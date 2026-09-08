@@ -32,6 +32,16 @@ catalog:
     expect(parseWorkspacePackageGlobs('packages:\n  - "apps/*"\n')).toStrictEqual(["apps/*"]);
   });
 
+  test("reads the globs a CRLF file declares", () => {
+    expect.hasAssertions();
+
+    expect(parseWorkspacePackageGlobs(WORKSPACE_YAML.replaceAll("\n", "\r\n"))).toStrictEqual([
+      "apps/*",
+      "packages/*",
+      "scripts",
+    ]);
+  });
+
   test("returns nothing when the file declares no packages block", () => {
     expect.hasAssertions();
 

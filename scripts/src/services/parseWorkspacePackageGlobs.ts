@@ -1,7 +1,10 @@
 // The `packages:` block alone. `pnpm-workspace.yaml` carries several sections this repo reads for different
 // Reasons — the catalog, the build allowlist — and each is sliced by whatever needs it rather than by a parser
-// That would make the whole file one shape.
-const WORKSPACE_PACKAGES_SECTION_REGEX = /^packages:\n(?<entries>(?:[ ]+- .+\n)+)/mu;
+// That would make the whole file one shape. The `\r?` is not made redundant by `.gitattributes` pinning this
+// File to `eol=lf`: an editor that rewrites it on save is not git, and an LF-only match would find no
+// `packages:` block and return an empty list — which reads here exactly like a workspace declaring none, so
+// Every caller silently covers nothing.
+const WORKSPACE_PACKAGES_SECTION_REGEX = /^packages:\r?\n(?<entries>(?:[ ]+- .+\r?\n)+)/mu;
 const WORKSPACE_PACKAGE_ENTRY_REGEX = /^[ ]+- ['"]?(?<glob>[^'"\n]+?)['"]?$/gmu;
 
 export const parseWorkspacePackageGlobs = (workspaceYaml: string): string[] => {
