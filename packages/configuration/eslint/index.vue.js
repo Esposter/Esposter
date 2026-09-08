@@ -32,7 +32,7 @@ export default withNuxt(plugins)
     },
   })
   // A `watch` sits in a store or a composable as often as in a component, so the alias ban is the one script-side
-  // Addition that has to reach `.ts` as well. It goes above the test override so a suite keeps its own list.
+  // Addition that has to reach `.ts` as well.
   .append({
     files: ["**/*.ts"],
     rules: {
@@ -44,11 +44,16 @@ export default withNuxt(plugins)
     },
   })
   // A test file carries the script-side bans plus its own — a typed `vi.fn` — the same carry-the-base-over
-  // Shape the date bans use above.
+  // Shape the date bans use above, the watch aliases included since this override replaces the `.ts` one.
   .append({
     files: ["**/*.test.ts"],
     rules: {
-      "no-restricted-syntax": ["error", ...typescriptRules["no-restricted-syntax"].slice(1), ...restrictedTestSyntaxes],
+      "no-restricted-syntax": [
+        "error",
+        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedTestSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
     },
   })
   // `public` is generated/static assets, the generated tileset `.tsx` included, and oxlint already ignores
