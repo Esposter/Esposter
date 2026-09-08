@@ -47,11 +47,11 @@ export default defineWebSocketHandler({
     );
   },
 
-  error(peer, error) {
+  error: (peer, error) => {
     peer.wsAdapter?.emit("error", error);
   },
 
-  message(peer, message) {
+  message: (peer, message) => {
     peer.wsAdapter?.emit("message", Buffer.from(message.text()), false);
   },
 
