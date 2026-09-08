@@ -136,7 +136,7 @@ export const useDataStore = defineStore("message/data", () => {
         const previousMessage = roomItems.value.find(getEntityIdEqualComparator(CompositeAzureKeyPath, input))?.message;
         baseStoreUpdateMessage(input);
         return () => {
-          if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
+          if (previousMessage) baseStoreUpdateMessage({ ...input, message: previousMessage });
         };
       },
       // `deleteFile` writes through this same executor, so the key is what stops an edit queueing behind an

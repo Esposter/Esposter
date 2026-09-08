@@ -29,7 +29,7 @@ export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath |
   }
 
   const [resourceId, directoryName, publishId, publishedFilesDirectoryName] = decodedSegments;
-  if (resourceId === undefined || !UUID_SCHEMA.safeParse(resourceId).success) return undefined;
+  if (!resourceId || !UUID_SCHEMA.safeParse(resourceId).success) return undefined;
 
   const blobName = decodedSegments.join("/");
   if (decodedSegments.length === 3 && directoryName === FILES_DIRECTORY_SEGMENT)
@@ -39,7 +39,7 @@ export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath |
     directoryName === SnapshotChannel.Published &&
     // The publish clone directory is a per-attempt uuid, never the publishVersion — the clone runs before the
     // Transaction claims one (see createSnapshotAssetsDirectoryName)
-    publishId !== undefined &&
+    publishId &&
     UUID_SCHEMA.safeParse(publishId).success &&
     publishedFilesDirectoryName === FILES_DIRECTORY_SEGMENT
   )
