@@ -5,6 +5,7 @@ import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSource
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
 import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { createEmptyRowData } from "@/services/resource/sheet/dataSource/createEmptyRowData";
 import { takeOne } from "@esposter/shared";
 
 export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange> {
@@ -60,7 +61,7 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
       } else {
         const appendedRow = takeOne(this.#appendedRows, rowOffset - this.#originalRows.length);
         // Reset rather than fill, so a redo leaves the row holding exactly what the first execute wrote
-        appendedRow.data = Object.fromEntries(columns.map(({ name }) => [name, null]));
+        appendedRow.data = createEmptyRowData(columns);
         for (const [columnOffset, value] of pastedRow.entries()) {
           if (columnOffset >= targetNames.length) break;
           const columnName = takeOne(targetNames, columnOffset);
