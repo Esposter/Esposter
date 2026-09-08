@@ -1,6 +1,6 @@
 # LiveKit Railway service
 
-This service wraps the official `livekit/livekit-server:v1.11.0` image with a Railway-specific entrypoint.
+This service wraps the official `livekit/livekit-server` image with a Railway-specific entrypoint.
 
 Railway does not expose UDP publicly, so this follows the TCP-only Railway template pattern: LiveKit advertises the Railway TCP proxy IP for ICE candidates, and HAProxy forwards Railway's application port to the advertised ICE port inside the container. Redis remains a separate Railway Redis service for room state.
 

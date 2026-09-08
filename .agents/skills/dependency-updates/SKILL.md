@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), version-capped packages (h3, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs), the Docker base-image rule keyed on the `docker` datasource that exempts every image tag from the repo-wide `updatePinnedDependencies: false` and pins digests so a tag that never moves still can, plus the local dry run that shows which deps a rule actually reaches, version-capped packages (h3, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -59,6 +59,23 @@ Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them pe
 
 - **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.
 - **`typescript`** — an exact-pinned `npm:typescript-native-bridge@…` alias, so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`) and a caret would float it across bridge builds. The alias is what runs `tsc`/`vue-tsc` on the Go compiler (`apps/web/content/docs/architecture/monorepo-tooling.md`); a bump moves the bridge, the TypeScript version behind it and `typescript-eslint` at once, so it is a deliberate, dedicated pass and never part of a routine update.
+
+## Docker base images (`renovate.json`)
+
+Renovate's `dockerfile` manager finds every `FROM` line with no `fileMatch` of its own, but what it may do with one is a `packageRules` entry keyed on `matchDatasources: ["docker"]`, because two repo-wide settings work against an image tag:
+
+- `updatePinnedDependencies: false` is there for the exact-pinned npm deps above that owe a dedicated pass. An image tag is a single version by definition, so without the override every `FROM` is skipped as `is-pinned` and Renovate proposes nothing — not a manager that failed to run, so no log line says the word Docker.
+- A tag that never moves (a distro codename, `latest`) carries no version to compare, so it can never be bumped by tag at all. `pinDigests: true` is what reaches it: Renovate rewrites the line to `<tag>@sha256:…` once, then keeps that digest current.
+
+Both are read during the lookup, so the rule carrying them takes no `matchUpdateTypes` — an update type exists only once the lookup has produced an update, so a rule gated on one cannot decide whether the lookup runs. That is why the digest automerge is a second rule rather than the same one. The datasource is the axis rather than the manager: the reason is a property of image tags, so it holds wherever one is declared, while a pin this repo chose on another datasource (a runner label, `packageManager`) stays skipped.
+
+To see what Renovate would do with the working tree, run it against the checkout instead of waiting for the bot:
+
+```bash
+PNPM_CONFIG_STRICT_DEP_BUILDS=false RENOVATE_PLATFORM=local RENOVATE_DRY_RUN=full LOG_LEVEL=debug pnpm dlx renovate
+```
+
+The env var is what lets the install run Renovate's own native build scripts, which pnpm blocks by default. The `packageFiles with updates` block of the log is the answer — every dep with the `updates` it earned, or the `skipReason` that emptied it. `renovate-config-validator` checks the schema only, so a rule that parses and still does nothing shows up here and nowhere else.
 
 ## Version-capped packages (keep the caret, cap the range)
 

@@ -11,6 +11,19 @@
       "automerge": true,
       "automergeType": "branch",
       "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "description": "An image tag is a single version by definition, so the repo-wide `updatePinnedDependencies: false` — which exists for the exact-pinned npm deps that owe a dedicated pass — would otherwise skip every one as `is-pinned`. `pinDigests` is what reaches a tag that never moves, where the digest behind it is the only thing left to update. Both are read during the lookup, so this rule carries no `matchUpdateTypes`: an update type exists only once the lookup has produced an update.",
+      "matchDatasources": ["docker"],
+      "pinDigests": true,
+      "updatePinnedDependencies": true
+    },
+    {
+      "automerge": true,
+      "automergeType": "branch",
+      "description": "A digest bump has no version to read, so it lands on the same branch automerge the minor/patch rule above gives everything else.",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["digest", "pinDigest"]
     }
   ],
   "rangeStrategy": "bump",
