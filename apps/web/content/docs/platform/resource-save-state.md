@@ -39,14 +39,16 @@ flowchart TD
 
 `saveState` reads the flags in priority order, so the state on screen is always the most urgent thing true about the resource.
 
-| State    | Shown as          | True when                                          | What the owner does            |
-| -------- | ----------------- | -------------------------------------------------- | ------------------------------ |
-| `Stale`  | Out of date       | another session's save moved `contentVersion` on   | refresh — nothing else lands   |
-| `Saving` | Saving…           | a debounce is armed, a write is in flight, or both | nothing                        |
-| `Failed` | Not saved         | the last write was rejected for any other reason   | retry the edit, or copy it out |
-| `Saved`  | Saved, and _when_ | none of the above                                  | nothing                        |
+| State    | Shown as          | True when                                                             | What the owner does            |
+| -------- | ----------------- | --------------------------------------------------------------------- | ------------------------------ |
+| `Stale`  | Out of date       | another session's save moved `contentVersion` on                      | refresh — nothing else lands   |
+| `Saving` | Saving…           | a debounce is armed, a write of _this_ resource is in flight, or both | nothing                        |
+| `Failed` | Not saved         | the last write was rejected for any other reason                      | retry the edit, or copy it out |
+| `Saved`  | Saved, and _when_ | none of the above                                                     | nothing                        |
 
 **An edit the debounce is still holding counts as saving.** The debounce re-arms on every keystroke, so nothing is in flight for as long as the owner keeps typing — a state read from the write alone would call a tab full of unwritten edits `Saved`, for however long the typing lasts. That is the one lie the indicator must not tell, so `hasUnwrittenContent` is set where the edit is seen and cleared by `saveContent` itself, with the mutation's own pending flag taking over from there. Folding it into `Saving` rather than giving unwritten edits a state of their own also keeps a word off the screen that would appear and vanish between keystrokes.
+
+**The in-flight half is asked of the resource, not of the executor.** Content saves are keyed by the resource they write, so a save issued before the blade moved on is still in flight under its own key while the next resource is loading. Read in aggregate, the mutation's pending flag would have the resource now on screen report `Saving` for work that belongs to another — and then settle to `Saved` at a moment that says nothing about it. The state asks `checkIsPending` for the loaded resource's own id, which is the same scoping every one of `saveContent`'s callbacks applies to what it writes back.
 
 **The clear belongs to the door, not to the trigger that armed it.** A dialog's Save arms nothing and would leave a flag it never set standing; a debounce that cleared its own would clear it for a save it then refuses — one scheduled against a resource the app has since navigated away from — and so report a dropped edit as `Saved`. The door is the one place that knows the edit was actually taken, and the navigation that refused it clears the flag through the `readResource()` its own page awaits.
 

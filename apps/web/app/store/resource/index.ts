@@ -19,7 +19,7 @@ import { checkIsUuidV4, RoutePath, withFinalizerAsync } from "@esposter/shared";
 // Them. Blade-scoped: the store is app-lifetime, this state is not, so the page clears it on unmount
 export const useResourceStore = defineStore("resource", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeSaveContentMutation, isPending: isSaveContentPending } = useMutation();
+  const { checkIsPending: checkIsSaveContentPending, executeMutation: executeSaveContentMutation } = useMutation();
   const { executeMutation: executeRenameMutation } = useMutation();
   const { executeMutation: executeUpdateTagsMutation } = useMutation();
   const { executeMutation: executeDeleteMutation } = useMutation();
@@ -70,7 +70,14 @@ export const useResourceStore = defineStore("resource", () => {
   // Save are the same write. See /docs/platform/resource-save-state
   const saveState = computed(() => {
     if (isContentStale.value) return ResourceSaveState.Stale;
-    else if (isSaveContentPending.value || hasUnwrittenContent.value) return ResourceSaveState.Saving;
+    // Asked of this resource rather than of the executor: a save is keyed by the resource it writes, and one
+    // Issued before the blade moved on is still in flight under its own key — read in aggregate it would show
+    // This resource saving work that belongs to another
+    else if (
+      (resource.value !== undefined && checkIsSaveContentPending(resource.value.id)) ||
+      hasUnwrittenContent.value
+    )
+      return ResourceSaveState.Saving;
     else if (hasSaveContentFailed.value) return ResourceSaveState.Failed;
     else return ResourceSaveState.Saved;
   });

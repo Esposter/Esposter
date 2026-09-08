@@ -11,15 +11,15 @@ Setting that out explicitly matters because the two halves fail differently. A c
 
 ## What holds and what does not
 
-| Surface                         | Status here                                                                                         |
-| :------------------------------ | :-------------------------------------------------------------------------------------------------- |
-| `vp run --cache`                | **Works fully.** Framework-agnostic — it runs `nuxt build` as a task and caches by traced inputs    |
-| `vp fmt`                        | **Works fully.** oxfmt already formats every file type in the repo                                  |
-| `vp env`, `vp install`, `vp pm` | **Works.** Runtime and package-manager management are indifferent to the framework                  |
-| `vp lint`                       | **Partial, and the partiality is the risk** — oxlint parses a `.vue` script block, not its template |
-| `vp test`                       | **Unproven.** Two specific blockers below                                                           |
-| `vp build`, `vp dev`            | **Does not apply to the app.** Nuxt owns the build, the dev server and the module graph             |
-| `vp pack`                       | Applies to the libraries, which are already tsdown packages                                         |
+| Surface                         | Status here                                                                                                                                                                                                                                        |
+| :------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vp run --cache`                | **Applies, unproven.** Framework-agnostic — it runs `nuxt build` as a task — but the traced key is what [Phase 0](/docs/proposals/refactors/vite-plus/phases) measures, and worker fan-out and the virrun overlay are the two ways it can be wrong |
+| `vp fmt`                        | **Works fully.** oxfmt already formats every file type in the repo                                                                                                                                                                                 |
+| `vp env`, `vp install`, `vp pm` | **Works.** Runtime and package-manager management are indifferent to the framework                                                                                                                                                                 |
+| `vp lint`                       | **Partial, and the partiality is the risk** — oxlint parses a `.vue` script block, not its template                                                                                                                                                |
+| `vp test`                       | **Unproven.** Two specific blockers below                                                                                                                                                                                                          |
+| `vp build`, `vp dev`            | **Does not apply to the app.** Nuxt owns the build, the dev server and the module graph                                                                                                                                                            |
+| `vp pack`                       | Applies to the libraries, which are already tsdown packages                                                                                                                                                                                        |
 
 The config-file consequence of that last row is the seam described in [configuration](/docs/proposals/refactors/vite-plus/configuration): Vite+ needs a root `vite.config.ts` to recognise a workspace, Nuxt wraps Vite and discourages a standalone one, and the request to let `nuxt.config.ts` be the authoritative source was raised upstream and closed without an implementation ([issue 912](https://github.com/voidzero-dev/vite-plus/issues/912)). The resulting warning is a warning rather than a defect — a separate config works ([Nuxt discussion](https://github.com/nuxt/nuxt/discussions/34857)) — but the arrangement is two config trees where one would do.
 

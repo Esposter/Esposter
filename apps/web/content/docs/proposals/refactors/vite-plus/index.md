@@ -13,7 +13,7 @@ The earlier reading of this was that the entry-point conflict had no answer and 
 
 > Everything under a hashed root is an input until proven otherwise, and only three things are subtracted
 
-Each of those three subtractions is a heuristic that was discovered by paying a wrong rebuild, and each is a place the key can drift from reality in the direction that serves a stale `dist`. A traced input set deletes the whole category: a file no build opened is provably not an input, and there is no list to maintain.
+Each of those three subtractions is a heuristic that was discovered by paying a wrong rebuild, and each is a place the key can drift from reality in the direction that serves a stale `dist`. A traced input set would delete the whole category — a file no build opened is not an input, and there is no list to maintain — and that sentence is the proposal's premise rather than a fact it has established. A traced key still carries a declared half: the task's arguments and the environment variables named as fingerprints, which is a list of exactly the kind the tracing was meant to retire. Two failure modes would make the traced half wrong rather than merely incomplete — tracing that does not follow a child process, and tracing through virrun's overlay that records sandbox paths instead of host ones — and both are unresolved. [Phase 0](/docs/proposals/refactors/vite-plus/phases) exists to settle them, the existing heuristics stay until it does, and nothing below the gate is reachable if it fails: a traced key that misses an input serves a stale build with more confidence than the conservative key it replaced.
 
 ## The decision
 

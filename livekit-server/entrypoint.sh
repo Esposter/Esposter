@@ -158,6 +158,11 @@ EOF
   haproxy -f /tmp/haproxy.cfg -D
 fi
 
+# No UDP port range is written, so LiveKit's own 50000-60000 default stands and the media path is the one it
+# Would take on any host: UDP first, TCP as the fallback. Railway routes no UDP today, so those candidates go
+# Nowhere and every client lands on the TCP one — the day Railway routes UDP that becomes the fast path with
+# Nothing here to change. Pinning the range to `0..0` says the opposite and does neither: `RTCConfig.Validate`
+# Reads a zero `port_range_start` outside development mode as unset and fills the default back in
 cat > /etc/livekit.yaml <<EOF
 port: ${PORT}
 bind_addresses:
@@ -168,8 +173,6 @@ logging:
 
 rtc:
   tcp_port: ${ICE_TCP_PORT}
-  port_range_start: 0
-  port_range_end: 0
 EOF
 
 # Each of these is omitted rather than written empty: LiveKit reads an absent key as its own default, where a
@@ -186,9 +189,12 @@ if [ -n "$REDIS_DB" ]; then
   db: ${REDIS_DB}"
 fi
 
+# `use_tls` is the deprecated spelling of this and still enables TLS, but only as the fallback the nested block
+# Takes precedence over, so the nested one is what gets written
 if [ "$REDIS_USE_TLS" = true ]; then
   REDIS_OPTIONS="${REDIS_OPTIONS}
-  use_tls: true"
+  tls:
+    enabled: true"
 fi
 
 cat >> /etc/livekit.yaml <<EOF

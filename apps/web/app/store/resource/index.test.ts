@@ -148,6 +148,35 @@ describe(useResourceStore, () => {
     expect(resource.value?.contentVersion).toBe(0);
   });
 
+  // Content saves are keyed by the resource they write, so one issued before the blade moved on is still in
+  // Flight under its own key. Read in aggregate it makes the resource that is loaded now say it is saving work
+  // That is not its own — and the toolbar it feeds is what the owner reads to know their edits are safe
+  test("reports the loaded resource as saved while another resource's save is still in flight", async () => {
+    expect.hasAssertions();
+
+    const { promise: isNavigated, resolve: resolveNavigated } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+        await isNavigated;
+        return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent();
+    const save = saveContent(createDefaultSheetResource());
+    setRouteId(otherResourceId);
+    await readResource();
+    await readContent();
+
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+
+    resolveNavigated();
+    await save;
+  });
+
   // Autosave fires again while the previous save is still in flight, and the row is read when the write is sent
   // Rather than when it was issued — sending the version it was holding makes the server reject our own
   // Overlapping save as a cross-session edit and strand the blade behind a refresh prompt
