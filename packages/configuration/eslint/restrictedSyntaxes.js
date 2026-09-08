@@ -45,7 +45,10 @@ export default [
     // Ternary is not even equivalent to it — the rules object is the seam a non-English locale changes, and an
     // Inline suffix is written once per surface and drifts, which is how the same count reads "1 result" on one
     // Screen and "1 results" on the next. The selector is the literal pair rather than anything about the
-    // Template around it, so a suffix built in a variable is caught the same way it is inside a string.
+    // Template around it, so a suffix built in a variable is caught the same way it is inside a string. That
+    // Breadth is the trade: a non-plural `s`, as in `http${isSecure ? "s" : ""}`, matches too and disables this
+    // On the line with that reason. Narrowing to a plural context is not on offer — the ternary is as often
+    // Assigned to a variable as written next to the count, and neither position is in the node.
     message:
       "Use `pluralize(word, count)` from `#shared/util/text/pluralize` rather than a hand-rolled plural suffix — see the string-utils skill.",
     selector:
