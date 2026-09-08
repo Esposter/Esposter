@@ -6,7 +6,7 @@ export const useMessageStore = defineStore("message", () => {
     rowKey: MessageEntity["rowKey"];
     target: InstanceType<typeof VMenu>["$props"]["target"];
   }>();
-  const editingRowKey = ref<MessageEntity["rowKey"]>();
+  const editingRowKey = ref<MessageEntity["rowKey"]>("");
   return {
     editingRowKey,
     optionsMenu,

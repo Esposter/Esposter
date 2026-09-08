@@ -42,7 +42,7 @@ const { activeRowKey } = storeToRefs(scrollStore);
 const isUpdateMode = computed({
   get: () => editingRowKey.value === message.rowKey,
   set: (value) => {
-    editingRowKey.value = value ? message.rowKey : undefined;
+    editingRowKey.value = value ? message.rowKey : "";
   },
 });
 const isHovered = ref(false);
