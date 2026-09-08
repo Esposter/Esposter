@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-08T05:27:43.171Z
-- Commit: unknown
+- Date: 2026-09-08T05:44:53.536Z
+- Commit: 879ae0aaa
 - Node: v26.8.1
 - OS: win32 10.0.26200 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
@@ -20,26 +20,26 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute        | 1.00×   | 0.7819    | ±22.69% | 1.2700   | 10      |
-| execute + undo | 0.59×   | 1.3210    | ±24.10% | 2.1909   | 10      |
+| execute        | 1.00×   | 0.2255    | ±7.72%  | 0.2722   | 10      |
+| execute + undo | 0.69×   | 0.3287    | ±12.09% | 0.4646   | 10      |
 
 ## CreateRowsCommand > insert 100 rows into 1000
 
 | task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute + undo | 1.00×   | 1.9201    | ±27.34% | 3.7328   | 10      |
-| execute        | 0.87×   | 2.2042    | ±18.05% | 3.2143   | 10      |
+| execute + undo | 1.00×   | 1.3979    | ±12.87% | 1.8474   | 10      |
+| execute        | 0.27×   | 5.1240    | ±83.15% | 20.3975  | 10      |
 
 ## CreateRowsCommand > insert 1000 rows into 10000
 
 | task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute        | 1.00×   | 18.9163   | ±9.76%  | 24.0954  | 10      |
-| execute + undo | 0.92×   | 20.5289   | ±10.72% | 26.5384  | 10      |
+| execute        | 1.00×   | 16.0952   | ±7.04%  | 17.9400  | 10      |
+| execute + undo | 0.97×   | 16.5124   | ±11.09% | 21.8864  | 10      |
 
 ## CreateRowsCommand > insert 10000 rows into 10000
 
-| task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------ | -------- | ------- |
-| execute        | 1.00×   | 33.4154   | ±7.86% | 38.4918  | 10      |
-| execute + undo | 0.69×   | 48.7785   | ±4.62% | 54.7127  | 10      |
+| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------- | -------- | ------- |
+| execute        | 1.00×   | 28.4182   | ±11.87% | 34.4018  | 10      |
+| execute + undo | 0.79×   | 35.8121   | ±7.28%  | 42.4609  | 10      |

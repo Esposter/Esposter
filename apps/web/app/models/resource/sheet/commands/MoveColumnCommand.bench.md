@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-08T05:27:43.171Z
-- Commit: unknown
+- Date: 2026-09-08T05:39:44.547Z
+- Commit: 879ae0aaa
 - Node: v26.8.1
 - OS: win32 10.0.26200 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
@@ -20,19 +20,19 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute        | 1.00×   | 0.2695    | ±25.36% | 0.4467   | 10      |
-| execute + undo | 0.53×   | 0.5053    | ±30.87% | 0.8140   | 10      |
+| execute        | 1.00×   | 0.1733    | ±5.73%  | 0.2060   | 10      |
+| execute + undo | 0.68×   | 0.2551    | ±29.50% | 0.5227   | 10      |
 
 ## MoveColumnCommand > move column 0→4, 1000 rows
 
 | task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute + undo | 1.00×   | 2.8542    | ±17.83% | 4.4866   | 10      |
-| execute        | 0.67×   | 4.2690    | ±48.17% | 11.3866  | 10      |
+| execute        | 1.00×   | 2.9951    | ±19.96% | 4.3148   | 10      |
+| execute + undo | 0.89×   | 3.3471    | ±31.96% | 6.7010   | 10      |
 
 ## MoveColumnCommand > move column 0→4, 10000 rows
 
 | task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute        | 1.00×   | 25.8834   | ±14.41% | 36.4877  | 10      |
-| execute + undo | 0.87×   | 29.9059   | ±7.17%  | 34.2817  | 10      |
+| execute        | 1.00×   | 20.2872   | ±12.59% | 26.5079  | 10      |
+| execute + undo | 0.78×   | 26.1749   | ±11.37% | 34.0733  | 10      |

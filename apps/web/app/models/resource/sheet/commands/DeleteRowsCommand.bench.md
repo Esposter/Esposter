@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-08T05:26:28.441Z
-- Commit: 0d26452ea
+- Date: 2026-09-08T05:39:44.547Z
+- Commit: 879ae0aaa
 - Node: v26.8.1
 - OS: win32 10.0.26200 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
@@ -18,21 +18,21 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## DeleteRowsCommand > delete 50 rows from 100
 
-| task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute        | 1.00×   | 0.2142    | ±7.41%  | 0.2413   | 10      |
-| execute + undo | 0.53×   | 0.4066    | ±20.13% | 0.6227   | 10      |
+| task           | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| -------------- | ------- | --------- | ------ | -------- | ------- |
+| execute        | 1.00×   | 0.1920    | ±6.22% | 0.2206   | 10      |
+| execute + undo | 0.64×   | 0.2990    | ±9.29% | 0.3797   | 10      |
 
 ## DeleteRowsCommand > delete 500 rows from 1000
 
 | task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute + undo | 1.00×   | 3.5992    | ±23.86% | 5.5856   | 10      |
-| execute        | 0.94×   | 3.8098    | ±48.10% | 10.2585  | 10      |
+| execute + undo | 1.00×   | 2.7420    | ±26.13% | 4.6580   | 10      |
+| execute        | 0.78×   | 3.5116    | ±46.76% | 9.1283   | 10      |
 
 ## DeleteRowsCommand > delete 5000 rows from 10000
 
 | task           | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------- | ------- | --------- | ------- | -------- | ------- |
-| execute        | 1.00×   | 23.2837   | ±13.37% | 33.0217  | 10      |
-| execute + undo | 0.69×   | 33.9382   | ±10.84% | 43.7779  | 10      |
+| execute        | 1.00×   | 24.8229   | ±13.22% | 31.9305  | 10      |
+| execute + undo | 0.82×   | 30.4141   | ±9.54%  | 39.1454  | 10      |
