@@ -11,27 +11,27 @@ export const findDuplicateRows = (dataSource: DataSource, keepMode = KeepDuplica
     .toSorted((firstKey, secondKey) => firstKey.localeCompare(secondKey));
   const getRowKey = (row: Row): string => JSON.stringify(sortedKeys.map((key) => row.data[key]));
 
+  const duplicateRows: IndexedRow[] = [];
+  // First mode keeps the earliest of each key, so a row is a duplicate the moment its key has been seen. Last
+  // Mode keeps the latest, which no single forward pass can know — the whole column has to be indexed first
   if (keepMode === KeepDuplicateMode.First) {
     const seenKeys = new Set<string>();
-    const duplicateRows: IndexedRow[] = [];
     for (const [index, row] of dataSource.rows.entries()) {
       const key = getRowKey(row);
       if (seenKeys.has(key)) duplicateRows.push({ index, row });
       else seenKeys.add(key);
     }
-    return duplicateRows;
-  }
+  } else {
+    const keys: string[] = [];
+    const keyLastIndexMap = new Map<string, number>();
+    for (const [index, row] of dataSource.rows.entries()) {
+      const key = getRowKey(row);
+      keys.push(key);
+      keyLastIndexMap.set(key, index);
+    }
 
-  const keys: string[] = [];
-  const keyLastIndexMap = new Map<string, number>();
-  for (const [index, row] of dataSource.rows.entries()) {
-    const key = getRowKey(row);
-    keys.push(key);
-    keyLastIndexMap.set(key, index);
+    for (const [index, row] of dataSource.rows.entries())
+      if (keyLastIndexMap.get(takeOne(keys, index)) !== index) duplicateRows.push({ index, row });
   }
-
-  const duplicateRows: IndexedRow[] = [];
-  for (const [index, row] of dataSource.rows.entries())
-    if (keyLastIndexMap.get(takeOne(keys, index)) !== index) duplicateRows.push({ index, row });
   return duplicateRows;
 };

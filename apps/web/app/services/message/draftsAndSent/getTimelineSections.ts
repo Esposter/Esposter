@@ -1,6 +1,7 @@
 import type { DraftsAndSentSection } from "@/models/message/draftsAndSent/DraftsAndSentSection";
 
 import { getTimelineDateLabel } from "@/util/date/getTimelineDateLabel";
+import { getOrCreate } from "@esposter/shared";
 
 export const getTimelineSections = <TItem>(
   items: TItem[],
@@ -9,9 +10,7 @@ export const getTimelineSections = <TItem>(
   const sectionMap = new Map<string, DraftsAndSentSection<TItem>>();
   for (const item of items) {
     const title = getTimelineDateLabel(getDate(item));
-    const section = sectionMap.get(title) ?? { items: [], title };
-    section.items.push(item);
-    sectionMap.set(title, section);
+    getOrCreate(sectionMap, title, () => ({ items: [], title })).items.push(item);
   }
   return [...sectionMap.values()];
 };

@@ -5,7 +5,7 @@ export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefi
   const { $trpc } = useNuxtApp();
   const { executeQuery, isPending } = useMutation();
   const dataset = ref<Dataset>();
-  const error = ref<string>();
+  const error = ref("");
   // One instance shows one dataset, so a read for a previous reference is superseded by the latest one and
   // Can never overwrite it
   const key = Symbol("useDataset");
@@ -24,7 +24,7 @@ export const useDataset = (reference: MaybeRefOrGetter<DatasetReference | undefi
         },
         onSuccess: (newDataset) => {
           dataset.value = newDataset;
-          error.value = undefined;
+          error.value = "";
         },
       },
     );

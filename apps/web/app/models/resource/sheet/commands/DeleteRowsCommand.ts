@@ -2,6 +2,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 
+import { pluralize } from "#shared/util/text/pluralize";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
@@ -11,7 +12,7 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
   readonly type = CommandType.DeleteRows;
 
   get description() {
-    return `Delete ${this.#indexedRows.length} Row${this.#indexedRows.length === 1 ? "" : "s"}`;
+    return `Delete ${this.#indexedRows.length} ${pluralize("Row", this.#indexedRows.length)}`;
   }
 
   readonly #indexedRows: IndexedRow[];

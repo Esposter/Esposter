@@ -2,8 +2,8 @@ import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOp
 import { TextSpeedDelayMsMap } from "@/services/dungeons/scene/settings/TextSpeedDelayMsMap";
 import { useSettingsStore } from "@/store/dungeons/settings";
 
-export const useTextDelayMs = (delayMs?: number) => {
+export const useTextDelayMs = () => {
   const settingsStore = useSettingsStore();
   const { settings } = storeToRefs(settingsStore);
-  return computed(() => delayMs ?? TextSpeedDelayMsMap[settings.value[SettingsOption["Text Speed"]]]);
+  return computed(() => TextSpeedDelayMsMap[settings.value[SettingsOption["Text Speed"]]]);
 };

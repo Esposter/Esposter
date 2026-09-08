@@ -11,13 +11,13 @@ export const getRecordDifferenceDescription = (original: object, updated: object
     if (ItemMetadataKeySet.has(key)) continue;
     const originalValue = (original as Record<string, unknown>)[key];
     const updatedValue = (updated as Record<string, unknown>)[key];
-    if (originalValue !== updatedValue) {
-      const formattedOriginalValue =
-        originalValue instanceof Date ? formatDate(originalValue, ISO_DATE_FORMAT) : String(originalValue);
-      const formattedUpdatedValue =
-        updatedValue instanceof Date ? formatDate(updatedValue, ISO_DATE_FORMAT) : String(updatedValue);
-      rows.push(`${key} | ${formattedOriginalValue} | ${formattedUpdatedValue}`);
-    }
+    if (originalValue === updatedValue) continue;
+
+    const formattedOriginalValue =
+      originalValue instanceof Date ? formatDate(originalValue, ISO_DATE_FORMAT) : String(originalValue);
+    const formattedUpdatedValue =
+      updatedValue instanceof Date ? formatDate(updatedValue, ISO_DATE_FORMAT) : String(updatedValue);
+    rows.push(`${key} | ${formattedOriginalValue} | ${formattedUpdatedValue}`);
   }
   if (rows.length === 0) return "";
   return ["key | original | updated", ":---: | :---: | :---:", ...rows].join("\n");

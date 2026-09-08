@@ -1,9 +1,9 @@
 ---
-title: Platform
+title: Cross-Product Layer Model
 description: The cross-product layer model — identity, resources, datasets, publishing, and events — that links Esposter's products together.
 ---
 
-# Platform — Cross-Product Layer Model
+# Cross-Product Layer Model
 
 How Esposter's products link together. Five layers; the Resources layer carries the products, and the others are capabilities or infrastructure it plugs into.
 

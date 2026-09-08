@@ -55,26 +55,24 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
 
   const start = async (timeslice?: number) => {
     if (state.value && state.value !== "inactive") return;
-    else if (!isSupported.value) {
-      createAlert("Media devices API is not supported in this environment.", "error");
-      return;
-    }
-    data.value = [];
-    // Release any lingering stream so useUserMedia re-requests a fresh one.
-    stopStream();
+    else if (isSupported.value) {
+      data.value = [];
+      // Release any lingering stream so useUserMedia re-requests a fresh one.
+      stopStream();
 
-    await getResultAsync(startStream).match(noop, (error) => {
-      // A DOMException is the device refusing — the user picked this device, so they are told. Anything
-      // Else reaching here is a programming error nobody watching a recorder can act on
-      if (error instanceof DOMException) createErrorAlert(error);
-      else console.error(error);
-    });
-    if (!stream.value) return;
+      await getResultAsync(startStream).match(noop, (error) => {
+        // A DOMException is the device refusing — the user picked this device, so they are told. Anything
+        // Else reaching here is a programming error nobody watching a recorder can act on
+        if (error instanceof DOMException) createErrorAlert(error);
+        else console.error(error);
+      });
+      if (!stream.value) return;
 
-    const newMediaRecorder = new MediaRecorder(stream.value, toValue(mediaRecorderOptions));
-    setupMediaRecorder(newMediaRecorder);
-    mediaRecorder.value = newMediaRecorder;
-    newMediaRecorder.start(timeslice);
+      const newMediaRecorder = new MediaRecorder(stream.value, toValue(mediaRecorderOptions));
+      setupMediaRecorder(newMediaRecorder);
+      mediaRecorder.value = newMediaRecorder;
+      newMediaRecorder.start(timeslice);
+    } else createAlert("Media devices API is not supported in this environment.", "error");
   };
 
   const stop = () => {

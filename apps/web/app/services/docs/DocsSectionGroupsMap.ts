@@ -5,7 +5,7 @@
 export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
   architecture: {
     "Core standards": [
-      "platform",
+      "layer-model",
       "resource",
       "dataset",
       "publishing",
@@ -66,7 +66,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
   },
   resource: {
     "Explorer & shell": [
-      "resource-explorer",
+      "explorer",
       "resource-service-menu",
       "list-filters-and-views",
       "summary-view",

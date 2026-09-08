@@ -47,7 +47,7 @@ export const searchEmojis = (query: string, customEmojis: CustomEmoji[] = []): P
   const normalizedQuery = query.toLowerCase();
   const customMatches = customEmojis.filter(({ name }) => name.includes(normalizedQuery));
   // BM25 has no reason to rank an exact shortcode above a longer one that also matched, so it is pinned
-  const exactMatch = slugEmojiMap.get(query.toLowerCase());
+  const exactMatch = slugEmojiMap.get(normalizedQuery);
   const results = getMiniSearch()
     .search(query)
     .flatMap(({ id }) => {

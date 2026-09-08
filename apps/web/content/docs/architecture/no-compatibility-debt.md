@@ -14,7 +14,7 @@ This is the rule the codebase's other absences follow from: there are no `@depre
 The usual reason to keep a wrong name is that changing it is expensive. Here it is not, and each of the three places that could have been expensive has already been paid for:
 
 - **Names in code** — the compiler finds every reference. A rename that typechecks is complete, and what typecheck cannot see (a path in a docs table, a name in prose) is covered by the docs index test and a grep across `content/docs`, `.agents` and the READMEs.
-- **Deployed identities** — infrastructure is Pulumi code ([platform](/docs/architecture/platform)), so renaming an Azure resource, a function, or the identifier a subscription points at is an ordinary edit followed by `pnpm infra:preview`. The plan says exactly what will happen before anything happens. "This would be a risky infra change" is a claim a preview either supports or refutes, and it is not allowed to stand unpreviewed.
+- **Deployed identities** — infrastructure is Pulumi code ([infra](/docs/infra)), so renaming an Azure resource, a function, or the identifier a subscription points at is an ordinary edit followed by `pnpm infra:preview`. The plan says exactly what will happen before anything happens. "This would be a risky infra change" is a claim a preview either supports or refutes, and it is not allowed to stand unpreviewed.
 - **A published package's exports** — `virrun`, `parse-tmx`, `vue-phaserjs`, `azure-mock`, `@esposter/azure`,
   `@esposter/shared` and `@esposter/xml2js` are published, and renaming an export from one is **not treated as a
   breaking change here**. The packages exist because this repository needed them factored out, not because they

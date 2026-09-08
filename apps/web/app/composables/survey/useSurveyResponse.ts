@@ -37,15 +37,15 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
           currentPageNo <= currentSurveyResponse.pageNo
         )
           return Promise.resolve(currentSurveyResponse);
-
-        return $trpc.survey.updateSurveyResponse.mutate({
-          model: data,
-          modelVersion: currentSurveyResponse.modelVersion,
-          pageNo: currentPageNo,
-          participantToken,
-          partitionKey: currentSurveyResponse.partitionKey,
-          rowKey: currentSurveyResponse.rowKey,
-        });
+        else
+          return $trpc.survey.updateSurveyResponse.mutate({
+            model: data,
+            modelVersion: currentSurveyResponse.modelVersion,
+            pageNo: currentPageNo,
+            participantToken,
+            partitionKey: currentSurveyResponse.partitionKey,
+            rowKey: currentSurveyResponse.rowKey,
+          });
       },
       {
         // One live response per participant per survey, so every save queues against that one target — a

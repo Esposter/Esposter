@@ -9,13 +9,12 @@ export const usePlayAnimation = (
   const playAnimationKey = ref(isActive.value ? startSpritesheetKey : undefined);
 
   watch(isActive, (newIsActive) => {
-    if (newIsActive) {
-      playAnimationKey.value = startSpritesheetKey;
-      return;
+    if (newIsActive) playAnimationKey.value = startSpritesheetKey;
+    else {
+      // Deactivating is how the caller says the animation finished
+      playAnimationKey.value = undefined;
+      emit("complete");
     }
-    // Deactivating is how the caller says the animation finished
-    playAnimationKey.value = undefined;
-    emit("complete");
   });
 
   return playAnimationKey;

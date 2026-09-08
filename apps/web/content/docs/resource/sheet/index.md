@@ -16,7 +16,7 @@ The sheet editor is the grid editor of the **Sheet resource** — a spreadsheet-
 - **Command history** — every mutation is a command object (`ADataSourceCommand`) pushed onto a history store, which is what powers unlimited undo/redo, including for multi-cell operations like range paste.
 - **Cell selection** — an Excel-style anchor/focus range selection (click, drag, Shift+click, Shift+Arrow) that keyboard copy/paste operates on. See [clipboard](/docs/resource/sheet/clipboard).
 
-The area is mature. Open work: [roadmap](/docs/resource/sheet/roadmap). New ideas should be checked against [deferred](/docs/resource/sheet/deferred) and [rejected](/docs/resource/sheet/rejected) first.
+The editor is mature. Open work: [roadmap](/docs/resource/sheet/roadmap). New ideas should be checked against [deferred](/docs/resource/sheet/deferred) and [rejected](/docs/resource/sheet/rejected) first.
 
 ## Shipped log
 

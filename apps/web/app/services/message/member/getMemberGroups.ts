@@ -1,6 +1,7 @@
 import type { RoomRoleInMessage, User } from "@esposter/db-schema";
 
 import { getTopRole } from "@/services/message/member/getTopRole";
+import { getOrCreate } from "@esposter/shared";
 
 interface MemberGroup<TMember> {
   members: TMember[];
@@ -17,9 +18,7 @@ export const getMemberGroups = <TMember extends Pick<User, "id">>(
   for (const member of members) {
     const role = getTopRole(getMemberRoles(member.id));
     const roleId = role?.id ?? "";
-    const group = roleIdGroupMap.get(roleId) ?? { members: [], role };
-    group.members.push(member);
-    roleIdGroupMap.set(roleId, group);
+    getOrCreate(roleIdGroupMap, roleId, () => ({ members: [], role })).members.push(member);
   }
   return [...roleIdGroupMap.values()].toSorted((firstGroup, secondGroup) => {
     if (!firstGroup.role) return 1;

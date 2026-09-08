@@ -18,9 +18,8 @@ export const useRotatingCursors = () => {
   const animateCursors = (cursorCount: number) => {
     const initialRotationOffsets = Array.from({ length: cursorCount }, (_value, index) => (360 / cursorCount) * index);
 
-    for (let i = 0; i < cursorCount; i++) {
-      const rotationOffset = takeOne(initialRotationOffsets, i);
-      const rotatingDivId = takeOne(rotatingDivIds.value, i);
+    for (const [index, rotationOffset] of initialRotationOffsets.entries()) {
+      const rotatingDivId = takeOne(rotatingDivIds.value, index);
       const rotatingDiv = window.document.getElementById(rotatingDivId);
       if (!rotatingDiv) continue;
       // Nodes are reused, so any prior infinite animation is cleared before the new one is added

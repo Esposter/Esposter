@@ -14,14 +14,12 @@ export const collectAffectedCells = (
   rowRange?: { end: number; start: number },
 ): AffectedCell[] => {
   const affectedCells: AffectedCell[] = [];
-  for (const [rowIndex, row] of rows.entries()) {
-    if (rowRange && rowIndex < rowRange.start) continue;
-    else if (rowRange && rowIndex > rowRange.end) break;
-
-    for (const column of columns) {
-      const value = takeOne(row.data, column.name);
-      if (checkIsAffected(value)) affectedCells.push({ columnName: column.name, originalValue: value, rowIndex });
-    }
-  }
+  for (const [rowIndex, row] of rows.entries())
+    if (rowRange && rowIndex > rowRange.end) break;
+    else if (!rowRange || rowIndex >= rowRange.start)
+      for (const column of columns) {
+        const value = takeOne(row.data, column.name);
+        if (checkIsAffected(value)) affectedCells.push({ columnName: column.name, originalValue: value, rowIndex });
+      }
   return affectedCells;
 };

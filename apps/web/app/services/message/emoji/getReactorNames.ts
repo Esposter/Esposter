@@ -1,4 +1,5 @@
 import { EN_US_CONJUNCTION_FORMATTER } from "#shared/services/intl/constants";
+import { pluralize } from "#shared/util/text/pluralize";
 import { MAX_REACTION_HOVER_NAMES } from "@/services/message/emoji/constants";
 
 // "Alice, Bob and 4 others" — the same shape Discord's hover card uses, so the line stays readable at any
@@ -8,6 +9,6 @@ export const getReactorNames = (userIds: string[], getMemberName: (userId: strin
   const names = userIds.slice(0, MAX_REACTION_HOVER_NAMES).map((userId) => getMemberName(userId));
   const overflowCount = userIds.length - names.length;
   return EN_US_CONJUNCTION_FORMATTER.format(
-    overflowCount > 0 ? [...names, `${overflowCount} other${overflowCount > 1 ? "s" : ""}`] : names,
+    overflowCount > 0 ? [...names, `${overflowCount} ${pluralize("other", overflowCount)}`] : names,
   );
 };

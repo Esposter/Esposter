@@ -29,6 +29,8 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
       }
 
       const executeSlashCommand = useExecuteSlashCommand();
+      // The branch above returned for every command that declares parameters, which is what leaves this one
+      // Parameterless — a fact about the array's length that its type has no way to carry
       await executeSlashCommand({ parameterValues: {}, type: slashCommand.type as SlashCommandTypeWithoutParameters });
     }).match(noop, console.error),
   ),

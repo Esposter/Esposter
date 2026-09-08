@@ -5,7 +5,7 @@ description: Resource ideas we decided not to build yet — one page per idea, e
 
 # Resource deferred ideas
 
-One page per deferred idea (not now — with a revisit trigger). Check here and [rejected](/docs/resource/rejected) before adding a roadmap item or proposal — never re-argue a decided idea.
+One page per deferred idea (not now — with a revisit trigger). Check here and [rejected](/docs/resource/rejected) before adding a roadmap item or proposal — never re-argue a decided idea. Grid-editor ideas are decided one level down, in the [sheet editor](/docs/resource/sheet)'s own deferred and rejected pages.
 
 - [AI resource generation](/docs/resource/deferred/ai-resource-generation) — first-ever LLM dependency is a platform decision, not a create-form tweak
 - [API / SQL dataset providers](/docs/resource/deferred/api-sql-dataset-providers) — external data sources need secret storage + SSRF/injection work with no consumer yet

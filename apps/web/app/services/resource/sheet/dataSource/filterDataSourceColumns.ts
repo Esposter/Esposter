@@ -23,7 +23,7 @@ export const filterDataSourceColumns = (
     const rowIndex = windowStart + index;
     const filteredRow = new Row(structuredClone(toRawDeep(row)));
     filteredRow.data = Object.fromEntries(
-      filteredColumns.map((column) => [column.name, computeValue(rows, row, columns, column, rowIndex) ?? null]),
+      filteredColumns.map((column) => [column.name, computeValue(rows, row, columns, column, rowIndex)]),
     );
     return filteredRow;
   });

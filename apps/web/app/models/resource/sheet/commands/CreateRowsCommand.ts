@@ -1,6 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
+import { pluralize } from "#shared/util/text/pluralize";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
@@ -10,7 +11,7 @@ export class CreateRowsCommand extends ADataSourceCommand<CommandType.CreateRows
   readonly type = CommandType.CreateRows;
 
   get description() {
-    return `Create ${this.#rows.length} Row${this.#rows.length === 1 ? "" : "s"}`;
+    return `Create ${this.#rows.length} ${pluralize("Row", this.#rows.length)}`;
   }
 
   readonly #rows: Row[];

@@ -5,7 +5,7 @@ description: Open resource work — the prioritized index over the proposal spec
 
 # Resource roadmap
 
-Azure-portal parity program for the Resource Explorer: every product is already a resource behind one [explorer](/docs/resource/resource-explorer), so this backlog closes the UX gap between our explorer and the real portal. Items link their full specs under [proposals](/docs/proposals) — directly or via their section heading; the specs are the plan, this page is only the priority order. Check [deferred](/docs/resource/deferred) + [rejected](/docs/resource/rejected) before adding items. New Azure services are the only real cost anywhere below; everything else is frontend + procedures + at most a Postgres migration.
+Azure-portal parity program for the Resource Explorer: every product is already a resource behind one [explorer](/docs/resource/explorer), so this backlog closes the UX gap between our explorer and the real portal. Items link their full specs under [proposals](/docs/proposals) — directly or via their section heading; the specs are the plan, this page is only the priority order. Check [deferred](/docs/resource/deferred) + [rejected](/docs/resource/rejected) before adding items, and the [sheet editor](/docs/resource/sheet)'s own pair for anything inside the Data blade — the grid keeps its backlog with the editor. New Azure services are the only real cost anywhere below; everything else is frontend + procedures + at most a Postgres migration.
 
 ## Next
 

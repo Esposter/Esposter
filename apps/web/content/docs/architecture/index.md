@@ -5,11 +5,11 @@ description: Cross-cutting standards and system explanations shared by every Esp
 
 # Architecture
 
-These pages explain the durable, cross-cutting mechanisms that span multiple packages or feature areas — the repo-wide answer to "whenever we need X, we do it this way". Area-specific features live under their own sections (for example [resource](/docs/resource) or [esbabbler](/docs/esbabbler)).
+These pages explain the durable, cross-cutting mechanisms that span multiple packages or feature areas — the repo-wide answer to "whenever we need X, we do it this way". Area-specific features live under their own sections (for example [resources](/docs/resource) or [esbabbler](/docs/esbabbler)).
 
 | Page                                                                                      | What it covers                                                                                 |
 | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [Platform](/docs/architecture/platform)                                                   | The cross-product layer model — identity, resources, datasets, publishing, events              |
+| [Cross-product layer model](/docs/architecture/layer-model)                               | How the products link together — identity, resources, datasets, publishing, events             |
 | [Resources](/docs/architecture/resource)                                                  | The standard for product persistence and surface — resource model, capabilities, factory       |
 | [Datasets](/docs/architecture/dataset)                                                    | The standard for serving tabular data — contract, DatasetProvider capability, row cap          |
 | [Publishing](/docs/architecture/publishing)                                               | The Publishable capability — versioned publish copy + rate-limited public read                 |

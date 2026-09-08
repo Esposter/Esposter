@@ -5,7 +5,7 @@ description: A Share command on published resources that posts the public link i
 
 # Share to Esbabbler
 
-A **Share** command on published resources: pick one of your rooms, add an optional note, and the public `/view/[type]/[id]` link lands there as a message. It is the first real bridge between the platform and [esbabbler](/docs/esbabbler), and it is deliberately the smallest one that works — client-side only, reusing the existing message-create path, with no new procedures and no schema.
+A **Share** command on published resources: pick one of your rooms, add an optional note, and the public `/view/[type]/[id]` link lands there as a message. It is the first real bridge between resources and [esbabbler](/docs/esbabbler), and it is deliberately the smallest one that works — client-side only, reusing the existing message-create path, with no new procedures and no schema.
 
 Copying the link off the Overview blade and pasting it into a room by hand still works; this does the same thing in place.
 
@@ -36,5 +36,5 @@ flowchart LR
 
 ## Notes
 
-- **Deliberately one direction** (platform → room). Surfacing "shared with me" inside the explorer is a different feature needing read-model thought, and is not in this cut.
+- **Deliberately one direction** (resource → room). Surfacing "shared with me" inside the explorer is a different feature needing read-model thought, and is not in this cut.
 - The message is the caller's own message in their own room — no special message type, no service-to-service write, no elevated permission. Deleting the resource later leaves a dead link, exactly like any pasted URL.

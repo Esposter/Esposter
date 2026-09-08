@@ -1,6 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
+import { pluralize } from "#shared/util/text/pluralize";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
@@ -13,7 +14,7 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
 
   get description() {
     const rowCount = this.#pastedValues.length;
-    return `Paste ${rowCount} row${rowCount === 1 ? "" : "s"}`;
+    return `Paste ${rowCount} ${pluralize("row", rowCount)}`;
   }
 
   readonly #anchorColumnIndex: number;
