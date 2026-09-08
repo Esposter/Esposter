@@ -28,8 +28,8 @@ export const useCallParticipantTiles = () => {
     const participant = activeScreenShareParticipantId.value
       ? callParticipantMap.value.get(activeScreenShareParticipantId.value)
       : undefined;
-    if (!participant) return "Someone";
-    return participant.id === sessionId.value ? `${participant.name} (You)` : participant.name;
+    if (participant) return participant.id === sessionId.value ? `${participant.name} (You)` : participant.name;
+    else return "Someone";
   });
   // Built once per render rather than per tile: the stage renders the same participants in two lists, and each
   // Tile's flags cost a scan of the speaking and screen-sharing id arrays

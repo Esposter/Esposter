@@ -24,7 +24,8 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
         switch (type) {
           case Target.Building: {
             const foundBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === unlockCondition.id);
-            return foundBuilding !== undefined && foundBuilding.amount >= unlockCondition.amount;
+            if (foundBuilding) return foundBuilding.amount >= unlockCondition.amount;
+            else return false;
           }
           case Target.Upgrade:
             return clickerStore.clicker.boughtUpgrades.some(({ id }) => id === unlockCondition.id);
