@@ -38,9 +38,9 @@
   "scripts": {
     "bench": "pnpm -r --if-present run bench",
     "build": "pnpm --filter \"@esposter/web^...\" --filter \"{.}^...\" run build && pnpm build:web",
+    "build:docs": "virrun -- typedoc",
     "build:functions": "pnpm -C apps/functions run build",
     "build:infra": "pnpm -C apps/infra run build",
-    "build:docs": "virrun -- typedoc",
     "build:packages": "pnpm -r --filter \"./packages/*\" run build",
     "build:web": "virrun -- pnpm -C apps/web run build",
     "coverage": "vitest run --coverage",
