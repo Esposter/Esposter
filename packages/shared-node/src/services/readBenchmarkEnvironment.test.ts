@@ -5,7 +5,7 @@ import { cpus } from "node:os";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("node:os"), async (importOriginal) => ({
-  ...(await importOriginal<typeof import("node:os")>()),
+  ...(await importOriginal()),
   cpus: vi.fn<typeof cpus>(),
 }));
 
