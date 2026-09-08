@@ -16,5 +16,5 @@ export const getSnapshotSummary = (type: ResourceType, serializedContent: string
     ResourceDefinitionMap[type].contentSchema.safeParse(JSON.parse(serializedContent)),
   ).unwrapOr(undefined);
   if (!parsedContent?.success) return "";
-  return summarize(parsedContent.data as never);
+  else return summarize(parsedContent.data as never);
 };

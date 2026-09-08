@@ -7,6 +7,5 @@ import { ResourceLiveContentMap } from "@@/server/services/resource/ResourceLive
 export const reapplyLiveResourceContent = async (resource: Resource, content: unknown): Promise<unknown> => {
   const reapplyLiveContent = ResourceLiveContentMap[resource.type];
   if (!reapplyLiveContent) return content;
-  const reappliedContent = await reapplyLiveContent(resource, content as never);
-  return reappliedContent;
+  else return reapplyLiveContent(resource, content as never);
 };

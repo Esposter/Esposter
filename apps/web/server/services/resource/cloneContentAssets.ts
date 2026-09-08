@@ -103,12 +103,13 @@ export const cloneContentAssets = async <TContent>(
       )
     )
       return true;
-    if (!isPublished) return false;
     // Asked without the caller: ownership is what the published check falls through to, and it has already
     // Answered no for this resource
-    return getOrCreate(isPublishedReadableMap, resourceId, () =>
-      checkIsResourceAssetReadable(db, { isPublished: true, resourceId }),
-    );
+    else if (isPublished)
+      return getOrCreate(isPublishedReadableMap, resourceId, () =>
+        checkIsResourceAssetReadable(db, { isPublished: true, resourceId }),
+      );
+    else return false;
   };
   const clones = (
     await Promise.all(

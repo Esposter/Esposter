@@ -22,5 +22,5 @@ export const readContentBlob = async <TSchema extends z.ZodType>(
   );
   if (!readableStreamBody) return undefined;
   // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, so free-text ISO strings survive
-  return contentSchema.parse(JSON.parse(await streamToText(readableStreamBody)));
+  else return contentSchema.parse(JSON.parse(await streamToText(readableStreamBody)));
 };
