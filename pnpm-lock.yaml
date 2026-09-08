@@ -669,8 +669,8 @@ catalogs:
       specifier: ^3.0.3
       version: 3.0.3
     three:
-      specifier: ^0.185.1
-      version: 0.185.1
+      specifier: ^0.186.0
+      version: 0.186.0
     three-globe:
       specifier: ^2.45.2
       version: 2.45.2
@@ -1026,13 +1026,13 @@ importers:
         version: 3.31.3(@floating-ui/dom@1.8.0)(@tiptap/core@3.31.3(@tiptap/pm@3.31.3))(@tiptap/pm@3.31.3)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
       '@tresjs/cientos':
         specifier: 'catalog:'
-        version: 5.8.1(@tresjs/core@5.8.3(three@0.185.1)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)))(three@0.185.1)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
+        version: 5.8.1(@tresjs/core@5.8.3(three@0.186.0)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)))(three@0.186.0)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
       '@tresjs/core':
         specifier: 'catalog:'
-        version: 5.8.3(three@0.185.1)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
+        version: 5.8.3(three@0.186.0)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
       '@tresjs/nuxt':
         specifier: 'catalog:'
-        version: 5.6.3(a57ec770ae8c668e6acc7c734f751586)
+        version: 5.6.3(60f8e2b0bf157e2152e670232e825bd7)
       '@trpc/client':
         specifier: 'catalog:'
         version: 11.18.0(@trpc/server@11.18.0(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
@@ -1260,10 +1260,10 @@ importers:
         version: 3.0.3(survey-core@3.0.3)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
       three:
         specifier: 'catalog:'
-        version: 0.185.1
+        version: 0.186.0
       three-globe:
         specifier: 'catalog:'
-        version: 2.45.2(three@0.185.1)
+        version: 2.45.2(three@0.186.0)
       trpc-nuxt:
         specifier: 'catalog:'
         version: 2.1.3(@trpc/client@11.18.0(@trpc/server@11.18.0(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(@trpc/server@11.18.0(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
@@ -13698,8 +13698,8 @@ packages:
     peerDependencies:
       three: '>=0.128.0'
 
-  three@0.185.1:
-    resolution: {integrity: sha512-5aojFCXKwnjBRZvUnt3WFfEcvUJgkN5LlijRFN95hMy8WVkG4I0QNcJE+OuWvuJ0bOdStrbfXn0pkd6/QyiAlg==}
+  three@0.186.0:
+    resolution: {integrity: sha512-cr/fIM2ddMSVbYVgkfD4jLJv7Fh/8ZTjvo+7gQeSVGUZHxpx9FDwoL5iC7hUz/LiRA8wMbqfnb90xKfm1/HHkQ==}
 
   through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
@@ -20386,42 +20386,42 @@ snapshots:
       y-protocols: 1.0.7(yjs@13.6.32)
       yjs: 13.6.32
 
-  '@tresjs/cientos@5.8.1(@tresjs/core@5.8.3(three@0.185.1)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)))(three@0.185.1)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))':
+  '@tresjs/cientos@5.8.1(@tresjs/core@5.8.3(three@0.186.0)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)))(three@0.186.0)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))':
     dependencies:
-      '@tresjs/core': 5.8.3(three@0.185.1)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
+      '@tresjs/core': 5.8.3(three@0.186.0)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
       '@vueuse/core': 14.4.0(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
-      camera-controls: 3.1.2(three@0.185.1)
-      stats-gl: 4.2.3(three@0.185.1)
+      camera-controls: 3.1.2(three@0.186.0)
+      stats-gl: 4.2.3(three@0.186.0)
       stats.js: 0.17.0
-      three: 0.185.1
-      three-custom-shader-material: 6.4.0(three@0.185.1)
-      three-mesh-bvh: 0.9.14(three@0.185.1)
-      three-stdlib: 2.36.1(three@0.185.1)
+      three: 0.186.0
+      three-custom-shader-material: 6.4.0(three@0.186.0)
+      three-mesh-bvh: 0.9.14(three@0.186.0)
+      three-stdlib: 2.36.1(three@0.186.0)
       vue: 3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
     transitivePeerDependencies:
       - '@react-three/fiber'
       - react
 
-  '@tresjs/core@5.8.3(three@0.185.1)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))':
+  '@tresjs/core@5.8.3(three@0.186.0)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))':
     dependencies:
       '@pmndrs/pointer-events': 6.6.30
       '@vue/devtools-api': 8.2.1
       '@vueuse/core': 14.4.0(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
       radashi: 12.9.1
-      three: 0.185.1
+      three: 0.186.0
       vue: 3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
 
-  '@tresjs/nuxt@5.6.3(a57ec770ae8c668e6acc7c734f751586)':
+  '@tresjs/nuxt@5.6.3(60f8e2b0bf157e2152e670232e825bd7)':
     dependencies:
       '@nuxt/kit': 4.1.2(magicast@0.5.4)
       '@nuxt/ui': 4.11.1(7f7ba5eb1db4c03e4852b4c8da0e4fea)
-      '@tresjs/core': 5.8.3(three@0.185.1)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
+      '@tresjs/core': 5.8.3(three@0.186.0)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))
       defu: 6.1.7
       mlly: 1.8.2
       ohash: 2.0.12
       pkg-types: 2.3.3
       sirv: 3.0.2
-      three: 0.185.1
+      three: 0.186.0
       vite-plugin-glsl: 1.6.1(@rollup/pluginutils@5.4.0(rollup@4.63.1))(esbuild@0.28.2)(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.0)(sass@1.104.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -22316,9 +22316,9 @@ snapshots:
       pascal-case: 3.1.2
       tslib: 2.8.1
 
-  camera-controls@3.1.2(three@0.185.1):
+  camera-controls@3.1.2(three@0.186.0):
     dependencies:
-      three: 0.185.1
+      three: 0.186.0
 
   caniuse-api@4.0.0:
     dependencies:
@@ -28506,9 +28506,9 @@ snapshots:
 
   standard-as-callback@2.1.0: {}
 
-  stats-gl@4.2.3(three@0.185.1):
+  stats-gl@4.2.3(three@0.186.0):
     optionalDependencies:
-      three: 0.185.1
+      three: 0.186.0
 
   stats.js@0.17.0: {}
 
@@ -28792,7 +28792,7 @@ snapshots:
     transitivePeerDependencies:
       - react-native-b4a
 
-  three-conic-polygon-geometry@2.1.3(three@0.185.1):
+  three-conic-polygon-geometry@2.1.3(three@0.186.0):
     dependencies:
       '@turf/boolean-point-in-polygon': 7.4.0
       d3-array: 3.2.4
@@ -28801,20 +28801,20 @@ snapshots:
       d3-scale: 4.0.2
       delaunator: 5.1.0
       earcut: 3.2.3
-      three: 0.185.1
+      three: 0.186.0
 
-  three-custom-shader-material@6.4.0(three@0.185.1):
+  three-custom-shader-material@6.4.0(three@0.186.0):
     dependencies:
-      three: 0.185.1
+      three: 0.186.0
 
-  three-geojson-geometry@2.1.1(three@0.185.1):
+  three-geojson-geometry@2.1.1(three@0.186.0):
     dependencies:
       d3-geo: 3.1.1
       d3-interpolate: 3.0.1
       earcut: 3.2.3
-      three: 0.185.1
+      three: 0.186.0
 
-  three-globe@2.45.2(three@0.185.1):
+  three-globe@2.45.2(three@0.186.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.3
@@ -28829,24 +28829,24 @@ snapshots:
       h3-js: 4.5.0
       index-array-by: 1.4.2
       kapsule: 1.16.3
-      three: 0.185.1
-      three-conic-polygon-geometry: 2.1.3(three@0.185.1)
-      three-geojson-geometry: 2.1.1(three@0.185.1)
-      three-slippy-map-globe: 1.0.6(three@0.185.1)
+      three: 0.186.0
+      three-conic-polygon-geometry: 2.1.3(three@0.186.0)
+      three-geojson-geometry: 2.1.1(three@0.186.0)
+      three-slippy-map-globe: 1.0.6(three@0.186.0)
       tinycolor2: 1.6.0
 
-  three-mesh-bvh@0.9.14(three@0.185.1):
+  three-mesh-bvh@0.9.14(three@0.186.0):
     dependencies:
-      three: 0.185.1
+      three: 0.186.0
 
-  three-slippy-map-globe@1.0.6(three@0.185.1):
+  three-slippy-map-globe@1.0.6(three@0.186.0):
     dependencies:
       d3-geo: 3.1.1
       d3-octree: 1.1.0
       d3-scale: 4.0.2
-      three: 0.185.1
+      three: 0.186.0
 
-  three-stdlib@2.36.1(three@0.185.1):
+  three-stdlib@2.36.1(three@0.186.0):
     dependencies:
       '@types/draco3d': 1.4.10
       '@types/offscreencanvas': 2019.7.3
@@ -28854,9 +28854,9 @@ snapshots:
       draco3d: 1.5.7
       fflate: 0.6.11
       potpack: 1.0.2
-      three: 0.185.1
+      three: 0.186.0
 
-  three@0.185.1: {}
+  three@0.186.0: {}
 
   through@2.3.8: {}
 
