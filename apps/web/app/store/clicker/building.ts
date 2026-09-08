@@ -29,11 +29,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     applyBuildingUpgrade(boughtBuilding, clickerStore.clicker.boughtUpgrades, clickerStore.clicker.boughtBuildings);
   const getBoughtBuilding = (building: Building) =>
     clickerStore.clicker.boughtBuildings.find(({ id }) => id === building.id);
-  const getBoughtBuildingAmount = (building: Building) => {
-    const boughtBuilding = getBoughtBuilding(building);
-    if (!boughtBuilding) return 0;
-    return boughtBuilding.amount;
-  };
+  const getBoughtBuildingAmount = (building: Building) => getBoughtBuilding(building)?.amount ?? 0;
   const getBoughtBuildingStatistics = (building: Building) => {
     const boughtBuilding = getBoughtBuilding(building);
     if (!boughtBuilding) return [];
