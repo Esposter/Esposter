@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pluralize } from "#shared/util/text/pluralize";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
 import { requireRouteParam } from "@/util/router/requireRouteParam";
@@ -54,9 +55,8 @@ const isMounted = useMounted();
                 {{ invite.user.name }}
               </div>
               <div>
-                {{ invite.roomInMessage.usersToRoomsInMessage.length }} Member{{
-                  invite.roomInMessage.usersToRoomsInMessage.length === 1 ? "" : "s"
-                }}
+                {{ invite.roomInMessage.usersToRoomsInMessage.length }}
+                {{ pluralize("Member", invite.roomInMessage.usersToRoomsInMessage.length) }}
               </div>
             </div>
           </v-card-text>

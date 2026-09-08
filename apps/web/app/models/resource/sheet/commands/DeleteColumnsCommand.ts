@@ -2,6 +2,7 @@ import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { IndexedColumn } from "@/models/resource/sheet/commands/IndexedColumn";
 
+import { pluralize } from "#shared/util/text/pluralize";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { takeOne } from "@esposter/shared";
@@ -10,7 +11,7 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
   readonly type = CommandType.DeleteColumns;
 
   get description() {
-    return `Delete ${this.#indexedColumns.length} Column${this.#indexedColumns.length === 1 ? "" : "s"}`;
+    return `Delete ${this.#indexedColumns.length} ${pluralize("Column", this.#indexedColumns.length)}`;
   }
 
   readonly #indexedColumns: IndexedColumn[];

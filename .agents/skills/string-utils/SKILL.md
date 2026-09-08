@@ -19,7 +19,7 @@ normalizeString(undefined); // → ""
 
 ## `pluralize`
 
-`${count} ${pluralize("result", count)}` — never a hand-rolled `${count === 1 ? "" : "s"}` in a template. It lives in `#shared/util/text/pluralize` and selects through `EN_US_PLURAL_RULES` (`Intl.PluralRules`), so the ternary is not even equivalent: the rules object is what decides, and it is the seam a non-English locale changes. The inline ternary also gets written per surface and drifts — the same count is "1 result" here and "1 results" there.
+`${count} ${pluralize("result", count)}`. The hand-rolled `${count === 1 ? "" : "s"}` is a `no-restricted-syntax` error in script and template alike, and this is what it is banned for: `pluralize` lives in `#shared/util/text/pluralize` and selects through `EN_US_PLURAL_RULES` (`Intl.PluralRules`), so the ternary is not even equivalent: the rules object is what decides, and it is the seam a non-English locale changes. The inline ternary also gets written per surface and drifts — the same count is "1 result" here and "1 results" there.
 
 ```ts
 pluralize("result"); // → "results" (count defaults to 2)
