@@ -92,7 +92,7 @@ grep -rnE '(^|[^-a-z])(b|bg|text)-(medium|high)-emphasis' --include=*.vue apps/w
   set of names, and as an **attribute** it generates nothing at all — Vuetify ships those as classes, so the
   attribute form is inert and reads on the page as no typography rather than as the wrong typography. A test over
   the tree decides it; an oxlint plugin cannot, because oxlint hands a JS plugin no Vue template
-  (`scripts/oxlint/errorAlert.ts` says the same about inline handlers). The generic form — every `text-*`
+  (`scripts/src/oxlint/errorAlert.ts` says the same about inline handlers). The generic form — every `text-*`
   attribute in a template resolving to a rule the config generates — catches typos too, and needs an extraction
   that can tell an attributify utility from a Vuetify `text` prop.
 - The general form of the two greps above — **every attributify attribute in a template producing a rule the

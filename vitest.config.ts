@@ -18,8 +18,8 @@ const vitestConfiguration: ViteUserConfig = defineConfig({
       {
         extends: true,
         test: {
-          benchmark: { include: ["scripts/**/*.bench.ts"] },
-          include: ["scripts/**/*.test.ts"],
+          benchmark: { include: ["scripts/src/**/*.bench.ts"] },
+          include: ["scripts/src/**/*.test.ts"],
           name: "scripts",
         },
       },

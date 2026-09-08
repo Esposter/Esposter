@@ -64,7 +64,7 @@ flowchart TD
   OX -->|"yes"| OXLINT[".oxlintrc.json — done"]
   OX -->|"no"| ES{"an ESLint rule expresses it?"}
   ES -->|"yes"| ESLINT["ESLint — and say which kind"]
-  ES -->|"no"| PLUGIN["an oxlint JS plugin under scripts/oxlint/"]
+  ES -->|"no"| PLUGIN["an oxlint JS plugin under scripts/src/oxlint/"]
   ESLINT --> KIND{"will oxlint ship this rule?"}
   KIND -->|"yes — upstream gap"| TABLE["a row in the table above, with its trigger"]
   KIND -->|"no — nothing upstream to wait for"| PARK["stays, and says so"]

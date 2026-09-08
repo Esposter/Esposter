@@ -8,7 +8,7 @@ description: Esposter oxlint + ESLint linting conventions — which lint script 
 ## Deep Dives
 
 - `references/lint-configuration.md` — when editing `.oxlintrc.json` (a category, a rule entry, a vitest or promise option, `ignorePatterns`, an `overrides` scope), deleting a manual ESLint disable, or hunting stale disable directives.
-- `references/custom-js-plugins.md` — when a repo-specific convention needs its own lint rule under `scripts/oxlint/`.
+- `references/custom-js-plugins.md` — when a repo-specific convention needs its own lint rule under `scripts/src/oxlint/`.
 
 ## Running lint
 

@@ -21,7 +21,7 @@ Router structure, the procedure builder each route picks, ownership guards, and 
 
 ## Next enforceable
 
-Both decidable halves belong to `scripts/oxlint/trpcProcedure.ts` — `trpc-procedure/no-hand-rolled-error` across
+Both decidable halves belong to `scripts/src/oxlint/trpcProcedure.ts` — `trpc-procedure/no-hand-rolled-error` across
 `apps/web/server/**` and `trpc-procedure/require-return-type` across `server/trpc/**`. What is left cannot be
 decided by a rule: procedure builder choice is a policy question about the route's data, and
 client-path-mirrors-file-path would be a test walking both trees.

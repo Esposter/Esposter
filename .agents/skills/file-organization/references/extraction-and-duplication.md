@@ -20,7 +20,7 @@ Different domains stay separate even when they rhyme. The abstraction must reduc
 
 The test is what the caller no longer has to state, never how short the call reads. A helper that still takes every element hand-written at every call site — `getUnsubscribeAll(a, b, c)` over an inline `[a, b, c]` loop — has moved a loop and absorbed no decision: forgetting one is exactly as easy after. A wrapper carrying no logic, no invariant and no default is a rename with an import, so delete it and leave the inline form. Extraction that pays: the caller passes less than it did, or passes it in a shape that cannot be wrong.
 
-The decidable half is **enforced** by `pass-through-helper/no-forwarding-wrapper` (`scripts/oxlint/passThroughHelper.ts`) — an exported arrow whose whole body is one call passing exactly its own parameters. It has no production suppressions and gets none: "it narrows the parameter type", "it is the single definition several reads agree on" and "it mirrors an upstream API name" have all been raised and rejected. Inline the wrapper.
+The decidable half is **enforced** by `pass-through-helper/no-forwarding-wrapper` (`scripts/src/oxlint/passThroughHelper.ts`) — an exported arrow whose whole body is one call passing exactly its own parameters. It has no production suppressions and gets none: "it narrows the parameter type", "it is the single definition several reads agree on" and "it mirrors an upstream API name" have all been raised and rejected. Inline the wrapper.
 
 ## What "something behaves differently without it" means for a flag
 

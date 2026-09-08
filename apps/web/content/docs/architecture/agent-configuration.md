@@ -31,7 +31,7 @@ flowchart LR
   Tooling -. ignored .-> Worktrees
 ```
 
-`AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` are the single source for all three paths, so anything that can import interpolates them instead of repeating a literal. The rest are import-less formats — `tsconfig.json`, `.oxlintrc.json`, `.oxfmtrc.json` and `.gitignore` — so they repeat the literal and `scripts/agentDirectories.test.ts` pins every copy to its constant. Two of them have been silently un-excluded once before by an unrelated edit widening a glob.
+`AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` are the single source for all three paths, so anything that can import interpolates them instead of repeating a literal. The rest are import-less formats — `tsconfig.json`, `.oxlintrc.json`, `.oxfmtrc.json` and `.gitignore` — so they repeat the literal and `scripts/src/agentDirectories.test.ts` pins every copy to its constant. Two of them have been silently un-excluded once before by an unrelated edit widening a glob.
 
 Which literal a tool needs follows from how far it walks, so the two exclusions are not interchangeable:
 
@@ -81,4 +81,4 @@ root `docs/` folder this layout exists to avoid. Point the skill at `.agents/` i
 | `.claude`                                 | Symlink alias to `.agents` so Claude Code resolves its own paths           |
 | `AGENTS.md`                               | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it     |
 | `packages/configuration/src/constants.ts` | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` |
-| `scripts/agentDirectories.test.ts`        | Pins both exclusions in the configs that cannot import the constants       |
+| `scripts/src/agentDirectories.test.ts`    | Pins both exclusions in the configs that cannot import the constants       |
