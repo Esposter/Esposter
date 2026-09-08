@@ -1,3 +1,4 @@
+import type { UnparameterizedAdminActionInput } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 import type { Item } from "@/models/shared/Item";
 
 import { useCallStore } from "@/store/message/room/call";
@@ -29,7 +30,7 @@ export const useCallParticipantActions = () => {
     if (!roomId || !callSessionId) return [];
 
     // The three moderation actions differ only in which `AdminActionType` they send and how they are labelled
-    const getAdminActionItem = (type: AdminActionType, icon: string, title: string): Item => ({
+    const getAdminActionItem = (type: UnparameterizedAdminActionInput["type"], icon: string, title: string): Item => ({
       icon,
       onClick: async () => {
         await executeAdminActionMutation(
