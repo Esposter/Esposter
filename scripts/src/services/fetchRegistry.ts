@@ -1,4 +1,4 @@
-import { NPM_REGISTRY_URL, REGISTRY_FETCH_TIMEOUT_MS } from "#scripts/services/constants";
+import { NPM_REGISTRY_URL, REGISTRY_FETCH_TIMEOUT_MS } from "#src/services/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 /** Fetch `pkg` (optionally a sub-`path` like `/latest`) from the npm registry and return the parsed JSON body. */
 export const fetchRegistry = async <T>(pkg: string, path = ""): Promise<T> => {

@@ -1,8 +1,8 @@
-import type { SkillDocsFile } from "#scripts/sweeps/skillDocs/models/SkillDocsFile";
-import type { SkillDocsFinding } from "#scripts/sweeps/skillDocs/models/SkillDocsFinding";
+import type { SkillDocsFile } from "#src/sweeps/skillDocs/models/SkillDocsFile";
+import type { SkillDocsFinding } from "#src/sweeps/skillDocs/models/SkillDocsFinding";
 
-import { getSkillName } from "#scripts/sweeps/skillDocs/getSkillName";
-import { SkillDocsFindingType } from "#scripts/sweeps/skillDocs/models/SkillDocsFindingType";
+import { getSkillName } from "#src/sweeps/skillDocs/getSkillName";
+import { SkillDocsFindingType } from "#src/sweeps/skillDocs/models/SkillDocsFindingType";
 
 // A reference page is loaded by the trigger-named index line in its own SKILL.md — nothing else reaches it, so
 // A page no line names is a page no pass ever opens, however good it is.

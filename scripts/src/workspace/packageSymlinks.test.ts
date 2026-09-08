@@ -1,4 +1,4 @@
-import { WORKSPACE_DIRECTORIES } from "#scripts/services/constants";
+import { WORKSPACE_DIRECTORIES } from "#src/services/constants";
 import { readdirSync, readlinkSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { describe, expect, test } from "vitest";

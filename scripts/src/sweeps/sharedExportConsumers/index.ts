@@ -1,7 +1,7 @@
-import { getSweepFilePaths } from "#scripts/sweeps/getSweepFilePaths";
-import { getConsumerPackagePaths } from "#scripts/sweeps/sharedExportConsumers/getConsumerPackagePaths";
-import { getExportNames } from "#scripts/sweeps/sharedExportConsumers/getExportNames";
-import { getPackagePath } from "#scripts/sweeps/sharedExportConsumers/getPackagePath";
+import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
+import { getConsumerPackagePaths } from "#src/sweeps/sharedExportConsumers/getConsumerPackagePaths";
+import { getExportNames } from "#src/sweeps/sharedExportConsumers/getExportNames";
+import { getPackagePath } from "#src/sweeps/sharedExportConsumers/getPackagePath";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

@@ -8,22 +8,9 @@ const vitestConfiguration: ViteUserConfig = defineConfig({
   ...baseVitestConfiguration,
   test: {
     ...baseVitestConfiguration.test,
-    projects: [
-      "apps/*",
-      "packages/*",
-      // The root `scripts/` suite is not a workspace package, so it needs its own project entry;
-      // `extends: true` inherits this file's shared base (tsconfig paths, hook timeout). Scope both the
-      // Test and benchmark globs to `scripts/` — `benchmark.include` defaults to `**/*.bench.ts`, which
-      // Would otherwise pull every package's bench file into this project on `vitest bench --project scripts`.
-      {
-        extends: true,
-        test: {
-          benchmark: { include: ["scripts/src/**/*.bench.ts"] },
-          include: ["scripts/src/**/*.test.ts"],
-          name: "scripts",
-        },
-      },
-    ],
+    // Every workspace member, as the globs `pnpm-workspace.yaml` declares them — each one configures its own
+    // Project, so nothing here knows what any of them contains.
+    projects: ["apps/*", "packages/*", "scripts"],
   },
 });
 

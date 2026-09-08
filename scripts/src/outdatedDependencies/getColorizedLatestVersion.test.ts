@@ -1,5 +1,5 @@
-import { createColor } from "#scripts/outdatedDependencies/createColor";
-import { getColorizedLatestVersion } from "#scripts/outdatedDependencies/getColorizedLatestVersion";
+import { createColor } from "#src/outdatedDependencies/createColor";
+import { getColorizedLatestVersion } from "#src/outdatedDependencies/getColorizedLatestVersion";
 import { describe, expect, test } from "vitest";
 
 describe(getColorizedLatestVersion, () => {

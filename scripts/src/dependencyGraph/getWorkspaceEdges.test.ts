@@ -1,6 +1,6 @@
-import type { WorkspacePackage } from "#scripts/models/WorkspacePackage";
+import type { WorkspacePackage } from "#src/models/WorkspacePackage";
 
-import { getWorkspaceEdges } from "#scripts/dependencyGraph/getWorkspaceEdges";
+import { getWorkspaceEdges } from "#src/dependencyGraph/getWorkspaceEdges";
 import { describe, expect, test } from "vitest";
 
 // The real workspace declares no sibling in both a runtime field and `devDependencies`, and never points a

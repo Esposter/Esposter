@@ -1,4 +1,4 @@
-import { createTableBorder } from "#scripts/outdatedDependencies/createTableBorder";
+import { createTableBorder } from "#src/outdatedDependencies/createTableBorder";
 import { describe, expect, test } from "vitest";
 
 describe(createTableBorder, () => {

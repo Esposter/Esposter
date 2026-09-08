@@ -1,5 +1,5 @@
-import { ENGINES_NODE_REGEX } from "#scripts/updateNode/constants";
-import { setVersion } from "#scripts/updateNode/setVersion";
+import { ENGINES_NODE_REGEX } from "#src/updateNode/constants";
+import { setVersion } from "#src/updateNode/setVersion";
 
 /** Rewrite a package.json string's `engines.node` to `^${version}`. */
 export const setEnginesNode = (packageJson: string, version: string): string =>

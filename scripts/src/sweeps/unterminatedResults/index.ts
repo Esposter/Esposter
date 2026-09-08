@@ -1,5 +1,5 @@
-import { getSweepFilePaths } from "#scripts/sweeps/getSweepFilePaths";
-import { getUnterminatedResults } from "#scripts/sweeps/unterminatedResults/getUnterminatedResults";
+import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
+import { getUnterminatedResults } from "#src/sweeps/unterminatedResults/getUnterminatedResults";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

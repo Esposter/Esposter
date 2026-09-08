@@ -770,24 +770,12 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:packages/configuration
-      '@esposter/shared':
-        specifier: workspace:*
-        version: link:packages/shared
-      '@esposter/shared-node':
-        specifier: workspace:*
-        version: link:packages/shared-node
-      '@hpcc-js/wasm-graphviz':
-        specifier: 'catalog:'
-        version: 1.29.0
       '@lerna-lite/cli':
         specifier: 'catalog:'
         version: 5.6.1(@lerna-lite/publish@5.6.1(@types/node@26.5.0)(conventional-commits-filter@6.0.1)(supports-color@10.2.2))(@lerna-lite/version@5.6.1(@lerna-lite/publish@5.6.1(@types/node@26.5.0)(conventional-commits-filter@6.0.1)(supports-color@10.2.2))(@types/node@26.5.0)(conventional-commits-filter@6.0.1))(@types/node@26.5.0)
       '@lerna-lite/publish':
         specifier: 'catalog:'
         version: 5.6.1(@types/node@26.5.0)(conventional-commits-filter@6.0.1)(supports-color@10.2.2)
-      '@oxlint/plugins':
-        specifier: 'catalog:'
-        version: 1.82.0
       '@types/node':
         specifier: 'catalog:'
         version: 26.5.0
@@ -809,9 +797,6 @@ importers:
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 7.0.2001
-      tsx:
-        specifier: 'catalog:'
-        version: 4.23.13
       typedoc:
         specifier: 'catalog:'
         version: 0.28.20(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
@@ -1984,6 +1969,33 @@ importers:
       type-fest:
         specifier: 'catalog:'
         version: 5.9.0
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.0(@opentelemetry/api@1.9.1)(@types/node@26.5.0)(@vitest/coverage-v8@5.0.0)(happy-dom@20.14.0)(msw@2.15.0(@types/node@26.5.0)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.0)(sass@1.104.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))
+
+  scripts:
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../packages/configuration
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../packages/shared
+      '@esposter/shared-node':
+        specifier: workspace:*
+        version: link:../packages/shared-node
+      '@hpcc-js/wasm-graphviz':
+        specifier: 'catalog:'
+        version: 1.29.0
+      '@oxlint/plugins':
+        specifier: 'catalog:'
+        version: 1.82.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.5.0
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.13
       vitest:
         specifier: 'catalog:'
         version: 5.0.0(@opentelemetry/api@1.9.1)(@types/node@26.5.0)(@vitest/coverage-v8@5.0.0)(happy-dom@20.14.0)(msw@2.15.0(@types/node@26.5.0)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.0)(sass@1.104.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))

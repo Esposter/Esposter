@@ -1,7 +1,7 @@
-import type { ColorPalette } from "#scripts/outdatedDependencies/models/ColorPalette";
-import type { Mismatch } from "#scripts/outdatedDependencies/models/Mismatch";
+import type { ColorPalette } from "#src/outdatedDependencies/models/ColorPalette";
+import type { Mismatch } from "#src/outdatedDependencies/models/Mismatch";
 
-import { printTable } from "#scripts/outdatedDependencies/printTable";
+import { printTable } from "#src/outdatedDependencies/printTable";
 
 export const printMismatches = (mismatches: Mismatch[], color: ColorPalette): void => {
   if (mismatches.length === 0) return;

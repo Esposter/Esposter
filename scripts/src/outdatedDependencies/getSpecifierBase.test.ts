@@ -1,4 +1,4 @@
-import { getSpecifierBase } from "#scripts/outdatedDependencies/getSpecifierBase";
+import { getSpecifierBase } from "#src/outdatedDependencies/getSpecifierBase";
 import { describe, expect, test } from "vitest";
 
 describe(getSpecifierBase, () => {

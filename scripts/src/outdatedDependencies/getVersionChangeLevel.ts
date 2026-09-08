@@ -1,5 +1,5 @@
-import { VersionChangeLevel } from "#scripts/outdatedDependencies/models/VersionChangeLevel";
-import { getVersionParts } from "#scripts/services/getVersionParts";
+import { VersionChangeLevel } from "#src/outdatedDependencies/models/VersionChangeLevel";
+import { getVersionParts } from "#src/services/getVersionParts";
 
 export const getVersionChangeLevel = (current: string, latest: string): VersionChangeLevel => {
   const currentParts = getVersionParts(current);

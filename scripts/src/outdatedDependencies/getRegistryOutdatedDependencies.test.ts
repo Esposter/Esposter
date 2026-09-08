@@ -1,10 +1,10 @@
-import type { DependencyEntry } from "#scripts/outdatedDependencies/models/DependencyEntry";
+import type { DependencyEntry } from "#src/outdatedDependencies/models/DependencyEntry";
 
-import { getRegistryOutdatedDependencies } from "#scripts/outdatedDependencies/getRegistryOutdatedDependencies";
-import { getLatestVersion } from "#scripts/services/getLatestVersion";
+import { getRegistryOutdatedDependencies } from "#src/outdatedDependencies/getRegistryOutdatedDependencies";
+import { getLatestVersion } from "#src/services/getLatestVersion";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#scripts/services/getLatestVersion"), () => ({ getLatestVersion: vi.fn<typeof getLatestVersion>() }));
+vi.mock(import("#src/services/getLatestVersion"), () => ({ getLatestVersion: vi.fn<typeof getLatestVersion>() }));
 
 describe(getRegistryOutdatedDependencies, () => {
   test("reports every entry sharing a package name under its own specifier", async () => {

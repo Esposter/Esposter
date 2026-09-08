@@ -1,4 +1,4 @@
-import { sliceLockSection } from "#scripts/outdatedDependencies/sliceLockSection";
+import { sliceLockSection } from "#src/outdatedDependencies/sliceLockSection";
 import { describe, expect, test } from "vitest";
 
 describe(sliceLockSection, () => {

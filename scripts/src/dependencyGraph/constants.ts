@@ -1,5 +1,5 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation these three template literals would otherwise infer */
-import { DependencyField } from "#scripts/models/DependencyField";
+import { DependencyField } from "#src/models/DependencyField";
 
 export const GRAPH_FILENAME = "dependency-graph.svg";
 

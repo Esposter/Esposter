@@ -1,4 +1,4 @@
-import { setCatalogTypesNode } from "#scripts/updateNode/setCatalogTypesNode";
+import { setCatalogTypesNode } from "#src/updateNode/setCatalogTypesNode";
 import { describe, expect, test } from "vitest";
 
 describe(setCatalogTypesNode, () => {

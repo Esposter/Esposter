@@ -1,4 +1,4 @@
-import { getVersionParts } from "#scripts/services/getVersionParts";
+import { getVersionParts } from "#src/services/getVersionParts";
 
 export const compareVersionBase = (left: string, right: string): number => {
   const leftParts = getVersionParts(left);

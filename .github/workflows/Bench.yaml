@@ -39,9 +39,9 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
-      # A bare root `vitest bench --run` discovers every project's `*.bench.ts` (packages/* + the scripts
-      # project, per the root vitest.config.ts `projects`) as one file set and runs it in one process, where the
-      # `pnpm bench` root script (`vitest bench --run scripts/ && pnpm -r --if-present run bench`) is a chain of several.
+      # A bare root `vitest bench --run` discovers every project's `*.bench.ts` (per the root vitest.config.ts
+      # `projects`, which is every workspace member) as one file set and runs it in one process, where the
+      # `pnpm bench` root script (`pnpm -r --if-present run bench`) is each member's own bench run in turn.
       # Local `pnpm bench` — the committed `*.bench.md` gate — uses the script. The BenchmarkMarkdownReporter
       # rewrites `*.bench.md` beside each bench on ephemeral runner disk; nothing commits it, so the committed
       # artifacts are untouched. Unsharded: this job is a smoke test that every bench still executes, so the

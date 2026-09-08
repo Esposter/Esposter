@@ -1,8 +1,8 @@
-import type { ColorPalette } from "#scripts/outdatedDependencies/models/ColorPalette";
-import type { ManifestDependency } from "#scripts/outdatedDependencies/models/ManifestDependency";
+import type { ColorPalette } from "#src/outdatedDependencies/models/ColorPalette";
+import type { ManifestDependency } from "#src/outdatedDependencies/models/ManifestDependency";
 
-import { getDependencyType } from "#scripts/outdatedDependencies/getDependencyType";
-import { printTable } from "#scripts/outdatedDependencies/printTable";
+import { getDependencyType } from "#src/outdatedDependencies/getDependencyType";
+import { printTable } from "#src/outdatedDependencies/printTable";
 
 export const printUncatalogedManifestDependencies = (dependencies: ManifestDependency[], color: ColorPalette): void => {
   if (dependencies.length === 0) return;

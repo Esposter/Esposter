@@ -1,4 +1,4 @@
-import { comparePrerelease } from "#scripts/outdatedDependencies/comparePrerelease";
+import { comparePrerelease } from "#src/outdatedDependencies/comparePrerelease";
 import { describe, expect, test } from "vitest";
 
 describe(comparePrerelease, () => {

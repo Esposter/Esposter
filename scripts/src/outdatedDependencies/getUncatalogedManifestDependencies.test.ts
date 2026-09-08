@@ -1,7 +1,7 @@
-import type { ManifestDependency } from "#scripts/outdatedDependencies/models/ManifestDependency";
+import type { ManifestDependency } from "#src/outdatedDependencies/models/ManifestDependency";
 
-import { DependencyField } from "#scripts/models/DependencyField";
-import { getUncatalogedManifestDependencies } from "#scripts/outdatedDependencies/getUncatalogedManifestDependencies";
+import { DependencyField } from "#src/models/DependencyField";
+import { getUncatalogedManifestDependencies } from "#src/outdatedDependencies/getUncatalogedManifestDependencies";
 import { describe, expect, test } from "vitest";
 
 describe(getUncatalogedManifestDependencies, () => {

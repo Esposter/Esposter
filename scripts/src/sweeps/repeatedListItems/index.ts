@@ -1,5 +1,5 @@
-import { getSweepFilePaths } from "#scripts/sweeps/getSweepFilePaths";
-import { checkHasRepeatedListItems } from "#scripts/sweeps/repeatedListItems/checkHasRepeatedListItems";
+import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
+import { checkHasRepeatedListItems } from "#src/sweeps/repeatedListItems/checkHasRepeatedListItems";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

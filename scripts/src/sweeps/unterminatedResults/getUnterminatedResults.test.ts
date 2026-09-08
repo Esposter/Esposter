@@ -1,4 +1,4 @@
-import { getUnterminatedResults } from "#scripts/sweeps/unterminatedResults/getUnterminatedResults";
+import { getUnterminatedResults } from "#src/sweeps/unterminatedResults/getUnterminatedResults";
 import { describe, expect, test } from "vitest";
 
 describe(getUnterminatedResults, () => {

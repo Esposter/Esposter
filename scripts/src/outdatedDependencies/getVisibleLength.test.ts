@@ -1,5 +1,5 @@
-import { createColor } from "#scripts/outdatedDependencies/createColor";
-import { getVisibleLength } from "#scripts/outdatedDependencies/getVisibleLength";
+import { createColor } from "#src/outdatedDependencies/createColor";
+import { getVisibleLength } from "#src/outdatedDependencies/getVisibleLength";
 import { describe, expect, test } from "vitest";
 
 describe(getVisibleLength, () => {

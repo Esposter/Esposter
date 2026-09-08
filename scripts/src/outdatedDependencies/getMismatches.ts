@@ -1,7 +1,7 @@
-import type { DependencyEntry } from "#scripts/outdatedDependencies/models/DependencyEntry";
-import type { Mismatch } from "#scripts/outdatedDependencies/models/Mismatch";
+import type { DependencyEntry } from "#src/outdatedDependencies/models/DependencyEntry";
+import type { Mismatch } from "#src/outdatedDependencies/models/Mismatch";
 
-import { getSpecifierBase } from "#scripts/outdatedDependencies/getSpecifierBase";
+import { getSpecifierBase } from "#src/outdatedDependencies/getSpecifierBase";
 
 export const getMismatches = (entries: DependencyEntry[], resolvedVersions: Map<string, string>): Mismatch[] => {
   const mismatches: Mismatch[] = [];

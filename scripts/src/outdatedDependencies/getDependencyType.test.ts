@@ -1,4 +1,4 @@
-import { getDependencyType } from "#scripts/outdatedDependencies/getDependencyType";
+import { getDependencyType } from "#src/outdatedDependencies/getDependencyType";
 import { describe, expect, test } from "vitest";
 
 describe(getDependencyType, () => {

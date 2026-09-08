@@ -1,5 +1,5 @@
-import { WORKSPACE_DIRECTORIES } from "#scripts/services/constants";
-import { parseMachineJson } from "#scripts/services/parseMachineJson";
+import { WORKSPACE_DIRECTORIES } from "#src/services/constants";
+import { parseMachineJson } from "#src/services/parseMachineJson";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { describe, expect, test } from "vitest";

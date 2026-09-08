@@ -1,4 +1,4 @@
-import { compareVersionBase } from "#scripts/services/compareVersionBase";
+import { compareVersionBase } from "#src/services/compareVersionBase";
 import { describe, expect, test } from "vitest";
 
 describe(compareVersionBase, () => {

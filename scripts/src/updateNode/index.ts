@@ -1,10 +1,10 @@
-import { getLatestVersion } from "#scripts/services/getLatestVersion";
-import { getVersionParts } from "#scripts/services/getVersionParts";
-import { getEnginesNode } from "#scripts/updateNode/getEnginesNode";
-import { getRegistryLatestVersionForPrefix } from "#scripts/updateNode/getRegistryLatestVersionForPrefix";
-import { setCatalogTypesNode } from "#scripts/updateNode/setCatalogTypesNode";
-import { setDevEnginesRuntime } from "#scripts/updateNode/setDevEnginesRuntime";
-import { setEnginesNode } from "#scripts/updateNode/setEnginesNode";
+import { getLatestVersion } from "#src/services/getLatestVersion";
+import { getVersionParts } from "#src/services/getVersionParts";
+import { getEnginesNode } from "#src/updateNode/getEnginesNode";
+import { getRegistryLatestVersionForPrefix } from "#src/updateNode/getRegistryLatestVersionForPrefix";
+import { setCatalogTypesNode } from "#src/updateNode/setCatalogTypesNode";
+import { setDevEnginesRuntime } from "#src/updateNode/setDevEnginesRuntime";
+import { setEnginesNode } from "#src/updateNode/setEnginesNode";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";

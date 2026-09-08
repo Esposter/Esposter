@@ -1,6 +1,6 @@
-import type { UnterminatedResult } from "#scripts/sweeps/unterminatedResults/models/UnterminatedResult";
+import type { UnterminatedResult } from "#src/sweeps/unterminatedResults/models/UnterminatedResult";
 
-import { scanCode } from "#scripts/sweeps/scanCode";
+import { scanCode } from "#src/sweeps/scanCode";
 
 const ASYNC_NAME = "getResultAsync";
 // The annotation is skipped rather than parsed, and the two characters that would carry the match out of the
