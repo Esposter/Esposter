@@ -17,10 +17,10 @@ export const createContext = (options: ContextInput) => {
       node: { req, res },
     } = options;
     return { db, headers, req, res };
+  } else {
+    const { req, res } = options;
+    return { db, headers: new Headers(Object.entries(req.headers as Record<string, string>)), req, res };
   }
-
-  const { req, res } = options;
-  return { db, headers: new Headers(Object.entries(req.headers as Record<string, string>)), req, res };
 };
 
 export type Context = ReturnType<typeof createContext>;
