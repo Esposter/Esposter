@@ -16,6 +16,10 @@ export const getVitestConfiguration = (projectDirectory?: string): ViteUserConfi
     conditions: [SOURCE_CONDITION, ...defaultServerConditions],
   },
   test: {
+    // Transforming the module graph is the largest share of a run and is otherwise redone from scratch every
+    // Time; persisting it to `node_modules/.vitest-cache` reuses it across reruns and separate processes, and
+    // A reinstall drops the directory along with the dependencies it was keyed on.
+    fsModuleCache: true,
     hookTimeout: 60_000,
     ...(projectDirectory ? { name: getVitestProjectName(projectDirectory) } : {}),
     // Restores every vi.stubEnv after the test that set it, so no file needs its own unstubAllEnvs teardown.
