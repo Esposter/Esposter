@@ -26,7 +26,6 @@ const isPublishable = computed(() => hasCapability(resource.type, "publishable")
 const isRenameOpen = ref(false);
 const isDeleteOpen = ref(false);
 const isShareOpen = ref(false);
-const isSaveVersionOpen = ref(false);
 // The panel opens from here rather than from the editor, because Sheet and TodoList are blade-only types with
 // No editor at all — the action bar is the one surface every type has. See /docs/platform/resource-snapshots
 const { openVersionHistory } = useVersionHistoryRoute();
@@ -86,19 +85,14 @@ const commandItems = computed<Item[]>(() => [
     onClick: () => duplicateResource(),
     title: "Duplicate",
   },
-  // Every type has revisions, so both commands are unconditional — recovery is core rather than a capability
+  // Every type has revisions, so the command is unconditional — recovery is core rather than a capability.
+  // Taking one is not a command at all: revisions accrue on their own, and a Save beside an editor that
+  // Already persists on its own would read as the thing that makes an edit durable
   {
     icon: "mdi-history",
     isGroupStart: true,
     onClick: () => openVersionHistory(),
     title: "Version history",
-  },
-  {
-    icon: "mdi-content-save-outline",
-    onClick: () => {
-      isSaveVersionOpen.value = true;
-    },
-    title: "Save version",
   },
   // Publishing and unpublishing are one executor, so one pending flag covers the single button that is
   // Rendered for whichever of them applies
@@ -183,5 +177,4 @@ const commandItems = computed<Item[]>(() => [
   <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
   <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove="deleteResource" :resource />
   <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />
-  <ResourceVersionHistorySaveDialog v-if="isSaveVersionOpen" v-model="isSaveVersionOpen" />
 </template>

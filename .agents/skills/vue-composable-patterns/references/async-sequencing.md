@@ -1,6 +1,14 @@
 # Sequencing overlapping reads and writes, and skipping saves that aren't dirty
 
-Read when a composable issues a read or a write that can overlap another, or persists state that may be unchanged since the last save. The bans — no promise chains, no in-flight promise maps, no generation counters or `isSaving` flags, no hand-rolled dirty snapshot — and the two entry points are in `SKILL.md`.
+Read when a composable issues a read or a write that can overlap another, or persists state that may be unchanged since the last save. The bans that make these the only options — no promise chains, no in-flight promise maps, no generation counters or `isSaving` flags, no hand-rolled dirty snapshot — are the primitive table in `SKILL.md`.
+
+## The entry points
+
+- **`executeQuery(query, { key, onError, onSuccess })`** — reads, latest-wins per key. A superseded read is silent (no callbacks, no alert): discarding it loses nothing, which is why it is the read default.
+- **`executeMutation(mutate, { applyOptimistic, key, onError, onSuccess })`** — writes, **queued** per key. Discarding a write loses its error and its rollback, so a write is never dropped by default.
+- **`useCachedRead(query, { onSuccess }).supersede(key?)`** — a value that reached the caller from outside the cache (a subscription push carrying the whole entry) marks the key's in-flight read stale and the entry loaded. It is what a store with both a read and a `store*` push handler calls before assigning, so the read already on its way cannot land afterwards and write the older value back.
+- **`useQuery(query, { onSuccess })`** — `executeQuery` + `shallowRef` data + auto-fetch on setup + error alert. Reach for it before writing a bespoke read composable; write a custom one only when the state shape genuinely differs (its own cursor, an inline error panel), and build it on `executeQuery` even then.
+- **Neither entry point is tRPC-only** — both take a plain `() => Promise<T>`, so IndexedDB writes and other local async work order through the same keys.
 
 ## The opt-ins
 

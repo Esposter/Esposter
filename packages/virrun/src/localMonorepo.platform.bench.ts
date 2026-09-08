@@ -12,8 +12,9 @@ import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCom
 import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnapshotLocation";
 import { createWorkspaceCorpus } from "#src/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "#src/services/exec/test/findRepoRoot.test";
+import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { rmSync } from "node:fs";
-import { afterAll, bench, describe } from "vitest";
+import { afterAll, test } from "vitest";
 // End-to-end speed gate: native baseline vs os sandbox on real monorepo commands. Runs on any host that
 // Supports the os backend - the sandbox runs natively on Linux (os/linux) and bridged from win32 via WSL
 // (os/wsl) - so this is a `.platform.bench.ts`, writing one committed artifact per platform. Every os run goes
@@ -55,56 +56,63 @@ afterAll(() => {
 // To disk costs at least as much as the native install it would replace (byte-copy across the WSL/host boundary vs
 // Native's same-volume hardlink, plus Defender on win32) - see out-of-scope/materialize-node-modules.md. The real,
 // Cashable payoff is "run the command without reinstalling", which the typecheck/build/test fork groups below
-// Measure against the native baseline. Capture at module scope, not in beforeAll: Vitest fires bench() callbacks
-// Before suite hooks resolve, so a beforeAll snapshot would not exist yet when the first fork runs - forkSnapshot
-// Would throw and the empty sample set yields a NaN mean. Top-level await guarantees the upper layer is materialized
-// First. Keyed by the lockfile hash, this one snapshot backs every fork below (same lockfile - same cache entry).
+// Measure against the native baseline. Captured at module scope rather than in a hook: one snapshot backs every
+// Fork below, so it is the file's setup rather than any one test's. Top-level await materializes the upper layer
+// First. Keyed by the lockfile hash (same lockfile - same cache entry).
 if (isOsSupported)
   await createSnapshot(createOsBackend(), resolveSetupCommand(), createOsInstallOptions(warmCorpus, "pipe"));
 
-describe.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", () => {
+test.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", async ({ bench }) => {
   const command = getSharedCommand("typecheck");
-  bench(BackendType.Native, async () => {
-    await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
-  });
-
-  bench(OS_TASK_NAME, async () => {
-    await forkSnapshot(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
-  });
+  await bench.compare(
+    bench(BackendType.Native, async () => {
+      await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
+    }),
+    bench(OS_TASK_NAME, async () => {
+      await forkSnapshot(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
+    }),
+    BENCHMARK_RUN_OPTIONS,
+  );
 });
 
-describe.skipIf(!isOsSupported)("build - packages/shared (cold)", () => {
+test.skipIf(!isOsSupported)("build - packages/shared (cold)", async ({ bench }) => {
   const command = getSharedCommand("build");
-  bench(BackendType.Native, async () => {
-    await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
-  });
-
-  bench(OS_TASK_NAME, async () => {
-    await forkSnapshot(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
-  });
+  await bench.compare(
+    bench(BackendType.Native, async () => {
+      await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
+    }),
+    bench(OS_TASK_NAME, async () => {
+      await forkSnapshot(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
+    }),
+    BENCHMARK_RUN_OPTIONS,
+  );
 });
 
 // Write-back: the same build run through persistRun, which forks the warm snapshot and flushes the produced dist
 // Back to the host (specs/write-back.md). vs native shows the net win, and vs the `build` fork above isolates the
 // Flush cost — both must stay below the native baseline for write-back to be worth adopting on a mutation command.
-describe.skipIf(!isOsSupported)("build - write-back persist vs native (produces dist)", () => {
+test.skipIf(!isOsSupported)("build - write-back persist vs native (produces dist)", async ({ bench }) => {
   const command = getSharedCommand("build");
-  bench(BackendType.Native, async () => {
-    await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
-  });
-
-  bench(`${OS_TASK_NAME}/persist`, async () => {
-    await persistRun(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
-  });
+  await bench.compare(
+    bench(BackendType.Native, async () => {
+      await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
+    }),
+    bench(`${OS_TASK_NAME}/persist`, async () => {
+      await persistRun(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
+    }),
+    BENCHMARK_RUN_OPTIONS,
+  );
 });
 
-describe.skipIf(!isOsSupported)("test - packages/shared", () => {
+test.skipIf(!isOsSupported)("- packages/shared", async ({ bench }) => {
   const command = getSharedCommand("test --run");
-  bench(BackendType.Native, async () => {
-    await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
-  });
-
-  bench(OS_TASK_NAME, async () => {
-    await forkSnapshot(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
-  });
+  await bench.compare(
+    bench(BackendType.Native, async () => {
+      await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
+    }),
+    bench(OS_TASK_NAME, async () => {
+      await forkSnapshot(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
+    }),
+    BENCHMARK_RUN_OPTIONS,
+  );
 });

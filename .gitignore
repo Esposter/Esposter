@@ -26,7 +26,7 @@ nuxt-build.cpuprofile
 
 # Testing
 coverage
-.vitest-reports
+.vitest
 vitest.config.*.timestamp*
 
 # Local env files

@@ -7,7 +7,7 @@ import type { Resource } from "@esposter/db-schema";
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import { SNAPSHOT_IDLE_WINDOW_MS } from "#shared/services/resource/constants";
+import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
@@ -82,6 +82,18 @@ describe(saveResourceContent, () => {
     )?.storageBytesUsed;
   const readBoundResourceId = async (id: Resource["id"]) =>
     (await ctx.db.query.resources.findFirst({ where: { id: { eq: id } } }))?.boundResourceId;
+  // The revision clock lives on the row, so a save that reuses the row it was handed last time never sees it
+  // Move — which is the whole of what the throttle reads. Every save the revision tests make goes through here
+  const saveLatestResourceContent = async (newContent: TodoListResource) => {
+    const latestResource = await ctx.db.query.resources.findFirst({ where: { id: { eq: resource.id } } });
+    assert.exists(latestResource);
+    await saveResourceContent(ctx, {
+      activityType: ResourceActivityType.ContentSaved,
+      content: newContent,
+      resource: latestResource,
+    });
+  };
+  const readRevisionCount = async () => (await readSnapshotHistory(resource.id, SnapshotChannel.Revisions)).length;
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(1);
   const item = new TodoListItem({ dueAt, name });
@@ -122,25 +134,21 @@ describe(saveResourceContent, () => {
     await mockContext.db.update(users).set({ storageBytesUsed: 0 });
   });
 
-  // One revision per idle window rather than per save, which is what SNAPSHOT_IDLE_WINDOW_MS is for
-  test("keeps no revision for a save inside the idle window", async () => {
+  // A resource's first save has nothing behind it to keep — the blob it would snapshot is the one this save
+  // Is about to write
+  test("keeps no revision for the save that creates the content", async () => {
     expect.hasAssertions();
 
-    await saveResourceContent(ctx, { activityType: ResourceActivityType.ContentSaved, content, resource });
+    await saveLatestResourceContent(content);
 
     await expect(readSnapshotHistory(resource.id, SnapshotChannel.Revisions)).resolves.toStrictEqual([]);
   });
 
-  test("keeps a revision of what the first save after an idle window replaces", async () => {
+  test("keeps a revision of what a save replaces once there is content to keep", async () => {
     expect.hasAssertions();
 
-    await saveResourceContent(ctx, { activityType: ResourceActivityType.ContentSaved, content, resource });
-    vi.advanceTimersByTime(SNAPSHOT_IDLE_WINDOW_MS);
-    await saveResourceContent(ctx, {
-      activityType: ResourceActivityType.ContentSaved,
-      content: { items: [] },
-      resource,
-    });
+    await saveLatestResourceContent(content);
+    await saveLatestResourceContent({ items: [] });
     const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
     assert.exists(container);
 
@@ -154,6 +162,33 @@ describe(saveResourceContent, () => {
 
     expect(snapshotVersion?.reason).toBe(SnapshotReason.Automatic);
     expect(snapshotVersion?.version).toBe(1);
+  });
+
+  // One revision per interval rather than per save, which is what SNAPSHOT_INTERVAL_MS is for
+  test("keeps no second revision for a save inside the interval", async () => {
+    expect.hasAssertions();
+
+    await saveLatestResourceContent(content);
+    await saveLatestResourceContent({ items: [] });
+    await saveLatestResourceContent({ items: [item] });
+
+    await expect(readRevisionCount()).resolves.toBe(1);
+  });
+
+  // The interval is measured from the last revision rather than from the last save, so an owner who never stops
+  // Typing still leaves points behind them — measured from the save clock this resource would never look idle
+  // And the whole session would be unrecoverable
+  test("keeps a revision per interval through a session that is never idle", async () => {
+    expect.hasAssertions();
+
+    await saveLatestResourceContent(content);
+    // Well inside the interval, so no save here is ever the first after a quiet spell
+    for (let saveCount = 0; saveCount < 6; saveCount++) {
+      vi.advanceTimersByTime(SNAPSHOT_INTERVAL_MS / 2);
+      await saveLatestResourceContent({ items: saveCount % 2 === 0 ? [] : [item] });
+    }
+
+    await expect(readRevisionCount()).resolves.toBe(3);
   });
 
   test("writes the content, emits the save, records the activity and runs the after-save hook as one unit", async () => {
@@ -217,13 +252,13 @@ describe(saveResourceContent, () => {
     await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength);
   });
 
-  // Every save after an idle window keeps a revision, and a revision is a full copy of the content charged
-  // Like any other stored blob — so the counter carries the working copy plus one copy per window the owner
-  // Came back after, which is the only path that grows it without a bigger document behind it
-  test("charges a revision on top of the content whenever a save follows an idle window", async () => {
+  // A revision is a full copy of the content charged like any other stored blob — so the counter carries the
+  // Working copy plus one copy per interval the owner kept editing through, which is the only path that grows
+  // It without a bigger document behind it
+  test("charges a revision on top of the content once per interval", async () => {
     expect.hasAssertions();
 
-    await saveResourceContent(ctx, { activityType: ResourceActivityType.ContentSaved, content, resource });
+    await saveLatestResourceContent(content);
     const storedContent = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(
       getContentBlobName(resource.id),
     );
@@ -231,14 +266,13 @@ describe(saveResourceContent, () => {
 
     await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength);
 
-    vi.advanceTimersByTime(SNAPSHOT_IDLE_WINDOW_MS);
-    await saveResourceContent(ctx, { activityType: ResourceActivityType.ContentSaved, content, resource });
+    await saveLatestResourceContent(content);
 
     await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength * 2);
 
-    // A second window, so the growth is shown to be per window rather than a one-off first revision
-    vi.advanceTimersByTime(SNAPSHOT_IDLE_WINDOW_MS);
-    await saveResourceContent(ctx, { activityType: ResourceActivityType.ContentSaved, content, resource });
+    // A second interval, so the growth is shown to be per interval rather than a one-off first revision
+    vi.advanceTimersByTime(SNAPSHOT_INTERVAL_MS);
+    await saveLatestResourceContent(content);
 
     await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength * 3);
   });

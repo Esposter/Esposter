@@ -50,5 +50,5 @@ sequenceDiagram
 
 ## Notes
 
-- Listing snapshots, previewing one, and rolling back to it are [resource snapshots](/docs/platform/resource-snapshots), not command-bar parity — the two commands that reach them live on the action bar, where `Version history` opens the panel and `Save version` opens the save-version dialog, and nothing else about it does.
+- Listing snapshots, previewing one, and rolling back to it are [resource snapshots](/docs/platform/resource-snapshots), not command-bar parity — the one command that reaches them lives on the action bar, where `Version history` opens the panel, and nothing else about it does. Whether the open resource's own edits have landed is [save state](/docs/platform/resource-save-state), which is a readout beside those commands rather than one of them.
 - JSON view / export-template parity is [out of scope](/docs/platform/rejected/json-config-parity).

@@ -3,6 +3,8 @@ import type { User } from "#src/schema/users";
 import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
+import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
+import { selectRoomInMessageSchema } from "#src/schema/roomsInMessage";
 import { selectUserSchema } from "#src/schema/users";
 import { createNormalizedStringSchema, getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
@@ -25,10 +27,8 @@ export const ModerationNoteEntityPropertyNames = getPropertyNames<ModerationNote
 export const moderationNoteEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      // `roomId`
-      partitionKey: z.uuid(),
-      // `reverseTickedTimestamp`
-      rowKey: z.string(),
+      partitionKey: selectRoomInMessageSchema.shape.id,
+      rowKey: reverseTickedTimestampSchema,
     }),
   ).shape,
   actorUserId: selectUserSchema.shape.id,

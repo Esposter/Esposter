@@ -11,7 +11,6 @@ const targetUserId = defineModel<string>("targetUserId", { default: "", required
 const emit = defineEmits<{ update: [] }>();
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
-// "" = unfiltered ("All …") — clearable is avoided since it emits null
 const memberItems = computed<SelectItemCategoryDefinition<string>[]>(() => [
   { title: "All members", value: "" },
   ...members.value.map(({ id, name }) => ({ title: name, value: id })),

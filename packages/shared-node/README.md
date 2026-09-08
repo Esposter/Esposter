@@ -19,14 +19,15 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 The benchmark reporting toolkit consumed by the repo's `vitest bench` runs (see the `bench` skill).
 
-| Export                                                                                           | Description                                                                            |
-| ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| `BenchmarkMarkdownReporter`                                                                      | Vitest bench reporter — writes `Foo.bench.md` + `Foo.bench.json` beside `Foo.bench.ts` |
-| `buildBenchmarkFileReport`                                                                       | Aggregates raw bench tasks into a structured `BenchmarkReport`                         |
-| `formatBenchmarkMarkdown`                                                                        | Renders a `BenchmarkReport` to Markdown tables                                         |
-| `writeBenchmarkReport`                                                                           | Persists the JSON + Markdown report artifacts                                          |
-| `readBenchmarkEnvironment`                                                                       | Captures CPU/OS/runtime metadata for reproducible results                              |
-| `BenchmarkFile` · `BenchmarkGroup` · `BenchmarkReport` · `BenchmarkResult` · `BenchmarkTaskNode` | Report data models                                                                     |
+| Export                                                                                           | Description                                                                      |
+| ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `BenchmarkMarkdownReporter`                                                                      | Vitest reporter — writes `Foo.bench.md` + `Foo.bench.json` beside `Foo.bench.ts` |
+| `BENCHMARK_RUN_OPTIONS`                                                                          | Run options every `bench.compare` passes, fixing the iteration count             |
+| `buildBenchmarkFileReport`                                                                       | Projects a module's reported tests into a structured `BenchmarkReport`           |
+| `formatBenchmarkMarkdown`                                                                        | Renders a `BenchmarkReport` to Markdown tables                                   |
+| `writeBenchmarkReport`                                                                           | Persists the JSON + Markdown report artifacts                                    |
+| `readBenchmarkEnvironment`                                                                       | Captures CPU/OS/runtime metadata for reproducible results                        |
+| `BenchmarkFile` · `BenchmarkGroup` · `BenchmarkReport` · `BenchmarkResult` · `BenchmarkTestCase` | Report data models                                                               |
 
 ### Architecture Notes
 

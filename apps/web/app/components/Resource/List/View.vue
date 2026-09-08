@@ -2,19 +2,15 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
-import type { Item } from "@/models/shared/Item";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
+import { NO_ACTION_ITEMS } from "@/services/shared/constants";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { useListDialogStore } from "@/store/resource/listDialog";
 import { RoutePath } from "@esposter/shared";
-
-// A row is always in the map it was built from, so this only satisfies the lookup type — bound as a module constant
-// So the fallback cannot allocate per render
-const NO_ACTION_ITEMS: Item[] = [];
 
 interface Props {
   source?: ResourceListSource;
@@ -59,8 +55,6 @@ const { count, createResourcesPageReader, error, isPending, items, readResources
   },
   source,
 );
-// One build per page rather than one per row per render — the row ⋮ menu binds an array of closures, so rebuilding
-// It inline hands the menu a new identity on every parent render
 const resourceIdActionItemsMap = computed(() => new Map(items.value.map((item) => [item.id, getActionItems(item)])));
 const { exportAllResourcesCsv } = useExportResourcesCsv();
 // One spelling of "everything this list is filtered by", so adding a filter is one edit rather than three

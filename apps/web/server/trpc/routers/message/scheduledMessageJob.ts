@@ -261,7 +261,6 @@ export const scheduledMessageJobRouter = router({
         createUserMessage(ctx.db, ctx.getSessionPayload, {
           files: [],
           message: payload.message,
-          // A message scheduled from a thread lands back in that thread, exactly as sending it there would
           replyRowKey: payload.replyRowKey,
           roomId: scheduledMessageJob.roomId,
           type: MessageType.Message,

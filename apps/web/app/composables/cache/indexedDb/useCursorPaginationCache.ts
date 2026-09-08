@@ -23,8 +23,6 @@ export const useCursorPaginationCache = <
 }: CursorPaginationCacheOptions<TStore, TIndex>) => {
   usePaginationCache({
     ...options,
-    // The cache stores rows and a slice stores a page of them, so the partition's slice is adapted here rather
-    // Than resolved twice — whichever partition the cache names is the one initialized
     getSlice: (partitionKey) => {
       const { initializeCursorPaginationData, isLoaded, items } = getSlice(partitionKey);
       return {

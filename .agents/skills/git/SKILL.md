@@ -75,25 +75,31 @@ matters already ran on the PR those commits came from.
 
 ### `pnpm-lock.yaml` Conflicts — Always Regenerate, Never Hand-Resolve
 
-The lockfile is machine state, like `snapshot.json`. A hand-merged lock (or one side taken wholesale and left alone) silently disagrees with the merged `pnpm-workspace.yaml` catalog. Resolve `pnpm-workspace.yaml` first — that one is authored and merges normally, keeping the **higher** version on every conflicting catalog entry — then regenerate the lock from it:
+The lockfile is machine state, like `snapshot.json`. Never hand-merge it, and never reason about which side to
+keep — a resolved-by-hand lock silently disagrees with the merged `pnpm-workspace.yaml` catalog. Resolve
+`pnpm-workspace.yaml` first, since that one is authored and merges normally: keep the **higher** version on
+every conflicting catalog entry. Then throw the lock away and let pnpm rebuild it:
 
 ```bash
-git checkout origin/main -- pnpm-lock.yaml   # the side that already resolved the incoming bumps
-pnpm i                                       # from the repo root — reconciles the lock to the merged catalog
+rm pnpm-lock.yaml
+pnpm i                  # from the repo root
 git add pnpm-lock.yaml
 ```
 
-**Which side is kept is not arbitrary.** `pnpm i` re-resolves only the specifiers the kept lock cannot satisfy,
-and it resolves each of those to the newest release the caret allows — which for a monorepo of packages bumped
-together is a release the rest of them have no entry for. Keeping the side that never saw the bump therefore
-puts the direct dependency a version ahead of every sibling pinned around it, and two copies of the shared core
-land in the tree; a type augmentation then registers against the copy the app does not import, and the errors
-name application files that the branch never touched. Keep the side whose catalog bump is already resolved
-— `origin/main` when merging `main` in — so the reconciliation is only the other branch's own additions.
+This is the whole procedure, on every merge, in either direction. It is safe because `pnpm i` rebuilds the lock
+from the already-installed `node_modules` tree rather than re-resolving each caret to the newest release it
+allows — so existing pins survive verbatim, including majors the other branch has never seen. It is fast for the
+same reason: under a second, not a reinstall.
 
-`pnpm i` reporting `Lockfile is up to date` is a valid outcome, not a skipped step — it means the side you kept already resolved every merged specifier. Verify with the specifiers themselves (`grep` the bumped package in the lock) rather than trusting the message.
+`Already up to date` is the normal report, and a rebuilt lock that comes back byte-identical to the one you
+deleted is the expected outcome, not a skipped step — it means the merged catalog was already fully resolved.
+A merge that resolves byte-identical to `develop` is likewise correct: it means `main` brought no catalog entry
+`develop` lacked. The merge commit is still made, since it records the ancestry that keeps the `develop` → `main`
+PR diff clean, and it simply carries a zero-content diff.
 
-Escalate to `pnpm refresh:lockfile` only when `pnpm i` cannot reconcile the tree — it deletes the lock and every `node_modules`, kills running node processes, and reinstalls from scratch (minutes, and it takes down any dev server or vitest watcher).
+Escalate to `pnpm refresh:lockfile` only when `pnpm i` cannot reconcile the tree — that one deletes every
+`node_modules` as well, kills running node processes, and reinstalls from scratch (minutes, and it takes down any
+dev server or vitest watcher).
 
 ## Verify On `develop`
 

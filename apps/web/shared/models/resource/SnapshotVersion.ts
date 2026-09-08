@@ -9,10 +9,8 @@ export interface SnapshotVersion {
   // Whether this is the version the public is being served. Only ever true on the published channel — a
   // Revision is a point to return to, never a live one
   isCurrent: boolean;
-  // What the owner named this version, empty unless they took it by hand. A row is chosen by what it says it
-  // Is, never by its ordinal, which is why both this and the reason ride the listing
-  label: string;
-  // Absent on a published row, whose reason is that it was published
+  // Why it was taken. A row is chosen by what it says it is, never by its ordinal, which is why this rides the
+  // Listing. Absent on a published row, whose reason is that it was published
   reason?: SnapshotReason;
   // One line about what this version holds — "12 items", "3 columns · 40 rows" — so a row is choosable by
   // What it is rather than by an ordinal. Empty for a type that declares no summary, and for a snapshot

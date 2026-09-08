@@ -3,6 +3,8 @@ import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
 import { EMPTY_NOTE_DOC } from "#shared/models/resource/note/NoteResource";
+import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -97,6 +99,84 @@ describe(useResourceStore, () => {
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
 
+  // The signal is armed by the keystroke and cleared by the write, and every door into a write is this one — a
+  // Settings dialog saving directly arms nothing, so a door that cleared its own would leave the toolbar at
+  // Saving for an edit the server already has. A save with nothing left to write is a save all the same
+  test("clears the unwritten-edit signal on a save with nothing to write", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { hasUnwrittenContent, saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
+    await readResource();
+    await readContent();
+    setPersistedContent(createDefaultSheetResource());
+    hasUnwrittenContent.value = true;
+    const isSuccessful = await saveContent(createDefaultSheetResource());
+
+    expect(isSuccessful).toBe(true);
+    expect(saveResourceContent).not.toHaveBeenCalled();
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+  });
+
+  // Saves of different resources are different single-flight keys, so one settles after the blade has moved on.
+  // The contentVersion it carries back is its own resource's, and merged into the loaded one it makes that one's
+  // Next save carry a version the server never issued for it — which comes back as a stale rejection
+  test("leaves the loaded resource alone when a save settles for another", async () => {
+    expect.hasAssertions();
+
+    const { promise: isNavigated, resolve: resolveNavigated } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+        await isNavigated;
+        return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent();
+    const save = saveContent(createDefaultSheetResource());
+    setRouteId(otherResourceId);
+    await readResource();
+    await readContent();
+    resolveNavigated();
+
+    await expect(save).resolves.toBe(true);
+    expect(resource.value?.id).toBe(otherResourceId);
+    expect(resource.value?.contentVersion).toBe(0);
+  });
+
+  // Content saves are keyed by the resource they write, so one issued before the blade moved on is still in
+  // Flight under its own key. Read in aggregate it makes the resource that is loaded now say it is saving work
+  // That is not its own — and the toolbar it feeds is what the owner reads to know their edits are safe
+  test("reports the loaded resource as saved while another resource's save is still in flight", async () => {
+    expect.hasAssertions();
+
+    const { promise: isNavigated, resolve: resolveNavigated } = Promise.withResolvers<void>();
+    server.use(
+      trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+        await isNavigated;
+        return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent();
+    const save = saveContent(createDefaultSheetResource());
+    setRouteId(otherResourceId);
+    await readResource();
+    await readContent();
+
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+
+    resolveNavigated();
+    await save;
+  });
+
   // Autosave fires again while the previous save is still in flight, and the row is read when the write is sent
   // Rather than when it was issued — sending the version it was holding makes the server reject our own
   // Overlapping save as a cross-session edit and strand the blade behind a refresh prompt
@@ -117,6 +197,58 @@ describe(useResourceStore, () => {
     await Promise.all([saveContent(createDefaultSheetResource()), saveContent(createDefaultSheetResource())]);
 
     expect(contentVersions).toStrictEqual([0, 1]);
+  });
+
+  // The notification that reports a failed save is a one-shot the owner dismisses, so the state is what keeps
+  // Saying their work is only in the tab
+  test("reports a rejected save as not saved until one lands", async () => {
+    expect.hasAssertions();
+
+    let isSaveRejected = true;
+    server.use(
+      trpcMsw.sheet.saveResourceContent.mutation(({ input }) => {
+        if (isSaveRejected) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+
+        return { ...createResource(resourceId), contentVersion: input.contentVersion + 1 };
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent();
+    await saveContent(createDefaultSheetResource());
+
+    expect(saveState.value).toBe(ResourceSaveState.Failed);
+
+    isSaveRejected = false;
+    await saveContent(createDefaultSheetResource());
+
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+  });
+
+  // Every retry after a stale rejection is a guaranteed rejection, so the state latches: the remedy is a reload,
+  // Not waiting, and the owner has to be able to see that after the warning is gone
+  test("reports a stale save as out of date until the next read", async () => {
+    expect.hasAssertions();
+
+    server.use(
+      trpcMsw.sheet.saveResourceContent.mutation(() => {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: staleContentVersionErrorMessage });
+      }),
+    );
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent();
+    await saveContent(createDefaultSheetResource());
+
+    expect(saveState.value).toBe(ResourceSaveState.Stale);
+
+    await readResource();
+
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
 
   // Renames of one resource queue, so the second's rollback has to restore the name the rename ahead of it

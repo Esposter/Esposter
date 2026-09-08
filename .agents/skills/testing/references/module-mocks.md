@@ -115,7 +115,7 @@ Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. A bare 
 Getting this wrong is invisible until a call-count assertion reads a neighbour's calls, so the hook is chosen by creation style, never by habit.
 
 - **`vi.spyOn()` → `vi.restoreAllMocks()`** (default) — restores the original implementation AND clears recorded calls, so spies never leak.
-- **Module-level `vi.fn()` (colocated `vi.mock`) → `vi.clearAllMocks()`** — never a spy, so `restoreAllMocks` lets its call history **leak into the next test**. Required wherever `toHaveBeenCalled*` is asserted on one across tests; a file mixing both kinds needs both calls.
+- **Module-level `vi.fn()` (colocated `vi.mock`) → nothing** — Vitest clears mock history before every test by default, so a module-level `vi.fn()` no longer leaks its calls into the next one. An explicit `vi.clearAllMocks()` is only worth writing where a test clears **mid-test**, between two call-count assertions of its own; in a `beforeEach` it restates the default.
 - **Never `vi.resetAllMocks()` as routine cleanup** — it resets implementations to empty functions, erasing intentional `vi.mock` defaults.
 
 ## Globals and environment variables

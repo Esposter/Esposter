@@ -152,10 +152,10 @@ jobs:
         run: pnpm build:functions && pnpm build:infra
       # `--shard=i/n` runs a distinct slice of ALL test files (every package + scripts, via the root
       # Vitest `projects` config) on this runner; `--reporter=blob` serialises this shard's results and
-      # Coverage data (vitest writes the per-shard `.vitest-reports/blob-i-n.json`) for the merge job.
-      # `--reporter=blob` serialises this shard's results + coverage for the merge job. We pair it with
-      # `--reporter=default` so failing tests / unhandled errors are also printed to the console — the
-      # blob reporter alone writes only the file and prints nothing, hiding why a shard exits non-zero.
+      # Coverage data for the merge job, as the per-shard `.vitest/blob/blob-i-n.json` — the directory
+      # `--merge-reports` reads by default, so neither side names it. We pair it with `--reporter=default`
+      # So failing tests / unhandled errors are also printed to the console — the blob reporter alone writes
+      # The file and prints only where it went, hiding why a shard exits non-zero.
       - name: 🧪 Test
         run: pnpm exec vitest run --coverage --reporter=default --reporter=blob --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
@@ -163,7 +163,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage-blob-${{ matrix.shard }}
-          path: .vitest-reports/*
+          path: .vitest/blob/*
           if-no-files-found: error
           include-hidden-files: true
 
@@ -197,7 +197,7 @@ jobs:
       - name: 📥 Download blob reports
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          path: .vitest-reports
+          path: .vitest/blob
           pattern: coverage-blob-*
           merge-multiple: true
       # Recombine the sharded runs into one report with unified coverage from the blob data —

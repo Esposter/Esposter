@@ -8,7 +8,7 @@ import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
-import { MessageMetadataType } from "@esposter/db-schema";
+import { getReverseTickedTimestamp, MessageMetadataType } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -140,7 +140,9 @@ describe("emojiRouter", () => {
   test("fails update emoji with non-existent emoji", async () => {
     expect.hasAssertions();
 
-    const input = { messageRowKey: "", partitionKey: roomId, rowKey: "" };
+    // Well-formed and absent rather than malformed: a key the schema rejects never reaches the lookup this
+    // Test is named for
+    const input = { messageRowKey: getReverseTickedTimestamp(), partitionKey: roomId, rowKey: "" };
 
     await expect(emojiCaller.updateEmoji(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(MessageMetadataType.Emoji, JSON.stringify(input)).message}]`,

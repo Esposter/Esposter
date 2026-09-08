@@ -3,21 +3,15 @@
   $utilities: (
     "align-items": (
       responsive: false,
-      unimportant: (
-        align-items,
-      ),
+      unimportant: (align-items,),
     ),
     "justify-content": (
       responsive: false,
-      unimportant: (
-        justify-content,
-      ),
+      unimportant: (justify-content,),
     ),
     "order": (
       responsive: false,
-      unimportant: (
-        order,
-      ),
+      unimportant: (order,),
     ),
   ),
   // The one place px outlives the rem rule: Vuetify reads the same thresholds from JS as bare numbers

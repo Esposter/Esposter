@@ -48,28 +48,71 @@ yaml_escape() {
   printf "%s" "$1" | sed "s/'/''/g"
 }
 
-REDIS_NO_SCHEME="${REDIS_URL#redis://}"
-REDIS_NO_SCHEME="${REDIS_NO_SCHEME#rediss://}"
+# A URL carries its credentials percent-encoded, so a generated password containing @ : / % reaches us as
+# Escapes and has to be handed to Redis as what it actually is. Literal backslashes are doubled first, or %b
+# Would interpret one that was already in the password
+url_decode() {
+  local value="${1//\\/\\\\}"
+  printf '%b' "${value//%/\\x}"
+}
+
+# rediss:// is the whole difference between an encrypted connection and a cleartext one, so it is read before the
+# Scheme is stripped rather than being lost with it. Matched case-insensitively, because a scheme is: `REDISS://`
+# Compared literally is no scheme anyone knows, which leaves TLS off and the scheme in front of the credentials.
+# An unknown scheme is rejected rather than defaulted — both ways of guessing at it connect. A url carrying no
+# `://` leaves this empty, so it is refused by the same branch rather than by a check of its own
+REDIS_SCHEME=""
+
+if [[ "$REDIS_URL" == *"://"* ]]; then
+  REDIS_SCHEME="$(printf "%s" "${REDIS_URL%%://*}" | tr "[:upper:]" "[:lower:]")"
+fi
+
+case "$REDIS_SCHEME" in
+  redis) REDIS_USE_TLS=false ;;
+  rediss) REDIS_USE_TLS=true ;;
+  *)
+    echo "ERROR: REDIS_URL must use the redis:// or rediss:// scheme"
+    exit 1
+    ;;
+esac
+
+REDIS_NO_SCHEME="${REDIS_URL#*://}"
 REDIS_NO_QUERY="${REDIS_NO_SCHEME%%\?*}"
+REDIS_USERNAME=""
 REDIS_PASSWORD=""
 
 if [[ "$REDIS_NO_QUERY" == *"@"* ]]; then
+  # The *last* @ separates credentials from host, so a password holding one survives the split
   REDIS_AUTH="${REDIS_NO_QUERY%@*}"
-  REDIS_HOST_PORT="${REDIS_NO_QUERY#*@}"
+  REDIS_HOST_PORT_DB="${REDIS_NO_QUERY##*@}"
 
   if [[ "$REDIS_AUTH" == *":"* ]]; then
-    REDIS_PASSWORD="${REDIS_AUTH#*:}"
+    REDIS_USERNAME="$(url_decode "${REDIS_AUTH%%:*}")"
+    REDIS_PASSWORD="$(url_decode "${REDIS_AUTH#*:}")"
   else
-    REDIS_PASSWORD="$REDIS_AUTH"
+    # Userinfo is `username[:password]`, so the half on its own is the username. Read as the password it drops
+    # The name the server authenticates against and offers the name as the secret, which fails ACL auth twice over
+    REDIS_USERNAME="$(url_decode "$REDIS_AUTH")"
   fi
 else
-  REDIS_HOST_PORT="$REDIS_NO_QUERY"
+  REDIS_HOST_PORT_DB="$REDIS_NO_QUERY"
 fi
 
-REDIS_HOST_PORT="${REDIS_HOST_PORT%%/*}"
+# The path segment is the database number, and dropping it silently points LiveKit at db 0
+REDIS_HOST_PORT="${REDIS_HOST_PORT_DB%%/*}"
+REDIS_DB=""
+
+if [[ "$REDIS_HOST_PORT_DB" == */* ]]; then
+  REDIS_DB="${REDIS_HOST_PORT_DB#*/}"
+fi
 
 if [ -z "$REDIS_HOST_PORT" ]; then
   echo "ERROR: Could not parse REDIS_URL"
+  exit 1
+fi
+
+if [ -n "$REDIS_DB" ] && ! [[ "$REDIS_DB" =~ ^[0-9]+$ ]]; then
+  echo "ERROR: REDIS_URL database must be a number"
   exit 1
 fi
 
@@ -115,6 +158,11 @@ EOF
   haproxy -f /tmp/haproxy.cfg -D
 fi
 
+# No UDP port range is written, so LiveKit's own 50000-60000 default stands and the media path is the one it
+# Would take on any host: UDP first, TCP as the fallback. Railway routes no UDP today, so those candidates go
+# Nowhere and every client lands on the TCP one — the day Railway routes UDP that becomes the fast path with
+# Nothing here to change. Pinning the range to `0..0` says the opposite and does neither: `RTCConfig.Validate`
+# Reads a zero `port_range_start` outside development mode as unset and fills the default back in
 cat > /etc/livekit.yaml <<EOF
 port: ${PORT}
 bind_addresses:
@@ -125,15 +173,35 @@ logging:
 
 rtc:
   tcp_port: ${ICE_TCP_PORT}
-  port_range_start: 0
-  port_range_end: 0
 EOF
+
+# Each of these is omitted rather than written empty: LiveKit reads an absent key as its own default, where a
+# Blank username or a db of "" is a value it has to reject
+REDIS_OPTIONS=""
+
+if [ -n "$REDIS_USERNAME" ]; then
+  REDIS_OPTIONS="${REDIS_OPTIONS}
+  username: '$(yaml_escape "${REDIS_USERNAME}")'"
+fi
+
+if [ -n "$REDIS_DB" ]; then
+  REDIS_OPTIONS="${REDIS_OPTIONS}
+  db: ${REDIS_DB}"
+fi
+
+# `use_tls` is the deprecated spelling of this and still enables TLS, but only as the fallback the nested block
+# Takes precedence over, so the nested one is what gets written
+if [ "$REDIS_USE_TLS" = true ]; then
+  REDIS_OPTIONS="${REDIS_OPTIONS}
+  tls:
+    enabled: true"
+fi
 
 cat >> /etc/livekit.yaml <<EOF
 
 redis:
   address: '$(yaml_escape "${REDIS_HOST_PORT}")'
-  password: '$(yaml_escape "${REDIS_PASSWORD}")'
+  password: '$(yaml_escape "${REDIS_PASSWORD}")'${REDIS_OPTIONS}
 
 keys:
   '$(yaml_escape "${LIVEKIT_API_KEY}")': '$(yaml_escape "${LIVEKIT_API_SECRET}")'

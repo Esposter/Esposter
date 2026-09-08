@@ -25,19 +25,18 @@ export const readSnapshotHistory = async (
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const prefix = `${id}/${channel}/`;
   const snapshotVersions: Except<SnapshotVersion, "isCurrent">[] = [];
-  // The reason and the label ride the blob's own metadata, which is what lets a row say what it is without
+  // The reason and the summary ride the blob's own metadata, which is what lets a row say what it is without
   // The listing opening a single snapshot — the alternative is one download per row on every history read
   for await (const blob of containerClient.listBlobsByHierarchy("/", { includeMetadata: true, prefix })) {
     if (blob.kind !== "blob") continue;
     const version = Number(blob.name.slice(prefix.length).replace(/\.json$/u, ""));
     if (!Number.isInteger(version) || version <= 0) continue;
-    // Written percent-encoded because metadata travels as http headers and a label is whatever the owner
-    // Typed. A snapshot written before either field existed simply has neither, which reads as an unlabelled
-    // Row rather than as a parse failure
-    const { label = "", reason, summary = "" } = blob.metadata ?? {};
+    // Written percent-encoded because metadata travels as http headers and a summary is built from content the
+    // Owner typed. A snapshot written before either field existed simply has neither, which reads as a bare row
+    // Rather than as a parse failure
+    const { reason, summary = "" } = blob.metadata ?? {};
     snapshotVersions.push({
       channel,
-      label: getDecodedUriComponent(label, label),
       reason: reason as SnapshotReason | undefined,
       summary: getDecodedUriComponent(summary, summary),
       takenAt: blob.properties.lastModified,

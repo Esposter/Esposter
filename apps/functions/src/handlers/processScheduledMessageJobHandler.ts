@@ -127,10 +127,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to notify`, { error, id });
       });
     else {
-      // The slowmode clock is what the NEXT send is checked against, so it advances with the guards rather than
-      // After the write, exactly as `createUserMessage` does: behind the write it would sit in the best-effort
-      // Block below, where a failed push swallows it and leaves a stale `lastMessageAt` that keeps passing —
-      // Slowmode silently stops applying. Advancing first can only cost one window on a write that throws
       await db
         .update(usersToRoomsInMessage)
         .set({ lastMessageAt: new Date() })
@@ -142,7 +138,6 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         );
       const newMessage = await createAndBroadcastMessage(context, {
         message: payload.message,
-        // A message scheduled from a thread lands back in that thread, exactly as sending it there would
         replyRowKey: payload.replyRowKey,
         roomId: processingJob.roomId,
         type: MessageType.Message,

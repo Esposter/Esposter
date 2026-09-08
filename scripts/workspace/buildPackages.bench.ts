@@ -1,8 +1,9 @@
 import { parseMachineJson } from "#scripts/services/parseMachineJson";
+import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { bench, describe } from "vitest";
+import { test } from "vitest";
 
 // This bench rebuilds every package from cold, and the only way to do that is to delete the `dist` it is about
 // To rebuild. On a CI runner that `dist` is the `package-builds` artifact every job downloaded, and one of the
@@ -50,8 +51,8 @@ const readBuildOrder = (): { directory: string; packageName: string }[] =>
       const [packageName, directory] = parseMachineJson<[string, string]>(trimmedLine);
       return [{ directory, packageName }];
     });
-// Module scope rather than a suite hook: Vitest fires bench() callbacks before hooks resolve. Gated on CI ahead
-// Of the spawn, so a runner does not pay for a workspace walk whose every task is about to be skipped.
+// Read once at module scope — the order is the same for every task, and a walk per task would time it. Gated on
+// CI ahead of the spawn, so a runner does not pay for a workspace walk whose every task is about to be skipped.
 const packages = IS_CI ? [] : readBuildOrder();
 
 // One task per package, declared in build order and so run in it — the serial shape a real `pnpm build:packages`
@@ -60,20 +61,20 @@ const packages = IS_CI ? [] : readBuildOrder();
 //
 // `vs base` compares each package against the first one built, so the package holding most of the serial build is
 // The smallest multiplier in the group — the only one worth optimising, and what a regression looks like here.
-describe.skipIf(IS_CI)("build - packages", () => {
-  for (const { directory, packageName } of packages)
-    bench(
-      packageName,
-      () => {
+test.skipIf(IS_CI)("build - packages", async ({ bench }) => {
+  await bench.compare(
+    ...packages.map(({ directory, packageName }) =>
+      bench(packageName, () => {
         // Tsdown cleans `dist` before writing anyway, so this states the starting state rather than creating it —
         // A package that ever turned `clean` off would otherwise be measured incrementally without the report
         // Saying so. The removal is milliseconds against a build of seconds.
         rmSync(join(directory, "dist"), { force: true, recursive: true });
         runPnpm(["--filter", quoteArgument(packageName), "run", "build"]);
-      },
-      // A build is seconds, so the runner's default ten iterations would put this bench in the tens of minutes.
-      // Three is what buys an honest `±rme` — one sample renders `±0.00%`, which reads as certainty the
-      // Measurement does not have — and no warmup, because a warmup run here is just another full build.
-      { iterations: 3, warmupIterations: 0 },
-    );
+      }),
+    ),
+    // A build is seconds, so the shared ten iterations would put this bench in the tens of minutes. Three is what
+    // Buys an honest `±rme` — one sample renders `±0.00%`, which reads as certainty the measurement does not have
+    // — and no warmup, because a warmup run here is just another full build.
+    { ...BENCHMARK_RUN_OPTIONS, iterations: 3, warmupIterations: 0 },
+  );
 });

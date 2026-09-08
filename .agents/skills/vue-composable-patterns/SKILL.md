@@ -1,9 +1,31 @@
 ---
 name: vue-composable-patterns
-description: Esposter Vue 3 composable patterns — no pass-through composables (a use* that only re-exposes a store's refs is deleted, consumers use the store directly), minimal public surface, createSharedComposable banned, single-function composables returning the function, inferred return types, MaybeRefOrGetter vs plain args, the three validation-rule layers (global alias / composable / Ajv keyword), extracting duplicate mutation blocks with a builder arg for discriminated-union inputs, permission-gated settings tabs hidden at the tab level, toRawDeep over toRaw and no cloning of freshly newed instances, resource cleanup and the one pan/zoom primitive, dirty-check saves via useSave (never hand-rolled), async sequencing through the one useMutation primitive (executeQuery latest-wins for reads, executeMutation queued per target for writes — promise chains, in-flight promise maps, generation counters and hand-rolled stale guards banned), plus deep dives on observing the browser (scroll position measured never polled, useOnline, SSR-safe watches where watchImmediate is the concern), the sequencing opt-ins and useSave mechanics, form-dialog wiring (Ajv keyword injection, schema-controlling selectors, type-driven state reset, dialog data loading), and composable lifecycle (capturing the instance before await, use*Subscribables). Apply when writing or reviewing a composable, a form dialog, or browser-aware reactive code.
+description: Esposter Vue 3 composable patterns — opening with the table of primitives that already own a job and the ban on hand-rolling any of them (useMutation for ordering overlapping reads and writes, useCachedRead().supersede for a pushed value beating a read, useSave for a dirty check, a mutation's own isPending for whether a save is still coming, useWorkerInterval, usePanZoom, getOrCreate), where a count of in-flight or armed anything is the tell that bookkeeping is being written by hand — plus no pass-through composables (a use* that only re-exposes a store's refs is deleted, consumers use the store directly), minimal public surface, createSharedComposable and module-scope refs banned, single-function composables returning the function, inferred return types, calling a composable at setup rather than in a callback, MaybeRefOrGetter vs plain args, the three validation-rule layers, extracting duplicate mutation blocks with a builder arg for discriminated-union inputs, toRawDeep over toRaw and no cloning of freshly newed instances, and the least-API-calls rule, plus deep dives on resource cleanup and when unmount is the teardown trigger, observing the browser (scroll position measured never polled, useOnline, SSR-safe watches), the sequencing entry points and opt-ins with useSave mechanics, form-dialog wiring (Ajv keyword injection, schema-controlling selectors, type-driven state reset, dialog data loading), and composable lifecycle (capturing the instance before await, use*Subscribables). Apply when writing or reviewing a composable, a form dialog, browser-aware reactive code, or any state that spans an await, a tick or a mount.
 ---
 
 # Vue Composable & Form Patterns
+
+## Reach for the primitive — hand-rolling BANNED
+
+Most of what a composable is tempted to write by hand already exists here, and the hand-rolled copy is not merely
+duplicated — it is the copy that drifts, forgets its teardown, or silently loses a write. **Before writing state
+that spans an `await`, a tick or a mount, find the row.**
+
+| Wanting to…                                         | Use                                                               | Never                                                                                          |
+| :-------------------------------------------------- | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| order overlapping reads or writes                   | `useMutation` (`executeQuery`/`executeMutation`), keyed by target | a promise chain, an in-flight promise map, a generation counter, a call id, an `isSaving` flag |
+| let a pushed value beat a read already in flight    | `useCachedRead(...).supersede(key)`                               | a pair of counters beside a `ref`                                                              |
+| skip a save when nothing changed                    | `useSave` (`{ save, setState }`)                                  | a hand-rolled snapshot, or a `set*` wrapper in a store                                         |
+| know a save is still coming                         | the mutation's own `isPending`                                    | a counter of armed debounces, or an `isPending` you assign yourself                            |
+| run something on an interval for a component's life | `useWorkerInterval`                                               | `setInterval` in `onMounted` + `clearInterval` in `onUnmounted`                                |
+| pan and zoom a surface                              | `usePanZoom`                                                      | scale/offset refs and pointer handlers                                                         |
+| read or insert into a `Map`                         | `getOrCreate` (`@esposter/shared`)                                | `let x = map.get(k); if (!x) …`                                                                |
+
+**A counter is the tell.** Every entry above was written by hand somewhere first, and each time the shape was the
+same: the problem looked complex enough that bookkeeping felt earned. It is the opposite signal. A count of
+in-flight or armed _anything_ is the moment to stop and name the primitive that owns it — and where a flag really
+is the answer, ask what one write actually cleans before reaching for a number. Counting two of something a
+single operation resolves is a bug wearing rigour.
 
 ## Deep dives
 
@@ -11,6 +33,7 @@ description: Esposter Vue 3 composable patterns — no pass-through composables 
 - `references/browser-observation.md` — when a composable reads scroll position or online state, or must not run during SSR.
 - `references/form-dialogs.md` — when building a dialog that edits an entity: a selector that switches which schema renders, a reset on type change, a Vjsf rule that needs live component state, or the dialog's initial data load.
 - `references/composable-lifecycle.md` — when a composable `await`s before registering hooks or watchers, or when wiring a feature's tRPC subscriptions.
+- `references/resource-cleanup.md` — when setting up an interval, listener, observer or pan/zoom surface, or deciding when to tear one down.
 
 ## Composable Rules
 
@@ -21,7 +44,7 @@ description: Esposter Vue 3 composable patterns — no pass-through composables 
 - **Single-function composables return the function directly** — `return async (...) => { ... }`. Callers use `const fn = useX()` not `const { fn } = useX()`.
 - **`Promise.resolve(value)` for sync-to-async** — when a sync expression must satisfy a `Promise<T>` return type, never `async () => value`.
 - **Don't annotate composable return types** — let TypeScript infer. Only annotate if inference fails or a contract must be enforced.
-- **Call a composable at setup, never inside a callback.** A composable invoked from a `watch` handler, an event handler or a `.then` runs outside the component's effect scope, so its `tryOnScopeDispose` cleanup never registers — the timer, listener or observer outlives unmount and fires into a destroyed component, and a fresh one leaks on every invocation. Instantiate once at setup with the composable's own defer option (`useTimeoutFn(fn, ms, { immediate: false })`) and call the returned `start`/`resume` from the callback.
+- **Call a composable at setup, never inside a callback** — outside the component's effect scope its cleanup never registers, so the timer or listener outlives unmount and a fresh one leaks per invocation (`references/resource-cleanup.md`).
 
 ## MaybeRefOrGetter vs Function Argument
 
@@ -34,21 +57,15 @@ Use a plain **function argument** on the returned function when the value is a *
 
 ## Validation Rules — Pick the Right Layer
 
-Three layers; pick by what the rule depends on.
-
-- **Stateless / simply parameterized** → a global alias in `app/rules.config.ts`, used via `useVRules()` (see the `vuetify` skill).
-- **Depends on reactive component state, plain Vuetify form** → a shared composable taking `MaybeRefOrGetter` (above). Extract on the 2nd copy — never duplicate an inline rule across dialogs.
-- **Depends on reactive state, but the form is a Vjsf schema** → a custom **Ajv keyword**, not a composable: a rule can't live in the schema as a closure, so the schema _declares_ the keyword and the component _injects_ the validate function at runtime (`references/form-dialogs.md`).
+A validation rule lives in one of three layers, chosen by what it depends on: a global alias, a shared composable,
+or an Ajv keyword when the form is a Vjsf schema. Extract on the 2nd copy — never duplicate an inline rule across
+dialogs. Which layer, and why a Vjsf rule cannot be a composable: `references/form-dialogs.md`.
 
 ## Extract Duplicate Mutation Blocks — Builder Arg for Discriminated-Union Inputs
 
 The same mutation block (lookup + guard + `withFinalizerAsync` + `$trpc.x.mutate`) copy-pasted across siblings differing only in payload → extract a composable that owns the store/`$trpc`/finalizer setup.
 
 When the input is a **discriminated union**, don't type the param `Except<Input, "field">` and spread `{ ...input, field }` — that won't narrow back to the union (TS error, tempts `as`). Take a **builder** `(field) => Input` so each caller builds a complete union member and the literal is checked against the union per call site.
-
-## Settings Tab Permissions — Hide at the Tab Level
-
-Permission-gated settings tabs are hidden via a tab-definition map (`FooPermissionMap` in `services/<domain>/settings/`), which maps each tab type to the permission it requires; the nav component filters visible tabs through `hasPermission` in a `computed`. Individual tab components **never** check permissions — they just fetch and render, because the tab simply isn't shown to users lacking it. **Do NOT** render "Insufficient permissions" text; hide the tab entirely.
 
 ## Unwrapping Reactive Proxies
 
@@ -57,33 +74,22 @@ Permission-gated settings tabs are hidden via a tab-definition map (`FooPermissi
 
 ## Resource Management
 
-- Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.
-- Prefer `VueUse` composables over manual event listeners where possible.
-- **A mount-scoped interval is `useWorkerInterval(callback, intervalMs)`**, never a hand-written `setInterval` in `onMounted` plus a `clearInterval` in `onUnmounted` — the second copy of that pair is where one of them loses its teardown. It schedules on `worker-timers`, so the interval keeps firing in a backgrounded tab; VueUse's `useIntervalFn` is the main-thread one, correct where throttling is fine. An interval armed by an event rather than by mounting (a recorder starting, a countdown beginning) still owns its own id.
-- **Pan and zoom is `usePanZoom`** (`composables/shared/usePanZoom.ts`), never hand-rolled scale/offset refs and pointer handlers — `@panzoom/panzoom` is already a dependency and its options cover the whole surface (`minScale`/`maxScale`, `panOnlyWhenZoomed`, `step`, wheel and pinch). It owns the instance for whichever element its target currently holds, mirrors the scale into a ref so a template can read `isZoomed`, and disposes with the scope; the call site keeps only its own policy — a ctrl-wheel gate, a control strip, a snap back to centre at the fitted size.
-- **Unmount is the teardown trigger, not "currently unneeded".** An observer or listener set up once at setup stays for the component's life; don't add a `watchEffect` that stops and re-creates it as some flag flips. An `IntersectionObserver` is the clearest case — on a `display: none` element it reports not-intersecting and goes quiet on its own, so `v-show` plus a permanent observer already costs nothing, while the stop/restart version adds a re-observation race for no saving (`Styled/Waypoint.vue`, and the `pagination` skill). Where a resource genuinely must not exist yet, use the composable's own defer option rather than a teardown cycle.
+Anything that outlives a tick — an interval, a listener, an observer — is torn down at unmount and never on a
+flag flipping, and the primitives above own the common cases. The rules and the reasoning:
+`references/resource-cleanup.md`.
 
 ## Observing the browser — `references/browser-observation.md`
 
 Scroll, connectivity and every other browser-only reading has one right shape here, and measuring where the platform will observe is the recurring mistake. **A composable reading scroll position or online state, or one that must not run during SSR**, is that page.
 
-## Least API Calls — Dirty-Check Saves (`useSave`)
+## Least API Calls — Dirty-Check Saves
 
-Every API call must be necessary. **Never fire a persistence call (tRPC mutation or localStorage write) when the payload equals what was last persisted.** Two silent offenders this kills: a `watch` on saveable state firing when the load assigns the just-loaded value (save-on-mount), and an interval that saves every tick even when nothing changed.
+Every API call must be necessary. **Never fire a persistence call — tRPC mutation or localStorage write — when the payload equals what was last persisted.** Two silent offenders this kills: a `watch` on saveable state firing when the load assigns the just-loaded value (save-on-mount), and an interval that saves every tick even when nothing changed. The check belongs to `useSave`, and a load goes through its `setState` so the snapshot resets rather than the state ref being assigned directly.
 
-The dirty check is built into `useSave` (`composables/shared/useSave.ts`) — **never hand-roll a snapshot or a `set*` wrapper in a store.** It returns `{ save, setState }`; loads go through `setState` (renamed per domain, `setFoo`/`setBar`) so the snapshot resets, and read composables never assign the state ref directly. Options, snapshot semantics and worked wiring: `references/async-sequencing.md`.
+## Async Sequencing — One Primitive
 
-## Async Sequencing — One Primitive (hand-rolling BANNED)
+A composable never decides **how** concurrency is handled. It declares **what the operation targets** (`key`) and **whether it reads or writes** (which entry point it calls) — `useMutation` (`composables/shared/useMutation.ts`) derives the rest. A composable that seems to need its own ordering needs the right `key`.
 
-A composable never decides **how** concurrency is handled. It declares **what the operation targets** (`key`) and **whether it reads or writes** (which entry point it calls) — `useMutation` (`composables/shared/useMutation.ts`) derives the rest.
+**A store is a call site too.** A store that both reads a value and receives it pushed — a subscription, a broadcast, any handler writing the same ref the read writes — is ordering two async sources against each other, which is the primitive's job however few lines it takes to fake.
 
-**No call site chains promises, holds a map of in-flight promises, or tracks a generation counter, a call id or an `isSaving` flag to order its own async work.** An ordering worth having belongs in the primitive, keyed by target — protection applied by hand is protection that gets forgotten, and every surface that forgot it was silently losing writes or serving stale reads. A composable that seems to need its own ordering needs the right `key`.
-
-**A store is a call site too, and the tell is a pair of counters beside a `ref`.** A store that both reads a value and receives it pushed — a subscription, a broadcast, any handler writing the same ref the read writes — is ordering two async sources against each other, which is the primitive's job however few lines it takes to fake. `supersede` is what says the pushed value won.
-
-- **`executeQuery(query, { key, onError, onSuccess })`** — reads, latest-wins per key. A superseded read is silent (no callbacks, no alert): discarding it loses nothing, which is why it is the read default.
-- **`executeMutation(mutate, { applyOptimistic, key, onError, onSuccess })`** — writes, **queued** per key. Discarding a write loses its error and its rollback, so a write is never dropped by default.
-- **`useCachedRead(query, { onSuccess }).supersede(key?)`** — a value that reached the caller from outside the cache (a subscription push carrying the whole entry) marks the key's in-flight read stale and the entry loaded. It is what a store with both a read and a `store*` push handler calls before assigning, so the read already on its way cannot land afterwards and write the older value back.
-- **`useQuery(query, { onSuccess })`** — `executeQuery` + `shallowRef` data + auto-fetch on setup + error alert. Reach for it before writing a bespoke read composable; write a custom one only when the state shape genuinely differs (its own cursor, an inline error panel), and build it on `executeQuery` even then.
-- **Neither entry point is tRPC-only** — both take a plain `() => Promise<T>`, so IndexedDB writes and other local async work order through the same keys.
-- The `isExclusive` / `isSupersede` opt-ins, the pending flag, `getSynchronizedFunction` pairing and mid-flight `checkIsStale` are in `references/async-sequencing.md`. Full model: `apps/web/content/docs/architecture/async-operations.md`.
+The entry points, the `isExclusive` / `isSupersede` opt-ins, the pending flag, `getSynchronizedFunction` pairing and mid-flight `checkIsStale`: `references/async-sequencing.md`. Full model: `apps/web/content/docs/architecture/async-operations.md`.

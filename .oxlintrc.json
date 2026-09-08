@@ -61,7 +61,21 @@
     {
       "files": ["**/*.test.ts"],
       "rules": {
-        "no-restricted-globals": "off"
+        "no-restricted-globals": [
+          "error",
+          {
+            "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+            "name": "useRoute"
+          },
+          {
+            "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+            "name": "waitFor"
+          },
+          {
+            "message": "Polling is banned — await the real completion signal (promises, events, flushPromises, waitForSynchronizedFunctions) instead of checking on a timer.",
+            "name": "waitUntil"
+          }
+        ]
       }
     },
     {
@@ -75,6 +89,11 @@
                 "importNames": ["randomUUID"],
                 "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
                 "name": "node:crypto"
+              },
+              {
+                "importNames": ["useRoute"],
+                "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+                "name": "vue-router"
               }
             ],
             "patterns": [
@@ -94,13 +113,20 @@
       }
     },
     {
+      "files": ["**/*.bench.ts"],
+      "rules": {
+        "vitest/expect-expect": "off",
+        "vitest/prefer-expect-assertions": "off"
+      }
+    },
+    {
       "files": ["apps/web/app/services/trpc/createErrorAlert.ts", "apps/web/app/services/trpc/errorLink.ts"],
       "rules": {
         "error-alert/no-raw-error-alert": "off"
       }
     },
     {
-      "files": ["packages/*/src/**", "scripts/**"],
+      "files": ["apps/*/src/**", "packages/*/src/**", "scripts/**"],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -110,6 +136,11 @@
                 "importNames": ["randomUUID"],
                 "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
                 "name": "node:crypto"
+              },
+              {
+                "importNames": ["useRoute"],
+                "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+                "name": "vue-router"
               }
             ],
             "patterns": [
@@ -120,29 +151,6 @@
               {
                 "group": ["./*", "./**", "../*", "../**"],
                 "message": "A package addresses its own source through `#src/*`, never a relative specifier — a relative path breaks the moment the file moves, and `#src` is resolved from the importing file's own package.json so it survives being compiled by a sibling. See /docs/architecture/build-pipeline."
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "files": [".agents/**", "packages/*/src/index.ts"],
-      "rules": {
-        "no-restricted-imports": [
-          "error",
-          {
-            "paths": [
-              {
-                "importNames": ["randomUUID"],
-                "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
-                "name": "node:crypto"
-              }
-            ],
-            "patterns": [
-              {
-                "group": ["@/**", "~/**"],
-                "message": "A package addresses its own source through the `#src/*` subpath imports its manifest declares, never a tsconfig `paths` alias — a `paths` entry re-points into whichever package is compiling, so a sibling bundling this one from source resolves it to nothing. See /docs/architecture/build-pipeline. (`apps/web` is the only tree that keeps `@/` — those are Nuxt's own aliases.)"
               }
             ]
           }

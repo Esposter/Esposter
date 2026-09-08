@@ -62,8 +62,6 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   };
   const acceptFriendRequest = async (sender: User) => {
     await executeAcceptFriendRequestMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
-      // Only the requests this write resolves — accepts and declines are keyed per party and never queue
-      // Against each other
       applyOptimistic: () => {
         const resolvedFriendRequests = getFriendRequestsByUser(sender.id);
         storeAcceptFriendRequest(sender);
@@ -77,7 +75,6 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   };
   const declineFriendRequest = async (senderId: User["id"]) => {
     await executeDeclineFriendRequestMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
-      // Only the requests this write resolves — see `acceptFriendRequest`
       applyOptimistic: () => {
         const resolvedFriendRequests = getFriendRequestsByUser(senderId);
         storeDeclineFriendRequest(senderId);

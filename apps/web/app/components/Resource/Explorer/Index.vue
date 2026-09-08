@@ -27,6 +27,9 @@ const { isVersionHistoryOpen, previewSnapshotVersionId } = useVersionHistoryRout
       <v-toolbar pl-4>
         <ResourceBladeTitle :active-blade :resource />
         <v-spacer />
+        <!-- Beside the commands rather than inside the blade, because content saves are the resource's and
+          every blade of it writes through the same door — /docs/platform/resource-save-state -->
+        <ResourceSaveStateIndicator :resource />
         <ResourceBladeActions :resource />
       </v-toolbar>
       <div b-0 b-t-1 b-border b-solid flex flex-1 min-w-0 :class="smAndDown ? 'flex-col' : 'flex-row'">

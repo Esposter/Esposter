@@ -102,7 +102,6 @@ export class EmailEditor extends AGrapesJsEditor {
   }
 }
 
-// The catchall is re-declared rather than inherited, for the reason AGrapesJsEditor states
 export const emailEditorSchema = z
   .object({
     ...grapesJsEditorSchema.shape,

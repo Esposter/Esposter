@@ -27,7 +27,7 @@ A delta already captures the edit optimally for a document handed over whole. Th
 
 ```mermaid
 flowchart TD
-  save["A trigger takes a version — idle window, restore, import, publish, Save version"] --> serialize["Serialize the content deterministically"]
+  save["A trigger takes a version — the revision interval, restore, import, publish"] --> serialize["Serialize the content deterministically"]
   serialize --> hash["Address it by the hash of the plaintext"]
   hash --> exists{"Object already stored?"}
   exists -->|yes| dedupe["Record a row pointing at it — nothing written, nothing charged"]

@@ -7,7 +7,7 @@ import { pgTable } from "#src/pgTable";
 import { users } from "#src/schema/users";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { sql } from "drizzle-orm";
-import { check, index, integer, jsonb, pgEnum, text, uuid } from "drizzle-orm/pg-core";
+import { check, index, integer, jsonb, pgEnum, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const RESOURCE_NAME_MAX_LENGTH = 100;
@@ -27,8 +27,12 @@ export const resources = pgTable(
     contentVersion: integer().notNull().default(0),
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull(),
+    // When the last revision was taken, which is what throttles the automatic ones. The save clock cannot
+    // Answer it: `updatedAt` moves on every autosave, so a continuously edited resource never looks idle and
+    // Leaves no recovery points at all. Null until the first revision lands. See /docs/platform/resource-snapshots
+    revisionTakenAt: timestamp(),
     // The revision channel's counter, and the only thing about a revision that is not in its own blob — its
-    // Reason and label ride as blob metadata, so there is no revisions table. Never derived from the blob
+    // Reason and summary ride as blob metadata, so there is no revisions table. Never derived from the blob
     // Listing: the listing answers which revisions exist, this answers what the next one is numbered, and a
     // Ring-buffer eviction makes the two disagree by design. See /docs/platform/resource-snapshots
     revisionVersion: integer().notNull().default(0),

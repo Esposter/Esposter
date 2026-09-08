@@ -1,7 +1,8 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 
-import { bench, describe } from "vitest";
+import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
+import { describe, test } from "vitest";
 
 // Every command bench is the same pair measured at some case: `execute` against a data source nothing else has
 // Touched, then the round trip that ends back where it started. Registering both from one place is what keeps
@@ -17,17 +18,19 @@ export const setupCommandBench = (
   createCommand: () => ADataSourceCommand,
   createDataSource: () => DataSource,
 ): void => {
-  describe(title, () => {
-    bench("execute", () => {
-      createCommand().execute(createDataSource());
-    });
-
-    bench("execute + undo", () => {
-      const dataSource = createDataSource();
-      const command = createCommand();
-      command.execute(dataSource);
-      command.undo(dataSource);
-    });
+  test(title, async ({ bench }) => {
+    await bench.compare(
+      bench("execute", () => {
+        createCommand().execute(createDataSource());
+      }),
+      bench("execute + undo", () => {
+        const dataSource = createDataSource();
+        const command = createCommand();
+        command.execute(dataSource);
+        command.undo(dataSource);
+      }),
+      BENCHMARK_RUN_OPTIONS,
+    );
   });
 };
 

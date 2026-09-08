@@ -5,6 +5,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { hasCapability } from "#shared/services/resource/hasCapability";
+import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { useNotificationStore } from "@/store/notification";
@@ -18,7 +19,7 @@ import { checkIsUuidV4, RoutePath, withFinalizerAsync } from "@esposter/shared";
 // Them. Blade-scoped: the store is app-lifetime, this state is not, so the page clears it on unmount
 export const useResourceStore = defineStore("resource", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation: executeSaveContentMutation } = useMutation();
+  const { checkIsPending: checkIsSaveContentPending, executeMutation: executeSaveContentMutation } = useMutation();
   const { executeMutation: executeRenameMutation } = useMutation();
   const { executeMutation: executeUpdateTagsMutation } = useMutation();
   const { executeMutation: executeDeleteMutation } = useMutation();
@@ -51,8 +52,35 @@ export const useResourceStore = defineStore("resource", () => {
   let persistedContentJson: string | undefined;
   // A stale contentVersion can only be cured by reloading, so once the server rejects a save every
   // Retry is a guaranteed rejection — the flag turns saveContent() into a no-op (and the warning into a
-  // One-shot) until the next readResource() reads a fresh version
-  let isContentStale = false;
+  // One-shot) until the next readResource() reads a fresh version. A ref because the toolbar renders it:
+  // "out of date" is the one save state the owner has to act on
+  const isContentStale = ref(false);
+  // Whether the last content write was rejected for any other reason. Its notification is a one-shot the owner
+  // Dismisses; this is what keeps saying so afterwards, because a failed save leaves work only in the tab
+  const hasSaveContentFailed = ref(false);
+  // An edit the debounce is holding that no write has taken yet. A flag rather than a count of armed
+  // Debounces: a save writes the whole content blob, so one write cleans every edit waiting on this resource
+  // However many watchers observed them — a count would claim two pending saves where there is one. Set where
+  // The edit is seen rather than derived from the content, because deriving it means serializing the whole blob
+  // On every keystroke, which is the cost the debounce exists to avoid; the write clears it and
+  // `persistedContentJson` takes over from there
+  const hasUnwrittenContent = ref(false);
+  // Every type's edits land through saveContent, so the state every type shows is derived here rather than
+  // Declared per type — a third-party editor autosaving on its own cadence, a toolbar command and a dialog's
+  // Save are the same write. See /docs/platform/resource-save-state
+  const saveState = computed(() => {
+    if (isContentStale.value) return ResourceSaveState.Stale;
+    // Asked of this resource rather than of the executor: a save is keyed by the resource it writes, and one
+    // Issued before the blade moved on is still in flight under its own key — read in aggregate it would show
+    // This resource saving work that belongs to another
+    else if (
+      (resource.value !== undefined && checkIsSaveContentPending(resource.value.id)) ||
+      hasUnwrittenContent.value
+    )
+      return ResourceSaveState.Saving;
+    else if (hasSaveContentFailed.value) return ResourceSaveState.Failed;
+    else return ResourceSaveState.Saved;
+  });
   const readResource = async () => {
     // Resolved per call rather than captured: the store outlives the page, so the loader always reads whichever
     // Resource the route names now
@@ -70,8 +98,11 @@ export const useResourceStore = defineStore("resource", () => {
         const { publication: newPublication, ...newResource } = await $trpc.resource.readResource.query({ id });
         resource.value = newResource;
         publication.value = newPublication ?? undefined;
-        // A fresh read carries the current contentVersion, so saving is meaningful again
-        isContentStale = false;
+        // A fresh read carries the current contentVersion, so saving is meaningful again, and the row it
+        // Carries is by definition what is written — whatever a closed blade left armed is not this one's
+        isContentStale.value = false;
+        hasSaveContentFailed.value = false;
+        hasUnwrittenContent.value = false;
       },
       () => {
         isPending.value = false;
@@ -88,7 +119,9 @@ export const useResourceStore = defineStore("resource", () => {
     publication.value = undefined;
     contentResourceId = undefined;
     persistedContentJson = undefined;
-    isContentStale = false;
+    isContentStale.value = false;
+    hasSaveContentFailed.value = false;
+    hasUnwrittenContent.value = false;
   };
   // This resource's content was replaced underneath whatever blade is open — a restore is the one write that
   // Does that. The row is re-read here and the content stores re-read themselves through the hook registry,
@@ -126,18 +159,28 @@ export const useResourceStore = defineStore("resource", () => {
     // A debounced autosave can fire after readResource() swapped in another resource but before the content
     // Store has re-seeded its content ref, and the content in hand is then still the previous resource's —
     // Writing it would replace this resource's document with another one's, under this one's id and version
-    if (!current || isContentStale || (contentResourceId !== undefined && contentResourceId !== current.id))
+    if (!current || isContentStale.value || (contentResourceId !== undefined && contentResourceId !== current.id))
       return false;
+    // Cleared here rather than by whichever trigger armed it, because this is the one door every save comes
+    // Through — a dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses
+    // Saved (/docs/platform/resource-save-state). The unchanged-content path below is a save all the same: it
+    // Wrote nothing because there was nothing left to write
+    hasUnwrittenContent.value = false;
     const contentJson = JSON.stringify(content);
     if (contentJson === persistedContentJson) return true;
+    // Saves of different resources are different single-flight keys, so this one can settle after the blade has
+    // Moved on, and everything it carries back — a stale latch, a failure, a contentVersion, the persisted-content
+    // Baseline — is its own resource's. Applied to whichever resource is loaded now, it strands that one behind a
+    // Refresh prompt or a version the server never issued for it. The notifications are not scoped: the write
+    // Failed for the owner either way (/docs/platform/resource-save-state)
+    const getActiveResource = () => (resource.value?.id === current.id ? resource.value : undefined);
     let isSuccessful = false;
     await executeSaveContentMutation(
       () => {
         // Read when the write is sent rather than when it was issued: a save that queued behind another must
         // Carry the contentVersion that one wrote back, or the server rejects our own overlapping saves as a
         // Cross-session edit. A load that swapped the resource in between leaves the issue-time row in place
-        const latest = resource.value;
-        const target = latest?.id === current.id ? latest : current;
+        const target = getActiveResource() ?? current;
         // Calling the union of every type's content write needs an argument every arm accepts, so the
         // Content is narrowed the same way the read above widens it
         return getResourceRouter(target.type).saveResourceContent.mutate({
@@ -151,7 +194,7 @@ export const useResourceStore = defineStore("resource", () => {
         key: current.id,
         onError: (error) => {
           if (error.message === staleContentVersionErrorMessage) {
-            isContentStale = true;
+            if (getActiveResource()) isContentStale.value = true;
             createNotification({
               action: {
                 // A hard reload is the one path guaranteed to re-run every blade's content loader
@@ -163,12 +206,18 @@ export const useResourceStore = defineStore("resource", () => {
               severity: NotificationSeverity.Warning,
               title: `"${current.name}" was modified elsewhere — refresh to load the latest`,
             });
-          } else createErrorNotification(error);
+          } else {
+            if (getActiveResource()) hasSaveContentFailed.value = true;
+            createErrorNotification(error);
+          }
         },
         onSuccess: (newResource) => {
+          isSuccessful = true;
+          if (!getActiveResource()) return;
+
           mergeResource({ contentVersion: newResource.contentVersion, updatedAt: newResource.updatedAt }, newResource);
           persistedContentJson = contentJson;
-          isSuccessful = true;
+          hasSaveContentFailed.value = false;
         },
       },
     );
@@ -310,6 +359,7 @@ export const useResourceStore = defineStore("resource", () => {
     clearResource,
     deleteResource,
     duplicateResource,
+    hasUnwrittenContent,
     isDuplicatePending,
     isPending,
     isPublicationPending,
@@ -321,6 +371,7 @@ export const useResourceStore = defineStore("resource", () => {
     renameResource,
     resource,
     saveContent,
+    saveState,
     setPersistedContent,
     storeContentVersion,
     unpublishResource,

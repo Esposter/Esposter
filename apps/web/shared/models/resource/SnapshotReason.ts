@@ -5,6 +5,4 @@ export enum SnapshotReason {
   Automatic = "Automatic",
   BeforeImport = "BeforeImport",
   BeforeRestore = "BeforeRestore",
-  // The owner's own Save version command, and the only reason that may carry a label
-  Manual = "Manual",
 }

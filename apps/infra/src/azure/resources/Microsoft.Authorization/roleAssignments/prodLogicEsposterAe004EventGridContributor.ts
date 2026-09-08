@@ -6,9 +6,6 @@ import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/re
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
-// EventGrid Contributor, deliberately not the narrower EventGrid EventSubscription Contributor this
-// Resource's Pulumi NAME still reads: that name is part of the resource's identity, so changing it would
-// Replace a `protect: true` role assignment rather than rename it. The role is what the assignment grants
 export const prodLogicEsposterAe004EventGridContributor: azure_native.authorization.RoleAssignment =
   new azure_native.authorization.RoleAssignment(
     "prod-logic-esposter-ae-004-event-grid-event-subscription-contributor",

@@ -16,11 +16,12 @@ export const getVitestConfiguration = (projectDirectory?: string): ViteUserConfi
     conditions: [SOURCE_CONDITION, ...defaultServerConditions],
   },
   test: {
-    ...getBenchmarkTestConfiguration(),
     hookTimeout: 60_000,
     ...(projectDirectory ? { name: getVitestProjectName(projectDirectory) } : {}),
     // Restores every vi.stubEnv after the test that set it, so no file needs its own unstubAllEnvs teardown.
     // The globals equivalent stays off: a beforeAll stubGlobal is restored after the first test, not the file.
     unstubEnvs: true,
+    // Last, because it raises the timeouts above for a bench run and spreads nothing outside one.
+    ...getBenchmarkTestConfiguration(),
   },
 });

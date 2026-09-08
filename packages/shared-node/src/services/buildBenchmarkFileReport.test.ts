@@ -1,50 +1,39 @@
-import type { BenchmarkResult } from "#src/models/BenchmarkResult";
-import type { BenchmarkTaskNode } from "#src/models/BenchmarkTaskNode";
+import type { BenchmarkTestCase, BenchmarkTestCaseTask } from "#src/models/BenchmarkTestCase";
 
 import { buildBenchmarkFileReport } from "#src/services/buildBenchmarkFileReport";
 import { describe, expect, test } from "vitest";
 
-describe(buildBenchmarkFileReport, () => {
-  const benchmark: BenchmarkResult = { mean: 1, name: "native", p99: 1, rme: 0, sampleCount: 1 };
-  const createBenchTask = (name: string): BenchmarkTaskNode => ({
-    meta: { benchmark: true },
-    name,
-    result: { benchmark: { ...benchmark, name } },
-    type: "test",
-  });
+const createTask = (name: string, rank = 1, mean = 1): BenchmarkTestCaseTask => ({
+  latency: { mean, p99: 1, rme: 0, samplesCount: 1 },
+  name,
+  rank,
+});
+const createTestCase = (fullName: string, benchmarks: BenchmarkTestCase["benchmarks"]): BenchmarkTestCase => ({
+  benchmarks,
+  fullName,
+});
 
-  test("projects each describe with bench children into a group keyed by full name", () => {
+describe(buildBenchmarkFileReport, () => {
+  const filepath = "src/foo.bench.ts";
+
+  test("projects each benchmarking test into a group keyed by its full name, fastest task first", () => {
     expect.hasAssertions();
 
-    const fileName = "src/foo.bench.ts";
-    const file: BenchmarkTaskNode = {
-      filepath: `/abs/${fileName}`,
-      meta: {},
-      name: fileName,
-      tasks: [
-        {
-          meta: {},
-          name: "group",
-          suite: { meta: {}, name: fileName, type: "suite" },
-          tasks: [createBenchTask("native"), createBenchTask(" ")],
-          type: "suite",
-        },
-      ],
-      type: "suite",
-    };
-    const report = buildBenchmarkFileReport(file);
+    const report = buildBenchmarkFileReport(filepath, [
+      createTestCase("group > case", () => [{ name: "case", tasks: [createTask(" ", 2), createTask("native", 1)] }]),
+    ]);
 
     expect(report).toStrictEqual({
       files: [
         {
-          filepath: fileName,
+          filepath,
           groups: [
             {
               benchmarks: [
                 { mean: 1, name: "native", p99: 1, rme: 0, sampleCount: 1 },
                 { mean: 1, name: " ", p99: 1, rme: 0, sampleCount: 1 },
               ],
-              fullName: `${fileName} > group`,
+              fullName: "group > case",
             },
           ],
         },
@@ -52,17 +41,23 @@ describe(buildBenchmarkFileReport, () => {
     });
   });
 
-  test("omits suites that declare no benchmarks", () => {
+  test("names every group when one test ran more than one comparison", () => {
     expect.hasAssertions();
 
-    const file: BenchmarkTaskNode = {
-      filepath: "/abs/empty.bench.ts",
-      meta: {},
-      name: "empty.bench.ts",
-      tasks: [{ meta: {}, name: "no benches", tasks: [], type: "suite" }],
-      type: "suite",
-    };
-    const report = buildBenchmarkFileReport(file);
+    const report = buildBenchmarkFileReport(filepath, [
+      createTestCase("case", () => [
+        { name: "first", tasks: [createTask("native")] },
+        { name: "second", tasks: [createTask("native")] },
+      ]),
+    ]);
+
+    expect(report.files[0]?.groups.map(({ fullName }) => fullName)).toStrictEqual(["case > first", "case > second"]);
+  });
+
+  test("omits tests that recorded no benchmarks", () => {
+    expect.hasAssertions();
+
+    const report = buildBenchmarkFileReport("empty.bench.ts", [createTestCase("no benches", () => [])]);
 
     expect(report).toStrictEqual({ files: [{ filepath: "empty.bench.ts", groups: [] }] });
   });
@@ -70,30 +65,9 @@ describe(buildBenchmarkFileReport, () => {
   test("throws a named error for a bench that produced no samples", () => {
     expect.hasAssertions();
 
-    const file: BenchmarkTaskNode = {
-      filepath: "/abs/broken.bench.ts",
-      meta: {},
-      name: "broken.bench.ts",
-      tasks: [
-        {
-          meta: {},
-          name: "group",
-          suite: { meta: {}, name: "broken.bench.ts", type: "suite" },
-          // A task that threw on every iteration: recorded with no finite stats (NaN mean here).
-          tasks: [
-            {
-              meta: { benchmark: true },
-              name: "os",
-              result: { benchmark: { ...benchmark, mean: Number.NaN, name: "os" } },
-              type: "test",
-            },
-          ],
-          type: "suite",
-        },
-      ],
-      type: "suite",
-    };
+    // A task that threw on every iteration is recorded with no finite stats.
+    const testCases = [createTestCase("group", () => [{ name: "group", tasks: [createTask("os", 1, Number.NaN)] }])];
 
-    expect(() => buildBenchmarkFileReport(file)).toThrow(`benchmark "os" produced no samples`);
+    expect(() => buildBenchmarkFileReport("broken.bench.ts", testCases)).toThrow(`benchmark "os" produced no samples`);
   });
 });

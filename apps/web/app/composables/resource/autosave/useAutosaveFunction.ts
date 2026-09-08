@@ -2,6 +2,7 @@ import type { Promisable } from "type-fest";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
+import { useResourceStore } from "@/store/resource";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -13,6 +14,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Id and contentVersion. Cancellation alone only shortens that window; the id closes it
 export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   const { currentRoute } = useRouter();
+  const resourceStore = useResourceStore();
+  const { hasUnwrittenContent } = storeToRefs(resourceStore);
   const { start } = useTimeoutFn(
     getSynchronizedFunction((scheduledResourceId: string) =>
       getResultAsync(async () => {
@@ -24,6 +27,12 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
     { immediate: false },
   );
   return () => {
+    // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so
+    // Between the keystroke and the write there is nothing in flight to read — the toolbar would call a tab
+    // Full of unwritten edits saved (/docs/platform/resource-save-state). Only set here: `saveContent` is the
+    // One door every save goes through, so clearing it is its, and a save this refuses never reaches it — which
+    // Is the point, since a refused save is an edit that was dropped rather than one that landed
+    hasUnwrittenContent.value = true;
     start(getRouteParamString(currentRoute.value.params.id));
   };
 };

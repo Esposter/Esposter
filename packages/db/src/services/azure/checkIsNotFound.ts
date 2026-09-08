@@ -1,5 +1,3 @@
-// The pipeline package's own `RestError` rather than either SDK's re-export, for the reason checkIsConflict
-// Gives
 import { RestError } from "@azure/core-rest-pipeline";
 
 // The row, blob or entity is genuinely absent — the one rejection a read may translate into an empty result.
