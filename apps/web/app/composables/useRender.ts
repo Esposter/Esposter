@@ -11,19 +11,17 @@ export const useRender = (container: Ref<Element | undefined>) => {
 
   return (components: Parameters<typeof h>[] = []) => {
     if (!container.value) return;
-    else if (components.length === 0) {
-      render(null, container.value);
-      return;
+    else if (components.length === 0) render(null, container.value);
+    else {
+      const vnode = h(Fragment, () =>
+        components.map((component) => {
+          const childVnode = h(...component);
+          childVnode.appContext = globalAppContext;
+          return childVnode;
+        }),
+      );
+      vnode.appContext = globalAppContext;
+      render(vnode, container.value);
     }
-
-    const vnode = h(Fragment, () =>
-      components.map((component) => {
-        const childVnode = h(...component);
-        childVnode.appContext = globalAppContext;
-        return childVnode;
-      }),
-    );
-    vnode.appContext = globalAppContext;
-    render(vnode, container.value);
   };
 };

@@ -99,7 +99,13 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
     await getResultAsync(() =>
       window.documentPictureInPicture.requestWindow({ height: options.height, width: options.width }),
     ).match(async (target) => {
-      target.addEventListener("pagehide", close, { once: true });
+      target.addEventListener(
+        "pagehide",
+        () => {
+          close();
+        },
+        { once: true },
+      );
       await bridgeStyles(target);
       // The window may have been closed while its stylesheets loaded; don't surface a dead window.
       if (target.closed) return;

@@ -55,10 +55,11 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
 
   const start = async (timeslice?: number) => {
     if (state.value && state.value !== "inactive") return;
-    else if (!isSupported.value) {
+    if (!isSupported.value) {
       createAlert("Media devices API is not supported in this environment.", "error");
       return;
     }
+
     data.value = [];
     // Release any lingering stream so useUserMedia re-requests a fresh one.
     stopStream();
