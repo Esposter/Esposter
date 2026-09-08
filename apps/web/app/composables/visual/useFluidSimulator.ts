@@ -130,8 +130,12 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
 
     const gui = inspector.createParameters("Settings");
     const folderSky = gui.addFolder("Sky");
-    folderSky.add(parameters, "elevation", 0, 90, 0.1).onChange(updateSun);
-    folderSky.add(parameters, "azimuth", -180, 180, 0.1).onChange(updateSun);
+    folderSky.add(parameters, "elevation", 0, 90, 0.1).onChange(() => {
+      updateSun();
+    });
+    folderSky.add(parameters, "azimuth", -180, 180, 0.1).onChange(() => {
+      updateSun();
+    });
     folderSky.add(parameters, "exposure", 0, 1, 0.0001).onChange((value: number) => {
       renderer.toneMappingExposure = value;
     });
@@ -161,7 +165,9 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
       renderPipeline.render();
     };
 
-    await renderer.setAnimationLoop(render);
+    await renderer.setAnimationLoop(() => {
+      render();
+    });
 
     fluidResources = {
       box,
