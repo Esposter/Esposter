@@ -2,33 +2,41 @@
 
 Most of the `typescript` skill is lint- or typecheck-decided; what this sweep carries is the part that needs a reader — whether two branches are mutually exclusive, whether a cast stands in for a type that could be modelled, whether a signature says what it accepts.
 
-| Unit                                                                           | Swept      | Notes                                                                                 |
-| ------------------------------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------- |
-| `server/trpc/routers/message`, `server/trpc/routers/room`                      | 2026-09-07 | the widest branch sets in the app                                                     |
-| `server/trpc/routers` — the resource family                                    | 2026-09-07 |                                                                                       |
-| `server/trpc/routers` — the rest                                               | 2026-09-07 |                                                                                       |
-| `server/services/message`                                                      | 2026-09-07 |                                                                                       |
-| `server/services` — the rest, `server/composables`                             | —          | plus `server/api`, `server/routes`                                                    |
-| `app/store/message`                                                            | —          |                                                                                       |
-| `app/store` — the rest                                                         | —          |                                                                                       |
-| `app/composables/message`                                                      | —          |                                                                                       |
-| `app/composables/resource`                                                     | —          |                                                                                       |
-| `app/composables` — the rest                                                   | —          |                                                                                       |
-| `app/services/message`                                                         | —          |                                                                                       |
-| `app/services/resource`                                                        | —          |                                                                                       |
-| `app/services/dungeons`                                                        | —          | the grid and scene maths, where an index is a coordinate rather than a position       |
-| `app/services` — the rest, `app/util`                                          | —          |                                                                                       |
-| `app/models`, `app/shared`                                                     | —          | a discriminated union here is the `zod` ledger's shape; this row reads the TypeScript |
-| `app/components/Message`                                                       | —          |                                                                                       |
-| `app/components/Resource`                                                      | —          |                                                                                       |
-| `app/components` — the rest, `app/pages`, `app/layouts`                        | —          |                                                                                       |
-| `packages/shared`, `packages/shared-node`                                      | —          |                                                                                       |
-| `packages/db`, `packages/db-schema`                                            | —          |                                                                                       |
-| `packages/azure`, `packages/azure-mock`, `apps/functions`, `packages/db-mock`  | —          |                                                                                       |
-| `packages/virrun` — `services/exec`                                            | —          |                                                                                       |
-| `packages/virrun` — the rest                                                   | —          |                                                                                       |
-| `apps/infra`, `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | —          |                                                                                       |
-| `packages/configuration`, `scripts`                                            | —          |                                                                                       |
+| Unit                                                                                            | Swept      | Notes                                                                                 |
+| ----------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------- |
+| `server/trpc/routers/message`, `server/trpc/routers/room`                                       | 2026-09-07 | the widest branch sets in the app                                                     |
+| `server/trpc/routers` — the resource family                                                     | 2026-09-07 |                                                                                       |
+| `server/trpc/routers` — the rest                                                                | 2026-09-07 |                                                                                       |
+| `server/services/message`                                                                       | 2026-09-07 |                                                                                       |
+| `server/services/resource`                                                                      | —          | the snapshot and rollback paths                                                       |
+| `server/services/room`, `friend`, `user`, `role`, `achievement`                                 | —          | membership and the social graph                                                       |
+| `server/services/survey`, `dataset`, `program`                                                  | —          | the response and reporting path                                                       |
+| `server/services/blueprint`, `storage`, `blobState`, `notification`, `dashboard`, `emailEditor` | —          |                                                                                       |
+| `server/services/auth`, `livekit`, `rateLimiter`, `request`                                     | —          |                                                                                       |
+| `server/services/azure`, `pagination`, `db`, `events`, `post`                                   | —          |                                                                                       |
+| `server/trpc` — everything outside `routers`                                                    | —          | context, procedure builders, middleware                                               |
+| `server/composables`, `server/api`, `server/routes`                                             | —          |                                                                                       |
+| `server/models`, `server/db`, `server/plugins`, `server/auth.ts`                                | —          |                                                                                       |
+| `app/store/message`                                                                             | —          |                                                                                       |
+| `app/store` — the rest                                                                          | —          |                                                                                       |
+| `app/composables/message`                                                                       | —          |                                                                                       |
+| `app/composables/resource`                                                                      | —          |                                                                                       |
+| `app/composables` — the rest                                                                    | —          |                                                                                       |
+| `app/services/message`                                                                          | —          |                                                                                       |
+| `app/services/resource`                                                                         | —          |                                                                                       |
+| `app/services/dungeons`                                                                         | —          | the grid and scene maths, where an index is a coordinate rather than a position       |
+| `app/services` — the rest, `app/util`                                                           | —          |                                                                                       |
+| `app/models`, `app/shared`                                                                      | —          | a discriminated union here is the `zod` ledger's shape; this row reads the TypeScript |
+| `app/components/Message`                                                                        | —          |                                                                                       |
+| `app/components/Resource`                                                                       | —          |                                                                                       |
+| `app/components` — the rest, `app/pages`, `app/layouts`                                         | —          |                                                                                       |
+| `packages/shared`, `packages/shared-node`                                                       | —          |                                                                                       |
+| `packages/db`, `packages/db-schema`                                                             | —          |                                                                                       |
+| `packages/azure`, `packages/azure-mock`, `apps/functions`, `packages/db-mock`                   | —          |                                                                                       |
+| `packages/virrun` — `services/exec`                                                             | —          |                                                                                       |
+| `packages/virrun` — the rest                                                                    | —          |                                                                                       |
+| `apps/infra`, `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`                  | —          |                                                                                       |
+| `packages/configuration`, `scripts`                                                             | —          |                                                                                       |
 
 ## The find recipe
 
