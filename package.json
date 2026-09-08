@@ -39,7 +39,7 @@
     "#scripts/*": "./scripts/*.ts"
   },
   "scripts": {
-    "bench": "vitest bench --run --project scripts && pnpm -r --if-present run bench",
+    "bench": "vitest bench --run scripts/ && pnpm -r --if-present run bench",
     "build": "pnpm --filter \"@esposter/web^...\" --filter \"{.}^...\" run build && pnpm build:web",
     "build:functions": "pnpm -C apps/functions run build",
     "build:infra": "pnpm -C apps/infra run build",

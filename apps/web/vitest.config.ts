@@ -3,9 +3,6 @@ import { defineVitestProject } from "@nuxt/test-utils/config";
 
 const vitestConfig = await defineVitestProject({
   test: {
-    // `defineVitestProject` builds its own config rather than taking `getVitestConfiguration`, so the bench
-    // Wiring (reporter + runner) comes from the shared helper the other packages get through that config.
-    ...getBenchmarkTestConfiguration(),
     // Anything that signs with the app secret refuses to run without one, rather than quietly signing with an
     // Empty key — Nuxt coerces an unset runtimeConfig value to "", which `createHmac` accepts, so the failure
     // Would otherwise be a forgeable token in production and nothing at all in a test.
@@ -31,6 +28,11 @@ const vitestConfig = await defineVitestProject({
     // Slowest of them tips over it. The failure reads as a flaky component rather than as a test that was
     // Always near the line, so give every test the headroom the environment actually needs
     testTimeout: Temporal.Duration.from({ seconds: 30 }).total("milliseconds"),
+    // `defineVitestProject` builds its own config rather than taking `getVitestConfiguration`, so the bench
+    // Wiring comes from the shared helper the other packages get through that config. Last, because it raises
+    // The two timeouts above for a bench run — a benchmark is a test now, and 30s is a fraction of one — and
+    // Spreads nothing outside one.
+    ...getBenchmarkTestConfiguration(),
   },
 });
 // `defineVitestProject` is `resolveConfig` (all the nuxt wiring: plugins, aliases, runtime entry setup

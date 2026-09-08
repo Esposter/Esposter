@@ -13,10 +13,11 @@ import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "#src/service
 import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
 import { createVirrun } from "#src/services/virrun/createVirrun";
 import { withFinalizerAsync } from "@esposter/shared";
+import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { afterAll, bench, describe } from "vitest";
+import { afterAll, test } from "vitest";
 // End-to-end value of the os backend's warm-cache LAYERS, as a 3-way comparison on a real workspace command:
 // Cold (empty cache) vs +snapshot (deps warm, prepare cold) vs +snapshot+prepare (both warm). Complements
 // `localMonorepo.platform.bench.ts` (native vs os), which answers the orthogonal "is the warm sandbox competitive
@@ -86,8 +87,8 @@ const run = async (home: string): Promise<void> => {
 // Also warms the checkout's repo-local pnpm store (<cleanSource>/.virrun/store), so the later cold task installs from
 // The warm store OFFLINE — "store-warm cold": cold measures the real cost of materialising node_modules into the
 // Overlay upper, isolated from network-download flakiness (which would make a committed benchmark non-deterministic).
-// Module scope, not beforeAll: Vitest fires bench() before suite hooks resolve, so a beforeAll seed would not exist
-// When the first task runs. Top-level await guarantees the deps snapshot + warm store are materialized first.
+// Module scope rather than a hook: the layers below are what the tasks measure the reuse of, so seeding them is
+// Setup for the whole file rather than for one test. Top-level await materializes the deps snapshot + warm store.
 if (isSandboxInstallSupported) {
   process.env[VIRRUN_CACHE_HOME_KEY] = SNAPSHOT_HOME;
   await createSnapshot(createOsBackend(), resolveSetupCommand(), createOsInstallOptions(cleanSource, "pipe"));
@@ -105,7 +106,7 @@ afterAll(() => {
   if (cleanSource) rmSync(cleanSource, { force: true, recursive: true });
 });
 
-describe.skipIf(!isSandboxInstallSupported)("shared typecheck - cache layers", () => {
+test.skipIf(!isSandboxInstallSupported)("shared typecheck - cache layers", async ({ bench }) => {
   // Cold and +snapshot each BUILD a layer (install / prepare), so they can only be measured ONCE — a second run would
   // Hit the warm layer, and vitest's bench options expose no per-iteration reset hook (tinybench's beforeEach) to wipe
   // It between samples, while wiping inside the timed callback would fold the (install-sized) teardown into cold's
@@ -115,9 +116,13 @@ describe.skipIf(!isSandboxInstallSupported)("shared typecheck - cache layers", (
   // Tax (/mnt/c → ext4, seconds) swamps the small store-warm install delta and the two can invert by noise. Read the
   // Linux artifact as the layer-value reference; the win32 one is dominated by the mirror, not the cache layers.
   // +snapshot must precede +snapshot+prepare — it builds the prepare layer the latter reuses (declaration order).
-  bench("cold", () => run(COLD_HOME), { iterations: 1, warmupIterations: 0 });
-  bench("+snapshot", () => run(SNAPSHOT_HOME), { iterations: 1, warmupIterations: 0 });
-  // The steady-state hot path: both layers warm, so every fork is read-only over the frozen overlay. Repeatable, so a
-  // Small sample gives a stable mean/rme; warmupIterations: 0 skips 5 wasted read-only typecheck runs.
-  bench("+snapshot+prepare", () => run(SNAPSHOT_HOME), { iterations: 3, warmupIterations: 0 });
+  await bench.compare(
+    bench("cold", () => run(COLD_HOME)),
+    bench("+snapshot", () => run(SNAPSHOT_HOME)),
+    // The steady-state hot path: both layers warm, so every fork is read-only over the frozen overlay. Repeatable,
+    // Unlike the two above, but the iteration count belongs to the comparison rather than to a task, so it takes
+    // The single sample they need — a `±0.00%` on this row is that, not a measurement anyone should trust.
+    bench("+snapshot+prepare", () => run(SNAPSHOT_HOME)),
+    { ...BENCHMARK_RUN_OPTIONS, iterations: 1, warmupIterations: 0 },
+  );
 });

@@ -47,7 +47,7 @@ describe(useReadResources, () => {
   test("counts once for a page change under a relative Updated preset", async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    vi.useFakeTimers({ now: 0, toFake: ["Date", "Temporal"] });
     const countHandler = vi.fn<() => number>(() => 0);
     server.use(
       trpcMsw.resource.readResourcesCount.query(countHandler),

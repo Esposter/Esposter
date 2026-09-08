@@ -1,59 +1,46 @@
 import type { BenchmarkGroup } from "#src/models/BenchmarkGroup";
 import type { BenchmarkReport } from "#src/models/BenchmarkReport";
 import type { BenchmarkResult } from "#src/models/BenchmarkResult";
-import type { BenchmarkTaskNode } from "#src/models/BenchmarkTaskNode";
+import type { BenchmarkTestCase } from "#src/models/BenchmarkTestCase";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
+// Projects one bench file's reported tests into the BenchmarkReport the formatter renders. A benchmark lives
+// Inside a test now, so the group is the test — its full name is already "<describe> > <test>", which is the
+// Heading the markdown carries. A test that ran more than one comparison names each one, since a single
+// Heading for both would render two tables under the same title.
+const getGroupName = (testCase: BenchmarkTestCase, benchmarkName: string, benchmarkCount: number): string =>
+  benchmarkCount > 1 ? `${testCase.fullName} > ${benchmarkName}` : testCase.fullName;
 
-const SUITE_TYPE = "suite";
-// Depth-first, file then nested describes — mirrors Vitest's own getTasks order so md sections stay in
-// Declaration order. A non-suite (a bench task itself) contributes nothing here; its stats are read from
-// Its parent suite below.
-const collectSuites = (node: BenchmarkTaskNode, accumulator: BenchmarkTaskNode[] = []): BenchmarkTaskNode[] => {
-  if (node.type !== SUITE_TYPE) return accumulator;
-  accumulator.push(node);
-  for (const child of node.tasks ?? []) collectSuites(child, accumulator);
-  return accumulator;
-};
-// Root-first join of every ancestor name — the file node's name is its package-relative path — matching
-// Vitest's getFullName so a group title reads "<file> > <describe>".
-const getFullName = (node: BenchmarkTaskNode): string => {
-  const names: string[] = [];
-  let current: BenchmarkTaskNode | undefined = node;
-  while (current) {
-    if (current.name) names.unshift(current.name);
-    current = current.suite;
-  }
-  return names.join(" > ");
-};
-// Projects one bench file's runner task tree into the BenchmarkReport the formatter renders: each suite
-// With bench children becomes a group, keyed by its full name.
-export const buildBenchmarkFileReport = (file: BenchmarkTaskNode): BenchmarkReport => {
+export const buildBenchmarkFileReport = (filepath: string, testCases: Iterable<BenchmarkTestCase>): BenchmarkReport => {
   const groups: BenchmarkGroup[] = [];
-  for (const suite of collectSuites(file)) {
-    const benchmarks: BenchmarkResult[] = [];
-    for (const task of suite.tasks ?? []) {
-      const benchmark = task.result?.benchmark;
-      if (!task.meta.benchmark || !benchmark) continue;
-      // A bench that threw on every iteration is recorded with zero samples — mean/p99 come back
-      // Non-finite (undefined or NaN), which would later crash formatBenchmarkMarkdown on `mean.toFixed`
-      // With a misleading "failed to write .md" error. Fail loud and named here instead, before any
-      // Artifact is written, since Vitest's bench summary silently swallows the per-iteration throws.
-      if (!Number.isFinite(benchmark.mean))
-        throw new InvalidOperationError(
-          Operation.Read,
-          getFullName(suite),
-          `benchmark "${benchmark.name}" produced no samples — it likely threw on every iteration`,
-        );
-      benchmarks.push({
-        mean: benchmark.mean,
-        name: benchmark.name,
-        p99: benchmark.p99,
-        rme: benchmark.rme,
-        sampleCount: benchmark.sampleCount,
-      });
+  for (const testCase of testCases) {
+    const testCaseBenchmarks = testCase.benchmarks();
+    for (const { name, tasks } of testCaseBenchmarks) {
+      const benchmarks: BenchmarkResult[] = [];
+      // Fastest first, which is the order Vitest's own comparison table prints and the order `vs base` reads
+      // Against — a rank rather than a registration position, so two runs of one group always diff line for line.
+      for (const task of tasks.toSorted((first, second) => first.rank - second.rank)) {
+        // A bench that threw on every iteration is recorded with zero samples — mean/p99 come back
+        // Non-finite (undefined or NaN), which would later crash formatBenchmarkMarkdown on `mean.toFixed`
+        // With a misleading "failed to write .md" error. Fail loud and named here instead, before any
+        // Artifact is written, since Vitest's bench summary silently swallows the per-iteration throws.
+        if (!Number.isFinite(task.latency.mean))
+          throw new InvalidOperationError(
+            Operation.Read,
+            testCase.fullName,
+            `benchmark "${task.name}" produced no samples — it likely threw on every iteration`,
+          );
+        benchmarks.push({
+          mean: task.latency.mean,
+          name: task.name,
+          p99: task.latency.p99,
+          rme: task.latency.rme,
+          sampleCount: task.latency.samplesCount,
+        });
+      }
+      if (benchmarks.length > 0)
+        groups.push({ benchmarks, fullName: getGroupName(testCase, name, testCaseBenchmarks.length) });
     }
-    if (benchmarks.length > 0) groups.push({ benchmarks, fullName: getFullName(suite) });
   }
-  return { files: [{ filepath: file.name, groups }] };
+  return { files: [{ filepath, groups }] };
 };

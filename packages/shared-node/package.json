@@ -32,20 +32,20 @@
     "#src/*": "./src/*.ts"
   },
   "exports": {
+    "./bench": {
+      "source": "./src/services/constants.ts",
+      "default": "./dist/bench.js"
+    },
     "./reporter": {
       "source": "./src/services/BenchmarkMarkdownReporter.ts",
       "default": "./dist/reporter.js"
-    },
-    "./runner": {
-      "source": "./src/services/StableBenchmarkRunner.ts",
-      "default": "./dist/runner.js"
     },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
+      "./bench": "./dist/bench.js",
       "./reporter": "./dist/reporter.js",
-      "./runner": "./dist/runner.js",
       "./package.json": "./package.json"
     }
   },

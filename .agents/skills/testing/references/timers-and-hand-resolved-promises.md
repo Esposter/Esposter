@@ -14,26 +14,19 @@ The default set is wide — `process.hrtime` is in it — so a test that only wa
 
 Name what the test actually asserts on — `vi.useFakeTimers({ now: 0, toFake: ["Date"] })` — whenever the code under test writes a table row or otherwise reads `now()` from `@esposter/shared`.
 
-## `Temporal.Now` reads a clock the fake timers never patched
+## `Temporal.Now` is faked, but only when `toFake` names it
 
-`Temporal` is not one of the methods vitest's `toFake` accepts — the fake clock replaces `Date`, `performance` and
-the timer functions and nothing else — so `Temporal.Now.zonedDateTimeISO()` and its siblings return the **real**
-current instant inside a suite that installed `vi.useFakeTimers({ now: 0 })`. The test fails with a received value
-that is today's date, which reads as the code ignoring its input rather than as the clock leaking.
+`Temporal` is one of the methods vitest's fake clock accepts, and it is not in the default set — a suite that
+installs `vi.useFakeTimers({ now: 0 })` and reads `Temporal.Now.zonedDateTimeISO()` gets the **real** current
+instant, and the failure reads as the code ignoring its input rather than as the clock leaking. A test that pins
+the clock over code reading `Temporal.Now` names it: `vi.useFakeTimers({ now: 0, toFake: ["Date", "Temporal"] })`.
 
-Production code that has to be testable takes the instant through `Date` and converts:
-`getZonedDateTime(new Date())` from `@esposter/shared`, which builds the zoned time from `date.getTime()` and so
-sees whatever the fake clock says. `Temporal.Now` stays fine anywhere no test needs to pin the clock.
+Both are needed where the code under test reads instants both ways, which most does — `getZonedDateTime(new Date())`
+converts a `Date`, so it follows the `Date` entry rather than the `Temporal` one.
 
-**This retires on the vitest 5 bump.** `@sinonjs/fake-timers` has since gained a `Temporal` entry that fakes every
-`Temporal.Now.*` method on native Temporal (node 26+), and vitest closed
-https://github.com/vitest-dev/vitest/issues/10345 against its 5.0.0 milestone as a breaking change — nothing on 4.x
-carries it. The check is one grep rather than a release note: the `FakeMethod` union in vitest's
-`dist/chunks/config.d.*.d.ts` either lists `"Temporal"` or it does not. Once it does, a test that pins the clock
-names it (`toFake: ["Date", "Temporal"]`) and the take-the-instant-through-`Date` rule above goes with it —
-`getZonedDateTime` itself stays, since it is the one place a `Date` becomes a zoned time. It is one row of
-`apps/web/content/docs/proposals/refactors/test-harness-workarounds.md`, which holds every shim the suite
-carries for a gap in a runner or its DOM.
+**Name `Temporal` only where the code under test reads `Temporal.Now`**, the same rule as every other entry: this
+is the list of what to fake, not a list of what can be faked. Production code no longer routes an instant through
+`Date` to stay testable, so a unit that wants the current instant reads `Temporal.Now` and its test names it.
 
 ## A throttled or debounced call wants a bare `vi.useFakeTimers()`
 
