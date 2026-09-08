@@ -8,7 +8,6 @@ import { SettingsCategoryMap } from "@/services/message/settings/SettingsCategor
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
 import { useRoleStore } from "@/store/message/room/role";
-import { checkHasPermission } from "@esposter/db-schema";
 
 interface Props {
   room: RoomInMessage;
@@ -19,16 +18,15 @@ const modelValue = defineModel<keyof typeof SettingsContentMap>({ required: true
 const isDrawerOpen = defineModel<boolean>("open", { default: false });
 const emit = defineEmits<{ "open:delete": [] }>();
 const roleStore = useRoleStore();
-const { getMyPermissions } = roleStore;
+const { checkHasMyPermission, getMyPermissions } = roleStore;
 const myPermissions = computed(() => getMyPermissions(room.id));
 // Deleting a room is guarded by ownership rather than by a permission, and a member who cannot delete it can
 // Still leave it — the same row, doing the thing this reader is allowed to do
 const isRoomOwner = computed(() => myPermissions.value?.isRoomOwner ?? false);
 const checkIsVisible = (settingsType: SettingsType) => {
   const permission = SettingsPermissionMap[settingsType];
-  if (!permission) return true;
-  if (!myPermissions.value) return false;
-  return checkHasPermission(myPermissions.value.permissions, permission, myPermissions.value.isRoomOwner);
+  if (permission) return checkHasMyPermission(room.id, permission);
+  else return true;
 };
 const visibleCategories = computed(() =>
   Object.entries(SettingsCategoryMap)
