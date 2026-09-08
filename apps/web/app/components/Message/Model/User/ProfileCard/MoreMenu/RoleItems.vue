@@ -3,7 +3,7 @@ import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useRoleStore } from "@/store/message/room/role";
-import { checkHasPermission, RoomPermission } from "@esposter/db-schema";
+import { RoomPermission } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {
@@ -13,13 +13,9 @@ interface Props {
 
 const { roomId, user } = defineProps<Props>();
 const roleStore = useRoleStore();
-const { getMyPermissions, getRoles, readMemberRoles } = roleStore;
+const { checkHasMyPermission, getRoles, readMemberRoles } = roleStore;
 const roles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
-const hasManageRoles = computed(() => {
-  const myPermissions = getMyPermissions(roomId);
-  if (!myPermissions) return false;
-  return checkHasPermission(myPermissions.permissions, RoomPermission.ManageRoles, myPermissions.isRoomOwner);
-});
+const hasManageRoles = computed(() => checkHasMyPermission(roomId, RoomPermission.ManageRoles));
 // The card is a popout that appears on hover, so the member's own roles load behind it rather than blocking it.
 // Nothing awaits the read and nobody asked for it, so it reports its own failure — the group renders empty,
 // Which is also what a member with no roles looks like

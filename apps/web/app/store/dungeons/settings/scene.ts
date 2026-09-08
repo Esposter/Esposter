@@ -50,15 +50,13 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   watch(
     () => SettingsOptionGrid.position.value.x,
     async () => {
-      if (isAutoUpdateGridX) {
-        isAutoUpdateGridX = false;
-        return;
-      } else if (selectedSettingsOption.value === SettingsOption.Close) return;
-
-      await setSettings(
-        selectedSettingsOption.value,
-        SettingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
-      );
+      if (isAutoUpdateGridX) isAutoUpdateGridX = false;
+      // Close is the exit row rather than a setting, so it has no value to write back
+      else if (selectedSettingsOption.value !== SettingsOption.Close)
+        await setSettings(
+          selectedSettingsOption.value,
+          SettingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
+        );
     },
   );
 

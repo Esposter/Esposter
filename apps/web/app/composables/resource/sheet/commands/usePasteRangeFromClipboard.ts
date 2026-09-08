@@ -2,6 +2,7 @@ import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
 import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
 import { parseClipboardValuesByPosition } from "@/services/resource/sheet/commands/parseClipboardValuesByPosition";
+import { createEmptyRowData } from "@/services/resource/sheet/dataSource/createEmptyRowData";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useCellStore } from "@/store/resource/sheet/cell";
@@ -33,9 +34,7 @@ export const usePasteRangeFromClipboard = () => {
         }
         case PasteMode.ShiftDown: {
           const rows = pastedValues.map((pastedRow) => {
-            const row = new Row({
-              data: Object.fromEntries(dataSourceValue.columns.map((column) => [column.name, null])),
-            });
+            const row = new Row({ data: createEmptyRowData(dataSourceValue.columns) });
             for (const [columnOffset, pastedValue] of pastedRow.entries()) {
               const columnIndex = anchorColumnIndex + columnOffset;
               if (columnIndex >= displayColumns.value.length) break;

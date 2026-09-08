@@ -1,7 +1,6 @@
+import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useRoomStore } from "@/store/message/room";
 import { useSearchHistoryStore } from "@/store/message/search/history";
-import { CompositeKeyPropertyNames } from "@esposter/azure";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadSearchHistories = () => {
   const { $trpc } = useNuxtApp();
@@ -11,23 +10,13 @@ export const useReadSearchHistories = () => {
   const { readItems, readMoreItems } = searchHistoryStore;
   const readSearchHistories = () =>
     readItems(() => {
-      if (!currentRoomId.value)
-        throw new InvalidOperationError(
-          Operation.Read,
-          readSearchHistories.name,
-          CompositeKeyPropertyNames.partitionKey,
-        );
-      return $trpc.searchHistory.readSearchHistories.query({ roomId: currentRoomId.value });
+      const roomId = requirePartitionKey(currentRoomId.value, readSearchHistories.name);
+      return $trpc.searchHistory.readSearchHistories.query({ roomId });
     });
   const readMoreSearchHistories = (onComplete: () => void) =>
     readMoreItems((cursor) => {
-      if (!currentRoomId.value)
-        throw new InvalidOperationError(
-          Operation.Read,
-          readMoreSearchHistories.name,
-          CompositeKeyPropertyNames.partitionKey,
-        );
-      return $trpc.searchHistory.readSearchHistories.query({ cursor, roomId: currentRoomId.value });
+      const roomId = requirePartitionKey(currentRoomId.value, readMoreSearchHistories.name);
+      return $trpc.searchHistory.readSearchHistories.query({ cursor, roomId });
     }, onComplete);
   return { readMoreSearchHistories, readSearchHistories };
 };

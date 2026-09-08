@@ -40,17 +40,16 @@ export const useMicrophoneLevel = () => {
         // A dispose can land while getUserMedia is still pending, and it cannot be cancelled.
         // `useUserMedia`'s own dispose then no-ops (its stream ref is still empty) and assigns the live
         // Stream afterwards, leaving the mic hot with nothing left to tear it down - so stop it here.
-        else if (isDisposed) {
-          stopStream();
-          return;
+        else if (isDisposed) stopStream();
+        else {
+          audioContext = new window.AudioContext();
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 1024;
+          timeDomainData = new Float32Array(analyser.fftSize);
+          audioContext.createMediaStreamSource(stream).connect(analyser);
+          isTesting.value = true;
+          resume();
         }
-        audioContext = new window.AudioContext();
-        analyser = audioContext.createAnalyser();
-        analyser.fftSize = 1024;
-        timeDomainData = new Float32Array(analyser.fftSize);
-        audioContext.createMediaStreamSource(stream).connect(analyser);
-        isTesting.value = true;
-        resume();
       },
       () => {
         isTesting.value = false;

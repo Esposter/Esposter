@@ -34,8 +34,7 @@ export const useCallDeviceSettings = (definitions: CallDeviceDefinition[]) => {
     }).match(noop, console.error);
   };
   watch(isMenuOpen, async (newIsMenuOpen) => {
-    if (!newIsMenuOpen) return;
-    await refreshDevices();
+    if (newIsMenuOpen) await refreshDevices();
   });
 
   return { deviceSections, isMenuOpen };

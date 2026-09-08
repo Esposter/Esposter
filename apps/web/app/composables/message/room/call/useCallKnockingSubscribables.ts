@@ -1,6 +1,7 @@
 import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { getResultAsync, noop, RoutePath } from "@esposter/shared";
@@ -18,27 +19,24 @@ export const useCallKnockingSubscribables = (callId: string, onlineSubscribableC
     (callSessionId) => {
       if (!callSessionId) return undefined;
 
-      const knockerAdmittedUnsubscribable = $trpc.callSession.knocker.onKnockerAdmitted.subscribe(callSessionId, {
-        // Neither call can reject — `joinCall` unwinds and alerts its own failure — so there is nothing here
-        // For a terminator to hold, and a failed admit leaves the user on the pre-join screen they knocked from
-        onData: getSynchronizedFunction(async () => {
-          cancelKnock();
-          await joinCall(callId);
-        }),
-      });
-      const knockerDismissedUnsubscribable = $trpc.callSession.knocker.onKnockerDismissed.subscribe(callSessionId, {
-        onData: getSynchronizedFunction(async () => {
-          await getResultAsync(async () => {
+      return getUnsubscribe(
+        $trpc.callSession.knocker.onKnockerAdmitted.subscribe(callSessionId, {
+          // Neither call can reject — `joinCall` unwinds and alerts its own failure — so there is nothing here
+          // For a terminator to hold, and a failed admit leaves the user on the pre-join screen they knocked from
+          onData: getSynchronizedFunction(async () => {
             cancelKnock();
-            await navigateTo(RoutePath.CallsIndex);
-          }).match(noop, console.error);
+            await joinCall(callId);
+          }),
         }),
-      });
-
-      return () => {
-        knockerAdmittedUnsubscribable.unsubscribe();
-        knockerDismissedUnsubscribable.unsubscribe();
-      };
+        $trpc.callSession.knocker.onKnockerDismissed.subscribe(callSessionId, {
+          onData: getSynchronizedFunction(async () => {
+            await getResultAsync(async () => {
+              cancelKnock();
+              await navigateTo(RoutePath.CallsIndex);
+            }).match(noop, console.error);
+          }),
+        }),
+      );
     },
     onlineSubscribableContext,
   );

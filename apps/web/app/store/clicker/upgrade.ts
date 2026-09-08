@@ -25,18 +25,13 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
           case Target.Building: {
             const foundBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === unlockCondition.id);
             if (foundBuilding) return foundBuilding.amount >= unlockCondition.amount;
-            break;
+            else return false;
           }
-          case Target.Upgrade: {
-            const foundUpgrade = clickerStore.clicker.boughtUpgrades.find(({ id }) => id === unlockCondition.id);
-            if (foundUpgrade) return true;
-            break;
-          }
+          case Target.Upgrade:
+            return clickerStore.clicker.boughtUpgrades.some(({ id }) => id === unlockCondition.id);
           default:
-            exhaustiveGuard(type);
+            return exhaustiveGuard(type);
         }
-
-        return false;
       }),
     ),
   );

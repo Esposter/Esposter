@@ -2,10 +2,10 @@ import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/servic
 import { getSettingsRowY } from "@/services/dungeons/scene/settings/getSettingsRowY";
 
 export const useSettingsCursorDimensions = (rowIndex: MaybeRefOrGetter<number>) => {
+  const width = ref<number>();
   useSettingsMenuWidth((settingsMenuWidth) => {
     width.value = settingsMenuWidth - INITIAL_SETTINGS_POSITION.x;
   });
-  const width = ref<number>();
   return {
     height: SETTINGS_POSITION_INCREMENT.y - 15,
     origin: 0,

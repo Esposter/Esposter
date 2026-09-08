@@ -49,8 +49,8 @@ export const useVolumeStore = defineStore("dungeons/settings/volume", () => {
     // And reset the volume delta metadata if it's not 0 since we know that the user
     // Has lifted the input direction key
     if (!isUpdateVolume) {
-      if (volumeDelta.value !== 0) volumeDelta.value = 0;
-      if (volumeIncrementCooldown.value !== 0) volumeIncrementCooldown.value = 0;
+      volumeDelta.value = 0;
+      volumeIncrementCooldown.value = 0;
     }
     return isUpdateVolume;
   };

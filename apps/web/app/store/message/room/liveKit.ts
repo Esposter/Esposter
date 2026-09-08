@@ -369,12 +369,11 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       applySpeakerVolume();
     },
   );
-  watch(
+  watchDeep(
     () => mediaStore.participantVolumePercentageMap,
     () => {
       applySpeakerVolume();
     },
-    { deep: true },
   );
   watch(
     () => userSettingsStore.userSettings?.noiseSuppressionMode,

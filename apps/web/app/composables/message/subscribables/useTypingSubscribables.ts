@@ -1,3 +1,4 @@
+import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 
@@ -24,28 +25,30 @@ export const useTypingSubscribables = async () => {
     (roomId) => {
       if (!roomId) return undefined;
 
-      const createTypingUnsubscribable = $trpc.message.onCreateTyping.subscribe(
-        { roomId },
-        {
-          onData: (typing) => {
-            clearTypingTimeout(typing.userId);
+      const unsubscribe = getUnsubscribe(
+        $trpc.message.onCreateTyping.subscribe(
+          { roomId },
+          {
+            onData: (typing) => {
+              clearTypingTimeout(typing.userId);
 
-            const timeoutId = window.setTimeout(
-              () => {
-                typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
-                clearTypingTimeout(typing.userId);
-              },
-              Temporal.Duration.from({ seconds: 3 }).total("milliseconds"),
-            );
+              const timeoutId = window.setTimeout(
+                () => {
+                  typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
+                  clearTypingTimeout(typing.userId);
+                },
+                Temporal.Duration.from({ seconds: 3 }).total("milliseconds"),
+              );
 
-            typingTimeoutIdMap.value.set(typing.userId, timeoutId);
-            if (!typings.value.some(({ userId }) => userId === typing.userId)) typings.value.push(typing);
+              typingTimeoutIdMap.value.set(typing.userId, timeoutId);
+              if (!typings.value.some(({ userId }) => userId === typing.userId)) typings.value.push(typing);
+            },
           },
-        },
+        ),
       );
 
       return () => {
-        createTypingUnsubscribable.unsubscribe();
+        unsubscribe();
         for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
         typings.value = [];
       };

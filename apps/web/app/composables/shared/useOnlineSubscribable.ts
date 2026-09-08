@@ -64,7 +64,9 @@ export function useOnlineSubscribable(
   });
   const { trigger } = watchTriggerable(sources, (values) => {
     const isOnline = online.value;
-    const value = isOnline ? (Array.isArray(source) ? values.slice(0, -1) : values[0]) : null;
+    // `online` is watched alongside the caller's own sources, so it is dropped again before the value reaches
+    // Them — and an offline tick has nothing to hand over, since the resubscribe returns before reading it
+    const value = isOnline ? (Array.isArray(source) ? values.slice(0, -1) : values[0]) : undefined;
 
     resubscribe(value, isOnline);
   });

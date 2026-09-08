@@ -10,6 +10,8 @@ const checkIsInputFocused = () => {
   return activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement;
 };
 
+const checkIsModifierPressed = (event: KeyboardEvent) => event.ctrlKey || event.metaKey;
+
 // The spreadsheet's keyboard surface: copy, paste, select-all and arrow navigation over the cell selection.
 // Every handler stands down while a cell is being edited or an input holds focus, so typing into a cell never
 // Reaches the grid
@@ -23,18 +25,12 @@ export const useCellKeyboardShortcuts = () => {
   const { clearCellSelection, extendCellSelection, startCellSelection } = cellStore;
   const copyRangeToClipboard = useCopyRangeToClipboard();
   const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+  const checkIsTyping = () => Boolean(editingCell.value) || checkIsInputFocused();
 
   onKeyStroke(
     ["c", "C"],
     getSynchronizedFunction(async (event: KeyboardEvent) => {
-      if (
-        editingCell.value ||
-        checkIsInputFocused() ||
-        (!event.ctrlKey && !event.metaKey) ||
-        event.shiftKey ||
-        !selectedCellRange.value
-      )
-        return;
+      if (checkIsTyping() || !checkIsModifierPressed(event) || event.shiftKey || !selectedCellRange.value) return;
       event.preventDefault();
       await copyRangeToClipboard();
     }),
@@ -43,15 +39,14 @@ export const useCellKeyboardShortcuts = () => {
   onKeyStroke(
     ["v", "V"],
     getSynchronizedFunction(async (event: KeyboardEvent) => {
-      if (editingCell.value || checkIsInputFocused() || (!event.ctrlKey && !event.metaKey) || !selectedCellRange.value)
-        return;
+      if (checkIsTyping() || !checkIsModifierPressed(event) || !selectedCellRange.value) return;
       event.preventDefault();
       await pasteRangeFromClipboard(event.shiftKey ? PasteMode.ShiftDown : PasteMode.Overwrite);
     }),
   );
 
   onKeyStroke(["a", "A"], (event) => {
-    if (editingCell.value || checkIsInputFocused() || (!event.ctrlKey && !event.metaKey) || event.shiftKey) return;
+    if (checkIsTyping() || !checkIsModifierPressed(event) || event.shiftKey) return;
     event.preventDefault();
     const rowCount = filteredRows.value.length;
     const columnCount = displayColumns.value.length;
@@ -62,7 +57,7 @@ export const useCellKeyboardShortcuts = () => {
   });
 
   onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
-    if (editingCell.value || checkIsInputFocused() || !focusedCell.value) return;
+    if (checkIsTyping() || !focusedCell.value) return;
     const arrowDelta = ArrowKeyDeltaMap[event.key];
     if (!arrowDelta) return;
     event.preventDefault();
@@ -76,7 +71,6 @@ export const useCellKeyboardShortcuts = () => {
   });
 
   onKeyStroke("Escape", () => {
-    if (editingCell.value || checkIsInputFocused()) return;
-    clearCellSelection();
+    if (!checkIsTyping()) clearCellSelection();
   });
 };

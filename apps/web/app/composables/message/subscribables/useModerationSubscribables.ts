@@ -1,4 +1,5 @@
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useRoomStore } from "@/store/message/room";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -10,17 +11,15 @@ export const useModerationSubscribables = () => {
   useOnlineSubscribable(currentRoomId, (roomId) => {
     if (!roomId) return undefined;
 
-    const adminActionUnsubscribable = $trpc.message.moderation.onAdminAction.subscribe(
-      { roomId },
-      {
-        onData: getSynchronizedFunction(({ durationMs, type }) =>
-          getResultAsync(() => adminActionMap[type](roomId, durationMs)).match(noop, console.error),
-        ),
-      },
+    return getUnsubscribe(
+      $trpc.message.moderation.onAdminAction.subscribe(
+        { roomId },
+        {
+          onData: getSynchronizedFunction(({ durationMs, type }) =>
+            getResultAsync(() => adminActionMap[type](roomId, durationMs)).match(noop, console.error),
+          ),
+        },
+      ),
     );
-
-    return () => {
-      adminActionUnsubscribable.unsubscribe();
-    };
   });
 };

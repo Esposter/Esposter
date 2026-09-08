@@ -403,6 +403,36 @@ describe(useDataStore, () => {
     expect(takeOne(items.value).message).toBe(updatedMessage);
   });
 
+  // An attachments-only message stores an empty body, so a rollback reading that body for truth never fires and
+  // Leaves the rejected edit's text on the bubble
+  test("rolls a rejected edit back to an empty body", async () => {
+    expect.hasAssertions();
+
+    const rejectedMessage = "rejectedMessage";
+    server.use(
+      trpcMsw.message.updateMessage.mutation(({ input }) => {
+        if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+      }),
+    );
+    const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
+    const { getSlice, updateMessage } = dataStore;
+    const newMessage = createMessageEntity({
+      message: "",
+      roomId,
+      type: MessageType.Message,
+      userId: getMockSession().user.id,
+    });
+    getSlice(newMessage.partitionKey).items.value = [newMessage];
+    await updateMessage({
+      message: rejectedMessage,
+      partitionKey: newMessage.partitionKey,
+      rowKey: newMessage.rowKey,
+    });
+
+    expect(takeOne(items.value).message).toBe("");
+  });
+
   // Each attachment is its own target, so two removals from one message overlap: reading the list the call was
   // Issued with makes the second removal write back the file the first one took off
   test("removes and restores one attachment at a time", async () => {

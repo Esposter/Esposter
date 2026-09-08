@@ -1,5 +1,4 @@
 import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
-import type { StandardCreateMessageInput } from "@esposter/db-schema";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { useDataStore } from "@/store/message/data";
@@ -32,40 +31,34 @@ export const useExecuteSlashCommand = () => {
     const roomId = currentRoomId.value;
     if (!roomId) return;
 
-    let createMessageInput: StandardCreateMessageInput | undefined;
+    // Every command that posts differs only in the markdown it posts; the rest open a dialog or write a room
+    // Field instead, and leave this empty so nothing is sent
+    let message = "";
 
     switch (command.type) {
-      case SlashCommandType.Flip: {
-        const isHeads = createRandomBoolean();
-        createMessageInput = { message: isHeads ? `🌝 **Heads**` : `🌚 **Tails**`, roomId, type: MessageType.Message };
+      case SlashCommandType.Flip:
+        message = createRandomBoolean() ? `🌝 **Heads**` : `🌚 **Tails**`;
         break;
-      }
-      case SlashCommandType.Me: {
-        const { message } = command.parameterValues;
-        createMessageInput = { message: `*${message}*`, roomId, type: MessageType.Message };
+      case SlashCommandType.Me:
+        message = `*${command.parameterValues.message}*`;
         break;
-      }
       case SlashCommandType.Poll:
         isOpen.value = true;
         break;
       case SlashCommandType.Remind:
         open(ScheduledMessageJobType.Reminder);
         break;
-      case SlashCommandType.Roll: {
-        const roll = Math.floor(Math.random() * 100) + 1;
-        createMessageInput = { message: `🎲 Rolled a **${roll}**`, roomId, type: MessageType.Message };
+      case SlashCommandType.Roll:
+        message = `🎲 Rolled a **${Math.floor(Math.random() * 100) + 1}**`;
         break;
-      }
       case SlashCommandType.Schedule:
         open(ScheduledMessageJobType.ScheduledMessage);
         break;
-      case SlashCommandType.Shrug: {
-        const { text } = command.parameterValues;
-        createMessageInput = { message: `${text}¯\\_(ツ)_/¯`, roomId, type: MessageType.Message };
+      case SlashCommandType.Shrug:
+        message = `${command.parameterValues.text}¯\\_(ツ)_/¯`;
         break;
-      }
       case SlashCommandType.TableFlip:
-        createMessageInput = { message: `(╯°□°）╯︵ ┻━┻`, roomId, type: MessageType.Message };
+        message = `(╯°□°）╯︵ ┻━┻`;
         break;
       case SlashCommandType.Topic: {
         const { text } = command.parameterValues;
@@ -84,18 +77,18 @@ export const useExecuteSlashCommand = () => {
         break;
       }
       case SlashCommandType.Unflip:
-        createMessageInput = { message: `┬─┬ノ( º _ ºノ)`, roomId, type: MessageType.Message };
+        message = `┬─┬ノ( º _ ºノ)`;
         break;
       default:
         exhaustiveGuard(command);
     }
 
-    if (!createMessageInput) return;
-
-    await sendMessage({
-      ...createMessageInput,
-      message: createMessageInput.message ? marked.parse(createMessageInput.message, { async: false }) : undefined,
-      replyRowKey: replyRowKey.value,
-    });
+    if (message)
+      await sendMessage({
+        message: marked.parse(message, { async: false }),
+        replyRowKey: replyRowKey.value,
+        roomId,
+        type: MessageType.Message,
+      });
   };
 };

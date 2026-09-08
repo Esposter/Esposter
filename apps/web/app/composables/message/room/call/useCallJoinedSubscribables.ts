@@ -1,5 +1,6 @@
 import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
 
+import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
@@ -28,47 +29,40 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
     (callSessionId) => {
       if (!callSessionId) return undefined;
 
-      const joinCallUnsubscribable = $trpc.callSession.onJoinCall.subscribe(callSessionId, {
-        onData: (participant) => {
-          createCallParticipant(callSessionId, participant);
-        },
-      });
-      const leaveCallUnsubscribable = $trpc.callSession.onLeaveCall.subscribe(callSessionId, {
-        onData: (participantId) => {
-          deleteCallParticipant(callSessionId, participantId);
-          deleteSpeaker(participantId);
-          deleteParticipantVolumePercentage(participantId);
-        },
-      });
-      const setHandRaisedUnsubscribable = $trpc.callSession.onSetHandRaised.subscribe(callSessionId, {
-        onData: ({ id: participantId, isHandRaised }) => {
-          setParticipantHandRaised(callSessionId, participantId, isHandRaised);
-        },
-      });
-      const setMutedUnsubscribable = $trpc.callSession.onSetMuted.subscribe(callSessionId, {
-        onData: ({ id: participantId, isMuted }) => {
-          setParticipantMuted(callSessionId, participantId, isMuted);
-        },
-      });
-      const setCameraEnabledUnsubscribable = $trpc.callSession.onSetCameraEnabled.subscribe(callSessionId, {
-        onData: ({ id: participantId, isCameraEnabled }) => {
-          setParticipantCameraEnabled(callSessionId, participantId, isCameraEnabled);
-        },
-      });
-      const knockCallUnsubscribable = $trpc.callSession.knocker.onKnockCall.subscribe(callSessionId, {
-        onData: (knocker) => {
-          createKnocker(knocker);
-        },
-      });
-
-      return () => {
-        joinCallUnsubscribable.unsubscribe();
-        leaveCallUnsubscribable.unsubscribe();
-        setHandRaisedUnsubscribable.unsubscribe();
-        setMutedUnsubscribable.unsubscribe();
-        setCameraEnabledUnsubscribable.unsubscribe();
-        knockCallUnsubscribable.unsubscribe();
-      };
+      return getUnsubscribe(
+        $trpc.callSession.onJoinCall.subscribe(callSessionId, {
+          onData: (participant) => {
+            createCallParticipant(callSessionId, participant);
+          },
+        }),
+        $trpc.callSession.onLeaveCall.subscribe(callSessionId, {
+          onData: (participantId) => {
+            deleteCallParticipant(callSessionId, participantId);
+            deleteSpeaker(participantId);
+            deleteParticipantVolumePercentage(participantId);
+          },
+        }),
+        $trpc.callSession.onSetHandRaised.subscribe(callSessionId, {
+          onData: ({ id: participantId, isHandRaised }) => {
+            setParticipantHandRaised(callSessionId, participantId, isHandRaised);
+          },
+        }),
+        $trpc.callSession.onSetMuted.subscribe(callSessionId, {
+          onData: ({ id: participantId, isMuted }) => {
+            setParticipantMuted(callSessionId, participantId, isMuted);
+          },
+        }),
+        $trpc.callSession.onSetCameraEnabled.subscribe(callSessionId, {
+          onData: ({ id: participantId, isCameraEnabled }) => {
+            setParticipantCameraEnabled(callSessionId, participantId, isCameraEnabled);
+          },
+        }),
+        $trpc.callSession.knocker.onKnockCall.subscribe(callSessionId, {
+          onData: (knocker) => {
+            createKnocker(knocker);
+          },
+        }),
+      );
     },
     onlineSubscribableContext,
   );

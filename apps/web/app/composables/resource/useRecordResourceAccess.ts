@@ -12,17 +12,17 @@ export const useRecordResourceAccess = (resource: Ref<Resource | undefined>) => 
   // Records what you opened, not what happened to it while it was open
   watchImmediate(
     () => resource.value?.id,
+    // Silent on failure: this is a record of the visit, and the visit itself succeeded. An alert here would
+    // Report a problem on a page that opened perfectly well
     async (id) => {
-      if (!id) return;
-      // Silent on failure: this is a record of the visit, and the visit itself succeeded. An alert here would
-      // Report a problem on a page that opened perfectly well
-      await executeMutation(() => $trpc.resource.recordAccess.mutate({ id }), {
-        // The row this writes is the one Recent is ordered by, so every cache of that ordering now predates
-        // This visit
-        invalidates: [CacheTag.Recents],
-        key: id,
-        onError: noop,
-      });
+      if (id)
+        await executeMutation(() => $trpc.resource.recordAccess.mutate({ id }), {
+          // The row this writes is the one Recent is ordered by, so every cache of that ordering now predates
+          // This visit
+          invalidates: [CacheTag.Recents],
+          key: id,
+          onError: noop,
+        });
     },
   );
 };

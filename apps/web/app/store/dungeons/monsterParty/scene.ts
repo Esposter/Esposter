@@ -16,7 +16,7 @@ export const useMonsterPartySceneStore = defineStore("dungeons/monsterParty/scen
   const monstersGrid = computed(() => {
     const grid: Monster[][] = [];
     for (let i = 0; i < Math.min(ROW_SIZE * COLUMN_SIZE, monsters.value.length); i += COLUMN_SIZE)
-      grid.push(monsters.value.slice(i, Math.min(i + COLUMN_SIZE, monsters.value.length)));
+      grid.push(monsters.value.slice(i, i + COLUMN_SIZE));
     return grid;
   });
   const sceneMode = ref(SceneMode.Default);

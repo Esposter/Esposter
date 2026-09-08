@@ -1,9 +1,10 @@
+import type { UnparameterizedAdminActionInput } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 import type { Item } from "@/models/shared/Item";
 
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useRoleStore } from "@/store/message/room/role";
-import { AdminActionType, checkHasPermission, RoomPermission } from "@esposter/db-schema";
+import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
 export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();
@@ -14,24 +15,9 @@ export const useCallParticipantActions = () => {
   const participantStore = useParticipantStore();
   const { setParticipantHandRaised } = participantStore;
   const roleStore = useRoleStore();
-  const { getMyPermissions } = roleStore;
-  const myPermissions = computed(() => (callRoomId.value ? getMyPermissions(callRoomId.value) : undefined));
-  const isForceMuteable = computed(() => {
-    if (!myPermissions.value) return false;
-    return checkHasPermission(
-      myPermissions.value.permissions,
-      RoomPermission.MuteMembers,
-      myPermissions.value.isRoomOwner,
-    );
-  });
-  const isKickableFromCall = computed(() => {
-    if (!myPermissions.value) return false;
-    return checkHasPermission(
-      myPermissions.value.permissions,
-      RoomPermission.MoveMembers,
-      myPermissions.value.isRoomOwner,
-    );
-  });
+  const { checkHasMyPermission } = roleStore;
+  const isForceMuteable = computed(() => checkHasMyPermission(callRoomId.value, RoomPermission.MuteMembers));
+  const isKickableFromCall = computed(() => checkHasMyPermission(callRoomId.value, RoomPermission.MoveMembers));
 
   const getActions = (
     participantId: string,
@@ -42,6 +28,18 @@ export const useCallParticipantActions = () => {
     const roomId = callRoomId.value;
     const callSessionId = activeCallSessionId.value;
     if (!roomId || !callSessionId) return [];
+
+    // The three moderation actions differ only in which `AdminActionType` they send and how they are labelled
+    const getAdminActionItem = (type: UnparameterizedAdminActionInput["type"], icon: string, title: string): Item => ({
+      icon,
+      onClick: async () => {
+        await executeAdminActionMutation(
+          () => $trpc.message.moderation.executeAdminAction.mutate({ roomId, targetUserId: userId, type }),
+          { key: userId },
+        );
+      },
+      title,
+    });
     const items: Item[] = [];
     if (isForceMuteable.value && isHandRaised)
       items.push({
@@ -70,54 +68,14 @@ export const useCallParticipantActions = () => {
         },
         title: "Lower Hand",
       });
-    if (isForceMuteable.value && !isParticipantMuted)
-      items.push({
-        icon: "mdi-microphone-off",
-        onClick: async () => {
-          await executeAdminActionMutation(
-            () =>
-              $trpc.message.moderation.executeAdminAction.mutate({
-                roomId,
-                targetUserId: userId,
-                type: AdminActionType.ForceMute,
-              }),
-            { key: userId },
-          );
-        },
-        title: "Force Mute",
-      });
-    if (isForceMuteable.value && isParticipantMuted)
-      items.push({
-        icon: "mdi-microphone",
-        onClick: async () => {
-          await executeAdminActionMutation(
-            () =>
-              $trpc.message.moderation.executeAdminAction.mutate({
-                roomId,
-                targetUserId: userId,
-                type: AdminActionType.ForceUnmute,
-              }),
-            { key: userId },
-          );
-        },
-        title: "Force Unmute",
-      });
+    if (isForceMuteable.value)
+      items.push(
+        isParticipantMuted
+          ? getAdminActionItem(AdminActionType.ForceUnmute, "mdi-microphone", "Force Unmute")
+          : getAdminActionItem(AdminActionType.ForceMute, "mdi-microphone-off", "Force Mute"),
+      );
     if (isKickableFromCall.value)
-      items.push({
-        icon: "mdi-account-remove",
-        onClick: async () => {
-          await executeAdminActionMutation(
-            () =>
-              $trpc.message.moderation.executeAdminAction.mutate({
-                roomId,
-                targetUserId: userId,
-                type: AdminActionType.KickFromCall,
-              }),
-            { key: userId },
-          );
-        },
-        title: "Kick from Call",
-      });
+      items.push(getAdminActionItem(AdminActionType.KickFromCall, "mdi-account-remove", "Kick from Call"));
     return items;
   };
 

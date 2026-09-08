@@ -4,6 +4,7 @@ import plugins from "@esposter/configuration/eslint/plugins/index.js";
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedTestSyntaxes from "@esposter/configuration/eslint/restrictedTestSyntaxes.js";
+import restrictedWatchSyntaxes from "@esposter/configuration/eslint/restrictedWatchSyntaxes.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
 import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
@@ -26,15 +27,33 @@ export default withNuxt(plugins)
         ...typescriptRules["no-restricted-syntax"].slice(1),
         ...restrictedDateSyntaxes,
         ...restrictedStoreSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
+    },
+  })
+  // A `watch` sits in a store or a composable as often as in a component, so the alias ban is the one script-side
+  // Addition that has to reach `.ts` as well.
+  .append({
+    files: ["**/*.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedWatchSyntaxes,
       ],
     },
   })
   // A test file carries the script-side bans plus its own — a typed `vi.fn` — the same carry-the-base-over
-  // Shape the date bans use above.
+  // Shape the date bans use above, the watch aliases included since this override replaces the `.ts` one.
   .append({
     files: ["**/*.test.ts"],
     rules: {
-      "no-restricted-syntax": ["error", ...typescriptRules["no-restricted-syntax"].slice(1), ...restrictedTestSyntaxes],
+      "no-restricted-syntax": [
+        "error",
+        ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedTestSyntaxes,
+        ...restrictedWatchSyntaxes,
+      ],
     },
   })
   // `public` is generated/static assets, the generated tileset `.tsx` included, and oxlint already ignores

@@ -6,11 +6,11 @@ interface Props {
 }
 
 const { leaderboard } = defineProps<Props>();
-const isMyEntryAppended = computed(
-  () =>
-    leaderboard.myEntry !== undefined &&
-    !leaderboard.entries.some(({ user }) => user.id === leaderboard.myEntry?.user.id),
-);
+const isMyEntryAppended = computed(() => {
+  const { myEntry } = leaderboard;
+  if (myEntry) return !leaderboard.entries.some(({ user }) => user.id === myEntry.user.id);
+  else return false;
+});
 </script>
 
 <template>
