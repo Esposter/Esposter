@@ -13,8 +13,9 @@ export const useEmojiTag = (emojiTag: MaybeRefOrGetter<string>) => {
   const customEmojiId = computed(() => parseCustomEmojiId(toValue(emojiTag)));
   const customEmoji = computed(() => (customEmojiId.value ? customEmojiMap.value.get(customEmojiId.value) : undefined));
   const description = computed(() => {
-    if (!customEmojiId.value) return getEmojiDescription(toValue(emojiTag));
-    return customEmoji.value ? getEmojiShortcode(customEmoji.value.name) : DELETED_EMOJI_DESCRIPTION;
+    if (customEmojiId.value)
+      return customEmoji.value ? getEmojiShortcode(customEmoji.value.name) : DELETED_EMOJI_DESCRIPTION;
+    else return getEmojiDescription(toValue(emojiTag));
   });
   return { customEmoji, customEmojiId, description };
 };
