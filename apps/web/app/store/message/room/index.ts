@@ -49,8 +49,8 @@ export const useRoomStore = defineStore("message/room", () => {
     await navigateFromDeletedRoom(id);
   };
   const currentRoom = computed(() => {
-    if (!currentRoomId.value) return undefined;
-    return rooms.value.find(({ id }) => id === currentRoomId.value);
+    if (currentRoomId.value) return rooms.value.find(({ id }) => id === currentRoomId.value);
+    else return undefined;
   });
   const session = authClient.useSession();
   const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);

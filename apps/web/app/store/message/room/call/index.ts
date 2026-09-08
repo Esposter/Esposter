@@ -49,8 +49,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const callRoute = computed(() => {
     if (!callRoomId.value) return RoutePath.Calls(activeCallSessionId.value);
     else if (callThreadRootRowKey.value) return RoutePath.MessagesThread(callRoomId.value, callThreadRootRowKey.value);
-
-    return RoutePath.Messages(callRoomId.value);
+    else return RoutePath.Messages(callRoomId.value);
   });
   const currentRoomCallSessionId = ref("");
   const isCallViewOpen = ref(false);

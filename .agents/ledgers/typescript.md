@@ -17,7 +17,7 @@ Most of the `typescript` skill is lint- or typecheck-decided; what this sweep ca
 | `server/trpc` — everything outside `routers`                                                    | 2026-09-08 | context, procedure builders, middleware                                               |
 | `server/composables`, `server/api`, `server/routes`                                             | 2026-09-08 |                                                                                       |
 | `server/models`, `server/db`, `server/plugins`, `server/auth.ts`                                | 2026-09-08 |                                                                                       |
-| `app/store/message/room`                                                                        | —          |                                                                                       |
+| `app/store/message/room`                                                                        | 2026-09-08 |                                                                                       |
 | `app/store/message/user`, `ui`, `search`                                                        | —          |                                                                                       |
 | `app/store/message/input`, `moderation`, `file`, `draftsAndSent`                                | —          |                                                                                       |
 | `app/store/message` — the top level                                                             | —          |                                                                                       |

@@ -59,16 +59,18 @@ export const useRoleStore = defineStore("message/room/role", () => {
   // The same way — a caller reading `permissions` on its own silently drops the bypass
   const checkHasMyPermission = (roomId: string, permission: RoomPermission) => {
     const myRoomPermissions = getMyPermissions(roomId);
-    if (!myRoomPermissions) return false;
-    return checkHasPermission(myRoomPermissions.permissions, permission, myRoomPermissions.isRoomOwner);
+    if (myRoomPermissions)
+      return checkHasPermission(myRoomPermissions.permissions, permission, myRoomPermissions.isRoomOwner);
+    else return false;
   };
   const checkIsManageable = (roomId: string) => {
     const roomPermissions = getMyPermissions(roomId);
-    if (!roomPermissions) return false;
-    return (
-      baseCheckIsManageable(roomPermissions.topRolePosition, 0, roomPermissions.isRoomOwner) ||
-      Boolean(roomPermissions.permissions & MANAGEMENT_PERMISSIONS)
-    );
+    if (roomPermissions)
+      return (
+        baseCheckIsManageable(roomPermissions.topRolePosition, 0, roomPermissions.isRoomOwner) ||
+        Boolean(roomPermissions.permissions & MANAGEMENT_PERMISSIONS)
+      );
+    else return false;
   };
   const {
     data: memberRoleMap,
