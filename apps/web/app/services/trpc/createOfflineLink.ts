@@ -12,6 +12,5 @@ export const createOfflineLink =
       if (!online.value && op.type !== "subscription") {
         observer.error(new TRPCOfflineClientError());
         return undefined;
-      }
-      return next(op).subscribe(observer);
+      } else return next(op).subscribe(observer);
     });
