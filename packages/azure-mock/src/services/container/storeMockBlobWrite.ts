@@ -1,5 +1,5 @@
 import { MOCK_BLOB_SEEDED_DATE } from "#src/services/container/constants";
-import { getMockContainerBlobDatesKey } from "#src/services/container/getMockContainerBlobDatesKey";
+import { getMockBlobKey } from "#src/services/container/getMockBlobKey";
 import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";
 
 // A write dates the blob: `lastModified` always moves, `createdOn` only on the create that first made it exist.
@@ -8,7 +8,7 @@ import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDate
 // Container has no dates row, and overwriting it must still read as an overwrite: its `createdOn` is the seeded
 // Instant rather than now, or a drained blob would look freshly created and be swept again on the next pass.
 export const storeMockBlobWrite = (containerName: string, blobName: string, isExisting: boolean): void => {
-  const key = getMockContainerBlobDatesKey(containerName, blobName);
+  const key = getMockBlobKey(containerName, blobName);
   const lastModified = new Date();
   MockContainerBlobDatesDatabase.set(key, {
     createdOn:

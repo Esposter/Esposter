@@ -1,5 +1,4 @@
-import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
+import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
 
 import { ImageKey } from "#shared/models/dungeons/keys/image/UI/ImageKey";
 import blueButton from "@/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton00.png";
@@ -44,4 +43,4 @@ export const ImageLoaderMap = {
   ...BallLoaderMap,
   ...ControlsLoaderMap,
   ...MonsterLoaderMap,
-} as const satisfies Record<ImageKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin>;
+} as const satisfies Record<ImageKey, AssetLoader>;

@@ -15,8 +15,8 @@ export const usePhaserStore = defineStore("phaser", () => {
     },
   });
 
+  // No scene has mounted until the first `switchToScene`, which no key of the consumer's enum can stand for
   const sceneKey = ref<SceneWithPlugins["scene"]["key"]>();
-  const rootSceneKey = sceneKey;
   const isSameScene = (newSceneKey: SceneWithPlugins["scene"]["key"]) => newSceneKey === sceneKey.value;
   const switchToScene = async (newSceneKey: SceneWithPlugins["scene"]["key"]) => {
     if (isSameScene(newSceneKey)) return;
@@ -63,7 +63,7 @@ export const usePhaserStore = defineStore("phaser", () => {
     parallelSceneKeys,
     prioritizedParallelSceneKeys,
     removeParallelScene,
-    rootSceneKey: rootSceneKey as Ref<SceneWithPlugins["scene"]["key"]>,
+    rootSceneKey: sceneKey,
     switchToScene,
   };
 });

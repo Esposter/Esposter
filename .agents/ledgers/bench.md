@@ -20,11 +20,11 @@ the two ways a bench quietly stops measuring what it names.
 
 ## Units
 
-| Unit                                                      | Swept | Notes                                                                             |
-| --------------------------------------------------------- | ----- | --------------------------------------------------------------------------------- |
-| `apps/web` — the sheet command benches and their fixtures | —     | 6 groups plus the 4 `.bench.ts` fixture files that carry `describe.todo`          |
-| `packages/virrun`                                         | —     | two of the three are switched off — read the gate before judging the bench        |
-| `scripts`                                                 | —     | `buildPackages` is switched off and deletes each `dist`, so it also skips on `CI` |
+| Unit                                                      | Swept      | Notes                                                                             |
+| --------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------- |
+| `apps/web` — the sheet command benches and their fixtures | 2026-09-09 | 6 groups plus the 4 `.bench.ts` fixture files that carry `describe.todo`          |
+| `packages/virrun`                                         | 2026-09-09 | two of the three are switched off — read the gate before judging the bench        |
+| `scripts`                                                 | 2026-09-09 | `buildPackages` is switched off and deletes each `dist`, so it also skips on `CI` |
 
 ## Find recipe
 
@@ -43,14 +43,25 @@ would have to be believed. So a pass reads every file its unit names; there is n
 - **A fixture helper that spreads a container is not isolation.** Copy every level the benched code writes
   through. The failure is silent and reads as a speedup: a command that renames a shared column on iteration one
   returns early on all nine that follow, so the mean is one real run and nine no-ops.
-- **A group mixing scales is a finding even when each task is fine**, because `vs base` then reports the ratio
-  between two fixture sizes rather than between two shapes.
+- **A group mixing scales is a finding when the group also varies shape**, because `vs base` then reports the
+  ratio between two fixture sizes rather than between two shapes. A unit whose only axis _is_ input size has no
+  shape to hold fixed, so its sizes belong in one group — splitting them leaves single-task groups reading
+  `1.00×`, which measures nothing.
 - **A bench with no committed `.bench.md` beside it has never been run**, and one whose `.bench.md` names a
   group the file no longer registers has been renamed without a re-run. Both are findings; the fix is `pnpm bench`
-  in that package and committing what it writes.
+  in that package and committing what it writes — except where the artifact is right and the registration drifted
+  off it, which is a rename to undo rather than a run to redo. A bench measuring the host rather than the repo
+  commits one artifact per platform (`*.bench.win32.md`, `*.bench.linux.md`) and has no unsuffixed pair, so read
+  the suffixes before calling one missing.
 - **A switched-off bench is not a finding.** Three are off on purpose and say why in a comment. What _is_ a
   finding is a file that replaced its capability gate with `IS_ENABLED` instead of ANDing the two, or one whose
   test skips while its module-scope setup still performs the install.
+- **A switched-off bench cannot be re-run to settle a drifted artifact, and must not be.** Its groups skip, so
+  the reporter writes a file with their sections gone — the fix for a live bench deletes the numbers of a
+  switched-off one. Where the two disagree, the artifact is the record and the drift is carried until the bench
+  is next flipped on for a reason of its own. `localMonorepo.platform`'s `test - packages/shared` is there:
+  `vitest(valid-title)` forbids a `test()` title starting with `test`, so the Vitest 5 migration could not keep
+  the name its `describe` used to give the group, and no rename passes lint _and_ matches the committed heading.
 
 ## Exclusions
 

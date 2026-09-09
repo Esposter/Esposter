@@ -4,7 +4,7 @@ Router structure, the procedure builder each route picks, ownership guards, and 
 
 | Unit                                                                                                                      | Swept      | Notes                                                                                         |
 | ------------------------------------------------------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
-| `server/trpc/procedure`, `guards`, `middleware`, `plugins`, `context.ts`                                                  | 2026-08-27 | the guard constructors live here, so this row is exempt from the hand-rolled-error rule below |
+| `server/trpc/procedure`, `guards`, `middleware`, `plugins`, `context.ts`                                                  | 2026-09-09 | the guard constructors live here, so this row is exempt from the hand-rolled-error rule below |
 | `server/trpc/routers/message` (+ `moderation`, `emoji`, `scheduledMessageJob`)                                            | 2026-08-27 |                                                                                               |
 | `server/trpc/routers/room` (+ `directMessage`, `emoji`, `category`, `filter`)                                             | 2026-08-27 | a guard reached from here is verified rather than assumed — the walk leaves the router tree   |
 | `server/trpc/routers/call`, `role`, `userToRoom`, `webhook`, `searchHistory`                                              | 2026-08-31 | the call routers key on a session rather than a room, so the room builders do not reach them  |

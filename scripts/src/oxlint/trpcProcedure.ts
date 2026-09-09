@@ -37,7 +37,7 @@ const getPropertyValue = (property: ESTree.Node, name: string): ESTree.Node | un
 const getHandRolledErrorName = (property: ESTree.Node): string | undefined => {
   const value = getPropertyValue(property, "message");
   if (value?.type !== "MemberExpression" || value.computed) return undefined;
-  else if (value.property.type !== "Identifier" || value.property.name !== "message") return undefined;
+  if (value.property.type !== "Identifier" || value.property.name !== "message") return undefined;
   const { object } = value;
   if (object.type !== "NewExpression" || object.callee.type !== "Identifier") return undefined;
   return object.callee.name;

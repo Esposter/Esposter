@@ -1,5 +1,4 @@
-import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
+import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
 
 import { MonsterPartyKey } from "#shared/models/dungeons/keys/image/MonsterPartyKey";
 import monsterPartyBackground from "@/assets/dungeons/scene/monsterParty/background.png";
@@ -10,4 +9,4 @@ export const MonsterPartyLoaderMap = {
     scene.load.image(MonsterPartyKey.MonsterDetailsBackground, monsterDetailsBackground),
   [MonsterPartyKey.MonsterPartyBackground]: (scene) =>
     scene.load.image(MonsterPartyKey.MonsterPartyBackground, monsterPartyBackground),
-} as const satisfies Record<MonsterPartyKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin>;
+} as const satisfies Record<MonsterPartyKey, AssetLoader>;

@@ -57,11 +57,11 @@ const sortDocuments = (documents: Record<string, unknown>[], orderBy: string[]):
 
 const getSearchFieldValues = (value: unknown, pathSegments: string[]): unknown[] => {
   if (pathSegments.length === 0) return [value];
-  if (Array.isArray(value)) return value.flatMap((item) => getSearchFieldValues(item, pathSegments));
-  if (typeof value !== "object" || value === null) return [];
-
-  const [field = "", ...remainingPathSegments] = pathSegments;
-  return getSearchFieldValues((value as Record<string, unknown>)[deserializeKey(field)], remainingPathSegments);
+  else if (Array.isArray(value)) return value.flatMap((item) => getSearchFieldValues(item, pathSegments));
+  else if (typeof value === "object" && value !== null) {
+    const [field = "", ...remainingPathSegments] = pathSegments;
+    return getSearchFieldValues((value as Record<string, unknown>)[deserializeKey(field)], remainingPathSegments);
+  } else return [];
 };
 
 const searchDocuments = (

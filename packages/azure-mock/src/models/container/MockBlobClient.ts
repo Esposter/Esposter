@@ -33,8 +33,8 @@ import { BLOB_NOT_FOUND_MESSAGE } from "#src/constants";
 import { MockRestError } from "#src/models/MockRestError";
 import { getBlobUrl } from "#src/services/container/getBlobUrl";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
+import { getMockBlobKey } from "#src/services/container/getMockBlobKey";
 import { getMockContainer } from "#src/services/container/getMockContainer";
-import { getMockContainerBlobDatesKey } from "#src/services/container/getMockContainerBlobDatesKey";
 import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { storeMockBlobWrite } from "#src/services/container/storeMockBlobWrite";
 import { createMockResponse } from "#src/services/createMockResponse";
@@ -105,7 +105,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   delete(): Promise<BlobDeleteResponse> {
     if (!this.container.has(this.name)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     this.container.delete(this.name);
-    MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(this.containerName, this.name));
+    MockContainerBlobDatesDatabase.delete(getMockBlobKey(this.containerName, this.name));
     return Promise.resolve({ _response: createMockResponse(200) });
   }
 
@@ -113,7 +113,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     const succeeded = this.container.has(this.name);
     if (succeeded) {
       this.container.delete(this.name);
-      MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(this.containerName, this.name));
+      MockContainerBlobDatesDatabase.delete(getMockBlobKey(this.containerName, this.name));
     }
     return Promise.resolve({ _response: createMockResponse(succeeded ? 200 : 404), succeeded });
   }

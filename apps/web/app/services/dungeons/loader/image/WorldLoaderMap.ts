@@ -1,5 +1,4 @@
-import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
+import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
 
 import { WorldKey } from "#shared/models/dungeons/keys/image/world/WorldKey";
 import worldHomeForeground from "@/assets/dungeons/scene/world/Home/foreground.png";
@@ -12,4 +11,4 @@ export const WorldLoaderMap = {
   [WorldKey.WorldHomeBuilding2Foreground]: (scene) =>
     scene.load.image(WorldKey.WorldHomeBuilding2Foreground, worldHomeBuilding2Foreground),
   [WorldKey.WorldHomeForeground]: (scene) => scene.load.image(WorldKey.WorldHomeForeground, worldHomeForeground),
-} as const satisfies Record<WorldKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin>;
+} as const satisfies Record<WorldKey, AssetLoader>;

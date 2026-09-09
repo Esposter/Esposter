@@ -20,21 +20,23 @@ const readGitCommonDirectory = (root: string): string | undefined => {
   const stats = getResult(() => lstatSync(gitPath)).unwrapOr(undefined);
   if (stats === undefined) return undefined;
   else if (stats.isDirectory()) return gitPath;
-  const gitdir = getResult(() => readFileSync(gitPath, "utf8")).unwrapOr("");
-  if (!gitdir.startsWith(GIT_WORKTREE_GITDIR_PREFIX)) return undefined;
-  // Resolved against the record's own directory, never the process cwd: git writes this path relative whenever the
-  // Repo is on relative worktrees (`worktree.useRelativePaths`, git 2.48+) or is a submodule (always
-  // `gitdir: ../.git/modules/<name>`), and anchoring it anywhere else lands outside the repo — which reads as "no
-  // Registry", so every nested worktree silently mirrors again.
-  const gitDirectory = resolve(root, gitdir.slice(GIT_WORKTREE_GITDIR_PREFIX.length).trim());
-  // `commondir` is itself resolved against the git dir holding it (git writes `../..` for a worktree entry). Absent,
-  // The git dir is its own common dir — the submodule case, and the only reading that does not guess: a worktree
-  // Entry git has not finished writing yields no registry, which mirrors a tree we needn't rather than reading the
-  // Wrong repository's.
-  const commonDirectory = getResult(() => readFileSync(join(gitDirectory, GIT_COMMON_DIRECTORY_FILENAME), "utf8"))
-    .unwrapOr("")
-    .trim();
-  return commonDirectory ? resolve(gitDirectory, commonDirectory) : gitDirectory;
+  else {
+    const gitdir = getResult(() => readFileSync(gitPath, "utf8")).unwrapOr("");
+    if (!gitdir.startsWith(GIT_WORKTREE_GITDIR_PREFIX)) return undefined;
+    // Resolved against the record's own directory, never the process cwd: git writes this path relative whenever the
+    // Repo is on relative worktrees (`worktree.useRelativePaths`, git 2.48+) or is a submodule (always
+    // `gitdir: ../.git/modules/<name>`), and anchoring it anywhere else lands outside the repo — which reads as "no
+    // Registry", so every nested worktree silently mirrors again.
+    const gitDirectory = resolve(root, gitdir.slice(GIT_WORKTREE_GITDIR_PREFIX.length).trim());
+    // `commondir` is itself resolved against the git dir holding it (git writes `../..` for a worktree entry). Absent,
+    // The git dir is its own common dir — the submodule case, and the only reading that does not guess: a worktree
+    // Entry git has not finished writing yields no registry, which mirrors a tree we needn't rather than reading the
+    // Wrong repository's.
+    const commonDirectory = getResult(() => readFileSync(join(gitDirectory, GIT_COMMON_DIRECTORY_FILENAME), "utf8"))
+      .unwrapOr("")
+      .trim();
+    return commonDirectory ? resolve(gitDirectory, commonDirectory) : gitDirectory;
+  }
 };
 // Read the repository's linked worktrees (`git worktree add`) that live INSIDE `cwd`, as posix relative paths.
 //

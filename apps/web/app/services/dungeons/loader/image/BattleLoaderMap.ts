@@ -1,5 +1,4 @@
-import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
+import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
 
 import { BattleKey } from "#shared/models/dungeons/keys/image/BattleKey";
 import battleForestBackground from "@/assets/dungeons/scene/battle/forestBackground.png";
@@ -7,4 +6,4 @@ import battleForestBackground from "@/assets/dungeons/scene/battle/forestBackgro
 export const BattleLoaderMap = {
   [BattleKey.BattleForestBackground]: (scene) =>
     scene.load.image(BattleKey.BattleForestBackground, battleForestBackground),
-} as const satisfies Record<BattleKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin>;
+} as const satisfies Record<BattleKey, AssetLoader>;

@@ -23,17 +23,20 @@ export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, cont
 
     const { blobName, containerName } = parsedBlobSubject;
     const { contentLength, sequencer } = blobCreatedEventGridDataSchema.parse(event.data);
-    const { chargedUserId, isMatched } = await reconcileStorageLedgerEntry(
-      db,
-      containerName,
-      blobName,
-      contentLength,
-      sequencer,
-    );
-    if (isMatched) {
+    // The name is the only thing that differs between the two attempts, and only a matched row is ever charged
+    // To an owner — so the meter is told here rather than once per attempt
+    const reconcile = async (name: string) => {
+      const { chargedUserId, isMatched } = await reconcileStorageLedgerEntry(
+        db,
+        containerName,
+        name,
+        contentLength,
+        sequencer,
+      );
       if (chargedUserId) await broadcastStorageUsage(context, [chargedUserId]);
-      return;
-    }
+      return isMatched;
+    };
+    if (await reconcile(blobName)) return;
     // A blob name reaches us through a url path, and whether storage percent-encodes it in the subject depends
     // On the characters in it — our names carry a `|` separator and a user-chosen filename. Rather than guess
     // Which form a given event used, the decoded form is tried only once the raw one has found no row.
@@ -42,13 +45,6 @@ export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, cont
     const decodedBlobName = getDecodedUriComponent(blobName, blobName);
     if (decodedBlobName === blobName) return;
 
-    const { chargedUserId: decodedChargedUserId } = await reconcileStorageLedgerEntry(
-      db,
-      containerName,
-      decodedBlobName,
-      contentLength,
-      sequencer,
-    );
-    if (decodedChargedUserId) await broadcastStorageUsage(context, [decodedChargedUserId]);
+    await reconcile(decodedBlobName);
   }).match(noop, logAndRethrow(context, AzureFunction.ReconcileStorageLedgerEntry));
 };

@@ -8,11 +8,11 @@ describe("azure-mock", () => {
 
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 44.38 KB (45443 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 44.26 KB (45325 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 50.29 KB (51496 bytes)"`);
+    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 50.26 KB (51468 bytes)"`);
   });
 });

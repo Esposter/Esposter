@@ -1,21 +1,19 @@
-import type { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
 import type { InteractableDirectionMap } from "@/models/dungeons/direction/InteractableDirectionMap";
 import type { Direction, Position } from "grid-engine";
 
-import { DEFAULT_INTERACTABLE_DIRECTION_MAP } from "@/services/dungeons/direction/constants";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 
+// The player may be facing a diagonal or standing still, neither of which the map holds an entry for
 const checkIsInteractableDirection = (
-  interactableDirectionMap: InteractableDirectionMap,
+  interactableDirectionMap: Partial<Record<Direction, boolean>>,
   direction: Direction,
-): direction is InteractableDirection =>
-  direction in interactableDirectionMap && interactableDirectionMap[direction as keyof InteractableDirectionMap];
+) => interactableDirectionMap[direction] === true;
 
 export const checkIsInteractiveObjectPosition = (
   playerPosition: Position,
   playerDirection: Direction,
   objectPosition: Position,
-  interactableDirectionMap: InteractableDirectionMap = DEFAULT_INTERACTABLE_DIRECTION_MAP,
+  interactableDirectionMap: InteractableDirectionMap,
 ): boolean => {
   if (!checkIsInteractableDirection(interactableDirectionMap, playerDirection)) return false;
   const newPlayerPosition = getPositionAfterDirectionMovement(playerPosition, playerDirection);

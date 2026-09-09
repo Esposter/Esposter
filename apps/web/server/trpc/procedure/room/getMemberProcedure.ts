@@ -8,11 +8,10 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: keyof inferParser<T>["out"]) =>
   standardAuthedProcedure.input(schema).use(async ({ ctx, input, next }) => {
-    if (!(roomIdKey in (input as object))) return next();
-
+    // The key is optional on the reads that answer across rooms — `readRooms` filters by one or by none — and a
+    // Room-less call has no membership to check
     const value = input[roomIdKey];
-    if (value === undefined) return next();
-
-    await assertIsMember(ctx.db, ctx.getSessionPayload, requireUuid(value, DatabaseEntityType.Room));
+    if (value !== undefined)
+      await assertIsMember(ctx.db, ctx.getSessionPayload, requireUuid(value, DatabaseEntityType.Room));
     return next();
   });

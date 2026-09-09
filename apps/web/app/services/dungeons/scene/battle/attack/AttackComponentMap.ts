@@ -1,7 +1,6 @@
 import { AttackId } from "#shared/models/dungeons/attack/AttackId";
 
-// Multiple attacks may reuse one animation component — new attacks only need new spritesheets
-// When they should look distinct, not to exist.
+// Multiple attacks reuse one animation component — a new one is earned by looking distinct, not by existing
 export const AttackComponentMap: Record<AttackId, Component> = {
   [AttackId.Bite]: defineAsyncComponent(() => import("@/components/Dungeons/Battle/Attack/Slash.vue")),
   [AttackId.Slash]: defineAsyncComponent(() => import("@/components/Dungeons/Battle/Attack/Slash.vue")),

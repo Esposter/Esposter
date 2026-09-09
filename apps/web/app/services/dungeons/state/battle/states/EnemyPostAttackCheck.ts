@@ -23,23 +23,16 @@ export const EnemyPostAttackCheck: State<StateName> = {
 
     if (checkIsMonsterFainted(activeMonster.value)) {
       await useMonsterDeathTween(false);
-      if (
-        player.value.monsters.some(
-          (monster) => monster.id !== activeMonster.value.id && !checkIsMonsterFainted(monster),
-        )
-      ) {
-        await showMessages(scene, [
-          `${prettify(activeMonster.value.key)} has fainted!`,
-          "Select another monster to continue the battle.",
-        ]);
-        await battleStateMachine.setState(StateName.SwitchAttempt);
-      } else {
-        await showMessages(scene, [
-          `${prettify(activeMonster.value.key)} has fainted!`,
-          "You have no more monsters, escaping to safety...",
-        ]);
-        await battleStateMachine.setState(StateName.Finished);
-      }
+      const hasStandingMonster = player.value.monsters.some(
+        (monster) => monster.id !== activeMonster.value.id && !checkIsMonsterFainted(monster),
+      );
+      await showMessages(scene, [
+        `${prettify(activeMonster.value.key)} has fainted!`,
+        hasStandingMonster
+          ? "Select another monster to continue the battle."
+          : "You have no more monsters, escaping to safety...",
+      ]);
+      await battleStateMachine.setState(hasStandingMonster ? StateName.SwitchAttempt : StateName.Finished);
     } else await battleStateMachine.setState(attackStatePriorityMap.value[StateName.EnemyPostAttackCheck]);
   },
 };

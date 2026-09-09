@@ -22,7 +22,6 @@ export const getOppositeDirection = (direction: Direction): Direction => {
     case Direction.UP_RIGHT:
       return Direction.DOWN_LEFT;
     default:
-      exhaustiveGuard(direction);
-      return Direction.NONE;
+      return exhaustiveGuard(direction);
   }
 };

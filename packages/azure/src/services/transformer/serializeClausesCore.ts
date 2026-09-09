@@ -10,20 +10,21 @@ import { takeOne } from "@esposter/shared";
 export const serializeClausesCore = (clauses: Clause<Record<string, unknown>>[], isTableFilter: boolean): string => {
   if (clauses.length === 0) return "";
   else if (clauses.length === 1) return serializeClause(takeOne(clauses), isTableFilter);
+  else {
+    const groupedClauses = Object.groupBy(clauses, ({ key }) => key);
+    const groupedStrings: string[] = [];
 
-  const groupedClauses = Object.groupBy(clauses, ({ key }) => key);
-  const groupedStrings: string[] = [];
+    for (const clauseGroup of Object.values(groupedClauses))
+      if (clauseGroup.length === 1) groupedStrings.push(serializeClause(takeOne(clauseGroup), isTableFilter));
+      else {
+        const serializedClauses = clauseGroup.map((clause) => serializeClause(clause, isTableFilter));
+        const isRangeClause = clauseGroup.some(({ operator }) => RangeOperators.includes(operator));
+        const groupedString = isRangeClause
+          ? serializedClauses.join(` ${UnaryOperator.and} `)
+          : `(${serializedClauses.join(` ${UnaryOperator.or} `)})`;
+        groupedStrings.push(groupedString);
+      }
 
-  for (const clauseGroup of Object.values(groupedClauses))
-    if (clauseGroup.length === 1) groupedStrings.push(serializeClause(takeOne(clauseGroup), isTableFilter));
-    else {
-      const serializedClauses = clauseGroup.map((clause) => serializeClause(clause, isTableFilter));
-      const isRangeClause = clauseGroup.some(({ operator }) => RangeOperators.includes(operator));
-      const groupedString = isRangeClause
-        ? serializedClauses.join(` ${UnaryOperator.and} `)
-        : `(${serializedClauses.join(` ${UnaryOperator.or} `)})`;
-      groupedStrings.push(groupedString);
-    }
-
-  return groupedStrings.join(` ${UnaryOperator.and} `);
+    return groupedStrings.join(` ${UnaryOperator.and} `);
+  }
 };
