@@ -26,8 +26,8 @@ const displayName = computed(() => getDisplayName(user, roomId));
 // Roles arrive, the second is a real position below every assigned role
 const targetTopPosition = computed(() => {
   const roles = getMemberRoleMap(roomId)?.get(user.id);
-  if (!roles) return undefined;
-  return Math.max(-1, ...roles.map(({ position }) => position));
+  if (roles) return Math.max(-1, ...roles.map(({ position }) => position));
+  else return undefined;
 });
 // The owner is the one member no moderator may act on, and the server says so too — offering the actions here
 // Would only surface a rejection
