@@ -1,5 +1,5 @@
+import { getMockBlobKey } from "#src/services/container/getMockBlobKey";
 import { getMockContainer } from "#src/services/container/getMockContainer";
-import { getMockContainerBlobDatesKey } from "#src/services/container/getMockContainerBlobDatesKey";
 import { storeMockBlobMetadata } from "#src/services/container/storeMockBlobMetadata";
 import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";
 
@@ -9,7 +9,7 @@ import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDate
 // Blob was there, since both delete paths answer 404 for one that was not.
 export const deleteMockBlob = (containerName: string, blobName: string): boolean => {
   if (!getMockContainer(containerName).delete(blobName)) return false;
-  MockContainerBlobDatesDatabase.delete(getMockContainerBlobDatesKey(containerName, blobName));
+  MockContainerBlobDatesDatabase.delete(getMockBlobKey(containerName, blobName));
   storeMockBlobMetadata(containerName, blobName, undefined);
   return true;
 };

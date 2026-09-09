@@ -2,8 +2,8 @@ import { drainDeadLetterContainer } from "#src/services/drainDeadLetterContainer
 import { getContainerClient } from "#src/services/getContainerClient";
 import { AzureContainer, DEAD_LETTER_ARCHIVED_PREFIX, DEAD_LETTER_QUARANTINE_PREFIX } from "@esposter/db-schema";
 import {
+  getMockBlobKey,
   getMockContainer,
-  getMockContainerBlobDatesKey,
   MOCK_BLOB_SEEDED_DATE,
   MockContainerBlobDatesDatabase,
   MockContainerDatabase,
@@ -13,7 +13,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 vi.mock(import("#src/services/getContainerClient"), () => import("#src/services/getContainerClient.test"));
 
 const readLastModified = (blobName: string) =>
-  MockContainerBlobDatesDatabase.get(getMockContainerBlobDatesKey(AzureContainer.DeadLetter, blobName))?.lastModified;
+  MockContainerBlobDatesDatabase.get(getMockBlobKey(AzureContainer.DeadLetter, blobName))?.lastModified;
 
 describe(drainDeadLetterContainer, () => {
   const strandedBlobName = "topic/subscription/2026/8/23/12/stranded.json";
