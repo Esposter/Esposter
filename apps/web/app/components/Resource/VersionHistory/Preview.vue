@@ -2,6 +2,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
+import { hasCapability } from "#shared/services/resource/hasCapability";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { parseSnapshotVersionId } from "@/services/resource/parseSnapshotVersionId";
 import { ViewComponentMap } from "@/services/resource/ViewComponentMap";
@@ -19,9 +20,11 @@ const { stopPreviewingSnapshot } = useVersionHistoryRoute();
 const snapshotVersion = computed(() => parseSnapshotVersionId(snapshotVersionId));
 // The type's own public renderer, matched against a runtime resource type the way the public view route
 // Matches its own route param — a type with no renderer previews nothing, and its rows never offer to
-const viewComponent = computed(
-  () => Object.entries(ViewComponentMap).find(([viewType]) => viewType === resource.type)?.[1],
-);
+const viewComponent = computed(() => {
+  const { type } = resource;
+  if (hasCapability(type, "publishable")) return ViewComponentMap[type];
+  else return undefined;
+});
 // The public renderer addresses `{id}/published/{version}`, so it can only be handed a published version — a
 // Revision's number would render whichever published snapshot happens to share it, and the two channels number
 // Independently. A revision has no rendered form here and falls to the empty state, whose Restore is the way to
