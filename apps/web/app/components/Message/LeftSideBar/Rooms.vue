@@ -9,6 +9,7 @@ import { getReorderedRoomCategories } from "@/services/message/roomCategory/getR
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
+import { getOrCreate } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
 const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarRoomsCollapsed, false);
@@ -22,11 +23,7 @@ const { readMoreRooms, readRooms } = await useReadRooms();
 const [{ isPending }] = await Promise.all([readRooms(), readRoomCategories()]);
 const categoryIdRoomsMap = computed(() => {
   const roomsMap = new Map<null | string, RoomInMessage[]>();
-  for (const room of rooms.value) {
-    const group = roomsMap.get(room.categoryId) ?? [];
-    group.push(room);
-    roomsMap.set(room.categoryId, group);
-  }
+  for (const room of rooms.value) getOrCreate(roomsMap, room.categoryId, () => []).push(room);
   return roomsMap;
 });
 const uncategorizedRooms = computed(() => categoryIdRoomsMap.value.get(null) ?? []);
