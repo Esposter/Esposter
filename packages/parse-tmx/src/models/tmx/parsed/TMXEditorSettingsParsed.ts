@@ -1,1 +1,5 @@
-export interface TMXEditorSettingsParsed extends Record<string, unknown> {}
+import type { TMXExportParsed } from "#src/models/tmx/parsed/TMXExportParsed";
+
+export interface TMXEditorSettingsParsed {
+  export?: TMXExportParsed;
+}

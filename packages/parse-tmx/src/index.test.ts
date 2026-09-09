@@ -8,11 +8,11 @@ describe("parse-tmx", () => {
 
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 11.06 KB (11324 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 10.90 KB (11162 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 11.86 KB (12146 bytes)"`);
+    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 12.20 KB (12492 bytes)"`);
   });
 });
