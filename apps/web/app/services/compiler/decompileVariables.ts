@@ -7,7 +7,7 @@ export const decompileVariables = (
   delimiter: Delimiter = Delimiter.CurlyBraces,
 ): string =>
   string.replaceAll(DelimiterRegexMap[delimiter], (_, key: string) => {
-    if (!Object.hasOwn(context, key)) return "";
-    const value = context[key];
-    return value !== null && value !== undefined ? String(value) : "";
+    // Own keys only — an inherited name like `toString` would otherwise substitute the function's source
+    if (Object.hasOwn(context, key)) return String(context[key] ?? "");
+    else return "";
   });
