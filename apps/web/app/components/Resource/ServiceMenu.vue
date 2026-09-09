@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { NavigationItem } from "@/models/shared/NavigationItem";
 
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+import { ResourceListSources } from "@/models/resource/list/ResourceListSource";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 import { RoutePath } from "@esposter/shared";
 
@@ -14,7 +14,7 @@ const { currentRoute } = useRouter();
 const items = computed<NavigationItem[]>(() =>
   [
     { icon: "mdi-home-outline", title: "Home", to: RoutePath.ResourceExplorer },
-    ...Object.values(ResourceListSource).map((source) => {
+    ...ResourceListSources.map((source) => {
       const { icon, title, to } = ResourceListSourceDefinitionMap[source];
       return { icon, title, to };
     }),

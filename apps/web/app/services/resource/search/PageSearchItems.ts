@@ -1,6 +1,6 @@
 import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
 
-import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
+import { ResourceListSource, ResourceListSources } from "@/models/resource/list/ResourceListSource";
 import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
@@ -22,7 +22,7 @@ export const PageSearchItems: readonly ResourceSearchItem[] = [
     title: "Home",
     to: RoutePath.ResourceExplorer,
   },
-  ...Object.values(ResourceListSource).map((source) => ({
+  ...ResourceListSources.map((source) => ({
     group: ResourceSearchGroup.Pages,
     icon: ResourceListSourceDefinitionMap[source].icon,
     id: `${ResourceSearchGroup.Pages}${ID_SEPARATOR}${source}`,
