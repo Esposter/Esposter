@@ -5,6 +5,7 @@ import { ContentCollection } from "#shared/models/content/ContentCollection";
 import { DocsSearchSectionPropertyNames } from "@/models/docs/DocsSearchSection";
 import { MAX_DOCS_SEARCH_RESULTS } from "@/services/docs/constants";
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
+import { getOrCreate } from "@esposter/shared";
 import MiniSearch from "minisearch";
 
 const isOpen = ref(false);
@@ -34,12 +35,11 @@ const results = computed(() => {
   if (!query.value) return [];
   const pagePathResultsMap = new Map<string, { id: string; subtitle: string; title: string }>();
   for (const searchResult of miniSearch.value.search(query.value)) {
-    // MiniSearch's SearchResult cannot express storeFields — it declares none of them, so there is no overlap
-    // For a direct cast and nothing to annotate. The fields are the ones the index above was told to store
-    const { id, title, titles } = searchResult as unknown as Pick<DocsSearchSection, "id" | "title" | "titles">;
+    // MiniSearch carries storeFields through an index signature, so they come back as `any` — the cast is the
+    // Shape the index above was told to store, named once here rather than flowing on unchecked
+    const { id, title, titles } = searchResult as Pick<DocsSearchSection, "id" | "title" | "titles">;
     const pagePath = id.split("#")[0] || id;
-    if (!pagePathResultsMap.has(pagePath))
-      pagePathResultsMap.set(pagePath, { id, subtitle: titles.join(" › ") || pagePath, title });
+    getOrCreate(pagePathResultsMap, pagePath, () => ({ id, subtitle: titles.join(" › ") || pagePath, title }));
     if (pagePathResultsMap.size === MAX_DOCS_SEARCH_RESULTS) break;
   }
   return [...pagePathResultsMap.values()];
