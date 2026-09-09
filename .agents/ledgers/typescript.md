@@ -161,7 +161,7 @@ Most of the `typescript` skill is lint- or typecheck-decided; what this sweep ca
 | `packages/azure`, `packages/azure-mock`, `apps/functions`, `packages/db-mock`                              | 2026-09-09 |                                                                                                                                            |
 | `packages/virrun` — `services/exec`                                                                        | 2026-09-09 |                                                                                                                                            |
 | `packages/virrun` — the rest                                                                               | 2026-09-09 |                                                                                                                                            |
-| `apps/infra`, `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`                             | —          |                                                                                                                                            |
+| `apps/infra`, `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`                             | 2026-09-09 |                                                                                                                                            |
 | `packages/configuration`, `scripts`                                                                        | —          |                                                                                                                                            |
 
 ## The find recipe

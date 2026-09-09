@@ -15,8 +15,7 @@ export const usePhaserStore = defineStore("phaser", () => {
     },
   });
 
-  const sceneKey = ref<SceneWithPlugins["scene"]["key"]>();
-  const rootSceneKey = sceneKey;
+  const sceneKey = ref<SceneWithPlugins["scene"]["key"]>("");
   const isSameScene = (newSceneKey: SceneWithPlugins["scene"]["key"]) => newSceneKey === sceneKey.value;
   const switchToScene = async (newSceneKey: SceneWithPlugins["scene"]["key"]) => {
     if (isSameScene(newSceneKey)) return;
@@ -63,7 +62,7 @@ export const usePhaserStore = defineStore("phaser", () => {
     parallelSceneKeys,
     prioritizedParallelSceneKeys,
     removeParallelScene,
-    rootSceneKey: rootSceneKey as Ref<SceneWithPlugins["scene"]["key"]>,
+    rootSceneKey: sceneKey,
     switchToScene,
   };
 });
