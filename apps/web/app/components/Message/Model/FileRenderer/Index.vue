@@ -12,10 +12,12 @@ const language = computed(() => getLanguage(file.value.filename));
 const renderer = computed<Component>(() => {
   if (language.value) return CodeRenderer;
   else if (file.value.mimetype in TypeRendererMap) return takeOne(TypeRendererMap, file.value.mimetype);
-
-  const inferredMimetype = getInferredMimetype(file.value.mimetype);
-  if (inferredMimetype in TypeRendererMap) return takeOne(TypeRendererMap, inferredMimetype);
-  else return DefaultRenderer;
+  else {
+    // The prefix alone — an image or a video of any specific format renders the same way
+    const inferredMimetype = getInferredMimetype(file.value.mimetype);
+    if (inferredMimetype in TypeRendererMap) return takeOne(TypeRendererMap, inferredMimetype);
+    else return DefaultRenderer;
+  }
 });
 </script>
 

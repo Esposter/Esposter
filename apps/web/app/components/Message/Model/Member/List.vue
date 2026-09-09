@@ -15,8 +15,8 @@ const roleStore = useRoleStore();
 const { getMemberRoles } = roleStore;
 const memberGroups = computed(() => {
   const room = currentRoom.value;
-  if (!room) return [];
-  return getMemberGroups(members.value, (userId) => getMemberRoles(room.id, userId));
+  if (room) return getMemberGroups(members.value, (userId) => getMemberRoles(room.id, userId));
+  else return [];
 });
 const roleIdMemberCountMap = computed(
   () => new Map(memberCountsByTopRole.value.map((countByTopRole) => [countByTopRole.roleId, countByTopRole.count])),
