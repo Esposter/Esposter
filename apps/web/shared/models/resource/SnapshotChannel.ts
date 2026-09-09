@@ -6,3 +6,5 @@ export enum SnapshotChannel {
   Published = "published",
   Revisions = "revisions",
 }
+
+export const SnapshotChannels = Object.values(SnapshotChannel);

@@ -14,5 +14,5 @@ export const getPurgesInText = (deletedAt: Resource["deletedAt"]): string => {
     (purgesAtMs - Date.now()) / Temporal.Duration.from({ days: 1 }).total("milliseconds"),
   );
   if (remainingDays <= 0) return "Purges soon";
-  return `Purges in ${remainingDays} ${pluralize("day", remainingDays)}`;
+  else return `Purges in ${remainingDays} ${pluralize("day", remainingDays)}`;
 };
