@@ -8,3 +8,5 @@ export enum MimeCategory {
 }
 
 export const mimeCategorySchema = z.enum(MimeCategory) satisfies z.ZodType<MimeCategory>;
+
+export const MimeCategories: readonly MimeCategory[] = Object.values(MimeCategory);

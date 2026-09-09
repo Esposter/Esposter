@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
-import type { RoomInMessage } from "@esposter/db-schema";
+import type { MimeCategory, RoomInMessage } from "@esposter/db-schema";
 
 import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
-import { MimeCategory } from "@esposter/db-schema";
+import { MimeCategories } from "@esposter/db-schema";
 
 interface Props {
   room: RoomInMessage;
@@ -14,7 +14,7 @@ const saveRoom = useSaveRoom(() => room);
 const editedMaxFileSizeBytes = ref(room.maxFileSizeBytes);
 const editedAllowedMimeCategories = ref([...room.allowedMimeCategories]);
 const maxFileSizeMegabytes = MAX_FILE_REQUEST_SIZE / MEGABYTE;
-const categoryItems = Object.values(MimeCategory).map<SelectItemCategoryDefinition<MimeCategory>>((category) => ({
+const categoryItems = MimeCategories.map<SelectItemCategoryDefinition<MimeCategory>>((category) => ({
   title: category,
   value: category,
 }));

@@ -3,7 +3,7 @@ import type { RoomFilterInMessage } from "@esposter/db-schema";
 
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
 import { TimeoutDurationSelectItems } from "@/services/message/moderation/TimeoutDurationSelectItems";
-import { WordFilterAction } from "@esposter/db-schema";
+import { WordFilterAction, WordFilterActions } from "@esposter/db-schema";
 import { toRawDeep } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
@@ -20,7 +20,7 @@ interface WordFilterFormData {
 
 const { filter, roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const actionSelectItems = Object.values(WordFilterAction).map((value) => ({ title: value, value }));
+const actionSelectItems = WordFilterActions.map((value) => ({ title: value, value }));
 const getWordFilterFormData = (roomFilter: RoomFilterInMessage | undefined): WordFilterFormData => ({
   action: roomFilter?.action ?? WordFilterAction.Reject,
   timeoutDurationMs: roomFilter?.timeoutDurationMs ?? TimeoutDurationMap["5 minutes"],
