@@ -1,4 +1,4 @@
-import type { QualifiedTag, SAXParser, Tag } from "sax";
+import type { QualifiedAttribute, QualifiedTag, SAXParser } from "sax";
 import type { convertableToString, ParserOptions } from "xml2js";
 
 import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "#src/constants";
@@ -37,20 +37,18 @@ export class Parser {
         [this.#options.charkey]: "",
       };
       if (!this.#options.ignoreAttrs)
-        for (const key in node.attributes)
-          if (Object.hasOwn(node.attributes, key)) {
-            if (!(this.#options.attrkey in newObject) && !this.#options.mergeAttrs)
-              newObject[this.#options.attrkey] = {};
+        for (const [key, attribute] of Object.entries<QualifiedAttribute | string>(node.attributes)) {
+          if (!(this.#options.attrkey in newObject) && !this.#options.mergeAttrs) newObject[this.#options.attrkey] = {};
 
-            const newValue = this.#options.attrValueProcessors
-              ? processItem(this.#options.attrValueProcessors, takeOne((node as Tag).attributes, key), key)
-              : node.attributes[key];
-            const processedKey = this.#options.attrNameProcessors
-              ? processItem(this.#options.attrNameProcessors, key, "")
-              : key;
-            if (this.#options.mergeAttrs) this.#assignOrPush(newObject, processedKey, newValue);
-            else defineProperty(newObject[this.#options.attrkey] as Record<string, unknown>, processedKey, newValue);
-          }
+          const newValue = this.#options.attrValueProcessors
+            ? processItem(this.#options.attrValueProcessors, attribute as string, key)
+            : attribute;
+          const processedKey = this.#options.attrNameProcessors
+            ? processItem(this.#options.attrNameProcessors, key, "")
+            : key;
+          if (this.#options.mergeAttrs) this.#assignOrPush(newObject, processedKey, newValue);
+          else defineProperty(newObject[this.#options.attrkey] as Record<string, unknown>, processedKey, newValue);
+        }
       newObject[BUILTIN_NAME_KEY] = this.#options.tagNameProcessors
         ? processItem(this.#options.tagNameProcessors, node.name, "")
         : node.name;
@@ -88,9 +86,7 @@ export class Parser {
         object[this.#options.charkey] = this.#options.valueProcessors
           ? processItem(this.#options.valueProcessors, charValue, nodeName)
           : charValue;
-        // Do away with '#' key altogether, if there's no subkeys
-        if (Object.keys(object).length === 1 && this.#options.charkey in object)
-          object = object[this.#options.charkey] as Record<string, unknown>;
+        object = this.#collapseCharKey(object);
       }
 
       if (checkIsEmpty(object))
@@ -125,9 +121,7 @@ export class Parser {
           // Push a clone so the child entry can carry the #name property while the original goes without.
           (nextObject[this.#options.childkey] as Record<string, unknown>[]).push(structuredClone(object));
           delete object[BUILTIN_NAME_KEY];
-          // Re-check whether the node can now collapse to just the charkey value.
-          if (Object.keys(object).length === 1 && this.#options.charkey in object)
-            object = object[this.#options.charkey] as Record<string, unknown>;
+          object = this.#collapseCharKey(object);
         }
       // Check whether we closed all the open tags
       if (this.#stack.length > 0) this.#assignOrPush(nextObject ?? {}, nodeName, object);
@@ -195,6 +189,13 @@ export class Parser {
       else defineProperty(object, key, [objectValue]);
     } else if (this.#options.explicitArray) defineProperty(object, key, [newValue]);
     else defineProperty(object, key, newValue);
+  }
+
+  // A node whose only key is the char data is the char data: `<a>b</a>` parses to "b", not to { _: "b" }
+  #collapseCharKey(object: Record<string, unknown>): Record<string, unknown> {
+    if (Object.keys(object).length === 1 && this.#options.charkey in object)
+      return object[this.#options.charkey] as Record<string, unknown>;
+    return object;
   }
   // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
   #parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {

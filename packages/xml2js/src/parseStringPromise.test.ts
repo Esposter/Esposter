@@ -44,6 +44,33 @@ describe(parseStringPromise, () => {
     expect(result.root.child).toStrictEqual(["A B"]);
   });
 
+  test("merges attributes onto the node when mergeAttrs is set", async () => {
+    expect.hasAssertions();
+
+    const result = await parseStringPromise('<root><child attr="value"/></root>', { mergeAttrs: true });
+
+    expect(result).toStrictEqual({ root: { child: [{ attr: ["value"] }] } });
+  });
+
+  test("drops attributes when ignoreAttrs is set", async () => {
+    expect.hasAssertions();
+
+    const result = await parseStringPromise('<root><child attr="value">text</child></root>', { ignoreAttrs: true });
+
+    expect(result).toStrictEqual({ root: { child: ["text"] } });
+  });
+
+  test("applies the attribute name and value processors", async () => {
+    expect.hasAssertions();
+
+    const result = await parseStringPromise('<root><child attr="value"/></root>', {
+      attrNameProcessors: [(name) => name.toUpperCase()],
+      attrValueProcessors: [(value) => value.toUpperCase()],
+    });
+
+    expect(result).toStrictEqual({ root: { child: [{ $: { ATTR: "VALUE" } }] } });
+  });
+
   test("drops a blank char key", async () => {
     expect.hasAssertions();
 
