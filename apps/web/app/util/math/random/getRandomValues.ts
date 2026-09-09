@@ -14,9 +14,12 @@ export const getRandomValues = <T>(values: T[], takenLength: number) => {
 
   let remainingLength = takenLength;
   while (remainingLength--) {
-    const x = Math.floor(Math.random() * length);
-    resultValues[remainingLength] = takeOne(values, x in takenValues ? takeOne(takenValues, x) : x);
-    takenValues[x] = --length in takenValues ? takeOne(takenValues, length) : length;
+    const randomIndex = Math.floor(Math.random() * length);
+    resultValues[remainingLength] = takeOne(
+      values,
+      randomIndex in takenValues ? takeOne(takenValues, randomIndex) : randomIndex,
+    );
+    takenValues[randomIndex] = --length in takenValues ? takeOne(takenValues, length) : length;
   }
 
   return resultValues;
