@@ -26,10 +26,9 @@ export const CatchMonster: State<StateName> = {
       await showMessages(scene, [`You caught ${prettify(activeMonster.value.key)}.`]);
       await battleStateMachine.setState(StateName.GainExperience);
       monsters.value.push(activeMonster.value);
-      return;
+    } else {
+      await showMessages(scene, [`Wild ${prettify(activeMonster.value.key)} breaks free!`]);
+      await battleStateMachine.setState(StateName.EnemyInput);
     }
-
-    await showMessages(scene, [`Wild ${prettify(activeMonster.value.key)} breaks free!`]);
-    await battleStateMachine.setState(StateName.EnemyInput);
   },
 };

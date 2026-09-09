@@ -67,11 +67,10 @@ export const GainExperience: State<StateName> = {
         }),
       );
       activeMonster.value.status.experience += experienceGain;
-      return;
+    } else {
+      activeMonster.value.status.experience += experienceGain;
+      await onComplete();
     }
-
-    activeMonster.value.status.experience += experienceGain;
-    await onComplete();
   },
 };
 

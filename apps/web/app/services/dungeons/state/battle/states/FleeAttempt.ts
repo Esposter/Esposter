@@ -16,11 +16,10 @@ export const FleeAttempt: State<StateName> = {
     if (createRandomBoolean()) {
       await showMessages(scene, ["You failed to run away..."]);
       await battleStateMachine.setState(StateName.EnemyInput);
-      return;
+    } else {
+      await showMessages(scene, ["You got away safely!"]);
+      getDungeonsSoundEffect(scene, SoundEffectKey.Flee).play();
+      await battleStateMachine.setState(StateName.Finished);
     }
-
-    await showMessages(scene, ["You got away safely!"]);
-    getDungeonsSoundEffect(scene, SoundEffectKey.Flee).play();
-    await battleStateMachine.setState(StateName.Finished);
   },
 };
