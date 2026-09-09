@@ -71,15 +71,13 @@ const moveCardsTimer = ref<number>();
 // Mark the top-right card active, move it to the end of the array, then unmark it after a timeout.
 const moveCards = () => {
   if (cards.length === 0) return;
-  else if (cards.length === 1) {
-    moveOneCard();
-    return;
+  else if (cards.length === 1) moveOneCard();
+  else {
+    inactiveCardId.value = activeCardId.value;
+    activeCardId.value = takeOne(cardIds.value);
+    // "Rotate" the cards.
+    cardIds.value = cardIds.value.map((id) => (id + 1) % cards.length);
   }
-
-  inactiveCardId.value = activeCardId.value;
-  activeCardId.value = takeOne(cardIds.value);
-  // "Rotate" the cards.
-  cardIds.value = cardIds.value.map((id) => (id + 1) % cards.length);
 };
 
 const moveOneCard = () => {
@@ -127,12 +125,15 @@ const activeCardStyle = computed<CardStyleVariables>(() => ({
 const inactiveCardStyle = computed<CardStyleVariables>(() => {
   // Size is irrelevant with a single card.
   if (cards.length === 1) return { scaleY: "1" };
-  return { scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.length - 1) - 1)}` };
+  else return { scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.length - 1) - 1)}` };
 });
 
 onMounted(() => {
   // Comment this line out when debugging animations so the cards stop moving on you.
-  if (duration > 0) moveCardsTimer.value = window.setInterval(moveCards, duration);
+  if (duration > 0)
+    moveCardsTimer.value = window.setInterval(() => {
+      moveCards();
+    }, duration);
   moveCards();
 });
 
