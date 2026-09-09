@@ -19,6 +19,8 @@ const columnKeySummaryMap = computed(() => {
     const context = buildColumnStatisticsComputeContext(column.type, values);
     const definition = ColumnStatisticsDefinitionMap[column.footerStatisticsKey];
     const value = definition.compute(context);
+    // The key is only known at runtime, so the compiler cannot correlate this definition's `compute` output
+    // With its own `format` input — the two are the same statistic by construction of the map
     result.set(toColumnKey(column.name), `${definition.title} ${definition.format(value as never, column)}`);
   }
   return result;

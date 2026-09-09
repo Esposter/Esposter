@@ -11,3 +11,5 @@ export const SceneComponentMap = {
   [SceneKey.Title]: defineAsyncComponent(() => import("@/components/Dungeons/Title/Scene.vue")),
   [SceneKey.World]: defineAsyncComponent(() => import("@/components/Dungeons/World/Scene.vue")),
 } as const satisfies Record<SceneKey, Component>;
+// Derived at the map rather than at the page that mounts them, so the scenes and their keys cannot drift apart
+export const SceneComponentEntries = Object.entries(SceneComponentMap);

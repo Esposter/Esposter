@@ -28,14 +28,11 @@ const displayFriends = computed(() =>
 const selectedUserIds = computed(() => (isMultiple ? (modelValue.value as string[] | undefined) : undefined) ?? []);
 const checkIsSelected = (id: string) => (isMultiple ? selectedUserIds.value.includes(id) : modelValue.value === id);
 const toggleFriend = (id: string) => {
-  if (!isMultiple) {
-    modelValue.value = (modelValue.value === id ? undefined : id) as ModelValue;
-    return;
-  }
-
-  modelValue.value = (
-    checkIsSelected(id) ? selectedUserIds.value.filter((userId) => userId !== id) : [...selectedUserIds.value, id]
-  ) as ModelValue;
+  if (isMultiple)
+    modelValue.value = (
+      checkIsSelected(id) ? selectedUserIds.value.filter((userId) => userId !== id) : [...selectedUserIds.value, id]
+    ) as ModelValue;
+  else modelValue.value = (modelValue.value === id ? undefined : id) as ModelValue;
 };
 
 const reset = () => {

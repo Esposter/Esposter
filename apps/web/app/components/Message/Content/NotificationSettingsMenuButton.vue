@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLabelMap";
+import { NotificationTypeLabelEntries } from "@/services/message/NotificationTypeLabelMap";
 import { useRoomStore } from "@/store/message/room";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { NotificationType } from "@esposter/db-schema";
@@ -12,7 +12,6 @@ const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
 const { myUserToRoom } = storeToRefs(userToRoomStore);
 const notificationType = computed(() => myUserToRoom.value?.notificationType ?? NotificationType.DirectMessage);
-const NOTIFICATION_TYPE_LABELS = Object.entries(NotificationTypeLabelMap);
 const { executeMutation } = useMutation();
 const updateNotificationType = async (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
@@ -51,7 +50,7 @@ const updateNotificationType = async (newNotificationType: NotificationType) => 
         :model-value="notificationType"
         @update:model-value="updateNotificationType($event as NotificationType)"
       >
-        <v-radio v-for="[value, label] of NOTIFICATION_TYPE_LABELS" :key="value" :value :label>
+        <v-radio v-for="[value, label] of NotificationTypeLabelEntries" :key="value" :value :label>
           <template #label="{ props: labelProps }">
             <v-label :="labelProps" text-label-large :text="label" />
           </template>

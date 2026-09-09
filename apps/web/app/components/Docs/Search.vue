@@ -5,6 +5,7 @@ import { ContentCollection } from "#shared/models/content/ContentCollection";
 import { DocsSearchSectionPropertyNames } from "@/models/docs/DocsSearchSection";
 import { MAX_DOCS_SEARCH_RESULTS } from "@/services/docs/constants";
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
+import { getOrCreate } from "@esposter/shared";
 import MiniSearch from "minisearch";
 
 const isOpen = ref(false);
@@ -38,8 +39,7 @@ const results = computed(() => {
     // For a direct cast and nothing to annotate. The fields are the ones the index above was told to store
     const { id, title, titles } = searchResult as unknown as Pick<DocsSearchSection, "id" | "title" | "titles">;
     const pagePath = id.split("#")[0] || id;
-    if (!pagePathResultsMap.has(pagePath))
-      pagePathResultsMap.set(pagePath, { id, subtitle: titles.join(" › ") || pagePath, title });
+    getOrCreate(pagePathResultsMap, pagePath, () => ({ id, subtitle: titles.join(" › ") || pagePath, title }));
     if (pagePathResultsMap.size === MAX_DOCS_SEARCH_RESULTS) break;
   }
   return [...pagePathResultsMap.values()];

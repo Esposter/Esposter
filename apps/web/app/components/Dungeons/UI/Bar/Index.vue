@@ -56,23 +56,21 @@ watch(barWidth, (newBarWidth) => {
     barDisplayWidth.value = newBarWidth;
     updateDisplayWidth(newBarWidth);
     emit("complete:display-width");
-    return;
-  }
-
-  useTween(tween, {
-    displayWidth: newBarWidth,
-    duration: Temporal.Duration.from({ seconds: 1 }).total("milliseconds"),
-    ease: Math.Easing.Sine.Out,
-    onComplete: () => {
-      emit("complete:display-width");
-    },
-    onStart: (startedTween) => {
-      emit("start:display-width", startedTween);
-    },
-    onUpdate: (_tween, _key, _target, displayWidth) => {
-      updateDisplayWidth(displayWidth);
-    },
-  });
+  } else
+    useTween(tween, {
+      displayWidth: newBarWidth,
+      duration: Temporal.Duration.from({ seconds: 1 }).total("milliseconds"),
+      ease: Math.Easing.Sine.Out,
+      onComplete: () => {
+        emit("complete:display-width");
+      },
+      onStart: (startedTween) => {
+        emit("start:display-width", startedTween);
+      },
+      onUpdate: (_tween, _key, _target, displayWidth) => {
+        updateDisplayWidth(displayWidth);
+      },
+    });
 });
 </script>
 

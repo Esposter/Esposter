@@ -15,8 +15,7 @@ const { activeBlade, resource } = defineProps<Props>();
 // Said, so only the blades that are somewhere else earn the suffix
 const activeBladeTitle = computed(() => {
   if (activeBlade === ResourceBladeType.Overview) return "";
-
-  return getResourceBladeDefinitions(resource.type).find(({ slug }) => slug === activeBlade)?.title ?? activeBlade;
+  else return getResourceBladeDefinitions(resource.type).find(({ slug }) => slug === activeBlade)?.title ?? activeBlade;
 });
 </script>
 

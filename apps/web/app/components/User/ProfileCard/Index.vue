@@ -36,6 +36,8 @@ const profileCardRows = computed(() => {
     },
   } as const;
 });
+// `Object.fromEntries` types its result as a plain record, so the key-to-value correspondence the rows
+// Already carry is restated here rather than lost
 const profileCardRowValues = computed(
   () =>
     Object.fromEntries(Object.entries(profileCardRows.value).map(([property, row]) => [property, row.value])) as {

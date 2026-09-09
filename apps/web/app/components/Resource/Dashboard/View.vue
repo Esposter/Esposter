@@ -19,6 +19,8 @@ const { content, name } = await useReadPublishedResourceContent(
       : $trpc.dashboard.readPublishedResourceContent.query(id),
   version,
 );
+// The published content is the data form of the class — `visuals` carries plain rows where the constructor's
+// `Partial<Dashboard>` declares class instances, and the class is what rebuilds them
 const dashboard = new BaseDashboard(content as never);
 </script>
 

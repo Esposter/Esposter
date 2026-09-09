@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NodeCategoryTypeMap } from "@/services/flowchartEditor/NodeCategoryTypeMap";
+import { NodeCategoryTypeEntries } from "@/services/flowchartEditor/NodeCategoryTypeMap";
 import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 
@@ -7,7 +7,6 @@ const { height, width } = useWindowSize();
 const flowchartEditorStore = useFlowchartEditorStore();
 const { isSidebarOpen } = storeToRefs(flowchartEditorStore);
 const { createNode, onDragStart } = useDragAndDrop();
-const NODE_CATEGORY_TYPES = Object.entries(NodeCategoryTypeMap);
 </script>
 
 <template>
@@ -15,7 +14,7 @@ const NODE_CATEGORY_TYPES = Object.entries(NodeCategoryTypeMap);
     <v-list flex flex-1 flex-col gap-y-4 items-center>
       <v-expansion-panels variant="accordion">
         <v-expansion-panel
-          v-for="[nodeCategory, nodeTypes] of NODE_CATEGORY_TYPES"
+          v-for="[nodeCategory, nodeTypes] of NodeCategoryTypeEntries"
           :key="nodeCategory"
           :title="nodeCategory"
         >

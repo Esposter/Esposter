@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import type { WorldForegroundKey } from "#shared/models/dungeons/keys/image/world/WorldForegroundKey";
 
 import { ImageKeys } from "#shared/models/dungeons/keys/image/ImageKey";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
@@ -9,7 +9,7 @@ import { Image } from "vue-phaserjs";
 const worldSceneStore = useWorldSceneStore();
 const { tilemapKey } = storeToRefs(worldSceneStore);
 const texture = computed(() => {
-  const foregroundTextureKey = `World${tilemapKey.value}Foreground` as ImageKey;
+  const foregroundTextureKey: WorldForegroundKey = `World${tilemapKey.value}Foreground`;
   return ImageKeys.has(foregroundTextureKey) ? foregroundTextureKey : undefined;
 });
 const worldPlayerStore = useWorldPlayerStore();

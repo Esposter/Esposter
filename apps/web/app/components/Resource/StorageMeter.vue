@@ -27,7 +27,9 @@ const usageText = computed(() =>
     : "",
 );
 
-onMounted(readStorageUsage);
+onMounted(async () => {
+  await readStorageUsage();
+});
 </script>
 
 <!-- Mounted by the resource shell on every page in the area, reading the number the store already holds -->

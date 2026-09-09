@@ -12,8 +12,9 @@ const { editedFilter: editedTagValue } = useDebouncedFilter(tagValue);
 // A name with no value means "tagged with this at all", which is the common case.
 // Reads the fields rather than the debounced filters so the chip keeps up with typing
 const tagText = computed(() => {
-  if (!editedTagName.value) return "all";
-  return editedTagValue.value ? `${editedTagName.value}: ${editedTagValue.value}` : editedTagName.value;
+  if (editedTagName.value)
+    return editedTagValue.value ? `${editedTagName.value}: ${editedTagValue.value}` : editedTagName.value;
+  else return "all";
 });
 const tagNameRules = computed(() => [rules.maxLength(MAX_TAG_NAME_LENGTH)]);
 const tagValueRules = computed(() => [rules.maxLength(MAX_TAG_VALUE_LENGTH)]);
