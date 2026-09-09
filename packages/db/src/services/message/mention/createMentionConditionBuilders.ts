@@ -13,6 +13,6 @@ export const createMentionConditionBuilders = (
   regularUserIds: (_db, _roomId, ids) => Promise.resolve(getUserIdsCondition(ids)),
   roleIds: async (db, roomId, ids) => {
     if (ids.length === 0) return undefined;
-    return getUserIdsCondition(await getRoleMemberIds(db, roomId, ids));
+    else return getUserIdsCondition(await getRoleMemberIds(db, roomId, ids));
   },
 });
