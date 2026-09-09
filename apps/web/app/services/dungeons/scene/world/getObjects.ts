@@ -8,7 +8,7 @@ export const getObjects = (tilemap: Tilemaps.Tilemap, objectLayer: Tilemaps.Obje
   const objects: SetRequired<Types.Tilemaps.TiledObject, keyof Position>[] = [];
 
   for (const { x, y, ...rest } of objectLayer.objects) {
-    if (!(x && y)) continue;
+    if (x === undefined || y === undefined) continue;
     objects.push({ ...getObjectUnitPosition(tilemap, { x, y }), ...rest });
   }
 
