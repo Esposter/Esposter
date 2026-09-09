@@ -38,9 +38,8 @@ export const createOperationData = <
     Object.assign(takeOne(items.value, index), updatedItem);
   };
   const deleteItem = (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
-    items.value = items.value.filter(
-      (item) => !getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], ids as Partial<TItem>)(item),
-    );
+    const checkIsDeletedItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], ids as Partial<TItem>);
+    items.value = items.value.filter((item) => !checkIsDeletedItem(item));
   };
   return {
     [`${uncapitalize(entityTypeKey)}s`]: items,
