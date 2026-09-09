@@ -20,15 +20,13 @@ export const getMessageNotificationAuthor = async ({
       where: { roomId: { eq: roomId }, userId: { eq: userId } },
       with: { user: { columns: { image: true, name: true } } },
     });
-    if (!userToRoom) return { title: "" };
-    return { icon: userToRoom.user.image, title: userToRoom.nickname || userToRoom.user.name };
-  }
-
-  if (!appUserId) return { title: "" };
-
-  const appUser = await db.query.appUsersInMessage.findFirst({
-    columns: { image: true, name: true },
-    where: { id: { eq: appUserId } },
-  });
-  return { icon: appUser?.image, title: appUser?.name ?? "" };
+    if (userToRoom) return { icon: userToRoom.user.image, title: userToRoom.nickname || userToRoom.user.name };
+    else return { title: "" };
+  } else if (appUserId) {
+    const appUser = await db.query.appUsersInMessage.findFirst({
+      columns: { image: true, name: true },
+      where: { id: { eq: appUserId } },
+    });
+    return { icon: appUser?.image, title: appUser?.name ?? "" };
+  } else return { title: "" };
 };
