@@ -198,8 +198,8 @@ catalogs:
       specifier: ^1.29.0
       version: 1.29.0
     '@json-layout/vocabulary':
-      specifier: ^2.13.1
-      version: 2.13.1
+      specifier: ^2.13.2
+      version: 2.13.2
     '@koumoul/vjsf':
       specifier: ^4.5.4
       version: 4.5.4
@@ -1321,7 +1321,7 @@ importers:
         version: link:../../packages/shared-node
       '@json-layout/vocabulary':
         specifier: 'catalog:'
-        version: 2.13.1(supports-color@10.2.2)
+        version: 2.13.2(supports-color@10.2.2)
       '@nuxt/content':
         specifier: 'catalog:'
         version: 3.16.0(@electric-sql/pglite@0.5.8)(@oxc-project/types@0.148.0)(esbuild@0.28.2)(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.7)(rollup@4.63.1)(srvx@0.11.22)(supports-color@10.2.2)(valibot@1.4.2(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(vite@8.2.2(@types/node@26.5.0)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.0)(sass@1.104.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))(webpack@5.110.3(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(svgo@4.1.0)(uglify-js@3.19.3))
@@ -3916,8 +3916,8 @@ packages:
     peerDependencies:
       '@json-layout/vocabulary': ^2.13.1
 
-  '@json-layout/vocabulary@2.13.1':
-    resolution: {integrity: sha512-DYEPXu4MmPJkok5wOnezKIGM3tLU2iuyQ+YaiLw6j6RFiY2iBJapOIBVV3+BTiAeH+dTbn95Glf/W12tv9OS0w==}
+  '@json-layout/vocabulary@2.13.2':
+    resolution: {integrity: sha512-B2yncuPFWH1B5wJsfectN9oGxSik7VETwbv2I/nraYjvRJMW2KhBQD/fbnHmkgvgc73RfTxIYqiS4VdGsBN5Mg==}
 
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
@@ -17151,9 +17151,9 @@ snapshots:
     dependencies:
       jsbi: 4.3.2
 
-  '@json-layout/core@2.8.2(@json-layout/vocabulary@2.13.1(supports-color@10.2.2))(supports-color@10.2.2)':
+  '@json-layout/core@2.8.2(@json-layout/vocabulary@2.13.2(supports-color@10.2.2))(supports-color@10.2.2)':
     dependencies:
-      '@json-layout/vocabulary': 2.13.1(supports-color@10.2.2)
+      '@json-layout/vocabulary': 2.13.2(supports-color@10.2.2)
       ajv: 8.20.0
       ajv-errors: 3.0.0(ajv@8.20.0)
       ajv-formats: 3.0.1(ajv@8.20.0)
@@ -17166,7 +17166,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@json-layout/vocabulary@2.13.1(supports-color@10.2.2)':
+  '@json-layout/vocabulary@2.13.2(supports-color@10.2.2)':
     dependencies:
       ajv: 8.20.0
       ajv-errors: 3.0.0(ajv@8.20.0)
@@ -17187,8 +17187,8 @@ snapshots:
 
   '@koumoul/vjsf@4.5.4(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(vuetify@4.1.13(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)))':
     dependencies:
-      '@json-layout/core': 2.8.2(@json-layout/vocabulary@2.13.1(supports-color@10.2.2))(supports-color@10.2.2)
-      '@json-layout/vocabulary': 2.13.1(supports-color@10.2.2)
+      '@json-layout/core': 2.8.2(@json-layout/vocabulary@2.13.2(supports-color@10.2.2))(supports-color@10.2.2)
+      '@json-layout/vocabulary': 2.13.2(supports-color@10.2.2)
       '@vueuse/core': 12.8.2(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
       debug: 4.4.3(supports-color@10.2.2)
       vue: 3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
