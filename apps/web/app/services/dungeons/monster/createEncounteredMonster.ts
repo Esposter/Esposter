@@ -4,8 +4,8 @@ import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";
 import { levelUp } from "@/services/dungeons/monster/levelUp";
 
-// Wild encounters spawn above the species' base level by replaying the normal level-up rolls,
-// So a scaled spawn is statistically identical to a monster trained to that level.
+// Wild encounters spawn above the species' base level by replaying the normal level-up rolls
+// Rather than scaling the statistics, so a spawn is identical to a monster trained to that level
 export const createEncounteredMonster = (key: MonsterKey, level: number) => {
   const monster = new Monster(key);
   while (monster.statistics.level < level) {

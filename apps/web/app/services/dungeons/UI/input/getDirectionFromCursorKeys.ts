@@ -17,17 +17,17 @@ const getDirectionCursorKeysMap = (
 });
 
 export const getDirectionFromCursorKeys = (cursorKeys: BaseCursorKeys, isJustDown?: true) => {
-  const directionCursorKeysMap = getDirectionCursorKeysMap(cursorKeys);
+  // Object.entries widens its keys to string, and the record it reads is keyed by the enum right above
+  const directionCursorKeysEntries = Object.entries(getDirectionCursorKeysMap(cursorKeys)) as [
+    Direction,
+    Input.Keyboard.Key[],
+  ][];
 
-  for (const [direction, directionKeys] of Object.entries(directionCursorKeysMap)) {
-    if (isJustDown) {
-      // JustDown doesn't support multiple different key presses
-      if (directionKeys.length > 1) continue;
-      if (directionKeys.every((cursorKey) => Input.Keyboard.JustDown(cursorKey))) return direction as Direction;
-      else continue;
-    }
-
-    if (directionKeys.every((cursorKey) => cursorKey.isDown)) return direction as Direction;
+  for (const [direction, directionKeys] of directionCursorKeysEntries) {
+    // JustDown doesn't support multiple different key presses
+    if (isJustDown && directionKeys.length > 1) continue;
+    if (directionKeys.every((cursorKey) => (isJustDown ? Input.Keyboard.JustDown(cursorKey) : cursorKey.isDown)))
+      return direction;
   }
 
   return Direction.NONE;
