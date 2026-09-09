@@ -11,6 +11,6 @@ export const TodoListHeaders: DataTableHeader<TodoListItem>[] = [
   {
     key: "dueAt",
     title: "Due Date",
-    value: (item) => (item.dueAt ? formatDate(item.dueAt, RESOURCE_DATE_FORMAT) : null),
+    value: (item) => (item.dueAt ? formatDate(item.dueAt, RESOURCE_DATE_FORMAT) : ""),
   },
 ];
