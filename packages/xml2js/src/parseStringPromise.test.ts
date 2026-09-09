@@ -71,6 +71,23 @@ describe(parseStringPromise, () => {
     expect(result).toStrictEqual({ root: { child: [{ $: { ATTR: "VALUE" } }] } });
   });
 
+  test("processes the value a qualified attribute wraps when xmlns is set", async () => {
+    expect.hasAssertions();
+
+    const result = await parseStringPromise('<root xmlns:ns="urn:x"><ns:child ns:attr="value"/></root>', {
+      attrValueProcessors: [(value) => value.toUpperCase()],
+      xmlns: true,
+    });
+
+    expect(result).toStrictEqual({
+      root: {
+        $: { "xmlns:ns": "URN:X" },
+        $ns: { local: "root", uri: "" },
+        "ns:child": [{ $: { "ns:attr": "VALUE" }, $ns: { local: "child", uri: "urn:x" } }],
+      },
+    });
+  });
+
   test("drops a blank char key", async () => {
     expect.hasAssertions();
 
