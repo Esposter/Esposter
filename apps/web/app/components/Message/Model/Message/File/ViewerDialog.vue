@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { downloadUrl } from "@/services/app/downloadUrl";
-import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 import { MAX_ZOOM_SCALE, MIN_ZOOM_SCALE, ZOOM_SCALE_PER_WHEEL_STEP } from "@/services/message/file/constants";
 import { useFileStore } from "@/store/message/file";
 import { useFileDialogStore } from "@/store/message/file/dialog";
+import { getMimeCategory, MimeCategory } from "@esposter/db-schema";
 
 const fileStore = useFileStore();
 const { fileUrlMap, viewableFiles } = storeToRefs(fileStore);
@@ -26,7 +26,7 @@ const index = computed(() => viewableFiles.value.findIndex(({ id }) => id === vi
 // Read by id rather than captured when the viewer opened, so the store's refresh sweep re-minting an expiring
 // Read SAS reaches a viewer that is still on screen
 const url = computed(() => (file.value ? (fileUrlMap.value.get(file.value.id)?.url ?? "") : ""));
-const isVideo = computed(() => (file.value ? getInferredMimetype(file.value.mimetype) === "video" : false));
+const isVideo = computed(() => (file.value ? getMimeCategory(file.value.mimetype) === MimeCategory.Video : false));
 const view = (offset: number) => {
   const nextFile = viewableFiles.value[index.value + offset];
   if (nextFile) viewingFileId.value = nextFile.id;
