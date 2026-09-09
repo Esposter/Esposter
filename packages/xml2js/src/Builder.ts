@@ -38,7 +38,7 @@ export class Builder {
     else if (typeof object !== "object") return this.#renderText(element, object);
     else if (Array.isArray(object))
       // https://github.com/Leonidas-from-XIV/node-xml2js/issues/119
-      for (const child of object.values())
+      for (const child of object)
         for (const [key, entry] of getEntries<unknown>(child)) element = this.#render(element.ele(key), entry).up();
     else
       for (const [key, child] of Object.entries(object))
@@ -49,8 +49,7 @@ export class Builder {
           // Char data (CDATA, etc.)
         } else if (key === this.#options.charkey) element = this.#renderText(element, child);
         // Array data
-        else if (Array.isArray(child))
-          for (const entry of child.values()) element = this.#render(element.ele(key), entry).up();
+        else if (Array.isArray(child)) for (const entry of child) element = this.#render(element.ele(key), entry).up();
         // Objects, scalars and nullish leaves
         else element = this.#render(element.ele(key), child).up();
 

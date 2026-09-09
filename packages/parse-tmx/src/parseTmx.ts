@@ -1,4 +1,5 @@
 import type { TMX } from "#src/models/tmx/node/TMX";
+import type { TMXExportNode } from "#src/models/tmx/node/TMXExportNode";
 import type { TMXGroupLayerNode } from "#src/models/tmx/node/TMXGroupLayerNode";
 import type { TMXLayerNode } from "#src/models/tmx/node/TMXLayerNode";
 import type { TMXPropertyNode } from "#src/models/tmx/node/TMXPropertyNode";
@@ -8,6 +9,7 @@ import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
 import { TMXMapParsed } from "#src/models/tmx/parsed/TMXMapParsed";
 import { TMXParsed } from "#src/models/tmx/parsed/TMXParsed";
 import { parseNode } from "#src/util/parseNode";
+import { parseProperties } from "#src/util/parseProperties";
 import { parseTileset } from "#src/util/parseTileset";
 import { parseXmlString } from "#src/util/parseXmlString";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -26,7 +28,9 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
         break;
       case TMXNodeType.EditorSettings:
         if (!node.$$) break;
-        map.editorsettings = Object.assign({}, ...node.$$.map((n) => ({ [n["#name"]]: n.$ })));
+        map.editorsettings = Object.fromEntries(
+          (node.$$ as TMXExportNode[]).map((exportNode) => [exportNode["#name"], exportNode.$]),
+        );
         break;
       case TMXNodeType.Export:
       case TMXNodeType.Image:
@@ -43,10 +47,9 @@ export const parseTmx = async (xmlString: string, translateFlips = false): Promi
       }
       case TMXNodeType.Properties:
         if (!node.$$) break;
-        map.properties = Object.assign(
-          {},
-          ...(node.$$ as TMXPropertyNode[]).map(({ $: { name, value } }) => ({ [name]: value })),
-        );
+        // The walk hands the map's properties over as the node's children rather than as the wrapped
+        // Element list every other caller holds
+        map.properties = parseProperties([{ property: node.$$ as TMXPropertyNode[] }]);
         break;
       case TMXNodeType.Tileset:
         map.tilesets.push(parseTileset(node as TMXTilesetNode));

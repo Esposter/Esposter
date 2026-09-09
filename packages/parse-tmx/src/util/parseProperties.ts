@@ -1,11 +1,5 @@
 import type { TMXPropertyNode } from "#src/models/tmx/node/TMXPropertyNode";
 import type { TMXPropertiesParsed } from "#src/models/tmx/parsed/TMXPropertiesParsed";
 
-import { takeOne } from "@esposter/shared";
-
 export const parseProperties = (properties: { property: TMXPropertyNode[] }[]): TMXPropertiesParsed =>
-  properties.map(({ property }) => {
-    const { $, _ } = takeOne(property);
-    const { name, value } = $;
-    return { name, value: value ?? _ };
-  });
+  properties.flatMap(({ property }) => property.map(({ $: { name, value }, _ }) => ({ name, value: value ?? _ })));

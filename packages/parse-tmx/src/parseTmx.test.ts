@@ -7,6 +7,8 @@ import { describe, expect, test } from "vitest";
 describe(parseTmx, () => {
   const ROOT_DIRECTORY = join(import.meta.dirname, "..");
   const MAP_DIRECTORY = `${ROOT_DIRECTORY}/maps`;
+  const name = "name";
+  const value = "value";
 
   test("empty", async () => {
     expect.hasAssertions();
@@ -16,9 +18,15 @@ describe(parseTmx, () => {
     expect(tmxParsed).toStrictEqual(new TMXParsed());
   });
 
-  // Left as a todo for runtime: it snapshots every .tmx fixture under maps/, whose output only moves when
-  // The parser does. Re-enable on a parseTmx change to regenerate against the committed __snapshots__.
-  test.todo("snapshots", { timeout: Temporal.Duration.from({ seconds: 60 }).total("milliseconds") }, async () => {
+  test("parses map properties", async () => {
+    expect.hasAssertions();
+
+    const tmxParsed = await parseTmx(`<map><properties><property name="${name}" value="${value}"/></properties></map>`);
+
+    expect(tmxParsed.map.properties).toStrictEqual([{ name, value }]);
+  });
+
+  test("snapshots", { timeout: Temporal.Duration.from({ seconds: 60 }).total("milliseconds") }, async () => {
     expect.hasAssertions();
 
     const filenames = await readdir(MAP_DIRECTORY, { recursive: true });

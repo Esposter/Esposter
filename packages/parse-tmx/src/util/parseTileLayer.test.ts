@@ -5,13 +5,14 @@ import { Encoding } from "#src/models/Encoding";
 import { Flipped } from "#src/models/Flipped";
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
 import { assertNode } from "#src/test/assertNode.test";
+import { createLayerShared } from "#src/test/createLayerShared.test";
 import { parseTileLayer } from "#src/util/parseTileLayer";
 import { describe, expect, test } from "vitest";
 
 const createNode = (data: string) =>
   assertNode<TMXLayerNode>({
     "#name": TMXNodeType.Layer,
-    $: { height: 0, id: 0, name: "", type: "", width: 0 },
+    $: createLayerShared(),
     $$: [],
     data: [assertNode<TMXDataNode>({ $: { encoding: Encoding.Csv }, $$: undefined, _: data })],
   });

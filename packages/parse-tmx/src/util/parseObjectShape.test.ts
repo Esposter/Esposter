@@ -3,23 +3,12 @@ import type { TMXObjectNode } from "#src/models/tmx/node/TMXObjectNode";
 import { Shape } from "#src/models/Shape";
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
 import { assertNode } from "#src/test/assertNode.test";
+import { createObjectShared } from "#src/test/createObjectShared.test";
 import { parseObjectShape } from "#src/util/parseObjectShape";
 import { describe, expect, test } from "vitest";
 
 describe(parseObjectShape, () => {
-  const baseNode = {
-    "#name": TMXNodeType.Object,
-    $: {
-      gid: 0,
-      height: 0,
-      id: 0,
-      type: "",
-      width: 0,
-      x: 0,
-      y: 0,
-    },
-    $$: [],
-  };
+  const baseNode = { "#name": TMXNodeType.Object, $: createObjectShared(), $$: [] };
 
   test(Shape.Rectangle, () => {
     expect.hasAssertions();

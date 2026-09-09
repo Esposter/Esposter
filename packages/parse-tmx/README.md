@@ -59,10 +59,10 @@ const loadMap = async () => {
     nextobjectid: 165,
     orientation: "orthogonal",
     renderorder: "right-down",
-    properties: {
-        property1: 'value',
-        property2: 0.5
-    },
+    properties: [
+        {name: 'property1', value: 'value'},
+        {name: 'property2', value: 0.5}
+    ],
     layers: [{
         id: 1,
         name: "layer name",
@@ -79,20 +79,20 @@ const loadMap = async () => {
         width: 512,
         height: 128,
         opacity: 0.77,
-        properties: {
-           property1: 'value',
-           property2: false
-        }
+        properties: [
+           {name: 'property1', value: 'value'},
+           {name: 'property2', value: false}
+        ]
     }, {
         id: 2,
         name: "objects",
         type: "objectgroup",
         visible: 1,
         objects: [{…}, {…}, {…}],
-        properties: {
-           property1: 'value',
-           property2: false
-        }
+        properties: [
+           {name: 'property1', value: 'value'},
+           {name: 'property2', value: false}
+        ]
     }, {
         …
     }],

@@ -27,7 +27,10 @@ export const parseObject = (node: TMXObjectNode): TMXObjectParsed => {
   if (text) {
     const textNode = takeOne(text);
     object.text = textNode._;
-    object.properties = Object.assign({}, ...(object.properties ?? []), textNode.$);
+    object.properties = [
+      ...(object.properties ?? []),
+      ...Object.entries(textNode.$ ?? {}).map(([name, value]) => ({ name, value })),
+    ];
   }
 
   if (object.gid) {
