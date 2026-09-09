@@ -2,13 +2,12 @@
 import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicateMode";
+import { KeepDuplicateMode, KeepDuplicateModes } from "@/models/resource/sheet/commands/KeepDuplicateMode";
 import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
 import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplicateRows";
 import { useSheetStore } from "@/store/resource/sheet";
 import { takeOne } from "@esposter/shared";
 
-const KEEP_DUPLICATE_MODES = Object.values(KeepDuplicateMode);
 const sheetStore = useSheetStore();
 const { dataSource } = storeToRefs(sheetStore);
 const isOpen = defineModel<boolean>({ default: false });
@@ -35,7 +34,7 @@ const duplicateHeaders = computed(() => [
     <template v-else>
       <span>{{ duplicateCount }} duplicate {{ pluralize("row", duplicateCount) }} will be deleted.</span>
       <v-btn-toggle v-model="keepMode" density="compact" mandatory mt-4>
-        <v-btn v-for="mode of KEEP_DUPLICATE_MODES" :key="mode" :value="mode">Keep {{ mode }}</v-btn>
+        <v-btn v-for="mode of KeepDuplicateModes" :key="mode" :value="mode">Keep {{ mode }}</v-btn>
       </v-btn-toggle>
       <v-data-table mt-4 density="compact" item-value="index" :headers="duplicateHeaders" :items="duplicateRows" />
     </template>
