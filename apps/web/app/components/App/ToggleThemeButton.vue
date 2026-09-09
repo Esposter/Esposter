@@ -5,6 +5,8 @@ import { ThemeModeIconMap } from "@/services/vuetify/ThemeModeIconMap";
 import { ThemeModeTooltipMap } from "@/services/vuetify/ThemeModeTooltipMap";
 
 const { global } = useVTheme();
+// Vuetify types its theme name as a bare string, while the themes it is given are exactly `ThemeMode` —
+// The cast is that boundary rather than a type this side could state
 const currentTheme = computed(() => global.name.value as ThemeMode);
 const toggleTheme = useToggleTheme();
 </script>
