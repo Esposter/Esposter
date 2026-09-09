@@ -1,10 +1,9 @@
-import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
+import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
 
 import { AXULART_FOLDER_PATH, FIRST_PARTY_FOLDER_PATH } from "#shared/services/app/constants";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 
-export const TilesetLoaderMap: Record<TilesetKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
+export const TilesetLoaderMap = {
   [TilesetKey.BasicPlains]: (scene) =>
     scene.load.image(TilesetKey.BasicPlains, `${AXULART_FOLDER_PATH}/${TilesetKey.BasicPlains}.png`),
   [TilesetKey.BeachAndCaves]: (scene) =>
@@ -32,6 +31,6 @@ export const TilesetLoaderMap: Record<TilesetKey, (scene: SceneWithPlugins) => L
     }),
   [TilesetKey.Teleport]: (scene) =>
     scene.load.image(TilesetKey.Teleport, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Teleport}.png`),
-};
+} as const satisfies Record<TilesetKey, AssetLoader>;
 
 export const TilesetLoaders = Object.values(TilesetLoaderMap);

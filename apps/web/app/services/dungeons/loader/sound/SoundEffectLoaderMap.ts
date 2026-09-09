@@ -1,5 +1,4 @@
-import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
+import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
 
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import openChest from "@/assets/dungeons/sound/openChest.mp3";
@@ -10,13 +9,12 @@ import flee from "@/assets/dungeons/thirdParty/leohpaz/flee.wav";
 import iceExplosion from "@/assets/dungeons/thirdParty/leohpaz/iceExplosion.wav";
 import stepGrass from "@/assets/dungeons/thirdParty/leohpaz/stepGrass.wav";
 
-export const SoundEffectLoaderMap: Record<SoundEffectKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
+export const SoundEffectLoaderMap = {
   [SoundEffectKey.Claw]: (scene) => scene.load.audio(SoundEffectKey.Claw, claw),
   [SoundEffectKey.Flee]: (scene) => scene.load.audio(SoundEffectKey.Flee, flee),
   [SoundEffectKey.IceExplosion]: (scene) => scene.load.audio(SoundEffectKey.IceExplosion, iceExplosion),
   [SoundEffectKey.OpenChest]: (scene) => scene.load.audio(SoundEffectKey.OpenChest, openChest),
-
   [SoundEffectKey.OpenDoor]: (scene) => scene.load.audio(SoundEffectKey.OpenDoor, openDoor),
   [SoundEffectKey.StepGrass]: (scene) => scene.load.audio(SoundEffectKey.StepGrass, stepGrass),
   [SoundEffectKey.TextBlip]: (scene) => scene.load.audio(SoundEffectKey.TextBlip, textBlip),
-};
+} as const satisfies Record<SoundEffectKey, AssetLoader>;

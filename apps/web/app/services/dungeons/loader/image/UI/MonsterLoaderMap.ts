@@ -1,5 +1,4 @@
-import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
+import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
 
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import aquavalor from "@/assets/dungeons/UI/monsters/aquavalor.png";
@@ -14,4 +13,4 @@ export const MonsterLoaderMap = {
   [MonsterKey.Frostsaber]: (scene) => scene.load.image(MonsterKey.Frostsaber, frostsaber),
   [MonsterKey.Ignivolt]: (scene) => scene.load.image(MonsterKey.Ignivolt, ignivolt),
   [MonsterKey.Iguanignite]: (scene) => scene.load.image(MonsterKey.Iguanignite, iguanignite),
-} as const satisfies Record<MonsterKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin>;
+} as const satisfies Record<MonsterKey, AssetLoader>;

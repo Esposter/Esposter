@@ -1,5 +1,4 @@
-import type { Loader } from "phaser";
-import type { SceneWithPlugins } from "vue-phaserjs";
+import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
 
 import { AttackKey } from "#shared/models/dungeons/keys/spritesheet/AttackKey";
 import iceAttackActive from "@/assets/dungeons/thirdParty/pimen/iceAttack/active.png";
@@ -12,4 +11,4 @@ export const AttackLoaderMap = {
     scene.load.spritesheet(AttackKey["Ice Shard"], iceAttackActive, { frameHeight: 32, frameWidth: 32 }),
   [AttackKey["Ice Shard Start"]]: (scene) =>
     scene.load.spritesheet(AttackKey["Ice Shard Start"], iceAttackStart, { frameHeight: 32, frameWidth: 32 }),
-} as const satisfies Record<AttackKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin>;
+} as const satisfies Record<AttackKey, AssetLoader>;
