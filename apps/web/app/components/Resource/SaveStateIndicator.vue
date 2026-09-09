@@ -34,11 +34,13 @@ const saveStateDefinition = computed<{ color?: string; icon: string; title: stri
         </template>
       </div>
     </template>
-    <span>{{ saveStateDefinition.title }}</span>
-    <NuxtTime
-      v-if="saveState === ResourceSaveState.Saved"
-      :="RESOURCE_DATE_TIME_ATTRIBUTES"
-      :datetime="resource.updatedAt"
-    />
+    <div flex gap-1 items-center>
+      <span>{{ saveStateDefinition.title }}</span>
+      <NuxtTime
+        v-if="saveState === ResourceSaveState.Saved"
+        :="RESOURCE_DATE_TIME_ATTRIBUTES"
+        :datetime="resource.updatedAt"
+      />
+    </div>
   </v-tooltip>
 </template>
