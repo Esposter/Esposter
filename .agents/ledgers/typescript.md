@@ -162,7 +162,7 @@ Most of the `typescript` skill is lint- or typecheck-decided; what this sweep ca
 | `packages/virrun` — `services/exec`                                                                        | 2026-09-09 |                                                                                                                                            |
 | `packages/virrun` — the rest                                                                               | 2026-09-09 |                                                                                                                                            |
 | `apps/infra`, `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`                             | 2026-09-09 |                                                                                                                                            |
-| `packages/configuration`, `scripts`                                                                        | —          |                                                                                                                                            |
+| `packages/configuration`, `scripts`                                                                        | 2026-09-09 |                                                                                                                                            |
 
 ## The find recipe
 
