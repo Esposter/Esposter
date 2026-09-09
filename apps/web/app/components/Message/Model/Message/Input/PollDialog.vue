@@ -18,7 +18,7 @@ const { isOpen } = storeToRefs(pollDialogStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const question = ref("");
-const options = ref(Array.from<string>({ length: POLL_MIN_OPTIONS }).fill(""));
+const options = ref(Array.from({ length: POLL_MIN_OPTIONS }, () => ""));
 const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
   await withFinalizerAsync(async () => {
     if (!currentRoomId.value) return;
