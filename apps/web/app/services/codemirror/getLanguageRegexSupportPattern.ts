@@ -1,7 +1,10 @@
 export const getLanguageRegexSupportPattern = (supportedExtensions: string): RegExp =>
   new RegExp(
     supportedExtensions.includes("^")
-      ? supportedExtensions.replaceAll(/\|(?<caret>\^)?/gu, (_, b) => `$|${b ? "^" : String.raw`^.*\.`}$`)
+      ? supportedExtensions.replaceAll(
+          /\|(?<caret>\^)?/gu,
+          (_match, caret: string | undefined) => `$|${caret ? "^" : String.raw`^.*\.`}$`,
+        )
       : `^.*\\.(${supportedExtensions})$`,
     "u",
   );

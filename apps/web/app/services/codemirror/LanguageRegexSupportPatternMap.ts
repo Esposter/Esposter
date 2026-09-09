@@ -8,4 +8,3 @@ export const LanguageRegexSupportPatternMap = Object.fromEntries(
     getLanguageRegexSupportPattern(extensions.map((extension) => RegExp.escape(extension)).join(ID_SEPARATOR)),
   ]),
 );
-export type LanguageRegexSupportPatternMap = typeof LanguageRegexSupportPatternMap;
