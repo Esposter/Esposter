@@ -28,7 +28,9 @@ onMounted(async () => {
   await readSnapshotHistory();
 });
 // The panel's state is the open resource's, and the panel is what opened it
-onUnmounted(clearVersionHistory);
+onUnmounted(() => {
+  clearVersionHistory();
+});
 </script>
 
 <template>

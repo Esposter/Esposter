@@ -25,7 +25,9 @@ const { deletingId, renamingId } = storeToRefs(listDialogStore);
 const favoriteStore = useFavoriteStore();
 const { readFavorites } = favoriteStore;
 // Every row renders a star, so the favorites are read once for the list rather than once per row
-onMounted(readFavorites);
+onMounted(async () => {
+  await readFavorites();
+});
 // The filter state mirrors to query params, so a global-search deep link lands the list filtered
 const {
   clearFilters,
