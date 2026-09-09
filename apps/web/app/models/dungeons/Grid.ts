@@ -40,7 +40,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
     this.validate = (targetPosition) => {
       const value = this.getValue(targetPosition);
       if (value === undefined) return false;
-      return validate?.bind(this)(targetPosition) ?? true;
+      else return validate?.bind(this)(targetPosition) ?? true;
     };
     this.#internalValidate = (...args) => unref(this.validate(...args));
     this.grid = grid;
