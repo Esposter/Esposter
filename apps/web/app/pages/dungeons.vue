@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FontKey } from "@/models/dungeons/keys/FontKey";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SceneComponentMap } from "@/services/dungeons/scene/SceneComponentMap";
+import { SceneComponentEntries } from "@/services/dungeons/scene/SceneComponentMap";
 import { checkIsMobile } from "@/util/device/checkIsMobile";
 import { GridEngine } from "grid-engine";
 import { AUTO, Scale } from "phaser";
@@ -20,7 +20,6 @@ prioritizedParallelSceneKeys.value = [SceneKey.MobileJoystick];
 const textStore = useTextStore();
 const { defaultTextStyle } = storeToRefs(textStore);
 defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
-const SCENE_COMPONENT_ENTRIES = Object.entries(SceneComponentMap);
 </script>
 
 <template>
@@ -70,7 +69,7 @@ const SCENE_COMPONENT_ENTRIES = Object.entries(SceneComponentMap);
         },
       }"
     >
-      <component :is="component" v-for="[sceneKey, component] of SCENE_COMPONENT_ENTRIES" :key="sceneKey" />
+      <component :is="component" v-for="[sceneKey, component] of SceneComponentEntries" :key="sceneKey" />
     </Game>
   </NuxtLayout>
 </template>
