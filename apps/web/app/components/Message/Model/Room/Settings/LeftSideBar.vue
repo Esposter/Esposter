@@ -28,13 +28,12 @@ const checkIsVisible = (settingsType: SettingsType) => {
   if (permission) return checkHasMyPermission(room.id, permission);
   else return true;
 };
+// Walked through the enum's own values rather than the map's entries, which come back keyed by `string`
 const visibleCategories = computed(() =>
-  Object.entries(SettingsCategoryMap)
-    .map(([category, settingsTypes]) => ({
-      category: category as SettingsCategory,
-      settingsTypes: settingsTypes.filter((settingsType) => checkIsVisible(settingsType)),
-    }))
-    .filter(({ settingsTypes }) => settingsTypes.length > 0),
+  SettingsCategories.map((category) => ({
+    category,
+    settingsTypes: SettingsCategoryMap[category].filter((settingsType) => checkIsVisible(settingsType)),
+  })).filter(({ settingsTypes }) => settingsTypes.length > 0),
 );
 // Discord heads the first category with the server name itself
 const getCategoryTitle = (category: SettingsCategory) => (category === SettingsCategory.General ? room.name : category);
