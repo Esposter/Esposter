@@ -22,7 +22,9 @@ const isLoading = ref(true);
 // VueFlow emits on every drag frame; coalesce so overlapping saves don't fight over contentVersion
 const debouncedSave = useAutosaveFunction(saveFlowchartEditor);
 
-onConnect(addEdges);
+onConnect((connection) => {
+  addEdges(connection);
+});
 
 onMounted(async () => {
   await loadContent();
