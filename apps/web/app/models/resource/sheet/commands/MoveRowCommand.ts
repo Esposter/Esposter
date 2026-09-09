@@ -28,9 +28,9 @@ export class MoveRowCommand extends ADataSourceCommand<CommandType.MoveRow> {
   }
 
   #moveRow(dataSource: DataSource, fromIndex: number, toIndex: number) {
-    const moved = dataSource.rows[fromIndex];
-    if (!moved) return;
+    const movedRow = dataSource.rows[fromIndex];
+    if (!movedRow) return;
 
-    dataSource.rows = dataSource.rows.toSpliced(fromIndex, 1).toSpliced(toIndex, 0, moved);
+    dataSource.rows = dataSource.rows.toSpliced(fromIndex, 1).toSpliced(toIndex, 0, movedRow);
   }
 }
