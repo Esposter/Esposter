@@ -8,12 +8,10 @@ export const applyUpgradeEffects = (
   upgrade: Upgrade,
   allUpgradeEffects: Effect[],
   boughtBuildings: BuildingWithStatistics[],
-): Upgrade => {
-  const resultEffects: Effect[] = [];
-  for (const effect of upgrade.effects)
-    resultEffects.push({
-      ...effect,
-      value: applyEffects(effect.value, allUpgradeEffects, boughtBuildings),
-    });
-  return { ...upgrade, effects: resultEffects };
-};
+): Upgrade => ({
+  ...upgrade,
+  effects: upgrade.effects.map((effect) => ({
+    ...effect,
+    value: applyEffects(effect.value, allUpgradeEffects, boughtBuildings),
+  })),
+});
