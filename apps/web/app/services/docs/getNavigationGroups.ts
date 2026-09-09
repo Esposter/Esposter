@@ -4,6 +4,7 @@ import type { ContentNavigationItem } from "@nuxt/content";
 import { DocsNavigationSlug } from "@/models/docs/DocsNavigationSlug";
 import { DocsSectionGroupsMap } from "@/services/docs/DocsSectionGroupsMap";
 import { getSlug } from "@/services/docs/getSlug";
+import { getOrCreate } from "@esposter/shared";
 
 const PLANNING_GROUP_TITLE = "Planning";
 const PlanningSlugs = new Set<string>([
@@ -22,9 +23,7 @@ export const getNavigationGroups = (sectionPath: string, items: ContentNavigatio
   for (const item of items) {
     const slug = getSlug(item.path);
     const title = PlanningSlugs.has(slug) ? PLANNING_GROUP_TITLE : slugGroupTitleMap.get(slug);
-    const groupItems = groupTitleItemsMap.get(title) ?? [];
-    groupItems.push(item);
-    groupTitleItemsMap.set(title, groupItems);
+    getOrCreate(groupTitleItemsMap, title, () => []).push(item);
   }
   // Ungrouped pages lead, mapped groups follow in declaration order, planning pages always trail
   return [undefined, ...Object.keys(sectionGroups), PLANNING_GROUP_TITLE].flatMap((title) => {
