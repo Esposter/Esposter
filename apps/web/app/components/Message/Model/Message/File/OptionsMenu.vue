@@ -2,6 +2,7 @@
 import type { Item } from "@/models/shared/Item";
 
 import { downloadUrl } from "@/services/app/downloadUrl";
+import { DENSE_ICON_BUTTON_PROPS } from "@/services/shared/constants";
 
 interface Props {
   filename: string;
@@ -37,7 +38,7 @@ const titleButtonPropsMap = computed(
     new Map(
       menuItems.value.map(({ color, title }) => [
         title,
-        { class: "m-0", color, density: "comfortable" as const, size: "small" as const, tile: true },
+        { ...DENSE_ICON_BUTTON_PROPS, color, density: "comfortable" as const },
       ]),
     ),
 );

@@ -5,3 +5,5 @@ export enum ResourceListSource {
   Favorites = "Favorites",
   Recents = "Recents",
 }
+
+export const ResourceListSources = Object.values(ResourceListSource);

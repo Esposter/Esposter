@@ -15,8 +15,8 @@ const { data: session } = await authClient.useSession(useFetch);
 const pollContent = computed(() => {
   const parsedMessage = jsonDateParse(message.message);
   const result = pollMessageContentSchema.safeParse(parsedMessage);
-  if (!result.success) throw new InvalidOperationError(Operation.Read, message.rowKey, result.error.message);
-  return result.data;
+  if (result.success) return result.data;
+  else throw new InvalidOperationError(Operation.Read, message.rowKey, result.error.message);
 });
 const totalVoteCount = computed(() => Object.keys(pollContent.value.votes).length);
 const optionIdVoteCountMap = computed(() => getOptionIdVoteCountMap(pollContent.value.votes));

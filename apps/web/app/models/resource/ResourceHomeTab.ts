@@ -1,8 +1,7 @@
-/* eslint-disable perfectionist/sort-enums */
-// Declaration order is the tab order, so the sort rule is disabled to keep Recent first.
 export enum ResourceHomeTab {
-  Recent = "recent",
   Favorites = "favorites",
+  Recent = "recent",
 }
-// Set iteration preserves the declaration order, so the card renders Recent → Favorites.
+// The route-query guard's membership check — the card writes its two tabs out literally, so nothing here
+// Decides the order they render in
 export const ResourceHomeTabs: ReadonlySet<ResourceHomeTab> = new Set(Object.values(ResourceHomeTab));

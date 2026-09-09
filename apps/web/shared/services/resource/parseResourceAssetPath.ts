@@ -34,7 +34,7 @@ export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath |
   const blobName = decodedSegments.join("/");
   if (decodedSegments.length === 3 && directoryName === FILES_DIRECTORY_SEGMENT)
     return { blobName, isPublished: false, resourceId };
-  if (
+  else if (
     decodedSegments.length === 5 &&
     directoryName === SnapshotChannel.Published &&
     // The publish clone directory is a per-attempt uuid, never the publishVersion — the clone runs before the
@@ -44,5 +44,5 @@ export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath |
     publishedFilesDirectoryName === FILES_DIRECTORY_SEGMENT
   )
     return { blobName, isPublished: true, resourceId };
-  return undefined;
+  else return undefined;
 };

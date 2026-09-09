@@ -9,3 +9,5 @@ export enum WordFilterAction {
 }
 
 export const wordFilterActionSchema = z.enum(WordFilterAction) satisfies z.ZodType<WordFilterAction>;
+
+export const WordFilterActions: readonly WordFilterAction[] = Object.values(WordFilterAction);

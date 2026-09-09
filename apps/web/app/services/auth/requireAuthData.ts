@@ -12,5 +12,5 @@ interface AuthResponse<TData> {
 export const requireAuthData = async <TData>(authResponse: Promise<AuthResponse<TData>>): Promise<null | TData> => {
   const { data, error } = await authResponse;
   if (error) throw new Error(error.message ?? error.statusText);
-  return data;
+  else return data;
 };

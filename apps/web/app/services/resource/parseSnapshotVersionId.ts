@@ -1,6 +1,6 @@
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
+import { SnapshotChannels } from "#shared/models/resource/SnapshotChannel";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // The inverse of getSnapshotVersionId, over a value that arrives through the route and is therefore whatever
@@ -10,8 +10,8 @@ export const parseSnapshotVersionId = (
   snapshotVersionId: string,
 ): Pick<SnapshotVersion, "channel" | "version"> | undefined => {
   const [channelSegment, versionSegment] = snapshotVersionId.split(ID_SEPARATOR);
-  const channel = Object.values(SnapshotChannel).find((snapshotChannel) => snapshotChannel === channelSegment);
+  const channel = SnapshotChannels.find((snapshotChannel) => snapshotChannel === channelSegment);
   const version = Number(versionSegment);
-  if (!channel || !Number.isInteger(version) || version <= 0) return undefined;
-  return { channel, version };
+  if (channel && Number.isInteger(version) && version > 0) return { channel, version };
+  else return undefined;
 };

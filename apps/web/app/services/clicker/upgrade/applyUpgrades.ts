@@ -7,22 +7,23 @@ import { applyUpgradeEffects } from "@/services/clicker/effect/applyUpgradeEffec
 
 export const applyUpgrades = (
   basePower: number,
-  upgradeFilterPredicate: Parameters<Upgrade[]["filter"]>[0],
+  upgradeFilterPredicate: (upgrade: Upgrade) => boolean,
   boughtUpgrades: Upgrade[],
   boughtBuildings: BuildingWithStatistics[],
 ) => {
   const allEffects = boughtUpgrades.flatMap(({ effects }) => effects);
   const resultUpgrades = boughtUpgrades
-    .map((bu) =>
+    .map((boughtUpgrade) =>
       applyUpgradeEffects(
-        bu,
+        boughtUpgrade,
         allEffects.filter(
-          ({ configuration, targets }) => configuration.itemType === Target.Upgrade && targets.includes(bu.id),
+          ({ configuration, targets }) =>
+            configuration.itemType === Target.Upgrade && targets.includes(boughtUpgrade.id),
         ),
         boughtBuildings,
       ),
     )
-    .filter((...args) => upgradeFilterPredicate(...args));
+    .filter((upgrade) => upgradeFilterPredicate(upgrade));
   const allUpgradedEffects = resultUpgrades.flatMap(({ effects }) => effects);
   return applyEffects(basePower, allUpgradedEffects, boughtBuildings);
 };

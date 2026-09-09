@@ -5,6 +5,6 @@ import { NotFoundError } from "@esposter/shared";
 
 export const getItem = (itemId: ItemId) => {
   const item = items.find(({ id }) => id === itemId);
-  if (!item) throw new NotFoundError(getItem.name, itemId);
-  return item;
+  if (item) return item;
+  else throw new NotFoundError(getItem.name, itemId);
 };

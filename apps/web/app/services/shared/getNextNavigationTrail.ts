@@ -39,5 +39,5 @@ export const getNextNavigationTrail = (
   // Re-entered with different filters — and one arriving from outside the area carries the empty trail that
   // Leaving it left behind, which is exactly what a direct arrival is
   if (fromPage && getPageKey(fromPath) !== getPageKey(toPath)) return [...trail, fromPage];
-  return [...trail];
+  else return [...trail];
 };

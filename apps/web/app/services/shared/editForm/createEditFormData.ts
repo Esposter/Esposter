@@ -17,11 +17,10 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const editedItem = ref<TItem>();
   const originalItem = computed(() => {
     const editedItemValue = editedItem.value;
-    return editedItemValue
-      ? items.value.find((item) =>
-          getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue)(item),
-        )
-      : undefined;
+    if (editedItemValue) {
+      const checkIsOriginalItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue);
+      return items.value.find((item) => checkIsOriginalItem(item));
+    } else return undefined;
   });
   const isFullScreenDialog = ref(false);
   const isEditFormValid = computed(() => !editForm.value || editForm.value.errors.length === 0);

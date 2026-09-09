@@ -99,7 +99,7 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     if (columnIndex === -1) return;
     const newColumnNames =
       updatedName === this.#originalName
-        ? null
+        ? undefined
         : dataSource.columns.map(({ name }) => (name === updatedName ? this.#originalName : name));
     for (const [index, row] of dataSource.rows.entries()) {
       const value = takeOne(this.#originalRowValues, index);

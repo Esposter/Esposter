@@ -4,7 +4,7 @@ import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationComputeMap } from "@/services/dashboard/dataset/DatasetAggregationComputeMap";
-import { takeOne } from "@esposter/shared";
+import { getOrCreate, takeOne } from "@esposter/shared";
 
 const SingleSeriesVisualTypes: ReadonlySet<VisualType> = new Set([
   VisualType.Pie,
@@ -20,9 +20,7 @@ export const computeDatasetVisualPropsData = (
   const categoryRowsMap = new Map<string, Dataset["rows"]>();
   for (const row of dataset.rows) {
     const category = String(row[query.xColumn] ?? "");
-    const rows = categoryRowsMap.get(category);
-    if (rows) rows.push(row);
-    else categoryRowsMap.set(category, [row]);
+    getOrCreate(categoryRowsMap, category, () => []).push(row);
   }
   const categories = [...categoryRowsMap.keys()];
   const series = query.series.map(({ aggregation, column }) => ({

@@ -4,9 +4,10 @@ export const getHighlightParts = (text: string, searchQuery: string) => {
   if (!searchQuery) return undefined;
   const index = text.toLowerCase().indexOf(searchQuery.toLowerCase());
   if (index === -1) return undefined;
-  return {
-    match: text.slice(index, index + searchQuery.length),
-    prefix: text.slice(0, index),
-    suffix: text.slice(index + searchQuery.length),
-  };
+  else
+    return {
+      match: text.slice(index, index + searchQuery.length),
+      prefix: text.slice(0, index),
+      suffix: text.slice(index + searchQuery.length),
+    };
 };
