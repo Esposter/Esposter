@@ -39,7 +39,13 @@ export const useInitializeGameObjectSetters = <
     setterWatchHandles.push(
       watch(
         () => toValue(configuration)[key],
-        (newValue) => {
+        (newValue, oldValue) => {
+          // `deep` makes vue skip its own changed check, so a parent re-render passing a fresh configuration object
+          // Would re-fire every setter with the value it already holds and overwrite whatever the game object has
+          // Been given since — a frame an animation plugin is driving, say. An object is still the same reference
+          // After a nested edit, so an unchanged primitive is the only one this can drop
+          if (newValue === oldValue && (newValue === null || typeof newValue !== "object")) return;
+
           const updater = () => {
             setter(toValue(gameObject), emit)(newValue);
             emit(updateEvent, newValue);
