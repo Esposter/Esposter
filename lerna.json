@@ -3,5 +3,6 @@
   "conventionalCommits": true,
   "forcePublish": true,
   "npmClient": "pnpm",
+  "packages": ["apps/*", "packages/*", "scripts"],
   "version": "2.40.0"
 }
