@@ -16,7 +16,8 @@ gh api "repos/Esposter/Esposter/pulls/<pr>/reviews?per_page=100" --paginate \
 gh api "repos/Esposter/Esposter/pulls/<pr>/comments?per_page=100" --paginate \
   --jq '.[] | "\(.id) \(.path):\(.line // .original_line)\n\(.body)\n"'
 
-# 3. Issue comments -> the walkthrough, status, and rate-limit notices.
+# 3. Issue comments -> the walkthrough, status, and rate-limit notices. The walkthrough also carries the
+#    MERGE RISK verdict and the PRE-MERGE CHECKS table, which live ONLY here — no review body has them.
 #    Sorted so the newest state is last; the endpoint ignores sort/direction, and --jq would sort
 #    each page on its own, so --slurp hands every page to one process that sorts across all of them.
 gh api "repos/Esposter/Esposter/issues/<pr>/comments?per_page=100" --paginate --slurp |
@@ -34,42 +35,85 @@ The walkthrough issue-comment is **edited in place** across reviews, so its `cre
 
 ## One call for every bodied finding
 
-Call 1 returns the review body as raw Markdown with HTML tags embedded in it — rendered HTML comes back in
-`body_html` under `application/vnd.github-commitcomment.html+json`, which is not what the default request asks for.
-The findings inside it sit in collapsed `<details>` blocks whose headings carry an emoji and a count, hence the
-tag strip and the emoji handling below. **Grepping that body for a category name is how they get missed** — the
-categories are not a fixed set: nitpicks and outside-diff-range findings are the two constants, and CodeRabbit
-moves findings into further buckets of its own (duplicates, refactor suggestions, an additional-comments block
-once a review carries many) whose names nobody has written down. So the filter runs the other way: suppress the
-sections that are known boilerplate, print everything else, and a bucket nobody has seen before shows up by
-default rather than silently.
+Bodied content is split across **two** endpoints, not one. Call 1 carries the findings buckets; call 3's
+walkthrough comment carries the **Merge Risk** verdict and the **Pre-merge checks** table, which appear in no
+review body at all. The single call below reads both, so "I fetched the review" stops meaning "I fetched the
+reviews endpoint".
+
+Each body is raw Markdown with HTML tags embedded in it — rendered HTML comes back in `body_html` under
+`application/vnd.github-commitcomment.html+json`, which is not what the default request asks for. The findings sit
+in collapsed `<details>` blocks whose headings carry an emoji and a count, hence the tag strip and the emoji
+handling below. **Grepping a body for a category name is how they get missed** — the categories are not a fixed
+set: nitpicks and outside-diff-range findings are the two constants, and CodeRabbit moves findings into further
+buckets of its own (duplicates, refactor suggestions, an additional-comments block once a review carries many)
+whose names nobody has written down. So the filter runs the other way: suppress the sections that are known
+boilerplate, print everything else, and a bucket nobody has seen before shows up by default rather than silently.
 
 ````bash
-gh api "repos/Esposter/Esposter/pulls/<pr>/reviews?per_page=100" --paginate --slurp | node -e '
+node -e '
+const { execFileSync } = require("node:child_process");
 const BOILERPLATE_REGEX =
   /^(\*\*)?(Review info|Run configuration|Commits|Files selected|Files ignored|Files with no reviewable|Files skipped|Autofix|Prompt for|Tip\b|Thanks for using|Fix all unresolved|---)/u;
 const EMOJI_PREFIX_REGEX = /^[\p{Extended_Pictographic}️‍]+\s*/u;
-const pages = JSON.parse(require("node:fs").readFileSync(0, "utf8"));
-const reviews = pages.flat().filter(({ body, user }) => user.login === "coderabbitai[bot]" && body);
-const body = reviews.at(-1)?.body ?? "";
-let isBoilerplate = false;
-for (const line of body
-  .replace(/```[\s\S]*?```/gu, "")
-  .replace(/<[^>]*>/gu, "")
-  .split("\n")
-  .map((entry) => entry.trim())
-  .filter(Boolean)) {
-  const heading = line.replace(EMOJI_PREFIX_REGEX, "");
-  if (BOILERPLATE_REGEX.test(heading)) isBoilerplate = true;
-  else if (/\(\d+\)$/u.test(heading) || /^\*\*Actionable comments posted:/u.test(heading)) isBoilerplate = false;
-  if (!isBoilerplate) console.log(line);
-}'
+const [pullRequest] = process.argv.slice(1);
+const readBotEntries = (path) =>
+  JSON.parse(
+    execFileSync("gh", ["api", `repos/Esposter/Esposter/${path}?per_page=100`, "--paginate", "--slurp"], {
+      encoding: "utf8",
+      maxBuffer: 256 * 1024 * 1024,
+    }),
+  )
+    .flat()
+    .filter(({ user }) => user.login === "coderabbitai[bot]");
+const printBody = (body) => {
+  let isBoilerplate = false;
+  for (const line of body
+    .replace(/```[\s\S]*?```/gu, "")
+    .replace(/<[^>]*>/gu, "")
+    .split("\n")
+    .map((entry) => entry.trim())
+    .filter(Boolean)) {
+    const heading = line.replace(EMOJI_PREFIX_REGEX, "");
+    if (BOILERPLATE_REGEX.test(heading)) isBoilerplate = true;
+    else if (/\(\d+\)$/u.test(heading) || /^(#{1,6} |\*\*Actionable comments posted:)/u.test(heading))
+      isBoilerplate = false;
+    if (!isBoilerplate) console.log(line);
+  }
+};
+const printMarkedBlock = (body, marker) => {
+  const start = body.indexOf(`<!-- ${marker}_start -->`);
+  const end = body.indexOf(`<!-- ${marker}_end -->`);
+  if (start === -1 || end === -1) return;
+  console.log(`\n##### ${marker}`);
+  printBody(body.slice(start, end));
+};
+const reviews = readBotEntries(`pulls/${pullRequest}/reviews`).filter(({ body }) => body);
+console.log(`##### newest of ${reviews.length} review bodies`);
+printBody(reviews.at(-1)?.body ?? "");
+const walkthrough =
+  readBotEntries(`issues/${pullRequest}/comments`).sort((a, b) => a.updated_at.localeCompare(b.updated_at)).at(-1)
+    ?.body ?? "";
+if (walkthrough.includes("review in progress by coderabbit.ai")) console.log("\n##### REVIEW IN PROGRESS — do not push");
+for (const marker of ["final_review_risk", "pre_merge_checks_walkthrough"]) printMarkedBlock(walkthrough, marker);
+' <pr>
 ````
 
-It prints the stated actionable count first — the number to reconcile the inline fetch against — then each
-finding group with its file, line range, severity and body. The fenced blocks are dropped because they hold the
-AI-agent prompts rather than findings, and only the **newest** review is read, since an older body still lists
-findings later commits fixed.
+It prints the stated actionable count first — the number to reconcile the inline fetch against — then each finding
+group with its file, line range, severity and body, then the merge-risk verdict and the pre-merge checks. The
+fenced blocks are dropped because they hold the AI-agent prompts rather than findings, and only the **newest**
+review and the **newest-touched** walkthrough comment are read, since an older body still lists findings later
+commits fixed.
+
+It shells out to `gh` itself rather than sitting downstream of a pipe, because two endpoints cannot feed one
+stdin. That also removes the `--paginate --slurp`-into-`--jq` footgun: `gh` runs `--jq` once per page, so a
+`sort_by`, `.[-1]`, `.[-N:]` or `length` computed there describes one page rather than the PR — silently, and only
+once a PR passes 100 comments, which is exactly when the answer matters.
+
+**The walkthrough's blocks are read by HTML-comment marker, not by heading.** They sit inside collapsed `<details>`
+and carry no counted heading, so nothing would reopen the line filter for them; the `_start`/`_end` marker pairs
+are stable and machine-written. The same absence is why `printBody` reopens on a markdown heading (`#{1,6} `) as
+well as a counted one: without that, `isBoilerplate` latches on the walkthrough's `📒 Files selected for
+processing (4)` and swallows every later section — including the merge risk — while exiting 0.
 
 **The leading emoji is stripped before the match, never listed as an alternative of its own.** Every boilerplate
 heading CodeRabbit emits pairs its emoji with fixed text (`📒 Files selected for processing (9)`,
@@ -77,6 +121,15 @@ heading CodeRabbit emits pairs its emoji with fixed text (`📒 Files selected f
 do the whole job. Matching a bare `🤖` or `⚙️` instead suppresses whatever follows it, and the branch that reopens
 a counted group is an `else if` — so an unseen bucket that happens to carry a listed emoji (`🤖 New findings (2)`)
 would be swallowed silently, which is the one failure this filter exists to prevent.
+
+### Merge Risk names the commit it covers
+
+The verdict line is `**Merge Risk:** _🟠 High_ · up to \`61705\``, followed by a prose rationale and a
+`final_review_risk_coverage`comment carrying`sourceCommitId`/`coveredCommitId`/`kind`. **Read the sha before
+acting on the level.** A High that covers a sha two pushes back describes code the fixes already changed, and
+treating it as current is how a drained PR reads as blocked; conversely a verdict whose `coveredCommitId` is the
+head is the one statement that reconciles against the work just pushed. The rationale is usually the same
+findings restated as consequences, so it is the fastest check that a window's fixes actually landed.
 
 ## The login differs by API, and so does the shape
 
