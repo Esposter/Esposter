@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
+
+### Features
+
+* **resource:** recovery points accrue, and the toolbar says the work is saved ([ada33bd](https://github.com/Esposter/Esposter/commit/ada33bd74b35238771f545eaaf219aa03ec0ba89))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes

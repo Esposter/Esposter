@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
+
+### Bug Fixes
+
+* **vue-phaserjs:** a re-render re-applies a setter only when its value changed ([8b5cb8f](https://github.com/Esposter/Esposter/commit/8b5cb8fc1b858f3a0206f12be7121cafbe54af20))
+* **vue-phaserjs:** the root scene key is absent, not empty ([6428145](https://github.com/Esposter/Esposter/commit/64281452071980b8496ef04988b3dd30b5d51062))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes

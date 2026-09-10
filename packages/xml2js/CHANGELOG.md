@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
+
+### Bug Fixes
+
+* **lint:** the three oxlint errors that only the repo-wide run sees ([26af8ef](https://github.com/Esposter/Esposter/commit/26af8efc3f79a676660038edc4ee0558f7e57cb0))
+* **xml2js:** an attribute value processor takes the value, not the qualified attribute ([02b17cb](https://github.com/Esposter/Esposter/commit/02b17cb114ca727ebd29d48a436db235ef25b37c))
+* **xml2js:** stripPrefix spares only the reserved xmlns prefix ([5d27f8f](https://github.com/Esposter/Esposter/commit/5d27f8f5f62bd16bff63c769e134dd5f4f0ec600))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
+
+### Bug Fixes
+
+* **azure-mock:** the composite map keys encode both halves before joining ([59ed805](https://github.com/Esposter/Esposter/commit/59ed805ef07619a3bc2a0e463bcc81eb8d2d5f8e))
+* **lint:** five errors my own sweep introduced, one of them a wrong rule ([e67617a](https://github.com/Esposter/Esposter/commit/e67617abaaf71a78b2a2bf2c8e90e9c75c3491c6))
+* **lint:** order the mock container's seeded blob map ([986e6b9](https://github.com/Esposter/Esposter/commit/986e6b920e6afc832a748c2d374e1d971fb92222))
+* **lint:** the three oxlint errors that only the repo-wide run sees ([26af8ef](https://github.com/Esposter/Esposter/commit/26af8efc3f79a676660038edc4ee0558f7e57cb0))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes

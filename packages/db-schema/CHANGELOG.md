@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
+
+### Bug Fixes
+
+* **azure-functions:** the bell write is the last step that may fail ([08d5399](https://github.com/Esposter/Esposter/commit/08d5399e7fb1f9c5d2841149851cb22592348310))
+* **ci:** the deploy workflow narrows what it fetches and what it is handed ([46f32cc](https://github.com/Esposter/Esposter/commit/46f32cc08dcd50ca2c8a5d7e357e6f68fb449fec))
+* **db-schema:** a reverse-ticked rowKey is validated as the countdown it is ([c53b45d](https://github.com/Esposter/Esposter/commit/c53b45d433f576bde3e371431971cd32f08c3cf6))
+* **db-schema:** AchievementNames comes back ([dddabcc](https://github.com/Esposter/Esposter/commit/dddabccedb5fe013164e8376d6b168d56045d509))
+* **lint:** the three oxlint errors that only the repo-wide run sees ([26af8ef](https://github.com/Esposter/Esposter/commit/26af8efc3f79a676660038edc4ee0558f7e57cb0))
+
+### Features
+
+* **resource:** recovery points accrue, and the toolbar says the work is saved ([ada33bd](https://github.com/Esposter/Esposter/commit/ada33bd74b35238771f545eaaf219aa03ec0ba89))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes

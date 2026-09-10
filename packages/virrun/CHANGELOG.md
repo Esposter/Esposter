@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
+
+### Bug Fixes
+
+* bench ([879ae0a](https://github.com/Esposter/Esposter/commit/879ae0aaa5d9a31da4ea77b958e12ba849139fbf))
+* **comments:** restore the words the grep-8 rewrap dropped ([7861627](https://github.com/Esposter/Esposter/commit/78616272a66bde6eeb4e5c95bc388115484e6e16))
+* **lint:** five errors my own sweep introduced, one of them a wrong rule ([e67617a](https://github.com/Esposter/Esposter/commit/e67617abaaf71a78b2a2bf2c8e90e9c75c3491c6))
+* **sweeps:** the review's findings on the two ported sweep scans ([267da99](https://github.com/Esposter/Esposter/commit/267da99bbc612b9abe609a2eea955c01975b4314))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes

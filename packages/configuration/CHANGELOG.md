@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
+
+### Bug Fixes
+
+* **lint:** five errors my own sweep introduced, one of them a wrong rule ([e67617a](https://github.com/Esposter/Esposter/commit/e67617abaaf71a78b2a2bf2c8e90e9c75c3491c6))
+* **lint:** the test override carries the watch alias ban it replaces ([4c5b037](https://github.com/Esposter/Esposter/commit/4c5b037c74b4bfb142de975c3a2f63a5c8a0d704))
+* **review:** the bench gate reads a subcommand, and the report names its own operation ([7443294](https://github.com/Esposter/Esposter/commit/744329442f1c36114236bb44470ccb15d26dfde1))
+* types and tests ([7feaa01](https://github.com/Esposter/Esposter/commit/7feaa0196bda870d7a6cc30a27d10e9dd89384f4))
+* **types:** the app names the global augmentation instead of counting directories ([a53bd38](https://github.com/Esposter/Esposter/commit/a53bd38b409cd691a923407dbb4a6cbf7c93eb71))
+
+### Features
+
+* **lint:** the hand-rolled plural suffix is a restricted syntax ([b38e732](https://github.com/Esposter/Esposter/commit/b38e7325eb2b49d592cf68a81f50a2b07811ec8b))
+
+### Performance Improvements
+
+* **test:** the transformed module graph persists across runs ([dcf9895](https://github.com/Esposter/Esposter/commit/dcf9895e20fde2fb2a6e4e80e07fc9d3afd73803))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes

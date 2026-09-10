@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
+
+### Bug Fixes
+
+* **formatting:** the corruption grep could not see a one-word name ([cc98468](https://github.com/Esposter/Esposter/commit/cc984680f29e4023ad650f2c76eccb3063dc8622)), closes [#1132](https://github.com/Esposter/Esposter/issues/1132)
+* **parse-tmx:** properties parse to one shape, and every property survives ([69d138b](https://github.com/Esposter/Esposter/commit/69d138bcb40500dc9f2dde7970f06e9f6ebbe847))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes

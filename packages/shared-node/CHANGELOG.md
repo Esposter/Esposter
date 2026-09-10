@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
+
+### Bug Fixes
+
+* bench ([879ae0a](https://github.com/Esposter/Esposter/commit/879ae0aaa5d9a31da4ea77b958e12ba849139fbf))
+* types and tests ([7feaa01](https://github.com/Esposter/Esposter/commit/7feaa0196bda870d7a6cc30a27d10e9dd89384f4))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes
