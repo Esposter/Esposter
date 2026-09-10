@@ -6,12 +6,20 @@ import { WSL_EXECUTABLE, WSL_REAPER_SHELL_NAME } from "#src/services/exec/wsl/co
 // The next run. The `-p`/`2>/dev/null` guards keep a race where a matched process already exited from turning into
 // Noise. TERM (not KILL) so bwrap can unwind cleanly. Each killed group is remembered in `pgids` for the wait arm
 // Below; the kill itself needs nothing of it, and one variable costs a fire-and-forget reaper nothing.
+//
+// Every reaper is skipped, this shell included. The markers ride each reaper's own argv (see below), so a reaper's
+// Cmdline matches the very `pgrep -f` its peers run — and TERMing that group kills a peer mid-wait: a startup sweep
+// Takes out the blocking `cache clean` reaper, whose caller then removes dirs whose trees are still alive.
+// WSL_REAPER_SHELL_NAME is the `$0` of every reaper and of nothing else, so one grep over the candidate's own cmdline
+// Excludes peers and self alike, replacing the `$$` comparison that only ever covered the latter. It reads
+// `/proc/<pid>/cmdline` — the same bytes `pgrep -f` matched on, so the two agree — rather than `ps -o args=`, which
+// Truncates to terminal width and would hide a name that sits past the whole script in the argv. A pid that exits
+// Mid-loop leaves no cmdline to read, which the `$pgid` guard below already treats as nothing to kill.
 const KILL_SCRIPT_LINES: readonly string[] = [
-  "self=$$",
   "pgids=",
   'for marker in "$@"; do',
   '  for pid in $(pgrep -f "$marker" 2>/dev/null); do',
-  '    [ "$pid" = "$self" ] && continue',
+  `    grep -qa -- "${WSL_REAPER_SHELL_NAME}" "/proc/$pid/cmdline" 2>/dev/null && continue`,
   '    pgid=$(ps -o pgid= -p "$pid" 2>/dev/null | tr -d " ")',
   '    [ -n "$pgid" ] || continue',
   '    kill -TERM "-$pgid" 2>/dev/null',
@@ -22,15 +30,21 @@ const KILL_SCRIPT_LINES: readonly string[] = [
 // The blocking arm: TERM only asks, so the kill loop returns while the tree is still unwinding, and a caller that
 // Removes the dirs that tree has open — `cache clean` — has to see it gone rather than merely signalled. It is
 // Deliberately not the default: the startup sweep is fire-and-forget off the critical path and must never make a run
-// Wait on a corpse. Past the deadline it gives up rather than hanging, leaving the caller the racy removal it would
-// Always have done.
+// Wait on a corpse.
 //
 // The wait watches the killed process GROUPS, not the markers it was handed: only the run's shell carries the marker
 // In its cmdline, and TERM kills that shell first while the `bwrap` beneath it — the process actually holding the
 // Store and snapshot dirs — is still unwinding, so a marker that stops matching proves nothing. It polls, because a
 // POSIX shell cannot `wait` on a process it did not fork.
+//
+// Past the deadline it gives up rather than hanging, and exits nonzero saying so. Blocking exists precisely because
+// The caller needs the trees gone, so a wait that never saw them go must not report as one that did: the nonzero
+// Status reaches reapOrphanedWslRuns as a throw (execWsl), which then keeps the registry entries so the next sweep
+// Re-reaps a corpse that is still alive instead of forgetting it. `alive` starts set so exit 0 means "observed every
+// Group gone" and never "never looked" — what a deadline already past on entry would otherwise return.
 const WAIT_SCRIPT_LINES: readonly string[] = [
   `deadline=$(($(date +%s) + ${WSL_REAP_WAIT_TIMEOUT_SECONDS}))`,
+  "alive=1",
   'while [ "$(date +%s)" -lt "$deadline" ]; do',
   "  alive=",
   "  for pgid in $pgids; do",
@@ -39,6 +53,7 @@ const WAIT_SCRIPT_LINES: readonly string[] = [
   '  [ -n "$alive" ] || break',
   `  sleep ${WSL_REAP_WAIT_INTERVAL_SECONDS}`,
   "done",
+  '[ -z "$alive" ] || exit 1',
 ];
 // Build the argv for a reaper: a fresh `wsl.exe --exec` running the script above over every marker it is handed.
 // Three callers hand it different sets: the interrupted run itself passes its own marker (createWslOsBackend's
@@ -47,9 +62,8 @@ const WAIT_SCRIPT_LINES: readonly string[] = [
 // Launch is a service RPC plus a relay process.
 //
 // The markers ride the argv rather than the script text so a set of any size needs no quoting rules. That does put
-// Every marker in this reaper's own cmdline, which its `pgrep` then matches: `self=$$` excludes this shell, and two
-// Reapers that were handed the same marker can match each other — harmless, since they are doing the same work and
-// Whichever survives finishes it.
+// Every marker in this reaper's own cmdline, where a peer's `pgrep` matches it — which is why `$0` is
+// WSL_REAPER_SHELL_NAME rather than anything marker-shaped, and why the kill loop skips every process carrying it.
 export const buildWslReapCommand = (markers: readonly string[], isBlocking = false): [string, ...string[]] => {
   const script = [...KILL_SCRIPT_LINES, ...(isBlocking ? WAIT_SCRIPT_LINES : [])].join("\n");
   return [WSL_EXECUTABLE, "--exec", "sh", "-c", script, WSL_REAPER_SHELL_NAME, ...markers];

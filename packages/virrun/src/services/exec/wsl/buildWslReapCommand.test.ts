@@ -17,17 +17,17 @@ describe(buildWslReapCommand, () => {
     expect(command.slice(5)).toStrictEqual([WSL_REAPER_SHELL_NAME, VIRRUN_WSL_PROCESS_MARKER, OTHER_MARKER]);
   });
 
-  // Matches each named run by its marker and group-kills it (negative pgid, TERM so bwrap unwinds), excluding the
-  // Reaper's own shell via the self-exclusion guard.
-  test("matches each run by its marker and group-kills it, excluding the reaper's own shell", () => {
+  // Matches each named run by its marker and group-kills it (negative pgid, TERM so bwrap unwinds), skipping every
+  // Reaper — peers and this shell alike — since each one carries the markers it was handed in its own cmdline, so a
+  // Peer matches the same `pgrep` and TERMing its group would kill a blocking reaper mid-wait.
+  test("matches each run by its marker and group-kills it, skipping every reaper's own shell", () => {
     expect.hasAssertions();
 
     expect(takeOne(buildWslReapCommand([VIRRUN_WSL_PROCESS_MARKER]), 4)).toMatchInlineSnapshot(`
-      "self=$$
-      pgids=
+      "pgids=
       for marker in "$@"; do
         for pid in $(pgrep -f "$marker" 2>/dev/null); do
-          [ "$pid" = "$self" ] && continue
+          grep -qa -- "virrun-reaper" "/proc/$pid/cmdline" 2>/dev/null && continue
           pgid=$(ps -o pgid= -p "$pid" 2>/dev/null | tr -d " ")
           [ -n "$pgid" ] || continue
           kill -TERM "-$pgid" 2>/dev/null
@@ -39,16 +39,16 @@ describe(buildWslReapCommand, () => {
 
   // What `cache clean` depends on: TERM only asks, so the reaper waits — bounded, and on the killed process groups
   // Rather than the markers, since the marker is on the shell TERM kills first while the bwrap holding the dirs open
-  // Is still unwinding.
-  test("waits for the killed trees to exit when blocking", () => {
+  // Is still unwinding. An expired deadline exits nonzero (`alive` pre-set so exit 0 cannot mean "never looked"),
+  // Which reaches reapOrphanedWslRuns as a throw and keeps the corpse's registry entry for the next sweep.
+  test("waits for the killed trees to exit when blocking, and fails when the deadline expires", () => {
     expect.hasAssertions();
 
     expect(takeOne(buildWslReapCommand([VIRRUN_WSL_PROCESS_MARKER], true), 4)).toMatchInlineSnapshot(`
-      "self=$$
-      pgids=
+      "pgids=
       for marker in "$@"; do
         for pid in $(pgrep -f "$marker" 2>/dev/null); do
-          [ "$pid" = "$self" ] && continue
+          grep -qa -- "virrun-reaper" "/proc/$pid/cmdline" 2>/dev/null && continue
           pgid=$(ps -o pgid= -p "$pid" 2>/dev/null | tr -d " ")
           [ -n "$pgid" ] || continue
           kill -TERM "-$pgid" 2>/dev/null
@@ -56,6 +56,7 @@ describe(buildWslReapCommand, () => {
         done
       done
       deadline=$(($(date +%s) + 30))
+      alive=1
       while [ "$(date +%s)" -lt "$deadline" ]; do
         alive=
         for pgid in $pgids; do
@@ -63,7 +64,8 @@ describe(buildWslReapCommand, () => {
         done
         [ -n "$alive" ] || break
         sleep 0.2
-      done"
+      done
+      [ -z "$alive" ] || exit 1"
     `);
   });
 });
