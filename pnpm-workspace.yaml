@@ -47,7 +47,7 @@ catalog:
   "@fullcalendar/vue3": ^7.1.0
   "@hpcc-js/wasm-graphviz": ^1.29.0
   "@json-layout/vocabulary": ^2.13.2
-  "@koumoul/vjsf": ^4.5.4
+  "@koumoul/vjsf": ^4.6.0
   "@lerna-lite/cli": ^5.6.1
   "@lerna-lite/publish": ^5.6.1
   "@livekit/track-processors": ^0.7.2
@@ -161,14 +161,14 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.15.0
   h3: ^1.15.11
-  happy-dom: ^20.14.0
+  happy-dom: ^20.14.3
   howler: ^2.2.4
   idb: ^8.0.3
   js-beautify: ^2.0.3
   link-preview-js: ^5.0.0
   linkifyjs: ^4.3.3
   livekit-client: ^2.22.3
-  livekit-server-sdk: ^2.18.0
+  livekit-server-sdk: ^2.19.0
   lodash-omitdeep: ^1.10.1
   lowlight: ^3.3.0
   marked: ^18.0.12
@@ -236,7 +236,7 @@ catalog:
   write-excel-file: ^4.1.1
   ws: ^8.21.3
   xmlbuilder2: ^4.0.3
-  zod: ^4.5.4
+  zod: ^4.6.1
 
 catalogMode: strict
 
