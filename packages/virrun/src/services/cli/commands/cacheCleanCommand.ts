@@ -20,6 +20,7 @@ import { getLocalCacheDirectory } from "#src/services/exec/util/getLocalCacheDir
 import { getRepoCacheDirectory } from "#src/services/exec/util/getRepoCacheDirectory";
 import { VIRRUN_SOURCES_DIRECTORY_NAME } from "#src/services/exec/wsl/constants";
 import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
+import { getWslRunsDirectory } from "#src/services/exec/wsl/getWslRunsDirectory";
 import { getResult, noop } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { rmSync } from "node:fs";
@@ -76,10 +77,15 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
         writeRemoved(probeCachePath);
       }
       // The win32 ext4 source mirrors live under the WSL-native cache root (createWslSourceMirrorSync ignores the
-      // VIRRUN_CACHE_HOME override to stay on ext4), so clean from there — not getGlobalCacheDirectory. Absent off
-      // Win32, where the source is read in place and never mirrored.
-      if (process.platform === "win32")
+      // VIRRUN_CACHE_HOME override to stay on ext4), so clean from there — not getGlobalCacheDirectory. The run
+      // Registry is Windows-side bookkeeping instead, and a clean is the one moment its entries can go without a
+      // Sweep: whatever they name is either live — and re-registers on its next command — or a corpse this clean is
+      // Already tearing the cache out from under. Both are absent off win32, where the source is read in place and
+      // Nothing runs through WSL.
+      if (process.platform === "win32") {
+        removeCacheDirectory(getWslRunsDirectory());
         removeCacheDirectory(join(getWslNativeCacheRoot(), VIRRUN_SOURCES_DIRECTORY_NAME));
+      }
     }).match(noop, (error) => {
       process.stderr.write(`${formatVirrunError(error.message)}\n`);
       process.exitCode = 1;

@@ -6,9 +6,9 @@ import type { ExecTeeTarget } from "#src/models/exec/ExecTeeTarget";
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
 import {
+  SIGNAL_EXIT_CODE_BASE,
   WSL_BWRAP_STATUS_BEGIN,
   WSL_BWRAP_STATUS_END,
-  WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER,
 } from "#src/services/exec/bwrap/constants";
 import { createBwrapBackend } from "#src/services/exec/bwrap/createBwrapBackend";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
@@ -22,7 +22,7 @@ vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof
 
 // A minimal ChildProcess stand-in that replays the given stream chunks then closes, so the close handler
 // Runs against deterministic stdout/stderr/status without spawning a real wsl/bwrap process.
-const createFakeChild = ({ status = "", stderr = "", stdout = "" }): ChildProcess => {
+const createFakeChild = ({ closeCode = 0, status = "", stderr = "", stdout = "" }): ChildProcess => {
   const child = new EventEmitter();
   const stdoutStream = new EventEmitter();
   const stderrStream = new EventEmitter();
@@ -36,7 +36,7 @@ const createFakeChild = ({ status = "", stderr = "", stdout = "" }): ChildProces
     if (stdout) stdoutStream.emit("data", Buffer.from(stdout));
     if (stderr) stderrStream.emit("data", Buffer.from(stderr));
     if (status) statusStream.emit("data", Buffer.from(status));
-    child.emit("close");
+    child.emit("close", closeCode, undefined);
   });
   return child as unknown as ChildProcess;
 };
@@ -78,19 +78,19 @@ describe(createBwrapBackend, () => {
     );
   });
 
-  test("names a folded sync failure instead of blaming bubblewrap when its marker is in stderr", async () => {
+  // The close event's status is what separates a killed run from a failed one (getNoStatusFailureHeadline owns the
+  // Wording); this pins that both of its arguments actually reach it, which is the half a pure test cannot see.
+  test("carries the close status into the failure headline when no exit code is reported", async () => {
     expect.hasAssertions();
 
-    // The wsl backend's sync prelude failed before bwrap started: no status block, only the marker line.
-    const commandStderr = `${WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER} with exit code 1\n`;
-    spawn.mockImplementation(() => createFakeChild({ stderr: commandStderr }));
+    spawn.mockImplementation(() => createFakeChild({ closeCode: SIGNAL_EXIT_CODE_BASE + 15 }));
     const message = (await getResultAsync(() => exec("pipe"))).match(
       () => "",
       ({ message: errorMessage }) => errorMessage,
     );
 
     expect(message).toBe(
-      `Invalid operation: Create, name: ${ERROR_NAME}, the source mirror sync failed before the sandbox started\n${commandStderr}`,
+      `Invalid operation: Create, name: ${ERROR_NAME}, the sandbox was killed by signal 15 — an external kill, not a bwrap failure`,
     );
   });
 

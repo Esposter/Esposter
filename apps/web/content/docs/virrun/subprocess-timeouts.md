@@ -57,6 +57,6 @@ flowchart TD
 
 ## Notes
 
-- Two bounds are expressed in **seconds**, not milliseconds (`SOURCE_MIRROR_TIMEOUT_SECONDS`, `ORPHAN_REAP_MINIMUM_AGE_SECONDS`), because their consumers are Linux shell utilities (`flock -w`, `timeout`, `ps -o etimes`) rather than `execFileSync`. The tier rule is the same; only the unit changes.
+- One bound is expressed in **seconds**, not milliseconds (`SOURCE_MIRROR_TIMEOUT_SECONDS`), because its consumers are Linux shell utilities (`flock -w`, `timeout`) rather than `execFileSync`. The tier rule is the same; only the unit changes.
 - `execWsl` defaults to the WSL probe tier so a call site that forgets to pass one gets a conservative bound rather than none. A call site doing real work must pass its own.
 - **A fixed question asked across a boundary that has to wake up is not the same fixed question.** The win32 round-trips ask exactly what the Linux probe asks, but the first of them boots the distro first — measured around 7.5s against a 10s probe bound, so a host merely busy enough to cross it reported "this machine cannot sandbox" and, before the unanswered verdict was made uncacheable, [cached that](/docs/virrun/cache) for six hours. Hence a tier of its own rather than a wider probe tier: the in-process probe should still fail in seconds, and only the calls paying for the boot get the wider bound.

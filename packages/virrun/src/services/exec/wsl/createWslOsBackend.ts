@@ -5,6 +5,7 @@ import { resolvePrepareStep } from "#src/services/configuration/resolvePrepareSt
 import {
   WSL_BWRAP_STATUS_BEGIN,
   WSL_BWRAP_STATUS_END,
+  WSL_SOURCE_MIRROR_LOCK_FAILURE_MARKER,
   WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER,
 } from "#src/services/exec/bwrap/constants";
 import { createBwrapBackend } from "#src/services/exec/bwrap/createBwrapBackend";
@@ -20,14 +21,16 @@ import { createWslSourceMirrorSync } from "#src/services/exec/wsl/createWslSourc
 import { getSourceMirrorKey } from "#src/services/exec/wsl/getSourceMirrorKey";
 import { reapAbandonedSourceMirrors } from "#src/services/exec/wsl/reapAbandonedSourceMirrors";
 import { reapOrphanedWslRuns } from "#src/services/exec/wsl/reapOrphanedWslRuns";
+import { registerWslRun } from "#src/services/exec/wsl/registerWslRun";
 import { resolveMirrorExcludes } from "#src/services/exec/wsl/resolveMirrorExcludes";
 import { shellQuote } from "#src/services/exec/wsl/shellQuote";
 // `environment` is the run's preset as the caller resolved it, threaded down rather than re-read from `virrun.config`
 // Here: a programmatically passed one is invisible to that file, and the mirror excludes derived from it are the same
 // Set createVirrun masks the write-back with — so guessing differs from the mask exactly when the two must agree.
 export const createWslOsBackend = (errorName: string, environment?: Environment): ExecBackend => {
-  // Reap any bwrap tree a previous hard-killed run left orphaned (its onTerminate reaper never fired) before this
-  // Backend spawns its own — off the critical path, and scoped to true orphans so a concurrent live run is untouched.
+  // Reap any bwrap tree a previous hard-killed run left behind (its onTerminate reaper never fired) before this
+  // Backend spawns its own — off the critical path, and scoped by owner liveness, so a concurrent live run's tree is
+  // Never a candidate.
   reapOrphanedWslRuns();
   // Swept once per cwd for this backend's whole life, not once per exec. The sweep has to run from the command
   // Builder below — it rests on the marker republish that only happens inside the planning call beside it — but one
@@ -38,8 +41,11 @@ export const createWslOsBackend = (errorName: string, environment?: Environment)
   return createBwrapBackend(
     createWslBwrapArgs,
     (bwrapArgs, options) => {
-      // Tag this run's shell with a unique `$0` so Ctrl+C can find and group-kill exactly its process tree.
+      // Tag this run's shell with a unique `$0` so Ctrl+C can find and group-kill exactly its process tree, and
+      // Record it against this process in the run registry so that if this run is hard-killed instead, the next
+      // Backend's startup sweep can tell its surviving tree from a concurrent live one (reapOrphanedWslRuns).
       const marker = createWslProcessMarker();
+      registerWslRun(marker);
       // The mirror sync rides the run's own wsl.exe invocation instead of a separate spawn: an empty script (mirror
       // Already current) prepends nothing, a delta/full sync runs ahead of bwrap and a failure prints the
       // WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER line then exits with its own code before the sandbox starts — the
@@ -51,6 +57,9 @@ export const createWslOsBackend = (errorName: string, environment?: Environment)
       // Lock — so its deletes/renames wait for readers to drain instead of tearing a live run's source tree. Shared
       // Holders don't block each other, and the sync prelude's own exclusive flock uses a nested fd-9 redirect (a
       // Separate open file description), released before this shared acquire — `flock -s -w` bounds a stuck writer.
+      // A failed acquire prints WSL_SOURCE_MIRROR_LOCK_FAILURE_MARKER for the same reason the sync failure does: it
+      // Ends the script before bwrap ever runs, so without the line the one failure a concurrent run fully explains
+      // Would read as a sandbox-setup failure (getNoStatusFailureHeadline).
       const cwd = resolveCwd(options.cwd);
       const { lockPath, script } = createWslSourceMirrorSync(
         cwd,
@@ -82,7 +91,7 @@ export const createWslOsBackend = (errorName: string, environment?: Environment)
                   `{ ${script}; } || { syncExitCode="$?"; printf '${WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER} with exit code %s\\n' "$syncExitCode" >&2; exit "$syncExitCode"; }`,
                 ]
               : []),
-            `flock -s -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 || exit "$?"`,
+            `flock -s -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 || { lockExitCode="$?"; printf '${WSL_SOURCE_MIRROR_LOCK_FAILURE_MARKER} within ${SOURCE_MIRROR_TIMEOUT_SECONDS}s\\n' >&2; exit "$lockExitCode"; }`,
             `status="$(mktemp)"`,
             `bwrap --json-status-fd 3 "$@" 3>"$status"`,
             `bwrapExitCode=$?`,
@@ -103,7 +112,7 @@ export const createWslOsBackend = (errorName: string, environment?: Environment)
         // (see there); forwardTerminationSignals guards this call so a synchronous spawn failure can't escape the
         // Signal handler, and the async `error` event is ignored because teardown is best-effort and the run is ending.
         onTerminate: () => {
-          const [file, ...args] = buildWslReapCommand(marker);
+          const [file, ...args] = buildWslReapCommand([marker]);
           spawnBackground(file, args);
         },
         statusSource: "stderr",

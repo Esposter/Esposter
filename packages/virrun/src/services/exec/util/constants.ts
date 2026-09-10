@@ -129,12 +129,6 @@ export const SOURCE_MIRROR_UNMARKED_MAX_AGE_MS: number = Temporal.Duration.from(
 // Runs, and the superseded snapshot dirs it named are never reclaimed — the unbounded ext4 growth the batched sweep
 // Exists to prevent, silently, since the spawn ignores its stdio and has no exit handler.
 export const REMOVE_LIST_REAP_MINIMUM_AGE_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
-// Minimum age (`ps -o etimes`) before the startup orphan sweep may judge a marker-matched process. Every transient
-// Misread window lasts milliseconds — a fork that hasn't exec'd yet (its cmdline still carries the parent's marker),
-// A spawning run whose Relay parent isn't established, a finishing run whose Relay died first — while a true corpse
-// Sits orphaned until the next virrun startup, so a short floor removes the races without delaying real reaps.
-// Seconds, not ms: the consumer is a Linux shell `[ -ge ]` against etimes.
-export const ORPHAN_REAP_MINIMUM_AGE_SECONDS: number = Temporal.Duration.from({ seconds: 10 }).total("seconds");
 // Upper bound the folded sync script enforces Linux-side — `flock -w` on the mirror lock plus `timeout` on the
 // Archive extract (createWslSourceMirrorSync). A pure hang guard: the extract unpacks one staged archive already
 // Sitting on ext4, seconds of local work even for a full materialize, so the bound only exists so a stalled ext4
