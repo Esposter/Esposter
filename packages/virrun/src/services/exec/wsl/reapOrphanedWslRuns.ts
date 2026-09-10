@@ -1,8 +1,10 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { checkIsProcessAlive } from "#src/services/exec/util/checkIsProcessAlive";
+import { WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { spawnBackground } from "#src/services/exec/util/spawnBackground";
 import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
 import { WSL_RUN_ENTRY_REGEX } from "#src/services/exec/wsl/constants";
+import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getWslRunsDirectory } from "#src/services/exec/wsl/getWslRunsDirectory";
 import { getResult, noop } from "@esposter/shared";
 import { readdirSync, rmSync } from "node:fs";
@@ -20,7 +22,12 @@ import { join } from "node:path";
 // Fired off the critical path and only when there is something to kill, so an ordinary run spawns no `wsl.exe` here
 // At all. Entries are unlinked after the reaper is spawned rather than before: the kill is fire-and-forget, so the
 // Unlink is what stops one corpse being re-reaped by every later run, and a re-reap costs nothing but a launch.
-export const reapOrphanedWslRuns = (): void => {
+//
+// `isBlocking` is for the one caller that depends on the corpses actually being gone rather than merely signalled —
+// `cache clean`, which then removes the dirs those trees hold open. It runs the reaper synchronously and has it wait
+// For the TERMed trees to exit (buildWslReapCommand's wait arm). A blocking reap that fails or times out keeps its
+// Entries, so the corpse is re-reaped by the next sweep instead of being forgotten with its tree still alive.
+export const reapOrphanedWslRuns = (isBlocking = false): void => {
   getResult(() => {
     const runsDirectory = getWslRunsDirectory();
     // Matched rather than split: anything in this directory that is not `<owner pid>.<marker>` is skipped outright,
@@ -32,8 +39,12 @@ export const reapOrphanedWslRuns = (): void => {
     });
     if (orphanedEntries.length === 0) return;
 
-    const [file, ...args] = buildWslReapCommand(orphanedEntries.map(({ marker }) => marker));
-    spawnBackground(file, args);
+    const [file, ...args] = buildWslReapCommand(
+      orphanedEntries.map(({ marker }) => marker),
+      isBlocking,
+    );
+    if (isBlocking) execWsl(args, { timeout: WSL_WORK_TIMEOUT_MS });
+    else spawnBackground(file, args);
     for (const { name } of orphanedEntries) rmSync(join(runsDirectory, name), { force: true });
   }).match(noop, ({ message }) => {
     writeVirrunDebug(`orphaned run sweep skipped — ${message}`);

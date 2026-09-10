@@ -147,3 +147,11 @@ export const HOME_CACHE_DIRECTORY_NAME = ".cache";
 // Leaf under the home cache root isolating the heavy tests' shared warm snapshot, so global teardown removes only
 // Test data and never the real cache.
 export const ACCEPTANCE_CACHE_DIRECTORY_NAME = "acceptance";
+// How long the blocking reaper waits for the trees it TERMed to actually exit (buildWslReapCommand's wait arm, run
+// Only by `cache clean`). A group-killed bwrap tree unwinds in well under a second, so this is a hang guard for one
+// That does not — the clean proceeds regardless, back to the racy removal it would always have done. Seconds, not
+// Ms: the consumer is a Linux shell, not execFileSync, and the host-side bound around it is WSL_WORK_TIMEOUT_MS.
+export const WSL_REAP_WAIT_TIMEOUT_SECONDS: number = Temporal.Duration.from({ seconds: 30 }).total("seconds");
+// The wait's poll interval. A POSIX shell cannot `wait` on a process it did not fork, so the only way to watch a
+// Killed tree is to re-`pgrep` for it; fine-grained enough that a normal unwind costs no perceptible pause.
+export const WSL_REAP_WAIT_INTERVAL_SECONDS: number = 0.2;
