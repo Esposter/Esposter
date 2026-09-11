@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, when a mechanical pass earns a ledger and when it is just a commit, splitting a row that reads as too high a level before any pass starts, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing, a window being filled rather than a ledger finished — an open row from another ledger continues one whose rows have run out, while a unit is never left half-read — why re-running one converges — a review window budgeted in files but spent on findings, so thinning findings buy more units per window until a window reports nothing — draining a ledger as a by-product of ordinary work, and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus deep dives on where a find recipe lives (a grep inline, anything with control flow a tested script under scripts/src/sweeps/), on resuming one from the `Scope` pathspecs its index row declares (the convention's domain rather than the union of its rows), on what a pass does when its rule turns out silent or wrong, and on the ledger file itself: the six things it may hold, the explanatory prose it may not, and the ban on any record of what a past pass did, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
+description: Esposter repo-wide sweep conventions — a Settled list of the directions already rejected (filing a sweep as a proposal, a progress column or tick count on the index row, fanning one sweep's units out to parallel agents, and inheriting a split row's date onto its children), progress tracked as a ledger in .agents/ledgers/ named after the skill that owns its rules, sweeps being repo state rather than proposals, proving a find recipe can fail before believing it passed, one unit per commit chunked to the review budget, state living at the leaf with the pass run in the main session one unit at a time, behaviour-preserving passes and where a behaviour-changing finding goes instead, what belongs in the commit message rather than the ledger, every sweep being standing, a window being filled rather than a ledger finished — an open row from another ledger continues one whose rows have run out, while a unit is never left half-read — why re-running one converges — a review window budgeted in files but spent on findings, so thinning findings buy more units per window until a window reports nothing — draining a ledger as a by-product of ordinary work, and handing part of a sweep to an enforcer so its scope shrinks instead of becoming a treadmill — plus deep dives on where a find recipe lives (a grep inline, anything with control flow a tested script under scripts/src/sweeps/), on resuming one from the `Scope` pathspecs its index row declares (the convention's domain rather than the union of its rows), on what a pass does when its rule turns out silent or wrong, on planning a sitting (the window rather than the ledger bounding the work, and why a resume reporting nothing is convergence), and on the ledger file itself: when a mechanical pass earns one at all, a unit sized to what one pass can read and a row split before any pass starts, the six things it may hold, the explanatory prose it may not, and the ban on any record of what a past pass did, promotion to a folder, and a ledger keyed by its question rather than its file set (several reaching the same files on purpose, merging only when the owning skill is the same), with a new convention resetting its dates and an enforcer-decided rule earning no ledger at all. Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one.
 ---
 
 # Sweeps
@@ -34,16 +34,6 @@ a check that cannot fail is not evidence.
 
 A grep stays inline in the ledger; anything with control flow is a script under `scripts/src/sweeps/` run as `pnpm ai:sweep:<scan>` (the rule is the `skill-authoring` skill's), where a colocated test keeps "prove the scan can fail" proved. **Writing one, or moving one out of a code block**, is that page.
 
-## Does it earn a file?
-
-- **More than one sitting or one commit → its own file.** Anything smaller is just the change; a sweep file for it is overhead that then rots.
-- **One question per file.** A convention another ledger already asks joins that ledger (see below); one that asks something different opens its own, however far its files overlap. What never merges is two conventions with different **units**, because a coverage table can only be dated against one of them.
-
-- **A unit is what one pass can read.** Reading is what finds duplication and the helper that already exists; a unit too big to read gets grepped instead, and a grep pass that ticks its row records a sweep that never happened. When a pass reaches for grep because the unit is too large, split the row at the directory boundary rather than carrying on — the children open at `—`, since a row grepped because it was too large is a row nothing read.
-- **Split the row the moment it reads as too high a level, before any pass starts.** Two shapes give it away without counting anything: a unit naming several unrelated trees at once, and a unit that is a whole tree rather than a directory inside one. Both are bags, and a bag is swept by skimming — which is how a fully dated ledger still misses things. Count the files the row actually covers, and split until each row is a sitting.
-- **A row that could never have been read loses its date in the split.** Inheriting the parent's date onto children the parent never read carries the skim forward as if it were coverage. The date survives only where the whole unit was small enough that the pass really could have read it; everything else reopens at `—`. Why the split happened goes in its commit message, never into the ledger, which carries no history (`references/ledger-files.md`).
-- **A migration is not a sweep.** Work gated on an external trigger (upstream shipping a feature) is tracked by its blocker table in its own docs page, not by coverage.
-
 ## One pass
 
 ```mermaid
@@ -68,7 +58,7 @@ flowchart LR
 
 ## The ledger file — `references/ledger-files.md`
 
-A ledger holds six things and no explanatory prose, and is keyed by the question it asks rather than by the files it reaches. **Writing, splitting, merging, promoting or retiring one**, or deciding whether a new convention joins an existing ledger, is that page.
+A ledger holds six things and no explanatory prose, and is keyed by the question it asks rather than by the files it reaches. **Writing, splitting, merging, promoting or retiring one**, deciding whether a mechanical pass earns a file at all or whether a new convention joins an existing ledger, and sizing a unit to what one pass can read, is that page.
 
 ## Every sweep is standing
 
@@ -92,49 +82,12 @@ and adding it resets that ledger's dates, because a unit swept against a narrowe
 the current one and there is no partially-swept state. Sharing a file set with an existing ledger is not what
 decides this; the next section is.
 
-## Re-running converges
+## The window is the unit of work — `references/windows-and-convergence.md`
 
-A resume that reports nothing reads like effort spent for no return, and it is the opposite. A pass is bounded by
-the review window, which is a budget of **files changed** — the `coderabbit` skill owns the number, and it is never
-restated here. What spends that budget is **findings**, since a unit reported clean changes no file at all: a unit
-carrying three fixes fills the window by itself; a unit carrying none costs only its reading and leaves the whole
-budget for the next unit. So as the density of findings falls, the number of units one window carries rises, and
-the same fixed budget reaches further into the tree every cycle. The cap still binds the window it reaches: units
-are added while the files they change stay under it, never because the last few reported nothing.
-
-```mermaid
-flowchart LR
-  FIRST["first pass — dense findings"] --> ONE["one unit fills the window"]
-  ONE --> LATER["later pass — sparse findings"]
-  LATER --> MANY["several units fit one window"]
-  MANY --> FIXED["the fixed point: one window touches every open row and reports nothing"]
-```
-
-That is what the coverage dates make visible, and it is why a convention is swept again rather than declared done.
-A pass that finds nothing is not the sweep failing to pay — it is the sweep having converged **there**, recorded as
-a date so the next cycle starts from it instead of re-reading it.
-
-This is not the treadmill the section above rejects. What must never repeat is a pass **re-deriving** a rule a
-machine could decide; that work is handed to an enforcer and leaves the sweep's scope for good. A reading pass
-whose findings thin out each cycle is the opposite shape: each cycle is cheaper than the last, and it ends.
-
-## The window is the unit of work
-
-A window is filled; a ledger is not finished. Every sweep is standing and most ledgers are larger than any one
-window, so "work this ledger until it is done" is not a plan a window can hold — and stopping when one ledger's
-open rows run out spends part of the budget on nothing.
-
-**A ledger left half-drained is the normal resting state.** When the ledger being worked runs out of open rows, or
-its next unit is too large to start inside what the budget has left, take an open row from another ledger. Crossing
-ledgers mid-window costs nothing: a row is scoped by its own pathspecs and carries its own convention, so the only
-thing shared across the two is the file count.
-
-What may not be split is a **unit**. A row is swept and dated in this window or untouched — the same rule that
-denies a partially-swept state denies a half-read one, and a unit abandoned mid-read leaves the next window unable
-to tell what was already looked at. So the last row a window starts is the last one whose findings still fit under
-the cap, from whichever ledger that is.
-
-The handover names where each ledger was left, so the next window opens on a row rather than re-deriving scope.
+A window is filled; a ledger is not finished. When the ledger being worked runs out of open rows, or its next unit
+will not fit in what the budget has left, take an open row from another ledger — and never leave a unit half-read.
+**Planning a sitting**, and why a resume that reports nothing is the sweep converging rather than failing, is that
+page.
 
 ## Draining beats scheduling
 
