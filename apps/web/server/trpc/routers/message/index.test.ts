@@ -2,7 +2,7 @@
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { BlobDeletionEventGridData, MessageEntity } from "@esposter/db-schema";
+import type { BlobDeletionEventGridData, MessageEntity, MessageNotificationData } from "@esposter/db-schema";
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
 import type { MockInstance } from "vitest";
 
@@ -24,8 +24,10 @@ import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import {
+  AppNotificationType,
   AzureContainer,
   AzureEntityType,
+  AzureFunction,
   AzureTable,
   getReverseTickedTimestamp,
   MessageCreationRejectionType,
@@ -56,6 +58,19 @@ const createOwnMentionMessage = () => createMentionMessage(getMockSession().user
 
 // A message addresses itself by the pair its own entity carries
 const getCompositeKey = ({ partitionKey, rowKey }: MessageEntity) => ({ partitionKey, rowKey });
+
+// What the Azure Function receives: the message as stored, and the thread root when the send was a reply.
+// Recipients are resolved at delivery from these fields alone, against the rules getMessageRecipientUserIds owns
+const createMessageNotificationData = (
+  messageText: string,
+  partitionKey: string,
+  rowKey: string,
+  threadRootRowKey?: string,
+): MessageNotificationData => ({
+  message: { message: messageText, partitionKey, rowKey, userId: getMockSession().user.id },
+  threadRootRowKey,
+  type: AppNotificationType.Message,
+});
 
 describe("messageRouter", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId } = setupRoomSuite();
@@ -1479,5 +1494,41 @@ describe("messageRouter", () => {
     });
 
     expect(threadRootRowKeysAfterUnfollow).toHaveLength(0);
+  });
+
+  test("createMessage publishes one notification", async () => {
+    expect.hasAssertions();
+
+    const newMessage = await messageCaller.createMessage({ message: name, roomId });
+    const events = MockEventGridDatabase.get("");
+    assert.exists(events);
+
+    // Published unconditionally: whether anyone is subscribed is not a question the request path asks
+    expect(events).toHaveLength(1);
+    expect(takeOne(events).eventType).toBe(AzureFunction.ProcessNotification);
+    expect(takeOne(events).data).toStrictEqual(createMessageNotificationData(name, roomId, newMessage.rowKey));
+  });
+
+  test("createMessage reply publishes one notification carrying the thread root", async () => {
+    expect.hasAssertions();
+
+    const newRootMessage = await messageCaller.createMessage({ message: name, roomId });
+    // Ignore the root message's notification; assert only on the reply
+    MockEventGridDatabase.clear();
+
+    const newReplyMessage = await messageCaller.createMessage({
+      message: name,
+      replyRowKey: newRootMessage.rowKey,
+      roomId,
+    });
+    const events = MockEventGridDatabase.get("");
+    assert.exists(events);
+
+    // One event rather than two: a thread's followers widen the reply's recipient set instead of raising a
+    // Second notification that the first has to be de-duplicated against
+    expect(events).toHaveLength(1);
+    expect(takeOne(events).data).toStrictEqual(
+      createMessageNotificationData(name, roomId, newReplyMessage.rowKey, newRootMessage.rowKey),
+    );
   });
 });

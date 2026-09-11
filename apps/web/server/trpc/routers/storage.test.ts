@@ -1,30 +1,21 @@
-import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
-import { resources, StorageTier } from "@esposter/db-schema";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
+import { StorageTier } from "@esposter/db-schema";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("storageRouter", () => {
-  let mockContext: Context;
+  const { getCaller } = setupResourceSuite(trpcRouter);
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
   const name = "name";
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(trpcRouter)(mockContext);
-  });
-
-  afterEach(async () => {
-    MockContainerDatabase.clear();
-    await mockContext.db.delete(resources);
+  beforeAll(() => {
+    caller = getCaller();
   });
 
   test("readUsage reads the initial storage usage for the authed user", async () => {

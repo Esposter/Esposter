@@ -8,6 +8,7 @@ import { updateWebhookInputSchema } from "#shared/models/db/webhook/UpdateWebhoo
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { generateToken } from "@@/server/services/auth/generateToken";
+import { getWebhookRoomWhere } from "@@/server/services/webhook/getWebhookRoomWhere";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -24,11 +25,6 @@ import {
 } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { and, count, eq, getColumns, inArray } from "drizzle-orm";
-
-// A webhook is addressed by both keys so the room the permission was checked against is the room the row must
-// Belong to — an id alone would let a moderator of one room rewrite another's
-const getWebhookRoomWhere = (id: string, roomId: string) =>
-  and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId));
 
 export const webhookRouter = router({
   createWebhook: getPermissionsProcedure(

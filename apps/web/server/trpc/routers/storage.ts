@@ -2,12 +2,12 @@ import type { StorageUsage } from "#shared/models/storage/StorageUsage";
 
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import { generateWebPubSubClientAccessUrl } from "@@/server/services/azure/webPubSub/generateWebPubSubClientAccessUrl";
+import { on } from "@@/server/services/events/on";
 import { storageEventEmitter } from "@@/server/services/storage/events/storageEventEmitter";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { AzureWebPubSubHub, DatabaseEntityType } from "@esposter/db-schema";
-import { on } from "node:events";
 
 export const storageRouter = router({
   // The counter's other writer is the Functions host, which shares no event emitter with this process — so the

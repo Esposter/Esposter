@@ -78,6 +78,7 @@ describe("sessionRouter", () => {
 
   test("reads the caller's unexpired sessions, without the stored address", async () => {
     expect.hasAssertions();
+
     const expiredSession = { ...createMockSession(userId), token: "expiredToken" };
     await insertSession(
       expiredSession,
