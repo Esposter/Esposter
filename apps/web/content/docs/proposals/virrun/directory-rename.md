@@ -17,7 +17,7 @@ Until it lands, **every sweep leaves `*Dir` names alone**: a partial rename is t
 
 ```mermaid
 flowchart TD
-  B["branch off main"] --> R["rename word-bounded camelCase identifiers"]
+  B["branch off main"] --> R["rename every identifier and filename carrying the segment"]
   R --> P["sweep the prose that quotes them"]
   P --> G{"any bare dir identifier left"}
   G -->|yes| R
@@ -26,7 +26,7 @@ flowchart TD
   N --> M["merge to main, then sync main into develop"]
 ```
 
-- **Word-bounded camelCase only** — `\b[a-z]+Dirs?\b` and the bare `\bdirs?\b`. The lowercase overlayfs mount words (`upperdir`, `workdir`, `lowerdir`) and the bwrap flags are the kernel's and bubblewrap's vocabulary, and stay.
+- **Every spelling of the segment, in identifiers and filenames alike.** `\b[A-Za-z]*[Dd]irs?\b` finds the camelCase (`upperDir`, `lowerDirs`), the bare `dir`, and the PascalCase (`OpaqueDir`); `\b[Dd]irs?[A-Z]` finds the prefix position (`DirSource`); and `git ls-files | grep -i dir` finds the file names, which no identifier grep reaches. The lowercase overlayfs mount words (`upperdir`, `workdir`, `lowerdir`) and the bwrap flags match too and stay: they are the kernel's and bubblewrap's vocabulary.
 - **Identifiers, never values.** An enum member is renamed, its string value is not (`OverlayEntryKind.OpaqueDir = "opaqueDir"` becomes `OpaqueDirectory = "opaqueDir"`), because a value may already sit in a persisted manifest or a CLI argument. Check every enum value and Zod key the regex reaches before touching it.
 - **Its own branch, merged straight to `main`.** The change is mechanical and reads as one diff, so it goes to `main` without a CodeRabbit slot rather than through the standing `develop` → `main` window, where it would fill a whole review with zero findings and bury the sweeps beside it. `main` is then synced back into `develop` the way the `git` skill describes.
 - **The enforcer lands last.** `id-denylist` is a ratchet: it goes on only once no bare `dir` identifier is left, and the `naming` skill gains the ruling in the same change, so the rule and its enforcer are never on the tree without each other.
