@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, bench, graph:gen, outdated:dependencies, release, and the `ai:`-prefixed scripts an agent runs — the `ai:sweep:*` scans and the `ai:coderabbit:*` review tooling), a Settled note that the release stays one local script rather than a CI publish and another that a renamed export of a published package is never a major, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `ai:<domain>:<verb>` prefix that marks a script no human types, the `scriptsComments` key that carries a script's comment because JSON has none, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
+description: Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, bench, graph:gen, outdated:dependencies, release, and the `ai:`-prefixed scripts an agent runs — the `ai:sweep:*` scans and the `ai:coderabbit:*` review tooling), a Settled note that the release stays one local script rather than a CI publish and another that a renamed export of a published package is never a major, the rule that every `.ts` script runs under `tsx` so an enum is always available and why a pre-install CI check is shell rather than a script, the `ai:<domain>:<verb>` prefix that marks a script no human types, the `scriptsComments` key that holds only a script's `@TODO:` because JSON has no comments and a rationale lives in the skill, and the ban on running the whole test suite locally rather than the paths a change touched. Apply whenever running or recommending package scripts.
 ---
 
 # Package Scripts
@@ -118,20 +118,19 @@ of bash in `.github/actions/verify-package-builds`, beside the bash that compute
 
 ## `scriptsComments`
 
-JSON has no comments, so a script whose command needs one carries it in a sibling top-level **`scriptsComments`** object keyed by the script name — never a `"// …"` key inside `scripts`, which pnpm lists as a runnable script. The value is the whole note as one string, `@TODO:`-prefixed when it records something to undo later:
+JSON has no comments, so a script that records something to undo later carries it in a sibling top-level
+**`scriptsComments`** object keyed by the script name — never a `"// …"` key inside `scripts`, which pnpm lists as a
+runnable script. The value is one `@TODO:`-prefixed string naming the condition that ends it, and that is **all**
+the object holds: why a script is shaped as it is lives in this skill's table and the docs page that owns it,
+where the reasoning already sits, so a copy in the manifest is a second one that drifts.
 
 ```json
 {
-  "scripts": {
-    "build": "pnpm --filter \"@esposter/web...\" run build"
-  },
   "scriptsComments": {
-    "build": "A deviation taken on purpose: … the app's dependencies derived rather than named … @TODO: restore `pnpm build:docs` to the chain when …"
+    "build": "@TODO: restore `pnpm build:docs` to the chain when …"
   }
 }
 ```
-
-Only the scripts that need a note appear there — this is not a place to document the whole script table, which is what this skill is for.
 
 ## Check Suite (after edits)
 
