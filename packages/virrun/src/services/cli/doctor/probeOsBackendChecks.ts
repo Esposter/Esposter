@@ -12,25 +12,27 @@ import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getResult, takeOne } from "@esposter/shared";
 // The oldest bubblewrap exposing `--overlay-src` / `--tmp-overlay` (the RAM-overlay flags the os backend needs).
 const MINIMUM_BUBBLEWRAP_VERSION = "0.10.0";
+// A probe's trimmed stdout, or undefined when the command is absent or errors (getResult swallows the throw; a
+// Missing tool has no partial result to report).
+const readProbeOutput = (read: () => string): string | undefined =>
+  getResult(read)
+    .map((stdout) => stdout.trim())
+    .unwrapOr(undefined);
 // Run a probe command where the os backend actually runs it — directly on Linux, or through `wsl.exe --exec` on
-// Win32 — so every doctor probe reaches the same place the backend does, and returns trimmed stdout, or undefined
-// When the command is absent or errors (getResult swallows the throw; a missing tool has no partial result to report).
-// The win32 side goes through execWsl rather than spawning wsl.exe here, so it inherits the cold-boot-tolerant WSL
-// Bound: reporting `not found on PATH` for a tool that was only waiting on the distro to boot is the same wrong
-// Answer the capability probe used to cache.
-const readProbeOutput = (file: string, args: readonly string[]): string | undefined =>
-  getResult(() =>
+// Win32 — so every doctor probe reaches the same place the backend does. The win32 side goes through execWsl rather
+// Than spawning wsl.exe here, so it inherits the cold-boot-tolerant WSL bound: reporting `not found on PATH` for a
+// Tool that was only waiting on the distro to boot is the same wrong answer the capability probe used to cache.
+const readSandboxProbeOutput = (file: string, args: readonly string[]): string | undefined =>
+  readProbeOutput(() =>
     process.platform === "win32"
       ? execWsl(["--exec", file, ...args])
       : execFileHidden(file, args, { timeout: PROBE_TIMEOUT_MS }),
-  )
-    .map((stdout) => stdout.trim())
-    .unwrapOr(undefined);
+  );
 
 const probeBubblewrap = (): DiagnosticCheck => {
   const label = `bubblewrap >= ${MINIMUM_BUBBLEWRAP_VERSION}`;
   const type = DiagnosticCheckType.Bubblewrap;
-  const output = readProbeOutput("bwrap", ["--version"]);
+  const output = readSandboxProbeOutput("bwrap", ["--version"]);
   if (output === undefined)
     return {
       fix: "install bubblewrap (e.g. `sudo apt install -y bubblewrap`)",
@@ -63,7 +65,7 @@ const probeWslNode = (): DiagnosticCheck => {
       status: DiagnosticStatus.NotApplicable,
       type,
     };
-  const nodePath = readProbeOutput("sh", ["-c", buildWslLoginShellCommand("command -v node")]) ?? "";
+  const nodePath = readSandboxProbeOutput("sh", ["-c", buildWslLoginShellCommand("command -v node")]) ?? "";
   return nodePath
     ? { fix: "", label, note: nodePath, status: DiagnosticStatus.Ok, type }
     : {
@@ -78,7 +80,7 @@ const probeWslNode = (): DiagnosticCheck => {
 const probePython3 = (): DiagnosticCheck => {
   const label = "python3 (write-back)";
   const type = DiagnosticCheckType.Python3;
-  const output = readProbeOutput("python3", ["--version"]);
+  const output = readSandboxProbeOutput("python3", ["--version"]);
   return output === undefined
     ? {
         fix: "install python3 (used only to flush produced files to host on `virrun -- <cmd>`)",
@@ -91,9 +93,9 @@ const probePython3 = (): DiagnosticCheck => {
 };
 // Off win32 the source already lives on the host FS, so no mirror and no archive — the check is N/A. On win32 the
 // Source is synced onto the ext4 mirror through a tar archive staged by the HOST tar (createSourceMirrorArchive) —
-// Probed directly on Windows, never through readProbeOutput, because that is where it runs — so a missing tar.exe
-// Aborts every os run that has a delta to apply. The extract side inside WSL needs no probe: GNU tar is an essential
-// Package in every distro, unlike the rsync this replaced.
+// Probed directly on Windows, never through readSandboxProbeOutput, because that is where it runs — so a missing
+// Tar.exe aborts every os run that has a delta to apply. The extract side inside WSL needs no probe: GNU tar is an
+// Essential package in every distro, unlike the rsync this replaced.
 const probeTar = (): DiagnosticCheck => {
   const label = "host tar (source mirror)";
   const type = DiagnosticCheckType.Tar;
@@ -105,9 +107,9 @@ const probeTar = (): DiagnosticCheck => {
       status: DiagnosticStatus.NotApplicable,
       type,
     };
-  const output = getResult(() => execFileHidden(getTarExecutable(), ["--version"], { timeout: PROBE_TIMEOUT_MS }))
-    .map((stdout) => stdout.trim())
-    .unwrapOr(undefined);
+  const output = readProbeOutput(() =>
+    execFileHidden(getTarExecutable(), ["--version"], { timeout: PROBE_TIMEOUT_MS }),
+  );
   return output === undefined
     ? {
         fix: "install Windows tar (bsdtar ships with Windows 10 1803+ at System32\\tar.exe; check PATH)",

@@ -2,9 +2,9 @@ import type { InitArgs } from "#src/models/cli/InitArgs";
 import type { ArgsDef, CommandDef } from "citty";
 
 import { Color } from "#src/models/cli/Color";
-import { BackendType } from "#src/models/virrun/BackendType";
+import { BackendType, BackendTypes } from "#src/models/virrun/BackendType";
 import { CommandType } from "#src/models/virrun/CommandType";
-import { Environment } from "#src/models/virrun/Environment";
+import { Environments } from "#src/models/virrun/Environment";
 import { colorize } from "#src/services/cli/color/colorize";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 import { buildVirrunConfigurationContent } from "#src/services/configuration/buildVirrunConfigurationContent";
@@ -12,18 +12,18 @@ import { VIRRUN_CONFIGURATION_FILENAME } from "#src/services/exec/util/constants
 import { defineCommand } from "citty";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-// InitArgs keeps `options` a mutable `BackendType[]` (citty's EnumArgDef rejects a readonly array) and pins
-// `type: "enum"` so citty infers `args.backend` as BackendType, not a widened string.
+// InitArgs keeps `options` a mutable `BackendType[]` (citty's EnumArgDef rejects a readonly array, so the values
+// Arrays are spread) and pins `type: "enum"` so citty infers `args.backend` as BackendType, not a widened string.
 const initArgs: InitArgs = {
   backend: {
     default: BackendType.Os,
     description: "Backend a sandboxed command runs through.",
-    options: [BackendType.Auto, BackendType.Native, BackendType.Os, BackendType.Vfs],
+    options: [...BackendTypes],
     type: "enum",
   },
   environment: {
     description: "Framework whose generated artifacts the sandbox regenerates (e.g. nuxt → .nuxt); omit for none.",
-    options: [Environment.Nuxt],
+    options: [...Environments],
     required: false,
     type: "enum",
   },

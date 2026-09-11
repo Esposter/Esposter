@@ -63,12 +63,14 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
       if (process.platform === "win32") reapOrphanedWslRuns(true);
       removeCacheDirectory(getRepoCacheDirectory(""));
       if (!args.all) return;
+      const globalCacheDirectory = getGlobalCacheDirectory();
+      const localCacheDirectory = getLocalCacheDirectory();
       for (const directoryName of [
         VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
         VIRRUN_PREPARE_DIRECTORY_NAME,
         VIRRUN_TASKS_DIRECTORY_NAME,
       ])
-        removeCacheDirectory(join(getGlobalCacheDirectory(), directoryName));
+        removeCacheDirectory(join(globalCacheDirectory, directoryName));
       // The persisted host probe caches survive a snapshot sweep, so clear them here too: they are keyed on platform
       // + kernel release, which cannot see a toolchain change, and a stale login capture is exactly what pins the
       // Sandbox to an old node. Each costs one re-probe on the next run. The bwrap capability verdict is
@@ -77,9 +79,9 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
       // Not removeCacheDirectory: these are single small files, so routing a WSL-rooted one through a wsl.exe spawn
       // Would buy nothing the 9p bridge cannot already do.
       for (const probeCachePath of [
-        join(getGlobalCacheDirectory(), CAPABILITY_CACHE_FILENAME),
-        join(getLocalCacheDirectory(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME),
-        join(getLocalCacheDirectory(), WSL_CACHE_ROOT_CACHE_FILENAME),
+        join(globalCacheDirectory, CAPABILITY_CACHE_FILENAME),
+        join(localCacheDirectory, WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME),
+        join(localCacheDirectory, WSL_CACHE_ROOT_CACHE_FILENAME),
       ]) {
         rmSync(probeCachePath, { force: true });
         writeRemoved(probeCachePath);
