@@ -471,8 +471,8 @@ catalogs:
       specifier: ^6.2.5
       version: 6.2.5
     fast-check:
-      specifier: ^4.9.0
-      version: 4.9.0
+      specifier: ^4.10.0
+      version: 4.10.0
     fast-deep-equal:
       specifier: ^3.1.3
       version: 3.1.3
@@ -1876,7 +1876,7 @@ importers:
         version: 1.7.2
       fast-check:
         specifier: 'catalog:'
-        version: 4.9.0
+        version: 4.10.0
       publint:
         specifier: 'catalog:'
         version: 0.3.24
@@ -9774,8 +9774,8 @@ packages:
     resolution: {integrity: sha512-CGnyrvbhPlWYMngksqrSSUT1BAVP49dZocrHuK0SvtR0D5TMs5wP0o3j7jexDJW01KSadjBp1M/71o/KR3nD1w==}
     engines: {node: '>=18'}
 
-  fast-check@4.9.0:
-    resolution: {integrity: sha512-7ms6T7SybUev/PQITciI0yLM2pOSFy5zpG8Ty7tQofcVaQUvrMXp6CBwqF6fThLCLOrfBtuHAtwq6Yu4XPCllg==}
+  fast-check@4.10.0:
+    resolution: {integrity: sha512-hhqQL+IJllZi3aM4TKvmCj3bywLEcycNTTLZeLhA9ttMxBrCqM07q7Di4kl+j9EWSTXvJH1+EpIgsDbF/+8H5Q==}
     engines: {node: '>=12.17.0'}
 
   fast-deep-equal@3.1.3:
@@ -23854,7 +23854,7 @@ snapshots:
 
   fake-indexeddb@6.2.5: {}
 
-  fast-check@4.9.0:
+  fast-check@4.10.0:
     dependencies:
       pure-rand: 8.4.2
 
