@@ -13,7 +13,7 @@ There is one exception, and it is the merge-base count at the bottom of this pag
 Every review body states its own range, so the frontier is a fact to read rather than a thing to estimate:
 
 ```bash
-pnpm ai:coderabbit:window <pr>
+pnpm ai:coderabbit:window "<pr>"
 ```
 
 ```text

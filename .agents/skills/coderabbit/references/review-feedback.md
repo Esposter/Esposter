@@ -17,7 +17,7 @@ are, for the ad-hoc question the script does not answer.
 A one-off read of one endpoint is a single command and stays one:
 
 ```bash
-gh api "repos/:owner/:repo/pulls/<pr>/reviews?per_page=100" --paginate \
+gh api "repos/{owner}/{repo}/pulls/<pr>/reviews?per_page=100" --paginate \
   --jq '.[] | select(.user.login=="coderabbitai[bot]") | select(.body|length > 0) | .body'
 ```
 
@@ -30,7 +30,7 @@ while `updated_at` moves: sorting or filtering issue comments by `created_at` hi
 ## One call for every bodied finding
 
 ```bash
-pnpm ai:coderabbit:feedback <pr>
+pnpm ai:coderabbit:feedback "<pr>"
 ```
 
 It prints the newest review's stated `Actionable comments posted: N` and every findings bucket, then the
@@ -63,7 +63,7 @@ REST (`/pulls/<pr>/comments`, `/reviews`, `/issues/<pr>/comments`) reports `user
 
 ```bash
 # REST — the payload is a bare array, and the author sits on `user`
-gh api "repos/:owner/:repo/pulls/<pr>/comments" --jq '.[] | select(.user.login == "coderabbitai[bot]")'
+gh api "repos/{owner}/{repo}/pulls/<pr>/comments" --jq '.[] | select(.user.login == "coderabbitai[bot]")'
 # GraphQL — the payload is an object, and the author sits on `author`, one `nodes[]` per connection
 gh api graphql -f query='...' --jq '.data.repository.pullRequest.reviewThreads.nodes[]
   | select(.comments.nodes[0].author.login == "coderabbitai")'
@@ -89,7 +89,7 @@ things that count answers are worth separating:
 ## Probing whether the checkpoint covers the head
 
 ```bash
-pnpm ai:coderabbit:probe <pr>
+pnpm ai:coderabbit:probe "<pr>"
 ```
 
 It posts `@coderabbitai review` and prints the reply — `Already reviewed` means the checkpoint already covers

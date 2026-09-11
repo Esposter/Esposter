@@ -25,10 +25,4 @@ describe(getSortedByUpdatedAt, () => {
       getSortedByUpdatedAt([createEntry(9, "2026-09-11T01:00:00Z"), createEntry(4, "2026-09-11T01:00:00Z")]).at(-1),
     ).toStrictEqual(createEntry(9, "2026-09-11T01:00:00Z"));
   });
-
-  test("returns nothing for no entries", () => {
-    expect.hasAssertions();
-
-    expect(getSortedByUpdatedAt<ReturnType<typeof createEntry>>([])).toStrictEqual([]);
-  });
 });

@@ -9,6 +9,6 @@ import { parseMachineJson } from "#src/services/parseMachineJson";
 // Result set (a sort, a `last`, a count) describes one page there, silently, and only once the pull request
 // Passes one page. Aggregation therefore happens here, over every page at once.
 export const readBotEntries = <TEntry extends GitHubEntry>(path: string): TEntry[] =>
-  parseMachineJson<TEntry[][]>(runGh(["api", `repos/:owner/:repo/${path}?per_page=100`, "--paginate", "--slurp"]))
+  parseMachineJson<TEntry[][]>(runGh(["api", `repos/{owner}/{repo}/${path}?per_page=100`, "--paginate", "--slurp"]))
     .flat()
     .filter(({ user }) => user.login === CODERABBIT_REST_LOGIN);

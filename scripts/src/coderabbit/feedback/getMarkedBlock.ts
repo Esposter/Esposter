@@ -3,6 +3,6 @@
 // Are machine-written and stable, which makes them the only reliable way in.
 export const getMarkedBlock = (body: string, marker: string): string | undefined => {
   const start = body.indexOf(`<!-- ${marker}_start -->`);
-  const end = body.indexOf(`<!-- ${marker}_end -->`);
+  const end = body.indexOf(`<!-- ${marker}_end -->`, start);
   return start === -1 || end === -1 ? undefined : body.slice(start, end);
 };

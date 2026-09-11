@@ -25,8 +25,8 @@ The working tree keeps whatever is in flight, which matters when agents are mid-
 
 ```bash
 baseBranch=$(gh pr view "<pr>" --json baseRefName --jq .baseRefName)
-sha=$(gh api "repos/:owner/:repo/contents/.coderabbit.yaml?ref=$baseBranch" --jq .sha)
-gh api -X PUT "repos/:owner/:repo/contents/.coderabbit.yaml" \
+sha=$(gh api "repos/{owner}/{repo}/contents/.coderabbit.yaml?ref=$baseBranch" --jq .sha)
+gh api -X PUT "repos/{owner}/{repo}/contents/.coderabbit.yaml" \
   -f message="$(cat message.txt)" -f content="$(base64 -w0 new.yaml)" -f sha="$sha" -f branch="$baseBranch"
 ```
 

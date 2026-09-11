@@ -19,7 +19,7 @@ Find recipe, over `*.md`: fenced `bash`/`sh` blocks are the candidates, and a bl
 loop, a branch, a fallback or a second process aggregating the first's output.
 
 ````bash
-grep -rn -A 30 '^```bash' --include=*.md .agents apps/web/content/docs |
+grep -rn -A 30 '^```bash' --include=*.md .agents apps/web/content/docs *.md |
   grep -E "^\S+[-:][0-9]+[-:]\s*((for |while |until ).*(; do| do$)|if .*; then)"
 ````
 

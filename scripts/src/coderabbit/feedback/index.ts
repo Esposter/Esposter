@@ -31,9 +31,10 @@ for (const line of getFindingLines(review.body)) console.info(line);
 
 const threads = readUnresolvedThreads(pullRequest);
 console.info(`\n##### ${threads.length.toString()} unresolved threads`);
+// Every finding opens with its severity tag; the bold line after it is the one that says what the finding is
 for (const { body, commentId, line, path } of threads)
   console.info(
-    `${commentId.toString()} ${path}:${line?.toString() ?? "outside the diff"}\n${body.split("\n")[0] ?? ""}\n`,
+    `${commentId.toString()} ${path}:${line?.toString() ?? "outside the diff"}\n${body.split("\n").find((entry) => entry.startsWith("**")) ?? ""}\n`,
   );
 
 // Inline comments can fail to post outright, and the review says so in a caution block nobody reads. The

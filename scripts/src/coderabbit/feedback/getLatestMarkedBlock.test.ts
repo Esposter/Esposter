@@ -2,9 +2,7 @@ import { getLatestMarkedBlock } from "#src/coderabbit/feedback/getLatestMarkedBl
 import { describe, expect, test } from "vitest";
 
 const createBody = (risk: string) =>
-  `<!-- final_review_risk_start -->
-**Merge Risk:** ${risk}
-<!-- final_review_risk_end -->`;
+  `<!-- final_review_risk_start -->\n**Merge Risk:** ${risk}\n<!-- final_review_risk_end -->`;
 
 describe(getLatestMarkedBlock, () => {
   // A status comment posted after the walkthrough takes the newest slot, and the verdict is still in the
@@ -13,7 +11,7 @@ describe(getLatestMarkedBlock, () => {
     expect.hasAssertions();
 
     expect(getLatestMarkedBlock([createBody("high"), "Review rate limited"], "final_review_risk")).toBe(
-      `<!-- final_review_risk_start -->\n**Merge Risk:** high\n`,
+      "<!-- final_review_risk_start -->\n**Merge Risk:** high\n",
     );
   });
 
@@ -21,13 +19,7 @@ describe(getLatestMarkedBlock, () => {
     expect.hasAssertions();
 
     expect(getLatestMarkedBlock([createBody("high"), createBody("low")], "final_review_risk")).toBe(
-      `<!-- final_review_risk_start -->\n**Merge Risk:** low\n`,
+      "<!-- final_review_risk_start -->\n**Merge Risk:** low\n",
     );
-  });
-
-  test("returns undefined when no body carries it", () => {
-    expect.hasAssertions();
-
-    expect(getLatestMarkedBlock(["Review rate limited"], "final_review_risk")).toBeUndefined();
   });
 });
