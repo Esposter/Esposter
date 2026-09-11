@@ -17,11 +17,12 @@ import { createStandaloneCallSessionId } from "@@/server/services/message/call/c
 import { joinLiveKitCall } from "@@/server/services/message/call/joinLiveKitCall";
 import { leaveCallAsParticipant } from "@@/server/services/message/call/leaveCallAsParticipant";
 import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
+import { requireCallParticipant } from "@@/server/services/message/call/requireCallParticipant";
 import { requireCallSession } from "@@/server/services/message/call/requireCallSession";
 import { requireJoinedCallSession } from "@@/server/services/message/call/requireJoinedCallSession";
 import { requireReadableCallSession } from "@@/server/services/message/call/requireReadableCallSession";
+import { requireThreadRoot } from "@@/server/services/message/call/requireThreadRoot";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
-import { readMessagesByRowKeys } from "@@/server/services/message/readMessagesByRowKeys";
 import { router } from "@@/server/trpc";
 import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
@@ -29,25 +30,8 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
 import { checkHasPermission } from "@esposter/db";
-import { AzureEntityType, callSessionIdSchema, DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
+import { callSessionIdSchema, DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-
-// The live participant row is the only place a per-session flag lives: a session with no row has not joined,
-// Whether it is the caller's own or the target of a moderation
-const requireCallParticipant = (callSessionId: string, sessionId: string) => {
-  const participant = callSessionParticipantMap.get(callSessionId)?.get(sessionId);
-  if (!participant) throw getForbiddenError("Must join call first");
-  return participant;
-};
-// A thread call hangs off the message its thread is rooted at, and that rowKey is written onto every join and
-// Leave message as the replyRowKey. Membership does not bound it and the session's unique index rejects only
-// Exact duplicates, so an unknown rowKey would open a session of its own whose messages reply to nothing
-const requireThreadRoot = async (roomId: string, threadRootRowKey: string) => {
-  if (!threadRootRowKey) return;
-
-  const [message] = await readMessagesByRowKeys(roomId, [threadRootRowKey]);
-  if (!message) throw getNotFoundError(AzureEntityType.Message, threadRootRowKey);
-};
 
 export const baseCallRouter = router({
   createCall: standardAuthedProcedure.mutation<{ callSessionId: CallSessionInMessage["id"] }>(async ({ ctx }) => {
