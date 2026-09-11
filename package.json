@@ -36,6 +36,9 @@
   },
   "type": "module",
   "scripts": {
+    "ai:coderabbit:feedback": "pnpm -C scripts run ai:coderabbit:feedback",
+    "ai:coderabbit:probe": "pnpm -C scripts run ai:coderabbit:probe",
+    "ai:coderabbit:window": "pnpm -C scripts run ai:coderabbit:window",
     "ai:sweep:constant-scope": "pnpm -C scripts run ai:sweep:constant-scope",
     "ai:sweep:repeated-list-items": "pnpm -C scripts run ai:sweep:repeated-list-items",
     "ai:sweep:shared-export-consumers": "pnpm -C scripts run ai:sweep:shared-export-consumers",

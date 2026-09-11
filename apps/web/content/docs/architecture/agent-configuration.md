@@ -44,6 +44,24 @@ ESLint states neither. The shared config bridges `.oxlintrc.json`'s `ignorePatte
 
 Only the agent harness's machine-local `.git/info/exclude` hides live worktrees from git on the machine that made them. No clone, CI runner, or non-git tool ever reads that file, which is why `.gitignore` carries the exclusion too and each tool states it in its own configuration.
 
+## An agent's programs live in `scripts/`, not in `.agents/`
+
+A recipe pasted into a skill page or a ledger is a program with none of a program's guarantees — nothing typechecks, lints, formats or runs it, and the rot is silent, because a scan that cannot run reports nothing and that is the shape of a clean tree. So a recipe that is more than one command lives in `scripts/src/<domain>/<verb>/` with a colocated test, where the repository's own toolchain already reaches it: no runner, project or config entry is added to make that work.
+
+The tree stays free of executables for one reason — it is the rules an agent reads, and an executable inside it makes "rule or tool" unanswerable from the path. A check **about** the agent tree is an ordinary `scripts` test, which is why `scripts/src/agentDirectories.test.ts` sits where it does rather than beside the thing it checks.
+
+```mermaid
+flowchart LR
+  Recipe["A recipe in a skill or ledger"] --> Gate{"One command, logic in its pattern"}
+  Gate -->|yes| Fence["Stays in its fence"]
+  Gate -->|no| Script["scripts/src/domain/verb/ + colocated test"]
+  Fence -->|needs a fix| Script
+  Script --> Name["pnpm ai:domain:verb"]
+  Name --> Page["The page keeps the one line and the why"]
+```
+
+Those scripts are named **`ai:<domain>:<verb>`**, and the prefix is decided by audience rather than by what the script does: `ai:sweep:*` carries the sweep scans, `ai:coderabbit:*` the review tooling, while a script a person types after a manifest edit or a version bump — `graph:gen`, `outdated:dependencies`, `update:node` — keeps its plain name. It is a name rather than a guard: nothing stops a person running one, and it answers the question a manifest reader actually has, which is which entries are not for them.
+
 ## Configuration there, documentation in public
 
 Documentation is **public by default**. Everything explanatory lives in `apps/web/content/docs`, ships with the app, and is readable at `/docs` on the deployed site — it is written for a person in a browser, and hiding it in a dotfolder is what stops it being read. See [monorepo tooling](/docs/architecture/monorepo-tooling) for how that package is built and published.
@@ -53,7 +71,7 @@ Documentation is **public by default**. Everything explanatory lives in `apps/we
 | Lives in `.agents/`                                  | Lives in the docs                                  |
 | ---------------------------------------------------- | -------------------------------------------------- |
 | Skills — conventions written as agent instructions   | The decision a convention encodes, and its why     |
-| Workflow scripts and their tests                     | What a workflow is for and when to reach for it    |
+| The `ai:`-prefixed scripts' invocations              | What a script is for and when to reach for it      |
 | Sweep ledgers — per-unit progress state              | The convention a sweep is carrying across the repo |
 | Harness settings and the permission allowlist        | Nothing — it is pure tool configuration            |
 | Issue tracker, triage label, and domain-doc pointers | Nothing — command recipes for one toolchain        |

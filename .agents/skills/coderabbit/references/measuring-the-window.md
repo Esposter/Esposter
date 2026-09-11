@@ -10,41 +10,32 @@ There is one exception, and it is the merge-base count at the bottom of this pag
 
 ## Read the last reviewed sha, never infer it
 
-Every review body states its own range, so this is a fact to read. One block, so no step gets substituted for a shortcut — it prints the frontier and both counts:
+Every review body states its own range, so the frontier is a fact to read rather than a thing to estimate:
 
 ```bash
-PR="<pr>"; BRANCH="<branch>"; BASE="<base-branch>"
-LAST=$(gh api "repos/:owner/:repo/pulls/$PR/reviews?per_page=100" --paginate \
-  --jq '.[] | select(.user.login=="coderabbitai[bot]") | select((.body|length) > 0)
-        | .body | capture("between [0-9a-f]{40} and (?<b>[0-9a-f]{40})") | .b' | tail -n 1)
-if [ -z "$LAST" ]; then
-  LAST=$(git merge-base "$BASE" HEAD)
-  echo "no review body names a range — first review, so the frontier is the merge base"
-fi
-echo "last reviewed:     $LAST"
-echo "pushed+unreviewed: $(git diff --name-only "$LAST"..origin/$BRANCH | wc -l)"
-echo "next push adds to: $(git diff --name-only "$LAST"..HEAD | wc -l)"
+pnpm ai:coderabbit:window <pr>
 ```
 
-**Both halves of that pipeline are load-bearing, and both fail silently.** `last` inside `--jq` would run once
-per page — `gh` re-invokes the filter for each — so a PR past 100 reviews yields one sha per page and `$LAST`
-becomes a multi-line string no `git diff` accepts; picking the last **line** downstream is what spans the pages.
-And a `[…] | last` over an empty array emits the literal `null`, which is a string `git diff` resolves against
-nothing rather than an empty value the shell can test, so the streaming form is what makes the guard reachable
-at all.
+```text
+last reviewed:     ef66127af1b030d53b91c3112789e5646b999380
+pushed+unreviewed: 5
+next push adds to: 22
+```
 
-An empty `LAST` means no review body has ever named a range — that is the first-review case, and the merge base
-the guard substitutes is the cumulative diff the bottom of this page describes. It never means zero.
+The head and base branches come from the pull request itself, so nothing has to be passed or remembered. When
+no review body names a range the script says so and substitutes the merge base: that is the **first-review**
+case, whose window is the cumulative diff this page's last section describes. It never means zero — reading it
+as zero is how an over-cap first window gets pushed as a small one.
 
 ## Take the second number before a push
 
-The pipeline deliberately keeps local commits ahead of the reviewed frontier, so `..origin/<branch>` measures the pushed backlog only and omits exactly the commits the push is about to add — it can read comfortably under the cap while the push lands well over it. Use `..origin/<branch>` only to answer "is a previous window still unreviewed"; use `..HEAD` (or `..<cut-sha>` when holding a tail back) to size the window.
+The pipeline deliberately keeps local commits ahead of the reviewed frontier, so `pushed+unreviewed` omits exactly the commits the push is about to add — it can read comfortably under the cap while the push lands well over it. It answers "is a previous window still unreviewed" and nothing else; `next push adds to` is the one that sizes the window. When a tail is being held back, the cut sha's own count is a `git diff --name-only <frontier>..<cut-sha>` away.
 
 **The budget is measured from that sha, not from the last push**. An unreviewed window does not clear — it accumulates. Two pushes of 35 and 80 that each looked compliant are one 115-file window, over the cap, and the review is skipped outright rather than truncated.
 
 ## A rate-limited status does not prove the frontier stalled
 
-CodeRabbit advances its incremental checkpoint over commits it never posted a review body for: the status still reads `Review rate limited`, no range names them, and they count as reviewed anyway. Reading that as an unreviewed window inflates the next backlog by everything it silently covered and stalls pushes to protect a review that will never run. The reviewed range is evidence the checkpoint moved, never evidence it did not. The probe is the retrigger itself — `@coderabbitai review` replies `Already reviewed` when the checkpoint covers the head, and starts a review when it does not. Read **the reply to the probe**, never whichever bot comment is newest (`references/review-feedback.md`); a decline costs nothing.
+CodeRabbit advances its incremental checkpoint over commits it never posted a review body for: the status still reads `Review rate limited`, no range names them, and they count as reviewed anyway. Reading that as an unreviewed window inflates the next backlog by everything it silently covered and stalls pushes to protect a review that will never run. The reviewed range is evidence the checkpoint moved, never evidence it did not. The probe is the retrigger itself: `pnpm ai:coderabbit:probe <pr>` replies `Already reviewed` when the checkpoint covers the head, and starts a review when it does not (`references/review-feedback.md`). A decline costs nothing; a start costs the slot, which is why it is asked for.
 
 ## Counting the files a window would carry
 

@@ -31,6 +31,9 @@
     "#src/*": "./src/*.ts"
   },
   "scripts": {
+    "ai:coderabbit:feedback": "tsx src/coderabbit/feedback/index.ts",
+    "ai:coderabbit:probe": "tsx src/coderabbit/probe/index.ts",
+    "ai:coderabbit:window": "tsx src/coderabbit/window/index.ts",
     "ai:sweep:constant-scope": "tsx src/sweeps/constantScope/index.ts",
     "ai:sweep:repeated-list-items": "tsx src/sweeps/repeatedListItems/index.ts",
     "ai:sweep:shared-export-consumers": "tsx src/sweeps/sharedExportConsumers/index.ts",

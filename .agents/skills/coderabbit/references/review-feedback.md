@@ -2,134 +2,60 @@
 
 Read when pulling a PR's review feedback, counting what is still open, or replying to a comment. What the output means — where nitpicks live, reconciling against the stated counts, replying to every finding — is in `SKILL.md`; this page is the calls and the ways they lie.
 
-## All three endpoints
+## Three endpoints, and what each one alone loses
 
-CodeRabbit's feedback is split across **three different endpoints**. Reading only one silently loses findings, and the loss is invisible — nothing tells you a category was missed.
+CodeRabbit's feedback is split across three endpoints, and reading one silently loses the others' findings —
+nothing tells you a category was missed. `pnpm ai:coderabbit:feedback <pr>` reads all three; this is what they
+are, for the ad-hoc question the script does not answer.
+
+| Endpoint               | Carries                                                                          | Lost by skipping it                                                                               |
+| :--------------------- | :------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| `pulls/<pr>/reviews`   | `Actionable comments posted: N`, the nitpick block, the outside-diff-range block | Every bodied finding — neither bucket ever exists as an inline comment                            |
+| `pulls/<pr>/comments`  | the file-anchored inline findings, and the comment id a reply needs              | The threads, and any way to answer one                                                            |
+| `issues/<pr>/comments` | the walkthrough: Merge Risk, the pre-merge checks, rate-limit notices            | The verdict — it appears in no review body, so the other two reconcile perfectly while missing it |
+
+A one-off read of one endpoint is a single command and stays one:
 
 ```bash
-# 1. Review bodies -> "Actionable comments posted: N", the collapsed NITPICK block, and the
-#    OUTSIDE DIFF RANGE block. Both of those live ONLY here. They are not inline comments.
-gh api "repos/Esposter/Esposter/pulls/<pr>/reviews?per_page=100" --paginate \
+gh api "repos/:owner/:repo/pulls/<pr>/reviews?per_page=100" --paginate \
   --jq '.[] | select(.user.login=="coderabbitai[bot]") | select(.body|length > 0) | .body'
-
-# 2. Inline review comments -> the actionable, file-anchored findings.
-gh api "repos/Esposter/Esposter/pulls/<pr>/comments?per_page=100" --paginate \
-  --jq '.[] | "\(.id) \(.path):\(.line // .original_line)\n\(.body)\n"'
-
-# 3. Issue comments -> the walkthrough, status, and rate-limit notices. The walkthrough also carries the
-#    MERGE RISK verdict and the PRE-MERGE CHECKS table, which live ONLY here — no review body has them.
-#    Sorted so the newest state is last; the endpoint ignores sort/direction, and --jq would sort
-#    each page on its own, so --slurp hands every page to one process that sorts across all of them.
-gh api "repos/Esposter/Esposter/issues/<pr>/comments?per_page=100" --paginate --slurp |
-  node -e 'const pages = JSON.parse(require("fs").readFileSync(0, "utf8"));
-    for (const { body } of pages.flat()
-      .filter(({ user }) => user.login === "coderabbitai[bot]")
-      .sort((a, b) => a.updated_at.localeCompare(b.updated_at))) console.log(body);'
 ```
 
-The walkthrough issue-comment is **edited in place** across reviews, so its `created_at` stays pinned to the first review while `updated_at` moves. Filtering issue comments by `created_at` hides the current walkthrough — sort by `updated_at`, as the call above does.
-
-**Anything that must see the whole result set goes downstream of `--paginate --slurp`, never in `--jq`.** `gh` runs `--jq` once per page, so a `sort_by`, a `.[-1]`, a `.[-N:]` or a `length` computed there describes one page rather than the PR — silently, and only once a PR passes 100 comments, which is exactly when the answer matters. Per-element work (`select`, string building) is unaffected and stays in `--jq`, which is why calls 1 and 2 above still use it.
-
-`--slurp` emits an **array of pages**, hence the `.flat()`. It cannot be combined with `--jq` or `--template` (gh rejects the pair), so the aggregation runs in a second process — `node -e`, not `jq`, because the repo's toolchain guarantees node and this machine has no standalone `jq` on `PATH`.
+Two traps in writing another one. **`gh` runs `--jq` once per page**, so a `sort_by`, `.[-1]`, `.[-N:]` or
+`length` computed there describes one page rather than the pull request — silently, and only once it passes a
+hundred comments, which is exactly when the answer matters. Per-element work (`select`, string building) is
+unaffected. And the **walkthrough is edited in place**, so its `created_at` stays pinned to the first review
+while `updated_at` moves: sorting or filtering issue comments by `created_at` hides the current one.
 
 ## One call for every bodied finding
 
-Bodied content is split across **two** endpoints, not one. Call 1 carries the findings buckets; call 3's
-walkthrough comment carries the **Merge Risk** verdict and the **Pre-merge checks** table, which appear in no
-review body at all. The single call below reads both, so "I fetched the review" stops meaning "I fetched the
-reviews endpoint".
+```bash
+pnpm ai:coderabbit:feedback <pr>
+```
 
-Each body is raw Markdown with HTML tags embedded in it — rendered HTML comes back in `body_html` under
-`application/vnd.github-commitcomment.html+json`, which is not what the default request asks for. The findings sit
-in collapsed `<details>` blocks whose headings carry an emoji and a count, hence the tag strip and the emoji
-handling below. **Grepping a body for a category name is how they get missed** — the categories are not a fixed
-set: nitpicks and outside-diff-range findings are the two constants, and CodeRabbit moves findings into further
-buckets of its own (duplicates, refactor suggestions, an additional-comments block once a review carries many)
-whose names nobody has written down. So the filter runs the other way: suppress the sections that are known
-boilerplate, print everything else, and a bucket nobody has seen before shows up by default rather than silently.
+It prints the newest review's stated `Actionable comments posted: N` and every findings bucket, then the
+unresolved threads as `<comment id> <path>:<line>` with the first line of each finding, then the two counts
+reconciled, then the walkthrough's **Merge Risk** verdict and **Pre-merge checks** table. One command, because
+the content is split across two endpoints and a fetch of the reviews endpoint alone reads as complete while
+missing the verdict entirely.
 
-````bash
-node -e '
-const { execFileSync } = require("node:child_process");
-const BOILERPLATE_REGEX =
-  /^(\*\*)?(Review info|Run configuration|Commits|Files selected|Files ignored|Files with no reviewable|Files skipped|Autofix|Prompt for|Tip\b|Thanks for using|Fix all unresolved|---)/u;
-const EMOJI_PREFIX_REGEX = /^[\p{Extended_Pictographic}️‍]+\s*/u;
-const [pullRequest] = process.argv.slice(1);
-const readBotEntries = (path) =>
-  JSON.parse(
-    execFileSync("gh", ["api", `repos/Esposter/Esposter/${path}?per_page=100`, "--paginate", "--slurp"], {
-      encoding: "utf8",
-      maxBuffer: 256 * 1024 * 1024,
-    }),
-  )
-    .flat()
-    .filter(({ user }) => user.login === "coderabbitai[bot]");
-const printBody = (body) => {
-  let isBoilerplate = false;
-  for (const line of body
-    .replace(/```[\s\S]*?```/gu, "")
-    .replace(/<[^>]*>/gu, "")
-    .split("\n")
-    .map((entry) => entry.trim())
-    .filter(Boolean)) {
-    const heading = line.replace(EMOJI_PREFIX_REGEX, "");
-    if (BOILERPLATE_REGEX.test(heading)) isBoilerplate = true;
-    else if (/\(\d+\)$/u.test(heading) || /^(#{1,6} |\*\*Actionable comments posted:)/u.test(heading))
-      isBoilerplate = false;
-    if (!isBoilerplate) console.log(line);
-  }
-};
-const printMarkedBlock = (body, marker) => {
-  const start = body.indexOf(`<!-- ${marker}_start -->`);
-  const end = body.indexOf(`<!-- ${marker}_end -->`);
-  if (start === -1 || end === -1) return;
-  console.log(`\n##### ${marker}`);
-  printBody(body.slice(start, end));
-};
-const reviews = readBotEntries(`pulls/${pullRequest}/reviews`).filter(({ body }) => body);
-console.log(`##### newest of ${reviews.length} review bodies`);
-printBody(reviews.at(-1)?.body ?? "");
-const walkthrough =
-  readBotEntries(`issues/${pullRequest}/comments`).sort((a, b) => a.updated_at.localeCompare(b.updated_at)).at(-1)
-    ?.body ?? "";
-if (walkthrough.includes("review in progress by coderabbit.ai")) console.log("\n##### REVIEW IN PROGRESS — do not push");
-for (const marker of ["final_review_risk", "pre_merge_checks_walkthrough"]) printMarkedBlock(walkthrough, marker);
-' "<pr>"
-````
+**What the output is not telling you** is the part worth knowing:
 
-It prints the stated actionable count first — the number to reconcile the inline fetch against — then each finding
-group with its file, line range, severity and body, then the merge-risk verdict and the pre-merge checks. The
-fenced blocks are dropped because they hold the AI-agent prompts rather than findings, and only the **newest**
-review and the **newest-touched** walkthrough comment are read, since an older body still lists findings later
-commits fixed.
-
-It shells out to `gh` itself rather than sitting downstream of a pipe, because two endpoints cannot feed one
-stdin. That also removes the `--paginate --slurp`-into-`--jq` footgun: `gh` runs `--jq` once per page, so a
-`sort_by`, `.[-1]`, `.[-N:]` or `length` computed there describes one page rather than the PR — silently, and only
-once a PR passes 100 comments, which is exactly when the answer matters.
-
-**The walkthrough's blocks are read by HTML-comment marker, not by heading.** They sit inside collapsed `<details>`
-and carry no counted heading, so nothing would reopen the line filter for them; the `_start`/`_end` marker pairs
-are stable and machine-written. The same absence is why `printBody` reopens on a markdown heading (`#{1,6} `) as
-well as a counted one: without that, `isBoilerplate` latches on the walkthrough's `📒 Files selected for
-processing (4)` and swallows every later section — including the merge risk — while exiting 0.
-
-**The leading emoji is stripped before the match, never listed as an alternative of its own.** Every boilerplate
-heading CodeRabbit emits pairs its emoji with fixed text (`📒 Files selected for processing (9)`,
-`🤖 Prompt for all review comments with AI agents`), so stripping the pictographs leaves the text alternatives to
-do the whole job. Matching a bare `🤖` or `⚙️` instead suppresses whatever follows it, and the branch that reopens
-a counted group is an `else if` — so an unseen bucket that happens to carry a listed emoji (`🤖 New findings (2)`)
-would be swallowed silently, which is the one failure this filter exists to prevent.
-
-### Merge Risk names the commit it covers
-
-The verdict line is `**Merge Risk:** _🟠 High_ · up to \`61705\``, followed by a prose rationale and a
-`final_review_risk_coverage`comment carrying`sourceCommitId`/`coveredCommitId`/`kind`. **Read the sha before
-acting on the level.** A High that covers a sha two pushes back describes code the fixes already changed, and
-treating it as current is how a drained PR reads as blocked; conversely a verdict whose `coveredCommitId` is the
-head is the one statement that reconciles against the work just pushed. The rationale is usually the same
-findings restated as consequences, so it is the fastest check that a window's fixes actually landed.
+- **A findings bucket it prints that this page never names is still a finding.** The categories are not a fixed
+  set — nitpicks and outside-diff-range findings are the two constants, and CodeRabbit invents further buckets
+  (duplicates, refactor suggestions, an additional-comments block once a review carries many). The script
+  suppresses known boilerplate and prints the rest, so an unseen bucket surfaces by default; grepping its output
+  for a category name puts the loss back.
+- **A thread count under the stated actionable count is reported, not hidden.** It means the findings were
+  resolved already or the inline comments failed to post — the review says the latter in a `> [!CAUTION] Inline
+review comments failed to post` block, and either way the body still lists them.
+- **Nitpicks and outside-diff-range findings have no thread to resolve**, so nothing marks them done and no
+  later review edits the body that lists them. Check each against the current file before acting: the counts
+  reconcile the fetch, never the state of the code.
+- **Merge Risk names the sha it covers** (`· up to \`61705\``). A High covering a sha two pushes back describes
+  code the fixes already changed, which is how a drained pull request reads as blocked. Read the sha first; the
+  rationale is usually that review's findings restated as consequences, which makes it the fastest confirmation
+  that a window's fixes landed.
 
 ## The login differs by API, and so does the shape
 
@@ -149,60 +75,32 @@ A `.[]` against the GraphQL payload iterates the top-level object's values, so i
 
 ## Counting open findings
 
-```bash
-gh api graphql --paginate -f query='
-query($endCursor: String) {
-  repository(owner: "<owner>", name: "<repo>") {
-    pullRequest(number: <pr>) {
-      reviewThreads(first: 100, after: $endCursor) {
-        pageInfo { hasNextPage endCursor }
-        nodes { isResolved isOutdated path line comments(first: 1) { nodes { author { login } body } } }
-      }
-    }
-  }
-}' --jq '.data.repository.pullRequest.reviewThreads.nodes[]
-  | select(.isResolved == false)
-  | select(.comments.nodes[0].author.login == "coderabbitai") | .path' | wc -l
-```
+`pnpm ai:coderabbit:feedback <pr>` prints them, and its count is the bot's unresolved threads alone. Two
+things that count answers are worth separating:
 
-**`--paginate` and `pageInfo` are both load-bearing**, and the failure is silent in the direction that matters. A long-lived release PR accumulates threads for its whole life, so `reviewThreads(first: 100)` alone starts dropping the newest page exactly when the PR is busiest, and reports the backlog as drained. `gh` follows the cursor only when the query declares `$endCursor` and selects `pageInfo`; omit either and it returns page one and exits 0. Count with `| wc -l` over one line per thread rather than `| length`, which reports a per-page length once per page.
-
-**The author filter is load-bearing in the other direction.** Unfiltered, the count is every unresolved thread on the PR — a human comment or another bot's thread then holds the drain gate shut against findings that were never CodeRabbit's, and the number stops reconciling against the review bodies' `Actionable comments posted: N`. Because the two mistakes are silent and point opposite ways, run it unfiltered too and read the gap as the human threads it is.
-
-Unresolved threads are the inline half only — reconcile against the stated counts (`SKILL.md`), since neither nitpicks nor outside-diff-range findings ever exist as threads, and inline comments can fail to post outright.
-
-**Nothing marks a bodied finding done.** A thread carries `isResolved`, so the query above narrows to what is still open; a nitpick or an outside-diff finding has no such flag, and the review body it sits in is never edited. So an older review's blocks still list findings that later commits fixed, and a fetch that reaches back over several reviews re-surfaces them as if they were new. Read the **newest** review's blocks, and check each one against the current file before acting — the counts reconcile the fetch, not the state of the code.
+- **It is the inline half only.** Neither nitpicks nor outside-diff-range findings ever exist as threads, and an
+  inline comment can fail to post outright, so the stated counts in the review body are what the number
+  reconciles against.
+- **It excludes human threads on purpose.** Unfiltered, an unresolved thread from a person holds the drain gate
+  shut against findings that were never CodeRabbit's, and the number stops reconciling against
+  `Actionable comments posted: N`. When the pull request feels stuck with nothing open, read the threads
+  unfiltered in the UI and the gap is the human ones.
 
 ## Probing whether the checkpoint covers the head
 
-Posting `@coderabbitai review` and reading straight back races the bot: the reply does not exist yet, so the read returns the previous bot comment — which is a real CodeRabbit remark and reads exactly like an answer. Wait for the newest bot comment to _change_, then read that one.
-
 ```bash
-crLatest() {  # the bot's most recently touched issue comment: "<id> <updated_at>"
-  gh api "repos/Esposter/Esposter/issues/<pr>/comments?per_page=100" --paginate --slurp |
-    node -e 'const [comment] = JSON.parse(require("fs").readFileSync(0, "utf8")).flat()
-      .filter(({ user }) => user.login === "coderabbitai[bot]")
-      .sort((a, b) => b.updated_at.localeCompare(a.updated_at) || b.id - a.id);
-      console.log(comment ? `${comment.id} ${comment.updated_at}` : "0 none");'
-}
-
-before=$(crLatest) || exit 1
-gh pr comment "<pr>" --body "@coderabbitai review" || exit 1
-deadline=$((SECONDS + 600))
-while :; do
-  test "$SECONDS" -lt "$deadline" || { echo "no reply in 10m — read the PR before assuming anything" >&2; exit 1; }
-  latest=$(crLatest) || { sleep 10; continue; }   # a failed read is not a new checkpoint
-  test "$latest" != "$before" && break
-  sleep 10
-done
-echo "$latest"   # then read that comment's body: "Already reviewed" -> the checkpoint already covers the head
+pnpm ai:coderabbit:probe <pr>
 ```
 
-**Sort by `updated_at`, not by `id`.** The answer often arrives as an **in-place edit** of the walkthrough, which keeps its original id — so the newest id can be a comment that has not moved while the one that did sorts below it. `id` stays only as the tie-breaker for two comments written in the same second. For the same reason the compared value is `id` plus `updated_at` rather than the first body line: an edit that leaves the first line intact is invisible to a body comparison, and `updated_at` moves whatever the edit touched.
+It posts `@coderabbitai review` and prints the reply — `Already reviewed` means the checkpoint already covers
+the head, anything else means a review is starting. **It spends a slot when a review does start**, so it is
+asked for like any other push-adjacent action.
 
-**The loop needs a deadline, and a failed read must not end it.** A bot that never posts and a failed API call look identical to an `until` loop, and both make it sleep forever. Bound it and fail loudly — an unanswered probe is a thing to go look at, not a thing to keep waiting on. Command substitution discards exit status, so a `crLatest` that errors returns an empty string, which differs from `$before` and reads as the reply arriving: capture the status separately and compare only a read that succeeded.
-
-The `--slurp`-then-`node` aggregation is required for the same reason as above: a `last` inside `--jq` would describe one page.
+Reading straight back instead races the bot: its reply does not exist yet, so the read returns the previous
+comment — a real CodeRabbit remark that looks exactly like an answer. The script waits for the newest comment to
+_change_, which is why the answer usually arrives as an **in-place edit** of the walkthrough: the edit keeps the
+comment's id and can leave its first line intact, so only the timestamp moves. After ten minutes it fails rather
+than waiting, because an unanswered probe is something to go and look at.
 
 ## Replying to a review comment
 

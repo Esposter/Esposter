@@ -15,6 +15,8 @@ It **migrates** to a script when either of two things happens:
 
 Length is not a trigger: a long `--jq` expression that is still one selection stays, and a three-line `if` does not.
 
+**A code example is not a recipe.** A fence teaching a convention — what a composable looks like, what the banned form is — is read rather than run, and it never migrates however much control flow it shows. The question is whether a reader is meant to execute the block.
+
 ## Where it goes
 
 `scripts/src/<domain>/<verb>/index.ts`, with the pure functions beside it as `get*`/`check*` files and a colocated test each — the shape the sweep scans already have. `scripts/` is in every typecheck, lint, format and test glob, so a migrated recipe gets all of it for the price of a folder, and no runner, project or config entry is added.
