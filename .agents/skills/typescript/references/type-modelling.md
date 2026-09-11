@@ -105,6 +105,6 @@ the file does not have. Optionality is looked up in the data, never guessed. It 
 ## A compiler limit is a `@ts-expect-error`, not a redesign
 
 TS2590 fires where a large component instance type meets a composable's element union. Suppress in place, tagged
-with the code and message: `// @ts-expect-error TS2590: Expression produces a union type that is too complex to
-represent.` Never move a template ref to another element to dodge it — the directive fails the build once the
+with the code and message:
+`// @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.` Never move a template ref to another element to dodge it — the directive fails the build once the
 error stops firing, where the workaround silently changes what the ref points at.
