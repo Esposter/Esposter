@@ -35,8 +35,9 @@ const results = computed(() => {
   if (!query.value) return [];
   const pagePathResultsMap = new Map<string, { id: string; subtitle: string; title: string }>();
   for (const searchResult of miniSearch.value.search(query.value)) {
-    // MiniSearch's SearchResult cannot express storeFields — it declares none of them, so there is no overlap
-    // For a direct cast and nothing to annotate. The fields are the ones the index above was told to store
+    // MiniSearch's SearchResult carries its storeFields behind an `any` index signature, which satisfies no
+    // Required property — so there is no overlap for a direct cast, and reading them bare would type as `any`.
+    // The fields are the ones the index above was told to store
     const { id, title, titles } = searchResult as unknown as Pick<DocsSearchSection, "id" | "title" | "titles">;
     const pagePath = id.split("#")[0] || id;
     getOrCreate(pagePathResultsMap, pagePath, () => ({ id, subtitle: titles.join(" › ") || pagePath, title }));

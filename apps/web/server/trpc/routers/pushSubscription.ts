@@ -1,6 +1,6 @@
 import type { PushSubscription } from "@esposter/db-schema";
 
-import { pushSubscriptionSchema } from "@@/server/models/pushSubscription/PushSubscription";
+import { pushSubscriptionInputSchema } from "#shared/models/db/pushSubscription/PushSubscriptionInput";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
@@ -9,7 +9,7 @@ import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const pushSubscriptionRouter = router({
-  subscribe: standardAuthedProcedure.input(pushSubscriptionSchema).mutation<PushSubscription>(
+  subscribe: standardAuthedProcedure.input(pushSubscriptionInputSchema).mutation<PushSubscription>(
     async ({
       ctx,
       input: {
@@ -49,7 +49,7 @@ export const pushSubscriptionRouter = router({
       ),
   ),
   unsubscribe: standardAuthedProcedure
-    .input(pushSubscriptionSchema.shape.endpoint)
+    .input(pushSubscriptionInputSchema.shape.endpoint)
     .mutation<PushSubscription>(async ({ ctx, input }) =>
       requireMutation(
         (

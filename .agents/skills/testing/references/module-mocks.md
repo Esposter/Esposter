@@ -39,8 +39,11 @@ vi.mock(import("@/services/getFoo"), () => ({ getFoo: () => fooMock.current() })
 
 **A module whose export is a dynamic-path `Proxy` can only be mocked at the module seam.** `authClient`
 (better-auth) resolves its methods through a `Proxy`, so `useSession` is not a configurable own property and
-`vi.spyOn(authClient, "useSession")` throws rather than replacing anything. Mock the module and drive the method
-through a hoisted holder, as above.
+`vi.spyOn(authClient, "useSession")` throws rather than replacing anything. Its colocated
+`app/services/auth/authClient.test.ts` is that seam: it exports the loosely typed `useSession`/`signOut` doubles
+beside the cast `authClient`, so a suite registers `vi.mock(import("@/services/auth/authClient"), () =>
+import("@/services/auth/authClient.test"))` and drives the method it imported from the mock file — never a
+per-file factory that re-rolls the cast. A Proxy no colocated file covers yet gets one, on the same shape.
 
 ### Placement and export
 
@@ -75,7 +78,7 @@ const bar = await getFoo(BarType.Baz);
 
 - Typed `vi.mock(import(...))` enforces type compatibility — casts stay in the mock file, never in individual tests.
 - If `MockXxx` from `azure-mock` doesn't satisfy the Azure SDK type (private members), fix `azure-mock` first. Use `as unknown as` in the mock `.test.ts` only when SDK private members make structural compatibility impossible.
-- **Never import from the `.test` file in tests** — only from real module paths.
+- **Never import a mocked export from the `.test` file in tests** — reach it through the real module path. Only a double the real module has no export for (a method of a Proxy, such as `useSession`) is imported from the mock file by name.
 
 ### `db` mock exception — getter pattern stays inline
 
@@ -83,7 +86,7 @@ The `db` mock cannot be centralized; it needs a getter so each test's `beforeAll
 
 ```ts
 // Must stay inline in each test file — not extractable to a shared mock file
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 vi.mock(import("@/services/db"), () => ({
   get db() {

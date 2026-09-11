@@ -60,7 +60,9 @@ export class Parser {
       this.#stack.push(newObject);
     };
     this.#saxParser.onclosetag = () => {
-      let object = this.#stack.pop();
+      // A closed tag is an object until the empty-tag substitution, after which it is whatever `emptyTag` says —
+      // The string default included — which is the shape the result object already declares
+      let object: Record<string, unknown> | string | undefined = this.#stack.pop();
       if (!object) return;
 
       const nodeName = object[BUILTIN_NAME_KEY] as string;
@@ -93,7 +95,7 @@ export class Parser {
 
       if (checkIsEmpty(object))
         if (typeof this.#options.emptyTag === "function") object = this.#options.emptyTag();
-        else object = (this.#options.emptyTag || emptyString) as unknown as Record<string, unknown>;
+        else object = this.#options.emptyTag || emptyString;
 
       if (this.#options.validator) {
         const xpath = `/${[...this.#stack.map((node) => node[BUILTIN_NAME_KEY]), nodeName].join("/")}`;

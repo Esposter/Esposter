@@ -1,16 +1,12 @@
 // @vitest-environment nuxt
 import { useAdminActionMap } from "@/composables/message/moderation/useAdminActionMap";
+import { useSession } from "@/services/auth/authClient.test";
 import { useAlertStore } from "@/store/alert";
 import { AdminActionType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-// `authClient` is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot
-// Be spied on directly — mock the module and drive useSession through a hoisted mock instead
-const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<(fetcher?: unknown) => unknown>() }));
 
-vi.mock(import("@/services/auth/authClient"), () => ({
-  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
-}));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useAdminActionMap, () => {
   const roomId = crypto.randomUUID();
@@ -18,7 +14,7 @@ describe(useAdminActionMap, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    useSessionMock.mockImplementation((fetcher?: unknown) =>
+    useSession.mockImplementation((fetcher?: unknown) =>
       fetcher ? { data: ref({ user: { id: userId } }) } : ref({ data: { user: { id: userId } } }),
     );
   });

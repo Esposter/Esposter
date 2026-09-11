@@ -50,7 +50,7 @@ const createFakeChild = ({
     if (status) statusStream.emit("data", Buffer.from(status));
     child.emit("close", closeCode, undefined);
   });
-  return child as unknown as ChildProcess;
+  return child as ChildProcess;
 };
 
 describe(createBwrapBackend, () => {

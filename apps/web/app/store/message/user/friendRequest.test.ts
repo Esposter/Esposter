@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { FriendRequestWithRelations, User } from "@esposter/db-schema";
 
+import { useSession } from "@/services/auth/authClient.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
@@ -13,11 +14,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
-const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<() => Ref<MockSessionValue>>() }));
-
-vi.mock(import("@/services/auth/authClient"), () => ({
-  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
-}));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useFriendRequestStore, () => {
   const server = setupMswTrpc();
@@ -39,7 +36,7 @@ describe(useFriendRequestStore, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });
 
   afterEach(() => {
@@ -69,7 +66,7 @@ describe(useFriendRequestStore, () => {
   test("counts only the requests the app user sent", () => {
     expect.hasAssertions();
 
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: appUser.id } } }));
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: appUser.id } } }));
     const friendRequestStore = useFriendRequestStore();
     const { friendRequests } = storeToRefs(friendRequestStore);
     const { checkHasSentFriendRequest } = friendRequestStore;

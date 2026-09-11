@@ -1,4 +1,4 @@
-import type { PushSubscription as WebPushSubscription } from "web-push";
+import { pushSubscriptionInputSchema } from "#shared/models/db/pushSubscription/PushSubscriptionInput";
 
 export const usePushSubscription = () => {
   const { $trpc } = useNuxtApp();
@@ -25,10 +25,10 @@ export const usePushSubscription = () => {
         applicationServerKey: runtimeConfig.public.vapid.publicKey,
         userVisibleOnly: true,
       }));
-    // The DOM `PushSubscription` and web-push's own type share no members, but the browser one serializes
-    // Through its `toJSON` into exactly web-push's shape — endpoint plus the p256dh/auth keys — so what the
-    // Server receives is a `WebPushSubscription` even though what is handed over here cannot be typed as one
-    await $trpc.pushSubscription.subscribe.mutate(pushSubscription.value as unknown as WebPushSubscription);
+    // The browser's `toJSON` is what the wire carries — endpoint plus the p256dh/auth keys — but the DOM declares
+    // Every field of it optional, so the payload is parsed through the procedure's own input schema rather than
+    // Asserted into it
+    await $trpc.pushSubscription.subscribe.mutate(pushSubscriptionInputSchema.parse(pushSubscription.value.toJSON()));
   });
 
   onMounted(async () => {

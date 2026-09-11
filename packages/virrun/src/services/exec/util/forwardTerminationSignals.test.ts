@@ -24,7 +24,7 @@ describe(forwardTerminationSignals, () => {
     const kill = vi.fn<ChildProcess["kill"]>();
     Object.assign(child, { kill });
     children.push(child);
-    return { child: child as unknown as ChildProcess, kill };
+    return { child: child as ChildProcess, kill };
   };
 
   afterEach(() => {

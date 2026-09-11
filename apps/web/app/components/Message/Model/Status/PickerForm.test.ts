@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import MessageModelStatusPickerForm from "@/components/Message/Model/Status/PickerForm.vue";
 import StyledButton from "@/components/Styled/Button.vue";
+import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useStatusStore } from "@/store/message/user/status";
 import { UserStatus } from "@esposter/db-schema";
@@ -10,11 +11,7 @@ import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { VTextField } from "vuetify/components";
 
-const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<() => unknown>() }));
-
-vi.mock(import("@/services/auth/authClient"), () => ({
-  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
-}));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe("messageModelStatusPickerForm", () => {
   const server = setupMswTrpc();
@@ -44,7 +41,7 @@ describe("messageModelStatusPickerForm", () => {
   };
 
   beforeEach(() => {
-    useSessionMock.mockReturnValue(ref({ data: { user: { id: userId } } }));
+    useSession.mockReturnValue(ref({ data: { user: { id: userId } } }));
     // Every test in the file shares the nuxt app's pinia, so each starts from a user whose status is whatever
     // This seeds
     const statusStore = useStatusStore();
@@ -121,7 +118,7 @@ describe("messageModelStatusPickerForm", () => {
   test("does not save without a session to file the write under", async () => {
     expect.hasAssertions();
 
-    useSessionMock.mockReturnValue(ref({ data: null }));
+    useSession.mockReturnValue(ref({ data: null }));
     const upsertStatus = vi.fn<() => never>(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "rejected" });
     });

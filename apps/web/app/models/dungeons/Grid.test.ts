@@ -17,7 +17,7 @@ vi.mock(import("grid-engine"), () => ({
     UP_RIGHT: "up-right",
     // The dynamic-import form types the factory against the real module, and these literals are the enum's own
     // Values rather than its members
-  } as unknown as typeof Direction,
+  } as typeof Direction,
 }));
 
 // The invariants every dungeons menu navigates by, rather than a description of how the walk is written.

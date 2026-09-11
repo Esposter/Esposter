@@ -77,9 +77,11 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const { transformPublishedContent } = (args[0] ?? {}) as unknown as PublishableResourceProcedureOptions<
     ResourceContent<TType>
   >;
-  // Annotated so the generic content schema resolves to a concrete type for destructuring.
-  // Both the output and input sides are declared — leaving the input side defaulted to unknown
-  // Would erase the procedure's input type for consumers like achievement condition paths.
+  // Annotated so the generic content schema resolves to a concrete type for destructuring: `contentSchema` is
+  // Read off the map by a generic key, so zod infers the union of every type's content, and the procedure's
+  // Input then reaches the stores as a union none of them can index. Both the output and input sides are
+  // Declared — leaving the input side defaulted to unknown would erase the procedure's input type for
+  // Consumers like achievement condition paths.
   const saveResourceContentInputSchema = z.object({
     content: contentSchema,
     contentVersion: selectResourceSchema.shape.contentVersion,

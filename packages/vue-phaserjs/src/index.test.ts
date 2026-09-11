@@ -13,6 +13,6 @@ describe("vue-phaserjs", () => {
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 536.37 KB (549246 bytes)"`);
+    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 536.37 KB (549239 bytes)"`);
   });
 });

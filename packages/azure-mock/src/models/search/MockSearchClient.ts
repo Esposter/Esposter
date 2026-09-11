@@ -184,6 +184,6 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
 
   uploadDocuments(documents: TModel[], _options?: UploadDocumentsOptions): Promise<IndexDocumentsResult> {
     this.documents.push(...documents);
-    return Promise.resolve({ results: [] } as unknown as IndexDocumentsResult);
+    return Promise.resolve({ results: [] });
   }
 }

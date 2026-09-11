@@ -23,7 +23,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 import { createMockDb } from "@esposter/db-mock";
 
 const db = await createMockDb();
-// db is a fully-typed PostgresJsDatabase with all Esposter schemas applied
+// db is a fully-typed `Database` (the driver-agnostic drizzle handle) with all Esposter relations applied
 ```
 
 ### How It Works

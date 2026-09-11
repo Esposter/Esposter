@@ -4,6 +4,7 @@ import type { Operation } from "@trpc/client";
 import type { EffectScope } from "vue";
 
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
+import { useSession } from "@/services/auth/authClient.test";
 import { errorLink } from "@/services/trpc/errorLink";
 import { useAlertStore } from "@/store/alert";
 import { RoutePath } from "@esposter/shared";
@@ -12,12 +13,8 @@ import { observable } from "@trpc/server/observable";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { navigateTo, session, sessionScope } = vi.hoisted(() => ({
+const { navigateTo } = vi.hoisted(() => ({
   navigateTo: vi.fn<(...args: Parameters<typeof import("#app/composables/router").navigateTo>) => void>(),
-  session: { value: { data: null as null | { user: { id: string } }, isPending: false } },
-  // The scope that was active where the link read the session, which is what decides whether the subscription
-  // Better-auth opens is ever disposed
-  sessionScope: { current: undefined as EffectScope | undefined },
 }));
 
 // The auto-imported `navigateTo` would really navigate — mock the module the auto-import points at rather than
@@ -27,22 +24,15 @@ vi.mock(import("#app/composables/router"), async (importOriginal) => ({
   navigateTo,
 }));
 
-vi.mock(import("@/services/auth/authClient"), async (importOriginal) => {
-  const original = await importOriginal();
-  const { getCurrentScope } = await import("vue");
-  return {
-    authClient: {
-      useSession: () => {
-        sessionScope.current = getCurrentScope();
-        return session;
-      },
-    } as unknown as typeof original.authClient,
-  };
-});
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(errorLink, () => {
   const message = "a";
   const userId = "b";
+  const session = { value: { data: null as null | { user: { id: string } }, isPending: false } };
+  // The scope that was active where the link read the session, which is what decides whether the subscription
+  // Better-auth opens is ever disposed
+  const sessionScope = { current: undefined as EffectScope | undefined };
 
   const createTrpcClientError = (code: string) =>
     TRPCClientError.from<TRPCRouter>({ error: { code: -32001, data: { code }, message } });
@@ -81,6 +71,10 @@ describe(errorLink, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     navigateTo.mockClear();
+    useSession.mockImplementation(() => {
+      sessionScope.current = getCurrentScope();
+      return session;
+    });
     session.value = { data: { user: { id: userId } }, isPending: false };
     sessionScope.current = undefined;
   });

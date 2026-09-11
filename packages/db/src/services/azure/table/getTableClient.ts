@@ -20,6 +20,6 @@ export const getTableClient = <TAzureTable extends AzureTable>(
   connectionString: string,
   tableName: TAzureTable,
 ): Promise<CustomTableClient<AzureTableEntityMap[TAzureTable]>> =>
-  getProvisionedTableClient(connectionString, tableName) as unknown as Promise<
+  getProvisionedTableClient(connectionString, tableName) as Promise<
     CustomTableClient<AzureTableEntityMap[TAzureTable]>
   >;

@@ -1,19 +1,16 @@
 // @vitest-environment nuxt
 import UserProfileHeader from "@/components/User/Profile/Header.vue";
+import { useSession } from "@/services/auth/authClient.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
 
-const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<(fetcher?: unknown) => unknown>() }));
-
-vi.mock(import("@/services/auth/authClient"), () => ({
-  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
-}));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe("userProfileHeader", () => {
   const userId = crypto.randomUUID();
   const user = { biography: "biography", image: "", name: "name" };
   const mountHeader = (viewerId: string, profileUserId: string) => {
-    useSessionMock.mockReturnValue({ data: ref({ user: { id: viewerId } }) });
+    useSession.mockReturnValue({ data: ref({ user: { id: viewerId } }) });
     return mountSuspended(UserProfileHeader, { props: { user, userId: profileUserId } });
   };
 

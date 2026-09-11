@@ -1,3 +1,4 @@
+import type { Database } from "@esposter/db-schema";
 import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import type { H3Event } from "h3";
 
@@ -9,6 +10,10 @@ type ContextInput = CreateWSSContextFnOptions | H3EventInput;
 type H3EventInput = Pick<H3Event, "headers" | "node">;
 
 const checkIsH3Event = (value: ContextInput): value is H3EventInput => "node" in value;
+// Widened to the driver-agnostic handle here rather than at its export, because the migrator that runs at startup
+// Wants the postgres-js handle itself. Every procedure and service reads `Context["db"]`, so this is the one
+// Seam that lets the pglite handle the tests build stand in without a cast
+const database: Database = db;
 
 export const createContext = (options: ContextInput) => {
   if (checkIsH3Event(options)) {
@@ -16,10 +21,10 @@ export const createContext = (options: ContextInput) => {
       headers,
       node: { req, res },
     } = options;
-    return { db, headers, req, res };
+    return { db: database, headers, req, res };
   } else {
     const { req, res } = options;
-    return { db, headers: new Headers(Object.entries(req.headers as Record<string, string>)), req, res };
+    return { db: database, headers: new Headers(Object.entries(req.headers as Record<string, string>)), req, res };
   }
 };
 

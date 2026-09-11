@@ -29,7 +29,7 @@ const mocks = vi.hoisted(() => {
     // Async like the real thing, and awaited by both its callers, which is what lets every session a request is
     // Handed be a row as well as an object — `pushSubscriptions.sessionId` references one. A fresh session per
     // Call is deliberate: a suite driving two requests is driving two devices, and several rely on that
-    getSession: vi.fn<() => Promise<GetSessionPayload>>(async () => {
+    getSession: vi.fn<() => Promise<GetSessionPayload | null>>(async () => {
       const getSessionPayload = { session: createMockSession(user.id), user } as const satisfies GetSessionPayload;
       await insertMockSession(getSessionPayload);
       return getSessionPayload;
@@ -47,7 +47,7 @@ vi.mock(
   import("@@/server/auth") as unknown as Promise<{
     auth: {
       api: {
-        getSession: () => Promise<GetSessionPayload>;
+        getSession: () => Promise<GetSessionPayload | null>;
         revokeOtherSessions: (input: { headers: Headers }) => Promise<void>;
         revokeSession: (input: { body: { token: string }; headers: Headers }) => Promise<void>;
       };
@@ -124,7 +124,7 @@ export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
 
 // `better-auth` answers null when no session exists, which is what an unauthenticated request looks like
 export const mockNoSessionOnce = () => {
-  mocks.getSession.mockResolvedValueOnce(null as unknown as GetSessionPayload);
+  mocks.getSession.mockResolvedValueOnce(null);
 };
 
 // Spends the queued session without a request to spend it on, so the next real request runs as the default
@@ -164,7 +164,7 @@ export const createMockContext = async (): Promise<Context> => {
 };
 
 const createMockDb = async () => {
-  const db = (await baseCreateMockDb()) as Context["db"];
+  const db = await baseCreateMockDb();
   mocks.state.insert = db.insert.bind(db);
   await db.insert(users).values({ ...mocks.user, image: mocks.user.image ?? "" });
   await insertMockSession(getMockSession());
