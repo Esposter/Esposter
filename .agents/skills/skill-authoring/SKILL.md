@@ -9,7 +9,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. The ownership map of wh
 
 ## Settled — do not re-propose
 
-- **Shaving prose to bring a skill under the ~15 KB budget.** The budget is a signal that topics have accumulated, and cutting words buys bytes by making every surviving rule harder to read; separate the topics instead ("SKILL.md is the always-on layer").
+- **Shaving prose to bring a skill under the ~15 KB budget.** The budget is a signal that topics have accumulated, and cutting words buys bytes by making every surviving rule harder to read; separate the topics instead ("SKILL.md is the always-on layer"). A rule's reasoning, its example and a settled entry's argument are never cut to land under the number — and a skill with no narrow trigger left to move stays over, saying so in the commit, rather than shaved.
 - **Moving an over-budget section to a `references/` page here when it is another skill's subject.** It becomes two shallow copies of one topic; it moves to the skill that owns it (`references/splitting-a-skill.md`).
 - **Recording a one-off as context worth preserving** — the file it went wrong in, the fix that was applied. The commit already holds it with more detail and a date, and a one-off in a skill reads as a standing rule (`references/what-belongs.md`).
 - **Restating a rule an enforcer already checks**, for completeness. It fails the build on violation, so the prose only rots when the rule changes ("Don't restate what an enforcer already checks").
