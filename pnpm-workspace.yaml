@@ -50,7 +50,7 @@ catalog:
   "@koumoul/vjsf": ^4.6.0
   "@lerna-lite/cli": ^5.6.1
   "@lerna-lite/publish": ^5.6.1
-  "@livekit/track-processors": ^0.7.2
+  "@livekit/track-processors": ^0.8.0
   "@mdi/font": ^7.4.47
   "@nuxt/content": ^3.16.0
   "@nuxt/eslint": ^1.17.0
