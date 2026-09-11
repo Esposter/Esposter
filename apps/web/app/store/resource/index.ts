@@ -3,8 +3,8 @@ import type { Resource, ResourcePublication, ResourceTags, ResourceType } from "
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
+import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
