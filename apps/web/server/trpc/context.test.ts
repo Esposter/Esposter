@@ -3,6 +3,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { Session, User } from "better-auth";
 
 import { authMocks, createMockSession, insertMockSession } from "@@/server/auth.test";
+import { getRequestHeaders } from "@@/server/services/request/getRequestHeaders";
 import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
 import { users } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -79,7 +80,7 @@ export const createMockContext = async (): Promise<Context> => {
   };
   return {
     db: await createMockDb(),
-    headers: new Headers(Object.entries(request.headers as Record<string, string>)),
+    headers: getRequestHeaders(request),
     req: request,
     res: new ServerResponse(request),
   };

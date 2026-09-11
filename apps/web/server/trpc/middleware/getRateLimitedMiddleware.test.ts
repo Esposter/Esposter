@@ -5,6 +5,7 @@ import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { createCallerFactory, publicProcedure, router } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockNoSessionOnce } from "@@/server/trpc/context.test";
 import { getRateLimitedMiddleware } from "@@/server/trpc/middleware/getRateLimitedMiddleware";
+import { noop } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The middleware only enforces in production, and the branch under test is the one taken when no address can be
@@ -51,7 +52,7 @@ describe(getRateLimitedMiddleware, () => {
     expect.hasAssertions();
 
     const consume = vi.spyOn(RateLimiterMap[RateLimiterType.Standard], "consume");
-    vi.spyOn(console, "warn").mockReturnValue(undefined);
+    vi.spyOn(console, "warn").mockImplementation(noop);
     mockNoSessionOnce();
 
     await caller.ping();

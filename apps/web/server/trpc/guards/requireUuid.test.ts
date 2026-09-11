@@ -28,10 +28,8 @@ describe(requireUuid, () => {
   test("names a bigint value instead of throwing on it", () => {
     expect.hasAssertions();
 
-    getResult(() => requireUuid(1n, name)).match(noop, (error) => {
-      expect(error).toMatchInlineSnapshot(
-        `[TRPCError: ${new InvalidOperationError(Operation.Read, name, "1").message}]`,
-      );
-    });
+    expect(() => requireUuid(1n, name)).toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, name, "1").message}]`,
+    );
   });
 });

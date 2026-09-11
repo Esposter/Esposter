@@ -11,6 +11,7 @@ import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchroni
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
@@ -39,7 +40,7 @@ import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
 // Per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
-describe("createResourceProcedures", () => {
+describe(createResourceProcedures, () => {
   let mockContext: Context;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
   let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;

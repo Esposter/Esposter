@@ -2,7 +2,7 @@ import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod";
 
 import { requireUuid } from "@@/server/trpc/guards/requireUuid";
-import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
+import { assertIsMember } from "@@/server/services/room/assertIsMember";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType } from "@esposter/db-schema";
 

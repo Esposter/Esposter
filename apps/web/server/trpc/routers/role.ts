@@ -20,7 +20,7 @@ import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
+import { assertIsMember } from "@@/server/services/room/assertIsMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";

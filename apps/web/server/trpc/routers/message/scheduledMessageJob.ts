@@ -21,7 +21,7 @@ import { insertScheduledMessageJob } from "@@/server/services/message/scheduledM
 import { requireScheduledMessageJob } from "@@/server/services/message/scheduledMessageJob/requireScheduledMessageJob";
 import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
 import { router } from "@@/server/trpc";
-import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
+import { assertIsMember } from "@@/server/services/room/assertIsMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {

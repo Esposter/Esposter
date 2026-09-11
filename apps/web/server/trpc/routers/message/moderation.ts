@@ -33,7 +33,7 @@ import { assertIsManageable } from "@@/server/services/room/rbac/assertIsManagea
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { assertIsRoomMiddleware } from "@@/server/trpc/middleware/userToRoom/assertIsRoomMiddleware";
+import { assertIsRoomMiddleware } from "@@/server/trpc/middleware/assertIsRoomMiddleware";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";

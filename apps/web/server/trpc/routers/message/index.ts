@@ -56,7 +56,7 @@ import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
+import { assertIsMember } from "@@/server/services/room/assertIsMember";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";

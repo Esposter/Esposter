@@ -3,6 +3,7 @@ import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import type { H3Event } from "h3";
 
 import { db } from "@@/server/db";
+import { getRequestHeaders } from "@@/server/services/request/getRequestHeaders";
 
 type ContextInput = CreateWSSContextFnOptions | H3EventInput;
 // `trpc-nuxt` bundles its own copy of h3's H3Event declaration, which misses nitro's augmentations, so we
@@ -24,7 +25,7 @@ export const createContext = (options: ContextInput) => {
     return { db: database, headers, req, res };
   } else {
     const { req, res } = options;
-    return { db: database, headers: new Headers(Object.entries(req.headers as Record<string, string>)), req, res };
+    return { db: database, headers: getRequestHeaders(req), req, res };
   }
 };
 
