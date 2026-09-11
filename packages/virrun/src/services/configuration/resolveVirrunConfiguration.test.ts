@@ -110,17 +110,8 @@ describe(resolveVirrunConfiguration, () => {
     const root = create();
     writeFileSync(join(root, typescriptConfigurationFilename), `export default { "": "" };`);
 
-    expect(() => resolveVirrunConfiguration(root)).toThrowErrorMatchingInlineSnapshot(`
-      [InvalidOperationError: Invalid operation: Read, name: parseVirrunConfiguration, [
-        {
-          "code": "unrecognized_keys",
-          "keys": [
-            ""
-          ],
-          "path": [],
-          "message": "Unrecognized key: \\"\\""
-        }
-      ]]
-    `);
+    expect(() => resolveVirrunConfiguration(root)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: parseVirrunConfiguration, ✖ Unrecognized key: ""]`,
+    );
   });
 });
