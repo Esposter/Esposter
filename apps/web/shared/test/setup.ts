@@ -92,6 +92,9 @@ vi.mock(
   import("@@/server/composables/azure/table/useTableClient"),
   () => import("@@/server/composables/azure/table/useTableClient.test"),
 );
+// The better-auth session is one of them: registered beside the context helpers it reached a suite only when that
+// Module happened to load before the suite's router did.
+vi.mock(import("@@/server/auth"), () => import("@@/server/auth.test"));
 // oxlint-disable-next-line vitest/prefer-import-in-mock
 vi.mock("nitropack/runtime", () => ({
   useRuntimeConfig: () => ({

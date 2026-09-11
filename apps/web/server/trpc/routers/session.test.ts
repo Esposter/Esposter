@@ -5,9 +5,9 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import type { Session } from "better-auth";
 
 import { createCallerFactory } from "@@/server/trpc";
+import { createMockSession } from "@@/server/auth.test";
 import {
   createMockContext,
-  createMockSession,
   getMockRevokeOtherSessions,
   getMockRevokeSession,
   getMockSession,
