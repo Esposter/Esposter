@@ -40,7 +40,7 @@ All three probe caches run through one primitive, `createProbeCache` — in-proc
 
 ## Cleanup and self-healing
 
-Every cache write is disposable, but it must not accumulate. All cleanup runs off the command's critical path — detached, best-effort, a failure never aborts the run — and all of it is **concurrency-safe via owner identity**: every temp and lease carries its owning pid, and a sweep reclaims only what a _dead_ owner left behind — where an owner is the process that started before the entry was written, since the OS recycles a dead process's pid onto whatever starts next. The host-global cache is shared across repos, worktrees, and mid-run branch switches, so "two live runs at once" is the normal case, not an edge one.
+Every cache write is disposable, but it must not accumulate. Automatic cleanup — the finalizers and the self-healing sweeps — runs off the command's critical path: detached, best-effort, a failure never aborts the run. `cache clean` is the one exception, because its caller is waiting for the space: it removes synchronously, blocks until the roots are gone, and on Windows first waits for the orphaned WSL runs it reaps so nothing holds a root open. All of it is **concurrency-safe via owner identity**: every temp and lease carries its owning pid, and a sweep reclaims only what a _dead_ owner left behind — where an owner is the process that started before the entry was written, since the OS recycles a dead process's pid onto whatever starts next. The host-global cache is shared across repos, worktrees, and mid-run branch switches, so "two live runs at once" is the normal case, not an edge one.
 
 ```mermaid
 flowchart TB

@@ -10,6 +10,9 @@ const SIDE_EFFECT_IMPORT_REGEX = /^[+-]\s*import\s+["']/u;
 const SECOND_QUOTED_VALUE_REGEX = /"[^"]*"[^"]*"/u;
 const QUOTED_STRING_REGEX = /"[^"]*"/gu;
 
+// Compared as a sorted set rather than in place: `perfectionist/sort-imports` owns import order, so a repathed import
+// Re-sorts among its neighbours and an in-place compare would keep every such file in review for an order no
+// Reviewer decides. The one import whose position is meaning — a side-effect import — is refused before this runs
 const getBlankedLines = (changedLines: string[], sign: "+" | "-"): string =>
   changedLines
     .filter((line) => line.startsWith(sign))

@@ -93,7 +93,7 @@ describe(reapOrphanedWslRuns, () => {
     expect.hasAssertions();
 
     const deadRunPath = seedDeadRun(DEAD_MARKER);
-    vi.mocked(execWsl).mockImplementation(() => {
+    vi.mocked(execWsl).mockImplementationOnce(() => {
       throw new InvalidOperationError(Operation.Delete, "execWsl", "wsl.exe failed");
     });
 

@@ -12,12 +12,22 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 const RENAME_OR_MODIFY_ROW_REGEX = /^(?<status>R\d*|M)\t(?<oldPath>[^\t]+)(?:\t(?<newPath>[^\t]+))?$/u;
 
 const getLines = (output: string): string[] => output.split("\n").filter(Boolean);
-// The sweep's own commit is the one whose substitutions are replayed. A file any sibling commit in the range also
-// Touched carries a content change under either of its paths, so it stays in — and so does a rename out of a
-// Protected tree, which is still a change to that tree.
-const getRenameTokenOnlyPaths = (range: string, sha: string, substitutions: RenameSubstitution[]): string[] => {
+// The sweep's own commit is the one whose substitutions are replayed, and it must be one of the range's: a sha
+// Outside it would let paths the range never changed into a static filter that then swallows a later real change
+// To them. A file any sibling commit in the range also touched carries a content change under either of its paths,
+// So it stays in — and so does a rename out of a protected tree, which is still a change to that tree.
+const getRenameTokenOnlyPaths = (
+  range: string,
+  changedPaths: readonly string[],
+  renameSha: string,
+  substitutions: RenameSubstitution[],
+): string[] => {
+  const sha = runGit(["rev-parse", "--verify", `${renameSha}^{commit}`]).trim();
+  const rangeCommits = getLines(runGit(["rev-list", range]));
+  if (!rangeCommits.includes(sha))
+    throw new InvalidOperationError(Operation.Read, "coderabbit", `${renameSha} is not a commit in ${range}`);
   const otherPaths = new Set(
-    getLines(runGit(["rev-list", range]))
+    rangeCommits
       .filter((commit) => commit !== sha)
       .flatMap((commit) => getLines(runGit(["show", "--name-only", "--format=", commit]))),
   );
@@ -26,6 +36,7 @@ const getRenameTokenOnlyPaths = (range: string, sha: string, substitutions: Rena
     if (!groups?.oldPath) return [];
     const oldPath = groups.oldPath;
     const newPath = groups.newPath ?? oldPath;
+    if (!changedPaths.includes(newPath)) return [];
     if ([oldPath, newPath].some((path) => checkIsProtectedPath(path) || otherPaths.has(path))) return [];
     return checkIsSubstitutionExact(
       runGit(["show", `${sha}^:${oldPath}`]),
@@ -47,7 +58,9 @@ const importPathOnlyPaths = changedPaths
   .filter((path) => !checkIsProtectedPath(path))
   .filter((path) => checkIsImportPathOnlyDiff(runGit(["diff", "-U0", "-M", range, "--", path])));
 const renameTokenOnlyPaths =
-  renameSha === undefined ? [] : getRenameTokenOnlyPaths(range, renameSha, getRenameSubstitutions(renameArgs));
+  renameSha === undefined
+    ? []
+    : getRenameTokenOnlyPaths(range, changedPaths, renameSha, getRenameSubstitutions(renameArgs));
 const excludablePaths = [
   ...new Set([
     ...getPureRenamePaths(runGit(["diff", "--name-status", "-M", range])).filter((path) => !checkIsProtectedPath(path)),

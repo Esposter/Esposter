@@ -11,6 +11,8 @@ describe(checkIsProtectedPath, () => {
     ".github/workflows/ci.yml",
     "packages/shared/package.json",
     "apps/web/vitest.config.ts",
+    "packages/shared/eslint.config.js",
+    "apps/web/postcss.config.mjs",
     "packages/db-schema/src/schema/message.ts",
     "apps/web/server/db/migrations/0001_init.sql",
   ])("keeps %s in review", (path) => {

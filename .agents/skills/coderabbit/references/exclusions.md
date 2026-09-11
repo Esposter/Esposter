@@ -24,7 +24,7 @@ The other case is a **small overshoot on an already-pushed window** (SKILL.md §
 
 **Every exclusion is derived from an open PR's diff.** Enumerate what that PR actually changed, classify each file, and list the ones that qualify. Never write an exclusion for a file class the repo merely _could_ produce — a speculative glob block (generated artifacts, binaries, vendored assets) added outside a PR is unreviewed config change for no benefit, and it silently blinds every later PR that does touch those paths. A class earns a permanent entry only when a real PR puts it in a diff.
 
-Exclude only files with **no reviewable content change**. Four kinds qualify:
+Exclude only files with **no reviewable content change**. Five kinds qualify:
 
 - **Pure renames** — 100% similarity, zero content change (`R100`).
 - **Rename-token-only edits** — the file's only diff is the mechanical substitution itself (every `OldName` identifier → `NewName`). A temporary block covering both kinds says so in its header comment.
@@ -62,10 +62,10 @@ pnpm ai:coderabbit:exclusions "<base>..<head>"
 pnpm ai:coderabbit:exclusions "<base>..<head>" <rename-sha> OldName=NewName [OldName=NewName ...]
 ```
 
-It prints the `path_filters` lines for every file the range lets out, sorted, under a comment counting them against the files changed — and never a file § When to exclude protects (a test, a docs page, a skill, a config, schema or migration input), however its diff reads. Three of the four kinds are decided mechanically:
+It prints the `path_filters` lines for every file the range lets out, sorted, under a comment counting them against the files changed — and never a file § When to exclude protects (a test, a docs page, a skill, a config, schema or migration input), however its diff reads. Three of the five kinds are decided mechanically:
 
 - **Pure renames** — `R100`, git's marker for a rename with no content change.
-- **Import-path-only edits** — every changed line is an import, **and** the added imports are the removed ones with only the quoted specifier differing. The second condition is what rejects an added symbol or an added package the first would wave through; a side-effect import, a mode flip in the diff header and an import attribute each keep their file in the review set, for a reason the classifier's test states.
+- **Import-path-only edits** — every changed line is an import, **and** the added imports are the removed ones with only the quoted specifier differing. The second condition is what rejects an added symbol or an added package the first would wave through; a side-effect import, a mode flip in the diff header and an import attribute each keep their file in the review set, for a reason the classifier's test states. The pairing is order-free: `perfectionist/sort-imports` owns import order and a repathed import re-sorts, so the order is never a decision a reviewer could act on — only a side-effect import is sequenced for its effect, and those are refused outright.
 - **Rename-token-only edits**, when the sweep landed as its own commit — the second form. Each `OldName=NewName` is replayed word-bounded on the parent blob, and the file qualifies only when the result reproduces the committed blob byte for byte: then there is by construction no other content change, so a balanced logic edit cannot be admitted, and the filter errs only toward keeping files reviewable — a reformatter rewrap or an under-specified rename fails the compare. A file any sibling commit in the range also touched stays in, under either of its paths. Never classify these by line counts: a token substitution rewrites each affected line in place, so `--numstat` is symmetric, but a balanced logic edit is symmetric too.
 
 If the sweep is mixed into a commit carrying other work, there is no parent blob to replay against — read the diffs by hand. Call-site-only substitutions and verbatim repetitions are read rather than computed, because both need the definition or the representative judged against its twins.
