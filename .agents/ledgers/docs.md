@@ -47,7 +47,7 @@ The skill tree adds a structural check the greps cannot make — a skill over bu
 indexes, a `references/` citation resolving nowhere.
 
 ```bash
-pnpm sweep:skill-docs
+pnpm ai:sweep:skill-docs
 ```
 
 It lives in `scripts/src/sweeps/skillDocs/` rather than in this file, because it is a program: four checks over the

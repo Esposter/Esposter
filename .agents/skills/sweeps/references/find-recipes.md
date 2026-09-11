@@ -2,20 +2,15 @@
 
 Read when writing or fixing the scan a ledger points a pass at, or deciding where it lives.
 
-A find recipe pasted into a ledger is a program with none of a program's guarantees: nothing typechecks it,
-nothing lints or formats it, and nothing runs it, so it rots in place and the rot is silent — an unrunnable scan
-reports nothing, which is the shape of a swept tree. Two of this repo's ledgers carried `python3` blocks that on
-a Windows checkout print a Microsoft Store notice and **exit 0**.
+The inline-vs-script line is the `skill-authoring` skill's (`references/embedded-recipes.md`), and it binds a
+ledger exactly as it binds a skill page: one command whose logic is its pattern stays in the ledger, anything
+with control flow — a bracket matcher, a tokenizer, a two-pass scan over a corpus — becomes
+`scripts/src/sweeps/<scanName>/` wired as `pnpm ai:sweep:<scan-name>`, and so does any recipe that turns out to
+need a fix. The ledger's Find recipe is then that one line plus why the scan is not a grep.
 
-So the line is what the recipe is, not how long it is:
-
-- **A grep stays inline.** One command whose whole logic is its pattern is read at a glance, and it fails loudly
-  when it fails at all. The ledger is the right home for it.
-- **Anything with control flow moves to `scripts/src/sweeps/<scanName>/`**, beside the other root scripts — a bracket
-  matcher, a tokenizer, a two-pass scan over a corpus. It is then typechecked by the root `tsc`, linted by the
-  root ESLint and oxlint, formatted by `oxfmt`, and run by the `scripts` vitest project, all with no
-  configuration: the folder is already in every one of those globs. Wire it as `pnpm sweep:<scan-name>` and let
-  the ledger's Find recipe be that one line plus why the scan is not a grep.
+What a **sweep** recipe adds to that rule is the reason it cannot be waived: an unrunnable scan reports nothing,
+which is the shape of a swept tree, so a rotted recipe does not fail — it ticks. Two of this repo's ledgers
+carried `python3` blocks that on a Windows checkout print a Microsoft Store notice and **exit 0**.
 
 **The colocated test is the point, not the packaging.** "Prove the scan can fail before believing it passed" is
 this skill's rule and it has no way to stay proved while the scan is a code block — each pass either re-does it

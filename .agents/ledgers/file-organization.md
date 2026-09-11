@@ -62,7 +62,7 @@ The ≥2-consumers rule is answered by counting the **packages** that name each 
 in memory rather than a grep per name:
 
 ```bash
-pnpm sweep:shared-export-consumers
+pnpm ai:sweep:shared-export-consumers
 ```
 
 It excludes the export's own **package**, not merely its own file: `packages/shared` naming its own export is the

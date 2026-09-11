@@ -69,7 +69,7 @@ The array-and-loop rule needs more than a pattern — a count per file, and the 
 file — so it is a script rather than a sixth line above (`sweeps`, `references/find-recipes.md`):
 
 ```bash
-pnpm sweep:repeated-list-items
+pnpm ai:sweep:repeated-list-items
 ```
 
 Both greps fire on shape, so read what a hit feeds before calling it a finding. The last one's current hits are

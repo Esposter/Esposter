@@ -32,7 +32,7 @@ a check that cannot fail is not evidence.
 
 ## The find recipe — `references/find-recipes.md`
 
-A grep stays inline in the ledger; anything with control flow is a script under `scripts/src/sweeps/`, where a colocated test keeps "prove the scan can fail" proved. **Writing one, or moving one out of a code block**, is that page.
+A grep stays inline in the ledger; anything with control flow is a script under `scripts/src/sweeps/` run as `pnpm ai:sweep:<scan>` (the rule is the `skill-authoring` skill's), where a colocated test keeps "prove the scan can fail" proved. **Writing one, or moving one out of a code block**, is that page.
 
 ## Does it earn a file?
 
