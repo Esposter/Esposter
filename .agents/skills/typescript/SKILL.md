@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Esposter TypeScript conventions — banned patterns (Omit over Except, forEach, parameter properties, mutating array methods, the void operator), as unknown as treated like any, arrow functions, callbacks never taking a bare function reference, regex literals, neverthrow promise style and the void ban, guard clauses and if/else-if chains (the shapes in a deep dive), exhaustive switch guards, inferred return types, for...of loops with .entries(), Array.from over spread+map, environment constants, stable selection IDs, filter narrowing, plus deep dives on enum declaration/values arrays/refs, the "" sentinel and null-vs-undefined, modelling types instead of casting (Pick from source types, discriminant-keyed dispatch maps, nuxt.d.ts augmentation, a TS2590 suppressed in place), function signatures (overloads, parameter defaults, boolean flags), the floating-promise replacement ladder, and declare over ! on class fields. Apply when writing any TypeScript in this project.
+description: Esposter TypeScript conventions — banned patterns (Omit over Except, forEach, parameter properties, mutating array methods, the void operator), as unknown as treated like any, arrow functions, callbacks never taking a bare function reference, regex literals, neverthrow promise style and the void ban, guard clauses and if/else-if chains (the shapes in a deep dive), exhaustive switch guards, inferred return types, for...of loops with .entries(), Array.from over spread+map, environment constants, stable selection IDs, filter narrowing, plus deep dives on enum declaration/values arrays/refs, the "" sentinel and null-vs-undefined, modelling types instead of casting (Pick from source types, discriminant-keyed dispatch maps, nuxt.d.ts augmentation, a TS2590 suppressed in place), function signatures (overloads, parameter defaults, boolean flags), the floating-promise replacement ladder, the two exceptions to the dynamic-import ban, and declare over ! on class fields. Apply when writing any TypeScript in this project.
 ---
 
 # TypeScript Conventions
@@ -13,6 +13,7 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - `references/control-flow.md` — when writing or reshaping a guard, an `if/else`, or a chain.
 - `references/function-signatures.md` — when writing a function's parameters: overloads, an options object, a default, or a boolean flag.
 - `references/floating-promises.md` — when a lint error flags a floating promise, or an async function must be called from a sync slot.
+- `references/dynamic-imports.md` — when reaching for `await import(...)`, or a dependency's docs mention `optimizeDeps`.
 - `references/class-fields.md` — when adding a field to a class.
 
 ## Core Rules
@@ -23,8 +24,8 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
 - `.forEach()` is **BANNED** — use `for...of` (see Loops); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
 - `type` aliases for object shapes → `interface` (`consistent-type-definitions`).
-- **Non-mutating array methods** — `sort()`, `reverse()` and `splice()` are lint errors (`unicorn/no-array-sort`, `unicorn/no-array-reverse`, `no-restricted-syntax`, restated in `vue/no-restricted-syntax` for templates). Write `toSorted`/`toReversed`/`toSpliced` and assign back, replace a drained array rather than `splice(0)`, and prefer `arr.with(index, value)` over a two-slice spread.
-- **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared`, in place of both the `let x = map.get(k); if (!x) { … }` block and the `map.get(k) ?? []` that is mutated and set back.
+- **Non-mutating array methods, enforced.** `sort()`, `reverse()` and `splice()` are all errors — the first two from oxlint (`unicorn/no-array-sort`, `unicorn/no-array-reverse`), `splice` from `no-restricted-syntax`, and all three restated in `vue/no-restricted-syntax` for the template expressions oxlint does not read. Write `toSorted`/`toReversed`/`toSpliced` and assign the result back; draining an array is taking it and putting a fresh one in its place, never `splice(0)`. What is left to judgement is `arr.with(index, value)` over `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`.
+- **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared`. Both hand-rolled shapes are four lines that read as branching logic where the helper reads as one lookup: the `let x = map.get(k); if (!x) { x = …; map.set(k, x); }` block, and the `map.get(k) ?? []` that is mutated and set back — whose `set` is load-bearing only on the miss, so it looks redundant to the next reader.
 - **`new Set` only for dedup** — use `.some()` for unique arrays. `Set` only when (a) deduplication is the goal, or (b) the collection is large enough that O(n) `.some()` hurts perf.
 - **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too.
 - Named imports from libraries, but only when not auto-imported by Nuxt/modules (`ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; all VueUse composables are auto-imported — never import manually).
@@ -51,7 +52,7 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 
 - **`try`/`catch` is BANNED** for fallible work — use neverthrow `getResult`/`getResultAsync` (+ `withFinalizer`/`withFinalizerAsync` for cleanup, never `try`/`finally`); never `.catch()` chains. **`new Error(...)` is banned too** — a throw is an `InvalidOperationError`, subject to the one exception `error-handling` names. Both subjects in full, plus `jsonDateParse` for any JSON round trip carrying dates, are the **error-handling** skill's.
 - **`.then()`/`.catch()`/`.finally()` are banned** by `no-restricted-syntax`, exceptions included — the shapes that survive it, and what a disable there has to say, are the **error-handling** skill's.
-- **Never `await import(...)`** for code-splitting — always a static top-level `import`: the build already chunk-splits per component, and a nested dynamic import only hides the dependency from Vite's discovery. Two exceptions, each saying in a comment what it keeps out of the eager graph: a library-mandated lazy-loader contract, and a heavy dependency whose only entry point is a module the app always loads (a codec behind a format map), where the dynamic import _is_ the split. `optimizeDeps` is touched only when the dependency's own docs say so.
+- **Never `await import(...)`** for code-splitting — always a static top-level `import`. The two exceptions, and what a dynamic import that survives them has to say in its comment: `references/dynamic-imports.md`.
 
 - **`void asyncFn()` is banned** (`no-void`) — it silences `no-floating-promises` by discarding the promise, so rejections go unhandled and the caller cannot await completion. The replacement ladder (make the caller `async`, widen the callback to `Promisable<void>`, `getSynchronizedFunction` as the last resort) is `references/floating-promises.md`.
 
@@ -65,7 +66,7 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 
 ## Loops and Iteration
 
-- **`Array.from(iterable, mapFn)` over `[...iterable].map(mapFn)`** — maps while converting, no intermediate array; a `Map` iterates as `[key, value]` with no `.entries()`. `no-restricted-syntax` fails the single-spread shape; the two cases the two-arg form would change — a callback reading `.map`'s third argument, an iterator its own callback advances — keep their order as `Array.from(iterable).map(fn)`. A multi-element literal (`[...a, ...b]`) is a concatenation and is untouched.
+- **`Array.from(iterable, mapFn)` over `[...iterable].map(mapFn)`** for any `Set`/`Map`/non-array iterable — the two-arg form maps while converting, producing no intermediate array. A `Map` iterates as `[key, value]` with no `.entries()` needed: `Array.from(fooMap, ([key, value]) => ({ key, value }))`. `no-restricted-syntax` fails the single-spread shape, so what is left to a reader is the two cases where the rewrite is not the same call — a callback reading `.map`'s third argument, and an iterator its own callback advances — both of which keep their evaluation order as `Array.from(iterable).map(fn)`. A multi-element literal (`[...a, ...b]`) is a concatenation rather than a conversion and is untouched.
 - **No index-based `for (let i = 0; i < arr.length; i++)`** for plain array iteration — use `for...of`, and `.entries()` when the index is needed (`for (const [i, item] of arr.entries())`). The `.entries()` iterator cost is negligible (tiny per-element pair alloc, JIT-friendly) versus the readability win.
 - **Index-based `for` stays** only when the loop genuinely isn't sequential array iteration: step counters (`i += 4`, `i += BATCH_SIZE`), pure counts (`for (let i = 0; i < 3; i++)`), `<=` bounds, multi-condition bounds, or in-body index mutation/lookahead (`line.charAt(i + 1)` then `i++`).
 - **Destructure in the binding position (loop var, function param) straight to the props you use** — `for (const [i, { id }] of files.entries())`, never binding the whole object and then reading its fields. This _removes_ a binding, so it does not conflict with the ban on a separate `const { x } = obj` line for a single use. Keep the whole binding only when the object is passed on whole, or used too many ways to enumerate cleanly.
@@ -74,7 +75,12 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 
 ## Environment Checks
 
-**Never use `import.meta.dev` or `import.meta.env.MODE` directly** — `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`.
+**Never use `import.meta.dev` or `import.meta.env.MODE` directly** — use `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`:
+
+```ts
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
+const baseUrl = IS_PRODUCTION ? PRODUCTION_URL : DEVELOPMENT_URL;
+```
 
 ## Absent Values
 
