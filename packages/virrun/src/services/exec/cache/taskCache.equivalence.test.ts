@@ -64,7 +64,7 @@ describe.todo("persistWithCache - a hit replays a recorded run identically (task
     async () => {
       expect.hasAssertions();
 
-      const key = computeTaskCacheKey(command, corpus, []);
+      const key = computeTaskCacheKey(command, corpus, [], "");
 
       assert.exists(key);
 
