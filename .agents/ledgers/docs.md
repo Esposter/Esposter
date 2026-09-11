@@ -24,7 +24,7 @@ page that has one.
 | root — `AGENTS.md`, `README.md`, `SCORE.md`, `CONTRIBUTING.md` | 2026-09-06 | plus `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.agents/*.md`                               |
 | `packages/*/README.md`                                         | 2026-09-06 | `readme-standards` owns the shape; what drifts is the content a reader acts on         |
 | `.agents/skills/*/SKILL.md`                                    | 2026-09-06 |                                                                                        |
-| `.agents/skills/*/SKILL.md` over the ~15 KB budget             | 2026-09-06 | a section over the budget is usually another skill's subject, not a page this one owes |
+| `.agents/skills/*/SKILL.md` over the ~15 KB budget             | 2026-09-11 | a section over the budget is usually another skill's subject, not a page this one owes |
 | `.agents/skills/*/references/*.md`                             | 2026-09-06 | a citation from inside `references/` to its own skill's root needs `../`               |
 
 Greps, over `*.md`. Each finds a candidate, not a defect — the failures are prose-shaped and the pass is reading.
