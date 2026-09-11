@@ -1,6 +1,6 @@
 ---
 name: build
-description: Esposter tsdown build conventions — a Settled list of the directions already tried and rejected (finishing the source split onto the app's bundlers or its Vitest project, devExports true in place of the condition name, a repo-namespaced condition, a hand-maintained onlyBundle allowlist, a guard skipping barrel generation, speeding the build up by cheapening ctix or raising concurrency, vendoring CJS as a policy, bundling to spare a consumer an install, and compilerOptions or paths returning to the base tsconfigs), the shared configuration factories and composing them with mergeConfig rather than a spread, dependencies being externalized while devDependencies are bundled, subpath-aware package patterns, inlinedDependencies as the record of what a bundle swallowed, every package declaring sideEffects and the one kind that claims true, the publint/attw/onlyImport gates a published package gets and why a private one gets none, and the dist size snapshot as the correctness signal — plus deep dives on barrel generation, the three opt-outs (minify, vendoring, a host-read entry field), the #src/ self-alias and the source export condition, ambient declarations and module augmentations that a bundle cannot carry, and the tsconfig presets with the bootstrap package. Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin.
+description: Esposter tsdown build conventions — a Settled list of the directions already tried and rejected (finishing the source split onto the app's bundlers or its Vitest project, devExports true in place of the condition name, a repo-namespaced condition, a hand-maintained onlyBundle allowlist, a guard skipping barrel generation, speeding the build up by cheapening ctix or raising concurrency, vendoring CJS as a policy, bundling to spare a consumer an install, and compilerOptions or paths returning to the base tsconfigs), the shared configuration factories and composing them with mergeConfig rather than a spread, dependencies being externalized while devDependencies are bundled, subpath-aware package patterns, inlinedDependencies as the record of what a bundle swallowed, every package declaring sideEffects and the one kind that claims true, every bundle's externals gated by onlyImport and a published one by publint and attw, and the dist size snapshot as the correctness signal — plus deep dives on the sideEffects answers and how the wrong one fails, on what each build gate catches and its fix, on barrel generation, the three opt-outs (minify, vendoring, a host-read entry field), the #src/ self-alias and the source export condition, ambient declarations and module augmentations that a bundle cannot carry, and the tsconfig presets with the bootstrap package. Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin.
 ---
 
 # Build Conventions (tsdown)
@@ -16,7 +16,7 @@ Every line here is a direction a reader reaches for on meeting the rules below. 
 - **A repo-namespaced condition** (`esposter-source`), to stop a stranger's resolver matching the arm. Nothing published carries a source arm at all (`references/source-exports.md`).
 - **A hand-maintained `onlyBundle` allowlist**, to answer tsdown's standing hint. `inlinedDependencies` already records every vendored package in a reviewed diff, and the check runs before the manifest is written, so a new package's first build could never pass (`references/opt-outs.md`).
 - **A guard that skips barrel generation on a hash of the file list.** ctix drops _both_ files when two export the same identifier, so a colliding rename changes the output while moving no path and flipping no export bit — and a key sound enough to see it buys nothing the `package-builds` cache does not already give (`references/barrels.md`).
-- **Making barrel generation cheaper, or building the packages more concurrently.** ctix loads a TypeScript program per package and offers no flag that avoids one, so it is roughly nine tenths of a package's build and its cost tracks that package's _dependency_ type surface rather than its own file count — the package pulling in the largest provider types is the slowest one here despite being far from the largest. Concurrency is not the lever either: the wall time is one topological chain, because a sibling's `source` arm points at its generated — and gitignored — barrel, so a worker count past what the graph allows was measured to change nothing. What already answers this is the `build:prepare` hook, the `package-builds` content cache, and `watch:packages` for the dev loop (`references/barrels.md`).
+- **Making barrel generation cheaper, or building the packages more concurrently.** ctix loads a TypeScript program per package with no flag that avoids one, so it is most of a package's build and its cost tracks the package's _dependency_ type surface; and the wall time is one topological chain, because a sibling's `source` arm points at its generated barrel, so a worker count past what the graph allows changes nothing. What already answers this is the `build:prepare` hook, the `package-builds` content cache, and `watch:packages` for the dev loop (`references/barrels.md`).
 - **Vendoring CJS dependencies as a policy.** It is a named exception per dependency; generalised it vendors the same library into half the dists here (`references/opt-outs.md`).
 - **Bundling a dependency to spare the consumer an install.** They never install it by hand, and it costs deduplication, strands them on a vendored copy, and splits the dependency's types into two that fail `instanceof` ("Externalized is the default").
 - **Dropping `composite` from `tsconfig.library.json`**, on the reading that nothing consumes it — only the app has `references`, and Nuxt generates those. It is the precondition for `isolatedDeclarations`, which is what keeps the declaration emit on the per-file path: without `composite` or `declaration`, every package fails `TS5069` before it checks a line (`references/tsconfig-presets.md`).
@@ -70,58 +70,17 @@ Anything handed to `deps` goes through `getPackagePatterns`. A bare name never m
 
 A package departs from the default in exactly three ways, each declared in its own `tsdown.config.ts` and never in `configuration`. **Minifying a deploy artifact, vendoring what the default would externalize, or declaring the entry field a runtime host loads by convention** is that page.
 
-### A package whose product is a side effect declares it
+### Every package declares `sideEffects` — `references/side-effects.md`
 
-`sideEffects: false` is right for a library — it is what lets a consumer's bundler drop the parts of it they do
-not import. It is fatal for a package whose **entry exists to run**, and the failure is silent in a way worth
-recognising: a registration written as a bare call whose result nothing uses, in a module with no named export
-for the barrel to keep alive, is a pure side effect by every rule a bundler has. Told the package has none, it
-removes them all, keeps the exports, and drops the import of the host library entirely. What ships is a bundle
-that loads without error and does nothing — for the Functions app, one that deploys, starts, reports `Running`
-and never runs a trigger again.
-
-So such a package sets `sideEffects: true`. Declaring it beats relying on the absence of the field, because the
-absence is what a repo-wide sweep adding `false` everywhere overwrites without anyone reading the diff twice.
-A package whose side effects each land in an exported binding — the infrastructure program's
-`export const x = new Resource(...)` — needs nothing: the export is what keeps it alive.
-
-**Every package answers, and one of three answers.** `false` where nothing runs at import; `true` where the
-entry exists to run; an **array of module paths** where one module runs and the rest are ordinary exports — a
-package registering a plugin at module scope names that file rather than surrendering the whole package's
-tree-shaking to a blanket `true`. Name both arms when a package is resolved through both: a consumer
-on `source` reaches the file itself, one on `default` gets a single chunk that carries the registration with
-everything else, and a path matching neither leaves a bundler free to drop the call.
-
-Leaving the field off is not the safe middle — absent means _unknown_, so a consumer's bundler keeps everything,
-the same outcome as `true` while reading as nobody having considered it. Nothing can derive the value, so
-`scripts/src/workspace/sideEffects.test.ts` enforces what is derivable: every package with a tsdown config declares the field,
-and only the run-on-import one claims `true` wholesale.
-
-**Assert it in that package's own `src/index.test.ts`.** Count the registrations in the built bundle against the
-source files that should have produced them; nothing else can see the difference, because every other test
-imports source rather than `dist`, and the bundle still loads either way.
+One of three answers: `false` where nothing runs at import, `true` where the entry exists to run, an array naming the one module that does. Absent means _unknown_ and keeps everything; `false` on a package that registers at module scope ships a bundle that loads and does nothing. `scripts/src/workspace/sideEffects.test.ts` enforces that every package answers and only the run-on-import one claims `true` wholesale; the package's own `src/index.test.ts` counts the registrations in the built bundle. **Setting the field, or a bundle that starts and never runs a trigger**, is that page.
 
 ### Declarations a bundle cannot carry — `references/declarations.md`
 
 Two kinds of declaration are invisible to the build that should emit them, and both fail silently with every check green. **A package holding an ambient `.d.ts` no entrypoint imports, or wrapping a library whose types a plugin augments** is that page.
 
-## Every bundle's externals are gated
+## Every bundle's externals are gated — `references/gates.md`
 
-`deps.onlyImport` applies to **every** package: a bundle may leave external only what its own manifest names. It catches two different failures with one check.
-
-- **A published package importing a _private_ sibling** passes every local check — the workspace has the sibling on disk — and resolves nothing on a fresh `npm install`. If it fires, the fix is to make the import legitimate (publish what it needs, or move the shared code somewhere published), never to widen the list.
-- **A specifier that resolved to nothing.** Rolldown externalizes an unresolvable `#src/...` rather than failing, so the `dist` ships an import Node then resolves through the package's own `imports` map to a `.ts` file it cannot load. That surfaces in a _consumer_, at runtime, naming a source path the consumer never referenced — `Cannot find module .../packages/db-schema/src/services/missing.ts imported from .../db-schema/dist/index.js`. The gate turns it into a build error in the package that caused it.
-
-`@esposter/configuration` is the one package that widens the list, because everything it externalizes is a `devDependency` and the base derives the allowlist from the runtime fields only.
-
-`deps.onlyImport` checks that imports are declared. It cannot check that a declared dependency is actually _publishable_, and neither can publint — a private sibling sitting in `dependencies` is declared, well-formed, and still ships a package that resolves nothing on a stranger's `npm install`. That edge is the one thing about the manifest no build gate can see, so `scripts/src/workspace/publishedDependencies.test.ts` asserts it instead: no published package names a private sibling in any field a consumer's package manager resolves.
-
-## A published package is gated further
-
-Absence of `private` in the manifest switches on `publint` and `attw`. Never disable one to get a build through — each marks a package that would fail on someone else's machine:
-
-- `publint` — the manifest points at a file the package does not ship.
-- `attw` — the declarations break under a resolution mode a consumer might use.
+`deps.onlyImport` applies to **every** package: a bundle may leave external only what its own manifest names, which turns a published package importing a private sibling, and a specifier that resolved to nothing, into a build error here rather than a runtime one in a consumer. Absence of `private` switches on `publint` and `attw` besides, and neither is ever disabled to get a build through. **What each gate catches and the fix when one fires** is that page.
 
 ## Self-alias and source exports — `references/source-exports.md`
 
@@ -132,8 +91,6 @@ A package refers to its own source through Node subpath imports (`"imports": { "
 Every package snapshots its `dist/index.js` size in `src/index.test.ts`, and its `index.d.ts` too unless it skips `dts`. After changing a manifest, a `deps` entry or a config factory, rebuild and run those — a jump means something started being bundled that shouldn't be, and a `-u` that "fixes" a large jump is hiding the bug.
 
 **Adding an export to a bundled package moves every snapshot downstream of it, and two of those live outside `packages/`.** `apps/functions` and `apps/infra` carry the same `index.test.ts` size snapshot, and `apps/functions` inlines `@esposter/db-schema` — so a values array added to one enum there shows up as a few dozen bytes in a suite `pnpm test:packages` never runs, because that script is `--project "packages/*"`. The gate for a change to a bundled package's export surface is `pnpm build:packages && pnpm -C apps/functions run build && pnpm -C apps/infra run build`, then the `src/index.test.ts` of every package plus those two apps — not `test:packages` alone.
-
-`sideEffects: false` is a claim, not a formality. Declare it only where the package genuinely has no top-level side effects — a package registering a library plugin at module scope has one, and names that module instead.
 
 ## tsconfig presets and the bootstrap package — `references/tsconfig-presets.md`
 
