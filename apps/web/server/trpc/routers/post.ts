@@ -1,9 +1,7 @@
 import type { CreatedComment } from "#shared/models/db/post/CreatedComment";
 import type { DeletedComment } from "#shared/models/db/post/DeletedComment";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { Transaction } from "@@/server/models/db/Transaction";
-import type { Context } from "@@/server/trpc/context";
-import type { Post, PostWithRelations, relations, User } from "@esposter/db-schema";
+import type { Post, PostWithRelations, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
 import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
@@ -22,38 +20,17 @@ import { getNotBlockedWhere } from "@@/server/services/post/getNotBlockedWhere";
 import { getPostRanking } from "@@/server/services/post/getPostRanking";
 import { getPostWithViewerLike } from "@@/server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "@@/server/services/post/getViewerPostRelations";
+import { readPostWithRelations } from "@@/server/services/post/readPostWithRelations";
 import { router } from "@@/server/trpc";
+import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { DatabaseEntityType, DerivedDatabaseEntityType, PostRelations, posts } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { Operation } from "@esposter/shared";
 import { and, arrayContains, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
-
-// The row a card renders: the author beside it, and the viewer's own like when there is a viewer to have one.
-// Signed out there is no like to look up, so the read drops the filtered relation rather than filtering on nobody
-const readPostWithRelations = async (
-  db: Context["db"] | Transaction,
-  id: Post["id"],
-  entityType: string,
-  userId?: User["id"],
-): Promise<PostWithRelations> =>
-  getPostWithViewerLike(
-    await requireEntity(
-      db.query.posts.findFirst({
-        where: {
-          id: {
-            eq: id,
-          },
-        },
-        with: userId ? getViewerPostRelations(userId) : PostRelations,
-      }),
-      entityType,
-      id,
-    ),
-  );
 
 export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<CreatedComment>(
@@ -212,7 +189,7 @@ export const postRouter = router({
               userId ? getNotBlockedWhere(post, ctx.db, userId) : undefined,
             );
             if (!rawWhere)
-              throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
+              throw getInvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
             return rawWhere;
           };
         const resultPosts = await ctx.db.query.posts.findMany({
