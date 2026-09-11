@@ -8,13 +8,12 @@ import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 import { z } from "zod";
 
+const readCache = (file: string) => createKeyedCacheSchema(z.string()).parse(jsonDateParse(readFileSync(file, "utf8")));
+
 describe(writeKeyedCache, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   const key = "";
   const value = "";
-  const readCache = (file: string) =>
-    createKeyedCacheSchema(z.string()).parse(jsonDateParse(readFileSync(file, "utf8")));
-
   afterEach(cleanup);
 
   test("persists the cache as validatable JSON", () => {
