@@ -15,4 +15,4 @@ const useBaseColorsStore = defineStore<typeof COLORS_STORE_ID, Colors>(COLORS_ST
   return colors;
 });
 
-export const useColorsStore = () => useBaseColorsStore() as Store<"colors", Colors>;
+export const useColorsStore = () => useBaseColorsStore() as Store<typeof COLORS_STORE_ID, Colors>;
