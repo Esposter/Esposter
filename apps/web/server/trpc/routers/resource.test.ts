@@ -3,7 +3,6 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Resource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
@@ -20,6 +19,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";

@@ -3,12 +3,12 @@ import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
-import { getDevice } from "@@/server/services/auth/getDevice";
 import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
+import { getDevice } from "@@/server/services/auth/getDevice";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";

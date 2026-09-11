@@ -1,7 +1,6 @@
 import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
 import type { RoomEmojiInMessage } from "@esposter/db-schema";
 
-import { getDevice } from "@@/server/services/auth/getDevice";
 import { createRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/CreateRoomEmojiInput";
 import { deleteRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/DeleteRoomEmojiInput";
 import { generateUploadRoomEmojiSasEntityInputSchema } from "#shared/models/db/roomEmoji/GenerateUploadRoomEmojiSasEntityInput";
@@ -9,6 +8,7 @@ import { updateRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/UpdateRo
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
+import { getDevice } from "@@/server/services/auth/getDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { checkIsUnicodeEmojiSlug } from "@@/server/services/message/emoji/checkIsUnicodeEmojiSlug";
 import { getRoomEmojiBlobName } from "@@/server/services/message/emoji/getRoomEmojiBlobName";

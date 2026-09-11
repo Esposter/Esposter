@@ -9,11 +9,6 @@ import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { Clause } from "@esposter/azure";
 import type { Resource } from "@esposter/db-schema";
 
-import { resourceListSelection } from "@@/server/services/resource/resourceListSelection";
-import { getSearchSimilarity } from "@@/server/services/resource/getSearchSimilarity";
-import { getResourcesWhere } from "@@/server/services/resource/getResourcesWhere";
-import { getLastAccessedJoin } from "@@/server/services/resource/getLastAccessedJoin";
-import { getFavoriteJoin } from "@@/server/services/resource/getFavoriteJoin";
 import { deleteResourcesInputSchema } from "#shared/models/db/resource/DeleteResourcesInput";
 import { readActivitiesInputSchema } from "#shared/models/db/resource/ReadActivitiesInput";
 import { readDeletedResourcesInputSchema } from "#shared/models/db/resource/ReadDeletedResourcesInput";
@@ -40,9 +35,14 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
 import { DUPLICATE_NAME_SUFFIX } from "@@/server/services/resource/constants";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
+import { getFavoriteJoin } from "@@/server/services/resource/getFavoriteJoin";
+import { getLastAccessedJoin } from "@@/server/services/resource/getLastAccessedJoin";
+import { getResourcesWhere } from "@@/server/services/resource/getResourcesWhere";
+import { getSearchSimilarity } from "@@/server/services/resource/getSearchSimilarity";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
+import { resourceListSelection } from "@@/server/services/resource/resourceListSelection";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
 import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
