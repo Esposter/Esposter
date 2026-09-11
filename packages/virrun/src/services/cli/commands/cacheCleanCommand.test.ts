@@ -1,9 +1,10 @@
 import { cacheCleanCommand } from "#src/services/cli/commands/cacheCleanCommand";
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
+import { setupPlatformStub } from "#src/services/exec/test/setupPlatformStub.test";
 import { reapOrphanedWslRuns } from "#src/services/exec/wsl/reapOrphanedWslRuns";
 import { takeOne } from "@esposter/shared";
 import { runCommand } from "citty";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/exec/snapshot/removeSnapshotDirectory"), () => ({
   removeSnapshotDirectory: vi.fn<typeof removeSnapshotDirectory>(),
@@ -12,8 +13,6 @@ vi.mock(import("#src/services/exec/wsl/reapOrphanedWslRuns"), () => ({
   reapOrphanedWslRuns: vi.fn<typeof reapOrphanedWslRuns>(),
 }));
 
-const setPlatform = (platform: NodeJS.Platform) =>
-  Object.defineProperty(process, "platform", { configurable: true, value: platform });
 // Driven through citty rather than by calling `run` with a hand-built context: `ParsedArgs<CleanArgs>` is not
 // Satisfiable by an object literal — `CleanArgs` carries an index signature, so the mapped type resolves every key
 // Including `_` to `never` — and parsing the empty argv is what supplies `all` from the command's own definition
@@ -27,14 +26,10 @@ const runClean = async () => {
 // What is left is that the sweep runs FIRST, blocking, and only on win32. A removal reordered ahead of it is asked to
 // Delete exactly what a surviving WSL tree still holds mounted, and no type or lint rule can see that.
 describe("cacheCleanCommand", () => {
-  const realPlatform = process.platform;
+  const stubPlatform = setupPlatformStub();
 
   beforeAll(() => {
     vi.spyOn(process.stderr, "write").mockReturnValue(true);
-  });
-
-  afterEach(() => {
-    setPlatform(realPlatform);
   });
 
   // Ordered on `invocationCallOrder` rather than by asserting from inside a mocked removal: the command body runs
@@ -44,7 +39,7 @@ describe("cacheCleanCommand", () => {
   test("reaps the surviving WSL trees, blocking, before it removes any cache directory on Windows", async () => {
     expect.hasAssertions();
 
-    setPlatform("win32");
+    stubPlatform("win32");
 
     await runClean();
 
@@ -58,7 +53,7 @@ describe("cacheCleanCommand", () => {
   test("reaps nothing off Windows, where there is no WSL tree to survive the run", async () => {
     expect.hasAssertions();
 
-    setPlatform("linux");
+    stubPlatform("linux");
 
     await runClean();
 

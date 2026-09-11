@@ -1,21 +1,15 @@
 import { SETUP_COMMAND_LINUX, SETUP_COMMAND_WIN32 } from "#src/services/exec/snapshot/constants";
 import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
-import { afterEach, describe, expect, test } from "vitest";
-
-const setPlatform = (platform: NodeJS.Platform) =>
-  Object.defineProperty(process, "platform", { configurable: true, value: platform });
+import { setupPlatformStub } from "#src/services/exec/test/setupPlatformStub.test";
+import { describe, expect, test } from "vitest";
 
 describe(resolveSetupCommand, () => {
-  const realPlatform = process.platform;
-
-  afterEach(() => {
-    setPlatform(realPlatform);
-  });
+  const stubPlatform = setupPlatformStub();
 
   test("bootstraps pnpm through corepack inside the WSL sandbox on Windows", () => {
     expect.hasAssertions();
 
-    setPlatform("win32");
+    stubPlatform("win32");
 
     expect(resolveSetupCommand()).toBe(SETUP_COMMAND_WIN32);
   });
@@ -23,7 +17,7 @@ describe(resolveSetupCommand, () => {
   test("invokes the caller-provided pnpm directly on Linux", () => {
     expect.hasAssertions();
 
-    setPlatform("linux");
+    stubPlatform("linux");
 
     expect(resolveSetupCommand()).toBe(SETUP_COMMAND_LINUX);
   });

@@ -1,5 +1,6 @@
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
+import { setupPlatformStub } from "#src/services/exec/test/setupPlatformStub.test";
 import { COREPACK_HOME_KEY, NODE_MODULES_BIN_DIRECTORY } from "#src/services/exec/util/constants";
 import {
   TEST_REPO_ROOT_WIN,
@@ -36,12 +37,6 @@ vi.mock(import("#src/services/exec/wsl/readWslLoginEnvironment"), () => ({
   }),
 }));
 
-// `process.platform` is a read-only own property rather than a global binding, so `vi.stubGlobal` cannot reach it
-// Without replacing the whole `process` object; the suite's afterEach puts the real one back
-const stubWin32Platform = () => {
-  Object.defineProperty(process, "platform", { configurable: true, value: "win32" });
-};
-
 describe(createOsExecOptions, () => {
   // Inert store options (no fs writes) and the shared wsl mocks so getWslSourceMirrorPath resolves a canonical mirror
   // Path from TEST_REPO_ROOT_WIN — the same transform createWslSourceMirrorSync.test / sourceMirrorPaths.test use. The
@@ -49,22 +44,19 @@ describe(createOsExecOptions, () => {
   const loginPath = TEST_WSL_LOGIN_ENVIRONMENT.path;
 
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  const { platform } = process;
+  const stubPlatform = setupPlatformStub();
 
   beforeEach(() => {
     osCacheRoot.value = create();
     loginEnvironmentPath.value = loginPath;
   });
 
-  afterEach(() => {
-    Object.defineProperty(process, "platform", { configurable: true, value: platform });
-    cleanup();
-  });
+  afterEach(cleanup);
 
   test("win32 prepends the mirror's node_modules/.bin ahead of the leaked host bin so the overlaid binary wins", () => {
     expect.hasAssertions();
 
-    stubWin32Platform();
+    stubPlatform("win32");
     // The regression this guards: without the prepend, a bare command resolves the /mnt/c host bin (win32 build)
     // Baked into the WSL login PATH and crashes needing its -linux-x64 sibling. The mirror bin must come first.
     const mirror = getWslSourceMirrorPath(TEST_REPO_ROOT_WIN);
@@ -77,7 +69,7 @@ describe(createOsExecOptions, () => {
   test("win32 fails loud on an empty login capture instead of running under the interop PATH's broken corepack shim", () => {
     expect.hasAssertions();
 
-    stubWin32Platform();
+    stubPlatform("win32");
     // An empty capture on win32 is a *failed* capture (cold-WSL timeout / blocking rc), not "no WSL": the support
     // Probe already proved WSL is present. Proceeding would resolve `corepack` to the /mnt/c fnm shim and die with a
     // Cryptic `node: not found` (127), so surface the timeout cause here rather than deep in the sandbox.
@@ -91,7 +83,7 @@ describe(createOsExecOptions, () => {
   test("injects no PATH off win32 — native Linux overlays at cwd, so its inherited PATH already resolves right", () => {
     expect.hasAssertions();
 
-    Object.defineProperty(process, "platform", { configurable: true, value: "linux" });
+    stubPlatform("linux");
 
     expect(createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe").env?.PATH).toBeUndefined();
   });
