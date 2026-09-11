@@ -1,6 +1,6 @@
 # Modelling a Type Instead of Working Around It
 
-For the moments a type is awkward: reaching for a cast, re-declaring fields a source type already has, dispatching per variant, or a module config key the compiler can't see.
+For the moments a type is awkward: reaching for a cast, re-declaring fields a source type already has, dispatching per variant, a module config key the compiler can't see, or a TS2590 it cannot represent.
 
 ## `as unknown as` is `any` with extra steps
 
@@ -101,3 +101,10 @@ The interface lives in `app/models/`, models the **whole** record rather than th
 and keeps the source's casing verbatim — a `/* eslint-disable camelcase */` with a reason beats renaming keys
 the file does not have. Optionality is looked up in the data, never guessed. It earns one shape test
 (`testing` skill).
+
+## A compiler limit is a `@ts-expect-error`, not a redesign
+
+TS2590 fires where a large component instance type meets a composable's element union. Suppress in place, tagged
+with the code and message: `// @ts-expect-error TS2590: Expression produces a union type that is too complex to
+represent.` Never move a template ref to another element to dodge it — the directive fails the build once the
+error stops firing, where the workaround silently changes what the ref points at.
