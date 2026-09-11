@@ -25,15 +25,15 @@ describe(createNativeBackend, () => {
     expect(exitCode).toBe(1);
   });
 
-  test("passes an argv array as discrete arguments so a token with spaces is not re-split", async () => {
+  test("passes an argv array as data: a token with spaces is not re-split and a shell operator is not run", async () => {
     expect.hasAssertions();
 
     const { exec } = createNativeBackend();
-    const { stdout } = await exec(["node", "-e", "process.stdout.write(process.argv[1] ?? '')", " "], {
-      cwd: "",
-      stdio: "pipe",
-    });
+    const { stdout } = await exec(
+      ["node", "-e", "process.stdout.write(process.argv.slice(1).join('|'))", " ", "a&&echo"],
+      { cwd: "", stdio: "pipe" },
+    );
 
-    expect(stdout).toBe(" ");
+    expect(stdout).toBe(" |a&&echo");
   });
 });

@@ -11,14 +11,13 @@ export const createNativeBackend = (): ExecBackend => ({
   exec: (command, options) =>
     new Promise((resolve, reject) => {
       // A string runs through the shell (operator passthrough); an argv array runs the file directly
-      // With shell: false so data-built commands can't be reinterpreted as shell metacharacters or
-      // Git options. Both forms share the same capture + exit-code handling below.
+      // With shell: false on every platform so data-built commands can't be reinterpreted as shell
+      // Metacharacters or git options — routing it through cmd.exe on win32 would hand a `ref&whoami`
+      // Back to the interpreter. Direct spawn resolves an `.exe` on PATH but not a `.cmd` shim, so a shim
+      // (pnpm, npx) takes the string form. Both forms share the same capture + exit-code handling below.
       const isArgv = Array.isArray(command);
       const [file, ...args] = isArgv ? command : [command];
-      const isWindowsArgv = isArgv && process.platform === "win32";
-      const spawnFile = isWindowsArgv ? "cmd.exe" : file;
-      const spawnArgs = isWindowsArgv ? ["/d", "/s", "/c", file, ...args] : args;
-      const child = spawnHidden(spawnFile, spawnArgs, {
+      const child = spawnHidden(file, args, {
         cwd: options.cwd || undefined,
         // Inherit the host env, with options.env merged over it (the `VIRRUN` signal, and anything else the
         // Orchestrator passes) — the same contract the bwrap backend honors, so the native path and the
