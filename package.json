@@ -36,6 +36,7 @@
   },
   "type": "module",
   "scripts": {
+    "ai:coderabbit:exclusions": "pnpm -C scripts run ai:coderabbit:exclusions",
     "ai:coderabbit:feedback": "pnpm -C scripts run ai:coderabbit:feedback",
     "ai:coderabbit:probe": "pnpm -C scripts run ai:coderabbit:probe",
     "ai:coderabbit:window": "pnpm -C scripts run ai:coderabbit:window",

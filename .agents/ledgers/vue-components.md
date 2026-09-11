@@ -100,8 +100,7 @@ scatters the `FilterPill` family and renames its members for the worse.
 
 ```bash
 # directories carrying ten or more flat components — the only ones the rule asks about
-find apps/web/app/components -name '*.vue' -printf '%h
-' | sort | uniq -c | awk '$1 >= 10'
+find apps/web/app/components -name '*.vue' -printf '%h\n' | sort | uniq -c | awk '$1 >= 10'
 ```
 
 Read each hit's listing rather than its files: the rule is about the names beside each other, so a directory is

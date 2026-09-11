@@ -11,9 +11,9 @@ meant to **run** the block.
 | Unit                                           | Swept      | Notes                                                                              |
 | ---------------------------------------------- | ---------- | ---------------------------------------------------------------------------------- |
 | `.agents/skills/coderabbit/references/*.md`    | 2026-09-11 | feedback, probe and window became `ai:coderabbit:*`; two emergency-path loops left |
-| `.agents/skills/*/references/*.md`, `SKILL.md` | —          |                                                                                    |
-| `.agents/ledgers/*.md`                         | —          | a grep pipeline is one command — the find recipes are mostly already compliant     |
-| `apps/web/content/docs/**/*.md`, root markdown | —          |                                                                                    |
+| `.agents/skills/*/references/*.md`, `SKILL.md` | 2026-09-11 |                                                                                    |
+| `.agents/ledgers/*.md`                         | 2026-09-11 | a grep pipeline is one command — the find recipes are mostly already compliant     |
+| `apps/web/content/docs/**/*.md`, root markdown | 2026-09-11 |                                                                                    |
 
 Find recipe, over `*.md`: fenced `bash`/`sh` blocks are the candidates, and a block is a finding when it holds a
 loop, a branch, a fallback or a second process aggregating the first's output.
