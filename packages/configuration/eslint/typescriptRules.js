@@ -26,7 +26,7 @@ export default {
       message:
         "Use `getDevice(getSessionPayload)` (server/services/auth/getDevice) rather than spelling the device literal.",
       selector:
-        "ObjectExpression:has(Property[key.name='sessionId'] > MemberExpression[property.name='id'] > MemberExpression[property.name='session'] > MemberExpression[property.name='getSessionPayload']):has(Property[key.name='userId'] > MemberExpression[property.name='id'] > MemberExpression[property.name='user'] > MemberExpression[property.name='getSessionPayload'])",
+        "ObjectExpression[properties.length=2][properties.0.key.name='sessionId'][properties.0.value.property.name='id'][properties.0.value.object.property.name='session'][properties.0.value.object.object.property.name='getSessionPayload'][properties.1.key.name='userId'][properties.1.value.property.name='id'][properties.1.value.object.property.name='user'][properties.1.value.object.object.property.name='getSessionPayload']",
     },
     {
       // The `A` prefix marks an abstract class, so an interface wearing it claims a construct it is not and
