@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs, and better-auth held at the last version whose sign-in worked — widened only after a real dev-server sign-in, never by a test that stubs the provider), version-capped packages (h3, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues — plus deep dives on bumping a GitHub Action to a dereferenced commit SHA, moving the node version with `pnpm update:node`, and the Docker base-image rule keyed on the `docker` datasource that exempts every image tag from the repo-wide `updatePinnedDependencies: false` and pins digests, with Renovate's local dry run showing which deps a rule reaches. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs, the typescript bridge alias), version-capped packages (h3, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues — plus deep dives on bumping a GitHub Action to a dereferenced commit SHA, moving the node version with `pnpm update:node`, and the Docker base-image rule keyed on the `docker` datasource that exempts every image tag from the repo-wide `updatePinnedDependencies: false` and pins digests, with Renovate's local dry run showing which deps a rule reaches. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -37,7 +37,6 @@ Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them pe
 ## Exact-pinned packages (no caret)
 
 - **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.
-- **`better-auth`, `@better-auth/drizzle-adapter`** — pinned exact at 1.7.3, together. 1.7.4 broke sign-in in the running app while CI stayed green end to end — typecheck, every suite, and the Nuxt build — so the break lives in the one thing nothing here exercises: a real OAuth round trip through the browser. A headless test of that path would stub the provider and prove only that better-auth agrees with the stub, which is why none was added. The pin is the enforcer, and Renovate skips it via `updatePinnedDependencies: false`. **Widen back to `^` only after signing in against a dev server on the new version**, bumping both to the same version since the adapter pins its core sibling.
 - **`typescript`** — an exact-pinned `npm:typescript-native-bridge@…` alias, so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`) and a caret would float it across bridge builds. The alias is what runs `tsc`/`vue-tsc` on the Go compiler (`apps/web/content/docs/architecture/monorepo-tooling.md`); a bump moves the bridge, the TypeScript version behind it and `typescript-eslint` at once, so it is a deliberate, dedicated pass and never part of a routine update.
 
 ## Docker base images — `references/renovate-docker.md`
@@ -74,7 +73,7 @@ What that trades is real and accepted: a just-published bad version installs imm
 
 ## Caret rules
 
-Every catalog entry has `^` except the exact-pinned packages listed above (`drizzle-kit`, `drizzle-orm`, `better-auth` and its adapter, `typescript`) and the two tilde caps, `vuetify` and the `unocss` trio. Note `h3` **has** a caret — it is capped by policy, not by a missing `^`.
+Every catalog entry has `^` except the exact-pinned packages listed above (`drizzle-kit`, `drizzle-orm`, `typescript`) and the two tilde caps, `vuetify` and the `unocss` trio. Note `h3` **has** a caret — it is capped by policy, not by a missing `^`.
 
 Before adding a `^` to a caret-less entry, check it against the exact-pinned list; if it's there, leave it alone. If it isn't, the missing caret is likely an oversight — add it.
 

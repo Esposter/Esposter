@@ -27,7 +27,6 @@ describe("drizzleAdapterConfiguration", () => {
       accountId: crypto.randomUUID(),
       createdAt,
       id: crypto.randomUUID(),
-      issuer: "local:oauth:github",
       providerId: "github",
       updatedAt: createdAt,
       userId,
