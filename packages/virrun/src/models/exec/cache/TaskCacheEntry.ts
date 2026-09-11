@@ -4,7 +4,7 @@ import { FlushOpType } from "#src/models/exec/FlushOpType";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 // The recorded outcome of one exit-0 persist run, replayed verbatim on a later cache hit so the sandbox is skipped
-// (specs/config-and-cache.md). `plan` is the write-back FlushOp[] (buildHostFlushPlan) that reconciles the entry's
+// (apps/web/content/docs/virrun/task-cache.md). `plan` is the write-back FlushOp[] (buildHostFlushPlan) that reconciles the entry's
 // `upper` payload onto the host; `exitCode`/`stdout`/`stderr` reproduce the command's observable output. Persisted
 // As meta.json and zod-validated on read (parseTaskCacheEntry) since it is untrusted on-disk state.
 export interface TaskCacheEntry {

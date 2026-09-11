@@ -1,14 +1,14 @@
 import { BackendType } from "#src/models/virrun/BackendType";
 import { Environment } from "#src/models/virrun/Environment";
 import { z } from "zod";
-// The repo-root `virrun.config.{ts,mts,js,mjs,json}` (specs/config-and-cache.md): a checked-in, reviewable selection
-// Of which backend a sandboxed command runs through and which framework environment it targets — the TS form
-// (`defineConfig`) is where platform branching lives. The `virrun -- <cmd>` prefix is the switch for *whether* a
-// Command is sandboxed (add it to adopt, remove it to drop); this config only chooses *how*. An absent file means the
-// Defaults (backend os → native where unsupported, environment undefined → no preset), so no config is a valid,
-// Fully-functional state.
+// The repo-root `virrun.config.{ts,mts,js,mjs,json}` (apps/web/content/docs/virrun/configuration.md): a checked-in,
+// Reviewable selection of which backend a sandboxed command runs through and which framework environment it targets
+// — the TS form (`defineConfig`) is where platform branching lives. The `virrun -- <cmd>` prefix is the switch for
+// *whether* a command is sandboxed (add it to adopt, remove it to drop); this config only chooses *how*. An absent
+// File means the defaults (backend os → native where unsupported, environment undefined → no preset), so no config
+// Is a valid, fully-functional state.
 export interface VirrunConfiguration {
-  // BackendType a sandboxed command runs through. When it can't run on this host (e.g. `os` off Linux) the
+  // BackendType a sandboxed command runs through. When it can't run on this host (e.g. `os` without bubblewrap) the
   // Resolver degrades to native — the worst case of adopting a command is "no speedup", never "broken". Optional: the
   // Schema defaults it to os, so `{}` (or an absent file) is valid and a consumer defaults an omitted value.
   readonly backend?: BackendType;

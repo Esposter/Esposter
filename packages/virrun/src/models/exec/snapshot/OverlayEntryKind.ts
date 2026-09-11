@@ -1,4 +1,5 @@
-// How an overlayfs upper entry is reconciled onto the host during write-back (specs/write-back.md).
+// How an overlayfs upper entry is reconciled onto the host during write-back
+// (apps/web/content/docs/virrun/write-back.md).
 export enum OverlayEntryKind {
   // Directory removed-and-recreated (user.overlay.opaque): clear the host copy before copying its children.
   OpaqueDir = "opaqueDir",
