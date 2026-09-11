@@ -339,7 +339,7 @@ export const baseMessageRouter = router({
     // The client's create handler already absorbs by id — the same guard reconnect catch-up needs anyway
     const createdMessages = on(messageEventEmitter, "createMessage", { signal });
     if (lastEventId) {
-      let cursor: string = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROWKEY_SORT_ITEM]);
+      let cursor = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROWKEY_SORT_ITEM]);
       let hasMore = true;
       const messages: MessageEntity[] = [];
 

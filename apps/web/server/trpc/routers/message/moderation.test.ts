@@ -7,6 +7,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
+import { readRoomMembershipRows } from "@@/server/trpc/routers/readRoomMembershipRows.test";
 import { createDirectMessageWithFriend } from "@@/server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import {
@@ -17,7 +18,6 @@ import {
   RoomPermission,
   StandardMessageEntity,
   users,
-  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
@@ -38,11 +38,7 @@ describe("moderationRouter", () => {
       .select()
       .from(bansInMessage)
       .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, userId)));
-  const readMembershipRows = (userId: string) =>
-    mockContext.db
-      .select()
-      .from(usersToRoomsInMessage)
-      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
+  const readMembershipRows = (userId: string) => readRoomMembershipRows(mockContext.db, roomId, userId);
 
   beforeAll(() => {
     mockContext = getMockContext();
