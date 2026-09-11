@@ -1,4 +1,4 @@
-import { SOURCE_TREE_HASH_MAX_BUFFER } from "#src/services/exec/cache/constants";
+import { EXEC_FILE_MAX_BUFFER } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { getResult } from "@esposter/shared";
@@ -31,7 +31,7 @@ export const computeSourceTreeHash = (cwd: string): null | string => {
   const runGit = (args: readonly string[]): string =>
     execFileHidden("git", args, {
       cwd: dir,
-      maxBuffer: SOURCE_TREE_HASH_MAX_BUFFER,
+      maxBuffer: EXEC_FILE_MAX_BUFFER,
       stdio: ["ignore", "pipe", "pipe"],
     });
   return getResult(() => {

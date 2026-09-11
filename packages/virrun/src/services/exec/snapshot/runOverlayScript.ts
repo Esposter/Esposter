@@ -1,10 +1,7 @@
-import { OVERLAY_WRITE_BACK_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { EXEC_FILE_MAX_BUFFER, OVERLAY_WRITE_BACK_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 import { readWslPath } from "#src/services/exec/wsl/readWslPath";
-import { KIBIBYTE } from "@esposter/shared";
-// Cap above the default 1 MB so a large diff's JSON manifest never overflows the buffer.
-const OVERLAY_SCRIPT_MAX_BUFFER = 256 * KIBIBYTE ** 2;
 // Run a Linux-side overlay python program (apps/web/content/docs/virrun/write-back.md, "Execution locus"): python3
 // Directly on Linux, via `wsl.exe --exec python3` on win32 (translating each host path arg to WSL form first). argv
 // Array, no shell.
@@ -19,7 +16,7 @@ export const runOverlayScript = (script: string, paths: readonly string[], input
   // Write-back with no verdict — see apps/web/content/docs/virrun/subprocess-timeouts.md.
   return execFileHidden(file, args, {
     input,
-    maxBuffer: OVERLAY_SCRIPT_MAX_BUFFER,
+    maxBuffer: EXEC_FILE_MAX_BUFFER,
     timeout: OVERLAY_WRITE_BACK_TIMEOUT_MS,
   });
 };

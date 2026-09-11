@@ -31,10 +31,11 @@ export const persistWithCache = async (
   maskedPaths: readonly string[] = [],
 ): Promise<ExecResult> => {
   const forceColor = options.env?.FORCE_COLOR ?? "";
-  const key = checkIsTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd, maskedPaths, forceColor) : null;
+  const isTaskCacheEnabled = checkIsTaskCacheEnabled();
+  const key = isTaskCacheEnabled ? computeTaskCacheKey(command, options.cwd, maskedPaths, forceColor) : null;
   if (key === null) {
     writeVirrunDebug(
-      checkIsTaskCacheEnabled()
+      isTaskCacheEnabled
         ? "task cache off — no key (not a git repo or no lockfile)"
         : "task cache off — disabled (CI or VIRRUN_NO_CACHE)",
     );

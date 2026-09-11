@@ -1,9 +1,7 @@
-import { SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { EXEC_FILE_MAX_BUFFER, SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { getTarExecutable } from "#src/services/exec/util/getTarExecutable";
-// Cap above the default 1 MB so a full materialize's member list (one line per mirrored path) never overflows the
-// Exec buffer.
-const ARCHIVE_MEMBERS_MAX_BUFFER = 256 * 1024 * 1024;
+
 const LEADING_CURRENT_DIRECTORY_REGEX = /^\.\//u;
 // List a staged archive's members as stored: posix relative paths keyed by the `-C cwd` it was built with, so they
 // Compare against copy paths and manifest keys directly. Every form tar is free to vary the same name by is collapsed
@@ -14,7 +12,7 @@ const LEADING_CURRENT_DIRECTORY_REGEX = /^\.\//u;
 // Or truncated, which is never a tolerable outcome for its caller.
 export const readSourceMirrorArchiveMembers = (archiveUnc: string): string[] =>
   execFileHidden(getTarExecutable(), ["-tf", archiveUnc], {
-    maxBuffer: ARCHIVE_MEMBERS_MAX_BUFFER,
+    maxBuffer: EXEC_FILE_MAX_BUFFER,
     timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS,
   })
     .split(/\r?\n/u)

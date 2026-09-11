@@ -14,10 +14,6 @@ import { join } from "node:path";
 // Been atomically published, so a half-written payload never reads as a hit.
 export const resolveTaskCacheLocation = (key: string): TaskCacheLocation => {
   const dir = join(getGlobalCacheDirectory(), VIRRUN_TASKS_DIRECTORY_NAME, key);
-  return {
-    dir,
-    exists: existsSync(join(dir, TASK_CACHE_META_FILENAME)),
-    metaFile: join(dir, TASK_CACHE_META_FILENAME),
-    payloadDir: join(dir, TASK_CACHE_PAYLOAD_DIRECTORY_NAME),
-  };
+  const metaFile = join(dir, TASK_CACHE_META_FILENAME);
+  return { dir, exists: existsSync(metaFile), metaFile, payloadDir: join(dir, TASK_CACHE_PAYLOAD_DIRECTORY_NAME) };
 };

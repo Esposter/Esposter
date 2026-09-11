@@ -13,7 +13,6 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 describe(pruneStaleTaskCacheEntries, () => {
   // One day past the cutoff — an entry last touched this long ago is dead weight and swept.
   const STALE_AGE_DAYS = TASK_CACHE_MAX_AGE_DAYS + 1;
-  const SECONDS_PER_DAY = 24 * 60 * 60;
 
   const { cleanup, create } = createTemporaryDirectoryTracker();
   let tasksRoot = "";
@@ -22,7 +21,8 @@ describe(pruneStaleTaskCacheEntries, () => {
     const directory = seedDirectory(join(tasksRoot, name));
     const metaFile = join(directory, TASK_CACHE_META_FILENAME);
     writeFileSync(metaFile, "");
-    const touchedAt = new Date(Date.now() - ageDays * SECONDS_PER_DAY * 1000);
+    const ageMs = Temporal.Duration.from({ days: ageDays }).total("milliseconds");
+    const touchedAt = new Date(Date.now() - ageMs);
     utimesSync(metaFile, touchedAt, touchedAt);
     return directory;
   };
@@ -31,7 +31,9 @@ describe(pruneStaleTaskCacheEntries, () => {
     tasksRoot = create();
   });
 
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+  });
 
   test("removes an entry not touched within the max age while keeping a recent one", () => {
     expect.hasAssertions();

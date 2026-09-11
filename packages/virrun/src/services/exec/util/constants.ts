@@ -1,4 +1,5 @@
 /* oxlint-disable typescript/no-inferrable-types */
+import { KIBIBYTE } from "@esposter/shared";
 
 export const GITIGNORE_FILENAME = ".gitignore";
 export const VIRRUN_CACHE_DIRECTORY_NAME = ".virrun";
@@ -163,3 +164,6 @@ export const OWNER_START_TOLERANCE_MS: number = Temporal.Duration.from({ seconds
 // Upper bound for the one PowerShell spawn virrun makes — reading a process's start time on win32 — sized like the
 // WSL probe: a hung shell fails the identity read, which reads as "spare the entry", instead of blocking the sweep.
 export const PROCESS_START_PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
+// Cap above execFile's default 1 MB for the three child streams that can legitimately run large: a working tree's
+// `git diff --binary`, an overlay script's JSON manifest, and a full materialize's archive member list.
+export const EXEC_FILE_MAX_BUFFER: number = 256 * KIBIBYTE ** 2;
