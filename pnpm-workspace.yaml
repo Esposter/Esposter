@@ -202,10 +202,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^3.0.3
-  survey-creator-core: ^3.0.3
-  survey-creator-vue: ^3.0.3
-  survey-vue3-ui: ^3.0.3
+  survey-core: ^3.0.4
+  survey-creator-core: ^3.0.4
+  survey-creator-vue: ^3.0.4
+  survey-vue3-ui: ^3.0.4
   three: ^0.186.0
   three-globe: ^2.45.2
   trpc-nuxt: ^2.1.3
