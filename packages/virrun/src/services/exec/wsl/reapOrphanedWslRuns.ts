@@ -1,5 +1,5 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
-import { checkIsProcessAlive } from "#src/services/exec/util/checkIsProcessAlive";
+import { checkIsOwnerAlive } from "#src/services/exec/util/checkIsOwnerAlive";
 import { WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { spawnBackground } from "#src/services/exec/util/spawnBackground";
 import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
@@ -14,7 +14,8 @@ import { join } from "node:path";
 // Skips it, and killing the `wsl.exe` client does not always take the tree with it, so `sh`+bwrap can outlive the run
 // And keep the store/snapshot pinned open. This reclaims exactly those, and it is the ONE thing it tests: a dead
 // Owner. A live owner is a concurrent run — including this one, whose entries are written under this pid — so no
-// Sweep can ever kill a run someone is still waiting on. That is why it does not read the WSL process tree's shape
+// Sweep can ever kill a run someone is still waiting on; and an owner is a live pid that started before its entry
+// Was written (checkIsOwnerAlive), since the OS recycles a dead run's pid onto whatever starts next. That is why it does not read the WSL process tree's shape
 // (whether a shell is still parented by its `Relay(<pid>)`) the way it once did: a hard-killed client leaves its relay
 // Alive for as long as the tree beneath it lives, so the shape test spared every real corpse while staying free to
 // Misfire on a live run — which surfaced as a bogus "bubblewrap failed to set up the sandbox" (getNoStatusFailureHeadline).
@@ -34,7 +35,8 @@ export const reapOrphanedWslRuns = (isBlocking = false): void => {
     // Since a name with no owner half would otherwise hand `pgrep -f` a pattern nothing here wrote.
     const orphanedEntries = readdirSync(runsDirectory).flatMap((name) => {
       const { marker, ownerPid } = WSL_RUN_ENTRY_REGEX.exec(name)?.groups ?? {};
-      if (marker === undefined || ownerPid === undefined || checkIsProcessAlive(Number(ownerPid))) return [];
+      if (marker === undefined || ownerPid === undefined) return [];
+      if (checkIsOwnerAlive(Number(ownerPid), join(runsDirectory, name))) return [];
       return [{ marker, name }];
     });
     if (orphanedEntries.length === 0) return;

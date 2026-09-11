@@ -1,5 +1,5 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
-import { checkIsProcessAlive } from "#src/services/exec/util/checkIsProcessAlive";
+import { checkIsOwnerAlive } from "#src/services/exec/util/checkIsOwnerAlive";
 import { REMOVE_LIST_REAP_MINIMUM_AGE_MS } from "#src/services/exec/util/constants";
 import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 import { VIRRUN_REMOVE_LIST_TEMP_PREFIX } from "#src/services/exec/wsl/constants";
@@ -23,7 +23,7 @@ export const reapStaleRemoveLists = (dir: string): void => {
     if (!entry.isFile()) continue;
 
     const pid = parseTempOwnerPid(entry.name, [VIRRUN_REMOVE_LIST_TEMP_PREFIX]);
-    if (pid === undefined || checkIsProcessAlive(pid)) continue;
+    if (pid === undefined || checkIsOwnerAlive(pid, join(dir, entry.name))) continue;
 
     const mtimeMs = getResult(() => statSync(join(dir, entry.name)).mtimeMs).unwrapOr(undefined);
     if (mtimeMs === undefined || mtimeMs > reapableBeforeMs) continue;

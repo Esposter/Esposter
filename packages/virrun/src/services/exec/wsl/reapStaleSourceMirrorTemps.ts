@@ -1,5 +1,5 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
-import { checkIsProcessAlive } from "#src/services/exec/util/checkIsProcessAlive";
+import { checkIsOwnerAlive } from "#src/services/exec/util/checkIsOwnerAlive";
 import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 import {
   VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
@@ -29,7 +29,7 @@ export const reapStaleSourceMirrorTemps = (entryUnc: string): void => {
     for (const entry of readdirSync(entryUnc, { withFileTypes: true })) {
       if (!entry.isFile()) continue;
       const pid = parseTempOwnerPid(entry.name, TEMP_PREFIXES);
-      if (pid === undefined || checkIsProcessAlive(pid)) continue;
+      if (pid === undefined || checkIsOwnerAlive(pid, join(entryUnc, entry.name))) continue;
       getResult(() => {
         unlinkSync(join(entryUnc, entry.name));
       }).match(noop, ({ message }) => {

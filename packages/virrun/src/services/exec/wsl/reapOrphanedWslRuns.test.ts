@@ -8,7 +8,7 @@ import { getWslRunsDirectory } from "#src/services/exec/wsl/getWslRunsDirectory"
 import { reapOrphanedWslRuns } from "#src/services/exec/wsl/reapOrphanedWslRuns";
 import { registerWslRun } from "#src/services/exec/wsl/registerWslRun";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
@@ -19,6 +19,7 @@ vi.mock(import("#src/services/exec/util/spawnBackground"), () => ({
 vi.mock(import("#src/services/exec/wsl/execWsl"), () => ({ execWsl: vi.fn<typeof execWsl>() }));
 
 const DEAD_MARKER = `${VIRRUN_WSL_PROCESS_MARKER}-dead`;
+const RECYCLED_MARKER = `${VIRRUN_WSL_PROCESS_MARKER}-recycled`;
 // A registry entry left by a run whose host process is gone — the one thing the sweep acts on. The directory is
 // Created here rather than left to registerWslRun, since a `cache clean` sweeps without registering a run of its own.
 const seedDeadRun = (marker: string): string => {
@@ -47,6 +48,24 @@ describe(reapOrphanedWslRuns, () => {
     // The entry is dropped so the corpse is not re-reaped by every later run; the live one is left to its owner.
     expect(existsSync(deadRunPath)).toBe(false);
     expect(readdirSync(getWslRunsDirectory())).toStrictEqual([`${process.pid}.${VIRRUN_WSL_PROCESS_MARKER}`]);
+  });
+
+  // The OS recycles a dead run's pid onto whatever starts next, so a live pid alone proves nothing: the entry's owner
+  // Started before writing it, and a holder that started after it is a stranger. The parent process is that stranger
+  // Once the entry is dated before it existed.
+  test("reaps a run whose pid is held by a process that started after the entry was written", () => {
+    expect.hasAssertions();
+
+    const runsDirectory = getWslRunsDirectory();
+    const recycledRunPath = join(runsDirectory, `${process.ppid.toString()}.${RECYCLED_MARKER}`);
+    mkdirSync(runsDirectory, { recursive: true });
+    writeFileSync(recycledRunPath, "");
+    utimesSync(recycledRunPath, 0, 0);
+
+    reapOrphanedWslRuns();
+
+    expect(spawnBackground).toHaveBeenCalledExactlyOnceWith("wsl.exe", expect.arrayContaining([RECYCLED_MARKER]));
+    expect(existsSync(recycledRunPath)).toBe(false);
   });
 
   // A clean removes exactly the dirs a corpse holds open, so its sweep runs the reaper synchronously and waits for

@@ -9,11 +9,11 @@ import { join } from "node:path";
 // Absent or concurrently-removed dir sweeps nothing instead of throwing. The callers differ only in what they select —
 // A superseded hash/key (`name !== current`), a hard-killed run's mkdtemp corpse (a temp prefix), a mirror whose repo
 // Is gone — so the readdir + guarded teardown lives here once instead of in each.
-export const sweepStaleEntries = (dir: string, isStale: (name: string) => boolean): void => {
+export const sweepStaleEntries = (dir: string, isStale: (name: string, path: string) => boolean): void => {
   removeSnapshotDirectoriesDetached(
     getResult(() => readdirSync(dir, { withFileTypes: true }))
       .unwrapOr([])
-      .filter((entry) => entry.isDirectory() && isStale(entry.name))
+      .filter((entry) => entry.isDirectory() && isStale(entry.name, join(dir, entry.name)))
       .map((entry) => join(dir, entry.name)),
   );
 };
