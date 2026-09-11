@@ -1,7 +1,7 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { usersToRoomsInMessage } from "@esposter/db-schema";
 import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
+import { usersToRoomsInMessage } from "@esposter/db-schema";
 import { describe } from "vitest";
 
 // The membership row a moderation or automod consequence lands on, read back by the pair that keys it — one row

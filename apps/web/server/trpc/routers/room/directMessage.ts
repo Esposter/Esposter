@@ -15,11 +15,11 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
-import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
 import { assertCanCreateDirectMessageParticipant } from "@@/server/services/room/directMessage/assertCanCreateDirectMessageParticipant";
 import { getDirectMessageParticipantKey } from "@@/server/services/room/directMessage/getDirectMessageParticipantKey";
 import { readDirectMessageParticipantIds } from "@@/server/services/room/directMessage/readDirectMessageParticipantIds";
 import { updateDirectMessageParticipantKey } from "@@/server/services/room/directMessage/updateDirectMessageParticipantKey";
+import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
