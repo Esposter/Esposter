@@ -5,7 +5,7 @@
 | `server/trpc/routers/message`                                                                                                                         | 2026-09-12 |       |
 | `server/trpc/routers/room`                                                                                                                            | 2026-09-12 |       |
 | `server/trpc/routers` — `call`                                                                                                                        | 2026-09-12 |       |
-| `server/trpc/routers` — `resource`, `user`, `role`                                                                                                    | —          |       |
+| `server/trpc/routers` — `resource`, `user`, `role`                                                                                                    | 2026-09-12 |       |
 | `server/trpc/routers` — `post`, `like`, `friend`, `friendRequest`, `block`, `userToRoom`                                                              | —          |       |
 | `server/trpc/routers` — `survey`, `surveyFunnel`, `webhook`, `searchHistory`, `achievement`, `pushSubscription`, `notification`, `session`, `storage` | —          |       |
 | `server/trpc/routers` — the roots, the thin routers and the shared test fixtures                                                                      | 2026-09-12 |       |

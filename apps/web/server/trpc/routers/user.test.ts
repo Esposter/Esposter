@@ -71,56 +71,28 @@ describe("userRouter", () => {
     expect(userStatus.userId).toBe(userId);
   });
 
-  test("connect inserts", async () => {
+  test.each(["connect", "disconnect"] as const)("%s inserts", async (procedure) => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
     const oldUserStatus = takeOne(await caller.readStatuses([userId]));
     vi.advanceTimersByTime(1);
-    await caller.connect();
+    await caller[procedure]();
     vi.advanceTimersByTime(1);
     const newUserStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
   });
 
-  test("connect updates", async () => {
+  test.each(["connect", "disconnect"] as const)("%s updates", async (procedure) => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    await caller.connect();
+    await caller[procedure]();
     vi.advanceTimersByTime(1);
     const oldUserStatus = takeOne(await caller.readStatuses([userId]));
     vi.advanceTimersByTime(1);
-    await caller.connect();
-    vi.advanceTimersByTime(1);
-    const newUserStatus = takeOne(await caller.readStatuses([userId]));
-
-    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 2);
-  });
-
-  test("disconnect inserts", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
-    vi.advanceTimersByTime(1);
-    await caller.disconnect();
-    vi.advanceTimersByTime(1);
-    const newUserStatus = takeOne(await caller.readStatuses([userId]));
-
-    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
-  });
-
-  test("disconnect updates", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    await caller.disconnect();
-    vi.advanceTimersByTime(1);
-    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
-    vi.advanceTimersByTime(1);
-    await caller.disconnect();
+    await caller[procedure]();
     vi.advanceTimersByTime(1);
     const newUserStatus = takeOne(await caller.readStatuses([userId]));
 

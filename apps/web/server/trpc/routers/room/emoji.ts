@@ -1,6 +1,7 @@
 import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
 import type { RoomEmojiInMessage } from "@esposter/db-schema";
 
+import { getDevice } from "@@/server/services/auth/getDevice";
 import { createRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/CreateRoomEmojiInput";
 import { deleteRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/DeleteRoomEmojiInput";
 import { generateUploadRoomEmojiSasEntityInputSchema } from "#shared/models/db/roomEmoji/GenerateUploadRoomEmojiSasEntityInput";
@@ -95,10 +96,7 @@ export const roomEmojiRouter = router({
       );
     });
     const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(containerClient, newRoomEmoji);
-    roomEmojiEventEmitter.emit("createRoomEmoji", [
-      roomEmojiWithSasUrl,
-      { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
-    ]);
+    roomEmojiEventEmitter.emit("createRoomEmoji", [roomEmojiWithSasUrl, getDevice(ctx.getSessionPayload)]);
     return roomEmojiWithSasUrl;
   }),
   deleteRoomEmoji: getPermissionsProcedure(
@@ -112,10 +110,7 @@ export const roomEmojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       id,
     );
-    roomEmojiEventEmitter.emit("deleteRoomEmoji", [
-      { id, roomId },
-      { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
-    ]);
+    roomEmojiEventEmitter.emit("deleteRoomEmoji", [{ id, roomId }, getDevice(ctx.getSessionPayload)]);
     // Best-effort and post-persist: a dropped publish orphans one blob under a prefix the room's own teardown
     // Sweeps anyway, and every reaction and token naming this id already renders its fallback
     await publishBlobDeletion(roomId, AzureContainer.MessageAssets, [getRoomEmojiBlobName(roomId, id)]);
@@ -182,10 +177,7 @@ export const roomEmojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       id,
     );
-    roomEmojiEventEmitter.emit("updateRoomEmoji", [
-      updatedRoomEmoji,
-      { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
-    ]);
+    roomEmojiEventEmitter.emit("updateRoomEmoji", [updatedRoomEmoji, getDevice(ctx.getSessionPayload)]);
     return updatedRoomEmoji;
   }),
 });

@@ -27,6 +27,7 @@ import { storageLedgerRelation } from "#src/relations/storageLedgerRelation";
 import { threadFollowsInMessageRelation } from "#src/relations/threadFollowsInMessageRelation";
 import { userAchievementsRelation } from "#src/relations/userAchievementsRelation";
 import { usersRelation } from "#src/relations/usersRelation";
+import { userSettingsInMessageRelation } from "#src/relations/userSettingsInMessageRelation";
 import { userStatusesInMessageRelation } from "#src/relations/userStatusesInMessageRelation";
 import { usersToRoomRolesInMessageRelation } from "#src/relations/usersToRoomRolesInMessageRelation";
 import { usersToRoomsInMessageRelation } from "#src/relations/usersToRoomsInMessageRelation";
@@ -61,6 +62,7 @@ export const relations = {
   ...storageLedgerRelation,
   ...threadFollowsInMessageRelation,
   ...userAchievementsRelation,
+  ...userSettingsInMessageRelation,
   ...userStatusesInMessageRelation,
   ...usersRelation,
   ...usersToRoomRolesInMessageRelation,
