@@ -1,5 +1,4 @@
-import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
-import { INVITE_EXPIRE_AFTER_MINUTES_OPTIONS } from "#shared/services/room/invite/constants";
+import { INVITE_EXPIRE_AFTER_MINUTES_OPTIONS, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { roomIdSchema } from "@esposter/db-schema";
 import { z } from "zod";
 

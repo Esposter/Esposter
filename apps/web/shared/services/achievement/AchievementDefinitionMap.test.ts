@@ -3,7 +3,7 @@ import { AchievementDefinitionMap } from "#shared/services/achievement/Achieveme
 import { AchievementName, AchievementNames, EmailAchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
-describe("AchievementDefinitionMap", () => {
+describe("achievementDefinitionMap", () => {
   const achievementDefinitionNames = new Set(Object.keys(AchievementDefinitionMap) as AchievementName[]);
 
   test("has a definition for every AchievementName", () => {
