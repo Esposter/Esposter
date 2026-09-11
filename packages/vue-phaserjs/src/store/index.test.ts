@@ -52,7 +52,7 @@ describe(usePhaserStore, () => {
 
     launchParallelScene(rootScene, "parallelScene");
 
-    expect(parallelSceneKeys.value).toContain("parallelScene");
+    expect(parallelSceneKeys.value).toStrictEqual(["parallelScene"]);
     expect(launchSpy).toHaveBeenCalledWith("parallelScene");
 
     launchSpy.mockRestore();
@@ -81,7 +81,7 @@ describe(usePhaserStore, () => {
 
     removeParallelScene(rootScene, "parallelScene");
 
-    expect(parallelSceneKeys.value).not.toContain("parallelScene");
+    expect(parallelSceneKeys.value).toStrictEqual([]);
     expect(stopSpy).toHaveBeenCalledWith("parallelScene");
 
     stopSpy.mockRestore();

@@ -11,6 +11,8 @@ import { Loader, Tilemaps, Utils } from "phaser";
 const GetFastValue = Utils.Objects.GetFastValue;
 const JSONFile = Loader.FileTypes.JSONFile;
 const MultiFile = Loader.MultiFile;
+// Tilesets are exposed from nuxt's public folder, so a tileset source is resolved from the path past that folder
+const PUBLIC_FOLDER = "public";
 
 export class TiledJSONExternalFile extends MultiFile {
   declare files: [TilemapFile, ...TilesetFile[]];
@@ -106,13 +108,10 @@ export class TiledJSONExternalFile extends MultiFile {
     loader.setPrefix(prefix);
 
     for (const [tilesetIndex, tileset] of tilesets.entries()) {
-      // Tileset is relative to the tilemap filename, but we will expose our tilesets
-      // In nuxt's public folder, so we just need to get the relative path past that
-      const publicString = "public";
-      const pathIndex = tileset.source.indexOf(publicString);
+      const pathIndex = tileset.source.indexOf(PUBLIC_FOLDER);
       if (pathIndex === -1) throw new NotFoundError(this.onFileComplete.name, tileset.source);
 
-      const relativePath = tileset.source.slice(pathIndex + publicString.length);
+      const relativePath = tileset.source.slice(pathIndex + PUBLIC_FOLDER.length);
       const tilesetFile = new TilesetFile(
         tilesetIndex,
         loader,

@@ -15,8 +15,8 @@ export const ZoneSetterMap: SetterMap<ZoneConfiguration, GameObjects.Zone, ZoneE
   ...ComputedSizeSetterMap,
   ...DepthSetterMap,
   ...OriginSetterMap,
-  ...TransformSetterMap,
   ...ScrollFactorSetterMap,
+  ...TransformSetterMap,
   ...VisibleSetterMap,
   ...GlobalSetterMap,
 };

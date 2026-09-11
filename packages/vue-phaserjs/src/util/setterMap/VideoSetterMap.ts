@@ -18,6 +18,16 @@ import { VisibleSetterMap } from "#src/util/setterMap/components/VisibleSetterMa
 import { GlobalSetterMap } from "#src/util/setterMap/global/GlobalSetterMap";
 
 export const VideoSetterMap: SetterMap<VideoConfiguration, GameObjects.Video, VideoEventEmitsOptions> = {
+  key: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.changeSource(value);
+  },
+  muted: (gameObject) => (value) => {
+    gameObject.setMute(value);
+  },
+  volume: (gameObject) => (value) => {
+    gameObject.setVolume(value);
+  },
   ...AlphaSetterMap,
   ...BlendModeSetterMap,
   ...DepthSetterMap,
@@ -31,14 +41,4 @@ export const VideoSetterMap: SetterMap<VideoConfiguration, GameObjects.Video, Vi
   ...TransformSetterMap,
   ...VisibleSetterMap,
   ...GlobalSetterMap,
-  key: (gameObject) => (value) => {
-    if (!value) return;
-    gameObject.changeSource(value);
-  },
-  muted: (gameObject) => (value) => {
-    gameObject.setMute(value);
-  },
-  volume: (gameObject) => (value) => {
-    gameObject.setVolume(value);
-  },
 };

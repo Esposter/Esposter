@@ -12,6 +12,8 @@ describe(useInitializeGameObject, () => {
   // 0 is the depth a game object already has, so the lowest value that proves a setter ran is 1
   const depth = 1;
   const newDepth = 2;
+  const configuration = { texture: "", x: 0, y: 0 };
+  const depthConfiguration = { ...configuration, depth };
 
   test("applies the initial configuration via the SetterMap to the game object on init", () => {
     expect.hasAssertions();
@@ -20,7 +22,7 @@ describe(useInitializeGameObject, () => {
 
     mountGameObject(Sprite, {
       props: {
-        configuration: { depth, texture: "", x: 0, y: 0 },
+        configuration: depthConfiguration,
         onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
           capturedSprite = sprite;
         },
@@ -41,7 +43,7 @@ describe(useInitializeGameObject, () => {
 
     const wrapper = mountGameObject(Sprite, {
       props: {
-        configuration: { depth, texture: "", x: 0, y: 0 },
+        configuration: depthConfiguration,
         onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
           capturedSprite = sprite;
         },
@@ -51,7 +53,7 @@ describe(useInitializeGameObject, () => {
     const scene = startTestScene(sceneKey);
     assert.exists(capturedSprite);
 
-    await wrapper.setProps({ configuration: { depth: newDepth, texture: "", x: 0, y: 0 } });
+    await wrapper.setProps({ configuration: { ...configuration, depth: newDepth } });
     stepScene(scene);
 
     expect(capturedSprite.depth).toBe(newDepth);
@@ -64,7 +66,7 @@ describe(useInitializeGameObject, () => {
 
     const wrapper = mountGameObject(Sprite, {
       props: {
-        configuration: { depth, texture: "", x: 0, y: 0 },
+        configuration: depthConfiguration,
         onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
           capturedSprite = sprite;
         },
@@ -76,7 +78,7 @@ describe(useInitializeGameObject, () => {
 
     // Whatever drives the game object between renders, e.g. an animation plugin writing frames
     capturedSprite.setDepth(newDepth);
-    await wrapper.setProps({ configuration: { depth, texture: "", x: 0, y: 0 } });
+    await wrapper.setProps({ configuration: { ...depthConfiguration } });
     stepScene(scene);
 
     expect(capturedSprite.depth).toBe(newDepth);
@@ -89,7 +91,7 @@ describe(useInitializeGameObject, () => {
 
     mountGameObject(Sprite, {
       props: {
-        configuration: { texture: "", x: 0, y: 0 },
+        configuration,
         onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
           capturedSprite = sprite;
         },
@@ -115,7 +117,7 @@ describe(useInitializeGameObject, () => {
 
     mountGameObject(Sprite, {
       props: {
-        configuration: { texture: "", x: 0, y: 0 },
+        configuration,
         immediate: true,
         onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
           capturedSprite = sprite;

@@ -19,7 +19,7 @@ export const AnimationSetterMap = {
       });
 
       if (gameObject.scene.anims.exists(configuration.key)) continue;
-      else if (!gameObject.scene.anims.create(configuration))
+      if (!gameObject.scene.anims.create(configuration))
         throw new InvalidOperationError(Operation.Create, "Animation", configuration.key);
     }
   },

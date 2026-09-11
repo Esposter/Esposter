@@ -4,12 +4,10 @@ import { IsoSetterMap } from "#src/util/setterMap/shared/IsoSetterMap";
 import { describe, expect, test } from "vitest";
 
 describe("isoSetterMap", () => {
-  test("carries every isometric setter into both isometric setter maps", () => {
+  test.each(Object.entries(IsoSetterMap))("carries %s into both isometric setter maps", (key, setter) => {
     expect.hasAssertions();
 
-    for (const [key, setter] of Object.entries(IsoSetterMap)) {
-      expect(IsoBoxSetterMap[key as keyof typeof IsoBoxSetterMap]).toBe(setter);
-      expect(IsoTriangleSetterMap[key as keyof typeof IsoTriangleSetterMap]).toBe(setter);
-    }
+    expect(IsoBoxSetterMap[key as keyof typeof IsoBoxSetterMap]).toBe(setter);
+    expect(IsoTriangleSetterMap[key as keyof typeof IsoTriangleSetterMap]).toBe(setter);
   });
 });

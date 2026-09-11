@@ -4,15 +4,13 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { VNode } from "vue";
 
 import { useGame } from "#src/composables/useGame";
-import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
 import { useCameraStore } from "#src/store/camera";
 import { usePhaserStore } from "#src/store/index";
 import { useInputStore } from "#src/store/input";
 import { ExternalSceneStore } from "#src/store/scene";
 import { createSceneClass } from "#src/util/createSceneClass";
 import { getScene } from "#src/util/getScene";
-import { resetLifecycleListeners } from "#src/util/hooks/resetLifecycleListeners";
-import { runLifecycleListeners } from "#src/util/hooks/runLifecycleListeners";
+import { runSceneShutdown } from "#src/util/hooks/runSceneShutdown";
 import { InjectionKeyMap } from "#src/util/InjectionKeyMap";
 import { Cameras, Scenes } from "phaser";
 
@@ -43,13 +41,16 @@ const fadeInCompleteListener = () => {
 const fadeOutCompleteListener = () => {
   isFading.value = false;
 };
+const cameraFadeListeners = [
+  [Cameras.Scene2D.Events.FADE_IN_START, fadeStartListener],
+  [Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener],
+  [Cameras.Scene2D.Events.FADE_OUT_START, fadeStartListener],
+  [Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener],
+] as const;
 const NewScene = createSceneClass(sceneKey, {
   onCreate: (scene) => {
     emit("create", scene);
-    scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_START, fadeStartListener);
-    scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
-    scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_START, fadeStartListener);
-    scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
+    for (const [event, listener] of cameraFadeListeners) scene.cameras.main.on(event, listener);
     isInputActive.value = true;
   },
   onInit: (scene) => emit("init", scene),
@@ -63,14 +64,8 @@ const readyListener = () => {
 
 const shutdownListener = () => {
   const scene = getScene(sceneKey);
-  resetLifecycleListeners(scene, Lifecycle.Update);
-  resetLifecycleListeners(scene, Lifecycle.NextTick);
-  runLifecycleListeners(scene, Lifecycle.Shutdown);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_START, fadeStartListener);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_START, fadeStartListener);
-  scene.cameras.main.off(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
-  ExternalSceneStore.sceneReadyMap.set(sceneKey, false);
+  runSceneShutdown(scene);
+  for (const [event, listener] of cameraFadeListeners) scene.cameras.main.off(event, listener);
   emit("shutdown", scene);
 };
 

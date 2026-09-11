@@ -10,7 +10,7 @@ Grouped so each row is one review-sized commit.
 | `apps/functions`                          | 2026-09-09 |       |
 | `packages/virrun`                         | 2026-08-20 |       |
 | `packages/parse-tmx`                      | 2026-09-09 |       |
-| `packages/vue-phaserjs`                   | —          |       |
+| `packages/vue-phaserjs`                   | 2026-09-11 |       |
 | `packages/xml2js`                         | 2026-09-09 |       |
 | `apps/infra`                              | 2026-08-20 |       |
 | `packages/configuration`                  | 2026-08-20 |       |
