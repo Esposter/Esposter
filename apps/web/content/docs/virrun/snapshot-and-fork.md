@@ -44,7 +44,7 @@ sequenceDiagram
 
 The deps snapshot is keyed on the **environment** (lockfile + node major) and must freeze only what those determine. Framework codegen written into the source tree (Nuxt's `.nuxt`) is **source**-derived and, on a win32 host, also **platform**-specific: the host's win32-generated `.nuxt` makes a Linux sandbox's type-aware linter collapse types to `any` (a phantom `no-unnecessary-type-parameters`) even though it is fine natively. `pruneSnapshotUpper` strips it from the deps snapshot; a **second overlay layer** owns it instead:
 
-- **Keyed by the environment key + source-tree hash + the resolved prepare step** (`resolvePrepareLocation`, reusing both `computeEnvironmentKey` — the prepare runs over that dep closure under that node major — and `computeSourceTreeHash` — the same git-based working-tree hash as the task cache). A source edit re-keys and rebuilds *this* layer only; the deps snapshot is untouched (no reinstall).
+- **Keyed by the environment key + source-tree hash + the resolved prepare step** (`resolvePrepareLocation`, reusing both `computeEnvironmentKey` — the prepare runs over that dep closure under that node major — and `computeSourceTreeHash` — the same git-based working-tree hash as the task cache). A source edit re-keys and rebuilds _this_ layer only; the deps snapshot is untouched (no reinstall).
 - **Built by `createPrepareLayer`**: fork the deps snapshot as a read-only lower, run the environment's prepare command (`nuxt prepare`), keep only the declared outputs (`pruneToOutputs`), then atomically publish (same per-pid temp + rename barrier). The sandbox thus owns a **Linux-generated** `.nuxt` matching current source.
 - **Stacked last** in the fork/persist lowers (`[depsUpper, prepareUpper]`): the last `--overlay-src` wins, so it shadows both the deps lower and the host's source copy. On win32 the source mirror excludes the outputs so the host copy never enters the sandbox.
 - **Selected by the `environment` config preset** — omitted (default) means no layer; `nuxt` detects the nuxt package by its git-tracked `nuxt.config`. Preset-driven, no overrides. Write-back masks the outputs like `node_modules` (cache-owned, never flushed to the host).
@@ -62,22 +62,22 @@ The deps snapshot is keyed on the **environment** (lockfile + node major) and mu
 
 Paths relative to `packages/virrun/src/`.
 
-| File | Role |
-| ---- | ---- |
-| `services/exec/snapshot/computeEnvironmentKey.ts` | sha256 of the lockfile digest + the sandbox node major — the key behind the snapshot, prepare layer, and task cache |
-| `services/exec/snapshot/computeLockfileHash.ts` | sha256 of `pnpm-lock.yaml` — the dependency-closure half of the environment key, memoized per mtime+size |
-| `services/exec/util/getSandboxNodeVersion.ts` | the node the sandbox really runs — the WSL guest's on win32, `process.version` elsewhere |
-| `services/exec/snapshot/resolveSnapshotLocation.ts` | resolve `~/.virrun/snapshots/<hash>` — pure addressing |
-| `services/exec/util/getGlobalCacheDirectory.ts` | host-global cache root (`VIRRUN_CACHE_HOME` override; WSL ext4 root on win32) |
-| `services/exec/bwrap/buildBwrapArgs.ts` | emit stacked `--overlay-src` lowers (fork) + persisted `--overlay` upper (capture) vs `--tmp-overlay` (ephemeral) |
-| `services/exec/snapshot/createSnapshot.ts` | capture a setup command's writes into a per-pid temp upper, atomically rename into place |
-| `services/exec/snapshot/forkSnapshot.ts` | run a command over a captured snapshot (upper stacked read-only, writes vanish) |
-| `services/exec/snapshot/resolvePrepareLocation.ts` | resolve `~/.virrun/prepare/<key>` (environment + source-tree + prepare-step key) |
-| `services/exec/snapshot/createPrepareLayer.ts` | fork the deps snapshot, run the prepare command, keep only outputs, atomically publish |
-| `services/exec/snapshot/pruneToOutputs.ts` | strip a prepare capture down to the declared output subtrees |
-| `services/exec/snapshot/pruneStaleSnapshots.ts` / `pruneStalePrepareLayers.ts` | evict superseded environment-/source-keyed entries |
-| `services/configuration/resolvePrepareStep.ts` | resolve the `environment` preset to a `{ command, outputs }` step |
-| `services/virrun/createVirrun.ts` | orchestrator `fork()`/`persist()` — os captures-or-reuses the snapshot + prepare layer; other backends fall through to `exec` |
+| File                                                                           | Role                                                                                                                          |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `services/exec/snapshot/computeEnvironmentKey.ts`                              | sha256 of the lockfile digest + the sandbox node major — the key behind the snapshot, prepare layer, and task cache           |
+| `services/exec/snapshot/computeLockfileHash.ts`                                | sha256 of `pnpm-lock.yaml` — the dependency-closure half of the environment key, memoized per mtime+size                      |
+| `services/exec/util/getSandboxNodeVersion.ts`                                  | the node the sandbox really runs — the WSL guest's on win32, `process.version` elsewhere                                      |
+| `services/exec/snapshot/resolveSnapshotLocation.ts`                            | resolve `~/.virrun/snapshots/<hash>` — pure addressing                                                                        |
+| `services/exec/util/getGlobalCacheDirectory.ts`                                | host-global cache root (`VIRRUN_CACHE_HOME` override; WSL ext4 root on win32)                                                 |
+| `services/exec/bwrap/buildBwrapArgs.ts`                                        | emit stacked `--overlay-src` lowers (fork) + persisted `--overlay` upper (capture) vs `--tmp-overlay` (ephemeral)             |
+| `services/exec/snapshot/createSnapshot.ts`                                     | capture a setup command's writes into a per-pid temp upper, atomically rename into place                                      |
+| `services/exec/snapshot/forkSnapshot.ts`                                       | run a command over a captured snapshot (upper stacked read-only, writes vanish)                                               |
+| `services/exec/snapshot/resolvePrepareLocation.ts`                             | resolve `~/.virrun/prepare/<key>` (environment + source-tree + prepare-step key)                                              |
+| `services/exec/snapshot/createPrepareLayer.ts`                                 | fork the deps snapshot, run the prepare command, keep only outputs, atomically publish                                        |
+| `services/exec/snapshot/pruneToOutputs.ts`                                     | strip a prepare capture down to the declared output subtrees                                                                  |
+| `services/exec/snapshot/pruneStaleSnapshots.ts` / `pruneStalePrepareLayers.ts` | evict superseded environment-/source-keyed entries                                                                            |
+| `services/configuration/resolvePrepareStep.ts`                                 | resolve the `environment` preset to a `{ command, outputs }` step                                                             |
+| `services/virrun/createVirrun.ts`                                              | orchestrator `fork()`/`persist()` — os captures-or-reuses the snapshot + prepare layer; other backends fall through to `exec` |
 
 ## Notes
 

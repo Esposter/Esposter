@@ -39,8 +39,7 @@ export const buildFlushPlan = (
     .map((copy) => ({ copy, depth: countSeparators(copy.relativePath) }))
     .toSorted(
       (firstCopy, secondCopy) =>
-        firstCopy.depth - secondCopy.depth ||
-        firstCopy.copy.relativePath.localeCompare(secondCopy.copy.relativePath),
+        firstCopy.depth - secondCopy.depth || firstCopy.copy.relativePath.localeCompare(secondCopy.copy.relativePath),
     )
     .map(({ copy }) => copy);
   return [...deletes, ...sortedCopies];

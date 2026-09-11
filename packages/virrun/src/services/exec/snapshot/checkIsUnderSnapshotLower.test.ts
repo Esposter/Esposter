@@ -10,9 +10,13 @@ describe(checkIsUnderSnapshotLower, () => {
   test("masks a write inside a node_modules tree even when it has no snapshot entry of its own", () => {
     expect.hasAssertions();
 
-    expect(checkIsUnderSnapshotLower(`${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}/${TEST_FILENAME}`, emptyPaths, noMaskedPaths)).toBe(
-      true,
-    );
+    expect(
+      checkIsUnderSnapshotLower(
+        `${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}/${TEST_FILENAME}`,
+        emptyPaths,
+        noMaskedPaths,
+      ),
+    ).toBe(true);
   });
 
   test("masks a snapshot-lower entry itself", () => {
@@ -40,7 +44,11 @@ describe(checkIsUnderSnapshotLower, () => {
     ]);
 
     expect(
-      checkIsUnderSnapshotLower(`${TEST_FILENAME}/${TEST_FILENAME}/${TEST_FILENAME}`, snapshotLowerPaths, noMaskedPaths),
+      checkIsUnderSnapshotLower(
+        `${TEST_FILENAME}/${TEST_FILENAME}/${TEST_FILENAME}`,
+        snapshotLowerPaths,
+        noMaskedPaths,
+      ),
     ).toBe(false);
   });
 
@@ -63,9 +71,9 @@ describe(checkIsUnderSnapshotLower, () => {
 
     expect(checkIsUnderSnapshotLower(`${worktreePath}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
     expect(checkIsUnderSnapshotLower(`${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(true);
-    expect(checkIsUnderSnapshotLower(`${TEST_FILENAME}/${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths)).toBe(
-      true,
-    );
+    expect(
+      checkIsUnderSnapshotLower(`${TEST_FILENAME}/${GIT_DIRECTORY}/${TEST_FILENAME}`, emptyPaths, maskedPaths),
+    ).toBe(true);
     // Source that merely shares a masked path's prefix is a normal flush — the mask is segment-anchored.
     expect(checkIsUnderSnapshotLower(`${GIT_DIRECTORY}ignore`, emptyPaths, maskedPaths)).toBe(false);
   });

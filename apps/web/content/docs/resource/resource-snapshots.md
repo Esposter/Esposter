@@ -102,13 +102,13 @@ Two things sit outside the invariant: the **ring buffer** evicts the oldest revi
 
 **Every trigger is the system's, never the owner's.** A recovery point that exists because somebody remembered to ask for one is not a recovery path — it is the same failure mode [no manual recovery](/docs/architecture/no-manual-recovery) rejects one layer down, and it fails exactly when the owner was too absorbed in the work to think about losing it. So there is no Save version command, and nothing in the product asks an owner to take a snapshot.
 
-| Trigger                                    | Channel     | Rationale                                                                          |
-| ------------------------------------------ | ----------- | ---------------------------------------------------------------------------------- |
-| Publish command                            | `published` | the outward act, unchanged                                                         |
-| Before a restore                           | `revisions` | the undo, taken by the restore itself                                              |
-| Before a Sheet import                      | `revisions` | the other write that replaces a draft wholesale; the import is refused if it fails |
-| First save an interval after the last one  | `revisions` | at most one per interval, so a working session leaves a handful of recovery points |
-| Every other autosave                       | —           | never                                                                              |
+| Trigger                                   | Channel     | Rationale                                                                          |
+| ----------------------------------------- | ----------- | ---------------------------------------------------------------------------------- |
+| Publish command                           | `published` | the outward act, unchanged                                                         |
+| Before a restore                          | `revisions` | the undo, taken by the restore itself                                              |
+| Before a Sheet import                     | `revisions` | the other write that replaces a draft wholesale; the import is refused if it fails |
+| First save an interval after the last one | `revisions` | at most one per interval, so a working session leaves a handful of recovery points |
+| Every other autosave                      | —           | never                                                                              |
 
 **The interval is measured from the last revision, not from the last save.** `saveResourceContent` fires on every coalesced keystroke batch, and Sheet and Dashboard put real data in the content blob — so a per-save revision copies the whole artifact each time, charges the owner's quota while they type, and grows a listing that has no limit. Throttling is the whole of the cost control. But throttling on the _save_ clock inverts the feature: `updatedAt` moves with every autosave, so a resource being actively edited never looks idle, and the session that most deserves recovery points is the one that leaves none. `revisionTakenAt` is a clock only a revision moves, so a working session leaves one point per interval however continuously it is edited.
 
@@ -128,11 +128,11 @@ Revisions are a **ring buffer** — a fixed cap in the tens, oldest evicted when
 
 The two counters that reach the UI are different axes: **`publishVersion` is what the public sees**, **`revisionVersion` is what you can return to**. Overview's Status row shows each only where it carries information:
 
-| Type            | State                            | Status row                                                             |
-| --------------- | -------------------------------- | ---------------------------------------------------------------------- |
-| Not publishable | —                                | that a restore point exists, once one does                             |
-| Publishable     | never published                  | `Draft` chip, plus that a restore point exists once one does           |
-| Publishable     | published, draft unchanged since | `Published` chip, `v{publishVersion}`, up to date                      |
+| Type            | State                            | Status row                                                              |
+| --------------- | -------------------------------- | ----------------------------------------------------------------------- |
+| Not publishable | —                                | that a restore point exists, once one does                              |
+| Publishable     | never published                  | `Draft` chip, plus that a restore point exists once one does            |
+| Publishable     | published, draft unchanged since | `Published` chip, `v{publishVersion}`, up to date                       |
 | Publishable     | published, draft moved since     | `Published` chip, `v{publishVersion}`, and that changes are unpublished |
 
 The last row is a comparison rather than a guess: `resource_publications.publishedContentVersion` records the `contentVersion` the publish was taken from, and `updatedAt` cannot answer it because a rename or a tag edit moves that too.
@@ -162,31 +162,31 @@ Three lesser reasons, each independently sufficient: versioning is a **blob-serv
 
 ## Procedures
 
-| Procedure                            | Auth                | Input                      | Purpose                                                 |
-| ------------------------------------ | ------------------- | -------------------------- | ------------------------------------------------------- |
-| `resource.readSnapshotHistory`       | `getOwnerProcedure` | `{ id }`                   | both channels merged, newest-first by time              |
-| `resource.restoreSnapshotVersion`    | `getOwnerProcedure` | `{ channel, id, version }` | reconstitute a snapshot into the working copy           |
+| Procedure                            | Auth                | Input                      | Purpose                                                        |
+| ------------------------------------ | ------------------- | -------------------------- | -------------------------------------------------------------- |
+| `resource.readSnapshotHistory`       | `getOwnerProcedure` | `{ id }`                   | both channels merged, newest-first by time                     |
+| `resource.restoreSnapshotVersion`    | `getOwnerProcedure` | `{ channel, id, version }` | reconstitute a snapshot into the working copy                  |
 | `resource.saveResourceRevision`      | `getOwnerProcedure` | `{ id }`                   | the pre-import safety net, and the only take a client asks for |
-| `{type}.readPublishedVersionContent` | `getOwnerProcedure` | `{ id, version }`          | owner-only read of one published snapshot, for preview  |
+| `{type}.readPublishedVersionContent` | `getOwnerProcedure` | `{ id, version }`          | owner-only read of one published snapshot, for preview         |
 
 The channel rides with the version on every command, because a version alone names one snapshot per channel. The reason a revision carries is never a client's to name: `Automatic` is decided by the save path from a clock and `BeforeRestore` by the restore itself, so a caller choosing between them would be choosing what its own write is called.
 
 ## Key files
 
-| File                                                                       | Role                                                          |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `apps/web/shared/services/resource/SnapshotChannelDefinitionMap.ts`                 | what a channel is — kind, retention, title                    |
-| `apps/web/shared/services/resource/SnapshotSummaryMap.ts`                           | the per-type one line a history row carries                   |
-| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`                | the revision take, its ring buffer and its ledger charge      |
-| `apps/web/server/services/resource/snapshot/readSnapshotHistory.ts`                 | a channel's prefix listing as history rows                    |
-| `apps/web/server/services/resource/ResourceLiveContentMap.ts`                       | the boundary — what a type declares live                      |
-| `apps/web/server/services/resource/reapplyLiveResourceContent.ts`                   | the reconstitution every snapshot read goes through           |
-| `apps/web/server/trpc/routers/resource.ts`                                          | history, restore and save-version procedures                  |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`               | the publish take, its version claim and its succession repair |
-| `apps/web/app/components/Resource/VersionHistory/`                                  | the panel, its rows, the preview banner and the restore dialog |
-| `apps/web/app/store/resource/versionHistory.ts`                                     | the timeline, the restore and its Undo                        |
-| `packages/db-schema/src/schema/resources.ts`                               | `revisionVersion`, `revisionTakenAt`                          |
-| `packages/db-schema/src/schema/resourcePublications.ts`                    | `publishedContentVersion`                                     |
+| File                                                                  | Role                                                           |
+| --------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `apps/web/shared/services/resource/SnapshotChannelDefinitionMap.ts`   | what a channel is — kind, retention, title                     |
+| `apps/web/shared/services/resource/SnapshotSummaryMap.ts`             | the per-type one line a history row carries                    |
+| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`  | the revision take, its ring buffer and its ledger charge       |
+| `apps/web/server/services/resource/snapshot/readSnapshotHistory.ts`   | a channel's prefix listing as history rows                     |
+| `apps/web/server/services/resource/ResourceLiveContentMap.ts`         | the boundary — what a type declares live                       |
+| `apps/web/server/services/resource/reapplyLiveResourceContent.ts`     | the reconstitution every snapshot read goes through            |
+| `apps/web/server/trpc/routers/resource.ts`                            | history, restore and save-version procedures                   |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | the publish take, its version claim and its succession repair  |
+| `apps/web/app/components/Resource/VersionHistory/`                    | the panel, its rows, the preview banner and the restore dialog |
+| `apps/web/app/store/resource/versionHistory.ts`                       | the timeline, the restore and its Undo                         |
+| `packages/db-schema/src/schema/resources.ts`                          | `revisionVersion`, `revisionTakenAt`                           |
+| `packages/db-schema/src/schema/resourcePublications.ts`               | `publishedContentVersion`                                      |
 
 ## Notes
 

@@ -1,7 +1,12 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
 import { spawnBackground } from "#src/services/exec/util/spawnBackground";
-import { VIRRUN_REMOVE_LIST_TEMP_PREFIX, WSL_EXECUTABLE, WSL_REMOVE_LIST_SCRIPT, WSL_UNC_REGEX } from "#src/services/exec/wsl/constants";
+import {
+  VIRRUN_REMOVE_LIST_TEMP_PREFIX,
+  WSL_EXECUTABLE,
+  WSL_REMOVE_LIST_SCRIPT,
+  WSL_UNC_REGEX,
+} from "#src/services/exec/wsl/constants";
 import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
 import { joinNullDelimited } from "#src/services/exec/wsl/joinNullDelimited";
 import { readWslPath } from "#src/services/exec/wsl/readWslPath";

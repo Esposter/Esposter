@@ -25,35 +25,39 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
   const { getBackend, getCorpus } = setupWarmSnapshotSuite();
   const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
 
-  test("the captured snapshot exists, a fork reuses node_modules offline, and the source stays clean", async () => {
-    expect.hasAssertions();
+  test(
+    "the captured snapshot exists, a fork reuses node_modules offline, and the source stays clean",
+    async () => {
+      expect.hasAssertions();
 
-    const corpus = getCorpus();
-    // The shared capture wrote into the snapshot, not the source corpus on disk.
-    const location = resolveSnapshotLocation(corpus);
+      const corpus = getCorpus();
+      // The shared capture wrote into the snapshot, not the source corpus on disk.
+      const location = resolveSnapshotLocation(corpus);
 
-    expect(location.exists).toBe(true);
-    expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
+      expect(location.exists).toBe(true);
+      expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
 
-    // Fork: stack the frozen snapshot read-only over the source, offline and with no shared store. The run sees the
-    // Full dependency closure (no reinstall) and a native binary (esbuild) executes; its own write vanishes in tmpfs.
-    const forkCommand = [
-      `test -d ${PNPM_MODULES_DIRECTORY}`,
-      FIND_ESBUILD_BINARY_COMMAND,
-      'test -n "$ESBUILD"',
-      RUN_ESBUILD_VERSION_COMMAND,
-      `printf "" > ${TEST_FILENAME}`,
-      `echo ${TEST_FILENAME}`,
-    ].join(" && ");
-    const { exitCode, stdout } = await getBackend().exec(forkCommand, {
-      cwd: corpus,
-      overlayLayers: { lowerDirs: [location.upperDir] },
-      stdio: "pipe",
-    });
+      // Fork: stack the frozen snapshot read-only over the source, offline and with no shared store. The run sees the
+      // Full dependency closure (no reinstall) and a native binary (esbuild) executes; its own write vanishes in tmpfs.
+      const forkCommand = [
+        `test -d ${PNPM_MODULES_DIRECTORY}`,
+        FIND_ESBUILD_BINARY_COMMAND,
+        'test -n "$ESBUILD"',
+        RUN_ESBUILD_VERSION_COMMAND,
+        `printf "" > ${TEST_FILENAME}`,
+        `echo ${TEST_FILENAME}`,
+      ].join(" && ");
+      const { exitCode, stdout } = await getBackend().exec(forkCommand, {
+        cwd: corpus,
+        overlayLayers: { lowerDirs: [location.upperDir] },
+        stdio: "pipe",
+      });
 
-    expect(exitCode).toBe(0);
-    expect(stdout).toContain(TEST_FILENAME);
-    expect(stdout).toMatch(ESBUILD_VERSION_REGEX);
-    expect(existsSync(join(corpus, TEST_FILENAME))).toBe(false);
-  }, acceptanceTimeoutMs);
+      expect(exitCode).toBe(0);
+      expect(stdout).toContain(TEST_FILENAME);
+      expect(stdout).toMatch(ESBUILD_VERSION_REGEX);
+      expect(existsSync(join(corpus, TEST_FILENAME))).toBe(false);
+    },
+    acceptanceTimeoutMs,
+  );
 });

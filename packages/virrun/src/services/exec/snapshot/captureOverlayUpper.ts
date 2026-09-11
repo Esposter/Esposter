@@ -52,13 +52,10 @@ export const captureOverlayUpper = (
     prune(captureUpperDir);
     getResult(() => {
       renameSync(captureUpperDir, upperDir);
-    }).match(
-      noop,
-      (error) => {
-        if (!existsSync(upperDir)) throw error;
-        removeSnapshotDirectoryBestEffort(captureUpperDir);
-      },
-    );
+    }).match(noop, (error) => {
+      if (!existsSync(upperDir)) throw error;
+      removeSnapshotDirectoryBestEffort(captureUpperDir);
+    });
     removeSnapshotDirectoryBestEffort(captureWorkDir);
     return result;
   }).match(

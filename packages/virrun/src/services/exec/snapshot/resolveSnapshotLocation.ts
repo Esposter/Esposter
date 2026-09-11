@@ -1,7 +1,10 @@
 import type { SnapshotLocation } from "#src/models/exec/snapshot/SnapshotLocation";
 
 import { computeEnvironmentKey } from "#src/services/exec/snapshot/computeEnvironmentKey";
-import { VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import {
+  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
+} from "#src/services/exec/snapshot/constants";
 import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
 import { existsSync } from "node:fs";
 import { join } from "node:path";

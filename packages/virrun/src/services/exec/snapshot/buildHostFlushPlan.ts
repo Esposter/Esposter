@@ -23,5 +23,7 @@ export const buildHostFlushPlan = (
     kind: parseOverlayEntryKind(entry, entry.isOpaque),
     relativePath: entry.relativePath,
   }));
-  return buildFlushPlan(entries, (relativePath) => checkIsUnderSnapshotLower(relativePath, snapshotLowerPaths, maskedPaths));
+  return buildFlushPlan(entries, (relativePath) =>
+    checkIsUnderSnapshotLower(relativePath, snapshotLowerPaths, maskedPaths),
+  );
 };

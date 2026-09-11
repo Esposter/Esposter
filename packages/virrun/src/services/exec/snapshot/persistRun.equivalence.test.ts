@@ -37,95 +37,131 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
     if (corpus) rmSync(join(corpus, MASKED_PATH), { force: true, recursive: true });
   });
 
-  test("a new top-level file reaches the host; node_modules and writes into it do not", async () => {
-    expect.hasAssertions();
+  test(
+    "a new top-level file reaches the host; node_modules and writes into it do not",
+    async () => {
+      expect.hasAssertions();
 
-    const command = [
-      `test -d ${NODE_MODULES_DIRECTORY}`,
-      `printf "" > ${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}`,
-      `printf "" > ${TEST_FILENAME}`,
-    ].join(" && ");
-    const result = await persistRun(getBackend(), command, createOsExecOptions(corpus, "pipe"));
+      const command = [
+        `test -d ${NODE_MODULES_DIRECTORY}`,
+        `printf "" > ${NODE_MODULES_DIRECTORY}/${TEST_FILENAME}`,
+        `printf "" > ${TEST_FILENAME}`,
+      ].join(" && ");
+      const result = await persistRun(getBackend(), command, createOsExecOptions(corpus, "pipe"));
 
-    expect(result.exitCode).toBe(0);
-    expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe("");
-    expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
-  }, acceptanceTimeoutMs);
+      expect(result.exitCode).toBe(0);
+      expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe("");
+      expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
+    },
+    acceptanceTimeoutMs,
+  );
 
-  test("an in-place edit of an existing source file is flushed (the oxfmt / eslint --fix shape)", async () => {
-    expect.hasAssertions();
+  test(
+    "an in-place edit of an existing source file is flushed (the oxfmt / eslint --fix shape)",
+    async () => {
+      expect.hasAssertions();
 
-    writeFileSync(join(corpus, TEST_FILENAME), "");
-    const result = await persistRun(getBackend(), `printf " " > ${TEST_FILENAME}`, createOsExecOptions(corpus, "pipe"));
+      writeFileSync(join(corpus, TEST_FILENAME), "");
+      const result = await persistRun(
+        getBackend(),
+        `printf " " > ${TEST_FILENAME}`,
+        createOsExecOptions(corpus, "pipe"),
+      );
 
-    expect(result.exitCode).toBe(0);
-    expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
-  }, acceptanceTimeoutMs);
+      expect(result.exitCode).toBe(0);
+      expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
+    },
+    acceptanceTimeoutMs,
+  );
 
-  test("a newly created nested file under a new directory is flushed (the ctix barrel / db:gen migration shape)", async () => {
-    expect.hasAssertions();
+  test(
+    "a newly created nested file under a new directory is flushed (the ctix barrel / db:gen migration shape)",
+    async () => {
+      expect.hasAssertions();
 
-    // The flush must materialise the directory chain, not just the leaf.
-    const result = await persistRun(
-      getBackend(),
-      `mkdir ${TEST_FILENAME} && printf "" > ${TEST_FILENAME}/${TEST_FILENAME}`,
-      createOsExecOptions(corpus, "pipe"),
-    );
+      // The flush must materialise the directory chain, not just the leaf.
+      const result = await persistRun(
+        getBackend(),
+        `mkdir ${TEST_FILENAME} && printf "" > ${TEST_FILENAME}/${TEST_FILENAME}`,
+        createOsExecOptions(corpus, "pipe"),
+      );
 
-    expect(result.exitCode).toBe(0);
-    expect(readFileSync(join(corpus, TEST_FILENAME, TEST_FILENAME), "utf8")).toBe("");
-  }, acceptanceTimeoutMs);
+      expect(result.exitCode).toBe(0);
+      expect(readFileSync(join(corpus, TEST_FILENAME, TEST_FILENAME), "utf8")).toBe("");
+    },
+    acceptanceTimeoutMs,
+  );
 
-  test("a deleted source file is removed from the host (whiteout)", async () => {
-    expect.hasAssertions();
+  test(
+    "a deleted source file is removed from the host (whiteout)",
+    async () => {
+      expect.hasAssertions();
 
-    writeFileSync(join(corpus, TEST_FILENAME), "");
-    const result = await persistRun(getBackend(), `rm ${TEST_FILENAME}`, createOsExecOptions(corpus, "pipe"));
+      writeFileSync(join(corpus, TEST_FILENAME), "");
+      const result = await persistRun(getBackend(), `rm ${TEST_FILENAME}`, createOsExecOptions(corpus, "pipe"));
 
-    expect(result.exitCode).toBe(0);
-    expect(existsSync(join(corpus, TEST_FILENAME))).toBe(false);
-  }, acceptanceTimeoutMs);
+      expect(result.exitCode).toBe(0);
+      expect(existsSync(join(corpus, TEST_FILENAME))).toBe(false);
+    },
+    acceptanceTimeoutMs,
+  );
 
-  test("a source file under a package dir the snapshot lower also materialises is flushed (the lint:fix shape)", async () => {
-    expect.hasAssertions();
+  test(
+    "a source file under a package dir the snapshot lower also materialises is flushed (the lint:fix shape)",
+    async () => {
+      expect.hasAssertions();
 
-    // An edit beneath a `packages/<pkg>` parent the snapshot lower also materialises (per-package node_modules) must
-    // Reach the host — it must not be masked as a dependency write the way an ancestor-walk over lower paths did.
-    const sourcePath = `${packageDirectory}/${TEST_FILENAME}`;
-    const result = await persistRun(getBackend(), `printf " " > ${sourcePath}`, createOsExecOptions(corpus, "pipe"));
+      // An edit beneath a `packages/<pkg>` parent the snapshot lower also materialises (per-package node_modules) must
+      // Reach the host — it must not be masked as a dependency write the way an ancestor-walk over lower paths did.
+      const sourcePath = `${packageDirectory}/${TEST_FILENAME}`;
+      const result = await persistRun(getBackend(), `printf " " > ${sourcePath}`, createOsExecOptions(corpus, "pipe"));
 
-    expect(result.exitCode).toBe(0);
-    expect(readFileSync(join(corpus, packageDirectory, TEST_FILENAME), "utf8")).toBe(" ");
-  }, acceptanceTimeoutMs);
+      expect(result.exitCode).toBe(0);
+      expect(readFileSync(join(corpus, packageDirectory, TEST_FILENAME), "utf8")).toBe(" ");
+    },
+    acceptanceTimeoutMs,
+  );
 
-  test("a write under a masked path never reaches the host (the stale-mirror ghost shape)", async () => {
-    expect.hasAssertions();
+  test(
+    "a write under a masked path never reaches the host (the stale-mirror ghost shape)",
+    async () => {
+      expect.hasAssertions();
 
-    // On win32 the sandbox reads a mirror the excludes were filtered out of, so nothing under one of them can be a
-    // Host file the command edited — only stale mirror content a tool happened to rewrite. Flushing it recreated
-    // `.agents/worktrees` trees on a host that had deleted them, with the old files the mirror still held.
-    const result = await persistRun(
-      getBackend(),
-      `mkdir -p ${MASKED_PATH}/${TEST_FILENAME} && printf " " > ${MASKED_PATH}/${TEST_FILENAME}/${TEST_FILENAME} && printf " " > ${TEST_FILENAME}`,
-      createOsExecOptions(corpus, "pipe"),
-      [],
-      [MASKED_PATH],
-    );
+      // On win32 the sandbox reads a mirror the excludes were filtered out of, so nothing under one of them can be a
+      // Host file the command edited — only stale mirror content a tool happened to rewrite. Flushing it recreated
+      // `.agents/worktrees` trees on a host that had deleted them, with the old files the mirror still held.
+      const result = await persistRun(
+        getBackend(),
+        `mkdir -p ${MASKED_PATH}/${TEST_FILENAME} && printf " " > ${MASKED_PATH}/${TEST_FILENAME}/${TEST_FILENAME} && printf " " > ${TEST_FILENAME}`,
+        createOsExecOptions(corpus, "pipe"),
+        [],
+        [MASKED_PATH],
+      );
 
-    expect(result.exitCode).toBe(0);
-    expect(existsSync(join(corpus, MASKED_PATH))).toBe(false);
-    // The same run's unmasked write still lands — masking is per-path, never a blanket drop of the flush.
-    expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
-  }, acceptanceTimeoutMs);
+      expect(result.exitCode).toBe(0);
+      expect(existsSync(join(corpus, MASKED_PATH))).toBe(false);
+      // The same run's unmasked write still lands — masking is per-path, never a blanket drop of the flush.
+      expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
+    },
+    acceptanceTimeoutMs,
+  );
 
-  test("a non-zero exit still flushes the files it produced (native leaves partial output; the eslint --fix remaining-errors shape)", async () => {
-    expect.hasAssertions();
+  test(
+    "a non-zero exit still flushes the files it produced (native leaves partial output; the eslint --fix remaining-errors shape)",
+    async () => {
+      expect.hasAssertions();
 
-    // Native-equivalence taken literally: a mutation tool that exits non-zero (eslint --fix / oxfmt with unfixable
-    // Errors left, a build that half-writes) still wrote real files, so persist reconciles them onto the host too.
-    const result = await persistRun(getBackend(), `printf " " > ${TEST_FILENAME} && exit 1`, createOsExecOptions(corpus, "pipe"));
+      // Native-equivalence taken literally: a mutation tool that exits non-zero (eslint --fix / oxfmt with unfixable
+      // Errors left, a build that half-writes) still wrote real files, so persist reconciles them onto the host too.
+      const result = await persistRun(
+        getBackend(),
+        `printf " " > ${TEST_FILENAME} && exit 1`,
+        createOsExecOptions(corpus, "pipe"),
+      );
 
-    expect(result.exitCode).toBe(1);
-    expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
-  }, acceptanceTimeoutMs);
+      expect(result.exitCode).toBe(1);
+      expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
+    },
+    acceptanceTimeoutMs,
+  );
 });

@@ -3,7 +3,10 @@ import type { PrepareStep } from "#src/models/virrun/PrepareStep";
 
 import { computeSourceTreeHash } from "#src/services/exec/cache/computeSourceTreeHash";
 import { computeEnvironmentKey } from "#src/services/exec/snapshot/computeEnvironmentKey";
-import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import {
+  VIRRUN_PREPARE_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
+} from "#src/services/exec/snapshot/constants";
 import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
 import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRoot";
 import { createHash } from "node:crypto";

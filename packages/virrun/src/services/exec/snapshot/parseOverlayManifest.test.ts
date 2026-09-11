@@ -28,15 +28,15 @@ describe(parseOverlayManifest, () => {
   test("throws on malformed JSON", () => {
     expect.hasAssertions();
 
-    expect(() => parseOverlayManifest("not json")).toThrowErrorMatchingInlineSnapshot(`[InvalidOperationError: Invalid operation: Read, name: parseOverlayManifest, Unexpected token 'o', "not json" is not valid JSON]`);
+    expect(() => parseOverlayManifest("not json")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: parseOverlayManifest, Unexpected token 'o', "not json" is not valid JSON]`,
+    );
   });
 
   test("throws when an entry is missing a field", () => {
     expect.hasAssertions();
 
-    expect(() =>
-      parseOverlayManifest(JSON.stringify([{ relativePath: " " }])),
-    ).toThrowErrorMatchingInlineSnapshot(`
+    expect(() => parseOverlayManifest(JSON.stringify([{ relativePath: " " }]))).toThrowErrorMatchingInlineSnapshot(`
       [InvalidOperationError: Invalid operation: Read, name: parseOverlayManifest, ✖ Invalid input: expected boolean, received undefined
         → at [0].isCharacterDevice
       ✖ Invalid input: expected boolean, received undefined
@@ -53,9 +53,7 @@ describe(parseOverlayManifest, () => {
   test("throws when a field has the wrong type", () => {
     expect.hasAssertions();
 
-    expect(() =>
-      parseOverlayManifest(JSON.stringify([{ ...entry, rdev: "0" }])),
-    ).toThrowErrorMatchingInlineSnapshot(`
+    expect(() => parseOverlayManifest(JSON.stringify([{ ...entry, rdev: "0" }]))).toThrowErrorMatchingInlineSnapshot(`
       [InvalidOperationError: Invalid operation: Read, name: parseOverlayManifest, ✖ Invalid input: expected number, received string
         → at [0].rdev]
     `);

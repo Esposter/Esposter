@@ -4,7 +4,7 @@ import { createRecordingBackend } from "#src/services/exec/test/createRecordingB
 import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
-import {beforeEach, describe, expect, test, vi} from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(
   import("#src/services/exec/util/getSandboxNodeVersion"),
@@ -50,7 +50,9 @@ describe(forkSnapshot, () => {
 
     const backend = createRecordingBackend();
 
-    expect(() => forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" })).toThrowErrorMatchingInlineSnapshot(
+    expect(() =>
+      forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" }),
+    ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, forkSnapshot.name, "no captured snapshot to fork; run createSnapshot first").message}]`,
     );
   });

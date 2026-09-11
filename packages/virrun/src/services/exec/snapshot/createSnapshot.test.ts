@@ -78,7 +78,12 @@ describe(createSnapshot, () => {
 
     const backend = createRecordingBackend();
     const store = join(repository, VIRRUN_STORE_DIRECTORY_NAME);
-    await createSnapshot(backend, command, { bindDirs: [store], cwd: repository, isNetworkEnabled: true, stdio: "pipe" });
+    await createSnapshot(backend, command, {
+      bindDirs: [store],
+      cwd: repository,
+      isNetworkEnabled: true,
+      stdio: "pipe",
+    });
 
     const call = takeOne(backend.calls);
 
@@ -96,7 +101,9 @@ describe(createSnapshot, () => {
 
     const backend = createRecordingBackend({ exitCode: 1, stderr: "", stdout: "" });
 
-    await expect(createSnapshot(backend, command, { cwd: repository, stdio: "pipe" })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      createSnapshot(backend, command, { cwd: repository, stdio: "pipe" }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, createSnapshot.name, "snapshot setup command exited with 1: ").message}]`,
     );
   });
