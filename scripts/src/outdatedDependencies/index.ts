@@ -15,22 +15,22 @@ import { printMismatches } from "#src/outdatedDependencies/printMismatches";
 import { printOutdatedDependencies } from "#src/outdatedDependencies/printOutdatedDependencies";
 import { printRegistryErrors } from "#src/outdatedDependencies/printRegistryErrors";
 import { printUncatalogedManifestDependencies } from "#src/outdatedDependencies/printUncatalogedManifestDependencies";
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const root = resolve(import.meta.dirname, "..", "..", "..");
 const startedAt = performance.now();
 const color = createColor(!process.env.NO_COLOR);
 
-const workspaceYaml = readFileSync(resolve(root, "pnpm-workspace.yaml"), "utf8");
-const lockYaml = readFileSync(resolve(root, "pnpm-lock.yaml"), "utf8");
+const workspaceYaml = readFileSync(resolve(REPOSITORY_ROOT, "pnpm-workspace.yaml"), "utf8");
+const lockYaml = readFileSync(resolve(REPOSITORY_ROOT, "pnpm-lock.yaml"), "utf8");
 
 const catalogEntries = parseWorkspaceEntries("catalog", getSection("catalog", workspaceYaml));
 const configDependencyEntries = parseWorkspaceEntries(
   "configDependencies",
   getSection("configDependencies", workspaceYaml),
 );
-const manifests = getManifestFiles(root);
+const manifests = getManifestFiles(REPOSITORY_ROOT);
 const engineEntries = getEngineEntries(manifests);
 const manifestDependencies = getManifestDependencies(manifests);
 const uncatalogedManifestDependencies = getUncatalogedManifestDependencies(manifestDependencies);
@@ -43,7 +43,7 @@ printUncatalogedManifestDependencies(uncatalogedManifestDependencies, color);
 printMismatches(mismatches, color);
 
 const [regularChecks, registryChecks] = await Promise.all([
-  getRegularOutdatedDependencies(root),
+  getRegularOutdatedDependencies(REPOSITORY_ROOT),
   getRegistryOutdatedDependencies([...configDependencyEntries, ...engineEntries]),
 ]);
 const outdatedDependencies = [...regularChecks.outdatedDependencies, ...registryChecks.outdatedDependencies];

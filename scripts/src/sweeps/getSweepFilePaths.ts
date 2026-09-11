@@ -1,5 +1,5 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { execFileSync } from "node:child_process";
-import { resolve } from "node:path";
 
 // `--others` is load-bearing: without it a suite that is written but not yet `git add`ed is out of scope, and the
 // Scan reports nothing for it — which reads exactly like a swept tree. `--exclude-standard` keeps ignored output
@@ -10,7 +10,7 @@ import { resolve } from "node:path";
 // The same silent-pass this whole scan exists to avoid, wearing a different hat.
 export const getSweepFilePaths = (glob: string): string[] =>
   execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", glob], {
-    cwd: resolve(import.meta.dirname, "..", "..", ".."),
+    cwd: REPOSITORY_ROOT,
     encoding: "utf8",
     maxBuffer: 1 << 28,
   })

@@ -1,5 +1,6 @@
 import type { SkillDocsFile } from "#src/sweeps/skillDocs/models/SkillDocsFile";
 
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
 import { getBudgetFindings } from "#src/sweeps/skillDocs/getBudgetFindings";
 import { getDocsRouteFindings } from "#src/sweeps/skillDocs/getDocsRouteFindings";
@@ -8,9 +9,8 @@ import { getUnresolvedFindings } from "#src/sweeps/skillDocs/getUnresolvedFindin
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const root = resolve(import.meta.dirname, "..", "..", "..", "..");
 const readFiles = (glob: string): SkillDocsFile[] =>
-  getSweepFilePaths(glob).map((path) => ({ path, text: readFileSync(resolve(root, path), "utf8") }));
+  getSweepFilePaths(glob).map((path) => ({ path, text: readFileSync(resolve(REPOSITORY_ROOT, path), "utf8") }));
 
 const skills = readFiles(".agents/skills/*/SKILL.md");
 const pages = readFiles(".agents/skills/*/references/*.md");

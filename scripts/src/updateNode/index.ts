@@ -1,3 +1,4 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getLatestVersion } from "#src/services/getLatestVersion";
 import { getVersionParts } from "#src/services/getVersionParts";
 import { getEnginesNode } from "#src/updateNode/getEnginesNode";
@@ -10,7 +11,6 @@ import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const root = resolve(import.meta.dirname, "..", "..", "..");
 // 1. Resolve target node version to a full published release (strip a leading `v`/`^`); a partial
 // Request like `X` / `X.Y` resolves to its highest release (`X.Y.Z`) so package.json pins a real
 // Version. Default to the latest stable from npm.
@@ -21,7 +21,7 @@ const { major } = getVersionParts(version);
 // 2. Bump the two node pins package.json carries: `devEngines.runtime` is what `pnpm/setup` installs on the
 // Runners, `engines.node` is what every other tool reads. They are the same number by definition, so they are
 // Written together and never separately.
-const packageJsonPath = resolve(root, "package.json");
+const packageJsonPath = resolve(REPOSITORY_ROOT, "package.json");
 const packageJson = readFileSync(packageJsonPath, "utf8");
 const oldVersion = getEnginesNode(packageJson);
 // The pins / @types/node only need rewriting when the target differs. We still hand off to fnm
@@ -34,7 +34,7 @@ if (isNewVersion) {
   console.info(`✔ package.json devEngines.runtime + engines.node → ^${version}`);
   // 3. Bump the @types/node catalog entry to the highest release matching the new node major.
   const typesVersion = await getRegistryLatestVersionForPrefix("@types/node", String(major));
-  const workspacePath = resolve(root, "pnpm-workspace.yaml");
+  const workspacePath = resolve(REPOSITORY_ROOT, "pnpm-workspace.yaml");
   writeFileSync(workspacePath, setCatalogTypesNode(readFileSync(workspacePath, "utf8"), typesVersion));
   console.info(`✔ pnpm-workspace.yaml @types/node → ^${typesVersion}`);
 } else console.info(`node is already ${version} in package.json — ensuring fnm has it installed and defaulted.\n`);
@@ -42,7 +42,7 @@ if (isNewVersion) {
 // When the version is unchanged, `old === new`, so the native script's guard skips the removal step.
 console.info("Installing and defaulting via fnm…");
 const result = spawnSync(`pnpm crossOS update:node ${version} ${oldVersion}`, {
-  cwd: root,
+  cwd: REPOSITORY_ROOT,
   shell: true,
   stdio: "inherit",
 });

@@ -4,19 +4,18 @@ import { getPullRequestArgument } from "#src/coderabbit/services/getPullRequestA
 import { readBotEntries } from "#src/coderabbit/services/readBotEntries";
 import { runGh } from "#src/coderabbit/services/runGh";
 import { getLastReviewedSha } from "#src/coderabbit/window/getLastReviewedSha";
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 import { execFileSync } from "node:child_process";
-import { resolve } from "node:path";
 
 interface PullRequestBranches {
   baseRefName: string;
   headRefName: string;
 }
 
-// Every count is against the repository root: `git diff` is relative to where it runs, and this package's own
-// Directory would answer about `scripts/` alone — a short, clean-looking number.
-const root = resolve(import.meta.dirname, "..", "..", "..");
-const runGit = (args: string[]): string => execFileSync("git", args, { cwd: root, encoding: "utf8" });
+// Every count is against the repository root: with `diff.relative` set, a `git diff` run from this package's own
+// Directory answers about `scripts/` alone — a short, clean-looking number.
+const runGit = (args: string[]): string => execFileSync("git", args, { cwd: REPOSITORY_ROOT, encoding: "utf8" });
 const getFileCount = (range: string): number =>
   runGit(["diff", "--name-only", range]).split("\n").filter(Boolean).length;
 

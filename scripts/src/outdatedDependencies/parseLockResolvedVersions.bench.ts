@@ -1,5 +1,6 @@
 import { parseLockResolvedVersions } from "#src/outdatedDependencies/parseLockResolvedVersions";
 import { sliceLockSection } from "#src/outdatedDependencies/sliceLockSection";
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -11,7 +12,7 @@ import { test } from "vitest";
 // `importers:` slice is small — the contrast makes per-input cost visible, so a regex regression (e.g.
 // Catastrophic backtracking) on a growing lock shows up. Slices are built once at module scope: they are read
 // And never written, so every iteration can share them.
-const lockYaml = readFileSync(resolve(import.meta.dirname, "..", "..", "..", "pnpm-lock.yaml"), "utf8");
+const lockYaml = readFileSync(resolve(REPOSITORY_ROOT, "pnpm-lock.yaml"), "utf8");
 const catalogSection = sliceLockSection(lockYaml, "\ncatalogs:", ["\npackages:", "\nsnapshots:", "\nimporters:"]);
 const importersSection = sliceLockSection(lockYaml, "\nimporters:", ["\npackages:"]);
 

@@ -1,3 +1,4 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
 import { getConsumerPackagePaths } from "#src/sweeps/sharedExportConsumers/getConsumerPackagePaths";
 import { getExportNames } from "#src/sweeps/sharedExportConsumers/getExportNames";
@@ -6,8 +7,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const MINIMUM_CONSUMER_PACKAGES = 2;
-const root = resolve(import.meta.dirname, "..", "..", "..", "..");
-const readText = (path: string) => readFileSync(resolve(root, path), "utf8");
+const readText = (path: string) => readFileSync(resolve(REPOSITORY_ROOT, path), "utf8");
 const sourcePaths = getSweepFilePaths("packages/shared/src/*.ts").filter(
   (path) => !path.includes(".test.") && !path.endsWith("index.ts"),
 );
