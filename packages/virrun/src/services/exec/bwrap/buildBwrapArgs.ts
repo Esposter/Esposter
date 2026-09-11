@@ -9,8 +9,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 //   - `isNetworkEnabled` re-adds only the network namespace (`--share-net`, valid only with `--unshare-all`).
 //   - `bindDirs` bind-mounted writable AFTER the overlay (overmounting it) for host caches whose writes must persist.
 //
-// `overlayLayers` parametrizes the working-dir overlay (specs/snapshot-fork.md): `lowerDirs` adds extra read-only
-// Lowers (a fork stacks the frozen snapshot upper here to shadow the source); `upperDir`+`workDir` switch to a
+// `overlayLayers` parametrizes the working-dir overlay (apps/web/content/docs/virrun/snapshot-and-fork.md):
+// `lowerDirs` adds extra read-only lowers (a fork stacks the frozen snapshot upper here to shadow the source);
+// `upperDir`+`workDir` switch to a
 // Persistent `--overlay` so a capture's writes land on disk — both required together, one without the other throws.
 //
 // `sourceDir` is the read-only source lower's real location, decoupled from `cwd` (the overlay *mountpoint* + chdir).

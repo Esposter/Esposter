@@ -102,7 +102,7 @@ export const WSL_PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30
 // Unlink of a whole node_modules closure — so it gets minutes rather than the probe's seconds, and its size is
 // Bounded by one cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p bridge fails
 // The call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents: a run that
-// Never returns and no error to explain it. See [subprocess timeouts](/docs/virrun/subprocess-timeouts).
+// Never returns and no error to explain it. See apps/web/content/docs/virrun/subprocess-timeouts.md.
 export const WSL_WORK_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // Upper bound for the write-back's overlay python program (runOverlayScript). Sized apart from the work cap because
 // This is the one bound whose work scales with the run rather than with a cache entry: the diff copied back is

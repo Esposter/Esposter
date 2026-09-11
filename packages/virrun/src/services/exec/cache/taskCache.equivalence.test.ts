@@ -13,8 +13,9 @@ import { execFileSync } from "node:child_process";
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
-// Task-cache equivalence (specs/config-and-cache.md): a cache HIT is observably identical to the MISS that recorded
-// It — same exit code, stdout, stderr, and produced host files — while skipping the sandbox entirely. The command's
+// Task-cache equivalence (apps/web/content/docs/virrun/task-cache.md): a cache HIT is observably identical to the
+// MISS that recorded it — same exit code, stdout, stderr, and produced host files — while skipping the sandbox
+// Entirely. The command's
 // Output is written to a gitignored path so it never perturbs the source-tree hash, keeping the key stable across
 // The miss→hit pair (the real dev-loop shape: build output like dist/.nuxt is gitignored).
 // Each case boots a sandbox and installs, so the pair costs minutes of wall clock — too slow for the default
