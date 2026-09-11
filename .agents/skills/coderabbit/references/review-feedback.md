@@ -1,6 +1,6 @@
 # Retrieving and answering CodeRabbit feedback
 
-Read when pulling a PR's review feedback, counting what is still open, or replying to a comment. What the output means — where nitpicks live, reconciling against the stated counts, replying to every finding — is in `SKILL.md`; this page is the calls and the ways they lie.
+Read when pulling a PR's review feedback, counting what is still open, or replying to a comment. What the output means — where nitpicks live, reconciling against the stated counts, replying to every finding — is `references/answering-findings.md`; this page is the calls and the ways they lie.
 
 ## Three endpoints, and what each one alone loses
 
