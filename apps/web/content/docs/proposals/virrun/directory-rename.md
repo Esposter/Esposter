@@ -9,7 +9,7 @@ description: Rename every `Dir`/`Dirs` identifier in virrun to `Directory`/`Dire
 
 ## What works today vs what this adds
 
-Nothing behaves differently before or after: the rename touches identifiers and the prose that quotes them, never a value. It adds one enforcer — `dir` on oxlint's `id-denylist` — so the abbreviation cannot return once it is gone, and one line in the `naming` skill stating the ruling.
+Nothing behaves differently before or after: the rename touches identifiers and the prose that quotes them, never a value. It adds one enforcer — `dir` on oxlint's `id-denylist` — so the bare `dir` identifier cannot return once it is gone — the denylist matches whole identifiers, and the compound spellings are the greps' job below — and one line in the `naming` skill stating the ruling.
 
 Until it lands, **every sweep leaves `*Dir` names alone**: a partial rename is two spellings of one thing, and the sweep commit that carried it would be unreadable as a sweep.
 
@@ -44,4 +44,4 @@ flowchart TD
 ## Notes
 
 - A one-time change: when it ships, this page and its roadmap item are deleted and nothing is written in their place — the shipped-log line in the virrun index is the only trace.
-- The count of files it touches is what `grep` answers on the day; it is not recorded here because it moves with every sweep that lands first.
+- The count of files it touches is what the identifier greps and the filename search above answer together on the day; it is not recorded here because it moves with every sweep that lands first.

@@ -293,13 +293,15 @@ describe("userRouter", () => {
     ]);
   });
 
-  test("readCallBackgrounds passes over a blob under the prefix that is not one of the slots", async () => {
+  // `NaN` survives a string round trip through `Number` and fails no range comparison, so it is the one name
+  // The integer check alone keeps out
+  test.each(["notASlot", "NaN"])("readCallBackgrounds passes over %s under the prefix", async (slotName) => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
     MockContainerDatabase.set(
       AzureContainer.PrivateUserAssets,
-      new Map([[`${getCallBackgroundPrefix(userId)}notASlot`, Buffer.alloc(size)]]),
+      new Map([[`${getCallBackgroundPrefix(userId)}${slotName}`, Buffer.alloc(size)]]),
     );
     const callBackgrounds = await caller.readCallBackgrounds();
 

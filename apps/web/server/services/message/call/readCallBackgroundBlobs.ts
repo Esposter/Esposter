@@ -23,7 +23,7 @@ export const readCallBackgroundBlobs = async (
       const slot = Number(slotName);
       // Only the names this router mints are backgrounds. Anything else under the prefix can never be rendered
       // Or replaced through a slot, so it is passed over rather than listed - and never reclaimed on a guess
-      if (String(slot) !== slotName || slot < 0 || slot >= MAX_CALL_BACKGROUNDS) continue;
+      if (!Number.isInteger(slot) || String(slot) !== slotName || slot < 0 || slot >= MAX_CALL_BACKGROUNDS) continue;
 
       callBackgroundBlobs.push({ contentLength: properties.contentLength ?? 0, name, slot });
     }
