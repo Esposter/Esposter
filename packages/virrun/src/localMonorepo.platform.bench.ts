@@ -114,7 +114,7 @@ test.skipIf(!isOsSupported)("build - write-back persist vs native (produces dist
   );
 });
 
-test.skipIf(!isOsSupported)("test - packages/shared", async ({ bench }) => {
+test.skipIf(!isOsSupported)("vitest - packages/shared", async ({ bench }) => {
   const command = getSharedCommand("test --run");
   await bench.compare(
     bench(BackendType.Native, async () => {

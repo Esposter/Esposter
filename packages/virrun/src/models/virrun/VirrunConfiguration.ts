@@ -3,10 +3,10 @@ import { Environment } from "#src/models/virrun/Environment";
 import { z } from "zod";
 // The repo-root `virrun.config.{ts,mts,js,mjs,json}` (apps/web/content/docs/virrun/configuration.md): a checked-in,
 // Reviewable selection of which backend a sandboxed command runs through and which framework environment it targets
-// — the TS form (`defineConfig`) is where platform branching lives. The `virrun -- <cmd>` prefix is the switch for
-// *whether* a command is sandboxed (add it to adopt, remove it to drop); this config only chooses *how*. An absent
-// File means the defaults (backend os → native where unsupported, environment undefined → no preset), so no config
-// Is a valid, fully-functional state.
+// — the TS form (`defineConfig`) is where platform branching lives. The `virrun -- <cmd>` prefix is the switch
+// For *whether* a command is sandboxed (add it to adopt, remove it to drop); this config only chooses *how*. An
+// Absent file means the defaults (backend os → native where unsupported, environment undefined → no preset), so no
+// Config is a valid, fully-functional state.
 export interface VirrunConfiguration {
   // BackendType a sandboxed command runs through. When it can't run on this host (e.g. `os` without bubblewrap) the
   // Resolver degrades to native — the worst case of adopting a command is "no speedup", never "broken". Optional: the
