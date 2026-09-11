@@ -95,7 +95,7 @@ const walkthrough =
     ?.body ?? "";
 if (walkthrough.includes("review in progress by coderabbit.ai")) console.log("\n##### REVIEW IN PROGRESS — do not push");
 for (const marker of ["final_review_risk", "pre_merge_checks_walkthrough"]) printMarkedBlock(walkthrough, marker);
-' <pr>
+' "<pr>"
 ````
 
 It prints the stated actionable count first — the number to reconcile the inline fetch against — then each finding
@@ -187,7 +187,7 @@ crLatest() {  # the bot's most recently touched issue comment: "<id> <updated_at
 }
 
 before=$(crLatest) || exit 1
-gh pr comment <pr> --body "@coderabbitai review" || exit 1
+gh pr comment "<pr>" --body "@coderabbitai review" || exit 1
 deadline=$((SECONDS + 600))
 while :; do
   test "$SECONDS" -lt "$deadline" || { echo "no reply in 10m — read the PR before assuming anything" >&2; exit 1; }

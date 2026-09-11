@@ -5,8 +5,8 @@ Read when changing the config a review applies. CodeRabbit reads it from the PR'
 Read the base off the PR rather than assuming it — feature PRs target `develop`, the release PR is `develop` → `main`:
 
 ```bash
-gh pr view <pr> --json baseRefName --jq .baseRefName   # the branch whose config applies
-git show <base-branch>:.coderabbit.yaml | head -20     # the config CodeRabbit actually applies
+gh pr view "<pr>" --json baseRefName --jq .baseRefName   # the branch whose config applies
+git show "<base-branch>:.coderabbit.yaml" | head -20     # the config CodeRabbit actually applies
 ```
 
 Commit it **directly to that base branch**, standalone, separate from the work it covers. Landing anything on a shared branch needs the same explicit go-ahead every push does — including the API call below, which does not look like a push but is one.
@@ -24,7 +24,7 @@ The working tree keeps whatever is in flight, which matters when agents are mid-
 **On Windows the worktree can fail outright**: checking this repo out under a long scratch path trips `Filename too long` on the deepest `apps/infra` paths and aborts with `Could not reset index file`. For a one-file config edit, skip the checkout and commit through the API, which is atomic and cannot disturb the working tree:
 
 ```bash
-baseBranch=$(gh pr view <pr> --json baseRefName --jq .baseRefName)
+baseBranch=$(gh pr view "<pr>" --json baseRefName --jq .baseRefName)
 sha=$(gh api "repos/:owner/:repo/contents/.coderabbit.yaml?ref=$baseBranch" --jq .sha)
 gh api -X PUT "repos/:owner/:repo/contents/.coderabbit.yaml" \
   -f message="$(cat message.txt)" -f content="$(base64 -w0 new.yaml)" -f sha="$sha" -f branch="$baseBranch"
