@@ -8,7 +8,7 @@
 | `server/trpc/routers` — `resource`, `user`, `role`                                                                                                    | —          |       |
 | `server/trpc/routers` — `post`, `like`, `friend`, `friendRequest`, `block`, `userToRoom`                                                              | —          |       |
 | `server/trpc/routers` — `survey`, `surveyFunnel`, `webhook`, `searchHistory`, `achievement`, `pushSubscription`, `notification`, `session`, `storage` | —          |       |
-| `server/trpc/routers` — the roots, the thin routers and the shared test fixtures                                                                      | —          |       |
+| `server/trpc/routers` — the roots, the thin routers and the shared test fixtures                                                                      | 2026-09-12 |       |
 | `server/trpc` — the roots, `guards`, `middleware`, `plugins`, `procedure`                                                                             | —          |       |
 | `server/models`, `composables`, `db`, `api`, `plugins`, `routes`, `auth.ts`                                                                           | —          |       |
 | `server/services/message` — `call`                                                                                                                    | 2026-09-07 |       |

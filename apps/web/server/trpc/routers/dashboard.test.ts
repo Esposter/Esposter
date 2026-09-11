@@ -1,4 +1,3 @@
-import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -8,42 +7,35 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
+import { createSurvey } from "@@/server/trpc/routers/createSurvey.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { resources, ResourceType } from "@esposter/db-schema";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { ResourceType } from "@esposter/db-schema";
+import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The dashboard-specific wiring, and the transformPublishedContent dataset-snapshot baking.
 describe("dashboardRouter", () => {
-  let mockContext: Context;
+  const { getCaller, getMockContext } = setupResourceSuite(dashboardRouter);
   let caller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const name = "name";
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(dashboardRouter)(mockContext);
-    surveyCaller = createCallerFactory(surveyRouter)(mockContext);
+  beforeAll(() => {
+    caller = getCaller();
+    surveyCaller = createCallerFactory(surveyRouter)(getMockContext());
   });
 
-  afterEach(async () => {
-    MockContainerDatabase.clear();
+  afterEach(() => {
     MockTableDatabase.clear();
-    await mockContext.db.delete(resources);
   });
 
   test("bakes dataset snapshot into published dashboard", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await surveyCaller.createResource({ name });
-    await surveyCaller.saveResourceContent({
-      content: {
-        model: JSON.stringify({ pages: [{ elements: [{ name: "satisfaction", type: "rating" }], name: "page1" }] }),
-      },
-      contentVersion: newSurvey.contentVersion,
-      id: newSurvey.id,
+    const newSurvey = await createSurvey(surveyCaller, name, {
+      model: JSON.stringify({ pages: [{ elements: [{ name: "satisfaction", type: "rating" }], name: "page1" }] }),
     });
     await surveyCaller.createSurveyResponse({
       model: { satisfaction: 5 },

@@ -1,31 +1,22 @@
-import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
 import { emailRouter } from "@@/server/trpc/routers/email";
-import { DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
+import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("emailRouter", () => {
-  let mockContext: Context;
+  const { getCaller } = setupResourceSuite(emailRouter);
   let caller: DecorateRouterRecord<TRPCRouter["email"]>;
   const name = "name";
   const html = "html";
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(emailRouter)(mockContext);
-  });
-
-  afterEach(async () => {
-    MockContainerDatabase.clear();
-    await mockContext.db.delete(resources);
+  beforeAll(() => {
+    caller = getCaller();
   });
 
   test("saves and reads content", async () => {

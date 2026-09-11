@@ -10,17 +10,20 @@ import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { mockSessionOnce } from "@@/server/trpc/context.test";
+import { createSurvey } from "@@/server/trpc/routers/createSurvey.test";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
-import { DatabaseEntityType, resources } from "@esposter/db-schema";
+import { DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("datasetRouter", () => {
+  const { getCaller, getMockContext } = setupResourceSuite(datasetRouter);
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["dataset"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
@@ -41,28 +44,18 @@ describe("datasetRouter", () => {
     ],
   });
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(datasetRouter)(mockContext);
+  beforeAll(() => {
+    mockContext = getMockContext();
+    caller = getCaller();
     surveyCaller = createCallerFactory(surveyRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
   });
 
-  afterEach(async () => {
-    MockContainerDatabase.clear();
+  afterEach(() => {
     MockTableDatabase.clear();
-    await mockContext.db.delete(resources);
   });
 
-  const setupSurvey = async () => {
-    const newResource = await surveyCaller.createResource({ name });
-    await surveyCaller.saveResourceContent({
-      content: { model },
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
-    return newResource;
-  };
+  const setupSurvey = () => createSurvey(surveyCaller, name, { model });
 
   test("reads survey responses dataset", async () => {
     expect.hasAssertions();

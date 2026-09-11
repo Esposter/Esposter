@@ -1,29 +1,20 @@
-import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
 import { flowchartRouter } from "@@/server/trpc/routers/flowchart";
-import { resources, ResourceType } from "@esposter/db-schema";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
+import { ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("flowchartRouter", () => {
-  let mockContext: Context;
+  const { getCaller } = setupResourceSuite(flowchartRouter);
   let caller: DecorateRouterRecord<TRPCRouter["flowchart"]>;
   const name = "name";
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(flowchartRouter)(mockContext);
-  });
-
-  afterEach(async () => {
-    MockContainerDatabase.clear();
-    await mockContext.db.delete(resources);
+  beforeAll(() => {
+    caller = getCaller();
   });
 
   test("saves and reads content", async () => {

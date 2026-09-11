@@ -1,5 +1,4 @@
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
-import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -7,27 +6,19 @@ import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn"
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
-import { resources, ResourceType } from "@esposter/db-schema";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
+import { ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("sheetRouter", () => {
-  let mockContext: Context;
+  const { getCaller } = setupResourceSuite(sheetRouter);
   let caller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   const name = "name";
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(sheetRouter)(mockContext);
-  });
-
-  afterEach(async () => {
-    MockContainerDatabase.clear();
-    await mockContext.db.delete(resources);
+  beforeAll(() => {
+    caller = getCaller();
   });
 
   test("saves and reads content", async () => {

@@ -10,10 +10,10 @@ import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
+import { mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
-import { AzureContainer, resources, ResourceType } from "@esposter/db-schema";
+import { AzureContainer, ResourceType } from "@esposter/db-schema";
 import { ID_SEPARATOR, jsonDateParse } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { MockContainerDatabase } from "azure-mock";
@@ -36,19 +36,18 @@ vi.mock(import("@@/server/services/resource/transformPublishedBlobUrls"), async 
 });
 
 describe("webpageRouter", () => {
+  const { getCaller, getMockContext } = setupResourceSuite(webpageRouter);
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(webpageRouter)(mockContext);
+  beforeAll(() => {
+    mockContext = getMockContext();
+    caller = getCaller();
   });
 
-  afterEach(async () => {
-    MockContainerDatabase.clear();
+  afterEach(() => {
     transformPublishedBlobUrlsMock.mockClear();
-    await mockContext.db.delete(resources);
   });
 
   // The assets are cloned before the transaction opens, so an unpublish landing in between sweeps them and this
