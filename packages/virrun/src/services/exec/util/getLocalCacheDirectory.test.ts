@@ -3,19 +3,15 @@ import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { getLocalCacheDirectory } from "#src/services/exec/util/getLocalCacheDirectory";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { afterEach, describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(getLocalCacheDirectory, () => {
   const customCache = join(homedir(), TEST_FILENAME);
 
-  afterEach(() => {
-    delete process.env[VIRRUN_CACHE_HOME_KEY];
-  });
-
   test("defaults to the same-OS ~/.virrun on every platform", () => {
     expect.hasAssertions();
 
-    delete process.env[VIRRUN_CACHE_HOME_KEY];
+    vi.stubEnv(VIRRUN_CACHE_HOME_KEY, undefined);
 
     expect(getLocalCacheDirectory()).toBe(join(homedir(), VIRRUN_CACHE_DIRECTORY_NAME));
   });
@@ -23,7 +19,7 @@ describe(getLocalCacheDirectory, () => {
   test("honors the VIRRUN_CACHE_HOME override", () => {
     expect.hasAssertions();
 
-    process.env[VIRRUN_CACHE_HOME_KEY] = customCache;
+    vi.stubEnv(VIRRUN_CACHE_HOME_KEY, customCache);
 
     expect(getLocalCacheDirectory()).toBe(customCache);
   });

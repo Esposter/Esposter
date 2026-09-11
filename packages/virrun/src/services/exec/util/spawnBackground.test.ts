@@ -12,7 +12,6 @@ describe(spawnBackground, () => {
   const child = { on: vi.fn<() => void>(), unref: vi.fn<() => void>() };
 
   beforeEach(() => {
-    vi.clearAllMocks();
     spawn.mockReturnValue(child as unknown as ChildProcess);
   });
 

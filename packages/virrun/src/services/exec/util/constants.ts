@@ -158,7 +158,7 @@ export const WSL_REAP_WAIT_INTERVAL_SECONDS: number = 0.2;
 // A pid-tagged entry's owner started before the entry was written, and a process the OS later hands the same pid
 // Started after the owner exited — so an owner's start never exceeds its entry's mtime except by clock resolution.
 // Linux reports boot time in whole seconds, which is the whole slack: a successor that starts inside it is spared for
-// One more sweep, today's behaviour, rather than a live run being killed. See checkIsOwnerAlive.
+// One more sweep rather than a live run being killed. See checkIsOwnerAlive.
 export const OWNER_START_TOLERANCE_MS: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 // Upper bound for the one PowerShell spawn virrun makes — reading a process's start time on win32 — sized like the
 // WSL probe: a hung shell fails the identity read, which reads as "spare the entry", instead of blocking the sweep.

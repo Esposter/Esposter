@@ -8,9 +8,7 @@ import { afterEach, describe, expect, test } from "vitest";
 describe(findUpFile, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
 
-  afterEach(() => {
-    cleanup();
-  });
+  afterEach(cleanup);
 
   test("finds the file in cwd itself", () => {
     expect.hasAssertions();

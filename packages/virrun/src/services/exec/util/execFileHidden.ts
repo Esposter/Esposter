@@ -7,8 +7,8 @@ import { execFileSync } from "node:child_process";
 // Multi-megabyte one.
 const STDERR_SAMPLE_BYTES = 64;
 // Which encoding a failed child really wrote its stderr in, detected rather than declared: a call site that has to
-// Remember "this one is utf16le" eventually forgets (runOverlayScript spawned wsl.exe without it and turned every
-// WSL launch failure into a bare "Command failed:"). UTF-16LE ASCII text pads every character with a trailing NUL,
+// Remember "this one is utf16le" eventually forgets, and every WSL launch failure then reads as a bare "Command
+// Failed:". UTF-16LE ASCII text pads every character with a trailing NUL,
 // A shape utf8 text never has, so the padding identifies itself. Text outside ASCII (a localized wsl.exe) carries no
 // Such padding and still reads back as utf8 — undetectable here, and no worse than declaring the encoding wrongly.
 // A capture cut mid-character (a timeout kill, a maxBuffer cut) may end on an odd byte; the sample still identifies

@@ -12,6 +12,7 @@ describe(readKeyedCache, () => {
   const key = "";
   const value = "";
   const valueSchema = z.string();
+  const maxAgeMs = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
   let file = "";
 
   beforeEach(() => {
@@ -55,9 +56,7 @@ describe(readKeyedCache, () => {
 
     writeKeyedCache(file, { key, value });
 
-    expect(readKeyedCache(file, valueSchema, key, Temporal.Duration.from({ hours: 1 }).total("milliseconds"))).toBe(
-      value,
-    );
+    expect(readKeyedCache(file, valueSchema, key, maxAgeMs)).toBe(value);
   });
 
   test("returns undefined when the value is older than the age bound — the drift the key cannot see", () => {
@@ -69,14 +68,12 @@ describe(readKeyedCache, () => {
       file,
       JSON.stringify({
         key,
-        storedAtMs: Date.now() - Temporal.Duration.from({ hours: 2 }).total("milliseconds"),
+        storedAtMs: Date.now() - maxAgeMs * 2,
         value,
       }),
     );
 
-    expect(
-      readKeyedCache(file, valueSchema, key, Temporal.Duration.from({ hours: 1 }).total("milliseconds")),
-    ).toBeUndefined();
+    expect(readKeyedCache(file, valueSchema, key, maxAgeMs)).toBeUndefined();
   });
 
   test("ignores the value's age when the caller sets no bound", () => {

@@ -12,7 +12,7 @@ describe(toExitCode, () => {
   test("maps signal termination to the shell's 128+signal convention", () => {
     expect.hasAssertions();
 
-    // SIGINT (2) ↁE130, SIGKILL (9) ↁE137, SIGTERM (15) ↁE143.
+    // SIGINT (2) → 130, SIGKILL (9) → 137, SIGTERM (15) → 143.
     expect(toExitCode(null, "SIGINT")).toBe(130);
     expect(toExitCode(null, "SIGKILL")).toBe(137);
     expect(toExitCode(null, "SIGTERM")).toBe(143);

@@ -10,9 +10,7 @@ import { afterEach, describe, expect, test } from "vitest";
 describe(resolveWorkspaceRoot, () => {
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
 
-  afterEach(() => {
-    cleanup();
-  });
+  afterEach(cleanup);
 
   test("resolves to the directory holding the lockfile when invoked at the root", () => {
     expect.hasAssertions();
