@@ -17,9 +17,9 @@ import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateReso
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
-import { hasCapability } from "#shared/services/resource/hasCapability";
+import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
@@ -190,7 +190,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
                 .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
                 .returning()
             )[0];
-            if (!savedResource) throw new TRPCError({ code: "BAD_REQUEST", message: staleContentVersionErrorMessage });
+            if (!savedResource)
+              throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
 
             return savedResource;
           },
@@ -451,8 +452,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
   };
   return {
     ...baseProcedures,
-    ...(hasCapability(type, "fileAssets") ? fileAssetsProcedures : {}),
-    ...(hasCapability(type, "publishable") ? publishProcedures : {}),
+    ...(checkHasCapability(type, "fileAssets") ? fileAssetsProcedures : {}),
+    ...(checkHasCapability(type, "publishable") ? publishProcedures : {}),
   } as (TType extends FileAssetsResourceType ? typeof fileAssetsProcedures : unknown) &
     (TType extends PublishableResourceType ? typeof publishProcedures : unknown) &
     typeof baseProcedures;

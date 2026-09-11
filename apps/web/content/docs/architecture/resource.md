@@ -94,7 +94,7 @@ export type CapabilityResourceType<TCapability extends keyof ResourceCapabilitie
 }[ResourceType];
 ```
 
-`PublishableResourceType`, `FileAssetsResourceType`, and `PortableResourceType` are its aliases, and `hasCapability(type, capability)` is the matching runtime type guard. Capability implementation maps are keyed by the derived unions — `ViewComponentMap: Record<PublishableResourceType, Component>`, `PortableFormatMap: Record<PortableResourceType, …>` — so a missing view page or format entry is a compile error, and adding one for a non-capable type is also a compile error.
+`PublishableResourceType`, `FileAssetsResourceType`, and `PortableResourceType` are its aliases, and `checkHasCapability(type, capability)` is the matching runtime type guard. Capability implementation maps are keyed by the derived unions — `ViewComponentMap: Record<PublishableResourceType, Component>`, `PortableFormatMap: Record<PortableResourceType, …>` — so a missing view page or format entry is a compile error, and adding one for a non-capable type is also a compile error.
 
 ### Wiring
 
@@ -134,7 +134,7 @@ Component wiring cannot live in shared code, so the client keeps one thin satell
 
 ## Procedures
 
-One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/resource/createResourceProcedures.ts`), spread into each type's router. Content schema and container come from `ResourceDefinitionMap[type]` — callers never pass them. Publish procedures are spread **conditionally with a conditional return type** (guarded by `hasCapability(type, "publishable")` at runtime), so a non-publishable type's router has no publish endpoints at the type level — a compile error on the client `$trpc` type, a 404 on the wire. The options argument itself is a conditional tuple: publish hooks are only accepted when `TType extends PublishableResourceType`.
+One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/resource/createResourceProcedures.ts`), spread into each type's router. Content schema and container come from `ResourceDefinitionMap[type]` — callers never pass them. Publish procedures are spread **conditionally with a conditional return type** (guarded by `checkHasCapability(type, "publishable")` at runtime), so a non-publishable type's router has no publish endpoints at the type level — a compile error on the client `$trpc` type, a 404 on the wire. The options argument itself is a conditional tuple: publish hooks are only accepted when `TType extends PublishableResourceType`.
 
 | Procedure                                     | Auth                                            | Purpose                                                         |
 | --------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
@@ -195,7 +195,7 @@ Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key of
 | `apps/web/shared/services/resource/ResourceDefinitionMap.ts`          | type definitions + capability declarations |
 | `apps/web/shared/models/resource/CapabilityResourceType.ts`           | derived capability unions                  |
 | `apps/web/shared/services/resource/getFilesDirectoryName.ts`          | the `{id}/files` path convention           |
-| `apps/web/shared/services/resource/hasCapability.ts`                  | runtime capability guard                   |
+| `apps/web/shared/services/resource/checkHasCapability.ts`             | runtime capability guard                   |
 | `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | the procedure factory                      |
 | `apps/web/server/trpc/procedure/resource/getOwnerProcedure.ts`        | ownership middleware                       |
 | `apps/web/app/store/resource/index.ts`                                | the open resource — state and every write  |

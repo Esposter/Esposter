@@ -3,7 +3,7 @@ import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { Resource } from "@esposter/db-schema";
 
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
-import { hasCapability } from "#shared/services/resource/hasCapability";
+import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { SnapshotReasonTitleMap } from "#shared/services/resource/SnapshotReasonTitleMap";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
@@ -25,7 +25,7 @@ const snapshotVersionId = computed(() => getSnapshotVersionId(snapshotVersion));
 // A revision is a point to return to, and reconstituting one into a read-only render of every type is a
 // Surface that does not exist yet, so its row restores rather than previews
 const isPreviewable = computed(
-  () => snapshotVersion.channel === SnapshotChannel.Published && hasCapability(resource.type, "publishable"),
+  () => snapshotVersion.channel === SnapshotChannel.Published && checkHasCapability(resource.type, "publishable"),
 );
 // What the row says it is: why it was taken and one line about what is in it. A bare version and a time is not
 // Something a person can choose between

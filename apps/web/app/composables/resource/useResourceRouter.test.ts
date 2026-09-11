@@ -1,6 +1,6 @@
 import type { ResourceType } from "@esposter/db-schema";
 
-import { hasCapability } from "#shared/services/resource/hasCapability";
+import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { CreatableResourceTypes } from "@/services/resource/CreatableResourceTypes";
 import { trpcRouter } from "@@/server/trpc/routers";
 import { ResourceTypes } from "@esposter/db-schema";
@@ -55,7 +55,7 @@ describe(useResourceRouter, () => {
     const procedureNames = getResourceRouterProcedureNames(type);
 
     expect(PUBLISH_PROCEDURE_NAMES.filter((procedureName) => procedureNames.includes(procedureName))).toStrictEqual(
-      hasCapability(type, "publishable") ? PUBLISH_PROCEDURE_NAMES : [],
+      checkHasCapability(type, "publishable") ? PUBLISH_PROCEDURE_NAMES : [],
     );
   });
 
@@ -65,7 +65,7 @@ describe(useResourceRouter, () => {
     const procedureNames = getResourceRouterProcedureNames(type);
 
     expect(FILE_PROCEDURE_NAMES.filter((procedureName) => procedureNames.includes(procedureName))).toStrictEqual(
-      hasCapability(type, "fileAssets") ? FILE_PROCEDURE_NAMES : [],
+      checkHasCapability(type, "fileAssets") ? FILE_PROCEDURE_NAMES : [],
     );
   });
 });

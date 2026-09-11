@@ -1,3 +1,5 @@
+import type { SnapshotChannelDefinition } from "#shared/models/resource/SnapshotChannelDefinition";
+
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
 
@@ -12,4 +14,4 @@ export const SnapshotChannelDefinitionMap = {
   [SnapshotChannel.Published]: { kind: SnapshotKind.Immutable, title: "Published" },
   // A ring buffer, so recovery costs a bounded number of blobs and the listing stays bounded with it
   [SnapshotChannel.Revisions]: { kind: SnapshotKind.Reference, maxRetained: 20, title: "Revision" },
-} as const satisfies Record<SnapshotChannel, { kind: SnapshotKind; maxRetained?: number; title: string }>;
+} as const satisfies Record<SnapshotChannel, SnapshotChannelDefinition>;

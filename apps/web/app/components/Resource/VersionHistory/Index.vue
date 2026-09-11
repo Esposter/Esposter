@@ -2,7 +2,7 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
-import { hasCapability } from "#shared/services/resource/hasCapability";
+import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 
@@ -17,7 +17,7 @@ const { clearVersionHistory, readSnapshotHistory } = versionHistoryStore;
 const { closeVersionHistory } = useVersionHistoryRoute();
 // Only a publishable type has two channels to tell apart, so the filter exists where it means something and
 // Nowhere else — on every other type the timeline is revisions and nothing but
-const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
+const isPublishable = computed(() => checkHasCapability(resource.type, "publishable"));
 const isPublishedOnly = ref(false);
 const displayVersions = computed(() =>
   isPublishedOnly.value

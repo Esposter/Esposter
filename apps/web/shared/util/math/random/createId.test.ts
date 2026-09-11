@@ -1,5 +1,6 @@
 import { EN_US_SEGMENTER } from "#shared/services/intl/constants";
-import { createId, ID_CHARACTERS } from "#shared/util/math/random/createId";
+import { ID_CHARACTERS } from "#shared/util/math/random/constants";
+import { createId } from "#shared/util/math/random/createId";
 import { describe, expect, test } from "vitest";
 
 describe(createId, () => {

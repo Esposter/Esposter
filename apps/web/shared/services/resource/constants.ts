@@ -2,7 +2,7 @@ import { AzureContainer, DatabaseEntityType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Built once and shared between the save procedure and the client save-conflict surface so detection can never drift
-export const staleContentVersionErrorMessage = new InvalidOperationError(
+export const STALE_CONTENT_VERSION_ERROR_MESSAGE = new InvalidOperationError(
   Operation.Update,
   DatabaseEntityType.Resource,
   "cannot save resource content with old content version",
@@ -15,7 +15,7 @@ export const FILES_DIRECTORY_SEGMENT = "files";
 // Keystroke batch, so without a throttle a working session would take a revision per batch — burning the
 // Owner's storage quota while they type and growing a listing nothing bounds. One per interval is the ceiling,
 // And against the ring buffer's cap it is also what decides how far back a session can reach
-export const SNAPSHOT_INTERVAL_MS = 15 * 60 * 1000;
+export const SNAPSHOT_INTERVAL_MS = Temporal.Duration.from({ minutes: 15 }).total("milliseconds");
 
 // Must match the serving route's directory: server/api/resource-assets/[...path].get.ts
 export const RESOURCE_ASSETS_URL_PREFIX = `/api/${AzureContainer.ResourceAssets}`;

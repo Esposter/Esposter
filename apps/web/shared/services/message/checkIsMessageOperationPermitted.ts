@@ -1,3 +1,5 @@
+import type { MessageOperationCaller } from "#shared/models/message/MessageOperationCaller";
+
 import { MessageOperationPermission } from "#shared/models/message/MessageOperationPermission";
 import { exhaustiveGuard } from "@esposter/shared";
 
@@ -6,7 +8,7 @@ import { exhaustiveGuard } from "@esposter/shared";
 // Bad request, an unpermitted one is unauthorized — by reading the permission before evaluating it.
 export const checkIsMessageOperationPermitted = (
   permission: MessageOperationPermission | undefined,
-  { hasManageMessages, isAuthor }: { hasManageMessages: boolean; isAuthor: boolean },
+  { hasManageMessages, isAuthor }: MessageOperationCaller,
 ) => {
   if (!permission) return false;
 
