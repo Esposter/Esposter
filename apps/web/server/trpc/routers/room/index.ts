@@ -34,6 +34,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
+import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
 import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "@@/server/services/room/listRoomProfileImageBlobNames";
@@ -275,12 +276,7 @@ export const baseRoomRouter = router({
       if (ownedRoom) return (await deleteRoom(ctx.db, ctx.getSessionPayload, input)).id;
 
       const userToRoom = requireMutation(
-        (
-          await ctx.db
-            .delete(usersToRoomsInMessage)
-            .where(and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, userId)))
-            .returning()
-        )[0],
+        (await ctx.db.delete(usersToRoomsInMessage).where(getRoomMembershipWhere(input, userId)).returning())[0],
         Operation.Delete,
         DatabaseEntityType.UserToRoom,
         input,

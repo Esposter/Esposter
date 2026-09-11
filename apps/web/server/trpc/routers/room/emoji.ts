@@ -1,6 +1,4 @@
 import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
-import type { Context } from "@@/server/trpc/context";
-import type { ContainerClient } from "@azure/storage-blob";
 import type { RoomEmojiInMessage } from "@esposter/db-schema";
 
 import { createRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/CreateRoomEmojiInput";
@@ -13,6 +11,9 @@ import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { checkIsUnicodeEmojiSlug } from "@@/server/services/message/emoji/checkIsUnicodeEmojiSlug";
 import { getRoomEmojiBlobName } from "@@/server/services/message/emoji/getRoomEmojiBlobName";
+import { getRoomEmojiNameQuery } from "@@/server/services/message/emoji/getRoomEmojiNameQuery";
+import { getRoomEmojiWhere } from "@@/server/services/message/emoji/getRoomEmojiWhere";
+import { getRoomEmojiWithSasUrl } from "@@/server/services/message/emoji/getRoomEmojiWithSasUrl";
 import { roomEmojiEventEmitter } from "@@/server/services/message/events/roomEmojiEventEmitter";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
@@ -20,7 +21,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
-import { generateReadSasUrl, generateWriteSasUrl } from "@esposter/db";
+import { generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -32,36 +33,7 @@ import {
   roomsInMessage,
 } from "@esposter/db-schema";
 import { getResultAsync, Operation, takeOne } from "@esposter/shared";
-import { and, count, eq, ne, notExists } from "drizzle-orm";
-
-// The room's other emoji answering to a name, as a subquery so the check and the update are one statement
-const getRoomEmojiNameQuery = (
-  db: Context["db"],
-  id: RoomEmojiInMessage["id"],
-  name: RoomEmojiInMessage["name"],
-  roomId: RoomEmojiInMessage["roomId"],
-) =>
-  db
-    .select({ id: roomEmojisInMessage.id })
-    .from(roomEmojisInMessage)
-    .where(
-      and(eq(roomEmojisInMessage.roomId, roomId), eq(roomEmojisInMessage.name, name), ne(roomEmojisInMessage.id, id)),
-    );
-// Every surface renders an emoji from its row plus a read SAS for the blob the row's id names, so the two
-// Travel together everywhere a row leaves this router
-const getRoomEmojiWithSasUrl = async (
-  containerClient: ContainerClient,
-  roomEmoji: RoomEmojiInMessage,
-): Promise<RoomEmojiWithSasUrl> => ({
-  ...roomEmoji,
-  sasUrl: await generateReadSasUrl(
-    containerClient.getBlockBlobClient(getRoomEmojiBlobName(roomEmoji.roomId, roomEmoji.id)),
-  ),
-});
-// An emoji is addressed by both keys so the room the permission was checked against is the room the row must
-// Belong to — an id alone would let a manager of one room rename or delete another's
-const getRoomEmojiWhere = (id: RoomEmojiInMessage["id"], roomId: RoomEmojiInMessage["roomId"]) =>
-  and(eq(roomEmojisInMessage.id, id), eq(roomEmojisInMessage.roomId, roomId));
+import { and, count, eq, notExists } from "drizzle-orm";
 
 export const roomEmojiRouter = router({
   createRoomEmoji: getPermissionsProcedure(

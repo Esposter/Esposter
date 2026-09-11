@@ -15,6 +15,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
+import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
 import { assertCanCreateDirectMessageParticipant } from "@@/server/services/room/directMessage/assertCanCreateDirectMessageParticipant";
 import { getDirectMessageParticipantKey } from "@@/server/services/room/directMessage/getDirectMessageParticipantKey";
 import { readDirectMessageParticipantIds } from "@@/server/services/room/directMessage/readDirectMessageParticipantIds";
@@ -79,10 +80,7 @@ export const directMessageRouter = router({
           .insert(usersToRoomsInMessage)
           .values(allUserIds.map((participantUserId) => ({ roomId: room.id, userId: participantUserId })))
           .onConflictDoNothing();
-        await tx
-          .update(usersToRoomsInMessage)
-          .set({ isHidden: false })
-          .where(and(eq(usersToRoomsInMessage.roomId, room.id), eq(usersToRoomsInMessage.userId, userId)));
+        await tx.update(usersToRoomsInMessage).set({ isHidden: false }).where(getRoomMembershipWhere(room.id, userId));
         return room;
       }),
     ),
@@ -164,12 +162,7 @@ export const directMessageRouter = router({
         userId,
       );
       requireMutation(
-        (
-          await tx
-            .delete(usersToRoomsInMessage)
-            .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
-            .returning()
-        )[0],
+        (await tx.delete(usersToRoomsInMessage).where(getRoomMembershipWhere(roomId, userId)).returning())[0],
         Operation.Delete,
         DatabaseEntityType.UserToRoom,
         JSON.stringify({ roomId, userId }),
@@ -212,9 +205,7 @@ export const directMessageRouter = router({
       await ctx.db
         .update(usersToRoomsInMessage)
         .set({ isHidden: true })
-        .where(
-          and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id)),
-        );
+        .where(getRoomMembershipWhere(input, ctx.getSessionPayload.user.id));
     }),
   readDirectMessageParticipants: standardAuthedProcedure
     .input(roomIdsInputSchema)

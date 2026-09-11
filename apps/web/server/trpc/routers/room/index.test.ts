@@ -28,6 +28,10 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { MOCK_BLOB_BASE_URL, MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+// Uploaded through the client, so the mock dates the blob now
+const uploadPublicUserAssetBlob = (blobName: string) =>
+  new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+
 describe("roomRouter", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -38,6 +42,9 @@ describe("roomRouter", () => {
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
   const publicUserAssetsUrlPrefix = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`;
   const getBlobName = (publicUrl: string) => publicUrl.slice(publicUserAssetsUrlPrefix.length);
+  // A link that never lapses, which is what every test not about expiry or exhaustion joins through
+  const createUnlimitedInvite = (inviteRoomId: string) =>
+    roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId });
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -235,7 +242,7 @@ describe("roomRouter", () => {
     const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const blobName = getBlobName(publicUrl);
     // Uploaded through the client, so the mock dates it now
-    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+    await uploadPublicUserAssetBlob(blobName);
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     const { publicUrl: replacementPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     await roomCaller.updateRoom({ id: newRoom.id, image: replacementPublicUrl });
@@ -253,7 +260,7 @@ describe("roomRouter", () => {
     const { publicUrl: staleUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const { publicUrl: freshUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const freshBlobName = getBlobName(freshUrl);
-    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, freshBlobName).upload(Buffer.alloc(0), 0);
+    await uploadPublicUserAssetBlob(freshBlobName);
     // The other admin's save landed first, so the row already points at the fresh avatar
     await roomCaller.updateRoom({ id: newRoom.id, image: freshUrl });
     MockEventGridDatabase.clear();
@@ -275,7 +282,7 @@ describe("roomRouter", () => {
     const { publicUrl: inFlightPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const inFlightBlobName = getBlobName(inFlightPublicUrl);
     // Uploaded through the client, so the mock dates it now — the state a second admin's in-flight save is in
-    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, inFlightBlobName).upload(Buffer.alloc(0), 0);
+    await uploadPublicUserAssetBlob(inFlightBlobName);
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert.exists(blobDeletionEvents);
@@ -309,7 +316,7 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const blobName = getBlobName(publicUrl);
-    await new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+    await uploadPublicUserAssetBlob(blobName);
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     MockEventGridDatabase.clear();
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl, name });
@@ -468,7 +475,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
     const readInvite = await roomCaller.readInvite(newInvite.id);
     const userId = getMockSession().user.id;
 
@@ -492,7 +499,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
     assert.exists(myInvite);
@@ -562,8 +569,8 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const firstInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
-    const secondInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const firstInvite = await createUnlimitedInvite(newRoom.id);
+    const secondInvite = await createUnlimitedInvite(newRoom.id);
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
     expect(secondInvite.id).not.toBe(firstInvite.id);
@@ -589,7 +596,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
     await mockSessionOnce(mockContext.db);
     const joinedRoom = await roomCaller.joinRoom(newInvite.id);
 
@@ -656,7 +663,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
     // The member who joined through the link holds no link of their own, so revoking that one matches no row
     const { user: member } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
@@ -682,9 +689,7 @@ describe("roomRouter", () => {
     const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 1, roomId: newRoom.id });
     await roomCaller.updateRoom({ id: newRoom.id, isInvitePaused: true });
 
-    await expect(
-      roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(createUnlimitedInvite(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, newRoom.id).message}]`,
     );
 
@@ -707,9 +712,7 @@ describe("roomRouter", () => {
 
     const { directMessage } = await createDirectMessageWithFriend(mockContext);
 
-    await expect(
-      roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: directMessage.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(createUnlimitedInvite(directMessage.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
     );
   });
@@ -760,11 +763,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: 0,
-      maxUses: 0,
-      roomId: newRoom.id,
-    });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
     const userId = getMockSession().user.id;
 
     await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -776,11 +775,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: 0,
-      maxUses: 0,
-      roomId: newRoom.id,
-    });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
     const onJoinRoom = await roomCaller.onJoinRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db);
     const data = await getFirstEmit(
