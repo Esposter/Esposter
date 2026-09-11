@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs, and better-auth held at the last version whose sign-in worked — widened only after a real dev-server sign-in, never by a test that stubs the provider), the Docker base-image rule keyed on the `docker` datasource that exempts every image tag from the repo-wide `updatePinnedDependencies: false` and pins digests so a mutable tag carrying no comparable version is still tracked, plus the local dry run that shows which deps a rule actually reaches, version-capped packages (h3, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs, and better-auth held at the last version whose sign-in worked — widened only after a real dev-server sign-in, never by a test that stubs the provider), version-capped packages (h3, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues — plus deep dives on bumping a GitHub Action to a dereferenced commit SHA, moving the node version with `pnpm update:node`, and the Docker base-image rule keyed on the `docker` datasource that exempts every image tag from the repo-wide `updatePinnedDependencies: false` and pins digests, with Renovate's local dry run showing which deps a rule reaches. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -16,38 +16,15 @@ If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prep
 3. **Refresh the lockfile**: `pnpm refresh:lockfile` from the repo root. Run it directly — it terminates the node processes holding native `.node` binaries open itself, walking up from its own `$PID` so it never kills the ancestry running it. Every **other** node process is fair game and it does not ask first: other agent sessions, dev servers, editor language servers all go. So confirm nothing else is mid-run before starting it, and expect to restart your own dev server afterwards. On Windows, narrowing the kill to the processes actually holding the binaries would mean handle enumeration through the Restart Manager API — the blanket kill is the deliberate trade, not an oversight.
 4. **Verify dependency sync** — after refresh, re-run `pnpm outdated:dependencies`. It checks manifests use `catalog:`/`workspace:`, catalog + configDependency specifiers against lockfile resolutions, and catalog/configDependency/`engines` entries against npm latest. Skip updates per the pinned/tracked-issue notes below; fix mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
 
-### Updating GitHub Actions (Resolving Commit SHAs)
+### GitHub Actions are pinned to a dereferenced commit SHA — `references/github-actions.md`
 
-GitHub Actions steps in `.github/workflows/` and `.github/actions/` are pinned to 40-character commit SHAs followed by a version comment (e.g., `uses: <owner>/<action>@<commit-sha> # v<version>`).
-
-When updating a GitHub Action to a new release tag:
-
-1. Fetch tags from the remote repo:
-   ```bash
-   git ls-remote --tags https://github.com/<owner>/<repo>.git "refs/tags/<version>*"
-   ```
-2. **Dereference annotated tags**:
-   - Annotated tags produce two output lines: `refs/tags/<version>` (the Git tag object SHA) and `refs/tags/<version>^{}` (the dereferenced target commit SHA).
-   - **Always use the dereferenced commit SHA (`refs/tags/<version>^{}`)**. Using the tag object SHA will fail to resolve in GitHub Actions.
-   - If the tag is lightweight (unannotated), only `refs/tags/<version>` is returned; use that SHA.
+`uses: <owner>/<action>@<commit-sha> # v<version>`, and the SHA is the tag's dereferenced target (`refs/tags/<version>^{}`), never the annotated tag object, which GitHub Actions cannot resolve. **Bumping one** is that page.
 
 `engines` (e.g. `node`) is read from every `package.json` and checked against the matching npm package's latest version (`node` → the `node` npm package). They are not catalog entries — for `node`, never hand-edit it; run `pnpm update:node` (see below).
 
-### Updating node
+### Node is never hand-edited — `references/updating-node.md`
 
-Don't hand-edit the node version — run `pnpm update:node [version]` from the repo root. With no argument it targets the latest stable node from the npm registry. In one call it:
-
-1. Bumps both node pins in root `package.json` together — `devEngines.runtime` (what `pnpm/setup` installs on the runners) and `engines.node` (what every other tool reads). They are the same number by definition; never write one alone
-2. Bumps the `@types/node` catalog entry to the highest release matching the new node major
-3. Installs the new version with fnm and sets it as the default (`fnm install`/`default`) — `fnm default` persists for every new shell. It deliberately does not run `fnm use`: the script runs in a nested non-interactive shell, so a `use` would only mutate a PATH that dies with the script
-4. Enables corepack on the new version (a freshly installed node ships it disabled, so `pnpm` would otherwise be missing)
-5. Schedules removal of the old version — fnm can't delete a node version while it's in use, so a detached process retries `fnm uninstall <old>` until this call's node processes exit, then removes it (self-cleaning, no process killing)
-
-The TS orchestration (`scripts/src/updateNode/`) resolves versions and edits the manifests; the per-OS `install.ps1`/`install.sh` (dispatched via `crossOS`, like `refresh:lockfile`) do the fnm work. Pure helpers (version selection, manifest editing) live beside them with unit tests; the generic registry/version utilities are shared from `scripts/src/services/`.
-
-On Windows the bump also invalidates virrun's warm snapshot, and the re-provision runs `corepack pnpm install` in the WSL guest — a separate fnm install this script never reaches. Node stopped bundling corepack, so a guest on one of those releases fails every sandboxed command with `/bin/sh: 1: corepack: not found` until it is given one (`npm i -g corepack` against the guest's node bin). The warm snapshot is why this surfaces on a node bump rather than on the release that dropped corepack.
-
-It deliberately does **not** refresh the lockfile. After it finishes, run `pnpm refresh:lockfile` to resolve the new `@types/node`. Already-open shells keep the old version until reopened.
+`pnpm update:node [version]` from the repo root bumps both node pins together with `@types/node`, installs and defaults the version with fnm, and enables corepack; it does not refresh the lockfile, so `pnpm refresh:lockfile` follows. **Moving the node version**, and the corepack failure a Windows sandbox shows afterwards, is that page.
 
 When `@electric-sql/pglite` changes between minor versions, regenerate the db-mock data directory snapshot from `packages/db-mock/` with `pnpm snapshot:gen`, then verify the db-mock tests. The committed `packages/db-mock/src/snapshot.tar.gz` is tied to PGlite's dump format and may need refreshing even without schema changes.
 
@@ -63,22 +40,9 @@ Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them pe
 - **`better-auth`, `@better-auth/drizzle-adapter`** — pinned exact at 1.7.3, together. 1.7.4 broke sign-in in the running app while CI stayed green end to end — typecheck, every suite, and the Nuxt build — so the break lives in the one thing nothing here exercises: a real OAuth round trip through the browser. A headless test of that path would stub the provider and prove only that better-auth agrees with the stub, which is why none was added. The pin is the enforcer, and Renovate skips it via `updatePinnedDependencies: false`. **Widen back to `^` only after signing in against a dev server on the new version**, bumping both to the same version since the adapter pins its core sibling.
 - **`typescript`** — an exact-pinned `npm:typescript-native-bridge@…` alias, so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`) and a caret would float it across bridge builds. The alias is what runs `tsc`/`vue-tsc` on the Go compiler (`apps/web/content/docs/architecture/monorepo-tooling.md`); a bump moves the bridge, the TypeScript version behind it and `typescript-eslint` at once, so it is a deliberate, dedicated pass and never part of a routine update.
 
-## Docker base images (`renovate.json`)
+## Docker base images — `references/renovate-docker.md`
 
-Renovate's `dockerfile` manager finds every `FROM` line with no `fileMatch` of its own, but what it may do with one is a `packageRules` entry keyed on `matchDatasources: ["docker"]`, because two repo-wide settings work against an image tag:
-
-- `updatePinnedDependencies: false` is there for the exact-pinned npm deps above that owe a dedicated pass. An image tag is a single version by definition, so without the override every `FROM` is skipped as `is-pinned` and Renovate proposes nothing — not a manager that failed to run, so no log line says the word Docker.
-- A tag that carries no version in it (a distro codename, `latest`) gives Renovate nothing to compare, so it can never be bumped by tag at all. That is a statement about the tag string, not about the image: a publisher can repoint such a tag at a new digest whenever they like, and `latest` is mutable by design. `pinDigests: true` is what reaches it: Renovate rewrites the line to `<tag>@sha256:…` once, then keeps that digest current — which is also what turns an otherwise invisible upstream rebuild into a reviewable diff.
-
-Both are read during the lookup, so the rule carrying them takes no `matchUpdateTypes` — an update type exists only once the lookup has produced an update, so a rule gated on one cannot decide whether the lookup runs. That is why the digest automerge is a second rule rather than the same one. The datasource is the axis rather than the manager: the reason is a property of image tags, so it holds wherever one is declared, while a pin this repo chose on another datasource (a runner label, `packageManager`) stays skipped.
-
-To see what Renovate would do with the working tree, run it against the checkout instead of waiting for the bot:
-
-```bash
-PNPM_CONFIG_STRICT_DEP_BUILDS=false RENOVATE_PLATFORM=local RENOVATE_DRY_RUN=full LOG_LEVEL=debug pnpm dlx renovate
-```
-
-The env var is what lets the install run Renovate's own native build scripts, which pnpm blocks by default. The `packageFiles with updates` block of the log is the answer — every dep with the `updates` it earned, or the `skipReason` that emptied it. `renovate-config-validator` checks the schema only, so a rule that parses and still does nothing shows up here and nowhere else.
+A `packageRules` entry keyed on `matchDatasources: ["docker"]` exempts every image tag from the repo-wide `updatePinnedDependencies: false` and pins digests, so a mutable tag with no comparable version is still tracked. **Editing `renovate.json`, adding a `FROM`, or running Renovate's local dry run to see what a rule reaches** is that page.
 
 ## Version-capped packages (keep the caret, cap the range)
 
