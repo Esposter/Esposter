@@ -50,4 +50,17 @@ describe(getRenameSubstitutions, () => {
       `[InvalidOperationError: Invalid operation: Read, name: getRenameSubstitutions, string=text]`,
     );
   });
+
+  // `{ __proto__: null }` sets the prototype where `{ safe: null }` adds a property, so the rename is a semantic
+  // Change in either direction that the exact matcher would still report as substitution-only
+  test("rejects __proto__ on either side", () => {
+    expect.hasAssertions();
+
+    expect(() => getRenameSubstitutions(["__proto__=safe"])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: getRenameSubstitutions, __proto__=safe]`,
+    );
+    expect(() => getRenameSubstitutions(["safe=__proto__"])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: getRenameSubstitutions, safe=__proto__]`,
+    );
+  });
 });

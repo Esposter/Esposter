@@ -7,7 +7,7 @@ description: Replace the two hand-rolled content-hash caches with `vp run --cach
 
 Three caches currently decide whether work is skipped in this repository, and they disagree about what an input is.
 
-- **`package-builds`** — a `git ls-tree` content hash over every tracked file under `packages/`, plus the root manifest, the lockfile, the catalog and the virrun config, computed by the `get-build-cache-keys` composite action and read by five workflows.
+- **`package-builds`** — a `git ls-tree` content hash over every tracked file under `packages/` less the three subtractions below, plus the root manifest, the lockfile and the catalog, computed by the `get-build-cache-keys` composite action and read by five workflows. The virrun config is deliberately not an input: neither build runs under the sandbox.
 - **`app-build`** — the same walk plus `apps/web`, keying a marker file that records only that this exact tree built green.
 - **virrun's task cache** — content-keyed on environment key, working tree and command, replaying a recorded diff and the captured streams on a hit. Default-on locally, off in CI, because a fresh commit changes the tree hash and hits are near zero ([virrun task cache](/docs/virrun/task-cache)).
 

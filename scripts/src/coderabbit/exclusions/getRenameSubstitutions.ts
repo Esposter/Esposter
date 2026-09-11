@@ -6,9 +6,12 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Reproduce a logic flip byte for byte and let the file out of review as a rename. Reserved words are the obvious
 // Half; the rest are the names TypeScript's grammar keys on wherever they appear — `constructor` in a class body,
 // The contextual keywords (`get`, `type`, `readonly`, …) and the primitive type names — so `constructor=initialize`
-// Would turn a class's constructor into a method and still read as substitution-only
+// Would turn a class's constructor into a method and still read as substitution-only. `__proto__` is the one
+// Plain property name an object literal reads by spelling: `{ __proto__: null }` sets the prototype where
+// `{ safe: null }` adds a property, so either direction of that rename is a semantic change
 const RENAME_SUBSTITUTION_REGEX = /^(?<oldName>[A-Za-z_$][\w$]*)=(?<newName>[A-Za-z_$][\w$]*)$/u;
 const RESERVED_WORDS = new Set([
+  "__proto__",
   "abstract",
   "accessor",
   "any",
