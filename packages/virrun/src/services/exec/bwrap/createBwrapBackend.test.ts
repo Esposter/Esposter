@@ -21,12 +21,24 @@ const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
 vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
 
 // A minimal ChildProcess stand-in that replays the given stream chunks then closes, so the close handler
-// Runs against deterministic stdout/stderr/status without spawning a real wsl/bwrap process.
-const createFakeChild = ({ closeCode = 0, status = "", stderr = "", stdout = "" }): ChildProcess => {
+// Runs against deterministic stdout/stderr/status without spawning a real wsl/bwrap process. `stderr` as an
+// Array replays one chunk per element, so a line or a status marker can be cut across chunk boundaries.
+const createFakeChild = ({
+  closeCode = 0,
+  status = "",
+  stderr = "",
+  stdout = "",
+}: {
+  closeCode?: number;
+  status?: string;
+  stderr?: readonly string[] | string;
+  stdout?: string;
+}): ChildProcess => {
   const child = new EventEmitter();
   const stdoutStream = new EventEmitter();
   const stderrStream = new EventEmitter();
   const statusStream = new EventEmitter();
+  const stderrChunks = typeof stderr === "string" ? [stderr] : stderr;
   Object.assign(child, {
     stderr: stderrStream,
     stdio: [null, stdoutStream, stderrStream, statusStream],
@@ -34,7 +46,7 @@ const createFakeChild = ({ closeCode = 0, status = "", stderr = "", stdout = "" 
   });
   queueMicrotask(() => {
     if (stdout) stdoutStream.emit("data", Buffer.from(stdout));
-    if (stderr) stderrStream.emit("data", Buffer.from(stderr));
+    for (const chunk of stderrChunks) if (chunk) stderrStream.emit("data", Buffer.from(chunk));
     if (status) statusStream.emit("data", Buffer.from(status));
     child.emit("close", closeCode, undefined);
   });
@@ -120,20 +132,17 @@ describe(createBwrapBackend, () => {
     const splitIndex = firstChunk.length + secondChunk.length + Math.floor(WSL_BWRAP_STATUS_BEGIN.length / 2);
     const fullStderr = `${firstChunk}${secondChunk}${trailer}`;
     const write = vi.spyOn(process.stderr, "write").mockReturnValue(true);
-    spawn.mockImplementation(() => {
-      const child = new EventEmitter();
-      const stderrStream = new EventEmitter();
-      Object.assign(child, { stderr: stderrStream, stdio: [null, null, stderrStream], stdout: null });
-      queueMicrotask(() => {
-        stderrStream.emit("data", Buffer.from(firstChunk));
-        stderrStream.emit("data", Buffer.from(secondChunk));
-        // The status marker is split mid-marker across two chunks; neither half may leak to the host.
-        stderrStream.emit("data", Buffer.from(fullStderr.slice(firstChunk.length + secondChunk.length, splitIndex)));
-        stderrStream.emit("data", Buffer.from(fullStderr.slice(splitIndex)));
-        child.emit("close");
-      });
-      return child as unknown as ChildProcess;
-    });
+    // The status marker is split mid-marker across two chunks; neither half may leak to the host.
+    spawn.mockImplementation(() =>
+      createFakeChild({
+        stderr: [
+          firstChunk,
+          secondChunk,
+          fullStderr.slice(firstChunk.length + secondChunk.length, splitIndex),
+          fullStderr.slice(splitIndex),
+        ],
+      }),
+    );
     const { exitCode } = await exec("inherit");
 
     expect(exitCode).toBe(0);
@@ -151,18 +160,9 @@ describe(createBwrapBackend, () => {
     const splitIndex = WSL_BWRAP_STATUS_BEGIN.length;
     const trailer = `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":0}\n${WSL_BWRAP_STATUS_END}`;
     const write = vi.spyOn(process.stderr, "write").mockReturnValue(true);
-    spawn.mockImplementation(() => {
-      const child = new EventEmitter();
-      const stderrStream = new EventEmitter();
-      Object.assign(child, { stderr: stderrStream, stdio: [null, null, stderrStream], stdout: null });
-      queueMicrotask(() => {
-        stderrStream.emit("data", Buffer.from(line.slice(0, splitIndex)));
-        stderrStream.emit("data", Buffer.from(line.slice(splitIndex)));
-        stderrStream.emit("data", Buffer.from(trailer));
-        child.emit("close");
-      });
-      return child as unknown as ChildProcess;
-    });
+    spawn.mockImplementation(() =>
+      createFakeChild({ stderr: [line.slice(0, splitIndex), line.slice(splitIndex), trailer] }),
+    );
     const { exitCode } = await exec("inherit");
 
     expect(exitCode).toBe(0);
