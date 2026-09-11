@@ -7,9 +7,10 @@ import { parseOverlayEntryKind } from "#src/services/exec/snapshot/parseOverlayE
 import { parseOverlayManifest } from "#src/services/exec/snapshot/parseOverlayManifest";
 import { runOverlayScript } from "#src/services/exec/snapshot/runOverlayScript";
 // Probe a persist run's overlay upper Linux-side and classify + order its entries into a host flush plan
-// (specs/write-back.md), skipping anything the snapshot lower supplies so node_modules never flushes, plus the
-// Caller's `maskedPaths` (prepare outputs, and the source-mirror excludes on win32 — checkIsUnderSnapshotLower). Pure of
-// Any host mutation (applyFlushPlan performs it), so the plan can be reused for both the host flush and the task cache.
+// (apps/web/content/docs/virrun/write-back.md), skipping anything the snapshot lower supplies so node_modules never
+// Flushes, plus the caller's `maskedPaths` (prepare outputs, and the source-mirror excludes on win32 —
+// CheckIsUnderSnapshotLower). Pure of any host mutation (applyFlushPlan performs it), so the plan can be reused for
+// Both the host flush and the task cache.
 export const buildHostFlushPlan = (
   upperDir: string,
   snapshotUpperDir: string,

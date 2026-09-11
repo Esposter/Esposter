@@ -14,8 +14,9 @@ import {
 import { setupWarmSnapshotSuite } from "#src/services/exec/test/setupWarmSnapshotSuite.test";
 import { describe, expect, test } from "vitest";
 
-// Correctness layer 4 snapshot/fork equivalence (specs/correctness.md): a forked warm sandbox must be observably
-// Identical to a freshly booted + installed one. The only variable is how the dependency closure is presented —
+// Correctness layer 4 snapshot/fork equivalence (apps/web/content/docs/virrun/correctness.md): a forked warm sandbox
+// Must be observably identical to a freshly booted + installed one. The only variable is how the dependency closure
+// Is presented —
 // Warm fork (frozen overlay upper stacked read-only) vs cold in-place install. Install output is discarded so only
 // The verify command's output is diffed; nothing is normalized, so no real divergence can hide.
 // Each case boots a sandbox and runs a full cold install, so the pair costs minutes of wall clock — too slow for
