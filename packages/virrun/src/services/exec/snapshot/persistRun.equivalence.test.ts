@@ -1,6 +1,6 @@
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { persistRun } from "#src/services/exec/snapshot/persistRun";
-import { ACCEPTANCE_TIMEOUT_MINUTES, PACKAGES_DIRECTORY } from "#src/services/exec/test/constants.test";
+import { ACCEPTANCE_TIMEOUT_MS, PACKAGES_DIRECTORY } from "#src/services/exec/test/constants.test";
 import { setupWarmSnapshotSuite } from "#src/services/exec/test/setupWarmSnapshotSuite.test";
 import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
@@ -19,7 +19,6 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
   const MASKED_PATH = "b/c";
 
   const { getBackend, getCorpus } = setupWarmSnapshotSuite();
-  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
   let corpus = "";
   // A real package directory in the corpus (e.g. `packages/virrun`); its per-package node_modules lands in the
   // Snapshot lower, so it is the fixture for the "source under a shared snapshot-lower parent" case.
@@ -54,7 +53,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe("");
       expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 
   test(
@@ -72,7 +71,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       expect(result.exitCode).toBe(0);
       expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 
   test(
@@ -90,7 +89,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       expect(result.exitCode).toBe(0);
       expect(readFileSync(join(corpus, TEST_FILENAME, TEST_FILENAME), "utf8")).toBe("");
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 
   test(
@@ -104,7 +103,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       expect(result.exitCode).toBe(0);
       expect(existsSync(join(corpus, TEST_FILENAME))).toBe(false);
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 
   test(
@@ -120,7 +119,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       expect(result.exitCode).toBe(0);
       expect(readFileSync(join(corpus, packageDirectory, TEST_FILENAME), "utf8")).toBe(" ");
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 
   test(
@@ -144,7 +143,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       // The same run's unmasked write still lands — masking is per-path, never a blanket drop of the flush.
       expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 
   test(
@@ -163,6 +162,6 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
       expect(result.exitCode).toBe(1);
       expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 });

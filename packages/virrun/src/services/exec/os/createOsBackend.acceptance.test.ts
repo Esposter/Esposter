@@ -2,7 +2,7 @@ import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
 import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
 import {
-  ACCEPTANCE_TIMEOUT_MINUTES,
+  ACCEPTANCE_TIMEOUT_MS,
   ESBUILD_VERSION_REGEX,
   FIND_ESBUILD_BINARY_COMMAND,
   RUN_ESBUILD_VERSION_COMMAND,
@@ -56,6 +56,6 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace in
       // The subprocess wall held: nothing the install wrote reached the host corpus on disk.
       expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
     },
-    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
+    ACCEPTANCE_TIMEOUT_MS,
   );
 });

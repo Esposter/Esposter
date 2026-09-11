@@ -5,7 +5,7 @@ import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOpt
 import { forkSnapshot } from "#src/services/exec/snapshot/forkSnapshot";
 import { resolveSetupCommand } from "#src/services/exec/snapshot/resolveSetupCommand";
 import {
-  ACCEPTANCE_TIMEOUT_MINUTES,
+  ACCEPTANCE_TIMEOUT_MS,
   ESBUILD_VERSION_REGEX,
   FIND_ESBUILD_BINARY_COMMAND,
   PNPM_MODULES_DIRECTORY,
@@ -55,7 +55,7 @@ describe.todo("forkSnapshot - warm fork matches a cold in-place install (equival
       expect(warmResult.stdout).toMatch(ESBUILD_VERSION_REGEX);
       expect(warmResult).toStrictEqual(coldResult);
     },
-    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
+    ACCEPTANCE_TIMEOUT_MS,
   );
 
   // The pre-run dependency verification pnpm does may auto-install inside the sandbox and fail when writing bin shims into the
@@ -81,6 +81,6 @@ describe.todo("forkSnapshot - warm fork matches a cold in-place install (equival
       expect(warmResult.stdout).toMatch(ESBUILD_VERSION_REGEX);
       expect(warmResult.stdout).toBe(coldResult.stdout);
     },
-    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
+    ACCEPTANCE_TIMEOUT_MS,
   );
 });

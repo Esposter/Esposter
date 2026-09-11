@@ -18,6 +18,9 @@ export const FIND_ESBUILD_BINARY_COMMAND: string = `ESBUILD=$(find ${PNPM_MODULE
 export const RUN_ESBUILD_VERSION_COMMAND: string = `"$ESBUILD" --version`;
 export const ESBUILD_VERSION_REGEX: RegExp = /\d+\.\d+\.\d+/u;
 // A frozen install of the whole corpus into a RAM overlay on a cold store routinely runs past the default caps.
-export const ACCEPTANCE_TIMEOUT_MINUTES: number = 10;
+const ACCEPTANCE_TIMEOUT_MINUTES = 10;
+export const ACCEPTANCE_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total(
+  "milliseconds",
+);
 
 describe.todo("constants");

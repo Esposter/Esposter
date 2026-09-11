@@ -1,4 +1,5 @@
 import { PNPM_WORKSPACE_FILENAME } from "#src/services/exec/util/constants";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe } from "vitest";
@@ -9,7 +10,11 @@ export const findRepoRoot = (): string => {
   while (!existsSync(join(directory, PNPM_WORKSPACE_FILENAME))) {
     const parent = dirname(directory);
     if (parent === directory)
-      throw new Error(`could not locate the monorepo root (no ${PNPM_WORKSPACE_FILENAME} found)`);
+      throw new InvalidOperationError(
+        Operation.Read,
+        findRepoRoot.name,
+        `could not locate the monorepo root (no ${PNPM_WORKSPACE_FILENAME} found)`,
+      );
     directory = parent;
   }
   return directory;

@@ -1,11 +1,9 @@
 import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
-import { HOME_CACHE_DIRECTORY_NAME, VIRRUN_TEMP_DIR_PREFIX } from "#src/services/exec/util/constants";
+import { createHomeCacheTemporaryDirectory } from "#src/services/exec/test/createHomeCacheTemporaryDirectory.test";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult } from "@esposter/shared";
-import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
-import { homedir } from "node:os";
-import { join } from "node:path";
+import { rmSync } from "node:fs";
 import { describe } from "vitest";
 
 // A host that runs the sandbox may still mount $HOME read-only (e.g. the root `test:packages` sandbox), where
@@ -13,9 +11,7 @@ import { describe } from "vitest";
 // Instead of skipping.
 const checkIsCacheHomeWritable = (): boolean =>
   getResult(() => {
-    const cache = join(homedir(), HOME_CACHE_DIRECTORY_NAME);
-    mkdirSync(cache, { recursive: true });
-    const directory = mkdtempSync(join(cache, VIRRUN_TEMP_DIR_PREFIX));
+    const directory = createHomeCacheTemporaryDirectory();
     rmSync(directory, { force: true, recursive: true });
   }).match(
     () => true,

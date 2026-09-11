@@ -1,14 +1,14 @@
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
-import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
+import { ACCEPTANCE_TIMEOUT_MS } from "#src/services/exec/test/constants.test";
 import { createWorkspaceCorpus } from "#src/services/exec/test/createWorkspaceCorpus.test";
 import { ensureWarmSnapshot } from "#src/services/exec/test/ensureWarmSnapshot.test";
 import { findRepoRoot } from "#src/services/exec/test/findRepoRoot.test";
 import { getAcceptanceCacheHome } from "#src/services/exec/test/getAcceptanceCacheHome";
 import { VIRRUN_CACHE_HOME_KEY } from "#src/services/exec/util/constants";
 import { rmSync } from "node:fs";
-import { afterAll, beforeAll, describe } from "vitest";
+import { afterAll, beforeAll, describe, vi } from "vitest";
 // The shared beforeAll/afterAll behind every heavy warm-snapshot acceptance/equivalence suite: point the cache home
 // At the shared acceptance location, build the workspace corpus, and capture-or-reuse the warm snapshot once. The
 // Backend is constructed lazily in beforeAll (which never runs for a skipped describe) rather than at describe scope:
@@ -19,21 +19,16 @@ import { afterAll, beforeAll, describe } from "vitest";
 export const setupWarmSnapshotSuite = (): { getBackend: () => ExecBackend; getCorpus: () => string } => {
   let backend: ExecBackend;
   let corpus = "";
-  const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
 
-  beforeAll(
-    async () => {
-      backend = createOsBackend();
-      process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
-      corpus = createWorkspaceCorpus(findRepoRoot());
-      await ensureWarmSnapshot(backend, corpus);
-    },
-    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
-  );
+  beforeAll(async () => {
+    backend = createOsBackend();
+    vi.stubEnv(VIRRUN_CACHE_HOME_KEY, getAcceptanceCacheHome());
+    corpus = createWorkspaceCorpus(findRepoRoot());
+    await ensureWarmSnapshot(backend, corpus);
+  }, ACCEPTANCE_TIMEOUT_MS);
 
   afterAll(() => {
-    if (previousCacheHome === undefined) delete process.env[VIRRUN_CACHE_HOME_KEY];
-    else process.env[VIRRUN_CACHE_HOME_KEY] = previousCacheHome;
+    vi.unstubAllEnvs();
     if (corpus) rmSync(corpus, { force: true, recursive: true });
   });
 

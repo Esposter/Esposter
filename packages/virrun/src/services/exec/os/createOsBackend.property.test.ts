@@ -1,6 +1,6 @@
 import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
-import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
+import { ACCEPTANCE_TIMEOUT_MS } from "#src/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import * as fc from "fast-check";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -101,6 +101,6 @@ describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
         { numRuns: 10 },
       );
     },
-    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
+    ACCEPTANCE_TIMEOUT_MS,
   );
 });

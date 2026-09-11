@@ -1,16 +1,11 @@
 import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
-import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
+import { ACCEPTANCE_TIMEOUT_MS } from "#src/services/exec/test/constants.test";
 import { TEST_DIR } from "#src/services/exec/util/constants.test";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(createOsBackend, () => {
-  // Real bwrap sandbox execs (win32: over the wsl.exe bridge) contend for the one shared WSL bridge when the suite
-  // Fans test files across 16 workers, so a ~1-3s exec can exceed vitest's 5s default. Same hang-ceiling the sibling
-  // Acceptance/property os tests carry; the exec is not slow, the cross-file contention is.
-  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
-
   // No-fallback contract: on an unsupported host, construction throws rather than running un-isolated.
   test.skipIf(checkIsOsBackendSupported())("throws on an unsupported host instead of falling back", () => {
     expect.hasAssertions();
@@ -19,6 +14,9 @@ describe(createOsBackend, () => {
     );
   });
 
+  // Real bwrap sandbox execs (win32: over the wsl.exe bridge) contend for the one shared WSL bridge when the suite
+  // Fans test files across 16 workers, so a ~1-3s exec can exceed vitest's 5s default. Same hang-ceiling the sibling
+  // Acceptance/property os tests carry; the exec is not slow, the cross-file contention is.
   test.skipIf(!checkIsOsBackendSupported())(
     "captures stdout and a zero exit code",
     async () => {
@@ -30,7 +28,7 @@ describe(createOsBackend, () => {
       expect(exitCode).toBe(0);
       expect(stdout).toBe("ok\n");
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 
   test.skipIf(!checkIsOsBackendSupported())(
@@ -43,7 +41,7 @@ describe(createOsBackend, () => {
 
       expect(exitCode).toBe(3);
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 
   // A command that exits non-zero is a result; a sandbox that can't even start is an error. A
@@ -70,6 +68,6 @@ describe(createOsBackend, () => {
           .message,
       );
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 });
