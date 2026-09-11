@@ -1,0 +1,9 @@
+# Opening a PR Spends a Review Slot
+
+Read when about to run `gh pr create` against the default branch, or in the minutes after one ran. The rule itself is in `SKILL.md` (creating the PR, and every push to it, starts a review, so the PR is asked for every time); this page is what has to be settled before the ask and what the first correction after opening costs.
+
+**Creating a PR against the default branch, and every push to one, starts a review** — the slot goes immediately and the next is about an hour out.
+
+So ask first, every time. Agreement on the goal ("get this reviewed") is not permission to spend the slot before the shape is settled: the commit range, the cut point, and the base's `.coderabbit.yaml` all have to be final. Until then push the branch and stop — a branch is free and re-cuttable, a PR is not. Opened one too early? Close it; the slot is already gone and the commits stay reviewable under the PR they belong to.
+
+**Creating the PR is itself the start of a review, so the moment after `gh pr create` is an in-flight one.** The in-flight rule ("Never Push Into an In-Flight Review" in `SKILL.md`) applies from that instant, and the trap is that the CodeRabbit check has not appeared yet — there is no `pending` row to read, because the review is queued rather than reporting. An absent row is the table's unrecognised case (**wait**), never clearance. What makes this the easy mistake is that the correction wanting to go out is usually the author's own: a claim in the body that turned out wrong, a stale comment, a typo spotted on re-reading. It feels like tidying the PR before anyone looks, and it is in fact a push into a live review — it cancels that review, loses its findings, spends the next slot, and cancels the CI run the PR just started. Corrections found after opening are a later window's commits. Fix the PR **body** freely (`gh pr edit` touches no sha), commit the code correction locally, and push it once the review lands.
