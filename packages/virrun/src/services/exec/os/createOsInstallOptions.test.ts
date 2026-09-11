@@ -40,7 +40,9 @@ describe(createOsInstallOptions, () => {
     osCacheRoot.value = create();
   });
 
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+  });
 
   test("adds CI so pnpm purges the leaked host node_modules instead of prompting for a TTY", () => {
     expect.hasAssertions();

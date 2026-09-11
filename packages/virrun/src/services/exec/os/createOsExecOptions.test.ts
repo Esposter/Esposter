@@ -51,7 +51,9 @@ describe(createOsExecOptions, () => {
     loginEnvironmentPath.value = loginPath;
   });
 
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+  });
 
   test("win32 prepends the mirror's node_modules/.bin ahead of the leaked host bin so the overlaid binary wins", () => {
     expect.hasAssertions();
