@@ -10,10 +10,11 @@ import { WebhookReceiver } from "livekit-server-sdk";
 export default defineEventHandler(async (event) => {
   const { livekit } = useRuntimeConfig(event);
   const body = await readRawBody(event, "utf8");
-  if (!body || !livekit?.apiKey || !livekit.apiSecret) {
+  const getInvalidWebhookResponse = () => {
     setResponseStatus(event, 400);
     return { message: "Invalid LiveKit webhook." };
-  }
+  };
+  if (!body || !livekit?.apiKey || !livekit.apiSecret) return getInvalidWebhookResponse();
 
   const webhookReceiver = new WebhookReceiver(livekit.apiKey, livekit.apiSecret);
   return getResultAsync(() => webhookReceiver.receive(body, getHeader(event, "authorization"))).match(
@@ -41,9 +42,6 @@ export default defineEventHandler(async (event) => {
       callEventEmitter.emit("joinCall", { callSessionId, participant: callParticipant, sessionId });
       return { ok: true };
     },
-    () => {
-      setResponseStatus(event, 400);
-      return { message: "Invalid LiveKit webhook." };
-    },
+    getInvalidWebhookResponse,
   );
 });
