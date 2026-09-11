@@ -37,4 +37,17 @@ describe(getRenameSubstitutions, () => {
       `[InvalidOperationError: Invalid operation: Read, name: getRenameSubstitutions, 1=2]`,
     );
   });
+
+  // `constructor` is not a reserved word, but word-bounded it turns a class's constructor into a method — a semantic
+  // Change the exact matcher would still report as substitution-only and exclude from review as a rename
+  test("rejects a name the grammar reads by spelling", () => {
+    expect.hasAssertions();
+
+    expect(() => getRenameSubstitutions(["constructor=initialize"])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: getRenameSubstitutions, constructor=initialize]`,
+    );
+    expect(() => getRenameSubstitutions(["string=text"])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: getRenameSubstitutions, string=text]`,
+    );
+  });
 });
