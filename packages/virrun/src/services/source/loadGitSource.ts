@@ -2,19 +2,15 @@ import type { GitSource } from "#src/models/source/GitSource";
 import type { LoadedSource } from "#src/models/source/LoadedSource";
 
 import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
-import { VIRRUN_TEMP_DIR_PREFIX } from "#src/services/exec/util/constants";
+import { createTemporarySourceDirectory } from "#src/services/source/createTemporarySourceDirectory";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 // Shallow-clones a repo into a temp dir via the host's real git, failing loud with git's own stderr on a
 // Non-zero exit. `-q` drops the volatile "Cloning into '<dest>'" progress line, leaving the fatal lines.
 export const loadGitSource = async (source: GitSource): Promise<LoadedSource> => {
-  const cwd = await mkdtemp(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
-  const dispose = () => rm(cwd, { force: true, recursive: true });
+  const { cwd, dispose } = await createTemporarySourceDirectory();
   // Argv form (shell: false) keeps repo/ref as data; `--` ends option parsing so a `--upload-pack=…`-style
   // Repo/ref can't be smuggled in as a git flag.
-  const args = [
+  const command = [
     "git",
     "clone",
     "-q",
@@ -26,7 +22,7 @@ export const loadGitSource = async (source: GitSource): Promise<LoadedSource> =>
     cwd,
   ];
   const { exitCode, stderr } = await getResultAsync(() =>
-    createNativeBackend().exec(args, { cwd: "", stdio: "pipe" }),
+    createNativeBackend().exec(command, { cwd: "", stdio: "pipe" }),
   ).match(
     (value) => value,
     async (error) => {

@@ -1,7 +1,6 @@
 import { BackendType } from "#src/models/virrun/BackendType";
 import { Environment } from "#src/models/virrun/Environment";
 import { parseVirrunConfiguration } from "#src/services/configuration/parseVirrunConfiguration";
-import { InvalidOperationError } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(parseVirrunConfiguration, () => {
@@ -22,31 +21,93 @@ describe(parseVirrunConfiguration, () => {
   test("throws on a non-object value", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration("os")).toThrow(InvalidOperationError);
+    expect(() => parseVirrunConfiguration("os")).toThrowErrorMatchingInlineSnapshot(`
+      [InvalidOperationError: Invalid operation: Read, name: parseVirrunConfiguration, [
+        {
+          "expected": "object",
+          "code": "invalid_type",
+          "path": [],
+          "message": "Invalid input: expected object, received string"
+        }
+      ]]
+    `);
   });
 
   test("throws on an unknown backend", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration({ backend: "" })).toThrow(InvalidOperationError);
+    expect(() => parseVirrunConfiguration({ backend: "" })).toThrowErrorMatchingInlineSnapshot(`
+      [InvalidOperationError: Invalid operation: Read, name: parseVirrunConfiguration, [
+        {
+          "code": "invalid_value",
+          "values": [
+            "auto",
+            "native",
+            "os",
+            "vfs"
+          ],
+          "path": [
+            "backend"
+          ],
+          "message": "Invalid option: expected one of \\"auto\\"|\\"native\\"|\\"os\\"|\\"vfs\\""
+        }
+      ]]
+    `);
   });
 
   test("throws on an unknown environment", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration({ environment: "" })).toThrow(InvalidOperationError);
+    expect(() => parseVirrunConfiguration({ environment: "" })).toThrowErrorMatchingInlineSnapshot(`
+      [InvalidOperationError: Invalid operation: Read, name: parseVirrunConfiguration, [
+        {
+          "code": "invalid_value",
+          "values": [
+            "nuxt"
+          ],
+          "path": [
+            "environment"
+          ],
+          "message": "Invalid input: expected \\"nuxt\\""
+        }
+      ]]
+    `);
   });
 
   test("throws on the removed 'none' environment — absence is expressed by omitting the key, not a none value", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration({ environment: "none" })).toThrow(InvalidOperationError);
+    expect(() => parseVirrunConfiguration({ environment: "none" })).toThrowErrorMatchingInlineSnapshot(`
+      [InvalidOperationError: Invalid operation: Read, name: parseVirrunConfiguration, [
+        {
+          "code": "invalid_value",
+          "values": [
+            "nuxt"
+          ],
+          "path": [
+            "environment"
+          ],
+          "message": "Invalid input: expected \\"nuxt\\""
+        }
+      ]]
+    `);
   });
 
   test("throws on an unknown key", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration({ "": "" })).toThrow(InvalidOperationError);
+    expect(() => parseVirrunConfiguration({ "": "" })).toThrowErrorMatchingInlineSnapshot(`
+      [InvalidOperationError: Invalid operation: Read, name: parseVirrunConfiguration, [
+        {
+          "code": "unrecognized_keys",
+          "keys": [
+            ""
+          ],
+          "path": [],
+          "message": "Unrecognized key: \\"\\""
+        }
+      ]]
+    `);
   });
 
   test("accepts a $schema pointer", () => {

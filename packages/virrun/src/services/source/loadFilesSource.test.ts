@@ -8,7 +8,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 // Call-through spy on rm so the failure-path leak test asserts dispose removed its dir deterministically, not
 // By counting shared-tmpdir entries parallel tests pollute. Other fs exports stay real.
@@ -23,10 +23,6 @@ vi.mock(import("node:fs/promises"), async (importOriginal) => {
 describe(loadFilesSource, () => {
   const escapePath = `../${TEST_FILENAME}`;
   const escapeReason = "path escapes sandbox directory";
-
-  beforeEach(() => {
-    rm.mockClear();
-  });
 
   test("materializes a file at a nested path into a temp directory", async () => {
     expect.hasAssertions();

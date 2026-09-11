@@ -11,8 +11,8 @@ import { afterEach, describe, expect, test } from "vitest";
 // The correctness gate for the vfs backend: every command must produce the identical observable result whether
 // Run natively or through vfs. The in-process path is where vfs can diverge, so it carries the corpus.
 describe(createVfsBackend, () => {
-  const native = createNativeBackend();
-  const vfs = createVfsBackend();
+  const nativeBackend = createNativeBackend();
+  const vfsBackend = createVfsBackend();
   const temporaryDirectories = createTemporaryDirectoryTracker();
 
   afterEach(() => {
@@ -22,7 +22,7 @@ describe(createVfsBackend, () => {
   test.each(NODE_DIFFERENTIAL_CORPUS)("matches the native backend for $name", async ({ command, rules }) => {
     expect.hasAssertions();
 
-    await assertDifferential(vfs, native, command, rules);
+    await assertDifferential(vfsBackend, nativeBackend, command, rules);
   });
 
   // A `node <file>` that requires a second module with no virtual shadow, so both reads fall through to real disk
@@ -39,8 +39,8 @@ describe(createVfsBackend, () => {
     );
     const command = `node ${TEST_FILENAME}.cjs`;
 
-    const nativeResult = await native.exec(command, { cwd: directory, stdio: "pipe" });
-    const vfsResult = await vfs.exec(command, { cwd: directory, stdio: "pipe" });
+    const nativeResult = await nativeBackend.exec(command, { cwd: directory, stdio: "pipe" });
+    const vfsResult = await vfsBackend.exec(command, { cwd: directory, stdio: "pipe" });
 
     expect(vfsResult).toStrictEqual({ exitCode: 0, stderr: "", stdout: " " });
     expect(vfsResult).toStrictEqual(nativeResult);

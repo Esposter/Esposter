@@ -8,19 +8,19 @@ export const tokenizeShellCommand = (input: string): string[] | undefined => {
   let current = "";
   let quote = "";
   let hasToken = false;
-  for (const char of input) {
+  for (const character of input) {
     if (quote) {
-      if (char === quote) quote = "";
-      else current += char;
+      if (character === quote) quote = "";
+      else current += character;
       continue;
     }
-    if (SHELL_OPERATORS.has(char)) return undefined;
-    if (char === '"' || char === "'") {
-      quote = char;
+    if (SHELL_OPERATORS.has(character)) return undefined;
+    if (character === '"' || character === "'") {
+      quote = character;
       hasToken = true;
       continue;
     }
-    if (char === " " || char === "\t") {
+    if (character === " " || character === "\t") {
       if (hasToken) {
         tokens.push(current);
         current = "";
@@ -28,7 +28,7 @@ export const tokenizeShellCommand = (input: string): string[] | undefined => {
       }
       continue;
     }
-    current += char;
+    current += character;
     hasToken = true;
   }
   if (quote) return undefined;

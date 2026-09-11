@@ -22,9 +22,7 @@ describe(resolvePrepareStep, () => {
 
   const { cleanup, createWorkspace } = createTemporaryDirectoryTracker();
 
-  afterEach(() => {
-    cleanup();
-  });
+  afterEach(cleanup);
 
   test("is undefined when no environment preset is set", () => {
     expect.hasAssertions();
@@ -63,12 +61,8 @@ describe(resolvePrepareStep, () => {
     const workspace = createWorkspace();
     execFileSync("git", ["init", "-q"], { cwd: workspace });
 
-    expect(() => resolvePrepareStep(Environment.Nuxt, workspace)).toThrow(
-      new InvalidOperationError(
-        Operation.Read,
-        resolvePrepareStep.name,
-        `environment "${Environment.Nuxt}" is set but no nuxt.config was found in the workspace`,
-      ),
+    expect(() => resolvePrepareStep(Environment.Nuxt, workspace)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, resolvePrepareStep.name, `environment "${Environment.Nuxt}" is set but no nuxt.config was found in the workspace`).message}]`,
     );
   });
 });

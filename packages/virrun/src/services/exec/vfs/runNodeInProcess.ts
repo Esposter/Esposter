@@ -3,6 +3,7 @@ import type { ExecResult } from "#src/models/exec/ExecResult";
 import type { NodeInvocation } from "#src/models/exec/vfs/NodeInvocation";
 
 import { ExitSignalError } from "#src/models/exec/vfs/ExitSignalError";
+import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { createPlatformaticFsProvider } from "#src/services/vfs/createPlatformaticFsProvider";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { createRequire } from "node:module";
@@ -23,8 +24,8 @@ export const runNodeInProcess = (
   const originalExitCode = process.exitCode;
   const originalRequire = globalThis.require;
   const originalCwd = cwd ? process.cwd() : "";
-  const baseDir = cwd || process.cwd();
-  const fs = createPlatformaticFsProvider({ isOverlayEnabled: true });
+  const baseDir = resolveCwd(cwd);
+  const fsProvider = createPlatformaticFsProvider({ isOverlayEnabled: true });
   const isPipe = stdio === "pipe";
   const require = createRequire(resolve(baseDir, "[eval].js"));
   const cachedBefore = new Set(Object.keys(require.cache));
@@ -43,13 +44,13 @@ export const runNodeInProcess = (
         return true;
       };
       process.exit = (exitCode) => {
-        const resolved =
+        const resolvedExitCode =
           typeof exitCode === "number" ? exitCode : typeof process.exitCode === "number" ? process.exitCode : 0;
-        throw new ExitSignalError(resolved);
+        throw new ExitSignalError(resolvedExitCode);
       };
       if (cwd) process.chdir(cwd);
       globalThis.require = require;
-      fs.mount(baseDir);
+      fsProvider.mount(baseDir);
       const run = () =>
         file ? require(require.resolve(resolve(baseDir, file))) : runInThisContext(code, { displayErrors: false });
       return getResult(run).match(
@@ -64,7 +65,7 @@ export const runNodeInProcess = (
       );
     },
     () => {
-      fs.dispose();
+      fsProvider.dispose();
       process.stdout.write = originalStdoutWrite;
       process.stderr.write = originalStderrWrite;
       process.exit = originalExit;
