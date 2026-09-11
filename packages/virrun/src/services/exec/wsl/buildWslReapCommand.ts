@@ -11,8 +11,7 @@ import { WSL_EXECUTABLE, WSL_REAPER_SHELL_NAME } from "#src/services/exec/wsl/co
 // Cmdline matches the very `pgrep -f` its peers run — and TERMing that group kills a peer mid-wait: a startup sweep
 // Takes out the blocking `cache clean` reaper, whose caller then removes dirs whose trees are still alive.
 // WSL_REAPER_SHELL_NAME is the `$0` of every reaper and of nothing else, so one grep over the candidate's own cmdline
-// Excludes peers and self alike, replacing the `$$` comparison that only ever covered the latter. It reads
-// `/proc/<pid>/cmdline` — the same bytes `pgrep -f` matched on, so the two agree — rather than `ps -o args=`, which
+// Excludes peers and self alike. It reads `/proc/<pid>/cmdline` — the same bytes `pgrep -f` matched on, so the two agree — rather than `ps -o args=`, which
 // Truncates to terminal width and would hide a name that sits past the whole script in the argv. A pid that exits
 // Mid-loop leaves no cmdline to read, which the `$pgid` guard below already treats as nothing to kill.
 const KILL_SCRIPT_LINES: readonly string[] = [

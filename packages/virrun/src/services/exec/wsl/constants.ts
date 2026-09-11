@@ -11,9 +11,8 @@ export const WSL_REAPER_SHELL_NAME = "virrun-reaper";
 // One file per run's WSL shell under the local cache root, named `<host pid>.<marker>`. It is the whole orphan test
 // The startup sweep runs (reapOrphanedWslRuns): a marker whose owning host process is dead belongs to a run nobody is
 // Waiting on any more, so its surviving WSL tree is a corpse — while a live owner means a concurrent run whose tree
-// Must not be touched. Keyed on process liveness like every other virrun sweep (leases, pid-tagged temps) rather than
-// On the WSL process tree's shape: a hard-killed client leaves its `Relay(<pid>)` alive for as long as the tree under
-// It lives, so "reparented off its Relay" — the shape the sweep used to test — is not what a real corpse looks like.
+// Must not be touched. Keyed on process liveness like every other virrun sweep (leases, pid-tagged temps); why the
+// WSL process tree's shape cannot stand in for it is with the sweep.
 export const VIRRUN_RUNS_DIRECTORY_NAME = "runs";
 // The registry entry name registerWslRun writes, read back apart by the sweep: an all-digit owner pid, then the
 // Marker. Both halves are required, so a stray file in the directory is skipped rather than read as a marker `pgrep`

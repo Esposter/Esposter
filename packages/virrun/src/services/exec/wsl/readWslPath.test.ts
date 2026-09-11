@@ -9,7 +9,7 @@ import {
 } from "#src/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
 import { readWslPath } from "#src/services/exec/wsl/readWslPath";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({
   execFileSync: vi.fn<typeof baseExecFileSync>(((_file, args) =>
@@ -21,10 +21,6 @@ vi.mock(import("node:child_process"), () => ({
 }));
 
 describe(readWslPath, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("memoizes translated paths", () => {
     expect.hasAssertions();
 

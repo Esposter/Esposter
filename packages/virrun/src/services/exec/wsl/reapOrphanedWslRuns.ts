@@ -15,10 +15,11 @@ import { join } from "node:path";
 // And keep the store/snapshot pinned open. This reclaims exactly those, and it is the ONE thing it tests: a dead
 // Owner. A live owner is a concurrent run — including this one, whose entries are written under this pid — so no
 // Sweep can ever kill a run someone is still waiting on; and an owner is a live pid that started before its entry
-// Was written (checkIsOwnerAlive), since the OS recycles a dead run's pid onto whatever starts next. That is why it does not read the WSL process tree's shape
-// (whether a shell is still parented by its `Relay(<pid>)`) the way it once did: a hard-killed client leaves its relay
-// Alive for as long as the tree beneath it lives, so the shape test spared every real corpse while staying free to
-// Misfire on a live run — which surfaced as a bogus "bubblewrap failed to set up the sandbox" (getNoStatusFailureHeadline).
+// Was written (checkIsOwnerAlive), since the OS recycles a dead run's pid onto whatever starts next. The WSL process
+// Tree's shape (whether a shell is still parented by its `Relay(<pid>)`) cannot stand in for that: a hard-killed
+// Client leaves its relay alive for as long as the tree beneath it lives, so a shape test spares every real corpse
+// While staying free to misfire on a live run as a bogus "bubblewrap failed to set up the sandbox"
+// (getNoStatusFailureHeadline).
 //
 // Fired off the critical path and only when there is something to kill, so an ordinary run spawns no `wsl.exe` here
 // At all. Entries are unlinked after the reaper is spawned rather than before: the kill is fire-and-forget, so the
