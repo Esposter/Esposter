@@ -52,20 +52,10 @@ export const pgTable: PgTable = <
     extraConfig?: (self: PgBuildExtraConfigColumns<TColumnsMap>) => PgTableExtraConfigValue[];
     schema?: PgSchema<TSchema>;
   } = {},
-) =>
-  schema?.table<TTableName, TColumnsMap & typeof metadataSchema>(
-    name,
-    {
-      ...metadataSchema,
-      ...columns,
-    },
-    extraConfig,
-  ) ??
-  camelCase.table<TTableName, TColumnsMap & typeof metadataSchema>(
-    name,
-    {
-      ...metadataSchema,
-      ...columns,
-    },
-    extraConfig,
+) => {
+  const columnsWithMetadata = { ...metadataSchema, ...columns };
+  return (
+    schema?.table<TTableName, TColumnsMap & typeof metadataSchema>(name, columnsWithMetadata, extraConfig) ??
+    camelCase.table<TTableName, TColumnsMap & typeof metadataSchema>(name, columnsWithMetadata, extraConfig)
   );
+};

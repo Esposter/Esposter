@@ -35,11 +35,11 @@ import { webhooksInMessageRelation } from "#src/relations/webhooksInMessageRelat
 
 export const relations = {
   ...accountsRelation,
-  ...callSessionsInMessageRelation,
   ...achievementsRelation,
   ...appUsersInMessageRelation,
   ...bansInMessageRelation,
   ...blocksRelation,
+  ...callSessionsInMessageRelation,
   ...friendRequestsRelation,
   ...friendsRelation,
   ...invitesInMessageRelation,

@@ -17,16 +17,9 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Migration Workflow
 
-After editing a schema file, generate the migration:
-
-```bash
-# From packages/db-schema/
-pnpm db:gen     # generate migration SQL from schema changes
-pnpm db:up      # upgrade snapshot metadata to a newer drizzle-kit format
-pnpm db:studio  # open Drizzle Studio UI for visual inspection
-```
-
-Migrations are output to `apps/web/server/db/migrations/` and are applied automatically at app startup by the Nitro plugin `apps/web/server/plugins/migrate.ts` — there is no apply script.
+After editing a schema file, generate the migration with `pnpm db:gen` (see Commands). Migrations are output to
+`apps/web/server/db/migrations/` and are applied automatically at app startup by the Nitro plugin
+`apps/web/server/plugins/migrate.ts` — there is no apply script.
 
 ### Schema Layout
 
@@ -48,9 +41,9 @@ Azure Table Storage, so a `messages` row is metadata and its body is not in this
 Run from `packages/db-schema/`:
 
 ```bash
-pnpm db:gen       # generate migration
-pnpm db:up        # upgrade snapshot metadata
-pnpm db:studio    # Drizzle Studio
+pnpm db:gen       # generate migration SQL from schema changes
+pnpm db:up        # upgrade snapshot metadata to a newer drizzle-kit format
+pnpm db:studio    # open Drizzle Studio UI for visual inspection
 pnpm build        # compile to dist/
 pnpm test         # vitest watch mode
 pnpm lint:fix     # auto-fix lint
