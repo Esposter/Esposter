@@ -20,7 +20,7 @@ export const getVitestConfiguration = (projectDirectory?: string): ViteUserConfi
     // Time; persisting it to `node_modules/.vitest-cache` reuses it across reruns and separate processes, and
     // A reinstall drops the directory along with the dependencies it was keyed on.
     fsModuleCache: true,
-    hookTimeout: 60_000,
+    hookTimeout: Temporal.Duration.from({ minutes: 1 }).total("milliseconds"),
     ...(projectDirectory ? { name: getVitestProjectName(projectDirectory) } : {}),
     // Restores every vi.stubEnv after the test that set it, so no file needs its own unstubAllEnvs teardown.
     // The globals equivalent stays off: a beforeAll stubGlobal is restored after the first test, not the file.

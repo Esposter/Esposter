@@ -1,3 +1,4 @@
+import ignores from "@esposter/configuration/eslint/ignores.js";
 import nuxtOverrides from "@esposter/configuration/eslint/overrides/nuxt.js";
 import oxlint from "@esposter/configuration/eslint/oxlint.js";
 import plugins from "@esposter/configuration/eslint/plugins/index.js";
@@ -19,6 +20,4 @@ export default withNuxt(plugins, {
       "no-restricted-syntax": ["error", ...typescriptRules["no-restricted-syntax"].slice(1), ...restrictedTestSyntaxes],
     },
   })
-  // `public` is generated/static assets, the generated tileset `.tsx` included, and oxlint already ignores
-  // It. Skipping it here too keeps eslint from walking the whole tree calculating a config per file.
-  .append({ ignores: ["**/*.md", "public/**"] });
+  .append(ignores);
