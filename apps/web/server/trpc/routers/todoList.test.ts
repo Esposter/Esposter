@@ -3,8 +3,8 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
+import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";
