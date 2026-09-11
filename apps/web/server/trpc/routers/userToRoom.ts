@@ -6,8 +6,8 @@ import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/Update
 import { on } from "@@/server/services/events/on";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
-import { router } from "@@/server/trpc";
 import { assertIsMember } from "@@/server/services/room/assertIsMember";
+import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { roomIdSchema, roomIdsSchema, usersToRoomsInMessage } from "@esposter/db-schema";

@@ -20,8 +20,8 @@ import { getScheduledMessageJobValues } from "@@/server/services/message/schedul
 import { insertScheduledMessageJob } from "@@/server/services/message/scheduledMessageJob/insertScheduledMessageJob";
 import { requireScheduledMessageJob } from "@@/server/services/message/scheduledMessageJob/requireScheduledMessageJob";
 import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
-import { router } from "@@/server/trpc";
 import { assertIsMember } from "@@/server/services/room/assertIsMember";
+import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {

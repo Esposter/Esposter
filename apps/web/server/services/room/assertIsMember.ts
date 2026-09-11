@@ -6,7 +6,7 @@ import { TRPCError } from "@trpc/server";
 // Deduplicated before the count: a membership row exists once per room, so a repeated id — which the search
 // Filters allow, since two `in:` clauses narrow together — would otherwise read as one missing membership
 export const assertIsMember = async (db: Context["db"], { user }: GetSessionPayload, roomIds: string | string[]) => {
-  const roomIdArray = Array.isArray(roomIds) ? Array.from(new Set(roomIds)) : [roomIds];
+  const roomIdArray = Array.isArray(roomIds) ? [...new Set(roomIds)] : [roomIds];
   const foundUsersToRooms = await db.query.usersToRoomsInMessage.findMany({
     where: {
       roomId: {

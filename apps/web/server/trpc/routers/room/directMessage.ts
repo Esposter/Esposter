@@ -14,6 +14,7 @@ import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmi
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { assertIsMember } from "@@/server/services/room/assertIsMember";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { assertCanCreateDirectMessageParticipant } from "@@/server/services/room/directMessage/assertCanCreateDirectMessageParticipant";
 import { getDirectMessageParticipantKey } from "@@/server/services/room/directMessage/getDirectMessageParticipantKey";
@@ -24,7 +25,6 @@ import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { assertIsMember } from "@@/server/services/room/assertIsMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
