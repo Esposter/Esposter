@@ -67,7 +67,7 @@ Files in the second set and not the first are the over-invalidation the migratio
 
 Two failure modes to probe in the same spike, because both would end the phase:
 
-- **Tracing through the sandbox.** Input tracing observes syscalls. `pnpm build:web` runs inside virrun's bubblewrap RAM overlay on a Windows host, and whether a traced input set survives an overlay mount — and whether the paths it records are host paths or sandbox paths — is unknown. On Linux the config resolves the native passthrough backend, so CI is the easy case and the dev loop is the hard one.
+- **Tracing through the sandbox.** Input tracing observes syscalls. Every build runs native, but the checks `vp` would cache next — `typecheck`, `test`, `lint` — run inside virrun's bubblewrap RAM overlay on a Windows host, and whether a traced input set survives an overlay mount — and whether the paths it records are host paths or sandbox paths — is unknown. On Linux the config resolves the native passthrough backend, so CI is the easy case and the dev loop is the hard one.
 - **Tracing a build that spawns workers.** tsdown and Nuxt both fan out to child processes. A tracer that only sees the parent's reads would produce a key that is confidently wrong, which is worse than the conservative key it replaces.
 
 ## Early cutoff stays unowned

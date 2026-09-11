@@ -83,7 +83,7 @@ The gate at the top is the one that matters. Everything below it rests on a sing
 
 **Blocked by:** nothing technical. Its task cache is subsumed by phase 1 and its prepare layer is a cost the sandbox imposes on itself, so the only open question is whether the warm-snapshot loop's local speed is worth the maintenance surface that keeps it correct. That is a judgement call, available at any time.
 
-**Ends when:** the package and its documentation area are gone, `pnpm build` is back to one selector, the coverage job has dropped its sandbox install and its image pin, and the published-package decision has been taken explicitly rather than by omission.
+**Ends when:** the package and its documentation area are gone, the coverage job has dropped its sandbox install and its image pin, and the published-package decision has been taken explicitly rather than by omission.
 
 **Killed by:** deciding the speed is worth keeping — in which case phases 1 through 4 still stand, and virrun keeps exactly one job.
 
