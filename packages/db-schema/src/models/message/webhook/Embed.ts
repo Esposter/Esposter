@@ -29,7 +29,7 @@ export interface Embed {
 
 export const embedSchema = z.object({
   author: embedAuthorSchema.optional(),
-  color: z.number().int().min(0).max(EMBED_COLOR_MAX_VALUE).optional(),
+  color: z.int().min(0).max(EMBED_COLOR_MAX_VALUE).optional(),
   description: z.string().max(EMBED_DESCRIPTION_MAX_LENGTH).optional(),
   fields: createUniqueArraySchema(embedFieldSchema, "name").max(EMBED_FIELDS_MAX_LENGTH).optional(),
   footer: embedFooterSchema.optional(),
