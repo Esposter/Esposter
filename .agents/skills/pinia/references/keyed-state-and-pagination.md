@@ -40,6 +40,12 @@ const { data: trailingText } = useDataMap(() => fooStore.currentFooId, "");
 
 Selection state uses the same primitive — the selected id is `useDataMap(() => parentStore.currentId, "")` and the selected entity a `computed` that `find`s it, so mutations set the id directly (`setSelectedFooId(input.parentId, newFoo.id)` from a create's `onSuccess`) rather than emitting.
 
+## Every field is keyed, and a write names its key
+
+**State describing one key must be keyed by it — a plain `ref` is only correct when the key cannot change under the store.** A global ref outlives the switch: at the moment the current id changes it still holds the previous key's value, so anything asking "is this the current key's data" reads a stale yes, and consumers grow guards over ambiguous state instead of getting an answer. Applies to **every field** of that state, not just the list — a keyed list beside global counts is the same bug, half-fixed (see `apps/web/content/docs/esbabbler/offline-cache.md`).
+
+**A write names its key; only a read may be ambient.** The `items`/`data` a keyed map hands back tracks whichever key is current, so an `onSuccess`, an optimistic rollback or a late read response landing after the key moved would file one key's rows under another's — a room's emoji appearing in the room the user navigated to. `useCursorPaginationDataMap` types its ambient `items` `readonly` so that write does not compile: a writer comes only from `getSlice(key)` (`getDataRef(key)`, or `getBoundData()` for the current one, on a plain `useDataMap`), and obtaining one means naming the key. **Resolve the slice where the operation is issued, never inside the callback that lands** — a store's writers are typically one `getRoomOperationData(roomId)` helper wrapping `createOperationData(getSlice(roomId).items, …)`. Ordering is the separate half: a read of a target that can be re-entered passes `key: <that id>` to `executeQuery`, so re-entry supersedes the read it interrupted and an A→B→A round cannot land the oldest response last. Why a guard was the wrong shape for this: the `invariants` skill.
+
 ## Cursor pagination helpers
 
 | Helper                                       | When to use                                                                           |
