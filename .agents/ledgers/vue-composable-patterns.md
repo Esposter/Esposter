@@ -5,11 +5,11 @@ Composable shape and, first, the primitives that already own a job: ordering ove
 | Unit                                                       | Swept      | Notes                                                                             |
 | ---------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------- |
 | `app/composables/shared`                                   | 2026-09-13 | the primitives themselves — a counter here is the implementation, not a violation |
-| `app/composables/resource`                                 |            |                                                                                   |
-| `app/composables/message`                                  |            |                                                                                   |
-| `app/composables/data`, `app/composables/file`, root files |            |                                                                                   |
-| `app/composables/dungeons`, `app/composables/clicker`      |            | Phaser-driven; frame loops are not async ordering                                 |
-| `app/store` as call sites                                  |            | shape is the `pinia` ledger's; this reads only the bookkeeping around an `await`  |
+| `app/composables/resource`                                 | 2026-09-13 |                                                                                   |
+| `app/composables/message`                                  | 2026-09-13 |                                                                                   |
+| `app/composables/data`, `app/composables/file`, root files | 2026-09-13 |                                                                                   |
+| `app/composables/dungeons`, `app/composables/clicker`      | 2026-09-13 | Phaser-driven; frame loops are not async ordering                                 |
+| `app/store` as call sites                                  | 2026-09-13 | shape is the `pinia` ledger's; this reads only the bookkeeping around an `await`  |
 
 ## The find recipe
 
