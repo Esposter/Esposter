@@ -14,7 +14,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/services`                                                             | 2026-09-12 | a file is named for its export, and a second map is a second file                            |
 | `app/models/dungeons`                                                      | 2026-09-12 | a class hierarchy stays a model; a map and the behaviour it dispatches to do not             |
 | `app/models/resource`                                                      | 2026-09-12 | a command class stays a model; the map beside a form union does not                          |
-| `app/models/message`                                                       | —          | a type derived from a services map is a type-only import, not a move                         |
+| `app/models/message`                                                       | 2026-09-12 | a type derived from a services map is a type-only import, not a move                         |
 | `app/models` — the rest                                                    | —          | the resolver class hierarchies stay models, like the sheet commands                          |
 | `app/util`                                                                 | 2026-09-12 | a type-only third-party import is the `util/types` escape, not a `services/` move            |
 | `app/types`                                                                | 2026-09-12 | ambient `.d.ts` only                                                                         |
