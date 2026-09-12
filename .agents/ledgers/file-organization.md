@@ -25,7 +25,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `server/trpc` — the room family                                                 | 2026-09-12 | `room`, `call`, `userToRoom`                                                                  |
 | `server/trpc` — the rest                                                        | 2026-09-12 | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                             |
 | `app/components/Message` — `Content`, `DraftsAndSent`, `Friends`, the side bars | 2026-09-12 | the stray-component half is `components/index.test.ts`, not a pass                            |
-| `app/components/Message/Model/Message`                                          | —          |                                                                                               |
+| `app/components/Message/Model/Message`                                          | 2026-09-12 |                                                                                               |
 | `app/components/Message/Model/Room`                                             | —          |                                                                                               |
 | `app/components/Message/Model` — `User` and the small folders                   | —          | `FileRenderer`, `Settings`, `RoomCategory`, `Status`, `Member`                                |
 | `app/components/Resource`                                                       | —          |                                                                                               |

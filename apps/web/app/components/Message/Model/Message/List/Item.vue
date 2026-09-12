@@ -3,6 +3,7 @@ import type { Creator } from "@/models/message/Creator";
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageDisplayMode } from "@/models/message/MessageDisplayMode";
+import { SAME_BATCH_WINDOW_MS } from "@/services/message/constants";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
 import { useMessageDialogStore } from "@/store/message/dialog";
@@ -15,9 +16,6 @@ interface Props {
   message: MessageEntity;
   nextMessage?: MessageEntity;
 }
-
-// Consecutive messages from the same author within this window render as one batch — one avatar, one header
-const SAME_BATCH_WINDOW_MS = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 
 const { creator, message, nextMessage } = defineProps<Props>();
 const isSameBatch = computed(

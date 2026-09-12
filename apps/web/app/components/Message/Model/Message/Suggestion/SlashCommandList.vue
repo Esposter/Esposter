@@ -7,7 +7,7 @@ import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { takeOne } from "@esposter/shared";
 
 const { command, items, query } = defineProps<Pick<SuggestionProps<SlashCommand>, "command" | "items" | "query">>();
-const title = computed(() => getSuggestionListTitle("COMMANDS", SuggestionTrigger.SlashCommand, query));
+const title = computed(() => getSuggestionListTitle(SuggestionTrigger.SlashCommand, query));
 // The required/optional split drives three template positions per row, so it is partitioned once per item
 // Rather than re-filtered inside the v-for on every keystroke that refilters the list
 const commandItems = computed(() =>
