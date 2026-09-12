@@ -60,7 +60,7 @@ landed, is a lie the tail invented. Return early instead; the caller still gets 
 
 A tail step that nothing downstream reads may be fired rather than awaited — `getSynchronizedFunction(writeResourceActivity)(...)` returns immediately and still lets tests drain it deterministically ([no polling](/docs/architecture/no-polling)). Same rule, one less `await`.
 
-Where the side effect is a write with its own event — a system message announcing that someone left a room — the write and its emit are wrapped **together** as one unit (`createSystemRoomMessage`), because relative to the mutation that triggered it the pair is a single best-effort effect.
+Where the side effect is a write with its own event — a system message announcing that someone left a room — the write and its emit are wrapped **together** as one unit (`createSystemRoomMessage`), because relative to the mutation that triggered it the pair is a single best-effort effect. The helper hands that unit back as a `ResultAsync` rather than logging inside it, and the call site terminates it with `.match(noop, console.error)` like any other tail step: the caller is the one that knows what the line was announcing, and the terminal is what the lint below reads.
 
 ## Why best-effort, specifically
 
@@ -76,7 +76,7 @@ Idempotent post-write steps are the one place a rethrow is admissible — a step
 
 ## Enforcement
 
-The tail half is lint-enforced, not left to review. A custom oxlint JS plugin (`scripts/src/oxlint/persistThenNotify.ts`, scoped to `apps/web/server` in `.oxlintrc.json`) errors on any `await` that follows a `*EventEmitter.emit(...)` in the same function unless it never rejects — a `getResult`/`getResultAsync` chain, an internally-best-effort helper like `createSystemRoomMessage`, `publishBlobDeletion` or `publishBlobPrefixDeletion`, or a `Promise` combinator over a fan-out of those. `withFinalizer`/`withFinalizerAsync` are deliberately **not** accepted: both unwrap the original result and rethrow on `Err`, so awaiting one after an emit rejects the caller for an entity that already exists and was already broadcast. The allowlist is by name, so a new helper that wraps its own effect best-effort has to be added to it — otherwise the first call site that awaits it after a notify gets a false positive. It runs in oxlint's single root pass because the check is purely syntactic. What it deliberately can't see is the rarer _gap_ — a fatal `await` sitting **before** the emit — since there's no syntactic marker for "the primary write"; that half stays a review concern, kept small by firing the emit the instant the entity exists.
+The tail half is lint-enforced, not left to review. A custom oxlint JS plugin (`scripts/src/oxlint/persistThenNotify.ts`, scoped to `apps/web/server` in `.oxlintrc.json`) errors on any `await` that follows a `*EventEmitter.emit(...)` in the same function unless it never rejects — a `getResult`/`getResultAsync` chain, any chain terminated by a `.match` whose err handler absorbs the error, or a `Promise` combinator over a fan-out of those. `withFinalizer`/`withFinalizerAsync` are deliberately **not** accepted: both unwrap the original result and rethrow on `Err`, so awaiting one after an emit rejects the caller for an entity that already exists and was already broadcast. The rule carries no list of the repo's own helpers: a helper that is best-effort inside looks exactly like a fatal one at its call site, so such a helper (`createSystemRoomMessage`, `publishBlobDeletion`, `publishBlobPrefixDeletion`) returns its `ResultAsync` and the call site terminates it — the terminal is the proof, and a new helper written the same way needs no registration. It runs in oxlint's single root pass because the check is purely syntactic. What it deliberately can't see is the rarer _gap_ — a fatal `await` sitting **before** the emit — since there's no syntactic marker for "the primary write"; that half stays a review concern, kept small by firing the emit the instant the entity exists.
 
 ## Where a failure surfaces
 
@@ -88,7 +88,7 @@ Server-side (tRPC routers, services, Nitro routes) the terminal handler is `cons
 | ----------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `apps/web/server/services/message/createUserMessage.ts`           | Canonical shape — guards, slowmode clock, write, emit, best-effort tail       |
 | `apps/web/server/trpc/routers/message/index.ts`                   | `forwardMessage` — the same shape per room, under `Promise.allSettled`        |
-| `apps/web/server/services/message/createSystemRoomMessage.ts`     | A write and its emit wrapped together as one best-effort effect               |
+| `apps/web/server/services/message/createSystemRoomMessage.ts`     | A write and its emit as one unit, handed back as a `ResultAsync` to terminate |
 | `apps/web/server/trpc/plugins/achievementPlugin.ts`               | Post-mutation work that always returns the original mutation's result         |
 | `apps/web/server/services/resource/writeResourceActivity.ts`      | Best-effort activity write behind every resource mutation                     |
 | `apps/web/server/services/azure/eventGrid/publishBlobDeletion.ts` | The one chunked best-effort blob-cleanup publish every delete funnels through |

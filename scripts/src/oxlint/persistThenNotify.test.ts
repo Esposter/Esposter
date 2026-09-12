@@ -14,9 +14,22 @@ describe(RULE, () => {
     { name: "afterEmit", source: `aEventEmitter.emit(); await g();`, violations: 1 },
     { name: "beforeEmit", source: `await g(); aEventEmitter.emit();`, violations: 0 },
     { name: "safeWrapperAfterEmit", source: `aEventEmitter.emit(); await getResultAsync(g);`, violations: 0 },
+    // A helper that hands back its ResultAsync is told apart from a fatal one by the terminal the call site
+    // Writes, never by its name — so bare it reports, and terminated it passes, whatever it is called.
+    { name: "bareHelperAfterEmit", source: `aEventEmitter.emit(); await createSystemRoomMessage(x);`, violations: 1 },
+    {
+      name: "absorbingMatchOnHelperAfterEmit",
+      source: `aEventEmitter.emit(); await createSystemRoomMessage(x).match(noop, console.error);`,
+      violations: 0,
+    },
+    {
+      name: "rethrowingMatchOnHelperAfterEmit",
+      source: `aEventEmitter.emit(); await createSystemRoomMessage(x).match(noop, (error) => { throw error; });`,
+      violations: 1,
+    },
     {
       name: "promiseAllOverSafeMap",
-      source: `aEventEmitter.emit(); await Promise.all(xs.map((x) => createSystemRoomMessage(x)));`,
+      source: `aEventEmitter.emit(); await Promise.all(xs.map((x) => createSystemRoomMessage(x).match(noop, console.error)));`,
       violations: 0,
     },
     {

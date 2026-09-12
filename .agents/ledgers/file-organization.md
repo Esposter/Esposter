@@ -83,8 +83,8 @@ finding: one consumer does not earn a place in a shared package.
 
 - One export per file and the models rule both fail the `oxlint` skill's roster gate — each one's exceptions are a
   list of filenames and shapes (`constants.ts`, a schema beside its type, an enum beside its values array, a
-  composable's own options) that grows with the repo — so both stay with the sweep. The models-rule plugin was
-  drafted and dropped; the `oxlint` skill's Settled list says why.
+  composable's own options) that grows with the repo — so both stay with the sweep; the `oxlint` skill's Settled
+  list carries the models-rule plugin.
 - A `util/` file importing a third-party package belongs in `services/`, and that is a specifier test: a
   `no-restricted-imports` override on `**/util/**` whose `group` is `["*", "!node:*", "!#src/*", "!@esposter/*"]` decides
   it, if oxlint honours a negated group and an `allowTypeImports` escape for the pure type utilities under
