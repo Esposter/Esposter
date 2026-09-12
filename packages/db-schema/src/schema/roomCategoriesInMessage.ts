@@ -2,8 +2,8 @@ import { createNameSchema } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { users } from "#src/schema/users";
-import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
+import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { check, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
