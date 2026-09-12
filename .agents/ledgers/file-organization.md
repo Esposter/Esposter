@@ -18,7 +18,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/models` — the rest                                                    | —          | the resolver class hierarchies stay models, like the sheet commands                          |
 | `app/util`                                                                 | 2026-09-12 | a type-only third-party import is the `util/types` escape, not a `services/` move            |
 | `app/types`                                                                | 2026-09-12 | ambient `.d.ts` only                                                                         |
-| `app/composables`                                                          | —          | sole-consumer subfolders                                                                     |
+| `app/composables`                                                          | 2026-09-12 | sole-consumer subfolders                                                                     |
 | `app/store`                                                                | —          | a store's file is named for its domain, so the filename never matches its `use*Store` export |
 | `server/services`, `server/composables`, `server/models`                   | 2026-09-12 |                                                                                              |
 | `server/trpc` — the resource family                                        | —          | `resource`, `survey`, `program`, `procedure/resource`                                        |

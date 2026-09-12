@@ -1,7 +1,8 @@
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
-import type { IndexKey, IndexNames } from "idb";
+import type { PartitionKey } from "@/models/cache/indexedDb/PartitionKey";
+import type { IndexNames } from "idb";
 import type { Promisable } from "type-fest";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
@@ -36,13 +37,6 @@ export interface PaginationCacheOptions<
   ) => Promisable<void>;
   partitionKey: MaybeRefOrGetter<PartitionKey<TStore, TIndex> | undefined>;
 }
-// The schema types every index key as a string, which is what lets a partition double as a `useMutation` target
-// Verbatim. The conditional cannot resolve while the store stays generic, so the intersection restates the
-// Guarantee the schema already makes
-type PartitionKey<
-  TStore extends IndexedDbStoreName,
-  TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
-> = IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> & string;
 
 export const usePaginationCache = <
   TStore extends IndexedDbStoreName,

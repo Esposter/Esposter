@@ -1,3 +1,5 @@
+import type { OnlineSubscribableSource } from "@/models/shared/OnlineSubscribableSource";
+import type { OnlineSubscribableValues } from "@/models/shared/OnlineSubscribableValues";
 import type { Promisable } from "type-fest";
 import type { ComponentInternalInstance, EffectScope, MultiWatchSources, WatchSource } from "vue";
 
@@ -8,12 +10,6 @@ export interface OnlineSubscribableContext {
   instance?: ComponentInternalInstance | null;
   scope?: EffectScope | null;
 }
-
-type OnlineSubscribableSource = object | WatchSource<unknown>;
-
-type OnlineSubscribableValues<TSources extends readonly OnlineSubscribableSource[]> = {
-  -readonly [K in keyof TSources]: TSources[K] extends WatchSource<infer V> ? V : TSources[K];
-};
 
 export function useOnlineSubscribable<const TSources extends readonly OnlineSubscribableSource[]>(
   source: TSources,

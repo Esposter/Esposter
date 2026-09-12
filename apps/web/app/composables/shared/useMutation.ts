@@ -1,4 +1,5 @@
 import type { CacheTag } from "@/models/cache/CacheTag";
+import type { MutationOutcome } from "@/models/shared/MutationOutcome";
 import type { Promisable } from "type-fest";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
@@ -20,12 +21,6 @@ interface MutationOptions<TResult> extends QueryOptions<TResult> {
 // Superseded by a newer call, or rejected — the operation's own rejection never escapes, so this is the only
 // Signal it did not land. A throwing callback does escape: the promise an entry point returns is rejected by a throw
 // From applyOptimistic, from the rollback it returns, or from onSuccess/onError, and nothing here catches them
-type MutationOutcome<TResult> =
-  | { error: Error; status: MutationStatus.Failed }
-  | { result: TResult; status: MutationStatus.Succeeded }
-  | { status: MutationStatus.Dropped }
-  | { status: MutationStatus.Stale };
-
 interface OperationContext<TResult> {
   applyOptimistic?: () => Promisable<() => void>;
   checkIsStale: () => boolean;
