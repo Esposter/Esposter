@@ -1,4 +1,4 @@
-import { getLatestVersionForPrefix } from "#src/updateNode/getLatestVersionForPrefix";
+import { getLatestVersionForPrefix } from "#src/services/updateNode/getLatestVersionForPrefix";
 import { describe, expect, test } from "vitest";
 
 describe(getLatestVersionForPrefix, () => {

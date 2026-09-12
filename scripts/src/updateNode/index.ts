@@ -1,11 +1,11 @@
 import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getLatestVersion } from "#src/services/getLatestVersion";
 import { getVersionParts } from "#src/services/getVersionParts";
-import { getEnginesNode } from "#src/updateNode/getEnginesNode";
-import { getRegistryLatestVersionForPrefix } from "#src/updateNode/getRegistryLatestVersionForPrefix";
-import { setCatalogTypesNode } from "#src/updateNode/setCatalogTypesNode";
-import { setDevEnginesRuntime } from "#src/updateNode/setDevEnginesRuntime";
-import { setEnginesNode } from "#src/updateNode/setEnginesNode";
+import { getEnginesNode } from "#src/services/updateNode/getEnginesNode";
+import { getRegistryLatestVersionForPrefix } from "#src/services/updateNode/getRegistryLatestVersionForPrefix";
+import { setCatalogTypesNode } from "#src/services/updateNode/setCatalogTypesNode";
+import { setDevEnginesRuntime } from "#src/services/updateNode/setDevEnginesRuntime";
+import { setEnginesNode } from "#src/services/updateNode/setEnginesNode";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";

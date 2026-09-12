@@ -1,4 +1,4 @@
-import { ENGINES_NODE_REGEX } from "#src/updateNode/constants";
+import { ENGINES_NODE_REGEX } from "#src/services/updateNode/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 /** Current `engines.node` version from a package.json string, with any leading `^` stripped. */

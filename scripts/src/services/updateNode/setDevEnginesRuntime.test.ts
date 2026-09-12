@@ -1,4 +1,4 @@
-import { setDevEnginesRuntime } from "#src/updateNode/setDevEnginesRuntime";
+import { setDevEnginesRuntime } from "#src/services/updateNode/setDevEnginesRuntime";
 import { describe, expect, test } from "vitest";
 
 describe(setDevEnginesRuntime, () => {

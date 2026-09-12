@@ -48,7 +48,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `scripts/src/oxlint`                                                       | 2026-09-12 | `.oxlintrc.json` loads a plugin by path, so the entrypoint stays; the rules move out          |
 | `scripts/src/coderabbit`                                                   | 2026-09-12 | four verbs; what two share sits at `services/coderabbit` root                                 |
 | `scripts/src/outdatedDependencies`                                         | —          |                                                                                               |
-| `scripts/src/updateNode`                                                   | —          |                                                                                               |
+| `scripts/src/updateNode`                                                   | 2026-09-12 |                                                                                               |
 | `scripts/src/sweeps`                                                       | —          | one entrypoint per scan                                                                       |
 | `scripts/src` — `services`, `models`, `workspace`, root                    | —          | a repo invariant suite is a `workspace/` suite                                                |
 
