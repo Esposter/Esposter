@@ -1,5 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/constants";
-import { getModuleScopeConstants } from "#src/sweeps/constantScope/getModuleScopeConstants";
+import { getModuleScopeConstants } from "#src/services/sweeps/constantScope/getModuleScopeConstants";
 import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";

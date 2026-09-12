@@ -1,4 +1,4 @@
-import { checkHasRepeatedListItems } from "#src/sweeps/repeatedListItems/checkHasRepeatedListItems";
+import { checkHasRepeatedListItems } from "#src/services/sweeps/repeatedListItems/checkHasRepeatedListItems";
 import { describe, expect, test } from "vitest";
 
 describe(checkHasRepeatedListItems, () => {

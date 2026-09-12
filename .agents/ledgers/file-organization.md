@@ -49,7 +49,8 @@ The question is where a thing lives and whether it exists twice — one export p
 | `scripts/src/coderabbit`                                                   | 2026-09-12 | four verbs; what two share sits at `services/coderabbit` root                                 |
 | `scripts/src/outdatedDependencies`                                         | —          |                                                                                               |
 | `scripts/src/updateNode`                                                   | 2026-09-12 |                                                                                               |
-| `scripts/src/sweeps`                                                       | —          | one entrypoint per scan                                                                       |
+| `scripts/src/sweeps` — `constantScope`, `repeatedListItems`                | 2026-09-12 | one entrypoint per scan                                                                       |
+| `scripts/src/sweeps` — the rest                                            | —          | `skillDocs`, `sharedExportConsumers`, `unterminatedResults`, the root helpers                 |
 | `scripts/src` — `services`, `models`, `workspace`, root                    | 2026-09-12 | a repo invariant suite is a `workspace/` suite                                                |
 
 ## Find recipe

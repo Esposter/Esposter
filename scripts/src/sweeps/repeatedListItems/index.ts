@@ -1,6 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
-import { checkHasRepeatedListItems } from "#src/sweeps/repeatedListItems/checkHasRepeatedListItems";
+import { checkHasRepeatedListItems } from "#src/services/sweeps/repeatedListItems/checkHasRepeatedListItems";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

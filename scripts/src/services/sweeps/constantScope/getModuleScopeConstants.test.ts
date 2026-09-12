@@ -1,4 +1,4 @@
-import { getModuleScopeConstants } from "#src/sweeps/constantScope/getModuleScopeConstants";
+import { getModuleScopeConstants } from "#src/services/sweeps/constantScope/getModuleScopeConstants";
 import { describe, expect, test } from "vitest";
 
 describe(getModuleScopeConstants, () => {

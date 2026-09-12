@@ -1,4 +1,5 @@
-import type { ModuleScopeConstant } from "#src/sweeps/constantScope/models/ModuleScopeConstant";
+import type { CodeToken } from "#src/models/sweeps/CodeToken";
+import type { ModuleScopeConstant } from "#src/models/sweeps/constantScope/ModuleScopeConstant";
 
 import { scanCode } from "#src/sweeps/scanCode";
 
@@ -8,10 +9,17 @@ const DECLARATION_REGEX = /^(?:const|let)\s+(?<name>[\w$]+)\s*[:=]/u;
 // Matched on a word boundary, or `awaitable()` and `functionFactory()` would be exempted by their prefixes alone
 const EXEMPT_BODY_REGEX = /^(?:await|(?:async\s+)?function)\b/u;
 
-// A declaration ends at the first `;` genuinely at depth zero — the last non-space token of the text so far
-const checkIsTerminated = (text: string) => {
-  const last = [...scanCode(text)].findLast(([character]) => character.trim());
-  return last?.[0] === ";" && last[1] === 0;
+// The declaration starting at `offset`, as its code tokens up to and including the first `;` genuinely at depth
+// Zero, which is where it ends. One lazy pass: the scan stops at that semicolon rather than reading to the end
+// Of the file, and rescanning a growing prefix once per line the declaration spans would read a k-line
+// Declaration k times over
+const getDeclarationTokens = (text: string, offset: number): CodeToken[] => {
+  const tokens: CodeToken[] = [];
+  for (const token of scanCode(text.slice(offset))) {
+    tokens.push(token);
+    if (token[0] === ";" && token[1] === 0) break;
+  }
+  return tokens;
 };
 
 // Module-scope state in a test file, which a sibling suite can reach and mutate — the `testing` skill's scope
@@ -25,19 +33,21 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
 
   const constants: ModuleScopeConstant[] = [];
   let index = 0;
+  let offset = 0;
 
   while (index < lines.length) {
-    const name = DECLARATION_REGEX.exec(lines[index] ?? "")?.groups?.name;
+    const line = lines[index] ?? "";
+    const name = DECLARATION_REGEX.exec(line)?.groups?.name;
     if (name === undefined) {
       index += 1;
+      offset += line.length + 1;
       continue;
     }
 
-    let end = index;
-    while (end < lines.length && !checkIsTerminated(lines.slice(index, end + 1).join("\n"))) end += 1;
-
-    const declaration = lines.slice(index, end + 1).join("\n");
-    const tokens = [...scanCode(declaration)];
+    const tokens = getDeclarationTokens(text, offset);
+    // A declaration nothing terminates runs to the end of the file
+    const length = tokens.at(-1)?.[2] ?? text.length - offset - 1;
+    const declaration = text.slice(offset, offset + length + 1);
     const assignment = tokens.findIndex(([character, depth]) => character === "=" && depth === 0);
     const after = assignment === -1 ? [] : tokens.slice(assignment + 1);
     const body = after
@@ -52,7 +62,10 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
     // `vi.hoisted` is lifted above the imports, so a `describe` scope cannot hold it
     if (!isArrow && !declaration.includes("vi.hoisted") && !EXEMPT_BODY_REGEX.test(body))
       constants.push({ line: index + 1, name });
-    index = end + 1;
+    // The declaration's last line is consumed whole, so a statement sharing it is never read as a declaration
+    const lineCount = declaration.split("\n").length;
+    for (const consumedLine of lines.slice(index, index + lineCount)) offset += consumedLine.length + 1;
+    index += lineCount;
   }
 
   return constants;

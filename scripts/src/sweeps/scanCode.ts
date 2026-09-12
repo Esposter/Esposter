@@ -1,8 +1,10 @@
+import type { CodeToken } from "#src/models/sweeps/CodeToken";
+
 // Every character of `text` that is real code, paired with its bracket depth and its index in `text`. Strings,
 // Template substitutions and both comment forms are skipped, so a `;` at depth 0 genuinely ends a declaration
 // And a `;` inside a string or a `${…}` does not — a plain bracket count reads both the same and mistakes where
 // A statement stops. The index is what lets a caller match against the code alone and still report a line.
-export const scanCode = function* (text: string): Generator<readonly [string, number, number]> {
+export const scanCode = function* (text: string): Generator<CodeToken> {
   const stack: string[] = [];
   let quote = "";
   let index = 0;
