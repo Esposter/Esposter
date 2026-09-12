@@ -51,7 +51,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `apps/infra` — `github`, root                                                      | 2026-09-13 |                                                                                                 |
 | `packages/configuration`                                                           | 2026-09-12 |                                                                                                 |
 | `packages/parse-tmx`, `packages/xml2js`                                            | 2026-09-13 | barrel contents are `ctix` output — regenerate, never hand-edit                                 |
-| `packages/vue-phaserjs` — `models`                                                 | —          | barrel contents are `ctix` output — regenerate, never hand-edit                                 |
+| `packages/vue-phaserjs` — `models`                                                 | 2026-09-13 | barrel contents are `ctix` output — regenerate, never hand-edit                                 |
 | `packages/vue-phaserjs` — `util`                                                   | —          | the setter maps' home is the `vue-phaserjs` skill's table                                       |
 | `packages/vue-phaserjs` — `components`, `composables`, `hooks`, `plugins`, `store` | —          |                                                                                                 |
 | `scripts/src/dependencyGraph`                                                      | 2026-09-12 | a command keeps its entrypoint; its functions live in `services/<command>`, types in `models`   |
