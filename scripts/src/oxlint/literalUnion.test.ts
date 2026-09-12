@@ -25,6 +25,7 @@ describe("literal-union", () => {
     // A union handed to a generic names keys or narrows a parameter the compiler checks against its target.
     { name: "pickKeys", source: `export type Summary = Pick<Foo, "id" | "name">;`, violations: 0 },
     { name: "genericArgument", source: `export const value = ref<"a" | "b">("a");`, violations: 0 },
+    { name: "parenthesizedKeys", source: `export type Flags = Record<("a" | "b"), boolean>;`, violations: 0 },
   ];
   const { getCodes, getViolations } = setupPluginSuite({ fixtures: FIXTURES, plugin: "literalUnion", rules: [RULE] });
 

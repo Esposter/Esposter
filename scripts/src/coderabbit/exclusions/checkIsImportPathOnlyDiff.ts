@@ -1,3 +1,4 @@
+import { DiffLineSign } from "#src/coderabbit/models/DiffLineSign";
 // A file's `git diff -U0 -M` output, judged as an import-path-only edit: a module moved and the file's entire
 // Diff is the same imports pointing at the new path. "Every changed line is an import" is not the test — a new
 // Symbol, a new package or an added side-effect import passes it — so the added imports must be the removed ones
@@ -13,7 +14,7 @@ const QUOTED_STRING_REGEX = /"[^"]*"/gu;
 // Compared as a sorted set rather than in place: `perfectionist/sort-imports` owns import order, so a repathed import
 // Re-sorts among its neighbours and an in-place compare would keep every such file in review for an order no
 // Reviewer decides. The one import whose position is meaning — a side-effect import — is refused before this runs
-const getBlankedLines = (changedLines: string[], sign: "+" | "-"): string =>
+const getBlankedLines = (changedLines: string[], sign: DiffLineSign): string =>
   changedLines
     .filter((line) => line.startsWith(sign))
     .map((line) => line.slice(1).replaceAll(QUOTED_STRING_REGEX, '""'))
@@ -35,5 +36,5 @@ export const checkIsImportPathOnlyDiff = (diff: string): boolean => {
   // An import attribute value is quoted too (`with { type: "json" }`), so blanking every quoted string would
   // Normalize a changed attribute away — a line carrying a second quoted value stays in the review set
   if (changedLines.some((line) => SECOND_QUOTED_VALUE_REGEX.test(line))) return false;
-  return getBlankedLines(changedLines, "+") === getBlankedLines(changedLines, "-");
+  return getBlankedLines(changedLines, DiffLineSign.Added) === getBlankedLines(changedLines, DiffLineSign.Removed);
 };

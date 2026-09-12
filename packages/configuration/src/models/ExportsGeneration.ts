@@ -9,4 +9,5 @@
 //
 // - "none": a package that names its entrypoints itself, so a barrel would be a file nothing is an entry for.
 // - "vue": the component barrel too, ahead of the TypeScript one, because that one then reaches it.
+// oxlint-disable-next-line literal-union/no-string-literal-union -- an enum here breaks tsdown loading this package's own config through strip-only type stripping, as the comment above says
 export type ExportsGeneration = "none" | "typescript" | "vue";

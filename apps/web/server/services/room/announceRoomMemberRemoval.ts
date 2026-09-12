@@ -1,3 +1,4 @@
+import type { RoomMemberRemovalAction } from "@@/server/models/room/RoomMemberRemovalAction";
 import type { Context } from "@@/server/trpc/context";
 import type { UserToRoomInMessage } from "@esposter/db-schema";
 
@@ -13,7 +14,7 @@ export const announceRoomMemberRemoval = async (
   { roomId, userId }: Pick<UserToRoomInMessage, "roomId" | "userId">,
   actorUserId: string,
   sessionId: string,
-  action: "banned" | "kicked",
+  action: RoomMemberRemovalAction,
 ): Promise<void> => {
   roomEventEmitter.emit("leaveRoom", { roomId, sessionId, userId });
   // Best-effort after the membership delete — the name lookup only exists to word the system message, so a

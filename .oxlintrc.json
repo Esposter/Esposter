@@ -28,9 +28,9 @@
   },
   "overrides": [
     {
-      "files": ["apps/infra/**/*.ts"],
+      "files": ["**/*.d.ts"],
       "rules": {
-        "literal-union/no-string-literal-union": "error"
+        "literal-union/no-string-literal-union": "off"
       }
     },
     {
@@ -171,6 +171,7 @@
     "complexity": "off",
     "curly": ["error", "multi"],
     "error-alert/no-raw-error-alert": "error",
+    "literal-union/no-string-literal-union": "error",
     "func-names": "off",
     "id-denylist": ["error", "acc", "curr", "idx"],
     "id-length": "off",

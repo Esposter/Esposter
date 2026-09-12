@@ -13,6 +13,7 @@ import { readModerationNotesCountInputSchema } from "#shared/models/db/moderatio
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { RoomMemberRemovalAction } from "@@/server/models/room/RoomMemberRemovalAction";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
@@ -129,7 +130,14 @@ export const moderationRouter = router({
         case AdminActionType.CreateBan:
         case AdminActionType.SoftBan: {
           const deletedMember = await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
-          if (deletedMember) await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, sessionId, "banned");
+          if (deletedMember)
+            await announceRoomMemberRemoval(
+              ctx.db,
+              deletedMember,
+              actorUserId,
+              sessionId,
+              RoomMemberRemovalAction.Banned,
+            );
           // A soft ban also purges what the member wrote — best-effort after the ban commits: the ban is the effect
           // That must not be lost, and rethrowing here would fail a mutation whose row already landed. Nothing
           // Re-runs the purge — re-issuing the ban hits `onConflictDoNothing`, and there is no sweeper or retry
@@ -149,7 +157,14 @@ export const moderationRouter = router({
             .delete(usersToRoomsInMessage)
             .where(getRoomMembershipWhere(roomId, targetUserId))
             .returning();
-          if (deletedMember) await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, sessionId, "kicked");
+          if (deletedMember)
+            await announceRoomMemberRemoval(
+              ctx.db,
+              deletedMember,
+              actorUserId,
+              sessionId,
+              RoomMemberRemovalAction.Kicked,
+            );
           break;
         }
         case AdminActionType.StopScreenShare: {

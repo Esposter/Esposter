@@ -3,6 +3,7 @@ import type { ExecBackend } from "#src/models/exec/ExecBackend";
 import type { ExecOptions } from "#src/models/exec/ExecOptions";
 import type { StdioOptions } from "node:child_process";
 
+import { BwrapStatusSource } from "#src/models/exec/bwrap/BwrapStatusSource";
 import { BackendType } from "#src/models/virrun/BackendType";
 import { createStderrLiveWriter } from "#src/services/exec/bwrap/createStderrLiveWriter";
 import { getNoStatusFailureHeadline } from "#src/services/exec/bwrap/getNoStatusFailureHeadline";
@@ -28,7 +29,7 @@ export const createBwrapBackend = (
       const bwrapCommand = createBwrapCommand(createBwrapArgs(command, options.cwd, options), options);
       const [file, ...args] = bwrapCommand.command;
       const stdio: StdioOptions =
-        bwrapCommand.statusSource === "fd"
+        bwrapCommand.statusSource === BwrapStatusSource.Fd
           ? [options.stdio, options.stdio, options.stdio, "pipe"]
           : [options.stdio, options.stdio, "pipe"];
       const child = spawnHidden(file, args, {
@@ -44,7 +45,8 @@ export const createBwrapBackend = (
       // The wsl backend pipes stderr to parse its appended status block, so under "inherit" (or a wsl tee) stream the
       // Real output live, withholding the trailing status block; the fd backend's stderr is clean and tees raw.
       const writeStderrLive =
-        (options.stdio === "inherit" || teeTarget !== undefined) && bwrapCommand.statusSource === "stderr"
+        (options.stdio === "inherit" || teeTarget !== undefined) &&
+        bwrapCommand.statusSource === BwrapStatusSource.Stderr
           ? createStderrLiveWriter()
           : undefined;
       child.stdout?.on("data", (chunk) => {
@@ -64,7 +66,7 @@ export const createBwrapBackend = (
       child.on("error", reject);
       child.on("close", (closeCode, closeSignal) => {
         const bwrapStderr =
-          bwrapCommand.statusSource === "stderr" ? parseBwrapStderrStatus(stderr) : { status, stderr };
+          bwrapCommand.statusSource === BwrapStatusSource.Stderr ? parseBwrapStderrStatus(stderr) : { status, stderr };
         const exitCode = parseBwrapExitCode(bwrapStderr.status);
         if (exitCode === undefined) {
           // No status block means bwrap never reported, and only one of the reasons is bubblewrap: a folded prelude

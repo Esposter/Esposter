@@ -3,8 +3,8 @@ import type { ColumnFilter } from "@/models/resource/sheet/column/ColumnFilter";
 import type { StringColumnFilter } from "@/models/resource/sheet/column/StringColumnFilter";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { BooleanFilterValue } from "@/models/resource/sheet/column/BooleanFilterValue";
 import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
-import { NULL_BOOLEAN_FILTER_VALUE } from "@/services/resource/sheet/constants";
 
 // A filter variant may answer to more than one ColumnType (one string filter covers Date and String), so the
 // Variant is selected by whether its own type union contains the key rather than by an exact match
@@ -20,7 +20,7 @@ const checkIsMatchingStringCell: ColumnFilterPredicate<StringColumnFilter> = (fi
 
 export const ColumnFilterPredicateMap = {
   [ColumnType.Boolean]: (filter, cellValue) => {
-    if (filter.value === NULL_BOOLEAN_FILTER_VALUE) return cellValue === null;
+    if (filter.value === BooleanFilterValue.Null) return cellValue === null;
     else if (filter.value === BooleanValue.True) return cellValue === true;
     else if (filter.value === BooleanValue.False) return cellValue === false;
     else return true;

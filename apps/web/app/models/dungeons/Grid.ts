@@ -109,7 +109,7 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
   // Than stopping at the first. Without `wrap` the candidate stops at the edge and the walk ends by assigning the
   // Cursor where it already was — pressing up at the top of a menu does nothing rather than failing, and only a
   // Walk that finds nothing valid throws. The axis bound is the row count vertically, the row's length across
-  #step(axis: "x" | "y", delta: -1 | 1, isSkipValidation?: boolean) {
+  #step(axis: keyof Position, delta: -1 | 1, isSkipValidation?: boolean) {
     const size = axis === "y" ? this.rowSize : this.getColumnSize(this.position.value.y);
     const lastIndex = size - 1;
     let next = this.position.value[axis];

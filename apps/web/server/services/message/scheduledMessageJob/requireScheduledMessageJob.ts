@@ -1,3 +1,4 @@
+import type { RequireMutationCode } from "@@/server/models/trpc/RequireMutationCode";
 import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
 import type { Operation } from "@esposter/shared";
 
@@ -8,5 +9,5 @@ export const requireScheduledMessageJob = (
   scheduledMessageJob: ScheduledMessageJobInMessage | undefined,
   operation: Operation,
   context: string,
-  code?: "BAD_REQUEST" | "NOT_FOUND",
+  code?: RequireMutationCode,
 ) => requireMutation(scheduledMessageJob, operation, DatabaseEntityType.ScheduledMessageJob, context, code);

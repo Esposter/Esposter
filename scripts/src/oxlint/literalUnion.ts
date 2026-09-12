@@ -9,6 +9,9 @@ import { definePlugin, defineRule } from "@oxlint/plugins";
 // Empty sentinel the typescript skill allows, and a lone discriminant (`type: "ApiConnection"`) is a single
 // Value. Numeric unions (`-1 | 1`) are left alone, since an enum would only rename the numbers, and so is a
 // Union passed as a type argument — `Pick<Foo, "a" | "b">` names keys the compiler already checks against `Foo`.
+//
+// Off for `**/*.d.ts` in the root .oxlintrc.json: an ambient declaration mirrors a library's API, whose unions
+// Are the library's to name.
 const MESSAGE =
   'A union of string literals is an enum — declare `enum Foo { Bar = "bar" }` in its own model file and reference it. See the typescript skill.';
 
@@ -21,7 +24,11 @@ const stringLiteralUnionRule = defineRule({
     const reportedStarts = new Set<number>();
     return {
       TSUnionType(node) {
-        if (node.parent.type === "TSTypeParameterInstantiation" || reportedStarts.has(node.start)) return;
+        if (reportedStarts.has(node.start)) return;
+        // A parenthesised union is the same argument: `Record<("a" | "b"), T>` is still a set of keys
+        let parent = node.parent;
+        while (parent.type === "TSParenthesizedType") parent = parent.parent;
+        if (parent.type === "TSTypeParameterInstantiation") return;
         const stringLiteralCount = node.types.filter((type) => checkIsStringLiteralType(type)).length;
         if (stringLiteralCount < 2) return;
         reportedStarts.add(node.start);
