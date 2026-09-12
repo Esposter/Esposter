@@ -1,7 +1,7 @@
 import type { AzureEntity, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
-import { checkIsNotFound } from "#src/services/azure/checkIsNotFound";
+import { checkIsNotFound } from "#src/services/azure/table/checkIsNotFound";
 import { deserializeEntity } from "#src/services/azure/transformer/deserializeEntity";
 import { getResultAsync } from "@esposter/shared";
 

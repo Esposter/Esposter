@@ -1,12 +1,7 @@
+import type { ListBlobNamesOptions } from "#src/models/azure/container/ListBlobNamesOptions";
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
-
-interface ListBlobNamesOptions {
-  // Keeps only blobs created strictly before this instant — the filter a prefix sweep needs so a blob that was
-  // Just uploaded, but whose owning row write has not landed yet, is never mistaken for an orphan
-  createdBefore?: Date;
-}
 // Always flat, never `listBlobsByHierarchy`: every prefix here names a directory without its trailing delimiter,
 // And a hierarchy listing classifies everything below such a prefix as a BlobPrefix rather than a BlobItem — so
 // It resolves to zero blobs and hands its caller a successful empty clone or teardown for a full directory.
