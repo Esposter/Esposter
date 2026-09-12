@@ -4,15 +4,10 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 import { MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";
+import { CALL_BACKGROUND_UPLOAD_KEY } from "@/services/message/room/call/constants";
+import { getCallBackgroundKey } from "@/services/message/room/call/getCallBackgroundKey";
 import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
 import { getCallBackgroundSelection } from "@/services/message/room/call/getCallBackgroundSelection";
-import { ID_SEPARATOR } from "@esposter/shared";
-
-// One upload affordance, so one stable target: the picker's tile is disabled while a write is in flight, and
-// This is what it reads. Deletes are keyed per slot instead — they are independent targets, and sharing one
-// Key would serialise a user working down their own list
-const CALL_BACKGROUND_UPLOAD_KEY = "callBackgroundUpload";
-const getCallBackgroundKey = (slot: CallBackground["slot"]) => `callBackground${ID_SEPARATOR}${slot}`;
 
 export const useCallBackgroundStore = defineStore("message/user/settings/callBackground", () => {
   const { $trpc } = useNuxtApp();

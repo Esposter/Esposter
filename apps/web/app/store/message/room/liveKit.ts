@@ -15,6 +15,9 @@ import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCa
 import { checkIsRemoteAudioSource } from "@/services/message/room/liveKit/checkIsRemoteAudioSource";
 import { getRemoteAudioElementKey } from "@/services/message/room/liveKit/getRemoteAudioElementKey";
 import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
+import { SCREEN_SHARE_CAPTURE_OPTIONS } from "@/services/message/room/call/constants";
+import { VoiceDeviceKinds, VoiceDeviceSettingsKeyMap } from "@/services/message/room/call/VoiceDeviceSettingsKeyMap";
+import { getRemoteStreamHandlers } from "@/services/message/room/liveKit/getRemoteStreamHandlers";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useUserSettingsStore } from "@/store/message/user/settings";
@@ -29,40 +32,6 @@ import {
 import { getResultAsync, noop } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { ConnectionQuality, ConnectionState, Room, RoomEvent, Track } from "livekit-client";
-
-// Which persisted selection each LiveKit device kind writes to, so writing a pick, restarting the live track on
-// A change, and syncing back what the room reports all read one declaration instead of three parallel ones
-const VoiceDeviceSettingsKeyMap = {
-  audioinput: "inputDeviceId",
-  audiooutput: "outputDeviceId",
-  videoinput: "cameraDeviceId",
-} as const satisfies Record<MediaDeviceKind, string>;
-// `Object.keys` widens to `string`, and every kind here is handed straight to LiveKit's device API, which takes
-// A `MediaDeviceKind`
-const VoiceDeviceKinds = Object.keys(VoiceDeviceSettingsKeyMap) as MediaDeviceKind[];
-// Camera and screen share arrive on the same two events and differ only in the source they answer to and the
-// Stream they set, so one factory declares both directions for each
-const getRemoteStreamHandlers = (
-  source: Track.Source,
-  setStream: (identity: string, stream: MediaStream | undefined) => void,
-) => ({
-  attach: (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
-    if (publication.source !== source || !track.mediaStream) return;
-    setStream(participant.identity, track.mediaStream);
-  },
-  detach: (_track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
-    if (publication.source !== source) return;
-    setStream(participant.identity, undefined);
-  },
-});
-// Presentation-quality capture: full HD, at a frame rate that keeps slides and code legible without saturating
-// The uplink, and never offering the tab doing the sharing as a surface to share
-const SCREEN_SHARE_CAPTURE_OPTIONS = {
-  audio: true,
-  resolution: { frameRate: 15, height: 1080, width: 1920 },
-  selfBrowserSurface: "exclude",
-  surfaceSwitching: "include",
-} as const;
 
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
