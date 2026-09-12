@@ -1,5 +1,5 @@
-import { getUnresolvedFindings } from "#src/sweeps/skillDocs/getUnresolvedFindings";
-import { SkillDocsFindingType } from "#src/sweeps/skillDocs/models/SkillDocsFindingType";
+import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFindingType";
+import { getUnresolvedFindings } from "#src/services/sweeps/skillDocs/getUnresolvedFindings";
 import { describe, expect, test } from "vitest";
 
 describe(getUnresolvedFindings, () => {

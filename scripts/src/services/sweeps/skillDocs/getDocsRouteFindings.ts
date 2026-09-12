@@ -1,8 +1,8 @@
-import type { SkillDocsFile } from "#src/sweeps/skillDocs/models/SkillDocsFile";
-import type { SkillDocsFinding } from "#src/sweeps/skillDocs/models/SkillDocsFinding";
+import type { SkillDocsFile } from "#src/models/sweeps/skillDocs/SkillDocsFile";
+import type { SkillDocsFinding } from "#src/models/sweeps/skillDocs/SkillDocsFinding";
 
-import { getSkillName } from "#src/sweeps/skillDocs/getSkillName";
-import { SkillDocsFindingType } from "#src/sweeps/skillDocs/models/SkillDocsFindingType";
+import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFindingType";
+import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 
 const DOCS_ROUTE_REGEX = /`\/docs\//u;
 // The two that teach the route and url forms, and so are the two that may write one

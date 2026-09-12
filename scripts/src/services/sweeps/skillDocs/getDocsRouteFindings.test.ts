@@ -1,5 +1,5 @@
-import { getDocsRouteFindings } from "#src/sweeps/skillDocs/getDocsRouteFindings";
-import { SkillDocsFindingType } from "#src/sweeps/skillDocs/models/SkillDocsFindingType";
+import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFindingType";
+import { getDocsRouteFindings } from "#src/services/sweeps/skillDocs/getDocsRouteFindings";
 import { describe, expect, test } from "vitest";
 
 describe(getDocsRouteFindings, () => {

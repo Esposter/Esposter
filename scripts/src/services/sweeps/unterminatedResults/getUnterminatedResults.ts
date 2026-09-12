@@ -1,6 +1,7 @@
-import type { UnterminatedResult } from "#src/sweeps/unterminatedResults/models/UnterminatedResult";
+import type { CodeToken } from "#src/models/sweeps/CodeToken";
+import type { UnterminatedResult } from "#src/models/sweeps/unterminatedResults/UnterminatedResult";
 
-import { scanCode } from "#src/sweeps/scanCode";
+import { scanCode } from "#src/services/sweeps/scanCode";
 
 const ASYNC_NAME = "getResultAsync";
 // The annotation is skipped rather than parsed, and the two characters that would carry the match out of the
@@ -19,6 +20,7 @@ const CALL_REGEX = /getResult/gu;
 const DOLLAR_REGEX = /\$/gu;
 const IDENTIFIER_REGEX = new RegExp(`[${IDENTIFIER_CONTINUE_CHARACTERS}]`, "u");
 const NAME = "getResult";
+const NEWLINE_REGEX = /\n/gu;
 const PRECEDING_AWAIT_REGEX = /\bawait\s*$/u;
 const PRECEDING_TRIVIA_REGEX = /(?:\s+|\/\*[\s\S]*?\*\/)+$/u;
 const STATEMENT_START_REGEX = /[;{}]\s*$|^\s*$/u;
@@ -31,7 +33,7 @@ const AFTER_LENGTH = 34;
 // `.matching(noop)` both read as `.match` followed by more identifier characters — no boundary written against
 // The code can tell them apart. The source is where they separate, exactly as the call's own name is re-read
 // There: `end` is one past the last token the name matched, so that token's index is where the source resumes.
-const getIsCalled = (text: string, tokens: readonly (readonly [string, number, number])[], end: number): boolean => {
+const getIsCalled = (text: string, tokens: readonly CodeToken[], end: number): boolean => {
   const last = tokens[end - 1];
   if (!last) return false;
 
@@ -57,6 +59,8 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
   const tokens = [...scanCode(text)];
   const code = tokens.map(([character]) => character).join("");
   const results: UnterminatedResult[] = [];
+  let line = 1;
+  let lineOffset = 0;
 
   for (const match of code.matchAll(CALL_REGEX)) {
     const start = tokens[match.index];
@@ -69,7 +73,14 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
     const afterName = text.slice(start[2] + name.length).replace(TRIVIA_REGEX, "");
     if (!afterName.startsWith("(")) continue;
 
-    const afterTokens = tokens.slice(match.index + name.length).filter(([, depth]) => depth === start[1]);
+    // The code back at the call's own depth, read up to the bracket that closes the scope the call sits in: a
+    // Terminator chained on the call cannot follow that bracket, so the tokens past it are never read
+    const afterTokens: CodeToken[] = [];
+    for (let index = match.index + name.length; index < tokens.length; index += 1) {
+      const token = tokens[index];
+      if (token === undefined || token[1] < start[1]) break;
+      else if (token[1] === start[1]) afterTokens.push(token);
+    }
     const afterCode = afterTokens.map(([character]) => character).join("");
     const after = afterCode.replaceAll(/\s+/gu, " ").trim().slice(0, AFTER_LENGTH);
     const terminator = TERMINATOR_REGEX.exec(afterCode);
@@ -95,15 +106,17 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
         String.raw`(?<![${IDENTIFIER_CONTINUE_CHARACTERS}.])${escapedBinding}\??\.(?:${TERMINATOR_NAMES})`,
         "gu",
       );
-      const bindingTokens = tokens.slice(match.index);
       const bindingMatches = [...code.slice(match.index).matchAll(bindingRegex)];
       const isTerminated = bindingMatches.some((bindingMatch) =>
-        getIsCalled(text, bindingTokens, bindingMatch.index + bindingMatch[0].length),
+        getIsCalled(text, tokens, match.index + bindingMatch.index + bindingMatch[0].length),
       );
       if (isTerminated) continue;
     } else if (!STATEMENT_START_REGEX.test(before)) continue;
 
-    results.push({ after, line: text.slice(0, start[2]).split("\n").length });
+    // Matches arrive in source order, so the line count only ever moves forward from the last hit
+    for (const _ of text.slice(lineOffset, start[2]).matchAll(NEWLINE_REGEX)) line += 1;
+    lineOffset = start[2];
+    results.push({ after, line });
   }
 
   return results;

@@ -1,4 +1,4 @@
-import { scanCode } from "#src/sweeps/scanCode";
+import { scanCode } from "#src/services/sweeps/scanCode";
 import { describe, expect, test } from "vitest";
 
 const readCode = (text: string) =>

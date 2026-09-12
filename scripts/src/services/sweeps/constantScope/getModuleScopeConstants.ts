@@ -1,7 +1,7 @@
 import type { CodeToken } from "#src/models/sweeps/CodeToken";
 import type { ModuleScopeConstant } from "#src/models/sweeps/constantScope/ModuleScopeConstant";
 
-import { scanCode } from "#src/sweeps/scanCode";
+import { scanCode } from "#src/services/sweeps/scanCode";
 
 // Anchored at column zero with no leading-space alternative: that is what scopes the scan to module scope,
 // Since the formatter indents every declaration a `describe` callback holds
