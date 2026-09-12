@@ -1,8 +1,6 @@
-import type { ExecBackend } from "#src/models/exec/ExecBackend";
 import type { ExecOptions } from "#src/models/exec/ExecOptions";
 import type { ExecStdio } from "#src/models/exec/ExecStdio";
 import type { Lease } from "#src/models/exec/snapshot/Lease";
-import type { Environment } from "#src/models/virrun/Environment";
 import type { Virrun } from "#src/models/virrun/Virrun";
 import type { VirrunOptions } from "#src/models/virrun/VirrunOptions";
 
@@ -10,8 +8,6 @@ import { SourceType } from "#src/models/source/SourceType";
 import { BackendType } from "#src/models/virrun/BackendType";
 import { resolvePrepareStep } from "#src/services/configuration/resolvePrepareStep";
 import { persistWithCache } from "#src/services/exec/cache/persistWithCache";
-import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
-import { createOsBackend } from "#src/services/exec/os/createOsBackend";
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "#src/services/exec/os/createOsInstallOptions";
 import { VIRRUN_SNAPSHOT_TEMP_PREFIXES } from "#src/services/exec/snapshot/constants";
@@ -28,20 +24,11 @@ import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnap
 import { VIRRUN_ENV_KEY } from "#src/services/exec/util/constants";
 import { toRootAnchoredExclude } from "#src/services/exec/util/toRootAnchoredExclude";
 import { withColorEnv } from "#src/services/exec/util/withColorEnv";
-import { createVfsBackend } from "#src/services/exec/vfs/createVfsBackend";
 import { readWslLoginEnvironment } from "#src/services/exec/wsl/readWslLoginEnvironment";
 import { resolveMirrorExcludes } from "#src/services/exec/wsl/resolveMirrorExcludes";
 import { loadSource } from "#src/services/source/loadSource";
+import { BackendFactoryMap } from "#src/services/virrun/BackendFactoryMap";
 import { existsSync } from "node:fs";
-// "auto" resolves to native until vfs beats it on the gates. Every factory takes the run's `environment` so the one
-// Backend that narrows what the sandbox can see (os on win32, via the source mirror) derives its exclude set from the
-// Same preset `maskedPaths` below does; the others have no mirror and ignore it.
-const BACKEND_FACTORY_MAP: Record<BackendType, (environment?: Environment) => ExecBackend> = {
-  [BackendType.Auto]: createNativeBackend,
-  [BackendType.Native]: createNativeBackend,
-  [BackendType.Os]: createOsBackend,
-  [BackendType.Vfs]: createVfsBackend,
-};
 // The orchestrator entrypoint: resolve the source to a working directory, pick a backend, and return a handle whose
 // Exec/fork/persist route through it; dispose() tears down any temp state the source created.
 export const createVirrun = async ({
@@ -49,7 +36,7 @@ export const createVirrun = async ({
   environment,
   source = { directory: "", type: SourceType.Directory },
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
-  const execBackend = BACKEND_FACTORY_MAP[backend](environment);
+  const execBackend = BackendFactoryMap[backend](environment);
   const { cwd, dispose: disposeSource } = await loadSource(source);
   // Leases this run holds on the snapshot/prepare hash directories it mounts — released on dispose so pruneStale* can reclaim
   // A superseded layer once no live run is reading it.

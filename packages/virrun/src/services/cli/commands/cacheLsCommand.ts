@@ -2,6 +2,7 @@ import type { CommandDef } from "citty";
 
 import { CommandType } from "#src/models/virrun/CommandType";
 import { formatCacheListing } from "#src/services/cli/cache/formatCacheListing";
+import { readTierEntries } from "#src/services/cli/cache/readTierEntries";
 import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "#src/services/exec/cache/constants";
 import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
@@ -11,10 +12,8 @@ import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheD
 import { getRepoCacheDirectory } from "#src/services/exec/util/getRepoCacheDirectory";
 import { getResult } from "@esposter/shared";
 import { defineCommand } from "citty";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
-// The entries of a host-global cache tier, sorted for a stable listing; an absent tier reads as empty.
-const readTierEntries = (path: string): string[] => (existsSync(path) ? readdirSync(path).toSorted() : []);
 // Reports the on-disk cache tiers: the repo-local dep store and the host-global snapshots, prepare layers and task
 // Entries. IO lives here; rendering is the pure formatCacheListing.
 export const cacheLsCommand: CommandDef = defineCommand({
