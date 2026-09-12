@@ -1,4 +1,4 @@
-import type { KeyedCache } from "#src/models/exec/KeyedCache";
+import type { ProbeCacheOptions } from "#src/models/exec/util/ProbeCacheOptions";
 
 import { VIRRUN_FORCE_PROBE_KEY } from "#src/services/exec/util/constants";
 import { getHostFingerprint } from "#src/services/exec/util/getHostFingerprint";
@@ -15,12 +15,7 @@ export const createProbeCache = <TValue>({
   readPersistedCache,
   shouldPersist,
   writePersistedCache,
-}: {
-  probe: () => TValue;
-  readPersistedCache: (key: string) => TValue | undefined;
-  shouldPersist: (value: TValue) => boolean;
-  writePersistedCache: (cache: Pick<KeyedCache<TValue>, "key" | "value">) => void;
-}): (() => TValue) => {
+}: ProbeCacheOptions<TValue>): (() => TValue) => {
   let cachedValue: TValue;
   let isCached = false;
   return () => {
