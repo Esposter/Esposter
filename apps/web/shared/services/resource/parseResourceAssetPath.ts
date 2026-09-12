@@ -1,9 +1,9 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getDecodedUriComponent } from "@esposter/shared";
 import { z } from "zod";
+import { SnapshotChannel } from "@esposter/db-schema";
 
 // Hoisted: this runs once per embedded asset url on a publish and once per asset request on a published page,
 // So a page with hundreds of images would otherwise build and discard that many schemas

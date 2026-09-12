@@ -1409,6 +1409,9 @@ importers:
       happy-dom:
         specifier: 'catalog:'
         version: 20.14.3
+      keyframe-store:
+        specifier: workspace:*
+        version: link:../../packages/keyframe-store
       msw:
         specifier: 'catalog:'
         version: 2.15.0(@types/node@26.5.1)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)

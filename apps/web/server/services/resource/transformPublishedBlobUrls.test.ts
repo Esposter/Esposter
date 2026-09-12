@@ -2,7 +2,6 @@ import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { ContainerClient } from "@azure/storage-blob";
 import type { Resource } from "@esposter/db-schema";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import {
   FILES_DIRECTORY_SEGMENT,
   RESOURCE_ASSET_URL_REGEX,
@@ -14,6 +13,7 @@ import { transformPublishedBlobUrls } from "@@/server/services/resource/transfor
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { SnapshotChannel } from "@esposter/db-schema";
 
 const { containerClientMock } = vi.hoisted(() => ({
   containerClientMock: {} as { current: ContainerClient },

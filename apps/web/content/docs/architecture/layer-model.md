@@ -48,7 +48,7 @@ sequenceDiagram
   participant PUB as Public /view/[type]/[id]
 
   Creator->>SV: 1. Author survey (SurveyJS autosave → saveResourceContent)
-  Creator->>SV: 2. Publish — snapshot model + assets to {id}/published/{n}
+  Creator->>SV: 2. Publish — snapshot model + assets as a published version
   PUB-->>Respondent: 3. Share /view/Survey/{id} (esbabbler, email block, anywhere)
   Respondent->>AT: 4. Respond → rows (partitionKey = survey resource id)
   Note over SV,AT: Respondents are served the published snapshot — unpublished 404s

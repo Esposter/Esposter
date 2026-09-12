@@ -9,7 +9,7 @@ Publishing an immutable snapshot clones **every asset the content references** a
 
 Content addressing removes the reason. An asset addressed by the hash of its bytes cannot be replaced in place — a different image is a different address — so a snapshot and the working copy can safely reference the same object, and there is nothing to clone and no url to rewrite.
 
-This is a second phase, not part of the first. It shares the substrate and none of the risk: versions can ship on content addressing while assets keep their current paths, and nothing about the version store depends on this landing.
+This is a second phase of the [resource version store](/docs/resource/resource-version-store), sharing its substrate and none of its risk: versions ship on content addressing while assets keep their current paths, and nothing about the store depends on this landing.
 
 ## What it removes
 
@@ -45,4 +45,4 @@ That is what makes it separable and what makes it second. It wants the scan to b
 
 ## Why not now
 
-The version store stands on its own and pays for itself immediately. This phase is a larger blast radius for a smaller win: it removes real complexity and real per-publish latency, but it touches publishing, unpublishing, the asset upload path and the deletion sweep at once, and its correctness rests on a scan rather than on a column. Sequencing it behind a store that is already proven in production is the cheaper order.
+The version store stands on its own and paid for itself immediately. This phase is a larger blast radius for a smaller win: it removes real complexity and real per-publish latency, but it touches publishing, unpublishing, the asset upload path and the deletion sweep at once, and its correctness rests on a scan rather than on a column. Sequencing it behind a store that is already proven in production is the cheaper order.

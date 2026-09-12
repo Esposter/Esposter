@@ -1,6 +1,6 @@
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { z } from "zod";
+import { SnapshotChannel } from "@esposter/db-schema";
 
 export const restoreSnapshotVersionInputSchema = z.object({
   ...resourceIdInputSchema.shape,

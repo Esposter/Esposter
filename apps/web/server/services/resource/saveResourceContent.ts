@@ -4,7 +4,6 @@ import type { SaveResourceContentInput } from "@@/server/models/resource/SaveRes
 import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
-import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
@@ -19,7 +18,7 @@ import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeR
 import { writeResourceActivity } from "@@/server/services/resource/writeResourceActivity";
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
 import { getContentBlobName } from "@esposter/db";
-import { AzureContainer, ResourceActivityType, resources } from "@esposter/db-schema";
+import { AzureContainer, ResourceActivityType, resources, SnapshotReason } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 

@@ -5,6 +5,6 @@ export interface ObjectStore {
   // `byteCount` asks for the head of the object only, which is all a deduplicated write reads. A backend that
   // Serves ranges honours it and one that cannot hands back the whole object — the reader only looks at the
   // Head either way. Undefined when nothing is stored under the key
-  read: (key: string, byteCount?: number) => Promise<undefined | Uint8Array>;
+  read: (key: string, byteCount?: number) => Promise<Uint8Array | undefined>;
   write: (key: string, bytes: Uint8Array) => Promise<void>;
 }

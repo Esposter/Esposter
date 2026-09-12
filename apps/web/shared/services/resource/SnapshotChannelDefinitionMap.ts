@@ -1,7 +1,7 @@
 import type { SnapshotChannelDefinition } from "#shared/models/resource/SnapshotChannelDefinition";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
+import { SnapshotChannel } from "@esposter/db-schema";
 
 // The one place a channel says what it is. Deliberately small: everything that differs between the two
 // Channels beyond these three fields — which counter numbers them, whether an unpublish sweep takes them,

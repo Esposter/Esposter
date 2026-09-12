@@ -1,4 +1,3 @@
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import {
   FILES_DIRECTORY_SEGMENT,
   RESOURCE_ASSET_URL_REGEX,
@@ -9,6 +8,7 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { SnapshotChannel } from "@esposter/db-schema";
 
 describe(getResourceAssetUrl, () => {
   const resourceId = crypto.randomUUID();

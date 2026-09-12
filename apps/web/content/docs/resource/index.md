@@ -34,6 +34,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Recycle bin](/docs/resource/recycle-bin) — soft delete with restore, permanent purge, and a 30-day timer sweep
 - [Activity log](/docs/resource/activity-log) — the per-resource audit trail blade, in Azure Table Storage
 - [Resource snapshots](/docs/resource/resource-snapshots) — published versions and revisions of the working copy in one version history panel, with preview, restore and undo
+- [Resource version store](/docs/resource/resource-version-store) — every retained version as a content-addressed keyframe or delta, so a version costs the edit rather than a copy of the document
 - [Resource save state](/docs/resource/resource-save-state) — one derived state in the blade toolbar saying whether the open resource's edits have reached the server, and when
 - [Shell cohesion](/docs/resource/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Breadcrumb trail](/docs/resource/breadcrumb-trail) — crumbs are the click path, the current page is the title, and a direct link shows no ancestor at all
@@ -73,4 +74,4 @@ Azure service at any point.
 - **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its trigram ranking, favorites, recents, tags, the recycle bin, activity log, and version history.
 - **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email and Flowchart.
 - **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it.
-- **Resource services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, and the notifications bell.
+- **Resource services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, the notifications bell, and version history re-based onto content-addressed keyframes and deltas — one `resourceVersions` table and one workspace package, no new Azure resource.

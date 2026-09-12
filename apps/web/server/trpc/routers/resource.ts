@@ -17,9 +17,7 @@ import { resourceFilterInputSchema } from "#shared/models/db/resource/ResourceFi
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { restoreSnapshotVersionInputSchema } from "#shared/models/db/resource/RestoreSnapshotVersionInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
-import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -39,13 +37,12 @@ import { getFavoriteJoin } from "@@/server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "@@/server/services/resource/getLastAccessedJoin";
 import { getResourcesWhere } from "@@/server/services/resource/getResourcesWhere";
 import { getSearchSimilarity } from "@@/server/services/resource/getSearchSimilarity";
-import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
 import { resourceListSelection } from "@@/server/services/resource/resourceListSelection";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
-import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
 import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
+import { readSnapshotVersionContent } from "@@/server/services/resource/snapshot/readSnapshotVersionContent";
 import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeResourceRevision";
 import { softDeleteResources } from "@@/server/services/resource/softDeleteResources";
 import { withResourceRollback } from "@@/server/services/resource/withResourceRollback";
@@ -69,6 +66,8 @@ import {
   ResourceActivityType,
   resourceFavorites,
   resources,
+  SnapshotChannel,
+  SnapshotReason,
 } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
 import { and, asc, count, desc, eq, ilike, inArray, isNull, sql } from "drizzle-orm";
@@ -271,10 +270,8 @@ export const resourceRouter = router({
         .groupBy(resources.type)
         .orderBy(desc(count())),
     ),
-  // Which snapshots exist comes from a blob prefix listing — no history table, since the
-  // {id}/{channel}/{n} blobs are already the source of truth for that. Which published one is LIVE comes from
-  // The publication row instead, because the two can disagree: the unpublish sweep is a best-effort event, so
-  // A republish can land while retired snapshots are still present, with publishVersion restarted at 1.
+  // Which versions exist comes from the version rows. Which published one is LIVE comes from the publication
+  // Row instead, because a row answers what is live and the listing answers what can be returned to.
   //
   // Both channels in one time-ordered list, because the owner has one question — where can I go back to — and
   // The channels are an address space rather than two things to make them choose between. Every type is asked
@@ -285,8 +282,8 @@ export const resourceRouter = router({
         where: { resourceId: { eq: ctx.resource.id } },
       });
       const channelHistories = await Promise.all([
-        readSnapshotHistory(ctx.resource.id, SnapshotChannel.Revisions),
-        readSnapshotHistory(ctx.resource.id, SnapshotChannel.Published, publication?.publishVersion),
+        readSnapshotHistory(ctx.db, ctx.resource.id, SnapshotChannel.Revisions),
+        readSnapshotHistory(ctx.db, ctx.resource.id, SnapshotChannel.Published, publication?.publishVersion),
       ]);
       // Newest first, and by time rather than by version: the two channels number independently, so an
       // Ordinal says nothing about where a row belongs once they share a list
@@ -343,11 +340,10 @@ export const resourceRouter = router({
     restoreSnapshotVersionInputSchema,
     "id",
   ).mutation<SnapshotRestoration>(async ({ ctx, input: { channel, id, version } }) => {
-    const blobName = getSnapshotContentBlobName(id, channel, version);
     const snapshotContent = await requireEntity(
-      readContentBlob(ResourceDefinitionMap[ctx.resource.type].contentSchema, blobName),
+      readSnapshotVersionContent(ctx.db, ctx.resource, { channel, version }),
       DatabaseEntityType.Resource,
-      blobName,
+      `${id}/${channel}/${version}`,
     );
     // The undo, taken before a single byte of the working copy is written and allowed to fail the whole
     // Restore: a restore is the one operation that destroys draft work on purpose, and one whose undo silently

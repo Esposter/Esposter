@@ -15,6 +15,14 @@ import { getContentAddress } from "#src/services/getContentAddress";
 import { parseObject } from "#src/services/parseObject";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
+// Cheap, because the hash is already computed on every write, and it turns the one failure this format can
+// Suffer — a truncated or mismatched object — into a refused read rather than a plausible-looking document
+const verifyContentAddress = (hash: string, plaintext: Uint8Array): Uint8Array => {
+  if (getContentAddress(plaintext) !== hash)
+    throw new InvalidOperationError(Operation.Read, hash, "object does not hash to its key");
+
+  return plaintext;
+};
 // The store: immutable objects addressed by the hash of their plaintext, each either a keyframe compressed
 // On its own or a delta compressed against exactly one keyframe. No chains, no generations, no rewriting —
 // Reconstructing any version is at most two reads, and an object once written is never touched again until
@@ -46,14 +54,6 @@ export const createKeyframeStore = (
 
     return { plaintext: await decodeObject(parsedObject), storedBytes: bytes.byteLength };
   };
-  // Cheap, because the hash is already computed on every write, and it turns the one failure this format can
-  // Suffer — a truncated or mismatched object — into a refused read rather than a plausible-looking document
-  const verify = (hash: string, plaintext: Uint8Array): Uint8Array => {
-    if (getContentAddress(plaintext) !== hash)
-      throw new InvalidOperationError(Operation.Read, hash, "object does not hash to its key");
-
-    return plaintext;
-  };
   return {
     // An object survives while any record names it, as its own hash or as its base — the caller answers that
     // From its records, so collection is never an object read
@@ -70,13 +70,13 @@ export const createKeyframeStore = (
         if (!bytes) throw new InvalidOperationError(Operation.Read, hash, "object is not stored");
 
         const parsedObject = parseObject(hash, bytes);
-        if (!parsedObject.baseHash) return verify(hash, await decodeObject(parsedObject));
+        if (!parsedObject.baseHash) return verifyContentAddress(hash, await decodeObject(parsedObject));
 
         const keyframe = await readKeyframe(parsedObject.baseHash);
         if (!keyframe)
           throw new InvalidOperationError(Operation.Read, hash, `keyframe ${parsedObject.baseHash} is not stored`);
 
-        return verify(hash, await decodeObject(parsedObject, keyframe.plaintext));
+        return verifyContentAddress(hash, await decodeObject(parsedObject, keyframe.plaintext));
       }),
     write: (plaintext, anchor) =>
       getResultAsync(async () => {

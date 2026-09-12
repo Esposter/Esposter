@@ -9,6 +9,16 @@ import { createMemoryObjectStore } from "#src/services/createMemoryObjectStore.t
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
+const unwrap = <T>(result: ResultAsync<T, Error>) =>
+  result.match(
+    (value) => value,
+    (error) => {
+      throw error;
+    },
+  );
+const countKeyframes = (writtenVersions: WrittenVersion[]) =>
+  writtenVersions.filter(({ baseHash }) => !baseHash).length;
+
 describe(createKeyframeStore, () => {
   const seed = 1;
   const rowCount = 1000;
@@ -19,13 +29,6 @@ describe(createKeyframeStore, () => {
   const editedVersion = takeOne(versions, 1);
   const rewrittenVersion = takeOne(createDocumentVersions({ editCount, rowCount, seed: 2, versionCount: 1 }));
   const emptyAnchor: VersionAnchor = { anchoredBytes: 0, hash: "" };
-  const unwrap = <T>(result: ResultAsync<T, Error>) =>
-    result.match(
-      (value) => value,
-      (error) => {
-        throw error;
-      },
-    );
   // Writes a session the way a caller does: the anchor is derived from what the previous write reported, and
   // Resets whenever a write comes back with an empty base
   const writeVersions = async (keyframeStore: KeyframeStore, sessionVersions: Uint8Array[]) => {
@@ -97,8 +100,6 @@ describe(createKeyframeStore, () => {
     expect.hasAssertions();
 
     const singleEditVersions = createDocumentVersions({ editCount: 1, rowCount, seed, versionCount });
-    const countKeyframes = (writtenVersions: WrittenVersion[]) =>
-      writtenVersions.filter(({ baseHash }) => !baseHash).length;
     const unboundedVersions = await writeVersions(createKeyframeStore(createMemoryObjectStore()), singleEditVersions);
     const budgetedVersions = await writeVersions(
       createKeyframeStore(createMemoryObjectStore(), { segmentBudgetRatio: 0.01 }),
@@ -172,10 +173,10 @@ describe(createKeyframeStore, () => {
     expect.hasAssertions();
 
     const writtenVersions = await writeVersions(createKeyframeStore(createMemoryObjectStore()), versions);
-    const sumBytes = (key: "plaintextBytes" | "storedBytes") =>
-      writtenVersions.reduce((total, writtenVersion) => total + writtenVersion[key], 0);
+    const sumBytes = (readBytes: (writtenVersion: WrittenVersion) => number) =>
+      writtenVersions.reduce((total, writtenVersion) => total + readBytes(writtenVersion), 0);
 
-    expect(sumBytes("plaintextBytes")).toMatchInlineSnapshot(`1140624`);
-    expect(sumBytes("storedBytes")).toMatchInlineSnapshot(`63503`);
+    expect(sumBytes(({ plaintextBytes }) => plaintextBytes)).toMatchInlineSnapshot(`1140624`);
+    expect(sumBytes(({ storedBytes }) => storedBytes)).toMatchInlineSnapshot(`63503`);
   });
 });

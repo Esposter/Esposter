@@ -16,7 +16,7 @@ The publish snapshot is taken server-side, but MJML compiles only in the client 
 ```mermaid
 flowchart LR
   SAVE["Editor blade autosave"] -->|"getEmailHtml(editor)<br/>content.html beside the project data"| BLOB[("{id}/content")]
-  PUB["publishResource"] -->|standard snapshot copy| SNAP[("{id}/published/{n}")]
+  PUB["publishResource"] -->|standard snapshot copy| SNAP[("published version n")]
   VIEW["/view/Email/[id]<br/>ViewComponentMap[Email]"] -->|readPublishedResourceContent| RENDER["sandboxed iframe srcdoc<br/>(same posture as the Webpage view)"]
 ```
 

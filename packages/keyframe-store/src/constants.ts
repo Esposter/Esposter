@@ -17,7 +17,7 @@ export const DELTA_HEADER_BYTE_COUNT: number = OBJECT_HEADER_BYTE_COUNT + HASH_B
 // Waiting behind, and below 12 the ratio degrades sharply and non-monotonically because the lower levels give
 // Up on exactly the long-range matches a near-duplicate document is made of
 export const DEFAULT_COMPRESSION_LEVEL = 12;
-// zstd's own bounds on a frame's window. The upper bound is 128 MiB, which is far past any document this
+// Zstd's own bounds on a frame's window. The upper bound is 128 MiB, which is far past any document this
 // Stores while staying inside what a decoder is willing to allocate
 export const MIN_WINDOW_LOG = 10;
 export const MAX_WINDOW_LOG = 27;

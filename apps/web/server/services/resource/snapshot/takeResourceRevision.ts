@@ -1,19 +1,14 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { Resource } from "@esposter/db-schema";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
-import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
-import { useUpload } from "@@/server/composables/azure/container/useUpload";
-import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
-import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
-import { getSnapshotMetadata } from "@@/server/services/resource/snapshot/getSnapshotMetadata";
-import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
-import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
+import { chargeSnapshotVersion } from "@@/server/services/resource/snapshot/chargeSnapshotVersion";
+import { collectSnapshotObjects } from "@@/server/services/resource/snapshot/collectSnapshotObjects";
+import { writeSnapshotVersion } from "@@/server/services/resource/snapshot/writeSnapshotVersion";
 import { checkIsNotFound, getContentBlobName } from "@esposter/db";
-import { AzureContainer, resources } from "@esposter/db-schema";
+import { AzureContainer, resources, resourceVersions, SnapshotChannel, SnapshotReason } from "@esposter/db-schema";
 import { getResultAsync, noop, streamToText } from "@esposter/shared";
 import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
 
@@ -45,10 +40,10 @@ export const takeResourceRevision = async (
 
   const serializedContent = await streamToText(contentStream);
   // Claimed in SQL so concurrent takes each get a distinct number. The counter leads the write, so a failed
-  // Upload burns a number rather than reusing one — which is the harmless direction: the listing is what
-  // Answers which revisions exist, and it simply never sees the number that was skipped. The timestamp moves
-  // With it for the same reason: it throttles the automatic take, and a failed upload that left the clock
-  // Untouched would have the next save retry immediately.
+  // Write burns a number rather than reusing one — which is the harmless direction: the rows are what answer
+  // Which revisions exist, and a burned number simply has none. The timestamp moves with it for the same
+  // Reason: it throttles the automatic take, and a failed write that left the clock untouched would have the
+  // Next save retry immediately.
   //
   // The interval is part of the claim rather than only the caller's precondition. A save reads its row before it
   // Writes, so two concurrent saves both hold a `revisionTakenAt` from before either took a revision and both
@@ -73,30 +68,28 @@ export const takeResourceRevision = async (
   if (!updatedResource) return undefined;
 
   const { revisionVersion } = updatedResource;
-  const blobName = getSnapshotContentBlobName(id, SnapshotChannel.Revisions, revisionVersion);
-  await useUpload(
-    AzureContainer.ResourceAssets,
-    blobName,
-    serializedContent,
-    getSnapshotMetadata({ reason, summary: getSnapshotSummary(resource.type, serializedContent) }),
-  );
-  // A revision is stored bytes the owner keeps, charged like the working copy it was taken from. On the
-  // Owner rather than the caller: a deploy or a restore writes on their behalf. See /docs/resource/storage-quotas
-  await chargeAndEmitStorageLedgerEntry(
+  const writtenVersion = await writeSnapshotVersion(
     ctx.db,
-    resource.userId,
-    AzureContainer.ResourceAssets,
-    blobName,
-    Buffer.byteLength(serializedContent),
+    resource,
+    { channel: SnapshotChannel.Revisions, reason, version: revisionVersion },
+    serializedContent,
   );
-  // Evicting by number rather than by listing keeps this to one publish rather than a walk of the prefix on
-  // Every save, and a number the buffer already passed over names a blob that is not there — which the deletion
-  // Path treats as success (/docs/resource/resource-snapshots)
+  await chargeSnapshotVersion(ctx.db, resource, writtenVersion);
+  // The ring buffer sheds the rows that fell out of the window, and collection publishes exactly the objects
+  // Nothing else references — so eviction never names a blob that is not there, and a burned number is not a
+  // Concept that exists (/docs/resource/resource-snapshots)
   const { maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
-  const evictedVersion = revisionVersion - maxRetained;
-  if (evictedVersion > 0)
-    await publishBlobDeletion(id, AzureContainer.ResourceAssets, [
-      getSnapshotContentBlobName(id, SnapshotChannel.Revisions, evictedVersion),
-    ]).match(noop, console.error);
+  const evictedVersions = await ctx.db
+    .delete(resourceVersions)
+    .where(
+      and(
+        eq(resourceVersions.resourceId, id),
+        eq(resourceVersions.channel, SnapshotChannel.Revisions),
+        lte(resourceVersions.version, revisionVersion - maxRetained),
+      ),
+    )
+    .returning({ baseHash: resourceVersions.baseHash, hash: resourceVersions.hash });
+  if (evictedVersions.length > 0)
+    await getResultAsync(() => collectSnapshotObjects(ctx.db, id, evictedVersions)).match(noop, console.error);
   return revisionVersion;
 };
