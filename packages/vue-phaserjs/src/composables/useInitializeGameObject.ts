@@ -6,10 +6,10 @@ import type { SetupContext } from "vue";
 import { useInitializeGameObjectEvents } from "#src/composables/useInitializeGameObjectEvents";
 import { useInitializeGameObjectSetters } from "#src/composables/useInitializeGameObjectSetters";
 import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
-import { pushGameObject } from "#src/pushGameObject";
 import { getScene } from "#src/services/getScene";
 import { getInitializeGameObjectLifecycleHook } from "#src/services/hooks/getInitializeGameObjectLifecycleHook";
 import { InjectionKeyMap } from "#src/services/InjectionKeyMap";
+import { pushGameObject } from "#src/services/pushGameObject";
 
 export const useInitializeGameObject = <
   TConfiguration extends object,
