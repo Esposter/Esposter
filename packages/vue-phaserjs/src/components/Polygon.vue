@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { PolygonSetterMap } from "#src/util/setterMap/PolygonSetterMap";
+import { PolygonSetterMap } from "#src/services/setterMap/PolygonSetterMap";
 
 interface PolygonEmits extends /** @vue-ignore */ PolygonEventEmitsOptions {}
 

@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { ParticlesSetterMap } from "#src/util/setterMap/ParticlesSetterMap";
+import { ParticlesSetterMap } from "#src/services/setterMap/ParticlesSetterMap";
 
 interface ParticlesEmits extends /** @vue-ignore */ ParticlesEventEmitsOptions {}
 

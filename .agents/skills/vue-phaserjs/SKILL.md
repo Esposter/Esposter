@@ -14,7 +14,7 @@ Every game object component follows the same 4-file pattern, split across four t
 | `{Name}.vue`                 | `packages/vue-phaserjs/src/components/`           |
 | `{Name}Configuration.ts`     | `packages/vue-phaserjs/src/models/configuration/` |
 | `{Name}EventEmitsOptions.ts` | `packages/vue-phaserjs/src/models/emit/`          |
-| `{Name}SetterMap.ts`         | `packages/vue-phaserjs/src/util/setterMap/`       |
+| `{Name}SetterMap.ts`         | `packages/vue-phaserjs/src/services/setterMap/`   |
 
 `<Game>` mounts the Phaser game and hosts `<Scene>`; every shape component extends `ShapeConfiguration`. One naming trap: the component is `<Nineslice>` with a lowercase `s` — `<NineSlice>` resolves to nothing.
 

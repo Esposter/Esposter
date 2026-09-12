@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { IsoBoxSetterMap } from "#src/util/setterMap/IsoBoxSetterMap";
+import { IsoBoxSetterMap } from "#src/services/setterMap/IsoBoxSetterMap";
 
 interface IsoBoxEmits extends /** @vue-ignore */ IsoBoxEventEmitsOptions {}
 

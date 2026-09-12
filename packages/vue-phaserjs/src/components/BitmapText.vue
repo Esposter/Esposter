@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { BitmapTextSetterMap } from "#src/util/setterMap/BitmapTextSetterMap";
+import { BitmapTextSetterMap } from "#src/services/setterMap/BitmapTextSetterMap";
 
 interface BitmapTextEmits extends /** @vue-ignore */ BitmapTextEventEmitsOptions {}
 

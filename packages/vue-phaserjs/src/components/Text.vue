@@ -3,8 +3,8 @@ import type { TextEventEmitsOptions } from "#src/models/emit/TextEventEmitsOptio
 import type { TextProps } from "#src/models/text/TextProps";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { TextSetterMap } from "#src/services/setterMap/TextSetterMap";
 import { useTextStore } from "#src/store/text";
-import { TextSetterMap } from "#src/util/setterMap/TextSetterMap";
 
 interface TextEmits extends /** @vue-ignore */ TextEventEmitsOptions {}
 

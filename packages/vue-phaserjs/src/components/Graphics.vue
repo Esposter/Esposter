@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { GraphicsSetterMap } from "#src/util/setterMap/GraphicsSetterMap";
+import { GraphicsSetterMap } from "#src/services/setterMap/GraphicsSetterMap";
 
 interface GraphicsEmits extends /** @vue-ignore */ GraphicsEventEmitsOptions {}
 

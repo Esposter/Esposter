@@ -6,7 +6,7 @@ import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { ImageSetterMap } from "#src/util/setterMap/ImageSetterMap";
+import { ImageSetterMap } from "#src/services/setterMap/ImageSetterMap";
 
 interface ImageEmits extends /** @vue-ignore */ ImageEventEmitsOptions {}
 

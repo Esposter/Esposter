@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { IsoTriangleSetterMap } from "#src/util/setterMap/IsoTriangleSetterMap";
+import { IsoTriangleSetterMap } from "#src/services/setterMap/IsoTriangleSetterMap";
 
 interface IsoTriangleEmits extends /** @vue-ignore */ IsoTriangleEventEmitsOptions {}
 

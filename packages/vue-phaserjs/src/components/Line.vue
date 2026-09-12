@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { LineSetterMap } from "#src/util/setterMap/LineSetterMap";
+import { LineSetterMap } from "#src/services/setterMap/LineSetterMap";
 
 interface LineEmits extends /** @vue-ignore */ LineEventEmitsOptions {}
 

@@ -6,8 +6,8 @@ import type { GameObjects } from "phaser";
 import type { VNode } from "vue";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
+import { ContainerSetterMap } from "#src/services/setterMap/ContainerSetterMap";
 import { InjectionKeyMap } from "#src/util/InjectionKeyMap";
-import { ContainerSetterMap } from "#src/util/setterMap/ContainerSetterMap";
 
 interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
 

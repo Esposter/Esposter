@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { TriangleSetterMap } from "#src/util/setterMap/TriangleSetterMap";
+import { TriangleSetterMap } from "#src/services/setterMap/TriangleSetterMap";
 
 interface Props {
   configuration: Partial<TriangleConfiguration>;

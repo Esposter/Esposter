@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { ArcSetterMap } from "#src/util/setterMap/ArcSetterMap";
+import { ArcSetterMap } from "#src/services/setterMap/ArcSetterMap";
 
 interface ArcEmits extends /** @vue-ignore */ ArcEventEmitsOptions {}
 

@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { RectangleSetterMap } from "#src/util/setterMap/RectangleSetterMap";
+import { RectangleSetterMap } from "#src/services/setterMap/RectangleSetterMap";
 
 interface Props {
   configuration: Partial<RectangleConfiguration>;

@@ -4,7 +4,7 @@ import type { ZoneEventEmitsOptions } from "#src/models/emit/ZoneEventEmitsOptio
 import type { SetRequired } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { ZoneSetterMap } from "#src/util/setterMap/ZoneSetterMap";
+import { ZoneSetterMap } from "#src/services/setterMap/ZoneSetterMap";
 
 interface Props {
   configuration: SetRequired<Partial<ZoneConfiguration>, "height" | "width" | "x" | "y">;
