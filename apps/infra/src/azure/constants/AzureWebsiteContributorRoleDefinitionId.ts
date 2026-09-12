@@ -1,5 +1,5 @@
-import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import { getRoleDefinitionId } from "#src/azure/services/getRoleDefinitionId";
 
-const AzureWebsiteContributorRoleDefinitionId: `/subscriptions/${string}/providers/Microsoft.Authorization/roleDefinitions/${string}` = `/subscriptions/${AzureSubscriptionId}/providers/Microsoft.Authorization/roleDefinitions/de139f84-1756-47ae-9be6-808fbbe84772`;
+const AzureWebsiteContributorRoleDefinitionId: string = getRoleDefinitionId("de139f84-1756-47ae-9be6-808fbbe84772");
 
 export default AzureWebsiteContributorRoleDefinitionId;

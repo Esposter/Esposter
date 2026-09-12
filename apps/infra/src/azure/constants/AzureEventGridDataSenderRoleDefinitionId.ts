@@ -1,5 +1,5 @@
-import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import { getRoleDefinitionId } from "#src/azure/services/getRoleDefinitionId";
 
-const AzureEventGridDataSenderRoleDefinitionId: `/subscriptions/${string}/providers/Microsoft.Authorization/roleDefinitions/${string}` = `/subscriptions/${AzureSubscriptionId}/providers/Microsoft.Authorization/roleDefinitions/d5a91429-5739-47e2-a06b-3470a27159e7`;
+const AzureEventGridDataSenderRoleDefinitionId: string = getRoleDefinitionId("d5a91429-5739-47e2-a06b-3470a27159e7");
 
 export default AzureEventGridDataSenderRoleDefinitionId;
