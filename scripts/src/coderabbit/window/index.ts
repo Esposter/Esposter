@@ -1,15 +1,13 @@
-import type { GitHubReview } from "#src/coderabbit/models/GitHubReview";
-import type { PullRequestBranches } from "#src/coderabbit/models/window/PullRequestBranches";
+import type { GitHubReview } from "#src/models/coderabbit/GitHubReview";
+import type { PullRequestBranches } from "#src/models/coderabbit/window/PullRequestBranches";
 
-import { getPullRequestArgument } from "#src/coderabbit/services/getPullRequestArgument";
-import { readBotEntries } from "#src/coderabbit/services/readBotEntries";
-import { runGh } from "#src/coderabbit/services/runGh";
-import { getLastReviewedSha } from "#src/coderabbit/window/getLastReviewedSha";
+import { getPullRequestArgument } from "#src/services/coderabbit/getPullRequestArgument";
+import { readBotEntries } from "#src/services/coderabbit/readBotEntries";
+import { runGh } from "#src/services/coderabbit/runGh";
+import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
+import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 import { runGit } from "#src/services/runGit";
-
-const getFileCount = (range: string): number =>
-  runGit(["diff", "--name-only", range]).split("\n").filter(Boolean).length;
 
 const pullRequest = getPullRequestArgument();
 const { baseRefName, headRefName } = parseMachineJson<PullRequestBranches>(

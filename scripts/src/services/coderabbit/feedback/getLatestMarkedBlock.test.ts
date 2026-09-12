@@ -1,4 +1,4 @@
-import { getLatestMarkedBlock } from "#src/coderabbit/feedback/getLatestMarkedBlock";
+import { getLatestMarkedBlock } from "#src/services/coderabbit/feedback/getLatestMarkedBlock";
 import { describe, expect, test } from "vitest";
 
 const createBody = (risk: string) =>

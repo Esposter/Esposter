@@ -1,4 +1,4 @@
-import { checkIsImportPathOnlyDiff } from "#src/coderabbit/exclusions/checkIsImportPathOnlyDiff";
+import { checkIsImportPathOnlyDiff } from "#src/services/coderabbit/exclusions/checkIsImportPathOnlyDiff";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsImportPathOnlyDiff, () => {

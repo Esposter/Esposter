@@ -1,4 +1,4 @@
-import { checkIsSubstitutionExact } from "#src/coderabbit/exclusions/checkIsSubstitutionExact";
+import { checkIsSubstitutionExact } from "#src/services/coderabbit/exclusions/checkIsSubstitutionExact";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSubstitutionExact, () => {

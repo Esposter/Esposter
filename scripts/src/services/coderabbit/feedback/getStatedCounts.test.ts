@@ -1,4 +1,4 @@
-import { getStatedCounts } from "#src/coderabbit/feedback/getStatedCounts";
+import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
 import { describe, expect, test } from "vitest";
 
 describe(getStatedCounts, () => {

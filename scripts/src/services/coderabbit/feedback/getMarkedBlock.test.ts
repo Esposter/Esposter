@@ -1,4 +1,4 @@
-import { getMarkedBlock } from "#src/coderabbit/feedback/getMarkedBlock";
+import { getMarkedBlock } from "#src/services/coderabbit/feedback/getMarkedBlock";
 import { describe, expect, test } from "vitest";
 
 describe(getMarkedBlock, () => {

@@ -1,9 +1,9 @@
-import type { ReviewThreadsPage } from "#src/coderabbit/models/feedback/ReviewThreadsPage";
-import type { ReviewThread } from "#src/coderabbit/models/ReviewThread";
+import type { ReviewThreadsPage } from "#src/models/coderabbit/feedback/ReviewThreadsPage";
+import type { ReviewThread } from "#src/models/coderabbit/ReviewThread";
 
-import { CODERABBIT_GRAPHQL_LOGIN } from "#src/coderabbit/constants";
-import { getRepository } from "#src/coderabbit/services/getRepository";
-import { runGh } from "#src/coderabbit/services/runGh";
+import { CODERABBIT_GRAPHQL_LOGIN } from "#src/services/coderabbit/constants";
+import { getRepository } from "#src/services/coderabbit/getRepository";
+import { runGh } from "#src/services/coderabbit/runGh";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 
 // `$endCursor` and `pageInfo` are both load-bearing: `gh` follows the cursor only when the query declares one

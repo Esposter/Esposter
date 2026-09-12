@@ -1,6 +1,6 @@
-import type { RepositoryView } from "#src/coderabbit/models/RepositoryView";
+import type { RepositoryView } from "#src/models/coderabbit/RepositoryView";
 
-import { runGh } from "#src/coderabbit/services/runGh";
+import { runGh } from "#src/services/coderabbit/runGh";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 
 // REST accepts `repos/{owner}/{repo}` and lets `gh` fill both in from the checkout's remote; GraphQL substitutes

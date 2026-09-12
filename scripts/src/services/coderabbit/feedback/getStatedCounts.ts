@@ -1,4 +1,4 @@
-import type { StatedCounts } from "#src/coderabbit/models/StatedCounts";
+import type { StatedCounts } from "#src/models/coderabbit/StatedCounts";
 
 const ACTIONABLE_REGEX = /Actionable comments posted:\s*(?<count>\d+)/u;
 const NITPICK_REGEX = /Nitpick comments \((?<count>\d+)\)/u;

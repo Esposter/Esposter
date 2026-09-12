@@ -1,4 +1,4 @@
-import { getRenameSubstitutions } from "#src/coderabbit/exclusions/getRenameSubstitutions";
+import { getRenameSubstitutions } from "#src/services/coderabbit/exclusions/getRenameSubstitutions";
 import { describe, expect, test } from "vitest";
 
 describe(getRenameSubstitutions, () => {

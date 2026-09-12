@@ -1,4 +1,4 @@
-import { getPureRenamePaths } from "#src/coderabbit/exclusions/getPureRenamePaths";
+import { getPureRenamePaths } from "#src/services/coderabbit/exclusions/getPureRenamePaths";
 import { describe, expect, test } from "vitest";
 
 describe(getPureRenamePaths, () => {

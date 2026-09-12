@@ -1,4 +1,4 @@
-import { checkIsCheckpointMoved } from "#src/coderabbit/probe/checkIsCheckpointMoved";
+import { checkIsCheckpointMoved } from "#src/services/coderabbit/probe/checkIsCheckpointMoved";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsCheckpointMoved, () => {

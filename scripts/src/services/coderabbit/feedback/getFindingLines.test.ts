@@ -1,4 +1,4 @@
-import { getFindingLines } from "#src/coderabbit/feedback/getFindingLines";
+import { getFindingLines } from "#src/services/coderabbit/feedback/getFindingLines";
 import { describe, expect, test } from "vitest";
 
 describe(getFindingLines, () => {

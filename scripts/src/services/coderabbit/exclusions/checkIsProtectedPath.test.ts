@@ -1,4 +1,4 @@
-import { checkIsProtectedPath } from "#src/coderabbit/exclusions/checkIsProtectedPath";
+import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkIsProtectedPath";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsProtectedPath, () => {

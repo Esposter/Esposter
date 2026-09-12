@@ -1,23 +1,11 @@
-import type { GitHubEntry } from "#src/coderabbit/models/GitHubEntry";
-
-import { checkIsCheckpointMoved } from "#src/coderabbit/probe/checkIsCheckpointMoved";
-import { getPullRequestArgument } from "#src/coderabbit/services/getPullRequestArgument";
-import { getSortedByUpdatedAt } from "#src/coderabbit/services/getSortedByUpdatedAt";
-import { readBotEntries } from "#src/coderabbit/services/readBotEntries";
-import { runGh } from "#src/coderabbit/services/runGh";
-import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
+import { getPullRequestArgument } from "#src/services/coderabbit/getPullRequestArgument";
+import { checkIsCheckpointMoved } from "#src/services/coderabbit/probe/checkIsCheckpointMoved";
+import { DEADLINE_MS, POLL_INTERVAL_MS } from "#src/services/coderabbit/probe/constants";
+import { getCheckpoint } from "#src/services/coderabbit/probe/getCheckpoint";
+import { readNewestComment } from "#src/services/coderabbit/probe/readNewestComment";
+import { runGh } from "#src/services/coderabbit/runGh";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { setTimeout as delay } from "node:timers/promises";
-
-const POLL_INTERVAL_MS = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
-const DEADLINE_MS = Temporal.Duration.from({ minutes: 10 }).total("milliseconds");
-
-const readNewestComment = (pullRequest: number): GitHubEntry | undefined =>
-  getResult(() => getSortedByUpdatedAt(readBotEntries<GitHubEntry>(`issues/${pullRequest.toString()}/comments`)).at(-1))
-    // A read that threw is not a checkpoint, and an empty reading is what says so downstream
-    .unwrapOr(undefined);
-
-const getCheckpoint = (comment: GitHubEntry | undefined): string =>
-  comment ? `${comment.id.toString()} ${comment.updated_at}` : "";
 
 // Posting the retrigger and reading straight back races the bot: its reply does not exist yet, so the read
 // Returns the previous comment — a real CodeRabbit remark that reads exactly like an answer. The wait is for

@@ -1,4 +1,4 @@
-import { getMarkedBlock } from "#src/coderabbit/feedback/getMarkedBlock";
+import { getMarkedBlock } from "#src/services/coderabbit/feedback/getMarkedBlock";
 
 // The walkthrough is not always the bot's newest comment — a status or rate-limit notice posted after it takes
 // That place — so the block is looked for in every body, newest first, rather than in whichever comment sorts
