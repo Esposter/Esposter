@@ -45,7 +45,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/configuration`                                                   | 2026-09-12 |                                                                                               |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | —          | barrel contents are `ctix` output — regenerate, never hand-edit                               |
 | `scripts/src/dependencyGraph`                                              | 2026-09-12 | a command keeps its entrypoint; its functions live in `services/<command>`, types in `models` |
-| `scripts/src/oxlint`                                                       | —          | `.oxlintrc.json` loads a plugin by path, so the entrypoint stays; the rules move out          |
+| `scripts/src/oxlint`                                                       | 2026-09-12 | `.oxlintrc.json` loads a plugin by path, so the entrypoint stays; the rules move out          |
 | `scripts/src/coderabbit`                                                   | —          | four verbs; what two share sits at `services/coderabbit` root                                 |
 | `scripts/src/outdatedDependencies`                                         | —          |                                                                                               |
 | `scripts/src/updateNode`                                                   | —          |                                                                                               |

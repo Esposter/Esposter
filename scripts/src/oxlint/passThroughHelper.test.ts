@@ -1,4 +1,4 @@
-import { setupPluginSuite } from "#src/oxlint/setupPluginSuite.test";
+import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
 const RULE = "pass-through-helper/no-forwarding-wrapper";

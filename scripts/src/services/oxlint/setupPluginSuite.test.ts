@@ -1,3 +1,4 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { jsonDateParse } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -15,14 +16,17 @@ interface SetupOxlintPluginSuiteOptions {
   // The extension fixtures are written with, for a rule whose subject only exists in one file type
   extension?: string;
   fixtures: OxlintFixture[];
-  // The plugin module's file name without its extension — it sits beside this helper
+  // The plugin entrypoint's file name without its extension, under `scripts/src/oxlint/`
   plugin: string;
   rules: string[];
   // A rule that only sees a construct inside a function frame needs its fixture bodies wrapped in one
   wrapSource?: (source: string) => string;
 }
 
-const OXLINT_BIN = join(import.meta.dirname, "..", "..", "..", "node_modules", "oxlint", "bin", "oxlint");
+const OXLINT_BIN = join(REPOSITORY_ROOT, "node_modules", "oxlint", "bin", "oxlint");
+// The plugin entrypoints stay where `.oxlintrc.json` loads them from, and the suite drives the same file the
+// Config does rather than the rule modules under `services/`
+const PLUGINS_DIRECTORY = join(REPOSITORY_ROOT, "scripts", "src", "oxlint");
 const TEMPORARY_DIRECTORY_PREFIX = "oxlint-plugin-";
 
 // A rule only exists as an oxlint JS plugin and @oxlint/plugins ships no RuleTester, so a suite drives the
@@ -49,7 +53,7 @@ export const setupPluginSuite = ({
       join(directory, ".oxlintrc.json"),
       JSON.stringify({
         categories: {},
-        jsPlugins: [join(import.meta.dirname, `${plugin}.ts`).replaceAll("\\", "/")],
+        jsPlugins: [join(PLUGINS_DIRECTORY, `${plugin}.ts`).replaceAll("\\", "/")],
         plugins: [],
         rules: Object.fromEntries(rules.map((rule) => [rule, "error"])),
       }),
