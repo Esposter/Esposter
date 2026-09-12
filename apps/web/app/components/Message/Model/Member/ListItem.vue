@@ -1,7 +1,6 @@
 <script setup lang="ts">
+import type { VHoverSlotProps } from "@/models/vuetify/VHoverSlotProps";
 import type { RoomInMessage, User } from "@esposter/db-schema";
-import type { VNodeChild } from "vue";
-import type { VHover } from "vuetify/lib/components/VHover/VHover.mjs";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
 import { getTopRole } from "@/services/message/member/getTopRole";
@@ -13,8 +12,6 @@ interface Props {
   member: Pick<User, "id" | "image" | "name">;
   room: RoomInMessage;
 }
-
-type VHoverSlotProps = Extract<VHover["v-slot:default"], Function> extends (props: infer P) => VNodeChild ? P : never;
 
 defineSlots<{
   append: ({ hoverProps, listItemProps }: { hoverProps: VHoverSlotProps; listItemProps: ListItemSlot }) => VNode;

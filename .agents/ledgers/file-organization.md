@@ -27,7 +27,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/components/Message` — `Content`, `DraftsAndSent`, `Friends`, the side bars | 2026-09-12 | the stray-component half is `components/index.test.ts`, not a pass                            |
 | `app/components/Message/Model/Message`                                          | 2026-09-12 |                                                                                               |
 | `app/components/Message/Model/Room`                                             | 2026-09-12 |                                                                                               |
-| `app/components/Message/Model` — `User` and the small folders                   | —          | `FileRenderer`, `Settings`, `RoomCategory`, `Status`, `Member`                                |
+| `app/components/Message/Model` — `User` and the small folders                   | 2026-09-12 | `FileRenderer`, `Settings`, `RoomCategory`, `Status`, `Member`                                |
 | `app/components/Resource`                                                       | —          |                                                                                               |
 | `app/components` — the rest                                                     | —          | a `*Props.ts` beside its component is colocation, not a stray model                           |
 | `packages/db-schema` — `models`                                                 | —          |                                                                                               |
@@ -89,6 +89,14 @@ finding: one consumer does not earn a place in a shared package.
 - Two exports sharing module-private state through closure — a pending set, a cached promise, a code set, a
   dispatch map. One-export-per-file cannot reach them without making that state a module global, which trades a
   file boundary for a wider one.
+
+## Open findings
+
+- The keybinds settings page lists three shortcuts (`KEYBIND_SHORTCUTS`) that `KeyboardShortcutList` states in
+  other words and other keys, and one of them (`↑` to edit the last message) appears nowhere else. Rendering the
+  model on the page changes what the page shows, so it is a decision rather than a pass: either the page renders
+  `KeyboardShortcutList` and the three-row list goes, or the three rows are the intended subset and the model
+  gains the missing key.
 
 ## Next enforceable
 
