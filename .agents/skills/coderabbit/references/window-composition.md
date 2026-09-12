@@ -24,7 +24,7 @@ flowchart TD
   SP -->|"yes — code the old rule accepts / the rule and its docs"| RS["reset --soft the unpushed range and re-commit in that order"]
   SP -->|"no"| V
   RS --> M
-  V["verify the cut sha's tree on its own: the suites the held tail touches, lint under the rule the cut carries"] --> T{"remote tip still the one measured against?"}
+  V["verify the cut sha's tree on its own<br/>(touched suites and cut's lint rule)"] --> T{"remote tip still the one measured against?"}
   T -->|"no"| M
   T -->|"yes"| P["git push origin cut-sha:branch — the tail stays local"]
 ```

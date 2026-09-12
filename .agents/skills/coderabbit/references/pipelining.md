@@ -12,13 +12,16 @@ Read when planning the push cadence on `develop` — how work keeps moving while
 4. When the review completes, address its findings, commit the fixes, verify, and push them **together with** the next queued chunk — then reply to every finding. That single push starts the next cycle. Replying last is what makes a reply checkable: it can name the commit that answers the finding, where a reply written before the push points at nothing.
 5. Repeat, so review effort tracks the work instead of gating it.
 
-**Verification does not gate the push.** `format`/`typecheck`/`lint`/tests are minutes of wall-clock each and a
-review slot is an hour, so holding a finished chunk until the checks come back spends the scarce resource to
-protect the cheap one — and the checks were going to run either way. Push the chunk, then run them against the
-same tree while the review works; a failure found afterwards is one more commit in the next window, which is
-where its fix belongs anyway. Correctness on `develop` is eventual, and the branch is not the release. The
-repo's finishing ritual still runs in full — the change is only that its verification steps stop standing
-between the commit and the push.
+**Verification does not gate an unsplit push.** When pushing the entire sitting,
+`format`/`typecheck`/`lint`/tests are minutes of wall-clock each and a review slot is an hour, so holding a
+finished chunk until the checks come back spends the scarce resource to protect the cheap one — and the checks
+were going to run either way. Push the chunk, then run them against the same tree while the review works; a
+failure found afterwards is one more commit in the next window, which is where its fix belongs anyway.
+Correctness on `develop` is eventual, and the branch is not the release. The repo's finishing ritual still runs
+in full — the change is only that its verification steps stop standing between the commit and the push.
+When a sitting is cut into a prefix window and leaves a tail held locally, however, the cut sha itself must be
+green on its own before pushing (`references/window-composition.md`): the held tail is not on the remote to
+supply the repairs, so a red cut burns the review slot on a window CI cannot pass.
 
 **Cut the commits, not the push.** The window boundary is whatever sha the push names, so the way to fill a slot
 to ~90 files without splitting a coherent change across two reviews is to commit in finer pieces and push
