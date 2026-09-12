@@ -1,8 +1,8 @@
 import type { TMXPropertyNode } from "#src/models/tmx/node/TMXPropertyNode";
 
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { parseProperties } from "#src/services/parseProperties";
 import { assertNode } from "#src/test/assertNode.test";
-import { parseProperties } from "#src/util/parseProperties";
 import { describe, expect, test } from "vitest";
 
 describe(parseProperties, () => {

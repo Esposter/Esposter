@@ -3,13 +3,13 @@ import type { TMXLayerParsed } from "#src/models/tmx/parsed/TMXLayerParsed";
 
 import { Compression } from "#src/models/Compression";
 import { Encoding } from "#src/models/Encoding";
-import { checkIsTMXEmbeddedTilesetNode } from "#src/util/checkIsTMXEmbeddedTilesetNode";
-import { cloneNodeWithType } from "#src/util/cloneNodeWithType";
-import { getDecompressedBytes } from "#src/util/getDecompressedBytes";
-import { parseFlips } from "#src/util/parseFlips";
-import { parseProperties } from "#src/util/parseProperties";
-import { parseTileId } from "#src/util/parseTileId";
-import { unpackTileBytes } from "#src/util/unpackTileBytes";
+import { checkIsTMXEmbeddedTilesetNode } from "#src/services/checkIsTMXEmbeddedTilesetNode";
+import { cloneNodeWithType } from "#src/services/cloneNodeWithType";
+import { getDecompressedBytes } from "#src/services/getDecompressedBytes";
+import { parseFlips } from "#src/services/parseFlips";
+import { parseProperties } from "#src/services/parseProperties";
+import { parseTileId } from "#src/services/parseTileId";
+import { unpackTileBytes } from "#src/services/unpackTileBytes";
 import { exhaustiveGuard, InvalidOperationError, normalizeString, Operation, takeOne } from "@esposter/shared";
 
 export const parseTileLayer = async (

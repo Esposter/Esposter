@@ -1,5 +1,5 @@
 import { Compression } from "#src/models/Compression";
-import { getDecompressedBytes } from "#src/util/getDecompressedBytes";
+import { getDecompressedBytes } from "#src/services/getDecompressedBytes";
 import { deflateSync, gzipSync } from "node:zlib";
 import { describe, expect, test } from "vitest";
 

@@ -4,10 +4,10 @@ import type { TMXTileNode } from "#src/models/tmx/node/TMXTileNode";
 
 import { Shape } from "#src/models/Shape";
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { parseTile } from "#src/services/parseTile";
 import { assertNode } from "#src/test/assertNode.test";
 import { createObjectShared } from "#src/test/createObjectShared.test";
 import { createPropertiesNode } from "#src/test/createPropertiesNode.test";
-import { parseTile } from "#src/util/parseTile";
 import { describe, expect, test } from "vitest";
 
 describe(parseTile, () => {

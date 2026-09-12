@@ -2,10 +2,10 @@ import type { TMXObjectNode } from "#src/models/tmx/node/TMXObjectNode";
 import type { TMXTextNode } from "#src/models/tmx/node/TMXTextNode";
 
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { parseObject } from "#src/services/parseObject";
 import { assertNode } from "#src/test/assertNode.test";
 import { createObjectShared } from "#src/test/createObjectShared.test";
 import { createPropertiesNode } from "#src/test/createPropertiesNode.test";
-import { parseObject } from "#src/util/parseObject";
 import { describe, expect, test } from "vitest";
 
 describe(parseObject, () => {

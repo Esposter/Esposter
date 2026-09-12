@@ -4,8 +4,8 @@ import type { TMXTilesetParsed } from "#src/models/tmx/parsed/TMXTilesetParsed";
 import type { TMXImageShared } from "#src/models/tmx/shared/TMXImageShared";
 
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
-import { checkIsExternalTileset } from "#src/util/checkIsExternalTileset";
-import { parseTile } from "#src/util/parseTile";
+import { checkIsExternalTileset } from "#src/services/checkIsExternalTileset";
+import { parseTile } from "#src/services/parseTile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const parseTileset = (node: TMXTilesetNode): TMXTilesetParsed => {

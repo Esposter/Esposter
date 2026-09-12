@@ -4,9 +4,9 @@ import type { TMXLayerNode } from "#src/models/tmx/node/TMXLayerNode";
 
 import { Encoding } from "#src/models/Encoding";
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { parseNode } from "#src/services/parseNode";
 import { assertNode } from "#src/test/assertNode.test";
 import { createLayerShared } from "#src/test/createLayerShared.test";
-import { parseNode } from "#src/util/parseNode";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

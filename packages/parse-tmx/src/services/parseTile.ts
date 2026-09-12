@@ -1,8 +1,8 @@
 import type { TMXTileNode } from "#src/models/tmx/node/TMXTileNode";
 import type { TMXTileParsed } from "#src/models/tmx/parsed/TMXTileParsed";
 
-import { parseObject } from "#src/util/parseObject";
-import { parseProperties } from "#src/util/parseProperties";
+import { parseObject } from "#src/services/parseObject";
+import { parseProperties } from "#src/services/parseProperties";
 import { takeOne } from "@esposter/shared";
 
 export const parseTile = (node: TMXTileNode): TMXTileParsed => {

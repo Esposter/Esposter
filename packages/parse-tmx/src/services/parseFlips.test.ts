@@ -1,5 +1,5 @@
 import { Flipped } from "#src/models/Flipped";
-import { parseFlips } from "#src/util/parseFlips";
+import { parseFlips } from "#src/services/parseFlips";
 import { describe, expect, test } from "vitest";
 
 describe(parseFlips, () => {

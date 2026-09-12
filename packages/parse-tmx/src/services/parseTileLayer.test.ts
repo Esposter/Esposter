@@ -4,9 +4,9 @@ import type { TMXLayerNode } from "#src/models/tmx/node/TMXLayerNode";
 import { Encoding } from "#src/models/Encoding";
 import { Flipped } from "#src/models/Flipped";
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { parseTileLayer } from "#src/services/parseTileLayer";
 import { assertNode } from "#src/test/assertNode.test";
 import { createLayerShared } from "#src/test/createLayerShared.test";
-import { parseTileLayer } from "#src/util/parseTileLayer";
 import { describe, expect, test } from "vitest";
 
 const createNode = (data: string) =>

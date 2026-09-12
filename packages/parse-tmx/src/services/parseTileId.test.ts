@@ -1,5 +1,5 @@
 import { Flipped } from "#src/models/Flipped";
-import { parseTileId } from "#src/util/parseTileId";
+import { parseTileId } from "#src/services/parseTileId";
 import { describe, expect, test } from "vitest";
 
 describe(parseTileId, () => {

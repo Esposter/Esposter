@@ -2,9 +2,9 @@ import type { TMXObjectNode } from "#src/models/tmx/node/TMXObjectNode";
 
 import { Shape } from "#src/models/Shape";
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { parseObjectShape } from "#src/services/parseObjectShape";
 import { assertNode } from "#src/test/assertNode.test";
 import { createObjectShared } from "#src/test/createObjectShared.test";
-import { parseObjectShape } from "#src/util/parseObjectShape";
 import { describe, expect, test } from "vitest";
 
 describe(parseObjectShape, () => {

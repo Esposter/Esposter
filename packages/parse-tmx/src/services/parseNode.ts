@@ -4,9 +4,9 @@ import type { TMXGroupLayerParsed } from "#src/models/tmx/parsed/TMXGroupLayerPa
 import type { TMXLayerParsed } from "#src/models/tmx/parsed/TMXLayerParsed";
 
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
-import { parseGroup } from "#src/util/parseGroup";
-import { parseLayer } from "#src/util/parseLayer";
-import { parseTileLayer } from "#src/util/parseTileLayer";
+import { parseGroup } from "#src/services/parseGroup";
+import { parseLayer } from "#src/services/parseLayer";
+import { parseTileLayer } from "#src/services/parseTileLayer";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const parseNode = <

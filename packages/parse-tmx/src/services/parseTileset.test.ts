@@ -3,11 +3,11 @@ import type { TMXTileNode } from "#src/models/tmx/node/TMXTileNode";
 import type { TMXTilesetNode } from "#src/models/tmx/node/TMXTilesetNode";
 
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { parseTileset } from "#src/services/parseTileset";
 import { assertNode } from "#src/test/assertNode.test";
 import { createEmbeddedTilesetShared } from "#src/test/createEmbeddedTilesetShared.test";
 import { createExternalTilesetShared } from "#src/test/createExternalTilesetShared.test";
 import { createImageShared } from "#src/test/createImageShared.test";
-import { parseTileset } from "#src/util/parseTileset";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

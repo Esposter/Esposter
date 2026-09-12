@@ -4,12 +4,12 @@ import type { TMXObjectNode } from "#src/models/tmx/node/TMXObjectNode";
 
 import { Shape } from "#src/models/Shape";
 import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
+import { parseLayer } from "#src/services/parseLayer";
 import { assertNode } from "#src/test/assertNode.test";
 import { createImageShared } from "#src/test/createImageShared.test";
 import { createLayerShared } from "#src/test/createLayerShared.test";
 import { createObjectShared } from "#src/test/createObjectShared.test";
 import { createPropertiesNode } from "#src/test/createPropertiesNode.test";
-import { parseLayer } from "#src/util/parseLayer";
 import { describe, expect, test } from "vitest";
 
 describe(parseLayer, () => {

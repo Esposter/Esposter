@@ -1,6 +1,6 @@
+import { checkIsExternalTileset } from "#src/services/checkIsExternalTileset";
 import { createEmbeddedTilesetShared } from "#src/test/createEmbeddedTilesetShared.test";
 import { createExternalTilesetShared } from "#src/test/createExternalTilesetShared.test";
-import { checkIsExternalTileset } from "#src/util/checkIsExternalTileset";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsExternalTileset, () => {

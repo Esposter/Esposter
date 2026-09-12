@@ -1,4 +1,4 @@
-import { unpackTileBytes } from "#src/util/unpackTileBytes";
+import { unpackTileBytes } from "#src/services/unpackTileBytes";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

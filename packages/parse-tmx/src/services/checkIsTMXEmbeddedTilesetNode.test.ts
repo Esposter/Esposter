@@ -2,9 +2,9 @@ import type { TMXDataNode } from "#src/models/tmx/node/TMXDataNode";
 import type { TMXEmbeddedTilesetNode } from "#src/models/tmx/node/TMXEmbeddedTilesetNode";
 
 import { Encoding } from "#src/models/Encoding";
+import { checkIsTMXEmbeddedTilesetNode } from "#src/services/checkIsTMXEmbeddedTilesetNode";
 import { assertNode } from "#src/test/assertNode.test";
 import { createEmbeddedTilesetShared } from "#src/test/createEmbeddedTilesetShared.test";
-import { checkIsTMXEmbeddedTilesetNode } from "#src/util/checkIsTMXEmbeddedTilesetNode";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsTMXEmbeddedTilesetNode, () => {
