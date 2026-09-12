@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ResourceSaveStateDefinition } from "@/models/resource/ResourceSaveStateDefinition";
 import type { Resource } from "@esposter/db-schema";
 
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
@@ -16,7 +17,7 @@ const { smAndDown } = useVDisplay();
 const resourceStore = useResourceStore();
 const { saveState } = storeToRefs(resourceStore);
 // Widened off the as-const literal union so the two states carrying no colour read the optional key
-const saveStateDefinition = computed<{ color?: string; icon: string; title: string }>(
+const saveStateDefinition = computed<ResourceSaveStateDefinition>(
   () => ResourceSaveStateDefinitionMap[saveState.value],
 );
 </script>

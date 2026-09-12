@@ -2,6 +2,8 @@
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { CreatableResourceType } from "@/services/resource/CreatableResourceTypes";
 
+import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
+import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 import { useNotificationStore } from "@/store/notification";
 import { RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
@@ -66,7 +68,9 @@ const submit = async () => {
         },
       );
       // They came to see their rows, so a successful import lands on the Data blade rather than Overview
-      await navigateTo(isSaved ? `${RoutePath.Resource(resource.id)}/data` : RoutePath.Resource(resource.id));
+      await navigateTo(
+        isSaved ? getResourceBladePath(resource.id, ResourceBladeSlug.Data) : RoutePath.Resource(resource.id),
+      );
     },
   });
   isSubmitting.value = false;

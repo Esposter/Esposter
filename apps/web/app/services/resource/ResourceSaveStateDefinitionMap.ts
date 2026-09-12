@@ -1,3 +1,5 @@
+import type { ResourceSaveStateDefinition } from "@/models/resource/ResourceSaveStateDefinition";
+
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 
 // What each state looks like in the toolbar. The colour rides the icon rather than the text, because Vuetify
@@ -8,4 +10,4 @@ export const ResourceSaveStateDefinitionMap = {
   [ResourceSaveState.Saved]: { icon: "mdi-cloud-check-outline", title: "Saved" },
   [ResourceSaveState.Saving]: { icon: "mdi-cloud-sync-outline", title: "Saving…" },
   [ResourceSaveState.Stale]: { color: "warning", icon: "mdi-cloud-refresh-outline", title: "Out of date" },
-} as const satisfies Record<ResourceSaveState, { color?: string; icon: string; title: string }>;
+} as const satisfies Record<ResourceSaveState, ResourceSaveStateDefinition>;

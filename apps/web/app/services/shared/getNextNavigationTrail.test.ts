@@ -1,4 +1,6 @@
+import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
 import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
+import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 import { getNextNavigationTrail } from "@/services/shared/getNextNavigationTrail";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -7,7 +9,7 @@ import { reactive } from "vue";
 describe(getNextNavigationTrail, () => {
   const resourcePath = RoutePath.Resource("id");
   const otherResourcePath = RoutePath.Resource("otherId");
-  const bladePath = `${resourcePath}/data`;
+  const bladePath = getResourceBladePath("id", ResourceBladeSlug.Data);
 
   test("appends the page drilled in from", () => {
     expect.hasAssertions();

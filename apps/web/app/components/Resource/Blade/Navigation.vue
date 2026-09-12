@@ -2,10 +2,9 @@
 import type { NavigationItem } from "@/models/shared/NavigationItem";
 import type { Resource } from "@esposter/db-schema";
 
-import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
+import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { RoutePath } from "@esposter/shared";
 
 interface Props {
   activeBlade: string;
@@ -13,16 +12,14 @@ interface Props {
 }
 
 const { activeBlade, resource } = defineProps<Props>();
-// Overview is the resource's own path; every other blade hangs off it as a segment
-const items = computed<NavigationItem[]>(() => {
-  const resourcePath = RoutePath.Resource(resource.id);
-  return getResourceBladeDefinitions(resource.type).map(({ icon, slug, title }) => ({
+const items = computed<NavigationItem[]>(() =>
+  getResourceBladeDefinitions(resource.type).map(({ icon, slug, title }) => ({
     icon,
     isActive: activeBlade === slug,
     title,
-    to: slug === ResourceBladeType.Overview ? resourcePath : `${resourcePath}/${slug}`,
-  }));
-});
+    to: getResourceBladePath(resource.id, slug),
+  })),
+);
 </script>
 
 <template>

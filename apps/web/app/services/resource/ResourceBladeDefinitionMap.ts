@@ -1,5 +1,6 @@
 import type { BladeDefinition } from "@/models/resource/BladeDefinition";
 
+import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
 import { ResourceType } from "@esposter/db-schema";
 // The type's own blades after the built-in Overview/Editor; slugs are route segments on /resources/[id]/[[blade]]
 //
@@ -19,13 +20,13 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
     {
       component: defineAsyncComponent(() => import("@/components/Resource/Program/Setup.vue")),
       icon: "mdi-cog",
-      slug: "setup",
+      slug: ResourceBladeSlug.Setup,
       title: "Setup",
     },
     {
       component: defineAsyncComponent(() => import("@/components/Resource/Program/Status.vue")),
       icon: "mdi-chart-timeline-variant",
-      slug: "status",
+      slug: ResourceBladeSlug.Status,
       title: "Status",
     },
   ],
@@ -33,13 +34,13 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
     {
       component: defineAsyncComponent(() => import("@/components/Resource/Sheet/Data.vue")),
       icon: "mdi-table",
-      slug: "data",
+      slug: ResourceBladeSlug.Data,
       title: "Data",
     },
     {
       component: defineAsyncComponent(() => import("@/components/Resource/Sheet/Settings.vue")),
       icon: "mdi-cog",
-      slug: "settings",
+      slug: ResourceBladeSlug.Settings,
       title: "Settings",
     },
   ],
@@ -47,7 +48,7 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
     {
       component: defineAsyncComponent(() => import("@/components/Resource/Survey/Responses.vue")),
       icon: "mdi-poll",
-      slug: "responses",
+      slug: ResourceBladeSlug.Responses,
       title: "Responses",
     },
   ],
@@ -55,13 +56,13 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
     {
       component: defineAsyncComponent(() => import("@/components/Resource/TodoList/Items.vue")),
       icon: "mdi-format-list-checks",
-      slug: "items",
+      slug: ResourceBladeSlug.Items,
       title: "Items",
     },
     {
       component: defineAsyncComponent(() => import("@/components/Resource/TodoList/Calendar.vue")),
       icon: "mdi-calendar",
-      slug: "calendar",
+      slug: ResourceBladeSlug.Calendar,
       title: "Calendar",
     },
   ],

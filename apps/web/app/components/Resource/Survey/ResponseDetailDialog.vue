@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
-import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
+import type { SurveyResponseRecord } from "#shared/models/resource/survey/SurveyResponseRecord";
 
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
 
 interface Props {
   columns: DatasetColumn[];
-  items: (Record<string, ColumnValue> & { rowKey: string })[];
+  items: SurveyResponseRecord[];
 }
 
 const { columns, items } = defineProps<Props>();
