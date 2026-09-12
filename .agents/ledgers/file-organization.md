@@ -33,7 +33,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/components/Dungeons`                                                       | 2026-09-12 |                                                                                                 |
 | `app/components/Styled`                                                         | 2026-09-12 | a `*Props.ts` beside its component is colocation, not a stray model                             |
 | `app/components` — `Visual`, `User`, `Docs`, `Clicker`, `Post`                  | 2026-09-12 |                                                                                                 |
-| `app/components` — the rest                                                     | —          | `App`, `Dashboard`, `RichTextEditor`, `Achievement`, `FlowchartEditor`, the single-file folders |
+| `app/components` — the rest                                                     | 2026-09-12 | `App`, `Dashboard`, `RichTextEditor`, `Achievement`, `FlowchartEditor`, the single-file folders |
 | `packages/db-schema` — `models`                                                 | —          |                                                                                                 |
 | `packages/db-schema` — `schema`, `relations`                                    | —          | a table file declares the table and its select schema; enums live in `models`                   |
 | `packages/db-schema` — `services`, root                                         | 2026-09-12 |                                                                                                 |

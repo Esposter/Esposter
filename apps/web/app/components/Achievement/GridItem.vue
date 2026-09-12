@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
+import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
 import { CategoryColorMap } from "@/services/achievement/CategoryColorMap";
 import { prettify } from "@/util/text/prettify";
 
 interface Props {
-  achievementDefinition: (typeof achievementDefinitions)[number];
+  achievementDefinition: AchievementDefinitionEntry;
   userAchievement?: UserAchievementWithDefinition;
 }
 
