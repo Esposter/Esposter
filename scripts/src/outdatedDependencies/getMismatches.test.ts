@@ -1,14 +1,15 @@
+import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
 import { getMismatches } from "#src/outdatedDependencies/getMismatches";
 import { describe, expect, test } from "vitest";
 
 describe(getMismatches, () => {
-  const entries = [{ group: "catalog", pkg: "a", specifier: "^0.0.0" }];
+  const entries = [{ group: DependencyGroup.Catalog, pkg: "a", specifier: "^0.0.0" }];
 
   test("reports an entry whose specifier base differs from the resolved version", () => {
     expect.hasAssertions();
 
     expect(getMismatches(entries, new Map([["a", "0.0.1"]]))).toStrictEqual([
-      { group: "catalog", pkg: "a", resolved: "0.0.1", specifier: "^0.0.0" },
+      { group: DependencyGroup.Catalog, pkg: "a", resolved: "0.0.1", specifier: "^0.0.0" },
     ]);
   });
 

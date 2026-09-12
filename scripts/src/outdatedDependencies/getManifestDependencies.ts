@@ -1,5 +1,5 @@
-import type { ManifestDependency } from "#src/outdatedDependencies/models/ManifestDependency";
-import type { ManifestFile } from "#src/outdatedDependencies/models/ManifestFile";
+import type { ManifestDependency } from "#src/models/outdatedDependencies/ManifestDependency";
+import type { ManifestFile } from "#src/models/outdatedDependencies/ManifestFile";
 
 import { DependencyFields } from "#src/models/DependencyField";
 

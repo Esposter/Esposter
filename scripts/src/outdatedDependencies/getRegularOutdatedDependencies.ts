@@ -1,5 +1,5 @@
-import type { OutdatedDependency } from "#src/outdatedDependencies/models/OutdatedDependency";
-import type { RegistryCheckError } from "#src/outdatedDependencies/models/RegistryCheckError";
+import type { OutdatedDependency } from "#src/models/outdatedDependencies/OutdatedDependency";
+import type { RegistryCheckError } from "#src/models/outdatedDependencies/RegistryCheckError";
 
 import { checkIsPnpmOutdatedDependency } from "#src/outdatedDependencies/checkIsPnpmOutdatedDependency";
 import { getDependencyType } from "#src/outdatedDependencies/getDependencyType";

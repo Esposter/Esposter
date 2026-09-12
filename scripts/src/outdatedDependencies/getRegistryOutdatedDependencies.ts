@@ -1,7 +1,8 @@
-import type { DependencyEntry } from "#src/outdatedDependencies/models/DependencyEntry";
-import type { OutdatedDependency } from "#src/outdatedDependencies/models/OutdatedDependency";
-import type { RegistryCheckError } from "#src/outdatedDependencies/models/RegistryCheckError";
+import type { DependencyEntry } from "#src/models/outdatedDependencies/DependencyEntry";
+import type { OutdatedDependency } from "#src/models/outdatedDependencies/OutdatedDependency";
+import type { RegistryCheckError } from "#src/models/outdatedDependencies/RegistryCheckError";
 
+import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
 import { checkIsVersionOutdated } from "#src/outdatedDependencies/checkIsVersionOutdated";
 import { REGISTRY_CONCURRENCY } from "#src/outdatedDependencies/constants";
 import { getSpecifierBase } from "#src/outdatedDependencies/getSpecifierBase";
@@ -9,9 +10,9 @@ import { getVersionChangeLevel } from "#src/outdatedDependencies/getVersionChang
 import { getLatestVersion } from "#src/services/getLatestVersion";
 import { getResultAsync } from "@esposter/shared";
 
-const GroupMetadataMap: Record<string, { dependencyType: string; dependent: string }> = {
-  configDependencies: { dependencyType: "config", dependent: "configDependencies" },
-  engines: { dependencyType: "engine", dependent: "engines" },
+const GroupMetadataMap: Partial<Record<DependencyGroup, { dependencyType: string; dependent: string }>> = {
+  [DependencyGroup.ConfigDependencies]: { dependencyType: "config", dependent: DependencyGroup.ConfigDependencies },
+  [DependencyGroup.Engines]: { dependencyType: "engine", dependent: DependencyGroup.Engines },
 };
 
 export const getRegistryOutdatedDependencies = async (

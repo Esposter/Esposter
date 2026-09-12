@@ -1,5 +1,6 @@
-import type { DependencyEntry } from "#src/outdatedDependencies/models/DependencyEntry";
+import type { DependencyEntry } from "#src/models/outdatedDependencies/DependencyEntry";
 
+import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
 import { getRegistryOutdatedDependencies } from "#src/outdatedDependencies/getRegistryOutdatedDependencies";
 import { getLatestVersion } from "#src/services/getLatestVersion";
 import { describe, expect, test, vi } from "vitest";
@@ -11,8 +12,8 @@ describe(getRegistryOutdatedDependencies, () => {
     expect.hasAssertions();
 
     const entries: DependencyEntry[] = [
-      { group: "engines", pkg: "node", specifier: "^26.0.0" },
-      { group: "engines", pkg: "node", specifier: "^26.8.0" },
+      { group: DependencyGroup.Engines, pkg: "node", specifier: "^26.0.0" },
+      { group: DependencyGroup.Engines, pkg: "node", specifier: "^26.8.0" },
     ];
     vi.mocked(getLatestVersion).mockResolvedValue("26.8.1");
 

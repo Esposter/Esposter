@@ -1,4 +1,4 @@
-import { getSection } from "#src/outdatedDependencies/getSection";
+import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { describe, expect, test } from "vitest";
 
 describe(getSection, () => {

@@ -1,6 +1,6 @@
-import { parseLockResolvedVersions } from "#src/outdatedDependencies/parseLockResolvedVersions";
-import { sliceLockSection } from "#src/outdatedDependencies/sliceLockSection";
 import { REPOSITORY_ROOT } from "#src/services/constants";
+import { parseLockResolvedVersions } from "#src/services/outdatedDependencies/lock/parseLockResolvedVersions";
+import { sliceLockSection } from "#src/services/outdatedDependencies/lock/sliceLockSection";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";

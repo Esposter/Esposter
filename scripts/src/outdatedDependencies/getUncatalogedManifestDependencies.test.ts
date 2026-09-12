@@ -1,4 +1,4 @@
-import type { ManifestDependency } from "#src/outdatedDependencies/models/ManifestDependency";
+import type { ManifestDependency } from "#src/models/outdatedDependencies/ManifestDependency";
 
 import { DependencyField } from "#src/models/DependencyField";
 import { getUncatalogedManifestDependencies } from "#src/outdatedDependencies/getUncatalogedManifestDependencies";
