@@ -53,6 +53,11 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm i
 
+      # `scripts` imports `@esposter/shared` through its published entry, and a fresh checkout has no `dist`.
+      # The closure selector builds the package and whatever workspace package it depends on.
+      - name: 🏗️ Build the shared package
+        run: pnpm --filter "@esposter/shared..." run build
+
       - name: 🪪 Identify the collector
         run: |
           git config user.name "Q16solver"
