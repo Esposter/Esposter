@@ -44,7 +44,8 @@ const runAsPeer = async (
       console.log(`${message}, clients: ${wss.clients.size}`);
     },
     (error) => {
-      if (error instanceof TRPCError && error.code !== "UNAUTHORIZED") throw error;
+      if (error instanceof TRPCError && error.code === "UNAUTHORIZED") return;
+      throw error;
     },
   );
 };
