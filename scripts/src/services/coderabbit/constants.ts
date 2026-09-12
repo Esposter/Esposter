@@ -3,3 +3,10 @@
 // Which reads exactly like a pull request whose findings are all answered.
 export const CODERABBIT_REST_LOGIN = "coderabbitai[bot]";
 export const CODERABBIT_GRAPHQL_LOGIN = "coderabbitai";
+
+// The Open Source tier's per-review file limit. It is popularity-scaled, so the bot's skip comment states the
+// Current one — this is the last known value, and a skip comment naming another is what changes it.
+export const REVIEW_FILE_CAP = 100;
+// Where a window is worth a slot on its own: a slot costs an hour whether it reads 20 files or 99, so a shorter
+// Window waits for more commits unless fixes are already parked for it.
+export const WINDOW_FILL_TARGET = 90;

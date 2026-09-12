@@ -1,0 +1,68 @@
+import type { PortInput } from "#src/models/coderabbit/collect/PortInput";
+import type { PortResult } from "#src/models/coderabbit/collect/PortResult";
+
+import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { REVIEW_FILE_CAP } from "#src/services/coderabbit/constants";
+import { runGit } from "#src/services/coderabbit/runGit";
+import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
+import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
+
+enum PickOutcome {
+  Applied = "Applied",
+  Conflict = "Conflict",
+  // The patch was already in the tree under another sha — nothing to commit, nothing owed
+  Empty = "Empty",
+}
+
+const pick = (sha: string, cwd: string): PickOutcome =>
+  getResult(() => runGit(["cherry-pick", sha], cwd)).match(
+    () => PickOutcome.Applied,
+    () => {
+      const unmerged = getNonEmptyLines(runGit(["diff", "--name-only", "--diff-filter=U"], cwd));
+      if (unmerged.length > 0) {
+        runGit(["cherry-pick", "--abort"], cwd);
+        return PickOutcome.Conflict;
+      }
+      runGit(["cherry-pick", "--skip"], cwd);
+      return PickOutcome.Empty;
+    },
+  );
+
+// Build the window as a branch, one cherry-pick at a time, and measure after each. Fixes ride first and whole,
+// Queue commits in queue order until one conflicts or overflows the cap, and the count that decides it is read
+// From the tree that will be pushed rather than estimated.
+export const portWindow = ({ cwd, developSha, queueSha, reviewFixesSha }: PortInput): PortResult => {
+  runGit(["switch", "--detach", developSha], cwd);
+
+  const fixShas = reviewFixesSha ? readCherryShas(developSha, reviewFixesSha, cwd) : [];
+  for (const sha of fixShas)
+    if (pick(sha, cwd) === PickOutcome.Conflict)
+      throw new InvalidOperationError(Operation.Update, "coderabbit", `fix ${sha} conflicts with develop`);
+
+  const queueShas: string[] = [];
+  let heldSha: string | undefined;
+  for (const sha of readCherryShas(developSha, queueSha, cwd)) {
+    const outcome = pick(sha, cwd);
+    if (outcome === PickOutcome.Conflict) {
+      heldSha = sha;
+      break;
+    } else if (outcome === PickOutcome.Empty) continue;
+
+    if (getFileCount(`${developSha}..HEAD`, cwd) > REVIEW_FILE_CAP) {
+      runGit(["reset", "--hard", "HEAD~1"], cwd);
+      heldSha = sha;
+      break;
+    }
+    queueShas.push(sha);
+  }
+
+  const mergeBase = runGit(["merge-base", developSha, queueSha], cwd).trim();
+  return {
+    fileCount: getFileCount(`${developSha}..HEAD`, cwd),
+    fixCount: fixShas.length,
+    heldSha,
+    isFastForward: fixShas.length === 0 && mergeBase === developSha,
+    queueShas,
+  };
+};
