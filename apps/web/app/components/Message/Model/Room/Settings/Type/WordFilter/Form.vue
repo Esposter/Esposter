@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { WordFilterFormData } from "@/models/message/moderation/WordFilterFormData";
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
@@ -10,12 +11,6 @@ import deepEqual from "fast-deep-equal";
 interface Props {
   filter?: RoomFilterInMessage;
   roomId: string;
-}
-
-interface WordFilterFormData {
-  action: WordFilterAction;
-  timeoutDurationMs: number;
-  words: string[];
 }
 
 const { filter, roomId } = defineProps<Props>();

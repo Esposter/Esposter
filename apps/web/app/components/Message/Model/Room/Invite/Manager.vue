@@ -5,10 +5,10 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { pluralize } from "#shared/util/text/pluralize";
+import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
 import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
 import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteMaxUsesSelectItems";
 import { useInviteStore } from "@/store/message/room/invite";
-import { RoutePath } from "@esposter/shared";
 
 interface Props {
   room: RoomInMessage;
@@ -42,9 +42,7 @@ const onUpdateOptions = async () => {
 // The panel outlives the link it shows, so an invite that lapses while it is open has to flip the copy rather
 // Than read "expires 5 minutes ago"
 const { isExpired } = useCountdown(() => invite.value?.expiresAt);
-const inviteLink = computed(() =>
-  invite.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(invite.value.id)}` : "",
-);
+const inviteLink = computed(() => (invite.value ? getInviteLink(runtimeConfig.public.baseUrl, invite.value.id) : ""));
 const remainingUsesText = computed(() => {
   if (!invite.value?.maxUses) return "";
   const remainingUses = invite.value.maxUses - invite.value.uses;
@@ -79,7 +77,7 @@ const isCopied = ref(false);
       readonly
       bg-color="background"
       :color="isCopied ? 'success' : undefined"
-      :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite('example')}`"
+      :placeholder="getInviteLink(runtimeConfig.public.baseUrl, 'example')"
     >
       <template #append-inner>
         <StyledClipboardButton w-20 :source="inviteLink" @update:copied="isCopied = $event" @create="onCreateInvite" />

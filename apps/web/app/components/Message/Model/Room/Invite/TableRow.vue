@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { InviteInMessageWithCreator, RoomInMessage } from "@esposter/db-schema";
 
+import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { useRoomInviteStore } from "@/store/message/room/roomInvite";
-import { RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   invite: InviteInMessageWithCreator;
@@ -17,7 +18,7 @@ const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId } = storeToRefs(roomDialogStore);
 const roomInviteStore = useRoomInviteStore();
 const { revokeInvite } = roomInviteStore;
-const inviteLink = computed(() => `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(invite.id)}`);
+const inviteLink = computed(() => getInviteLink(runtimeConfig.public.baseUrl, invite.id));
 // The cap belongs beside the count rather than in a column of its own, which is where Discord puts a bare number
 const usesText = computed(() => (invite.maxUses ? `${invite.uses} / ${invite.maxUses}` : String(invite.uses)));
 // Discord's column is a clock rather than a phrase — the reader is watching a link run out, and "in 2 hours"
