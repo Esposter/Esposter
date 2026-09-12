@@ -1,6 +1,6 @@
 import { resourceFilterInputSchema } from "#shared/models/db/resource/ResourceFilterInput";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListItem";
+import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListSortKey";
 import { z } from "zod";
 
 export const readResourceListInputSchema = z.object({

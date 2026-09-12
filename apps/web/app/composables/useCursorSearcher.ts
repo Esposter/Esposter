@@ -1,5 +1,5 @@
-import type { AEntity } from "#shared/models/entity/AEntity";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import type { AEntity } from "@/models/entity/AEntity";
 import type { ToData } from "@esposter/shared";
 import type { TRPCProcedureOptions } from "@trpc/client";
 

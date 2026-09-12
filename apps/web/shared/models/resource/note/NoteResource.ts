@@ -20,9 +20,6 @@ const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>
   }),
 );
 
-// A fresh Note is an empty document with a single paragraph — the shape Tiptap starts an editor with
-export const EMPTY_NOTE_DOC: JSONContent = { content: [{ type: "paragraph" }], type: "doc" };
-
 export const noteResourceSchema = z.object({
   doc: jsonContentSchema,
 }) satisfies z.ZodType<NoteResource>;

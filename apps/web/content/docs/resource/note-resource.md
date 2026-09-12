@@ -31,7 +31,8 @@ Note owns no tables. It is one `ResourceType` enum value (`Note`, added to the `
 | ---------------------------------------------------------------------- | ------------------------------------------------------- |
 | `packages/db-schema/src/models/resource/ResourceType.ts`               | `Note` enum value                                       |
 | `apps/web/server/db/migrations/20260717000000_add_note_resource_type/` | pg enum `ADD VALUE 'Note'` migration                    |
-| `apps/web/shared/models/resource/note/NoteResource.ts`                 | `{ doc }` content schema + empty-document default       |
+| `apps/web/shared/models/resource/note/NoteResource.ts`                 | `{ doc }` content schema                                |
+| `apps/web/shared/services/resource/constants.ts`                       | `EMPTY_NOTE_DOC`, the empty-document default            |
 | `apps/web/shared/services/resource/ResourceDefinitionMap.ts`           | Note definition entry                                   |
 | `apps/web/app/services/resource/note/getNoteExtensions.ts`             | shared Tiptap extension set (editor + published render) |
 | `apps/web/app/components/Resource/Note/Editor.vue`                     | Tiptap editor blade                                     |

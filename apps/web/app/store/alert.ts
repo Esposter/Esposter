@@ -1,3 +1,4 @@
+import type { Alert } from "@/models/vuetify/Alert";
 import type { VAlert } from "vuetify/components";
 
 import { AlertIconMap } from "@/services/vuetify/AlertIconMap";
@@ -5,10 +6,6 @@ import { checkIsServer } from "@esposter/shared";
 
 // The four props the alert list renders, rather than the whole `VAlert` prop surface: matching an alert already
 // On screen compares two of them, and doing that across every prop v-alert accepts blows the instantiation depth
-interface Alert extends Pick<VAlert["$props"], "icon" | "location" | "text" | "type"> {
-  id: string;
-}
-
 export const useAlertStore = defineStore("alert", () => {
   const alerts = ref<Alert[]>([]);
   const alertTimeoutMap = new Map<string, number>();
