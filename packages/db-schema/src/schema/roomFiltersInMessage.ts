@@ -2,12 +2,10 @@ import { WordFilterAction, wordFilterActionSchema } from "#src/models/message/fi
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
+import { FILTER_WORDS_MAX_LENGTH } from "#src/services/message/filter/constants";
 import { sql } from "drizzle-orm";
 import { check, integer, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-
-export const FILTER_KEY_MAX_LENGTH = 100;
-export const FILTER_WORDS_MAX_LENGTH = 1000;
 
 export const wordFilterActionEnum = pgEnum("wordFilterAction", WordFilterAction);
 

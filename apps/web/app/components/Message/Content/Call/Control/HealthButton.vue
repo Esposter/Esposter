@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { VBtn } from "vuetify/components";
 
+import { MediaDeviceKindMetadataMap } from "@/services/message/room/call/MediaDeviceKindMetadataMap";
 import { ConnectionQualityMetadataMap } from "@/services/message/room/liveKit/ConnectionQualityMetadataMap";
 import { ConnectionStateMetadataMap } from "@/services/message/room/liveKit/ConnectionStateMetadataMap";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
@@ -23,9 +24,9 @@ const healthRows = computed(() => [
   { ...connectionQualityMetadata.value, label: "Quality" },
 ]);
 const deviceRows = computed(() => [
-  { icon: "mdi-microphone", label: "Microphone", value: inputDeviceId.value },
-  { icon: "mdi-speaker", label: "Speakers", value: outputDeviceId.value },
-  { icon: "mdi-video", label: "Camera", value: cameraDeviceId.value },
+  { ...MediaDeviceKindMetadataMap.audioinput, value: inputDeviceId.value },
+  { ...MediaDeviceKindMetadataMap.audiooutput, value: outputDeviceId.value },
+  { ...MediaDeviceKindMetadataMap.videoinput, value: cameraDeviceId.value },
 ]);
 </script>
 
@@ -51,11 +52,11 @@ const deviceRows = computed(() => [
         </v-list-item>
         <v-divider />
         <v-list-item
-          v-for="{ icon, label, value } of deviceRows"
-          :key="label"
+          v-for="{ icon, title, value } of deviceRows"
+          :key="title"
           :prepend-icon="icon"
           :subtitle="value || 'Default'"
-          :title="label"
+          :title
         />
       </v-list>
     </StyledCard>

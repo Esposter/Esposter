@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { MAX_SLOWMODE_MS } from "@esposter/db-schema";
+
 const modelValue = defineModel<null | number>({ required: true });
 const emit = defineEmits<{ save: [] }>();
 const rules = useVRules();
@@ -11,9 +13,7 @@ const displaySeconds = computed(() =>
     ? ""
     : Math.trunc(Temporal.Duration.from({ milliseconds: modelValue.value }).total("seconds")),
 );
-// `slowmodeMs` is a Postgres `integer`, so a longer slowmode could never be stored — and the bound doubles as
-// The one that keeps a typed entry inside the range a Temporal duration can represent
-const MAX_SLOWMODE_MS = 2_147_483_647;
+// The bound doubles as the one that keeps a typed entry inside the range a Temporal duration can represent
 const maxDisplaySeconds = Math.trunc(Temporal.Duration.from({ milliseconds: MAX_SLOWMODE_MS }).total("seconds"));
 const onUpdateModelValue = (newDisplaySeconds: string) => {
   // A number input hands over whatever was typed rather than what its own min and max allow, and a Temporal

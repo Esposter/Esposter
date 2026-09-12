@@ -1,0 +1,2 @@
+export const FILTER_KEY_MAX_LENGTH = 100;
+export const FILTER_WORDS_MAX_LENGTH = 1000;

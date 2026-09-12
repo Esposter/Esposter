@@ -1,7 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getWorkspacePackageDirectories } from "#src/services/getWorkspacePackageDirectories";
 import { parseMachineJson } from "#src/services/parseMachineJson";
-import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
+import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";

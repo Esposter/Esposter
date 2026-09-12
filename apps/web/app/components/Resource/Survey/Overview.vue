@@ -3,8 +3,10 @@ import type { ReadSurveyResponsesCountResult } from "#shared/models/resource/sur
 import type { Resource } from "@esposter/db-schema";
 
 import { pluralize } from "#shared/util/text/pluralize";
+import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
+import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 import { useSurveyStore } from "@/store/survey";
-import { getResultAsync, RoutePath } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 
 interface Props {
   resource: Resource;
@@ -38,7 +40,9 @@ onMounted(async () => {
     <template #essentials>
       <template v-if="responseCount">
         <span op-medium-emphasis>Responses</span>
-        <NuxtLink :to="`${RoutePath.Resource(resource.id)}/responses`" text-info>{{ responseLabel }}</NuxtLink>
+        <NuxtLink :to="getResourceBladePath(resource.id, ResourceBladeSlug.Responses)" text-info>{{
+          responseLabel
+        }}</NuxtLink>
       </template>
     </template>
     <template #summary>

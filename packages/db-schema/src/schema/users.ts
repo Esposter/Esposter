@@ -3,13 +3,11 @@ import { StorageTier } from "#src/models/user/StorageTier";
 import { pgTable } from "#src/pgTable";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
+import { USER_BIOGRAPHY_MAX_LENGTH, USER_NAME_MAX_LENGTH } from "#src/services/user/constants";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { bigint, boolean, check, pgEnum, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
-
-export const USER_BIOGRAPHY_MAX_LENGTH = 160;
-export const USER_NAME_MAX_LENGTH = 100;
 
 export const storageTierEnum = pgEnum("storageTier", StorageTier);
 

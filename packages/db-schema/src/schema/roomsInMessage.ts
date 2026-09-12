@@ -4,6 +4,7 @@ import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomCategoriesInMessage } from "#src/schema/roomCategoriesInMessage";
 import { users } from "#src/schema/users";
+import { ROOM_NAME_MAX_LENGTH, ROOM_TOPIC_MAX_LENGTH } from "#src/services/room/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
@@ -11,9 +12,6 @@ import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter
 import { sql } from "drizzle-orm";
 import { boolean, check, integer, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-
-export const ROOM_NAME_MAX_LENGTH = 100;
-export const ROOM_TOPIC_MAX_LENGTH = 500;
 
 export const roomTypeEnum = pgEnum("roomType", RoomType);
 

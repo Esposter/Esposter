@@ -1,6 +1,6 @@
 import type { ItemEntityType } from "@esposter/shared";
 
-import { sanitizedMessageSchema } from "#src/models/message/BaseMessageEntity";
+import { sanitizedMessageSchema } from "#src/models/message/SanitizedMessage";
 import { ScheduledMessageJobType } from "#src/models/message/ScheduledMessageJobType";
 import { z } from "zod";
 

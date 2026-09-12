@@ -2,6 +2,9 @@
 import type { MenuItem } from "@/models/shared/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 
+import { getListMenuItems } from "@/services/richTextEditor/getListMenuItems";
+import { getTextFormatMenuItems } from "@/services/richTextEditor/getTextFormatMenuItems";
+
 interface Props {
   editor?: Editor;
 }
@@ -41,22 +44,7 @@ const items = computed<MenuItem[]>(() => [
     title: "Heading 3",
   },
   { isDivider: true },
-  {
-    active: editor?.isActive("bold"),
-    icon: "mdi-format-bold",
-    onClick: () => {
-      editor?.chain().focus().toggleBold().run();
-    },
-    title: "Bold",
-  },
-  {
-    active: editor?.isActive("italic"),
-    icon: "mdi-format-italic",
-    onClick: () => {
-      editor?.chain().focus().toggleItalic().run();
-    },
-    title: "Italic",
-  },
+  ...getTextFormatMenuItems(editor),
   {
     active: editor?.isActive("code"),
     icon: "mdi-code-tags",
@@ -66,22 +54,7 @@ const items = computed<MenuItem[]>(() => [
     title: "Code",
   },
   { isDivider: true },
-  {
-    active: editor?.isActive("bulletList"),
-    icon: "mdi-format-list-bulleted",
-    onClick: () => {
-      editor?.chain().focus().toggleBulletList().run();
-    },
-    title: "Bullet List",
-  },
-  {
-    active: editor?.isActive("orderedList"),
-    icon: "mdi-format-list-numbered",
-    onClick: () => {
-      editor?.chain().focus().toggleOrderedList().run();
-    },
-    title: "Ordered List",
-  },
+  ...getListMenuItems(editor),
   {
     active: editor?.isActive("blockquote"),
     icon: "mdi-format-quote-close",

@@ -1,0 +1,1 @@
+export const MINIMUM_CONSUMER_PACKAGES = 2;

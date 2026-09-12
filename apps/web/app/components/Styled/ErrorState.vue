@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { VBtn } from "vuetify/components";
-
-const RETRY_BUTTON_PROPS: VBtn["$props"] = { prependIcon: "mdi-refresh", text: "Retry" };
+import { RETRY_BUTTON_PROPS } from "@/services/styled/constants";
 
 interface Props {
   error: string;

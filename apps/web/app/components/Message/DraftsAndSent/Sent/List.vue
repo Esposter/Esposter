@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
+import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
 import { getTimelineSections } from "@/services/message/draftsAndSent/getTimelineSections";
 import { useSentMessageStore } from "@/store/message/sentMessage";
 import { ID_SEPARATOR } from "@esposter/shared";
@@ -23,5 +25,10 @@ const sections = computed(() => getTimelineSections(items.value, ({ message }) =
       <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
     </div>
   </div>
-  <StyledEmptyState v-else-if="!isPending" h-full icon="mdi-send-outline" title="No sent messages" />
+  <StyledEmptyState
+    v-else-if="!isPending"
+    h-full
+    :icon="DraftsAndSentTabMetadataMap[DraftsAndSentTab.Sent].icon"
+    title="No sent messages"
+  />
 </template>

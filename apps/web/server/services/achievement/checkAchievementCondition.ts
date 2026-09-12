@@ -1,12 +1,13 @@
+import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
+
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
-import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { EN_US_SEGMENTER } from "#shared/services/intl/constants";
 import { BinaryOperator } from "@esposter/azure";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const checkAchievementCondition = (
-  condition: NonNullable<(typeof achievementDefinitions)[number]["condition"]>,
+  condition: NonNullable<AchievementDefinitionEntry["condition"]>,
   data: unknown,
 ): boolean => {
   switch (condition.type) {

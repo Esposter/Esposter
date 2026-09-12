@@ -1,16 +1,10 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
 <script setup lang="ts">
 import type { Card } from "@/models/visual/Card";
+import type { CardStyleVariables } from "@/models/visual/CardStyleVariables";
 
 import CardBase from "@/components/Visual/Card/Base.vue";
 import { takeOne } from "@esposter/shared";
-
-interface CardStyleVariables {
-  marginRight?: string;
-  oldMarginRight?: string;
-  oldScaleY?: string;
-  scaleY?: string;
-}
 
 interface Props {
   cards: Card[];

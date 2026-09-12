@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
+import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { useSentMessageStore } from "@/store/message/sentMessage";
 
@@ -10,14 +11,21 @@ const { scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
 const sentMessageStore = useSentMessageStore();
 const { sentMessageCount } = storeToRefs(sentMessageStore);
 const tabs = computed(() => [
-  { count: draftItems.value.length, icon: "mdi-pencil", title: "Drafts", value: DraftsAndSentTab.Drafts },
   {
+    ...DraftsAndSentTabMetadataMap[DraftsAndSentTab.Drafts],
+    count: draftItems.value.length,
+    value: DraftsAndSentTab.Drafts,
+  },
+  {
+    ...DraftsAndSentTabMetadataMap[DraftsAndSentTab.Scheduled],
     count: scheduledMessageJobCount.value,
-    icon: "mdi-clock-outline",
-    title: "Scheduled",
     value: DraftsAndSentTab.Scheduled,
   },
-  { count: sentMessageCount.value, icon: "mdi-send-outline", title: "Sent", value: DraftsAndSentTab.Sent },
+  {
+    ...DraftsAndSentTabMetadataMap[DraftsAndSentTab.Sent],
+    count: sentMessageCount.value,
+    value: DraftsAndSentTab.Sent,
+  },
 ]);
 </script>
 

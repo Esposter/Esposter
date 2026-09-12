@@ -16,3 +16,6 @@ export const TASK_CACHE_TEMP_PREFIX = ".tmp.";
 // Key can become current again), so recency is the only honest eviction signal — and losing a live one costs a single
 // Re-run, the cache being a pure accelerator. Touched on every hit (replayTaskCache) so age reflects use, not creation.
 export const TASK_CACHE_MAX_AGE_DAYS = 14;
+export const TASK_CACHE_MAX_AGE_MS: number = Temporal.Duration.from({ days: TASK_CACHE_MAX_AGE_DAYS }).total(
+  "milliseconds",
+);

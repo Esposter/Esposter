@@ -32,6 +32,52 @@ What makes a sha a valid cut — a tree green on its own, the repairs the checks
 they repair, and a change split from its enforcer at the rule the tree already carries — and the flow that cuts a
 sitting into the largest prefix under the cap: `references/window-composition.md`.
 
+## A standing sweep queues its windows as branches
+
+A sweep that never stops (`sweeps` skill) produces windows faster than reviews complete, so the local commit queue
+outgrows one sitting and one clone. Each window that fills is **cut and bookmarked**: a branch `queue/<n>-<title>`
+at the cut sha, numbered in push order and titled by what the window carries as a ref-safe slug — lowercase
+letters, digits and hyphens, since the title lands unquoted in a branch name — pushed once so the work exists
+somewhere other than this clone. It is pushed to no PR, so it starts no review; CI and the bench still run on
+every branch push, and only the deployment workflow is limited to `develop`.
+
+```bash
+git branch queue/<n>-<title> <cut> && git push origin queue/<n>-<title>
+```
+
+The window still being filled gets the same bookmark early — pushed after every unit's commit and re-pointed with
+`git branch -f` plus `git push --force-with-lease origin queue/<n>-<title>` — so the remote holds every commit the
+clone does, and a lost clone loses nothing. The cut only fixes where the bookmark stops moving.
+
+`develop` stays linear and local work continues above the cut. Draining is the ordinary push of the oldest
+bookmark's sha to `develop` once the gates open (`SKILL.md`), followed by deleting the branch — there is nothing
+to cherry-pick, because `develop` already holds the commits; the branch only recorded where the cut fell.
+
+```bash
+git push origin <cut>:develop && git push origin --delete queue/<n>-<title>
+```
+
+A review's fixes still lead the next window (`references/window-composition.md`), which rebases every queued
+window above them. The bookmarks are re-pointed with `git branch -f` and, one ref at a time so the push cannot
+fall back to whatever `push.default` selects, `git push --force-with-lease origin queue/<n>-<title>`: a queue
+bookmark is a backup of unpushed work rather than a reviewed artifact, so it may move where a
+`queue/<scope>` cut from a pushed `develop` (`references/release-pr-cutting.md`) may not.
+
+The loop, with the four gates of `SKILL.md` collapsed into the one decision they answer here:
+
+```mermaid
+flowchart TD
+  U[Sweep the next unit and commit it] --> W{Does the unpushed range approach the cap}
+  W -->|no| U
+  W -->|yes| B[Bookmark the cut as queue/n-title and push the branch]
+  B --> R{Has the previous window's review completed}
+  R -->|no| U
+  R -->|yes| F[Fix its findings as one commit and prepend it to the unpushed range]
+  F --> P[Re-point every bookmark, verify the oldest cut is green, push that cut to develop]
+  P --> A[Reply to each finding with the sha, delete the drained bookmark]
+  A --> U
+```
+
 ## Re-opening the standing PR after it merges
 
 The pipeline assumes the `develop` → `main` PR is open; once it merges there is none, and the next window has to

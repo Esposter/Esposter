@@ -1,21 +1,22 @@
-import { createColor } from "#src/outdatedDependencies/createColor";
-import { getEngineEntries } from "#src/outdatedDependencies/getEngineEntries";
-import { getLockCatalogVersions } from "#src/outdatedDependencies/getLockCatalogVersions";
-import { getLockConfigDependencyVersions } from "#src/outdatedDependencies/getLockConfigDependencyVersions";
-import { getManifestDependencies } from "#src/outdatedDependencies/getManifestDependencies";
-import { getManifestFiles } from "#src/outdatedDependencies/getManifestFiles";
-import { getMismatches } from "#src/outdatedDependencies/getMismatches";
-import { getRegistryOutdatedDependencies } from "#src/outdatedDependencies/getRegistryOutdatedDependencies";
-import { getRegularOutdatedDependencies } from "#src/outdatedDependencies/getRegularOutdatedDependencies";
-import { getSection } from "#src/outdatedDependencies/getSection";
-import { getUncatalogedManifestDependencies } from "#src/outdatedDependencies/getUncatalogedManifestDependencies";
-import { parseWorkspaceEntries } from "#src/outdatedDependencies/parseWorkspaceEntries";
-import { printExecutionTime } from "#src/outdatedDependencies/printExecutionTime";
-import { printMismatches } from "#src/outdatedDependencies/printMismatches";
-import { printOutdatedDependencies } from "#src/outdatedDependencies/printOutdatedDependencies";
-import { printRegistryErrors } from "#src/outdatedDependencies/printRegistryErrors";
-import { printUncatalogedManifestDependencies } from "#src/outdatedDependencies/printUncatalogedManifestDependencies";
+import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
 import { REPOSITORY_ROOT } from "#src/services/constants";
+import { getMismatches } from "#src/services/outdatedDependencies/getMismatches";
+import { getLockCatalogVersions } from "#src/services/outdatedDependencies/lock/getLockCatalogVersions";
+import { getLockConfigDependencyVersions } from "#src/services/outdatedDependencies/lock/getLockConfigDependencyVersions";
+import { getEngineEntries } from "#src/services/outdatedDependencies/manifest/getEngineEntries";
+import { getManifestDependencies } from "#src/services/outdatedDependencies/manifest/getManifestDependencies";
+import { getManifestFiles } from "#src/services/outdatedDependencies/manifest/getManifestFiles";
+import { getUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/manifest/getUncatalogedManifestDependencies";
+import { getRegularOutdatedDependencies } from "#src/services/outdatedDependencies/pnpm/getRegularOutdatedDependencies";
+import { createColor } from "#src/services/outdatedDependencies/print/createColor";
+import { printExecutionTime } from "#src/services/outdatedDependencies/print/printExecutionTime";
+import { printMismatches } from "#src/services/outdatedDependencies/print/printMismatches";
+import { printOutdatedDependencies } from "#src/services/outdatedDependencies/print/printOutdatedDependencies";
+import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
+import { printUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/print/printUncatalogedManifestDependencies";
+import { getRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/getRegistryOutdatedDependencies";
+import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
+import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -25,10 +26,13 @@ const color = createColor(!process.env.NO_COLOR);
 const workspaceYaml = readFileSync(resolve(REPOSITORY_ROOT, "pnpm-workspace.yaml"), "utf8");
 const lockYaml = readFileSync(resolve(REPOSITORY_ROOT, "pnpm-lock.yaml"), "utf8");
 
-const catalogEntries = parseWorkspaceEntries("catalog", getSection("catalog", workspaceYaml));
+const catalogEntries = parseWorkspaceEntries(
+  DependencyGroup.Catalog,
+  getSection(DependencyGroup.Catalog, workspaceYaml),
+);
 const configDependencyEntries = parseWorkspaceEntries(
-  "configDependencies",
-  getSection("configDependencies", workspaceYaml),
+  DependencyGroup.ConfigDependencies,
+  getSection(DependencyGroup.ConfigDependencies, workspaceYaml),
 );
 const manifests = getManifestFiles(REPOSITORY_ROOT);
 const engineEntries = getEngineEntries(manifests);

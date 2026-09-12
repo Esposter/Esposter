@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/azure";
 
+import { PIN_FILTER_OPTIONS } from "@/services/message/filter/constants";
+
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
-const PIN_ITEMS = [
-  { icon: "mdi-pin", label: "true", value: true },
-  { icon: "mdi-pin-off", label: "false", value: false },
-];
 </script>
 
 <template>
-  <MessageRightSideBarSearchFilterOptionList :items="PIN_ITEMS" @select="emit('select', $event)" />
+  <MessageRightSideBarSearchFilterOptionList :items="PIN_FILTER_OPTIONS" @select="emit('select', $event)" />
 </template>

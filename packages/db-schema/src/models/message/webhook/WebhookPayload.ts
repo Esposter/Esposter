@@ -1,11 +1,9 @@
 import type { Embed } from "#src/models/message/webhook/Embed";
 
 import { embedSchema } from "#src/models/message/webhook/Embed";
-import { USER_NAME_MAX_LENGTH } from "#src/schema/users";
+import { EMBED_MAX_LENGTH, WEBHOOK_CONTENT_MAX_LENGTH } from "#src/services/message/webhook/constants";
+import { USER_NAME_MAX_LENGTH } from "#src/services/user/constants";
 import { z } from "zod";
-
-export const EMBED_MAX_LENGTH = 10;
-export const WEBHOOK_CONTENT_MAX_LENGTH = 2000;
 
 export interface WebhookPayload {
   avatar_url?: string;

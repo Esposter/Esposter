@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { KeyboardShortcutCategory } from "@/models/shared/KeyboardShortcutCategory";
-import type { VCard, VDialog } from "vuetify/components";
 
-const CARD_PROPS: VCard["$props"] = { prependIcon: "mdi-keyboard", title: "Keyboard Shortcuts" };
-const DIALOG_PROPS: VDialog["$props"] = { maxWidth: "30rem" };
+import { KEYBOARD_SHORTCUTS_CARD_PROPS, KEYBOARD_SHORTCUTS_DIALOG_PROPS } from "@/services/styled/constants";
 
 interface Props {
   list: readonly KeyboardShortcutCategory[];
@@ -15,7 +13,11 @@ const { list } = defineProps<Props>();
 
 <template>
   <!-- Nothing to confirm, so no actions row and no close button of its own — the shell's own chrome closes it -->
-  <StyledDialog v-model="modelValue" :card-props="CARD_PROPS" :dialog-props="DIALOG_PROPS">
+  <StyledDialog
+    v-model="modelValue"
+    :card-props="KEYBOARD_SHORTCUTS_CARD_PROPS"
+    :dialog-props="KEYBOARD_SHORTCUTS_DIALOG_PROPS"
+  >
     <div v-for="{ category, items } of list" :key="category">
       <div font-bold mb-2 uppercase op-medium-emphasis text-label-medium>{{ category }}</div>
       <div v-for="{ description, keys } of items" :key="description" py-1 flex items-center justify-between>

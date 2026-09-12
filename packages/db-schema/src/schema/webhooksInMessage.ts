@@ -4,11 +4,10 @@ import { appUsersInMessage } from "#src/schema/appUsersInMessage";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { users } from "#src/schema/users";
+import { WEBHOOK_NAME_MAX_LENGTH } from "#src/services/message/webhook/constants";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { boolean, check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-
-export const WEBHOOK_NAME_MAX_LENGTH = 100;
 
 export const webhooksInMessage = pgTable(
   "webhooks",

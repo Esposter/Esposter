@@ -1,6 +1,5 @@
+import { EMBED_FOOTER_TEXT_MAX_LENGTH } from "#src/services/message/webhook/constants";
 import { z } from "zod";
-
-export const EMBED_FOOTER_TEXT_MAX_LENGTH = 2048;
 
 export interface EmbedFooter {
   icon_url?: string;

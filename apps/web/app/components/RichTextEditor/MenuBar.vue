@@ -2,28 +2,16 @@
 import type { MenuItem } from "@/models/shared/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 
+import { getListMenuItems } from "@/services/richTextEditor/getListMenuItems";
+import { getTextFormatMenuItems } from "@/services/richTextEditor/getTextFormatMenuItems";
+
 interface Props {
   editor?: Editor;
 }
 
 const { editor } = defineProps<Props>();
 const items = computed<MenuItem[]>(() => [
-  {
-    active: editor?.isActive("bold"),
-    icon: "mdi-format-bold",
-    onClick: () => {
-      editor?.chain().focus().toggleBold().run();
-    },
-    title: "Bold",
-  },
-  {
-    active: editor?.isActive("italic"),
-    icon: "mdi-format-italic",
-    onClick: () => {
-      editor?.chain().focus().toggleItalic().run();
-    },
-    title: "Italic",
-  },
+  ...getTextFormatMenuItems(editor),
   {
     active: editor?.isActive("strike"),
     icon: "mdi-format-strikethrough-variant",
@@ -35,22 +23,7 @@ const items = computed<MenuItem[]>(() => [
   {
     isDivider: true,
   },
-  {
-    active: editor?.isActive("bulletList"),
-    icon: "mdi-format-list-bulleted",
-    onClick: () => {
-      editor?.chain().focus().toggleBulletList().run();
-    },
-    title: "Bullet List",
-  },
-  {
-    active: editor?.isActive("orderedList"),
-    icon: "mdi-format-list-numbered",
-    onClick: () => {
-      editor?.chain().focus().toggleOrderedList().run();
-    },
-    title: "Ordered List",
-  },
+  ...getListMenuItems(editor),
   {
     isDivider: true,
   },

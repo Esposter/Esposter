@@ -1,0 +1,3 @@
+export const STATUS_MESSAGE_MAX_LENGTH = 64;
+export const USER_BIOGRAPHY_MAX_LENGTH = 160;
+export const USER_NAME_MAX_LENGTH = 100;

@@ -2,6 +2,7 @@
 import type { Position } from "grid-engine";
 
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
+import { BAR_WIDTH } from "@/services/dungeons/UI/bar/constants";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
 
@@ -12,7 +13,7 @@ interface Props {
   width?: number;
 }
 
-const { barPercentage: baseBarPercentage, position, scaleY = 0.4, width = 372 } = defineProps<Props>();
+const { barPercentage: baseBarPercentage, position, scaleY = 0.4, width = BAR_WIDTH } = defineProps<Props>();
 const emit = defineEmits<{ "level-up": [onComplete: () => void] }>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);

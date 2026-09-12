@@ -1,13 +1,9 @@
 import { REPOSITORY_ROOT } from "#src/services/constants";
-import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
-import { getUnterminatedResults } from "#src/sweeps/unterminatedResults/getUnterminatedResults";
+import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
+import { checkIsInScope } from "#src/services/sweeps/unterminatedResults/checkIsInScope";
+import { getUnterminatedResults } from "#src/services/sweeps/unterminatedResults/getUnterminatedResults";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-
-const SourcePrefixes = ["apps/web/app/", "apps/web/server/", "apps/web/shared/"];
-const SOURCE_REGEX = /^(?:apps|packages)\/[^/]+\/src\//u;
-const checkIsInScope = (path: string) =>
-  !path.includes(".test.") && (SOURCE_REGEX.test(path) || SourcePrefixes.some((prefix) => path.startsWith(prefix)));
 
 // Prints rather than exits non-zero, like the other sweep scans: a hit is a chain to read against what the
 // Enclosing function does with it, and the ledger carries the standing exclusions

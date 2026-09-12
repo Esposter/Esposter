@@ -3,10 +3,9 @@ import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { users } from "#src/schema/users";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { STATUS_MESSAGE_MAX_LENGTH } from "#src/services/user/constants";
 import { boolean, check, pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-
-export const STATUS_MESSAGE_MAX_LENGTH = 64;
 
 export const userStatusEnum = pgEnum("userStatus", UserStatus);
 

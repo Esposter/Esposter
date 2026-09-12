@@ -1,15 +1,15 @@
-import { ClickerAchievementName } from "#src/services/achievement/ClickerAchievementName";
-import { DungeonsAchievementName } from "#src/services/achievement/DungeonsAchievementName";
-import { EmailAchievementName } from "#src/services/achievement/EmailAchievementName";
-import { FlowchartAchievementName } from "#src/services/achievement/FlowchartAchievementName";
-import { LikeAchievementName } from "#src/services/achievement/LikeAchievementName";
-import { MessageAchievementName } from "#src/services/achievement/MessageAchievementName";
-import { PostAchievementName } from "#src/services/achievement/PostAchievementName";
-import { RoomAchievementName } from "#src/services/achievement/RoomAchievementName";
-import { SpecialAchievementName } from "#src/services/achievement/SpecialAchievementName";
-import { SurveyAchievementName } from "#src/services/achievement/SurveyAchievementName";
-import { TableAchievementName } from "#src/services/achievement/TableAchievementName";
-import { WebpageAchievementName } from "#src/services/achievement/WebpageAchievementName";
+import { ClickerAchievementName } from "#src/models/achievement/ClickerAchievementName";
+import { DungeonsAchievementName } from "#src/models/achievement/DungeonsAchievementName";
+import { EmailAchievementName } from "#src/models/achievement/EmailAchievementName";
+import { FlowchartAchievementName } from "#src/models/achievement/FlowchartAchievementName";
+import { LikeAchievementName } from "#src/models/achievement/LikeAchievementName";
+import { MessageAchievementName } from "#src/models/achievement/MessageAchievementName";
+import { PostAchievementName } from "#src/models/achievement/PostAchievementName";
+import { RoomAchievementName } from "#src/models/achievement/RoomAchievementName";
+import { SpecialAchievementName } from "#src/models/achievement/SpecialAchievementName";
+import { SurveyAchievementName } from "#src/models/achievement/SurveyAchievementName";
+import { TableAchievementName } from "#src/models/achievement/TableAchievementName";
+import { WebpageAchievementName } from "#src/models/achievement/WebpageAchievementName";
 import { mergeObjectsStrict } from "@esposter/shared";
 
 export const AchievementName = mergeObjectsStrict(

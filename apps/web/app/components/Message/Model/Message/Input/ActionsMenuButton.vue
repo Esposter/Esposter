@@ -1,19 +1,9 @@
 <script setup lang="ts">
-import type { SlashCommandTypeWithoutParameters } from "@/models/message/slashCommands/SlashCommandTypeWithoutParameters";
 import type { Item } from "@/models/shared/Item";
 
-import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { pickFiles } from "@/services/file/pickFiles";
+import { MENU_SLASH_COMMANDS } from "@/services/message/slashCommands/constants";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
-
-// The three commands that open a dialog instead of sending something. Their titles name the command (`/poll`),
-// Which reads as a noun in a menu of actions, so the menu writes the verb and takes the icon from the definition —
-// An entry can then never drift from the command it runs
-const MENU_COMMANDS: { title: string; type: SlashCommandTypeWithoutParameters }[] = [
-  { title: "Create Poll", type: SlashCommandType.Poll },
-  { title: "Schedule Message", type: SlashCommandType.Schedule },
-  { title: "Set Reminder", type: SlashCommandType.Remind },
-];
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 const executeSlashCommand = useExecuteSlashCommand();
@@ -26,7 +16,7 @@ const items = computed<Item[]>(() => [
     },
     title: "Upload a File",
   },
-  ...MENU_COMMANDS.map<Item>(({ title, type }) => ({
+  ...MENU_SLASH_COMMANDS.map<Item>(({ title, type }) => ({
     icon: SlashCommandDefinitionMap[type].icon,
     onClick: () => executeSlashCommand({ parameterValues: {}, type }),
     title,

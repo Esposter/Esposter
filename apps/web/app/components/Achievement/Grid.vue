@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { achievementDefinitions as baseAchievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
+import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
 interface Props {
-  achievementDefinitions: (typeof baseAchievementDefinitions)[number][];
+  achievementDefinitions: AchievementDefinitionEntry[];
   userAchievements: UserAchievementWithDefinition[];
 }
 

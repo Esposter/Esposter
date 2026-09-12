@@ -3,14 +3,8 @@ import type { OverlayEntry } from "#src/models/exec/snapshot/OverlayEntry";
 
 import { FlushOpType } from "#src/models/exec/FlushOpType";
 import { OverlayEntryKind } from "#src/models/exec/snapshot/OverlayEntryKind";
+import { getPathDepth } from "#src/services/exec/snapshot/getPathDepth";
 import { exhaustiveGuard } from "@esposter/shared";
-// Path depth = its "/" count; decorate-sort-undecorate below computes it once per copy (a build's upper can hold
-// Thousands).
-const countSeparators = (relativePath: string): number => {
-  let count = 0;
-  for (const character of relativePath) if (character === "/") count++;
-  return count;
-};
 // Order a classified overlay-upper walk into host ops (apps/web/content/docs/virrun/write-back.md). Deletes run before
 // Copies so an opaque directory is cleared before its replacement children land; an opaque directory expands to a delete + a copy.
 export const buildFlushPlan = (
@@ -37,7 +31,7 @@ export const buildFlushPlan = (
     }
   }
   const sortedCopies = copies
-    .map((copy) => ({ copy, depth: countSeparators(copy.relativePath) }))
+    .map((copy) => ({ copy, depth: getPathDepth(copy.relativePath) }))
     .toSorted(
       (firstCopy, secondCopy) =>
         firstCopy.depth - secondCopy.depth || firstCopy.copy.relativePath.localeCompare(secondCopy.copy.relativePath),

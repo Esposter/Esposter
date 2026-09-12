@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ResourceListFilterTypeDefinition } from "@/models/resource/list/ResourceListFilterTypeDefinition";
 import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
 import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
@@ -7,11 +8,6 @@ import { ResourceListFilterType, ResourceListFilterTypes } from "@/models/resour
 
 interface Props {
   hasActiveFilters: boolean;
-}
-
-interface ResourceListFilterTypeDefinition {
-  isVisible: ComputedRef<boolean>;
-  reset: () => void;
 }
 
 const { hasActiveFilters } = defineProps<Props>();

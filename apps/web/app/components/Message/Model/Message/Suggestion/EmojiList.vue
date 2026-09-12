@@ -11,7 +11,7 @@ import { takeOne } from "@esposter/shared";
 const { command, items, query } = defineProps<Pick<SuggestionProps<PickableEmoji>, "command" | "items" | "query">>();
 const emojiPickerStore = useEmojiPickerStore();
 const { skinTone } = storeToRefs(emojiPickerStore);
-const title = computed(() => getSuggestionListTitle("EMOJI", SuggestionTrigger.Emoji, query));
+const title = computed(() => getSuggestionListTitle(SuggestionTrigger.Emoji, query));
 const selectItem = (index: number) => {
   const emoji = takeOne(items, index);
   command(emoji);

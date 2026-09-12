@@ -3,13 +3,9 @@ import { AccountLinkErrorMessageMap } from "@/services/auth/AccountLinkErrorMess
 import { authClient } from "@/services/auth/authClient";
 import { requireAuthData } from "@/services/auth/requireAuthData";
 import { LoginButtonItems } from "@/services/login/LoginButtonItems";
+import { LINKED_ACCOUNTS_MUTATION_KEY } from "@/services/user/constants";
 import { useAlertStore } from "@/store/alert";
 import { RoutePath } from "@esposter/shared";
-
-// One key for every row, because they all write one target: the account set. better-auth's last-account guard
-// Reads the accounts and deletes without a transaction, so two unlinks in flight together both see two providers,
-// Both pass, and both delete — leaving an account no provider reaches, which sign-in here can never recover
-const LINKED_ACCOUNTS_KEY = "linkedAccounts";
 
 const { currentRoute } = useRouter();
 const router = useRouter();
@@ -64,7 +60,7 @@ if (typeof linkError === "string") {
                     provider: loginButtonProps.provider,
                   }),
                 ),
-              { key: LINKED_ACCOUNTS_KEY },
+              { key: LINKED_ACCOUNTS_MUTATION_KEY },
             );
           }
         "
@@ -73,7 +69,7 @@ if (typeof linkError === "string") {
             const accountId = LinkedAccountIdMap.get(loginButtonProps.provider);
             if (!accountId) return;
             await executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
-              key: LINKED_ACCOUNTS_KEY,
+              key: LINKED_ACCOUNTS_MUTATION_KEY,
               onSuccess: async () => {
                 await refresh();
               },
