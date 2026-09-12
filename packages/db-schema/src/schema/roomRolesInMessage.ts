@@ -4,6 +4,7 @@ import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
+import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
@@ -26,14 +27,14 @@ export const roomRolesInMessage = pgTable(
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: (table) => [
-      check("roomRoles_color_length_check", createMaxLengthCheckSql(table.color, ROOM_ROLE_COLOR_MAX_LENGTH)),
-      check("roomRoles_name_length_check", createNameCheckSql(table.name, ROOM_ROLE_NAME_MAX_LENGTH)),
-      check("roomRoles_position_check", sql`${table.position} >= 0`),
-      index("roomRoles_roomId_position_index").on(table.roomId, table.position),
+    extraConfig: ({ color, isEveryone, name, position, roomId }) => [
+      check("roomRoles_color_length_check", createMaxLengthCheckSql(color, ROOM_ROLE_COLOR_MAX_LENGTH)),
+      check("roomRoles_name_length_check", createNameCheckSql(name, ROOM_ROLE_NAME_MAX_LENGTH)),
+      check("roomRoles_position_check", createMinimumCheckSql(position, 0)),
+      index("roomRoles_roomId_position_index").on(roomId, position),
       uniqueIndex("roomRoles_roomId_isEveryone_unique")
-        .on(table.roomId)
-        .where(sql`${table.isEveryone} = TRUE`),
+        .on(roomId)
+        .where(sql`${isEveryone} = TRUE`),
     ],
     schema: messageSchema,
   },

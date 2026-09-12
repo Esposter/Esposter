@@ -3,7 +3,7 @@ import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { users } from "#src/schema/users";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
-import { sql } from "drizzle-orm";
+import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { check, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
@@ -22,7 +22,7 @@ export const roomCategoriesInMessage = pgTable(
   {
     extraConfig: ({ name, position }) => [
       check("roomCategories_name_length_check", createNameCheckSql(name, ROOM_CATEGORY_NAME_MAX_LENGTH)),
-      check("roomCategories_position_check", sql`${position} >= 0`),
+      check("roomCategories_position_check", createMinimumCheckSql(position, 0)),
     ],
     schema: messageSchema,
   },
