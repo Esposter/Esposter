@@ -197,7 +197,7 @@ catalog:
   read-excel-file: ^9.3.10
   rxjs: ^7.8.2
   sanitize-html: ^2.17.7
-  sass-embedded: ^1.104.0
+  sass-embedded: ^1.104.1
   sax: ^1.6.1
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
