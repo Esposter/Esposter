@@ -3,7 +3,6 @@ import { ThemeMode } from "@/models/vuetify/ThemeMode";
 import { THEME_COOKIE_NAME, THEME_COOKIE_OPTIONS } from "@/services/vuetify/constants";
 
 defineSlots<{ default: () => VNode }>();
-
 const theme = useVTheme();
 const themeCookie = useCookie(THEME_COOKIE_NAME, { ...THEME_COOKIE_OPTIONS, default: () => ThemeMode.system });
 const { $ssrClientHints } = useNuxtApp();

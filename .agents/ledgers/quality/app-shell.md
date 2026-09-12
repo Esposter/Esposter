@@ -4,7 +4,7 @@ Everything a product mounts inside rather than owns: the chrome, the routes, and
 
 | Unit                                                                                                                              | Swept      | Notes                                                             |
 | --------------------------------------------------------------------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------- |
-| `App/`, `Nuxt/`, `Fragment.vue`, `layouts/`, `App.vue`                                                                            | 2026-08-20 |                                                                   |
+| `App/`, `Nuxt/`, `Fragment.vue`, `layouts/`, `App.vue`                                                                            | 2026-09-12 |                                                                   |
 | `pages/` + `middleware/` + `plugins/`                                                                                             | 2026-08-20 | only the pages no other row names — a feature row carries its own |
 | `app/store` and `app/composables` root files, `app/util`, `app/models`, `app/types`, `rules.config.ts`                            | 2026-08-20 |                                                                   |
 | `services/{app,auth,route,router,trpc,notification,google}` + `composables/{data,shared}`                                         | 2026-08-20 |                                                                   |

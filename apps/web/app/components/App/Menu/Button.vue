@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { APP_BAR_MENU_PROPS, APP_BAR_TOOLTIP_PROPS } from "@/services/app/constants";
 import { ProductListLinkItems } from "@/services/app/ProductListLinkItems";
 
 const menu = ref(false);
@@ -9,9 +10,9 @@ const menu = ref(false);
     <StyledTooltipMenuIconButton
       v-model="menu"
       icon="mdi-dots-grid"
-      :menu-props="{ closeOnContentClick: false, location: 'bottom start' }"
+      :menu-props="APP_BAR_MENU_PROPS"
       text="Menu"
-      :tooltip-props="{ location: 'bottom' }"
+      :tooltip-props="APP_BAR_TOOLTIP_PROPS"
     >
       <AppMenuLinkList :items="ProductListLinkItems" @select="menu = false" />
     </StyledTooltipMenuIconButton>
