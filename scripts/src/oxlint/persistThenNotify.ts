@@ -107,9 +107,10 @@ const checkIsRethrowingHandler = (node: unknown): boolean => {
     );
   if (checkIsPromiseReject(expression)) return true;
   if (!FunctionNodeTypes.has(expression.type)) return false;
-  const functionNode = expression as ESTree.ArrowFunctionExpression | ESTree.FunctionExpression;
-  if (functionNode.body.type !== "BlockStatement") return checkIsPromiseReject(functionNode.body);
-  return checkHasOwnRejection(functionNode.body);
+  const functionNode = expression as ESTree.ArrowFunctionExpression | ESTree.Function;
+  if (functionNode.type === "ArrowFunctionExpression" && functionNode.expression)
+    return checkIsPromiseReject(functionNode.body);
+  return functionNode.body ? checkHasOwnRejection(functionNode.body) : false;
 };
 // The root says the chain STARTED in a wrapper; it says nothing about how the chain ENDS. `.match(noop, (error)
 // => { throw error })` and `._unsafeUnwrap()` both hand the rejection straight back to the awaiting caller, and
