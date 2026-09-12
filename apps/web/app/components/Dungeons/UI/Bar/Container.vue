@@ -4,6 +4,7 @@ import type { BarType } from "@/models/dungeons/UI/bar/BarType";
 import type { Position } from "grid-engine";
 import type { Tweens } from "phaser";
 
+import { BAR_WIDTH } from "@/services/dungeons/UI/bar/constants";
 import { clamp } from "@vueuse/core";
 import { Container } from "vue-phaserjs";
 
@@ -22,7 +23,7 @@ const {
   position,
   scaleY = 0.7,
   type,
-  width = 372,
+  width = BAR_WIDTH,
 } = defineProps<Props>();
 const emit = defineEmits<{
   "complete:display-width": [];

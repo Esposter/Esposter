@@ -3,14 +3,14 @@ import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
 
 import { AttackKey } from "#shared/models/dungeons/keys/spritesheet/AttackKey";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
+import { getAnimationCompleteEventKey } from "@/services/dungeons/animation/getAnimationCompleteEventKey";
 import { getAnimationConfiguration } from "@/services/dungeons/animation/getAnimationConfiguration";
-import { Animations } from "phaser";
 
 const isActive = defineModel<boolean>("isActive", { required: true });
 const { isToEnemy } = defineProps<AttackProps>();
 const emit = defineEmits<{ complete: [] }>();
 const playAnimationKey = usePlayAnimation(AttackKey["Ice Shard Start"], isActive, emit);
-const onCompleteKey = `${Animations.Events.ANIMATION_COMPLETE_KEY}${AttackKey["Ice Shard Start"]}`;
+const onCompleteKey = getAnimationCompleteEventKey(AttackKey["Ice Shard Start"]);
 </script>
 
 <template>

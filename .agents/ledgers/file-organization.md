@@ -30,7 +30,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/components/Message/Model` — `User` and the small folders                   | 2026-09-12 | `FileRenderer`, `Settings`, `RoomCategory`, `Status`, `Member`                                  |
 | `app/components/Resource/Sheet`                                                 | 2026-09-12 |                                                                                                 |
 | `app/components/Resource` — the rest                                            | 2026-09-12 | `List`, the small resource folders, the root files                                              |
-| `app/components/Dungeons`                                                       | —          |                                                                                                 |
+| `app/components/Dungeons`                                                       | 2026-09-12 |                                                                                                 |
 | `app/components/Styled`                                                         | —          | a `*Props.ts` beside its component is colocation, not a stray model                             |
 | `app/components` — `Visual`, `User`, `Docs`, `Clicker`, `Post`                  | —          |                                                                                                 |
 | `app/components` — the rest                                                     | —          | `App`, `Dashboard`, `RichTextEditor`, `Achievement`, `FlowchartEditor`, the single-file folders |
