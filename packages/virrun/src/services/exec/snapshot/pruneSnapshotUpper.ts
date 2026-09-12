@@ -1,16 +1,8 @@
+import { checkHasNodeModules } from "#src/services/exec/snapshot/checkHasNodeModules";
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
 import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-// A cheap structural probe: does this subtree hold a node_modules anywhere? Short-circuits on the first match and
-// Never descends *into* a node_modules — a symlink-dense forest there is nothing to learn from — so it stays a pure
-// Readdir walk with no removal cost, runnable even from the host over a `\\wsl.localhost` UNC by listing alone.
-const checkHasNodeModules = (directory: string): boolean =>
-  readdirSync(directory, { withFileTypes: true }).some(
-    (entry) =>
-      entry.isDirectory() &&
-      (entry.name === NODE_MODULES_DIRECTORY || checkHasNodeModules(join(directory, entry.name))),
-  );
 // A captured snapshot upper is everything the frozen `pnpm install` wrote: the dependency closure (node_modules)
 // Plus any source-tree artifact a postinstall lifecycle script generated (e.g. `nuxt prepare` → apps/web/.nuxt).
 // Those artifacts derive from *source*, but the snapshot is keyed only on the lockfile, so freezing them lets a fork

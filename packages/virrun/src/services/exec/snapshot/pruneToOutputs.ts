@@ -9,10 +9,15 @@ import { join } from "node:path";
 // Host-native join so it runs from the win32 host over a `\\wsl.localhost` UNC.
 export const pruneToOutputs = (upperDirectory: string, outputs: readonly string[]): void => {
   const outputSet = new Set(outputs);
+  // Every proper ancestor of an output, grown one segment at a time so a depth-d output costs d appends rather than
+  // D joins of up to d segments
   const prefixSet = new Set<string>();
   for (const output of outputs) {
-    const segments = output.split("/");
-    for (let index = 1; index < segments.length; index++) prefixSet.add(segments.slice(0, index).join("/"));
+    let prefix = "";
+    for (const segment of output.split("/").slice(0, -1)) {
+      prefix = prefix ? `${prefix}/${segment}` : segment;
+      prefixSet.add(prefix);
+    }
   }
   const walk = (absoluteDirectory: string, relativePath: string): void => {
     for (const entry of readdirSync(absoluteDirectory, { withFileTypes: true })) {

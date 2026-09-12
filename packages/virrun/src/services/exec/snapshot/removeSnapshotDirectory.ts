@@ -1,17 +1,11 @@
+import { makeTraversable } from "#src/services/exec/snapshot/makeTraversable";
 import { WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { WSL_REMOVE_SCRIPT, WSL_UNC_REGEX } from "#src/services/exec/wsl/constants";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { readWslPath } from "#src/services/exec/wsl/readWslPath";
-import { chmodSync, existsSync, lstatSync, readdirSync, rmSync } from "node:fs";
-import { join } from "node:path";
-// Removes a snapshot directory, restoring +rwx top-down first: a capture overlay's on-disk `work/work` scratch is left at
-// Mode 000 (un-traversable), and Node's recursive rmSync refuses to chmod before descending, so a plain remove
-// EACCES-es on it. Harmless on an ordinary tree, so callers needn't reason about whether a given directory is poisoned.
-const makeTraversable = (directory: string): void => {
-  chmodSync(directory, 0o700);
-  for (const entry of readdirSync(directory, { withFileTypes: true }))
-    if (entry.isDirectory()) makeTraversable(join(directory, entry.name));
-};
+import { existsSync, lstatSync, rmSync } from "node:fs";
+// Removes a snapshot directory, restoring +rwx top-down first (makeTraversable) so rmSync can descend a capture
+// Overlay's mode-000 `work/work` scratch.
 // `timeoutMs` bounds the WSL-side removal only, defaulting to the work cap that suits a single cache entry. A caller
 // Removing a whole cache root (`cache clean`) overrides it — that removal is explicit, user-invoked, and must run to
 // Completion rather than be SIGTERM'd into a half-swept cache. See CACHE_CLEAN_TIMEOUT_MS.
