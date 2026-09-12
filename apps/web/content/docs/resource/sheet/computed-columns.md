@@ -95,7 +95,7 @@ All paths relative to `apps/web`.
 | `app/services/resource/sheet/column/computeValue.ts`                                       | Lazy resolver with inline cycle guard                           |
 | `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                   | Per-column statistics over the resolved values                  |
 | `app/services/resource/sheet/column/transformation/ColumnTransformationComputeMap.ts`      | Dispatch map: transformation type → computer                    |
-| `app/services/resource/sheet/column/computeAggregationValue.ts`                            | Aggregation entry point (source resolution + numeric filtering) |
+| `app/services/resource/sheet/column/transformation/computeAggregationValue.ts`             | Aggregation entry point (source resolution + numeric filtering) |
 | `app/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type computers                                  |
 | `app/services/resource/sheet/column/transformation/computeMathTransformation.ts`           | mathjs `evaluate` with variable scope                           |
 | `app/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                       |

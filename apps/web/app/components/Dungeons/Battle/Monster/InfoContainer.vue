@@ -3,7 +3,7 @@ import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { ExperienceLabelTextStyle } from "@/assets/dungeons/styles/ExperienceLabelTextStyle";
 import { HealthLabelTextStyle } from "@/assets/dungeons/styles/HealthLabelTextStyle";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
-import { phaserEventEmitter } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { prettify } from "@/util/text/prettify";
 import { Container, Image, Text } from "vue-phaserjs";
 

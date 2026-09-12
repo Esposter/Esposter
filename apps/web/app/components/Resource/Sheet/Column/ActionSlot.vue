@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 
-import { ChartableColumnTypes } from "@/services/resource/sheet/column/computeColumnChartData";
+import { ChartableColumnTypes } from "@/services/resource/sheet/column/ChartableColumnTypes";
 import { getEffectiveColumnType } from "@/services/resource/sheet/column/getEffectiveColumnType";
 import { getDeleteColumnDescription } from "@/services/resource/sheet/commands/getDeleteColumnDescription";
 import { getEditColumnDescription } from "@/services/resource/sheet/commands/getEditColumnDescription";

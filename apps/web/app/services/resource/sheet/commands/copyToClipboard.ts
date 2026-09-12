@@ -1,14 +1,11 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+import type { CopyToClipboardOptions } from "@/models/resource/sheet/commands/CopyToClipboardOptions";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
 import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
 import { serializeToHtml } from "@/services/resource/sheet/commands/serializeToHtml";
 import { serializeToTsv } from "@/services/resource/sheet/commands/serializeToTsv";
-
-interface CopyToClipboardOptions {
-  includeHeaders?: boolean;
-  rowIds?: string[];
-}
 
 export const copyToClipboard = async (dataSource: DataSource, options: CopyToClipboardOptions = {}): Promise<void> => {
   const { includeHeaders = true, rowIds } = options;
@@ -24,9 +21,11 @@ export const copyToClipboard = async (dataSource: DataSource, options: CopyToCli
     return;
   }
 
-  const tsvBlob = new Blob([tsv], { type: "text/plain" });
+  const tsvBlob = new Blob([tsv], { type: MimeType.PlainText });
   const htmlBlob = new Blob([serializeToHtml(filteredDataSource, includeHeaders, cellTextRows)], {
-    type: "text/html",
+    type: MimeType.Html,
   });
-  await window.navigator.clipboard.write([new ClipboardItem({ "text/html": htmlBlob, "text/plain": tsvBlob })]);
+  await window.navigator.clipboard.write([
+    new ClipboardItem({ [MimeType.Html]: htmlBlob, [MimeType.PlainText]: tsvBlob }),
+  ]);
 };

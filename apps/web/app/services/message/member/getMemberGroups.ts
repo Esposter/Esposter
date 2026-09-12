@@ -1,12 +1,8 @@
-import type { RoomRoleInMessage, User } from "@esposter/db-schema";
+import type { MemberGroup } from "@/models/message/member/MemberGroup";
+import type { User } from "@esposter/db-schema";
 
 import { getTopRole } from "@/services/message/member/getTopRole";
 import { getOrCreate } from "@esposter/shared";
-
-interface MemberGroup<TMember> {
-  members: TMember[];
-  role?: RoomRoleInMessage;
-}
 
 // Discord-style member grouping — one group per top role ordered by position (highest first).
 // Members without any role trail in a single roleless group.

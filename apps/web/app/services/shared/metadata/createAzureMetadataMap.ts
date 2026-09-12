@@ -1,18 +1,15 @@
-import type { MessageMetadataEntityMap } from "@/models/db/message/metadata/MessageMetadataEntityMap";
+import type { AzureMetadataEntity } from "@/models/shared/metadata/AzureMetadataEntity";
 import type { AzureMetadataOperationDataKey } from "@/models/shared/metadata/AzureMetadataOperationDataKey";
-import type { MessageMetadataType } from "@esposter/db-schema";
 
 import { AzureMetadataOperation } from "@/models/shared/metadata/AzureMetadataOperation";
 import { getOrCreate, uncapitalize } from "@esposter/shared";
-
-type TEntity<TType extends string> = TType extends MessageMetadataType ? MessageMetadataEntityMap[TType] : never;
 
 export const createAzureMetadataMap = <TType extends string>(
   currentId: MaybeRefOrGetter<string>,
   azureEntityTypeKey: TType,
 ) => {
   // Map<partitionKey, Map<rowKey, T[]>>
-  const metadataMap: Ref<Map<string, Map<string, TEntity<TType>[]>>> = ref(new Map());
+  const metadataMap: Ref<Map<string, Map<string, AzureMetadataEntity<TType>[]>>> = ref(new Map());
   const getMetadatas = (rowKey: string) => {
     const currentIdValue = toValue(currentId);
     if (!currentIdValue) return [];
@@ -20,10 +17,13 @@ export const createAzureMetadataMap = <TType extends string>(
     if (dataMap) return getOrCreate(dataMap, rowKey, () => []);
     else return [];
   };
-  const setMetadatas = (rowKey: string, metadatas: TEntity<TType>[]) => {
+  const setMetadatas = (rowKey: string, metadatas: AzureMetadataEntity<TType>[]) => {
     const currentIdValue = toValue(currentId);
     if (!currentIdValue) return;
-    getOrCreate(metadataMap.value, currentIdValue, () => new Map<string, TEntity<TType>[]>()).set(rowKey, metadatas);
+    getOrCreate(metadataMap.value, currentIdValue, () => new Map<string, AzureMetadataEntity<TType>[]>()).set(
+      rowKey,
+      metadatas,
+    );
   };
   return {
     [`${uncapitalize(AzureMetadataOperation.Get)}${azureEntityTypeKey}s`]: getMetadatas,

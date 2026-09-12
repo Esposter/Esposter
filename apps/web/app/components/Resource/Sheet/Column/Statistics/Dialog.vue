@@ -2,7 +2,7 @@
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 
 import { ColumnStatisticsDefinitions } from "@/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
-import { ChartableColumnTypes } from "@/services/resource/sheet/column/computeColumnChartData";
+import { ChartableColumnTypes } from "@/services/resource/sheet/column/ChartableColumnTypes";
 
 const isOpen = defineModel<boolean>();
 const columnStatistics = useColumnStatistics();

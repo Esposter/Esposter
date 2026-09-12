@@ -11,7 +11,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/shared/models/dungeons`                                               | —          |                                                                                              |
 | `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | —          |                                                                                              |
 | `app/shared/models` — the rest                                             | —          | the small folders, several of them a single file                                             |
-| `app/services`                                                             | —          | a file is named for its export, and a second map is a second file                            |
+| `app/services`                                                             | 2026-09-12 | a file is named for its export, and a second map is a second file                            |
 | `app/models/dungeons`                                                      | —          | a class hierarchy stays a model; a map and the behaviour it dispatches to do not             |
 | `app/models/resource`                                                      | —          | a command class stays a model; the map beside a form union does not                          |
 | `app/models/message`                                                       | —          | a type derived from a services map is a type-only import, not a move                         |

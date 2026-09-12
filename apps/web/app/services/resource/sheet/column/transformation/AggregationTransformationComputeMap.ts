@@ -1,12 +1,9 @@
-import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
-import type { AggregationTransformationComputeContext } from "@/models/resource/sheet/column/transformation/AggregationTransformationComputeContext";
+import type { AggregationTransformationComputer } from "@/models/resource/sheet/column/transformation/AggregationTransformationComputer";
 
 import { AggregationTransformationType } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationType";
 import { getAverage } from "@/services/resource/sheet/column/getAverage";
 import { getSummation } from "@/services/resource/sheet/column/getSummation";
 import { takeOne } from "@esposter/shared";
-
-type AggregationTransformationComputer = (context: AggregationTransformationComputeContext) => ColumnValue;
 
 export const AggregationTransformationComputeMap = {
   [AggregationTransformationType.Average]: ({ nonNullValues }) => {

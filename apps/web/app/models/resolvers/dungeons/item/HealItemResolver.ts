@@ -6,7 +6,7 @@ import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { phaserEventEmitter } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 
 export class HealItemResolver extends AItemResolver {

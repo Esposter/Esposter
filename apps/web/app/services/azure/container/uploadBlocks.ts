@@ -1,6 +1,7 @@
 import type { ProgressNotifier } from "p-progress";
 
 import { MEGABYTE } from "#shared/services/app/constants";
+import { BLOB_CONTENT_TYPE_HEADER } from "@/services/azure/container/constants";
 import { commitBlockList } from "@/services/azure/container/commitBlockList";
 import { PProgress } from "p-progress";
 
@@ -19,7 +20,7 @@ export const uploadBlocks = async (file: Blob, sasUrl: string, progressNotifier?
         body: file.slice(start, end),
         headers: {
           "Content-Type": file.type,
-          "x-ms-blob-content-type": file.type,
+          [BLOB_CONTENT_TYPE_HEADER]: file.type,
           "x-ms-blob-type": "BlockBlob",
         },
         method: "PUT",

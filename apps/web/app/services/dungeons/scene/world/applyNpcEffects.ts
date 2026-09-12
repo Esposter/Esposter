@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { applyNpcEffect } from "@/services/dungeons/scene/world/applyNpcEffect";
 import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
-import { phaserEventEmitter } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const applyNpcEffects = async (scene: SceneWithPlugins, npc: Npc) => {
