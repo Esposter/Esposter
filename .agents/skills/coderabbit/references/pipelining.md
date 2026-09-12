@@ -59,6 +59,21 @@ fall back to whatever `push.default` selects, `git push --force-with-lease origi
 bookmark is a backup of unpushed work rather than a reviewed artifact, so it may move where a
 `queue/<scope>` cut from a pushed `develop` (`references/release-pr-cutting.md`) may not.
 
+The loop, with the four gates of `SKILL.md` collapsed into the one decision they answer here:
+
+```mermaid
+flowchart TD
+  U[Sweep the next unit and commit it] --> W{Does the unpushed range approach the cap}
+  W -->|no| U
+  W -->|yes| B[Bookmark the cut as queue/n-title and push the branch]
+  B --> R{Has the previous window's review completed}
+  R -->|no| U
+  R -->|yes| F[Fix its findings as one commit and prepend it to the unpushed range]
+  F --> P[Re-point every bookmark, verify the oldest cut is green, push that cut to develop]
+  P --> A[Reply to each finding with the sha, delete the drained bookmark]
+  A --> U
+```
+
 ## Re-opening the standing PR after it merges
 
 The pipeline assumes the `develop` → `main` PR is open; once it merges there is none, and the next window has to
