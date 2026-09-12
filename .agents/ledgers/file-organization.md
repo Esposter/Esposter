@@ -47,7 +47,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/virrun` — `services` — the rest                                       | 2026-09-12 | `cli`, `configuration`, `source`, `vfs`, `virrun`                                               |
 | `packages/virrun` — `models`, root                                              | 2026-09-12 |                                                                                                 |
 | `apps/infra` — `azure/resources`                                                | 2026-09-12 | one resource per file, named for its export                                                     |
-| `apps/infra` — `azure` — the rest                                               | —          | `constants`, `services`, the stack files                                                        |
+| `apps/infra` — `azure` — the rest                                               | 2026-09-12 | `constants`, `services`, the stack files                                                        |
 | `apps/infra` — `github`, root                                                   | —          |                                                                                                 |
 | `packages/configuration`                                                        | 2026-09-12 |                                                                                                 |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`                | —          | barrel contents are `ctix` output — regenerate, never hand-edit                                 |
@@ -101,6 +101,10 @@ finding: one consumer does not earn a place in a shared package.
   model on the page changes what the page shows, so it is a decision rather than a pass: either the page renders
   `KeyboardShortcutList` and the three-row list goes, or the three rows are the intended subset and the model
   gains the missing key.
+- `apps/infra/src/azure/constants/` keeps one PascalCase file per constant, each a default export, and two hundred
+  import sites read them that way. No rule names default exports either way — the file-organization skill only
+  bans `export { }` — so converting the tree to `export const` is a convention to settle first, not a pass: the
+  tree is internally consistent and the swap is sixty files of pure churn.
 
 ## Next enforceable
 
