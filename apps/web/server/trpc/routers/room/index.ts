@@ -75,12 +75,10 @@ import {
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
+import { MAX_INVITE_ID_RETRIES } from "@@/server/services/room/constants";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { and, count, desc, eq, getColumns, gt, ilike, inArray, isNull, lt, ne, not, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
-
-// Invite ids are short enough to collide, so a create re-rolls before giving up
-const MAX_INVITE_ID_RETRIES = 3;
 
 export const baseRoomRouter = router({
   createInvite: getPermissionsProcedure(RoomPermission.ManageInvites, createInviteInputSchema, "roomId")
