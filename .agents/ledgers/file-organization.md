@@ -48,7 +48,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/virrun` — `models`, root                                              | 2026-09-12 |                                                                                                 |
 | `apps/infra` — `azure/resources`                                                | 2026-09-12 | one resource per file, named for its export                                                     |
 | `apps/infra` — `azure` — the rest                                               | 2026-09-12 | `constants`, `services`, the stack files                                                        |
-| `apps/infra` — `github`, root                                                   | —          |                                                                                                 |
+| `apps/infra` — `github`, root                                                   | 2026-09-13 |                                                                                                 |
 | `packages/configuration`                                                        | 2026-09-12 |                                                                                                 |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`                | —          | barrel contents are `ctix` output — regenerate, never hand-edit                                 |
 | `scripts/src/dependencyGraph`                                                   | 2026-09-12 | a command keeps its entrypoint; its functions live in `services/<command>`, types in `models`   |
