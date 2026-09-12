@@ -39,6 +39,7 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - **`as unknown as T` is `any` with extra steps** — it launders a value past every check, isn't lint-enforceable, and needs a stated reason the type cannot be modelled; the default answer is that it never was. Prefer a single `as T` where TS accepts it, and comment what the compiler cannot see — never "this is safe".
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
 - **Never `Object.values(SomeEnum)` inline**, and never abbreviate an enum value name (`Configuration`, not `Config`).
+- **A union of string literals is an enum** — `"delete" | "get"` in an annotation is a closed set spelled inline, so it becomes `enum HttpMethod` in its own model file and the annotation names the enum. `"" | Foo` (the empty sentinel), a lone discriminant (`type: "ApiConnection"`), a numeric union and a union passed as a type argument (`Pick<Foo, "a" | "b">` names keys) are not sets. Enforced by `literal-union/no-string-literal-union` (`scripts/src/oxlint/literalUnion.ts`), switched on per tree as its sites clear (`.oxlintrc.json` `overrides`).
 - **Track selections by stable ID, not name or index** — names change, indices shift on delete/reorder. Use `entity.id` (UUID) as the key for selected/active items. A stale ID is harmless; a stale name/index is a bug.
 
 ## Functions

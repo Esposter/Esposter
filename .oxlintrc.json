@@ -17,6 +17,7 @@
   ],
   "jsPlugins": [
     "./scripts/src/oxlint/errorAlert.ts",
+    "./scripts/src/oxlint/literalUnion.ts",
     "./scripts/src/oxlint/passThroughHelper.ts",
     "./scripts/src/oxlint/persistThenNotify.ts",
     "./scripts/src/oxlint/propsInterface.ts",
@@ -26,6 +27,12 @@
     "typeAware": true
   },
   "overrides": [
+    {
+      "files": ["apps/infra/**/*.ts"],
+      "rules": {
+        "literal-union/no-string-literal-union": "error"
+      }
+    },
     {
       "files": ["**/*.vue"],
       "rules": {
