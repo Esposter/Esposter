@@ -1,0 +1,213 @@
+{
+  "files": [
+    {
+      "filepath": "src/createKeyframeStore.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0013099999999781175,
+              "name": "native — a full copy written to the backend",
+              "p99": 0.0034820000000252093,
+              "rme": 61.05021280938324,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.0017200000000229922,
+              "name": "read — a full copy from the backend",
+              "p99": 0.0052460000000269244,
+              "rme": 81.84871131453309,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.040330000000017206,
+              "name": "write — content already held",
+              "p99": 0.05615299999994136,
+              "rme": 13.027986710627825,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.3878600000000233,
+              "name": "read — a keyframe",
+              "p99": 0.5548679999999968,
+              "rme": 13.760967229910879,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.142639999999983,
+              "name": "read — a delta",
+              "p99": 3.559233000000054,
+              "rme": 61.6324513556467,
+              "sampleCount": 10
+            },
+            {
+              "mean": 18.120480000000065,
+              "name": "write — an incompressible payload, promoting",
+              "p99": 19.25132000000011,
+              "rme": 2.9661065092644705,
+              "sampleCount": 10
+            },
+            {
+              "mean": 20.779700000000037,
+              "name": "write — a single-cell edit, as a delta",
+              "p99": 27.192553000000032,
+              "rme": 9.828845267459823,
+              "sampleCount": 10
+            },
+            {
+              "mean": 22.655490000000032,
+              "name": "write — a broad edit, as a delta",
+              "p99": 25.431809000000147,
+              "rme": 3.7591304837539314,
+              "sampleCount": 10
+            },
+            {
+              "mean": 23.675070000000005,
+              "name": "write — a wholesale rewrite, promoting",
+              "p99": 26.54017100000013,
+              "rme": 3.6447247107137883,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createKeyframeStore > 1000 rows"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0008299999999962891,
+              "name": "native — a full copy written to the backend",
+              "p99": 0.0033389999995961264,
+              "rme": 84.05928187781929,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.0009699999999611464,
+              "name": "read — a full copy from the backend",
+              "p99": 0.005158999999594017,
+              "rme": 120.28207967618773,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.2940000000000964,
+              "name": "write — content already held",
+              "p99": 0.3057379999998784,
+              "rme": 1.6268622985317223,
+              "sampleCount": 10
+            },
+            {
+              "mean": 2.0168599999999968,
+              "name": "read — a keyframe",
+              "p99": 2.2367689999997764,
+              "rme": 4.940092500931673,
+              "sampleCount": 10
+            },
+            {
+              "mean": 4.011979999999949,
+              "name": "read — a delta",
+              "p99": 7.460786999999991,
+              "rme": 30.575328306754656,
+              "sampleCount": 10
+            },
+            {
+              "mean": 20.873360000000048,
+              "name": "write — an incompressible payload, promoting",
+              "p99": 24.621906999999965,
+              "rme": 6.484631238359354,
+              "sampleCount": 10
+            },
+            {
+              "mean": 38.11068999999998,
+              "name": "write — a single-cell edit, as a delta",
+              "p99": 40.90732699999992,
+              "rme": 3.260382016276119,
+              "sampleCount": 10
+            },
+            {
+              "mean": 50.46550000000006,
+              "name": "write — a broad edit, as a delta",
+              "p99": 53.22220600000018,
+              "rme": 2.000413154623104,
+              "sampleCount": 10
+            },
+            {
+              "mean": 64.90372999999995,
+              "name": "write — a wholesale rewrite, promoting",
+              "p99": 71.03083399999998,
+              "rme": 3.3751247708447916,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createKeyframeStore > 10000 rows"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.0008800000003247987,
+              "name": "read — a full copy from the backend",
+              "p99": 0.004695000002539019,
+              "rme": 120.74376933972961,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.00102000000042608,
+              "name": "native — a full copy written to the backend",
+              "p99": 0.004803999999458029,
+              "rme": 103.22243634418378,
+              "sampleCount": 10
+            },
+            {
+              "mean": 2.992159999999421,
+              "name": "write — content already held",
+              "p99": 3.1706519999999365,
+              "rme": 2.434987402336593,
+              "sampleCount": 10
+            },
+            {
+              "mean": 19.232700000000477,
+              "name": "read — a keyframe",
+              "p99": 25.338948000001256,
+              "rme": 9.934862859211758,
+              "sampleCount": 10
+            },
+            {
+              "mean": 29.247960000000603,
+              "name": "read — a delta",
+              "p99": 36.190671999999175,
+              "rme": 10.091240275983353,
+              "sampleCount": 10
+            },
+            {
+              "mean": 138.0160599999974,
+              "name": "write — an incompressible payload, promoting",
+              "p99": 141.43979299999373,
+              "rme": 1.5015243345815603,
+              "sampleCount": 10
+            },
+            {
+              "mean": 386.97037999999964,
+              "name": "write — a single-cell edit, as a delta",
+              "p99": 460.2922569999999,
+              "rme": 6.647471874884254,
+              "sampleCount": 10
+            },
+            {
+              "mean": 600.12883,
+              "name": "write — a broad edit, as a delta",
+              "p99": 607.3953649999994,
+              "rme": 0.505790985103881,
+              "sampleCount": 10
+            },
+            {
+              "mean": 842.0605000000004,
+              "name": "write — a wholesale rewrite, promoting",
+              "p99": 918.9513179999981,
+              "rme": 3.1630236474771407,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createKeyframeStore > 100000 rows"
+        }
+      ]
+    }
+  ]
+}
