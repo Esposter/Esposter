@@ -6,7 +6,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | -------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
 | `packages/shared`, `packages/shared-node`                                  | 2026-09-12 |                                                                                              |
 | `app/shared/services`, `app/shared/util`                                   | 2026-09-12 | `getSynchronizedFunction`'s second export is the exclusion below                             |
-| `app/shared/models/db`                                                     | —          |                                                                                              |
+| `app/shared/models/db`                                                     | 2026-09-12 |                                                                                              |
 | `app/shared/models/resource`                                               | —          |                                                                                              |
 | `app/shared/models/dungeons`                                               | —          |                                                                                              |
 | `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | —          |                                                                                              |

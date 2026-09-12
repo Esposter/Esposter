@@ -1,4 +1,4 @@
-import type { UnparameterizedAdminActionInput } from "#shared/models/db/moderation/ExecuteAdminActionInput";
+import type { UnparameterizedAdminActionInput } from "#shared/models/db/moderation/UnparameterizedAdminActionInput";
 import type { Item } from "@/models/shared/Item";
 
 import { useCallStore } from "@/store/message/room/call";
