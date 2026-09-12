@@ -1,3 +1,4 @@
+import type { ReviewThreadsPage } from "#src/coderabbit/models/feedback/ReviewThreadsPage";
 import type { ReviewThread } from "#src/coderabbit/models/ReviewThread";
 
 import { CODERABBIT_GRAPHQL_LOGIN } from "#src/coderabbit/constants";
@@ -24,24 +25,6 @@ query($owner: String!, $name: String!, $pullRequest: Int!, $endCursor: String) {
     }
   }
 }`;
-
-interface ReviewThreadsPage {
-  data: {
-    repository: {
-      pullRequest: {
-        reviewThreads: {
-          nodes: {
-            comments: { nodes: { author: { login: string }; body: string; databaseId: number }[] };
-            isResolved: boolean;
-            // GitHub answers `null` for a thread whose lines the diff no longer carries
-            line: null | number;
-            path: string;
-          }[];
-        };
-      };
-    };
-  };
-}
 
 export const readUnresolvedThreads = (pullRequest: number): ReviewThread[] => {
   const { name, owner } = getRepository();

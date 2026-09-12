@@ -1,10 +1,8 @@
 import type { SkillDocsFile } from "#src/sweeps/skillDocs/models/SkillDocsFile";
 import type { SkillDocsFinding } from "#src/sweeps/skillDocs/models/SkillDocsFinding";
 
+import { MAX_SKILL_BYTES, MAX_SKILL_LINES } from "#src/sweeps/skillDocs/constants";
 import { SkillDocsFindingType } from "#src/sweeps/skillDocs/models/SkillDocsFindingType";
-
-export const MAX_SKILL_BYTES = 15000;
-export const MAX_SKILL_LINES = 150;
 
 // The budget is a signal to separate topics rather than a number to shave prose under (`skill-authoring`), so a
 // Hit is read rather than trimmed. Bytes, not code points: this repo's prose is full of em-dashes and each is

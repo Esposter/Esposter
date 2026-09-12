@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { VBtn } from "vuetify/components";
+
 interface Props {
   color?: string;
   icon: string;
   tooltip: string;
-  variant: "plain" | "tonal";
+  variant: VBtn["$props"]["variant"];
 }
 
 const { color, icon, tooltip, variant } = defineProps<Props>();

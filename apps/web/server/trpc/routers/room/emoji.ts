@@ -33,7 +33,7 @@ import {
   RoomPermission,
   roomsInMessage,
 } from "@esposter/db-schema";
-import { getResultAsync, Operation, takeOne } from "@esposter/shared";
+import { getResultAsync, noop, Operation, takeOne } from "@esposter/shared";
 import { and, count, eq, notExists } from "drizzle-orm";
 
 export const roomEmojiRouter = router({
@@ -113,7 +113,10 @@ export const roomEmojiRouter = router({
     roomEmojiEventEmitter.emit("deleteRoomEmoji", [{ id, roomId }, getDevice(ctx.getSessionPayload)]);
     // Best-effort and post-persist: a dropped publish orphans one blob under a prefix the room's own teardown
     // Sweeps anyway, and every reaction and token naming this id already renders its fallback
-    await publishBlobDeletion(roomId, AzureContainer.MessageAssets, [getRoomEmojiBlobName(roomId, id)]);
+    await publishBlobDeletion(roomId, AzureContainer.MessageAssets, [getRoomEmojiBlobName(roomId, id)]).match(
+      noop,
+      console.error,
+    );
     return deletedRoomEmoji;
   }),
   generateUploadRoomEmojiSasEntity: getPermissionsProcedure(

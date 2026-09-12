@@ -7,6 +7,13 @@ description: Esposter Pulumi infrastructure conventions for apps/infra — the p
 
 Apply when modifying `apps/infra`.
 
+## Settled — do not re-propose
+
+- **Reading a role assignment's, budget's or event subscription's `scope` from the scoped resource's `.id`.** `.id` carries the leading slash the interpolated `subscriptions/…` shape omits, and `scope` is a path parameter, so the preview is a replacement of every `protect: true` grant (`+-1 to replace … marked for protection`, probed 2026-09-12). The interpolated shape stays; `getWorkflowResourceGroupPath` builds the same prefix for the Logic App actions.
+- **Reading the Function Apps' `AzureWebJobsStorage__*ServiceUri` settings and `WEBSITE_RUN_FROM_PACKAGE` from the storage account's `primaryEndpoints`.** Three of the four values lack the trailing slash the endpoint outputs carry, so deriving them is an app-settings update that restarts both apps for a value that cannot drift while the account name is the file's own constant.
+- **Tying `WEBSITE_NODE_DEFAULT_VERSION` to `engines.node`.** The Functions runtime supports fewer majors than the repo runs on, so the setting stays on the major Functions supports and moves by hand when that support lands; `pnpm update:node` deliberately leaves it alone.
+- **A `get<Resource>Arguments` factory for each dev/prod pair of property bags** (storage accounts, blob services, sites, plans, search services, action groups, Web PubSub). Each pair is Azure's exported shape, and a factory per resource type is a second copy of the SDK's argument type; only what the pairs share beyond the SDK's shape — a rule list, a subscription's arguments, a workflow's actions — is a service.
+
 ## Package Shape
 
 - `apps/infra` is a private Pulumi package managing Azure (and, from v12, GitHub) infrastructure in one `prod` stack.
@@ -46,7 +53,7 @@ Every new resource must set the `parent` Pulumi option to the **nearest final Az
 - Add constants only for values external to managed resources, values required as plain strings in Pulumi options/import IDs, or shared built-in/static identifiers (e.g. role definition IDs).
 - A local `const` within a file is fine when it is the **source of truth** for that name and reused more than once in the same file (e.g. `const workflowName = "dev-logic-esposter-ae-001"` used as the Pulumi resource name and the Azure property). Don't introduce a local const that merely duplicates a name owned by another resource file.
 - **Single-use UUIDs inline directly** — don't declare `const roleAssignmentName = "uuid"` if used once; inline it: `roleAssignmentName: "uuid"`. Applies to any UUID/identifier appearing exactly once.
-- **Named constants only for cross-file reuse** — create a constant file only when the value is referenced in ≥2 resource files. External principal IDs not backed by managed resources live in named constants too, under the same ≥2-files rule.
+- **Named constants only for cross-file reuse** — create a constant file only when the value is referenced in ≥2 resource files. A managed resource's principal id is never a constant: it is read from the resource's identity output through `getPrincipalId` in `src/azure/services`, so a recreated identity cannot leave a stale GUID behind. Only an external principal (the deployment service principal, a user) is a literal, and it lives in a named constant under the same ≥2-files rule.
 - **Per-stack files, shared environment-independent values** — dev and prod each keep their own resource file (names, parents, scopes, action groups differ), but any value identical across stacks — KQL alert queries, tags, location, thresholds, repeated literal + explanatory comment pairs — is imported from one shared constant in `src/azure/constants/` rather than duplicated per stack.
 - **A value the infra shares with app code interpolates the same constant that code uses** (e.g. an advanced-filter prefix comes from the constant the handler filters on), so renaming one cannot leave the infra filter and the code it mirrors silently disagreeing.
 - **Mixing resource outputs and enum literals in one file is fine** — use a resource output (`.name`, `.id`) when Pulumi declares the referenced resource, and the plain enum/constant when it does not. The two forms sitting side by side in one `rules` array is correct, not an inconsistency; don't "fix" one to match the other.

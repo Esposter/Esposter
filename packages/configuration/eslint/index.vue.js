@@ -8,6 +8,8 @@ import restrictedTestSyntaxes from "@esposter/configuration/eslint/restrictedTes
 import restrictedWatchSyntaxes from "@esposter/configuration/eslint/restrictedWatchSyntaxes.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
+// A relative reach out of the package, against the alias rule everywhere else: Nuxt writes this file into the
+// App's .nuxt/ at prepare time, and no `#` map or package export points at a generated file in a sibling package
 import { withNuxt } from "../../../apps/web/.nuxt/eslint.config.mjs";
 
 export default withNuxt(plugins)

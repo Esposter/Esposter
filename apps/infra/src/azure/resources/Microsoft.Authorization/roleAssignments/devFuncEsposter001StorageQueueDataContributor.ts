@@ -1,8 +1,9 @@
 import AzureStorageQueueDataContributorRoleDefinitionId from "#src/azure/constants/AzureStorageQueueDataContributorRoleDefinitionId";
 import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
-import DevFuncEsposter001PrincipalId from "#src/azure/constants/DevFuncEsposter001PrincipalId";
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
+import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
+import { getPrincipalId } from "#src/azure/services/getPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -10,7 +11,7 @@ export const devFuncEsposter001StorageQueueDataContributor: azure_native.authori
   new azure_native.authorization.RoleAssignment(
     "dev-func-esposter-001-storage-queue-data-contributor",
     {
-      principalId: DevFuncEsposter001PrincipalId,
+      principalId: getPrincipalId(devFuncEsposter001),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleAssignmentName: "61366a3f-c339-41cf-8c84-398e01603cee",
       roleDefinitionId: AzureStorageQueueDataContributorRoleDefinitionId,

@@ -4,8 +4,8 @@ import { createColumn } from "@/composables/resource/sheet/commands/createColumn
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
+import { BooleanFilterValue } from "@/models/resource/sheet/column/BooleanFilterValue";
 import { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
-import { NULL_BOOLEAN_FILTER_VALUE } from "@/services/resource/sheet/constants";
 import { filterDataSourceRows } from "@/services/resource/sheet/dataSource/filterDataSourceRows";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -106,7 +106,7 @@ describe(filterDataSourceRows, () => {
   test.each([
     [BooleanValue.True, true],
     [BooleanValue.False, false],
-    [NULL_BOOLEAN_FILTER_VALUE, null],
+    [BooleanFilterValue.Null, null],
   ] as const)("boolean filter %s keeps only the rows holding it", (value, expected) => {
     expect.hasAssertions();
 

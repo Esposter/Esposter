@@ -1,7 +1,9 @@
 import AzureStorageTableDataReaderRoleDefinitionId from "#src/azure/constants/AzureStorageTableDataReaderRoleDefinitionId";
 import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import { prodSrchEsposter001 } from "#src/azure/resources/Microsoft.Search/searchServices/prodSrchEsposter001";
 import { prodstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
+import { getPrincipalId } from "#src/azure/services/getPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -9,7 +11,7 @@ export const prodSrchEsposter001StorageTableDataReader: azure_native.authorizati
   new azure_native.authorization.RoleAssignment(
     "prod-srch-esposter-001-storage-table-data-reader",
     {
-      principalId: "410221f9-50a3-4c38-8826-b052d1f5457a",
+      principalId: getPrincipalId(prodSrchEsposter001),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleAssignmentName: "58ca2e63-71c7-4697-89a4-5ff1457ff829",
       roleDefinitionId: AzureStorageTableDataReaderRoleDefinitionId,

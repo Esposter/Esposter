@@ -1,9 +1,4 @@
-import type { SnapshotReason } from "#shared/models/resource/SnapshotReason";
-
-interface SnapshotMetadataInput {
-  reason?: SnapshotReason;
-  summary?: string;
-}
+import type { SnapshotMetadataInput } from "@@/server/models/resource/snapshot/SnapshotMetadataInput";
 
 // The blob metadata a snapshot carries, and the one place its encoding is decided. Metadata travels as http
 // Headers, so a value is ASCII or it is rejected outright — and a summary is built from content the owner

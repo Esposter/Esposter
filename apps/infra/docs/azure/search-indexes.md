@@ -54,14 +54,7 @@ name — followed by the data source and indexer below.
 
 Each search service's SystemAssigned managed identity needs `Storage Table Data Reader` on its storage account so the Azure Table indexer can read messages.
 
-After Pulumi creates the new service, retrieve its principal ID and add a Pulumi role assignment file:
-
-```bash
-az search service show --name dev-srch-esposter-001 --resource-group dev-rg-esposter-ae-001 --query "identity.principalId" -o tsv
-az search service show --name prod-srch-esposter-001 --resource-group prod-rg-esposter-ae-001 --query "identity.principalId" -o tsv
-```
-
-Add files under `src/azure/resources/Microsoft.Authorization/roleAssignments/` pointing those principal IDs to `devstesposter001` / `prodstesposter001` respectively.
+Add a role assignment file under `src/azure/resources/Microsoft.Authorization/roleAssignments/` whose `principalId` reads the service's identity through `getPrincipalId(devSrchEsposter001)` / `getPrincipalId(prodSrchEsposter001)`, scoped to `devstesposter001` / `prodstesposter001` respectively — the GUID is never copied out of Azure by hand.
 
 ---
 

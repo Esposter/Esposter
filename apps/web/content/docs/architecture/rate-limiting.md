@@ -73,7 +73,7 @@ Paths relative to `apps/web` unless noted.
 | `server/models/rateLimiter/RateLimiterType.ts`            | the `Slow` / `Standard` enum                              |
 | `server/trpc/middleware/getRateLimitedMiddleware.ts`      | consumes a point and sets the response headers            |
 | `server/trpc/middleware/getAuthedMiddleware.ts`           | pipes the rate limiter, then requires a session           |
-| `server/trpc/procedure/AuthedProcedureMap.ts`             | enum → authed procedure builder                           |
+| `server/trpc/procedure/room/AuthedProcedureMap.ts`        | enum → authed procedure builder                           |
 | `server/api/webhooks/[id]/[token].post.ts`                | inbound webhook route, 429 on overspend                   |
 | `server/api/resource-assets/[...path].get.ts`             | asset redirect route, 429 on overspend                    |
 | `server/auth.ts`                                          | better-auth budget derived from the standard limiter      |

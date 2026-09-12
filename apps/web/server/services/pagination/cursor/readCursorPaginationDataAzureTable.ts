@@ -1,5 +1,4 @@
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Clause } from "@esposter/azure";
+import type { ReadCursorPaginationDataAzureTableOptions } from "@@/server/models/pagination/cursor/ReadCursorPaginationDataAzureTableOptions";
 import type { AzureEntity, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
@@ -8,12 +7,6 @@ import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/g
 import { serializeClauses } from "@esposter/azure";
 import { getTopNEntities } from "@esposter/db";
 
-interface ReadCursorPaginationDataAzureTableOptions<TEntity extends AzureEntity> {
-  clauses: Clause<TEntity>[];
-  cursor: string;
-  limit: number;
-  sortBy: SortItem<keyof TEntity & string>[];
-}
 // One page of an Azure Table read: the cursor becomes another filter clause, and the read asks for one entity
 // Beyond the page so the same round trip that fills it also answers `hasMore`.
 // The caller's `clauses` are copied rather than appended to — a caller that pages twice off one array would

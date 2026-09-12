@@ -7,10 +7,10 @@ interface Props {
   items: NavigationItem[];
 }
 
-const { items } = defineProps<Props>();
 // Closed at every breakpoint until the caller's hamburger opens it, and closed again by the entry that was
 // Picked — navigation is the drawer's whole purpose, so staying open outlives its reason to be there
 const isOpen = defineModel<boolean>({ required: true });
+const { items } = defineProps<Props>();
 </script>
 
 <!-- A drawer over the content rather than a rail beside it: the content is the widest thing on the page and

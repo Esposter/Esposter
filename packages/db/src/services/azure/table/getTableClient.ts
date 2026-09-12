@@ -1,7 +1,7 @@
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
-import { checkIsConflict } from "#src/services/azure/checkIsConflict";
 import { createProvisionedClientCache } from "#src/services/azure/createProvisionedClientCache";
+import { checkIsConflict } from "#src/services/azure/table/checkIsConflict";
 import { TableClient } from "@azure/data-tables";
 import { getResultAsync, noop } from "@esposter/shared";
 

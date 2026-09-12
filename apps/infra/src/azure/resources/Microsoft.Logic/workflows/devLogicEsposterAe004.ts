@@ -1,184 +1,37 @@
 import ApplicationTags from "#src/azure/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastLocation";
-import AzureEventSubscriptionRetryPolicy from "#src/azure/constants/AzureEventSubscriptionRetryPolicy";
 import AzureLogicAppEndpointsConfiguration from "#src/azure/constants/AzureLogicAppEndpointsConfiguration";
+import AzureMonthlyRecurrenceWorkflowTriggers from "#src/azure/constants/AzureMonthlyRecurrenceWorkflowTriggers";
 import AzureResourceManagerManagedApiId from "#src/azure/constants/AzureResourceManagerManagedApiId";
-import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import DevEventSubscriptionGuardTargets from "#src/azure/constants/DevEventSubscriptionGuardTargets";
 import { devEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devstesposter001Deadletter } from "#src/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/devstesposter001Deadletter";
 import { devstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
 import { devApicEsposterAe004 } from "#src/azure/resources/Microsoft.Web/connections/devApicEsposterAe004";
 import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
+import { getEventSubscriptionRestoreActions } from "#src/azure/services/getEventSubscriptionRestoreActions";
 import { getWorkflowConnectionParameters } from "#src/azure/services/getWorkflowConnectionParameters";
-import { AzureFunction } from "@esposter/db-schema";
+import { getWorkflowDefinition } from "#src/azure/services/getWorkflowDefinition";
 import * as azure_native from "@pulumi/azure-native";
-import * as pulumi from "@pulumi/pulumi";
 
 const workflowName = "dev-logic-esposter-ae-004";
 
 export const devLogicEsposterAe004: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   workflowName,
   {
-    definition: {
-      $schema:
-        "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-      actions: {
-        [`Create_${AzureFunction.ProcessNotification}_Event_Subscription`]: {
-          inputs: {
-            body: {
-              properties: {
-                deadLetterDestination: {
-                  endpointType: "StorageBlob",
-                  properties: {
-                    blobContainerName: devstesposter001Deadletter.name,
-                    resourceId: devstesposter001.id,
-                  },
-                },
-                destination: {
-                  endpointType: "AzureFunction",
-                  properties: {
-                    maxEventsPerBatch: 1,
-                    preferredBatchSizeInKilobytes: 64,
-                    resourceId: pulumi.interpolate`${devFuncEsposter001.id}/functions/${AzureFunction.ProcessNotification}`,
-                  },
-                },
-                eventDeliverySchema: "EventGridSchema",
-                filter: {
-                  enableAdvancedFilteringOnArrays: true,
-                  includedEventTypes: [AzureFunction.ProcessNotification],
-                  subjectBeginsWith: "",
-                  subjectEndsWith: "",
-                },
-                id: pulumi.interpolate`/subscriptions/${AzureSubscriptionId}/resourceGroups/${devRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${devEvgtEsposterAe001.name}/providers/Microsoft.EventGrid/eventSubscriptions/dev-evgs-esposter-ae-002`,
-                name: "dev-evgs-esposter-ae-002",
-                resourceGroup: devRgEsposterAe001.name,
-                retryPolicy: AzureEventSubscriptionRetryPolicy,
-                topic: devEvgtEsposterAe001.id,
-                type: "Microsoft.EventGrid/eventSubscriptions",
-              },
-            },
-            host: {
-              connection: {
-                name: pulumi.interpolate`@parameters('$connections')['${devApicEsposterAe004.name}']['connectionId']`,
-              },
-            },
-            method: "put",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${devEvgtEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-002')}`,
-            queries: {
-              "x-ms-api-version": "2025-02-15",
-            },
-          },
-          runAfter: {
-            [`Read_${AzureFunction.ProcessNotification}_Event_Subscription`]: ["Failed"],
-          },
-          type: "ApiConnection",
-        },
-        [`Create_${AzureFunction.ProcessWebhook}_Event_Subscription`]: {
-          inputs: {
-            body: {
-              properties: {
-                deadLetterDestination: {
-                  endpointType: "StorageBlob",
-                  properties: {
-                    blobContainerName: devstesposter001Deadletter.name,
-                    resourceId: devstesposter001.id,
-                  },
-                },
-                destination: {
-                  endpointType: "AzureFunction",
-                  properties: {
-                    maxEventsPerBatch: 1,
-                    preferredBatchSizeInKilobytes: 64,
-                    resourceId: pulumi.interpolate`${devFuncEsposter001.id}/functions/${AzureFunction.ProcessWebhook}`,
-                  },
-                },
-                eventDeliverySchema: "EventGridSchema",
-                filter: {
-                  enableAdvancedFilteringOnArrays: true,
-                  includedEventTypes: [AzureFunction.ProcessWebhook],
-                  subjectBeginsWith: "",
-                  subjectEndsWith: "",
-                },
-                id: pulumi.interpolate`/subscriptions/${AzureSubscriptionId}/resourceGroups/${devRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${devEvgtEsposterAe001.name}/providers/Microsoft.EventGrid/eventSubscriptions/dev-evgs-esposter-ae-001`,
-                name: "dev-evgs-esposter-ae-001",
-                resourceGroup: devRgEsposterAe001.name,
-                retryPolicy: AzureEventSubscriptionRetryPolicy,
-                topic: devEvgtEsposterAe001.id,
-                type: "Microsoft.EventGrid/eventSubscriptions",
-              },
-            },
-            host: {
-              connection: {
-                name: pulumi.interpolate`@parameters('$connections')['${devApicEsposterAe004.name}']['connectionId']`,
-              },
-            },
-            method: "put",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${devEvgtEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-001')}`,
-            queries: {
-              "x-ms-api-version": "2025-02-15",
-            },
-          },
-          runAfter: {
-            [`Read_${AzureFunction.ProcessWebhook}_Event_Subscription`]: ["Failed"],
-          },
-          type: "ApiConnection",
-        },
-        [`Read_${AzureFunction.ProcessNotification}_Event_Subscription`]: {
-          inputs: {
-            host: {
-              connection: {
-                name: pulumi.interpolate`@parameters('$connections')['${devApicEsposterAe004.name}']['connectionId']`,
-              },
-            },
-            method: "get",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${devEvgtEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-002')}`,
-            queries: {
-              "x-ms-api-version": "2025-02-15",
-            },
-          },
-          type: "ApiConnection",
-        },
-        [`Read_${AzureFunction.ProcessWebhook}_Event_Subscription`]: {
-          inputs: {
-            host: {
-              connection: {
-                name: pulumi.interpolate`@parameters('$connections')['${devApicEsposterAe004.name}']['connectionId']`,
-              },
-            },
-            method: "get",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${devEvgtEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-001')}`,
-            queries: {
-              "x-ms-api-version": "2025-02-15",
-            },
-          },
-          type: "ApiConnection",
-        },
-      },
-      contentVersion: "1.0.0.0",
-      parameters: {
-        $connections: {
-          type: "Object",
-        },
-      },
-      triggers: {
-        Recurrence: {
-          evaluatedRecurrence: {
-            frequency: "Month",
-            interval: 1,
-            startTime: "2025-01-01T00:00:00Z",
-            timeZone: "UTC",
-          },
-          recurrence: {
-            frequency: "Month",
-            interval: 1,
-            startTime: "2025-01-01T00:00:00Z",
-            timeZone: "UTC",
-          },
-          type: "Recurrence",
-        },
-      },
-    },
+    definition: getWorkflowDefinition(
+      getEventSubscriptionRestoreActions({
+        connection: devApicEsposterAe004,
+        deadLetterContainer: devstesposter001Deadletter,
+        resourceGroup: devRgEsposterAe001,
+        site: devFuncEsposter001,
+        storageAccount: devstesposter001,
+        targets: DevEventSubscriptionGuardTargets,
+        topic: devEvgtEsposterAe001,
+      }),
+      AzureMonthlyRecurrenceWorkflowTriggers,
+    ),
     endpointsConfiguration: AzureLogicAppEndpointsConfiguration,
     identity: {
       type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned,

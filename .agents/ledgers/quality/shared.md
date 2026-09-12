@@ -3,7 +3,7 @@
 | Unit                                                                            | Swept      | Notes                                                                                                  |
 | ------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------ |
 | optimistic rollbacks                                                            | 2026-08-20 |                                                                                                        |
-| `app/components/Styled`                                                         | 2026-08-20 |                                                                                                        |
+| `app/components/Styled`                                                         | 2026-09-12 |                                                                                                        |
 | `shared/models/db/message` — the roots                                          | 2026-09-07 |                                                                                                        |
 | `shared/models/db/message` — `scheduledMessageJob`, `metadata`                  | 2026-09-07 |                                                                                                        |
 | `shared/models/db/room`                                                         | 2026-09-07 |                                                                                                        |

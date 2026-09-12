@@ -1,6 +1,6 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
-import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
+import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { RoomAchievementName } from "@esposter/db-schema";
 
 export const RoomAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Room, {

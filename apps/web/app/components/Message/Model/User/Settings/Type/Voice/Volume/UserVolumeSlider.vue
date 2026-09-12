@@ -4,7 +4,7 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 
 interface Props {
-  field: "microphoneVolumePercentage" | "speakerVolumePercentage";
+  field: keyof Pick<UserSettingsInMessage, "microphoneVolumePercentage" | "speakerVolumePercentage">;
   label: string;
   userSettings: UserSettingsInMessage;
 }

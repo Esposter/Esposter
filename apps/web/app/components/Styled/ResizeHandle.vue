@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { RESIZE_HANDLE_KEYBOARD_STEP } from "@/services/styled/constants";
+
 interface Props {
   // Reversed handles sit on the left edge and grow their container as the pointer moves left
   isReversed?: boolean;
@@ -30,14 +32,13 @@ const onPointerUp = () => {
   isDragging.value = false;
 };
 // Keyboard nudge for non-pointer users — one step per Arrow press, direction flipped for reversed handles
-const WIDTH_KEYBOARD_STEP = 16;
 const onKeyDown = (event: KeyboardEvent) => {
   let direction = 0;
   if (event.key === "ArrowLeft") direction = -1;
   else if (event.key === "ArrowRight") direction = 1;
   else return;
   event.preventDefault();
-  width.value = clampWidth(width.value + (isReversed ? -direction : direction) * WIDTH_KEYBOARD_STEP);
+  width.value = clampWidth(width.value + (isReversed ? -direction : direction) * RESIZE_HANDLE_KEYBOARD_STEP);
 };
 </script>
 
@@ -45,11 +46,14 @@ const onKeyDown = (event: KeyboardEvent) => {
   <div
     w-1
     cursor-col-resize
+    transition-colors
+    duration-200
     inset-y-0
     absolute
     z-10
-    class="resize-handle"
-    :class="[isReversed ? 'left-0' : 'right-0', { 'resize-handle--dragging': isDragging }]"
+    touch-none
+    hover:bg-primary
+    :class="[isReversed ? 'left-0' : 'right-0', { 'bg-primary': isDragging }]"
     role="separator"
     tabindex="0"
     aria-orientation="vertical"
@@ -63,15 +67,3 @@ const onKeyDown = (event: KeyboardEvent) => {
     @keydown="onKeyDown"
   />
 </template>
-
-<style scoped>
-.resize-handle {
-  touch-action: none;
-  transition: background-color 0.2s;
-}
-
-.resize-handle:hover,
-.resize-handle--dragging {
-  background-color: rgb(var(--v-theme-primary));
-}
-</style>

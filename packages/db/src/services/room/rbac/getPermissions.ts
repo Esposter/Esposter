@@ -1,12 +1,8 @@
+import type { GetPermissions } from "#src/models/room/rbac/GetPermissions";
 import type { Database } from "@esposter/db-schema";
 
 import { roomRolesInMessage, usersToRoomRolesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, inArray, or } from "drizzle-orm";
-
-interface GetPermissions {
-  (db: Database, userId: string, roomId: string): Promise<bigint>;
-  (db: Database, userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
-}
 
 export const getPermissions: GetPermissions = (async (
   db: Database,

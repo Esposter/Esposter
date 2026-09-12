@@ -45,7 +45,7 @@ import {
   userStatusesInMessage,
   VoiceInputMode,
 } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 export const userRouter = router({
@@ -65,7 +65,7 @@ export const userRouter = router({
         AzureContainer.PrivateUserAssets,
         getCallBackgroundBlobName(userId, slot),
         new Date(),
-      );
+      ).match(noop, console.error);
     }),
   disconnect: standardAuthedProcedure.mutation<void>(({ ctx }) => upsertConnectedStatus(ctx, false)),
   generateCallBackgroundUploadUrl: standardAuthedProcedure
@@ -122,7 +122,7 @@ export const userRouter = router({
     // A slot that came back over the cap is dropped from what the picker receives and reclaimed through the
     // Same event every other blob delete goes through. Best-effort: a dropped publish only leaves a slot
     // Occupied by a blob nothing will ever hand out
-    await publishBlobDeletion(userId, AzureContainer.PrivateUserAssets, unservableBlobNames);
+    await publishBlobDeletion(userId, AzureContainer.PrivateUserAssets, unservableBlobNames).match(noop, console.error);
     return Promise.all(
       servableCallBackgroundBlobs.map(async ({ name, slot }) => ({
         sasUrl: await generateReadSasUrl(containerClient.getBlockBlobClient(name)),

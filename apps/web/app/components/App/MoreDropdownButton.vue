@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
+import { APP_BAR_MENU_PROPS, APP_BAR_TOOLTIP_PROPS } from "@/services/app/constants";
 import { MoreDropdownLinkItems } from "@/services/app/MoreDropdownLinkItems";
 import { authClient } from "@/services/auth/authClient";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
@@ -43,9 +44,9 @@ const menu = ref(false);
       v-model="menu"
       :button-props="session ? { height: '100%' } : {}"
       :icon="session ? '' : 'mdi-chevron-down'"
-      :menu-props="{ closeOnContentClick: false, location: 'bottom start' }"
+      :menu-props="APP_BAR_MENU_PROPS"
       :text="session ? 'Account' : 'More'"
-      :tooltip-props="{ location: 'bottom' }"
+      :tooltip-props="APP_BAR_TOOLTIP_PROPS"
     >
       <template v-if="session" #activator>
         <StyledAvatar :image="session.user.image" :name="session.user.name" />

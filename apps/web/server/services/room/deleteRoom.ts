@@ -9,7 +9,7 @@ import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmi
 import { listRoomProfileImageBlobNames } from "@@/server/services/room/listRoomProfileImageBlobNames";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { AzureContainer, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { noop, Operation } from "@esposter/shared";
 
 export const deleteRoom = async (db: Context["db"], { session, user }: GetSessionPayload, id: string) => {
   const deletedRoom = (
@@ -34,13 +34,13 @@ export const deleteRoom = async (db: Context["db"], { session, user }: GetSessio
     // Unbounded in time, unlike every other prefix sweep: the room row is gone, so nothing can re-own this
     // Prefix and this is its only teardown — a `createdBefore` cutoff would permanently strand the attachment
     // Of any member still holding a write SAS when the owner deleted, billed and downloadable forever
-    publishBlobPrefixDeletion(id, AzureContainer.MessageAssets, id, undefined),
+    publishBlobPrefixDeletion(id, AzureContainer.MessageAssets, id, undefined).match(noop, console.error),
     // Profile images are a handful, and their listing has to reach a pre-cutover flat name the prefix walk
     // Would not cover, so this one stays a resolved list
     publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
       return listRoomProfileImageBlobNames(containerClient, id);
-    }),
+    }).match(noop, console.error),
   ]);
   return deletedRoom;
 };

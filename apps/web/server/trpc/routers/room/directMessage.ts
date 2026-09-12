@@ -36,7 +36,7 @@ import {
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { getOrCreate, Operation } from "@esposter/shared";
+import { getOrCreate, noop, Operation } from "@esposter/shared";
 import { and, eq, getColumns, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
@@ -140,7 +140,7 @@ export const directMessageRouter = router({
           actorUser.id,
           `${targetUser.name} was added by ${actorUser.name}.`,
           ctx.getSessionPayload.session.id,
-        ),
+        ).match(noop, console.error),
       ),
     );
     return targetUsers;
@@ -194,7 +194,7 @@ export const directMessageRouter = router({
         ? `${targetUser.name} left the group.`
         : `${targetUser.name} was removed by ${actorUser.name}.`,
       ctx.getSessionPayload.session.id,
-    );
+    ).match(noop, console.error);
     return targetUser;
   }),
   hideDirectMessage: standardAuthedProcedure

@@ -3,6 +3,8 @@ import type { ItemEntityType } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
 import type { z } from "zod";
 
+import { DIALOG_TRANSITION_DURATION_MS } from "@/services/vuetify/constants";
+
 interface Props<T> {
   editedItem: T;
   isDirty: boolean;
@@ -32,7 +34,7 @@ const { start: startClose } = useTimeoutFn(
   () => {
     emit("close");
   },
-  300,
+  DIALOG_TRANSITION_DURATION_MS,
   { immediate: false },
 );
 useConfirmBeforeNavigation(() => isDirty);
@@ -52,7 +54,7 @@ watch(editForm, (newEditForm) => {
   <v-dialog
     :model-value="dialog"
     :fullscreen="isFullScreenDialog"
-    :width="isFullScreenDialog ? '100%' : 800"
+    :width="isFullScreenDialog ? '100%' : '50rem'"
     @update:model-value="
       (value) => {
         if (value) dialog = true;

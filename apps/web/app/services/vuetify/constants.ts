@@ -10,3 +10,6 @@ export const DISABLED_OPACITY = 0.38;
 // A list scrolled away from the present — takes it, because a timeout would retract the message while what it
 // Reports is still true, and a one-way `:model-value` binding cannot bring it back until the value flips
 export const SNACKBAR_PERSISTENT_TIMEOUT = -1;
+
+// The one Vuetify dialog leave transition takes, so a close that waits for it emits after the dialog is gone
+export const DIALOG_TRANSITION_DURATION_MS = 300;

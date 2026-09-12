@@ -1,3 +1,4 @@
+import type { RequireMutationCode } from "@@/server/models/trpc/RequireMutationCode";
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 import type { Operation } from "@esposter/shared";
 
@@ -8,5 +9,5 @@ export const requireRoomCategory = (
   roomCategory: RoomCategoryInMessage | undefined,
   operation: Operation,
   context: string,
-  code?: "BAD_REQUEST" | "NOT_FOUND",
+  code?: RequireMutationCode,
 ) => requireMutation(roomCategory, operation, DatabaseEntityType.RoomCategory, context, code);

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VCard } from "vuetify/components";
+
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface Props {
   cardProps?: VCard["$props"];

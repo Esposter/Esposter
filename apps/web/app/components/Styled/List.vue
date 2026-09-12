@@ -2,6 +2,7 @@
 import type { VList } from "vuetify/components";
 
 import { mergeProps } from "vue";
+
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface Props {
   listAttrs?: VList["$attrs"];

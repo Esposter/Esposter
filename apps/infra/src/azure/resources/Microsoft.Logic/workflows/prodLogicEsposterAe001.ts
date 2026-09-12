@@ -3,13 +3,14 @@ import AzureAppServiceManagedApiId from "#src/azure/constants/AzureAppServiceMan
 import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastLocation";
 import AzureBudgetActionWorkflowTriggers from "#src/azure/constants/AzureBudgetActionWorkflowTriggers";
 import AzureLogicAppEndpointsConfiguration from "#src/azure/constants/AzureLogicAppEndpointsConfiguration";
-import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import { FunctionAppPowerAction } from "#src/azure/models/FunctionAppPowerAction";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodApicEsposterAe001 } from "#src/azure/resources/Microsoft.Web/connections/prodApicEsposterAe001";
 import { prodFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/prodFuncEsposter001";
+import { getFunctionAppPowerAction } from "#src/azure/services/getFunctionAppPowerAction";
 import { getWorkflowConnectionParameters } from "#src/azure/services/getWorkflowConnectionParameters";
+import { getWorkflowDefinition } from "#src/azure/services/getWorkflowDefinition";
 import * as azure_native from "@pulumi/azure-native";
-import * as pulumi from "@pulumi/pulumi";
 
 const workflowName = "prod-logic-esposter-ae-001";
 
@@ -17,38 +18,23 @@ export const prodLogicEsposterAe001: azure_native.logic.Workflow = new azure_nat
   workflowName,
   {
     definition: {
-      $schema:
-        "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-      actions: {
-        Stop_Function_App: {
-          inputs: {
-            host: {
-              connection: {
-                name: pulumi.interpolate`@parameters('$connections')['${prodApicEsposterAe001.name}']['connectionId']`,
-              },
-            },
-            method: "post",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${prodRgEsposterAe001.name}')}/providers/Microsoft.Web/sites/@{encodeURIComponent('${prodFuncEsposter001.name}')}/stop`,
-            queries: {
-              "api-version": "2019-08-01",
-            },
-          },
-          type: "ApiConnection",
+      ...getWorkflowDefinition(
+        {
+          Stop_Function_App: getFunctionAppPowerAction(
+            prodApicEsposterAe001,
+            prodRgEsposterAe001,
+            prodFuncEsposter001,
+            FunctionAppPowerAction.Stop,
+          ),
         },
-      },
-      contentVersion: "1.0.0.0",
-      parameters: {
-        $connections: {
-          type: "Object",
-        },
-      },
+        AzureBudgetActionWorkflowTriggers,
+      ),
       staticResults: {
         Stop_web_app0: {
           hasDelegate: false,
           status: "Succeeded",
         },
       },
-      triggers: AzureBudgetActionWorkflowTriggers,
     },
     endpointsConfiguration: AzureLogicAppEndpointsConfiguration,
     identity: {

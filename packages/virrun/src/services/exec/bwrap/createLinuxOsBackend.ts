@@ -1,5 +1,6 @@
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
 
+import { BwrapStatusSource } from "#src/models/exec/bwrap/BwrapStatusSource";
 import { buildBwrapArgs } from "#src/services/exec/bwrap/buildBwrapArgs";
 import { createBwrapBackend } from "#src/services/exec/bwrap/createBwrapBackend";
 
@@ -9,7 +10,7 @@ export const createLinuxOsBackend = (errorName: string): ExecBackend =>
     (bwrapArgs, options) => ({
       command: ["bwrap", "--json-status-fd", "3", ...bwrapArgs],
       env: { ...process.env, ...options.env },
-      statusSource: "fd",
+      statusSource: BwrapStatusSource.Fd,
     }),
     errorName,
   );

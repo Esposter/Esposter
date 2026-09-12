@@ -1,10 +1,10 @@
-import AzureEventSubscriptionRetryPolicy from "#src/azure/constants/AzureEventSubscriptionRetryPolicy";
 import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
 import { devEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devstesposter001Deadletter } from "#src/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/devstesposter001Deadletter";
 import { devstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
 import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
+import { getAzureFunctionEventSubscriptionArguments } from "#src/azure/services/getAzureFunctionEventSubscriptionArguments";
 import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
@@ -15,26 +15,13 @@ export const devEvgsEsposterAe002: azure_native.eventgrid.EventSubscription =
   new azure_native.eventgrid.EventSubscription(
     eventSubscriptionName,
     {
-      deadLetterDestination: {
-        blobContainerName: devstesposter001Deadletter.name,
-        endpointType: "StorageBlob",
-        resourceId: devstesposter001.id,
-      },
-      destination: {
-        endpointType: "AzureFunction",
-        maxEventsPerBatch: 1,
-        preferredBatchSizeInKilobytes: 64,
-        resourceId: pulumi.interpolate`${devFuncEsposter001.id}/functions/${AzureFunction.ProcessNotification}`,
-      },
-      eventDeliverySchema: azure_native.eventgrid.EventDeliverySchema.EventGridSchema,
+      ...getAzureFunctionEventSubscriptionArguments(
+        AzureFunction.ProcessNotification,
+        devFuncEsposter001,
+        devstesposter001,
+        devstesposter001Deadletter,
+      ),
       eventSubscriptionName,
-      filter: {
-        enableAdvancedFilteringOnArrays: true,
-        includedEventTypes: [AzureFunction.ProcessNotification],
-        subjectBeginsWith: "",
-        subjectEndsWith: "",
-      },
-      retryPolicy: AzureEventSubscriptionRetryPolicy,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${devRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${devEvgtEsposterAe001.name}`,
     },
     {

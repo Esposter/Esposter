@@ -5,6 +5,7 @@ import type { ExecStdio } from "#src/models/exec/ExecStdio";
 import type { ExecTeeTarget } from "#src/models/exec/ExecTeeTarget";
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
+import { BwrapStatusSource } from "#src/models/exec/bwrap/BwrapStatusSource";
 import {
   SIGNAL_EXIT_CODE_BASE,
   WSL_BWRAP_STATUS_BEGIN,
@@ -62,7 +63,7 @@ describe(createBwrapBackend, () => {
   const createBackend = () =>
     createBwrapBackend(
       () => [],
-      () => ({ command: ["wsl.exe"], env: {}, statusSource: "stderr" }),
+      () => ({ command: ["wsl.exe"], env: {}, statusSource: BwrapStatusSource.Stderr }),
       ERROR_NAME,
     );
   const exec = (stdio: ExecStdio, tee?: ExecTeeTarget) => createBackend().exec(["tsc"], { cwd: "", stdio, tee });

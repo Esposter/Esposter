@@ -1,8 +1,8 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
-import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
+import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { countEmojis } from "#shared/util/text/countEmojis";
 import { SpecialAchievementName } from "@esposter/db-schema";
 

@@ -1,6 +1,7 @@
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
 import type { Environment } from "#src/models/virrun/Environment";
 
+import { BwrapStatusSource } from "#src/models/exec/bwrap/BwrapStatusSource";
 import { resolvePrepareStep } from "#src/services/configuration/resolvePrepareStep";
 import {
   WSL_BWRAP_STATUS_BEGIN,
@@ -115,7 +116,7 @@ export const createWslOsBackend = (errorName: string, environment?: Environment)
           const [file, ...args] = buildWslReapCommand([marker]);
           spawnBackground(file, args);
         },
-        statusSource: "stderr",
+        statusSource: BwrapStatusSource.Stderr,
       };
     },
     errorName,

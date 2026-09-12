@@ -17,7 +17,7 @@ import {
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
+import { ItemMetadataPropertyNames, noop } from "@esposter/shared";
 
 // Soft-deletes every message a user still has visible in a room, one Table batch at a time. Each batch notifies
 // As soon as it commits, so a purge that stops partway still hides everything it managed to write.
@@ -53,7 +53,7 @@ export const softDeleteRoomMessagesByUser = async (roomId: string, targetUserId:
           roomId,
           AzureContainer.MessageAssets,
           batch.flatMap(({ files }) => getFilesBlobNames(roomId, files)),
-        );
+        ).match(noop, console.error);
       },
     );
 };

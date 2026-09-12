@@ -25,6 +25,13 @@ interface Props {
 
 const CLOSE_BUTTON_PROPS: VBtn["$props"] = { density: "comfortable", variant: "text" };
 
+const slots = defineSlots<{
+  activator?: (props: DialogActivatorSlotProps) => VNode;
+  default?: () => VNode;
+  header?: () => VNode;
+  "prepend-actions"?: () => VNode;
+  "prepend-confirm"?: () => VNode;
+}>();
 const modelValue = defineModel<boolean>({ default: false });
 const {
   cardProps = {},
@@ -35,13 +42,6 @@ const {
   hideToolbarActions,
 } = defineProps<Props>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
-const slots = defineSlots<{
-  activator?: (props: DialogActivatorSlotProps) => VNode;
-  default?: () => VNode;
-  header?: () => VNode;
-  "prepend-actions"?: () => VNode;
-  "prepend-confirm"?: () => VNode;
-}>();
 const isFullScreen = ref(false);
 // Vuetify's block scroll strategy reads the overlay root element a tick after the overlay activates, and an
 // Overlay born open has none yet whenever its mount is deferred — a page navigation renders the incoming tree

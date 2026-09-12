@@ -39,7 +39,7 @@ export const leaveCallAsParticipant = async (
       // The summary belongs where the call was — the thread it ran in, or the room itself
       replyRowKey: callSession.threadRootRowKey || undefined,
       type: MessageType.Call,
-    });
+    }).match(noop, console.error);
   }).match(noop, console.error);
   return true;
 };

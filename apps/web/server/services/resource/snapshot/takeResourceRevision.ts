@@ -14,7 +14,7 @@ import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnap
 import { chargeAndEmitStorageLedgerEntry } from "@@/server/services/storage/chargeAndEmitStorageLedgerEntry";
 import { checkIsNotFound, getContentBlobName } from "@esposter/db";
 import { AzureContainer, resources } from "@esposter/db-schema";
-import { getResultAsync, streamToText } from "@esposter/shared";
+import { getResultAsync, noop, streamToText } from "@esposter/shared";
 import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
 
 // A point the owner can return to, taken from the working copy as it stands. Returns the version it wrote, or
@@ -97,6 +97,6 @@ export const takeResourceRevision = async (
   if (evictedVersion > 0)
     await publishBlobDeletion(id, AzureContainer.ResourceAssets, [
       getSnapshotContentBlobName(id, SnapshotChannel.Revisions, evictedVersion),
-    ]);
+    ]).match(noop, console.error);
   return revisionVersion;
 };

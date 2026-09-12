@@ -1,14 +1,8 @@
-import type { Database, RoomFilterInMessage } from "@esposter/db-schema";
+import type { MessageCreationRejection } from "#src/models/message/moderation/MessageCreationRejection";
+import type { Database } from "@esposter/db-schema";
 
 import { checkHasPermission } from "#src/services/room/rbac/checkHasPermission";
 import { MessageCreationRejectionType, RoomPermission } from "@esposter/db-schema";
-
-type MessageCreationRejection =
-  | {
-      filter: Pick<RoomFilterInMessage, "action" | "timeoutDurationMs">;
-      type: MessageCreationRejectionType.WordFilter;
-    }
-  | { type: Exclude<MessageCreationRejectionType, MessageCreationRejectionType.WordFilter> };
 // The gate every message-producing path decides with, in precedence order: a timeout outranks everything,
 // Then the room's read-only flag, its slowmode, and finally the word filter. It returns the decision rather
 // Than throwing so each caller can raise the error its own transport speaks — a tRPC code in the app, a

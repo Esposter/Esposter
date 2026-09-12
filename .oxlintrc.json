@@ -17,6 +17,7 @@
   ],
   "jsPlugins": [
     "./scripts/src/oxlint/errorAlert.ts",
+    "./scripts/src/oxlint/literalUnion.ts",
     "./scripts/src/oxlint/passThroughHelper.ts",
     "./scripts/src/oxlint/persistThenNotify.ts",
     "./scripts/src/oxlint/propsInterface.ts",
@@ -26,6 +27,12 @@
     "typeAware": true
   },
   "overrides": [
+    {
+      "files": ["**/*.d.ts", "**/*.d.mts", "**/*.d.cts"],
+      "rules": {
+        "literal-union/no-string-literal-union": "off"
+      }
+    },
     {
       "files": ["**/*.vue"],
       "rules": {
@@ -164,6 +171,7 @@
     "complexity": "off",
     "curly": ["error", "multi"],
     "error-alert/no-raw-error-alert": "error",
+    "literal-union/no-string-literal-union": "error",
     "func-names": "off",
     "id-denylist": ["error", "acc", "curr", "idx"],
     "id-length": "off",

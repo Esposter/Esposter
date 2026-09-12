@@ -3,6 +3,7 @@ import type { User } from "better-auth";
 import type { VAvatar } from "vuetify/components";
 
 import { mergeProps } from "vue";
+
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface Props {
   avatarAttrs?: VAvatar["$attrs"];

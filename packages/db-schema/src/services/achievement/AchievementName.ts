@@ -39,7 +39,3 @@ export type AchievementName =
   | SurveyAchievementName
   | TableAchievementName
   | WebpageAchievementName;
-
-// A Set rather than an array: the only consumer is an exhaustiveness assertion that asks it for
-// `difference` against the definition map's keys, in both directions
-export const AchievementNames: ReadonlySet<AchievementName> = new Set(Object.values(AchievementName));
