@@ -1,6 +1,6 @@
-import type { PackageRoleColors } from "#src/dependencyGraph/models/PackageRoleColors";
+import type { PackageRoleColors } from "#src/models/dependencyGraph/PackageRoleColors";
 
-import { PackageRole } from "#src/dependencyGraph/models/PackageRole";
+import { PackageRole } from "#src/models/dependencyGraph/PackageRole";
 
 // Two stops and a border per role. Graphviz reads a `pale:deep` pair as a gradient, and at `gradientangle=270`
 // That is a face lit from above, which is the direction the `box3d` fold already implies. The border is a deeper

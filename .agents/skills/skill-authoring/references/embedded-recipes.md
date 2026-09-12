@@ -19,7 +19,7 @@ Length is not a trigger: a long `--jq` expression that is still one selection st
 
 ## Where it goes
 
-`scripts/src/<domain>/<verb>/index.ts`, with the pure functions beside it as `get*`/`check*` files and a colocated test each — the shape the sweep scans already have. `scripts/` is in every typecheck, lint, format and test glob, so a migrated recipe gets all of it for the price of a folder, and no runner, project or config entry is added.
+`scripts/src/<domain>/<verb>/index.ts`, with the pure functions under `scripts/src/services/<domain>/<verb>/` as `get*`/`check*` files and a colocated test each, and its types under `scripts/src/models/<domain>/` — the shape the sweep scans already have. `scripts/` is in every typecheck, lint, format and test glob, so a migrated recipe gets all of it for the price of a folder, and no runner, project or config entry is added.
 
 The domain folder is named for **what the tooling is about**, never for who runs it. The audience is carried by the script name, and an `ai/` folder would rewrite every `#src/…` import to say what the manifest already says.
 

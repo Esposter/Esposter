@@ -1,5 +1,5 @@
-import type { WorkspaceEdge } from "#src/dependencyGraph/models/WorkspaceEdge";
-import type { WorkspaceEdges } from "#src/dependencyGraph/models/WorkspaceEdges";
+import type { WorkspaceEdge } from "#src/models/dependencyGraph/WorkspaceEdge";
+import type { WorkspaceEdges } from "#src/models/dependencyGraph/WorkspaceEdges";
 import type { WorkspacePackage } from "#src/models/WorkspacePackage";
 
 import {
@@ -7,10 +7,10 @@ import {
   DEVELOPMENT_EDGE_ATTRIBUTES,
   GRAPH_ATTRIBUTES,
   RUNTIME_EDGE_ATTRIBUTES,
-} from "#src/dependencyGraph/constants";
-import { getLegendLabel } from "#src/dependencyGraph/getLegendLabel";
-import { getPackageRole } from "#src/dependencyGraph/getPackageRole";
-import { PackageRoleColorsMap } from "#src/dependencyGraph/PackageRoleColorsMap";
+} from "#src/services/dependencyGraph/constants";
+import { getLegendLabel } from "#src/services/dependencyGraph/getLegendLabel";
+import { getPackageRole } from "#src/services/dependencyGraph/getPackageRole";
+import { PackageRoleColorsMap } from "#src/services/dependencyGraph/PackageRoleColorsMap";
 
 const getEdgeLines = (workspaceEdges: WorkspaceEdge[], attributes: string): string[] =>
   workspaceEdges.map(({ from, to }) => `  "${from}" -> "${to}" [${attributes}];`);

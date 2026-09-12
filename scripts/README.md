@@ -26,11 +26,12 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `sweeps/`               | The find recipes behind each `ai:sweep:*` script, one per ledger scan (`sweeps` skill)                             |
 | `updateNode/`           | Bumps the node pins and hands installation to fnm through the platform script                                      |
 | `workspace/`            | The workspace invariants — declaration generation, side effects, symlink escapes, private dependency edges         |
-| `services/`, `models/`  | What more than one of the above shares                                                                             |
+| `services/`, `models/`  | Every command's functions and types, one subfolder per command, with what more than one shares at the root         |
 | `crossOS.ts`            | Runs the per-platform command the root manifest's `crossOS` map names for a script                                 |
 
 ### Architecture Notes
 
+- **An entrypoint folder holds the entrypoint alone.** `src/<command>/index.ts` is what the manifest names, and what it runs is under `services/<command>/` with its types under `models/<command>/` (`file-organization` skill).
 - **Nothing imports it.** It is run, never resolved, so it publishes no `exports`, builds no `dist`, and addresses its own sources through the `#src/*` subpath its manifest declares.
 - **Every `.ts` entrypoint runs under `tsx`**, which is what makes an enum available to a script (`package-scripts` skill).
 - **The root delegates to it by filter**, so the root manifest names a script rather than a path into this tree.

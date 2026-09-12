@@ -1,9 +1,9 @@
-import type { WorkspaceEdge } from "#src/dependencyGraph/models/WorkspaceEdge";
-import type { WorkspaceEdges } from "#src/dependencyGraph/models/WorkspaceEdges";
+import type { WorkspaceEdge } from "#src/models/dependencyGraph/WorkspaceEdge";
+import type { WorkspaceEdges } from "#src/models/dependencyGraph/WorkspaceEdges";
 import type { WorkspacePackage } from "#src/models/WorkspacePackage";
 
-import { RUNTIME_DEPENDENCY_FIELDS, WORKSPACE_SPECIFIER_PREFIX } from "#src/dependencyGraph/constants";
 import { DependencyField } from "#src/models/DependencyField";
+import { RUNTIME_DEPENDENCY_FIELDS, WORKSPACE_SPECIFIER_PREFIX } from "#src/services/dependencyGraph/constants";
 
 const getEdgeKey = ({ from, to }: WorkspaceEdge): string => `${from}/${to}`;
 // Ordered by `<` on the key rather than by `localeCompare`, so the order is UTF-16 code units rather than the

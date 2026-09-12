@@ -1,8 +1,8 @@
-import type { PackageRoleColors } from "#src/dependencyGraph/models/PackageRoleColors";
+import type { PackageRoleColors } from "#src/models/dependencyGraph/PackageRoleColors";
 
-import { MUTED_COLOR, RUNTIME_EDGE_COLOR } from "#src/dependencyGraph/constants";
-import { PackageRole } from "#src/dependencyGraph/models/PackageRole";
-import { PackageRoleColorsMap } from "#src/dependencyGraph/PackageRoleColorsMap";
+import { PackageRole } from "#src/models/dependencyGraph/PackageRole";
+import { MUTED_COLOR, RUNTIME_EDGE_COLOR } from "#src/services/dependencyGraph/constants";
+import { PackageRoleColorsMap } from "#src/services/dependencyGraph/PackageRoleColorsMap";
 
 // A key drawn as cells rather than as glyphs: a box-drawing character is only as good as the font the reader's
 // Browser falls back to, where a filled table cell is the same rectangle everywhere. The dashed line is three
