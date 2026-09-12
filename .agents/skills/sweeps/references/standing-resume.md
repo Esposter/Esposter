@@ -32,5 +32,5 @@ was meant to locate.
 
 A pathspec that resolves to nothing is `SKILL.md`'s silent scan wearing a different hat — it reports no work and
 reads exactly like a swept tree, and nothing else would notice, because a scope is prose to every other tool. So
-`scripts/src/ledgerScopes.test.ts` holds every pathspec in the index to something that exists, and holds every ledger
+`scripts/src/workspace/ledgerScopes.test.ts` holds every pathspec in the index to something that exists, and holds every ledger
 to declaring one.

@@ -1,4 +1,4 @@
-import { setupPluginSuite } from "#src/oxlint/setupPluginSuite.test";
+import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
 const RULE = "pass-through-helper/no-forwarding-wrapper";
@@ -16,6 +16,10 @@ describe(RULE, () => {
       source: `export const a = (b: Client, ...c: string[]) => b.d(...c);`,
       violations: 1,
     },
+    // A rest parameter handed over unspread is an array the caller never wrote, and the reverse spreads one out.
+    { name: "collectsRestIntoArray", source: `export const a = (...b: string[]) => f(b);`, violations: 0 },
+    { name: "spreadsArrayParameter", source: `export const a = (b: string[]) => f(...b);`, violations: 0 },
+    { name: "forwardsRest", source: `export const a = (...b: string[]) => f(...b);`, violations: 1 },
     // A default export is the same surface reached without a name, so it forwards on the same terms.
     { name: "forwardsFromDefaultExport", source: `export default (b: string) => f(b);`, violations: 1 },
     // Everything below absorbs something the caller no longer states.

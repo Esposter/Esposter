@@ -1,4 +1,4 @@
-import { setupPluginSuite } from "#src/oxlint/setupPluginSuite.test";
+import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
 const RULE = "persist-then-notify/no-unhandled-effect-after-emit";
@@ -21,6 +21,11 @@ describe(RULE, () => {
       name: "absorbingMatchOnHelperAfterEmit",
       source: `aEventEmitter.emit(); await createSystemRoomMessage(x).match(noop, console.error);`,
       violations: 0,
+    },
+    {
+      name: "conciselyRethrowingMatchOnHelperAfterEmit",
+      source: `aEventEmitter.emit(); await createSystemRoomMessage(x).match(noop, (error) => logAndRethrow(error));`,
+      violations: 1,
     },
     {
       name: "rethrowingMatchOnHelperAfterEmit",

@@ -1,19 +1,15 @@
-import type { GitHubEntry } from "#src/coderabbit/models/GitHubEntry";
-import type { GitHubReview } from "#src/coderabbit/models/GitHubReview";
+import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubReview } from "#src/models/coderabbit/GitHubReview";
 
-import { getFindingLines } from "#src/coderabbit/feedback/getFindingLines";
-import { getLatestMarkedBlock } from "#src/coderabbit/feedback/getLatestMarkedBlock";
-import { getStatedCounts } from "#src/coderabbit/feedback/getStatedCounts";
-import { readUnresolvedThreads } from "#src/coderabbit/feedback/readUnresolvedThreads";
-import { getPullRequestArgument } from "#src/coderabbit/services/getPullRequestArgument";
-import { getSortedByUpdatedAt } from "#src/coderabbit/services/getSortedByUpdatedAt";
-import { readBotEntries } from "#src/coderabbit/services/readBotEntries";
+import { IN_PROGRESS_MARKER, WALKTHROUGH_MARKERS } from "#src/services/coderabbit/feedback/constants";
+import { getFindingLines } from "#src/services/coderabbit/feedback/getFindingLines";
+import { getLatestMarkedBlock } from "#src/services/coderabbit/feedback/getLatestMarkedBlock";
+import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
+import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
+import { getPullRequestArgument } from "#src/services/coderabbit/getPullRequestArgument";
+import { getSortedByUpdatedAt } from "#src/services/coderabbit/getSortedByUpdatedAt";
+import { readBotEntries } from "#src/services/coderabbit/readBotEntries";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-// The walkthrough is one comment edited in place across every review, and these two blocks live only in it —
-// A fetch of the reviews endpoint plus the inline threads reads as complete while missing both.
-const WALKTHROUGH_MARKERS = ["final_review_risk", "pre_merge_checks_walkthrough"];
-const IN_PROGRESS_MARKER = "review in progress by coderabbit.ai";
 
 const pullRequest = getPullRequestArgument();
 // Only the newest review is read: an older body still lists findings later commits fixed, and nothing edits it

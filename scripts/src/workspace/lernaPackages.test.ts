@@ -1,3 +1,4 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 import { parseWorkspacePackageGlobs } from "#src/services/parseWorkspacePackageGlobs";
 import { readFileSync } from "node:fs";
@@ -13,7 +14,6 @@ import { describe, expect, test } from "vitest";
  * trusted, against the one file pnpm actually reads.
  */
 describe("lerna packages", () => {
-  const repositoryRoot = resolve(import.meta.dirname, "../../..");
   const LERNA_FILENAME = "lerna.json";
   const WORKSPACE_FILENAME = "pnpm-workspace.yaml";
 
@@ -21,11 +21,11 @@ describe("lerna packages", () => {
     expect.hasAssertions();
 
     const { packages } = parseMachineJson<{ packages: string[] }>(
-      readFileSync(resolve(repositoryRoot, LERNA_FILENAME), "utf8"),
+      readFileSync(resolve(REPOSITORY_ROOT, LERNA_FILENAME), "utf8"),
     );
 
     expect(packages).toStrictEqual(
-      parseWorkspacePackageGlobs(readFileSync(resolve(repositoryRoot, WORKSPACE_FILENAME), "utf8")),
+      parseWorkspacePackageGlobs(readFileSync(resolve(REPOSITORY_ROOT, WORKSPACE_FILENAME), "utf8")),
     );
   });
 });

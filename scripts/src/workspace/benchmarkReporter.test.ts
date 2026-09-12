@@ -1,3 +1,4 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getWorkspacePackageDirectories } from "#src/services/getWorkspacePackageDirectories";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 import { getSweepFilePaths } from "#src/sweeps/getSweepFilePaths";
@@ -22,10 +23,9 @@ const readDevDependencies = (manifestPath: string): Record<string, unknown> => {
 };
 
 describe("benchmark reporter", () => {
-  const repositoryRoot = resolve(import.meta.dirname, "../../..");
   // Discovered from the bench files themselves rather than listed: a listed set stops covering the package that
   // Adds its first bench after this was written, which is one of the two ways the invariant breaks.
-  const BENCHING_PACKAGE_PATHS = getWorkspacePackageDirectories(repositoryRoot).filter(
+  const BENCHING_PACKAGE_PATHS = getWorkspacePackageDirectories(REPOSITORY_ROOT).filter(
     (packagePath) => getSweepFilePaths(`${packagePath}/**/*.bench.ts`).length > 0,
   );
   // The other way, and the one that has already happened: the root owns no bench file, so nothing about the tree
@@ -39,7 +39,7 @@ describe("benchmark reporter", () => {
     // Named rather than counted: the manifest that cannot resolve the reporter names itself in the failure.
     const undeclaredDirectories = RUN_DIRECTORIES.filter(
       (directory) =>
-        !(REPORTER_PACKAGE_NAME in readDevDependencies(resolve(repositoryRoot, directory, "package.json"))),
+        !(REPORTER_PACKAGE_NAME in readDevDependencies(resolve(REPOSITORY_ROOT, directory, "package.json"))),
     );
 
     expect(undeclaredDirectories).toStrictEqual([]);
@@ -51,10 +51,10 @@ describe("benchmark reporter", () => {
   // Members by definition, and neither side of that is this file's to choose.
   test("finds the same members that declare a bench script", () => {
     expect.hasAssertions();
-    const declaringPackagePaths = getWorkspacePackageDirectories(repositoryRoot).filter((packagePath) =>
+    const declaringPackagePaths = getWorkspacePackageDirectories(REPOSITORY_ROOT).filter((packagePath) =>
       Boolean(
         parseMachineJson<{ scripts?: Record<string, unknown> }>(
-          readFileSync(resolve(repositoryRoot, packagePath, "package.json"), "utf8"),
+          readFileSync(resolve(REPOSITORY_ROOT, packagePath, "package.json"), "utf8"),
         ).scripts?.bench,
       ),
     );

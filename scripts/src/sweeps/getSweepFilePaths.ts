@@ -1,4 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/constants";
+import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
 import { execFileSync } from "node:child_process";
 
 // `--others` is load-bearing: without it a suite that is written but not yet `git add`ed is out of scope, and the
@@ -9,11 +10,10 @@ import { execFileSync } from "node:child_process";
 // A scan started from a package directory would quietly cover that package alone and report a short clean list —
 // The same silent-pass this whole scan exists to avoid, wearing a different hat.
 export const getSweepFilePaths = (glob: string): string[] =>
-  execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", glob], {
-    cwd: REPOSITORY_ROOT,
-    encoding: "utf8",
-    maxBuffer: 1 << 28,
-  })
-    .split("\n")
-    .filter(Boolean)
-    .filter((path) => !path.includes("node_modules/") && !path.includes("/.nuxt/"));
+  getNonEmptyLines(
+    execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", glob], {
+      cwd: REPOSITORY_ROOT,
+      encoding: "utf8",
+      maxBuffer: 1 << 28,
+    }),
+  ).filter((path) => !path.includes("node_modules/") && !path.includes("/.nuxt/"));

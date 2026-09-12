@@ -1,3 +1,4 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getWorkspacePackageDirectories } from "#src/services/getWorkspacePackageDirectories";
 import { readdirSync, readlinkSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
@@ -17,7 +18,6 @@ import { describe, expect, test } from "vitest";
 describe("workspace package symlinks", () => {
   const NODE_MODULES_DIRECTORY = "node_modules";
   const PARENT_DIRECTORY = "..";
-  const repositoryRoot = resolve(import.meta.dirname, "../../..");
   // `node_modules` is the one prune: it is the fetcher's own output rather than package source, and every dependency
   // Under it is a store link that escapes by design.
   const readSymlinkPaths = (directory: string): string[] =>
@@ -31,8 +31,8 @@ describe("workspace package symlinks", () => {
   test("never resolve outside their own package", () => {
     expect.hasAssertions();
 
-    const escapingSymlinkPaths = getWorkspacePackageDirectories(repositoryRoot).flatMap((packageDirectory) => {
-      const packageRoot = resolve(repositoryRoot, packageDirectory);
+    const escapingSymlinkPaths = getWorkspacePackageDirectories(REPOSITORY_ROOT).flatMap((packageDirectory) => {
+      const packageRoot = resolve(REPOSITORY_ROOT, packageDirectory);
       return readSymlinkPaths(packageRoot)
         .filter((path) => {
           // The escape is a leading `..` segment, matched as a whole component so an entry named `..fixtures` stays
@@ -42,7 +42,7 @@ describe("workspace package symlinks", () => {
           const [firstSegment] = target.split(sep);
           return firstSegment === PARENT_DIRECTORY || isAbsolute(target);
         })
-        .map((path) => relative(repositoryRoot, path));
+        .map((path) => relative(REPOSITORY_ROOT, path));
     });
 
     expect(escapingSymlinkPaths).toStrictEqual([]);

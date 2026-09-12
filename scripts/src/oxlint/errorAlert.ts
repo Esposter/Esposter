@@ -1,6 +1,7 @@
 import type { Plugin } from "@oxlint/plugins";
 
-import { definePlugin, defineRule } from "@oxlint/plugins";
+import { noRawErrorAlert } from "#src/services/oxlint/errorAlert/noRawErrorAlert";
+import { definePlugin } from "@oxlint/plugins";
 // An oxlint JS plugin enforcing "who alerts a tRPC rejection" (error-handling/SKILL.md).
 //
 // The error link already alerts the codes it owns, so a caller that reads `error.message` off a rejection and
@@ -20,26 +21,9 @@ import { definePlugin, defineRule } from "@oxlint/plugins";
 //
 // What it cannot see is an alert written inside a Vue template's inline handler, which oxlint's `.vue` support
 // Does not hand to a JS plugin — those stay a review catch.
-const MESSAGE =
-  "A rejection reaches the user through createErrorAlert(error), which asks the error link first — alerting error.message directly stacks a second toast on a failure the link already showed.";
-
-const rule = defineRule({
-  create: (context) => ({
-    CallExpression(node) {
-      if (node.callee.type !== "Identifier" || node.callee.name !== "createAlert") return;
-      const [text] = node.arguments;
-      if (text?.type !== "MemberExpression" || text.computed) return;
-      else if (text.property.type !== "Identifier" || text.property.name !== "message") return;
-
-      context.report({ message: MESSAGE, node });
-    },
-  }),
-  meta: { type: "suggestion" },
-});
-
 const plugin: Plugin = definePlugin({
   meta: { name: "error-alert" },
-  rules: { "no-raw-error-alert": rule },
+  rules: { "no-raw-error-alert": noRawErrorAlert },
 });
 
 export default plugin;
