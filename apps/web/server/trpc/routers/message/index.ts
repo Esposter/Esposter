@@ -100,6 +100,7 @@ import {
   ItemMetadataPropertyNames,
   jsonDateParse,
   MAX_READ_LIMIT,
+  noop,
   Operation,
   takeOne,
 } from "@esposter/shared";
@@ -147,7 +148,7 @@ export const baseMessageRouter = router({
         `${partitionKey}/${rowKey}`,
         AzureContainer.MessageAssets,
         Object.values(getFileBlobNames(partitionKey, id, deletedFilename)),
-      );
+      ).match(noop, console.error);
     },
   ),
   // Clearing the preview needs a Replace — Merge cannot unset a property — so the write carries the whole message
@@ -177,7 +178,7 @@ export const baseMessageRouter = router({
         `${messageEntity.partitionKey}/${messageEntity.rowKey}`,
         AzureContainer.MessageAssets,
         getFilesBlobNames(messageEntity.partitionKey, messageEntity.files),
-      );
+      ).match(noop, console.error);
     },
   ),
   // Reclaims blobs that were uploaded against a write SAS but never reached a message — the composer's revert
@@ -192,7 +193,10 @@ export const baseMessageRouter = router({
         if (!checkIsUploadFileTokenValid(ctx.getSessionPayload.user.id, roomId, id, token))
           throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      await publishBlobDeletion(roomId, AzureContainer.MessageAssets, getFilesBlobNames(roomId, files));
+      await publishBlobDeletion(roomId, AzureContainer.MessageAssets, getFilesBlobNames(roomId, files)).match(
+        noop,
+        console.error,
+      );
     },
   ),
   followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation<void>(
@@ -375,7 +379,7 @@ export const baseMessageRouter = router({
       await createSystemRoomMessage(input.partitionKey, getSessionPayload.user.id, "", getSessionPayload.session.id, {
         replyRowKey: input.rowKey,
         type: MessageType.PinMessage,
-      });
+      }).match(noop, console.error);
     },
   ),
   // One read for both shapes the client needs, since the display list is derived from the follow state:

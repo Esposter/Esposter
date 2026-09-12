@@ -7,7 +7,7 @@ import { createCallParticipant } from "@@/server/services/message/call/createCal
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { MessageType } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import { noop } from "@esposter/shared";
 
 export const joinCallAsParticipant = async (
   { id: callSessionId, roomId, threadRootRowKey }: Pick<CallSessionInMessage, "id" | "roomId" | "threadRootRowKey">,
@@ -29,12 +29,10 @@ export const joinCallAsParticipant = async (
     // A call started in a thread announces itself in that thread, through the same reply the rest of the thread
     // Is made of, rather than in the room the thread happens to live in
     if (roomId)
-      await getResultAsync(() =>
-        createSystemRoomMessage(roomId, userId, "", sessionId, {
-          replyRowKey: threadRootRowKey || undefined,
-          type: MessageType.Call,
-        }),
-      ).match(noop, console.error);
+      await createSystemRoomMessage(roomId, userId, "", sessionId, {
+        replyRowKey: threadRootRowKey || undefined,
+        type: MessageType.Call,
+      }).match(noop, console.error);
   }
 
   return { callSessionId, participantMap };

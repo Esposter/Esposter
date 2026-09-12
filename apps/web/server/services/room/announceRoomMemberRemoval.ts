@@ -27,6 +27,6 @@ export const announceRoomMemberRemoval = async (
         actorUserId,
         `${removedMember.name} was ${action} from the room.`,
         sessionId,
-      );
+      ).match(noop, console.error);
   }).match(noop, console.error);
 };

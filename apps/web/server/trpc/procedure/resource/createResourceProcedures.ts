@@ -231,7 +231,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
       async ({ input: { blobPath, id } }) => {
         // The path is a single separator-free segment (BLOB_SEGMENT_REGEX) anchored under {id}/files/, so this can
         // Only ever delete uploaded assets, never the content or published-content blobs beside the files directory
-        await publishBlobDeletion(id, AzureContainer.ResourceAssets, [`${getFilesDirectoryName(id)}/${blobPath}`]);
+        await publishBlobDeletion(id, AzureContainer.ResourceAssets, [
+          `${getFilesDirectoryName(id)}/${blobPath}`,
+        ]).match(noop, console.error);
       },
     ),
     generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id").query<
@@ -438,7 +440,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         AzureContainer.ResourceAssets,
         `${id}/${SnapshotChannel.Published}`,
         new Date(),
-      );
+      ).match(noop, console.error);
       // Best-effort: a failed write loses one trail entry, never the unpublish.
       getSynchronizedFunction(writeResourceActivity)({
         activityType: ResourceActivityType.Unpublished,

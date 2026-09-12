@@ -259,7 +259,12 @@ export const baseRoomRouter = router({
     });
 
     roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
-    await createSystemRoomMessage(roomId, user.id, `${user.name} joined the room.`, ctx.getSessionPayload.session.id);
+    await createSystemRoomMessage(
+      roomId,
+      user.id,
+      `${user.name} joined the room.`,
+      ctx.getSessionPayload.session.id,
+    ).match(noop, console.error);
 
     return room;
   }),
@@ -296,7 +301,7 @@ export const baseRoomRouter = router({
             userId,
             `${leavingMember.name} left the room.`,
             ctx.getSessionPayload.session.id,
-          );
+          ).match(noop, console.error);
       }).match(noop, console.error);
 
       return userToRoom.roomId;
@@ -607,7 +612,7 @@ export const baseRoomRouter = router({
           createdBefore: new Date(Date.now() - WRITE_SAS_DURATION_MS),
         });
         return blobNames.filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== image);
-      });
+      }).match(noop, console.error);
 
     return updatedRoom;
   }),
