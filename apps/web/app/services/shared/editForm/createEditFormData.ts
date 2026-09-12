@@ -1,4 +1,4 @@
-import type { AEntity } from "#shared/models/entity/AEntity";
+import type { AEntity } from "@/models/entity/AEntity";
 import type { EntityIdKeys } from "@/models/entity/EntityIdKeys";
 import type { ToData } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
