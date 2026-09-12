@@ -44,7 +44,13 @@ The question is where a thing lives and whether it exists twice — one export p
 | `apps/infra` — `github`, root                                              | —          |                                                                                              |
 | `packages/configuration`                                                   | 2026-09-12 |                                                                                              |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | —          | barrel contents are `ctix` output — regenerate, never hand-edit                              |
-| `scripts`                                                                  | 2026-09-12 | a command is a folder once it has internals                                                  |
+| `scripts/src/dependencyGraph`                                              | —          | a command is a folder: `index.ts` beside its own `services/` and `models/`                   |
+| `scripts/src/oxlint`                                                       | —          | a plugin is a command folder too; `.oxlintrc.json` loads its `index.ts` by path              |
+| `scripts/src/coderabbit`                                                   | —          | four verbs, each a command folder; what two share sits one level up                          |
+| `scripts/src/outdatedDependencies`                                         | —          |                                                                                              |
+| `scripts/src/updateNode`                                                   | —          |                                                                                              |
+| `scripts/src/sweeps`                                                       | —          | one command folder per scan                                                                  |
+| `scripts/src` — `services`, `models`, `workspace`, root                    | —          | a repo invariant suite is a `workspace/` suite                                               |
 
 ## Find recipe
 
