@@ -25,6 +25,9 @@ to ~90 files without splitting a coherent change across two reviews is to commit
 through the last one that fits. Never undo working-tree edits to make a window smaller: the work stays
 committed and the tail is simply held, so nothing is redone and nothing is lost. A rename too large for one
 window splits by **which identifiers it renames**, never by which files, so every commit is green on its own.
+What makes a sha a valid cut — a tree green on its own, the repairs the checks produced committed behind the units
+they repair, and a change split from its enforcer at the rule the tree already carries — and the flow that cuts a
+sitting into the largest prefix under the cap: `references/window-composition.md`.
 
 ## Re-opening the standing PR after it merges
 

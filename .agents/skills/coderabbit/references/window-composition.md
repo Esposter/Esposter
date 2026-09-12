@@ -1,12 +1,43 @@
 # Composing a push window
 
-Read when a push would exceed the file cap, when work authored last has to be reviewed first, or when roadmap items are being batched into one window.
+Read when a push would exceed the file cap, when work authored last has to be reviewed first, when a sitting's commits have to be cut so the pushed head is green on its own, or when roadmap items are being batched into one window.
 
 A window is a **prefix of the unpushed range**, so what rides in it is decided by commit order, not authoring order. Push a prefix and hold the rest by naming the cut sha:
 
 ```bash
 git push origin <cut-sha>:<branch>      # everything after <cut-sha> stays local
 ```
+
+## Cutting a sitting into a window
+
+The same steps every time, so a window is filled without a rewritten pushed commit or a head that fails CI:
+
+```mermaid
+flowchart TD
+  S["sitting's commits + the batched checks have run"] --> R{"did the checks change files (a snapshot, a lint fix, a path a rename owed)?"}
+  R -->|"yes"| RC["commit the repairs on their own, right after the units they repair"]
+  R -->|"no"| M
+  RC --> M["git fetch; pnpm ai:coderabbit:window — the count from the last reviewed sha"]
+  M --> G{"largest prefix whose count is under the cap"}
+  G -->|"the whole range"| V
+  G -->|"a proper prefix"| SP{"does the first held commit split at a self-contained boundary?"}
+  SP -->|"yes — code the old rule accepts / the rule and its docs"| RS["reset --soft the unpushed range and re-commit in that order"]
+  SP -->|"no"| V
+  RS --> M
+  V["verify the cut sha's tree on its own: the suites the held tail touches, lint under the rule the cut carries"] --> T{"remote tip still the one measured against?"}
+  T -->|"no"| M
+  T -->|"yes"| P["git push origin cut-sha:branch — the tail stays local"]
+```
+
+**Every cut is a green tree.** The pushed head runs CI on its own, so a commit that a later commit repairs is not a valid cut: the size snapshot a barrel reorder moved, the key-files path a rename owed, the import order lint rewrote — each is a red shard until the commit carrying it lands. The batched checks at the end of a sitting are what produce those repairs, so they are committed **as their own commit directly behind the units they repair**, never folded into the next behaviour change, where they would be held with it. That commit is the natural cut.
+
+**A change and the enforcer it lands split at the old rule.** When a change is code plus the rule that demands it plus the docs that record it, and the rule the tree already carries accepts the new code, the code goes in this window and the rule with its docs in the next — the cut's tree is green under the rule it carries. Never the reverse: a rule ahead of its sites fails lint on every one of them.
+
+**Re-splitting the unpushed range is free; a pushed commit is never rewritten.** With a clean tree, `git reset --soft origin/<branch>` puts every unpushed change back in the index and `git add <paths>` / `git commit` re-cuts it in the order the window needs; the reordering recipe below is the same operation for whole commits. Both stop at `origin/<branch>` — that ref is the reviewed frontier and other sessions' pushes, and a rewrite past it is the checkpoint desync the last section describes.
+
+**Verify the cut, not only the head.** The checks ran against the tip, which includes the held tail; the cut's tree is that tip minus the tail, so what the tail touches is re-run against the cut — the package suites whose snapshots it moved, the docs suite whose paths it fixed, and lint with the plugin at the cut (`git show <cut>:scripts/src/oxlint/<plugin>.ts` into a scratch file beside the others, a scratch config at the repo root naming it, deleted after).
+
+**Fill to the cap.** A slot costs an hour whether it reads 20 files or 99, so the prefix is the largest one under the cap, and a prefix that lands at 99 is pushed rather than held at 84. The ~90 figure the skill aims at is what a prefix usually lands on, never a reason to hold one that fits. Other sessions push the same branch, so the count is re-read after a fetch and the push goes out only while the remote tip is still the one it was measured against.
 
 ## Reordering so a fix leads
 
