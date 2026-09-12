@@ -8,6 +8,10 @@ export const noExportedType: Rule = defineRule({
     return {
       // `export default interface Foo {}` — unreachable in `<script setup>`, but an SFC may carry a plain
       // `<script>` block beside it, and the rule is about the export rather than about which block it sits in
+      // `export type * from "./types"` hands out every type the module names, without naming one here
+      ExportAllDeclaration(node) {
+        if (node.exportKind === "type") context.report({ message: EXPORTED_TYPE_MESSAGE, node });
+      },
       ExportDefaultDeclaration(node) {
         if (node.declaration.type === "TSInterfaceDeclaration")
           context.report({ message: EXPORTED_TYPE_MESSAGE, node: node.declaration });

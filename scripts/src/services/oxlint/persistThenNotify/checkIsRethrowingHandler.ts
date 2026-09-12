@@ -18,7 +18,9 @@ export const checkIsRethrowingHandler = (node: unknown): boolean => {
   if (checkIsPromiseReject(expression)) return true;
   if (!FunctionNodeTypes.has(expression.type)) return false;
   const functionNode = expression as ESTree.ArrowFunctionExpression | ESTree.Function;
+  // A concise body is the handler's whole answer, so it is classified exactly as the handler itself would be:
+  // `(error) => logAndRethrow(error)` puts the rejection back as surely as a block that throws
   if (functionNode.type === "ArrowFunctionExpression" && functionNode.expression)
-    return checkIsPromiseReject(functionNode.body);
+    return checkIsRethrowingHandler(functionNode.body);
   return functionNode.body ? checkHasOwnRejection(functionNode.body) : false;
 };

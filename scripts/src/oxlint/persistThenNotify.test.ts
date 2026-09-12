@@ -23,6 +23,11 @@ describe(RULE, () => {
       violations: 0,
     },
     {
+      name: "conciselyRethrowingMatchOnHelperAfterEmit",
+      source: `aEventEmitter.emit(); await createSystemRoomMessage(x).match(noop, (error) => logAndRethrow(error));`,
+      violations: 1,
+    },
+    {
       name: "rethrowingMatchOnHelperAfterEmit",
       source: `aEventEmitter.emit(); await createSystemRoomMessage(x).match(noop, (error) => { throw error; });`,
       violations: 1,

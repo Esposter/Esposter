@@ -31,7 +31,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Architecture Notes
 
-- **An entrypoint folder holds the entrypoint alone.** `src/<command>/index.ts` is what the manifest names, and what it runs is under `services/<command>/` with its types under `models/<command>/` (`file-organization` skill).
+- **An entrypoint folder holds the entrypoint, and the platform scripts it dispatches to.** `src/<command>/index.ts` is what the manifest names, and what it runs is under `services/<command>/` with its types under `models/<command>/` (`file-organization` skill).
 - **Nothing imports it.** It is run, never resolved, so it publishes no `exports`, builds no `dist`, and addresses its own sources through the `#src/*` subpath its manifest declares.
 - **Every `.ts` entrypoint runs under `tsx`**, which is what makes an enum available to a script (`package-scripts` skill).
 - **The root delegates to it by filter**, so the root manifest names a script rather than a path into this tree.

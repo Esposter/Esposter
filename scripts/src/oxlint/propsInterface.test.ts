@@ -58,6 +58,8 @@ describe("props-interface", () => {
     { name: "exportedTypeSpecifier", source: `interface Foo { a: string }\nexport { type Foo };`, violations: 1 },
     { name: "exportedTypeStatement", source: `interface Foo { a: string }\nexport type { Foo };`, violations: 1 },
     { name: "exportedDefaultInterface", source: `export default interface Foo { a: string }`, violations: 1 },
+    { name: "exportedTypeStar", source: `export type * from "./types";`, violations: 1 },
+    { name: "exportedValueStar", source: `export * from "./values";`, violations: 0 },
     // A value re-export is not a type leaving the file.
     { name: "exportedValueSpecifier", source: `const foo = 1;\nexport { foo };`, violations: 0 },
     // Only type declarations move out; an SFC still exports whatever its own compiler output needs to.
