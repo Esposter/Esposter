@@ -6,7 +6,7 @@ import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob
 
 const { readMoreScheduledMessageJobs } = useReadScheduledMessageJobs();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
-const { hasMore, isPending, items } = storeToRefs(scheduledMessageJobStore);
+const { hasMore, isLoaded, items } = storeToRefs(scheduledMessageJobStore);
 const sections = computed(() => getTimelineSections(items.value, ({ runAt }) => runAt));
 </script>
 
@@ -22,7 +22,7 @@ const sections = computed(() => getTimelineSections(items.value, ({ runAt }) => 
     <StyledWaypoint :is-active="hasMore" @change="readMoreScheduledMessageJobs" />
   </div>
   <StyledEmptyState
-    v-else-if="!isPending"
+    v-else-if="isLoaded"
     h-full
     :icon="DraftsAndSentTabMetadataMap[DraftsAndSentTab.Scheduled].icon"
     title="No scheduled messages"

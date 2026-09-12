@@ -1,6 +1,7 @@
 import type { ComposableOptions } from "@/models/sound/ComposableOptions";
 import type { PlayOptions } from "@/models/sound/PlayOptions";
 
+import { getOrCreate } from "@esposter/shared";
 import { Howl } from "howler";
 
 const howlCache = new Map<string, Howl>();
@@ -21,15 +22,11 @@ export const useSound = (
   }
 
   onMounted(() => {
-    let howl = howlCache.get(src);
-    if (howl) {
-      sound.value = howl;
-      return;
-    }
-
-    howl = new Howl({ onload: handleLoad, rate: unref(rate), src, volume: unref(volume), ...rest });
-    sound.value = howl;
-    howlCache.set(src, sound.value);
+    sound.value = getOrCreate(
+      howlCache,
+      src,
+      () => new Howl({ onload: handleLoad, rate: unref(rate), src, volume: unref(volume), ...rest }),
+    );
   });
 
   watch(

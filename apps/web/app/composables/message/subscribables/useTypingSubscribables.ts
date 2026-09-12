@@ -9,11 +9,13 @@ export const useTypingSubscribables = async () => {
   const { typings } = storeToRefs(dataStore);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const typingTimeoutIdMap = ref(new Map<string, number>());
+  // Timer handles only, read by the closures below and rendered nowhere, so a reactive wrapper would proxy the
+  // Map for no reader
+  const typingTimeoutIdMap = new Map<string, number>();
   const clearTypingTimeout = (userId: string) => {
-    const timeoutId = typingTimeoutIdMap.value.get(userId);
+    const timeoutId = typingTimeoutIdMap.get(userId);
     if (timeoutId) {
-      typingTimeoutIdMap.value.delete(userId);
+      typingTimeoutIdMap.delete(userId);
       window.clearTimeout(timeoutId);
     }
   };
@@ -40,7 +42,7 @@ export const useTypingSubscribables = async () => {
                 Temporal.Duration.from({ seconds: 3 }).total("milliseconds"),
               );
 
-              typingTimeoutIdMap.value.set(typing.userId, timeoutId);
+              typingTimeoutIdMap.set(typing.userId, timeoutId);
               if (!typings.value.some(({ userId }) => userId === typing.userId)) typings.value.push(typing);
             },
           },
@@ -49,7 +51,7 @@ export const useTypingSubscribables = async () => {
 
       return () => {
         unsubscribe();
-        for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
+        for (const userId of typingTimeoutIdMap.keys()) clearTypingTimeout(userId);
         typings.value = [];
       };
     },

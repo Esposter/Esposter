@@ -7,7 +7,7 @@ import { ID_SEPARATOR } from "@esposter/shared";
 
 const { readMoreSentMessages } = useReadSentMessages();
 const sentMessageStore = useSentMessageStore();
-const { hasMore, isPending, items } = storeToRefs(sentMessageStore);
+const { hasMore, isLoaded, items } = storeToRefs(sentMessageStore);
 const sections = computed(() => getTimelineSections(items.value, ({ message }) => message.createdAt));
 </script>
 
@@ -26,7 +26,7 @@ const sections = computed(() => getTimelineSections(items.value, ({ message }) =
     </div>
   </div>
   <StyledEmptyState
-    v-else-if="!isPending"
+    v-else-if="isLoaded"
     h-full
     :icon="DraftsAndSentTabMetadataMap[DraftsAndSentTab.Sent].icon"
     title="No sent messages"
