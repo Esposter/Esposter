@@ -39,7 +39,9 @@ const getEventSubscriptionBody = (
 });
 
 // Each target is read first and recreated only when the read fails, so a subscription the guard never deleted
-// Is left untouched
+// Is left untouched. Any failed read gates the PUT, not a 404 alone: the body is the declared state, so a write
+// After a throttled or timed-out read re-asserts what is already there, and a read the identity's roles reject
+// Fails the write the same way — a 404 gate would buy an If and a Terminate action for no different outcome
 export const getEventSubscriptionRestoreActions = ({
   connection,
   deadLetterContainer,

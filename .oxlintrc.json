@@ -28,7 +28,7 @@
   },
   "overrides": [
     {
-      "files": ["**/*.d.ts"],
+      "files": ["**/*.d.ts", "**/*.d.mts", "**/*.d.cts"],
       "rules": {
         "literal-union/no-string-literal-union": "off"
       }
