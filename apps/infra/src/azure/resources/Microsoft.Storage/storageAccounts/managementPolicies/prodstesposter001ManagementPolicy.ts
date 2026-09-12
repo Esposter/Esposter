@@ -1,7 +1,7 @@
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodstesposter001Deadletter } from "#src/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/prodstesposter001Deadletter";
 import { prodstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
-import { AzureContainer } from "@esposter/db-schema";
+import { getStorageManagementPolicyRules } from "#src/azure/services/getStorageManagementPolicyRules";
 import * as azure_native from "@pulumi/azure-native";
 
 export const prodstesposter001ManagementPolicy: azure_native.storage.ManagementPolicy =
@@ -11,64 +11,7 @@ export const prodstesposter001ManagementPolicy: azure_native.storage.ManagementP
       accountName: prodstesposter001.name,
       managementPolicyName: "default",
       policy: {
-        rules: [
-          {
-            definition: {
-              actions: {
-                version: {
-                  delete: {
-                    daysAfterCreationGreaterThan: 1,
-                  },
-                },
-              },
-              filters: {
-                blobTypes: ["blockBlob", "appendBlob"],
-              },
-            },
-            enabled: true,
-            name: "DeletePreviousVersions (auto-created)",
-            type: azure_native.storage.RuleType.Lifecycle,
-          },
-          {
-            definition: {
-              actions: {
-                baseBlob: {
-                  tierToCold: {
-                    daysAfterCreationGreaterThan: 90,
-                  },
-                  tierToCool: {
-                    daysAfterCreationGreaterThan: 30,
-                  },
-                },
-              },
-              filters: {
-                blobTypes: ["blockBlob"],
-                prefixMatch: [AzureContainer.MessageAssets],
-              },
-            },
-            enabled: true,
-            name: "TierMessageAttachments",
-            type: azure_native.storage.RuleType.Lifecycle,
-          },
-          {
-            definition: {
-              actions: {
-                baseBlob: {
-                  delete: {
-                    daysAfterCreationGreaterThan: 30,
-                  },
-                },
-              },
-              filters: {
-                blobTypes: ["blockBlob"],
-                prefixMatch: [prodstesposter001Deadletter.name],
-              },
-            },
-            enabled: true,
-            name: "DeleteDeadLetter",
-            type: azure_native.storage.RuleType.Lifecycle,
-          },
-        ],
+        rules: getStorageManagementPolicyRules(prodstesposter001Deadletter),
       },
       resourceGroupName: prodRgEsposterAe001.name,
     },

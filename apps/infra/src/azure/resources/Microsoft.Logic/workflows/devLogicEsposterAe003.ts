@@ -3,63 +3,29 @@ import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastL
 import AzureBudgetActionWorkflowTriggers from "#src/azure/constants/AzureBudgetActionWorkflowTriggers";
 import AzureLogicAppEndpointsConfiguration from "#src/azure/constants/AzureLogicAppEndpointsConfiguration";
 import AzureResourceManagerManagedApiId from "#src/azure/constants/AzureResourceManagerManagedApiId";
-import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import DevEventSubscriptionGuardTargets from "#src/azure/constants/DevEventSubscriptionGuardTargets";
 import { devEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devApicEsposterAe003 } from "#src/azure/resources/Microsoft.Web/connections/devApicEsposterAe003";
+import { getEventSubscriptionDeleteActions } from "#src/azure/services/getEventSubscriptionDeleteActions";
 import { getWorkflowConnectionParameters } from "#src/azure/services/getWorkflowConnectionParameters";
-import { AzureFunction } from "@esposter/db-schema";
+import { getWorkflowDefinition } from "#src/azure/services/getWorkflowDefinition";
 import * as azure_native from "@pulumi/azure-native";
-import * as pulumi from "@pulumi/pulumi";
 
 const workflowName = "dev-logic-esposter-ae-003";
 
 export const devLogicEsposterAe003: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   workflowName,
   {
-    definition: {
-      $schema:
-        "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-      actions: {
-        [`Delete_${AzureFunction.ProcessNotification}_Event_Subscription`]: {
-          inputs: {
-            host: {
-              connection: {
-                name: pulumi.interpolate`@parameters('$connections')['${devApicEsposterAe003.name}']['connectionId']`,
-              },
-            },
-            method: "delete",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${devEvgtEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-002')}`,
-            queries: {
-              "x-ms-api-version": "2025-02-15",
-            },
-          },
-          type: "ApiConnection",
-        },
-        [`Delete_${AzureFunction.ProcessWebhook}_Event_Subscription`]: {
-          inputs: {
-            host: {
-              connection: {
-                name: pulumi.interpolate`@parameters('$connections')['${devApicEsposterAe003.name}']['connectionId']`,
-              },
-            },
-            method: "delete",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${devRgEsposterAe001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${devEvgtEsposterAe001.name}/eventSubscriptions/dev-evgs-esposter-ae-001')}`,
-            queries: {
-              "x-ms-api-version": "2025-02-15",
-            },
-          },
-          type: "ApiConnection",
-        },
-      },
-      contentVersion: "1.0.0.0",
-      parameters: {
-        $connections: {
-          type: "Object",
-        },
-      },
-      triggers: AzureBudgetActionWorkflowTriggers,
-    },
+    definition: getWorkflowDefinition(
+      getEventSubscriptionDeleteActions(
+        devApicEsposterAe003,
+        devRgEsposterAe001,
+        devEvgtEsposterAe001,
+        DevEventSubscriptionGuardTargets,
+      ),
+      AzureBudgetActionWorkflowTriggers,
+    ),
     endpointsConfiguration: AzureLogicAppEndpointsConfiguration,
     identity: {
       type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned,

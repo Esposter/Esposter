@@ -1,5 +1,6 @@
 import ApplicationTags from "#src/azure/constants/ApplicationTags";
 import AzureAustraliaEastDisplayLocation from "#src/azure/constants/AzureAustraliaEastDisplayLocation";
+import AzureCustomDomainVerificationId from "#src/azure/constants/AzureCustomDomainVerificationId";
 import { prodEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodAspEsposterAe001 } from "#src/azure/resources/Microsoft.Web/serverFarms/prodAspEsposterAe001";
@@ -16,7 +17,7 @@ export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web
     clientCertEnabled: false,
     clientCertMode: azure_native.web.ClientCertMode.Required,
     containerSize: 1536,
-    customDomainVerificationId: "2056A3EEB73FBB528BC43CDFDCC87B0ED9A0C4C7C520BE7663108B19B35289C8",
+    customDomainVerificationId: AzureCustomDomainVerificationId,
     dailyMemoryTimeQuota: 0,
     enabled: true,
     endToEndEncryptionEnabled: false,
