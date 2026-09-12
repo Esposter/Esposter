@@ -22,4 +22,5 @@ export const userAchievementsRelation = defineRelationsPart(schema, (r) => ({
 export const UserAchievementRelations = {
   achievement: true,
 } as const;
+
 export type UserAchievementWithRelations = UserAchievement & { achievement: Achievement };

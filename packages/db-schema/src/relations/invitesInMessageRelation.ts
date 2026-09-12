@@ -6,7 +6,7 @@ import { defineRelationsPart } from "drizzle-orm";
 
 export const invitesInMessageRelation = defineRelationsPart(schema, (r) => ({
   invitesInMessage: {
-    roomInMessage: r.one.roomsInMessage({
+    room: r.one.roomsInMessage({
       from: r.invitesInMessage.roomId,
       optional: false,
       to: r.roomsInMessage.id,
@@ -20,7 +20,7 @@ export const invitesInMessageRelation = defineRelationsPart(schema, (r) => ({
 }));
 
 export const InviteInMessageRelations = {
-  roomInMessage: {
+  room: {
     with: {
       usersToRoomsInMessage: true,
     },

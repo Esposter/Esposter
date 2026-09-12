@@ -178,7 +178,7 @@ export const baseRoomRouter = router({
     return { publicUrl: blockBlobClient.url, sasUrl };
   }),
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const { roomId, roomInMessage, user } = await ctx.db.transaction(async (tx) => {
+    const { roomId, room, user } = await ctx.db.transaction(async (tx) => {
       // The room the token names is read and locked before a use is consumed, and the lock is held through the
       // Membership insert: a pause committing between the check below and that insert would otherwise let one more
       // Member in through a link the room had already closed
@@ -254,14 +254,14 @@ export const baseRoomRouter = router({
         DatabaseEntityType.UserToRoom,
         JSON.stringify(userToRoom),
       );
-      const { roomId: joinedRoomId, roomInMessage: joinedRoomInMessage, user: joinedUser } = userToRoomWithRelations;
-      return { roomId: joinedRoomId, roomInMessage: joinedRoomInMessage, user: joinedUser };
+      const { roomId: joinedRoomId, room: joinedRoom, user: joinedUser } = userToRoomWithRelations;
+      return { roomId: joinedRoomId, room: joinedRoom, user: joinedUser };
     });
 
     roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
     await createSystemRoomMessage(roomId, user.id, `${user.name} joined the room.`, ctx.getSessionPayload.session.id);
 
-    return roomInMessage;
+    return room;
   }),
   leaveRoom: standardAuthedProcedure
     .input(leaveRoomInputSchema)

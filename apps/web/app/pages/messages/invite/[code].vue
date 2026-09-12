@@ -48,15 +48,15 @@ const isMounted = useMounted();
             <div text-center>
               You've been invited to join
               <span font-bold>
-                {{ invite.roomInMessage.name }}
+                {{ invite.room.name }}
               </span>
               by
               <div font-bold text-headline-small>
                 {{ invite.user.name }}
               </div>
               <div>
-                {{ invite.roomInMessage.usersToRoomsInMessage.length }}
-                {{ pluralize("Member", invite.roomInMessage.usersToRoomsInMessage.length) }}
+                {{ invite.room.usersToRoomsInMessage.length }}
+                {{ pluralize("Member", invite.room.usersToRoomsInMessage.length) }}
               </div>
             </div>
           </v-card-text>

@@ -3,7 +3,7 @@ import { defineRelationsPart } from "drizzle-orm";
 
 export const scheduledMessageJobsInMessageRelation = defineRelationsPart(schema, (r) => ({
   scheduledMessageJobsInMessage: {
-    roomInMessage: r.one.roomsInMessage({
+    room: r.one.roomsInMessage({
       from: r.scheduledMessageJobsInMessage.roomId,
       optional: false,
       to: r.roomsInMessage.id,

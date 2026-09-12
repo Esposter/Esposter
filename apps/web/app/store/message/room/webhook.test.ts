@@ -22,7 +22,7 @@ describe(useWebhookStore, () => {
   // The read hands back each row with the room and the webhook's own user attached, the way the panel renders it
   const room = createRoom("room");
   const user = createUser();
-  const readWebhook = (webhook: WebhookInMessage) => ({ ...webhook, roomInMessage: room, user });
+  const readWebhook = (webhook: WebhookInMessage) => ({ ...webhook, room: room, user });
 
   beforeEach(() => {
     setActivePinia(createPinia());

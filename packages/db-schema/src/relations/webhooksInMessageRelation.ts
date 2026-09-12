@@ -12,7 +12,7 @@ export const webhooksInMessageRelation = defineRelationsPart(schema, (r) => ({
       optional: false,
       to: r.appUsersInMessage.id,
     }),
-    roomInMessage: r.one.roomsInMessage({
+    room: r.one.roomsInMessage({
       from: r.webhooksInMessage.roomId,
       optional: false,
       to: r.roomsInMessage.id,
@@ -26,9 +26,9 @@ export const webhooksInMessageRelation = defineRelationsPart(schema, (r) => ({
 }));
 
 export const WebhookInMessageRelations = {
-  roomInMessage: true,
+  room: true,
   user: true,
 } as const;
 // The row `WebhookInMessageRelations` actually produces, so a procedure returning one can declare it rather
 // Than infer a shape the caller cannot name
-export type WebhookInMessageWithRelations = WebhookInMessage & { roomInMessage: RoomInMessage; user: User };
+export type WebhookInMessageWithRelations = WebhookInMessage & { room: RoomInMessage; user: User };

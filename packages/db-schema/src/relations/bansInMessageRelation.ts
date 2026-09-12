@@ -11,7 +11,7 @@ export const bansInMessageRelation = defineRelationsPart(schema, (r) => ({
       optional: true,
       to: r.users.id,
     }),
-    roomInMessage: r.one.roomsInMessage({
+    room: r.one.roomsInMessage({
       from: r.bansInMessage.roomId,
       optional: false,
       to: r.roomsInMessage.id,
