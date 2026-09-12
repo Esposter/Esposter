@@ -5,8 +5,8 @@ interface Props {
   title: string;
 }
 
-const { description, icon = "mdi-inbox-outline", title } = defineProps<Props>();
 defineSlots<{ default?: () => VNode }>();
+const { description, icon = "mdi-inbox-outline", title } = defineProps<Props>();
 </script>
 
 <template>

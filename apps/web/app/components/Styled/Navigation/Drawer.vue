@@ -4,8 +4,8 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { permanent } = defineProps<Props>();
 const isOpen = defineModel<boolean>({ required: true });
+const { permanent } = defineProps<Props>();
 </script>
 
 <!-- Every drawer in the app wants the same thing: while it is permanent it is simply open, and the model is the

@@ -22,13 +22,13 @@ const confirmCloseDialog = defineModel<boolean>("confirmCloseDialog", { required
 const isFullScreenDialog = defineModel<boolean>("isFullScreenDialog", { required: true });
 const { editedItem, editForm, formId, isDirty, isEditFormValid, isSavable, name, originalItem, schema } =
   defineProps<Props<T>>();
-const errorIcon = useTemplateRef("errorIcon");
-const title = computed(() => `Configuration - ${prettify(editedItem.type)}`);
 const emit = defineEmits<{
   delete: [onComplete: (isSuccessful?: boolean) => void];
   save: [];
   "update:edit-form-dialog": [value: false];
 }>();
+const errorIcon = useTemplateRef("errorIcon");
+const title = computed(() => `Configuration - ${prettify(editedItem.type)}`);
 </script>
 
 <template>

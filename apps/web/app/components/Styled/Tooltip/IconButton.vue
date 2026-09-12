@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { VBtn, VTooltip } from "vuetify/components";
 
+import { mergeProps } from "vue";
+
 interface Props {
   buttonProps?: VBtn["$props"];
   icon: string;
@@ -13,15 +15,15 @@ interface Props {
 // Is what every call site means by them; an explicit buttonProps entry still wins over the same attr
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default?: () => VNode }>();
-const { buttonProps, icon, isIconButton = true, text, tooltipProps } = defineProps<Props>();
+const { buttonProps = {}, icon, isIconButton = true, text, tooltipProps } = defineProps<Props>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
 </script>
 
 <template>
   <v-tooltip :text :="tooltipProps">
     <template #activator="{ props }">
-      <v-btn v-if="isIconButton" :icon :="{ ...props, ...$attrs, ...buttonProps }" @click="emit('click', $event)" />
-      <v-btn v-else :="{ ...props, ...$attrs, ...buttonProps }" @click="emit('click', $event)">
+      <v-btn v-if="isIconButton" :icon :="mergeProps(props, $attrs, buttonProps)" @click="emit('click', $event)" />
+      <v-btn v-else :="mergeProps(props, $attrs, buttonProps)" @click="emit('click', $event)">
         <v-icon :icon />
       </v-btn>
     </template>

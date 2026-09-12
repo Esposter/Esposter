@@ -3,13 +3,13 @@ interface Props {
   title?: string;
 }
 
-const { title } = defineProps<Props>();
 const slots = defineSlots<{
   actions?: () => VNode;
   filters?: () => VNode;
   prepend?: () => VNode;
   status?: () => VNode;
 }>();
+const { title } = defineProps<Props>();
 </script>
 
 <!-- Breadcrumb row on top, carrying any standing readout at its far end so the width the trail leaves is spent

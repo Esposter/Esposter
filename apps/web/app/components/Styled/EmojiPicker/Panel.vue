@@ -14,10 +14,10 @@ interface Props {
   customEmojis?: CustomEmoji[];
 }
 
+defineSlots<{ footer?: () => VNode }>();
 const { customEmojis = [] } = defineProps<Props>();
 // The tag leads, because reacting is what most surfaces do with a pick; the record follows for the composer,
 // Which needs the content form rather than the reaction form
-defineSlots<{ footer?: () => VNode }>();
 const emit = defineEmits<{ select: [emojiTag: string, emoji: PickableEmoji] }>();
 const emojiPickerStore = useEmojiPickerStore();
 const { recentEmojiSlugs, skinTone } = storeToRefs(emojiPickerStore);
@@ -31,12 +31,12 @@ const previewEmoji = ref<PickableEmoji>();
 const categories = computed(() => getEmojiCategories(recentEmojiSlugs.value, customEmojis));
 // Tracked by title rather than by index because Frequently Used only appears once there is something in it,
 // So an index would silently point at a different category the first time an emoji is picked
-const pickedCategoryTitle = ref(takeOne(categories.value, 0).title);
+const pickedCategoryTitle = ref(takeOne(categories.value).title);
 // A category can leave the rail while it is the selected one — a room's set going empty takes its category with
 // It — so the pick is resolved against the live list rather than trusted. `v-tabs` handed a value no tab carries
 // Shows no active tab at all, which would leave the rail blank above a grid that had already fallen back
 const activeCategory = computed(
-  () => categories.value.find(({ title }) => title === pickedCategoryTitle.value) ?? takeOne(categories.value, 0),
+  () => categories.value.find(({ title }) => title === pickedCategoryTitle.value) ?? takeOne(categories.value),
 );
 const activeCategoryTitle = computed({
   get: () => activeCategory.value.title,

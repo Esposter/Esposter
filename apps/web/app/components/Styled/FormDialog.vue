@@ -4,6 +4,7 @@ import type { SubmitEventPromise } from "vuetify";
 import type { VBtn, VCard, VForm } from "vuetify/components";
 
 import { mergeProps } from "vue";
+
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface Props {
   cardProps?: VCard["$props"];

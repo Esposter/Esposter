@@ -2,7 +2,6 @@
 import StyledNavigationDrawer from "@/components/Styled/Navigation/Drawer.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
-import { h } from "vue";
 import { VLayout } from "vuetify/components";
 
 // A drawer needs a layout to inject, and the wrapper is only ever rendered inside one

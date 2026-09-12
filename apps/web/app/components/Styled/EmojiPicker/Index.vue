@@ -6,6 +6,7 @@ import type { VBtn, VTooltip } from "vuetify/components";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { mergeProps } from "vue";
 import { VBottomSheet, VMenu } from "vuetify/components";
+
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface Props {
   buttonProps?: VBtn["$props"];
