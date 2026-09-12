@@ -31,7 +31,7 @@ flowchart LR
   Tooling -. ignored .-> Worktrees
 ```
 
-`AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` are the single source for all three paths, so anything that can import interpolates them instead of repeating a literal. The rest are import-less formats — `.oxlintrc.json`, `.oxfmtrc.json` and `.gitignore` — so they repeat the literal and `scripts/src/agentDirectories.test.ts` pins every copy to its constant. A copy has been silently un-excluded before by an unrelated edit widening a glob, and nothing else would have noticed.
+`AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` are the single source for all three paths, so anything that can import interpolates them instead of repeating a literal. The rest are import-less formats — `.oxlintrc.json`, `.oxfmtrc.json` and `.gitignore` — so they repeat the literal and `scripts/src/workspace/agentDirectories.test.ts` pins every copy to its constant. A copy has been silently un-excluded before by an unrelated edit widening a glob, and nothing else would have noticed.
 
 Which literal a tool needs follows from how far it walks, so the two exclusions are not interchangeable:
 
@@ -46,9 +46,9 @@ Only the agent harness's machine-local `.git/info/exclude` hides live worktrees 
 
 ## An agent's programs live in `scripts/`, not in `.agents/`
 
-A recipe pasted into a skill page or a ledger is a program with none of a program's guarantees — nothing typechecks, lints, formats or runs it, and the rot is silent, because a scan that cannot run reports nothing and that is the shape of a clean tree. So a recipe that is more than one command lives in `scripts/src/<domain>/<verb>/` with a colocated test, where the repository's own toolchain already reaches it: no runner, project or config entry is added to make that work.
+A recipe pasted into a skill page or a ledger is a program with none of a program's guarantees — nothing typechecks, lints, formats or runs it, and the rot is silent, because a scan that cannot run reports nothing and that is the shape of a clean tree. So a recipe that is more than one command has its entrypoint at `scripts/src/<domain>/<verb>/index.ts` and its functions under `scripts/src/services/<domain>/<verb>/` with a colocated test, where the repository's own toolchain already reaches it: no runner, project or config entry is added to make that work.
 
-The tree stays free of executables for one reason — it is the rules an agent reads, and an executable inside it makes "rule or tool" unanswerable from the path. A check **about** the agent tree is an ordinary `scripts` test, which is why `scripts/src/agentDirectories.test.ts` sits where it does rather than beside the thing it checks.
+The tree stays free of executables for one reason — it is the rules an agent reads, and an executable inside it makes "rule or tool" unanswerable from the path. A check **about** the agent tree is an ordinary `scripts` test, which is why `scripts/src/workspace/agentDirectories.test.ts` sits with the other workspace invariants rather than beside the thing it checks.
 
 ```mermaid
 flowchart LR
@@ -93,10 +93,10 @@ root `docs/` folder this layout exists to avoid. Point the skill at `.agents/` i
 
 ## Key files
 
-| Path                                      | Role                                                                       |
-| ----------------------------------------- | -------------------------------------------------------------------------- |
-| `.agents`                                 | The agent tree — skills, workflows, ledgers, harness settings              |
-| `.claude`                                 | Symlink alias to `.agents` so Claude Code resolves its own paths           |
-| `AGENTS.md`                               | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it     |
-| `packages/configuration/src/constants.ts` | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` |
-| `scripts/src/agentDirectories.test.ts`    | Pins both exclusions in the configs that cannot import the constants       |
+| Path                                             | Role                                                                       |
+| ------------------------------------------------ | -------------------------------------------------------------------------- |
+| `.agents`                                        | The agent tree — skills, workflows, ledgers, harness settings              |
+| `.claude`                                        | Symlink alias to `.agents` so Claude Code resolves its own paths           |
+| `AGENTS.md`                                      | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it     |
+| `packages/configuration/src/constants.ts`        | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` |
+| `scripts/src/workspace/agentDirectories.test.ts` | Pins both exclusions in the configs that cannot import the constants       |

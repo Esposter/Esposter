@@ -3,8 +3,8 @@ import type { RenameSubstitution } from "#src/models/coderabbit/RenameSubstituti
 import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkIsProtectedPath";
 import { checkIsSubstitutionExact } from "#src/services/coderabbit/exclusions/checkIsSubstitutionExact";
 import { RENAME_OR_MODIFY_ROW_REGEX } from "#src/services/coderabbit/exclusions/constants";
+import { runGit } from "#src/services/coderabbit/runGit";
 import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
-import { runGit } from "#src/services/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The sweep's own commit is the one whose substitutions are replayed, and it must be one of the range's: a sha

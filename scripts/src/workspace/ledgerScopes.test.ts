@@ -1,8 +1,20 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { AGENT_DIRECTORY } from "@esposter/configuration";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { glob } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
+
+// A git pathspec naming a directory means everything under it, so a plain path that exists resolves whatever
+// Sits inside it; one carrying no separator matches at any depth, which a glob only reads that way once it is
+// Prefixed. Neither is what a bare glob would do with it, hence the two steps rather than one pattern.
+const checkIsResolved = async (pathspec: string): Promise<boolean> => {
+  if (existsSync(resolve(REPOSITORY_ROOT, pathspec))) return true;
+
+  const pattern = pathspec.includes("/") ? pathspec : `**/${pathspec}`;
+  for await (const _ of glob(pattern, { cwd: REPOSITORY_ROOT })) return true;
+  return false;
+};
 
 /**
  * A ledger's `Scope` is what the standing-resume command in the `sweeps` skill takes, so a pathspec that matches
@@ -13,11 +25,10 @@ import { describe, expect, test } from "vitest";
  * overlay, which carries the files and not the repository.
  */
 describe("ledgerScopes", () => {
-  const repositoryRoot = resolve(import.meta.dirname, "..", "..");
   const LEDGER_ROW_REGEX = /^\| \[(?<ledger>[^\]]+)\]\([^)]+\)\s*\|[^|]*\|[^|]*\|(?<scope>[^|]*)\|$/u;
   const MARKDOWN_EXTENSION_REGEX = /\.md$/u;
   const PATHSPEC_REGEX = /`(?<pathspec>[^`]+)`/gu;
-  const ledgerDirectory = join(repositoryRoot, AGENT_DIRECTORY, "ledgers");
+  const ledgerDirectory = join(REPOSITORY_ROOT, AGENT_DIRECTORY, "ledgers");
   const index = readFileSync(join(ledgerDirectory, "README.md"), "utf8");
   // A ledger is either one file or a promoted folder of area files, so both shapes are a name the index owes a
   // Row to — the folder's own README is its metadata, not a ledger of its own.
@@ -32,16 +43,6 @@ describe("ledgerScopes", () => {
       ledger: String(ledger),
       pathspecs: Array.from(String(scope).matchAll(PATHSPEC_REGEX), (match) => String(match.groups?.pathspec)),
     }));
-  // A git pathspec naming a directory means everything under it, so a plain path that exists resolves whatever
-  // Sits inside it; one carrying no separator matches at any depth, which a glob only reads that way once it is
-  // Prefixed. Neither is what a bare glob would do with it, hence the two steps rather than one pattern.
-  const checkIsResolved = async (pathspec: string): Promise<boolean> => {
-    if (existsSync(resolve(repositoryRoot, pathspec))) return true;
-
-    const pattern = pathspec.includes("/") ? pathspec : `**/${pathspec}`;
-    for await (const _ of glob(pattern, { cwd: repositoryRoot })) return true;
-    return false;
-  };
 
   test("every ledger in the index declares one", () => {
     expect.hasAssertions();

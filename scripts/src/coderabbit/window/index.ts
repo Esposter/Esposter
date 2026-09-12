@@ -4,10 +4,10 @@ import type { PullRequestBranches } from "#src/models/coderabbit/window/PullRequ
 import { getPullRequestArgument } from "#src/services/coderabbit/getPullRequestArgument";
 import { readBotEntries } from "#src/services/coderabbit/readBotEntries";
 import { runGh } from "#src/services/coderabbit/runGh";
+import { runGit } from "#src/services/coderabbit/runGit";
 import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
 import { parseMachineJson } from "#src/services/parseMachineJson";
-import { runGit } from "#src/services/runGit";
 
 const pullRequest = getPullRequestArgument();
 const { baseRefName, headRefName } = parseMachineJson<PullRequestBranches>(

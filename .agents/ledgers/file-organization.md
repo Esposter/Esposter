@@ -50,7 +50,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `scripts/src/outdatedDependencies`                                         | —          |                                                                                               |
 | `scripts/src/updateNode`                                                   | 2026-09-12 |                                                                                               |
 | `scripts/src/sweeps`                                                       | —          | one entrypoint per scan                                                                       |
-| `scripts/src` — `services`, `models`, `workspace`, root                    | —          | a repo invariant suite is a `workspace/` suite                                                |
+| `scripts/src` — `services`, `models`, `workspace`, root                    | 2026-09-12 | a repo invariant suite is a `workspace/` suite                                                |
 
 ## Find recipe
 

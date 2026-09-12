@@ -3,8 +3,8 @@ import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkI
 import { getPureRenamePaths } from "#src/services/coderabbit/exclusions/getPureRenamePaths";
 import { getRenameSubstitutions } from "#src/services/coderabbit/exclusions/getRenameSubstitutions";
 import { getRenameTokenOnlyPaths } from "#src/services/coderabbit/exclusions/getRenameTokenOnlyPaths";
+import { runGit } from "#src/services/coderabbit/runGit";
 import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
-import { runGit } from "#src/services/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // `pnpm ai:coderabbit:exclusions <base>..<head> [<rename-sha> OldName=NewName ...]`

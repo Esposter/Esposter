@@ -11,7 +11,7 @@ Some files are read by a tool that has no module resolution for a workspace pack
 `postinstall` evaluates, which runs before any workspace package is built, so importing one fails the install
 itself on a fresh clone. Reaching for the constant there is not a tidier version of the literal, it is a broken
 install. Write the literal, say in a comment why it cannot be imported, and pin it **only where nothing downstream
-would fail on the drift** — `scripts/src/agentDirectories.test.ts` exists because a dropped ignore pattern is
+would fail on the drift** — `scripts/src/workspace/agentDirectories.test.ts` exists because a dropped ignore pattern is
 silent, where a misplaced content collection breaks the suite that reads it. A pin is the exception to the rule
 against testing wiring, so it needs that argument made, not assumed.
 
@@ -22,5 +22,5 @@ second checkout of the monorepo nested inside it — and a walk that follows dir
 `AGENT_ALIAS_DIRECTORY`, or it enumerates the tree twice under two names. Which one a tool needs follows from how
 far it walks, so check before copying an entry across: a formatter that rewrites what it walks needs the worktrees
 exclusion and not the alias, and `.gitignore` is a tool here too. ESLint states neither — `eslint-plugin-oxlint`
-bridges `.oxlintrc.json`'s `ignorePatterns` into its global `ignores`. `scripts/src/agentDirectories.test.ts` pins
+bridges `.oxlintrc.json`'s `ignorePatterns` into its global `ignores`. `scripts/src/workspace/agentDirectories.test.ts` pins
 the copies that cannot import the constants.

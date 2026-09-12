@@ -1,8 +1,16 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { AGENT_ALIAS_DIRECTORY, AGENT_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
+
+const readJson = (fileName: string): Record<string, unknown> =>
+  jsonDateParse<Record<string, unknown>>(readFileSync(resolve(REPOSITORY_ROOT, fileName), "utf8"));
+const readGitignorePatterns = (): string[] =>
+  readFileSync(resolve(REPOSITORY_ROOT, ".gitignore"), "utf8")
+    .split("\n")
+    .map((line) => line.trim());
 
 /**
  * The configs below are JSON and gitignore syntax with no import mechanism, so they repeat the literal and these
@@ -12,14 +20,6 @@ import { describe, expect, test } from "vitest";
  * cover both linters.
  */
 describe(AGENT_DIRECTORY, () => {
-  const repositoryRoot = resolve(import.meta.dirname, "..", "..");
-  const readJson = (fileName: string): Record<string, unknown> =>
-    jsonDateParse<Record<string, unknown>>(readFileSync(resolve(repositoryRoot, fileName), "utf8"));
-  const readGitignorePatterns = (): string[] =>
-    readFileSync(resolve(repositoryRoot, ".gitignore"), "utf8")
-      .split("\n")
-      .map((line) => line.trim());
-
   // Only a tool that follows directory symlinks enumerates the tree a second time under the alias, which is why
   // Absent here and present below: oxfmt and git.
   describe(AGENT_ALIAS_DIRECTORY, () => {

@@ -1,3 +1,4 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getWorkspacePackageDirectories } from "#src/services/getWorkspacePackageDirectories";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 import { existsSync, readFileSync } from "node:fs";
@@ -19,13 +20,12 @@ const checkIsSideEffectsDeclaration = (sideEffects: unknown): boolean =>
   (Array.isArray(sideEffects) && sideEffects.every((entry) => typeof entry === "string"));
 
 describe("side effects", () => {
-  const repositoryRoot = resolve(import.meta.dirname, "../../..");
   // Discovered rather than listed, for the same reason the declaration-generation invariant discovers its set: a
   // Listed one stops covering the package added after it was written, which is the only way this can be broken.
   // Every member the workspace declares, because two of the ones that build sit under `apps`. (`apps/web` is a
   // Nuxt application, has no tsdown config, and nothing resolves into it.)
-  const PACKAGE_PATHS = getWorkspacePackageDirectories(repositoryRoot).filter((packagePath) =>
-    existsSync(resolve(repositoryRoot, packagePath, "tsdown.config.ts")),
+  const PACKAGE_PATHS = getWorkspacePackageDirectories(REPOSITORY_ROOT).filter((packagePath) =>
+    existsSync(resolve(REPOSITORY_ROOT, packagePath, "tsdown.config.ts")),
   );
   // The Functions app registers each handler with a bare `app.eventGrid(...)` call in a module whose only export
   // Is `export default {}`, which the barrel does not re-export. Told it has no side effects, rolldown drops
@@ -34,7 +34,7 @@ describe("side effects", () => {
   // Keeps a blanket `true` from being the easy answer for a package that is mostly tree-shakeable.
   const SIDE_EFFECTING_PACKAGE_PATH = "apps/functions";
   const readSideEffects = (packagePath: string): unknown =>
-    readJsonFile(resolve(repositoryRoot, packagePath, "package.json")).sideEffects;
+    readJsonFile(resolve(REPOSITORY_ROOT, packagePath, "package.json")).sideEffects;
 
   test("are declared by every package a bundler resolves", () => {
     expect.hasAssertions();
