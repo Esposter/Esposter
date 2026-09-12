@@ -23,7 +23,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `server/services`, `server/composables`, `server/models`                   | 2026-09-12 |                                                                                              |
 | `server/trpc` — the resource family                                        | —          | `resource`, `survey`, `program`, `procedure/resource`                                        |
 | `server/trpc` — the room family                                            | —          | `room`, `call`, `userToRoom`                                                                 |
-| `server/trpc` — the rest                                                   | —          | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                            |
+| `server/trpc` — the rest                                                   | 2026-09-12 | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                            |
 | `app/components/Message`                                                   | —          | the stray-component half is `components/index.test.ts`, not a pass                           |
 | `app/components/Resource`                                                  | —          |                                                                                              |
 | `app/components` — the rest                                                | —          | a `*Props.ts` beside its component is colocation, not a stray model                          |

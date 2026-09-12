@@ -4,7 +4,7 @@ import type { z } from "zod";
 
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { requireUuid } from "@@/server/trpc/guards/requireUuid";
-import { AuthedProcedureMap } from "@@/server/trpc/procedure/AuthedProcedureMap";
+import { AuthedProcedureMap } from "@@/server/trpc/procedure/room/AuthedProcedureMap";
 import { checkHasPermission } from "@esposter/db";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
