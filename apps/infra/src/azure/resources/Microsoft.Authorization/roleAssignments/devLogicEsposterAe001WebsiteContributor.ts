@@ -1,8 +1,9 @@
 import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
 import AzureWebsiteContributorRoleDefinitionId from "#src/azure/constants/AzureWebsiteContributorRoleDefinitionId";
-import DevLogicEsposterAe001PrincipalId from "#src/azure/constants/DevLogicEsposterAe001PrincipalId";
+import { devLogicEsposterAe001 } from "#src/azure/resources/Microsoft.Logic/workflows/devLogicEsposterAe001";
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
+import { getPrincipalId } from "#src/azure/services/getPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -10,7 +11,7 @@ export const devLogicEsposterAe001WebsiteContributor: azure_native.authorization
   new azure_native.authorization.RoleAssignment(
     "dev-logic-esposter-ae-001-website-contributor",
     {
-      principalId: DevLogicEsposterAe001PrincipalId,
+      principalId: getPrincipalId(devLogicEsposterAe001),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleDefinitionId: AzureWebsiteContributorRoleDefinitionId,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${devRgEsposterAe001.name}/providers/Microsoft.Web/sites/${devFuncEsposter001.name}`,

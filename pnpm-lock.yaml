@@ -894,6 +894,9 @@ importers:
       '@esposter/db-schema':
         specifier: workspace:*
         version: link:../../packages/db-schema
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@pulumi/azure-native':
         specifier: 'catalog:'
         version: 3.27.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
