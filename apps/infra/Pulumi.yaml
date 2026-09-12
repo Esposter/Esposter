@@ -1,5 +1,5 @@
 name: esposter-infra
-description: Esposter Azure infrastructure migration and management.
+description: Esposter Azure and GitHub infrastructure.
 runtime:
   name: nodejs
   options:

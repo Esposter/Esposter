@@ -8,12 +8,8 @@ Azure Search indexes are **data-plane resources** — not managed by Pulumi (no 
 | ---------------- | ---------------------------------------- | ----------------------------- |
 | `messages-index` | `data/searchIndexes/messages-index.json` | dev + prod (identical schema) |
 
-### `messages-index` summary
-
-- **Key field**: `RowKey` (Edm.String)
-- **Searchable fields**: `message` (analyzer: `en.lucene`), `files/filename` (analyzer: `standard.lucene`), `appUser/name` (analyzer: `standard.lucene`)
-- **Similarity**: BM25
-- **Scoring profile**: `messageBoost` — `message` weight 3×, `appUser/name` weight 1.5×
+The definition file is the index: which fields are searchable, their analyzers and the scoring weights are read
+off it rather than restated here.
 
 ---
 
@@ -49,18 +45,8 @@ For prod: `SERVICE=prod-srch-esposter-001`, `RG=prod-rg-esposter-ae-001`.
 
 ## Recreate an index on a new service
 
-```bash
-SERVICE_NAME=dev-srch-esposter-001
-RG=dev-rg-esposter-ae-001
-ADMIN_KEY=$(az search admin-key show --service-name $SERVICE_NAME --resource-group $RG --query primaryKey -o tsv)
-
-curl -X PUT "https://${SERVICE_NAME}.search.windows.net/indexes/messages-index?api-version=2024-07-01" \
-  -H "api-key: $ADMIN_KEY" \
-  -H "Content-Type: application/json" \
-  -d @data/searchIndexes/messages-index.json
-```
-
-For prod: `SERVICE_NAME=prod-srch-esposter-001`, `RG=prod-rg-esposter-ae-001`.
+A new service has no index to delete, so only step 2 above applies — the same `PUT` against the new service's
+name — followed by the data source and indexer below.
 
 ---
 
