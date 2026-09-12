@@ -9,7 +9,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/shared/models/db`                                                     | 2026-09-12 |                                                                                              |
 | `app/shared/models/resource`                                               | 2026-09-12 |                                                                                              |
 | `app/shared/models/dungeons`                                               | 2026-09-12 |                                                                                              |
-| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | —          |                                                                                              |
+| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | 2026-09-12 |                                                                                              |
 | `app/shared/models` — the rest                                             | —          | the small folders, several of them a single file                                             |
 | `app/services`                                                             | 2026-09-12 | a file is named for its export, and a second map is a second file                            |
 | `app/models/dungeons`                                                      | 2026-09-12 | a class hierarchy stays a model; a map and the behaviour it dispatches to do not             |
