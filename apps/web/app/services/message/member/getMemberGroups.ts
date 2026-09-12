@@ -1,5 +1,5 @@
 import type { MemberGroup } from "@/models/message/member/MemberGroup";
-import type { User } from "@esposter/db-schema";
+import type { RoomRoleInMessage, User } from "@esposter/db-schema";
 
 import { getTopRole } from "@/services/message/member/getTopRole";
 import { getOrCreate } from "@esposter/shared";
