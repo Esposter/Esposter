@@ -2,8 +2,8 @@ import { AchievementCategory } from "#shared/models/achievement/AchievementCateg
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { MonsterKeys } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
-import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
+import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { DungeonsAchievementName } from "@esposter/db-schema";
 
 // The monster level milestones differ only in threshold and reward, so one definition serves the family

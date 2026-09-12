@@ -3,8 +3,8 @@ import { AchievementCategory } from "#shared/models/achievement/AchievementCateg
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { BuildingIds } from "#shared/models/clicker/data/building/BuildingId";
-import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
+import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { BinaryOperator } from "@esposter/azure";
 import { ClickerAchievementName } from "@esposter/db-schema";
 

@@ -1,7 +1,7 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
-import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { defineAchievementDefinitionMap } from "#shared/services/achievement/defineAchievementDefinitionMap";
+import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
+import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { BinaryOperator } from "@esposter/azure";
 import { TableAchievementName } from "@esposter/db-schema";
 
