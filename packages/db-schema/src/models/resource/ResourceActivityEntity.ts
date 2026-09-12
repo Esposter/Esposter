@@ -3,7 +3,9 @@ import type { User } from "#src/schema/users";
 import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
+import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
 import { ResourceActivityType, resourceActivityTypeSchema } from "#src/models/resource/ResourceActivityType";
+import { selectResourceSchema } from "#src/schema/resources";
 import { selectUserSchema } from "#src/schema/users";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
@@ -29,8 +31,8 @@ export const ResourceActivityEntityPropertyNames = getPropertyNames<ResourceActi
 export const resourceActivityEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      partitionKey: z.uuid(),
-      rowKey: z.string(),
+      partitionKey: selectResourceSchema.shape.id,
+      rowKey: reverseTickedTimestampSchema,
     }),
   ).shape,
   activityType: resourceActivityTypeSchema,

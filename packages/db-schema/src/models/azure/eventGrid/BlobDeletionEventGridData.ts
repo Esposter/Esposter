@@ -1,4 +1,6 @@
-import { AzureContainer } from "#src/models/azure/container/AzureContainer";
+import type { AzureContainer } from "#src/models/azure/container/AzureContainer";
+
+import { azureContainerSchema } from "#src/models/azure/container/AzureContainer";
 import { MAX_BLOB_DELETION_EVENT_BLOB_NAMES } from "#src/services/azure/eventGrid/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
@@ -18,10 +20,10 @@ export type BlobDeletionEventGridData = (
 export const blobDeletionEventGridDataSchema = z.union([
   z.object({
     blobNames: createUniqueArraySchema(z.string()).min(1).max(MAX_BLOB_DELETION_EVENT_BLOB_NAMES),
-    containerName: z.enum(AzureContainer),
+    containerName: azureContainerSchema,
   }),
   z.object({
-    containerName: z.enum(AzureContainer),
+    containerName: azureContainerSchema,
     // The listing happens at delivery time, but the set the publisher meant is the one that existed when it
     // Published. Delivery is at-least-once and a dead-lettered event can be replayed hours later, so without
     // This bound a redelivery would enumerate — and delete — blobs written after the deletion was decided.

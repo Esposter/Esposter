@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum AzureContainer {
   AppAssets = "app-assets",
   ClickerAssets = "clicker-assets",
@@ -8,3 +10,5 @@ export enum AzureContainer {
   PublicUserAssets = "public-user-assets",
   ResourceAssets = "resource-assets",
 }
+
+export const azureContainerSchema = z.enum(AzureContainer) satisfies z.ZodType<AzureContainer>;
