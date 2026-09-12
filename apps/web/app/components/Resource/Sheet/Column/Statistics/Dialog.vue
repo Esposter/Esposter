@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 
+import { ChartableColumnTypes } from "@/services/resource/sheet/column/ChartableColumnTypes";
 import { ColumnStatisticsDefinitions } from "@/services/resource/sheet/column/ColumnStatisticsDefinitionMap";
-import { ChartableColumnTypes } from "@/services/resource/sheet/column/computeColumnChartData";
 
 const isOpen = defineModel<boolean>();
 const columnStatistics = useColumnStatistics();

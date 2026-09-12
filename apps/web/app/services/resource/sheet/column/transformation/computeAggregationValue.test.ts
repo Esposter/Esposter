@@ -5,7 +5,7 @@ import { ColumnTransformationType } from "#shared/models/resource/sheet/column/t
 import { createDataSource } from "@/composables/resource/sheet/commands/createDataSource.test";
 import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { createRow } from "@/composables/resource/sheet/commands/createRow.test";
-import { computeAggregationValue } from "@/services/resource/sheet/column/computeAggregationValue";
+import { computeAggregationValue } from "@/services/resource/sheet/column/transformation/computeAggregationValue";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

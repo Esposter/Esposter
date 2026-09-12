@@ -1,4 +1,4 @@
-import type { Promisable } from "type-fest";
+import type { AdminAction } from "@/models/message/moderation/AdminAction";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
@@ -6,14 +6,12 @@ import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType, AdminActionTypes } from "@esposter/db-schema";
 
-type Action = (roomId: string, durationMs?: number) => Promisable<void>;
-
 export const useAdminActionMap = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const roomStore = useRoomStore();
   const { storeDeleteRoom } = roomStore;
-  const adminActionMap: Partial<Record<AdminActionType, Action>> = {
+  const adminActionMap: Partial<Record<AdminActionType, AdminAction>> = {
     [AdminActionType.CreateBan]: async (roomId: string) => {
       await storeDeleteRoom({ id: roomId });
       createAlert("You have been banned from this room.", "error");

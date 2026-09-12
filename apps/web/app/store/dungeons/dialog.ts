@@ -6,7 +6,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { phaserEventEmitter } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { sleepScene } from "vue-phaserjs";

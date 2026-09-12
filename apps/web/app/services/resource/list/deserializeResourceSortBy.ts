@@ -2,7 +2,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
 import { sortOrderSchema } from "#shared/models/pagination/sorting/SortOrder";
-import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListItem";
+import { resourceListSortKeySchema } from "#shared/models/resource/ResourceListSortKey";
 import { RESOURCE_SORT_BY_SEPARATOR } from "@/services/resource/list/constants";
 
 // Invalid entries are dropped rather than failing the whole deep link

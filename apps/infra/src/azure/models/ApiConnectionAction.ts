@@ -1,4 +1,5 @@
 import type { HttpMethod } from "#src/azure/models/HttpMethod";
+import type { WorkflowActionStatus } from "#src/azure/models/WorkflowActionStatus";
 import type * as pulumi from "@pulumi/pulumi";
 
 export interface ApiConnectionAction {
@@ -9,6 +10,6 @@ export interface ApiConnectionAction {
     path: pulumi.Output<string>;
     queries: Record<string, string>;
   };
-  runAfter?: Record<string, string[]>;
+  runAfter?: Record<string, WorkflowActionStatus[]>;
   type: "ApiConnection";
 }

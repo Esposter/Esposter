@@ -3,7 +3,9 @@ import type { FileRendererComponentProps } from "@/models/message/file/FileRende
 
 import { getLanguage } from "@/services/codemirror/getLanguage";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
-import { CodeRenderer, DefaultRenderer, TypeRendererMap } from "@/services/message/file/TypeRendererMap";
+import { CodeRenderer } from "@/services/message/file/CodeRenderer";
+import { DefaultRenderer } from "@/services/message/file/DefaultRenderer";
+import { TypeRendererMap } from "@/services/message/file/TypeRendererMap";
 import { takeOne } from "@esposter/shared";
 
 const props = defineProps<FileRendererComponentProps>();

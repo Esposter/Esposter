@@ -1,8 +1,6 @@
-import { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
+import type { DialogMessageKey } from "@/models/dungeons/UI/dialog/DialogMessageKey";
 
-type DialogMessageKey<TTypeKey extends string> =
-  | `${TTypeKey}${TTypeKey extends "" ? "d" : "D"}ialogMessage`
-  | `${TTypeKey}${TTypeKey extends "" ? "t" : "T"}extDisplayWidth`;
+import { DialogMessage } from "@/models/dungeons/UI/dialog/DialogMessage";
 
 export const useDialogMessage = <TTypeKey extends string = "">(typeKey: string | TTypeKey = "") => {
   const dialogMessage = ref(new DialogMessage());

@@ -1,7 +1,7 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { EMPTY_NOTE_DOC } from "#shared/models/resource/note/NoteResource";
+import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { noteRouter } from "@@/server/trpc/routers/note";
 import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { ResourceType } from "@esposter/db-schema";

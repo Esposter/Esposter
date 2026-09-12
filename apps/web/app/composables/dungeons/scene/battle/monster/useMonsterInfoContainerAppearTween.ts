@@ -1,5 +1,5 @@
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
-import { phaserEventEmitter } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
 

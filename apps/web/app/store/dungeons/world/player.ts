@@ -1,6 +1,6 @@
 import type { GameObjects } from "phaser";
 
-import { phaserEventEmitter } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";

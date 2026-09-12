@@ -1,3 +1,4 @@
+import type { FluidResources } from "@/models/visual/FluidResources";
 import type { RenderTarget } from "three/webgpu";
 
 import { APP_BAR_HEIGHT } from "#shared/services/app/constants";
@@ -23,19 +24,6 @@ import {
   Vector3,
   WebGPURenderer,
 } from "three/webgpu";
-
-// Everything the teardown must dispose, assembled only after onMounted finishes wiring three.js
-interface FluidResources {
-  box: Mesh<BoxGeometry, MeshStandardMaterial>;
-  controls: OrbitControls;
-  disposeRenderTarget: () => void;
-  pmremGenerator: PMREMGenerator;
-  renderer: WebGPURenderer;
-  renderPipeline: RenderPipeline;
-  sky: SkyMesh;
-  stopResize: () => void;
-  water: WaterMesh;
-}
 
 export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | undefined>) => {
   const parameters = { azimuth: 180, elevation: 2, exposure: 0.5 };

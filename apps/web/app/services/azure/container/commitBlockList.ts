@@ -1,4 +1,5 @@
 import { MimeType } from "#shared/models/file/MimeType";
+import { BLOB_CONTENT_TYPE_HEADER } from "@/services/azure/container/constants";
 import dedent from "dedent";
 
 // Put Block List is the only call in the upload that sets the blob's own headers — Put Block ignores them — so
@@ -16,7 +17,7 @@ export const commitBlockList = (sasUrl: string, blockIds: string[], contentType?
   `,
     headers: {
       "Content-Type": MimeType.Xml,
-      ...(contentType && { "x-ms-blob-content-type": contentType }),
+      ...(contentType && { [BLOB_CONTENT_TYPE_HEADER]: contentType }),
     },
     method: "PUT",
   });

@@ -1,7 +1,7 @@
 import type { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import type { HookArgs } from "vue-phaserjs";
 
-import { phaserEventEmitter } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { getScene, useInjectSceneKey } from "vue-phaserjs";
 
 export const onSceneEvent = (sceneEventKey: SceneEventKey, listener: HookArgs[0]) => {

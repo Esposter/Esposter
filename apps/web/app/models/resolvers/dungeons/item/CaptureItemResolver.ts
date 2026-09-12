@@ -8,7 +8,7 @@ import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 import { checkIsBallKey } from "@/services/dungeons/item/checkIsBallKey";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/scene/monsterParty/constants";
-import { phaserEventEmitter } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useBallStore } from "@/store/dungeons/battle/ball";
 import { useInventoryInfoPanelStore } from "@/store/dungeons/inventory/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";

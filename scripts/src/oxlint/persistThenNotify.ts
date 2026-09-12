@@ -9,17 +9,13 @@ import { definePlugin, defineRule } from "@oxlint/plugins";
 //
 // Scoped to apps/web/server in the root .oxlintrc.json: only there does an emitter carry the
 // Persist-then-notify meaning. Client emitters (e.g. the Phaser game bus) are a different concept.
-// Calls that never reject: the neverthrow wrappers, plus helpers that wrap their own effect
-// Best-effort internally (so awaiting them never rejects). `withFinalizer`/`withFinalizerAsync` are deliberately
-// NOT here — both unwrap the original result and rethrow on Err (see error-handling/SKILL.md, Finalizers), so
-// Awaiting one after an emit rejects the caller for an entity that already exists and was already broadcast.
-const AllowedRoots = new Set([
-  "createSystemRoomMessage",
-  "getResult",
-  "getResultAsync",
-  "publishBlobDeletion",
-  "publishBlobPrefixDeletion",
-]);
+// Calls that never reject: the neverthrow wrappers, and nothing of the repo's own. A helper that is best-effort
+// Inside cannot be told from a fatal one at its call site, so such a helper hands its ResultAsync back and the
+// Call site terminates it — which is the `.match` terminal below, and needs no list of helper names to stay
+// Correct (oxlint skill, custom-js-plugins). `withFinalizer`/`withFinalizerAsync` are deliberately NOT here —
+// Both unwrap the original result and rethrow on Err (see error-handling/SKILL.md, Finalizers), so awaiting one
+// After an emit rejects the caller for an entity that already exists and was already broadcast.
+const AllowedRoots = new Set(["getResult", "getResultAsync"]);
 // Terminal helpers whose whole job is to log and put the rejection back.
 const RethrowingCallees = new Set(["logAndRethrow"]);
 const PromiseCombinators = new Set(["all", "any", "race"]);
@@ -76,19 +72,45 @@ const getRootCalleeName = (expression: ESTree.Expression): string | undefined =>
   if (expression.type === "MemberExpression") return getRootCalleeName(expression.object);
   return undefined;
 };
-// A `throw` this function reaches without entering a nested one: one inside a deeper callback belongs to that
-// Callback, not to this handler.
-const checkHasOwnThrow = (value: unknown): boolean =>
-  collectOwnNodes(value, (node) => (node.type === "ThrowStatement" ? [true] : undefined)).length > 0;
-// An err handler that puts the rejection back rather than absorbing it.
+const checkIsPromiseReject = (node: ESTree.Node): boolean =>
+  (node.type === "MemberExpression" &&
+    node.object.type === "Identifier" &&
+    node.object.name === "Promise" &&
+    node.property.type === "Identifier" &&
+    node.property.name === "reject") ||
+  (node.type === "CallExpression" &&
+    node.callee.type === "MemberExpression" &&
+    node.callee.object.type === "Identifier" &&
+    node.callee.object.name === "Promise" &&
+    node.callee.property.type === "Identifier" &&
+    node.callee.property.name === "reject");
+
+// A `throw` or `Promise.reject` this function reaches without entering a nested one: one inside a deeper callback
+// Belongs to that callback, not to this handler.
+const checkHasOwnRejection = (value: unknown): boolean =>
+  collectOwnNodes(value, (node) => {
+    if (node.type === "ThrowStatement") return [true];
+    if (node.type === "ReturnStatement" && node.argument && checkIsPromiseReject(node.argument)) return [true];
+    return undefined;
+  }).length > 0;
+
+// An err handler that puts the rejection back rather than absorbing it: throwing, returning a rejected promise,
+// Or passing a rethrowing callee directly.
 const checkIsRethrowingHandler = (node: unknown): boolean => {
   if (node === null || typeof node !== "object") return false;
   const expression = node as ESTree.Node;
   if (expression.type === "Identifier") return RethrowingCallees.has(expression.name);
   if (expression.type === "CallExpression")
-    return expression.callee.type === "Identifier" && RethrowingCallees.has(expression.callee.name);
+    return (
+      (expression.callee.type === "Identifier" && RethrowingCallees.has(expression.callee.name)) ||
+      checkIsPromiseReject(expression)
+    );
+  if (checkIsPromiseReject(expression)) return true;
   if (!FunctionNodeTypes.has(expression.type)) return false;
-  return checkHasOwnThrow((expression as ESTree.ArrowFunctionExpression).body);
+  const functionNode = expression as ESTree.ArrowFunctionExpression | ESTree.Function;
+  if (functionNode.type === "ArrowFunctionExpression" && functionNode.expression)
+    return checkIsPromiseReject(functionNode.body);
+  return functionNode.body ? checkHasOwnRejection(functionNode.body) : false;
 };
 // The root says the chain STARTED in a wrapper; it says nothing about how the chain ENDS. `.match(noop, (error)
 // => { throw error })` and `._unsafeUnwrap()` both hand the rejection straight back to the awaiting caller, and
@@ -103,15 +125,26 @@ const checkHasRethrowingTerminal = (expression: ESTree.Expression): boolean => {
   }
   return checkHasRethrowingTerminal(callee.object);
 };
-// Never rejects: an allowed wrapper whose terminal absorbs the error, `Promise.allSettled` over anything, or a
-// Rejecting Promise combinator over a fan-out (array literal or `.map` callback) of such calls — e.g.
-// `Promise.all(users.map((u) => createSystemRoomMessage(u)))`.
+// A chain ending in `.match` with an err handler that absorbs the error settles on what the handlers return and
+// Never rejects, whatever it roots at: only a neverthrow chain terminates that way (error-handling/SKILL.md), so
+// The terminal is proof enough on its own, and a helper handing back its ResultAsync needs no name here.
+const checkHasAbsorbingMatchTerminal = (expression: ESTree.Expression): boolean =>
+  expression.type === "CallExpression" &&
+  expression.callee.type === "MemberExpression" &&
+  expression.callee.property.type === "Identifier" &&
+  expression.callee.property.name === "match" &&
+  expression.arguments.length === 2 &&
+  !checkIsRethrowingHandler(expression.arguments[1]);
+// Never rejects: an absorbing `.match` terminal, an allowed wrapper whose terminal absorbs the error,
+// `Promise.allSettled` over anything, or a rejecting Promise combinator over a fan-out (array literal or `.map`
+// Callback) of such calls — e.g. `Promise.all(users.map((u) => createSystemRoomMessage(u).match(noop, console.error)))`.
 // Unrecognised syntax falls through to `false`, which reports rather than exempts, so the shapes deliberately left
 // Out (a ternary or `&&` chain in the await position, a `function` expression as the `.map` callback) cost a false
 // Positive and never a miss — and none of them appear anywhere in `apps/web/server`, the only tree this rule
 // Runs over. A false positive here is loud and immediate: it fails the lint on the line that wrote it. Widen this
 // When one of those shapes actually lands, not before — every branch added is one the fixture suite has to pin.
 const checkIsSafeAwait = (argument: ESTree.Expression): boolean => {
+  if (checkHasAbsorbingMatchTerminal(argument)) return true;
   const rootName = getRootCalleeName(argument);
   if (rootName !== undefined && AllowedRoots.has(rootName)) return !checkHasRethrowingTerminal(argument);
   if (

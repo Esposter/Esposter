@@ -1,13 +1,10 @@
+import type { SuggestionList } from "@/models/message/SuggestionList";
 import type { SuggestionKeyDownProps, SuggestionOptions } from "@tiptap/suggestion";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { updatePosition } from "@/services/message/updatePosition";
 import { getResultAsync, noop } from "@esposter/shared";
 import { VueRenderer } from "@tiptap/vue-3";
-
-interface SuggestionList {
-  onKeyDown: (props: SuggestionKeyDownProps) => boolean;
-}
 
 export const getRender =
   <TItem, TAsync = TItem>(ListComponent: Component): NonNullable<SuggestionOptions<TItem, TAsync>["render"]> =>

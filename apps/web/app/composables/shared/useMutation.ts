@@ -1,10 +1,11 @@
 import type { CacheTag } from "@/models/cache/CacheTag";
+import type { MutationOutcome } from "@/models/shared/MutationOutcome";
 import type { Promisable } from "type-fest";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { settleOperation } from "@/services/shared/settleOperation";
 import { useCacheStore } from "@/store/cache";
-import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface MutationOptions<TResult> extends QueryOptions<TResult> {
   applyOptimistic?: () => Promisable<() => void>;
@@ -15,23 +16,6 @@ interface MutationOptions<TResult> extends QueryOptions<TResult> {
   // Latest-wins instead of queueing, for a control that fires per keystroke or per drag frame where the
   // Earlier call's value is already replaced on screen by the later one, so losing it costs nothing
   isSupersede?: true;
-}
-// The four ways a call can end, so a caller can tell a persisted write from one that was dropped as a duplicate,
-// Superseded by a newer call, or rejected — the operation's own rejection never escapes, so this is the only
-// Signal it did not land. A throwing callback does escape: the promise an entry point returns is rejected by a throw
-// From applyOptimistic, from the rollback it returns, or from onSuccess/onError, and nothing here catches them
-type MutationOutcome<TResult> =
-  | { error: Error; status: MutationStatus.Failed }
-  | { result: TResult; status: MutationStatus.Succeeded }
-  | { status: MutationStatus.Dropped }
-  | { status: MutationStatus.Stale };
-
-interface OperationContext<TResult> {
-  applyOptimistic?: () => Promisable<() => void>;
-  checkIsStale: () => boolean;
-  isSilentWhenStale: boolean;
-  onError?: (error: Error) => Promisable<void>;
-  onSuccess?: (result: TResult) => Promisable<void>;
 }
 
 interface QueryOptions<TResult> {
@@ -106,31 +90,6 @@ export const useMutation = () => {
       return run();
     }, release);
   };
-  const settle = async <TResult>(
-    operate: (checkIsStale: () => boolean) => Promise<TResult>,
-    { applyOptimistic, checkIsStale, isSilentWhenStale, onError, onSuccess }: OperationContext<TResult>,
-  ): Promise<MutationOutcome<TResult>> => {
-    const rollback = await applyOptimistic?.();
-    return getResultAsync(() => operate(checkIsStale)).match<Promise<MutationOutcome<TResult>>>(
-      async (result) => {
-        // The target already holds a newer call's value, so applying this older one would undo it
-        if (checkIsStale()) return { status: MutationStatus.Stale };
-
-        await onSuccess?.(result);
-        return { result, status: MutationStatus.Succeeded };
-      },
-      async (error) => {
-        // A read that lost its race is silent — nothing was applied, so nothing is owed to the user
-        if (isSilentWhenStale && checkIsStale()) return { status: MutationStatus.Stale };
-        // A write always unwinds and reports, superseded or not: its rollback and its error are the only
-        // Record that the value the user is looking at was never persisted
-        rollback?.();
-        if (onError) await onError(error);
-        else createErrorAlert(error);
-        return { error, status: MutationStatus.Failed };
-      },
-    );
-  };
   // Reads are latest-wins per target: the caller wants the freshest data, and a superseded response has
   // Nothing to unwind — discarding it loses no information
   const executeQuery = <TResult>(
@@ -151,7 +110,7 @@ export const useMutation = () => {
     // The finalizer guarantees pending bookkeeping unwinds even when a callback throws,
     // So a thrown callback can never strand the key as permanently pending
     const outcome = withFinalizerAsync(
-      () => settle(query, { checkIsStale, isSilentWhenStale: true, onError, onSuccess }),
+      () => settleOperation(query, { checkIsStale, isSilentWhenStale: true, onError, onSuccess }),
       () => {
         releaseKey(key);
         // Only this call's own entry is dropped: the read that superseded it registers its own, and clearing
@@ -174,7 +133,7 @@ export const useMutation = () => {
 
     const checkIsStale = isSupersede ? getCheckIsStale(key) : () => false;
     claimKey(key);
-    // Composed onto this write's own success callback rather than handled inside settle, which the read path
+    // Composed onto this write's own success callback rather than handled inside settleOperation, which the read path
     // Shares: a read carries no invalidates and so cannot reach this at all. It runs after the write landed
     // And after the caller applied its result, so a cache re-reading here reads the post-write world
     const onSettled = invalidates
@@ -184,7 +143,13 @@ export const useMutation = () => {
         }
       : onSuccess;
     const run = () =>
-      settle(mutate, { applyOptimistic, checkIsStale, isSilentWhenStale: false, onError, onSuccess: onSettled });
+      settleOperation(mutate, {
+        applyOptimistic,
+        checkIsStale,
+        isSilentWhenStale: false,
+        onError,
+        onSuccess: onSettled,
+      });
     // The finalizer guarantees pending and queue bookkeeping unwind even when applyOptimistic or a callback
     // Throws, so a thrown callback can never strand the key as permanently pending or wedge its queue
     return withFinalizerAsync(

@@ -1,9 +1,7 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
 
-// A fresh object per call — the pre-join sheet edits it in place, so a shared one would carry the previous
-// Call's choices into the next lobby
-const getDefaultJoinCallOptions = (): JoinCallOptions => ({ isCameraEnabled: false, isMicrophoneEnabled: true });
+import { getDefaultJoinCallOptions } from "@/services/message/room/call/getDefaultJoinCallOptions";
 
 export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const { $trpc } = useNuxtApp();

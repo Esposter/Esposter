@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { checkIsCreatableResourceType } from "@/services/resource/CreatableResourceTypes";
+import { checkIsCreatableResourceType } from "@/services/resource/checkIsCreatableResourceType";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 
 definePageMeta({ middleware: "auth" });

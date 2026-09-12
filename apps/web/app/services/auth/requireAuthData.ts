@@ -1,7 +1,5 @@
-interface AuthResponse<TData> {
-  data: null | TData;
-  error: null | { message?: string; statusText: string };
-}
+import type { AuthResponse } from "@/models/auth/AuthResponse";
+
 // The auth client answers with a payload rather than a rejection, and its `fetchOptions: { throw: true }` escape
 // Hatch throws an error whose message is only the http status text — the api's own message (a session too old to
 // Unlink with, the last-account guard) rides on a property nothing downstream reads, so a rejected link surfaced

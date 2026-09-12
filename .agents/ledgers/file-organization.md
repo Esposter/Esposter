@@ -6,23 +6,23 @@ The question is where a thing lives and whether it exists twice — one export p
 | -------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
 | `packages/shared`, `packages/shared-node`                                  | 2026-09-12 |                                                                                              |
 | `app/shared/services`, `app/shared/util`                                   | 2026-09-12 | `getSynchronizedFunction`'s second export is the exclusion below                             |
-| `app/shared/models/db`                                                     | —          |                                                                                              |
-| `app/shared/models/resource`                                               | —          |                                                                                              |
-| `app/shared/models/dungeons`                                               | —          |                                                                                              |
-| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | —          |                                                                                              |
-| `app/shared/models` — the rest                                             | —          | the small folders, several of them a single file                                             |
-| `app/services`                                                             | —          | a file is named for its export, and a second map is a second file                            |
-| `app/models/dungeons`                                                      | —          | a class hierarchy stays a model; a map and the behaviour it dispatches to do not             |
-| `app/models/resource`                                                      | —          | a command class stays a model; the map beside a form union does not                          |
-| `app/models/message`                                                       | —          | a type derived from a services map is a type-only import, not a move                         |
-| `app/models` — the rest                                                    | —          | the resolver class hierarchies stay models, like the sheet commands                          |
+| `app/shared/models/db`                                                     | 2026-09-12 |                                                                                              |
+| `app/shared/models/resource`                                               | 2026-09-12 |                                                                                              |
+| `app/shared/models/dungeons`                                               | 2026-09-12 |                                                                                              |
+| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | 2026-09-12 |                                                                                              |
+| `app/shared/models` — the rest                                             | 2026-09-12 | the small folders, several of them a single file                                             |
+| `app/services`                                                             | 2026-09-12 | a file is named for its export, and a second map is a second file                            |
+| `app/models/dungeons`                                                      | 2026-09-12 | a class hierarchy stays a model; a map and the behaviour it dispatches to do not             |
+| `app/models/resource`                                                      | 2026-09-12 | a command class stays a model; the map beside a form union does not                          |
+| `app/models/message`                                                       | 2026-09-12 | a type derived from a services map is a type-only import, not a move                         |
+| `app/models` — the rest                                                    | 2026-09-12 | the resolver class hierarchies stay models, like the sheet commands                          |
 | `app/util`                                                                 | 2026-09-12 | a type-only third-party import is the `util/types` escape, not a `services/` move            |
 | `app/types`                                                                | 2026-09-12 | ambient `.d.ts` only                                                                         |
-| `app/composables`                                                          | —          | sole-consumer subfolders                                                                     |
-| `app/store`                                                                | —          | a store's file is named for its domain, so the filename never matches its `use*Store` export |
+| `app/composables`                                                          | 2026-09-12 | sole-consumer subfolders                                                                     |
+| `app/store`                                                                | 2026-09-12 | a store's file is named for its domain, so the filename never matches its `use*Store` export |
 | `server/services`, `server/composables`, `server/models`                   | 2026-09-12 |                                                                                              |
-| `server/trpc` — the resource family                                        | —          | `resource`, `survey`, `program`, `procedure/resource`                                        |
-| `server/trpc` — the room family                                            | —          | `room`, `call`, `userToRoom`                                                                 |
+| `server/trpc` — the resource family                                        | 2026-09-12 | `resource`, `survey`, `program`, `procedure/resource`                                        |
+| `server/trpc` — the room family                                            | 2026-09-12 | `room`, `call`, `userToRoom`                                                                 |
 | `server/trpc` — the rest                                                   | 2026-09-12 | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                            |
 | `app/components/Message`                                                   | —          | the stray-component half is `components/index.test.ts`, not a pass                           |
 | `app/components/Resource`                                                  | —          |                                                                                              |
@@ -83,8 +83,8 @@ finding: one consumer does not earn a place in a shared package.
 
 - One export per file and the models rule both fail the `oxlint` skill's roster gate — each one's exceptions are a
   list of filenames and shapes (`constants.ts`, a schema beside its type, an enum beside its values array, a
-  composable's own options) that grows with the repo — so both stay with the sweep. The models-rule plugin was
-  drafted and dropped; the `oxlint` skill's Settled list says why.
+  composable's own options) that grows with the repo — so both stay with the sweep; the `oxlint` skill's Settled
+  list carries the models-rule plugin.
 - A `util/` file importing a third-party package belongs in `services/`, and that is a specifier test: a
   `no-restricted-imports` override on `**/util/**` whose `group` is `["*", "!node:*", "!#src/*", "!@esposter/*"]` decides
   it, if oxlint honours a negated group and an `allowTypeImports` escape for the pure type utilities under

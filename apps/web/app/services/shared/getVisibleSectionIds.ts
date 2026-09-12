@@ -1,7 +1,5 @@
-interface SectionAnchor {
-  id: string;
-  top: number;
-}
+import type { SectionAnchor } from "@/models/shared/SectionAnchor";
+
 // A section spans from its own anchor down to the next one, so the last runs to the bottom of the document.
 // Both bounds are open on one side deliberately: an anchor sitting exactly on the viewport's top line has
 // Scrolled past, and one sitting exactly on the bottom has not arrived. Both bounds are in viewport coordinates,

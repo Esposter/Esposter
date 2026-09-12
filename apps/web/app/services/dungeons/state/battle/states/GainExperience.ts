@@ -1,6 +1,6 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { State } from "@/models/dungeons/state/State";
-import type { PhaserEvents } from "@/services/phaser/events";
+import type { PhaserEvents } from "@/models/phaser/PhaserEvents";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
@@ -9,7 +9,7 @@ import { getExperienceGain } from "@/services/dungeons/monster/getExperienceGain
 import { getLevelExperience } from "@/services/dungeons/monster/getLevelExperience";
 import { levelUp } from "@/services/dungeons/monster/levelUp";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
-import { phaserEventEmitter } from "@/services/phaser/events";
+import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";

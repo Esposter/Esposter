@@ -1,10 +1,9 @@
-import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { ColumnTransformation } from "#shared/models/resource/sheet/column/transformation/ColumnTransformation";
-import type { ColumnTransformationComputeContext } from "@/models/resource/sheet/column/transformation/ColumnTransformationComputeContext";
+import type { ColumnTransformationComputer } from "@/models/resource/sheet/column/transformation/ColumnTransformationComputer";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
-import { computeAggregationValue } from "@/services/resource/sheet/column/computeAggregationValue";
+import { computeAggregationValue } from "@/services/resource/sheet/column/transformation/computeAggregationValue";
 import { computeConvertToTransformation } from "@/services/resource/sheet/column/transformation/computeConvertToTransformation";
 import { computeDatePartTransformation } from "@/services/resource/sheet/column/transformation/computeDatePartTransformation";
 import { computeMathTransformation } from "@/services/resource/sheet/column/transformation/computeMathTransformation";
@@ -12,11 +11,6 @@ import { computeRegexMatchTransformation } from "@/services/resource/sheet/colum
 import { computeSplitTransformation } from "@/services/resource/sheet/column/transformation/string/computeSplitTransformation";
 import { computeStringPatternTransformation } from "@/services/resource/sheet/column/transformation/string/computeStringPatternTransformation";
 import { computeStringTransformation } from "@/services/resource/sheet/column/transformation/string/computeStringTransformation";
-
-type TransformationComputer<T extends ColumnTransformation> = (
-  transformation: T,
-  context: ColumnTransformationComputeContext,
-) => ColumnValue;
 
 export const ColumnTransformationComputeMap = {
   [ColumnTransformationType.Aggregation]: (transformation, { findSource, rowIndex, rows }) => {
@@ -53,5 +47,5 @@ export const ColumnTransformationComputeMap = {
     return computeSplitTransformation(String(value), transformation.delimiter, transformation.segmentIndex);
   },
 } as const satisfies {
-  [K in ColumnTransformationType]: TransformationComputer<Extract<ColumnTransformation, { type: K }>>;
+  [K in ColumnTransformationType]: ColumnTransformationComputer<Extract<ColumnTransformation, { type: K }>>;
 };

@@ -1,13 +1,8 @@
+import type { CallDeviceDefinition } from "@/models/message/room/call/CallDeviceDefinition";
 import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
 
 import { getResultAsync, noop } from "@esposter/shared";
 import { Room } from "livekit-client";
-
-interface CallDeviceDefinition {
-  kind: MediaDeviceKind;
-  selectedId: Ref<string>;
-  title: string;
-}
 
 // The menu is owned here because the device list is only worth enumerating while it is open — a device plugged
 // In with the menu shut has to appear the next time it opens

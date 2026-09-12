@@ -4,7 +4,8 @@ The repo authors its own oxlint rules as **JS plugins** (`jsPlugins` in `.oxlint
 
 ## Settled — do not re-propose
 
-- **A plugin for the file-organization skill's models rule** (an `interface` or `type` outside `models/`). Every one of its exceptions is a roster — path globs for the trees whose files are the type, name suffixes for hook maps and a composable's own options, a directory test for composables — and a roster is the maintenance the tree below rejects. Drafted and dropped 2026-09-12; the rule stays a review and sweep rule.
+- **A plugin for the file-organization skill's models rule** (an `interface` or `type` outside `models/`). Every one of its exceptions is a roster — path globs for the trees whose files are the type, name suffixes for hook maps and a composable's own options, a directory test for composables — and a roster is the maintenance the tree below rejects. The rule stays a review and sweep rule.
+- **A list of the repo's own best-effort helpers in `persistThenNotify.ts`.** A helper that is best-effort inside looks exactly like a fatal one at its call site, so naming the safe ones is a list every new helper has to join or it reports. The helpers hand back their `ResultAsync` and the call site's absorbing `.match` terminal is the proof, which no new helper has to be added to.
 
 ## What earns a plugin
 
