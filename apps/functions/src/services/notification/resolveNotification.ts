@@ -1,3 +1,4 @@
+import type { ResolvedNotification } from "#src/models/notification/ResolvedNotification";
 import type { InvocationContext } from "@azure/functions";
 import type { NotificationEventGridData } from "@esposter/db-schema";
 
@@ -7,14 +8,6 @@ import { getMessageNotificationBody } from "#src/services/notification/getMessag
 import { getMessageRecipientUserIds } from "@esposter/db";
 import { AppNotificationType } from "@esposter/db-schema";
 import { exhaustiveGuard, RoutePath } from "@esposter/shared";
-
-export interface ResolvedNotification {
-  body: string;
-  icon?: null | string;
-  path: string;
-  title: string;
-  userIds: string[];
-}
 
 // The one place a published occurrence becomes a rendered notification and a recipient list. Every type answers
 // The same questions — what it says, where it goes, whose it is — so the delivery below it never branches on type
