@@ -45,8 +45,11 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
     }
 
     const tokens = getDeclarationTokens(text, offset);
-    // A declaration nothing terminates runs to the end of the file
-    const length = tokens.at(-1)?.[2] ?? text.length - offset - 1;
+    // A declaration nothing terminates runs to the end of the file, trailing comment included: stopping at its
+    // Last code token would hand the comment's lines back to the loop, which reads a `const` inside one as a
+    // Declaration
+    const terminator = tokens.at(-1);
+    const length = terminator?.[0] === ";" && terminator[1] === 0 ? terminator[2] : text.length - offset - 1;
     const declaration = text.slice(offset, offset + length + 1);
     const assignment = tokens.findIndex(([character, depth]) => character === "=" && depth === 0);
     const after = assignment === -1 ? [] : tokens.slice(assignment + 1);

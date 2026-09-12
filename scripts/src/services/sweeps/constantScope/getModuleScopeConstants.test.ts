@@ -12,6 +12,14 @@ describe(getModuleScopeConstants, () => {
     expect(getModuleScopeConstants(`const ${name} = { id: "" };`)).toStrictEqual([{ line: 1, name }]);
   });
 
+  // A declaration nothing terminates runs to the end of the file, so the comment after it is part of it rather
+  // Than a second run of lines for the loop to read a `const` out of
+  test("consumes a trailing comment after an unterminated declaration", () => {
+    expect.hasAssertions();
+
+    expect(getModuleScopeConstants(`const ${name} = 1\n/*\nconst other = 2;\n*/`)).toStrictEqual([{ line: 1, name }]);
+  });
+
   test("reports a factory call, which is state even though a function produced it", () => {
     expect.hasAssertions();
 

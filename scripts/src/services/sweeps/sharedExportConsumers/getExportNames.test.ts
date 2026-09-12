@@ -9,6 +9,9 @@ describe(getExportNames, () => {
     ["function", "export function name() {}"],
     ["interface", "export interface name {}"],
     ["type", "export type name = string;"],
+    ["async function", "export async function name() {}"],
+    ["declare const", "export declare const name: string;"],
+    ["abstract class", "export abstract class name {}"],
   ])("reads the name a %s export declares", (_declaration, text) => {
     expect.hasAssertions();
 
