@@ -13,7 +13,7 @@ export const devSrchEsposter001: azure_native.search.Service = new azure_native.
     encryptionWithCmk: {
       enforcement: azure_native.search.SearchEncryptionWithCmk.Unspecified,
     },
-    endpoint: "https://dev-srch-esposter-001.search.windows.net",
+    endpoint: `https://${searchServiceName}.search.windows.net`,
     hostingMode: azure_native.search.HostingMode.Default,
     identity: {
       type: azure_native.search.IdentityType.SystemAssigned,

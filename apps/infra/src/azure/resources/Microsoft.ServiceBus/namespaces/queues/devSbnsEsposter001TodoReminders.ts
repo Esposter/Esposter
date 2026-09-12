@@ -3,11 +3,13 @@ import { devSbnsEsposter001 } from "#src/azure/resources/Microsoft.ServiceBus/na
 import { AzureQueue } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 
+const queueName = AzureQueue.TodoReminders;
+
 export const devSbnsEsposter001TodoReminders: azure_native.servicebus.Queue = new azure_native.servicebus.Queue(
-  "dev-sbns-esposter-001/todo-reminders",
+  `dev-sbns-esposter-001/${queueName}`,
   {
     namespaceName: devSbnsEsposter001.name,
-    queueName: AzureQueue.TodoReminders,
+    queueName,
     resourceGroupName: devRgEsposterAe001.name,
   },
   {
