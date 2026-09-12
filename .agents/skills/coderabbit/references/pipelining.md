@@ -32,6 +32,30 @@ What makes a sha a valid cut — a tree green on its own, the repairs the checks
 they repair, and a change split from its enforcer at the rule the tree already carries — and the flow that cuts a
 sitting into the largest prefix under the cap: `references/window-composition.md`.
 
+## A standing sweep queues its windows as branches
+
+A sweep that never stops (`sweeps` skill) produces windows faster than reviews complete, so the local commit queue
+outgrows one sitting and one clone. Each window that fills is **cut and bookmarked**: a branch `queue/<n>-<title>`
+at the cut sha, numbered in push order and titled by what the window carries, pushed once so the work exists
+somewhere other than this clone — and pushed to no PR, so it triggers nothing.
+
+```bash
+git branch queue/<n>-<title> <cut> && git push origin queue/<n>-<title>
+```
+
+`develop` stays linear and local work continues above the cut. Draining is the ordinary push of the oldest
+bookmark's sha to `develop` once the gates open (`SKILL.md`), followed by deleting the branch — there is nothing
+to cherry-pick, because `develop` already holds the commits; the branch only recorded where the cut fell.
+
+```bash
+git push origin <cut>:develop && git push origin --delete queue/<n>-<title>
+```
+
+A review's fixes still lead the next window (`references/window-composition.md`), which rebases every queued
+window above them. The bookmarks are re-pointed with `git branch -f` and `git push --force-with-lease`: a queue
+bookmark is a backup of unpushed work rather than a reviewed artifact, so it may move where a
+`queue/<scope>` cut from a pushed `develop` (`references/release-pr-cutting.md`) may not.
+
 ## Re-opening the standing PR after it merges
 
 The pipeline assumes the `develop` → `main` PR is open; once it merges there is none, and the next window has to
