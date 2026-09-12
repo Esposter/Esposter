@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
+
+### Bug Fixes
+
+* **infra:** the restore PUT also follows a timed-out read ([625956f](https://github.com/Esposter/Esposter/commit/625956fd23e1531c3fbcb9de11cce064450c0ed4))
+* **lint:** the declaration-file exemption reaches .d.mts and .d.cts, and the restore PUT's gate says why it is any failed read ([92b583e](https://github.com/Esposter/Esposter/commit/92b583ea5c774ae609d6d199d87fd107ffb98d36))
+* **release:** carry every workspace member's version, not just packages/* ([c066526](https://github.com/Esposter/Esposter/commit/c066526539227321db023523f86c60afb7755c46))
+* wip ([2ced3b3](https://github.com/Esposter/Esposter/commit/2ced3b30b30cf09d33d5cb96f1f60c2f5bb5a083))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
+
+### Bug Fixes
+
+* **lint:** match the device literal itself, not every object that contains one ([02664ae](https://github.com/Esposter/Esposter/commit/02664ae458afdc79a077d73dac001024c3d05734))
+
 # [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
 
 ### Bug Fixes

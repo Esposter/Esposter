@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
+
+* refactor(virrun)!: spell Directory in every identifier that said Dir ([dd2c3a1](https://github.com/Esposter/Esposter/commit/dd2c3a1e7bf3b515102a55e1d305ec1c179e7e3b))
+
+### Bug Fixes
+
+* **format:** the oxfmt snapshot ignore matched every path with snapshot in its name ([c1378a9](https://github.com/Esposter/Esposter/commit/c1378a9070cda3d31cacd20f0a332ec36a818ba8))
+* lint and types ([e313f51](https://github.com/Esposter/Esposter/commit/e313f51092a032874c5c58b9db2dc8872da293ca))
+* **scripts:** the exclusion filter cannot let a logic change out as a rename ([023c9dd](https://github.com/Esposter/Esposter/commit/023c9dde34302e27be112849da5d90427148bedd))
+* **virrun:** a clean sweeps the run registry rather than deleting it ([82c3b53](https://github.com/Esposter/Esposter/commit/82c3b53e8f41140cd636f068815b59dcef4ac643))
+* **virrun:** a clean waits for the corpses it reaps before removing anything ([61705bd](https://github.com/Esposter/Esposter/commit/61705bdf7285a53a7ad20dfa0c78d5d842059958))
+* **virrun:** a reaper skips its peers, and a timed-out wait fails ([0765ca7](https://github.com/Esposter/Esposter/commit/0765ca742d90926ade4ccc53e26ba55f77115a94))
+* **virrun:** an entry's owner is a live pid that started before the entry ([222fc89](https://github.com/Esposter/Esposter/commit/222fc89614c31e38c8cc5df518532263be520364))
+* **virrun:** drive the clean's ordering test through citty's own runCommand ([1b1aef2](https://github.com/Esposter/Esposter/commit/1b1aef248f22e44aafa8a8d15f056d539ef7f345))
+* **virrun:** key the orphan sweep on owner liveness, and name a killed run ([8d38462](https://github.com/Esposter/Esposter/commit/8d38462e0791fb04fb6e0c2cfc85eef12fb1c216))
+* **virrun:** spawn argv commands directly on win32, and keep suite-scoped env overrides alive ([8594d5a](https://github.com/Esposter/Esposter/commit/8594d5a7940128c085881561fc23c7168f825cff))
+* **virrun:** the task-cache key carries the color level the child ran under ([d07354b](https://github.com/Esposter/Esposter/commit/d07354b9d463be22e358cc914790985877453fda))
+* **virrun:** three lint errors the models sweep introduced ([839c2ad](https://github.com/Esposter/Esposter/commit/839c2ad3a4d57b3c0edf87e020bc5e3ba1cfec5d))
+* wip ([2ced3b3](https://github.com/Esposter/Esposter/commit/2ced3b30b30cf09d33d5cb96f1f60c2f5bb5a083))
+
+### BREAKING CHANGES
+
+* `createVirrun`'s directory source is `{ directory, type: SourceType.Directory }`; the `dir` key and the `SourceType.Dir` member are gone. The wire value is unchanged.
+
 # [2.40.0](https://github.com/Esposter/Esposter/compare/v2.39.0...v2.40.0) (2026-09-10)
 
 ### Bug Fixes

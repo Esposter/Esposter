@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
+
+### Bug Fixes
+
+* **ci:** the functions size snapshot and the rate-limiting key-files path follow the sweep commits ([2999036](https://github.com/Esposter/Esposter/commit/2999036df800d6deacd81a10d6f838c4464ab6f9))
+* **release:** carry every workspace member's version, not just packages/* ([c066526](https://github.com/Esposter/Esposter/commit/c066526539227321db023523f86c60afb7755c46))
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes

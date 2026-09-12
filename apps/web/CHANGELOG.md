@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
+
+* refactor(virrun)!: spell Directory in every identifier that said Dir ([dd2c3a1](https://github.com/Esposter/Esposter/commit/dd2c3a1e7bf3b515102a55e1d305ec1c179e7e3b))
+
+### Bug Fixes
+
+* **app-shell:** import RoomRoleInMessage in getMemberGroups ([17daa87](https://github.com/Esposter/Esposter/commit/17daa8712c860ecffe371e63fc46239360c751e4))
+* **auth:** drop the account issuer column and take better-auth 1.7.4 ([47e935e](https://github.com/Esposter/Esposter/commit/47e935e037c0709374bf76bcf28cb78b735b71ed))
+* **call:** reject a NaN slot name, and answer the review ([eba51c6](https://github.com/Esposter/Esposter/commit/eba51c65dd5f6ce83b956b084a5f4ae027d567bc))
+* **ci:** the functions size snapshot and the rate-limiting key-files path follow the sweep commits ([2999036](https://github.com/Esposter/Esposter/commit/2999036df800d6deacd81a10d6f838c4464ab6f9))
+* **coderabbit:** answer the 73467fafe review's three findings ([c0b2afa](https://github.com/Esposter/Esposter/commit/c0b2afaba8cd08af696baf1ab8721659f86a4802))
+* **coderabbit:** answer the review's findings on the review tooling ([409c6da](https://github.com/Esposter/Esposter/commit/409c6da4f2a2f556de7a91c08dfb315b97a0921a))
+* **format:** the oxfmt snapshot ignore matched every path with snapshot in its name ([c1378a9](https://github.com/Esposter/Esposter/commit/c1378a9070cda3d31cacd20f0a332ec36a818ba8))
+* **infra:** the restore PUT also follows a timed-out read ([625956f](https://github.com/Esposter/Esposter/commit/625956fd23e1531c3fbcb9de11cce064450c0ed4))
+* lint ([32bb618](https://github.com/Esposter/Esposter/commit/32bb6182eb673083c78ace3db736e9bb2e178a53))
+* lint and types ([e313f51](https://github.com/Esposter/Esposter/commit/e313f51092a032874c5c58b9db2dc8872da293ca))
+* **release:** carry every workspace member's version, not just packages/* ([c066526](https://github.com/Esposter/Esposter/commit/c066526539227321db023523f86c60afb7755c46))
+* **scripts:** the exclusion filter cannot let a logic change out as a rename ([023c9dd](https://github.com/Esposter/Esposter/commit/023c9dde34302e27be112849da5d90427148bedd))
+* **server:** a repeated room id no longer fails the membership check ([1d5125c](https://github.com/Esposter/Esposter/commit/1d5125cfa0f054970cc55aabb06948d7b439a0f3))
+* **virrun:** a clean sweeps the run registry rather than deleting it ([82c3b53](https://github.com/Esposter/Esposter/commit/82c3b53e8f41140cd636f068815b59dcef4ac643))
+* **virrun:** a clean waits for the corpses it reaps before removing anything ([61705bd](https://github.com/Esposter/Esposter/commit/61705bdf7285a53a7ad20dfa0c78d5d842059958))
+* **virrun:** a reaper skips its peers, and a timed-out wait fails ([0765ca7](https://github.com/Esposter/Esposter/commit/0765ca742d90926ade4ccc53e26ba55f77115a94))
+* **virrun:** an entry's owner is a live pid that started before the entry ([222fc89](https://github.com/Esposter/Esposter/commit/222fc89614c31e38c8cc5df518532263be520364))
+* **virrun:** key the orphan sweep on owner liveness, and name a killed run ([8d38462](https://github.com/Esposter/Esposter/commit/8d38462e0791fb04fb6e0c2cfc85eef12fb1c216))
+* **virrun:** the task-cache key carries the color level the child ran under ([d07354b](https://github.com/Esposter/Esposter/commit/d07354b9d463be22e358cc914790985877453fda))
+* **web:** rethrow every ws lifecycle error except the expected UNAUTHORIZED ([a8d0588](https://github.com/Esposter/Esposter/commit/a8d05886bc900e25373dae75fdee85985884f214))
+* wip ([2ced3b3](https://github.com/Esposter/Esposter/commit/2ced3b30b30cf09d33d5cb96f1f60c2f5bb5a083))
+
+### Features
+
+* **scripts:** move the CodeRabbit recipes into ai:coderabbit:* scripts ([ff99165](https://github.com/Esposter/Esposter/commit/ff99165331a1be2aff1fe9857c3dab60aedc3dfb))
+
+### BREAKING CHANGES
+
+* `createVirrun`'s directory source is `{ directory, type: SourceType.Directory }`; the `dir` key and the `SourceType.Dir` member are gone. The wire value is unchanged.
+
 # [2.39.0](https://github.com/Esposter/Esposter/compare/v2.38.1...v2.39.0) (2026-09-04)
 
 ### Bug Fixes
