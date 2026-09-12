@@ -21,7 +21,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/composables`                                                          | 2026-09-12 | sole-consumer subfolders                                                                     |
 | `app/store`                                                                | 2026-09-12 | a store's file is named for its domain, so the filename never matches its `use*Store` export |
 | `server/services`, `server/composables`, `server/models`                   | 2026-09-12 |                                                                                              |
-| `server/trpc` — the resource family                                        | —          | `resource`, `survey`, `program`, `procedure/resource`                                        |
+| `server/trpc` — the resource family                                        | 2026-09-12 | `resource`, `survey`, `program`, `procedure/resource`                                        |
 | `server/trpc` — the room family                                            | 2026-09-12 | `room`, `call`, `userToRoom`                                                                 |
 | `server/trpc` — the rest                                                   | 2026-09-12 | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                            |
 | `app/components/Message`                                                   | —          | the stray-component half is `components/index.test.ts`, not a pass                           |
