@@ -5,6 +5,9 @@ export const AUTOMOD_USER_ID = "00000000-0000-4000-8000-000000000000";
 // Caps the follow list read so resolving thread roots never fans out an unbounded number of
 // Azure Table point reads for a single request.
 export const MAX_FOLLOWED_THREADS = 50;
+export const MENTION_MAX_LENGTH = 100;
+export const MESSAGE_MAX_LENGTH = 10000;
+export const MODERATION_NOTE_MAX_LENGTH = 2000;
 // `slowmodeMs` is a Postgres `integer`, so a longer slowmode could never be stored — and it is not a whole number
 // Of seconds, so a field editing it in seconds truncates what it advertises.
 export const MAX_SLOWMODE_MS = 2_147_483_647;

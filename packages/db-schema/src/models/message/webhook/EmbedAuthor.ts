@@ -1,7 +1,6 @@
 import { createNameSchema } from "#src/models/shared/Name";
+import { EMBED_AUTHOR_NAME_MAX_LENGTH } from "#src/services/message/webhook/constants";
 import { z } from "zod";
-
-export const EMBED_AUTHOR_NAME_MAX_LENGTH = 256;
 
 export interface EmbedAuthor {
   icon_url?: string;

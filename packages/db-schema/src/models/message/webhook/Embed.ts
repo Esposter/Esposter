@@ -5,14 +5,14 @@ import type { EmbedFooter } from "#src/models/message/webhook/EmbedFooter";
 import { embedAuthorSchema } from "#src/models/message/webhook/EmbedAuthor";
 import { embedFieldSchema } from "#src/models/message/webhook/EmbedField";
 import { embedFooterSchema } from "#src/models/message/webhook/EmbedFooter";
+import {
+  EMBED_COLOR_MAX_VALUE,
+  EMBED_DESCRIPTION_MAX_LENGTH,
+  EMBED_FIELDS_MAX_LENGTH,
+  EMBED_TITLE_MAX_LENGTH,
+} from "#src/services/message/webhook/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
-
-export const EMBED_DESCRIPTION_MAX_LENGTH = 4096;
-export const EMBED_FIELDS_MAX_LENGTH = 25;
-export const EMBED_TITLE_MAX_LENGTH = 256;
-// A hex colour code as an integer, so the ceiling is the largest three-byte value.
-export const EMBED_COLOR_MAX_VALUE = 256 ** 3 - 1;
 
 export interface Embed {
   author?: EmbedAuthor;

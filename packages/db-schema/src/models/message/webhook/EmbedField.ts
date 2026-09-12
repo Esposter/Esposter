@@ -1,8 +1,6 @@
 import { createNameSchema } from "#src/models/shared/Name";
+import { EMBED_FIELD_NAME_MAX_LENGTH, EMBED_FIELD_VALUE_MAX_LENGTH } from "#src/services/message/webhook/constants";
 import { z } from "zod";
-
-export const EMBED_FIELD_NAME_MAX_LENGTH = 256;
-export const EMBED_FIELD_VALUE_MAX_LENGTH = 1024;
 
 export interface EmbedField {
   inline?: boolean;

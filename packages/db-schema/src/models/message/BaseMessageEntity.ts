@@ -9,15 +9,13 @@ import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/Az
 import { fileEntitySchema } from "#src/models/azure/table/FileEntity";
 import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
 import { MessageType, standardMessageTypeSchema } from "#src/models/message/MessageType";
+import { sanitizedMessageSchema } from "#src/models/message/SanitizedMessage";
 import { selectRoomInMessageSchema } from "#src/schema/roomsInMessage";
 import { selectUserSchema } from "#src/schema/users";
 import { FILE_MAX_LENGTH } from "#src/services/azure/container/constants";
-import { createUniqueArraySchema, sanitizeTextHtml } from "@esposter/shared";
+import { MENTION_MAX_LENGTH } from "#src/services/message/constants";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
-
-export const MENTION_MAX_LENGTH = 100;
-export const MESSAGE_MAX_LENGTH = 10000;
-export const sanitizedMessageSchema = z.string().transform(sanitizeTextHtml).pipe(z.string().max(MESSAGE_MAX_LENGTH));
 
 export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
   extends AzureEntity

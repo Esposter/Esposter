@@ -1,3 +1,6 @@
+export const MAX_TAG_NAME_LENGTH = 128;
+export const MAX_TAG_VALUE_LENGTH = 256;
+export const MAX_TAGS_COUNT = 50;
 export const RECYCLE_BIN_RETENTION_DAYS = 30;
 // A soft-deleted resource is destroyed for good this long after it lands in the Recycle bin.
 // Lives here — browser-safe db-schema — so both the app UI (the "purges in {n}d" column, the delete
