@@ -26,6 +26,7 @@ import { sessionsRelation } from "#src/relations/sessionsRelation";
 import { storageLedgerRelation } from "#src/relations/storageLedgerRelation";
 import { threadFollowsInMessageRelation } from "#src/relations/threadFollowsInMessageRelation";
 import { userAchievementsRelation } from "#src/relations/userAchievementsRelation";
+import { userSettingsInMessageRelation } from "#src/relations/userSettingsInMessageRelation";
 import { usersRelation } from "#src/relations/usersRelation";
 import { userStatusesInMessageRelation } from "#src/relations/userStatusesInMessageRelation";
 import { usersToRoomRolesInMessageRelation } from "#src/relations/usersToRoomRolesInMessageRelation";
@@ -34,11 +35,11 @@ import { webhooksInMessageRelation } from "#src/relations/webhooksInMessageRelat
 
 export const relations = {
   ...accountsRelation,
-  ...callSessionsInMessageRelation,
   ...achievementsRelation,
   ...appUsersInMessageRelation,
   ...bansInMessageRelation,
   ...blocksRelation,
+  ...callSessionsInMessageRelation,
   ...friendRequestsRelation,
   ...friendsRelation,
   ...invitesInMessageRelation,
@@ -61,6 +62,7 @@ export const relations = {
   ...storageLedgerRelation,
   ...threadFollowsInMessageRelation,
   ...userAchievementsRelation,
+  ...userSettingsInMessageRelation,
   ...userStatusesInMessageRelation,
   ...usersRelation,
   ...usersToRoomRolesInMessageRelation,

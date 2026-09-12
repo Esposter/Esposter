@@ -8,11 +8,12 @@ import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 import { z } from "zod";
 
+const readCache = (file: string) => createKeyedCacheSchema(z.string()).parse(jsonDateParse(readFileSync(file, "utf8")));
+
 describe(writeKeyedCache, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   const key = "";
   const value = "";
-
   afterEach(cleanup);
 
   test("persists the cache as validatable JSON", () => {
@@ -21,9 +22,7 @@ describe(writeKeyedCache, () => {
     const file = join(create(), TEST_FILENAME);
     writeKeyedCache(file, { key, value });
 
-    const { storedAtMs, ...cache } = createKeyedCacheSchema(z.string()).parse(
-      jsonDateParse(readFileSync(file, "utf8")),
-    );
+    const { storedAtMs, ...cache } = readCache(file);
 
     expect(cache).toStrictEqual({ key, value });
     expect(storedAtMs).toBeTypeOf("number");
@@ -35,7 +34,7 @@ describe(writeKeyedCache, () => {
     const file = join(create(), TEST_FILENAME);
     const beforeWriteMs = Date.now();
     writeKeyedCache(file, { key, value });
-    const { storedAtMs } = createKeyedCacheSchema(z.string()).parse(jsonDateParse(readFileSync(file, "utf8")));
+    const { storedAtMs } = readCache(file);
 
     expect(storedAtMs).toBeGreaterThanOrEqual(beforeWriteMs);
     expect(storedAtMs).toBeLessThanOrEqual(Date.now());
@@ -47,9 +46,7 @@ describe(writeKeyedCache, () => {
     const file = join(create(), TEST_FILENAME, TEST_FILENAME);
     writeKeyedCache(file, { key, value });
 
-    const { storedAtMs, ...cache } = createKeyedCacheSchema(z.string()).parse(
-      jsonDateParse(readFileSync(file, "utf8")),
-    );
+    const { storedAtMs, ...cache } = readCache(file);
 
     expect(cache).toStrictEqual({ key, value });
     expect(storedAtMs).toBeTypeOf("number");

@@ -1,6 +1,6 @@
 # Styled Primitives — Lists, Avatars, and What Is Deliberately Not One
 
-Read when building a keyboard-navigable list, rendering a user's avatar, or wondering why a tooltip around a text button has no wrapper. The first two are wrappers that exist because the hand-rolled form kept being rewritten; the last is the case where that reasoning does not hold.
+Read when building a keyboard-navigable list, rendering a user's avatar, converting a tooltip and button to `StyledTooltipIconButton`, or wondering why a tooltip around a text button has no wrapper. The first two are wrappers that exist because the hand-rolled form kept being rewritten; the last is the case where that reasoning does not hold.
 
 ## Keyboard-navigable lists — `StyledList`
 
@@ -21,6 +21,10 @@ Props: `image?: User["image"]`, `name: User["name"]`, `avatarProps?: VAvatar["$p
 ```vue
 <StyledAvatar mr-3 :image="user.image" :name="user.name" :avatar-props="{ size: '2.25rem' }" />
 ```
+
+## `StyledTooltipIconButton` is a circle by default
+
+It passes `:icon` by default, and Vuetify's `icon` prop switches the button to the icon-button variant: circular, equal width/height, no min-width. Converting a `<v-tooltip>` + rectangular `<v-btn>` to it silently turns the button into a circle — pass `:is-icon-button="false"` to keep the regular button shape with the icon as a child. `rounded`/`tile` cannot restore it; they only change corners, not the forced square dimensions.
 
 ## There is no `StyledTooltipButton`, and that is the answer
 

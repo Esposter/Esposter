@@ -4,7 +4,7 @@ Pulumi stacks are isolated state and configuration records for the same Pulumi p
 
 ## Current State
 
-One unified stack owns all Azure resources in the subscription. Both development (`d-*`) and production (`p-*`) resources are declared together in the Pulumi program.
+One unified stack owns all Azure resources in the subscription. Both development (`dev-*`) and production (`prod-*`) resources are declared together in the Pulumi program.
 
 The stack is named `prod`.
 

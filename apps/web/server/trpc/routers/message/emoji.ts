@@ -1,5 +1,4 @@
 import type { Clause } from "@esposter/azure";
-import type { CustomTableClient } from "@esposter/db-schema";
 
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
@@ -11,8 +10,10 @@ import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/Updat
 import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
+import { useMessageEmojiMetadataClient } from "@@/server/composables/azure/table/useMessageEmojiMetadataClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getDevice } from "@@/server/services/auth/getDevice";
+import { getEmojiMetadataClauses } from "@@/server/services/message/emoji/getEmojiMetadataClauses";
 import { emojiEventEmitter } from "@@/server/services/message/events/emojiEventEmitter";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
@@ -23,15 +24,6 @@ import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, seriali
 import { createEntity, getEntity, getTopNEntities, updateEntity } from "@esposter/db";
 import { AzureTable, MessageMetadataType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-
-// The MessagesMetadata table holds every metadata type, so every read here narrows it to the emoji rows
-const useMessageEmojiMetadataClient = async () =>
-  (await useTableClient(AzureTable.MessagesMetadata)) as CustomTableClient<MessageEmojiMetadataEntity>;
-// The "emoji rows of this room" predicate every query in this router starts from
-const getEmojiMetadataClauses = (partitionKey: string): Clause<MessageEmojiMetadataEntity>[] => [
-  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey },
-  { key: MessageEmojiMetadataEntityPropertyNames.type, operator: BinaryOperator.eq, value: MessageMetadataType.Emoji },
-];
 
 export const emojiRouter = router({
   createEmoji: getMemberProcedure(
@@ -78,13 +70,14 @@ export const emojiRouter = router({
   readEmojis: getMemberProcedure(readMetadataInputSchema, "roomId").query<MessageEmojiMetadataEntity[]>(
     async ({ input: { messageRowKeys, roomId } }) => {
       const messagesMetadataClient = await useMessageEmojiMetadataClient();
-      const clauses = getEmojiMetadataClauses(roomId);
-      for (const messageRowKey of messageRowKeys)
-        clauses.push({
+      const clauses: Clause<MessageEmojiMetadataEntity>[] = [
+        ...getEmojiMetadataClauses(roomId),
+        ...messageRowKeys.map((messageRowKey) => ({
           key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
           operator: BinaryOperator.eq,
           value: messageRowKey,
-        });
+        })),
+      ];
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
         filter: serializeClauses(clauses),
       });

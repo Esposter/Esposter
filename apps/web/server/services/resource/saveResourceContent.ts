@@ -8,6 +8,7 @@ import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
+import { getDevice } from "@@/server/services/auth/getDevice";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { ResourceAfterSaveContentMap } from "@@/server/services/resource/ResourceAfterSaveContentMap";
@@ -169,7 +170,7 @@ export const saveResourceContent = async (
 
   resourceEventEmitter.emit("saveResourceContent", [
     { content: parsedContent, contentVersion: savedResource.contentVersion, id },
-    { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
+    getDevice(ctx.getSessionPayload),
   ]);
   // Not awaited — a failure costs one activity row, and the coalescing scan it does would otherwise land on
   // Every write the user is waiting on

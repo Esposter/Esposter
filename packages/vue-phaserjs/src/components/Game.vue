@@ -6,13 +6,11 @@ import type { VNode } from "vue";
 import { useGame } from "#src/composables/useGame";
 import { registerTiledJSONExternalLoader } from "#src/plugins/registerTiledJSONExternalLoader";
 import { usePhaserStore } from "#src/store/index";
-import { Game } from "phaser";
+import { Core, Game } from "phaser";
 
 interface Props {
-  // We're gonna stop people from being stupid and adding scenes like this
-  // Because Phaser automatically starts the first scene under-the-hood
-  // Which is totally un-obvious and also the correct way of adding scenes
-  // Is to use the vue "Scene" Component which is way neater C:
+  // `scene` is excluded because Phaser silently starts the first scene it is handed, bypassing the `Scene`
+  // Component's lifecycle — scenes are added through that component instead
   configuration: Except<Types.Core.GameConfig, "scene">;
 }
 
@@ -30,12 +28,12 @@ const readyListener = () => {
 onMounted(() => {
   registerTiledJSONExternalLoader();
   storeGame.value = new Game({ ...configuration, parent: canvasRoot.value });
-  storeGame.value.events.on("ready", readyListener);
+  storeGame.value.events.on(Core.Events.READY, readyListener);
 });
 
 onUnmounted(() => {
   const game = useGame();
-  game.events.off("ready", readyListener);
+  game.events.off(Core.Events.READY, readyListener);
   game.destroy(true);
   storeGame.value = undefined;
 });

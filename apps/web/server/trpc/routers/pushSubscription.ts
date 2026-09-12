@@ -1,6 +1,6 @@
 import type { PushSubscription } from "@esposter/db-schema";
 
-import { pushSubscriptionSchema } from "@@/server/models/pushSubscription/PushSubscription";
+import { pushSubscriptionInputSchema } from "#shared/models/db/pushSubscription/PushSubscriptionInput";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
@@ -9,7 +9,7 @@ import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const pushSubscriptionRouter = router({
-  subscribe: standardAuthedProcedure.input(pushSubscriptionSchema).mutation<PushSubscription>(
+  subscribe: standardAuthedProcedure.input(pushSubscriptionInputSchema).mutation<PushSubscription>(
     async ({
       ctx,
       input: {
@@ -17,27 +17,22 @@ export const pushSubscriptionRouter = router({
         expirationTime,
         keys: { auth, p256dh },
       },
-    }) =>
-      requireMutation(
+    }) => {
+      const { session, user } = ctx.getSessionPayload;
+      const expiresAt = expirationTime ? new Date(expirationTime) : null;
+      return requireMutation(
         (
           await ctx.db
             .insert(pushSubscriptions)
-            .values({
-              auth,
-              endpoint,
-              expirationTime: expirationTime ? new Date(expirationTime) : null,
-              p256dh,
-              sessionId: ctx.getSessionPayload.session.id,
-              userId: ctx.getSessionPayload.user.id,
-            })
+            .values({ auth, endpoint, expirationTime: expiresAt, p256dh, sessionId: session.id, userId: user.id })
             .onConflictDoUpdate({
               set: {
                 auth,
-                expirationTime: expirationTime ? new Date(expirationTime) : null,
+                expirationTime: expiresAt,
                 p256dh,
                 // The same browser resubscribing under a new session claims the row for it, so a revoke of the
                 // Session that is actually using this endpoint is the one that takes its pushes away
-                sessionId: ctx.getSessionPayload.session.id,
+                sessionId: session.id,
               },
               target: [pushSubscriptions.endpoint, pushSubscriptions.userId],
             })
@@ -46,10 +41,11 @@ export const pushSubscriptionRouter = router({
         Operation.Create,
         DatabaseEntityType.PushSubscription,
         "subscribe",
-      ),
+      );
+    },
   ),
   unsubscribe: standardAuthedProcedure
-    .input(pushSubscriptionSchema.shape.endpoint)
+    .input(pushSubscriptionInputSchema.shape.endpoint)
     .mutation<PushSubscription>(async ({ ctx, input }) =>
       requireMutation(
         (

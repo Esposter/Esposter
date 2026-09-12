@@ -1,6 +1,5 @@
-import AzureAustraliaEastLocation from "#src/azure/constants/AzureAustraliaEastLocation";
-import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
+import { getManagedApiId } from "#src/azure/services/getManagedApiId";
 
-const AzureResourceManagerManagedApiId: `/subscriptions/${string}/providers/Microsoft.Web/locations/${string}/managedApis/arm` = `/subscriptions/${AzureSubscriptionId}/providers/Microsoft.Web/locations/${AzureAustraliaEastLocation}/managedApis/arm`;
+const AzureResourceManagerManagedApiId: string = getManagedApiId("arm");
 
 export default AzureResourceManagerManagedApiId;

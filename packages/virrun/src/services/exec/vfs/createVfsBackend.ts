@@ -8,13 +8,13 @@ import { runNodeInProcess } from "#src/services/exec/vfs/runNodeInProcess";
 // Fall back to native for everything else. Every path it can't run faithfully in-process defers to native, so
 // Correctness always matches the baseline; the speed win exists only on the in-process path.
 export const createVfsBackend = (): ExecBackend => {
-  const native = createNativeBackend();
+  const nativeBackend = createNativeBackend();
   return {
     exec: (command, options) => {
       const invocation = parseNodeInvocation(command);
-      if (!invocation) return native.exec(command, options);
+      if (!invocation) return nativeBackend.exec(command, options);
       const result = runNodeInProcess(invocation, options);
-      return result ? Promise.resolve(result) : native.exec(command, options);
+      return result ? Promise.resolve(result) : nativeBackend.exec(command, options);
     },
     name: BackendType.Vfs,
   };

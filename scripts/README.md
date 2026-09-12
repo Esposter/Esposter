@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-The repository's own tooling — the workspace dependency graph, the outdated-dependency report, the custom oxlint plugins, the sweep scans and the cross-platform launcher. It is the workspace's machinery rather than part of the product, which is why it sits at the repository root beside `.github/` and `.agents/` instead of under `apps/` or `packages/`.
+The repository's own tooling — the workspace dependency graph, the outdated-dependency report, the custom oxlint plugins, the sweep scans, the CodeRabbit review tooling and the cross-platform launcher. It is the workspace's machinery rather than part of the product, which is why it sits at the repository root beside `.github/` and `.agents/` instead of under `apps/` or `packages/`.
 
 ## Table of Contents
 
@@ -17,16 +17,17 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What's Included
 
-| Directory               | What it does                                                                                                 |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `dependencyGraph/`      | Renders `dependency-graph.svg` from the workspace manifests, roles read off the edges rather than off a list |
-| `outdatedDependencies/` | Checks every manifest against the catalog, the lockfile and the registry, and prints the mismatches          |
-| `oxlint/`               | The custom oxlint JS plugins `.oxlintrc.json` loads by path                                                  |
-| `sweeps/`               | The find recipes behind each `sweep:*` script, one per ledger scan (`sweeps` skill)                          |
-| `updateNode/`           | Bumps the node pins and hands installation to fnm through the platform script                                |
-| `workspace/`            | The workspace invariants — declaration generation, side effects, symlink escapes, private dependency edges   |
-| `services/`, `models/`  | What more than one of the above shares                                                                       |
-| `crossOS.ts`            | Runs the per-platform command the root manifest's `crossOS` map names for a script                           |
+| Directory               | What it does                                                                                                       |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `dependencyGraph/`      | Renders `dependency-graph.svg` from the workspace manifests, roles read off the edges rather than off a list       |
+| `outdatedDependencies/` | Checks every manifest against the catalog, the lockfile and the registry, and prints the mismatches                |
+| `oxlint/`               | The custom oxlint JS plugins `.oxlintrc.json` loads by path                                                        |
+| `coderabbit/`           | The review-feedback, probe, window and exclusion readers behind each `ai:coderabbit:*` script (`coderabbit` skill) |
+| `sweeps/`               | The find recipes behind each `ai:sweep:*` script, one per ledger scan (`sweeps` skill)                             |
+| `updateNode/`           | Bumps the node pins and hands installation to fnm through the platform script                                      |
+| `workspace/`            | The workspace invariants — declaration generation, side effects, symlink escapes, private dependency edges         |
+| `services/`, `models/`  | What more than one of the above shares                                                                             |
+| `crossOS.ts`            | Runs the per-platform command the root manifest's `crossOS` map names for a script                                 |
 
 ### Architecture Notes
 

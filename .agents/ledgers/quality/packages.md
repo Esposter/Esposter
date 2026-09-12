@@ -2,15 +2,35 @@
 
 Grouped so each row is one review-sized commit.
 
-| Unit                                      | Swept      | Notes |
-| ----------------------------------------- | ---------- | ----- |
-| `packages/azure-mock`, `packages/db-mock` | 2026-09-09 |       |
-| `packages/db`                             | 2026-09-09 |       |
-| `packages/db-schema`                      | 2026-08-20 |       |
-| `apps/functions`                          | 2026-09-09 |       |
-| `packages/virrun`                         | 2026-08-20 |       |
-| `packages/parse-tmx`                      | 2026-09-09 |       |
-| `packages/vue-phaserjs`                   | —          |       |
-| `packages/xml2js`                         | 2026-09-09 |       |
-| `apps/infra`                              | 2026-08-20 |       |
-| `packages/configuration`                  | 2026-08-20 |       |
+| Unit                                                                                                                                                                                                    | Swept      | Notes |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ----- |
+| `packages/azure-mock`, `packages/db-mock`                                                                                                                                                               | 2026-09-09 |       |
+| `packages/db`                                                                                                                                                                                           | 2026-09-09 |       |
+| `packages/db-schema/*`, `packages/db-schema/src/*`                                                                                                                                                      | 2026-09-12 |       |
+| `packages/db-schema/src/models` — `message`                                                                                                                                                             | 2026-09-12 |       |
+| `packages/db-schema/src/models` — `azure`, `shared`, `resource`, `notification`, `user`, `survey`, `program`, `file`                                                                                    | 2026-09-12 |       |
+| `packages/db-schema/src/services`                                                                                                                                                                       | 2026-09-12 |       |
+| `packages/db-schema/src/schema`                                                                                                                                                                         | 2026-09-12 |       |
+| `packages/db-schema/src/relations`                                                                                                                                                                      | 2026-09-12 |       |
+| `apps/functions`                                                                                                                                                                                        | 2026-09-09 |       |
+| `packages/virrun/*`, `packages/virrun/readme`, `packages/virrun/src/*`, `packages/virrun/src/models`                                                                                                    | 2026-09-11 |       |
+| `packages/virrun/src/services/cli`                                                                                                                                                                      | 2026-09-11 |       |
+| `packages/virrun/src/services/configuration`, `packages/virrun/src/services/source`, `packages/virrun/src/services/vfs`, `packages/virrun/src/services/virrun`, `packages/virrun/src/services/exec/vfs` | 2026-09-11 |       |
+| `packages/virrun/src/services/exec/differential`, `packages/virrun/src/services/exec/native`, `packages/virrun/src/services/exec/store`                                                                 | 2026-09-12 |       |
+| `packages/virrun/src/services/exec/bwrap`                                                                                                                                                               | 2026-09-12 |       |
+| `packages/virrun/src/services/exec/cache`                                                                                                                                                               | 2026-09-12 |       |
+| `packages/virrun/src/services/exec/os`                                                                                                                                                                  | 2026-09-12 |       |
+| `packages/virrun/src/services/exec/test`                                                                                                                                                                | 2026-09-12 |       |
+| `packages/virrun/src/services/exec/snapshot`                                                                                                                                                            | 2026-09-11 |       |
+| `packages/virrun/src/services/exec/util`                                                                                                                                                                | 2026-09-11 |       |
+| `packages/virrun/src/services/exec/wsl`                                                                                                                                                                 | 2026-09-11 |       |
+| `packages/parse-tmx`                                                                                                                                                                                    | 2026-09-09 |       |
+| `packages/vue-phaserjs`                                                                                                                                                                                 | 2026-09-11 |       |
+| `packages/xml2js`                                                                                                                                                                                       | 2026-09-09 |       |
+| `apps/infra/*`, `apps/infra/docker`, `apps/infra/docs`, `apps/infra/data`, `apps/infra/src/*`                                                                                                           | 2026-09-12 |       |
+| `apps/infra/src/github`                                                                                                                                                                                 | 2026-09-12 |       |
+| `apps/infra/src/azure/constants`, `apps/infra/src/azure/services`                                                                                                                                       | 2026-09-12 |       |
+| `apps/infra/src/azure/resources` — `Microsoft.Authorization`                                                                                                                                            | —          |       |
+| `apps/infra/src/azure/resources` — `Microsoft.EventGrid`, `Microsoft.Web`, `Microsoft.Storage`, `Microsoft.Logic`                                                                                       | —          |       |
+| `apps/infra/src/azure/resources` — `Microsoft.ServiceBus`, `Microsoft.Insights`, `Microsoft.Consumption`, `Microsoft.SignalRService`, `Microsoft.Search`, `Microsoft.Resources`                         | —          |       |
+| `packages/configuration`                                                                                                                                                                                | 2026-09-11 |       |

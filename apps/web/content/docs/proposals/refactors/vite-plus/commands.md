@@ -13,16 +13,14 @@ This page is the inventory. It assumes the phases in order — a script only los
 
 Four families account for most of the reduction, and in each case the script variants are encoding an argument.
 
-| Family        | Today                                                                    | After                                                             |
-| :------------ | :----------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| **Lint**      | `lint`, `lint:fix`, `lint:packages`, `lint:fix:packages`                 | `vp lint`, with `--fix` and a filter as arguments                 |
-| **Test**      | `test`, `test:packages`                                                  | one task; the project selector is an argument, as it already is   |
-| **Typecheck** | `typecheck`, `typecheck:packages`                                        | one task plus a filter                                            |
-| **Build**     | `build`, `build:web`, `build:packages`, `build:functions`, `build:infra` | `vp run build` with a filter, plus the one deploy-entrypoint name |
+| Family        | Today                                                    | After                                                             |
+| :------------ | :------------------------------------------------------- | :---------------------------------------------------------------- |
+| **Lint**      | `lint`, `lint:fix`, `lint:packages`, `lint:fix:packages` | `vp lint`, with `--fix` and a filter as arguments                 |
+| **Test**      | `test`, `test:packages`                                  | one task; the project selector is an argument, as it already is   |
+| **Typecheck** | `typecheck`, `typecheck:packages`                        | one task plus a filter                                            |
+| **Build**     | `build`, `build:packages`                                | `vp run build` with a filter, plus the one deploy-entrypoint name |
 
 The build family does not collapse as far as the others, and the exception is worth stating because it looks like an inconsistency. The bare `build` means the app rather than the workspace, deliberately: the deploy platform runs `pnpm build` as its default build command, so that name is a deploy entrypoint rather than a developer convenience, and widening it would have every deploy build two bundles it does not ship. That reasoning is unchanged by the migration, so one specifically-named task survives for it.
-
-`build` also loses a piece of itself. It derives two filters today, and the second exists only because virrun's committed CLI entry imports a `dist` only its own build writes — the one place the toolchain is a build input rather than a dependency. With virrun gone, the app build is one selector.
 
 ## What `vp check` absorbs
 

@@ -1,7 +1,7 @@
 import { AzureContainer } from "#src/models/azure/container/AzureContainer";
 import { pgTable } from "#src/pgTable";
 import { users } from "#src/schema/users";
-import { sql } from "drizzle-orm";
+import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { bigint, check, index, pgEnum, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 
 export const azureContainerEnum = pgEnum("azureContainer", AzureContainer);
@@ -40,8 +40,8 @@ export const storageLedger = pgTable(
   {
     extraConfig: ({ blobName, containerName, countedBytes, declaredBytes, reconciledAt, userId }) => [
       primaryKey({ columns: [containerName, blobName] }),
-      check("storageLedger_declaredBytes_check", sql`${declaredBytes} >= 0`),
-      check("storageLedger_countedBytes_check", sql`${countedBytes} >= 0`),
+      check("storageLedger_declaredBytes_check", createMinimumCheckSql(declaredBytes, 0)),
+      check("storageLedger_countedBytes_check", createMinimumCheckSql(countedBytes, 0)),
       // Backs the outstanding-reservation cap and the expired-hold collection, both of which lead with the
       // User on every reserve. No index leads with `reconciledAt`: nothing scans the ledger account-wide
       index("storageLedger_userId_reconciledAt_index").on(userId, reconciledAt),

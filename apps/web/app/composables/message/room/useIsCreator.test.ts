@@ -1,16 +1,11 @@
 // @vitest-environment nuxt
 import { useIsCreator } from "@/composables/message/room/useIsCreator";
+import { useSession } from "@/services/auth/authClient.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-// `authClient` is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot
-// Be spied on directly — mock the module and drive useSession through a hoisted mock instead. Its two call
-// Forms return different shapes: the composable takes the nuxt `{ data }` pair, the room store takes the ref
-const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<(fetcher?: unknown) => unknown>() }));
 
-vi.mock(import("@/services/auth/authClient"), () => ({
-  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
-}));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useIsCreator, () => {
   const roomId = crypto.randomUUID();
@@ -18,7 +13,7 @@ describe(useIsCreator, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    useSessionMock.mockImplementation((fetcher?: unknown) =>
+    useSession.mockImplementation((fetcher?: unknown) =>
       fetcher ? { data: ref({ user: { id: userId } }) } : ref({ data: { user: { id: userId } } }),
     );
   });

@@ -1,62 +1,53 @@
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
-import type { ExecOptions } from "#src/models/exec/ExecOptions";
+import type { ExecResult } from "#src/models/exec/ExecResult";
 
 import { computeTaskCacheKey } from "#src/services/exec/cache/computeTaskCacheKey";
 import { persistWithCache } from "#src/services/exec/cache/persistWithCache";
 import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
 import { createOsExecOptions } from "#src/services/exec/os/createOsExecOptions";
-import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
+import { ACCEPTANCE_TIMEOUT_MS } from "#src/services/exec/test/constants.test";
+import { setupSuiteEnv } from "#src/services/exec/test/setupSuiteEnv.test";
 import { setupWarmSnapshotSuite } from "#src/services/exec/test/setupWarmSnapshotSuite.test";
 import { CI_ENV_KEY, VIRRUN_NO_CACHE_KEY } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { execFileSync } from "node:child_process";
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
-// Task-cache equivalence (specs/config-and-cache.md): a cache HIT is observably identical to the MISS that recorded
-// It — same exit code, stdout, stderr, and produced host files — while skipping the sandbox entirely. The command's
+import { assert, beforeAll, describe, expect, test } from "vitest";
+// Task-cache equivalence (apps/web/content/docs/virrun/task-cache.md): a cache HIT is observably identical to the
+// MISS that recorded it — same exit code, stdout, stderr, and produced host files — while skipping the sandbox
+// Entirely. The command's
 // Output is written to a gitignored path so it never perturbs the source-tree hash, keeping the key stable across
 // The miss→hit pair (the real dev-loop shape: build output like dist/.nuxt is gitignored).
 // Each case boots a sandbox and installs, so the pair costs minutes of wall clock — too slow for the default
 // Suite. The body is kept intact; drop the `.todo` to run it when the cache key or the replay path changes.
 describe.todo("persistWithCache - a hit replays a recorded run identically (task-cache equivalence)", () => {
   const { getBackend, getCorpus } = setupWarmSnapshotSuite();
+  // The task cache is off in CI / under the opt-out; force it on for the assertions regardless of the host env.
+  setupSuiteEnv(() => ({ [CI_ENV_KEY]: undefined, [VIRRUN_NO_CACHE_KEY]: undefined }));
   // Counts real sandbox executions so a hit can be proven to skip exec, not merely reproduce its output.
   let execCount = 0;
   let countingBackend: ExecBackend;
-  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
   let corpus = "";
-  const previousCi = process.env[CI_ENV_KEY];
-  const previousNoCache = process.env[VIRRUN_NO_CACHE_KEY];
   // Print to stdout AND produce a gitignored file, so the recorded result exercises both stream replay and file flush.
   const command = `printf " "; printf " " > ${TEST_FILENAME}`;
-  const runCached = (): Promise<{ exitCode: number; stderr: string; stdout: string }> =>
+  const runCached = (): Promise<ExecResult> =>
     persistWithCache(countingBackend, command, createOsExecOptions(corpus, "pipe"));
 
   beforeAll(() => {
     // Runs after the shared warm-snapshot fixture's beforeAll, so the backend and corpus already exist.
     corpus = getCorpus();
     countingBackend = {
-      exec: (targetCommand: readonly string[] | string, options: ExecOptions) => {
+      exec: (targetCommand, options) => {
         execCount++;
         return getBackend().exec(targetCommand, options);
       },
       name: getBackend().name,
     };
-    // The task cache is off in CI / under the opt-out; force it on for the assertions regardless of the host env.
-    delete process.env[CI_ENV_KEY];
-    delete process.env[VIRRUN_NO_CACHE_KEY];
     // The corpus must be a git repo for the source-tree hash, and the produced file must be gitignored so it does not
     // Move the key between the miss and the hit.
     execFileSync("git", ["init", "-q"], { cwd: corpus });
     writeFileSync(join(corpus, ".gitignore"), `${TEST_FILENAME}\n`);
-  });
-
-  afterAll(() => {
-    if (previousCi === undefined) delete process.env[CI_ENV_KEY];
-    else process.env[CI_ENV_KEY] = previousCi;
-    if (previousNoCache === undefined) delete process.env[VIRRUN_NO_CACHE_KEY];
-    else process.env[VIRRUN_NO_CACHE_KEY] = previousNoCache;
   });
 
   test(
@@ -64,7 +55,7 @@ describe.todo("persistWithCache - a hit replays a recorded run identically (task
     async () => {
       expect.hasAssertions();
 
-      const key = computeTaskCacheKey(command, corpus, []);
+      const key = computeTaskCacheKey(command, corpus, [], "");
 
       assert.exists(key);
 
@@ -88,6 +79,6 @@ describe.todo("persistWithCache - a hit replays a recorded run identically (task
       // ...and it never touched the sandbox.
       expect(execCount).toBe(0);
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 });

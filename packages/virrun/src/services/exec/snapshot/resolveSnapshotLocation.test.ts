@@ -7,7 +7,7 @@ import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnap
 import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
-import {describe, expect, test, vi} from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(
   import("#src/services/exec/util/getSandboxNodeVersion"),

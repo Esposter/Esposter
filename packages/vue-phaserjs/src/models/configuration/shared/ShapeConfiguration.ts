@@ -10,20 +10,18 @@ import type { VisibleConfiguration } from "#src/models/configuration/components/
 import type { GlobalConfiguration } from "#src/models/configuration/global/GlobalConfiguration";
 import type { GameObjects } from "phaser";
 
-export type ShapeConfiguration = AlphaSingleConfiguration &
-  BlendModeConfiguration &
-  DepthConfiguration &
-  GlobalConfiguration &
-  MaskConfiguration &
-  OriginConfiguration &
-  RenderNodesConfiguration &
-  ScrollFactorConfiguration &
-  TransformConfiguration &
-  VisibleConfiguration & {
-    active: GameObjects.Shape["active"];
-    displayHeight: GameObjects.Shape["displayHeight"];
-    displayWidth: GameObjects.Shape["displayWidth"];
-    fillAlpha: GameObjects.Shape["fillAlpha"];
-    fillColor: GameObjects.Shape["fillColor"];
-    strokeStyle: Parameters<GameObjects.Shape["setStrokeStyle"]>;
-  };
+export interface ShapeConfiguration
+  extends
+    AlphaSingleConfiguration,
+    BlendModeConfiguration,
+    DepthConfiguration,
+    GlobalConfiguration,
+    MaskConfiguration,
+    OriginConfiguration,
+    Pick<GameObjects.Shape, "displayHeight" | "displayWidth" | "fillAlpha" | "fillColor">,
+    RenderNodesConfiguration,
+    ScrollFactorConfiguration,
+    TransformConfiguration,
+    VisibleConfiguration {
+  strokeStyle: Parameters<GameObjects.Shape["setStrokeStyle"]>;
+}

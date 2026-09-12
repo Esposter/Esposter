@@ -17,6 +17,7 @@ import {
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "@@/server/trpc/routers/createAudienceSheet.test";
+import { createSurvey } from "@@/server/trpc/routers/createSurvey.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { emailRouter } from "@@/server/trpc/routers/email";
@@ -69,14 +70,9 @@ describe("surveyFunnel", () => {
     const sheet = await createAudienceSheet(sheetCaller, "customers", customers);
 
     // 2. The survey — Identified mode, published
-    const survey = await surveyCaller.createResource({ name: "feedback" });
-    await surveyCaller.saveResourceContent({
-      content: {
-        model,
-        settings: { ...settings, responseMode: SurveyResponseMode.Identified },
-      } satisfies SurveyResource,
-      contentVersion: survey.contentVersion,
-      id: survey.id,
+    const survey = await createSurvey(surveyCaller, "feedback", {
+      model,
+      settings: { ...settings, responseMode: SurveyResponseMode.Identified },
     });
     await surveyCaller.publishResource({ id: survey.id });
 

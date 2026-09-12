@@ -29,9 +29,9 @@ describe(createPlatformaticFsProvider, () => {
   // Canonical diff values: "" as the base, " " as a distinct second value.
   const contentArbitrary = fc.constantFrom("", " ");
   const operationArbitrary = fc.oneof(
-    fc.record({ content: contentArbitrary, kind: fc.constant("write"), rel: fileArbitrary }),
-    fc.record({ kind: fc.constant("read"), rel: fileArbitrary }),
-    fc.record({ kind: fc.constant("exists"), rel: fileArbitrary }),
+    fc.record({ content: contentArbitrary, kind: fc.constant("write"), relativePath: fileArbitrary }),
+    fc.record({ kind: fc.constant("read"), relativePath: fileArbitrary }),
+    fc.record({ kind: fc.constant("exists"), relativePath: fileArbitrary }),
   );
 
   afterEach(() => {
@@ -55,8 +55,8 @@ describe(createPlatformaticFsProvider, () => {
             const realTrace = [];
 
             for (const operation of operations) {
-              const virtualPath = `${VIRTUAL_ROOT}/${operation.rel}`;
-              const realPath = join(directory, operation.rel);
+              const virtualPath = `${VIRTUAL_ROOT}/${operation.relativePath}`;
+              const realPath = join(directory, operation.relativePath);
               if (operation.kind === "write") {
                 const { content } = operation;
                 virtualTrace.push(

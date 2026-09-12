@@ -1,5 +1,4 @@
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
-import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -7,18 +6,18 @@ import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
 import { blueprintRouter } from "@@/server/trpc/routers/blueprint";
 import { programRouter } from "@@/server/trpc/routers/program";
-import { AzureQueue, DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
+import { AzureQueue, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockServiceBusDatabase } from "azure-mock";
+import { MockServiceBusDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The blueprint router's own procedures: the deploy wiring, its validation and owner guards, and capture's
 // Alias rewrite.
 describe("blueprintRouter", () => {
-  let mockContext: Context;
+  const { getCaller, getMockContext } = setupResourceSuite(blueprintRouter);
   let caller: DecorateRouterRecord<TRPCRouter["blueprint"]>;
   let programCaller: DecorateRouterRecord<TRPCRouter["program"]>;
   const name = "name";
@@ -36,16 +35,13 @@ describe("blueprintRouter", () => {
     parameters: [],
   };
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(blueprintRouter)(mockContext);
-    programCaller = createCallerFactory(programRouter)(mockContext);
+  beforeAll(() => {
+    caller = getCaller();
+    programCaller = createCallerFactory(programRouter)(getMockContext());
   });
 
-  afterEach(async () => {
-    MockContainerDatabase.clear();
+  afterEach(() => {
     MockServiceBusDatabase.clear();
-    await mockContext.db.delete(resources);
   });
 
   const createBlueprint = async (manifest: BlueprintResource) => {

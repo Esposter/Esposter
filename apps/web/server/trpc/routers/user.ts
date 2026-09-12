@@ -1,6 +1,5 @@
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-import type { ContainerClient } from "@azure/storage-blob";
+import type { CallBackgroundBlob } from "@@/server/models/message/call/CallBackgroundBlob";
 import type { User, UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
 import type { SetNonNullable } from "type-fest";
 
@@ -11,22 +10,23 @@ import { upsertStatusInputSchema } from "#shared/models/db/user/UpsertStatusInpu
 import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsInput";
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
-import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
+import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "@@/server/services/azure/eventGrid/publishBlobPrefixDeletion";
 import { on } from "@@/server/services/events/on";
+import { checkIsServableCallBackground } from "@@/server/services/message/call/checkIsServableCallBackground";
 import { getCallBackgroundBlobName } from "@@/server/services/message/call/getCallBackgroundBlobName";
-import { getCallBackgroundPrefix } from "@@/server/services/message/call/getCallBackgroundPrefix";
+import { readCallBackgroundBlobs } from "@@/server/services/message/call/readCallBackgroundBlobs";
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
 import { userEventEmitter } from "@@/server/services/user/events/userEventEmitter";
+import { upsertConnectedStatus } from "@@/server/services/user/upsertConnectedStatus";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { generateReadSasUrl, generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
@@ -46,58 +46,7 @@ import {
   VoiceInputMode,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { eq, inArray } from "drizzle-orm";
-
-const upsertConnectedStatus = async (ctx: AuthedContext, isConnected: boolean) => {
-  const upsertedStatus = requireMutation(
-    (
-      await ctx.db
-        .insert(userStatusesInMessage)
-        .values({ isConnected, userId: ctx.getSessionPayload.user.id })
-        .onConflictDoUpdate({ set: { isConnected }, target: userStatusesInMessage.userId })
-        .returning()
-    )[0],
-    Operation.Update,
-    DatabaseEntityType.UserStatus,
-    JSON.stringify({ isConnected }),
-  );
-
-  userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
-};
-
-interface CallBackgroundBlob {
-  contentLength: number;
-  name: string;
-  slot: number;
-}
-// The listing is the whole index. A slot's blob name holds its number, and the properties the listing already
-// Carries hold the size and content type - so a background needs no row, no id and nothing to reconcile, and
-// Reading the set back costs one request rather than one per slot
-const readCallBackgroundBlobs = async (containerClient: ContainerClient, userId: User["id"]) => {
-  const prefix = getCallBackgroundPrefix(userId);
-  const callBackgroundBlobs: CallBackgroundBlob[] = [];
-  const pages = containerClient.listBlobsFlat({ prefix }).byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE });
-
-  for await (const { segment } of pages)
-    for (const { name, properties } of segment.blobItems) {
-      const slotName = name.slice(prefix.length);
-      const slot = Number(slotName);
-      // Only the names this router mints are backgrounds. Anything else under the prefix can never be rendered
-      // Or replaced through a slot, so it is passed over rather than listed - and never reclaimed on a guess
-      if (String(slot) !== slotName || slot < 0 || slot >= MAX_CALL_BACKGROUNDS) continue;
-
-      callBackgroundBlobs.push({ contentLength: properties.contentLength ?? 0, name, slot });
-    }
-
-  return callBackgroundBlobs;
-};
-// A write SAS constrains the blob name it may be PUT to, never the bytes that arrive through it, so the size
-// The picker checked before asking for a target is an early no rather than the guarantee. This is the
-// Guarantee, and it costs nothing extra: the length comes back on the listing that renders the picker anyway.
-// The stored content type is deliberately not read here: the same client sets it on the same upload, so it
-// Is the mime claim again rather than evidence about the bytes - the write target's check already has that
-const checkIsServableCallBackground = ({ contentLength }: CallBackgroundBlob) =>
-  contentLength <= MAX_CALL_BACKGROUND_SIZE_BYTES;
+import { eq } from "drizzle-orm";
 
 export const userRouter = router({
   connect: standardAuthedProcedure.mutation<void>(({ ctx }) => upsertConnectedStatus(ctx, true)),
@@ -184,10 +133,7 @@ export const userRouter = router({
   readStatuses: standardAuthedProcedure
     .input(userStatusIdsInputSchema)
     .query<SetNonNullable<UserStatusInMessage, "status">[]>(async ({ ctx, input }) => {
-      const foundUserStatuses = await ctx.db
-        .select()
-        .from(userStatusesInMessage)
-        .where(inArray(userStatusesInMessage.userId, input));
+      const foundUserStatuses = await ctx.db.query.userStatusesInMessage.findMany({ where: { userId: { in: input } } });
       const resultUserStatuses: SetNonNullable<UserStatusInMessage, "status">[] = [];
       const statusMap = new Map(foundUserStatuses.map((userStatus) => [userStatus.userId, userStatus]));
 
@@ -226,12 +172,9 @@ export const userRouter = router({
       ),
     ),
   readUserSettings: standardAuthedProcedure.query<UserSettingsInMessage>(async ({ ctx }) => {
-    const foundUserSettings = (
-      await ctx.db
-        .select()
-        .from(userSettingsInMessage)
-        .where(eq(userSettingsInMessage.userId, ctx.getSessionPayload.user.id))
-    )[0];
+    const foundUserSettings = await ctx.db.query.userSettingsInMessage.findFirst({
+      where: { userId: { eq: ctx.getSessionPayload.user.id } },
+    });
     if (foundUserSettings) return foundUserSettings;
     // No row yet — return the defaults without persisting; the first update upserts the row
     else

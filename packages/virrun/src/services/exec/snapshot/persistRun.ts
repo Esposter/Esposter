@@ -16,15 +16,14 @@ import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 // Run a command over the warm snapshot with a persistable upper, then flush that upper to the host whatever the exit
-// Code (native-equivalence; specs/write-back.md) — a non-zero mutation still wrote real files. The persist sibling of
-// `forkSnapshot`: the deps snapshot (and any
-// `extraLowerDirs`, e.g. the prepare layer) stack as read-only lowers, so node_modules is never in the upper and
-// Never flushed. `maskedPaths` (an environment's prepare outputs, e.g. `.nuxt`, plus the source-mirror excludes on
-// Win32) are masked from the flush like node_modules — owned by a layer or by the host alone, so a persist run never
-// Writes them back (checkIsUnderSnapshotLower). Requires a captured snapshot; the
-// Temp upper/work are always torn down. `onPersist` fires after the host flush with the still-live upper and the
-// Built plan (only on a clean exit — a failed run is flushed but never cached), so the task cache can record the
-// Output diff without re-probing (persistWithCache).
+// Code (native-equivalence; apps/web/content/docs/virrun/write-back.md) — a non-zero mutation still wrote real files.
+// The persist sibling of `forkSnapshot`: the deps snapshot (and any `extraLowerDirs`, e.g. the prepare layer) stack
+// As read-only lowers, so node_modules is never in the upper and never flushed. `maskedPaths` (an environment's
+// Prepare outputs, e.g. `.nuxt`, plus the source-mirror excludes on win32) are masked from the flush like
+// Node_modules — owned by a layer or by the host alone, so a persist run never writes them back
+// (checkIsUnderSnapshotLower). Requires a captured snapshot; the temp upper/work are always torn down. `onPersist`
+// Fires after the host flush with the still-live upper and the built plan (only on a clean exit — a failed run is
+// Flushed but never cached), so the task cache can record the output diff without re-probing (persistWithCache).
 export const persistRun = (
   backend: ExecBackend,
   command: readonly string[] | string,

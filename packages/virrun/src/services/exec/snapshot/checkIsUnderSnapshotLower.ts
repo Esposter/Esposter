@@ -1,8 +1,9 @@
 import { checkIsExcludedPath } from "#src/services/exec/util/checkIsExcludedPath";
 import { NODE_MODULES_DIRECTORY } from "#src/services/exec/util/constants";
 // Whether an overlay-upper path is cache-owned (drop) vs real source the persist flush must reconcile
-// (specs/write-back.md). Two masked classes: (1) the snapshot lower materialises node_modules AND the shared
-// Parents housing the per-package ones (`packages/<pkg>`), so an ancestor-walk over lower paths wrongly masks a
+// (apps/web/content/docs/virrun/write-back.md). Two masked classes: (1) the snapshot lower materialises node_modules
+// AND the shared parents housing the per-package ones (`packages/<pkg>`), so an ancestor-walk over lower paths
+// Wrongly masks a
 // Source file living under such a parent (`packages/<pkg>/src/foo.ts`) — the bug that stranded `lint:fix` edits — so
 // Mask only the snapshot-lower entry itself and anything inside a `node_modules` tree; (2) `maskedPaths`, matched by
 // The shared checkIsExcludedPath so the mask and the source-side exclude can never drift. That covers an environment's

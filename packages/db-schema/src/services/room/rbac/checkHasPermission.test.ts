@@ -5,21 +5,25 @@ import { describe, expect, test } from "vitest";
 describe(checkHasPermission, () => {
   test("owner always has permission regardless of permission bits", () => {
     expect.hasAssertions();
+
     expect(checkHasPermission(0n, RoomPermission.ManageRoom, true)).toBe(true);
   });
 
   test("administrator bit grants any permission", () => {
     expect.hasAssertions();
+
     expect(checkHasPermission(RoomPermission.Administrator, RoomPermission.ManageRoom, false)).toBe(true);
   });
 
   test("exact single-bit match returns true", () => {
     expect.hasAssertions();
+
     expect(checkHasPermission(RoomPermission.ReadMessages, RoomPermission.ReadMessages, false)).toBe(true);
   });
 
   test("missing single-bit returns false", () => {
     expect.hasAssertions();
+
     expect(checkHasPermission(RoomPermission.ReadMessages, RoomPermission.ManageRoom, false)).toBe(false);
   });
 

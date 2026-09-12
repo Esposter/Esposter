@@ -38,13 +38,14 @@ export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions 
   const sharedPackageStoreOptions = createSharedPackageStoreOptions(cwd, osCacheRoot);
   const corepackHome = join(osCacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
   mkdirSync(corepackHome, { recursive: true });
-  const wslLoginPath = process.platform === "win32" ? readWslLoginEnvironment().path : "";
+  const isWindows = process.platform === "win32";
+  const wslLoginPath = isWindows ? readWslLoginEnvironment().path : "";
   // On win32 the os backend REQUIRES the login-shell capture to place a Linux node on PATH; the support probe already
   // Proved WSL is present, so an empty capture is a *failed* capture (a cold-WSL login shell overrunning
   // WSL_LOGIN_ENVIRONMENT_TIMEOUT_MS, or a blocking rc), not "no WSL". Proceeding would run the command under the
   // Windows-interop PATH, where `corepack` resolves to the /mnt/c fnm shim and dies with a cryptic `node: not found`
   // (exit 127). Fail loud so the cause reads as a timeout to retry, not a real toolchain error.
-  if (process.platform === "win32" && !wslLoginPath)
+  if (isWindows && !wslLoginPath)
     throw new InvalidOperationError(
       Operation.Read,
       createOsExecOptions.name,

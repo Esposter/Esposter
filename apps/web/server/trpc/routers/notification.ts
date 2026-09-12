@@ -4,6 +4,7 @@ import type { RelationsFilter } from "drizzle-orm";
 
 import { readNotificationsInputSchema } from "#shared/models/db/notification/ReadNotificationsInput";
 import { ownedBy } from "@@/server/services/db/ownedBy";
+import { getUnreadNotificationsWhere } from "@@/server/services/notification/getUnreadNotificationsWhere";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -11,8 +12,8 @@ import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, notifications, selectNotificationSchema } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
-import { and, count, eq } from "drizzle-orm";
+import { Operation, takeOne } from "@esposter/shared";
+import { count, eq } from "drizzle-orm";
 
 export const notificationRouter = router({
   deleteNotification: standardAuthedProcedure
@@ -36,8 +37,9 @@ export const notificationRouter = router({
   readNotifications: standardAuthedProcedure
     .input(readNotificationsInputSchema)
     .query<ReadNotificationsResult>(async ({ ctx, input: { cursor, limit, sortBy } }) => {
+      const userId = ctx.getSessionPayload.user.id;
       const where: RelationsFilter<(typeof relations)["notifications"], typeof relations> = {
-        userId: { eq: ctx.getSessionPayload.user.id },
+        userId: { eq: userId },
       };
       if (cursor) where.RAW = (notification) => getCursorWhere(notification, cursor, sortBy);
       // The badge counts every unread row, not the ones a page happens to hold: unread notifications sit on pages
@@ -48,20 +50,17 @@ export const notificationRouter = router({
           orderBy: (notification) => parseSortByToSql(notification, sortBy),
           where,
         }),
-        ctx.db
-          .select({ count: count() })
-          .from(notifications)
-          .where(and(eq(notifications.userId, ctx.getSessionPayload.user.id), eq(notifications.isRead, false))),
+        ctx.db.select({ count: count() }).from(notifications).where(getUnreadNotificationsWhere(userId)),
       ]);
       return {
         paginationData: getCursorPaginationData(resultNotifications, limit, sortBy),
-        unreadCount: unreadCounts[0]?.count ?? 0,
+        unreadCount: takeOne(unreadCounts).count,
       };
     }),
   updateNotificationsReadStatus: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
     await ctx.db
       .update(notifications)
       .set({ isRead: true })
-      .where(and(eq(notifications.userId, ctx.getSessionPayload.user.id), eq(notifications.isRead, false)));
+      .where(getUnreadNotificationsWhere(ctx.getSessionPayload.user.id));
   }),
 });

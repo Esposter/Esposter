@@ -2,7 +2,7 @@ name: Get Build Cache Keys
 description: Compute the content hashes that key the package-builds and app-build caches, and the path list the package-builds entry is saved and restored with, shared by the workflows that save one and every workflow that restores one
 outputs:
   app-build-hash:
-    description: sha256 over every tracked file `pnpm build:web` could read — the package-builds inputs plus `apps/web`
+    description: sha256 over every tracked file `pnpm -C apps/web run build` could read — the package-builds inputs plus `apps/web`
     value: ${{ steps.keys.outputs.app-build-hash }}
   package-builds-hash:
     description: sha256 over every tracked file `pnpm build:packages` could read
@@ -22,11 +22,11 @@ runs:
     # Neither key subtracts a directory any more, because the tree states what each one covers. The package key
     # is a content hash (mode + blob hash + path) of the TRACKED files under `packages/` — the set that cache
     # holds a `dist` for — plus the root package.json (infra bundles it via
-    # `import packageJson from "../../../../package.json"`), the lockfile, the catalog and `virrun.config.ts`.
-    # Reading the lockfile and the catalog is what makes a dependency bump — a catalog version, a resolution —
-    # a new key rather than a stale hit; reading `virrun.config.ts` is what makes a change to the backend
-    # `pnpm build:web` runs under one, since the root package.json only carries the script that names `virrun`.
-    # The app key is that same walk plus `apps/web`, which is the rule a second app would follow with nothing
+    # `import packageJson from "../../../../package.json"`), the lockfile and the catalog. Reading the lockfile
+    # and the catalog is what makes a dependency bump — a catalog version, a resolution — a new key rather than
+    # a stale hit. `virrun.config.ts` is not an input: neither build runs under the sandbox, so the backend it
+    # picks moves nothing either key covers. The app key is that same walk plus `apps/web`, which is the rule a
+    # second app would follow with nothing
     # here edited. `apps/functions` and `apps/infra` are in neither: each builds inside the workflow that ships
     # it, from the source that workflow checked out, and a build measured in seconds earns no cache gate.
     #
@@ -59,7 +59,7 @@ runs:
         }
         readPackageInputs() {
           readTrackedInputs packages
-          git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml HEAD:virrun.config.ts
+          git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
         }
         {
           echo "app-build-hash=$({ readPackageInputs; readTrackedInputs apps/web; } | sha256sum | cut -d' ' -f1)"

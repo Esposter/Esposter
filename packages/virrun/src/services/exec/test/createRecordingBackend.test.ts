@@ -9,7 +9,7 @@ import { describe } from "vitest";
 export const createRecordingBackend = (
   result: ExecResult = { exitCode: 0, stderr: "", stdout: "" },
   onExec?: (options: ExecOptions) => void,
-): { calls: ExecOptions[]; exec: ExecBackend["exec"]; name: BackendType } => {
+): ExecBackend & { calls: ExecOptions[] } => {
   const calls: ExecOptions[] = [];
   return {
     calls,

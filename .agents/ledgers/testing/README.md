@@ -44,7 +44,7 @@ set of names across both ledgers.
 ## Find recipe
 
 ```bash
-pnpm sweep:constant-scope
+pnpm ai:sweep:constant-scope
 ```
 
 The scan lives in `scripts/src/sweeps/constantScope/` rather than in this file, because it is a program: a

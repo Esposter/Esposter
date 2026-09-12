@@ -36,14 +36,20 @@
   },
   "type": "module",
   "scripts": {
+    "ai:coderabbit:exclusions": "pnpm -C scripts run ai:coderabbit:exclusions",
+    "ai:coderabbit:feedback": "pnpm -C scripts run ai:coderabbit:feedback",
+    "ai:coderabbit:probe": "pnpm -C scripts run ai:coderabbit:probe",
+    "ai:coderabbit:window": "pnpm -C scripts run ai:coderabbit:window",
+    "ai:sweep:constant-scope": "pnpm -C scripts run ai:sweep:constant-scope",
+    "ai:sweep:repeated-list-items": "pnpm -C scripts run ai:sweep:repeated-list-items",
+    "ai:sweep:shared-export-consumers": "pnpm -C scripts run ai:sweep:shared-export-consumers",
+    "ai:sweep:skill-docs": "pnpm -C scripts run ai:sweep:skill-docs",
+    "ai:sweep:unterminated-results": "pnpm -C scripts run ai:sweep:unterminated-results",
     "bench": "pnpm -r --workspace-concurrency=1 --if-present run bench",
     "bench:ci": "vitest bench --run",
-    "build": "pnpm --filter \"@esposter/web^...\" --filter \"{.}^...\" run build && pnpm build:web",
+    "build": "pnpm --filter \"@esposter/web...\" run build",
     "build:docs": "virrun -- typedoc",
-    "build:functions": "pnpm -C apps/functions run build",
-    "build:infra": "pnpm -C apps/infra run build",
     "build:packages": "pnpm -r --filter \"./packages/*\" run build",
-    "build:web": "virrun -- pnpm -C apps/web run build",
     "coverage": "vitest run --coverage",
     "crossOS": "pnpm -C scripts run crossOS",
     "format": "oxfmt",
@@ -59,11 +65,6 @@
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
     "release": "pnpm format:check && pnpm build:packages && pnpm lint:packages && pnpm typecheck:packages && pnpm test:packages && lerna publish --yes",
     "start": "pnpm -C apps/web run start",
-    "sweep:constant-scope": "pnpm -C scripts run sweep:constant-scope",
-    "sweep:repeated-list-items": "pnpm -C scripts run sweep:repeated-list-items",
-    "sweep:shared-export-consumers": "pnpm -C scripts run sweep:shared-export-consumers",
-    "sweep:skill-docs": "pnpm -C scripts run sweep:skill-docs",
-    "sweep:unterminated-results": "pnpm -C scripts run sweep:unterminated-results",
     "test": "virrun -- vitest run",
     "test:packages": "virrun -- vitest run --project \"packages/*\"",
     "typecheck": "virrun -- tsc && virrun -- pnpm -r --parallel run typecheck",
@@ -112,7 +113,6 @@
     }
   },
   "scriptsComments": {
-    "bench:ci": "Not a shorter `pnpm bench`, and never run in its place. `bench` is `pnpm -r --workspace-concurrency=1`: every member owning a bench, one at a time, rewriting the committed `*.bench.md` a developer diffs. The concurrency flag is load-bearing twice over, because parallel benches skew each other's numbers and because the `scripts` cold-build bench deletes each `packages/*/dist` out from under a concurrent member still loading its `vitest.config.ts`, which surfaces as `Failed to resolve entry for package`. This one is a bare `vitest bench --run` at the root: one process over every project's bench files at once, which measures nothing anybody should compare and proves only that they all still execute. That is what the Bench workflow wants, and it is a script so the workflow names one rather than restating the command. See the `bench` skill.",
-    "build": "A deviation taken on purpose: the bare name means the whole workspace in a pnpm, turbo or nx repo alike, and here it means the web app plus the libraries it imports, because Railway runs `pnpm build` as its default build command. That makes this name a deploy entrypoint rather than a developer convenience, and widening it would have every deploy build two bundles it never ships. Two selectors, both derived rather than named. `--filter \"@esposter/web^...\"` is everything the app imports, in topological order, so nothing here knows which libraries exist. `--filter \"{.}^...\"` is what the root itself depends on, which is where the toolchain is declared — `virrun` above all, whose committed `bin/cli.js` imports a `dist` only its own build writes. The app does not import it, so the first selector cannot reach it, and a deploy that builds from source rather than from CI's `package-builds` artifact then dies inside `build:web` on `Cannot find module '.../packages/virrun/dist/cli.js'`. That is the whole reason for the second selector: here the toolchain is a build input, not a dependency. `^...` rather than the `{.}...` that `setup-packages` installs, because this one is a `run` — matching the root would have `build` recurse into itself. The two halves stay separate commands because only the second one belongs in the sandbox — a library's output is platform-neutral and read from host disk, so `virrun` would charge it the mirror tax for an isolation nothing wants, while the app build is the one that needs the Linux-generated `.nuxt` (see the virrun adoption page). `build:packages` is a third set: every library rather than the ones this app imports, which is what CI caches and hands to the checks, and the coverage shards build the two apps whose bundles the suite asserts against. @TODO: restore `pnpm build:docs` to the chain when a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
+    "build": "@TODO: restore `pnpm build:docs` to the chain when a bridge build grows the AST navigation API. TypeDoc exits 6 against the `typescript-native-bridge` alias, and `build` is what deploy runs, so the deploy would fail on documentation alone. `build:docs` stays as the probe. See the `build-docs` job in .github/workflows/CI.yaml."
   }
 }

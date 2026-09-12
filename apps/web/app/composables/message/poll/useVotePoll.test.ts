@@ -2,17 +2,13 @@
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
 
 import { useVotePoll } from "@/composables/message/poll/useVotePoll";
+import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { MessageType, StandardMessageEntity } from "@esposter/db-schema";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-// `authClient` is a better-auth dynamic-path Proxy, so useSession is not a configurable own property and cannot be
-// Spied on directly — mock the module and drive useSession through a hoisted mock instead
-const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<(fetcher?: unknown) => unknown>() }));
 
-vi.mock(import("@/services/auth/authClient"), () => ({
-  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
-}));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useVotePoll, () => {
   const server = setupMswTrpc();
@@ -37,7 +33,7 @@ describe(useVotePoll, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    useSessionMock.mockReturnValue({ data: ref({ user: { id: userId } }) });
+    useSession.mockReturnValue({ data: ref({ user: { id: userId } }) });
   });
 
   // The poll is a getter, so one instance answers for whatever the surface points it at. Read off the whole

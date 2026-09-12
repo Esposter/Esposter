@@ -21,6 +21,14 @@ export default {
       selector: "TryStatement",
     },
     {
+      // The caller's device is one function, and this literal is how a second spelling of it starts: the pair is
+      // What every event emitter takes to skip the client that caused the event, so it is written in one place.
+      message:
+        "Use `getDevice(getSessionPayload)` (server/services/auth/getDevice) rather than spelling the device literal.",
+      selector:
+        "ObjectExpression[properties.length=2][properties.0.key.name='sessionId'][properties.0.value.property.name='id'][properties.0.value.object.property.name='session'][properties.0.value.object.object.property.name='getSessionPayload'][properties.1.key.name='userId'][properties.1.value.property.name='id'][properties.1.value.object.property.name='user'][properties.1.value.object.object.property.name='getSessionPayload']",
+    },
+    {
       // The `A` prefix marks an abstract class, so an interface wearing it claims a construct it is not and
       // Sorts beside the classes it only resembles. The shared-shape interface takes `Base*` instead, which is
       // Also what the schema it sits beside is already called.

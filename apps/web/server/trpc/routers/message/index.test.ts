@@ -2,7 +2,7 @@
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { BlobDeletionEventGridData, MessageEntity } from "@esposter/db-schema";
+import type { BlobDeletionEventGridData, MessageEntity, MessageNotificationData } from "@esposter/db-schema";
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
 import type { MockInstance } from "vitest";
 
@@ -19,12 +19,15 @@ import { createMentionMessage } from "@@/server/trpc/routers/createMentionMessag
 import { createRoomMember } from "@@/server/trpc/routers/createRoomMember.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
+import { readRoomMembershipRows } from "@@/server/trpc/routers/readRoomMembershipRows.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import {
+  AppNotificationType,
   AzureContainer,
   AzureEntityType,
+  AzureFunction,
   AzureTable,
   getReverseTickedTimestamp,
   MessageCreationRejectionType,
@@ -56,6 +59,19 @@ const createOwnMentionMessage = () => createMentionMessage(getMockSession().user
 // A message addresses itself by the pair its own entity carries
 const getCompositeKey = ({ partitionKey, rowKey }: MessageEntity) => ({ partitionKey, rowKey });
 
+// What the Azure Function receives: the message as stored, and the thread root when the send was a reply.
+// Recipients are resolved at delivery from these fields alone, against the rules getMessageRecipientUserIds owns
+const createMessageNotificationData = (
+  messageText: string,
+  partitionKey: string,
+  rowKey: string,
+  threadRootRowKey?: string,
+): MessageNotificationData => ({
+  message: { message: messageText, partitionKey, rowKey, userId: getMockSession().user.id },
+  threadRootRowKey,
+  type: AppNotificationType.Message,
+});
+
 describe("messageRouter", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId } = setupRoomSuite();
   let mockContext: Context;
@@ -80,6 +96,12 @@ describe("messageRouter", () => {
     ],
     question: "question",
     votes: {},
+  });
+  const createPoll = () => messageCaller.createMessage({ message: pollMessage, roomId, type: MessageType.Poll });
+  // The two blobs one attachment owns, which every deletion path has to publish together
+  const getExpectedBlobDeletionData = (id: string) => ({
+    blobNames: [getBlobName(`${roomId}/${id}`, filename), getThumbnailBlobName(roomId, id)],
+    containerName: AzureContainer.MessageAssets,
   });
   // Every mock Azure client resolves in the same microtask drain, so two concurrent procedures run to completion
   // One after the other and never interleave on their own. The write is the seam the conditional-write tests
@@ -380,11 +402,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const newMessage = await messageCaller.createMessage({
-      message: pollMessage,
-      roomId,
-      type: MessageType.Poll,
-    });
+    const newMessage = await createPoll();
 
     expect(newMessage).toStrictEqual(
       new StandardMessageEntity({
@@ -404,11 +422,7 @@ describe("messageRouter", () => {
   test("votes on a poll", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({
-      message: pollMessage,
-      roomId,
-      type: MessageType.Poll,
-    });
+    const newMessage = await createPoll();
     const member = await createMember();
     const compositeKey = getCompositeKey(newMessage);
     // Joining posts a system message of its own, so the poll is read back by its own key rather than by position
@@ -439,11 +453,7 @@ describe("messageRouter", () => {
   test("keeps both votes when two members vote at once", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({
-      message: pollMessage,
-      roomId,
-      type: MessageType.Poll,
-    });
+    const newMessage = await createPoll();
     const member = await createMember();
     const ownerUserId = getMockSession().user.id;
     const compositeKey = getCompositeKey(newMessage);
@@ -467,12 +477,8 @@ describe("messageRouter", () => {
   test("fails vote with an option the poll does not offer", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({
-      message: pollMessage,
-      roomId,
-      type: MessageType.Poll,
-    });
-    const input = { optionId: crypto.randomUUID(), partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const newMessage = await createPoll();
+    const input = { optionId: crypto.randomUUID(), ...getCompositeKey(newMessage) };
 
     await expect(messageCaller.votePoll(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.Message, JSON.stringify(input)).message}]`,
@@ -488,21 +494,16 @@ describe("messageRouter", () => {
 
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
-    const newMessage = await messageCaller.createMessage({
-      message: pollMessage,
-      roomId,
-      type: MessageType.Poll,
-    });
+    const newMessage = await createPoll();
     await mockSessionOnce(mockContext.db, member);
 
     await expect(
       messageCaller.updateMessage({
         message: updatedMessage,
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
+        ...getCompositeKey(newMessage),
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.Message, JSON.stringify({ operation: MessageOperation.Update, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.Message, JSON.stringify({ operation: MessageOperation.Update, ...getCompositeKey(newMessage) })).message}]`,
     );
   });
 
@@ -622,8 +623,7 @@ describe("messageRouter", () => {
     });
     await messageCaller.updateMessage({
       message: updatedMessage,
-      partitionKey: newMessage.partitionKey,
-      rowKey: newMessage.rowKey,
+      ...getCompositeKey(newMessage),
     });
     const readMessages = await messageCaller.readMessages({ roomId });
 
@@ -647,8 +647,7 @@ describe("messageRouter", () => {
     await expect(
       messageCaller.updateMessage({
         message: updatedMessage,
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
+        ...getCompositeKey(newMessage),
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
@@ -664,8 +663,7 @@ describe("messageRouter", () => {
       () =>
         messageCaller.updateMessage({
           message: updatedMessage,
-          partitionKey: newMessage.partitionKey,
-          rowKey: newMessage.rowKey,
+          ...getCompositeKey(newMessage),
         }),
     );
 
@@ -707,9 +705,8 @@ describe("messageRouter", () => {
     const forwardedRoom = await roomCaller.createRoom({ name });
 
     await messageCaller.forwardMessage({
-      partitionKey: newMessage.partitionKey,
+      ...getCompositeKey(newMessage),
       roomIds: [forwardedRoom.id],
-      rowKey: newMessage.rowKey,
     });
 
     const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
@@ -727,9 +724,8 @@ describe("messageRouter", () => {
 
     await messageCaller.forwardMessage({
       message,
-      partitionKey: newMessage.partitionKey,
+      ...getCompositeKey(newMessage),
       roomIds: [forwardedRoom.id],
-      rowKey: newMessage.rowKey,
     });
 
     const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
@@ -763,9 +759,8 @@ describe("messageRouter", () => {
     await expect(
       messageCaller.forwardMessage({
         message: filteredMessage,
-        partitionKey: source.partitionKey,
+        ...getCompositeKey(source),
         roomIds: [filteredRoom.id, unfilteredRoom.id],
-        rowKey: source.rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
@@ -775,10 +770,7 @@ describe("messageRouter", () => {
     expect(unfilteredMessages.items.filter(({ isForward }) => isForward)).toHaveLength(1);
 
     // The sender is not timed out where nothing was blocked — the timeout only accompanies a real per-room block.
-    const [unfilteredMembership] = await mockContext.db
-      .select()
-      .from(usersToRoomsInMessage)
-      .where(and(eq(usersToRoomsInMessage.roomId, unfilteredRoom.id), eq(usersToRoomsInMessage.userId, member.id)));
+    const [unfilteredMembership] = await readRoomMembershipRows(mockContext.db, unfilteredRoom.id, member.id);
 
     expect(unfilteredMembership?.timeoutUntil).toBeNull();
   });
@@ -801,9 +793,8 @@ describe("messageRouter", () => {
 
     await expect(
       messageCaller.forwardMessage({
-        partitionKey: source.partitionKey,
+        ...getCompositeKey(source),
         roomIds: [firstFilteredRoom.id, secondFilteredRoom.id],
-        rowKey: source.rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
@@ -825,9 +816,8 @@ describe("messageRouter", () => {
 
     await expect(
       messageCaller.forwardMessage({
-        partitionKey: source.partitionKey,
+        ...getCompositeKey(source),
         roomIds: [filteredRoom.id],
-        rowKey: source.rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
@@ -836,9 +826,8 @@ describe("messageRouter", () => {
     await expect(
       messageCaller.forwardMessage({
         message: createMentionMessage(member.id),
-        partitionKey: source.partitionKey,
+        ...getCompositeKey(source),
         roomIds: [filteredRoom.id],
-        rowKey: source.rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
@@ -880,10 +869,9 @@ describe("messageRouter", () => {
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert(blobDeletionEvents);
 
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-      blobNames: [getBlobName(`${roomId}/${sasEntity.id}`, filename), getThumbnailBlobName(roomId, sasEntity.id)],
-      containerName: AzureContainer.MessageAssets,
-    });
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual(
+      getExpectedBlobDeletionData(sasEntity.id),
+    );
   });
 
   // The grant says which blob, never what it is called: the name is interpolated into a blob path that the
@@ -986,7 +974,7 @@ describe("messageRouter", () => {
     });
     setMessageAssetBlob(id);
 
-    await messageCaller.deleteFile({ id, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+    await messageCaller.deleteFile({ id, ...getCompositeKey(newMessage) });
 
     const updatedMessages = await messageCaller.readMessagesByRowKeys({
       roomId,
@@ -1036,16 +1024,15 @@ describe("messageRouter", () => {
 
     // Drop the send's own notification event so the assertion below is about the deletion and nothing else
     MockEventGridDatabase.clear();
-    await messageCaller.deleteFile({ id, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+    await messageCaller.deleteFile({ id, ...getCompositeKey(newMessage) });
 
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-      blobNames: [getBlobName(`${roomId}/${id}`, filename), getThumbnailBlobName(roomId, id)],
-      containerName: AzureContainer.MessageAssets,
-    });
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual(
+      getExpectedBlobDeletionData(id),
+    );
   });
 
   test("publishes thumbnail deletion on delete message", async () => {
@@ -1065,10 +1052,9 @@ describe("messageRouter", () => {
     assert(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-      blobNames: [getBlobName(`${roomId}/${id}`, filename), getThumbnailBlobName(roomId, id)],
-      containerName: AzureContainer.MessageAssets,
-    });
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual(
+      getExpectedBlobDeletionData(id),
+    );
   });
 
   test("fails delete file with non-existent file id", async () => {
@@ -1083,7 +1069,7 @@ describe("messageRouter", () => {
     setMessageAssetBlob(newFileId);
 
     await expect(
-      messageCaller.deleteFile({ id: deleteFileId, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
+      messageCaller.deleteFile({ id: deleteFileId, ...getCompositeKey(newMessage) }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(AzureEntityType.File, deleteFileId).message}]`,
     );
@@ -1105,9 +1091,8 @@ describe("messageRouter", () => {
       () => onCreateMessage,
       () =>
         messageCaller.forwardMessage({
-          partitionKey: newMessage.partitionKey,
+          ...getCompositeKey(newMessage),
           roomIds: [roomId],
-          rowKey: newMessage.rowKey,
         }),
     );
 
@@ -1136,8 +1121,7 @@ describe("messageRouter", () => {
     await expect(
       messageCaller.deleteFile({
         id,
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
+        ...getCompositeKey(newMessage),
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, AzureEntityType.Message, id).message}]`,
@@ -1301,9 +1285,8 @@ describe("messageRouter", () => {
     await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
     const member = await createMember();
     const forwardInput = {
-      partitionKey: source.partitionKey,
+      ...getCompositeKey(source),
       roomIds: [roomId],
-      rowKey: source.rowKey,
     };
 
     await mockSessionOnce(mockContext.db, member);
@@ -1448,10 +1431,7 @@ describe("messageRouter", () => {
       messageCaller.createMessage({ message: filteredMessage, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
-    const [membership] = await mockContext.db
-      .select()
-      .from(usersToRoomsInMessage)
-      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
+    const [membership] = await readRoomMembershipRows(mockContext.db, roomId, member.id);
 
     expect(membership?.timeoutUntil?.getTime()).toBeGreaterThanOrEqual(beforeCreateMessageTime + timeoutDurationMs);
   });
@@ -1514,5 +1494,41 @@ describe("messageRouter", () => {
     });
 
     expect(threadRootRowKeysAfterUnfollow).toHaveLength(0);
+  });
+
+  test("createMessage publishes one notification", async () => {
+    expect.hasAssertions();
+
+    const newMessage = await messageCaller.createMessage({ message: name, roomId });
+    const events = MockEventGridDatabase.get("");
+    assert.exists(events);
+
+    // Published unconditionally: whether anyone is subscribed is not a question the request path asks
+    expect(events).toHaveLength(1);
+    expect(takeOne(events).eventType).toBe(AzureFunction.ProcessNotification);
+    expect(takeOne(events).data).toStrictEqual(createMessageNotificationData(name, roomId, newMessage.rowKey));
+  });
+
+  test("createMessage reply publishes one notification carrying the thread root", async () => {
+    expect.hasAssertions();
+
+    const newRootMessage = await messageCaller.createMessage({ message: name, roomId });
+    // Ignore the root message's notification; assert only on the reply
+    MockEventGridDatabase.clear();
+
+    const newReplyMessage = await messageCaller.createMessage({
+      message: name,
+      replyRowKey: newRootMessage.rowKey,
+      roomId,
+    });
+    const events = MockEventGridDatabase.get("");
+    assert.exists(events);
+
+    // One event rather than two: a thread's followers widen the reply's recipient set instead of raising a
+    // Second notification that the first has to be de-duplicated against
+    expect(events).toHaveLength(1);
+    expect(takeOne(events).data).toStrictEqual(
+      createMessageNotificationData(name, roomId, newReplyMessage.rowKey, newRootMessage.rowKey),
+    );
   });
 });

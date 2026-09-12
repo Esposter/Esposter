@@ -8,7 +8,8 @@ import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 const checkNever = (): boolean => false;
-const checkIsSnapshotLowerPath = (relativePath: string): boolean => relativePath.startsWith(`${NODE_MODULES_DIRECTORY}/`);
+const checkIsSnapshotLowerPath = (relativePath: string): boolean =>
+  relativePath.startsWith(`${NODE_MODULES_DIRECTORY}/`);
 
 describe(buildFlushPlan, () => {
   test(`a ${OverlayEntryKind.Whiteout} becomes a single ${FlushOpType.Delete}`, () => {
@@ -16,7 +17,9 @@ describe(buildFlushPlan, () => {
 
     const entries: OverlayEntry[] = [{ kind: OverlayEntryKind.Whiteout, relativePath: TEST_FILENAME }];
 
-    expect(buildFlushPlan(entries, checkNever)).toStrictEqual([{ relativePath: TEST_FILENAME, type: FlushOpType.Delete }]);
+    expect(buildFlushPlan(entries, checkNever)).toStrictEqual([
+      { relativePath: TEST_FILENAME, type: FlushOpType.Delete },
+    ]);
   });
 
   test(`a ${OverlayEntryKind.Regular} entry becomes a single ${FlushOpType.Copy}`, () => {
@@ -24,7 +27,9 @@ describe(buildFlushPlan, () => {
 
     const entries: OverlayEntry[] = [{ kind: OverlayEntryKind.Regular, relativePath: TEST_FILENAME }];
 
-    expect(buildFlushPlan(entries, checkNever)).toStrictEqual([{ relativePath: TEST_FILENAME, type: FlushOpType.Copy }]);
+    expect(buildFlushPlan(entries, checkNever)).toStrictEqual([
+      { relativePath: TEST_FILENAME, type: FlushOpType.Copy },
+    ]);
   });
 
   test(`an ${OverlayEntryKind.OpaqueDir} expands to a ${FlushOpType.Delete} then a ${FlushOpType.Copy}`, () => {

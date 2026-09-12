@@ -73,7 +73,8 @@ flowchart LR
 | `app/composables/resource/list/useReadResourcesPage.ts`         | the shared paged reader: stale guard + filter-keyed count                |
 | `app/composables/resource/list/useDebouncedFilter.ts`           | field ↔ filter bridge that debounces typing                              |
 | `app/composables/resource/useExportResourcesCsv.ts`             | selected-rows + chunked full export with truncation warning              |
-| `server/trpc/routers/resource.ts`                               | filter schema, `getResourcesWhere`, bulk delete                          |
+| `server/trpc/routers/resource.ts`                               | filter schema, bulk delete                                               |
+| `server/services/resource/getResourcesWhere.ts`                 | the one filter source every list read and count shares                   |
 
 ## Notes
 

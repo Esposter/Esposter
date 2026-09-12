@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { hasCapability } from "#shared/services/resource/hasCapability";
+import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
@@ -22,7 +22,7 @@ const { isPending, publication } = storeToRefs(resourceStore);
 const { updateResourceTags } = resourceStore;
 const isTagsEditorOpen = ref(false);
 const tagRows = computed(() => Object.entries(resource.tags));
-const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
+const isPublishable = computed(() => checkHasCapability(resource.type, "publishable"));
 // The publication records the `contentVersion` it was published from, so whether the draft has moved since is
 // A comparison rather than a guess off two timestamps — `updatedAt` moves for a rename and a tag edit too, and
 // The publish itself writes nothing to the resource row for it to be compared against
@@ -45,7 +45,7 @@ onMounted(async () => {
   // Called on the local `type` rather than read off `isPublishable`, because it is the type guard that narrows
   // The router to the one carrying `readResourceViewCount`
   const { type } = resource;
-  if (!publication.value || !hasCapability(type, "publishable")) return;
+  if (!publication.value || !checkHasCapability(type, "publishable")) return;
 
   const { readResourceViewCount } = getResourceRouter(type);
   viewCount.value = await getResultAsync(() => readResourceViewCount.query({ id: resource.id })).unwrapOr(undefined);

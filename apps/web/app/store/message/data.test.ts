@@ -2,6 +2,7 @@
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { Router } from "vue-router";
 
+import { useSession } from "@/services/auth/authClient.test";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
@@ -17,11 +18,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
-const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<() => Ref<MockSessionValue>>() }));
-
-vi.mock(import("@/services/auth/authClient"), () => ({
-  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
-}));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useDataStore, () => {
   const server = setupMswTrpc();
@@ -43,13 +40,13 @@ describe(useDataStore, () => {
 
   // The store reads only `session.value.data.user.id`, so signing in is that slice of the session ref
   const signIn = () => {
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
   };
 
   beforeEach(() => {
     setActivePinia(createPinia());
     router.currentRoute.value.params.id = roomId;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });
 
   afterEach(() => {

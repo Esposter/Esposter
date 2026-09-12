@@ -4,8 +4,9 @@ import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
 import { usePhaserStore } from "#src/store/index";
 import { ExternalSceneStore } from "#src/store/scene";
 import { createSceneClass } from "#src/util/createSceneClass";
-import { resetLifecycleListeners } from "#src/util/hooks/resetLifecycleListeners";
 import { runLifecycleListeners } from "#src/util/hooks/runLifecycleListeners";
+import { runSceneShutdown } from "#src/util/hooks/runSceneShutdown";
+import { NotInitializedError } from "@esposter/shared";
 import { Game, HEADLESS, Scenes } from "phaser";
 import { createPinia, setActivePinia } from "pinia";
 import { afterAll, beforeAll, describe } from "vitest";
@@ -24,23 +25,17 @@ export const startTestScene = (key: string): SceneWithPlugins => {
     ExternalSceneStore.sceneReadyMap.set(key, true);
   };
   const shutdownListener = () => {
-    resetLifecycleListeners(scene, Lifecycle.Update);
-    resetLifecycleListeners(scene, Lifecycle.NextTick);
-    runLifecycleListeners(scene, Lifecycle.Shutdown);
-    ExternalSceneStore.sceneReadyMap.set(key, false);
+    runSceneShutdown(scene);
   };
   scene.events.on(Scenes.Events.READY, readyListener);
   scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
   testGame.scene.start(key);
   return scene;
 };
-/**
- * Advance the scene N times, firing onUpdate and onNextTick listeners.
- * Calls lifecycle listeners directly rather than going through game.step()
- * because the HEADLESS renderer is null and game.step() calls renderer.preRender().
- */
-export const stepScene = (scene: SceneWithPlugins, n = 1): void => {
-  for (let i = 0; i < n; i++) {
+// Advances the scene by firing its onUpdate and onNextTick listeners directly: the HEADLESS renderer is null, so
+// Game.step() would fall over in renderer.preRender()
+export const stepScene = (scene: SceneWithPlugins, steps = 1): void => {
+  for (let step = 0; step < steps; step++) {
     runLifecycleListeners(scene, Lifecycle.Update, false);
     runLifecycleListeners(scene, Lifecycle.NextTick);
   }
@@ -64,7 +59,7 @@ beforeAll(() => {
   });
   // Document.readyState is stubbed to 'complete' in setupCanvas.ts so Phaser boots
   // Synchronously inside the constructor — check isBooted instead of waiting for 'ready'
-  if (!testGame.isBooted) throw new Error("Phaser game failed to boot synchronously");
+  if (!testGame.isBooted) throw new NotInitializedError(Game.name);
   // Stop the automatic Request Animation Frame (RAF) loop — the browser API that drives
   // Phaser's game loop — so it never fires testGame.step() unexpectedly during tests.
   testGame.loop.sleep();

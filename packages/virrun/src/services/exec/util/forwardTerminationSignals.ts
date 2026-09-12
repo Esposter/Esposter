@@ -2,7 +2,6 @@ import type { ChildProcess } from "node:child_process";
 
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { getResult, noop } from "@esposter/shared";
-
 // Bridge the parent's termination signals to the spawned child so Ctrl+C actually stops the run. Killing the
 // Child alone is not enough on every backend: the native and linux-bwrap children are the process tree's root
 // (killing bwrap collapses its PID namespace), but the wsl backend's child is the Windows `wsl.exe` client —

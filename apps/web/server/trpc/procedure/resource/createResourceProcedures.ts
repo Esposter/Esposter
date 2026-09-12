@@ -17,9 +17,9 @@ import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateReso
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
+import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
+import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
-import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
@@ -77,9 +77,11 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const { transformPublishedContent } = (args[0] ?? {}) as unknown as PublishableResourceProcedureOptions<
     ResourceContent<TType>
   >;
-  // Annotated so the generic content schema resolves to a concrete type for destructuring.
-  // Both the output and input sides are declared — leaving the input side defaulted to unknown
-  // Would erase the procedure's input type for consumers like achievement condition paths.
+  // Annotated so the generic content schema resolves to a concrete type for destructuring: `contentSchema` is
+  // Read off the map by a generic key, so zod infers the union of every type's content, and the procedure's
+  // Input then reaches the stores as a union none of them can index. Both the output and input sides are
+  // Declared — leaving the input side defaulted to unknown would erase the procedure's input type for
+  // Consumers like achievement condition paths.
   const saveResourceContentInputSchema = z.object({
     content: contentSchema,
     contentVersion: selectResourceSchema.shape.contentVersion,
@@ -190,7 +192,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
                 .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
                 .returning()
             )[0];
-            if (!savedResource) throw new TRPCError({ code: "BAD_REQUEST", message: staleContentVersionErrorMessage });
+            if (!savedResource)
+              throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
 
             return savedResource;
           },
@@ -451,8 +454,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
   };
   return {
     ...baseProcedures,
-    ...(hasCapability(type, "fileAssets") ? fileAssetsProcedures : {}),
-    ...(hasCapability(type, "publishable") ? publishProcedures : {}),
+    ...(checkHasCapability(type, "fileAssets") ? fileAssetsProcedures : {}),
+    ...(checkHasCapability(type, "publishable") ? publishProcedures : {}),
   } as (TType extends FileAssetsResourceType ? typeof fileAssetsProcedures : unknown) &
     (TType extends PublishableResourceType ? typeof publishProcedures : unknown) &
     typeof baseProcedures;

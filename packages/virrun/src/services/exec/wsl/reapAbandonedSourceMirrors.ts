@@ -12,7 +12,8 @@ import { join } from "node:path";
 // Path it holds is provably absent (existsSync false). A blank marker (a first-run partial another process is
 // Mid-writing) is left alone — reap only what we can prove abandoned, never a concurrent live run's mirror.
 //
-// An entry with NO marker is the one case the marker can't settle, and treating it as untouchable leaked forever:
+// An entry with NO marker is the one case the marker can't settle, and treating it as untouchable would leak it
+// Forever:
 // CreateWslSourceMirrorSync publishes the marker the instant it creates the entry dir AND republishes it from any
 // Later planning pass that finds it missing — including the no-delta early return a live repo takes on nearly every
 // Run — so an absent marker means no planning pass has completed for this entry since it died. Age settles it: past

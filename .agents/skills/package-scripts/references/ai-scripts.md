@@ -1,0 +1,20 @@
+# The `ai:` Script Catalogue
+
+Read when a sweep, a review or a skill needs the script that runs its scan — every root `ai:<domain>:<verb>`
+entry, what it prints, and what it costs. The naming rule is the `skill-authoring` skill's (`references/embedded-recipes.md`);
+this page is the list.
+
+Each is a `pnpm -C scripts run <same name>` delegation to `scripts`, which owns the source under
+`scripts/src/<domain>/<verb>/` with a colocated test. One `ai:sweep:*` per scan.
+
+| Command                                   | Prints                                                                                                                                                                                                                                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm ai:coderabbit:exclusions "<range>"` | The `path_filters` lines for the files a `<base>..<head>` range lets out of review — pure renames, import-path-only edits and, given `<rename-sha> OldName=NewName …` after the range, rename-token-only edits — never a protected class (`coderabbit` skill, `references/exclusions.md`). |
+| `pnpm ai:coderabbit:feedback "<pr>"`      | The newest review's buckets, its unresolved threads with the comment id a reply needs, the stated counts reconciled against them, and the walkthrough's merge risk and pre-merge checks.                                                                                                   |
+| `pnpm ai:coderabbit:probe "<pr>"`         | Posts `@coderabbitai review` and waits for the bot's answer — `Already reviewed` means the checkpoint covers the head. **Spends a review slot when it does start one.**                                                                                                                    |
+| `pnpm ai:coderabbit:window "<pr>"`        | The last reviewed sha, the files pushed since it, and the files the next push would add.                                                                                                                                                                                                   |
+| `pnpm ai:sweep:constant-scope`            | One sweep find recipe, as a tested script rather than a ledger code block (`sweeps` skill).                                                                                                                                                                                                |
+| `pnpm ai:sweep:repeated-list-items`       | A component writing three or more `v-list-item`s out one by one, with no `v-for` anywhere in it.                                                                                                                                                                                           |
+| `pnpm ai:sweep:shared-export-consumers`   | Every `packages/shared` export naming fewer than two consumer packages, which is what earns a place there.                                                                                                                                                                                 |
+| `pnpm ai:sweep:skill-docs`                | The skill tree structural check: a page over budget, a reference nothing indexes, a citation resolving nowhere.                                                                                                                                                                            |
+| `pnpm ai:sweep:unterminated-results`      | Every `getResult` call, matched to its closing bracket, whose chain nothing terminates.                                                                                                                                                                                                    |

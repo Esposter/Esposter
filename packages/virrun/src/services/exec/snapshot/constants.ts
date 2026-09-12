@@ -19,7 +19,8 @@ export const VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME = "leases";
 // The reap prefixes every pid-tagged capture/persist temp starts with inside a snapshot/prepare hash dir, ordered
 // Longest-first so a persist temp (`upper.persist.<pid>.<rand>`) matches its own prefix rather than the shorter
 // `upper.`. They never match the published bare `upper`/`work` (no trailing `.`) or the `leases/` sibling.
-// A `reapStaleTemps` pass reads the owner pid back out of each match (parseTempOwnerPid) and reclaims only a dead owner's corpse.
+// A `reapStaleTemps` pass reads the owner pid back out of each match (parseTempOwnerPid) and reclaims only a dead
+// Owner's corpse.
 export const VIRRUN_SNAPSHOT_TEMP_PREFIXES: readonly string[] = [
   `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`,
   `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`,
@@ -34,8 +35,9 @@ export const VIRRUN_SNAPSHOT_TEMP_PREFIXES: readonly string[] = [
 // Longer read in-sandbox: the prepare layer regenerates a Linux `.nuxt` that shadows it.
 export const SETUP_COMMAND_WIN32 = "corepack pnpm install --frozen-lockfile";
 export const SETUP_COMMAND_LINUX = "pnpm install --frozen-lockfile";
-// Linux-side fs primitives for write-back (specs/write-back.md → "Execution locus"); classification + ordering stay
-// In tested TS. python3 over getfattr — it reads the opaque xattr and walks in one ubiquitous tool.
+// Linux-side fs primitives for write-back (apps/web/content/docs/virrun/write-back.md, "Execution locus");
+// Classification + ordering stay in tested TS. python3 over getfattr — it reads the opaque xattr and walks in one
+// Ubiquitous tool.
 // PROBE (argv: upperDir, snapshotDir) emits a JSON manifest of raw facts per upper entry, including whether each
 // Path is supplied by the snapshot lower (a dep-tree write to skip), validated by zod in parseOverlayManifest.
 export const OVERLAY_PROBE_SCRIPT = `

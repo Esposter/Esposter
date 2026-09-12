@@ -5,7 +5,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | Unit                                                                       | Swept      | Notes                                                                                        |
 | -------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
 | `packages/shared`, `packages/shared-node`                                  | 2026-08-30 |                                                                                              |
-| `app/shared/services`, `app/shared/util`                                   | 2026-08-27 | `getSynchronizedFunction`'s second export is the exclusion below                             |
+| `app/shared/services`, `app/shared/util`                                   | 2026-09-11 | `getSynchronizedFunction`'s second export is the exclusion below                             |
 | `app/shared/models/db`                                                     | 2026-09-06 |                                                                                              |
 | `app/shared/models/resource`                                               | 2026-09-06 |                                                                                              |
 | `app/shared/models/dungeons`                                               | 2026-09-06 |                                                                                              |
@@ -62,7 +62,7 @@ The ≥2-consumers rule is answered by counting the **packages** that name each 
 in memory rather than a grep per name:
 
 ```bash
-pnpm sweep:shared-export-consumers
+pnpm ai:sweep:shared-export-consumers
 ```
 
 It excludes the export's own **package**, not merely its own file: `packages/shared` naming its own export is the

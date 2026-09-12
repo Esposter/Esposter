@@ -3,7 +3,10 @@ import type { PrepareStep } from "#src/models/virrun/PrepareStep";
 
 import { computeSourceTreeHash } from "#src/services/exec/cache/computeSourceTreeHash";
 import { computeEnvironmentKey } from "#src/services/exec/snapshot/computeEnvironmentKey";
-import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
+import {
+  VIRRUN_PREPARE_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
+} from "#src/services/exec/snapshot/constants";
 import { getGlobalCacheDirectory } from "#src/services/exec/util/getGlobalCacheDirectory";
 import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRoot";
 import { createHash } from "node:crypto";
@@ -14,8 +17,8 @@ import { join } from "node:path";
 // Task cache; git-based, cheap on a clean tree, moves on any staged/unstaged/untracked change) so editing source
 // Re-provisions the layer while the deps snapshot is untouched, and (c) the resolved prepare step, so changing the
 // Environment preset can't serve a layer built for another. The source hash is taken at the workspace root so the
-// Key is stable regardless of which subdirectory virrun was invoked from. A non-git repo yields a null source hash → one static entry (the layer
-// Still works, it just won't auto-refresh on source edits, matching the freeze fallback).
+// Key is stable regardless of which subdirectory virrun was invoked from. A non-git repo yields a null source hash →
+// One static entry (the layer still works, it just won't auto-refresh on source edits, matching the freeze fallback).
 export const resolvePrepareLocation = (cwd: string, prepareStep: PrepareStep): PrepareLocation => {
   const key = createHash("sha256")
     .update(computeEnvironmentKey(cwd))

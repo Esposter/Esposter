@@ -1,6 +1,6 @@
 # Modelling a Type Instead of Working Around It
 
-For the moments a type is awkward: reaching for a cast, re-declaring fields a source type already has, dispatching per variant, or a module config key the compiler can't see.
+For the moments a type is awkward: reaching for a cast, re-declaring fields a source type already has, dispatching per variant, a module config key the compiler can't see, or a TS2590 it cannot represent.
 
 ## `as unknown as` is `any` with extra steps
 
@@ -22,10 +22,13 @@ What survives is **seams the type system genuinely cannot express**. Most live i
 
 A few are unavoidable in production source, and both known kinds share a tell — **TS refuses the single `as T` for want of overlap**, which is the compiler confirming there is nothing to narrow rather than you overruling it:
 
-- **A library result type that cannot express what it carries** — e.g. a search hit that declares none of the fields the index was told to store. There is no index signature to annotate against and no overlap to cast through.
+- **A library result type that cannot express what it carries** — e.g. a search hit that declares its stored fields behind an `any` index signature, which satisfies no required property. There is nothing to annotate against and no overlap to cast through.
 - **A transform whose key mapping is runtime-only** — `Object.fromEntries` over renamed keys types as a bare `Record`, which overlaps no class. Restate the shape only where something else already pins it (the source's own document type).
+- **A generic read off a map by a generic key** — `z.object({ content: DefinitionMap[type].contentSchema })` infers the union of every entry's schema, not the one `TType` names, and the union reaches every consumer as a shape none of them can index. The annotation restates what the key already pins.
 
 Prefer a single `as T` whenever TS accepts it, and comment **what the compiler cannot see** — never "this is safe". Adding one to production source earns the same scrutiny as reaching for `any`: if the shape is worth asserting, it is worth declaring.
+
+What TS accepts is settled by one rule — **one side must be assignable to the other**. A single `as` holds for a fake that is a **subset** of its target: an `EventEmitter` standing in for a `ChildProcess`, a phantom-branded intersection (`TableClient` → `TableClient & { entityType }`), an `Except<T, K>` back to `T`, an object literal of a few members typed against an interface with many, a `defineComponent` stub against a library component, and a `Mock<F>` against a non-overloaded `F`. It never holds for a class fake against an SDK class (`MockContainerClient` → `ContainerClient`), a hand-rolled object against a class with fields the object lacks, a deep-partial stub against a `Database` or a store, or a `Mock` against an overload set — every one of those is a genuine `as unknown as`, and the single form is a typecheck error rather than a judgement call. Write the single form first and let the compiler answer.
 
 ## Configuration interfaces — `Pick` from source types
 
@@ -101,3 +104,10 @@ The interface lives in `app/models/`, models the **whole** record rather than th
 and keeps the source's casing verbatim — a `/* eslint-disable camelcase */` with a reason beats renaming keys
 the file does not have. Optionality is looked up in the data, never guessed. It earns one shape test
 (`testing` skill).
+
+## A compiler limit is a `@ts-expect-error`, not a redesign
+
+TS2590 fires where a large component instance type meets a composable's element union. Suppress in place, tagged
+with the code and message:
+`// @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.` Never move a template ref to another element to dodge it — the directive fails the build once the
+error stops firing, where the workaround silently changes what the ref points at.

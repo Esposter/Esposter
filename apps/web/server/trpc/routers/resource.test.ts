@@ -16,21 +16,15 @@ import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/co
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { getContentBlobName } from "@esposter/db";
-import {
-  AzureContainer,
-  AzureQueue,
-  AzureTable,
-  ResourceActivityType,
-  resources,
-  ResourceType,
-} from "@esposter/db-schema";
+import { AzureContainer, AzureQueue, AzureTable, ResourceActivityType, ResourceType } from "@esposter/db-schema";
 import { ID_SEPARATOR, jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -54,6 +48,7 @@ const readPublishedBlobSizes = (id: string): number[] => {
 };
 
 describe("resourceRouter", () => {
+  const { getCaller, getMockContext } = setupResourceSuite(resourceRouter);
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
@@ -78,9 +73,9 @@ describe("resourceRouter", () => {
       id: webpageResource.id,
     });
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(resourceRouter)(mockContext);
+  beforeAll(() => {
+    mockContext = getMockContext();
+    caller = getCaller();
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     todoListCaller = createCallerFactory(todoListRouter)(mockContext);
@@ -95,13 +90,11 @@ describe("resourceRouter", () => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     vi.useRealTimers();
     resourceEventEmitter.removeAllListeners("saveResourceContent");
-    MockContainerDatabase.clear();
     MockServiceBusDatabase.clear();
     MockTableDatabase.clear();
-    await mockContext.db.delete(resources);
   });
 
   test("reads empty resources", async () => {

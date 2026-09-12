@@ -29,6 +29,7 @@ export const userStatusesInMessage = pgTable(
     schema: messageSchema,
   },
 );
+
 export type UserStatusInMessage = typeof userStatusesInMessage.$inferSelect;
 
 export const selectUserStatusInMessageSchema = createSelectSchema(userStatusesInMessage, {

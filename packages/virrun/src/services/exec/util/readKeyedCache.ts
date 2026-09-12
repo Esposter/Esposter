@@ -18,8 +18,7 @@ export const readKeyedCache = <TValue>(
 ): TValue | undefined =>
   getResult(() => createKeyedCacheSchema(valueSchema).parse(parseMachineJson(readFileSync(file, "utf8")))).match(
     (cache) => {
-      if (cache.key !== key) return undefined;
-      else if (maxAgeMs !== undefined && Date.now() - cache.storedAtMs > maxAgeMs) return undefined;
+      if (cache.key !== key || (maxAgeMs !== undefined && Date.now() - cache.storedAtMs > maxAgeMs)) return undefined;
       else return cache.value;
     },
     () => undefined,

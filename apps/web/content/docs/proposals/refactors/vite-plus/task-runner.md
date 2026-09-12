@@ -7,7 +7,7 @@ description: Replace the two hand-rolled content-hash caches with `vp run --cach
 
 Three caches currently decide whether work is skipped in this repository, and they disagree about what an input is.
 
-- **`package-builds`** — a `git ls-tree` content hash over every tracked file under `packages/`, plus the root manifest, the lockfile, the catalog and the virrun config, computed by the `get-build-cache-keys` composite action and read by five workflows.
+- **`package-builds`** — a `git ls-tree` content hash over every tracked file under `packages/` less the three subtractions below, plus the root manifest, the lockfile and the catalog, computed by the `get-build-cache-keys` composite action and read by five workflows. The virrun config is deliberately not an input: neither build runs under the sandbox.
 - **`app-build`** — the same walk plus `apps/web`, keying a marker file that records only that this exact tree built green.
 - **virrun's task cache** — content-keyed on environment key, working tree and command, replaying a recorded diff and the captured streams on a hit. Default-on locally, off in CI, because a fresh commit changes the tree hash and hits are near zero ([virrun task cache](/docs/virrun/task-cache)).
 
@@ -67,7 +67,7 @@ Files in the second set and not the first are the over-invalidation the migratio
 
 Two failure modes to probe in the same spike, because both would end the phase:
 
-- **Tracing through the sandbox.** Input tracing observes syscalls. `pnpm build:web` runs inside virrun's bubblewrap RAM overlay on a Windows host, and whether a traced input set survives an overlay mount — and whether the paths it records are host paths or sandbox paths — is unknown. On Linux the config resolves the native passthrough backend, so CI is the easy case and the dev loop is the hard one.
+- **Tracing through the sandbox.** Input tracing observes syscalls. Every build runs native, but the checks `vp` would cache next — `typecheck`, `test`, `lint` — run inside virrun's bubblewrap RAM overlay on a Windows host, and whether a traced input set survives an overlay mount — and whether the paths it records are host paths or sandbox paths — is unknown. On Linux the config resolves the native passthrough backend, so CI is the easy case and the dev loop is the hard one.
 - **Tracing a build that spawns workers.** tsdown and Nuxt both fan out to child processes. A tracer that only sees the parent's reads would produce a key that is confidently wrong, which is worse than the conservative key it replaces.
 
 ## Early cutoff stays unowned

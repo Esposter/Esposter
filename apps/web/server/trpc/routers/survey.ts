@@ -11,11 +11,11 @@ import { transformPublishedBlobUrls } from "@@/server/services/resource/transfor
 import { getInvalidParticipantTokenError } from "@@/server/services/survey/getInvalidParticipantTokenError";
 import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
 import { readSurveyResponsesCount } from "@@/server/services/survey/readSurveyResponsesCount";
+import { requireSurveyResponse } from "@@/server/services/survey/requireSurveyResponse";
 import { resolveSurveyResponseRead } from "@@/server/services/survey/resolveSurveyResponseRead";
 import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
-import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
@@ -42,11 +42,7 @@ export const surveyRouter = router({
     async ({ ctx, input: { rowKey } }) => {
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       // Existence is proven before deleting so a second delete of the same key errors rather than silently passing
-      await requireEntity(
-        getEntity(surveyResponseClient, SurveyResponseEntity, ctx.resource.id, rowKey),
-        AzureEntityType.SurveyResponse,
-        JSON.stringify({ partitionKey: ctx.resource.id, rowKey }),
-      );
+      await requireSurveyResponse(surveyResponseClient, ctx.resource.id, rowKey);
       await surveyResponseClient.deleteEntity(ctx.resource.id, rowKey);
     },
   ),
@@ -82,11 +78,7 @@ export const surveyRouter = router({
     .mutation<SurveyResponseEntity>(async ({ ctx, input }) => {
       const participantToken = await resolveSurveyResponseWrite(ctx.db, input.partitionKey, input.participantToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-      const surveyResponse = await requireEntity(
-        getEntity(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
-        AzureEntityType.SurveyResponse,
-        JSON.stringify({ partitionKey: input.partitionKey, rowKey: input.rowKey }),
-      );
+      const surveyResponse = await requireSurveyResponse(surveyResponseClient, input.partitionKey, input.rowKey);
       // A resume must carry the identity it started with, so swapping tokens mid-response is a forgery.
       // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
       if (participantToken && participantToken !== surveyResponse.participantToken)
@@ -97,8 +89,8 @@ export const surveyRouter = router({
       if (JSON.stringify(input.model) === JSON.stringify(surveyResponse.model) && input.pageNo <= surveyResponse.pageNo)
         throw getInvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model");
 
-      input.modelVersion++;
-      if (input.modelVersion <= surveyResponse.modelVersion)
+      const modelVersion = input.modelVersion + 1;
+      if (modelVersion <= surveyResponse.modelVersion)
         throw getInvalidOperationError(
           Operation.Update,
           AzureEntityType.SurveyResponse,
@@ -107,7 +99,11 @@ export const surveyRouter = router({
       // The resolved token is written, never the caller's — a stale token cannot ride an Anonymous write.
       // An empty resolution keeps the identity the response was created with, so a live switch to
       // Anonymous never erases who answered from the program funnel
-      const updatedSurveyResponse = { ...input, participantToken: participantToken || surveyResponse.participantToken };
+      const updatedSurveyResponse = {
+        ...input,
+        modelVersion,
+        participantToken: participantToken || surveyResponse.participantToken,
+      };
       await updateEntity(surveyResponseClient, updatedSurveyResponse);
       return Object.assign(surveyResponse, updatedSurveyResponse);
     }),

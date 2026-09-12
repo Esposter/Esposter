@@ -11,7 +11,7 @@ import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import {describe, expect, test, vi} from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(
   import("#src/services/exec/util/getSandboxNodeVersion"),

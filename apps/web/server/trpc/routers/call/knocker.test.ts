@@ -1,3 +1,4 @@
+import type { KnockerInput } from "#shared/models/db/call/KnockerInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -5,37 +6,32 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createId } from "#shared/util/math/random/createId";
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
-import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 import { deleteCallParticipant } from "@@/server/services/message/call/deleteCallParticipant";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
-import { callRouter } from "@@/server/trpc/routers/call";
-import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
+import { getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { setCallParticipant } from "@@/server/trpc/routers/call/setCallParticipant.test";
-import { CALL_ID_LENGTH, callSessionsInMessage, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
+import { setupCallSuite } from "@@/server/trpc/routers/call/setupCallSuite.test";
+import { CALL_ID_LENGTH, DatabaseEntityType } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("knockerRouter", () => {
+  const { getCallCaller, getMockContext } = setupCallSuite();
   let mockContext: Context;
   let callSessionCaller: DecorateRouterRecord<TRPCRouter["callSession"]>;
   let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
   const nonExistentCallSessionId = createId(CALL_ID_LENGTH);
+  // Admitting and dismissing share the one doorkeeper guard; the gate whose message does not name the action is
+  // Asserted once for both, the two that do stay written out (`testing` skill, error assertions)
+  const doorkeeperMutations = [
+    { action: "admit", mutate: (input: KnockerInput) => knockerCaller.admitKnocker(input) },
+    { action: "dismiss", mutate: (input: KnockerInput) => knockerCaller.dismissKnocker(input) },
+  ];
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    callSessionCaller = createCallerFactory(callRouter)(mockContext);
-    knockerCaller = createCallerFactory(knockerRouter)(mockContext);
-  });
-
-  afterEach(async () => {
-    callAdmittedParticipantMap.clear();
-    callKnockerMap.clear();
-    callSessionParticipantMap.clear();
-    await mockContext.db.delete(callSessionsInMessage);
-    await mockContext.db.delete(roomsInMessage);
-    vi.restoreAllMocks();
+  beforeAll(() => {
+    mockContext = getMockContext();
+    callSessionCaller = getCallCaller();
+    knockerCaller = callSessionCaller.knocker;
   });
 
   test("knockCall adds the knocker to the map and emits it", async () => {
@@ -149,37 +145,17 @@ describe("knockerRouter", () => {
     );
   });
 
-  test("fails admitKnocker with a non-existent call", async () => {
+  test.each(doorkeeperMutations)("fails $action with a non-existent call", async ({ mutate }) => {
     expect.hasAssertions();
 
     const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
     setCallParticipant(nonExistentCallSessionId, sessionPayload);
 
     await expect(
-      knockerCaller.admitKnocker({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),
+      mutate({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, nonExistentCallSessionId).message}]`,
     );
-  });
-
-  test("dismissKnocker removes the knocker and emits it", async () => {
-    expect.hasAssertions();
-
-    const creatorPayload = getMockSession();
-    const { callSessionId } = await callSessionCaller.createCall();
-    const { session: knockerSession } = await mockSessionOnce(mockContext.db);
-    await knockerCaller.knockCall({ id: callSessionId });
-    setCallParticipant(callSessionId, creatorPayload);
-    const emitSpy = vi.spyOn(callEventEmitter, "emit");
-    replayMockSession(creatorPayload);
-
-    await knockerCaller.dismissKnocker({ callSessionId, sessionId: knockerSession.id });
-
-    expect(callKnockerMap.get(callSessionId)?.has(knockerSession.id)).toBe(false);
-    expect(emitSpy).toHaveBeenCalledExactlyOnceWith("knockerDismissed", {
-      callSessionId,
-      knockerSessionId: knockerSession.id,
-    });
   });
 
   test("fails dismissKnocker with a caller who is not in the call", async () => {
@@ -213,16 +189,23 @@ describe("knockerRouter", () => {
     );
   });
 
-  test("fails dismissKnocker with a non-existent call", async () => {
+  test("dismissKnocker removes the knocker and emits it", async () => {
     expect.hasAssertions();
 
-    const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    setCallParticipant(nonExistentCallSessionId, sessionPayload);
+    const creatorPayload = getMockSession();
+    const { callSessionId } = await callSessionCaller.createCall();
+    const { session: knockerSession } = await mockSessionOnce(mockContext.db);
+    await knockerCaller.knockCall({ id: callSessionId });
+    setCallParticipant(callSessionId, creatorPayload);
+    const emitSpy = vi.spyOn(callEventEmitter, "emit");
+    replayMockSession(creatorPayload);
 
-    await expect(
-      knockerCaller.dismissKnocker({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, nonExistentCallSessionId).message}]`,
-    );
+    await knockerCaller.dismissKnocker({ callSessionId, sessionId: knockerSession.id });
+
+    expect(callKnockerMap.get(callSessionId)?.has(knockerSession.id)).toBe(false);
+    expect(emitSpy).toHaveBeenCalledExactlyOnceWith("knockerDismissed", {
+      callSessionId,
+      knockerSessionId: knockerSession.id,
+    });
   });
 });

@@ -3,6 +3,7 @@ import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { readUserAchievementsInputSchema } from "#shared/models/db/achievement/ReadUserAchievementsInput";
 import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
+import { achievementPointsSummation } from "@@/server/services/achievement/achievementPointsSummation";
 import { buildPointsLeaderboard } from "@@/server/services/achievement/buildPointsLeaderboard";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { on } from "@@/server/services/events/on";
@@ -11,16 +12,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { achievements, UserAchievementRelations, userAchievements, users } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { count, eq, isNotNull, sql } from "drizzle-orm";
-
-// Points live in the definition map, not the DB, so the summation injects them as a CASE over the
-// Achievement name — keeping the aggregation in SQL bounds the result set to one row per user.
-const achievementPointsSummation = sql<number>`sum(case ${achievements.name} ${sql.join(
-  Object.entries(AchievementDefinitionMap).map(
-    ([achievementName, { points }]) => sql`when ${achievementName} then ${points}`,
-  ),
-  sql` `,
-)} else 0 end)::int`;
+import { count, eq, isNotNull } from "drizzle-orm";
 
 export const achievementRouter = router({
   onUpdateAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {

@@ -1,6 +1,7 @@
 import { Color } from "#src/models/cli/Color";
 import { colorize } from "#src/services/cli/color/colorize";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
+import { joinCommand } from "#src/services/cli/format/joinCommand";
 // Printed (stderr) when a cached run FAILS reaching the network. A cached run is sandboxed offline so its result stays
 // Determined by (lockfile + source + command) alone; a command that needs the registry (e.g. `pnpm outdated`) then dies
 // With its own opaque error. Surface the real cause + the fix, a "did you mean" in the shape of getCommandNotFoundHint.
@@ -10,7 +11,7 @@ import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 export const formatVirrunNetworkHint = (command: readonly string[] | string): string =>
   [
     formatVirrunLine(
-      `"${colorize(typeof command === "string" ? command : command.join(" "), Color.Yellow)}" tried to use the network, but cached runs are sandboxed offline so results stay reproducible.`,
+      `"${colorize(joinCommand(command), Color.Yellow)}" tried to use the network, but cached runs are sandboxed offline so results stay reproducible.`,
     ),
     formatVirrunLine(
       `If it needs the network, run it natively — drop the ${colorize("virrun --", Color.Yellow)} prefix — or, to keep the sandbox, re-run uncached with ${colorize("virrun --no-cache --", Color.Yellow)} (or ${colorize("VIRRUN_NO_CACHE=1", Color.Yellow)}).`,

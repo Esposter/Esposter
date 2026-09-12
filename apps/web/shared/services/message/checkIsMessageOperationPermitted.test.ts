@@ -1,3 +1,5 @@
+import type { MessageOperationCaller } from "#shared/models/message/MessageOperationCaller";
+
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { checkIsMessageOperationPermitted } from "#shared/services/message/checkIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
@@ -10,7 +12,7 @@ describe(checkIsMessageOperationPermitted, () => {
   const author = { hasManageMessages: false, isAuthor: true };
   const member = { hasManageMessages: false, isAuthor: false };
   const moderator = { hasManageMessages: true, isAuthor: false };
-  const getPermittedOperations = (type: MessageType, caller: { hasManageMessages: boolean; isAuthor: boolean }) =>
+  const getPermittedOperations = (type: MessageType, caller: MessageOperationCaller) =>
     messageOperations.filter((operation) =>
       checkIsMessageOperationPermitted(getMessageOperationPermission(type, operation), caller),
     );

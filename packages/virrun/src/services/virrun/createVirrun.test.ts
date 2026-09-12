@@ -17,7 +17,7 @@ import { takeOne } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 // Mock the os backend factory so the network/store wiring can be asserted without bubblewrap on the host.
 vi.mock(import("#src/services/exec/os/createOsBackend"));
 // Mock the snapshot layer so the cold/warm fork provisioning is asserted without a real install:
@@ -53,7 +53,7 @@ const mockOsBackend = () =>
     exec: (): Promise<ExecResult> => Promise.resolve({ exitCode: 0, stderr: "", stdout: "" }),
     name: BackendType.Os,
   });
-const snapshotLocation = (exists: boolean, dir: string): SnapshotLocation => ({
+const createSnapshotLocation = (exists: boolean, dir: string): SnapshotLocation => ({
   dir,
   exists,
   hash: TEST_FILENAME,
@@ -62,11 +62,6 @@ const snapshotLocation = (exists: boolean, dir: string): SnapshotLocation => ({
 
 describe(createVirrun, () => {
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
-
-  beforeEach(() => {
-    // Clear call counts between tests so the warm-snapshot case never sees the cold case's capture call.
-    vi.clearAllMocks();
-  });
 
   afterEach(() => {
     cleanup();
@@ -143,9 +138,9 @@ describe(createVirrun, () => {
 
     mockOsBackend();
     const snapshotDirectory = create();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(false, snapshotDirectory));
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(createSnapshotLocation(false, snapshotDirectory));
     vi.mocked(createSnapshot).mockResolvedValue({
-      location: snapshotLocation(true, snapshotDirectory),
+      location: createSnapshotLocation(true, snapshotDirectory),
       result: { exitCode: 0, stderr: "", stdout: "" },
     });
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
@@ -167,7 +162,7 @@ describe(createVirrun, () => {
 
     mockOsBackend();
     const snapshotDirectory = create();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDirectory));
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(createSnapshotLocation(true, snapshotDirectory));
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     const dir = createWorkspace();
     const { dispose, fork } = await createVirrun({
@@ -186,7 +181,7 @@ describe(createVirrun, () => {
 
     mockOsBackend();
     const snapshotDirectory = create();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDirectory));
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(createSnapshotLocation(true, snapshotDirectory));
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     const dir = createWorkspace();
     const { dispose, fork } = await createVirrun({

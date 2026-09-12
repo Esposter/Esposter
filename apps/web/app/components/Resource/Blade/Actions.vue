@@ -3,7 +3,7 @@ import type { PortableFormat } from "@/models/resource/PortableFormat";
 import type { Item } from "@/models/shared/Item";
 import type { Resource } from "@esposter/db-schema";
 
-import { hasCapability } from "#shared/services/resource/hasCapability";
+import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 import { useResourceStore } from "@/store/resource";
 import { takeOne } from "@esposter/shared";
@@ -21,7 +21,7 @@ const resourceStore = useResourceStore();
 const { isDuplicatePending, isPending, isPublicationPending, publication } = storeToRefs(resourceStore);
 const { deleteResource, duplicateResource, publishResource, readResource, renameResource, unpublishResource } =
   resourceStore;
-const isPublishable = computed(() => hasCapability(resource.type, "publishable"));
+const isPublishable = computed(() => checkHasCapability(resource.type, "publishable"));
 // The dialogs mount only while open so their fields start from the current resource every time
 const isRenameOpen = ref(false);
 const isDeleteOpen = ref(false);

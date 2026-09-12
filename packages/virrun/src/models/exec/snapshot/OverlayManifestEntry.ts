@@ -1,7 +1,7 @@
 import { z } from "zod";
 // Raw facts the overlay probe emits per upper entry. Crosses a process boundary as JSON, so it is zod-validated
 // Before use (parseOverlayManifest); isSnapshotLowerPath is computed Linux-side so the host never reads the WSL
-// Filesystem. See specs/write-back.md.
+// Filesystem. See apps/web/content/docs/virrun/write-back.md.
 export interface OverlayManifestEntry {
   readonly isCharacterDevice: boolean;
   readonly isDirectory: boolean;

@@ -3,6 +3,7 @@ import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { users } from "#src/schema/users";
 import { createExactLengthCheckSql } from "#src/services/shared/createExactLengthCheckSql";
+import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -29,8 +30,8 @@ export const invitesInMessage = pgTable(
   {
     extraConfig: ({ id, maxUses, uses }) => [
       check("invites_id_length_check", createExactLengthCheckSql(id, INVITE_ID_LENGTH)),
-      check("invites_maxUses_check", sql`${maxUses} >= 0`),
-      check("invites_uses_check", sql`${uses} >= 0`),
+      check("invites_maxUses_check", createMinimumCheckSql(maxUses, 0)),
+      check("invites_uses_check", createMinimumCheckSql(uses, 0)),
       check("invites_uses_maxUses_check", sql`${maxUses} = 0 OR ${uses} <= ${maxUses}`),
     ],
     schema: messageSchema,

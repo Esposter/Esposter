@@ -11,7 +11,7 @@ This is what makes **step 1 below a last resort rather than the routine tool.** 
 **Do not predict the baseline — read it.** The reliable number is the one in the bot's own skip comment ("This PR contains N files"), and that comment is **edited in place**, so its `created_at` is the first skip while its body is always the current count. Any local `git diff` is a lower bound, not the answer:
 
 ```bash
-gh api repos/:owner/:repo/issues/<pr>/comments --paginate --jq '.[] | select(.user.login=="coderabbitai[bot]") |
+gh api repos/{owner}/{repo}/issues/<pr>/comments --paginate --jq '.[] | select(.user.login=="coderabbitai[bot]") |
   select(.body|test("Too many files")) | .updated_at + " " + (.body | capture("contains (?<c>[0-9]+) files").c)' | tail -1
 ```
 

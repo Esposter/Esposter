@@ -2,39 +2,27 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
-import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
-import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
-import { callRouter } from "@@/server/trpc/routers/call";
+import { getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { setCallParticipant } from "@@/server/trpc/routers/call/setCallParticipant.test";
+import { setupCallSuite } from "@@/server/trpc/routers/call/setupCallSuite.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { callSessionsInMessage, roomsInMessage } from "@esposter/db-schema";
 import { ForbiddenError } from "@esposter/shared";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("callRouter", () => {
+  const { getCallCaller, getMockContext } = setupCallSuite();
   let mockContext: Context;
   let callCaller: DecorateRouterRecord<TRPCRouter["callSession"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   const name = "name";
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    callCaller = createCallerFactory(callRouter)(mockContext);
+  beforeAll(() => {
+    mockContext = getMockContext();
+    callCaller = getCallCaller();
     roomCaller = createCallerFactory(roomRouter)(mockContext);
-  });
-
-  afterEach(async () => {
-    callAdmittedParticipantMap.clear();
-    callKnockerMap.clear();
-    callSessionParticipantMap.clear();
-    await mockContext.db.delete(callSessionsInMessage);
-    await mockContext.db.delete(roomsInMessage);
-    vi.restoreAllMocks();
   });
 
   test("creates standalone call", async () => {
@@ -58,17 +46,6 @@ describe("callRouter", () => {
 
     await expect(callCaller.joinCall({ id: callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new ForbiddenError("Must be admitted to join this call").message}]`,
-    );
-  });
-
-  test("prevents non-participant from reading standalone call participants", async () => {
-    expect.hasAssertions();
-
-    const { callSessionId } = await callCaller.createCall();
-    await mockSessionOnce(mockContext.db);
-
-    await expect(callCaller.readCallParticipantMap({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new ForbiddenError("Must be in call").message}]`,
     );
   });
 

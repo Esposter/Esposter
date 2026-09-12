@@ -34,6 +34,18 @@ reviews:
         forward-only Drizzle migration in the same change. Report a rename that is incomplete — a reference the
         rename missed, or a migration absent for a changed DB column — never one that is complete.
 
+    # Raised as order-dependence on any test file where two tests share a mock, with the hook it asks for already
+    # Being the configured default. One entry ends the class; the implementation/spy half is carved out because that
+    # Half is a real finding.
+    - path: "**/*.test.ts"
+      instructions: |
+        Vitest clears every mock's call history before each test in this repository — the `clearMocks` default is
+        on and `packages/configuration/src/getVitestConfiguration.ts` does not disable it. Never report call
+        history, call counts or `toHaveBeenCalled*`/`invocationCallOrder` assertions as leaking between tests in a
+        file, and never ask for `vi.clearAllMocks()` or `mockClear()` in a `beforeEach`/`afterEach` — the hook
+        restates the default. That default clears history ONLY: a `mockImplementation`/`mockReturnValue` set in one
+        test, or a `vi.spyOn` left unrestored, does persist into later tests, so report those.
+
   path_filters:
     - "!pnpm-lock.yaml"
     # auto-generated migrations

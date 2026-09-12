@@ -33,7 +33,6 @@ describe("getWslNativeCacheRoot", () => {
   const unresolvedEnvironmentErrorMessage = `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "getWslNativeCacheRoot", "could not resolve the WSL distro or home directory").message}]`;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.resetModules();
   });
 

@@ -1,7 +1,7 @@
 // The RAM-backed filesystem seam, mirroring ExecBackend's role for exec. The `vfs` exec backend
 // Runs JS in-process against one of these so the module loader and core fs see virtual files. One
 // Implementation today (platformatic); node:vfs swaps in behind it later. See
-// Features/virrun/specs/virtual-fs.md.
+// Apps/web/content/docs/virrun/execution-backends.md.
 export interface FsProvider {
   // Safe teardown (unmounts if still mounted); always callable.
   dispose: () => void;

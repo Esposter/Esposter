@@ -1,5 +1,5 @@
 import { sweepStaleEntries } from "#src/services/exec/snapshot/sweepStaleEntries";
-import { checkIsProcessAlive } from "#src/services/exec/util/checkIsProcessAlive";
+import { checkIsOwnerAlive } from "#src/services/exec/util/checkIsOwnerAlive";
 import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 // A capture/persist run writes into a private pid-tagged `mkdtemp` sibling of the live snapshot/prepare hash dir
 // (`<base>.<pid>.<rand>`, withPidTempPrefix) and its in-process finalizer removes it on a clean exit. A hard kill
@@ -10,8 +10,8 @@ import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 // `leases/` sibling carry no owner pid and are always kept. (Not for the shared `os.tmpdir()` source-clone root — that
 // Is concurrent with no per-entry owner, so it is left to the OS's tmp reaping.)
 export const reapStaleTemps = (dir: string, prefixes: readonly string[]): void => {
-  sweepStaleEntries(dir, (name) => {
+  sweepStaleEntries(dir, (name, path) => {
     const pid = parseTempOwnerPid(name, prefixes);
-    return pid !== undefined && !checkIsProcessAlive(pid);
+    return pid !== undefined && !checkIsOwnerAlive(pid, path);
   });
 };

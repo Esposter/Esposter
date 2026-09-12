@@ -30,21 +30,31 @@ const getReq = (peer: Peer): IncomingMessage =>
   (peer.context.node as undefined | { req: IncomingMessage })?.req ??
   ({ headers: Object.fromEntries(peer.request.headers.entries()) } as IncomingMessage);
 
+// A socket that carries no session still opens and closes — it just has no device row to keep — so the user
+// Router's UNAUTHORIZED is the connection's ordinary life rather than a failure to report
+const runAsPeer = async (
+  peer: Peer,
+  req: IncomingMessage,
+  run: (caller: ReturnType<typeof createCaller>) => Promise<unknown>,
+  message: string,
+) => {
+  const caller = createCaller(createContext({ req, res: peer.wsAdapter } as CreateWSSContextFnOptions));
+  await getResultAsync(() => run(caller)).match(
+    () => {
+      console.log(`${message}, clients: ${wss.clients.size}`);
+    },
+    (error) => {
+      if (error instanceof TRPCError && error.code !== "UNAUTHORIZED") throw error;
+    },
+  );
+};
+
 export default defineWebSocketHandler({
   close: async (peer, event) => {
     if (!peer.wsAdapter) return;
     peer.wsAdapter.readyState = peer.wsAdapter.CLOSED;
     peer.wsAdapter.emit("close", event.code, event.reason);
-    const req = getReq(peer);
-    const caller = createCaller(createContext({ req, res: peer.wsAdapter } as CreateWSSContextFnOptions));
-    await getResultAsync(() => caller.disconnect()).match(
-      () => {
-        console.log(`WS connection closed, clients: ${wss.clients.size}`);
-      },
-      (error) => {
-        if (error instanceof TRPCError && error.code !== "UNAUTHORIZED") throw error;
-      },
-    );
+    await runAsPeer(peer, getReq(peer), (caller) => caller.disconnect(), "WS connection closed");
   },
 
   error: (peer, error) => {
@@ -59,14 +69,6 @@ export default defineWebSocketHandler({
     const req = getReq(peer);
     peer.wsAdapter = new WsAdapter(peer);
     wss.addConnection(peer.wsAdapter, req);
-    const caller = createCaller(createContext({ req, res: peer.wsAdapter } as CreateWSSContextFnOptions));
-    await getResultAsync(() => caller.connect()).match(
-      () => {
-        console.log(`WS connection opened, clients: ${wss.clients.size}`);
-      },
-      (error) => {
-        if (error instanceof TRPCError && error.code !== "UNAUTHORIZED") throw error;
-      },
-    );
+    await runAsPeer(peer, req, (caller) => caller.connect(), "WS connection opened");
   },
 });

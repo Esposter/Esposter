@@ -74,7 +74,7 @@ Open work: [roadmap](/docs/virrun/roadmap). Decided ideas: [deferred](/docs/virr
 - **citty CLI** — `run`/`exec`/`warm`/`init`/`cache`/`doctor` subcommands; the bare `virrun -- <cmd>` prefix is the default `run`.
 - **WSL ext4 source mirror + manifest delta sync** — win32 source reads move off v9fs onto an ext4 mirror kept fresh by a host-side manifest diff (no per-run 9p stat-walk).
 - **Cross-process probe caches** — os-backend capability probe and win32 WSL environment probes persisted across processes.
-- **Concurrency-safe cache** — pid-tagged temps, pid-liveness reaping, and per-run leases so concurrent runs never delete each other's files.
+- **Concurrency-safe cache** — pid-tagged temps, owner-identity reaping (a live pid that started after the entry is a recycled pid, not an owner), and per-run leases so concurrent runs never delete each other's files.
 - **`virrun doctor`** — probes each `os`-backend prerequisite and prints an aligned per-check report.
 - **Native-on-Linux CI** — the platform-branched config resolves `native` on Linux CI runners, so CI needs no snapshot pipeline of its own.
 - **Bench truth** — the install bench group dropped, because the os install feeds the fork snapshot rather than host disk and a head-to-head against a native install would imply a substitution nobody can make.

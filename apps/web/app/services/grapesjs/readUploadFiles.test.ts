@@ -2,10 +2,10 @@
 import { readUploadFiles } from "@/services/grapesjs/readUploadFiles";
 import { describe, expect, test } from "vitest";
 
-const createFileList = (files: File[]): FileList => {
+const createDataTransfer = (files: File[]) => {
   const dataTransfer = new DataTransfer();
   for (const file of files) dataTransfer.items.add(file);
-  return dataTransfer.files;
+  return dataTransfer;
 };
 
 describe(readUploadFiles, () => {
@@ -16,7 +16,7 @@ describe(readUploadFiles, () => {
     expect.hasAssertions();
 
     const file = createFile();
-    const files = readUploadFiles({ dataTransfer: { files: createFileList([file]) } } as unknown as DragEvent);
+    const files = readUploadFiles({ dataTransfer: createDataTransfer([file]), target: null });
 
     expect(files).toStrictEqual([file]);
   });
@@ -27,8 +27,8 @@ describe(readUploadFiles, () => {
     const file = createFile();
     const target = document.createElement("input");
     target.type = "file";
-    target.files = createFileList([file]);
-    const files = readUploadFiles({ target } as unknown as DragEvent);
+    target.files = createDataTransfer([file]).files;
+    const files = readUploadFiles({ dataTransfer: null, target });
 
     expect(files).toStrictEqual([file]);
   });
@@ -36,7 +36,7 @@ describe(readUploadFiles, () => {
   test("reads no files without a drag payload or input element", () => {
     expect.hasAssertions();
 
-    const files = readUploadFiles({ target: document.createElement("div") } as unknown as DragEvent);
+    const files = readUploadFiles({ dataTransfer: null, target: document.createElement("div") });
 
     expect(files).toStrictEqual([]);
   });

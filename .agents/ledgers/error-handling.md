@@ -56,7 +56,7 @@ code that follows it, through the same `scanCode` walker the `constantScope` sca
 or a comment closes nothing:
 
 ```bash
-pnpm sweep:unterminated-results
+pnpm ai:sweep:unterminated-results
 ```
 
 Where no terminator follows the call, the code **before** it decides, because whatever the value reaches owns

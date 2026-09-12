@@ -3,8 +3,8 @@ import type { Resource, ResourcePublication, ResourceTags, ResourceType } from "
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
-import { hasCapability } from "#shared/services/resource/hasCapability";
+import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
+import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
@@ -190,7 +190,7 @@ export const useResourceStore = defineStore("resource", () => {
         // Content saves of one resource share its id, so they queue instead of overlapping
         key: current.id,
         onError: (error) => {
-          if (error.message === staleContentVersionErrorMessage) {
+          if (error.message === STALE_CONTENT_VERSION_ERROR_MESSAGE) {
             if (getActiveResource()) isContentStale.value = true;
             createNotification({
               action: {
@@ -304,7 +304,7 @@ export const useResourceStore = defineStore("resource", () => {
   };
   const publishResource = async () => {
     const current = resource.value;
-    if (!current || !hasCapability(current.type, "publishable")) return;
+    if (!current || !checkHasCapability(current.type, "publishable")) return;
 
     const resourceRouter = getResourceRouter(current.type);
     await executePublicationMutation(() => resourceRouter.publishResource.mutate({ id: current.id }), {
@@ -328,7 +328,7 @@ export const useResourceStore = defineStore("resource", () => {
   };
   const unpublishResource = async () => {
     const current = resource.value;
-    if (!current || !hasCapability(current.type, "publishable")) return;
+    if (!current || !checkHasCapability(current.type, "publishable")) return;
 
     const resourceRouter = getResourceRouter(current.type);
     await executePublicationMutation(() => resourceRouter.unpublishResource.mutate({ id: current.id }), {

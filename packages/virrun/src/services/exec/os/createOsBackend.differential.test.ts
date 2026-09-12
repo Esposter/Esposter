@@ -2,7 +2,7 @@ import { assertDifferential } from "#src/services/exec/differential/assertDiffer
 import { SHELL_DIFFERENTIAL_CORPUS } from "#src/services/exec/differential/differentialCorpus.test";
 import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
-import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
+import { ACCEPTANCE_TIMEOUT_MS } from "#src/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { createOsBaselineBackend } from "#src/services/exec/wsl/createOsBaselineBackend.test";
@@ -16,16 +16,15 @@ import { afterEach, describe, expect, test } from "vitest";
 describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
   const native = createOsBaselineBackend();
   const temporaryDirectories = createTemporaryDirectoryTracker();
-  // Each case spawns a real bwrap sandbox (win32: over the wsl.exe bridge). In isolation that is ~1-3s, but the suite
-  // Runs test files across 16 workers all contending for the one shared WSL bridge, so a single exec can wait well
-  // Past vitest's 5s default. Use the same hang-ceiling the acceptance/property os tests already carry — the exec is
-  // Not the slow part, the contention is.
-  const acceptanceTimeoutMs = Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds");
 
   afterEach(() => {
     temporaryDirectories.cleanup();
   });
 
+  // Each case spawns a real bwrap sandbox (win32: over the wsl.exe bridge). In isolation that is ~1-3s, but the suite
+  // Runs test files across 16 workers all contending for the one shared WSL bridge, so a single exec can wait well
+  // Past vitest's 5s default. Use the same hang-ceiling the acceptance/property os tests already carry — the exec is
+  // Not the slow part, the contention is.
   test.each(SHELL_DIFFERENTIAL_CORPUS)(
     "matches the native backend for $name",
     async ({ command, rules }) => {
@@ -33,7 +32,7 @@ describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
 
       await assertDifferential(createOsBackend(), native, command, rules);
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 
   test(
@@ -54,6 +53,6 @@ describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
 
       expect(readResult.exitCode).not.toBe(0);
     },
-    acceptanceTimeoutMs,
+    ACCEPTANCE_TIMEOUT_MS,
   );
 });

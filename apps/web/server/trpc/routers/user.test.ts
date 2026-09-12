@@ -71,56 +71,28 @@ describe("userRouter", () => {
     expect(userStatus.userId).toBe(userId);
   });
 
-  test("connect inserts", async () => {
+  test.each(["connect", "disconnect"] as const)("%s inserts", async (procedure) => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
     const oldUserStatus = takeOne(await caller.readStatuses([userId]));
     vi.advanceTimersByTime(1);
-    await caller.connect();
+    await caller[procedure]();
     vi.advanceTimersByTime(1);
     const newUserStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
   });
 
-  test("connect updates", async () => {
+  test.each(["connect", "disconnect"] as const)("%s updates", async (procedure) => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    await caller.connect();
+    await caller[procedure]();
     vi.advanceTimersByTime(1);
     const oldUserStatus = takeOne(await caller.readStatuses([userId]));
     vi.advanceTimersByTime(1);
-    await caller.connect();
-    vi.advanceTimersByTime(1);
-    const newUserStatus = takeOne(await caller.readStatuses([userId]));
-
-    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 2);
-  });
-
-  test("disconnect inserts", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
-    vi.advanceTimersByTime(1);
-    await caller.disconnect();
-    vi.advanceTimersByTime(1);
-    const newUserStatus = takeOne(await caller.readStatuses([userId]));
-
-    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
-  });
-
-  test("disconnect updates", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    await caller.disconnect();
-    vi.advanceTimersByTime(1);
-    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
-    vi.advanceTimersByTime(1);
-    await caller.disconnect();
+    await caller[procedure]();
     vi.advanceTimersByTime(1);
     const newUserStatus = takeOne(await caller.readStatuses([userId]));
 
@@ -321,13 +293,15 @@ describe("userRouter", () => {
     ]);
   });
 
-  test("readCallBackgrounds passes over a blob under the prefix that is not one of the slots", async () => {
+  // `NaN` survives a string round trip through `Number` and fails no range comparison, so it is the one name
+  // The integer check alone keeps out
+  test.each(["notASlot", "NaN"])("readCallBackgrounds passes over %s under the prefix", async (slotName) => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
     MockContainerDatabase.set(
       AzureContainer.PrivateUserAssets,
-      new Map([[`${getCallBackgroundPrefix(userId)}notASlot`, Buffer.alloc(size)]]),
+      new Map([[`${getCallBackgroundPrefix(userId)}${slotName}`, Buffer.alloc(size)]]),
     );
     const callBackgrounds = await caller.readCallBackgrounds();
 

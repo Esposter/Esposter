@@ -5,20 +5,12 @@ import { deleteRoomCategoryInputSchema } from "#shared/models/db/roomCategory/De
 import { reorderRoomCategoriesInputSchema } from "#shared/models/db/roomCategory/ReorderRoomCategoriesInput";
 import { updateRoomCategoryInputSchema } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
 import { ownedBy } from "@@/server/services/db/ownedBy";
+import { requireRoomCategory } from "@@/server/services/room/category/requireRoomCategory";
 import { router } from "@@/server/trpc";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema";
+import { roomCategoriesInMessage } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { eq, max } from "drizzle-orm";
-
-// Every mutation here addresses one of the caller's own categories, so a miss is always the same rejection
-const requireRoomCategory = (
-  roomCategory: RoomCategoryInMessage | undefined,
-  operation: Operation,
-  context: string,
-  code?: "BAD_REQUEST" | "NOT_FOUND",
-) => requireMutation(roomCategory, operation, DatabaseEntityType.RoomCategory, context, code);
 
 export const categoryRouter = router({
   createRoomCategory: standardAuthedProcedure

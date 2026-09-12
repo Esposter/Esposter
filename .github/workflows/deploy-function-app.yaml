@@ -88,7 +88,7 @@ jobs:
       # Built from the source this job checked out rather than inherited from a cache entry keyed for someone
       # Else's purpose. It is a tsdown build of one package — seconds — so no gate is worth its own failure mode.
       - name: 🏗️ Build
-        run: pnpm build:functions
+        run: pnpm -C apps/functions run build
 
       - name: 📦 Collect Deployment Output
         run: |

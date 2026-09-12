@@ -1,6 +1,4 @@
 import type { MyRoomPermissions } from "#shared/models/db/role/MyRoomPermissions";
-import type { RoomMemberAuthority } from "#shared/models/room/RoomMemberAuthority";
-import type { Context } from "@@/server/trpc/context";
 import type { RoomRoleInMessage, UserToRoomRoleInMessageWithRelations } from "@esposter/db-schema";
 
 import { assignRoleInputSchema } from "#shared/models/db/role/AssignRoleInput";
@@ -12,15 +10,17 @@ import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
+import { getDevice } from "@@/server/services/auth/getDevice";
 import { roleEventEmitter } from "@@/server/services/role/events/roleEventEmitter";
+import { assertIsMember } from "@@/server/services/room/assertIsMember";
+import { assertCanGrantPermissions } from "@@/server/services/room/rbac/assertCanGrantPermissions";
+import { assertCanManageMemberRole } from "@@/server/services/room/rbac/assertCanManageMemberRole";
 import { getRoomMemberAuthority } from "@@/server/services/room/rbac/getRoomMemberAuthority";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
@@ -36,36 +36,6 @@ import {
 import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
-
-// A role may never carry a permission its author does not already hold — otherwise ManageRoles alone is a
-// Path to every other permission. The room owner and an Administrator are the two who are already above it
-const assertCanGrantPermissions = async (
-  db: Context["db"],
-  actorUserId: string,
-  roomId: string,
-  permissions: bigint,
-  isOwner: boolean,
-) => {
-  if (isOwner) return;
-  const actorPermissions = await getPermissions(db, actorUserId, roomId);
-  const hasAdministratorPermission = Boolean(actorPermissions & RoomPermission.Administrator);
-  if (!hasAdministratorPermission && (permissions & ~actorPermissions) !== 0n)
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-};
-// Granting and revoking are both two hierarchy checks, never one: the role has to be below the actor, and so
-// Does the member it is being moved on or off, or a peer could be stripped through a role they outrank
-const assertCanManageMemberRole = async (
-  db: Context["db"],
-  actor: RoomMemberAuthority,
-  rolePosition: number,
-  roomId: string,
-  userId: string,
-) => {
-  if (!checkIsManageable(actor.topPosition, rolePosition, actor.isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-  const targetAuthority = await getRoomMemberAuthority(db, userId, roomId);
-  if (!checkIsMemberManageable(actor, targetAuthority)) throw new TRPCError({ code: "UNAUTHORIZED" });
-};
 
 export const roleRouter = router({
   assignRole: getPermissionsProcedure(
@@ -97,7 +67,7 @@ export const roleRouter = router({
 
     await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
 
-    const device = { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId };
+    const device = getDevice(ctx.getSessionPayload);
     const [userToRoomRole] = await ctx.db
       .insert(usersToRoomRolesInMessage)
       .values({ roleId, roomId, userId })
@@ -125,10 +95,7 @@ export const roleRouter = router({
       JSON.stringify({ name, roomId }),
     );
 
-    roleEventEmitter.emit("createRole", [
-      newRole,
-      { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId },
-    ]);
+    roleEventEmitter.emit("createRole", [newRole, getDevice(ctx.getSessionPayload)]);
     return newRole;
   }),
   deleteRole: getPermissionsProcedure(
@@ -167,10 +134,7 @@ export const roleRouter = router({
       "NOT_FOUND",
     );
 
-    roleEventEmitter.emit("deleteRole", [
-      { id, roomId },
-      { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId },
-    ]);
+    roleEventEmitter.emit("deleteRole", [{ id, roomId }, getDevice(ctx.getSessionPayload)]);
     return deletedRole;
   }),
   onAssignRole: getRoomEventSubscription(roleEventEmitter, "assignRole", ({ roomId }) => roomId),
@@ -243,10 +207,7 @@ export const roleRouter = router({
             eq(usersToRoomRolesInMessage.roleId, roleId),
           ),
         );
-      roleEventEmitter.emit("revokeRole", [
-        { roleId, roomId, userId },
-        { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId },
-      ]);
+      roleEventEmitter.emit("revokeRole", [{ roleId, roomId, userId }, getDevice(ctx.getSessionPayload)]);
     },
   ),
   updateRole: getPermissionsProcedure(
@@ -289,10 +250,7 @@ export const roleRouter = router({
       id,
       "NOT_FOUND",
     );
-    roleEventEmitter.emit("updateRole", [
-      updatedRole,
-      { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId },
-    ]);
+    roleEventEmitter.emit("updateRole", [updatedRole, getDevice(ctx.getSessionPayload)]);
     return updatedRole;
   }),
 });

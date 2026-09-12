@@ -63,9 +63,9 @@ jobs:
       # Flag would report green having built nothing at all. A literal path rather than a glob, so the leading
       # Dot is matched as the ordinary character it is.
       #
-      # The platform-branched virrun.config.ts resolves the native backend on Linux, so `virrun --` is a passthrough
-      # Here: the filtered install (warm pnpm store cache) provisions node_modules and `nuxt prepare` generates
-      # The platform-correct Linux `.nuxt` in place — no sandbox, no bubblewrap, no warm overlay layers.
+      # The app build runs native — no `virrun --` on it: the filtered install (warm pnpm store cache) provisions
+      # node_modules and `nuxt prepare` generates the platform-correct Linux `.nuxt` in place — no sandbox, no
+      # Bubblewrap, no warm overlay layers.
       - name: 🔧 Setup Project Dependencies
         if: ${{ hashFiles('.app-build-marker') == '' }}
         uses: ./.github/actions/setup-project-dependencies
@@ -86,7 +86,7 @@ jobs:
         env:
           APP_BUILD_HASH: ${{ steps.keys.outputs.app-build-hash }}
         run: |
-          pnpm build:web
+          pnpm -C apps/web run build
           echo "$APP_BUILD_HASH" > .app-build-marker
 
   # @TODO: Commented out, not deleted: TypeDoc cannot run against the `typescript-native-bridge` alias. Its
@@ -149,7 +149,7 @@ jobs:
       # checked out, which no cache entry keyed on `packages/` could promise. Seconds, and only these two apps
       # build: nothing reads the web app's output.
       - name: 🏗️ Build the app bundles the suite asserts against
-        run: pnpm build:functions && pnpm build:infra
+        run: pnpm -C apps/functions run build && pnpm -C apps/infra run build
       # `--shard=i/n` runs a distinct slice of ALL test files (every package + scripts, via the root
       # Vitest `projects` config) on this runner; `--reporter=blob` serialises this shard's results and
       # Coverage data for the merge job, as the per-shard `.vitest/blob/blob-i-n.json` — the directory

@@ -1,6 +1,4 @@
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-import type { Context } from "@@/server/trpc/context";
 
 import { callSessionIdInputSchema } from "#shared/models/db/call/CallSessionIdInput";
 import { callSessionInputSchema } from "#shared/models/db/call/CallSessionInput";
@@ -10,6 +8,7 @@ import { callAdmittedParticipantMap } from "@@/server/services/message/call/call
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callSessionParticipantMap";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
+import { requireCallDoorkeeper } from "@@/server/services/message/call/requireCallDoorkeeper";
 import { requireCallSession } from "@@/server/services/message/call/requireCallSession";
 import { requireKnockerCallSession } from "@@/server/services/message/call/requireKnockerCallSession";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
@@ -17,23 +16,6 @@ import { router } from "@@/server/trpc";
 import { getForbiddenError } from "@@/server/trpc/guards/getForbiddenError";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { getOrCreate } from "@esposter/shared";
-
-// Only the creator, and only while they are themselves in the call, decides who gets in — for admitting and
-// Dismissing alike
-const requireCallDoorkeeper = async (
-  db: Context["db"],
-  sessionPayload: GetSessionPayload,
-  callSessionId: string,
-  action: string,
-) => {
-  const { session: callerSession, user: callerUser } = sessionPayload;
-  if (!callSessionParticipantMap.get(callSessionId)?.has(callerSession.id))
-    throw getForbiddenError(`Must be in call to ${action} knockers`);
-
-  const callSession = await requireCallSession(db, callSessionId);
-  if (callSession.userId !== callerUser.id) throw getForbiddenError(`Must be call creator to ${action} knockers`);
-  return callSession;
-};
 
 export const knockerRouter = router({
   admitKnocker: standardAuthedProcedure

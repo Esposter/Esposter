@@ -1,14 +1,9 @@
+import { signOut } from "@/services/auth/authClient.test";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
 import { RoutePath } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-// `authClient` is a better-auth dynamic-path Proxy, so signOut is not a configurable own property and cannot be
-// Spied on directly — mock the module and drive signOut through a hoisted mock instead
-const { signOutMock } = vi.hoisted(() => ({ signOutMock: vi.fn<() => Promise<void>>() }));
-
-vi.mock(import("@/services/auth/authClient"), () => ({
-  authClient: { signOut: signOutMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
-}));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(signOutOfBrowser, () => {
   const reloadMock = vi.fn<() => void>();
@@ -20,7 +15,7 @@ describe(signOutOfBrowser, () => {
   test("lands on the given path", async () => {
     expect.hasAssertions();
 
-    signOutMock.mockResolvedValue();
+    signOut.mockResolvedValue();
     await signOutOfBrowser(RoutePath.Login);
 
     expect(window.location.href).toBe(RoutePath.Login);
@@ -30,7 +25,7 @@ describe(signOutOfBrowser, () => {
   test("reloads in place when given no path", async () => {
     expect.hasAssertions();
 
-    signOutMock.mockResolvedValue();
+    signOut.mockResolvedValue();
     await signOutOfBrowser();
 
     expect(reloadMock).toHaveBeenCalledTimes(1);
@@ -42,7 +37,7 @@ describe(signOutOfBrowser, () => {
     expect.hasAssertions();
 
     vi.spyOn(console, "error").mockImplementation(() => {});
-    signOutMock.mockRejectedValue(new Error("network"));
+    signOut.mockRejectedValue(new Error("network"));
     await signOutOfBrowser(RoutePath.Login);
 
     expect(window.location.href).toBe(RoutePath.Login);

@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import { useSession } from "@/services/auth/authClient.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
@@ -14,11 +15,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 interface MockSessionValue {
   data?: { user: { id: string } };
 }
-const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<() => Ref<MockSessionValue>>() }));
-
-vi.mock(import("@/services/auth/authClient"), () => ({
-  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
-}));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useEmojiStore, () => {
   const server = setupMswTrpc();
@@ -29,7 +26,7 @@ describe(useEmojiStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     setCurrentRoomId(crypto.randomUUID());
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
   });
 
   afterEach(() => {
@@ -88,7 +85,7 @@ describe(useEmojiStore, () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
     const calledProcedures: string[] = [];
     server.use(
       trpcMsw.message.emoji.deleteEmoji.mutation(() => {
@@ -119,7 +116,7 @@ describe(useEmojiStore, () => {
 
     const userId = getMockSession().user.id;
     const otherUserId = crypto.randomUUID();
-    useSessionMock.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
+    useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
     const emojiStore = useEmojiStore();
     const { getEmojis, setEmojis, storeUpdateEmoji, updateEmoji } = emojiStore;
     server.use(

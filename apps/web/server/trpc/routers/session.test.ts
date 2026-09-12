@@ -4,10 +4,10 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { Session } from "better-auth";
 
+import { createMockSession } from "@@/server/auth.test";
 import { createCallerFactory } from "@@/server/trpc";
 import {
   createMockContext,
-  createMockSession,
   getMockRevokeOtherSessions,
   getMockRevokeSession,
   getMockSession,
@@ -78,6 +78,7 @@ describe("sessionRouter", () => {
 
   test("reads the caller's unexpired sessions, without the stored address", async () => {
     expect.hasAssertions();
+
     const expiredSession = { ...createMockSession(userId), token: "expiredToken" };
     await insertSession(
       expiredSession,

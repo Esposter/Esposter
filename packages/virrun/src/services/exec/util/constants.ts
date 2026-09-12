@@ -1,4 +1,5 @@
 /* oxlint-disable typescript/no-inferrable-types */
+import { KIBIBYTE } from "@esposter/shared";
 
 export const GITIGNORE_FILENAME = ".gitignore";
 export const VIRRUN_CACHE_DIRECTORY_NAME = ".virrun";
@@ -102,7 +103,7 @@ export const WSL_PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30
 // Unlink of a whole node_modules closure — so it gets minutes rather than the probe's seconds, and its size is
 // Bounded by one cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p bridge fails
 // The call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents: a run that
-// Never returns and no error to explain it. See [subprocess timeouts](/docs/virrun/subprocess-timeouts).
+// Never returns and no error to explain it. See apps/web/content/docs/virrun/subprocess-timeouts.md.
 export const WSL_WORK_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // Upper bound for the write-back's overlay python program (runOverlayScript). Sized apart from the work cap because
 // This is the one bound whose work scales with the run rather than with a cache entry: the diff copied back is
@@ -129,12 +130,6 @@ export const SOURCE_MIRROR_UNMARKED_MAX_AGE_MS: number = Temporal.Duration.from(
 // Runs, and the superseded snapshot dirs it named are never reclaimed — the unbounded ext4 growth the batched sweep
 // Exists to prevent, silently, since the spawn ignores its stdio and has no exit handler.
 export const REMOVE_LIST_REAP_MINIMUM_AGE_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
-// Minimum age (`ps -o etimes`) before the startup orphan sweep may judge a marker-matched process. Every transient
-// Misread window lasts milliseconds — a fork that hasn't exec'd yet (its cmdline still carries the parent's marker),
-// A spawning run whose Relay parent isn't established, a finishing run whose Relay died first — while a true corpse
-// Sits orphaned until the next virrun startup, so a short floor removes the races without delaying real reaps.
-// Seconds, not ms: the consumer is a Linux shell `[ -ge ]` against etimes.
-export const ORPHAN_REAP_MINIMUM_AGE_SECONDS: number = Temporal.Duration.from({ seconds: 10 }).total("seconds");
 // Upper bound the folded sync script enforces Linux-side — `flock -w` on the mirror lock plus `timeout` on the
 // Archive extract (createWslSourceMirrorSync). A pure hang guard: the extract unpacks one staged archive already
 // Sitting on ext4, seconds of local work even for a full materialize, so the bound only exists so a stalled ext4
@@ -153,3 +148,22 @@ export const HOME_CACHE_DIRECTORY_NAME = ".cache";
 // Leaf under the home cache root isolating the heavy tests' shared warm snapshot, so global teardown removes only
 // Test data and never the real cache.
 export const ACCEPTANCE_CACHE_DIRECTORY_NAME = "acceptance";
+// How long the blocking reaper waits for the trees it TERMed to actually exit (buildWslReapCommand's wait arm, run
+// Only by `cache clean`). A group-killed bwrap tree unwinds in well under a second, so this is a hang guard for one
+// That does not — the clean proceeds regardless, back to the racy removal it would always have done. Seconds, not
+// Ms: the consumer is a Linux shell, not execFileSync, and the host-side bound around it is WSL_WORK_TIMEOUT_MS.
+export const WSL_REAP_WAIT_TIMEOUT_SECONDS: number = Temporal.Duration.from({ seconds: 30 }).total("seconds");
+// The wait's poll interval. A POSIX shell cannot `wait` on a process it did not fork, so the only way to watch a
+// Killed tree is to re-`pgrep` for it; fine-grained enough that a normal unwind costs no perceptible pause.
+export const WSL_REAP_WAIT_INTERVAL_SECONDS: number = 0.2;
+// A pid-tagged entry's owner started before the entry was written, and a process the OS later hands the same pid
+// Started after the owner exited — so an owner's start never exceeds its entry's mtime except by clock resolution.
+// Linux reports boot time in whole seconds, which is the whole slack: a successor that starts inside it is spared for
+// One more sweep rather than a live run being killed. See checkIsOwnerAlive.
+export const OWNER_START_TOLERANCE_MS: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
+// Upper bound for the one PowerShell spawn virrun makes — reading a process's start time on win32 — sized like the
+// WSL probe: a hung shell fails the identity read, which reads as "spare the entry", instead of blocking the sweep.
+export const PROCESS_START_PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
+// Cap above execFile's default 1 MB for the three child streams that can legitimately run large: a working tree's
+// `git diff --binary`, an overlay script's JSON manifest, and a full materialize's archive member list.
+export const EXEC_FILE_MAX_BUFFER: number = 256 * KIBIBYTE ** 2;

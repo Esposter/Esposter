@@ -1,30 +1,21 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
-import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { todoListRouter } from "@@/server/trpc/routers/todoList";
-import { resources, ResourceType } from "@esposter/db-schema";
+import { ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("todoListRouter", () => {
-  let mockContext: Context;
+  const { getCaller } = setupResourceSuite(todoListRouter);
   let caller: DecorateRouterRecord<TRPCRouter["todoList"]>;
   const name = "name";
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(todoListRouter)(mockContext);
-  });
-
-  afterEach(async () => {
-    MockContainerDatabase.clear();
-    await mockContext.db.delete(resources);
+  beforeAll(() => {
+    caller = getCaller();
   });
 
   test("saves and reads content", async () => {

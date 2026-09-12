@@ -1,14 +1,14 @@
 import { checkIsOsBackendSupported } from "#src/services/exec/os/checkIsOsBackendSupported";
 import { createOsBackend } from "#src/services/exec/os/createOsBackend";
-import { ACCEPTANCE_TIMEOUT_MINUTES } from "#src/services/exec/test/constants.test";
+import { ACCEPTANCE_TIMEOUT_MS } from "#src/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import * as fc from "fast-check";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-// Correctness layer 5 property/fuzz, os half (specs/correctness.md): fast-check drives randomized command sequences
-// And asserts the structural isolation invariants hold under every ordering —
+// Correctness layer 5 property/fuzz, os half (apps/web/content/docs/virrun/correctness.md): fast-check drives
+// Randomized command sequences and asserts the structural isolation invariants hold under every ordering —
 //   1. Host isolation — no command mutates the host working dir (the seeded canary keeps its baseline).
 //   2. No cross-exec leakage — each exec gets a fresh upper, so a final read of the canary sees the source baseline.
 //   3. Well-formedness — every command yields a finite exit code + string stdio; the sandbox never wedges.
@@ -101,6 +101,6 @@ describe.skipIf(!checkIsOsBackendSupported())(createOsBackend, () => {
         { numRuns: 10 },
       );
     },
-    Temporal.Duration.from({ minutes: ACCEPTANCE_TIMEOUT_MINUTES }).total("milliseconds"),
+    ACCEPTANCE_TIMEOUT_MS,
   );
 });

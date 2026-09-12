@@ -8,6 +8,10 @@ Any room-scoped router suite where every test needs a room uses `setupRoomSuite(
 
 Suites alias the getters into local `let`s in their own `beforeAll`/`beforeEach` so test bodies stay unchanged; suite-specific hooks (fake timers, extra table deletes) compose alongside. Never copy-paste `createMember`/`setupMemberWithRole` or the room lifecycle hooks into a suite.
 
+## `setupResourceSuite(router)` and `setupCallSuite()` fixtures
+
+The same shape for the other two suite families. A resource-typed router suite (`sheet`, `program`, `blueprint`, every `createResourceProcedures` consumer) opens with `setupResourceSuite(<router>)` (`server/trpc/routers/setupResourceSuite.test.ts`), which owns the mock context, the caller for that router, and the cleanup every resource suite owes (`MockContainerDatabase.clear()` + `db.delete(resources)`); a suite that also writes tables, queues or a module mock clears those in its own `afterEach`, and a suite that drives several routers at once passes `trpcRouter` itself and calls through the caller it gets back. A survey with content written is `createSurvey(surveyCaller, name, content)` beside it — the content is the schema's input, so the settings may be left to their prefault. The call suites open with `setupCallSuite()` (`server/trpc/routers/call/setupCallSuite.test.ts`), whose caller's `knocker` is the knocker router, so no suite builds a second caller for it.
+
 ## Subscription tests: builder once, wiring smoke per router
 
 `getRoomEventSubscription` behaviour (member check, room filter, same-device filter, data passthrough) is tested thoroughly ONCE in `server/trpc/procedure/room/getRoomEventSubscription.test.ts` through one representative subscription. Each router keeps only a **single** emit-wiring smoke test (one `getFirstEmit` happy path); do not add per-subscription filter/UNAUTHORIZED/other-room tests to router suites.

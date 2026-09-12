@@ -7,7 +7,8 @@ import { join } from "node:path";
 // Readdir walk with no removal cost, runnable even from the host over a `\\wsl.localhost` UNC by listing alone.
 const checkHasNodeModules = (dir: string): boolean =>
   readdirSync(dir, { withFileTypes: true }).some(
-    (entry) => entry.isDirectory() && (entry.name === NODE_MODULES_DIRECTORY || checkHasNodeModules(join(dir, entry.name))),
+    (entry) =>
+      entry.isDirectory() && (entry.name === NODE_MODULES_DIRECTORY || checkHasNodeModules(join(dir, entry.name))),
   );
 // A captured snapshot upper is everything the frozen `pnpm install` wrote: the dependency closure (node_modules)
 // Plus any source-tree artifact a postinstall lifecycle script generated (e.g. `nuxt prepare` → apps/web/.nuxt).

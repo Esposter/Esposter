@@ -9,5 +9,3 @@ export const InviteExpireAfterMinutesMap = {
   "1 day": Temporal.Duration.from({ days: 1 }).total("minutes"),
   "7 days": Temporal.Duration.from({ days: 7 }).total("minutes"),
 } as const satisfies Record<string, number>;
-
-export const InviteExpireAfterMinutes = Object.values(InviteExpireAfterMinutesMap);

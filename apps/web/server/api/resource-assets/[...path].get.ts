@@ -17,7 +17,6 @@ import { generateReadSasUrl } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { lookup } from "mime-types";
-import { extname } from "node:path";
 
 // Serves the stable asset urls content embeds (/api/resource-assets/{blobName}) by authorizing the caller
 // And 302-redirecting to a freshly signed minutes-scale SAS — content never carries a signature, so nothing
@@ -65,7 +64,7 @@ export default defineEventHandler(async (event) => {
   // No existence probe — Azure itself 404s a missing blob when the redirect is followed
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const sasUrl = await generateReadSasUrl(containerClient.getBlockBlobClient(blobName), {
-    contentType: lookup(extname(blobName).toLowerCase()) || undefined,
+    contentType: lookup(blobName) || undefined,
     expiresOn: new Date(Date.now() + RESOURCE_ASSET_SAS_DURATION_MS),
   });
   setResponseHeader(event, "Cache-Control", `private, max-age=${RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS}`);

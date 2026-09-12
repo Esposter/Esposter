@@ -42,10 +42,7 @@ describe(reapAbandonedSourceMirrors, () => {
     cacheRootHolder.value = create();
   });
 
-  afterEach(() => {
-    cacheRootHolder.value = "";
-    cleanup();
-  });
+  afterEach(cleanup);
 
   test("reaps a mirror whose origin host dir no longer exists", () => {
     expect.hasAssertions();

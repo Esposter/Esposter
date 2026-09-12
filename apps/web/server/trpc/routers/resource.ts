@@ -1,4 +1,3 @@
-import type { ResourceFilterInput } from "#shared/models/db/resource/ResourceFilterInput";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
@@ -7,7 +6,6 @@ import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCoun
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
-import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
 import type { Resource } from "@esposter/db-schema";
 
@@ -35,11 +33,16 @@ import { readCursorPaginationDataAzureTable } from "@@/server/services/paginatio
 import { getBasePaginationData } from "@@/server/services/pagination/getBasePaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
-import { SEARCH_SIMILARITY_THRESHOLD } from "@@/server/services/resource/constants";
+import { DUPLICATE_NAME_SUFFIX } from "@@/server/services/resource/constants";
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
+import { getFavoriteJoin } from "@@/server/services/resource/getFavoriteJoin";
+import { getLastAccessedJoin } from "@@/server/services/resource/getLastAccessedJoin";
+import { getResourcesWhere } from "@@/server/services/resource/getResourcesWhere";
+import { getSearchSimilarity } from "@@/server/services/resource/getSearchSimilarity";
 import { readContentBlob } from "@@/server/services/resource/readContentBlob";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { reapplyLiveResourceContent } from "@@/server/services/resource/reapplyLiveResourceContent";
+import { resourceListSelection } from "@@/server/services/resource/resourceListSelection";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
 import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
 import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
@@ -65,88 +68,10 @@ import {
   ResourceActivityEntity,
   ResourceActivityType,
   resourceFavorites,
-  resourcePublications,
   resources,
 } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
-import {
-  and,
-  asc,
-  count,
-  desc,
-  eq,
-  exists,
-  getColumns,
-  gte,
-  ilike,
-  inArray,
-  isNull,
-  lte,
-  notExists,
-  or,
-  sql,
-} from "drizzle-orm";
-
-// Appended to a duplicated resource's name; the base name is truncated so the whole stays within the length check
-const DUPLICATE_NAME_SUFFIX = " (copy)";
-// Not index-backed — resources_name_trgm_index serves the `ilike` arm below, not a `similarity()` inequality
-const getSearchSimilarity = (searchQuery: string) => sql`similarity(${resources.name}, ${searchQuery})`;
-// One row shape for every resource list, doubling as the sort space: a column a list can show is a column it
-// Can sort by, and no list can be handed a key its query cannot order by
-const resourceListSelection = { ...getColumns(resources), lastAccessedAt: resourceAccesses.accessedAt };
-// Caller-scoped relationship predicates: the row is the relationship, not a property of the resource, so one
-// User's Recent or Favorites can never reflect another's
-const getLastAccessedJoin = (userId: string) =>
-  and(eq(resourceAccesses.resourceId, resources.id), eq(resourceAccesses.userId, userId));
-const getFavoriteJoin = (userId: string) =>
-  and(eq(resourceFavorites.resourceId, resources.id), eq(resourceFavorites.userId, userId));
-const getResourcesWhere = (
-  db: Context["db"],
-  userId: string,
-  {
-    ids,
-    isAccessed,
-    isFavorite,
-    isPublished,
-    searchQuery,
-    tagName,
-    tags,
-    types,
-    updatedAfter,
-    updatedBefore,
-  }: ResourceFilterInput,
-  isDeletedOnly = false,
-) => {
-  // A publication row exists iff the resource is currently published
-  const publicationQuery = db
-    .select()
-    .from(resourcePublications)
-    .where(eq(resourcePublications.resourceId, resources.id));
-  const accessQuery = db.select().from(resourceAccesses).where(getLastAccessedJoin(userId));
-  const favoriteQuery = db.select().from(resourceFavorites).where(getFavoriteJoin(userId));
-  return and(
-    eq(resources.userId, userId),
-    // Soft-deleted resources live on for the Recycle bin window, so every normal read excludes them
-    isDeletedOnly ? sql`${resources.deletedAt} IS NOT NULL` : isNull(resources.deletedAt),
-    // Substring keeps exact matches that trigram similarity would miss on very short queries
-    searchQuery
-      ? or(
-          ilike(resources.name, `%${escapeLike(searchQuery)}%`),
-          sql`${getSearchSimilarity(searchQuery)} > ${SEARCH_SIMILARITY_THRESHOLD}`,
-        )
-      : undefined,
-    ids ? inArray(resources.id, ids) : undefined,
-    tags && Object.keys(tags).length > 0 ? sql`${resources.tags} @> ${JSON.stringify(tags)}::jsonb` : undefined,
-    // Both operators are backed by the resources_tags_index GIN index
-    tagName ? sql`jsonb_exists(${resources.tags}, ${tagName})` : undefined,
-    types && types.length > 0 ? inArray(resources.type, types) : undefined,
-    isAccessed === undefined ? undefined : isAccessed ? exists(accessQuery) : notExists(accessQuery),
-    isFavorite === undefined ? undefined : isFavorite ? exists(favoriteQuery) : notExists(favoriteQuery),
-    isPublished === undefined ? undefined : isPublished ? exists(publicationQuery) : notExists(publicationQuery),
-    updatedAfter ? gte(resources.updatedAt, updatedAfter) : undefined,
-    updatedBefore ? lte(resources.updatedAt, updatedBefore) : undefined,
-  );
-};
+import { and, asc, count, desc, eq, ilike, inArray, isNull, sql } from "drizzle-orm";
 
 export const resourceRouter = router({
   deleteResources: standardAuthedProcedure

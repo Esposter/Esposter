@@ -1,27 +1,20 @@
+import { setupPlatformStub } from "#src/services/exec/test/setupPlatformStub.test";
 import { getSandboxNodeVersion } from "#src/services/exec/util/getSandboxNodeVersion";
 import { readWslLoginEnvironment } from "#src/services/exec/wsl/readWslLoginEnvironment";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/exec/wsl/readWslLoginEnvironment"), () => ({
   readWslLoginEnvironment: vi.fn<typeof readWslLoginEnvironment>(() => ({ nodeVersion: "", path: "" })),
 }));
 
-const setPlatform = (value: string) => {
-  Object.defineProperty(process, "platform", { configurable: true, value });
-};
-
 describe(getSandboxNodeVersion, () => {
   const nodeVersion = "v26.5.0";
-  const { platform } = process;
-
-  afterEach(() => {
-    setPlatform(platform);
-  });
+  const stubPlatform = setupPlatformStub();
 
   test("reports the WSL guest's node on win32 — the sandbox runs that one, not this process's", () => {
     expect.hasAssertions();
 
-    setPlatform("win32");
+    stubPlatform("win32");
     vi.mocked(readWslLoginEnvironment).mockReturnValueOnce({ nodeVersion, path: "/usr/bin" });
 
     expect(getSandboxNodeVersion()).toBe(nodeVersion);
@@ -34,7 +27,7 @@ describe(getSandboxNodeVersion, () => {
   test("reports nothing on win32 when the capture yields no PATH to inject", () => {
     expect.hasAssertions();
 
-    setPlatform("win32");
+    stubPlatform("win32");
     vi.mocked(readWslLoginEnvironment).mockReturnValueOnce({ nodeVersion: "v27.0.0", path: "" });
 
     expect(getSandboxNodeVersion()).toBe("");
@@ -43,7 +36,7 @@ describe(getSandboxNodeVersion, () => {
   test("reports nothing on win32 when the capture names no node", () => {
     expect.hasAssertions();
 
-    setPlatform("win32");
+    stubPlatform("win32");
     vi.mocked(readWslLoginEnvironment).mockReturnValueOnce({ nodeVersion: "", path: "/usr/bin" });
 
     expect(getSandboxNodeVersion()).toBe("");
@@ -52,7 +45,7 @@ describe(getSandboxNodeVersion, () => {
   test("reports the host node off win32, where the sandbox inherits the caller's toolchain", () => {
     expect.hasAssertions();
 
-    setPlatform("linux");
+    stubPlatform("linux");
 
     expect(getSandboxNodeVersion()).toBe(process.version);
   });

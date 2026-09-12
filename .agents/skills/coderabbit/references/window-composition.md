@@ -1,6 +1,6 @@
 # Composing a push window
 
-Read when a push would exceed the file cap, or when work authored last has to be reviewed first.
+Read when a push would exceed the file cap, when work authored last has to be reviewed first, or when roadmap items are being batched into one window.
 
 A window is a **prefix of the unpushed range**, so what rides in it is decided by commit order, not authoring order. Push a prefix and hold the rest by naming the cut sha:
 
@@ -39,3 +39,7 @@ Measure before every push and hold the overflow locally. A push that overshoots 
 When a push has already overshot, the recovery is to shorten `develop`, park the remainder on a queue branch, and drain it one window at a time — `references/release-pr-cutting.md`. Last resort, with a real cost.
 
 **Exclusions are rarely the answer, and never for a substantive file.** Over budget is a chunking problem: split the work, or land it in stages so each cycle stays under the cap. Excluding a file that carries real content buys a smaller review, not a better one — the diff still ships, just unread. When to reach for one anyway, and the procedure: `references/exclusions.md`.
+
+## Batching roadmap items to fill a window
+
+A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a slot and multiplies rounds. Batch items until the estimate approaches ~90, grouping by what they touch so coupling stays inside one review: items sharing a schema section, a router or a settings object belong in the same PR — splitting them creates stacked branches that cannot start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land separately with a stated merge order.

@@ -1,5 +1,6 @@
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 
 export const DEFAULT_INVITE_EXPIRE_AFTER_MINUTES = InviteExpireAfterMinutesMap["7 days"];
+export const INVITE_EXPIRE_AFTER_MINUTES_OPTIONS = Object.values(InviteExpireAfterMinutesMap);
 // Discord's invite max-use options; "No limit" (the 0 sentinel) lives in the select
 export const INVITE_MAX_USES_OPTIONS = [1, 5, 10, 25, 50, 100] as const;

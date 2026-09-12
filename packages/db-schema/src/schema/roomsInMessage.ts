@@ -5,6 +5,7 @@ import { messageSchema } from "#src/schema/messageSchema";
 import { roomCategoriesInMessage } from "#src/schema/roomCategoriesInMessage";
 import { users } from "#src/schema/users";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
@@ -54,8 +55,11 @@ export const roomsInMessage = pgTable(
         "rooms_type_participantKey_check",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${participantKey} IS NOT NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${participantKey} IS NULL)`,
       ),
-      check("rooms_maxFileSizeBytes_check", sql`${maxFileSizeBytes} IS NULL OR ${maxFileSizeBytes} >= 1`),
-      check("rooms_slowmodeMs_check", sql`${slowmodeMs} IS NULL OR ${slowmodeMs} >= 1`),
+      check(
+        "rooms_maxFileSizeBytes_check",
+        sql`${maxFileSizeBytes} IS NULL OR ${createMinimumCheckSql(maxFileSizeBytes, 1)}`,
+      ),
+      check("rooms_slowmodeMs_check", sql`${slowmodeMs} IS NULL OR ${createMinimumCheckSql(slowmodeMs, 1)}`),
       check("rooms_topic_length_check", createMaxLengthCheckSql(topic, ROOM_TOPIC_MAX_LENGTH)),
     ],
     schema: messageSchema,

@@ -1,6 +1,5 @@
 import { statSync } from "node:fs";
 import { dirname, join } from "node:path";
-
 // Walks up from cwd to the filesystem root and returns the first ancestor path holding filename as a regular file,
 // Or undefined when none does. The minimal up-walk primitive for files
 // Unconfig's config discovery doesn't cover — e.g. the pnpm lockfile anchoring resolveWorkspaceRoot.

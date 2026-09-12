@@ -84,8 +84,8 @@ describe(execFileHidden, () => {
     expect(execFileHidden("git", ["status"], { stdio: "inherit" })).toBe("");
   });
 
-  // The call site declares nothing about stderr, which is the point: runOverlayScript spawned wsl.exe straight
-  // Through here and its every launch failure arrived as an empty reason until the encoding was detected instead
+  // The call site declares nothing about stderr, which is the point: a wsl.exe launch failure would otherwise
+  // Arrive as an empty reason
   test("detects a UTF-16LE stderr no caller declared", () => {
     expect.hasAssertions();
 

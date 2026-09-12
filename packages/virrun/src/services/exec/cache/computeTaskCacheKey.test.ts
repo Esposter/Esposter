@@ -15,6 +15,7 @@ describe(computeTaskCacheKey, () => {
 
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
   const command = "";
+  const forceColor = "0";
 
   afterEach(() => {
     cleanup();
@@ -23,7 +24,7 @@ describe(computeTaskCacheKey, () => {
   test("is null when there is no git repository to hash the source tree", () => {
     expect.hasAssertions();
 
-    expect(computeTaskCacheKey(command, createWorkspace(), MASKED_PATHS)).toBeNull();
+    expect(computeTaskCacheKey(command, createWorkspace(), MASKED_PATHS, forceColor)).toBeNull();
   });
 
   test("is null when there is no lockfile to key the dependency closure", () => {
@@ -32,7 +33,7 @@ describe(computeTaskCacheKey, () => {
     const directory = create();
     initRepository(directory);
 
-    expect(computeTaskCacheKey(command, directory, MASKED_PATHS)).toBeNull();
+    expect(computeTaskCacheKey(command, directory, MASKED_PATHS, forceColor)).toBeNull();
   });
 
   test.skipIf(!IS_SANDBOX_NODE_VERSION_READABLE)("is stable for the same command, lockfile, and source tree", () => {
@@ -41,8 +42,8 @@ describe(computeTaskCacheKey, () => {
     const directory = createWorkspace();
     initRepository(directory);
 
-    expect(computeTaskCacheKey(command, directory, MASKED_PATHS)).toBe(
-      computeTaskCacheKey(command, directory, MASKED_PATHS),
+    expect(computeTaskCacheKey(command, directory, MASKED_PATHS, forceColor)).toBe(
+      computeTaskCacheKey(command, directory, MASKED_PATHS, forceColor),
     );
   });
 
@@ -52,8 +53,8 @@ describe(computeTaskCacheKey, () => {
     const directory = createWorkspace();
     initRepository(directory);
 
-    expect(computeTaskCacheKey(command, directory, MASKED_PATHS)).not.toBe(
-      computeTaskCacheKey(" ", directory, MASKED_PATHS),
+    expect(computeTaskCacheKey(command, directory, MASKED_PATHS, forceColor)).not.toBe(
+      computeTaskCacheKey(" ", directory, MASKED_PATHS, forceColor),
     );
   });
 
@@ -66,8 +67,8 @@ describe(computeTaskCacheKey, () => {
     const directory = createWorkspace();
     initRepository(directory);
 
-    expect(computeTaskCacheKey(command, directory, MASKED_PATHS)).not.toBe(
-      computeTaskCacheKey(command, directory, [toRootAnchoredExclude(TEST_FILENAME)]),
+    expect(computeTaskCacheKey(command, directory, MASKED_PATHS, forceColor)).not.toBe(
+      computeTaskCacheKey(command, directory, [toRootAnchoredExclude(TEST_FILENAME)], forceColor),
     );
   });
 
@@ -82,11 +83,25 @@ describe(computeTaskCacheKey, () => {
       initRepository(directory);
       const maskedPath = toRootAnchoredExclude(TEST_FILENAME);
 
-      expect(computeTaskCacheKey(`${command}\n${maskedPath}`, directory, MASKED_PATHS)).not.toBe(
-        computeTaskCacheKey(command, directory, [`${maskedPath}\n`]),
+      expect(computeTaskCacheKey(`${command}\n${maskedPath}`, directory, MASKED_PATHS, forceColor)).not.toBe(
+        computeTaskCacheKey(command, directory, [`${maskedPath}\n`], forceColor),
       );
     },
   );
+
+  // A hit replays the RECORDED streams, and the toolchain colors them by the FORCE_COLOR withColorEnv pins per run —
+  // So a plain recording from a piped run would answer a terminal run uncolored, and the reverse would push escape
+  // Codes into a piped caller's captured stdout, whichever ran first.
+  test.skipIf(!IS_SANDBOX_NODE_VERSION_READABLE)("differs for a different color level over the same tree", () => {
+    expect.hasAssertions();
+
+    const directory = createWorkspace();
+    initRepository(directory);
+
+    expect(computeTaskCacheKey(command, directory, MASKED_PATHS, forceColor)).not.toBe(
+      computeTaskCacheKey(command, directory, MASKED_PATHS, "3"),
+    );
+  });
 
   test.skipIf(!IS_SANDBOX_NODE_VERSION_READABLE)("treats a string command and its argv form as distinct keys", () => {
     expect.hasAssertions();
@@ -94,8 +109,8 @@ describe(computeTaskCacheKey, () => {
     const directory = createWorkspace();
     initRepository(directory);
 
-    expect(computeTaskCacheKey(command, directory, MASKED_PATHS)).not.toBe(
-      computeTaskCacheKey([command], directory, MASKED_PATHS),
+    expect(computeTaskCacheKey(command, directory, MASKED_PATHS, forceColor)).not.toBe(
+      computeTaskCacheKey([command], directory, MASKED_PATHS, forceColor),
     );
   });
 });

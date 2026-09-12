@@ -13,8 +13,10 @@ import { getResult } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-// Reports the two on-disk caches: the repo-local dep store and the host-global warm-snapshot dir (one
-// `<lockfile-hash>` entry per captured snapshot). IO lives here; rendering is the pure formatCacheListing.
+// The entries of a host-global cache tier, sorted for a stable listing; an absent tier reads as empty.
+const readTierEntries = (path: string): string[] => (existsSync(path) ? readdirSync(path).toSorted() : []);
+// Reports the on-disk cache tiers: the repo-local dep store and the host-global snapshots, prepare layers and task
+// Entries. IO lives here; rendering is the pure formatCacheListing.
 export const cacheLsCommand: CommandDef = defineCommand({
   meta: {
     description: "List the repo-local dependency store and host-global warm snapshots.",
@@ -23,20 +25,19 @@ export const cacheLsCommand: CommandDef = defineCommand({
   run: () => {
     getResult(() => {
       const repoStorePath = join(getRepoCacheDirectory(""), VIRRUN_STORE_DIRECTORY_NAME);
-      const snapshotsPath = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
-      const snapshotHashes = existsSync(snapshotsPath) ? readdirSync(snapshotsPath).toSorted() : [];
-      const preparePath = join(getGlobalCacheDirectory(), VIRRUN_PREPARE_DIRECTORY_NAME);
-      const prepareKeys = existsSync(preparePath) ? readdirSync(preparePath).toSorted() : [];
-      const tasksPath = join(getGlobalCacheDirectory(), VIRRUN_TASKS_DIRECTORY_NAME);
+      const globalCacheDirectory = getGlobalCacheDirectory();
+      const snapshotsPath = join(globalCacheDirectory, VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
+      const preparePath = join(globalCacheDirectory, VIRRUN_PREPARE_DIRECTORY_NAME);
+      const tasksPath = join(globalCacheDirectory, VIRRUN_TASKS_DIRECTORY_NAME);
       return formatCacheListing({
         isRepoStorePresent: existsSync(repoStorePath),
-        prepareKeys,
+        prepareKeys: readTierEntries(preparePath),
         preparePath,
         repoStorePath,
-        snapshotHashes,
+        snapshotHashes: readTierEntries(snapshotsPath),
         snapshotsPath,
         taskBytes: computeDirectoryByteSize(tasksPath),
-        taskCount: existsSync(tasksPath) ? readdirSync(tasksPath).length : 0,
+        taskCount: readTierEntries(tasksPath).length,
         tasksPath,
       });
     }).match(

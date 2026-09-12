@@ -52,11 +52,11 @@ import { createThreadUnfollow } from "@@/server/services/message/thread/createTh
 import { readFollowedThreadRootRowKeys } from "@@/server/services/message/thread/readFollowedThreadRootRowKeys";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
+import { assertIsMember } from "@@/server/services/room/assertIsMember";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
@@ -339,7 +339,7 @@ export const baseMessageRouter = router({
     // The client's create handler already absorbs by id — the same guard reconnect catch-up needs anyway
     const createdMessages = on(messageEventEmitter, "createMessage", { signal });
     if (lastEventId) {
-      let cursor: string = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROWKEY_SORT_ITEM]);
+      let cursor = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROWKEY_SORT_ITEM]);
       let hasMore = true;
       const messages: MessageEntity[] = [];
 

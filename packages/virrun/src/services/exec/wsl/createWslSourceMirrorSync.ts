@@ -29,9 +29,10 @@ import { join } from "node:path";
 // Same derivation diffSourceMirrorManifests turns into deletes, so the two can never disagree on what changed.
 const checkHasBareNameExcludeChange = (previous: readonly string[], current: readonly string[]): boolean =>
   getChangedExcludes(previous, current).some((exclude) => checkIsBareNameExclude(exclude));
-// Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
-// Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
-// `createWslOsBackend` folds into the run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole
+// Plan the win32 source-mirror sync for a host cwd and return { lockPath, mirrorPath, script }: the mirror lock every
+// Run holds shared for bwrap's duration, the ext4 mirror tree's Linux path (the `--overlay-src` lower
+// CreateWslBwrapArgs points at), and the sh script that brings it up to date, which `createWslOsBackend` folds into
+// The run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole
 // Win32 os gap was reads of the source lower crossing v9fs (an order of magnitude slower or worse); the mirror moves
 // The toolchain's reads to ext4, the manifest diff moves the per-run change detection to the host FS, and the staged
 // Archive moves the data plane off per-file 9p round-trips:

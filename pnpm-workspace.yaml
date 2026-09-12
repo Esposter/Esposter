@@ -114,7 +114,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^7.1.0
+  apexcharts: ^7.2.0
   better-auth: ^1.7.4
   bowser: ^2.14.1
   citty: ^0.2.2
@@ -236,7 +236,7 @@ catalog:
   write-excel-file: ^4.1.1
   ws: ^8.21.3
   xmlbuilder2: ^4.0.3
-  zod: ^4.6.1
+  zod: ^4.6.2
 
 catalogMode: strict
 

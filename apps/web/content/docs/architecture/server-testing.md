@@ -29,7 +29,7 @@ flowchart LR
 1. Reads the pre-migrated PGlite data directory snapshot (`snapshot.tar.gz`) from disk.
 2. Creates a `PGlite` instance with `loadDataDir: <snapshot>` (WebAssembly PostgreSQL, runs in-process).
 3. Awaits `client.waitReady` — `new PGlite()` returns before init finishes, so without this the first query pays the boot cost and can blow past the per-test timeout.
-4. Returns the drizzle-orm `db` instance cast to `PostgresJsDatabase<typeof relations>`.
+4. Returns the drizzle-orm `db` instance as `Database` — the driver-agnostic `PgAsyncDatabase` the pglite handle satisfies as it is, so nothing is cast.
 
 **Why a snapshot instead of running migrations at runtime?** Loading a pre-migrated data directory skips PGlite's `initdb` boot + migration generation, roughly halving boot per call. Regenerate it with `pnpm snapshot:gen` (in `packages/db-mock`) whenever the schema changes. `createMockDb.test.ts` fails if the committed snapshot drifts from the live schema (it diffs the snapshot against a freshly `generateMigration`-built DB). The hookTimeout in `vitest.config.ts` stays at five minutes to absorb PGlite boot under parallel test load.
 

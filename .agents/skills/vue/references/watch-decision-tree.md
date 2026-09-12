@@ -1,6 +1,6 @@
 # When (not) to use `watch`
 
-Read before writing any `watch`, or when a local `ref` mirrors a prop/store value.
+Read before writing any `watch`, or when a local `ref` mirrors a prop/store value. The decision tree is first; "Writing the watch" at the end is the aliases and the deep-watcher trap once a `watch` is the answer.
 
 Reach for `watch` only after exhausting cases 1–4. Cases 5 and 6 are the legitimate uses.
 
@@ -107,3 +107,10 @@ watch(throttledSearchQuery, async (newQuery) => {
   initializePaginationData(results);
 });
 ```
+
+## Writing the watch
+
+Once a `watch` is the right tool, two rules shape the call itself.
+
+- `watchDeep`/`watchImmediate` replace the option object on `watch`, and `no-restricted-syntax` decides it — in `.ts` as much as in `.vue`, since a `watch` sits in a store or a composable as often as in a component. What the rule cannot see is that both aliases are VueUse via Nuxt auto-imports, so they exist in `apps/web` only: a published package taking on VueUse for an alias would push that dependency onto every consumer, which is why the one site in `packages/vue-phaserjs` keeps the option object behind a disable. When both flags are needed the aliases still compose — `watchDeep(source, cb, { immediate: true })` (alphabetical: deep before immediate).
+- **`deep` skips Vue's own changed check** — a deep watcher fires whenever its getter re-evaluates, even when the value it returns is identical, so `watchDeep(() => props.configuration[key], ...)` re-runs on every parent re-render that passes a fresh object literal. Where the callback writes to something the source is not the only author of, that overwrite is the bug: guard on `newValue === oldValue` for a primitive, which is the only case an unchanged value cannot be a nested edit.

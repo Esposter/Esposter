@@ -1,5 +1,5 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
-import { checkIsProcessAlive } from "#src/services/exec/util/checkIsProcessAlive";
+import { checkIsOwnerAlive } from "#src/services/exec/util/checkIsOwnerAlive";
 import { parsePid } from "#src/services/exec/util/parsePid";
 import { getResult, noop } from "@esposter/shared";
 import { readdirSync, rmSync } from "node:fs";
@@ -13,7 +13,7 @@ export const reapDeadLeases = (leasesDir: string): boolean => {
   let isLeaseLive = false;
   for (const entry of entries) {
     const pid = parsePid(entry);
-    if (pid !== undefined && checkIsProcessAlive(pid)) {
+    if (pid !== undefined && checkIsOwnerAlive(pid, join(leasesDir, entry))) {
       isLeaseLive = true;
       continue;
     }

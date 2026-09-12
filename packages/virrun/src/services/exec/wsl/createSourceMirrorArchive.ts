@@ -22,16 +22,16 @@ import { join } from "node:path";
 // Symlinks are archived AS symlinks (no `-h`): the repo's intra-tree symlinks carry position-dependent relative
 // Content (e.g. every package's `eslint.config.js` links to `../configuration/eslint/index.*.js`, whose own imports
 // Resolve `../../app/.nuxt/...` from the link target's real directory), so dereferencing would copy that content into
-// The link's location and break its relative resolution — the whole-repo lint failure the tar migration first shipped.
-// Preserving the link restores rsync's default: the target is mirrored too, so it resolves at extract, and Node walks
+// The link's location and break its relative resolution, failing every repo-wide lint. Preserving the link keeps
+// Rsync's default: the target is mirrored too, so it resolves at extract, and Node walks
 // The symlink's realpath to bind imports from the right base. All flags parse identically on bsdtar and GNU tar, so
 // Tests exercise the real spawn on any platform. (The win32 bsdtar writer stamps a benign pax LIBARCHIVE.symlinktype
 // Header on each symlink member; the WSL GNU-tar extract quiets its "unknown keyword" warning — createWslSourceMirrorSync.)
 //
 // The copy list is consumed and unlinked here whatever tar's verdict, staged under the pid-tag convention so a plan
 // That dies mid-way leaves only reapable corpses (reapStaleSourceMirrorTemps). A failure tar recovered from
-// Per-entry — a Windows-locked file,
-// Or one that vanished between the manifest walk and this spawn — leaves an archive complete but for those entries, so
+// Per-entry — a Windows-locked file, or one that vanished between the manifest walk and this spawn — leaves an
+// Archive complete but for those entries, so
 // The listed paths its members lack come back as unarchivedPaths for the planner to prune, instead of a single skipped
 // File hard-failing every run. Attribution reads the archive, never the stderr, because bsdtar names no path at all on
 // A vanished entry (`tar: : Couldn't visit directory`) — the archive is the one record of what was actually captured,

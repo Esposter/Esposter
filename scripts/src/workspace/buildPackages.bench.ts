@@ -1,8 +1,9 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import { test } from "vitest";
 
 // This bench rebuilds every package from cold, and the only way to do that is to delete the `dist` it is about
@@ -35,7 +36,6 @@ const quoteArgument = (argument: string): string => (IS_SHELL ? `"${argument}"` 
 // Matches nothing, and pnpm exits 0 having done nothing. That reads as a workspace with nothing to build, which
 // Is indistinguishable here from a workspace whose packages were all found, and the emptiness only surfaces one
 // Layer up as `bench.compare() requires at least 2 benchmarks, received 0`.
-const REPOSITORY_ROOT = resolve(import.meta.dirname, "..", "..", "..");
 const runPnpm = (args: string[]): string =>
   execFileSync("pnpm", args, { cwd: REPOSITORY_ROOT, encoding: "utf8", shell: IS_SHELL });
 // Pnpm orders a recursive run topologically, and `--workspace-concurrency=1` is what makes that order observable:

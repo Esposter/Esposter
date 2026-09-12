@@ -6,6 +6,6 @@ import type { InviteInMessage, RoomInMessage, User, UserToRoomInMessage } from "
 // The room's name and member count beside the decision.
 export interface ReadInviteResult extends InviteInMessage {
   isMember: boolean;
-  roomInMessage: RoomInMessage & { usersToRoomsInMessage: UserToRoomInMessage[] };
+  room: RoomInMessage & { usersToRoomsInMessage: UserToRoomInMessage[] };
   user: User;
 }

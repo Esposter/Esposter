@@ -4,14 +4,15 @@ import type { OverlayEntry } from "#src/models/exec/snapshot/OverlayEntry";
 import { FlushOpType } from "#src/models/exec/FlushOpType";
 import { OverlayEntryKind } from "#src/models/exec/snapshot/OverlayEntryKind";
 import { exhaustiveGuard } from "@esposter/shared";
-// Path depth = its "/" count; decorate-sort-undecorate below computes it once per copy (a build's upper can hold thousands).
+// Path depth = its "/" count; decorate-sort-undecorate below computes it once per copy (a build's upper can hold
+// Thousands).
 const countSeparators = (relativePath: string): number => {
   let count = 0;
   for (const character of relativePath) if (character === "/") count++;
   return count;
 };
-// Order a classified overlay-upper walk into host ops (specs/write-back.md). Deletes run before copies so an opaque
-// Dir is cleared before its replacement children land; an opaque dir expands to a delete + a copy.
+// Order a classified overlay-upper walk into host ops (apps/web/content/docs/virrun/write-back.md). Deletes run before
+// Copies so an opaque dir is cleared before its replacement children land; an opaque dir expands to a delete + a copy.
 export const buildFlushPlan = (
   entries: readonly OverlayEntry[],
   checkIsSnapshotLowerPath: (relativePath: string) => boolean,
@@ -39,8 +40,7 @@ export const buildFlushPlan = (
     .map((copy) => ({ copy, depth: countSeparators(copy.relativePath) }))
     .toSorted(
       (firstCopy, secondCopy) =>
-        firstCopy.depth - secondCopy.depth ||
-        firstCopy.copy.relativePath.localeCompare(secondCopy.copy.relativePath),
+        firstCopy.depth - secondCopy.depth || firstCopy.copy.relativePath.localeCompare(secondCopy.copy.relativePath),
     )
     .map(({ copy }) => copy);
   return [...deletes, ...sortedCopies];

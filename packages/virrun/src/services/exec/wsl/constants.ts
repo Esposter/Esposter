@@ -5,6 +5,19 @@ export const WSL_EXECUTABLE = "wsl.exe";
 // It makes the run's process tree findable Linux-side by cmdline (pgrep -f) so a Ctrl+C reaper can kill its whole
 // Process group without a Windows→WSL PID handoff. Kept generic ("virrun-bwrap") so it reads clearly in `ps`.
 export const VIRRUN_WSL_PROCESS_MARKER = "virrun-bwrap";
+// The `$0` a reaper's own shell runs under (buildWslReapCommand). Deliberately NOT a marker: `$0` is in the cmdline
+// Its own `pgrep` scans, so anything marker-shaped here would make every reaper a candidate for the next one.
+export const WSL_REAPER_SHELL_NAME = "virrun-reaper";
+// One file per run's WSL shell under the local cache root, named `<host pid>.<marker>`. It is the whole orphan test
+// The startup sweep runs (reapOrphanedWslRuns): a marker whose owning host process is dead belongs to a run nobody is
+// Waiting on any more, so its surviving WSL tree is a corpse — while a live owner means a concurrent run whose tree
+// Must not be touched. Keyed on process liveness like every other virrun sweep (leases, pid-tagged temps); why the
+// WSL process tree's shape cannot stand in for it is with the sweep.
+export const VIRRUN_RUNS_DIRECTORY_NAME = "runs";
+// The registry entry name registerWslRun writes, read back apart by the sweep: an all-digit owner pid, then the
+// Marker. Both halves are required, so a stray file in the directory is skipped rather than read as a marker `pgrep`
+// Would then match on.
+export const WSL_RUN_ENTRY_REGEX: RegExp = /^(?<ownerPid>\d+)\.(?<marker>.+)$/u;
 // Markers bracketing each value readWslLoginEnvironment prints inside the interactive login shell, so an rc that
 // Writes to stdout itself (prompts, MOTD, version-manager banners…) can't corrupt the capture — the parser slices
 // Strictly between them and treats their absence as "not captured". A marker pair per value rather than one pair with

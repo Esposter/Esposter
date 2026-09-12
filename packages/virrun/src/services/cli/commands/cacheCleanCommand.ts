@@ -20,6 +20,7 @@ import { getLocalCacheDirectory } from "#src/services/exec/util/getLocalCacheDir
 import { getRepoCacheDirectory } from "#src/services/exec/util/getRepoCacheDirectory";
 import { VIRRUN_SOURCES_DIRECTORY_NAME } from "#src/services/exec/wsl/constants";
 import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheRoot";
+import { reapOrphanedWslRuns } from "#src/services/exec/wsl/reapOrphanedWslRuns";
 import { getResult, noop } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { rmSync } from "node:fs";
@@ -52,14 +53,24 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
   },
   run: ({ args }) => {
     getResult(() => {
+      // Corpses first, on win32: a hard-killed run's surviving WSL tree holds the store and snapshot dirs open, so a
+      // Clean that ran ahead of the sweep would be asked to remove exactly what something still has mounted. Blocking,
+      // Unlike the startup sweep: TERM only asks, so a fire-and-forget reap returns while the tree is still unwinding
+      // And hands the removals below the very race the sweep is here to close. The sweep is keyed on owner liveness,
+      // Which is also why the run registry is swept rather than deleted outright — a live run's entry is the only
+      // Record of a tree that is still to be reaped if that run is killed later, and a clean that dropped it would
+      // Strand the tree with nothing left to find it by.
+      if (process.platform === "win32") reapOrphanedWslRuns(true);
       removeCacheDirectory(getRepoCacheDirectory(""));
       if (!args.all) return;
+      const globalCacheDirectory = getGlobalCacheDirectory();
+      const localCacheDirectory = getLocalCacheDirectory();
       for (const directoryName of [
         VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
         VIRRUN_PREPARE_DIRECTORY_NAME,
         VIRRUN_TASKS_DIRECTORY_NAME,
       ])
-        removeCacheDirectory(join(getGlobalCacheDirectory(), directoryName));
+        removeCacheDirectory(join(globalCacheDirectory, directoryName));
       // The persisted host probe caches survive a snapshot sweep, so clear them here too: they are keyed on platform
       // + kernel release, which cannot see a toolchain change, and a stale login capture is exactly what pins the
       // Sandbox to an old node. Each costs one re-probe on the next run. The bwrap capability verdict is
@@ -68,9 +79,9 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
       // Not removeCacheDirectory: these are single small files, so routing a WSL-rooted one through a wsl.exe spawn
       // Would buy nothing the 9p bridge cannot already do.
       for (const probeCachePath of [
-        join(getGlobalCacheDirectory(), CAPABILITY_CACHE_FILENAME),
-        join(getLocalCacheDirectory(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME),
-        join(getLocalCacheDirectory(), WSL_CACHE_ROOT_CACHE_FILENAME),
+        join(globalCacheDirectory, CAPABILITY_CACHE_FILENAME),
+        join(localCacheDirectory, WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME),
+        join(localCacheDirectory, WSL_CACHE_ROOT_CACHE_FILENAME),
       ]) {
         rmSync(probeCachePath, { force: true });
         writeRemoved(probeCachePath);

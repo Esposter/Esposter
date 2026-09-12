@@ -1,6 +1,6 @@
 ---
 name: file-organization
-description: Esposter file and folder organisation — the alias imports (shared/root/app-source, never relative) and the shared-may-not-import-client boundary, one export per file, no export{} syntax, no magic strings where a constant already means it, the literal a postinstall-evaluated or JSON config must repeat instead of importing, local type declarations at the top of the block, models vs services vs utils vs constants, the sole-consumer subfolder rule, no duplicate constants, when an extraction or a flag earns its existence, the ≥2-consumers rule for shared packages, renaming without re-export aliases, shared field schemas, and file length — plus deep dives on cross-package placement, extraction shapes, constant maps, generic type maps and generic Vue components, symlinks, localStorage keys, command classes, and creating a workspace package. Apply when creating, moving, renaming, or organising any file, export, constant, or package.
+description: Esposter file and folder organisation — the alias imports (shared/root/app-source, never relative) and the shared-may-not-import-client boundary, one export per file, no export{} syntax, no magic strings where a constant already means it, the literal a postinstall-evaluated or JSON config must repeat instead of importing and the two exclusions a walk into .agents/ owes, local type declarations at the top of the block, models vs services vs utils vs constants, the sole-consumer subfolder rule, no duplicate constants, when an extraction or a flag earns its existence, the ≥2-consumers rule for shared packages, renaming without re-export aliases, and file length — plus deep dives on cross-package placement, extraction shapes, config literals and repo-wide walks, constant maps, generic type maps and generic Vue components, symlinks, localStorage keys, command classes, and creating a workspace package. Apply when creating, moving, renaming, or organising any file, export, constant, or package.
 ---
 
 # File & Folder Organisation
@@ -12,12 +12,7 @@ description: Esposter file and folder organisation — the alias imports (shared
   - `@@/` — project root (`apps/web/`); `server/` and other root-level paths.
   - `@/` — app source dir (`apps/web/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
   - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
-  - **Never import a composable — `configuration/imports.ts` auto-imports `composables/**` whole.** An
-    `import { useMutation } from "@/composables/shared/useMutation"` resolves to the same function the auto-import
-    would hand you, so it is pure noise that reads as though this call site is reaching for something the others
-    are not. Two things still need the specifier: a **type** exported beside a composable (`PaginationCacheOptions`,
-    `OnlineSubscribableContext`), which the auto-import does not carry, and a `*.test.ts` / `*.bench.ts` helper
-    living under `composables/`, which the scan skips.
+  - **Never import a composable — `configuration/imports.ts` auto-imports `composables/**` whole.** An `import { useMutation } from "@/composables/shared/useMutation"` resolves to the same function the auto-import would hand you, so it is pure noise that reads as though this call site is reaching for something the others are not. Two things still need the specifier: a **type** exported beside a composable (`PaginationCacheOptions`, `OnlineSubscribableContext`), which the auto-import does not carry, and a `*.test.ts` / `*.bench.ts` helper living under `composables/`, which the scan skips.
   - Those are the **app's** aliases and Nuxt generates them. Everywhere else — every `packages/*` and the repo-root `scripts/` — a tree addresses its own source through the `#src/*` subpath imports its manifest declares, and oxlint bans `@/` there (`build` skill).
 - **`shared/` may never import `@/` or `~/`** — it is parsed by the server as well as shipped to the browser, so a client import drags UI-library types and browser-only values into the server's graph. Banned by a root `.oxlintrc.json` override, type-only imports included. When a `shared/` module needs a client concern, give it a **twin**: `shared/` keeps the validating schema, `app/` derives the form schema from it with `safeExtend` and `satisfies z.ZodType<TSharedType>`. Moving the client module down into `shared/` relocates the boundary instead of restoring it. See `apps/web/content/docs/architecture/module-boundaries.md`.
 - Import grouping, blank lines, ordering, and line endings — see the `formatting` skill.
@@ -43,8 +38,8 @@ description: Esposter file and folder organisation — the alias imports (shared
 
 - **Constants go in `constants.ts`** under `services/`, beside the files that use them — never a production `constants.ts` inside `composables/`, and never a module-scope `const MAX_THING = …` at the top of an SFC or composable: the moment a value is worth naming it is worth importing, and the next file that needs it should find it without reaching into a component. The test and bench equivalents are `constants.test.ts` / `constants.bench.ts`, carrying shared fixture data under the same multi-export exception, colocated with the code under test even when that sits under `composables/`. Helper _functions_ still get one file each (`testing` skill).
 - **No duplicate constants — one source of truth per value (per runtime realm).** Never repeat the same literal (magic number/string) or re-declare the same named constant in two files within a realm; extract it to a `constants.ts` and import it when the value is reused or is a real source of truth, and leave single-use literals inline. E.g. `KIBIBYTE = 2 ** 10`, with `MEGABYTE = KIBIBYTE ** 2` derived from it — never a bare `1024`/`2 ** 20`. This includes test files: import the constant, don't re-declare a local copy in the `.test.ts`.
-- **A config that cannot import the constant repeats the literal and is pinned by a test.** Some files are read by a tool that has no module resolution for a workspace package: JSON (`tsconfig.json`, `.oxlintrc.json`, `.oxfmtrc.json`), `.gitignore`, and — the one that fails loudly and late — anything a `postinstall` evaluates, which runs before any workspace package is built, so importing one fails the install itself on a fresh clone. Reaching for the constant there is not a tidier version of the literal, it is a broken install. Write the literal, say in a comment why it cannot be imported, and pin it **only where nothing downstream would fail on the drift** — `scripts/src/agentDirectories.test.ts` exists because a dropped ignore pattern is silent, where a misplaced content collection breaks the suite that reads it. A pin is the exception to the rule against testing wiring, so it needs that argument made, not assumed.
-- **Do not extract function names into constants** — use `functionName.name` at the call site, or pass that `.name` down when a helper must report on behalf of the public API. A `CREATE_THING_ERROR_NAME = "createThing"` constant is duplication, not a source of truth.
+- **A config that cannot import the constant repeats the literal, says why, and is pinned by a test only where nothing downstream fails on the drift.** JSON, `.gitignore` and anything a `postinstall` evaluates have no module resolution for a workspace package, and a walk into `.agents/` owes two exclusions. Editing one: `references/config-literals.md`.
+- **Do not extract function names into constants** — use `functionName.name` at the call site, or pass that `.name` down when a helper must report on behalf of the public API. A `CREATE_THING_ERROR_NAME = "createThing"` constant is duplication, not a source of truth. The one binding `.name` cannot serve is a const holding a factory's return — `getWslNativeCacheRoot = createProbeCache({ … })` names an anonymous closure, so its `.name` is `""` and the literal stays; name inference reaches only a function expression assigned directly.
 - **Default option objects** are constants: export one shared `DEFAULT_*` object from the feature's `services/.../constants.ts` and reuse it everywhere, wrapped in `Object.freeze({ ... } satisfies InterfaceName)` so callers can't mutate the shared default. **`Object.freeze` is shallow**: it protects the top level only, and an array or object held in a property stays mutable. Freeze those values too, or a single caller's `push` becomes every later caller's default.
 
 ## Never Duplicate Similar Logic — Source AND Tests
@@ -58,10 +53,6 @@ Before writing a helper, grep for an existing one; before finishing a feature, g
 ## Cross-package placement — `references/cross-package-placement.md`
 
 Read it before adding a module or constant to a shared package, relocating an existing one for symmetry, or implementing behaviour a second package needs. In short: **a shared package is for code with ≥2 consuming packages** — name the second consumer or leave the code beside its sole one, and when a second appears move the implementation rather than writing another. The home is the lowest package both already depend on. The page also owns the client/node cross-realm exception, env-reading scripts, and the domain-package rule for Azure helpers.
-
-## Repo-wide walks must exclude agent worktrees and the alias
-
-Any walk that reaches into `.agents/` must exclude `AGENT_WORKTREES_DIRECTORY`, because a live worktree is a full second checkout of the monorepo nested inside it — and a walk that follows directory symlinks must also exclude `AGENT_ALIAS_DIRECTORY`, or it enumerates the tree twice under two names. Which one a tool needs follows from how far it walks, so check before copying an entry across: a formatter that rewrites what it walks needs the worktrees exclusion and not the alias, and `.gitignore` is a tool here too. ESLint states neither — `eslint-plugin-oxlint` bridges `.oxlintrc.json`'s `ignorePatterns` into its global `ignores`. `scripts/src/agentDirectories.test.ts` pins the copies that cannot import the constants.
 
 ## Symlinks — `references/symlinks.md`
 
@@ -87,15 +78,9 @@ Read it when adding or editing a command in the undo/redo stack: the base class,
 
 Read it when adding a package under `packages/`, adding a `bin` entrypoint (no shebang — pnpm generates the shim), or choosing `peerDependencies` vs `dependencies`. It carries the eight-step setup (package.json fields and scripts, the two tsconfigs, the rolldown factory, the re-exporting `eslint.config.js`, the ctix barrel, `pnpm i`, `pnpm build`) and the rule that every peer dependency must also appear in the rolldown `external` array.
 
-## Refactoring — No Alias Re-exports
+## Renaming — no alias re-exports — `references/renames.md`
 
-When renaming a file (`createFoo.ts` → `createBar.ts`), **delete the old file** — never leave a re-export alias (`export { createBar as createFoo } from "./createBar"`). Update all import sites to the new path/name directly, and the barrel (`index.ts`) if it exported the old name. The alias pattern looks helpful but creates confusion: the old name stays discoverable, callers assume it's canonical, and the rename never fully propagates.
-
-The same applies to a function that **moves into a shared package**: consumers import it from the owning package directly. Never leave a local file whose whole body re-exports it — one function with two importable paths means a grep for its call sites finds the wrong half. Two files are allowed to re-export, both because a tool demands a file at that path: a package barrel (`index.ts`), since publishing the package is its entire job, and a package's `eslint.config.js`, which is how ESLint reaches the shared config.
-
-## Shared Schemas
-
-When multiple models share a field (e.g. `bar`), define a single named interface + schema (`Bar` / `barSchema`) in `shared/models/entity/` and spread the schema's `.shape` into each model schema. No `With` prefix. Don't add `.default(...)` to the shared schema — each implementing class declares its own default as a class field and adds it at the schema call site.
+Delete the old file and update every import site; a re-export alias is a second importable path that keeps the old name discoverable and the rename half-done. **Renaming a file, or moving a function into a shared package**, is that page.
 
 ## File Length
 

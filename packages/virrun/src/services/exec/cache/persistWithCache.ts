@@ -20,7 +20,9 @@ import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 // The cache is off or the key can't be computed (not a git repo / no lockfile).
 //
 // `maskedPaths` is keyed on, not re-applied: a hit replays the recorded plan verbatim, so an entry built under a
-// Different mask must miss rather than flush what today's mask forbids (computeTaskCacheKey).
+// Different mask must miss rather than flush what today's mask forbids (computeTaskCacheKey). The child's FORCE_COLOR
+// Is keyed on for the same reason: a hit replays the recorded streams verbatim, so a plain recording from a piped run
+// Must not answer a terminal run, nor the reverse. withColorEnv has already pinned it on `options.env` by here.
 export const persistWithCache = async (
   backend: ExecBackend,
   command: readonly string[] | string,
@@ -28,10 +30,12 @@ export const persistWithCache = async (
   extraLowerDirs: readonly string[] = [],
   maskedPaths: readonly string[] = [],
 ): Promise<ExecResult> => {
-  const key = checkIsTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd, maskedPaths) : null;
+  const forceColor = options.env?.FORCE_COLOR ?? "";
+  const isTaskCacheEnabled = checkIsTaskCacheEnabled();
+  const key = isTaskCacheEnabled ? computeTaskCacheKey(command, options.cwd, maskedPaths, forceColor) : null;
   if (key === null) {
     writeVirrunDebug(
-      checkIsTaskCacheEnabled()
+      isTaskCacheEnabled
         ? "task cache off — no key (not a git repo or no lockfile)"
         : "task cache off — disabled (CI or VIRRUN_NO_CACHE)",
     );

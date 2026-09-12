@@ -14,16 +14,17 @@ import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmi
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { assertIsMember } from "@@/server/services/room/assertIsMember";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { assertCanCreateDirectMessageParticipant } from "@@/server/services/room/directMessage/assertCanCreateDirectMessageParticipant";
 import { getDirectMessageParticipantKey } from "@@/server/services/room/directMessage/getDirectMessageParticipantKey";
 import { readDirectMessageParticipantIds } from "@@/server/services/room/directMessage/readDirectMessageParticipantIds";
 import { updateDirectMessageParticipantKey } from "@@/server/services/room/directMessage/updateDirectMessageParticipantKey";
+import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
@@ -79,10 +80,7 @@ export const directMessageRouter = router({
           .insert(usersToRoomsInMessage)
           .values(allUserIds.map((participantUserId) => ({ roomId: room.id, userId: participantUserId })))
           .onConflictDoNothing();
-        await tx
-          .update(usersToRoomsInMessage)
-          .set({ isHidden: false })
-          .where(and(eq(usersToRoomsInMessage.roomId, room.id), eq(usersToRoomsInMessage.userId, userId)));
+        await tx.update(usersToRoomsInMessage).set({ isHidden: false }).where(getRoomMembershipWhere(room.id, userId));
         return room;
       }),
     ),
@@ -164,12 +162,7 @@ export const directMessageRouter = router({
         userId,
       );
       requireMutation(
-        (
-          await tx
-            .delete(usersToRoomsInMessage)
-            .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
-            .returning()
-        )[0],
+        (await tx.delete(usersToRoomsInMessage).where(getRoomMembershipWhere(roomId, userId)).returning())[0],
         Operation.Delete,
         DatabaseEntityType.UserToRoom,
         JSON.stringify({ roomId, userId }),
@@ -212,9 +205,7 @@ export const directMessageRouter = router({
       await ctx.db
         .update(usersToRoomsInMessage)
         .set({ isHidden: true })
-        .where(
-          and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id)),
-        );
+        .where(getRoomMembershipWhere(input, ctx.getSessionPayload.user.id));
     }),
   readDirectMessageParticipants: standardAuthedProcedure
     .input(roomIdsInputSchema)

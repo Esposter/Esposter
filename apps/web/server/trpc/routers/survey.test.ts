@@ -11,26 +11,22 @@ import {
   INVALID_PARTICIPANT_TOKEN_ERROR_REASON,
 } from "@@/server/services/survey/constants";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { createBoundProgram } from "@@/server/trpc/routers/createBoundProgram.test";
+import { createSurvey } from "@@/server/trpc/routers/createSurvey.test";
 import { programRouter } from "@@/server/trpc/routers/program";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import {
-  AzureEntityType,
-  AzureTable,
-  DatabaseEntityType,
-  resources,
-  ResourceType,
-  SurveyResponseMode,
-} from "@esposter/db-schema";
+import { AzureEntityType, AzureTable, DatabaseEntityType, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The survey-specific procedures.
 describe("surveyRouter", () => {
+  const { getCaller, getMockContext } = setupResourceSuite(surveyRouter);
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["survey"]>;
   let programCaller: DecorateRouterRecord<TRPCRouter["program"]>;
@@ -82,8 +78,7 @@ describe("surveyRouter", () => {
     });
   // An Identified survey plus a program bound to it, returning the survey and its one valid token
   const setupIdentifiedSurvey = async () => {
-    const survey = await caller.createResource({ name });
-    await saveSurveyContent(survey.id, survey.contentVersion, { model, settings: identifiedSettings });
+    const survey = await createSurvey(caller, name, { model, settings: identifiedSettings });
     const program = await createBoundProgram({
       keyValues: [keyValue],
       name,
@@ -96,18 +91,16 @@ describe("surveyRouter", () => {
     return { program, survey, token: participant.token };
   };
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(surveyRouter)(mockContext);
+  beforeAll(() => {
+    mockContext = getMockContext();
+    caller = getCaller();
     programCaller = createCallerFactory(programRouter)(mockContext);
     resourceCaller = createCallerFactory(resourceRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
   });
 
-  afterEach(async () => {
-    MockContainerDatabase.clear();
+  afterEach(() => {
     MockTableDatabase.clear();
-    await mockContext.db.delete(resources);
   });
 
   test("saves and reads content", async () => {
@@ -126,8 +119,7 @@ describe("surveyRouter", () => {
   test("clears its response partition when the resource is purged", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    const newResource = await createSurvey(caller, name, { model, settings });
     await createSurveyResponse(newResource.id, 0);
 
     // Delete is soft, so responses survive the Recycle bin window and restore keeps them intact
@@ -154,8 +146,7 @@ describe("surveyRouter", () => {
   test("serves the published snapshot to respondents, not later edits", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    const newResource = await createSurvey(caller, name, { model, settings });
     await caller.publishResource({ id: newResource.id });
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { model: updatedModel, settings });
     const { content } = await caller.readPublishedResourceContent(newResource.id);
@@ -382,8 +373,7 @@ describe("surveyRouter", () => {
   test(`fails update with swapped token in ${SurveyResponseMode.Identified} mode`, async () => {
     expect.hasAssertions();
 
-    const survey = await caller.createResource({ name });
-    await saveSurveyContent(survey.id, survey.contentVersion, { model, settings: identifiedSettings });
+    const survey = await createSurvey(caller, name, { model, settings: identifiedSettings });
     // Two recipients of the same program: both tokens are valid, but a response belongs to exactly one
     const program = await createBoundProgram({
       keyValues: [keyValue, `${keyValue} `],
@@ -436,8 +426,7 @@ describe("surveyRouter", () => {
   test("fails create with closed survey", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings: closedSettings });
+    const newResource = await createSurvey(caller, name, { model, settings: closedSettings });
 
     await expect(createSurveyResponse(newResource.id, 0)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${closedSurveyErrorMessage}]`,
@@ -471,8 +460,7 @@ describe("surveyRouter", () => {
   test("serves the live closed flag over the published snapshot", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    const newResource = await createSurvey(caller, name, { model, settings });
     await caller.publishResource({ id: newResource.id });
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
       model: updatedModel,
@@ -492,8 +480,7 @@ describe("surveyRouter", () => {
   test("keeps the live settings when a published version is restored over them", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    const newResource = await createSurvey(caller, name, { model, settings });
     await caller.publishResource({ id: newResource.id });
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
       model: updatedModel,
@@ -510,8 +497,7 @@ describe("surveyRouter", () => {
   test("serves the live settings on the owner's version preview", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    const newResource = await createSurvey(caller, name, { model, settings });
     await caller.publishResource({ id: newResource.id });
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
       model: updatedModel,
@@ -526,8 +512,7 @@ describe("surveyRouter", () => {
   test("reopening accepts responses again", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
-    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings: closedSettings });
+    const newResource = await createSurvey(caller, name, { model, settings: closedSettings });
     // No re-publish involved — the toggle alone reopens collection
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { model, settings });
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
@@ -564,7 +549,7 @@ describe("surveyRouter", () => {
     );
   });
 
-  test("fails delete survey response with wrong user", async () => {
+  test("fails delete survey response for a user who does not own the survey", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });

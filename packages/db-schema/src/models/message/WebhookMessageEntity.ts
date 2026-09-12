@@ -22,11 +22,9 @@ export class WebhookMessageEntity extends BaseMessageEntity<MessageType.Webhook>
 
 export const webhookMessageEntitySchema = z.object({
   ...baseMessageEntitySchema.shape,
-  appUser: z.object({
-    ...selectAppUserInMessageSchema.pick({ id: true, image: true, name: true }).shape,
-    image: selectAppUserInMessageSchema.shape.image.optional(),
-    name: selectAppUserInMessageSchema.shape.name.optional(),
-  }),
+  appUser: selectAppUserInMessageSchema
+    .pick({ id: true, image: true, name: true })
+    .partial({ image: true, name: true }),
   type: z.literal(MessageType.Webhook),
   // Webhook messages have no direct user author, so userId is always absent
   userId: z.undefined().optional(),

@@ -1,6 +1,6 @@
+import { REPOSITORY_ROOT } from "#src/services/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "node:child_process";
-import { resolve } from "node:path";
 
 // oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#` map can reach
 import packageJson from "../../package.json" with { type: "json" };
@@ -30,7 +30,7 @@ if (!command)
 // So the root is resolved from this file rather than inherited, and the map is read from the manifest that
 // Declares it rather than from whichever one the caller happened to be standing in.
 const proc = spawn([command, ...args].join(" "), {
-  cwd: resolve(import.meta.dirname, "..", ".."),
+  cwd: REPOSITORY_ROOT,
   shell: true,
   stdio: "inherit",
 });

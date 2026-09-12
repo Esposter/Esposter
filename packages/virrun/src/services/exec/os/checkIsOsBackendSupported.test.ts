@@ -12,16 +12,15 @@ describe(checkIsOsBackendSupported, () => {
   // Outcome: some kernels happily overlay the already-overlaid cwd, yet the backend still can't run nested (its
   // Persist/snapshot writes hit the outer read-only ~/.virrun), so the wrapper degrades on the VIRRUN signal regardless
   // Of what the probe reports.
-  const isHostCapable = probeOsBackendSupported();
-  const isNested = checkIsVirrunEnabled(process.env);
+  const isCapableUnnestedHost = Boolean(probeOsBackendSupported()) && !checkIsVirrunEnabled(process.env);
 
-  test.skipIf(!(isHostCapable && !isNested))("is true on a capable, un-nested host", () => {
+  test.skipIf(!isCapableUnnestedHost)("is true on a capable, un-nested host", () => {
     expect.hasAssertions();
 
     expect(checkIsOsBackendSupported()).toBe(true);
   });
 
-  test.skipIf(isHostCapable && !isNested)("is false on an incapable or nested host", () => {
+  test.skipIf(isCapableUnnestedHost)("is false on an incapable or nested host", () => {
     expect.hasAssertions();
 
     expect(checkIsOsBackendSupported()).toBe(false);

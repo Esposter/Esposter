@@ -3,11 +3,8 @@ import { DateToken } from "#shared/util/date/DateToken";
 import { DateTokenPatternMap } from "#shared/util/date/DateTokenPatternMap";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
-const REGEX_SPECIAL_CHARACTER_REGEX = /[.*+?^${}()|[\]\\]/gu;
 const UTC_DESIGNATOR = "Z";
 const UTC_OFFSET = "+00:00";
-
-const escapeLiteral = (literal: string): string => literal.replace(REGEX_SPECIAL_CHARACTER_REGEX, String.raw`\$&`);
 // Dayjs's strict `customParseFormat`, over Temporal: the format is compiled to an anchored regex, so a value
 // With anything before, after or between its parts fails rather than being read partially, and the fields are
 // Handed to Temporal with `overflow: "reject"` so a real calendar decides whether 31 February is a date.
@@ -20,12 +17,12 @@ export const parseDate = (value: string, format: string): Date | undefined => {
     const tokenPattern = DateTokenPatternMap[token];
     if (tokenPattern === undefined)
       throw new InvalidOperationError(Operation.Read, parseDate.name, `"${format}" is a display-only format`);
-    pattern += escapeLiteral(format.slice(literalIndex, match.index)) + tokenPattern;
+    pattern += RegExp.escape(format.slice(literalIndex, match.index)) + tokenPattern;
     tokens.push(token);
     literalIndex = match.index + token.length;
   }
 
-  const matched = new RegExp(`^${pattern}${escapeLiteral(format.slice(literalIndex))}$`, "u").exec(value);
+  const matched = new RegExp(`^${pattern}${RegExp.escape(format.slice(literalIndex))}$`, "u").exec(value);
   if (!matched) return undefined;
 
   const fields = { day: 1, hour: 0, minute: 0, month: 1, second: 0, year: 1970 };

@@ -9,7 +9,8 @@ import { initTRPC } from "@trpc/server";
 
 const t = initTRPC.context<AuthedContext>().create();
 
-export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, next, type: procedureType }) => {
+// Best-effort: a failure here loses one log entry, never the admin action that has already committed.
+export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, next, path, type: procedureType }) => {
   const result = await next();
   if (!result.ok || procedureType !== "mutation") return result;
 
@@ -27,7 +28,9 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
       targetUserId,
       type,
     }),
-  ).match(noop, console.error);
+  ).match(noop, (error) => {
+    console.error(`Failed to write moderation log entry for path "${path}" and room "${roomId}":`, error);
+  });
 
   return result;
 });

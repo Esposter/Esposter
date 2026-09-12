@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Runs entirely in the main session; there is no workflow script and no finder/verifier fan-out. Owns the two lanes a review runs (quality — reuse, simplification, efficiency, altitude; and correctness — defects and broken conventions), the trigger rule that makes an in-thread finding real, the refute-first pass that replaces an independent verifier, how to size the commit window, the written record as tiebreaker, the findings-table report shape, the stop rule for when a round is converged, and the standing rule that `.agents/` stays in every review window so the skill improves itself. Apply on any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one.
+description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Runs entirely in the main session; there is no workflow script and no finder/verifier fan-out. Owns the two lanes a review runs (quality — reuse, simplification, efficiency, altitude; and correctness — defects and broken conventions), the trigger rule that makes an in-thread finding real, the refute-first pass that replaces an independent verifier, how to size the commit window, the written record as tiebreaker, the findings-table report shape, the stop rule for when a round is converged, and the standing rule that `.agents/` stays in every review window so the skill improves itself, with the meta pass's evidence table as a deep dive. Apply on any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one.
 ---
 
 # Code Review — One Entry Point, One Thread
@@ -9,11 +9,9 @@ Every review request — `/code-review`, `/simplify`, "review this", "review PR 
 
 Never use the `review` skill/command, the built-in `/simplify`, or `mattpocock-skills:code-review` — all answer to "review this", and several overlapping commands is how the shallowest one gets picked.
 
-## Why this runs in-thread
+## Settled — do not re-propose
 
-Cost is agents × material read. A cold subagent re-derives a diff the session already holds, so a fan-out pays for the same reading a dozen times over and returns findings whose context died with the agent. The one thing a separate agent genuinely bought was **a verifier that did not raise the claim** — and what made that verifier work was its instructions, not its address. Those instructions are the trigger rule and the refute-first pass below, and they are enforceable here for free.
-
-What you give up in exchange is real and worth naming: the same context that formed a candidate now judges it. The two rules exist to stop that becoming a rubber stamp, and they are not optional.
+- **Fanning a review out to finder and verifier agents, or a workflow script.** Cost is agents × material read: a cold subagent re-derives a diff the session already holds, and returns findings whose context died with it. The one thing a separate verifier bought — a judge that did not raise the claim — was its instructions, not its address, and those are the trigger rule and the refute-first pass below, enforced here for free. The price is that the same context that formed a candidate now judges it, which is exactly what those two rules exist to stop, and they are not optional.
 
 ## The two lanes
 
@@ -112,13 +110,4 @@ Deliberately **not** measured here: candidate counts, per-lens ceilings, token e
 
 **`.agents/` is never excluded from a review window**, however tooling-shaped the window looks. This tree is edited nearly every round, and reviewing its own last round's edits is how the review compounds instead of drifting. Never put `.agents/` in a target string's exclusions and never pick a window that stops short of it. Findings against it are ordinary findings — same table, same rules, no special casing.
 
-The meta pass is one question, asked once per round after the findings table: **what did this round's own evidence say about these instructions?**
-
-| Evidence                                                                      | What it says                                     | The change that ends it                                         |
-| ----------------------------------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------- |
-| You settled a finding by hand and the hop was cheap                           | the trigger rule is missing that hop             | name the hop in "The trigger rule"                              |
-| The same false-positive class returns across rounds                           | the bar is too low, or the decision is unwritten | raise the materiality bar, or write the doc page (`docs` skill) |
-| A real defect escaped and surfaced later (CodeRabbit, next round, prod)       | a lens does not exist                            | add it to the lane table                                        |
-| A `regression` or `reopened` finding matches no entry in `fixing-findings.md` | the cause is unrecorded and will be re-shipped   | append it there in the same round                               |
-
-**A round that changes nothing about this skill is a valid outcome** — inventing an edit to have made one is the failure this section exists to avoid.
+The meta pass is one question, asked once per round after the findings table — **what did this round's own evidence say about these instructions?** — and the four kinds of evidence that change this skill are `references/meta-pass.md`. **A round that changes nothing about this skill is a valid outcome** — inventing an edit to have made one is the failure this section exists to avoid.

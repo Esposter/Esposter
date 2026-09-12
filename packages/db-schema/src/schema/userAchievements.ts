@@ -1,7 +1,7 @@
 import { pgTable } from "#src/pgTable";
 import { achievements } from "#src/schema/achievements";
 import { users } from "#src/schema/users";
-import { sql } from "drizzle-orm";
+import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { check, integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const userAchievements = pgTable(
@@ -19,7 +19,7 @@ export const userAchievements = pgTable(
   {
     extraConfig: ({ achievementId, amount, userId }) => [
       primaryKey({ columns: [userId, achievementId] }),
-      check("userAchievements_amount_check", sql`${amount} >= 1`),
+      check("userAchievements_amount_check", createMinimumCheckSql(amount, 1)),
     ],
   },
 );

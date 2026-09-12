@@ -4,7 +4,7 @@ Store shape and the rules around a mutation: `storeToRefs`, store-to-store dot-a
 
 | Unit                                                                                                                     | Swept      | Notes                                                                  |
 | ------------------------------------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------- |
-| `app/store` root files (`alert`, `cache`, `clipboard`, `colors`, `layout`, `navigationTrail`, `notification`, `storage`) | 2026-08-27 | the two plain Maps here are deliberately not reactive and each says so |
+| `app/store` root files (`alert`, `cache`, `clipboard`, `colors`, `layout`, `navigationTrail`, `notification`, `storage`) | 2026-09-11 | the two plain Maps here are deliberately not reactive and each says so |
 | `app/store/message/room`, `app/store/message/user`                                                                       | 2026-08-31 | the widest keyed state in the app — every write names its room         |
 | `app/store/message` — `data`, `pin`, `file`, `input`, `draftsAndSent`, `moderation`, `search`, `ui`                      | 2026-08-31 |                                                                        |
 | `app/store/resource`                                                                                                     | 2026-08-31 | blade-scoped state, torn down on unmount                               |

@@ -1,4 +1,4 @@
-export const ID_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+import { ID_CHARACTERS } from "#shared/util/math/random/constants";
 
 const BYTE_VALUE_COUNT = 256;
 

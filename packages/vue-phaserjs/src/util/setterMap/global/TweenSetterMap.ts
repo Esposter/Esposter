@@ -17,7 +17,9 @@ export const TweenSetterMap = {
   tweenchain: (gameObject, emit) => (value) => {
     if (!value) return;
 
-    const tweenchain = gameObject.scene.add.tweenchain(value.map((c) => ({ ...c, targets: gameObject })));
+    const tweenchain = gameObject.scene.add.tweenchain(
+      value.map((configuration) => ({ ...configuration, targets: gameObject })),
+    );
     tweenchain.on(Tweens.Events.TWEEN_COMPLETE, () => {
       emit("update:tweenchain", undefined);
     });

@@ -24,7 +24,7 @@ The other case is a **small overshoot on an already-pushed window** (SKILL.md §
 
 **Every exclusion is derived from an open PR's diff.** Enumerate what that PR actually changed, classify each file, and list the ones that qualify. Never write an exclusion for a file class the repo merely _could_ produce — a speculative glob block (generated artifacts, binaries, vendored assets) added outside a PR is unreviewed config change for no benefit, and it silently blinds every later PR that does touch those paths. A class earns a permanent entry only when a real PR puts it in a diff.
 
-Exclude only files with **no reviewable content change**. Four kinds qualify:
+Exclude only files with **no reviewable content change**. Five kinds qualify:
 
 - **Pure renames** — 100% similarity, zero content change (`R100`).
 - **Rename-token-only edits** — the file's only diff is the mechanical substitution itself (every `OldName` identifier → `NewName`). A temporary block covering both kinds says so in its header comment.
@@ -57,100 +57,23 @@ Keep permanent structural entries (`!pnpm-lock.yaml`, generated migrations) at t
 
 ## Generating the list
 
-`R100` is git's marker for a rename with no content change — it gets you the pure-rename subset for free:
-
 ```bash
-git diff --name-status -M <base>..<head> | awk '$1=="R100"{print "    - \"!" $3 "\""}' | sort
+pnpm ai:coderabbit:exclusions "<base>..<head>"
+pnpm ai:coderabbit:exclusions "<base>..<head>" <rename-sha> OldName=NewName [OldName=NewName ...]
 ```
 
-Import-path-only edits need two conditions, not one — every changed line is an import, **and** the added imports are the removed ones with a different specifier. Blanking the quoted path turns the second into a set comparison, which is what rejects an added symbol or an added package that the first condition alone would wave through:
+It prints the `path_filters` lines for every file the range lets out, sorted, under a comment counting them against the files changed — and never a file § When to exclude protects (a test, a docs page, a skill, a config, schema or migration input), however its diff reads. Three of the five kinds are decided mechanically:
+
+- **Pure renames** — `R100`, git's marker for a rename with no content change.
+- **Import-path-only edits** — every changed line is an import, **and** the added imports are the removed ones with only the quoted specifier differing. The second condition is what rejects an added symbol or an added package the first would wave through; a side-effect import, a mode flip in the diff header and an import attribute each keep their file in the review set, for a reason the classifier's test states. The pairing is order-free: `perfectionist/sort-imports` owns import order and a repathed import re-sorts, so the order is never a decision a reviewer could act on — only a side-effect import is sequenced for its effect, and those are refused outright.
+- **Rename-token-only edits**, when the sweep landed as its own commit — the second form. Each `OldName=NewName` is replayed word-bounded on the parent blob, and the file qualifies only when the result reproduces the committed blob byte for byte: then there is by construction no other content change, so a balanced logic edit cannot be admitted, and the filter errs only toward keeping files reviewable — a reformatter rewrap or an under-specified rename fails the compare. A file any sibling commit in the range also touched stays in, under either of its paths. Both halves of a pair must be names the grammar does not read by spelling — never a reserved word, `constructor`, a contextual keyword (`get`, `type`, `readonly`, …) or a primitive type name — because a word-bounded swap of one reproduces a semantic change byte for byte (`constructor=initialize` turns a class's constructor into a method) and the compare cannot tell it from a rename; `getRenameSubstitutions` refuses those pairs outright. Never classify these by line counts: a token substitution rewrites each affected line in place, so `--numstat` is symmetric, but a balanced logic edit is symmetric too.
+
+If the sweep is mixed into a commit carrying other work, there is no parent blob to replay against — read the diffs by hand. Call-site-only substitutions and verbatim repetitions are read rather than computed, because both need the definition or the representative judged against its twins.
+
+Verify the count matches what you expect before committing, and that the block landed as entries rather than prose — an indentation slip shows up as a count that does not match:
 
 ```bash
-git diff --name-only -M <base>..<head> | while IFS= read -r path; do
-  # §When to exclude never lets these out, whatever the diff shape says
-  case "$path" in
-    *.test.ts|*.test-d.ts|apps/web/content/docs/*|.agents/skills/*) continue ;;
-    *.yaml|*.yml|*.json|*.config.ts|packages/db-schema/*|apps/web/server/db/migrations/*) continue ;;
-  esac
-  diff=$(git diff -U0 -M <base>..<head> -- "$path")
-  # a mode flip rides in the diff header rather than on a +/- line, so it would survive every
-  # filter below and leave a permission change unreviewed
-  printf '%s\n' "$diff" | grep -qE '^(old|new|deleted file|new file) mode ' && continue
-  # -U0 so context lines can't be mistaken for changes; the +++/--- headers are dropped
-  changed=$(printf '%s\n' "$diff" | grep -E '^[+-]' | grep -vE '^(\+\+\+|---)')
-  [ -z "$changed" ] && continue
-  printf '%s\n' "$changed" | grep -qvE '^[+-][[:space:]]*(import[[:space:]]|$)' && continue
-  # a bare side-effect import is sequenced for its effect, and the sort below cannot tell a
-  # reordering of them from a repathing. Both quote styles, or a single-quoted one slips through
-  printf '%s\n' "$changed" | grep -qE "^[+-][[:space:]]*import[[:space:]]+[\"']" && continue
-  # an import attribute value is quoted too (`with { type: "json" }`), so blanking every quoted
-  # string would normalize a changed attribute away. A line carrying a second quoted value stays in
-  # the review set rather than being classified
-  printf '%s\n' "$changed" | grep -qE '"[^"]*"[^"]*"' && continue
-  # every quoted string blanked, so two lines match only if the specifier was the sole difference
-  blank() { printf '%s\n' "$changed" | grep "^[$1]" | sed -E 's/^.//; s/"[^"]*"/""/g' | sort; }
-  [ "$(blank +)" = "$(blank -)" ] && echo "    - \"!$path\""
-done
-```
-
-Rename-token-only edits are not `R100` (they have a content diff), but when the sweep landed as **its own commit** they can be classified **exactly** — by replaying the substitution and demanding the result reproduce the committed blob byte-for-byte. Never classify by line counts: a token substitution rewrites each affected line in place, so `--numstat` is symmetric, but a balanced logic edit is symmetric too and the filter cannot tell them apart.
-
-Set `SED` to the sweep's substitutions (one `-e` per rename) — GNU sed, whose `\b` word boundary the identifier substitutions rely on — then:
-
-```bash
-set -euo pipefail
-SHA=<rename-sha> SED='s/\bOldName\b/NewName/g'
-# a partial path list silently under-protects files, so build it in a checked loop rather than
-# `grep -v | xargs` — an empty commit list must not fall through to `git show` on HEAD
-otherPaths=$(mktemp)
-trap 'rm -f "$otherPaths"' EXIT
-# every sibling commit in the range, not just one — a file any of them touched is reviewable
-git rev-list <base>..<head> | while IFS= read -r commit; do
-  [ "$commit" = "$SHA" ] && continue
-  git show --name-only --format="" "$commit"
-done | sort -u > "$otherPaths"
-git diff -M --name-status "$SHA^" "$SHA" | while IFS=$'\t' read -r status old new; do
-  # R carries old and new paths; M reuses the one path. A/D are content decisions, never mechanical
-  case "$status" in
-    R*) path_old="$old"; path_new="$new" ;;
-    M)  path_old="$old"; path_new="$old" ;;
-    *)  continue ;;
-  esac
-  # both paths are tested: a rename out of a protected tree is still a change to that tree, and a
-  # sibling commit that touched the pre-rename path is a content change this file carries
-  isKept=""
-  for path in "$path_old" "$path_new"; do
-    # §When to exclude never lets these out, whatever the diff says
-    case "$path" in
-      *.test.ts|*.test-d.ts|apps/web/content/docs/*|.agents/skills/*) isKept=1 ;;
-      *.yaml|*.yml|*.json|*.config.ts|packages/db-schema/*|apps/web/server/db/migrations/*) isKept=1 ;;
-    esac
-    grep -qxF "$path" "$otherPaths" && isKept=1
-  done
-  [ -n "$isKept" ] && continue
-  # exact: replaying the substitution on the parent must reproduce the committed blob
-  if git show "$SHA^:$path_old" | sed "$SED" | cmp -s - <(git show "$SHA:$path_new"); then
-    echo "    - \"!$path_new\""
-  fi
-done
-```
-
-`cmp` is the whole guarantee: if replaying the substitution reproduces the file exactly, there is by construction no other content change, so this cannot admit a balanced logic edit. It errs only toward keeping files reviewable — a rename that forced a reformatter rewrap, or a sweep whose `SED` you under-specified, fails the compare and stays in. On a multi-hundred-file sweep the line-symmetry filter it replaces admitted roughly two-thirds of the commit on no evidence at all, where the replay admits only files whose every changed line it can account for.
-
-If the sweep is mixed into a commit carrying other work, there is no parent blob to replay against — read the diffs by hand.
-
-Verify the count matches what you expect before committing, and validate the result parses:
-
-```bash
-node -e "
-const fs=require('node:fs');
-// js-yaml is only a transitive dep, so pnpm's strict layout leaves it unresolvable by bare name -
-// reach into .pnpm, but discover the version rather than pinning it.
-const [dir]=fs.readdirSync('node_modules/.pnpm').filter((d)=>d.startsWith('js-yaml@'));
-const yaml=require('./node_modules/.pnpm/'+dir+'/node_modules/js-yaml');
-const d=yaml.load(fs.readFileSync('.coderabbit.yaml','utf8'));
-console.log('path_filters:', d.reviews.path_filters.length);
-"
+grep -c '^\s*- "!' .coderabbit.yaml
 ```
 
 ## The commit pair

@@ -16,7 +16,9 @@ const CtixConfigurationsMap: Record<ExportsGeneration, string[]> = {
 // Relative step reaches them however a consumer resolved this module.
 const CONFIGURATION_DIRECTORY = resolve(import.meta.dirname, "..");
 // Resolved rather than spawned by name: a bare `ctix` would be found through whatever `PATH` the process
-// Happened to inherit, which is the package manager's doing and not this package's to rely on.
+// Happened to inherit, which is the package manager's doing and not this package's to rely on. The throws here
+// Are bare `Error`s because this package builds before `@esposter/shared`, so the repo's error classes are out of
+// Reach — the same reason `readPackageManifest` parses without `jsonDateParse`.
 const getCtixCommandPath = (): string => {
   const ctixCommandPath = resolve(dirname(createRequire(import.meta.url).resolve("ctix")), "cli.cjs");
 

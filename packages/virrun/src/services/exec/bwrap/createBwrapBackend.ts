@@ -4,8 +4,8 @@ import type { ExecOptions } from "#src/models/exec/ExecOptions";
 import type { StdioOptions } from "node:child_process";
 
 import { BackendType } from "#src/models/virrun/BackendType";
-import { WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER } from "#src/services/exec/bwrap/constants";
 import { createStderrLiveWriter } from "#src/services/exec/bwrap/createStderrLiveWriter";
+import { getNoStatusFailureHeadline } from "#src/services/exec/bwrap/getNoStatusFailureHeadline";
 import { parseBwrapExitCode } from "#src/services/exec/bwrap/parseBwrapExitCode";
 import { parseBwrapStderrStatus } from "#src/services/exec/bwrap/parseBwrapStderrStatus";
 import { forwardTerminationSignals } from "#src/services/exec/util/forwardTerminationSignals";
@@ -62,18 +62,20 @@ export const createBwrapBackend = (
         status += chunk.toString();
       });
       child.on("error", reject);
-      child.on("close", () => {
+      child.on("close", (closeCode, closeSignal) => {
         const bwrapStderr =
           bwrapCommand.statusSource === "stderr" ? parseBwrapStderrStatus(stderr) : { status, stderr };
         const exitCode = parseBwrapExitCode(bwrapStderr.status);
         if (exitCode === undefined) {
-          // No status block means bwrap never reported: either the wsl backend's folded sync prelude failed before
-          // The sandbox started (its marker line is in stderr — name that failure, not bubblewrap) or sandbox setup
-          // Itself failed (bad flag, missing binary, WSL bridge or overlay-mount error). Fold the captured stderr
-          // Into the error either way so the user sees why.
-          const headline = bwrapStderr.stderr.includes(WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER)
-            ? "the source mirror sync failed before the sandbox started"
-            : "bubblewrap failed to set up the sandbox";
+          // No status block means bwrap never reported, and only one of the reasons is bubblewrap: a folded prelude
+          // Failed before the sandbox started (its marker line is in stderr), the run was killed from outside, or
+          // Sandbox setup itself failed (bad flag, missing binary, WSL bridge or overlay-mount error).
+          // GetNoStatusFailureHeadline names which; the captured stderr is folded in either way so the user sees why.
+          const headline = getNoStatusFailureHeadline(
+            bwrapStderr.stderr,
+            closeCode ?? undefined,
+            closeSignal ?? undefined,
+          );
           reject(
             new InvalidOperationError(
               Operation.Create,

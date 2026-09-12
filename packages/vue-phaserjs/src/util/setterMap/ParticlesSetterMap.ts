@@ -19,6 +19,10 @@ export const ParticlesSetterMap: SetterMap<
   GameObjects.Particles.ParticleEmitter,
   ParticlesEventEmitsOptions
 > = {
+  config: (gameObject) => (value) => {
+    if (!value) return;
+    gameObject.setConfig(value);
+  },
   ...AlphaSingleSetterMap,
   ...BlendModeSetterMap,
   ...DepthSetterMap,
@@ -29,8 +33,4 @@ export const ParticlesSetterMap: SetterMap<
   ...TransformSetterMap,
   ...VisibleSetterMap,
   ...GlobalSetterMap,
-  config: (gameObject) => (value) => {
-    if (!value) return;
-    gameObject.setConfig(value);
-  },
 };

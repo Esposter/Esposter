@@ -60,10 +60,9 @@ That is a judgement call about this repository's priorities rather than a techni
 
 ## What deletion removes
 
-Beyond the package itself and its documentation area, three things elsewhere in the repository exist only because virrun does:
+Beyond the package itself and its documentation area, two things elsewhere in the repository exist only because virrun does:
 
 - **The prefix.** Every root script carrying `virrun --` loses it, which is most of the check and build surface. Detailed in [commands](/docs/proposals/refactors/vite-plus/commands).
-- **The second selector in `pnpm build`.** That script derives two filters, and the second exists solely because the toolchain is a build input rather than a dependency: virrun's committed CLI entry imports a `dist` only its own build writes, so a deploy building from source rather than from CI's artifact reached the app build with no `virrun` to run it with. Remove virrun and the app build is one selector again.
 - **Two constraints on the coverage job.** It installs a bubblewrap sandbox and pins an Ubuntu image newer than the default, both because the suite exercises virrun's `os` backend and the older image's sandbox version would silently self-gate the differential tests out of existence. Neither constraint has any other cause.
 
 ## The published-package question

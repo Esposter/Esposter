@@ -1,3 +1,5 @@
+import type { SourceMirrorManifest } from "#src/models/exec/wsl/SourceMirrorManifest";
+
 import { SourceMirrorEntryType } from "#src/models/exec/wsl/SourceMirrorEntryType";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "#src/services/exec/util/constants";
@@ -60,30 +62,19 @@ describe(createWslSourceMirrorSync, () => {
   };
   // Simulate a prior successful sync: the tree dir exists and the published manifest matches the given tree state,
   // Recorded under the exclude set in force unless a case is exercising an exclude change.
-  const publish = (publishedExcludes: readonly string[] = excludes): void => {
+  const publish = (publishedExcludes: readonly string[] = excludes, extraEntries: SourceMirrorManifest = {}): void => {
     mkdirSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { recursive: true });
     writeFileSync(
       join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME),
       JSON.stringify({
-        entries: buildSourceMirrorManifest(cwd, publishedExcludes),
+        entries: { ...buildSourceMirrorManifest(cwd, publishedExcludes), ...extraEntries },
         excludes: publishedExcludes,
       }),
     );
   };
-
   // A prior sync whose manifest also claims a path the working tree no longer holds — the delete side of a delta.
   const publishRemoved = (removedFilename: string): void => {
-    mkdirSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { recursive: true });
-    writeFileSync(
-      join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME),
-      JSON.stringify({
-        entries: {
-          ...buildSourceMirrorManifest(cwd, excludes),
-          [removedFilename]: { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.File },
-        },
-        excludes,
-      }),
-    );
+    publish(excludes, { [removedFilename]: { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.File } });
   };
 
   beforeEach(() => {

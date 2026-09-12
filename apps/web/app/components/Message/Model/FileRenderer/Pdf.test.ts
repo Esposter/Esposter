@@ -13,12 +13,12 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 vi.mock(import("@vue-pdf-viewer/viewer"), () => ({
   VPdfViewer: defineComponent({
     render: () => h("div"),
-  }) as unknown as (typeof import("@vue-pdf-viewer/viewer"))["VPdfViewer"],
+  }) as (typeof import("@vue-pdf-viewer/viewer"))["VPdfViewer"],
 }));
 vi.mock(import("vue-pdf-embed"), () => ({
   default: defineComponent({
     render: () => h("div", { class: "pdf-embed" }),
-  }) as unknown as (typeof import("vue-pdf-embed"))["default"],
+  }) as (typeof import("vue-pdf-embed"))["default"],
 }));
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- a `?url` asset has no module type to import
 vi.mock("pdfjs-dist/build/pdf.worker?url", () => ({ default: "" }));

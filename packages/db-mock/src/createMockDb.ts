@@ -22,6 +22,5 @@ export const createMockDb = async (): Promise<Database> => {
   // `new PGlite()` returns before init finishes, so the first query would otherwise pay the
   // Boot cost and blow past the per-test timeout. Await readiness here so it lands in `beforeAll`.
   await client.waitReady;
-  const db = drizzle({ client, relations });
-  return db as unknown as Database;
+  return drizzle({ client, relations });
 };

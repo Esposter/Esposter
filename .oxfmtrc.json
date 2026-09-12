@@ -5,7 +5,8 @@
     "*.tsx",
     "**/tilemap.json",
     "**/auto-imports.d.ts",
-    "*snapshot*",
+    "**/__snapshots__",
+    "**/snapshot.json",
     "CHANGELOG*.md"
   ],
   "printWidth": 120

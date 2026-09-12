@@ -39,8 +39,11 @@ vi.mock(import("@/services/getFoo"), () => ({ getFoo: () => fooMock.current() })
 
 **A module whose export is a dynamic-path `Proxy` can only be mocked at the module seam.** `authClient`
 (better-auth) resolves its methods through a `Proxy`, so `useSession` is not a configurable own property and
-`vi.spyOn(authClient, "useSession")` throws rather than replacing anything. Mock the module and drive the method
-through a hoisted holder, as above.
+`vi.spyOn(authClient, "useSession")` throws rather than replacing anything. Its colocated
+`app/services/auth/authClient.test.ts` is that seam: it exports the loosely typed `useSession`/`signOut` doubles
+beside the cast `authClient`, so a suite registers `vi.mock(import("@/services/auth/authClient"), () =>
+import("@/services/auth/authClient.test"))` and drives the method it imported from the mock file — never a
+per-file factory that re-rolls the cast. A Proxy no colocated file covers yet gets one, on the same shape.
 
 ### Placement and export
 
@@ -64,7 +67,7 @@ describe.todo("getFoo");
 vi.mock(import("@/services/getFoo"), () => import("@/services/getFoo.test"));
 ```
 
-**A mock every suite wants is registered once in the package's vitest `setupFiles`, never per file.** A `vi.mock` is hoisted only within the file that writes it, so one written in a shared helper module (e.g. `context.test.ts`) does not intercept a test file's own direct import of the same module — the reason a registration tends to get copied verbatim into every suite that reads through it. A setup file runs before the test module is imported, so it covers both paths. In this repo every Azure composable is registered in `apps/web/shared/test/setup.ts`; a test file adds its own `vi.mock` only for a double that is specific to it (an inline factory over local state).
+**A mock every suite wants is registered once in the package's vitest `setupFiles`, never per file.** A `vi.mock` is hoisted only within the file that writes it, so one written in a shared helper module (e.g. `context.test.ts`) does not intercept a test file's own direct import of the same module — the reason a registration tends to get copied verbatim into every suite that reads through it. A setup file runs before the test module is imported, so it covers both paths. In this repo every Azure composable and the better-auth session (`@@/server/auth` → `server/auth.test.ts`, whose `authMocks` the `context.test.ts` helpers drive) are registered in `apps/web/shared/test/setup.ts`; a test file adds its own `vi.mock` only for a double that is specific to it (an inline factory over local state). The session one is the cautionary case: registered from `context.test.ts` it reached a suite only while that module happened to load before the suite's router import, and a `setup*` fixture that took the `context.test.ts` import out of the suite file was what made the order visible.
 
 When a test needs to call the mock directly (assert on calls / read mock state), import from the **real path** — Vitest intercepts it and returns the mock:
 
@@ -75,7 +78,7 @@ const bar = await getFoo(BarType.Baz);
 
 - Typed `vi.mock(import(...))` enforces type compatibility — casts stay in the mock file, never in individual tests.
 - If `MockXxx` from `azure-mock` doesn't satisfy the Azure SDK type (private members), fix `azure-mock` first. Use `as unknown as` in the mock `.test.ts` only when SDK private members make structural compatibility impossible.
-- **Never import from the `.test` file in tests** — only from real module paths.
+- **Never import a mocked export from the `.test` file in tests** — reach it through the real module path. Only a double the real module has no export for (a method of a Proxy, such as `useSession`) is imported from the mock file by name.
 
 ### `db` mock exception — getter pattern stays inline
 
@@ -83,7 +86,7 @@ The `db` mock cannot be centralized; it needs a getter so each test's `beforeAll
 
 ```ts
 // Must stay inline in each test file — not extractable to a shared mock file
-let mockDb: PostgresJsDatabase<typeof relations>;
+let mockDb: Database;
 
 vi.mock(import("@/services/db"), () => ({
   get db() {
@@ -122,7 +125,7 @@ Getting this wrong is invisible until a call-count assertion reads a neighbour's
 
 - **Globals use `vi.stubGlobal`**, never `Object.defineProperty`; unstub with `vi.unstubAllGlobals()` in `afterEach` (per-test stubs) or `afterAll` (set once in `beforeAll`). `vi.restoreAllMocks()` does **not** undo a `stubGlobal`.
 - **`vi.stubEnv` needs no teardown** — `unstubEnvs: true` in `getVitestConfiguration` restores the env after every test, so never write an `unstubAllEnvs` hook. `vi.stubEnv(KEY, undefined)` is how a test unsets one, which is what a case reading a default owes itself: an ambient `CI` or opt-out from the dev's shell otherwise decides the answer. The globals flag stays off deliberately: it would restore a `beforeAll` `stubGlobal` after the file's first test.
-- **An env var a `beforeAll` sets is the one case `vi.stubEnv` cannot serve**, and for the same reason: the restore runs after every test, so the second test onwards would see the host value. A suite-scoped override reads the previous value, assigns `process.env` directly, and puts it back in `afterAll` — the hand-rolled shape everywhere else is a finding.
+- **An env var a `beforeAll` sets is the one case `vi.stubEnv` cannot serve**, and for the same reason: the restore runs after every test, so the second test onwards would see the host value. A suite-scoped override reads the previous value, assigns `process.env` directly, and puts it back in `afterAll` — `setupSuiteEnv` (`packages/virrun/src/services/exec/test/setupSuiteEnv.test.ts`) is that shape, registered before the `beforeAll` that reads the value, and a hand-rolled copy of it is a finding.
 - **A test must never read a color/TTY env var it did not stub.** `checkIsColorEnabled` consults `NO_COLOR`/`FORCE_COLOR`, so an ambient one from the dev's shell repaints CLI output; virrun's `vitest.config.ts` pins both empty for the package, and a test wanting color stubs `FORCE_COLOR` itself.
 
 ## A double that fabricates an entity id owes it a row

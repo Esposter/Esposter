@@ -1,4 +1,3 @@
-// oxlint-disable typescript/no-unnecessary-type-assertion
 import type { AzureContainer } from "@esposter/db-schema";
 
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
@@ -13,6 +12,7 @@ export const createReadBlobStateProcedure = <TData>(container: AzureContainer, M
       const { readableStreamBody } = await useDownload(container, getSaveBlobName(ctx.getSessionPayload.user.id));
       if (!readableStreamBody) return new Model();
       const json = await streamToText(readableStreamBody);
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion -- `any` is not assignable to `never`
       return new Model(jsonDateParse(json) as never);
     })
       .orTee(console.error)

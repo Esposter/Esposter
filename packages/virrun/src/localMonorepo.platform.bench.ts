@@ -32,8 +32,7 @@ import { afterAll, test } from "vitest";
 // Still skips instead of crashing in the module-scope install.
 const IS_ENABLED = false;
 const isOsSupported = IS_ENABLED && checkIsOsBackendSupported();
-const isWindows = process.platform === "win32";
-const OS_TASK_NAME = isWindows ? `${BackendType.Os}/wsl` : `${BackendType.Os}/linux`;
+const OS_TASK_NAME = process.platform === "win32" ? `${BackendType.Os}/wsl` : `${BackendType.Os}/linux`;
 const native = createNativeBackend();
 const repoRoot = isOsSupported ? findRepoRoot() : "";
 // A clean manifest mirror (symlinked real manifests + lockfile, no node_modules) used solely to warm the snapshot
@@ -63,11 +62,12 @@ afterAll(() => {
 // Os install writes node_modules only into the snapshot (for forking), never to host disk, so it is not a drop-in
 // For a native `pnpm install` and a head-to-head would imply a swap that can't be made. Materializing the tree back
 // To disk costs at least as much as the native install it would replace (byte-copy across the WSL/host boundary vs
-// Native's same-volume hardlink, plus Defender on win32) - see out-of-scope/materialize-node-modules.md. The real,
-// Cashable payoff is "run the command without reinstalling", which the typecheck/build/test fork groups below
-// Measure against the native baseline. Captured at module scope rather than in a hook: one snapshot backs every
-// Fork below, so it is the file's setup rather than any one test's. Top-level await materializes the upper layer
-// First. Keyed by the lockfile hash (same lockfile - same cache entry).
+// Native's same-volume hardlink, plus Defender on win32) - see
+// Apps/web/content/docs/virrun/rejected/materialize-node-modules.md. The real, cashable payoff is "run the command
+// Without reinstalling", which the typecheck/build/test fork groups below measure against the native baseline.
+// Captured at module scope rather than in a hook: one snapshot backs every fork below, so it is the file's setup
+// Rather than any one test's. Top-level await materializes the upper layer first. Keyed by the lockfile hash (same
+// Lockfile - same cache entry).
 if (isOsSupported)
   await createSnapshot(createOsBackend(), resolveSetupCommand(), createOsInstallOptions(warmCorpus, "pipe"));
 
@@ -98,8 +98,9 @@ test.skipIf(!isOsSupported)("build - packages/shared (cold)", async ({ bench }) 
 });
 
 // Write-back: the same build run through persistRun, which forks the warm snapshot and flushes the produced dist
-// Back to the host (specs/write-back.md). vs native shows the net win, and vs the `build` fork above isolates the
-// Flush cost — both must stay below the native baseline for write-back to be worth adopting on a mutation command.
+// Back to the host (apps/web/content/docs/virrun/write-back.md). vs native shows the net win, and vs the `build`
+// Fork above isolates the flush cost — both must stay below the native baseline for write-back to be worth adopting
+// On a mutation command.
 test.skipIf(!isOsSupported)("build - write-back persist vs native (produces dist)", async ({ bench }) => {
   const command = getSharedCommand("build");
   await bench.compare(
@@ -113,7 +114,7 @@ test.skipIf(!isOsSupported)("build - write-back persist vs native (produces dist
   );
 });
 
-test.skipIf(!isOsSupported)("- packages/shared", async ({ bench }) => {
+test.skipIf(!isOsSupported)("vitest - packages/shared", async ({ bench }) => {
   const command = getSharedCommand("test --run");
   await bench.compare(
     bench(BackendType.Native, async () => {

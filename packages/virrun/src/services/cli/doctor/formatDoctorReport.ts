@@ -30,7 +30,7 @@ const formatCheckLine = (check: DiagnosticCheck, labelWidth: number): string => 
 };
 // The one-line verdict. A failed Sandbox check means resolveBackend degrades os → native (the true fallback); any
 // Other failure means the sandbox mounts but a command hits a toolchain/write-back gap — kept distinct because the
-// Two failures have genuinely different consequences (specs/adoption.md auto-fallback).
+// Two failures have genuinely different consequences (apps/web/content/docs/virrun/adoption.md auto-fallback).
 const formatSummary = (checks: readonly DiagnosticCheck[]): string => {
   const isSandboxMissing = checks.some(
     (check) => check.type === DiagnosticCheckType.Sandbox && check.status === DiagnosticStatus.Missing,

@@ -1,6 +1,5 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Context } from "@@/server/trpc/context";
 import type { Clause } from "@esposter/azure";
 import type { BanInMessage, BanInMessageWithUsers } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
@@ -21,6 +20,7 @@ import { callSessionParticipantMap } from "@@/server/services/message/call/callS
 import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
 import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
+import { banRoomMember } from "@@/server/services/message/moderation/banRoomMember";
 import { readModerationNotesCount } from "@@/server/services/message/moderation/readModerationNotesCount";
 import { softDeleteRoomMessagesByUser } from "@@/server/services/message/moderation/softDeleteRoomMessagesByUser";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -28,11 +28,12 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { readCursorPaginationDataAzureTable } from "@@/server/services/pagination/cursor/readCursorPaginationDataAzureTable";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { announceRoomMemberRemoval } from "@@/server/services/room/announceRoomMemberRemoval";
+import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
 import { assertIsManageable } from "@@/server/services/room/rbac/assertIsManageable";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { assertIsRoomMiddleware } from "@@/server/trpc/middleware/userToRoom/assertIsRoomMiddleware";
+import { assertIsRoomMiddleware } from "@@/server/trpc/middleware/assertIsRoomMiddleware";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
@@ -57,24 +58,6 @@ import { exhaustiveGuard, getResultAsync, ItemMetadataPropertyNames, noop, Opera
 import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, ilike, isNull } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
-
-// The membership row an admin action removes, times out, or replaces
-const getRoomMembershipWhere = (roomId: string, userId: string) =>
-  and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, roomId));
-// A ban revokes membership and records the ban in one commit — both the ban and the soft ban start here.
-// The membership row comes back so the caller can announce the removal, which is not part of the commit
-const banRoomMember = (db: Context["db"], actorUserId: string, roomId: string, targetUserId: string) =>
-  db.transaction(async (tx) => {
-    const [deletedMember] = await tx
-      .delete(usersToRoomsInMessage)
-      .where(getRoomMembershipWhere(roomId, targetUserId))
-      .returning();
-    await tx
-      .insert(bansInMessage)
-      .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
-      .onConflictDoNothing();
-    return deletedMember;
-  });
 
 export const moderationRouter = router({
   createModerationNote: getPermissionsProcedure(
@@ -143,9 +126,18 @@ export const moderationRouter = router({
       const sessionId = ctx.getSessionPayload.session.id;
 
       switch (input.type) {
-        case AdminActionType.CreateBan: {
+        case AdminActionType.CreateBan:
+        case AdminActionType.SoftBan: {
           const deletedMember = await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
           if (deletedMember) await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, sessionId, "banned");
+          // A soft ban also purges what the member wrote — best-effort after the ban commits: the ban is the effect
+          // That must not be lost, and rethrowing here would fail a mutation whose row already landed. Nothing
+          // Re-runs the purge — re-issuing the ban hits `onConflictDoNothing`, and there is no sweeper or retry
+          // Queue — so a partial failure leaves some of the banned user's messages visible until a moderator
+          // Deletes them by hand. Accepted while the purge is a table scan the request path already owns; a
+          // Durable version belongs on the event pipeline
+          if (input.type === AdminActionType.SoftBan)
+            await getResultAsync(() => softDeleteRoomMessagesByUser(roomId, targetUserId)).match(noop, console.error);
           break;
         }
         case AdminActionType.ForceMute:
@@ -158,17 +150,6 @@ export const moderationRouter = router({
             .where(getRoomMembershipWhere(roomId, targetUserId))
             .returning();
           if (deletedMember) await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, sessionId, "kicked");
-          break;
-        }
-        case AdminActionType.SoftBan: {
-          const deletedMember = await banRoomMember(ctx.db, actorUserId, roomId, targetUserId);
-          if (deletedMember) await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, sessionId, "banned");
-          // Best-effort after the ban commits: the ban is the effect that must not be lost, and rethrowing here
-          // Would fail a mutation whose row already landed. Nothing re-runs the purge — re-issuing the ban hits
-          // `onConflictDoNothing`, and there is no sweeper or retry queue — so a partial failure leaves some of
-          // The banned user's messages visible until a moderator deletes them by hand. Accepted while the purge
-          // Is a table scan the request path already owns; a durable version belongs on the event pipeline
-          await getResultAsync(() => softDeleteRoomMessagesByUser(roomId, targetUserId)).match(noop, console.error);
           break;
         }
         case AdminActionType.StopScreenShare: {

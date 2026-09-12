@@ -22,7 +22,9 @@ vi.mock(import("#src/services/exec/snapshot/resolveSnapshotLocation"), () => ({
 vi.mock(import("#src/services/exec/snapshot/buildHostFlushPlan"), () => ({
   buildHostFlushPlan: vi.fn<typeof buildHostFlushPlan>(),
 }));
-vi.mock(import("#src/services/exec/snapshot/applyFlushPlan"), () => ({ applyFlushPlan: vi.fn<typeof applyFlushPlan>() }));
+vi.mock(import("#src/services/exec/snapshot/applyFlushPlan"), () => ({
+  applyFlushPlan: vi.fn<typeof applyFlushPlan>(),
+}));
 vi.mock(import("#src/services/exec/snapshot/removeSnapshotDirectory"), () => ({
   removeSnapshotDirectory: vi.fn<typeof removeSnapshotDirectory>(),
 }));
@@ -40,7 +42,12 @@ describe(persistRun, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // The snapshot dir must be a real directory — persistRun mkdtempSyncs the per-run upper/work under it.
-    vi.mocked(resolveSnapshotLocation).mockReturnValue({ dir: create(), exists: true, hash: "", upperDir: "/snapshot/upper" });
+    vi.mocked(resolveSnapshotLocation).mockReturnValue({
+      dir: create(),
+      exists: true,
+      hash: "",
+      upperDir: "/snapshot/upper",
+    });
     vi.mocked(buildHostFlushPlan).mockReturnValue(PLAN);
   });
 

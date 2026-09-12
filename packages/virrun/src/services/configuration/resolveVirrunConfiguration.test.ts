@@ -13,9 +13,7 @@ describe(resolveVirrunConfiguration, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   const typescriptConfigurationFilename = `${VIRRUN_CONFIGURATION_NAME}.ts`;
 
-  afterEach(() => {
-    cleanup();
-  });
+  afterEach(cleanup);
 
   test("walks up from a nested cwd to the repo-root config", () => {
     expect.hasAssertions();
@@ -112,6 +110,8 @@ describe(resolveVirrunConfiguration, () => {
     const root = create();
     writeFileSync(join(root, typescriptConfigurationFilename), `export default { "": "" };`);
 
-    expect(() => resolveVirrunConfiguration(root)).toThrow(InvalidOperationError);
+    expect(() => resolveVirrunConfiguration(root)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: parseVirrunConfiguration, ✖ Unrecognized key: ""]`,
+    );
   });
 });

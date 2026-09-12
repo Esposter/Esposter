@@ -33,8 +33,10 @@ import { readMyInvite } from "@@/server/services/message/readMyInvite";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { assertIsMember } from "@@/server/services/room/assertIsMember";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
+import { getRoomMembershipWhere } from "@@/server/services/room/getRoomMembershipWhere";
 import { getRoomProfileImageBlobPrefix } from "@@/server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "@@/server/services/room/listRoomProfileImageBlobNames";
 import { router } from "@@/server/trpc";
@@ -44,8 +46,7 @@ import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
-import { assertIsMember } from "@@/server/trpc/middleware/userToRoom/assertIsMember";
-import { assertIsRoomMiddleware } from "@@/server/trpc/middleware/userToRoom/assertIsRoomMiddleware";
+import { assertIsRoomMiddleware } from "@@/server/trpc/middleware/assertIsRoomMiddleware";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
@@ -177,7 +178,7 @@ export const baseRoomRouter = router({
     return { publicUrl: blockBlobClient.url, sasUrl };
   }),
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const { roomId, roomInMessage, user } = await ctx.db.transaction(async (tx) => {
+    const { room, roomId, user } = await ctx.db.transaction(async (tx) => {
       // The room the token names is read and locked before a use is consumed, and the lock is held through the
       // Membership insert: a pause committing between the check below and that insert would otherwise let one more
       // Member in through a link the room had already closed
@@ -253,14 +254,14 @@ export const baseRoomRouter = router({
         DatabaseEntityType.UserToRoom,
         JSON.stringify(userToRoom),
       );
-      const { roomId: joinedRoomId, roomInMessage: joinedRoomInMessage, user: joinedUser } = userToRoomWithRelations;
-      return { roomId: joinedRoomId, roomInMessage: joinedRoomInMessage, user: joinedUser };
+      const { room: joinedRoom, roomId: joinedRoomId, user: joinedUser } = userToRoomWithRelations;
+      return { room: joinedRoom, roomId: joinedRoomId, user: joinedUser };
     });
 
     roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
     await createSystemRoomMessage(roomId, user.id, `${user.name} joined the room.`, ctx.getSessionPayload.session.id);
 
-    return roomInMessage;
+    return room;
   }),
   leaveRoom: standardAuthedProcedure
     .input(leaveRoomInputSchema)
@@ -275,12 +276,7 @@ export const baseRoomRouter = router({
       if (ownedRoom) return (await deleteRoom(ctx.db, ctx.getSessionPayload, input)).id;
 
       const userToRoom = requireMutation(
-        (
-          await ctx.db
-            .delete(usersToRoomsInMessage)
-            .where(and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, userId)))
-            .returning()
-        )[0],
+        (await ctx.db.delete(usersToRoomsInMessage).where(getRoomMembershipWhere(input, userId)).returning())[0],
         Operation.Delete,
         DatabaseEntityType.UserToRoom,
         input,

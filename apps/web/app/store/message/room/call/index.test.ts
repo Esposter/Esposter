@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useCallStore } from "@/store/message/room/call";
@@ -10,14 +11,10 @@ import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { useSessionMock } = vi.hoisted(() => ({ useSessionMock: vi.fn<() => unknown>() }));
-
-vi.mock(import("@/services/auth/authClient"), () => ({
-  authClient: { useSession: useSessionMock } as unknown as (typeof import("@/services/auth/authClient"))["authClient"],
-}));
+vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 beforeEach(() => {
-  useSessionMock.mockReturnValue(ref({ data: getMockSession() }));
+  useSession.mockReturnValue(ref({ data: getMockSession() }));
 });
 
 describe(useCallStore, () => {

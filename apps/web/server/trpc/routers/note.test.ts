@@ -1,29 +1,20 @@
-import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { EMPTY_NOTE_DOC } from "#shared/models/resource/note/NoteResource";
-import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
 import { noteRouter } from "@@/server/trpc/routers/note";
-import { resources, ResourceType } from "@esposter/db-schema";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
+import { ResourceType } from "@esposter/db-schema";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("noteRouter", () => {
-  let mockContext: Context;
+  const { getCaller } = setupResourceSuite(noteRouter);
   let caller: DecorateRouterRecord<TRPCRouter["note"]>;
   const name = "name";
   const note = { doc: EMPTY_NOTE_DOC };
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(noteRouter)(mockContext);
-  });
-
-  afterEach(async () => {
-    MockContainerDatabase.clear();
-    await mockContext.db.delete(resources);
+  beforeAll(() => {
+    caller = getCaller();
   });
 
   test("saves and reads content", async () => {

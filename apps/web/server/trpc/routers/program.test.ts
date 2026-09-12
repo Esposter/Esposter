@@ -1,5 +1,4 @@
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
-import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Clause } from "@esposter/azure";
@@ -10,12 +9,14 @@ import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySetti
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { DANGLING_PROGRAM_BINDING_REASON } from "@@/server/services/program/constants";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "@@/server/trpc/routers/createAudienceSheet.test";
 import { createBoundProgram } from "@@/server/trpc/routers/createBoundProgram.test";
+import { createSurvey } from "@@/server/trpc/routers/createSurvey.test";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { programRouter } from "@@/server/trpc/routers/program";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
+import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
@@ -24,12 +25,11 @@ import {
   AzureEntityType,
   AzureTable,
   ProgramParticipantEntity,
-  resources,
   ResourceType,
   SurveyResponseMode,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -46,6 +46,7 @@ const readStoredParticipants = async (programId: string) => {
 
 // The program-specific participant issuance and status join.
 describe("programRouter", () => {
+  const { getCaller, getMockContext } = setupResourceSuite(programRouter);
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["program"]>;
   let datasetCaller: DecorateRouterRecord<TRPCRouter["dataset"]>;
@@ -65,14 +66,9 @@ describe("programRouter", () => {
     DANGLING_PROGRAM_BINDING_REASON,
   ).message;
   // Every participant test starts from the same pair — an Identified survey and a program bound to it plus an
-  // Audience sheet — and varies only the audience it issues against
-  const setupIdentifiedProgram = async (audienceKeyValues = keyValues) => {
-    const survey = await surveyCaller.createResource({ name });
-    await surveyCaller.saveResourceContent({
-      content: { model, settings: identifiedSettings } satisfies SurveyResource,
-      contentVersion: survey.contentVersion,
-      id: survey.id,
-    });
+  // Audience sheet — and varies only the audience it issues against, or the survey's settings
+  const setupIdentifiedProgram = async (audienceKeyValues = keyValues, surveySettings = identifiedSettings) => {
+    const survey = await createSurvey(surveyCaller, name, { model, settings: surveySettings });
     const program = await createBoundProgram({
       keyValues: audienceKeyValues,
       name,
@@ -83,19 +79,17 @@ describe("programRouter", () => {
     return { program, survey };
   };
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
-    caller = createCallerFactory(programRouter)(mockContext);
+  beforeAll(() => {
+    mockContext = getMockContext();
+    caller = getCaller();
     datasetCaller = createCallerFactory(datasetRouter)(mockContext);
     resourceCaller = createCallerFactory(resourceRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     surveyCaller = createCallerFactory(surveyRouter)(mockContext);
   });
 
-  afterEach(async () => {
-    MockContainerDatabase.clear();
+  afterEach(() => {
     MockTableDatabase.clear();
-    await mockContext.db.delete(resources);
   });
 
   test("saves and reads content", async () => {
@@ -265,19 +259,7 @@ describe("programRouter", () => {
   test("reads status with an anonymous-era responder", async () => {
     expect.hasAssertions();
 
-    const survey = await surveyCaller.createResource({ name });
-    await surveyCaller.saveResourceContent({
-      content: { model, settings } satisfies SurveyResource,
-      contentVersion: survey.contentVersion,
-      id: survey.id,
-    });
-    const program = await createBoundProgram({
-      keyValues: [" "],
-      name,
-      programCaller: caller,
-      sheetCaller,
-      surveyId: survey.id,
-    });
+    const { program, survey } = await setupIdentifiedProgram([" "], settings);
     await caller.generateProgramParticipants({ id: program.id });
     // A response carrying no token carries nobody, so it is simply not a participant row
     await surveyCaller.createSurveyResponse({
