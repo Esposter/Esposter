@@ -36,8 +36,10 @@ sitting into the largest prefix under the cap: `references/window-composition.md
 
 A sweep that never stops (`sweeps` skill) produces windows faster than reviews complete, so the local commit queue
 outgrows one sitting and one clone. Each window that fills is **cut and bookmarked**: a branch `queue/<n>-<title>`
-at the cut sha, numbered in push order and titled by what the window carries, pushed once so the work exists
-somewhere other than this clone — and pushed to no PR, so it triggers nothing.
+at the cut sha, numbered in push order and titled by what the window carries as a ref-safe slug — lowercase
+letters, digits and hyphens, since the title lands unquoted in a branch name — pushed once so the work exists
+somewhere other than this clone. It is pushed to no PR, so it starts no review; CI and the bench still run on
+every branch push, and only the deployment workflow is limited to `develop`.
 
 ```bash
 git branch queue/<n>-<title> <cut> && git push origin queue/<n>-<title>
@@ -52,7 +54,8 @@ git push origin <cut>:develop && git push origin --delete queue/<n>-<title>
 ```
 
 A review's fixes still lead the next window (`references/window-composition.md`), which rebases every queued
-window above them. The bookmarks are re-pointed with `git branch -f` and `git push --force-with-lease`: a queue
+window above them. The bookmarks are re-pointed with `git branch -f` and, one ref at a time so the push cannot
+fall back to whatever `push.default` selects, `git push --force-with-lease origin queue/<n>-<title>`: a queue
 bookmark is a backup of unpushed work rather than a reviewed artifact, so it may move where a
 `queue/<scope>` cut from a pushed `develop` (`references/release-pr-cutting.md`) may not.
 
