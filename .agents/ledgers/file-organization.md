@@ -48,7 +48,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `scripts/src/oxlint`                                                       | 2026-09-12 | `.oxlintrc.json` loads a plugin by path, so the entrypoint stays; the rules move out          |
 | `scripts/src/coderabbit`                                                   | 2026-09-12 | four verbs; what two share sits at `services/coderabbit` root                                 |
 | `scripts/src/outdatedDependencies` — `models`, `lock`, `workspace`         | 2026-09-12 | the readers of the two yaml files                                                             |
-| `scripts/src/outdatedDependencies` — the rest                              | —          | `manifest`, `registry`, `pnpm`, `print`, and what two of them share at the root               |
+| `scripts/src/outdatedDependencies` — the rest                              | 2026-09-12 | `manifest`, `registry`, `pnpm`, `print`, and what two of them share at the root               |
 | `scripts/src/updateNode`                                                   | 2026-09-12 |                                                                                               |
 | `scripts/src/sweeps` — `constantScope`, `repeatedListItems`                | 2026-09-12 | one entrypoint per scan                                                                       |
 | `scripts/src/sweeps` — the rest                                            | 2026-09-12 | `skillDocs`, `sharedExportConsumers`, `unterminatedResults`, the root helpers                 |
