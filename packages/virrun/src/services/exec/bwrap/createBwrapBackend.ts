@@ -1,6 +1,6 @@
-import type { BwrapCommand } from "#src/models/exec/bwrap/BwrapCommand";
+import type { CreateBwrapArgs } from "#src/models/exec/bwrap/CreateBwrapArgs";
+import type { CreateBwrapCommand } from "#src/models/exec/bwrap/CreateBwrapCommand";
 import type { ExecBackend } from "#src/models/exec/ExecBackend";
-import type { ExecOptions } from "#src/models/exec/ExecOptions";
 import type { StdioOptions } from "node:child_process";
 
 import { BwrapStatusSource } from "#src/models/exec/bwrap/BwrapStatusSource";
@@ -14,12 +14,8 @@ import { spawnHidden } from "#src/services/exec/util/spawnHidden";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const createBwrapBackend = (
-  createBwrapArgs: (
-    command: readonly string[] | string,
-    cwd: string,
-    options: Pick<ExecOptions, "bindDirectories" | "isNetworkEnabled" | "overlayLayers">,
-  ) => string[],
-  createBwrapCommand: (bwrapArgs: readonly string[], options: ExecOptions) => BwrapCommand,
+  createBwrapArgs: CreateBwrapArgs,
+  createBwrapCommand: CreateBwrapCommand,
   errorName: string,
 ): ExecBackend => ({
   exec: (command, options) =>

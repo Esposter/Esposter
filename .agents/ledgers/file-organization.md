@@ -43,7 +43,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/virrun` — `services/exec/wsl`                                         | 2026-09-12 |                                                                                                 |
 | `packages/virrun` — `services/exec/snapshot`                                    | 2026-09-12 |                                                                                                 |
 | `packages/virrun` — `services/exec/util`                                        | 2026-09-12 |                                                                                                 |
-| `packages/virrun` — `services/exec` — the rest                                  | —          | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                        |
+| `packages/virrun` — `services/exec` — the rest                                  | 2026-09-12 | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                        |
 | `packages/virrun` — `services` — the rest                                       | —          | `cli`, `configuration`, `source`, `vfs`, `virrun`                                               |
 | `packages/virrun` — `models`, root                                              | —          |                                                                                                 |
 | `apps/infra` — `azure/resources`                                                | —          | one resource per file, named for its export                                                     |

@@ -1,36 +1,19 @@
 import type { ExecOptions } from "#src/models/exec/ExecOptions";
 
+import { ensureGitIgnoreEntry } from "#src/services/exec/store/ensureGitIgnoreEntry";
 import {
-  GITIGNORE_FILENAME,
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
   PNPM_CONFIG_STORE_DIR_KEY,
   PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN_KEY,
   PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN_VALUE,
   VIRRUN_CACHE_DIRECTORY_NAME,
-  VIRRUN_GITIGNORE_ENTRY,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "#src/services/exec/util/constants";
 import { resolveWorkspaceRoot } from "#src/services/exec/util/resolveWorkspaceRoot";
-import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { join } from "node:path";
-
-const ensureGitIgnoreEntry = (workspaceRoot: string) => {
-  const gitignore = join(workspaceRoot, GITIGNORE_FILENAME);
-  const gitignoreContent = existsSync(gitignore) ? readFileSync(gitignore, "utf8") : "";
-  // Idempotent against any form the cache directory is already ignored under — `.virrun`, `/.virrun`, `.virrun/`,
-  // `/.virrun/` — by normalizing each line to its bare name. Matching only the exact `/.virrun/` entry would
-  // Re-append a redundant line whenever a repo already lists the directory in a different (equally valid) form.
-  const isIgnored = gitignoreContent
-    .split(/\r?\n/u)
-    .some((line) => line.trim().replace(/^\/+/u, "").replace(/\/+$/u, "") === VIRRUN_CACHE_DIRECTORY_NAME);
-  if (isIgnored) return;
-  appendFileSync(
-    gitignore,
-    `${!gitignoreContent || gitignoreContent.endsWith("\n") ? "" : "\n"}${VIRRUN_GITIGNORE_ENTRY}\n`,
-  );
-};
 // `cacheRoot` is the `.virrun` directory the store lives under — the repo's own on Linux, but the WSL distro's
 // Ext4 home on win32 (see getWslNativeCacheRoot), since the repo path resolves to slow v9fs inside the sandbox.
 // The caller (createVirrun) owns that platform decision so this stays a pure function of its inputs.

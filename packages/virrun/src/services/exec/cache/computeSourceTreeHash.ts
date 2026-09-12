@@ -1,21 +1,10 @@
+import { hashUntrackedEntry } from "#src/services/exec/cache/hashUntrackedEntry";
 import { EXEC_FILE_MAX_BUFFER } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { getResult } from "@esposter/shared";
 import { createHash } from "node:crypto";
-import { lstatSync, readFileSync, readlinkSync } from "node:fs";
 import { join } from "node:path";
-// Hash one untracked entry's identity: its symlink target, or its file content, or a mode marker for anything else
-// (a directory/socket git may list under an odd path). Unreadable (permission denied) falls back to a constant so a
-// Non-input the command can't read either never fails the hash. Combined with its path by the caller, so distinct
-// Paths never collide even when their markers match.
-const hashUntrackedEntry = (fullPath: string): string =>
-  getResult(() => {
-    const stats = lstatSync(fullPath);
-    if (stats.isSymbolicLink()) return `l:${readlinkSync(fullPath)}`;
-    else if (stats.isFile()) return `f:${createHash("sha256").update(readFileSync(fullPath)).digest("hex")}`;
-    else return `s:${stats.mode}`;
-  }).unwrapOr("unreadable");
 // A content hash of the working tree exactly as the sandboxed command would read it — the source half of the task
 // Cache key (computeTaskCacheKey). Correct against every mutation shape: `git ls-files -s` fingerprints the index
 // (committed + staged blob shas), `git diff --binary` layers the unstaged working delta on top (binary content

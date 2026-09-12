@@ -1,6 +1,8 @@
+import type { BwrapStderrStatus } from "#src/models/exec/bwrap/BwrapStderrStatus";
+
 import { WSL_BWRAP_STATUS_BEGIN, WSL_BWRAP_STATUS_END } from "#src/services/exec/bwrap/constants";
 
-export const parseBwrapStderrStatus = (stderr: string): { status: string; stderr: string } => {
+export const parseBwrapStderrStatus = (stderr: string): BwrapStderrStatus => {
   const beginIndex = stderr.lastIndexOf(WSL_BWRAP_STATUS_BEGIN);
   const endIndex = stderr.lastIndexOf(WSL_BWRAP_STATUS_END);
   if (beginIndex === -1 || endIndex === -1 || endIndex < beginIndex) return { status: "", stderr };
