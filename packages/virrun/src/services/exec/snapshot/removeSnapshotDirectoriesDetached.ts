@@ -1,5 +1,6 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
+import { createPidTempTag } from "#src/services/exec/util/createPidTempTag";
 import { spawnBackground } from "#src/services/exec/util/spawnBackground";
 import {
   VIRRUN_REMOVE_LIST_TEMP_PREFIX,
@@ -55,7 +56,7 @@ export const removeSnapshotDirectoriesDetached = (directories: readonly string[]
     // Reclaim the lists of runs whose launch never happened before staging this one — this is the only path that
     // Enumerates the cache root, so a list left there has no other owner (reapStaleRemoveLists)
     reapStaleRemoveLists(cacheRoot);
-    const listFilename = `${VIRRUN_REMOVE_LIST_TEMP_PREFIX}${process.pid}.${crypto.randomUUID()}`;
+    const listFilename = `${VIRRUN_REMOVE_LIST_TEMP_PREFIX}${createPidTempTag()}`;
     const listUnc = join(cacheRoot, listFilename);
     writeFileSync(listUnc, joinNullDelimited(linuxDirectories));
     spawnBackground(WSL_EXECUTABLE, ["--exec", "sh", "-c", WSL_REMOVE_LIST_SCRIPT, "sh", readWslPath(listUnc)]);

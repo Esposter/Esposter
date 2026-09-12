@@ -1,4 +1,5 @@
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
+import { createPidTempTag } from "#src/services/exec/util/createPidTempTag";
 import {
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
   VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
@@ -15,10 +16,7 @@ import { join } from "node:path";
 // The user's command for a marker nothing in this run reads. What makes swallowing it safe is that every planning
 // Pass republishes a missing marker, so a failure costs one window rather than leaving the entry unattributable.
 export const publishSourceMirrorOrigin = (entryUnc: string, cwd: string): void => {
-  const originTempPath = join(
-    entryUnc,
-    `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${process.pid}.${crypto.randomUUID()}`,
-  );
+  const originTempPath = join(entryUnc, `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${createPidTempTag()}`);
   getResult(() => {
     writeFileSync(originTempPath, cwd);
     renameSync(originTempPath, join(entryUnc, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME));

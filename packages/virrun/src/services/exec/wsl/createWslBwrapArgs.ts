@@ -1,17 +1,10 @@
 import type { ExecOptions } from "#src/models/exec/ExecOptions";
-import type { OverlayLayers } from "#src/models/exec/OverlayLayers";
 
 import { buildBwrapArgs } from "#src/services/exec/bwrap/buildBwrapArgs";
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
 import { getWslSourceMirrorPath } from "#src/services/exec/wsl/getWslSourceMirrorPath";
+import { readWslOverlayLayers } from "#src/services/exec/wsl/readWslOverlayLayers";
 import { readWslPath } from "#src/services/exec/wsl/readWslPath";
-// The overlay layers carry host (Windows) paths to the snapshot cache, so translate every one through
-// Wslpath before they reach the Linux bwrap argv — exactly as cwd and bindDirectories are translated.
-const readWslOverlayLayers = ({ lowerDirectories, upperDirectory, workDirectory }: OverlayLayers): OverlayLayers => ({
-  lowerDirectories: lowerDirectories?.map((lowerDirectory) => readWslPath(lowerDirectory)),
-  upperDirectory: upperDirectory === undefined ? undefined : readWslPath(upperDirectory),
-  workDirectory: workDirectory === undefined ? undefined : readWslPath(workDirectory),
-});
 
 export const createWslBwrapArgs = (
   command: readonly string[] | string,

@@ -1,8 +1,9 @@
 import type { WslSourceMirrorSync } from "#src/models/exec/wsl/WslSourceMirrorSync";
 
-import { checkIsBareNameExclude } from "#src/services/exec/util/checkIsBareNameExclude";
 import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "#src/services/exec/util/constants";
+import { createPidTempTag } from "#src/services/exec/util/createPidTempTag";
 import { buildSourceMirrorManifest } from "#src/services/exec/wsl/buildSourceMirrorManifest";
+import { checkHasBareNameExcludeChange } from "#src/services/exec/wsl/checkHasBareNameExcludeChange";
 import {
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME,
@@ -12,7 +13,6 @@ import {
 } from "#src/services/exec/wsl/constants";
 import { createSourceMirrorArchive } from "#src/services/exec/wsl/createSourceMirrorArchive";
 import { diffSourceMirrorManifests } from "#src/services/exec/wsl/diffSourceMirrorManifests";
-import { getChangedExcludes } from "#src/services/exec/wsl/getChangedExcludes";
 import { getWslSourceMirrorEntryPath } from "#src/services/exec/wsl/getWslSourceMirrorEntryPath";
 import { getWslSourceMirrorEntryUnc } from "#src/services/exec/wsl/getWslSourceMirrorEntryUnc";
 import { getWslSourceMirrorPath } from "#src/services/exec/wsl/getWslSourceMirrorPath";
@@ -24,11 +24,6 @@ import { shellQuote } from "#src/services/exec/wsl/shellQuote";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-// Whether the two exclude sets disagree on a bare name — the one exclude shape a delete list can't target, since it
-// Matches that segment at any depth rather than one path. The changed set itself comes from getChangedExcludes, the
-// Same derivation diffSourceMirrorManifests turns into deletes, so the two can never disagree on what changed.
-const checkHasBareNameExcludeChange = (previous: readonly string[], current: readonly string[]): boolean =>
-  getChangedExcludes(previous, current).some((exclude) => checkIsBareNameExclude(exclude));
 // Plan the win32 source-mirror sync for a host cwd and return { lockPath, mirrorPath, script }: the mirror lock every
 // Run holds shared for bwrap's duration, the ext4 mirror tree's Linux path (the `--overlay-src` lower
 // CreateWslBwrapArgs points at), and the sh script that brings it up to date, which `createWslOsBackend` folds into
@@ -108,7 +103,7 @@ export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string
     return { lockPath, mirrorPath, script: "" };
   }
   return getResult(() => {
-    const tag = `${process.pid}.${crypto.randomUUID()}`;
+    const tag = createPidTempTag();
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
     mkdirSync(entryUnc, { recursive: true });
     // The abandonment reaper can only reclaim an entry it can attribute, so the origin marker is published the moment

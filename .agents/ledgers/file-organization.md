@@ -40,7 +40,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/db` — `services/azure`                                                | 2026-09-12 |                                                                                                 |
 | `packages/db` — the rest, `packages/db-mock`                                    | 2026-09-12 |                                                                                                 |
 | `packages/azure`, `apps/functions`, `packages/azure-mock`                       | 2026-09-12 | cross-package placement: an Azure helper two packages need lives in `db`                        |
-| `packages/virrun` — `services/exec/wsl`                                         | —          |                                                                                                 |
+| `packages/virrun` — `services/exec/wsl`                                         | 2026-09-12 |                                                                                                 |
 | `packages/virrun` — `services/exec/snapshot`                                    | —          |                                                                                                 |
 | `packages/virrun` — `services/exec/util`                                        | —          |                                                                                                 |
 | `packages/virrun` — `services/exec` — the rest                                  | —          | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                        |
