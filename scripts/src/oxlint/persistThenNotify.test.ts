@@ -161,6 +161,21 @@ describe(RULE, () => {
       violations: 1,
     },
     {
+      name: "rethrowingPromiseRejectMatchAfterEmit",
+      source: `aEventEmitter.emit(); await getResultAsync(g).match(noop, (error) => Promise.reject(error));`,
+      violations: 1,
+    },
+    {
+      name: "rethrowingPromiseRejectBlockMatchAfterEmit",
+      source: `aEventEmitter.emit(); await getResultAsync(g).match(noop, (error) => { return Promise.reject(error); });`,
+      violations: 1,
+    },
+    {
+      name: "rethrowingPromiseRejectHandlerMatchAfterEmit",
+      source: `aEventEmitter.emit(); await getResultAsync(g).match(noop, Promise.reject);`,
+      violations: 1,
+    },
+    {
       name: "absorbingMatchAfterEmit",
       source: `aEventEmitter.emit(); await getResultAsync(g).match(noop, console.error);`,
       violations: 0,

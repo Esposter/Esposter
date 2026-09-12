@@ -72,19 +72,44 @@ const getRootCalleeName = (expression: ESTree.Expression): string | undefined =>
   if (expression.type === "MemberExpression") return getRootCalleeName(expression.object);
   return undefined;
 };
-// A `throw` this function reaches without entering a nested one: one inside a deeper callback belongs to that
-// Callback, not to this handler.
-const checkHasOwnThrow = (value: unknown): boolean =>
-  collectOwnNodes(value, (node) => (node.type === "ThrowStatement" ? [true] : undefined)).length > 0;
-// An err handler that puts the rejection back rather than absorbing it.
+const checkIsPromiseReject = (node: ESTree.Node): boolean =>
+  (node.type === "MemberExpression" &&
+    node.object.type === "Identifier" &&
+    node.object.name === "Promise" &&
+    node.property.type === "Identifier" &&
+    node.property.name === "reject") ||
+  (node.type === "CallExpression" &&
+    node.callee.type === "MemberExpression" &&
+    node.callee.object.type === "Identifier" &&
+    node.callee.object.name === "Promise" &&
+    node.callee.property.type === "Identifier" &&
+    node.callee.property.name === "reject");
+
+// A `throw` or `Promise.reject` this function reaches without entering a nested one: one inside a deeper callback
+// Belongs to that callback, not to this handler.
+const checkHasOwnRejection = (value: unknown): boolean =>
+  collectOwnNodes(value, (node) => {
+    if (node.type === "ThrowStatement") return [true];
+    if (node.type === "ReturnStatement" && node.argument && checkIsPromiseReject(node.argument)) return [true];
+    return undefined;
+  }).length > 0;
+
+// An err handler that puts the rejection back rather than absorbing it: throwing, returning a rejected promise,
+// Or passing a rethrowing callee directly.
 const checkIsRethrowingHandler = (node: unknown): boolean => {
   if (node === null || typeof node !== "object") return false;
   const expression = node as ESTree.Node;
   if (expression.type === "Identifier") return RethrowingCallees.has(expression.name);
   if (expression.type === "CallExpression")
-    return expression.callee.type === "Identifier" && RethrowingCallees.has(expression.callee.name);
+    return (
+      (expression.callee.type === "Identifier" && RethrowingCallees.has(expression.callee.name)) ||
+      checkIsPromiseReject(expression)
+    );
+  if (checkIsPromiseReject(expression)) return true;
   if (!FunctionNodeTypes.has(expression.type)) return false;
-  return checkHasOwnThrow((expression as ESTree.ArrowFunctionExpression).body);
+  const functionNode = expression as ESTree.ArrowFunctionExpression | ESTree.FunctionExpression;
+  if (functionNode.body.type !== "BlockStatement") return checkIsPromiseReject(functionNode.body);
+  return checkHasOwnRejection(functionNode.body);
 };
 // The root says the chain STARTED in a wrapper; it says nothing about how the chain ENDS. `.match(noop, (error)
 // => { throw error })` and `._unsafeUnwrap()` both hand the rejection straight back to the awaiting caller, and
