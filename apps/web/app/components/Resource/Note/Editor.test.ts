@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 
-import { EMPTY_NOTE_DOC } from "#shared/models/resource/note/NoteResource";
+import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import ResourceNoteEditor from "@/components/Resource/Note/Editor.vue";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { ResourceType } from "@esposter/db-schema";

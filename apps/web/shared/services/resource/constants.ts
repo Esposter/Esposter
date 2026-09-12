@@ -1,3 +1,5 @@
+import type { JSONContent } from "@tiptap/core";
+
 import { AzureContainer, DatabaseEntityType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -31,3 +33,6 @@ export const RESOURCE_ASSET_URL_REGEX = new RegExp(
   String.raw`(?<![\w.~%/:-])${RegExp.escape(RESOURCE_ASSETS_URL_PREFIX)}/(?<encodedPath>[\w.~%-]+(?:/[\w.~%-]+)*)`,
   "gu",
 );
+
+// A fresh Note is an empty document with a single paragraph — the shape Tiptap starts an editor with
+export const EMPTY_NOTE_DOC: JSONContent = { content: [{ type: "paragraph" }], type: "doc" };
