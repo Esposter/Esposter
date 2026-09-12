@@ -1,4 +1,5 @@
-import { getBudgetFindings, MAX_SKILL_BYTES, MAX_SKILL_LINES } from "#src/sweeps/skillDocs/getBudgetFindings";
+import { MAX_SKILL_BYTES, MAX_SKILL_LINES } from "#src/sweeps/skillDocs/constants";
+import { getBudgetFindings } from "#src/sweeps/skillDocs/getBudgetFindings";
 import { SkillDocsFindingType } from "#src/sweeps/skillDocs/models/SkillDocsFindingType";
 import { describe, expect, test } from "vitest";
 

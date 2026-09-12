@@ -1,10 +1,7 @@
+import type { RepositoryView } from "#src/coderabbit/models/RepositoryView";
+
 import { runGh } from "#src/coderabbit/services/runGh";
 import { parseMachineJson } from "#src/services/parseMachineJson";
-
-interface RepositoryView {
-  name: string;
-  owner: { login: string };
-}
 
 // REST accepts `repos/{owner}/{repo}` and lets `gh` fill both in from the checkout's remote; GraphQL substitutes
 // Nothing, so a query naming the repository has to be handed real values. Reading them beats a constant: a

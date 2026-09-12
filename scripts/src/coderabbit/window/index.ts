@@ -1,4 +1,5 @@
 import type { GitHubReview } from "#src/coderabbit/models/GitHubReview";
+import type { PullRequestBranches } from "#src/coderabbit/models/window/PullRequestBranches";
 
 import { getPullRequestArgument } from "#src/coderabbit/services/getPullRequestArgument";
 import { readBotEntries } from "#src/coderabbit/services/readBotEntries";
@@ -6,11 +7,6 @@ import { runGh } from "#src/coderabbit/services/runGh";
 import { getLastReviewedSha } from "#src/coderabbit/window/getLastReviewedSha";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 import { runGit } from "#src/services/runGit";
-
-interface PullRequestBranches {
-  baseRefName: string;
-  headRefName: string;
-}
 
 const getFileCount = (range: string): number =>
   runGit(["diff", "--name-only", range]).split("\n").filter(Boolean).length;

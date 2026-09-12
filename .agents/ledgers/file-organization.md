@@ -44,7 +44,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `apps/infra` — `github`, root                                              | —          |                                                                                              |
 | `packages/configuration`                                                   | —          |                                                                                              |
 | `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | —          | barrel contents are `ctix` output — regenerate, never hand-edit                              |
-| `scripts`                                                                  | —          | a command is a folder once it has internals                                                  |
+| `scripts`                                                                  | 2026-09-12 | a command is a folder once it has internals                                                  |
 
 ## Find recipe
 
