@@ -20,6 +20,20 @@ Run in order from `apps/infra/`, always before `infra:preview` or `infra:up`:
 - If `pulumi up` partially succeeds or fails, stop and run `pnpm infra:preview` again before any follow-up apply.
 - **`preview` and `up` diff the program against state, never against Azure**, so an `up` reporting `unchanged` is not evidence that the live estate matches — anything changed out of band is invisible to both. When something reads as deployed but does not work, run `pnpm infra:refresh` before concluding the code is wrong, and check RBAC against Azure directly (`az role assignment list --assignee <principalId> --all`): a role assignment present in state and absent in Azure fails at runtime with `Forbidden` behind a clean preview.
 
+## An update to a resource with an identity previews as replacing every grant on it
+
+A role assignment reads its `principalId` through `getPrincipalId`, an `apply` over the resource's `identity`
+output. When the program updates that resource — a Logic App's `definition`, say — the provider cannot promise
+the identity survives, so the preview carries it as `[unknown]`, and an unknown `principalId` on a `protect: true`
+grant is `+-… to replace … marked for protection`: the preview fails on every assignment the identity holds,
+while the only real diff is the property being edited (probed 2026-09-12 editing a `runAfter`). The GUID does not
+change on an update, and an `up` resolves it to the same value, but the failed preview blocks the plain `up`.
+
+Apply it targeted: `pnpm infra:up --yes --suppress-outputs --target '**::<resource-name>'`, one `--target` per
+edited resource. The wildcard form is the one to use — a full URN carries `$` segments the `pnpm` script layer
+re-expands even inside single quotes, and the target then "could not be found in the stack". A following
+untargeted `infra:preview` reports the grants unchanged, because the identity is no longer in motion.
+
 ## The first `up` after a provider bump cannot be targeted
 
 State pins the default provider each resource was last written with (`pulumi:providers:github::default_6_14_1`), so a catalog bump to a provider package makes the program register a version state has never seen. Under `--target`, Pulumi registers providers only for the targeted resources, so the untargeted ones' provider is missing and it refuses:
