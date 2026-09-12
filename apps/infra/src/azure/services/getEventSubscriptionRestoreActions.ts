@@ -35,7 +35,7 @@ export const getEventSubscriptionRestoreActions = ({
         storageAccount,
         deadLetterContainer,
       );
-      const body = getEventSubscriptionBody(resourceGroup, topic, eventSubscription, eventSubscriptionArguments);
+      const body = getEventSubscriptionBody(eventSubscriptionArguments);
       return [
         [
           `Create_${azureFunction}_Event_Subscription`,

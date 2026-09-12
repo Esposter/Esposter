@@ -28,7 +28,8 @@ export const probeTar = (): DiagnosticCheck => {
   );
   return output === undefined
     ? {
-        fix: "install Windows tar (bsdtar ships with Windows 10 1803+ at System32\\tar.exe; check PATH)",
+        // Named by absolute path (getTarExecutable), so PATH has no say in it
+        fix: "restore Windows tar (bsdtar ships with Windows 10 1803+ at %SystemRoot%\\System32\\tar.exe)",
         label,
         note: "not found — the repo source can't be mirrored onto ext4, so os runs abort",
         status: DiagnosticStatus.Missing,
