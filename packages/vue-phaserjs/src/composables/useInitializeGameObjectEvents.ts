@@ -2,9 +2,9 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects, Types } from "phaser";
 import type { SetupContext } from "vue";
 
-import { checkIsEvent } from "#src/util/emit/checkIsEvent";
-import { GameObjectEventMap } from "#src/util/emit/GameObjectEventMap";
-import { getEventName } from "#src/util/emit/getEventName";
+import { checkIsEvent } from "#src/services/emit/checkIsEvent";
+import { GameObjectEventMap } from "#src/services/emit/GameObjectEventMap";
+import { getEventName } from "#src/services/emit/getEventName";
 import { takeOne } from "@esposter/shared";
 import ClickOutside from "phaser4-rex-plugins/plugins/clickoutside.js";
 

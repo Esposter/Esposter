@@ -1,5 +1,5 @@
+import { sleepScene } from "#src/services/sleepScene";
 import { getTestGame, removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
-import { sleepScene } from "#src/util/sleepScene";
 import { describe, expect, test } from "vitest";
 
 describe(sleepScene, () => {

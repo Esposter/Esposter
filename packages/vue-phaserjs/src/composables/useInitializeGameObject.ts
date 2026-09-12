@@ -7,9 +7,9 @@ import { useInitializeGameObjectEvents } from "#src/composables/useInitializeGam
 import { useInitializeGameObjectSetters } from "#src/composables/useInitializeGameObjectSetters";
 import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
 import { pushGameObject } from "#src/pushGameObject";
-import { getScene } from "#src/util/getScene";
-import { getInitializeGameObjectLifecycleHook } from "#src/util/hooks/getInitializeGameObjectLifecycleHook";
-import { InjectionKeyMap } from "#src/util/InjectionKeyMap";
+import { getScene } from "#src/services/getScene";
+import { getInitializeGameObjectLifecycleHook } from "#src/services/hooks/getInitializeGameObjectLifecycleHook";
+import { InjectionKeyMap } from "#src/services/InjectionKeyMap";
 
 export const useInitializeGameObject = <
   TConfiguration extends object,

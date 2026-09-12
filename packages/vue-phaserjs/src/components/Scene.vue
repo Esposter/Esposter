@@ -4,14 +4,14 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { VNode } from "vue";
 
 import { useGame } from "#src/composables/useGame";
+import { createSceneClass } from "#src/services/createSceneClass";
+import { getScene } from "#src/services/getScene";
+import { runSceneShutdown } from "#src/services/hooks/runSceneShutdown";
+import { InjectionKeyMap } from "#src/services/InjectionKeyMap";
 import { useCameraStore } from "#src/store/camera";
 import { usePhaserStore } from "#src/store/index";
 import { useInputStore } from "#src/store/input";
 import { ExternalSceneStore } from "#src/store/scene";
-import { createSceneClass } from "#src/util/createSceneClass";
-import { getScene } from "#src/util/getScene";
-import { runSceneShutdown } from "#src/util/hooks/runSceneShutdown";
-import { InjectionKeyMap } from "#src/util/InjectionKeyMap";
 import { Cameras, Scenes } from "phaser";
 
 defineSlots<{ default: () => VNode }>();

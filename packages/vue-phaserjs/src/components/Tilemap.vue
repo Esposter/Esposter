@@ -5,7 +5,7 @@ import type { VNode } from "vue";
 
 import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
 import { onCreate } from "#src/hooks/onCreate";
-import { getScene } from "#src/util/getScene";
+import { getScene } from "#src/services/getScene";
 
 interface Props {
   configuration: Types.Tilemaps.TilemapConfig;

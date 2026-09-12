@@ -52,7 +52,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `packages/configuration`                                                           | 2026-09-12 |                                                                                                 |
 | `packages/parse-tmx`, `packages/xml2js`                                            | 2026-09-13 | barrel contents are `ctix` output — regenerate, never hand-edit                                 |
 | `packages/vue-phaserjs` — `models`                                                 | 2026-09-13 | barrel contents are `ctix` output — regenerate, never hand-edit                                 |
-| `packages/vue-phaserjs` — `util`                                                   | —          | the setter maps' home is the `vue-phaserjs` skill's table                                       |
+| `packages/vue-phaserjs` — `util`                                                   | 2026-09-13 | `util` became `services`; the three emit type utilities are `models/emit`                       |
 | `packages/vue-phaserjs` — `components`, `composables`, `hooks`, `plugins`, `store` | —          |                                                                                                 |
 | `scripts/src/dependencyGraph`                                                      | 2026-09-12 | a command keeps its entrypoint; its functions live in `services/<command>`, types in `models`   |
 | `scripts/src/oxlint`                                                               | 2026-09-12 | `.oxlintrc.json` loads a plugin by path, so the entrypoint stays; the rules move out            |

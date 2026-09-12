@@ -2,7 +2,7 @@ import type { SceneLifecycleHooks } from "#src/models/scene/SceneLifecycleHooks"
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
 import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
-import { runLifecycleListeners } from "#src/util/hooks/runLifecycleListeners";
+import { runLifecycleListeners } from "#src/services/hooks/runLifecycleListeners";
 import { Scene } from "phaser";
 
 export const createSceneClass = (key: string, hooks: SceneLifecycleHooks = {}): new () => Scene =>

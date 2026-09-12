@@ -1,11 +1,11 @@
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
 import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
+import { createSceneClass } from "#src/services/createSceneClass";
+import { runLifecycleListeners } from "#src/services/hooks/runLifecycleListeners";
+import { runSceneShutdown } from "#src/services/hooks/runSceneShutdown";
 import { usePhaserStore } from "#src/store/index";
 import { ExternalSceneStore } from "#src/store/scene";
-import { createSceneClass } from "#src/util/createSceneClass";
-import { runLifecycleListeners } from "#src/util/hooks/runLifecycleListeners";
-import { runSceneShutdown } from "#src/util/hooks/runSceneShutdown";
 import { NotInitializedError } from "@esposter/shared";
 import { Game, HEADLESS, Scenes } from "phaser";
 import { createPinia, setActivePinia } from "pinia";

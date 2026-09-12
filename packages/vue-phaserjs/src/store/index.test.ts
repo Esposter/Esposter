@@ -1,6 +1,6 @@
+import { createSceneClass } from "#src/services/createSceneClass";
 import { usePhaserStore } from "#src/store/index";
 import { getTestGame, getTestPinia, removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
-import { createSceneClass } from "#src/util/createSceneClass";
 import { describe, expect, test, vi } from "vitest";
 
 describe(usePhaserStore, () => {
