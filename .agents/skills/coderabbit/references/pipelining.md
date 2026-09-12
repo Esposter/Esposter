@@ -45,6 +45,10 @@ every branch push, and only the deployment workflow is limited to `develop`.
 git branch queue/<n>-<title> <cut> && git push origin queue/<n>-<title>
 ```
 
+The window still being filled gets the same bookmark early — pushed after every unit's commit and re-pointed with
+`git branch -f` plus `git push --force-with-lease origin queue/<n>-<title>` — so the remote holds every commit the
+clone does, and a lost clone loses nothing. The cut only fixes where the bookmark stops moving.
+
 `develop` stays linear and local work continues above the cut. Draining is the ordinary push of the oldest
 bookmark's sha to `develop` once the gates open (`SKILL.md`), followed by deleting the branch — there is nothing
 to cherry-pick, because `develop` already holds the commits; the branch only recorded where the cut fell.
