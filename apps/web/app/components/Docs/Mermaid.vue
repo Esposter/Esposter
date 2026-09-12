@@ -1,13 +1,9 @@
 <script setup lang="ts">
+import type { MermaidZoomControl } from "@/models/docs/MermaidZoomControl";
+
 import { MAX_MERMAID_SCALE, MIN_MERMAID_SCALE } from "@/services/docs/constants";
 import { getResultAsync } from "@esposter/shared";
 import { useTheme } from "vuetify";
-
-interface MermaidZoomControl {
-  icon: string;
-  onClick: () => void;
-  text: string;
-}
 
 interface Props {
   code: string;

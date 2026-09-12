@@ -4,13 +4,10 @@ import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { authClient } from "@/services/auth/authClient";
 import { requireAuthData } from "@/services/auth/requireAuthData";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
+import { PROFILE_MUTATION_KEY } from "@/services/user/constants";
 import { useColorsStore } from "@/store/colors";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import deepEqual from "fast-deep-equal";
-
-// One key for the one target this card writes: the signed-in user's own profile. A second save queues behind
-// The first rather than racing it, so the later edit is the one that lands
-const PROFILE_KEY = "profile";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { updateUser } = authClient;
@@ -58,7 +55,7 @@ const disabled = computed(
     @submit.prevent="
       async () => {
         await executeMutation(() => requireAuthData(updateUser(editedProfileCardRows)), {
-          key: PROFILE_KEY,
+          key: PROFILE_MUTATION_KEY,
           // A rejected save leaves the form open on the edits it could not persist — closing it would drop them
           onSuccess: () => {
             editMode = false;

@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
+import { SESSIONS_MUTATION_KEY } from "@/services/user/constants";
 import { useUserSessionDialogStore } from "@/store/user/sessionDialog";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
-
-// One key for every row, because they all write one target: the session set. Each revoke refreshes the listing
-// The card renders, so two in flight together would both read a list the other has already changed
-const SESSIONS_KEY = "sessions";
 
 const { $trpc } = useNuxtApp();
 const { executeMutation } = useMutation();
@@ -49,7 +46,7 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
               await withFinalizerAsync(
                 () =>
                   executeMutation(() => $trpc.session.deleteOtherSessions.mutate(), {
-                    key: SESSIONS_KEY,
+                    key: SESSIONS_MUTATION_KEY,
                     onSuccess: async () => {
                       await refresh();
                     },
@@ -73,7 +70,7 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
         await withFinalizerAsync(
           () =>
             executeMutation(() => $trpc.session.deleteSession.mutate(id), {
-              key: SESSIONS_KEY,
+              key: SESSIONS_MUTATION_KEY,
               onSuccess: async () => {
                 // Revoking your own session leaves the page authenticated against a session that no longer
                 // Exists, so it signs this browser out on the way to the login route instead of refreshing a
