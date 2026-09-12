@@ -3,11 +3,9 @@ import GitHubRenovateAppActorId from "#src/github/constants/GitHubRenovateAppAct
 import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 
-// Modern ruleset replacing the classic branch protection on develop + main.
-// Required_approving_review_count: 0 — no human review required (CodeRabbit stays
-// Advisory; GitHub cannot gate merge on a bot review). Bypass via Admin repository
-// Role (5) + the Renovate GitHub App (app id 2740) — classic per-user force-push
-// Bypassers do not carry over to rulesets.
+// The ruleset protecting develop and main. No human review is required (CodeRabbit stays advisory; GitHub
+// Cannot gate a merge on a bot review), and bypass goes to the Admin repository role and the Renovate GitHub
+// App, since a ruleset cannot name an individual user the way classic branch protection could.
 // Required status checks deliberately live in developMainStatusChecks instead of here: bypass is granted
 // Per ruleset and never per rule, so keeping them in this ruleset would exempt Renovate from CI as the
 // Price of exempting it from the pull request requirement.

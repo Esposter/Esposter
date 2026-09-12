@@ -3,11 +3,10 @@ import GitHubRenovateAppActorId from "#src/github/constants/GitHubRenovateAppAct
 import { repository } from "#src/github/repository";
 import * as github from "@pulumi/github";
 
-// Restricts who may create branches. Rulesets cannot be bypassed by
-// Individual user (only role/team/app), so the equivalent is restricting creation across
-// All refs to the Admin repository role (5) + the Renovate GitHub App (app id 2740), which
-// Must keep opening its dependency-update branches. `creation: true` only allows bypass
-// Actors to create matching refs; existing branches and pushes to them are unaffected.
+// Restricts who may create branches. Rulesets cannot be bypassed by an individual user (only a role, team
+// Or app), so the equivalent is restricting creation across all refs to the Admin repository role and the
+// Renovate GitHub App, which must keep opening its dependency-update branches. `creation: true` only allows
+// Bypass actors to create matching refs; existing branches and pushes to them are unaffected.
 export const branchCreationRestriction: github.RepositoryRuleset = new github.RepositoryRuleset(
   "branchCreationRestriction",
   {
