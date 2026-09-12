@@ -24,13 +24,13 @@ const hashUntrackedEntry = (fullPath: string): string =>
 // Reads. Returns null when this is not a git repo (`git` throws), which disables the cache rather than colliding
 // Every non-repo onto one key.
 export const computeSourceTreeHash = (cwd: string): null | string => {
-  const dir = resolveCwd(cwd);
-  // Piping git's stderr (the stdio option) instead of letting it inherit the parent's: on a non-repo dir git prints
+  const directory = resolveCwd(cwd);
+  // Piping git's stderr (the stdio option) instead of letting it inherit the parent's: on a non-repo directory git prints
   // "fatal: not a git repository" to fd 2 before exiting non-zero, which the getResult below already tolerates —
   // Piping keeps that expected fatal off the console (it otherwise leaks into vitest output for the not-a-repo cases).
   const runGit = (args: readonly string[]): string =>
     execFileHidden("git", args, {
-      cwd: dir,
+      cwd: directory,
       maxBuffer: EXEC_FILE_MAX_BUFFER,
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -40,7 +40,7 @@ export const computeSourceTreeHash = (cwd: string): null | string => {
     const untracked = runGit(["ls-files", "--others", "--exclude-standard", "-z"]).split("\0").filter(Boolean);
     const untrackedHashes = untracked
       .toSorted()
-      .map((relativePath) => `${relativePath}\0${hashUntrackedEntry(join(dir, relativePath))}`)
+      .map((relativePath) => `${relativePath}\0${hashUntrackedEntry(join(directory, relativePath))}`)
       .join("\n");
     return createHash("sha256")
       .update(indexed)

@@ -12,7 +12,7 @@ describe(computeLockfileHash, () => {
   const lockfileContent = "lockfileVersion: '9.0'\n";
 
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
-  // A lockfile-less dir exercises the throw path; any other content makes a workspace root.
+  // A lockfile-less directory exercises the throw path; any other content makes a workspace root.
   const createRepository = (content?: string): string => (content === undefined ? create() : createWorkspace(content));
 
   afterEach(() => {

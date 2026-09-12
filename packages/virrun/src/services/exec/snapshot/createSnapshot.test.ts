@@ -27,7 +27,7 @@ describe(createSnapshot, () => {
     repository = createWorkspace();
   });
 
-  test("captures in a private temp upper and atomically publishes it onto the final upperDir", async () => {
+  test("captures in a private temp upper and atomically publishes it onto the final upperDirectory", async () => {
     expect.hasAssertions();
 
     const backend = createRecordingBackend();
@@ -35,23 +35,23 @@ describe(createSnapshot, () => {
 
     expect(location).toStrictEqual(resolveSnapshotLocation(repository));
     // The published upper exists; the private temps it was captured/scratched in are torn down.
-    expect(existsSync(location.upperDir)).toBe(true);
+    expect(existsSync(location.upperDirectory)).toBe(true);
 
-    const { upperDir, workDir } = backend.calls[0]?.overlayLayers ?? {};
+    const { upperDirectory, workDirectory } = backend.calls[0]?.overlayLayers ?? {};
 
-    // A per-invocation mkdtemp name under dir, distinct from the published upper it was renamed onto.
-    expect(upperDir?.startsWith(join(location.dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
-    expect(workDir?.startsWith(join(location.dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
-    expect(upperDir).not.toBe(location.upperDir);
-    expect(existsSync(upperDir ?? "")).toBe(false);
-    expect(existsSync(workDir ?? "")).toBe(false);
+    // A per-invocation mkdtemp name under directory, distinct from the published upper it was renamed onto.
+    expect(upperDirectory?.startsWith(join(location.directory, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
+    expect(workDirectory?.startsWith(join(location.directory, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
+    expect(upperDirectory).not.toBe(location.upperDirectory);
+    expect(existsSync(upperDirectory ?? "")).toBe(false);
+    expect(existsSync(workDirectory ?? "")).toBe(false);
   });
 
   test("keeps a snapshot a concurrent capturer already published and drops its own temp upper", async () => {
     expect.hasAssertions();
 
     // Simulate the lost race: a populated final upper is already on disk before this capture publishes.
-    const publishedUpper = resolveSnapshotLocation(repository).upperDir;
+    const publishedUpper = resolveSnapshotLocation(repository).upperDirectory;
     mkdirSync(publishedUpper, { recursive: true });
     writeFileSync(join(publishedUpper, TEST_FILENAME), "");
 
@@ -61,7 +61,7 @@ describe(createSnapshot, () => {
     expect(location.exists).toBe(true);
     // Theirs is kept untouched; our own temp upper is discarded.
     expect(existsSync(join(publishedUpper, TEST_FILENAME))).toBe(true);
-    expect(existsSync(backend.calls[0]?.overlayLayers?.upperDir ?? "")).toBe(false);
+    expect(existsSync(backend.calls[0]?.overlayLayers?.upperDirectory ?? "")).toBe(false);
   });
 
   test("returns the capture run's result so a cold-path fork reuses it instead of re-running", async () => {
@@ -79,7 +79,7 @@ describe(createSnapshot, () => {
     const backend = createRecordingBackend();
     const store = join(repository, VIRRUN_STORE_DIRECTORY_NAME);
     await createSnapshot(backend, command, {
-      bindDirs: [store],
+      bindDirectories: [store],
       cwd: repository,
       isNetworkEnabled: true,
       stdio: "pipe",
@@ -87,13 +87,13 @@ describe(createSnapshot, () => {
 
     const call = takeOne(backend.calls);
 
-    expect(call.bindDirs).toStrictEqual([store]);
+    expect(call.bindDirectories).toStrictEqual([store]);
     expect(call.cwd).toBe(repository);
     expect(call.isNetworkEnabled).toBe(true);
-    // The other half of the title: the capture run layers an upper over the working dir so the install persists
+    // The other half of the title: the capture run layers an upper over the working directory so the install persists
     assert.exists(call.overlayLayers);
 
-    expect(call.overlayLayers.upperDir).not.toBe("");
+    expect(call.overlayLayers.upperDirectory).not.toBe("");
   });
 
   test("throws when the setup command fails so a half-installed upper is never reused", async () => {

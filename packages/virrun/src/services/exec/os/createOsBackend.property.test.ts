@@ -9,7 +9,7 @@ import { afterEach, describe, expect, test } from "vitest";
 
 // Correctness layer 5 property/fuzz, os half (apps/web/content/docs/virrun/correctness.md): fast-check drives
 // Randomized command sequences and asserts the structural isolation invariants hold under every ordering —
-//   1. Host isolation — no command mutates the host working dir (the seeded canary keeps its baseline).
+//   1. Host isolation — no command mutates the host working directory (the seeded canary keeps its baseline).
 //   2. No cross-exec leakage — each exec gets a fresh upper, so a final read of the canary sees the source baseline.
 //   3. Well-formedness — every command yields a finite exit code + string stdio; the sandbox never wedges.
 // Real subprocesses, so host-gated and kept to small run counts.

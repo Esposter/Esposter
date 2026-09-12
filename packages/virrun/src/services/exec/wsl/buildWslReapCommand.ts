@@ -9,7 +9,7 @@ import { WSL_EXECUTABLE, WSL_REAPER_SHELL_NAME } from "#src/services/exec/wsl/co
 //
 // Every reaper is skipped, this shell included. The markers ride each reaper's own argv (see below), so a reaper's
 // Cmdline matches the very `pgrep -f` its peers run — and TERMing that group kills a peer mid-wait: a startup sweep
-// Takes out the blocking `cache clean` reaper, whose caller then removes dirs whose trees are still alive.
+// Takes out the blocking `cache clean` reaper, whose caller then removes directories whose trees are still alive.
 // WSL_REAPER_SHELL_NAME is the `$0` of every reaper and of nothing else, so one grep over the candidate's own cmdline
 // Excludes peers and self alike. It reads `/proc/<pid>/cmdline` — the same bytes `pgrep -f` matched on, so the two agree — rather than `ps -o args=`, which
 // Truncates to terminal width and would hide a name that sits past the whole script in the argv. A pid that exits
@@ -27,13 +27,13 @@ const KILL_SCRIPT_LINES: readonly string[] = [
   "done",
 ];
 // The blocking arm: TERM only asks, so the kill loop returns while the tree is still unwinding, and a caller that
-// Removes the dirs that tree has open — `cache clean` — has to see it gone rather than merely signalled. It is
+// Removes the directories that tree has open — `cache clean` — has to see it gone rather than merely signalled. It is
 // Deliberately not the default: the startup sweep is fire-and-forget off the critical path and must never make a run
 // Wait on a corpse.
 //
 // The wait watches the killed process GROUPS, not the markers it was handed: only the run's shell carries the marker
 // In its cmdline, and TERM kills that shell first while the `bwrap` beneath it — the process actually holding the
-// Store and snapshot dirs — is still unwinding, so a marker that stops matching proves nothing. It polls, because a
+// Store and snapshot directories — is still unwinding, so a marker that stops matching proves nothing. It polls, because a
 // POSIX shell cannot `wait` on a process it did not fork.
 //
 // Past the deadline it gives up rather than hanging, and exits nonzero saying so. Blocking exists precisely because

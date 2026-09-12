@@ -13,7 +13,12 @@ import { join } from "node:path";
 // Shared across checkouts/CI, and `exists` keys off the meta file — an entry is only replayable once meta.json has
 // Been atomically published, so a half-written payload never reads as a hit.
 export const resolveTaskCacheLocation = (key: string): TaskCacheLocation => {
-  const dir = join(getGlobalCacheDirectory(), VIRRUN_TASKS_DIRECTORY_NAME, key);
-  const metaFile = join(dir, TASK_CACHE_META_FILENAME);
-  return { dir, exists: existsSync(metaFile), metaFile, payloadDir: join(dir, TASK_CACHE_PAYLOAD_DIRECTORY_NAME) };
+  const directory = join(getGlobalCacheDirectory(), VIRRUN_TASKS_DIRECTORY_NAME, key);
+  const metaFile = join(directory, TASK_CACHE_META_FILENAME);
+  return {
+    directory,
+    exists: existsSync(metaFile),
+    metaFile,
+    payloadDirectory: join(directory, TASK_CACHE_PAYLOAD_DIRECTORY_NAME),
+  };
 };

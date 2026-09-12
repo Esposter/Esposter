@@ -4,7 +4,7 @@ import { VIRRUN_TEMP_DIR_PREFIX } from "#src/services/exec/util/constants";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-// The working dir a materialized source (a file map, a git clone) is written into, with the teardown that removes
+// The working directory a materialized source (a file map, a git clone) is written into, with the teardown that removes
 // It: a fresh `os.tmpdir()` sibling under the virrun prefix, so a loader that dies mid-write can dispose exactly
 // What it created.
 export const createTemporarySourceDirectory = async (): Promise<LoadedSource> => {

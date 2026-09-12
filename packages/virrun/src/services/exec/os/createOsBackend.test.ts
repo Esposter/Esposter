@@ -57,7 +57,7 @@ describe(createOsBackend, () => {
       const { exec } = createOsBackend();
 
       const message = (
-        await getResultAsync(() => exec(`echo hi`, { bindDirs: [TEST_DIR], cwd: "", stdio: "pipe" }))
+        await getResultAsync(() => exec(`echo hi`, { bindDirectories: [TEST_DIR], cwd: "", stdio: "pipe" }))
       ).match(
         () => "",
         (error) => error.message,

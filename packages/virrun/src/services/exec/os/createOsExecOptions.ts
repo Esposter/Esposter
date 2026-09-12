@@ -24,7 +24,7 @@ import { join } from "node:path";
 // The corepack home belongs to every run, not just the capture install: the sandbox mounts `/` read-only, so a command
 // That shells out to `pnpm` resolves the node manager's corepack shim, which downloads the repo's pinned
 // `packageManager` version whenever the host's own corepack cache doesn't already hold it — writing under `$HOME/.cache`
-// And dying with EROFS. Pointing COREPACK_HOME at a bound, host-persisted dir makes that bootstrap writable once and
+// And dying with EROFS. Pointing COREPACK_HOME at a bound, host-persisted directory makes that bootstrap writable once and
 // Reused by every later run.
 //
 // That login PATH also carries the host's `/mnt/c/<repo>/node_modules/.bin` (WSL Windows-interop appends the Windows
@@ -56,7 +56,7 @@ export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions 
     : "";
   return {
     ...sharedPackageStoreOptions,
-    bindDirs: [...(sharedPackageStoreOptions.bindDirs ?? []), corepackHome],
+    bindDirectories: [...(sharedPackageStoreOptions.bindDirectories ?? []), corepackHome],
     cwd,
     env: {
       ...(path ? { PATH: path } : {}),

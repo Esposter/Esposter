@@ -6,7 +6,7 @@ import type { BackendType } from "#src/models/virrun/BackendType";
 // Dispose.
 export interface Virrun {
   readonly backend: BackendType;
-  // Tears down any temp state the source materialized. Always safe to call; a no-op for a dir source.
+  // Tears down any temp state the source materialized. Always safe to call; a no-op for a directory source.
   dispose: () => Promise<void>;
   exec: (command: readonly string[] | string, stdio?: ExecStdio) => Promise<ExecResult>;
   // Runs a command over a warm dependency snapshot, provisioning it first if needed

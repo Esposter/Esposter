@@ -88,7 +88,7 @@ const run = async (home: string): Promise<void> => {
   const virrun = await createVirrun({
     backend: BackendType.Os,
     environment: Environment.Nuxt,
-    source: { dir: cleanSource, type: SourceType.Dir },
+    source: { directory: cleanSource, type: SourceType.Directory },
   });
   await withFinalizerAsync(
     () => virrun.fork(SHARED_TYPECHECK_COMMAND, "pipe"),
@@ -114,11 +114,11 @@ if (isBenchable) {
 afterAll(() => {
   if (!isBenchable) return;
   restoreCacheHome();
-  // `removeSnapshotDirectory` (not rmSync) handles the mode-000 overlay work dir and, on win32, the \\wsl.localhost
+  // `removeSnapshotDirectory` (not rmSync) handles the mode-000 overlay work directory and, on win32, the \\wsl.localhost
   // UNC teardown. Safe unconditionally: these homes are bench-owned leaves, never the developer's real cache.
   removeSnapshotDirectory(COLD_HOME);
   removeSnapshotDirectory(SNAPSHOT_HOME);
-  // The checkout is a plain $HOME-staged dir (no overlay internals); rmSync clears it and its warm store.
+  // The checkout is a plain $HOME-staged directory (no overlay internals); rmSync clears it and its warm store.
   if (cleanSource) rmSync(cleanSource, { force: true, recursive: true });
 });
 

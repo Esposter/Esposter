@@ -7,10 +7,10 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 // The generic keep/lease/absent matrix lives in pruneSupersededEntries; here only the wiring — superseded siblings
-// Under the global `prepare/` dir are evicted while the current key's layer survives.
+// Under the global `prepare/` directory are evicted while the current key's layer survives.
 describe(pruneStalePrepareLayers, () => {
   const { getCacheHome } = setupTemporaryCacheHome();
-  // Canonical source-key-shaped dir names: the layer the current source state resolves to, and a superseded one.
+  // Canonical source-key-shaped directory names: the layer the current source state resolves to, and a superseded one.
   const CURRENT_KEY = "0";
   const STALE_KEY = "1";
 

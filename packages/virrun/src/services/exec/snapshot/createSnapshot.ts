@@ -14,9 +14,9 @@ export const createSnapshot = async (
   options: ExecOptions,
 ): Promise<SnapshotCapture> => {
   const location = resolveSnapshotLocation(options.cwd);
-  const { dir, upperDir } = location;
+  const { directory, upperDirectory } = location;
   const result = await captureOverlayUpper(backend, command, options, {
-    dir,
+    directory,
     failureLabel: "snapshot setup command",
     operationName: createSnapshot.name,
     // The snapshot is keyed only on the lockfile, so it must freeze only what the lockfile determines: the
@@ -24,7 +24,7 @@ export const createSnapshot = async (
     // Before publishing, or a fork would serve a stale copy that shadows the host's fresh one once source moves
     // On — instead the fork reads them from the host source tree stacked underneath as the `--overlay-src` lower
     prune: pruneSnapshotUpper,
-    upperDir,
+    upperDirectory,
   });
   return { location: { ...location, exists: true }, result };
 };

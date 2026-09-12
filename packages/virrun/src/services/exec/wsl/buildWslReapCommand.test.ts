@@ -38,7 +38,7 @@ describe(buildWslReapCommand, () => {
   });
 
   // What `cache clean` depends on: TERM only asks, so the reaper waits — bounded, and on the killed process groups
-  // Rather than the markers, since the marker is on the shell TERM kills first while the bwrap holding the dirs open
+  // Rather than the markers, since the marker is on the shell TERM kills first while the bwrap holding the directories open
   // Is still unwinding. An expired deadline exits nonzero (`alive` pre-set so exit 0 cannot mean "never looked"),
   // Which reaches reapOrphanedWslRuns as a throw and keeps the corpse's registry entry for the next sweep.
   test("waits for the killed trees to exit when blocking, and fails when the deadline expires", () => {

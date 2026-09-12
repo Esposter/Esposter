@@ -12,7 +12,7 @@ const countSeparators = (relativePath: string): number => {
   return count;
 };
 // Order a classified overlay-upper walk into host ops (apps/web/content/docs/virrun/write-back.md). Deletes run before
-// Copies so an opaque dir is cleared before its replacement children land; an opaque dir expands to a delete + a copy.
+// Copies so an opaque directory is cleared before its replacement children land; an opaque directory expands to a delete + a copy.
 export const buildFlushPlan = (
   entries: readonly OverlayEntry[],
   checkIsSnapshotLowerPath: (relativePath: string) => boolean,
@@ -22,7 +22,7 @@ export const buildFlushPlan = (
   for (const { kind, relativePath } of entries) {
     if (checkIsSnapshotLowerPath(relativePath)) continue;
     switch (kind) {
-      case OverlayEntryKind.OpaqueDir:
+      case OverlayEntryKind.OpaqueDirectory:
         deletes.push({ relativePath, type: FlushOpType.Delete });
         copies.push({ relativePath, type: FlushOpType.Copy });
         break;

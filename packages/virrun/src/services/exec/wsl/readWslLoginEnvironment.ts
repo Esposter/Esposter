@@ -29,12 +29,12 @@ const EMPTY_LOGIN_ENVIRONMENT: WslLoginEnvironment = { nodeVersion: "", path: ""
 // Virrun mirror the user's real terminal environment with zero config — no per-machine setup field.
 //
 // Before printing, prepend the *stable* directory that holds `node`: fnm activates by putting an ephemeral
-// `/run/user/<uid>/fnm_multishells/<pid>_<ts>/bin` (a per-shell symlink dir) on PATH, which fnm's exit hook deletes
+// `/run/user/<uid>/fnm_multishells/<pid>_<ts>/bin` (a per-shell symlink directory) on PATH, which fnm's exit hook deletes
 // The instant this capture shell ends — so the raw captured entry is already dead by the time the sandbox (or a
 // Later process reading the persisted cache) runs the command, giving `corepack: command not found` (exit 127).
-// `readlink -f` dereferences that ephemeral symlink to its backing install dir (…/fnm/node-versions/vX/installation/
+// `readlink -f` dereferences that ephemeral symlink to its backing install directory (…/fnm/node-versions/vX/installation/
 // Bin, which also carries corepack/npm/pnpm) and we lead PATH with it. Idempotent for stable managers (nvm/volta):
-// `readlink -f` on an already-real path is a no-op and re-prepending a dir already on PATH is harmless.
+// `readlink -f` on an already-real path is a no-op and re-prepending a directory already on PATH is harmless.
 //
 // The same shell also reports that node's version, which is the version the sandbox actually runs — the host process's
 // Own `process.version` is the Windows node and says nothing about the guest toolchain.

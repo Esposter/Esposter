@@ -4,7 +4,7 @@ import { join } from "node:path";
 // The same-OS, spawn-free cache root: `~/.virrun` on the host virrun's process actually runs on (VIRRUN_CACHE_HOME
 // Override). Unlike getGlobalCacheDirectory, on win32 this stays the WINDOWS `~` rather than routing to the WSL
 // Distro's ext4 home — because locating that ext4 home *is* getWslNativeCacheRoot, so a cache that persists WSL probe
-// Results (readWslEnvironmentCache) must live here to avoid a circular "resolve the cache dir by spawning the very
+// Results (readWslEnvironmentCache) must live here to avoid a circular "resolve the cache directory by spawning the very
 // Probe the cache exists to skip". On non-win32 it coincides with getGlobalCacheDirectory; only the win32 WSL
 // Environment probes read it.
 export const getLocalCacheDirectory = (): string =>

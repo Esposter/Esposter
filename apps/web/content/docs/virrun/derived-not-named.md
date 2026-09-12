@@ -33,7 +33,7 @@ A literal in an exclude list reads as a harmless two-word constant, which is why
 - it says **why** nowhere, so the mechanism that needs the same rule on the other side — the write-back mask — never learns it, and keeps flushing those paths onto the host
 - it makes the exclude set look constant, when the property it stands for (a worktree exists) changes while the repo is being worked on. Nothing reconciles a change to a constant, so a deleted worktree comes back from the stale mirror copy
 
-Deriving the same exclusion from `<commonDir>/worktrees/<name>/gitdir` answers all three at once, and covers every tool that runs `git worktree add` — including the ones that don't exist yet.
+Deriving the same exclusion from `<commonDirectory>/worktrees/<name>/gitdir` answers all three at once, and covers every tool that runs `git worktree add` — including the ones that don't exist yet.
 
 ## Applying it
 

@@ -23,14 +23,14 @@ describe(resolvePrepareLocation, () => {
 
   const { createWorkspace, getCacheHome } = setupTemporaryCacheHome();
 
-  test("addresses the layer under prepare/<key> with its upper dir, outside the repo", () => {
+  test("addresses the layer under prepare/<key> with its upper directory, outside the repo", () => {
     expect.hasAssertions();
 
     const workspace = createWorkspace();
-    const { dir: directory, upperDir } = resolvePrepareLocation(workspace, step);
+    const { directory, upperDirectory } = resolvePrepareLocation(workspace, step);
 
     expect(directory.startsWith(join(getCacheHome(), VIRRUN_PREPARE_DIRECTORY_NAME))).toBe(true);
-    expect(upperDir).toBe(join(directory, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME));
+    expect(upperDirectory).toBe(join(directory, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME));
     expect(directory.startsWith(workspace)).toBe(false);
   });
 
@@ -41,7 +41,7 @@ describe(resolvePrepareLocation, () => {
 
     expect(resolvePrepareLocation(workspace, step).exists).toBe(false);
 
-    mkdirSync(resolvePrepareLocation(workspace, step).upperDir, { recursive: true });
+    mkdirSync(resolvePrepareLocation(workspace, step).upperDirectory, { recursive: true });
 
     expect(resolvePrepareLocation(workspace, step).exists).toBe(true);
   });

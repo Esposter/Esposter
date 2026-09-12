@@ -45,7 +45,7 @@ describe(buildBwrapArgs, () => {
     expect(args.slice(-4)).toStrictEqual(["git", "clone", "--", "; rm -rf /"]);
   });
 
-  test("mounts the same dir as overlay source, upper, and chdir", () => {
+  test("mounts the same directory as overlay source, upper, and chdir", () => {
     expect.hasAssertions();
 
     const args = buildBwrapArgs("pwd", TEST_DIR);
@@ -72,11 +72,11 @@ describe(buildBwrapArgs, () => {
     expect(buildBwrapArgs("pwd", TEST_DIR).slice(0, 2)).toStrictEqual(["--unshare-all", "--die-with-parent"]);
   });
 
-  test("binds writable host cache dirs after RAM overlays", () => {
+  test("binds writable host cache directories after RAM overlays", () => {
     expect.hasAssertions();
 
-    const bindDir = `${TEST_DIR}/${VIRRUN_CACHE_DIRECTORY_NAME}/${VIRRUN_STORE_DIRECTORY_NAME}/${VIRRUN_PNPM_STORE_DIRECTORY_NAME}`;
-    const args = buildBwrapArgs("pwd", TEST_DIR, { bindDirs: [bindDir] });
+    const bindDirectory = `${TEST_DIR}/${VIRRUN_CACHE_DIRECTORY_NAME}/${VIRRUN_STORE_DIRECTORY_NAME}/${VIRRUN_PNPM_STORE_DIRECTORY_NAME}`;
+    const args = buildBwrapArgs("pwd", TEST_DIR, { bindDirectories: [bindDirectory] });
 
     // The bind lands after the RAM overlays and before the chdir, which the argv below shows in order
     expect(args).toMatchInlineSnapshot(`
@@ -112,9 +112,9 @@ describe(buildBwrapArgs, () => {
   test("persists writes to a host upper when capturing a snapshot", () => {
     expect.hasAssertions();
 
-    const upperDir = `${TEST_DIR}/upper`;
-    const workDir = `${TEST_DIR}/work`;
-    const args = buildBwrapArgs("pnpm install", TEST_DIR, {}, { upperDir, workDir });
+    const upperDirectory = `${TEST_DIR}/upper`;
+    const workDirectory = `${TEST_DIR}/work`;
+    const args = buildBwrapArgs("pnpm install", TEST_DIR, {}, { upperDirectory, workDirectory });
 
     expect(args).toMatchInlineSnapshot(`
       [
@@ -149,7 +149,7 @@ describe(buildBwrapArgs, () => {
     expect.hasAssertions();
 
     const snapshotUpper = `${TEST_DIR}/${TEST_FILENAME}`;
-    const args = buildBwrapArgs("vitest", TEST_DIR, {}, { lowerDirs: [snapshotUpper] });
+    const args = buildBwrapArgs("vitest", TEST_DIR, {}, { lowerDirectories: [snapshotUpper] });
 
     // The snapshot lower must stack after the source so its files shadow it, and both precede the upper.
     expect(args).toMatchInlineSnapshot(`
@@ -181,7 +181,7 @@ describe(buildBwrapArgs, () => {
     `);
   });
 
-  test("overlays a distinct sourceDir as the lower while mounting and chdiring at cwd", () => {
+  test("overlays a distinct sourceDirectory as the lower while mounting and chdiring at cwd", () => {
     expect.hasAssertions();
 
     const mirror = `${TEST_DIR}/${TEST_FILENAME}`;
@@ -217,8 +217,8 @@ describe(buildBwrapArgs, () => {
   });
 
   test.each([
-    ["upperDir", { upperDir: `${TEST_DIR}/upper` }],
-    ["workDir", { workDir: `${TEST_DIR}/work` }],
+    ["upperDirectory", { upperDirectory: `${TEST_DIR}/upper` }],
+    ["workDirectory", { workDirectory: `${TEST_DIR}/work` }],
   ])("throws when only %s is supplied", (_name, overlayLayers) => {
     expect.hasAssertions();
 
@@ -227,7 +227,7 @@ describe(buildBwrapArgs, () => {
         new InvalidOperationError(
           Operation.Create,
           buildBwrapArgs.name,
-          "a persistent overlay needs both upperDir and workDir",
+          "a persistent overlay needs both upperDirectory and workDirectory",
         ).message
       }]`,
     );

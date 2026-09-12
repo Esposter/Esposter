@@ -5,10 +5,11 @@ import { join } from "node:path";
 // A cheap structural probe: does this subtree hold a node_modules anywhere? Short-circuits on the first match and
 // Never descends *into* a node_modules — a symlink-dense forest there is nothing to learn from — so it stays a pure
 // Readdir walk with no removal cost, runnable even from the host over a `\\wsl.localhost` UNC by listing alone.
-const checkHasNodeModules = (dir: string): boolean =>
-  readdirSync(dir, { withFileTypes: true }).some(
+const checkHasNodeModules = (directory: string): boolean =>
+  readdirSync(directory, { withFileTypes: true }).some(
     (entry) =>
-      entry.isDirectory() && (entry.name === NODE_MODULES_DIRECTORY || checkHasNodeModules(join(dir, entry.name))),
+      entry.isDirectory() &&
+      (entry.name === NODE_MODULES_DIRECTORY || checkHasNodeModules(join(directory, entry.name))),
   );
 // A captured snapshot upper is everything the frozen `pnpm install` wrote: the dependency closure (node_modules)
 // Plus any source-tree artifact a postinstall lifecycle script generated (e.g. `nuxt prepare` → apps/web/.nuxt).
@@ -19,9 +20,9 @@ const checkHasNodeModules = (dir: string): boolean =>
 // Everything else in a single rm per discarded subtree. The fork reads the dropped artifacts from the host source
 // Tree stacked underneath as the `--overlay-src` lower, so the lockfile-keyed snapshot only ever owns what the
 // Lockfile actually determines.
-export const pruneSnapshotUpper = (dir: string): void => {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const entryPath = join(dir, entry.name);
+export const pruneSnapshotUpper = (directory: string): void => {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const entryPath = join(directory, entry.name);
     // The closure itself — keep it whole, never descend.
     if (entry.isDirectory() && entry.name === NODE_MODULES_DIRECTORY) continue;
     // A directory only worth keeping as the path to a deeper closure: keep it, but prune the artifacts beside it.

@@ -48,7 +48,7 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
       ].join(" && ");
       const { exitCode, stdout } = await getBackend().exec(forkCommand, {
         cwd: corpus,
-        overlayLayers: { lowerDirs: [location.upperDir] },
+        overlayLayers: { lowerDirectories: [location.upperDirectory] },
         stdio: "pipe",
       });
 

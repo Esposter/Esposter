@@ -8,9 +8,9 @@ description: Esposter file and folder organisation — the alias imports (shared
 ## Imports
 
 - **Always use alias imports** — never relative imports (`./`, `../`), even for same-folder files. Enforced by oxlint `no-restricted-imports` for `packages/*/src/**` and the repo-root `scripts/src/**` (the `#src/*` half), each against the map its own manifest declares. Two things are exempt, sharing one override because the alias ban still applies to both: the ctix-generated `src/index.ts` barrel, which is not hand-written, and `.agents/**`, which is the one tree with no `imports` map to point at. `packages/configuration` is **not** exempt — it declares `#src/*` like every other package, its root `tsdown.config.ts` and `vitest.config.ts` included, and the bootstrap survives it because Node resolves the map to a `.ts` target it can already type-strip. Reaching the repo-root `package.json` is the one exception anywhere, since no `#` map reaches up out of its own package, and both sites carry an `oxlint-disable-next-line` saying so.
-  - `#shared/` — the app's shared dir (`apps/web/shared/`, **not** `app/shared/`); models, services, constants shared between client and server.
+  - `#shared/` — the app's shared directory (`apps/web/shared/`, **not** `app/shared/`); models, services, constants shared between client and server.
   - `@@/` — project root (`apps/web/`); `server/` and other root-level paths.
-  - `@/` — app source dir (`apps/web/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
+  - `@/` — app source directory (`apps/web/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
   - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
   - **Never import a composable — `configuration/imports.ts` auto-imports `composables/**` whole.** An `import { useMutation } from "@/composables/shared/useMutation"` resolves to the same function the auto-import would hand you, so it is pure noise that reads as though this call site is reaching for something the others are not. Two things still need the specifier: a **type** exported beside a composable (`PaginationCacheOptions`, `OnlineSubscribableContext`), which the auto-import does not carry, and a `*.test.ts` / `*.bench.ts` helper living under `composables/`, which the scan skips.
   - Those are the **app's** aliases and Nuxt generates them. Everywhere else — every `packages/*` and the repo-root `scripts/` — a tree addresses its own source through the `#src/*` subpath imports its manifest declares, and oxlint bans `@/` there (`build` skill).
@@ -43,7 +43,7 @@ description: Esposter file and folder organisation — the alias imports (shared
 
 ## Never Duplicate Similar Logic — Source AND Tests
 
-Before writing a helper, grep for an existing one; before finishing a feature, grep for near-twin functions you may have created and collapse them. When ≥2 functions share a shape and differ only in a predicate/parameter, extract **one functional primitive** (`sweepEntries(dir, isStale)`) and make each caller a thin, intention-revealing wrapper that keeps the domain name and passes the constants.
+Before writing a helper, grep for an existing one; before finishing a feature, grep for near-twin functions you may have created and collapse them. When ≥2 functions share a shape and differ only in a predicate/parameter, extract **one functional primitive** (`sweepEntries(directory, isStale)`) and make each caller a thin, intention-revealing wrapper that keeps the domain name and passes the constants.
 
 - **An extraction earns its existence only when a call site stops being able to get something wrong** — the caller passes less than it did, or passes it in a shape that cannot be wrong. A wrapper carrying no logic, no invariant and no default is a rename with an import, and its decidable half is enforced by `pass-through-helper/no-forwarding-wrapper`.
 - **A flag, field or primitive earns its existence only when something behaves differently without it.** Single responsibility is a unit having one job, never one boolean per case, and a distinction with no behavioural consequence is not debt.

@@ -6,17 +6,17 @@ export const VIRRUN_SNAPSHOTS_DIRECTORY_NAME = "snapshots";
 export const VIRRUN_PREPARE_DIRECTORY_NAME = "prepare";
 // Overlayfs layer names of a captured snapshot, under .virrun/snapshots/<lockfile-hash>/: `upper` is the
 // Published layer that persists the post-install writes (and doubles as a read-only lower when forking);
-// `work` is the empty scratch dir overlayfs requires alongside a writable upper. A capture/persist run writes into
+// `work` is the empty scratch directory overlayfs requires alongside a writable upper. A capture/persist run writes into
 // A pid-tagged mkdtemp temp (`<base>.<pid>.<rand>`, withPidTempPrefix) and renames the upper onto its final name as
 // The atomic publish barrier.
 export const VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME = "upper";
 export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
-// A published snapshot/prepare hash dir carries a `leases/<pid>` file per live run mounting it. pruneStale* keeps a
-// Superseded dir while any lease pid is alive, so a concurrent run on a different lockfile hash can't evict a layer
-// Another live run is still reading. Dead-pid leases are reaped in place (acquireLease / checkHasLiveLease). The dir sits
+// A published snapshot/prepare hash directory carries a `leases/<pid>` file per live run mounting it. pruneStale* keeps a
+// Superseded directory while any lease pid is alive, so a concurrent run on a different lockfile hash can't evict a layer
+// Another live run is still reading. Dead-pid leases are reaped in place (acquireLease / checkHasLiveLease). The directory sits
 // Beside `upper`/`work`, invisible to the mount (which names only those), the reap, and the flush.
 export const VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME = "leases";
-// The reap prefixes every pid-tagged capture/persist temp starts with inside a snapshot/prepare hash dir, ordered
+// The reap prefixes every pid-tagged capture/persist temp starts with inside a snapshot/prepare hash directory, ordered
 // Longest-first so a persist temp (`upper.persist.<pid>.<rand>`) matches its own prefix rather than the shorter
 // `upper.`. They never match the published bare `upper`/`work` (no trailing `.`) or the `leases/` sibling.
 // A `reapStaleTemps` pass reads the owner pid back out of each match (parseTempOwnerPid) and reclaims only a dead
@@ -31,14 +31,14 @@ export const VIRRUN_SNAPSHOT_TEMP_PREFIXES: readonly string[] = [
 // Install of the lockfile. On Windows the sandbox is a Linux (WSL) guest installing via corepack's pnpm
 // (the login PATH brings node + corepack, not necessarily a global pnpm); on Linux the caller's shell
 // Already exposes pnpm, so it is invoked directly. See resolveSetupCommand. The sandbox installs at pnpm's own
-// Linux default virtual-store-dir length — the win32 host's `.nuxt` (which baked host-length `.pnpm` paths) is no
+// Linux default virtual-store-directory length — the win32 host's `.nuxt` (which baked host-length `.pnpm` paths) is no
 // Longer read in-sandbox: the prepare layer regenerates a Linux `.nuxt` that shadows it.
 export const SETUP_COMMAND_WIN32 = "corepack pnpm install --frozen-lockfile";
 export const SETUP_COMMAND_LINUX = "pnpm install --frozen-lockfile";
 // Linux-side fs primitives for write-back (apps/web/content/docs/virrun/write-back.md, "Execution locus");
 // Classification + ordering stay in tested TS. python3 over getfattr — it reads the opaque xattr and walks in one
 // Ubiquitous tool.
-// PROBE (argv: upperDir, snapshotDir) emits a JSON manifest of raw facts per upper entry, including whether each
+// PROBE (argv: upperDirectory, snapshotDirectory) emits a JSON manifest of raw facts per upper entry, including whether each
 // Path is supplied by the snapshot lower (a dep-tree write to skip), validated by zod in parseOverlayManifest.
 export const OVERLAY_PROBE_SCRIPT = `
 import json, os, stat, sys
@@ -68,8 +68,8 @@ for root, _dirs, _files in os.walk(up):
         })
 json.dump(entries, sys.stdout)
 `;
-// APPLY (argv: upperDir, hostDir; stdin: the ordered FlushOp[] as JSON) reconciles the plan onto the host working
-// Dir: a delete removes the host path; a copy recreates a symlink, mkdirs a directory (children arrive as their own
+// APPLY (argv: upperDirectory, hostDirectory; stdin: the ordered FlushOp[] as JSON) reconciles the plan onto the host working
+// Directory: a delete removes the host path; a copy recreates a symlink, mkdirs a directory (children arrive as their own
 // Copies), or copy2's a file (preserving mode). The plan's deletes-before-copies, parent-first ordering is enforced
 // By buildFlushPlan, so apply just executes in order.
 export const OVERLAY_APPLY_SCRIPT = `
@@ -85,8 +85,8 @@ for op in json.load(sys.stdin):
         continue
     src = os.path.join(up, *op["relativePath"].split("/"))
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    # A pre-existing symlink at dest must go first: os.path.isdir/isfile follow links, so a dir/file copy onto a
-    # Host symlink would otherwise write *through* it and escape hostDir. After this every isdir(dest) below is honest.
+    # A pre-existing symlink at dest must go first: os.path.isdir/isfile follow links, so a directory/file copy onto a
+    # Host symlink would otherwise write *through* it and escape hostDirectory. After this every isdir(dest) below is honest.
     if os.path.islink(dest):
         os.remove(dest)
     if os.path.islink(src):

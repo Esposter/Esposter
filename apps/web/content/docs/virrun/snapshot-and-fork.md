@@ -9,7 +9,7 @@ Booting a repo and installing deps is the slow part and it is identical across r
 
 ## How it works
 
-On the `os` backend the mechanism is a custom **overlay-layer snapshot** (FS-only, no CRIU): a capture run persists the post-install writes into a real overlay upper (`bwrap --overlay <upper> <work> <dir>`); a fork run stacks that frozen upper as a read-only `--overlay-src` lower beside the source and tops it with a fresh `--tmp-overlay` so its own writes vanish.
+On the `os` backend the mechanism is a custom **overlay-layer snapshot** (FS-only, no CRIU): a capture run persists the post-install writes into a real overlay upper (`bwrap --overlay <upper> <work> <directory>`); a fork run stacks that frozen upper as a read-only `--overlay-src` lower beside the source and tops it with a fresh `--tmp-overlay` so its own writes vanish.
 
 ```mermaid
 sequenceDiagram
@@ -52,11 +52,11 @@ The deps snapshot is keyed on the **environment** (lockfile + node major) and mu
 
 ## Concurrency safety (atomic publish)
 
-`exists: existsSync(upperDir)` is the readiness signal every reader consumes, so it must only flip true on a **finished** layer. `createSnapshot` captures into pid-tagged `mkdtemp` temps under `<hash>/`, runs the setup command there, then a single `renameSync` promotes the temp upper onto the final `<hash>/upper`. Rename is the publish barrier — a concurrent reader sees either no upper or the complete one, never a half-built install.
+`exists: existsSync(upperDirectory)` is the readiness signal every reader consumes, so it must only flip true on a **finished** layer. `createSnapshot` captures into pid-tagged `mkdtemp` temps under `<hash>/`, runs the setup command there, then a single `renameSync` promotes the temp upper onto the final `<hash>/upper`. Rename is the publish barrier — a concurrent reader sees either no upper or the complete one, never a half-built install.
 
-- Parallel capturers never share an overlay upper/work (pid-tagged temps). A capturer that loses the race finds `upperDir` already published, keeps that equivalent layer, and drops its own temp.
+- Parallel capturers never share an overlay upper/work (pid-tagged temps). A capturer that loses the race finds `upperDirectory` already published, keeps that equivalent layer, and drops its own temp.
 - Teardown removes **only the capturing process's own temps**, never the shared `<hash>/` root.
-- Cleanup is gated on **process liveness**, not a serial-run assumption: a hard-killed run's temp corpse is reaped only once its owner pid is dead, and a published hash dir a concurrent run still needs is pinned by a `leases/<pid>` file the prune honors.
+- Cleanup is gated on **process liveness**, not a serial-run assumption: a hard-killed run's temp corpse is reaped only once its owner pid is dead, and a published hash directory a concurrent run still needs is pinned by a `leases/<pid>` file the prune honors.
 
 ## Key files
 

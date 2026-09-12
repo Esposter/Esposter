@@ -32,10 +32,10 @@ describe(buildFlushPlan, () => {
     ]);
   });
 
-  test(`an ${OverlayEntryKind.OpaqueDir} expands to a ${FlushOpType.Delete} then a ${FlushOpType.Copy}`, () => {
+  test(`an ${OverlayEntryKind.OpaqueDirectory} expands to a ${FlushOpType.Delete} then a ${FlushOpType.Copy}`, () => {
     expect.hasAssertions();
 
-    const entries: OverlayEntry[] = [{ kind: OverlayEntryKind.OpaqueDir, relativePath: TEST_FILENAME }];
+    const entries: OverlayEntry[] = [{ kind: OverlayEntryKind.OpaqueDirectory, relativePath: TEST_FILENAME }];
 
     expect(buildFlushPlan(entries, checkNever)).toStrictEqual([
       { relativePath: TEST_FILENAME, type: FlushOpType.Delete },
@@ -86,11 +86,11 @@ describe(buildFlushPlan, () => {
     ]);
   });
 
-  test("an opaque dir is cleared before its replacement children are copied in", () => {
+  test("an opaque directory is cleared before its replacement children are copied in", () => {
     expect.hasAssertions();
 
     const entries: OverlayEntry[] = [
-      { kind: OverlayEntryKind.OpaqueDir, relativePath: TEST_FILENAME },
+      { kind: OverlayEntryKind.OpaqueDirectory, relativePath: TEST_FILENAME },
       { kind: OverlayEntryKind.Regular, relativePath: `${TEST_FILENAME}/${TEST_FILENAME}` },
     ];
 

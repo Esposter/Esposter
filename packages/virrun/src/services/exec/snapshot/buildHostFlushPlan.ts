@@ -12,11 +12,13 @@ import { runOverlayScript } from "#src/services/exec/snapshot/runOverlayScript";
 // CheckIsUnderSnapshotLower). Pure of any host mutation (applyFlushPlan performs it), so the plan can be reused for
 // Both the host flush and the task cache.
 export const buildHostFlushPlan = (
-  upperDir: string,
-  snapshotUpperDir: string,
+  upperDirectory: string,
+  snapshotUpperDirectory: string,
   maskedPaths: readonly string[] = [],
 ): FlushOp[] => {
-  const manifest = parseOverlayManifest(runOverlayScript(OVERLAY_PROBE_SCRIPT, [upperDir, snapshotUpperDir]));
+  const manifest = parseOverlayManifest(
+    runOverlayScript(OVERLAY_PROBE_SCRIPT, [upperDirectory, snapshotUpperDirectory]),
+  );
   const snapshotLowerPaths = new Set(
     manifest.filter((entry) => entry.isSnapshotLowerPath).map((entry) => entry.relativePath),
   );

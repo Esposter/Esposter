@@ -19,15 +19,15 @@ describe(parseOverlayEntryKind, () => {
     );
   });
 
-  test(`a directory carrying the opaque marker is an ${OverlayEntryKind.OpaqueDir}`, () => {
+  test(`a directory carrying the opaque marker is an ${OverlayEntryKind.OpaqueDirectory}`, () => {
     expect.hasAssertions();
 
     expect(parseOverlayEntryKind({ isCharacterDevice: false, isDirectory: true, rdev: 0 }, true)).toBe(
-      OverlayEntryKind.OpaqueDir,
+      OverlayEntryKind.OpaqueDirectory,
     );
   });
 
-  test(`a directory without the opaque marker is ${OverlayEntryKind.Regular} (a merge dir)`, () => {
+  test(`a directory without the opaque marker is ${OverlayEntryKind.Regular} (a merge directory)`, () => {
     expect.hasAssertions();
 
     expect(parseOverlayEntryKind({ isCharacterDevice: false, isDirectory: true, rdev: 0 }, false)).toBe(

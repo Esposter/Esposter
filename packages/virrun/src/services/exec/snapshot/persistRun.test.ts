@@ -41,12 +41,12 @@ describe(persistRun, () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    // The snapshot dir must be a real directory — persistRun mkdtempSyncs the per-run upper/work under it.
+    // The snapshot directory must be a real directory — persistRun mkdtempSyncs the per-run upper/work under it.
     vi.mocked(resolveSnapshotLocation).mockReturnValue({
-      dir: create(),
+      directory: create(),
       exists: true,
       hash: "",
-      upperDir: "/snapshot/upper",
+      upperDirectory: "/snapshot/upper",
     });
     vi.mocked(buildHostFlushPlan).mockReturnValue(PLAN);
   });
@@ -64,11 +64,11 @@ describe(persistRun, () => {
 
     expect(result.exitCode).toBe(0);
 
-    // The per-run upper dir is a random mkdtemp path; capture it to assert the same dir threads into onPersist.
-    const [upperDir] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
+    // The per-run upper directory is a random mkdtemp path; capture it to assert the same directory threads into onPersist.
+    const [upperDirectory] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
 
-    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIRECTORY, PLAN);
-    expect(onPersist).toHaveBeenCalledExactlyOnceWith(upperDir, PLAN, { exitCode: 0, stderr: "", stdout: "" });
+    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDirectory, HOST_DIRECTORY, PLAN);
+    expect(onPersist).toHaveBeenCalledExactlyOnceWith(upperDirectory, PLAN, { exitCode: 0, stderr: "", stdout: "" });
   });
 
   test("still flushes on a non-zero exit (native leaves partial output) but never records the task cache", async () => {
@@ -80,13 +80,13 @@ describe(persistRun, () => {
 
     expect(result.exitCode).toBe(1);
 
-    const [upperDir] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
+    const [upperDirectory] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
 
-    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIRECTORY, PLAN);
+    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDirectory, HOST_DIRECTORY, PLAN);
     expect(onPersist).not.toHaveBeenCalled();
   });
 
-  test("always tears down the per-run temp upper and work dirs", async () => {
+  test("always tears down the per-run temp upper and work directories", async () => {
     expect.hasAssertions();
 
     exec.mockResolvedValue({ exitCode: 1, stderr: "", stdout: "" });

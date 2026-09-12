@@ -24,7 +24,7 @@ export const taskCacheEntrySchema: z.ZodObject<{
   plan: createUniqueArraySchema(
     z.object({
       // The entry is persisted, hand-editable meta.json replayed onto the host via applyFlushPlan, so reject any
-      // Path that would escape hostDir (absolute, or a `..` segment) before it reaches the host-write script.
+      // Path that would escape hostDirectory (absolute, or a `..` segment) before it reaches the host-write script.
       relativePath: z
         .string()
         .refine(

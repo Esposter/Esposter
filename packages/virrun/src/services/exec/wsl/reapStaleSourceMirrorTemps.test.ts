@@ -51,7 +51,7 @@ describe(reapStaleSourceMirrorTemps, () => {
     expect(existsSync(publishedOrigin)).toBe(true);
   });
 
-  test("is a no-op on an entry dir that does not exist yet", () => {
+  test("is a no-op on an entry directory that does not exist yet", () => {
     expect.hasAssertions();
 
     expect(() => {

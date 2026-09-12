@@ -27,7 +27,7 @@ const readProbeVerdict = (probe: () => void): boolean | undefined =>
 // From buildBwrapArgs, and on Linux probe the ACTUAL working directory the backend will sandbox (process.cwd()) —
 // Not a throwaway tmpdir. A tmpdir is tmpfs, which hides the one failure that matters most: when cwd is itself an
 // Overlayfs mount (virrun's own suite runs inside the os-backend sandbox via `virrun -- vitest`, so an os test that
-// Overlays the repo dir is overlayfs-on-overlayfs), the kernel rejects the mount with EINVAL ("Can't make overlay
+// Overlays the repo directory is overlayfs-on-overlayfs), the kernel rejects the mount with EINVAL ("Can't make overlay
 // Mount ... userxattr: Invalid argument"). A tmpfs probe passes there and the backend then throws mid-run; probing
 // The real cwd keeps the predicate honest and in lockstep with what the backend emits, so a nested/incapable host
 // Degrades (resolveBackend) or refuses (createOsBackend) cleanly instead of crashing. `--tmp-overlay` writes nothing
@@ -50,16 +50,16 @@ export const probeOsBackendSupported = (): boolean | undefined => {
       // Three times as long, on every process — and the timed-out verdict is deliberately not cached, so nothing
       // Would amortize it away.
       return readProbeVerdict(() => {
-        const wslDir = execWsl(["--exec", "mktemp", "-d"]).trim();
+        const wslDirectory = execWsl(["--exec", "mktemp", "-d"]).trim();
         withFinalizer(
-          () => execWsl(["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], { timeout: PROBE_TIMEOUT_MS }),
+          () => execWsl(["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDirectory)], { timeout: PROBE_TIMEOUT_MS }),
           () => {
-            // The probe's own mktemp dir, and nothing else sweeps the guest's /tmp on our behalf — a failed
+            // The probe's own mktemp directory, and nothing else sweeps the guest's /tmp on our behalf — a failed
             // Removal leaks one directory per probe, which is only ever visible if it is said out loud
-            getResult(() => execWsl(["--exec", "rm", "-rf", wslDir], { timeout: PROBE_TIMEOUT_MS })).match(
+            getResult(() => execWsl(["--exec", "rm", "-rf", wslDirectory], { timeout: PROBE_TIMEOUT_MS })).match(
               noop,
               ({ message }) => {
-                writeVirrunDebug(`os probe temp ${wslDir} not removed — ${message}`);
+                writeVirrunDebug(`os probe temp ${wslDirectory} not removed — ${message}`);
               },
             );
           },

@@ -173,7 +173,7 @@
     "error-alert/no-raw-error-alert": "error",
     "literal-union/no-string-literal-union": "error",
     "func-names": "off",
-    "id-denylist": ["error", "acc", "curr", "idx"],
+    "id-denylist": ["error", "acc", "curr", "dir", "idx"],
     "id-length": "off",
     "import/default": "off",
     "import/exports-last": "off",

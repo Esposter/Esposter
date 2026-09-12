@@ -14,7 +14,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 const { osCacheRoot } = vi.hoisted(() => ({ osCacheRoot: { value: "" } }));
 
 vi.mock(import("#src/services/exec/store/createSharedPackageStoreOptions"), () => ({
-  createSharedPackageStoreOptions: () => ({ bindDirs: [], env: {} }),
+  createSharedPackageStoreOptions: () => ({ bindDirectories: [], env: {} }),
 }));
 
 vi.mock(import("#src/services/exec/os/getOsCacheRoot"), () => ({ getOsCacheRoot: () => osCacheRoot.value }));
@@ -53,10 +53,10 @@ describe(createOsInstallOptions, () => {
   test("keeps the sandbox options it extends, so the install bootstraps corepack into the same bound home", () => {
     expect.hasAssertions();
 
-    const { bindDirs, env } = createOsInstallOptions(TEST_REPO_ROOT_WIN, "pipe");
+    const { bindDirectories, env } = createOsInstallOptions(TEST_REPO_ROOT_WIN, "pipe");
     const corepackHome = env?.[COREPACK_HOME_KEY] ?? "";
 
     expect(corepackHome.startsWith(osCacheRoot.value)).toBe(true);
-    expect(bindDirs).toContain(corepackHome);
+    expect(bindDirectories).toContain(corepackHome);
   });
 });

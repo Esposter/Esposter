@@ -14,8 +14,8 @@ const FALLBACK_COMMAND = `node -p "1 + 1"`;
 const native = createNativeBackend();
 const vfs = createVfsBackend();
 const temporaryDirectories = createTemporaryDirectoryTracker();
-const dir = temporaryDirectories.create();
-writeFileSync(join(dir, "bench.cjs"), "process.stdout.write('bench')");
+const directory = temporaryDirectories.create();
+writeFileSync(join(directory, "bench.cjs"), "process.stdout.write('bench')");
 const FILE_COMMAND = "node bench.cjs";
 
 afterAll(() => {
@@ -37,10 +37,10 @@ test("createVfsBackend - in-process node -e vs native spawn (hot path)", async (
 test("createVfsBackend - in-process node <file> vs native spawn (hot path)", async ({ bench }) => {
   await bench.compare(
     bench(BackendType.Native, async () => {
-      await native.exec(FILE_COMMAND, { cwd: dir, stdio: "pipe" });
+      await native.exec(FILE_COMMAND, { cwd: directory, stdio: "pipe" });
     }),
     bench(BackendType.Vfs, async () => {
-      await vfs.exec(FILE_COMMAND, { cwd: dir, stdio: "pipe" });
+      await vfs.exec(FILE_COMMAND, { cwd: directory, stdio: "pipe" });
     }),
     BENCHMARK_RUN_OPTIONS,
   );

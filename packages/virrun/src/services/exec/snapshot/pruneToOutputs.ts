@@ -7,17 +7,17 @@ import { join } from "node:path";
 // Output subtree (and the directories on the path to one) and drop the rest in a single rm per discarded subtree.
 // `outputs` are workspace-root-relative POSIX paths matched against the upper's own layout; filesystem ops use the
 // Host-native join so it runs from the win32 host over a `\\wsl.localhost` UNC.
-export const pruneToOutputs = (upperDir: string, outputs: readonly string[]): void => {
+export const pruneToOutputs = (upperDirectory: string, outputs: readonly string[]): void => {
   const outputSet = new Set(outputs);
   const prefixSet = new Set<string>();
   for (const output of outputs) {
     const segments = output.split("/");
     for (let index = 1; index < segments.length; index++) prefixSet.add(segments.slice(0, index).join("/"));
   }
-  const walk = (absoluteDir: string, relativePath: string): void => {
-    for (const entry of readdirSync(absoluteDir, { withFileTypes: true })) {
+  const walk = (absoluteDirectory: string, relativePath: string): void => {
+    for (const entry of readdirSync(absoluteDirectory, { withFileTypes: true })) {
       const childRelativePath = relativePath ? `${relativePath}/${entry.name}` : entry.name;
-      const childAbsolutePath = join(absoluteDir, entry.name);
+      const childAbsolutePath = join(absoluteDirectory, entry.name);
       // An output root — keep the whole subtree, never descend.
       if (outputSet.has(childRelativePath)) continue;
       // On the path to a deeper output — descend to keep the output while pruning its siblings.
@@ -26,5 +26,5 @@ export const pruneToOutputs = (upperDir: string, outputs: readonly string[]): vo
       else removeSnapshotDirectory(childAbsolutePath);
     }
   };
-  walk(upperDir, "");
+  walk(upperDirectory, "");
 };

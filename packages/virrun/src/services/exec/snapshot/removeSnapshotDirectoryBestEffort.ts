@@ -8,10 +8,10 @@ import { getResult, noop } from "@esposter/shared";
 // And REPLACES the error that actually failed the run: a WSL service that dies mid-run surfaces as nothing but
 // "Command failed: wsl.exe … rm -rf", with the real cause thrown away. The removal is still attempted synchronously
 // (a caller ordering a publish after it keeps its ordering); only its verdict is dropped, to the debug sink.
-export const removeSnapshotDirectoryBestEffort = (dir: string): void => {
+export const removeSnapshotDirectoryBestEffort = (directory: string): void => {
   getResult(() => {
-    removeSnapshotDirectory(dir);
+    removeSnapshotDirectory(directory);
   }).match(noop, (error) => {
-    writeVirrunDebug(`snapshot temp teardown failed (${dir}) — ${error.message}`);
+    writeVirrunDebug(`snapshot temp teardown failed (${directory}) — ${error.message}`);
   });
 };

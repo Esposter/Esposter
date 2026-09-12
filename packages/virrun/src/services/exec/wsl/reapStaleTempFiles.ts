@@ -12,12 +12,12 @@ import { join } from "node:path";
 // `minimumAgeMs` keeps a just-stranded temp for a caller whose reader opens the file asynchronously after the owner
 // Has already gone: a temp younger than the floor is left for a later sweep, and one whose mtime cannot be read is
 // Too. Omitted, owner death alone decides.
-export const reapStaleTempFiles = (dir: string, prefixes: readonly string[], minimumAgeMs?: number): void => {
+export const reapStaleTempFiles = (directory: string, prefixes: readonly string[], minimumAgeMs?: number): void => {
   getResult(() => {
     const reapableBeforeMs = minimumAgeMs === undefined ? undefined : Date.now() - minimumAgeMs;
-    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
       if (!entry.isFile()) continue;
-      const path = join(dir, entry.name);
+      const path = join(directory, entry.name);
       const pid = parseTempOwnerPid(entry.name, prefixes);
       if (pid === undefined || checkIsOwnerAlive(pid, path)) continue;
       if (reapableBeforeMs !== undefined) {
@@ -31,6 +31,6 @@ export const reapStaleTempFiles = (dir: string, prefixes: readonly string[], min
       });
     }
   }).match(noop, ({ message }) => {
-    writeVirrunDebug(`stranded temp sweep skipped for ${dir} — ${message}`);
+    writeVirrunDebug(`stranded temp sweep skipped for ${directory} — ${message}`);
   });
 };

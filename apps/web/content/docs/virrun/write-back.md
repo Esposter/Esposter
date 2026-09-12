@@ -9,7 +9,7 @@ Flush a sandboxed command's produced files back to the host working tree, so `vi
 
 ## Principle: native-equivalence, not a guessed file set
 
-A name-based filter — gitignore-aware, or a denylist — cannot hold: `pnpm build` writes `dist/`, gitignored yet wanted, and any such rule guesses wrong eventually. The only stable rule is **leave disk as native would**. The overlay upper already _is_ the native diff — changed/new files, whiteouts for deletes, opaque markers for replaced dirs — so persisting the upper (minus what a lower layer supplies) reproduces the native on-disk result without virrun ever deciding which files "matter".
+A name-based filter — gitignore-aware, or a denylist — cannot hold: `pnpm build` writes `dist/`, gitignored yet wanted, and any such rule guesses wrong eventually. The only stable rule is **leave disk as native would**. The overlay upper already _is_ the native diff — changed/new files, whiteouts for deletes, opaque markers for replaced directories — so persisting the upper (minus what a lower layer supplies) reproduces the native on-disk result without virrun ever deciding which files "matter".
 
 ## How it works
 
@@ -25,13 +25,13 @@ flowchart LR
     top -->|"mutation run<br/>--overlay upper"| up[("persistable upper<br/>= dist / migrations / fixed src")]
     top -->|"CI / verification fork<br/>--tmp-overlay"| vanish[("tmpfs<br/>writes vanish")]
 
-    up --> flush["flushUpperToHost<br/>files · whiteout deletes · opaque dirs"]
-    flush -->|"skipping snapshot lowers<br/>and every masked path"| host[("host working dir<br/>(native-equivalent)")]
+    up --> flush["flushUpperToHost<br/>files · whiteout deletes · opaque directories"]
+    flush -->|"skipping snapshot lowers<br/>and every masked path"| host[("host working directory<br/>(native-equivalent)")]
 ```
 
 Two facts make this native-equivalent without guessing:
 
-- **The upper _is_ the native diff** — overlayfs records changed/new files, char-dev `0:0` whiteouts for deletes, and (in rootless userxattr mode) `user.overlay.opaque` markers for replaced dirs. Replaying it onto the host reproduces native's result.
+- **The upper _is_ the native diff** — overlayfs records changed/new files, char-dev `0:0` whiteouts for deletes, and (in rootless userxattr mode) `user.overlay.opaque` markers for replaced directories. Replaying it onto the host reproduces native's result.
 - **`node_modules` is structurally excluded** — it lives in the RO snapshot lower, so it is never in the top upper's flush set. Upper entries that shadow a snapshot-lower path (a postinstall patch, `node_modules/.vite`) are skipped by layer membership, not a name guess. A prepare layer's outputs (`.nuxt`) are excluded the same structural way.
 
 ### The flush set is bounded by the source set
@@ -48,20 +48,20 @@ Without the mask, a `--fix` run materializes those ghosts on the host: the mirro
 
 Probed on a rootless-bubblewrap overlay (kernel 6.6, ext4). Inside a user namespace the overlay uses **userxattr** — markers live in `user.overlay.*`, readable unprivileged:
 
-| Upper entry                         | On-disk representation                                          | Detection                                                     |
-| ----------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- |
-| deleted path (whiteout)             | character device, `rdev` 0:0, mode 0                            | `lstat`: `S_ISCHR(mode) && rdev === 0` — no xattr read needed |
-| dir removed-then-recreated (opaque) | directory with xattr `user.overlay.opaque="y"`                  | xattr read of `user.overlay.opaque`                           |
-| dir modified in place (merge)       | directory with `user.overlay.origin`/`impure` but **no** opaque | absence of opaque → recurse, do not clear                     |
-| created / copied-up file            | regular file                                                    | default → copy                                                |
+| Upper entry                               | On-disk representation                                          | Detection                                                     |
+| ----------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- |
+| deleted path (whiteout)                   | character device, `rdev` 0:0, mode 0                            | `lstat`: `S_ISCHR(mode) && rdev === 0` — no xattr read needed |
+| directory removed-then-recreated (opaque) | directory with xattr `user.overlay.opaque="y"`                  | xattr read of `user.overlay.opaque`                           |
+| directory modified in place (merge)       | directory with `user.overlay.origin`/`impure` but **no** opaque | absence of opaque → recurse, do not clear                     |
+| created / copied-up file                  | regular file                                                    | default → copy                                                |
 
-A `build` that cleans its output dir (`rm -rf dist && rebuild`) produces an **opaque** `dist`, so opaque handling is required, not optional.
+A `build` that cleans its output directory (`rm -rf dist && rebuild`) produces an **opaque** `dist`, so opaque handling is required, not optional.
 
 ## Flush algorithm
 
 After the command exits — **whatever the exit code** — reconcile the top upper into the host working directory:
 
-1. **Walk the upper**, classifying each entry per the table (`parseOverlayEntryKind`): regular file/dir → copy over; whiteout → remove the host path; opaque dir → clear the host dir, then copy the upper's children.
+1. **Walk the upper**, classifying each entry per the table (`parseOverlayEntryKind`): regular file/directory → copy over; whiteout → remove the host path; opaque directory → clear the host directory, then copy the upper's children.
 2. **Skip snapshot-lower-shadowing paths** and `maskedPaths` — prepare outputs, plus the mirror excludes on win32 (structural, above). Source-tree paths and genuinely new repo content always flush.
 3. **Bulk copy-out, last** — sequential over the (small) diff, far cheaper than the random I/O the toolchain did in RAM.
 
@@ -81,7 +81,7 @@ Paths relative to `packages/virrun/src/`.
 
 | File                                                    | Role                                                                                                                |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `models/exec/snapshot/OverlayEntryKind.ts`              | enum `Regular`/`Whiteout`/`OpaqueDir` — the classification result                                                   |
+| `models/exec/snapshot/OverlayEntryKind.ts`              | enum `Regular`/`Whiteout`/`OpaqueDirectory` — the classification result                                             |
 | `services/exec/snapshot/parseOverlayEntryKind.ts`       | pure: classify an upper entry from a parsed manifest entry + opaque flag                                            |
 | `services/exec/snapshot/buildFlushPlan.ts`              | pure: turn an upper walk into an ordered `FlushOp[]`, skipping snapshot-lower paths                                 |
 | `services/exec/snapshot/checkIsUnderSnapshotLower.ts`   | pure: the skip predicate — snapshot-lower membership, any `node_modules` tree, and `maskedPaths`                    |

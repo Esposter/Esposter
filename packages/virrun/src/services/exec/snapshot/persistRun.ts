@@ -17,7 +17,7 @@ import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 // Run a command over the warm snapshot with a persistable upper, then flush that upper to the host whatever the exit
 // Code (native-equivalence; apps/web/content/docs/virrun/write-back.md) — a non-zero mutation still wrote real files.
-// The persist sibling of `forkSnapshot`: the deps snapshot (and any `extraLowerDirs`, e.g. the prepare layer) stack
+// The persist sibling of `forkSnapshot`: the deps snapshot (and any `extraLowerDirectories`, e.g. the prepare layer) stack
 // As read-only lowers, so node_modules is never in the upper and never flushed. `maskedPaths` (an environment's
 // Prepare outputs, e.g. `.nuxt`, plus the source-mirror excludes on win32) are masked from the flush like
 // Node_modules — owned by a layer or by the host alone, so a persist run never writes them back
@@ -28,39 +28,47 @@ export const persistRun = (
   backend: ExecBackend,
   command: readonly string[] | string,
   options: ExecOptions,
-  extraLowerDirs: readonly string[] = [],
+  extraLowerDirectories: readonly string[] = [],
   maskedPaths: readonly string[] = [],
-  onPersist?: (upperDir: string, plan: readonly FlushOp[], result: ExecResult) => void,
+  onPersist?: (upperDirectory: string, plan: readonly FlushOp[], result: ExecResult) => void,
 ): Promise<ExecResult> => {
-  const { dir, exists, upperDir } = resolveSnapshotLocation(options.cwd);
+  const { directory, exists, upperDirectory } = resolveSnapshotLocation(options.cwd);
   if (!exists)
     throw new InvalidOperationError(
       Operation.Read,
       persistRun.name,
       "no captured snapshot to persist over; provision one first",
     );
-  const hostDir = options.cwd || process.cwd();
-  const persistUpperDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`)));
-  const persistWorkDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`)));
+  const hostDirectory = options.cwd || process.cwd();
+  const persistUpperDirectory = mkdtempSync(
+    join(directory, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`)),
+  );
+  const persistWorkDirectory = mkdtempSync(
+    join(directory, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`)),
+  );
   return withFinalizerAsync(
     async () => {
       const result = await backend.exec(command, {
         ...options,
-        overlayLayers: { lowerDirs: [upperDir, ...extraLowerDirs], upperDir: persistUpperDir, workDir: persistWorkDir },
+        overlayLayers: {
+          lowerDirectories: [upperDirectory, ...extraLowerDirectories],
+          upperDirectory: persistUpperDirectory,
+          workDirectory: persistWorkDirectory,
+        },
       });
       // Build the plan once and always flush it, whatever the exit code: native-equivalence taken literally means the
       // Host is left exactly as the tool left it, and a mutation tool that exits non-zero (eslint --fix / oxfmt with
       // Remaining unfixable errors, a build that half-writes dist/) still wrote real files that must reach the host.
-      const plan = buildHostFlushPlan(persistUpperDir, upperDir, maskedPaths);
-      applyFlushPlan(persistUpperDir, hostDir, plan);
+      const plan = buildHostFlushPlan(persistUpperDirectory, upperDirectory, maskedPaths);
+      applyFlushPlan(persistUpperDirectory, hostDirectory, plan);
       // Only a clean exit is recorded to the task cache — replaying a failed run would skip a genuine re-attempt — but
       // The same plan is reused so the cache records the output diff without a second Linux-side probe.
-      if (result.exitCode === 0) onPersist?.(persistUpperDir, plan, result);
+      if (result.exitCode === 0) onPersist?.(persistUpperDirectory, plan, result);
       return result;
     },
     () => {
-      removeSnapshotDirectoryBestEffort(persistUpperDir);
-      removeSnapshotDirectoryBestEffort(persistWorkDir);
+      removeSnapshotDirectoryBestEffort(persistUpperDirectory);
+      removeSnapshotDirectoryBestEffort(persistWorkDirectory);
     },
   );
 };

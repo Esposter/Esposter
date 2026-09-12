@@ -68,7 +68,7 @@ describe(reapOrphanedWslRuns, () => {
     expect(existsSync(recycledRunPath)).toBe(false);
   });
 
-  // A clean removes exactly the dirs a corpse holds open, so its sweep runs the reaper synchronously and waits for
+  // A clean removes exactly the directories a corpse holds open, so its sweep runs the reaper synchronously and waits for
   // The trees it TERMs — where the startup sweep stays fire-and-forget off the critical path.
   test("runs the reaper synchronously and waits for the trees when blocking", () => {
     expect.hasAssertions();

@@ -35,10 +35,10 @@ export const resolvePrepareStep = (environment: Environment | undefined, cwd: st
       resolvePrepareStep.name,
       `environment "${Environment.Nuxt}" is set but no nuxt.config was found in the workspace`,
     );
-  const relativeDir = dirname(configPath);
-  if (relativeDir === ".") return { command: NUXT_PREPARE_COMMAND, outputs: [NUXT_OUTPUT_DIRECTORY] };
+  const relativeDirectory = dirname(configPath);
+  if (relativeDirectory === ".") return { command: NUXT_PREPARE_COMMAND, outputs: [NUXT_OUTPUT_DIRECTORY] };
   return {
-    command: `pnpm --filter ./${relativeDir} exec ${NUXT_PREPARE_COMMAND}`,
-    outputs: [`${relativeDir}/${NUXT_OUTPUT_DIRECTORY}`],
+    command: `pnpm --filter ./${relativeDirectory} exec ${NUXT_PREPARE_COMMAND}`,
+    outputs: [`${relativeDirectory}/${NUXT_OUTPUT_DIRECTORY}`],
   };
 };

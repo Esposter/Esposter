@@ -6,10 +6,14 @@ import { buildHostFlushPlan } from "#src/services/exec/snapshot/buildHostFlushPl
 // `maskedPaths` (an environment's prepare outputs, plus the source-mirror excludes on win32) are masked from the
 // Flush like node_modules — owned by a layer or by the host alone, never written back from the sandbox.
 export const flushUpperToHost = (
-  upperDir: string,
-  hostDir: string,
-  snapshotUpperDir: string,
+  upperDirectory: string,
+  hostDirectory: string,
+  snapshotUpperDirectory: string,
   maskedPaths: readonly string[] = [],
 ): void => {
-  applyFlushPlan(upperDir, hostDir, buildHostFlushPlan(upperDir, snapshotUpperDir, maskedPaths));
+  applyFlushPlan(
+    upperDirectory,
+    hostDirectory,
+    buildHostFlushPlan(upperDirectory, snapshotUpperDirectory, maskedPaths),
+  );
 };

@@ -9,7 +9,7 @@ import { copyFileSync, existsSync, mkdirSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe } from "vitest";
 // Assembles a manifest mirror of the real monorepo: copies the root manifests + every workspace package.json
-// Into a fresh dir with NO node_modules, so a real `pnpm install` resolves the actual closure from a cold state.
+// Into a fresh directory with NO node_modules, so a real `pnpm install` resolves the actual closure from a cold state.
 //
 // Copies, not symlinks: on win32 the corpus reaches the sandbox through the WSL source mirror, whose archive is
 // Staged by the host's `tar`, and that strips the drive letter from an absolute NTFS symlink target — so

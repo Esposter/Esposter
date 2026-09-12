@@ -39,13 +39,13 @@ vi.mock(import("#src/services/exec/wsl/readWslPath"), async () => {
   const { TEST_WSL_PREFIX: testWslPrefix } = await import("#src/services/exec/wsl/constants.test");
   return { readWslPath: (path: string) => `${testWslPrefix}${path}` };
 });
-// Same for the WSL native cache root: the real one spawns wsl.exe and would create dirs in the live WSL home.
-// Point it at an in-temp dir.
+// Same for the WSL native cache root: the real one spawns wsl.exe and would create directories in the live WSL home.
+// Point it at an in-temp directory.
 vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), async () => {
   const { tmpdir: osTmpdir } = await import("node:os");
   const { join: joinPath } = await import("node:path");
-  const { TEST_WSL_CACHE_DIR_NAME: testWslCacheDirName } = await import("#src/services/exec/wsl/constants.test");
-  return { getWslNativeCacheRoot: () => joinPath(osTmpdir(), testWslCacheDirName) };
+  const { TEST_WSL_CACHE_DIR_NAME: testWslCacheDirectoryName } = await import("#src/services/exec/wsl/constants.test");
+  return { getWslNativeCacheRoot: () => joinPath(osTmpdir(), testWslCacheDirectoryName) };
 });
 
 const mockOsBackend = () =>
@@ -53,11 +53,11 @@ const mockOsBackend = () =>
     exec: (): Promise<ExecResult> => Promise.resolve({ exitCode: 0, stderr: "", stdout: "" }),
     name: BackendType.Os,
   });
-const createSnapshotLocation = (exists: boolean, dir: string): SnapshotLocation => ({
-  dir,
+const createSnapshotLocation = (exists: boolean, directory: string): SnapshotLocation => ({
+  directory,
   exists,
   hash: TEST_FILENAME,
-  upperDir: TEST_FILENAME,
+  upperDirectory: TEST_FILENAME,
 });
 
 describe(createVirrun, () => {
@@ -107,11 +107,11 @@ describe(createVirrun, () => {
     // The network — so the orchestrator must turn it back on.
     const backend = createRecordingBackend();
     vi.mocked(createOsBackend).mockReturnValue(backend);
-    // The os path anchors its shared store to the workspace root (nearest lockfile), so use a lockfile-seeded dir.
-    const dir = createWorkspace();
+    // The os path anchors its shared store to the workspace root (nearest lockfile), so use a lockfile-seeded directory.
+    const directory = createWorkspace();
     const { dispose, exec } = await createVirrun({
       backend: BackendType.Os,
-      source: { dir, type: SourceType.Dir },
+      source: { directory, type: SourceType.Directory },
     });
     await exec("pnpm install");
     await dispose();
@@ -144,10 +144,10 @@ describe(createVirrun, () => {
       result: { exitCode: 0, stderr: "", stdout: "" },
     });
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
-    const dir = createWorkspace();
+    const directory = createWorkspace();
     const { dispose, fork } = await createVirrun({
       backend: BackendType.Os,
-      source: { dir, type: SourceType.Dir },
+      source: { directory, type: SourceType.Directory },
     });
     const result = await fork("tsc");
     await dispose();
@@ -164,10 +164,10 @@ describe(createVirrun, () => {
     const snapshotDirectory = create();
     vi.mocked(resolveSnapshotLocation).mockReturnValue(createSnapshotLocation(true, snapshotDirectory));
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
-    const dir = createWorkspace();
+    const directory = createWorkspace();
     const { dispose, fork } = await createVirrun({
       backend: BackendType.Os,
-      source: { dir, type: SourceType.Dir },
+      source: { directory, type: SourceType.Directory },
     });
     await fork("tsc");
     await dispose();
@@ -183,10 +183,10 @@ describe(createVirrun, () => {
     const snapshotDirectory = create();
     vi.mocked(resolveSnapshotLocation).mockReturnValue(createSnapshotLocation(true, snapshotDirectory));
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
-    const dir = createWorkspace();
+    const directory = createWorkspace();
     const { dispose, fork } = await createVirrun({
       backend: BackendType.Os,
-      source: { dir, type: SourceType.Dir },
+      source: { directory, type: SourceType.Directory },
     });
     await fork("tsc");
 

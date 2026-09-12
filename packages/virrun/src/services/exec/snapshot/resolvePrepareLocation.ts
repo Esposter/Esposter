@@ -29,7 +29,7 @@ export const resolvePrepareLocation = (cwd: string, prepareStep: PrepareStep): P
     .update("\0")
     .update(prepareStep.outputs.join("\0"))
     .digest("hex");
-  const dir = join(getGlobalCacheDirectory(), VIRRUN_PREPARE_DIRECTORY_NAME, key);
-  const upperDir = join(dir, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME);
-  return { dir, exists: existsSync(upperDir), key, upperDir };
+  const directory = join(getGlobalCacheDirectory(), VIRRUN_PREPARE_DIRECTORY_NAME, key);
+  const upperDirectory = join(directory, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME);
+  return { directory, exists: existsSync(upperDirectory), key, upperDirectory };
 };

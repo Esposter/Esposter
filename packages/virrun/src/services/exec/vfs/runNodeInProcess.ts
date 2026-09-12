@@ -10,7 +10,7 @@ import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { runInThisContext } from "node:vm";
 // Run a recognised node invocation in the current process instead of spawning a child, inside an overlay vfs
-// Mounted at the working dir so the module loader + core fs serve virtual files (falling through to real disk).
+// Mounted at the working directory so the module loader + core fs serve virtual files (falling through to real disk).
 // Returns undefined when the code can't run faithfully in-process so the caller falls back to native. Runs
 // Serially: it patches the global process streams, exit, and require and mounts the vfs inside withFinalizer, all
 // Restored whether the run throws or not, and resets the require cache so each run re-executes from scratch.
@@ -24,10 +24,10 @@ export const runNodeInProcess = (
   const originalExitCode = process.exitCode;
   const originalRequire = globalThis.require;
   const originalCwd = cwd ? process.cwd() : "";
-  const baseDir = resolveCwd(cwd);
+  const baseDirectory = resolveCwd(cwd);
   const fsProvider = createPlatformaticFsProvider({ isOverlayEnabled: true });
   const isPipe = stdio === "pipe";
-  const require = createRequire(resolve(baseDir, "[eval].js"));
+  const require = createRequire(resolve(baseDirectory, "[eval].js"));
   const cachedBefore = new Set(Object.keys(require.cache));
   let stdout = "";
   let stderr = "";
@@ -50,9 +50,11 @@ export const runNodeInProcess = (
       };
       if (cwd) process.chdir(cwd);
       globalThis.require = require;
-      fsProvider.mount(baseDir);
+      fsProvider.mount(baseDirectory);
       const run = () =>
-        file ? require(require.resolve(resolve(baseDir, file))) : runInThisContext(code, { displayErrors: false });
+        file
+          ? require(require.resolve(resolve(baseDirectory, file)))
+          : runInThisContext(code, { displayErrors: false });
       return getResult(run).match(
         // An async result needs an event loop we will not spin, so defer it to native.
         (value): ExecResult | undefined =>

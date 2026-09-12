@@ -17,7 +17,7 @@ export const createPrepareLayer = async (
   backend: ExecBackend,
   prepareStep: PrepareStep,
   options: ExecOptions,
-  { dir, upperDir }: PrepareLocation,
+  { directory, upperDirectory }: PrepareLocation,
 ): Promise<void> => {
   const depsLocation = resolveSnapshotLocation(options.cwd);
   if (!depsLocation.exists)
@@ -27,14 +27,14 @@ export const createPrepareLayer = async (
       "no captured deps snapshot to fork for the prepare layer; run createSnapshot first",
     );
   await captureOverlayUpper(backend, prepareStep.command, options, {
-    dir,
+    directory,
     failureLabel: "prepare command",
-    lowerDirs: [depsLocation.upperDir],
+    lowerDirectories: [depsLocation.upperDirectory],
     operationName: createPrepareLayer.name,
     // This layer owns only the declared outputs; the deps snapshot below supplies the dep tree the prepare churned
-    prune: (captureUpperDir) => {
-      pruneToOutputs(captureUpperDir, prepareStep.outputs);
+    prune: (captureUpperDirectory) => {
+      pruneToOutputs(captureUpperDirectory, prepareStep.outputs);
     },
-    upperDir,
+    upperDirectory,
   });
 };

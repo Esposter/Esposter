@@ -34,7 +34,7 @@ describe(createSharedPackageStoreOptions, () => {
 
     expect(existsSync(storeDirectory)).toBe(true);
     expect(options).toStrictEqual({
-      bindDirs: [storeDirectory],
+      bindDirectories: [storeDirectory],
       env: {
         [PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY]: PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
         [PNPM_CONFIG_STORE_DIR_KEY]: storeDirectory,

@@ -4,7 +4,7 @@ import type { LoadedSource } from "#src/models/source/LoadedSource";
 import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
 import { createTemporarySourceDirectory } from "#src/services/source/createTemporarySourceDirectory";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
-// Shallow-clones a repo into a temp dir via the host's real git, failing loud with git's own stderr on a
+// Shallow-clones a repo into a temp directory via the host's real git, failing loud with git's own stderr on a
 // Non-zero exit. `-q` drops the volatile "Cloning into '<dest>'" progress line, leaving the fatal lines.
 export const loadGitSource = async (source: GitSource): Promise<LoadedSource> => {
   const { cwd, dispose } = await createTemporarySourceDirectory();

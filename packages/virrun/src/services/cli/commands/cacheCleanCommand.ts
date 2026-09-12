@@ -53,7 +53,7 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
   },
   run: ({ args }) => {
     getResult(() => {
-      // Corpses first, on win32: a hard-killed run's surviving WSL tree holds the store and snapshot dirs open, so a
+      // Corpses first, on win32: a hard-killed run's surviving WSL tree holds the store and snapshot directories open, so a
       // Clean that ran ahead of the sweep would be asked to remove exactly what something still has mounted. Blocking,
       // Unlike the startup sweep: TERM only asks, so a fire-and-forget reap returns while the tree is still unwinding
       // And hands the removals below the very race the sweep is here to close. The sweep is keyed on owner liveness,

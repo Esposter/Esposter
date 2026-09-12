@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
-// Call-through spy on rm so the failure-path leak test asserts dispose removed its dir deterministically, not
+// Call-through spy on rm so the failure-path leak test asserts dispose removed its directory deterministically, not
 // By counting shared-tmpdir entries parallel tests pollute. Other fs exports stay real.
 const { rm } = vi.hoisted(() => ({ rm: vi.fn<typeof baseRm>() }));
 

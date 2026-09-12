@@ -9,7 +9,7 @@ import { readFileSync, utimesSync } from "node:fs";
 // Replay a task-cache hit: reconcile the recorded payload onto the host exactly as the original write-back did, then
 // Return the recorded outcome. The observable result — files, streams, exit code — is identical to re-running, the
 // Correctness contract the differential/equivalence tests hold it to.
-export const replayTaskCache = (key: string, hostDir: string): ExecResult => {
+export const replayTaskCache = (key: string, hostDirectory: string): ExecResult => {
   const location = resolveTaskCacheLocation(key);
   const entry = parseTaskCacheEntry(readFileSync(location.metaFile, "utf8"));
   // Bump the meta mtime so the age-prune (pruneStaleTaskCacheEntries) measures recency of use, not creation — a hot
@@ -20,6 +20,6 @@ export const replayTaskCache = (key: string, hostDir: string): ExecResult => {
   }).match(noop, ({ message }) => {
     writeVirrunDebug(`task cache touch failed, entry ages from creation — ${message}`);
   });
-  applyFlushPlan(location.payloadDir, hostDir, entry.plan);
+  applyFlushPlan(location.payloadDirectory, hostDirectory, entry.plan);
   return { exitCode: entry.exitCode, stderr: entry.stderr, stdout: entry.stdout };
 };

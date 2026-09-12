@@ -17,16 +17,16 @@ vi.mock(
 describe(resolveSnapshotLocation, () => {
   const { createWorkspace, getCacheHome } = setupTemporaryCacheHome();
 
-  test("addresses the snapshot in the global cache under snapshots/<environment-key> with its upper dir", () => {
+  test("addresses the snapshot in the global cache under snapshots/<environment-key> with its upper directory", () => {
     expect.hasAssertions();
 
     const workspace = createWorkspace();
-    const { dir: snapshotDirectory, hash, upperDir } = resolveSnapshotLocation(workspace);
+    const { directory: snapshotDirectory, hash, upperDirectory } = resolveSnapshotLocation(workspace);
     const expectedDirectory = join(getCacheHome(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME, hash);
 
     expect(hash).toBe(computeEnvironmentKey(workspace));
     expect(snapshotDirectory).toBe(expectedDirectory);
-    expect(upperDir).toBe(join(expectedDirectory, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME));
+    expect(upperDirectory).toBe(join(expectedDirectory, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME));
   });
 
   test("lives outside the repo so a forked overlay lower never nests inside the source tree", () => {
@@ -34,7 +34,7 @@ describe(resolveSnapshotLocation, () => {
 
     const workspace = createWorkspace();
 
-    expect(resolveSnapshotLocation(workspace).dir.startsWith(workspace)).toBe(false);
+    expect(resolveSnapshotLocation(workspace).directory.startsWith(workspace)).toBe(false);
   });
 
   test("reports exists only once the upper layer has been captured on disk", () => {
@@ -44,7 +44,7 @@ describe(resolveSnapshotLocation, () => {
 
     expect(resolveSnapshotLocation(workspace).exists).toBe(false);
 
-    mkdirSync(resolveSnapshotLocation(workspace).upperDir, { recursive: true });
+    mkdirSync(resolveSnapshotLocation(workspace).upperDirectory, { recursive: true });
 
     expect(resolveSnapshotLocation(workspace).exists).toBe(true);
   });

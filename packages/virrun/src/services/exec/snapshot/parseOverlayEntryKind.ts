@@ -6,6 +6,6 @@ import { OverlayEntryKind } from "#src/models/exec/snapshot/OverlayEntryKind";
 // Directory.
 export const parseOverlayEntryKind = (stats: OverlayEntryStats, isOpaque: boolean): OverlayEntryKind => {
   if (stats.isCharacterDevice && stats.rdev === 0) return OverlayEntryKind.Whiteout;
-  else if (stats.isDirectory && isOpaque) return OverlayEntryKind.OpaqueDir;
+  else if (stats.isDirectory && isOpaque) return OverlayEntryKind.OpaqueDirectory;
   else return OverlayEntryKind.Regular;
 };

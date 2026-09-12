@@ -17,30 +17,34 @@ import { join } from "node:path";
 // The publish protocol both captured layers share — the deps snapshot and the prepare layer differ only in what
 // They stack under, what they keep, and what they return. Everything else is the same barrier, and it is the
 // Part that must not drift: the command writes into a private per-invocation temp upper, and a single
-// `renameSync` promotes it onto the final `upperDir` as the last thing to flip, so a concurrent reader (every
-// Fork and resolve reads `existsSync(upperDir)`) never sees a half-built upper. Rename-then-check rather than
+// `renameSync` promotes it onto the final `upperDirectory` as the last thing to flip, so a concurrent reader (every
+// Fork and resolve reads `existsSync(upperDirectory)`) never sees a half-built upper. Rename-then-check rather than
 // Check-then-rename collapses the window where two capturers both saw `exists === false`; the loser keeps the
-// Published layer and discards its own. The pre-resolved `upperDir` is probed rather than a re-resolve, because
+// Published layer and discards its own. The pre-resolved `upperDirectory` is probed rather than a re-resolve, because
 // The command may have rewritten the lockfile and re-hashed to a different key. On any failure only this
 // Invocation's temps are torn down — a sibling capturer's published or in-flight layer must survive
 export const captureOverlayUpper = (
   backend: ExecBackend,
   command: readonly string[] | string,
   options: ExecOptions,
-  { dir, failureLabel, lowerDirs, operationName, prune, upperDir }: CaptureOverlayUpperOptions,
+  { directory, failureLabel, lowerDirectories, operationName, prune, upperDirectory }: CaptureOverlayUpperOptions,
 ): Promise<ExecResult> => {
   // "" until created so the failure finalizer knows whether there is anything to tear down (mkdtemp itself could throw).
-  let captureUpperDir = "";
-  let captureWorkDir = "";
+  let captureUpperDirectory = "";
+  let captureWorkDirectory = "";
   return getResultAsync(async () => {
-    mkdirSync(dir, { recursive: true });
-    captureUpperDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`)));
-    captureWorkDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`)));
+    mkdirSync(directory, { recursive: true });
+    captureUpperDirectory = mkdtempSync(join(directory, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`)));
+    captureWorkDirectory = mkdtempSync(join(directory, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`)));
     const result = await backend.exec(command, {
       ...options,
       // Spread conditionally rather than passing `undefined`: an ephemeral capture stacks no extra lower, and
       // The argv builder reads the field's presence
-      overlayLayers: { ...(lowerDirs ? { lowerDirs } : {}), upperDir: captureUpperDir, workDir: captureWorkDir },
+      overlayLayers: {
+        ...(lowerDirectories ? { lowerDirectories } : {}),
+        upperDirectory: captureUpperDirectory,
+        workDirectory: captureWorkDirectory,
+      },
     });
     if (result.exitCode !== 0)
       throw new InvalidOperationError(
@@ -49,20 +53,20 @@ export const captureOverlayUpper = (
         getProvisionFailureMessage(failureLabel, result, options),
       );
     // Prune the private temp upper, never the published one.
-    prune(captureUpperDir);
+    prune(captureUpperDirectory);
     getResult(() => {
-      renameSync(captureUpperDir, upperDir);
+      renameSync(captureUpperDirectory, upperDirectory);
     }).match(noop, (error) => {
-      if (!existsSync(upperDir)) throw error;
-      removeSnapshotDirectoryBestEffort(captureUpperDir);
+      if (!existsSync(upperDirectory)) throw error;
+      removeSnapshotDirectoryBestEffort(captureUpperDirectory);
     });
-    removeSnapshotDirectoryBestEffort(captureWorkDir);
+    removeSnapshotDirectoryBestEffort(captureWorkDirectory);
     return result;
   }).match(
     (value) => value,
     (error) => {
-      if (captureUpperDir) removeSnapshotDirectoryBestEffort(captureUpperDir);
-      if (captureWorkDir) removeSnapshotDirectoryBestEffort(captureWorkDir);
+      if (captureUpperDirectory) removeSnapshotDirectoryBestEffort(captureUpperDirectory);
+      if (captureWorkDirectory) removeSnapshotDirectoryBestEffort(captureWorkDirectory);
       throw error;
     },
   );

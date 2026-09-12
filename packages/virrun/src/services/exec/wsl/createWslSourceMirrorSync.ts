@@ -43,7 +43,7 @@ const checkHasBareNameExcludeChange = (previous: readonly string[], current: rea
 //   Current side of the diff, and every sync path publishes that same manifest), and virrun is a one-shot CLI whose
 //   Event loop has nothing else to run during planning — off-threading it would add IPC without cutting wall time.
 //   Sub-second warm on NTFS, against a 9p stat-walk an order of magnitude slower.
-// - A delta stages pid-tagged temps in the entry dir (over the UNC): the next manifest, the null-delimited delete
+// - A delta stages pid-tagged temps in the entry directory (over the UNC): the next manifest, the null-delimited delete
 //   List, and a tar archive of the copied paths built host-side (createSourceMirrorArchive — native NTFS reads, one
 //   Sequential 9p write). The script applies them under the mirror lock: `xargs -0 rm -rf` for removals, then a local
 //   Ext4 `tar -x` into `tree/` — no source file ever crosses v9fs individually. `chmod -R 777` after the extract
@@ -112,9 +112,9 @@ export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
     mkdirSync(entryUnc, { recursive: true });
     // The abandonment reaper can only reclaim an entry it can attribute, so the origin marker is published the moment
-    // The entry dir exists rather than at the end of a successful sync: a materialize that dies midway (a killed run,
-    // A failed archive) would otherwise leave an unattributable dir no sweep may ever touch, and those corpses
-    // Accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp dirs.
+    // The entry directory exists rather than at the end of a successful sync: a materialize that dies midway (a killed run,
+    // A failed archive) would otherwise leave an unattributable directory no sweep may ever touch, and those corpses
+    // Accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp directories.
     // The publish is best-effort (publishSourceMirrorOrigin), which every planning pass makes safe by republishing
     // A missing marker — including the no-delta early return above, the path a live repo takes on nearly every run
     publishSourceMirrorOrigin(entryUnc, cwd);
@@ -142,7 +142,7 @@ export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string
       ? [
           // `--warning=no-unknown-keyword` quiets GNU tar's per-symlink "Ignoring unknown extended header keyword
           // 'LIBARCHIVE.symlinktype'" line: a benign pax header the win32 bsdtar writer stamps on every archived
-          // Symlink to record its file-vs-dir target kind. That distinction is meaningless on Linux — extraction
+          // Symlink to record its file-vs-directory target kind. That distinction is meaningless on Linux — extraction
           // Recreates the symlink correctly and exits 0 with or without it — so it is pure noise at this boundary.
           // This command only ever runs under WSL GNU tar (the mirror is win32-only; a native-Linux run uses the os
           // Backend, not this archive), and the archive itself stays standard pax for any other reader.

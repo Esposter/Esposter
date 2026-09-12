@@ -18,7 +18,7 @@ const { loginEnvironmentPath, osCacheRoot } = vi.hoisted(() => ({
 }));
 
 vi.mock(import("#src/services/exec/store/createSharedPackageStoreOptions"), () => ({
-  createSharedPackageStoreOptions: () => ({ bindDirs: [], env: {} }),
+  createSharedPackageStoreOptions: () => ({ bindDirectories: [], env: {} }),
 }));
 
 vi.mock(import("#src/services/exec/os/getOsCacheRoot"), () => ({ getOsCacheRoot: () => osCacheRoot.value }));
@@ -40,7 +40,7 @@ vi.mock(import("#src/services/exec/wsl/readWslLoginEnvironment"), () => ({
 describe(createOsExecOptions, () => {
   // Inert store options (no fs writes) and the shared wsl mocks so getWslSourceMirrorPath resolves a canonical mirror
   // Path from TEST_REPO_ROOT_WIN — the same transform createWslSourceMirrorSync.test / sourceMirrorPaths.test use. The
-  // Cache root is a real temp dir per test, since the corepack home under it is materialized, not merely named.
+  // Cache root is a real temp directory per test, since the corepack home under it is materialized, not merely named.
   const loginPath = TEST_WSL_LOGIN_ENVIRONMENT.path;
 
   const { cleanup, create } = createTemporaryDirectoryTracker();
@@ -90,16 +90,16 @@ describe(createOsExecOptions, () => {
     expect(createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe").env?.PATH).toBeUndefined();
   });
 
-  test("points every run's corepack home at a writable bound dir, not the read-only sandbox home", () => {
+  test("points every run's corepack home at a writable bound directory, not the read-only sandbox home", () => {
     expect.hasAssertions();
 
     // The regression this guards: the sandbox mounts `/` read-only, so a command that shells out to `pnpm` runs the
     // Node manager's corepack shim, which downloads the repo's pinned packageManager under $HOME/.cache and dies
     // EROFS. Only the capture install carried a corepack home, so every ordinary run hit it.
-    const { bindDirs, env } = createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe");
+    const { bindDirectories, env } = createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe");
     const corepackHome = env?.[COREPACK_HOME_KEY] ?? "";
 
     expect(corepackHome.startsWith(osCacheRoot.value)).toBe(true);
-    expect(bindDirs).toContain(corepackHome);
+    expect(bindDirectories).toContain(corepackHome);
   });
 });

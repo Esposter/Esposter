@@ -7,10 +7,10 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 // The generic keep/lease/absent matrix lives in pruneSupersededEntries; here only the wiring — superseded siblings
-// Under the global `snapshots/` dir are evicted while the current hash's dir survives.
+// Under the global `snapshots/` directory are evicted while the current hash's directory survives.
 describe(pruneStaleSnapshots, () => {
   const { getCacheHome } = setupTemporaryCacheHome();
-  // Canonical hash-shaped dir names: the live entry the current lockfile resolves to, and a superseded one beside it.
+  // Canonical hash-shaped directory names: the live entry the current lockfile resolves to, and a superseded one beside it.
   const CURRENT_HASH = "0";
   const STALE_HASH = "1";
 

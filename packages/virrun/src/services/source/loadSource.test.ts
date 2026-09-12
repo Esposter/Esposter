@@ -6,10 +6,10 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe(loadSource, () => {
-  test(`routes ${SourceType.Dir} to the directory loader`, async () => {
+  test(`routes ${SourceType.Directory} to the directory loader`, async () => {
     expect.hasAssertions();
 
-    const { cwd } = await loadSource({ dir: "", type: SourceType.Dir });
+    const { cwd } = await loadSource({ directory: "", type: SourceType.Directory });
 
     expect(cwd).toBe("");
   });

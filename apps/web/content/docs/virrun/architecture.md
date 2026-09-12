@@ -16,9 +16,9 @@ flowchart TB
         api["createVirrun()<br/>orchestrator API"]
         cli --> api
 
-        subgraph src["source loaders → working dir"]
+        subgraph src["source loaders → working directory"]
             direction LR
-            dir["dir"]
+            directory["dir"]
             files["files"]
             git["git"]
         end

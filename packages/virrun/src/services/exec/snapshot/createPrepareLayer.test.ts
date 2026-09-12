@@ -23,10 +23,10 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 // Dep-tree churn into the capture upper, so the test can assert only the output survives the publish.
 const createFakeBackend = (exitCode: number): ExecBackend & ReturnType<typeof createRecordingBackend> =>
   createRecordingBackend({ exitCode, stderr: "", stdout: "" }, (options) => {
-    const upperDir = options.overlayLayers?.upperDir;
-    if (exitCode === 0 && upperDir !== undefined) {
-      seedFile(join(upperDir, TEST_FILENAME, TEST_FILENAME, TEST_FILENAME));
-      seedFile(join(upperDir, NODE_MODULES_DIRECTORY, TEST_FILENAME));
+    const upperDirectory = options.overlayLayers?.upperDirectory;
+    if (exitCode === 0 && upperDirectory !== undefined) {
+      seedFile(join(upperDirectory, TEST_FILENAME, TEST_FILENAME, TEST_FILENAME));
+      seedFile(join(upperDirectory, NODE_MODULES_DIRECTORY, TEST_FILENAME));
     }
   });
 
@@ -36,7 +36,7 @@ vi.mock(
 );
 
 describe(createPrepareLayer, () => {
-  // A two-segment output dir (`a/a`) the fake prepare command populates, alongside a node_modules tree it churns.
+  // A two-segment output directory (`a/a`) the fake prepare command populates, alongside a node_modules tree it churns.
   const OUTPUT = `${TEST_FILENAME}/${TEST_FILENAME}`;
   const prepareStep: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [OUTPUT] };
 
@@ -58,31 +58,31 @@ describe(createPrepareLayer, () => {
   test("captures only the declared outputs, dropping dep-tree churn, and publishes the layer", async () => {
     expect.hasAssertions();
 
-    mkdirSync(resolveSnapshotLocation(repository).upperDir, { recursive: true });
+    mkdirSync(resolveSnapshotLocation(repository).upperDirectory, { recursive: true });
     const backend = createFakeBackend(0);
     await prepare(backend);
 
-    const { exists, upperDir } = resolvePrepareLocation(repository, prepareStep);
+    const { exists, upperDirectory } = resolvePrepareLocation(repository, prepareStep);
 
     expect(exists).toBe(true);
-    expect(existsSync(join(upperDir, TEST_FILENAME, TEST_FILENAME, TEST_FILENAME))).toBe(true);
-    expect(existsSync(join(upperDir, NODE_MODULES_DIRECTORY))).toBe(false);
+    expect(existsSync(join(upperDirectory, TEST_FILENAME, TEST_FILENAME, TEST_FILENAME))).toBe(true);
+    expect(existsSync(join(upperDirectory, NODE_MODULES_DIRECTORY))).toBe(false);
   });
 
   test("forks the deps snapshot as the lower with a per-invocation capture upper", async () => {
     expect.hasAssertions();
 
-    const dependenciesUpperDir = resolveSnapshotLocation(repository).upperDir;
-    mkdirSync(dependenciesUpperDir, { recursive: true });
+    const dependenciesUpperDirectory = resolveSnapshotLocation(repository).upperDirectory;
+    mkdirSync(dependenciesUpperDirectory, { recursive: true });
     const backend = createFakeBackend(0);
     await prepare(backend);
 
-    const { dir: directory } = resolvePrepareLocation(repository, prepareStep);
-    const { lowerDirs, upperDir, workDir } = backend.calls[0]?.overlayLayers ?? {};
+    const { directory } = resolvePrepareLocation(repository, prepareStep);
+    const { lowerDirectories, upperDirectory, workDirectory } = backend.calls[0]?.overlayLayers ?? {};
 
-    expect(lowerDirs).toStrictEqual([dependenciesUpperDir]);
-    expect(upperDir?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
-    expect(workDir?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
+    expect(lowerDirectories).toStrictEqual([dependenciesUpperDirectory]);
+    expect(upperDirectory?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
+    expect(workDirectory?.startsWith(join(directory, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
   });
 
   test("throws when there is no deps snapshot to fork", async () => {
@@ -104,7 +104,7 @@ describe(createPrepareLayer, () => {
   test("throws when the prepare command fails so a half-built layer is never published", async () => {
     expect.hasAssertions();
 
-    mkdirSync(resolveSnapshotLocation(repository).upperDir, { recursive: true });
+    mkdirSync(resolveSnapshotLocation(repository).upperDirectory, { recursive: true });
     const backend = createFakeBackend(1);
 
     await expect(prepare(backend)).rejects.toThrowErrorMatchingInlineSnapshot(

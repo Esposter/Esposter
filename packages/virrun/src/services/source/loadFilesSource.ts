@@ -5,8 +5,8 @@ import { createTemporarySourceDirectory } from "#src/services/source/createTempo
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
-// Materializes an in-memory file map into a fresh temp dir for a backend to run against; a failure
-// Mid-write tears down the partial dir before rethrowing.
+// Materializes an in-memory file map into a fresh temp directory for a backend to run against; a failure
+// Mid-write tears down the partial directory before rethrowing.
 export const loadFilesSource = async (source: FilesSource): Promise<LoadedSource> => {
   const { cwd, dispose } = await createTemporarySourceDirectory();
   await getResultAsync(async () => {

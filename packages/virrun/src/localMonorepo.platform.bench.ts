@@ -55,7 +55,7 @@ afterAll(() => {
   if (!isOsSupported) return;
   // Evict the snapshot only if this bench captured it. Resolve before removing warmCorpus (its lockfile keys the
   // Cache entry), then clear the private temp mirror unconditionally.
-  if (!isSnapshotPreexisting) removeSnapshotDirectory(resolveSnapshotLocation(warmCorpus).dir);
+  if (!isSnapshotPreexisting) removeSnapshotDirectory(resolveSnapshotLocation(warmCorpus).directory);
   rmSync(warmCorpus, { force: true, recursive: true });
 });
 // Capture the install once into a warm snapshot the forks below reuse. There is deliberately NO install bench: the

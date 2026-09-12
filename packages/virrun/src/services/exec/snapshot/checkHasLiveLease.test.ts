@@ -36,7 +36,7 @@ describe(checkHasLiveLease, () => {
     expect(existsSync(deadLeaseFile)).toBe(false);
   });
 
-  test(`is false when the hash dir has no leases directory`, () => {
+  test(`is false when the hash directory has no leases directory`, () => {
     expect.hasAssertions();
 
     expect(checkHasLiveLease(hashDirectory)).toBe(false);

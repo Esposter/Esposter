@@ -4,21 +4,21 @@ import { parsePid } from "#src/services/exec/util/parsePid";
 import { getResult, noop } from "@esposter/shared";
 import { readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
-// Walk a hash dir's `leases/`, dropping every lease whose owner pid has died (a hard-killed run never released its
+// Walk a hash directory's `leases/`, dropping every lease whose owner pid has died (a hard-killed run never released its
 // Own), and report whether any live lease remains — the signal pruneStale* uses to spare a superseded layer another
-// Run is still reading, and acquireLease uses to self-heal the live dir the prune never sweeps. Best-effort: an absent
-// Dir (readdir errors) reads as "no live lease", and a failed file removal just leaves a corpse the next pass reaps.
-export const reapDeadLeases = (leasesDir: string): boolean => {
-  const entries = getResult(() => readdirSync(leasesDir)).unwrapOr([]);
+// Run is still reading, and acquireLease uses to self-heal the live directory the prune never sweeps. Best-effort: an absent
+// Directory (readdir errors) reads as "no live lease", and a failed file removal just leaves a corpse the next pass reaps.
+export const reapDeadLeases = (leasesDirectory: string): boolean => {
+  const entries = getResult(() => readdirSync(leasesDirectory)).unwrapOr([]);
   let isLeaseLive = false;
   for (const entry of entries) {
     const pid = parsePid(entry);
-    if (pid !== undefined && checkIsOwnerAlive(pid, join(leasesDir, entry))) {
+    if (pid !== undefined && checkIsOwnerAlive(pid, join(leasesDirectory, entry))) {
       isLeaseLive = true;
       continue;
     }
     getResult(() => {
-      rmSync(join(leasesDir, entry), { force: true });
+      rmSync(join(leasesDirectory, entry), { force: true });
     }).match(noop, ({ message }) => {
       writeVirrunDebug(`dead lease ${entry} not reaped, it spares this layer another pass — ${message}`);
     });

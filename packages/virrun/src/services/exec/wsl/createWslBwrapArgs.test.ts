@@ -28,7 +28,7 @@ describe(createWslBwrapArgs, () => {
     expect.hasAssertions();
 
     const wslBindDirectory = `${TEST_WSL_PREFIX}${TEST_PNPM_STORE_PATH_WIN}`;
-    const args = createWslBwrapArgs("pwd", TEST_REPO_ROOT_WIN, { bindDirs: [TEST_PNPM_STORE_PATH_WIN] });
+    const args = createWslBwrapArgs("pwd", TEST_REPO_ROOT_WIN, { bindDirectories: [TEST_PNPM_STORE_PATH_WIN] });
 
     expect(args).toStrictEqual([
       "--unshare-all",
@@ -58,12 +58,14 @@ describe(createWslBwrapArgs, () => {
     ]);
   });
 
-  test("translates capture overlay upper and work dirs before building the argv", () => {
+  test("translates capture overlay upper and work directories before building the argv", () => {
     expect.hasAssertions();
 
-    const upperDir = String.raw`C:\cache\snap\upper`;
-    const workDir = String.raw`C:\cache\snap\work`;
-    const args = createWslBwrapArgs("pnpm install", TEST_REPO_ROOT_WIN, { overlayLayers: { upperDir, workDir } });
+    const upperDirectory = String.raw`C:\cache\snap\upper`;
+    const workDirectory = String.raw`C:\cache\snap\work`;
+    const args = createWslBwrapArgs("pnpm install", TEST_REPO_ROOT_WIN, {
+      overlayLayers: { upperDirectory, workDirectory },
+    });
 
     expect(args).toMatchInlineSnapshot(`
       [
@@ -94,11 +96,13 @@ describe(createWslBwrapArgs, () => {
     `);
   });
 
-  test("translates fork overlay lower dirs before building the argv", () => {
+  test("translates fork overlay lower directories before building the argv", () => {
     expect.hasAssertions();
 
     const snapshotUpper = String.raw`C:\cache\snap\upper`;
-    const args = createWslBwrapArgs("vitest", TEST_REPO_ROOT_WIN, { overlayLayers: { lowerDirs: [snapshotUpper] } });
+    const args = createWslBwrapArgs("vitest", TEST_REPO_ROOT_WIN, {
+      overlayLayers: { lowerDirectories: [snapshotUpper] },
+    });
 
     expect(args).toMatchInlineSnapshot(`
       [

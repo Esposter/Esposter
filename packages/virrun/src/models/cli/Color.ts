@@ -11,7 +11,7 @@
 //           (`snapshot cache hit` / `task cache hit`, via formatCacheHitLabel) so the fast path stands out.
 // - Yellow— commands / argv / executables / actionable flags (`--force`), and the "expect a wait" cache-MISS /
 //           One-time-install notice. What the user typed or should type.
-// - Blue  — concrete values & locations: file/dir paths, backend type, lockfile hash, counts. The nouns of a line.
+// - Blue  — concrete values & locations: file/directory paths, backend type, lockfile hash, counts. The nouns of a line.
 // - Green — success & positive state: exit 0, "present", durations, node version.
 // - Red   — failure & destructive: errors, a non-zero exit, "absent", and a path being REMOVED (destruction outranks
 //           The plain path=Blue rule).

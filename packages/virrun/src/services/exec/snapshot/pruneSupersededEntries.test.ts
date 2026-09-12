@@ -20,7 +20,7 @@ describe(pruneSupersededEntries, () => {
     writeLeaseFile(join(seedEntry(name), VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME), pid);
 
   beforeEach(() => {
-    // A not-yet-created child of the tracked temp dir, so the absent-directory case is exercisable.
+    // A not-yet-created child of the tracked temp directory, so the absent-directory case is exercisable.
     directory = join(create(), TEST_FILENAME);
   });
 

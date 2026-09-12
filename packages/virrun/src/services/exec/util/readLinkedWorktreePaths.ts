@@ -9,11 +9,11 @@ import { getResult } from "@esposter/shared";
 import { lstatSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 // Where this tree's git bookkeeping lives: `.git` is that directory in a normal checkout, and a file pointing at
-// Another git dir otherwise — `<commonDir>/worktrees/<name>` when the tree is a linked worktree, `<super>/.git/
+// Another git directory otherwise — `<commonDirectory>/worktrees/<name>` when the tree is a linked worktree, `<super>/.git/
 // Modules/<name>` when it is a submodule. Which of the two it is, and therefore where the repository's single
 // Worktree registry sits, is a fact git records rather than one the path's shape can be read for: only a worktree's
-// Git dir carries a `commondir`. Stripping two levels unconditionally is right for `worktrees/<name>` and wrong for
-// A submodule, whose git dir IS the common dir — resolving it to the superproject's `.git` reads that registry
+// Git directory carries a `commondir`. Stripping two levels unconditionally is right for `worktrees/<name>` and wrong for
+// A submodule, whose git directory IS the common directory — resolving it to the superproject's `.git` reads that registry
 // Instead, finds none of the submodule's own worktrees, and mirrors every one of them as source.
 const readGitCommonDirectory = (root: string): string | undefined => {
   const gitPath = join(root, GIT_DIRECTORY);
@@ -28,8 +28,8 @@ const readGitCommonDirectory = (root: string): string | undefined => {
     // `gitdir: ../.git/modules/<name>`), and anchoring it anywhere else lands outside the repo — which reads as "no
     // Registry", so every nested worktree silently mirrors again.
     const gitDirectory = resolve(root, gitdir.slice(GIT_WORKTREE_GITDIR_PREFIX.length).trim());
-    // `commondir` is itself resolved against the git dir holding it (git writes `../..` for a worktree entry). Absent,
-    // The git dir is its own common dir — the submodule case, and the only reading that does not guess: a worktree
+    // `commondir` is itself resolved against the git directory holding it (git writes `../..` for a worktree entry). Absent,
+    // The git directory is its own common directory — the submodule case, and the only reading that does not guess: a worktree
     // Entry git has not finished writing yields no registry, which mirrors a tree we needn't rather than reading the
     // Wrong repository's.
     const commonDirectory = getResult(() => readFileSync(join(gitDirectory, GIT_COMMON_DIRECTORY_FILENAME), "utf8"))
@@ -44,11 +44,11 @@ const readGitCommonDirectory = (root: string): string | undefined => {
 // Parallel checkout, not source belonging to the tree it is nested in. It is its own virrun cwd with its own mirror
 // Entry, so mirroring it into the parent's set duplicates an entire repo per worktree and swamps every delta with
 // Paths no command in this tree reads. Which directories those are is a property of the repository, not of whichever
-// Tool created them, so it is read from git's own bookkeeping rather than named: `<commonDir>/worktrees/<name>/gitdir`
+// Tool created them, so it is read from git's own bookkeeping rather than named: `<commonDirectory>/worktrees/<name>/gitdir`
 // Holds the path of each linked worktree's `.git` file, so the worktree root is that path's parent — and that file
 // Must still be there pointing back at the entry, which is the only fact that separates a live worktree from a
 // Registry entry whose tree was deleted out from under it. An unregistered directory is just files on disk and
-// Mirrors normally; a submodule is another repository's tree and likewise stays in (its git dir lives under
+// Mirrors normally; a submodule is another repository's tree and likewise stays in (its git directory lives under
 // `modules/`, never `worktrees/`).
 //
 // Reads only: a repo with no linked worktrees costs one failed `worktrees` readdir, and anything unreadable or
@@ -69,7 +69,7 @@ export const readLinkedWorktreePaths = (cwd: string): readonly string[] => {
       .trim();
     if (!gitdir) continue;
     // The recorded path is the worktree's own `.git` file, so its parent is the worktree root. Relative records
-    // (`git worktree repair --relative-paths`) resolve against the entry dir holding them, not the process cwd.
+    // (`git worktree repair --relative-paths`) resolve against the entry directory holding them, not the process cwd.
     const worktreeGitPath = resolve(entryDirectory, gitdir);
     // A registry entry outlives the tree it names: `rm -rf`ing a worktree instead of `git worktree remove` leaves the
     // Entry until a `git worktree prune` that only runs under gc, and the path is then free for a real source

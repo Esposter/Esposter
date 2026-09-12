@@ -24,25 +24,27 @@ describe(forkSnapshot, () => {
   test("stacks the captured upper as the sole overlay lower and runs the command", async () => {
     expect.hasAssertions();
 
-    const { upperDir } = resolveSnapshotLocation(repository);
-    mkdirSync(upperDir, { recursive: true });
+    const { upperDirectory } = resolveSnapshotLocation(repository);
+    mkdirSync(upperDirectory, { recursive: true });
     const backend = createRecordingBackend({ exitCode: 0, stderr: "", stdout });
     const result = await forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" });
 
     expect(result.stdout).toBe(stdout);
-    expect(backend.calls[0]?.overlayLayers).toStrictEqual({ lowerDirs: [upperDir] });
+    expect(backend.calls[0]?.overlayLayers).toStrictEqual({ lowerDirectories: [upperDirectory] });
   });
 
-  test("stacks extra lower dirs above the deps upper, in order, so the last one wins", async () => {
+  test("stacks extra lower directories above the deps upper, in order, so the last one wins", async () => {
     expect.hasAssertions();
 
-    const { upperDir } = resolveSnapshotLocation(repository);
-    mkdirSync(upperDir, { recursive: true });
-    const prepareUpperDir = create();
+    const { upperDirectory } = resolveSnapshotLocation(repository);
+    mkdirSync(upperDirectory, { recursive: true });
+    const prepareUpperDirectory = create();
     const backend = createRecordingBackend();
-    await forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" }, [prepareUpperDir]);
+    await forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" }, [prepareUpperDirectory]);
 
-    expect(backend.calls[0]?.overlayLayers).toStrictEqual({ lowerDirs: [upperDir, prepareUpperDir] });
+    expect(backend.calls[0]?.overlayLayers).toStrictEqual({
+      lowerDirectories: [upperDirectory, prepareUpperDirectory],
+    });
   });
 
   test("throws when no snapshot has been captured yet", () => {

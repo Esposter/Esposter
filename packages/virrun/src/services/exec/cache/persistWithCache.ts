@@ -27,7 +27,7 @@ export const persistWithCache = async (
   backend: ExecBackend,
   command: readonly string[] | string,
   options: ExecOptions,
-  extraLowerDirs: readonly string[] = [],
+  extraLowerDirectories: readonly string[] = [],
   maskedPaths: readonly string[] = [],
 ): Promise<ExecResult> => {
   const forceColor = options.env?.FORCE_COLOR ?? "";
@@ -39,7 +39,7 @@ export const persistWithCache = async (
         ? "task cache off — no key (not a git repo or no lockfile)"
         : "task cache off — disabled (CI or VIRRUN_NO_CACHE)",
     );
-    return persistRun(backend, command, options, extraLowerDirs, maskedPaths);
+    return persistRun(backend, command, options, extraLowerDirectories, maskedPaths);
   }
   // Reproduce a result under the caller's stdio convention, matching createBwrapBackend: "inherit" already put its
   // Output on the terminal so it returns empty streams; "pipe" returns the captured streams.
@@ -65,9 +65,9 @@ export const persistWithCache = async (
     backend,
     command,
     { ...options, isNetworkEnabled: false, stdio: "pipe", tee: options.stdio === "inherit" ? "stdout" : undefined },
-    extraLowerDirs,
+    extraLowerDirectories,
     maskedPaths,
-    (upperDir, plan, persistResult) => {
+    (upperDirectory, plan, persistResult) => {
       // A write-network install (`pnpm install`/`add`/`update`) can still succeed offline from the warm store, so the
       // Net-unshare gate alone would cache it. Its output isn't determined by the key it mutates, so skip recording —
       // The run is flushed and correct, just uncached.
@@ -75,7 +75,7 @@ export const persistWithCache = async (
         writeVirrunDebug("task cache record skipped — run mutated the dependency closure");
         return;
       }
-      recordTaskCache(key, upperDir, plan, persistResult);
+      recordTaskCache(key, upperDirectory, plan, persistResult);
     },
   );
   // The run above was hermetic (network unshared). If it FAILED reaching the network, the tool's own error is opaque (a

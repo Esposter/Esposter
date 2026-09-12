@@ -11,8 +11,8 @@ The public, TypeScript, node-compatible surface. Everything below it (FS, exec, 
 import { createVirrun } from "virrun";
 
 const virrun = await createVirrun({
-  // Source is a discriminated union on `type` (SourceType.Dir | Files | Git), normalized to a
-  // working dir + dispose() by the source loaders.
+  // Source is a discriminated union on `type` (SourceType.Directory | Files | Git), normalized to a
+  // working directory + dispose() by the source loaders.
   source: { type: SourceType.Git, repo: "https://github.com/user/repo", ref: "" },
   backend: BackendType.Auto, // Auto resolves to the fastest supported backend (Native today).
 });
@@ -34,11 +34,11 @@ await virrun.dispose();
 
 Paths relative to `packages/virrun/src/`.
 
-| File                              | Role                                                    |
-| --------------------------------- | ------------------------------------------------------- |
-| `services/virrun/createVirrun.ts` | the entrypoint — orchestrates source, backend, snapshot |
-| `models/virrun/VirrunOptions.ts`  | `source` + `backend` option types                       |
-| `services/source/` (loaders)      | `dir`/`files`/`git` sources → working dir + `dispose()` |
+| File                              | Role                                                          |
+| --------------------------------- | ------------------------------------------------------------- |
+| `services/virrun/createVirrun.ts` | the entrypoint — orchestrates source, backend, snapshot       |
+| `models/virrun/VirrunOptions.ts`  | `source` + `backend` option types                             |
+| `services/source/` (loaders)      | `dir`/`files`/`git` sources → working directory + `dispose()` |
 
 ## Notes
 

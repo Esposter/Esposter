@@ -33,7 +33,7 @@ vi.mock(import("node:fs"), async (importOriginal) => {
   return { ...actual, rmSync, writeFileSync };
 });
 // The cache root is a `\\wsl.localhost` UNC in production and nothing else maps back to a Linux path, so the mock
-// Returns one too — the staged list's own path goes through readWslPath exactly like the dirs it holds. Writes to a
+// Returns one too — the staged list's own path goes through readWslPath exactly like the directories it holds. Writes to a
 // UNC cannot land on a test machine, so the sweep cases capture the staged bytes through the writeFileSync mock
 // Instead of reading them back off disk.
 vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
@@ -72,7 +72,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
     expect(spawn).not.toHaveBeenCalled();
   });
 
-  test("tears down every WSL-UNC dir in ONE hidden, unref'd WSL process off the critical path", () => {
+  test("tears down every WSL-UNC directory in ONE hidden, unref'd WSL process off the critical path", () => {
     expect.hasAssertions();
 
     const linuxDirectories = [TEST_FILENAME, `${TEST_FILENAME}/${TEST_FILENAME}`].map(
@@ -83,7 +83,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
       linuxDirectories.map((directory) => createTestWslUnc(directory, TEST_WSL_LEGACY_UNC_PREFIX)),
     );
 
-    // One launch for the whole sweep however many dirs it holds, because the paths ride in a list file rather than
+    // One launch for the whole sweep however many directories it holds, because the paths ride in a list file rather than
     // The argv: each wsl.exe launch is a service RPC plus a relay process, and a fan-out wedges the WSL service
     // Outright, while an argv-sized batch would reintroduce that fan-out one launch at a time. Never `detached`
     // Either: on win32 that flag makes Windows ignore windowsHide and flash an empty console (nodejs#21825).
@@ -97,7 +97,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
     expect(child.unref).toHaveBeenCalledExactlyOnceWith();
   });
 
-  test("spawns nothing when no dir is a WSL UNC", () => {
+  test("spawns nothing when no directory is a WSL UNC", () => {
     expect.hasAssertions();
 
     removeSnapshotDirectoriesDetached([]);
@@ -109,7 +109,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
     expect.hasAssertions();
 
     // `spawnBackground` deliberately lets a synchronous spawn throw reach its caller (EAGAIN/EMFILE) — here that
-    // Caller is cache hygiene for dirs this run never touches, so it must not fail the user's command.
+    // Caller is cache hygiene for directories this run never touches, so it must not fail the user's command.
     spawn.mockImplementation(() => {
       throw new Error(" ");
     });
@@ -120,7 +120,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
     expect(spawn).toHaveBeenCalledTimes(1);
   });
 
-  test("swallows a failing local removal and still tears down the WSL dirs", () => {
+  test("swallows a failing local removal and still tears down the WSL directories", () => {
     expect.hasAssertions();
 
     rmSync.mockImplementationOnce(() => {

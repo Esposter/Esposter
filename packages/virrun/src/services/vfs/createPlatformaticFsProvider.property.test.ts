@@ -7,9 +7,9 @@ import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 // Property/fuzz gate (apps/web/content/docs/virrun/correctness.md): fast-check generates randomized FS op sequences,
-// Each run against BOTH the vfs provider and a real node:fs temp dir, asserting identical outcomes. node:fs is
+// Each run against BOTH the vfs provider and a real node:fs temp directory, asserting identical outcomes. node:fs is
 // The oracle (never re-implemented), so a divergence is a real provider bug; a failing sequence shrinks to its
-// Minimal counterexample. Pure in-memory (never mounted). The "d" sub-dir is pre-created on both sides so every
+// Minimal counterexample. Pure in-memory (never mounted). The "d" sub-directory is pre-created on both sides so every
 // Write's parent exists, keeping the compared scope to read/write/exists semantics.
 
 // Normalize any op to a value comparable across the two filesystems: the success value, or a thrown marker.
@@ -43,7 +43,7 @@ describe(createPlatformaticFsProvider, () => {
 
     fc.assert(
       fc.property(fc.array(operationArbitrary, { maxLength: 48, minLength: 1 }), (operations) => {
-        // Each fast-check run (including replay/shrinking) allocates its own provider + temp dir and frees them
+        // Each fast-check run (including replay/shrinking) allocates its own provider + temp directory and frees them
         // In the finalizer, so the randomized trace never stacks allocations across the run's many iterations.
         const provider = createPlatformaticFsProvider();
         const directory = temporaryDirectories.create();

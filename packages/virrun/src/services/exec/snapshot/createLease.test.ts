@@ -31,7 +31,7 @@ describe(createLease, () => {
     expect(existsSync(leaseFile)).toBe(false);
   });
 
-  test(`self-heals a dead lease left in the live dir`, () => {
+  test(`self-heals a dead lease left in the live directory`, () => {
     expect.hasAssertions();
 
     const deadLease = writeLeaseFile(join(hashDirectory, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME), DEAD_PID);

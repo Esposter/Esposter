@@ -10,29 +10,29 @@ export const VIRRUN_COREPACK_STORE_DIRECTORY_NAME = "corepack";
 export const PACKAGE_JSON_FILENAME = "package.json";
 export const PNPM_WORKSPACE_FILENAME = "pnpm-workspace.yaml";
 export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";
-// The dependency-closure dir. The persist flush must never leak it: it comes from the snapshot lower, and writes
+// The dependency-closure directory. The persist flush must never leak it: it comes from the snapshot lower, and writes
 // Into it (e.g. node_modules/.vite) must not reach the host.
 export const NODE_MODULES_DIRECTORY = "node_modules";
-// The repo's own git dir — host-owned working state the source mirror keeps out of the sandbox
+// The repo's own git directory — host-owned working state the source mirror keeps out of the sandbox
 // (resolveMirrorExcludes) and the write-back therefore masks. Named here rather than spelled inline, so the two
 // Directions and their tests can never disagree on the spelling.
 export const GIT_DIRECTORY = ".git";
 // Marks an exclude pattern as naming ONE place in the tree rather than a segment at any depth (checkIsBareNameExclude).
 // Kept a valid relative path so a consumer that spends the pattern as one still resolves inside the tree.
 export const ROOT_ANCHOR_PREFIX = "./";
-// Git's registry of linked worktrees under the common git dir: one `worktrees/<name>/gitdir` file per worktree,
+// Git's registry of linked worktrees under the common git directory: one `worktrees/<name>/gitdir` file per worktree,
 // Holding the absolute path of that worktree's own `.git` file. A `.git` that is a file rather than a directory
 // Points back at its entry with the same `gitdir: ` prefix. Read by readLinkedWorktreePaths to derive which nested
 // Directories are parallel checkouts rather than this tree's source — the generic form of "don't mirror a worktree".
 export const GIT_WORKTREES_DIRECTORY_NAME = "worktrees";
 export const GIT_WORKTREE_GITDIR_FILENAME = "gitdir";
 export const GIT_WORKTREE_GITDIR_PREFIX = "gitdir: ";
-// Git's own record of where a git dir's common dir is, written into every linked worktree's git dir (`../..`, or an
-// Absolute path). Its ABSENCE is equally a fact: a git dir that is not a worktree entry — a submodule's
-// `.git/modules/<name>` — is its own common dir. Reading it is what keeps readGitCommonDirectory from inferring the
+// Git's own record of where a git directory's common directory is, written into every linked worktree's git directory (`../..`, or an
+// Absolute path). Its ABSENCE is equally a fact: a git directory that is not a worktree entry — a submodule's
+// `.git/modules/<name>` — is its own common directory. Reading it is what keeps readGitCommonDirectory from inferring the
 // Answer from the path's shape, which only holds for the `worktrees/<name>` layout.
 export const GIT_COMMON_DIRECTORY_FILENAME = "commondir";
-// The dir pnpm/npm link executables into; prepended to the sandbox PATH so a bare command resolves the overlaid
+// The directory pnpm/npm link executables into; prepended to the sandbox PATH so a bare command resolves the overlaid
 // (current-platform) binary ahead of any host `.bin` the WSL login PATH leaks in. See createOsExecOptions.
 export const NODE_MODULES_BIN_DIRECTORY: string = `${NODE_MODULES_DIRECTORY}/.bin`;
 // Repo-root config selecting which backend a sandboxed command runs through; absent means auto (native today).
@@ -49,7 +49,7 @@ export const VIRRUN_SCHEMA_RELATIVE_PATH: string = "./node_modules/virrun/schema
 export const VIRRUN_ENV_KEY = "VIRRUN";
 
 export const COREPACK_HOME_KEY = "COREPACK_HOME";
-// Lets CI and tests point the snapshot cache at a disposable dir instead of the real home.
+// Lets CI and tests point the snapshot cache at a disposable directory instead of the real home.
 export const VIRRUN_CACHE_HOME_KEY = "VIRRUN_CACHE_HOME";
 // Host-global file caching the os-backend capability probe's verdict so a fresh `virrun -- <cmd>` process reuses it
 // Instead of re-spawning the bwrap probe every command. See checkIsOsBackendSupported.
@@ -99,7 +99,7 @@ export const PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).
 // Leaves no margin at all, and a machine merely busy enough to cross it turns a cold boot into a "this host cannot
 // Sandbox" verdict. The bound still exists only as a hang guard for a wedged WSL service, which never answers at all.
 export const WSL_PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
-// Upper bound for a synchronous WSL-side `rm -rf` of a cache dir (removeSnapshotDirectory). Real work — an
+// Upper bound for a synchronous WSL-side `rm -rf` of a cache directory (removeSnapshotDirectory). Real work — an
 // Unlink of a whole node_modules closure — so it gets minutes rather than the probe's seconds, and its size is
 // Bounded by one cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p bridge fails
 // The call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents: a run that
@@ -118,16 +118,16 @@ export const OVERLAY_WRITE_BACK_TIMEOUT_MS: number = Temporal.Duration.from({ mi
 // User-invoked, so it may block until it finishes and the user may Ctrl+C it.
 export const CACHE_CLEAN_TIMEOUT_MS: number = 0;
 // How old a source-mirror entry carrying no `origin` marker must be before the reaper may reclaim it. The marker is
-// Written (atomically) as soon as the entry dir exists, so its absence means a sync died in that same instant — a
+// Written (atomically) as soon as the entry directory exists, so its absence means a sync died in that same instant — a
 // Corpse, not a live planner — and any window measured in a day is orders of magnitude beyond that gap. Without this
-// The unmarked corpses are unattributable and accumulate forever: a test suite that runs virrun in temp dirs strands
+// The unmarked corpses are unattributable and accumulate forever: a test suite that runs virrun in temp directories strands
 // One per aborted run, hundreds of them holding gigabytes of ext4.
 export const SOURCE_MIRROR_UNMARKED_MAX_AGE_MS: number = Temporal.Duration.from({ days: 1 }).total("milliseconds");
 // Minimum age before a dead owner's staged remove-list may be reclaimed. A dead owner does NOT mean the teardown is
 // Finished with the file: `spawnBackground` spawns asynchronously, and `wsl.exe` still has to start the WSL relay and
 // `sh` before the script's `< "$1"` redirect opens it — so a short win32 run can exit, and its pid read as dead, while
 // Its own teardown is still cold-starting. Unlinking then leaves that `sh` with a missing input, its `rm -rf` never
-// Runs, and the superseded snapshot dirs it named are never reclaimed — the unbounded ext4 growth the batched sweep
+// Runs, and the superseded snapshot directories it named are never reclaimed — the unbounded ext4 growth the batched sweep
 // Exists to prevent, silently, since the spawn ignores its stdio and has no exit handler.
 export const REMOVE_LIST_REAP_MINIMUM_AGE_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // Upper bound the folded sync script enforces Linux-side — `flock -w` on the mirror lock plus `timeout` on the
@@ -143,7 +143,7 @@ export const SOURCE_MIRROR_TIMEOUT_SECONDS: number = Temporal.Duration.from({ mi
 export const SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";
-// The host cache dir acceptance corpora/snapshots stage into, under $HOME never os.tmpdir (see createWorkspaceCorpus).
+// The host cache directory acceptance corpora/snapshots stage into, under $HOME never os.tmpdir (see createWorkspaceCorpus).
 export const HOME_CACHE_DIRECTORY_NAME = ".cache";
 // Leaf under the home cache root isolating the heavy tests' shared warm snapshot, so global teardown removes only
 // Test data and never the real cache.

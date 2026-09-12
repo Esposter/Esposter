@@ -3,7 +3,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe } from "vitest";
-// Walks up from this file to the monorepo root (the dir holding pnpm-workspace.yaml) so callers mirror whatever
+// Walks up from this file to the monorepo root (the directory holding pnpm-workspace.yaml) so callers mirror whatever
 // Checkout they run in, not a hard-coded path.
 export const findRepoRoot = (): string => {
   let directory = import.meta.dirname;

@@ -25,7 +25,7 @@ describe(checkIsUnderSnapshotLower, () => {
     expect(checkIsUnderSnapshotLower(TEST_FILENAME, new Set([TEST_FILENAME]), noMaskedPaths)).toBe(true);
   });
 
-  test("masks an output dir itself and everything inside it", () => {
+  test("masks an output directory itself and everything inside it", () => {
     expect.hasAssertions();
 
     expect(checkIsUnderSnapshotLower(TEST_FILENAME, emptyPaths, [TEST_FILENAME])).toBe(true);
@@ -52,10 +52,10 @@ describe(checkIsUnderSnapshotLower, () => {
     ).toBe(false);
   });
 
-  test("does not mask a sibling of an output dir that merely shares its prefix", () => {
+  test("does not mask a sibling of an output directory that merely shares its prefix", () => {
     expect.hasAssertions();
 
-    // `a` is an output dir; `aa` shares the prefix but is not under it, so it must still flush.
+    // `a` is an output directory; `aa` shares the prefix but is not under it, so it must still flush.
     expect(checkIsUnderSnapshotLower(`${TEST_FILENAME}${TEST_FILENAME}`, emptyPaths, [TEST_FILENAME])).toBe(false);
   });
 
@@ -65,7 +65,7 @@ describe(checkIsUnderSnapshotLower, () => {
   test("masks a mirror-excluded path at any depth so a ghost write can never reach the host", () => {
     expect.hasAssertions();
 
-    // A linked worktree root the mirror excluded, and the repo git dir.
+    // A linked worktree root the mirror excluded, and the repo git directory.
     const worktreePath = `${TEST_FILENAME}/worktree`;
     const maskedPaths = [worktreePath, GIT_DIRECTORY];
 

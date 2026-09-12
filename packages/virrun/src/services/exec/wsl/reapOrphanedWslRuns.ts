@@ -26,7 +26,7 @@ import { join } from "node:path";
 // Unlink is what stops one corpse being re-reaped by every later run, and a re-reap costs nothing but a launch.
 //
 // `isBlocking` is for the one caller that depends on the corpses actually being gone rather than merely signalled —
-// `cache clean`, which then removes the dirs those trees hold open. It runs the reaper synchronously and has it wait
+// `cache clean`, which then removes the directories those trees hold open. It runs the reaper synchronously and has it wait
 // For the TERMed trees to exit (buildWslReapCommand's wait arm). A blocking reap that fails or times out keeps its
 // Entries, so the corpse is re-reaped by the next sweep instead of being forgotten with its tree still alive.
 export const reapOrphanedWslRuns = (isBlocking = false): void => {

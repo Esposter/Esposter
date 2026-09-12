@@ -107,7 +107,7 @@ describe.todo("persistRun - flushes produced files but never node_modules (write
   );
 
   test(
-    "a source file under a package dir the snapshot lower also materialises is flushed (the lint:fix shape)",
+    "a source file under a package directory the snapshot lower also materialises is flushed (the lint:fix shape)",
     async () => {
       expect.hasAssertions();
 
