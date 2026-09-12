@@ -8,7 +8,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/shared/services`, `app/shared/util`                                   | 2026-09-12 | `getSynchronizedFunction`'s second export is the exclusion below                             |
 | `app/shared/models/db`                                                     | 2026-09-12 |                                                                                              |
 | `app/shared/models/resource`                                               | 2026-09-12 |                                                                                              |
-| `app/shared/models/dungeons`                                               | —          |                                                                                              |
+| `app/shared/models/dungeons`                                               | 2026-09-12 |                                                                                              |
 | `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | —          |                                                                                              |
 | `app/shared/models` — the rest                                             | —          | the small folders, several of them a single file                                             |
 | `app/services`                                                             | 2026-09-12 | a file is named for its export, and a second map is a second file                            |

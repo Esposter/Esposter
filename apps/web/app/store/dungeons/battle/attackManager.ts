@@ -1,4 +1,4 @@
-import type { Attack } from "#shared/models/dungeons/attack/Attack";
+import type { Attack } from "@/models/dungeons/attack/Attack";
 import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
