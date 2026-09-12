@@ -7,16 +7,8 @@ const { setActiveDevice } = liveKitStore;
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
 const { deviceSections, isMenuOpen } = useCallDeviceSettings([
-  {
-    kind: "audioinput",
-    selectedId: inputDeviceId,
-    title: "Microphone",
-  },
-  {
-    kind: "audiooutput",
-    selectedId: outputDeviceId,
-    title: "Speakers",
-  },
+  { kind: "audioinput", selectedId: inputDeviceId },
+  { kind: "audiooutput", selectedId: outputDeviceId },
 ]);
 </script>
 

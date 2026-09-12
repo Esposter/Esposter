@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
+import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
 import { getTimelineSections } from "@/services/message/draftsAndSent/getTimelineSections";
 
 const draftItems = useDraftItems();
@@ -11,5 +13,5 @@ const sections = computed(() => getTimelineSections(draftItems.value, ({ updated
       <MessageDraftsAndSentDraftListItem v-for="draftItem of section.items" :key="draftItem.composerKey" :draft-item />
     </MessageDraftsAndSentSection>
   </div>
-  <StyledEmptyState v-else h-full icon="mdi-pencil" title="No drafts" />
+  <StyledEmptyState v-else h-full :icon="DraftsAndSentTabMetadataMap[DraftsAndSentTab.Drafts].icon" title="No drafts" />
 </template>

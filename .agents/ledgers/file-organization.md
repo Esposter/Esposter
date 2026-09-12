@@ -2,57 +2,60 @@
 
 The question is where a thing lives and whether it exists twice — one export per file, no magic string where a constant already means it, no duplicate constant, the sole-consumer subfolder rule, alias imports, and an interface or type in its own model file rather than beside the code that reads it.
 
-| Unit                                                                       | Swept      | Notes                                                                                         |
-| -------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
-| `packages/shared`, `packages/shared-node`                                  | 2026-09-12 |                                                                                               |
-| `app/shared/services`, `app/shared/util`                                   | 2026-09-12 | `getSynchronizedFunction`'s second export is the exclusion below                              |
-| `app/shared/models/db`                                                     | 2026-09-12 |                                                                                               |
-| `app/shared/models/resource`                                               | 2026-09-12 |                                                                                               |
-| `app/shared/models/dungeons`                                               | 2026-09-12 |                                                                                               |
-| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor` | 2026-09-12 |                                                                                               |
-| `app/shared/models` — the rest                                             | 2026-09-12 | the small folders, several of them a single file                                              |
-| `app/services`                                                             | 2026-09-12 | a file is named for its export, and a second map is a second file                             |
-| `app/models/dungeons`                                                      | 2026-09-12 | a class hierarchy stays a model; a map and the behaviour it dispatches to do not              |
-| `app/models/resource`                                                      | 2026-09-12 | a command class stays a model; the map beside a form union does not                           |
-| `app/models/message`                                                       | 2026-09-12 | a type derived from a services map is a type-only import, not a move                          |
-| `app/models` — the rest                                                    | 2026-09-12 | the resolver class hierarchies stay models, like the sheet commands                           |
-| `app/util`                                                                 | 2026-09-12 | a type-only third-party import is the `util/types` escape, not a `services/` move             |
-| `app/types`                                                                | 2026-09-12 | ambient `.d.ts` only                                                                          |
-| `app/composables`                                                          | 2026-09-12 | sole-consumer subfolders                                                                      |
-| `app/store`                                                                | 2026-09-12 | a store's file is named for its domain, so the filename never matches its `use*Store` export  |
-| `server/services`, `server/composables`, `server/models`                   | 2026-09-12 |                                                                                               |
-| `server/trpc` — the resource family                                        | 2026-09-12 | `resource`, `survey`, `program`, `procedure/resource`                                         |
-| `server/trpc` — the room family                                            | 2026-09-12 | `room`, `call`, `userToRoom`                                                                  |
-| `server/trpc` — the rest                                                   | 2026-09-12 | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                             |
-| `app/components/Message`                                                   | —          | the stray-component half is `components/index.test.ts`, not a pass                            |
-| `app/components/Resource`                                                  | —          |                                                                                               |
-| `app/components` — the rest                                                | —          | a `*Props.ts` beside its component is colocation, not a stray model                           |
-| `packages/db-schema` — `models`                                            | —          |                                                                                               |
-| `packages/db-schema` — `schema`, `relations`                               | —          | a table file declares the table and its select schema; enums live in `models`                 |
-| `packages/db-schema` — `services`, root                                    | 2026-09-12 |                                                                                               |
-| `packages/db` — `services/azure`                                           | 2026-09-12 |                                                                                               |
-| `packages/db` — the rest, `packages/db-mock`                               | 2026-09-12 |                                                                                               |
-| `packages/azure`, `apps/functions`, `packages/azure-mock`                  | 2026-09-12 | cross-package placement: an Azure helper two packages need lives in `db`                      |
-| `packages/virrun` — `services/exec/wsl`                                    | —          |                                                                                               |
-| `packages/virrun` — `services/exec/snapshot`                               | —          |                                                                                               |
-| `packages/virrun` — `services/exec/util`                                   | —          |                                                                                               |
-| `packages/virrun` — `services/exec` — the rest                             | —          | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                      |
-| `packages/virrun` — `services` — the rest                                  | —          | `cli`, `configuration`, `source`, `vfs`, `virrun`                                             |
-| `packages/virrun` — `models`, root                                         | —          |                                                                                               |
-| `apps/infra` — `azure/resources`                                           | —          | one resource per file, named for its export                                                   |
-| `apps/infra` — `azure` — the rest                                          | —          | `constants`, `services`, the stack files                                                      |
-| `apps/infra` — `github`, root                                              | —          |                                                                                               |
-| `packages/configuration`                                                   | 2026-09-12 |                                                                                               |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`           | —          | barrel contents are `ctix` output — regenerate, never hand-edit                               |
-| `scripts/src/dependencyGraph`                                              | 2026-09-12 | a command keeps its entrypoint; its functions live in `services/<command>`, types in `models` |
-| `scripts/src/oxlint`                                                       | 2026-09-12 | `.oxlintrc.json` loads a plugin by path, so the entrypoint stays; the rules move out          |
-| `scripts/src/coderabbit`                                                   | 2026-09-12 | four verbs; what two share sits at `services/coderabbit` root                                 |
-| `scripts/src/outdatedDependencies` — `models`, `lock`, `workspace`         | 2026-09-12 | the readers of the two yaml files                                                             |
-| `scripts/src/outdatedDependencies` — the rest                              | 2026-09-12 | `manifest`, `registry`, `pnpm`, `print`, and what two of them share at the root               |
-| `scripts/src/updateNode`                                                   | 2026-09-12 |                                                                                               |
-| `scripts/src/sweeps` — `constantScope`, `repeatedListItems`                | 2026-09-12 | one entrypoint per scan                                                                       |
-| `scripts/src/sweeps` — the rest                                            | 2026-09-12 | `skillDocs`, `sharedExportConsumers`, `unterminatedResults`, the root helpers                 |
-| `scripts/src` — `services`, `models`, `workspace`, root                    | 2026-09-12 | a repo invariant suite is a `workspace/` suite                                                |
+| Unit                                                                            | Swept      | Notes                                                                                         |
+| ------------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
+| `packages/shared`, `packages/shared-node`                                       | 2026-09-12 |                                                                                               |
+| `app/shared/services`, `app/shared/util`                                        | 2026-09-12 | `getSynchronizedFunction`'s second export is the exclusion below                              |
+| `app/shared/models/db`                                                          | 2026-09-12 |                                                                                               |
+| `app/shared/models/resource`                                                    | 2026-09-12 |                                                                                               |
+| `app/shared/models/dungeons`                                                    | 2026-09-12 |                                                                                               |
+| `app/shared/models` — `clicker`, `dashboard`, `dataset`, `flowchartEditor`      | 2026-09-12 |                                                                                               |
+| `app/shared/models` — the rest                                                  | 2026-09-12 | the small folders, several of them a single file                                              |
+| `app/services`                                                                  | 2026-09-12 | a file is named for its export, and a second map is a second file                             |
+| `app/models/dungeons`                                                           | 2026-09-12 | a class hierarchy stays a model; a map and the behaviour it dispatches to do not              |
+| `app/models/resource`                                                           | 2026-09-12 | a command class stays a model; the map beside a form union does not                           |
+| `app/models/message`                                                            | 2026-09-12 | a type derived from a services map is a type-only import, not a move                          |
+| `app/models` — the rest                                                         | 2026-09-12 | the resolver class hierarchies stay models, like the sheet commands                           |
+| `app/util`                                                                      | 2026-09-12 | a type-only third-party import is the `util/types` escape, not a `services/` move             |
+| `app/types`                                                                     | 2026-09-12 | ambient `.d.ts` only                                                                          |
+| `app/composables`                                                               | 2026-09-12 | sole-consumer subfolders                                                                      |
+| `app/store`                                                                     | 2026-09-12 | a store's file is named for its domain, so the filename never matches its `use*Store` export  |
+| `server/services`, `server/composables`, `server/models`                        | 2026-09-12 |                                                                                               |
+| `server/trpc` — the resource family                                             | 2026-09-12 | `resource`, `survey`, `program`, `procedure/resource`                                         |
+| `server/trpc` — the room family                                                 | 2026-09-12 | `room`, `call`, `userToRoom`                                                                  |
+| `server/trpc` — the rest                                                        | 2026-09-12 | the loose routers, `guards`, `procedure`, `plugins`, `middleware`                             |
+| `app/components/Message` — `Content`, `DraftsAndSent`, `Friends`, the side bars | 2026-09-12 | the stray-component half is `components/index.test.ts`, not a pass                            |
+| `app/components/Message/Model/Message`                                          | —          |                                                                                               |
+| `app/components/Message/Model/Room`                                             | —          |                                                                                               |
+| `app/components/Message/Model` — `User` and the small folders                   | —          | `FileRenderer`, `Settings`, `RoomCategory`, `Status`, `Member`                                |
+| `app/components/Resource`                                                       | —          |                                                                                               |
+| `app/components` — the rest                                                     | —          | a `*Props.ts` beside its component is colocation, not a stray model                           |
+| `packages/db-schema` — `models`                                                 | —          |                                                                                               |
+| `packages/db-schema` — `schema`, `relations`                                    | —          | a table file declares the table and its select schema; enums live in `models`                 |
+| `packages/db-schema` — `services`, root                                         | 2026-09-12 |                                                                                               |
+| `packages/db` — `services/azure`                                                | 2026-09-12 |                                                                                               |
+| `packages/db` — the rest, `packages/db-mock`                                    | 2026-09-12 |                                                                                               |
+| `packages/azure`, `apps/functions`, `packages/azure-mock`                       | 2026-09-12 | cross-package placement: an Azure helper two packages need lives in `db`                      |
+| `packages/virrun` — `services/exec/wsl`                                         | —          |                                                                                               |
+| `packages/virrun` — `services/exec/snapshot`                                    | —          |                                                                                               |
+| `packages/virrun` — `services/exec/util`                                        | —          |                                                                                               |
+| `packages/virrun` — `services/exec` — the rest                                  | —          | `cache`, `os`, `bwrap`, `vfs`, `differential`, `store`, `native`, `test`                      |
+| `packages/virrun` — `services` — the rest                                       | —          | `cli`, `configuration`, `source`, `vfs`, `virrun`                                             |
+| `packages/virrun` — `models`, root                                              | —          |                                                                                               |
+| `apps/infra` — `azure/resources`                                                | —          | one resource per file, named for its export                                                   |
+| `apps/infra` — `azure` — the rest                                               | —          | `constants`, `services`, the stack files                                                      |
+| `apps/infra` — `github`, root                                                   | —          |                                                                                               |
+| `packages/configuration`                                                        | 2026-09-12 |                                                                                               |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js`                | —          | barrel contents are `ctix` output — regenerate, never hand-edit                               |
+| `scripts/src/dependencyGraph`                                                   | 2026-09-12 | a command keeps its entrypoint; its functions live in `services/<command>`, types in `models` |
+| `scripts/src/oxlint`                                                            | 2026-09-12 | `.oxlintrc.json` loads a plugin by path, so the entrypoint stays; the rules move out          |
+| `scripts/src/coderabbit`                                                        | 2026-09-12 | four verbs; what two share sits at `services/coderabbit` root                                 |
+| `scripts/src/outdatedDependencies` — `models`, `lock`, `workspace`              | 2026-09-12 | the readers of the two yaml files                                                             |
+| `scripts/src/outdatedDependencies` — the rest                                   | 2026-09-12 | `manifest`, `registry`, `pnpm`, `print`, and what two of them share at the root               |
+| `scripts/src/updateNode`                                                        | 2026-09-12 |                                                                                               |
+| `scripts/src/sweeps` — `constantScope`, `repeatedListItems`                     | 2026-09-12 | one entrypoint per scan                                                                       |
+| `scripts/src/sweeps` — the rest                                                 | 2026-09-12 | `skillDocs`, `sharedExportConsumers`, `unterminatedResults`, the root helpers                 |
+| `scripts/src` — `services`, `models`, `workspace`, root                         | 2026-09-12 | a repo invariant suite is a `workspace/` suite                                                |
 
 ## Find recipe
 

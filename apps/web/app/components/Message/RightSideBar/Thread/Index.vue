@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE } from "@/services/message/composer/constants";
 import { useThreadStore } from "@/store/message/thread";
 
@@ -10,9 +11,7 @@ const actionItems = useThreadActionItems();
 // Oldest first, so the thread reads top-down into the composer below it — the root is the earliest message in
 // Its own thread, so it needs no special case to stay at the top
 const displayThreadMessages = computed(() =>
-  threadMessages.value.toSorted(
-    (firstMessage, secondMessage) => firstMessage.createdAt.getTime() - secondMessage.createdAt.getTime(),
-  ),
+  threadMessages.value.toSorted((firstMessage, secondMessage) => compareCreatedAt(firstMessage, secondMessage)),
 );
 </script>
 

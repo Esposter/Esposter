@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { SearchFilterOption } from "@/models/message/filter/SearchFilterOption";
 import type { SerializableValue } from "@esposter/azure";
 
 interface Props {
-  items: { icon: string; label: string; value: SerializableValue }[];
+  items: SearchFilterOption[];
 }
 
 const { items } = defineProps<Props>();

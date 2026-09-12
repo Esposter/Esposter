@@ -12,13 +12,7 @@ const liveKitStore = useLiveKitStore();
 const { setActiveDevice } = liveKitStore;
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { cameraDeviceId } = storeToRefs(voiceDeviceSettingsStore);
-const { deviceSections, isMenuOpen } = useCallDeviceSettings([
-  {
-    kind: "videoinput",
-    selectedId: cameraDeviceId,
-    title: "Camera",
-  },
-]);
+const { deviceSections, isMenuOpen } = useCallDeviceSettings([{ kind: "videoinput", selectedId: cameraDeviceId }]);
 </script>
 
 <template>

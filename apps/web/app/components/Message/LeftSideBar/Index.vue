@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
+import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
+import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
 import { useInputStore } from "@/store/message/input";
 import { RoutePath } from "@esposter/shared";
 
@@ -19,10 +21,10 @@ const items = computed(
       },
       {
         badges: [
-          { count: drafts.value.size, icon: "mdi-pencil" },
-          { count: scheduledMessageJobCount, icon: "mdi-clock-outline" },
+          { count: drafts.value.size, icon: DraftsAndSentTabMetadataMap[DraftsAndSentTab.Drafts].icon },
+          { count: scheduledMessageJobCount, icon: DraftsAndSentTabMetadataMap[DraftsAndSentTab.Scheduled].icon },
         ].filter(({ count }) => count > 0),
-        icon: "mdi-send-outline",
+        icon: DraftsAndSentTabMetadataMap[DraftsAndSentTab.Sent].icon,
         title: "Drafts & sent",
         value: RoutePath.MessagesDraftsAndSent,
       },

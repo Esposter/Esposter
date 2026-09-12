@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
+import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
 import { getTimelineSections } from "@/services/message/draftsAndSent/getTimelineSections";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 
@@ -19,5 +21,10 @@ const sections = computed(() => getTimelineSections(items.value, ({ runAt }) => 
     </MessageDraftsAndSentSection>
     <StyledWaypoint :is-active="hasMore" @change="readMoreScheduledMessageJobs" />
   </div>
-  <StyledEmptyState v-else-if="!isPending" h-full icon="mdi-clock-outline" title="No scheduled messages" />
+  <StyledEmptyState
+    v-else-if="!isPending"
+    h-full
+    :icon="DraftsAndSentTabMetadataMap[DraftsAndSentTab.Scheduled].icon"
+    title="No scheduled messages"
+  />
 </template>

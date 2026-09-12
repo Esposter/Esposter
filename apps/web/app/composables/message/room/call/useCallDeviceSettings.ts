@@ -1,6 +1,7 @@
 import type { CallDeviceDefinition } from "@/models/message/room/call/CallDeviceDefinition";
 import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
 
+import { MediaDeviceKindMetadataMap } from "@/services/message/room/call/MediaDeviceKindMetadataMap";
 import { getResultAsync, noop } from "@esposter/shared";
 import { Room } from "livekit-client";
 
@@ -10,11 +11,11 @@ export const useCallDeviceSettings = (definitions: CallDeviceDefinition[]) => {
   const isMenuOpen = ref(false);
   const deviceMap = ref(new Map<MediaDeviceKind, MediaDeviceInfo[]>());
   const deviceSections = computed<DeviceSection[]>(() =>
-    definitions.map(({ kind, selectedId, title }) => ({
+    definitions.map(({ kind, selectedId }) => ({
       devices: deviceMap.value.get(kind) ?? [],
       kind,
       selectedId: selectedId.value,
-      title,
+      title: MediaDeviceKindMetadataMap[kind].title,
     })),
   );
   const refreshDevices = async () => {

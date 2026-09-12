@@ -1,12 +1,11 @@
 <script setup lang="ts">
+import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { useFriendStore } from "@/store/message/user/friend";
 
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const displayFriends = computed(() =>
-  friends.value.toSorted(
-    (firstFriend, secondFriend) => secondFriend.createdAt.getTime() - firstFriend.createdAt.getTime(),
-  ),
+  friends.value.toSorted((firstFriend, secondFriend) => compareCreatedAt(secondFriend, firstFriend)),
 );
 </script>
 

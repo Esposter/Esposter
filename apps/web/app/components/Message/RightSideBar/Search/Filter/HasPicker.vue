@@ -1,17 +1,11 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/azure";
 
-import { FilterTypeHasIconMap } from "@/services/message/FilterTypeHasIconMap";
-import { FilterTypeHases } from "@esposter/db-schema";
+import { HAS_FILTER_OPTIONS } from "@/services/message/filter/constants";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
-const HAS_ITEMS = FilterTypeHases.map((filterTypeHas) => ({
-  icon: FilterTypeHasIconMap[filterTypeHas],
-  label: filterTypeHas,
-  value: filterTypeHas,
-}));
 </script>
 
 <template>
-  <MessageRightSideBarSearchFilterOptionList :items="HAS_ITEMS" @select="emit('select', $event)" />
+  <MessageRightSideBarSearchFilterOptionList :items="HAS_FILTER_OPTIONS" @select="emit('select', $event)" />
 </template>
