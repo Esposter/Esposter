@@ -16,7 +16,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/models/resource`                                                      | —          | a command class stays a model; the map beside a form union does not                          |
 | `app/models/message`                                                       | —          | a type derived from a services map is a type-only import, not a move                         |
 | `app/models` — the rest                                                    | —          | the resolver class hierarchies stay models, like the sheet commands                          |
-| `app/util`                                                                 | —          | a type-only third-party import is the `util/types` escape, not a `services/` move            |
+| `app/util`                                                                 | 2026-09-12 | a type-only third-party import is the `util/types` escape, not a `services/` move            |
 | `app/types`                                                                | —          | ambient `.d.ts` only                                                                         |
 | `app/composables`                                                          | —          | sole-consumer subfolders                                                                     |
 | `app/store`                                                                | —          | a store's file is named for its domain, so the filename never matches its `use*Store` export |
