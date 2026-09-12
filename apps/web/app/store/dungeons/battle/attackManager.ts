@@ -1,5 +1,5 @@
-import type { Attack } from "@/models/dungeons/attack/Attack";
 import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
+import type { Attack } from "@/models/dungeons/attack/Attack";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";

@@ -2,8 +2,7 @@
 import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-schema";
 
-import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
-import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
+import { EMPTY_NOTE_DOC, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";

@@ -10,14 +10,16 @@ import type {
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { MicrophoneProcessor } from "@/models/message/room/call/MicrophoneProcessor";
 import { MutationStatus } from "@/models/shared/MutationStatus";
-import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "@/services/message/room/call/constants";
+import {
+  DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE,
+  SCREEN_SHARE_CAPTURE_OPTIONS,
+} from "@/services/message/room/call/constants";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
+import { VoiceDeviceKinds, VoiceDeviceSettingsKeyMap } from "@/services/message/room/call/VoiceDeviceSettingsKeyMap";
 import { checkIsRemoteAudioSource } from "@/services/message/room/liveKit/checkIsRemoteAudioSource";
 import { getRemoteAudioElementKey } from "@/services/message/room/liveKit/getRemoteAudioElementKey";
-import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
-import { SCREEN_SHARE_CAPTURE_OPTIONS } from "@/services/message/room/call/constants";
-import { VoiceDeviceKinds, VoiceDeviceSettingsKeyMap } from "@/services/message/room/call/VoiceDeviceSettingsKeyMap";
 import { getRemoteStreamHandlers } from "@/services/message/room/liveKit/getRemoteStreamHandlers";
+import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useUserSettingsStore } from "@/store/message/user/settings";
