@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivatorSlotProps";
-import type { VDialog } from "vuetify/components";
+
+import { SEARCH_DIALOG_PROPS } from "@/services/styled/constants";
 
 interface Props {
   // Registered with useVHotkey to toggle the dialog, e.g. "ctrl+k"
   hotkey: string;
   placeholder: string;
 }
-
-const DIALOG_PROPS: VDialog["$props"] = { width: "37.5rem" };
 
 defineSlots<{
   activator?: (props: DialogActivatorSlotProps) => VNode;
@@ -25,7 +24,7 @@ useVHotkey(hotkey, () => {
 
 <template>
   <!-- The field is the dialog's `header` rather than body content: results scroll, the thing you type in does not -->
-  <StyledDialog v-model="isOpen" :dialog-props="DIALOG_PROPS" hide-toolbar-actions>
+  <StyledDialog v-model="isOpen" :dialog-props="SEARCH_DIALOG_PROPS" hide-toolbar-actions>
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>

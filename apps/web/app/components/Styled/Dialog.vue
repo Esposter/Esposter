@@ -3,6 +3,7 @@ import type { DialogActivatorSlotProps } from "@/components/Styled/DialogActivat
 import type { Except } from "type-fest";
 import type { VBtn, VCard, VDialog } from "vuetify/components";
 
+import { CLOSE_DIALOG_BUTTON_PROPS } from "@/services/styled/constants";
 import { mergeProps } from "vue";
 
 // @TODO: https://github.com/vuejs/core/issues/11371
@@ -22,8 +23,6 @@ interface Props {
   // Field is a larger version of nothing. Every other dialog keeps the pair.
   hideToolbarActions?: boolean;
 }
-
-const CLOSE_BUTTON_PROPS: VBtn["$props"] = { density: "comfortable", variant: "text" };
 
 const slots = defineSlots<{
   activator?: (props: DialogActivatorSlotProps) => VNode;
@@ -78,7 +77,7 @@ const confirm = () => {
           actions row, this when there is not. Without it a read-only dialog could only be left by clicking outside it. -->
         <StyledTooltipIconButton
           v-if="!hasActions"
-          :button-props="CLOSE_BUTTON_PROPS"
+          :button-props="CLOSE_DIALOG_BUTTON_PROPS"
           icon="mdi-close"
           text="Close"
           @click="modelValue = false"
