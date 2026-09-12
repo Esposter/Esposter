@@ -6,9 +6,11 @@ import { z } from "zod";
 
 const roomNameSchema = createNameSchema(ROOM_NAME_MAX_LENGTH);
 
-export const refineRoomSchema = <TSchema extends z.ZodType>(schema: TSchema, roomType = RoomType.Room): TSchema =>
-  schema.superRefine((data, ctx) => {
-    const { name, type } = data as Partial<{ name: string; type: RoomType }>;
+export const refineRoomSchema = <TSchema extends z.ZodType<Partial<{ name: string; type: RoomType }>>>(
+  schema: TSchema,
+  roomType = RoomType.Room,
+): TSchema =>
+  schema.superRefine(({ name, type }, ctx) => {
     if (name === undefined) return;
 
     if ((type ?? roomType) === RoomType.DirectMessage) {

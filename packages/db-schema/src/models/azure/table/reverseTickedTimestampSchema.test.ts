@@ -11,6 +11,7 @@ describe("reverseTickedTimestampSchema", () => {
     ["the narrowest countdown", getReverseTickedTimestamp(AZURE_SELF_DESTRUCT_TIMER)],
   ])("accepts %s", (_description, rowKey) => {
     expect.hasAssertions();
+
     expect(reverseTickedTimestampSchema.parse(rowKey)).toBe(rowKey);
   });
 
@@ -25,6 +26,7 @@ describe("reverseTickedTimestampSchema", () => {
     ["one digit past the maximum", `${AZURE_SELF_DESTRUCT_TIMER}9`],
   ])("rejects %s", (_description, rowKey) => {
     expect.hasAssertions();
+
     expect(reverseTickedTimestampSchema.safeParse(rowKey).success).toBe(false);
   });
 });
