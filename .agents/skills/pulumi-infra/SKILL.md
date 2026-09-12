@@ -7,6 +7,13 @@ description: Esposter Pulumi infrastructure conventions for apps/infra — the p
 
 Apply when modifying `apps/infra`.
 
+## Settled — do not re-propose
+
+- **Reading a role assignment's, budget's or event subscription's `scope` from the scoped resource's `.id`.** `.id` carries the leading slash the interpolated `subscriptions/…` shape omits, and `scope` is a path parameter, so the preview is a replacement of every `protect: true` grant (`+-1 to replace … marked for protection`, probed 2026-09-12). The interpolated shape stays; `getWorkflowResourceGroupPath` builds the same prefix for the Logic App actions.
+- **Reading the Function Apps' `AzureWebJobsStorage__*ServiceUri` settings and `WEBSITE_RUN_FROM_PACKAGE` from the storage account's `primaryEndpoints`.** Three of the four values lack the trailing slash the endpoint outputs carry, so deriving them is an app-settings update that restarts both apps for a value that cannot drift while the account name is the file's own constant.
+- **Tying `WEBSITE_NODE_DEFAULT_VERSION` to `engines.node`.** The Functions runtime supports fewer majors than the repo runs on, so the setting stays on the major Functions supports and moves by hand when that support lands; `pnpm update:node` deliberately leaves it alone.
+- **A `get<Resource>Arguments` factory for each dev/prod pair of property bags** (storage accounts, blob services, sites, plans, search services, action groups, Web PubSub). Each pair is Azure's exported shape, and a factory per resource type is a second copy of the SDK's argument type; only what the pairs share beyond the SDK's shape — a rule list, a subscription's arguments, a workflow's actions — is a service.
+
 ## Package Shape
 
 - `apps/infra` is a private Pulumi package managing Azure (and, from v12, GitHub) infrastructure in one `prod` stack.
