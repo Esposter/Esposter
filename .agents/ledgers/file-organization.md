@@ -35,7 +35,7 @@ The question is where a thing lives and whether it exists twice — one export p
 | `app/components` — `Visual`, `User`, `Docs`, `Clicker`, `Post`                  | 2026-09-12 |                                                                                                 |
 | `app/components` — the rest                                                     | 2026-09-12 | `App`, `Dashboard`, `RichTextEditor`, `Achievement`, `FlowchartEditor`, the single-file folders |
 | `packages/db-schema` — `models`                                                 | 2026-09-12 |                                                                                                 |
-| `packages/db-schema` — `schema`, `relations`                                    | —          | a table file declares the table and its select schema; enums live in `models`                   |
+| `packages/db-schema` — `schema`, `relations`                                    | 2026-09-12 | a table file declares the table and its select schema; enums live in `models`                   |
 | `packages/db-schema` — `services`, root                                         | 2026-09-12 |                                                                                                 |
 | `packages/db` — `services/azure`                                                | 2026-09-12 |                                                                                                 |
 | `packages/db` — the rest, `packages/db-mock`                                    | 2026-09-12 |                                                                                                 |

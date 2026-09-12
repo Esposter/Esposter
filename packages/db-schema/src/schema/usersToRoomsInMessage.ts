@@ -3,6 +3,7 @@ import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { users } from "#src/schema/users";
+import { NICKNAME_MAX_LENGTH } from "#src/services/room/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNormalizedStringSchema } from "@esposter/shared";
@@ -11,8 +12,6 @@ import { boolean, check, index, integer, pgEnum, primaryKey, text, timestamp, uu
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const notificationTypeEnum = pgEnum("notificationType", NotificationType);
-
-export const NICKNAME_MAX_LENGTH = 32;
 
 export const usersToRoomsInMessage = pgTable(
   "usersToRooms",

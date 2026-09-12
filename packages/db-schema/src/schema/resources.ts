@@ -5,12 +5,11 @@ import { ResourceType } from "#src/models/resource/ResourceType";
 import { createNameSchema } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { users } from "#src/schema/users";
+import { RESOURCE_NAME_MAX_LENGTH } from "#src/services/resource/constants";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { sql } from "drizzle-orm";
 import { check, index, integer, jsonb, pgEnum, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-
-export const RESOURCE_NAME_MAX_LENGTH = 100;
 
 export const resourceTypeEnum = pgEnum("resourceType", ResourceType);
 // Pure identity + content lifecycle. Publish state is normalized into resourcePublications

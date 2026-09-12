@@ -1,18 +1,13 @@
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
+import { ROOM_EMOJI_NAME_MAX_LENGTH, ROOM_EMOJI_NAME_REGEX } from "#src/services/room/constants";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { check, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
-
-export const ROOM_EMOJI_NAME_MAX_LENGTH = 32;
-// The shortcode charset, which is the unicode dataset's slug charset. `:name:` in the composer resolves against
-// One vocabulary, so a custom name is drawn from the same closed set a dataset slug is — anything else and the
-// Autocomplete would have to say which kind of token it is completing
-export const ROOM_EMOJI_NAME_REGEX = /^[a-z0-9_]+$/u;
 
 export const roomEmojisInMessage = pgTable(
   "roomEmojis",

@@ -1,11 +1,10 @@
 import { createNameSchema } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
+import { APP_USER_NAME_MAX_LENGTH } from "#src/services/message/webhook/constants";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-
-export const APP_USER_NAME_MAX_LENGTH = 100;
 
 export const appUsersInMessage = pgTable(
   "appUsers",
