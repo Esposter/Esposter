@@ -1,8 +1,4 @@
-interface LiveKitCredentials {
-  apiKey: string;
-  apiSecret: string;
-  url: string;
-}
+import type { LiveKitCredentials } from "@@/server/models/livekit/LiveKitCredentials";
 // LiveKit is optional — a deployment without it runs calls with no media server rather than failing them — so
 // Every entry point has to answer the same question first, and answering it in one place is what keeps the
 // Token path from minting a grant for a room the service client was never configured to create

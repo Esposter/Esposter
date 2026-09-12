@@ -1,12 +1,8 @@
+import type { GetTopRolePosition } from "@@/server/models/room/rbac/GetTopRolePosition";
 import type { Context } from "@@/server/trpc/context";
 
 import { roomRolesInMessage, usersToRoomRolesInMessage } from "@esposter/db-schema";
 import { and, eq, inArray, max } from "drizzle-orm";
-
-interface GetTopRolePosition {
-  (db: Context["db"], userId: string, roomId: string): Promise<number>;
-  (db: Context["db"], userId: string, roomIds: string[]): Promise<Map<string, number>>;
-}
 
 export const getTopRolePosition: GetTopRolePosition = (async (
   db: Context["db"],
