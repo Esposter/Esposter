@@ -213,7 +213,7 @@ if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined))
     });
     if (status !== 0)
       throw new InvalidOperationError(Operation.Read, "coderabbit", "the feedback read failed — see its output");
-    const drain = drainFindings({
+    const drain = await drainFindings({
       developSha,
       feedback,
       issueComments,
