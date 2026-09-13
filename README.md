@@ -330,7 +330,8 @@ Three branches, each written by exactly one actor, turn a stream of AI-authored 
 without anyone waiting on anyone. Sessions push to `queue` as fast as they commit. The review collector — a
 GitHub Actions workflow fired by every `queue` push and every CodeRabbit review — drains the open findings,
 ports the largest green window under CodeRabbit's file cap onto `develop`, and replies on each thread with the
-pushed sha. `develop` merges to `main` once a window comes back clean. The design and its fine print live in
+pushed sha. `develop` merges to `main` once a window comes back clean, and the push to `main` runs the same
+collector, which fast-forwards `develop` back onto it. The design and its fine print live in
 [the review collector proposal](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/proposals/infra/review-collector).
 
 ```mermaid
@@ -343,6 +344,8 @@ flowchart LR
   C -->|fixes parked| F[(review-fixes)]
   F -->|lead the next window| D
   D -->|zero findings| M[(main)]
+  M -->|push event| C
+  C -->|fast-forward after the merge<br/>fold a bump into the next window| D
 ```
 
 ## <a name="packages">📦 Packages</a>

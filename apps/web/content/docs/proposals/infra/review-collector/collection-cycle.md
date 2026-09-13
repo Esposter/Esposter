@@ -23,11 +23,18 @@ Nothing is remembered between runs, so every input is a remote fact with a singl
 
 The trailers are the collector's memory. A fix commit says which finding it answers in its own message, so the reply step can name it after the push, a later run can tell an answered finding from an open one without any table, and a session fixing a finding by hand leaves the same record by writing the same trailer.
 
+## The return stroke
+
+Before the pull request is even looked up, the cycle compares `develop` with `main`. When `develop` is an ancestor of `main` and the two differ, the release pull request has just merged: `develop` is fast-forwarded to `main` with a plain push, which spends nothing because no pull request is open to review it. When `main` has commits `develop` lacks and `develop` is not an ancestor — a dependency bump merged straight to `main` — nothing happens here; the port step folds `main` into the candidate as a merge commit, resolving the lockfile the git skill's way (thrown away and rebuilt from the installed tree), so the bump rides the window the collector was pushing anyway and costs no slot of its own. A merge that conflicts anywhere but the lockfile is aborted and the window goes out without it. `queue` and `review-fixes` need no return stroke: the session rebases `queue` onto `develop` before its next unit, and `review-fixes` is re-created from `develop` by the next drain.
+
 ## Gates
 
 ```mermaid
 flowchart TD
-  S[Read state] --> PR{Release PR open}
+  S[Read state] --> RS{develop an ancestor of main}
+  RS -->|yes| FF[Fast-forward develop to main]
+  RS -->|no| PR
+  FF --> PR{Release PR open}
   PR -->|no| X0[Exit — re-opening is a human ask]
   PR -->|yes| RP[Reply for pushed fixes<br/>trailers on frontier..develop without a reply]
   RP --> B{Newest review body<br/>ends at the develop head}
@@ -88,7 +95,7 @@ The rules the loop encodes:
 - **A conflict ends the window before the conflicting commit.** The fixes changed something the queue also changed, and only the session can decide how they combine; the collector reports the commit and pushes whatever fit before it if that is ready. When the conflicting commit is the first one, the run pushes nothing and the [two writers](/docs/proposals/infra/review-collector/two-writers) page says how the session resolves it.
 - **Readiness is a two-by-two.** Fixes parked and any queue commit fits: push, because the fixes are what the window is for. No fixes and the count reaches the fill target: push. No fixes and the queue is short: wait, the slot is free and nothing is waiting on it. Fixes parked and the queue empty: park, which is the case that motivated `review-fixes`. `--force` collapses the two waits into a push, for the dispatch when a short window is the right trade.
 - **The cut is green on its own.** The pushed head runs CI alone, and interior queue commits were verified by nobody, so the candidate head gets `typecheck` and the lint check — check-only, never `lint:fix`, because a repair the collector wrote would be a commit nobody reviewed. Red drops the last queue commit and tries again a bounded number of times, then holds and names the range. Tests are not run here: `develop` runs its own CI after the push, and a red suite there is one more finding for the next window, which is the pipelining page's existing "correctness on `develop` is eventual".
-- **Fast-forward when the shas allow it.** When there are no fixes and the queue sits directly on `origin/develop`, the cut is a queue commit and `git push origin <cut>:develop` moves `develop` to it without rewriting a sha, so the session's local branch already matches and no rebase is owed. The cherry-picked candidate is pushed only when fixes lead or the queue has drifted.
+- **Fast-forward when the shas allow it.** When there are no fixes, the queue sits directly on `origin/develop`, no skipped merge sits among the cut's ancestors and `main` had nothing to fold in, the cut is a queue commit and `git push origin <cut>:develop` moves `develop` to it without rewriting a sha, so the session's local branch already matches and no rebase is owed. The cherry-picked candidate is pushed in every other case.
 
 ## Push and reply
 

@@ -19,7 +19,7 @@ This proposal adds the collector and removes the bookkeeping it replaces. Local 
 2. [The runner](/docs/proposals/infra/review-collector/runner) — the workflow that fires the cycle from the allocation and free events, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 3. [Two writers](/docs/proposals/infra/review-collector/two-writers) — the ref ownership that lets a human session and the collector work the same pull request without racing: the collector alone writes `develop` and `review-fixes`, the session alone writes `queue`.
 
-**Out of scope:** merging the release pull request to `main` is a production release and stays a human act, and so does re-opening the pull request after a merge, since that spends a slot the skill says is always asked for. The collector exits when it finds no open `develop` → `main` pull request.
+**Out of scope:** merging the release pull request to `main` is a production release and stays a human act, and so does re-opening the pull request after a merge, since that spends a slot the skill says is always asked for. What happens right after the merge is in scope — the return stroke: a push to `main` runs the cycle, which fast-forwards `develop` to `main` when `develop` is its ancestor, and a `main` that advanced on its own (a dependency bump) is folded into the next window as a merge commit so it rides a slot that was being spent anyway. The collector exits when it finds no open `develop` → `main` pull request.
 
 ## How it works
 
@@ -30,15 +30,19 @@ flowchart TD
   A[queue pushed<br/>by a working session] --> C
   F[Review submitted<br/>by the bot on the release PR] --> C
   D[Manual dispatch<br/>optional force] --> C
+  MN[main pushed<br/>a release merged or a bump landed] --> C
   C[Collector run<br/>serialized by concurrency group] --> R[Read remote state<br/>frontier, status, threads, refs]
-  R --> G{Slot free and<br/>previous window reviewed}
+  R --> RS{develop an ancestor of main}
+  RS -->|yes| FF[Fast-forward develop to main<br/>no slot spent]
+  RS -->|no| G
+  FF --> G{Slot free and<br/>previous window reviewed}
   G -->|no| X[Exit — nothing to do]
   G -->|yes| O{Open findings}
   O -->|yes| DR[Drain into review-fixes<br/>Claude fixes or rejects each]
   O -->|no| P
   DR --> P{Fixes parked or<br/>queue at the fill target}
   P -->|neither| PK[Wait — slot stays free]
-  P -->|either| W[Port fixes then queue prefix<br/>largest green prefix under the cap]
+  P -->|either| W[Port fixes then queue prefix<br/>largest green prefix under the cap, main folded in]
   W --> PU[Fast-forward push to develop]
   PU --> RP[Reply on each answered thread<br/>with the pushed sha]
 ```

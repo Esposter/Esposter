@@ -51,14 +51,6 @@ const {
   options: { "dry-run": { default: false, type: "boolean" }, force: { default: false, type: "boolean" } },
 });
 
-const pullRequest = pullRequestArgument ? Number(pullRequestArgument) : readOpenPullRequest()?.number;
-if (pullRequest === undefined) {
-  console.info(`no open ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request — re-opening one is a human ask`);
-  process.exit(0);
-}
-if (!Number.isSafeInteger(pullRequest) || pullRequest <= 0)
-  throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
-
 const dirtyPaths = getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));
 if (!isDryRun && dirtyPaths.length > 0)
   throw new InvalidOperationError(
@@ -70,19 +62,45 @@ if (!isDryRun && dirtyPaths.length > 0)
 runGit(["fetch", "--prune", "origin"]);
 const readSha = (ref: string): string | undefined =>
   getResult(() => runGit(["rev-parse", "--verify", "--quiet", ref]).trim()).unwrapOr(undefined);
-const developSha = readSha(`origin/${DEVELOP_BRANCH}`);
+const mainSha = readSha(`origin/${MAIN_BRANCH}`);
 const queueSha = readSha(`origin/${QUEUE_BRANCH}`);
-if (!developSha || !queueSha)
+const pushedDevelopSha = readSha(`origin/${DEVELOP_BRANCH}`);
+if (!pushedDevelopSha || !queueSha || !mainSha)
   throw new InvalidOperationError(
     Operation.Read,
     "coderabbit",
-    `origin/${DEVELOP_BRANCH} or origin/${QUEUE_BRANCH} is missing`,
+    `origin/${DEVELOP_BRANCH}, origin/${QUEUE_BRANCH} or origin/${MAIN_BRANCH} is missing`,
   );
 let reviewFixesSha = readSha(`origin/${REVIEW_FIXES_BRANCH}`);
 
+// The return stroke: the release pull request just merged, so develop is an ancestor of main and follows it by
+// Fast-forward — no slot spent, since no pull request is open. Main advancing on its own (a dependency bump)
+// Leaves develop no ancestor, and the porter folds that into the next window instead.
+const isDevelopBehindMain =
+  pushedDevelopSha !== mainSha &&
+  getResult(() => runGit(["merge-base", "--is-ancestor", pushedDevelopSha, mainSha])).match(
+    () => true,
+    () => false,
+  );
+if (isDevelopBehindMain) {
+  console.info(
+    `${DEVELOP_BRANCH} is an ancestor of ${MAIN_BRANCH} — fast-forwarding it${isDryRun ? " (dry run: not pushed)" : ""}`,
+  );
+  if (!isDryRun) runGit(["push", "origin", `${mainSha}:refs/heads/${DEVELOP_BRANCH}`]);
+}
+const developSha = isDevelopBehindMain ? mainSha : pushedDevelopSha;
+
+const pullRequest = pullRequestArgument ? Number(pullRequestArgument) : readOpenPullRequest()?.number;
+if (pullRequest === undefined) {
+  console.info(`no open ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request — re-opening one is a human ask`);
+  process.exit(0);
+}
+if (!Number.isSafeInteger(pullRequest) || pullRequest <= 0)
+  throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
+
 const reviews = readBotEntries<GitHubReview>(`pulls/${pullRequest.toString()}/reviews`);
 const lastReviewedSha = getLastReviewedSha(reviews.map(({ body }) => body));
-const frontier = lastReviewedSha ?? runGit(["merge-base", `origin/${MAIN_BRANCH}`, developSha]).trim();
+const frontier = lastReviewedSha ?? runGit(["merge-base", mainSha, developSha]).trim();
 const viewerLogin = readViewerLogin();
 console.info(`pull request #${pullRequest.toString()} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`);
 console.info(`develop ${developSha}\nqueue   ${queueSha}\nfixes   ${reviewFixesSha ?? "none"}\nfrontier ${frontier}`);
@@ -166,7 +184,7 @@ const cwd = isDryRun ? mkdtempSync(join(tmpdir(), DRY_RUN_WORKTREE_PREFIX)) : RE
 if (isDryRun) runGit(["worktree", "add", "--detach", cwd, developSha]);
 const port = portWindow({ cwd, developSha, queueSha, reviewFixesSha });
 console.info(
-  `window: ${port.fixCount.toString()} fix commits + ${port.queueShas.length.toString()} queue commits = ${port.fileCount.toString()} files${port.heldSha ? `, held from ${port.heldSha}` : ""}${port.isFastForward ? ", fast-forward" : ""}`,
+  `window: ${port.fixCount.toString()} fix commits + ${port.queueShas.length.toString()} queue commits = ${port.fileCount.toString()} files${port.heldSha ? `, held from ${port.heldSha}` : ""}${port.isMainMerged ? ", main folded in" : ""}${port.isFastForward ? ", fast-forward" : ""}`,
 );
 const isReady = getIsReady({
   fileCount: port.fileCount,

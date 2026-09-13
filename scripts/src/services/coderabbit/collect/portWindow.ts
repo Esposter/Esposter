@@ -1,6 +1,7 @@
 import type { PortInput } from "#src/models/coderabbit/collect/PortInput";
 import type { PortResult } from "#src/models/coderabbit/collect/PortResult";
 
+import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/constants";
 import { runGit } from "#src/services/coderabbit/runGit";
@@ -61,6 +62,7 @@ export const portWindow = ({ cwd, developSha, queueSha, reviewFixesSha }: PortIn
   // Ahead of it, the queue sitting on develop, and no skipped merge among the cut's ancestors — a merge's own
   // Diff was never counted, and a fast-forward would land it anyway.
   const cutSha = queueShas.at(-1);
+  const isMainMerged = mergeMain(cwd);
   const mergeBase = runGit(["merge-base", developSha, queueSha], cwd).trim();
   const isMergeFree =
     cutSha === undefined ||
@@ -69,7 +71,8 @@ export const portWindow = ({ cwd, developSha, queueSha, reviewFixesSha }: PortIn
     fileCount: getFileCount(`${developSha}..HEAD`, cwd),
     fixCount: fixShas.length,
     heldSha,
-    isFastForward: fixShas.length === 0 && mergeBase === developSha && isMergeFree,
+    isMainMerged,
+    isFastForward: fixShas.length === 0 && mergeBase === developSha && isMergeFree && !isMainMerged,
     queueShas,
   };
 };

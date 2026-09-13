@@ -26,10 +26,11 @@ sequenceDiagram
   W->>W: cycle — reply, drain, port the next window
 ```
 
-Three events, and every one runs the identical cycle:
+Four events, and every one runs the identical cycle:
 
 - **`push` on `queue`** — the allocation event. Fires on every push the session makes, which under a standing sweep is one per commit; almost all of them exit at the gates within seconds of the checkout. The one that arrives when the slot is free and the queue has reached the target is the one that pushes.
 - **`pull_request_review` of type `submitted`**, filtered in the job's `if` to the bot's login and to a pull request whose head is `develop` — the free event. Renovate's pull requests also target `main` and also get reviewed, and the filter is what keeps their reviews from running a cycle against the release pull request for nothing. The workflow file for this event is taken from the pull request's merge ref, so it runs from `develop`'s copy while the release pull request is open; it does not need to be on `main` first.
+- **`push` on `main`** — the return stroke. A release merging, or a dependency bump landing directly, both move `main`; the cycle fast-forwards `develop` to it when `develop` is an ancestor and otherwise leaves the fold to the next window's port.
 - **`workflow_dispatch`** with a `force` boolean, passed through to the script — the manual nudge, for a short window worth pushing anyway or for a webhook that was dropped.
 
 **No `schedule`.** [No polling](/docs/architecture/no-polling) is the repo's standing rule and this is the case it was written for: a cron would be a loop asking "anything yet?" against two signals the platform already pushes. The cost of the rule is that a dropped webhook waits until the next queue push, and a session that has stopped pushing has no next push — that is what the dispatch is for. Once the workflow file is on `main`, the `status` event becomes available as a third, more exact free signal, since it fires on the commit status CodeRabbit flips at completion and covers a rate-limited completion that posts no review body; it runs from the default branch only, which is why it is the follow-on rather than the design.

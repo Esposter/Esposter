@@ -7,12 +7,12 @@ description: Proposal — the ref ownership that lets a working session and the 
 
 Today one actor pushes `develop`: whichever session is open. With the collector there are two, and two writers on one ref is a race whatever the gates say. The fix is not a lock but ownership — every ref in the pipeline has exactly one writer, and the two actors communicate only through the refs the other one reads.
 
-| Ref            | Written by                                | Read by          | Moves how                                                                                   |
-| :------------- | :---------------------------------------- | :--------------- | :------------------------------------------------------------------------------------------ |
-| `develop`      | the collector                             | both, CodeRabbit | fast-forward only, one window per review cycle                                              |
-| `review-fixes` | the collector                             | the session      | grows during a drain, re-created from `develop` by the next one once ported — never deleted |
-| `queue`        | the working session                       | the collector    | the session's checked-out branch, pushed after every commit                                 |
-| `main`         | a person merging the release pull request | everyone         | out of the collector's scope                                                                |
+| Ref            | Written by                                | Read by          | Moves how                                                                                         |
+| :------------- | :---------------------------------------- | :--------------- | :------------------------------------------------------------------------------------------------ |
+| `develop`      | the collector                             | both, CodeRabbit | fast-forward only, one window per review cycle                                                    |
+| `review-fixes` | the collector                             | the session      | grows during a drain, re-created from `develop` by the next one once ported — never deleted       |
+| `queue`        | the working session                       | the collector    | the session's checked-out branch, pushed after every commit                                       |
+| `main`         | a person merging the release pull request | everyone         | `develop` follows it by fast-forward on the merge, and a bump landing there rides the next window |
 
 The standing authorisation the session held — push `develop` when the window fills — becomes an authorisation to push `queue`, which spends nothing: a queue push starts no review, only a collector run that measures. The four gates of the `coderabbit` skill are unchanged; they simply move from the session's head into the [collection cycle](/docs/proposals/infra/review-collector/collection-cycle), where they are read from the remote every time rather than remembered.
 
