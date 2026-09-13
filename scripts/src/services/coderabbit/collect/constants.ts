@@ -44,6 +44,13 @@ export const QUARANTINED_MARKER = "review-collector quarantined";
 
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 
+// The family alias, never a version (`model-delegation`): the drain is an implementer, and left unpinned it
+// Runs on whatever the account's default was last set to, which no log line would say
+export const DRAIN_MODEL = "opus";
+
+// `pnpm` is a shim on Windows that only a shell resolves; every other platform runs the binary as it is
+export const IS_PNPM_SHELL: boolean = process.platform === "win32";
+
 // A dry run ports into a throwaway worktree so the caller's tree is never switched
 export const DRY_RUN_WORKTREE_PREFIX = "review-collector-";
 

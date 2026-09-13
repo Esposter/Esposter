@@ -42,14 +42,14 @@ interface DrainFindingsInput extends DrainInput {
 // Claude Code's own session limit is the one non-zero exit that is not this review's failure, so it neither
 // Counts an attempt nor fails the run: the deadline goes into a marker comment, and every run until it lifts
 // Reads that marker and skips the drain instead of downloading Claude Code to be refused again.
-export const drainFindings = ({
+export const drainFindings = async ({
   developSha,
   issueComments,
   newestReviewId,
   reviewFixesSha,
   viewerLogin,
   ...drainInput
-}: DrainFindingsInput): DrainFindingsResult => {
+}: DrainFindingsInput): Promise<DrainFindingsResult> => {
   const pullRequest = drainInput.pullRequest.toString();
   const quarantinedMarker = getMarker(QUARANTINED_MARKER, newestReviewId);
   if (checkHasMarkerComment(issueComments, viewerLogin, quarantinedMarker)) {
@@ -79,7 +79,7 @@ export const drainFindings = ({
   const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
   const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
   const verdictPath = join(verdictDirectory, VERDICT_FILE);
-  const { isDrained, limitResetAtMs } = runDrain(getDrainPrompt({ ...drainInput, rejectionsPath, verdictPath }));
+  const { isDrained, limitResetAtMs } = await runDrain(getDrainPrompt({ ...drainInput, rejectionsPath, verdictPath }));
   if (limitResetAtMs !== undefined) {
     const resetAt = new Date(limitResetAtMs).toISOString();
     runGh([

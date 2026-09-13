@@ -1,12 +1,15 @@
 import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromptInput";
 
 import { ANSWERS_TRAILER, DRAINS_TRAILER } from "#src/services/coderabbit/collect/constants";
+import { getFindingText } from "#src/services/coderabbit/collect/getFindingText";
 
 // The one step Claude runs. The skill already teaches how a finding is verified, fixed and answered, so the
-// Prompt names the findings and the two things the collector needs from the commits — the trailers — and
-// Forbids the three things only the collector may do: push, rewrite history, and talk to GitHub. The last of
-// Those is why a verdict is written to a file rather than posted: the drain reads review text it must not
-// Trust, so it runs with no credential that could act on this repository (`runDrain`).
+// Prompt carries the findings as the reviewer wrote them — the drain holds no `gh` to read a thread itself, so
+// A title alone would have it re-derive the case the reviewer already made — and the two things the collector
+// Needs from the commits: the trailers. It forbids the three things only the collector may do: push, rewrite
+// History, and talk to GitHub. The last of those is why a verdict is written to a file rather than posted: the
+// Drain reads review text it must not trust, so it runs with no credential that could act on this repository
+// (`runDrain`).
 export const getDrainPrompt = ({
   feedback,
   openThreads,
@@ -16,9 +19,9 @@ export const getDrainPrompt = ({
   verdictPath,
 }: DrainPromptInput): string => {
   const pullRequestNumber = pullRequest.toString();
-  const threadLines = openThreads.map(
+  const threadSections = openThreads.map(
     ({ body, commentId, line, path }) =>
-      `- comment ${commentId.toString()} at ${path}:${line?.toString() ?? "outside the diff"}\n  ${body.split("\n").find((entry) => entry.startsWith("**")) ?? body.split("\n")[0] ?? ""}`,
+      `### comment ${commentId.toString()} at ${path}:${line?.toString() ?? "outside the diff"}\n\n${getFindingText(body)}`,
   );
   const bodySection =
     reviewId === undefined
@@ -30,8 +33,9 @@ export const getDrainPrompt = ({
     "",
     "Answer every finding below and nothing else. The `coderabbit` skill in `.agents/skills/coderabbit/SKILL.md` and its `references/answering-findings.md` own how: verify against the code before accepting, grep for the repo's convention before taking a suggested diff, and check whether a real finding has a twin the scan stopped short of.",
     "",
-    "Open inline findings:",
-    ...(threadLines.length > 0 ? threadLines : ["- none"]),
+    "## Open inline findings",
+    "",
+    ...(threadSections.length > 0 ? threadSections : ["none"]),
     "",
     bodySection,
     "",
