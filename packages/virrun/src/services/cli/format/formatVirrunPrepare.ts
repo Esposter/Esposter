@@ -1,3 +1,5 @@
+import type { PrepareLocation } from "#src/models/exec/snapshot/PrepareLocation";
+
 import { Color } from "#src/models/cli/Color";
 import { formatCacheHitLabel } from "#src/services/cli/cache/formatCacheHitLabel";
 import { colorize } from "#src/services/cli/color/colorize";
@@ -7,7 +9,7 @@ import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 // Built for the current source state, while a `prepare cache miss` (yellowed) regenerates it — expected on a first
 // Run and after any source edit, since the layer key moves with the working-tree hash. The key is source-derived
 // (lockfile + source-tree + prepare step), so its short prefix identifies the layer without restating the inputs.
-export const formatVirrunPrepare = ({ exists, key }: { exists: boolean; key: string }): string => {
+export const formatVirrunPrepare = ({ exists, key }: Pick<PrepareLocation, "exists" | "key">): string => {
   const source = colorize(key.slice(0, 12), Color.Blue);
   return exists
     ? formatVirrunLine(`${formatCacheHitLabel("prepare cache hit")} (source ${source})`)

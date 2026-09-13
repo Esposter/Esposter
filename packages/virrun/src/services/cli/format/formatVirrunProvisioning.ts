@@ -1,3 +1,5 @@
+import type { SnapshotLocation } from "#src/models/exec/snapshot/SnapshotLocation";
+
 import { Color } from "#src/models/cli/Color";
 import { formatCacheHitLabel } from "#src/services/cli/cache/formatCacheHitLabel";
 import { colorize } from "#src/services/cli/color/colorize";
@@ -8,7 +10,7 @@ import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 // `snapshot cache miss` is yellowed (expect a wait), so the two outcomes read before the words do. Both lines carry
 // Only the environment key (the lockfile digest plus the sandbox node major, see computeEnvironmentKey) — the
 // `snapshot cache hit` label already says the snapshot is being reused, so no restatement.
-export const formatVirrunProvisioning = ({ exists, hash }: { exists: boolean; hash: string }): string => {
+export const formatVirrunProvisioning = ({ exists, hash }: Pick<SnapshotLocation, "exists" | "hash">): string => {
   const environment = colorize(hash.slice(0, 12), Color.Blue);
   return exists
     ? formatVirrunLine(`${formatCacheHitLabel("snapshot cache hit")} (environment ${environment})`)

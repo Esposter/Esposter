@@ -1,16 +1,10 @@
+import type { CacheListing } from "#src/models/cli/CacheListing";
+
 import { Color } from "#src/models/cli/Color";
 import { formatByteSize } from "#src/services/cli/cache/formatByteSize";
+import { formatKeyedTierLine } from "#src/services/cli/cache/formatKeyedTierLine";
 import { colorize } from "#src/services/cli/color/colorize";
 import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
-// The two key-listing tiers — warm snapshots and source-keyed prepare layers — report identically: the tier's path,
-// Then either a dimmed "none" or the entry count followed by the keys themselves. One builder so the two can never
-// Drift into reading differently for the same state.
-const formatKeyedTierLine = (label: string, path: string, keys: readonly string[]): string =>
-  formatVirrunLine(
-    keys.length === 0
-      ? `${label} ${colorize(path, Color.Blue)} (${colorize("none", Color.Dim)})`
-      : `${label} ${colorize(path, Color.Blue)} (${colorize(String(keys.length), Color.Blue)}): ${keys.join(", ")}`,
-  );
 // Pure string-building over already-resolved paths so the IO stays in the command and the formatting is testable.
 // Paths and counts are blue (the nouns), presence is green / absence red, and an empty tier's "none" is dimmed so the
 // Populated-vs-empty state of each cache tier reads at a glance.
@@ -24,17 +18,7 @@ export const formatCacheListing = ({
   taskBytes,
   taskCount,
   tasksPath,
-}: {
-  isRepoStorePresent: boolean;
-  prepareKeys: readonly string[];
-  preparePath: string;
-  repoStorePath: string;
-  snapshotHashes: readonly string[];
-  snapshotsPath: string;
-  taskBytes: number;
-  taskCount: number;
-  tasksPath: string;
-}): string => {
+}: CacheListing): string => {
   const repoLine = formatVirrunLine(
     `repo store ${colorize(repoStorePath, Color.Blue)} (${isRepoStorePresent ? colorize("present", Color.Green) : colorize("absent", Color.Red)})`,
   );

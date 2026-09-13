@@ -1,16 +1,13 @@
 import type { CleanArgs } from "#src/models/cli/CleanArgs";
 import type { ArgsDef, CommandDef } from "citty";
 
-import { Color } from "#src/models/cli/Color";
 import { CommandType } from "#src/models/virrun/CommandType";
-import { colorize } from "#src/services/cli/color/colorize";
+import { removeCacheDirectory } from "#src/services/cli/cache/removeCacheDirectory";
+import { writeRemoved } from "#src/services/cli/cache/writeRemoved";
 import { formatVirrunError } from "#src/services/cli/format/formatVirrunError";
-import { formatVirrunLine } from "#src/services/cli/format/formatVirrunLine";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "#src/services/exec/cache/constants";
 import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "#src/services/exec/snapshot/constants";
-import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
 import {
-  CACHE_CLEAN_TIMEOUT_MS,
   CAPABILITY_CACHE_FILENAME,
   WSL_CACHE_ROOT_CACHE_FILENAME,
   WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME,
@@ -25,17 +22,6 @@ import { getResult, noop } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-// Each removal is announced as it lands, the path reddened — destruction outranks the palette's plain path=Blue rule.
-const writeRemoved = (path: string): void => {
-  process.stderr.write(`${formatVirrunLine(`removed ${colorize(path, Color.Red)}`)}\n`);
-};
-// Every cache root is torn down identically — unbounded (CACHE_CLEAN_TIMEOUT_MS), because a clean is explicit and must
-// Run to completion rather than be SIGTERM'd into a half-swept cache — so the roots below read as a list of what is
-// Removed rather than as a repeated remove-then-report pair.
-const removeCacheDirectory = (path: string): void => {
-  removeSnapshotDirectory(path, CACHE_CLEAN_TIMEOUT_MS);
-  writeRemoved(path);
-};
 
 const cleanArgs: CleanArgs = {
   all: {

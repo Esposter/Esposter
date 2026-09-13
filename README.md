@@ -324,6 +324,27 @@ Regenerate it from the repo root with:
 pnpm graph:gen
 ```
 
+### Review Engine
+
+Three branches, each written by exactly one actor, turn a stream of AI-authored commits into reviewed releases
+without anyone waiting on anyone. Sessions push to `queue` as fast as they commit. The review collector — a
+GitHub Actions workflow fired by every `queue` push and every CodeRabbit review — drains the open findings,
+ports the largest green window under CodeRabbit's file cap onto `develop`, and replies on each thread with the
+pushed sha. `develop` merges to `main` once a window comes back clean. The design and its fine print live in
+[the review collector proposal](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/proposals/infra/review-collector).
+
+```mermaid
+flowchart LR
+  S[AI sessions<br/>commit continuously] -->|git push| Q[(queue)]
+  Q -->|push event| C{{Review collector<br/>gates, drains, ports}}
+  C -->|largest green window<br/>under the cap| D[(develop)]
+  D -->|pull request synchronized| R[CodeRabbit review<br/>one slot per hour]
+  R -->|review submitted| C
+  C -->|fixes parked| F[(review-fixes)]
+  F -->|lead the next window| D
+  D -->|zero findings| M[(main)]
+```
+
 ## <a name="packages">📦 Packages</a>
 
 | Package                                                                                           | Description                                                                      | Published |

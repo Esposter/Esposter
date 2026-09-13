@@ -6,7 +6,7 @@ import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { SpriteSetterMap } from "#src/util/setterMap/SpriteSetterMap";
+import { SpriteSetterMap } from "#src/services/setterMap/SpriteSetterMap";
 
 interface Props {
   configuration: SetRequired<Partial<SpriteConfiguration>, "texture">;

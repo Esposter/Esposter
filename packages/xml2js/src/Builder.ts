@@ -3,13 +3,9 @@ import type { BuilderOptions } from "xml2js";
 import type { XMLBuilder } from "xmlbuilder2/lib/interfaces";
 
 import { DefaultBuilderOptions } from "#src/DefaultBuilderOptions";
+import { getEntries } from "#src/getEntries";
 import { takeOne } from "@esposter/shared";
 import { create } from "xmlbuilder2";
-
-// `typeof null === "object"`, so every nullish value that reaches `Object.entries` throws. The original iterates with
-// `for key of obj`, which runs zero times for one, so a nullish value contributes no entries here either.
-const getEntries = <T>(value: unknown): [string, T][] =>
-  value === null || value === undefined ? [] : Object.entries(value as Record<string, T>);
 
 export class Builder {
   readonly #options: typeof DefaultBuilderOptions = structuredClone(DefaultBuilderOptions);

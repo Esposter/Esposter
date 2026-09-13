@@ -6,7 +6,7 @@ import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { NinesliceSetterMap } from "#src/util/setterMap/NinesliceSetterMap";
+import { NinesliceSetterMap } from "#src/services/setterMap/NinesliceSetterMap";
 
 interface NinesliceEmits extends /** @vue-ignore */ NinesliceEventEmitsOptions {}
 

@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { RenderTextureSetterMap } from "#src/util/setterMap/RenderTextureSetterMap";
+import { RenderTextureSetterMap } from "#src/services/setterMap/RenderTextureSetterMap";
 
 interface Props {
   configuration: Partial<RenderTextureConfiguration>;

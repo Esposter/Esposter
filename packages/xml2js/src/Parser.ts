@@ -1,8 +1,11 @@
 import type { QualifiedAttribute, QualifiedTag, SAXParser } from "sax";
 import type { convertableToString, ParserOptions } from "xml2js";
 
+import { checkIsEmpty } from "#src/checkIsEmpty";
 import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "#src/constants";
 import { DefaultParserOptions } from "#src/DefaultParserOptions";
+import { defineProperty } from "#src/defineProperty";
+import { processItem } from "#src/processItem";
 import { stripBOM } from "#src/stripBOM";
 import { takeOne } from "@esposter/shared";
 import { parser } from "sax";
@@ -211,22 +214,3 @@ export class Parser {
     return this.#saxParser.write(string).close();
   }
 }
-
-const checkIsEmpty = (value: unknown): boolean =>
-  typeof value === "object" && value !== null && Object.keys(value).length === 0;
-
-const processItem = (processors: ((value: string, name: string) => string)[], item: string, key: string): string => {
-  let processedItem = item;
-  for (const processor of processors) processedItem = processor(processedItem, key);
-  return processedItem;
-};
-
-const defineProperty = (object: Record<string, unknown>, key: string, value: unknown): void => {
-  // Make sure the descriptor hasn't been prototype polluted
-  const descriptor = Object.create(null);
-  descriptor.value = value;
-  descriptor.writable = true;
-  descriptor.enumerable = true;
-  descriptor.configurable = true;
-  Object.defineProperty(object, key, descriptor);
-};

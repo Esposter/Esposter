@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { VideoSetterMap } from "#src/util/setterMap/VideoSetterMap";
+import { VideoSetterMap } from "#src/services/setterMap/VideoSetterMap";
 
 interface Props {
   configuration: Partial<VideoConfiguration>;

@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { CurveSetterMap } from "#src/util/setterMap/CurveSetterMap";
+import { CurveSetterMap } from "#src/services/setterMap/CurveSetterMap";
 
 interface CurveEmits extends /** @vue-ignore */ CurveEventEmitsOptions {}
 

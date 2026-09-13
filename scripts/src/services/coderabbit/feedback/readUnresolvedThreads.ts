@@ -9,6 +9,7 @@ import { parseMachineJson } from "#src/services/parseMachineJson";
 // `$endCursor` and `pageInfo` are both load-bearing: `gh` follows the cursor only when the query declares one
 // And selects the other, and without them it returns the first page and exits 0. A long-lived pull request
 // Accumulates threads for its whole life, so that drops the newest page exactly when the backlog matters.
+// The first comment is the finding, the last comment's author is whether anyone has answered it since.
 const QUERY = `
 query($owner: String!, $name: String!, $pullRequest: Int!, $endCursor: String) {
   repository(owner: $owner, name: $name) {
@@ -19,7 +20,8 @@ query($owner: String!, $name: String!, $pullRequest: Int!, $endCursor: String) {
           isResolved
           path
           line
-          comments(first: 1) { nodes { databaseId author { login } body } }
+          firstComment: comments(first: 1) { nodes { databaseId author { login } body } }
+          lastComment: comments(last: 1) { nodes { author { login } } }
         }
       }
     }
@@ -46,9 +48,16 @@ export const readUnresolvedThreads = (pullRequest: number): ReviewThread[] => {
   )
     .flatMap(({ data }) => data.repository.pullRequest.reviewThreads.nodes)
     .filter(({ isResolved }) => !isResolved)
-    .flatMap(({ comments, line, path }) =>
-      comments.nodes
+    .flatMap(({ firstComment, lastComment, line, path }) => {
+      const lastAuthorLogin = lastComment.nodes.at(-1)?.author.login ?? "";
+      return firstComment.nodes
         .filter(({ author }) => author.login === CODERABBIT_GRAPHQL_LOGIN)
-        .map(({ body, databaseId }) => ({ body, commentId: databaseId, line: line ?? undefined, path })),
-    );
+        .map(({ body, databaseId }) => ({
+          body,
+          commentId: databaseId,
+          lastAuthorLogin,
+          line: line ?? undefined,
+          path,
+        }));
+    });
 };

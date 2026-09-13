@@ -1,7 +1,7 @@
 import type { ComponentMountingOptions, VueWrapper } from "@vue/test-utils";
 
+import { InjectionKeyMap } from "#src/services/InjectionKeyMap";
 import { getTestPinia, removeTestScene } from "#src/test/fixtures/headlessGame.test";
-import { InjectionKeyMap } from "#src/util/InjectionKeyMap";
 import { mount } from "@vue/test-utils";
 import { afterEach, describe } from "vitest";
 // Mount returns a wrapper typed against the concrete component instance, which is not assignable

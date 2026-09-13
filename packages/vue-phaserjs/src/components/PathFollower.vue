@@ -6,7 +6,7 @@ import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { PathFollowerSetterMap } from "#src/util/setterMap/PathFollowerSetterMap";
+import { PathFollowerSetterMap } from "#src/services/setterMap/PathFollowerSetterMap";
 
 interface PathFollowerEmits extends /** @vue-ignore */ PathFollowerEventEmitsOptions {}
 

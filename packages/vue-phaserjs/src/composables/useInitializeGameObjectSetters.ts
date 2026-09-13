@@ -4,7 +4,7 @@ import type { SetupContext, WatchHandle } from "vue";
 
 import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
 import { onNextTick } from "#src/hooks/onNextTick";
-import { getUpdateEvent } from "#src/util/emit/getUpdateEvent";
+import { getUpdateEvent } from "#src/services/emit/getUpdateEvent";
 
 export const useInitializeGameObjectSetters = <
   TConfiguration extends object,

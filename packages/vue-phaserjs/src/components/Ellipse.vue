@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { EllipseSetterMap } from "#src/util/setterMap/EllipseSetterMap";
+import { EllipseSetterMap } from "#src/services/setterMap/EllipseSetterMap";
 
 interface EllipseEmits extends /** @vue-ignore */ EllipseEventEmitsOptions {}
 

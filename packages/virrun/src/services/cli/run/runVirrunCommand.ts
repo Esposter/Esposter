@@ -1,3 +1,5 @@
+import type { RunVirrunCommandOptions } from "#src/models/cli/RunVirrunCommandOptions";
+
 import { BackendType } from "#src/models/virrun/BackendType";
 import { ExecutionMode } from "#src/models/virrun/ExecutionMode";
 import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
@@ -25,7 +27,7 @@ import { performance } from "node:perf_hooks";
 // Lines go to stderr only — never stdout — so correctness diffs comparing the child's streams are untouched.
 export const runVirrunCommand = async (
   command: readonly string[],
-  { mode }: { mode: ExecutionMode },
+  { mode }: RunVirrunCommandOptions,
 ): Promise<number> => {
   const start = performance.now();
   const result = await getResultAsync(async () => {

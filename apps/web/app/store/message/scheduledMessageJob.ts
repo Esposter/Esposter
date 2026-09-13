@@ -9,7 +9,6 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
   const { executeMutation: executeScheduledMessageJobMutation } = useMutation();
   const { items, ...restOffsetPaginationData } = useOffsetPaginationData<ScheduledMessageJobInMessageWithRoom>();
   const scheduledMessageJobCount = ref(0);
-  const isPending = ref(true);
   const deleteScheduledMessageJob = (id: ScheduledMessageJobInMessage["id"]) => {
     const remainingScheduledMessageJobs = items.value.filter((scheduledMessageJob) => scheduledMessageJob.id !== id);
     // The badge counts every scheduled job, not just the loaded page, so it only moves when this page really
@@ -46,7 +45,6 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
   return {
     cancelScheduledMessageJob,
     deleteScheduledMessageJob,
-    isPending,
     items,
     scheduledMessageJobCount,
     sendScheduledMessageNow,

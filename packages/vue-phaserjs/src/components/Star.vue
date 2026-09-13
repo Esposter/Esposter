@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
 import { useInitializeGameObject } from "#src/composables/useInitializeGameObject";
-import { StarSetterMap } from "#src/util/setterMap/StarSetterMap";
+import { StarSetterMap } from "#src/services/setterMap/StarSetterMap";
 
 interface Props {
   configuration: Partial<StarConfiguration>;

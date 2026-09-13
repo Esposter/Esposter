@@ -1,5 +1,4 @@
 import type { ApiConnectionAction } from "#src/azure/models/ApiConnectionAction";
-import type { AzureFunctionEventSubscriptionArguments } from "#src/azure/models/AzureFunctionEventSubscriptionArguments";
 import type { EventSubscriptionRestoreOptions } from "#src/azure/models/EventSubscriptionRestoreOptions";
 
 import AzureEventGridApiVersion from "#src/azure/constants/AzureEventGridApiVersion";
@@ -7,37 +6,8 @@ import { HttpMethod } from "#src/azure/models/HttpMethod";
 import { WorkflowActionStatus } from "#src/azure/models/WorkflowActionStatus";
 import { getApiConnectionAction } from "#src/azure/services/getApiConnectionAction";
 import { getAzureFunctionEventSubscriptionArguments } from "#src/azure/services/getAzureFunctionEventSubscriptionArguments";
+import { getEventSubscriptionBody } from "#src/azure/services/getEventSubscriptionBody";
 import { getEventSubscriptionResourcePath } from "#src/azure/services/getEventSubscriptionResourcePath";
-import * as azure_native from "@pulumi/azure-native";
-
-// The REST body nests each destination's settings under `properties` where the Pulumi resource flattens them
-const getEventSubscriptionBody = (
-  resourceGroup: azure_native.resources.ResourceGroup,
-  topic: azure_native.eventgrid.Topic,
-  eventSubscription: azure_native.eventgrid.EventSubscription,
-  {
-    deadLetterDestination: { endpointType: deadLetterEndpointType, ...deadLetterProperties },
-    destination: { endpointType: destinationEndpointType, ...destinationProperties },
-    ...properties
-  }: AzureFunctionEventSubscriptionArguments,
-) => ({
-  properties: {
-    ...properties,
-    deadLetterDestination: {
-      endpointType: deadLetterEndpointType,
-      properties: deadLetterProperties,
-    },
-    destination: {
-      endpointType: destinationEndpointType,
-      properties: destinationProperties,
-    },
-    id: eventSubscription.id,
-    name: eventSubscription.name,
-    resourceGroup: resourceGroup.name,
-    topic: topic.id,
-    type: "Microsoft.EventGrid/eventSubscriptions",
-  },
-});
 
 // Each target is read first and recreated only when the read does not succeed, so a subscription the guard never
 // Deleted is left untouched. Any failed or timed-out read gates the PUT, not a 404 alone: the body is the declared
@@ -65,7 +35,7 @@ export const getEventSubscriptionRestoreActions = ({
         storageAccount,
         deadLetterContainer,
       );
-      const body = getEventSubscriptionBody(resourceGroup, topic, eventSubscription, eventSubscriptionArguments);
+      const body = getEventSubscriptionBody(eventSubscriptionArguments);
       return [
         [
           `Create_${azureFunction}_Event_Subscription`,
