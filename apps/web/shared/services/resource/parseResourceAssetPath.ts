@@ -1,7 +1,7 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { SnapshotChannel } from "@esposter/db-schema";
 import { getDecodedUriComponent } from "@esposter/shared";
 import { z } from "zod";
 

@@ -3,7 +3,8 @@ export enum GateDecisionKind {
   Exit = "Exit",
   // A state the gates do not recognise — a person looks rather than the collector guessing
   Fail = "Fail",
-  // A rate-limited status with a stale body: only a retrigger says whether the checkpoint covers the head
-  Probe = "Probe",
   Proceed = "Proceed",
+  // A rate-limited status with a stale body: the bot ran nothing, so the slot is free and the window is measured
+  // From the stale frontier — and the retrigger that starts the review it skipped is scheduled for the deadline
+  RateLimited = "RateLimited",
 }

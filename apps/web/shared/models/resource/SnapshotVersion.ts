@@ -1,5 +1,4 @@
-import type { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
-import type { SnapshotReason } from "#shared/models/resource/SnapshotReason";
+import type { SnapshotChannel, SnapshotReason } from "@esposter/db-schema";
 
 // One row of a resource's version history, whichever channel it came from. The two channels are separate
 // Address spaces in storage and one list on screen, so the row says which channel it belongs to rather than

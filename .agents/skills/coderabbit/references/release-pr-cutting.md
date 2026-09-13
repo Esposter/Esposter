@@ -2,7 +2,7 @@
 
 Read when a push has put a review window past the file limit and CodeRabbit skips it outright ("Review skipped: N files exceed the limit of 100"). This is the recovery for **any** overshoot, not just a PR too big for its first review — an already-reviewed PR trips it the ordinary way, by accumulating past the cap locally between pushes.
 
-The release PR (`develop` → `main`) can't be planned to a budget — it accumulates whatever merged. The fix is to **shorten `develop` and park the rest on a queue branch**, then feed the queue back one window at a time.
+The release PR (`develop` → `main`) can't be planned to a budget — it accumulates whatever merged. The fix is to **shorten `develop` and park the rest on a park branch**, then feed it back one window at a time.
 
 **Never force-push `develop` to make a window fit.** A rewind desynchronises CodeRabbit's incremental checkpoint from the branch, and the checkpoint does not recover on its own: the review after one anchors on the **start** of its own range rather than the end, so the next window is counted from a sha whose files have already been reviewed and accepted, and a window measured locally as comfortably under the cap arrives well over it. Every later cycle inherits that inflated baseline. The cost of one rewind is therefore not one skipped review but a branch that cannot get under the cap again by any additive means.
 
@@ -19,9 +19,11 @@ When a local measure and that number disagree, the bot is right and the local ba
 
 Never open side PRs against `main` to slice it up. Each one spends a review slot on arrival, and the release PR is not the thing that needs splitting — its _review cycles_ are.
 
-**There are only ever two branches: `develop` and `queue/<scope>`. One PR: the release PR, which stays open the whole time.**
+**There are only ever two branches beyond the session's own: `develop` and `parked/<scope>`. One PR: the release PR, which stays open the whole time.**
 
-**The queue branch stages content, never history.** Port its changes onto `develop` as fresh commits and delete the branch — do not merge it. A merge replays the queue's original commits and adds a merge commit, which is exactly the shape that leaves CodeRabbit's checkpoint ambiguous; a linear, purely additive `develop` is what it tracks reliably. Porting does not change the file count — the same files change either way — so this buys history hygiene, not headroom.
+**The park branch cannot live under `queue/`.** Git stores a branch as a file at its own path, so `refs/heads/queue` and `refs/heads/queue/<scope>` cannot both exist — and `queue` is the session's permanent branch (`references/pipelining.md`), so a park named under it fails at `git branch`. It is named `parked/<scope>` for that reason, and because the collector's `push` trigger names the literal `queue`: a park is staging, and pushing it must start no cycle.
+
+**The park branch stages content, never history.** Port its changes onto `develop` as fresh commits and delete the branch — do not merge it. A merge replays the queue's original commits and adds a merge commit, which is exactly the shape that leaves CodeRabbit's checkpoint ambiguous; a linear, purely additive `develop` is what it tracks reliably. Porting does not change the file count — the same files change either way — so this buys history hygiene, not headroom.
 
 ## 1. Cut
 
@@ -44,28 +46,28 @@ git switch "$start"   # unconditional: a red candidate is the expected result, n
 
 Never `&&`-chain the return hop behind the check. A failing typecheck is the outcome this is looking for, so chaining strands the clone on a detached `HEAD`. There is no `git stash` here either — the cut already requires a clean worktree, and a `stash push` on a clean tree creates nothing, so the paired `stash pop` would restore an unrelated older entry.
 
-A cut that lands mid-breakage is not a lost-work problem — the repair is safe on the queue branch — but it publishes a red `develop` and burns the review cycle on a window whose CI never passes.
+A cut that lands mid-breakage is not a lost-work problem — the repair is safe on the park branch — but it publishes a red `develop` and burns the review cycle on a window whose CI never passes.
 
 Take the boundary nearest ~90 files. The next three commands discard and rewrite published history, so they are the one place in this repo that needs a gate first — **get explicit approval for this cut**, and check all three of: the worktree is clean (`git status --porcelain -uall` empty — a `reset --hard` eats uncommitted work), you are on `develop` and not a worktree branch, and the local tip matches `origin/develop` (`git rev-parse develop origin/develop`) so no other session's push is about to be overwritten. `--force-with-lease` refuses the push if the remote moved, but nothing catches a dirty tree or the wrong branch.
 
 Then park and cut:
 
 ```bash
-git branch queue/<scope> develop && git push origin queue/<scope>   # nothing lost yet
+git branch parked/<scope> develop && git push origin parked/<scope>   # nothing lost yet
 git reset --hard <cut> && git push --force-with-lease origin develop
 ```
 
 **Reset straight to `<cut>` — the first window stays on `develop`.** Resetting all the way back to `<base>` and then merging the window in is the same end state by a worse route: it is two pushes, and the first reviews a zero-file diff, so it spends a review slot to say nothing. One push, one slot, one window.
 
-The park has to be pushed **before** the reset, not after. Until `queue/<scope>` exists on the remote the cut commits live only in this clone, and a `reset --hard` that lands with the push unmade is unrecoverable from anywhere else.
+The park has to be pushed **before** the reset, not after. Until `parked/<scope>` exists on the remote the cut commits live only in this clone, and a `reset --hard` that lands with the push unmade is unrecoverable from anywhere else.
 
-**The queue branch is never rebased, moved, or force-pushed.** Because windows are cherry-picked onto `develop` rather than merged, the queue is an immutable record of what still has to be ported; rewriting it invalidates the cursor the drain step counts with, and re-dirties shas that `develop` already carries copies of. Push it once, here, and leave it until it is deleted.
+**The park branch is never rebased, moved, or force-pushed.** Because windows are cherry-picked onto `develop` rather than merged, the queue is an immutable record of what still has to be ported; rewriting it invalidates the cursor the drain step counts with, and re-dirties shas that `develop` already carries copies of. Push it once, here, and leave it until it is deleted.
 
 Cherry-pick doc and skill commits across the cut so the working tree keeps the conventions it is being asked to follow. One already on `develop` replays as a no-op, or conflicts if it was reworded since — read the commit's **patch**, `git show <commit>`, before resolving, never `--stat`, which shows which files it touched but not whether their content is the copy. Dropping a conflicting commit wholesale loses any unrelated work it also carried.
 
 ## 2. Drain
 
-**The review collector is the drain.** With the cut pushed, `queue/<scope>` is what `queue` still owes, and the
+**The review collector is the drain.** With the cut pushed, `parked/<scope>` is what `queue` still owes, and the
 procedure below is what `pnpm ai:coderabbit:collect` does on every queue push and every completed review
 (`references/pipelining.md`). Port the parked commits onto `queue` — a cherry-pick, never a merge, for the reasons
 this page gives — and the collector sizes, verifies and pushes each window. What follows is the same drain by hand,
@@ -73,18 +75,18 @@ for reading what the collector is doing or for a clone where it cannot run.
 
 Port one queue window onto `develop`, trigger a review, wait for `Review completed`, fix findings, then port the next. Reviews are incremental — each cycle reads only what changed since the last completed one (SKILL.md § PR File Budget) — so every window gets a full-budget review even though the PR's cumulative diff grows past the cap.
 
-Size each window off the queue the way the cut was sized, then **cherry-pick the window, never merge the branch.** `git merge queue/<scope>` takes the whole remainder and rebuilds the over-budget PR in a single push; even merging a single window commit adds a merge commit and replays the queue's shas, and `develop` is tracked most reliably when it only ever grows linearly:
+Size each window off the queue the way the cut was sized, then **cherry-pick the window, never merge the branch.** `git merge parked/<scope>` takes the whole remainder and rebuilds the over-budget PR in a single push; even merging a single window commit adds a merge commit and replays the queue's shas, and `develop` is tracked most reliably when it only ever grows linearly:
 
 ```bash
 cursor=<last-ported-queue-commit>   # the cut itself, for the first window
-for commit in $(git rev-list --reverse "$cursor"..queue/<scope>); do
+for commit in $(git rev-list --reverse "$cursor"..parked/<scope>); do
   printf '%4d  %s\n' "$(git diff --name-only -M "$cursor..$commit" | wc -l)" "$(git log -1 --oneline "$commit")"
 done
 git switch develop && git cherry-pick "$cursor"..<window> && git push origin develop
-git rev-list --count <window>..queue/<scope>   # what the queue still owes; <window> is the new cursor
+git rev-list --count <window>..parked/<scope>   # what the queue still owes; <window> is the new cursor
 ```
 
-**Count the remainder from a cursor, never from `develop`.** Cherry-picking copies the queue's commits rather than making `develop` a descendant of them, so `develop..queue/<scope>` never shrinks — it keeps reporting windows already ported and would re-offer them for sizing. The cursor is the last queue commit ported; it advances to `<window>` after each push, and the branch is deleted when it reaches the tip.
+**Count the remainder from a cursor, never from `develop`.** Cherry-picking copies the queue's commits rather than making `develop` a descendant of them, so `develop..parked/<scope>` never shrinks — it keeps reporting windows already ported and would re-offer them for sizing. The cursor is the last queue commit ported; it advances to `<window>` after each push, and the branch is deleted when it reaches the tip.
 
 **Re-measure the window immediately before pushing, not when planning it.** The count that matters is the one after the review fixes, the port and the format/lint pass have all landed, and it lands higher than the estimate: a lint pass fixes whatever the ported window dragged in, so it touches files no one attributed to the window. Planning at "89 plus the five files the findings name" is how a window arrives at the remote at 101.
 
@@ -94,7 +96,7 @@ git diff --name-only -M <last-reviewed-sha>..HEAD | wc -l   # after every commit
 
 Over budget at that point is cheap to fix precisely because nothing is pushed: `git reset --hard` to the last commit that belongs on `develop`, cherry-pick a **shorter prefix** of the window, and re-apply whatever work sat above it. The cursor moves back with the prefix, so the queue simply owes one more window. Prefer dropping a whole trailing commit to hunting individual files — the boundary stays a commit boundary, and the next window is already sized.
 
-`--no-ff` rather than `--ff-only`: the fixes for one window's findings land on `develop`, so from the second window on the queue is no longer a descendant of `develop` and a fast-forward is refused. The queue branch itself is never moved — `develop..queue/<scope>` shrinks on its own as windows merge, and it is empty (count `0`) when the branch can be deleted.
+`--no-ff` rather than `--ff-only`: the fixes for one window's findings land on `develop`, so from the second window on the queue is no longer a descendant of `develop` and a fast-forward is refused. The park branch itself is never moved — the cursor-based count from step 2 shrinks as windows merge, and it is empty (count `0`) when the branch can be deleted.
 
 ## 3. Merge
 
@@ -106,4 +108,4 @@ Three things break the scheme:
 - **Asking for a full re-review** — it re-reads the cumulative diff and trips the file limit again.
 - **A force-push while a review is running** — the cut in step 1 retriggers the open PR's review like any other push, so check the state first and check no other session is pushing `develop`.
 
-Counts don't subtract: a file touched in two windows counts in both, so the remainder is bigger than `total - prefix`. Measure it — `git diff --name-only -M develop..queue/<scope> | wc -l`.
+Counts don't subtract: a file touched in two windows counts in both, so the remainder is bigger than `total - prefix`. Measure it — `git diff --name-only -M develop..parked/<scope> | wc -l`.

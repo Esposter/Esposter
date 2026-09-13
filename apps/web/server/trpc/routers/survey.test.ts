@@ -4,7 +4,6 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import {
   CLOSED_SURVEY_ERROR_REASON,
@@ -19,7 +18,14 @@ import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { AzureEntityType, AzureTable, DatabaseEntityType, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
+import {
+  AzureEntityType,
+  AzureTable,
+  DatabaseEntityType,
+  ResourceType,
+  SnapshotChannel,
+  SurveyResponseMode,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";

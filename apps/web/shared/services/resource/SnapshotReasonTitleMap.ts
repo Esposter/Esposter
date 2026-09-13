@@ -1,4 +1,4 @@
-import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
+import { SnapshotReason } from "@esposter/db-schema";
 
 // What a history row says it is. Written from the owner's point of view rather than the mechanism's — they
 // Did not ask for a checkpoint, they were about to do something that would have destroyed their draft

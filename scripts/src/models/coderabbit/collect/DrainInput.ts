@@ -6,5 +6,5 @@ export interface DrainInput {
   openThreads: ReviewThread[];
   pullRequest: number;
   // Present when the newest review's body-only findings are still open
-  reviewId: number | undefined;
+  reviewId?: number;
 }

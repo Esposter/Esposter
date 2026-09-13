@@ -3,7 +3,7 @@
 Read when planning the push cadence, when deciding what the session pushes and what it never touches, or when
 the collector has moved `develop` and the session has to catch up. This page holds the whole procedure; `SKILL.md`
 keeps the cap, the gates and the finding rules it operates under. The design in full, with the cycle, the runner
-and the ref ownership as separate pages: `apps/web/content/docs/proposals/infra/review-collector/`.
+and the ref ownership as separate pages: `apps/web/content/docs/infra/review-collector/`.
 
 ## Three branches, one writer each
 
@@ -68,8 +68,11 @@ rejection needs no sha and may be replied to directly.
 — the session rebases `queue` onto `origin/review-fixes`, not onto `develop`: the fixes will lead the next window,
 and a queue that already carries them replays them as empty.
 
-**A merge of `main` into `queue`** — a dependency bump landing — is never owed to `develop`: the porter skips
-merge commits, and their content reaches `develop` through the `main` sync the `git` skill describes.
+**`main` is synced by the collector, not the session.** After the release pull request merges, the push to
+`main` runs the cycle and `develop` is fast-forwarded to it; a dependency bump that lands on `main` alone is folded
+into the next window as a merge commit, lockfile rebuilt the `git` skill's way, so it rides a slot that was being
+spent anyway. A merge of `main` into `queue` the session makes is never owed to `develop` — the porter takes only
+the commits the queue authored — and the session's next rebase onto `develop` linearises it away.
 
 ## Re-opening the standing PR after it merges
 

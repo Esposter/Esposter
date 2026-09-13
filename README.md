@@ -330,8 +330,9 @@ Three branches, each written by exactly one actor, turn a stream of AI-authored 
 without anyone waiting on anyone. Sessions push to `queue` as fast as they commit. The review collector — a
 GitHub Actions workflow fired by every `queue` push and every CodeRabbit review — drains the open findings,
 ports the largest green window under CodeRabbit's file cap onto `develop`, and replies on each thread with the
-pushed sha. `develop` merges to `main` once a window comes back clean. The design and its fine print live in
-[the review collector proposal](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/proposals/infra/review-collector).
+pushed sha. `develop` merges to `main` once a window comes back clean, and the push to `main` runs the same
+collector, which fast-forwards `develop` back onto it. The design and its fine print live in
+[the review collector docs](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/infra/review-collector).
 
 ```mermaid
 flowchart LR
@@ -343,28 +344,31 @@ flowchart LR
   C -->|fixes parked| F[(review-fixes)]
   F -->|lead the next window| D
   D -->|zero findings| M[(main)]
+  M -->|push event| C
+  C -->|fast-forward after the merge<br/>fold a bump into the next window| D
 ```
 
 ## <a name="packages">📦 Packages</a>
 
-| Package                                                                                           | Description                                                                      | Published |
-| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | :-------: |
-| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                 | Serverless Azure Functions backend — push notifications, webhooks, EventGrid     |     —     |
-| [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                         | Pulumi infrastructure code and migration tools for Azure resources               |     —     |
-| [`apps/web`](https://github.com/Esposter/Esposter/tree/main/apps/web)                             | Main Nuxt 4 web application — frontend, server routes, tRPC API                  |     —     |
-| [`packages/azure`](https://github.com/Esposter/Esposter/tree/main/packages/azure)                 | Azure wire conventions — OData filter clauses, entity key casing, service limits |     ✓     |
-| [`packages/azure-mock`](https://github.com/Esposter/Esposter/tree/main/packages/azure-mock)       | Mock Azure service classes for local dev and testing                             |     ✓     |
-| [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration) | Shared ESLint, TSConfig, and tsdown build configurations                         |     —     |
-| [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                       | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub  |     —     |
-| [`packages/db-mock`](https://github.com/Esposter/Esposter/tree/main/packages/db-mock)             | In-memory PGlite database factory for unit and integration tests                 |     —     |
-| [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)         | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                  |     —     |
-| [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)         | Parser for Tiled Map Editor `.tmx` files                                         |     ✓     |
-| [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)               | Shared TypeScript types, utilities, and error classes                            |     ✓     |
-| [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)     | Node-only shared tooling — benchmark reporting for vitest bench runs             |     —     |
-| [`packages/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/virrun)               | Ephemeral, in-memory virtual runner — runs a repo's real toolchain isolated      |     ✓     |
-| [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)   | Phaser 4 game engine integration for Vue 3                                       |     ✓     |
-| [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)               | TypeScript rewrite of xml2js — XML ↔ JSON conversion                             |     ✓     |
-| [`scripts`](https://github.com/Esposter/Esposter/tree/main/scripts)                               | The repository's own tooling — workspace graph, dependency report, sweep scans   |     —     |
+| Package                                                                                             | Description                                                                      | Published |
+| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | :-------: |
+| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                   | Serverless Azure Functions backend — push notifications, webhooks, EventGrid     |     —     |
+| [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                           | Pulumi infrastructure code and migration tools for Azure resources               |     —     |
+| [`apps/web`](https://github.com/Esposter/Esposter/tree/main/apps/web)                               | Main Nuxt 4 web application — frontend, server routes, tRPC API                  |     —     |
+| [`packages/azure`](https://github.com/Esposter/Esposter/tree/main/packages/azure)                   | Azure wire conventions — OData filter clauses, entity key casing, service limits |     ✓     |
+| [`packages/azure-mock`](https://github.com/Esposter/Esposter/tree/main/packages/azure-mock)         | Mock Azure service classes for local dev and testing                             |     ✓     |
+| [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration)   | Shared ESLint, TSConfig, and tsdown build configurations                         |     —     |
+| [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                         | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub  |     —     |
+| [`packages/db-mock`](https://github.com/Esposter/Esposter/tree/main/packages/db-mock)               | In-memory PGlite database factory for unit and integration tests                 |     —     |
+| [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)           | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                  |     —     |
+| [`packages/keyframe-store`](https://github.com/Esposter/Esposter/tree/main/packages/keyframe-store) | Content-addressed version store — zstd keyframes and deltas over any backend     |     ✓     |
+| [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)           | Parser for Tiled Map Editor `.tmx` files                                         |     ✓     |
+| [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                 | Shared TypeScript types, utilities, and error classes                            |     ✓     |
+| [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)       | Node-only shared tooling — benchmark reporting for vitest bench runs             |     —     |
+| [`packages/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/virrun)                 | Ephemeral, in-memory virtual runner — runs a repo's real toolchain isolated      |     ✓     |
+| [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)     | Phaser 4 game engine integration for Vue 3                                       |     ✓     |
+| [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)                 | TypeScript rewrite of xml2js — XML ↔ JSON conversion                             |     ✓     |
+| [`scripts`](https://github.com/Esposter/Esposter/tree/main/scripts)                                 | The repository's own tooling — workspace graph, dependency report, sweep scans   |     —     |
 
 ## <a name="community">🤝 Community</a>
 

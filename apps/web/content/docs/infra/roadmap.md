@@ -7,12 +7,9 @@ description: Open infrastructure work — every item links its proposal.
 
 Open work, each item linking its proposal. Ideas parked behind a revisit trigger live in [deferred](/docs/infra/deferred) instead. Rationale lives in [Cost & Security Posture](/docs/infra/cost-and-security-posture) and `apps/infra/docs/`.
 
-## In progress
+## Review collector follow-ons
 
-- [ ] [Review collector](/docs/proposals/infra/review-collector) — the event-triggered, idempotent collector that drains CodeRabbit findings and ports `queue` windows onto `develop`
-  - [ ] the `ai:coderabbit:collect` cycle and its workflow
-  - [ ] the `REVIEW_COLLECTOR_TOKEN` secret declared in Pulumi and supplied to the stack
-  - [ ] the `coderabbit` skill's pipelining and cutting pages rewritten around one `queue` branch
+- [ ] the `status` event as a further free signal for the [runner](/docs/infra/review-collector/runner) — it fires on the commit status CodeRabbit flips at completion, so it covers a rate-limited completion that posts no review body; it runs from the default branch only, so it waits on the workflow file reaching `main`
 
 ## Blocked (app-side migration off key-based auth first)
 

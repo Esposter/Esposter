@@ -81,6 +81,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "recycle-bin",
       "activity-log",
       "resource-snapshots",
+      "resource-version-store",
       "resource-save-state",
       "shell-cohesion",
       "breadcrumb-trail",

@@ -1,11 +1,10 @@
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
-import { NotificationSeverity } from "@esposter/db-schema";
+import { NotificationSeverity, SnapshotChannel } from "@esposter/db-schema";
 
 // The version history panel's own state: one merged timeline over both channels, and the two writes its rows
 // Issue. Blade-scoped — the store is app-lifetime and this state is the open resource's, so the panel clears

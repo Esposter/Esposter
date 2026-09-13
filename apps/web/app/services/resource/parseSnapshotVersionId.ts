@@ -1,6 +1,6 @@
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
-import { SnapshotChannels } from "#shared/models/resource/SnapshotChannel";
+import { SnapshotChannels } from "@esposter/db-schema";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 // The inverse of getSnapshotVersionId, over a value that arrives through the route and is therefore whatever
