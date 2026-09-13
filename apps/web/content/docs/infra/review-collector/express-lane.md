@@ -45,7 +45,7 @@ flowchart TD
 
 **It does not trust the proof it selected with.** Each commit is classified as its author wrote it, against a parent from the queue — and what ships is that patch replayed onto `main` and stacked with the siblings the lane took out of order. So the proof is asked again of the **cut**, whose cumulative diff against `main` is both what a cherry-pick actually produced and the unit a reviewer would have read. A cut that fails it takes the review lane whole, rather than the lane guessing which pick changed meaning.
 
-**It does not push twice in a run.** The express push is one irreversible act, and the run exits on it. The push fires the cycle again, which fast-forwards `develop` onto the new `main` and only then measures a window, against a frontier that has already moved.
+**It does not push twice in a run.** The express push is one irreversible act, and the run exits on it. The push fires the cycle again, which fast-forwards `develop` onto the new `main` and exits in turn — the lane it opened by doing so waits for the event after that, since a mechanical commit is never the urgent one — and only then is a window measured, against a frontier that has already moved.
 
 ## What it costs a sweep
 

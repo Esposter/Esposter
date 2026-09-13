@@ -33,9 +33,8 @@ flowchart TD
   CM[Bot comment<br/>answering a retrigger] --> C
   C[Collector run<br/>serialized by concurrency group] --> R[Read remote state<br/>frontier, status, threads, refs]
   R --> RS{develop an ancestor of main}
-  RS -->|yes| FF[Fast-forward develop to main<br/>no slot spent]
-  RS -->|no| E
-  FF --> E{Any owed commit provably<br/>has nothing to review}
+  RS -->|yes| FF[Fast-forward develop to main<br/>no slot spent, exit]
+  RS -->|no| E{Any owed commit provably<br/>has nothing to review}
   E -->|yes| EX[Cherry-pick onto main<br/>push, exit — no window spent]
   E -->|no| G{Slot free and<br/>previous window reviewed}
   G -->|no| X[Exit — nothing to do]
@@ -52,7 +51,7 @@ flowchart TD
 Three properties make the picture safe to fire from anything:
 
 - **All state is remote.** The runner is ephemeral, so nothing it learns survives a run: the frontier is read from review bodies, open findings from the threads, fixes awaiting a push from the `review-fixes` branch, which thread a fix answers from a trailer on the fix commit itself, and what the queue still owes from `git cherry` against `develop`. A second run sees exactly what the first saw plus whatever the first pushed.
-- **One irreversible act per run** — the push to `develop`, or the express lane's push to `main`, never both — and it is a compare-and-swap: a non-fast-forward push is refused, so a `develop` that moved between the read and the push fails the run rather than clobbering anything. Everything before it is a local branch in the runner, and everything after it is idempotent by predicate — a reply is posted only where the thread lacks one citing that sha. Nothing is ever deleted: `review-fixes` is re-created from `develop` by the next drain once it owes nothing, and what `queue` still owes is a `git cherry` away.
+- **One irreversible act per run** — the return stroke's fast-forward of `develop`, the express lane's push to `main`, or the window's push to `develop`, never two — and it is a compare-and-swap: a non-fast-forward push is refused, so a `develop` that moved between the read and the push fails the run rather than clobbering anything. Everything before it is a local branch in the runner, and everything after it is idempotent by predicate — a reply is posted only where the thread lacks one citing that sha. Nothing is ever deleted: `review-fixes` is re-created from `develop` by the next drain once it owes nothing, and what `queue` still owes is a `git cherry` away.
 - **The cap is measured on the tree that will be pushed,** never estimated. The porter builds the candidate branch one cherry-pick at a time and reads the file count from the frontier after each, so fixes, ported commits and a queue rebased by nobody all count exactly once.
 
 ## Parameters

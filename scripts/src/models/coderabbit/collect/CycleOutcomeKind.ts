@@ -3,6 +3,8 @@
 export enum CycleOutcomeKind {
   // Mechanical commits reached `main` directly — no review slot spent
   Expressed = "Expressed",
+  // `develop` followed a merged `main` by fast-forward — no review slot spent, no pull request open
+  FastForwarded = "FastForwarded",
   // Nothing was done: a gate closed, the window is under the fill target, or the remote moved under the run
   Idle = "Idle",
   // A window reached `develop`

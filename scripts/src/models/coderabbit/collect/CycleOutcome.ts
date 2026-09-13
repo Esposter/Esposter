@@ -8,6 +8,6 @@ export interface CycleOutcome {
   // Seconds the runner's retrigger job sleeps before dispatching the cycle again. Set from the gate down
   // Whatever the run goes on to do: a stated deadline is owed a wake whether or not a window was pushed.
   retriggerDelaySeconds?: number;
-  // What was pushed, on `Expressed` and `Pushed`
+  // What was pushed, on `Expressed`, `FastForwarded` and `Pushed`
   targetSha?: string;
 }

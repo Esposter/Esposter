@@ -72,8 +72,8 @@ export const runCycle = async ({
   runGit(["fetch", "--prune", "origin"]);
   const mainSha = readSha(`origin/${MAIN_BRANCH}`);
   const queueSha = readSha(`origin/${QUEUE_BRANCH}`);
-  const pushedDevelopSha = readSha(`origin/${DEVELOP_BRANCH}`);
-  if (!pushedDevelopSha || !queueSha || !mainSha)
+  const developSha = readSha(`origin/${DEVELOP_BRANCH}`);
+  if (!developSha || !queueSha || !mainSha)
     throw new InvalidOperationError(
       Operation.Read,
       "coderabbit",
@@ -83,18 +83,24 @@ export const runCycle = async ({
 
   // The return stroke: the release pull request just merged, so develop is an ancestor of main and follows it by
   // Fast-forward — no slot spent, since no pull request is open. Main advancing on its own (a dependency bump)
-  // Leaves develop no ancestor, and the porter folds that into the next window instead.
+  // Leaves develop no ancestor, and the porter folds that into the next window instead. The push is this run's
+  // One irreversible act: with develop and main now agreeing the express lane is open, and taking it here would
+  // Make two pushes of one run. It waits for the next event, and a mechanical commit is never the urgent one.
   const isDevelopBehindMain =
-    pushedDevelopSha !== mainSha &&
-    getResult(() => runGit(["merge-base", "--is-ancestor", pushedDevelopSha, mainSha])).match(
+    developSha !== mainSha &&
+    getResult(() => runGit(["merge-base", "--is-ancestor", developSha, mainSha])).match(
       () => true,
       () => false,
     );
   if (isDevelopBehindMain) {
     console.info(`${DEVELOP_BRANCH} is an ancestor of ${MAIN_BRANCH} — fast-forwarding it`);
     pushBranch({ branch: DEVELOP_BRANCH, isDryRun, sha: mainSha });
+    return getOutcome(
+      CycleOutcomeKind.FastForwarded,
+      `${DEVELOP_BRANCH} followed ${MAIN_BRANCH} — the next event measures against it`,
+      mainSha,
+    );
   }
-  const developSha = isDevelopBehindMain ? mainSha : pushedDevelopSha;
 
   // The express lane, before the pull request is even looked up: it spends no review slot and needs no pull
   // Request open, which also makes it the one thing that moves the pipeline while there is none. A mechanical
