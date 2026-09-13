@@ -27,19 +27,20 @@ export const postDrainVerdicts = ({
 }: Pick<DrainPromptInput, "openThreads" | "pullRequest" | "rejectionsPath" | "reviewId" | "verdictPath">): void => {
   const openIds = new Set(openThreads.map(({ commentId }) => commentId));
   for (const line of readLines(rejectionsPath)) {
-    const [commentId = "", ...reason] = line.split(" ");
+    const [rawCommentId = "", ...reason] = line.split(" ");
+    const commentId = Number(rawCommentId);
     // A line naming no open thread is skipped rather than posted: a malformed id, or one the drain — which reads
     // Review text it must not trust — was never asked about
-    if (!openIds.has(Number(commentId))) {
+    if (!openIds.has(commentId)) {
       console.info(`skipping a rejection line that names no open thread: ${line}`);
       continue;
     }
 
     const body = `Not a real issue, no change — ${stripHtmlComments(reason.join(" "))}`;
-    console.info(`reply ${commentId}: ${body}`);
+    console.info(`reply ${commentId.toString()}: ${body}`);
     runGh([
       "api",
-      `repos/{owner}/{repo}/pulls/${pullRequest.toString()}/comments/${commentId}/replies`,
+      `repos/{owner}/{repo}/pulls/${pullRequest.toString()}/comments/${commentId.toString()}/replies`,
       "-f",
       `body=${body}`,
     ]);
