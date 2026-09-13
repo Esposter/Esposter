@@ -2,6 +2,7 @@ import type { GitHubReview } from "#src/models/coderabbit/GitHubReview";
 
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
+import { checkIsProbeDue } from "#src/services/coderabbit/collect/checkIsProbeDue";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import {
   DEVELOP_BRANCH,
@@ -10,7 +11,6 @@ import {
   GREEN_CUT_RETRY_LIMIT,
   MAIN_BRANCH,
   PENDING_BUCKET,
-  PROBE_COMMENT,
   QUEUE_BRANCH,
   REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
@@ -122,15 +122,10 @@ else if (gate.kind === GateDecisionKind.Probe) {
     console.info("would probe — a dry run posts nothing");
     process.exit(0);
   }
-  // One retrigger per head: a rate-limited bot answers every probe with the same notice, and every queue push
-  // Would otherwise post another one for the hour the limit lasts
   const headCommittedAtMs = Number(runGit(["show", "--no-patch", "--format=%ct", developSha]).trim()) * 1000;
-  const isProbePosted = issueComments.some(
-    ({ body, updated_at, user }) =>
-      user.login === viewerLogin && body.trim() === PROBE_COMMENT && Date.parse(updated_at) > headCommittedAtMs,
-  );
-  if (isProbePosted) {
-    console.info("already probed for this head — the bot's answer decides, not another retrigger");
+  const isProbeDue = checkIsProbeDue({ headCommittedAtMs, issueComments, nowMs: Date.now(), viewerLogin });
+  if (!isProbeDue) {
+    console.info("probed for this head inside the rate-limit window — the next event retriggers");
     process.exit(0);
   }
   const reply = await runProbe(pullRequest);

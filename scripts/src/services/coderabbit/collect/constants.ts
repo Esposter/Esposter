@@ -18,6 +18,10 @@ export const CHECK_NAME = "CodeRabbit";
 // The retrigger the probe posts, spelled once so the collector recognises its own
 export const PROBE_COMMENT = "@coderabbitai review";
 
+// CodeRabbit's rate limit lifts on an hourly window and answers every retrigger inside one with the same notice,
+// So a probe is worth posting again only once that window has turned over
+export const PROBE_BACKOFF_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+
 export const PENDING_BUCKET = "pending";
 
 export const PASS_BUCKET = "pass";
