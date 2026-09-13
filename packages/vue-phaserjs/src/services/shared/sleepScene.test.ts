@@ -1,4 +1,4 @@
-import { sleepScene } from "#src/services/sleepScene";
+import { sleepScene } from "#src/services/shared/sleepScene";
 import { getTestGame, removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
 import { describe, expect, test } from "vitest";
 

@@ -1,4 +1,4 @@
-import { getDepthInsertIndex } from "#src/services/getDepthInsertIndex";
+import { getDepthInsertIndex } from "#src/services/shared/getDepthInsertIndex";
 import { describe, expect, test } from "vitest";
 
 const createList = (depths: (number | undefined)[]) => depths.map((depth) => ({ depth }));

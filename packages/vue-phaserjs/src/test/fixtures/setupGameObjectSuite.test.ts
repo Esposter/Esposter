@@ -1,6 +1,6 @@
 import type { ComponentMountingOptions, VueWrapper } from "@vue/test-utils";
 
-import { InjectionKeyMap } from "#src/services/InjectionKeyMap";
+import { InjectionKeyMap } from "#src/services/shared/InjectionKeyMap";
 import { getTestPinia, removeTestScene } from "#src/test/fixtures/headlessGame.test";
 import { mount } from "@vue/test-utils";
 import { afterEach, describe } from "vitest";
