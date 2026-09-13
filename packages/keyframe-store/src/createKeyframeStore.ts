@@ -24,16 +24,6 @@ const verifyContentAddress = (hash: string, plaintext: Uint8Array): Uint8Array =
 
   return plaintext;
 };
-// What a write reports when the store already holds the content: the stored header's own base, because that
-// Is the keyframe the caller's record must name for collection to keep alive — never the base this writer
-// Would have chosen, which is the wrong one whenever the object under the key was written against another
-const adoptStored = (hash: string, storedHead: Uint8Array, plaintextBytes: number): WrittenVersion => ({
-  baseHash: parseObject(hash, storedHead).baseHash,
-  hash,
-  isDeduplicated: true,
-  plaintextBytes,
-  storedBytes: 0,
-});
 // The store: immutable objects addressed by the hash of their plaintext, each either a keyframe compressed
 // On its own or a delta compressed against exactly one keyframe. No chains, no generations, no rewriting —
 // Reconstructing any version is at most two reads, and an object once written is never touched again until
@@ -66,6 +56,33 @@ export const createKeyframeStore = (
 
     return { plaintext: verifyContentAddress(hash, await decodeObject(parsedObject)), storedBytes: bytes.byteLength };
   };
+  // The full fetch-decode-verify a read already pays, reused by a dedup hit: a head read proves the stored
+  // Object starts with a well-formed header, never that its payload survived — a torn write or one bit of rot
+  // Can leave enough of the header intact to parse while the compressed frame behind it does not decode to
+  // What it claims. Adopting on the header alone would report someone else's write as this one's success
+  const readVerifiedObject = async (hash: string): Promise<{ baseHash: string; plaintext: Uint8Array }> => {
+    const bytes = await objectStore.read(hash);
+    if (!bytes) throw new ObjectNotStoredError(hash, "object is not stored");
+
+    const parsedObject = parseObject(hash, bytes);
+    if (!parsedObject.baseHash)
+      return { baseHash: "", plaintext: verifyContentAddress(hash, await decodeObject(parsedObject)) };
+
+    const keyframe = await readKeyframe(parsedObject.baseHash);
+    if (!keyframe) throw new ObjectNotStoredError(hash, `keyframe ${parsedObject.baseHash} is not stored`);
+
+    return {
+      baseHash: parsedObject.baseHash,
+      plaintext: verifyContentAddress(hash, await decodeObject(parsedObject, keyframe.plaintext)),
+    };
+  };
+  // What a write reports when the store already holds the content: the stored object's own base, because that
+  // Is the keyframe the caller's record must name for collection to keep alive — never the base this writer
+  // Would have chosen, which is the wrong one whenever the object under the key was written against another
+  const adoptStored = async (hash: string, plaintextBytes: number): Promise<WrittenVersion> => {
+    const { baseHash } = await readVerifiedObject(hash);
+    return { baseHash, hash, isDeduplicated: true, plaintextBytes, storedBytes: 0 };
+  };
   return {
     // An object survives while any record names it, as its own hash or as its base — the caller answers that
     // From its records, so collection is never an object read
@@ -76,19 +93,7 @@ export const createKeyframeStore = (
         if (collectableHashes.length > 0) await objectStore.delete(collectableHashes);
         return collectableHashes;
       }),
-    read: (hash) =>
-      getResultAsync(async () => {
-        const bytes = await objectStore.read(hash);
-        if (!bytes) throw new ObjectNotStoredError(hash, "object is not stored");
-
-        const parsedObject = parseObject(hash, bytes);
-        if (!parsedObject.baseHash) return verifyContentAddress(hash, await decodeObject(parsedObject));
-
-        const keyframe = await readKeyframe(parsedObject.baseHash);
-        if (!keyframe) throw new ObjectNotStoredError(hash, `keyframe ${parsedObject.baseHash} is not stored`);
-
-        return verifyContentAddress(hash, await decodeObject(parsedObject, keyframe.plaintext));
-      }),
+    read: (hash) => getResultAsync(async () => (await readVerifiedObject(hash)).plaintext),
     write: (plaintext, anchor) =>
       getResultAsync(async () => {
         const hash = getContentAddress(plaintext);
@@ -97,7 +102,7 @@ export const createKeyframeStore = (
         // Which keyframe it decodes against — the base the caller's record has to carry, or collection would
         // Free a keyframe this version still needs
         const storedHead = await objectStore.read(hash, DELTA_HEADER_BYTE_COUNT);
-        if (storedHead) return adoptStored(hash, storedHead, plaintextBytes);
+        if (storedHead) return adoptStored(hash, plaintextBytes);
 
         // One place lands an object, whichever kind it is. The head read above and the backend's own create-only
         // Condition are two checks with a gap between them, and a twin writing the same content can land in it —
@@ -114,7 +119,7 @@ export const createKeyframeStore = (
           if (!twinHead)
             throw new InvalidOperationError(Operation.Create, hash, "refused as already stored, but nothing is stored");
 
-          return adoptStored(hash, twinHead, plaintextBytes);
+          return adoptStored(hash, plaintextBytes);
         };
         const keyframeBytes = await encodeObject(plaintext, compressionLevel);
         const writeKeyframe = () => writeObject(keyframeBytes, "");
