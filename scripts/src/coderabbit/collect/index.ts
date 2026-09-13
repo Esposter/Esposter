@@ -22,6 +22,7 @@ import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimi
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
+import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
 import { readEntries } from "#src/services/coderabbit/collect/readEntries";
 import { readOpenPullRequest } from "#src/services/coderabbit/collect/readOpenPullRequest";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
@@ -161,15 +162,23 @@ console.info(
   `open findings: ${openThreads.length.toString()} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
 );
 
+const drainLimitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
 if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined))
   if (isDryRun) console.info("would drain — a dry run runs no Claude session");
-  else {
+  // Claude Code's own limit, read off the marker the run that hit it wrote. Nothing announces it lifting and
+  // Every queue push fires a cycle, so without this each one downloads Claude Code to be refused again.
+  else if (drainLimitResetMs !== undefined && drainLimitResetMs > Date.now()) {
+    console.info(
+      `the drain is limited until ${new Date(drainLimitResetMs).toISOString()} — the findings stay open, so nothing ports ahead of them`,
+    );
+    process.exit(0);
+  } else {
     const feedback = execFileSync("pnpm", ["ai:coderabbit:feedback", pullRequest.toString()], {
       cwd: REPOSITORY_ROOT,
       encoding: "utf8",
       shell: process.platform === "win32",
     });
-    reviewFixesSha = drainFindings({
+    const drain = drainFindings({
       developSha,
       feedback,
       issueComments,
@@ -180,6 +189,9 @@ if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined))
       reviewId: openBodyReviewId,
       viewerLogin,
     });
+    // The open set is untouched, so porting now would put a window ahead of findings that must lead it
+    if (drain.isLimited) process.exit(0);
+    reviewFixesSha = drain.reviewFixesSha;
   }
 
 // Port into the tree the run owns — a throwaway worktree for a dry run, this checkout otherwise

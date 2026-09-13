@@ -1,3 +1,4 @@
+import type { DrainFindingsResult } from "#src/models/coderabbit/collect/DrainFindingsResult";
 import type { DrainInput } from "#src/models/coderabbit/collect/DrainInput";
 import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
 
@@ -5,6 +6,7 @@ import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/colle
 import {
   DRAIN_ATTEMPT_CAP,
   DRAIN_FAILED_MARKER,
+  DRAIN_LIMITED_MARKER,
   DRAIN_VERDICT_PREFIX,
   QUARANTINED_MARKER,
   REJECTIONS_FILE,
@@ -37,7 +39,9 @@ interface DrainFindingsInput extends DrainInput {
 // So the branch is never deleted and never stale — and the branch is pushed only after it exits cleanly, so a
 // Drain that dies leaves no trace and the next run starts the same open set again. Past the attempt cap the review is quarantined: its findings stay open for a person and the caller
 // Ports without them, because a pipeline stalled on one finding nobody sees costs every window after it.
-// Returns the pushed review-fixes sha, or the one it started from when nothing was drained.
+// Claude Code's own session limit is the one non-zero exit that is not this review's failure, so it neither
+// Counts an attempt nor fails the run: the deadline goes into a marker comment, and every run until it lifts
+// Reads that marker and skips the drain instead of downloading Claude Code to be refused again.
 export const drainFindings = ({
   developSha,
   issueComments,
@@ -45,12 +49,12 @@ export const drainFindings = ({
   reviewFixesSha,
   viewerLogin,
   ...drainInput
-}: DrainFindingsInput): string | undefined => {
+}: DrainFindingsInput): DrainFindingsResult => {
   const pullRequest = drainInput.pullRequest.toString();
   const quarantinedMarker = getMarker(QUARANTINED_MARKER, newestReviewId);
   if (checkHasMarkerComment(issueComments, viewerLogin, quarantinedMarker)) {
     console.info(`review ${newestReviewId.toString()} is quarantined — porting without its fixes`);
-    return reviewFixesSha;
+    return { isLimited: false, reviewFixesSha };
   }
 
   const failedMarker = getMarker(DRAIN_FAILED_MARKER, newestReviewId);
@@ -65,7 +69,7 @@ export const drainFindings = ({
       "--body",
       `${quarantinedMarker}\nThe drain of review ${newestReviewId.toString()} failed ${attempts.toString()} times. Its findings stay open for a person, and the collector ports without them.`,
     ]);
-    return reviewFixesSha;
+    return { isLimited: false, reviewFixesSha };
   }
 
   const isOwing = reviewFixesSha !== undefined && readCherryShas(developSha, reviewFixesSha).length > 0;
@@ -75,7 +79,20 @@ export const drainFindings = ({
   const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
   const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
   const verdictPath = join(verdictDirectory, VERDICT_FILE);
-  const isDrained = runDrain(getDrainPrompt({ ...drainInput, rejectionsPath, verdictPath }));
+  const { isDrained, limitResetAtMs } = runDrain(getDrainPrompt({ ...drainInput, rejectionsPath, verdictPath }));
+  if (limitResetAtMs !== undefined) {
+    const resetAt = new Date(limitResetAtMs).toISOString();
+    runGh([
+      "pr",
+      "comment",
+      pullRequest,
+      "--body",
+      `<!-- ${DRAIN_LIMITED_MARKER} until ${resetAt} -->\nThe drain could not start — the account is out of session until ${resetAt}. No attempt is counted, and the next event after that drains the same open set.`,
+    ]);
+    console.info(`the drain is limited until ${resetAt} — nothing drained, nothing counted`);
+    return { isLimited: true, reviewFixesSha };
+  }
+
   // A zero exit says the session ended, never that it finished the job: a drain that stopped mid-fix leaves the
   // Rest of a finding in the working tree, and reading `HEAD` there pushes half of one as though it were whole.
   const dirtyPaths = getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));
@@ -104,7 +121,7 @@ export const drainFindings = ({
   const headSha = runGit(["rev-parse", "HEAD"]).trim();
   if (headSha === baseSha) {
     console.info("the drain produced no commit — every finding was rejected or already answered");
-    return reviewFixesSha;
+    return { isLimited: false, reviewFixesSha };
   }
 
   const lease = reviewFixesSha
@@ -112,5 +129,5 @@ export const drainFindings = ({
     : `--force-with-lease=refs/heads/${REVIEW_FIXES_BRANCH}:`;
   runGit(["push", lease, "origin", `${headSha}:refs/heads/${REVIEW_FIXES_BRANCH}`]);
   console.info(`pushed ${REVIEW_FIXES_BRANCH} at ${headSha}`);
-  return headSha;
+  return { isLimited: false, reviewFixesSha: headSha };
 };

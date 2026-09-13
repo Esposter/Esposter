@@ -65,6 +65,8 @@ The step checks out `review-fixes` while it still owes `develop` commits and re-
 
 **A finding the drain cannot close is quarantined, not retried forever.** Each failed drain of a review leaves a hidden marker in a pull request comment carrying the review id and the attempt count; past the attempt cap the collector stops draining that review, posts that it has, and proceeds to port without fixes. The findings stay open for a person — the cost of that is a window whose fixes do not lead it, and the cost of the alternative is a pipeline stalled on one finding nobody sees. This is the [no manual recovery](/docs/architecture/no-manual-recovery) shape: land the failure durably, cap the attempts, quarantine visibly.
 
+**A drain that never started is not a failed attempt.** Claude Code refusing to run because the account is out of session exits non-zero exactly like a drain that tried and could not, and counting it would spend the quarantine budget on an outage — three pushes during one limit would park a review for a person over something no fix addresses. So the step separates the two by reading the sentence Claude prints on its way out, and a limit writes its own marker carrying the instant it lifts. Until then every cycle skips the drain and stops before the port, because the open findings are untouched and nothing may be ported ahead of them. There is no waiting job for this one: the limit lifts on a clock this repo does not own, and the session pushes `queue` often enough that the next event is never far away.
+
 ## Port
 
 The port builds the window as a local branch in the runner, one cherry-pick at a time, and measures after each. Estimation is what the manual process got wrong most often; here the count is read from the tree that will be pushed.

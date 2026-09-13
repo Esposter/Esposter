@@ -1,4 +1,7 @@
+import type { DrainRun } from "#src/models/coderabbit/collect/DrainRun";
+
 import { CLAUDE_CODE_PACKAGE } from "#src/services/coderabbit/collect/constants";
+import { getDrainLimitResetMs } from "#src/services/coderabbit/collect/getDrainLimitResetMs";
 import { REPOSITORY_ROOT } from "#src/services/constants";
 import { spawnSync } from "node:child_process";
 
@@ -14,13 +17,16 @@ import { spawnSync } from "node:child_process";
 // Own pushes and replies from the environment of the parent process, which this child does not share.
 const WITHHELD_VARIABLES = new Set(["GH_TOKEN", "GITHUB_TOKEN"]);
 
-export const runDrain = (prompt: string): boolean => {
+// Stdout is read rather than inherited, because the one thing separating a drain that failed from a drain that
+// Never started is the sentence Claude Code prints on its way out. It is echoed whole the moment the session
+// Ends, so the run's log says everything it used to — a few minutes later than it used to say it.
+export const runDrain = (prompt: string): DrainRun => {
   const environment = Object.fromEntries(
     Object.keys(process.env)
       .filter((key) => !WITHHELD_VARIABLES.has(key))
       .map((key) => [key, process.env[key]]),
   );
-  const { status } = spawnSync(
+  const { status, stdout } = spawnSync(
     "pnpm",
     ["dlx", CLAUDE_CODE_PACKAGE, "-p", "--dangerously-skip-permissions", "--output-format", "text"],
     {
@@ -29,8 +35,9 @@ export const runDrain = (prompt: string): boolean => {
       env: environment,
       input: prompt,
       shell: process.platform === "win32",
-      stdio: ["pipe", "inherit", "inherit"],
+      stdio: ["pipe", "pipe", "inherit"],
     },
   );
-  return status === 0;
+  console.info(stdout);
+  return { isDrained: status === 0, limitResetAtMs: getDrainLimitResetMs(stdout, Date.now()) };
 };

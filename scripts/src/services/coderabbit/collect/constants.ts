@@ -36,6 +36,10 @@ export const DRAIN_ATTEMPT_CAP = 3;
 // Hidden markers in pull request comments — the collector's durable memory for what a commit cannot carry
 export const DRAIN_FAILED_MARKER = "review-collector drain-failed";
 
+// Claude Code's own limit, which is not this review's problem and not counted against the quarantine budget. The
+// Marker carries the instant it lifts, because nothing announces that and every run in between would retry.
+export const DRAIN_LIMITED_MARKER = "review-collector drain-limited";
+
 export const DRAINS_MARKER = "review-collector drains";
 
 export const QUARANTINED_MARKER = "review-collector quarantined";
@@ -52,6 +56,12 @@ export const DRAIN_VERDICT_PREFIX = "review-collector-verdicts-";
 export const REJECTIONS_FILE = "rejections.txt";
 
 export const VERDICT_FILE = "verdict.txt";
+
+// The backoff when the limit states no deadline this can read — short enough that a misparse costs one run
+export const DRAIN_LIMIT_FALLBACK_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+
+// The reset is a time of day, so an already-passed one is tomorrow's
+export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
 
 // What the plan grants when no block states otherwise: one included review per hour, so an hour is the floor
 export const RATE_LIMIT_FALLBACK_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
