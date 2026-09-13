@@ -19,6 +19,7 @@ import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecisio
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
 import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
 import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
+import { portExpress } from "#src/services/coderabbit/collect/portExpress";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
@@ -92,6 +93,39 @@ if (isDevelopBehindMain) {
   if (!isDryRun) runGit(["push", "origin", `${mainSha}:refs/heads/${DEVELOP_BRANCH}`]);
 }
 const developSha = isDevelopBehindMain ? mainSha : pushedDevelopSha;
+
+// The tree the run owns — a throwaway worktree for a dry run, this checkout otherwise. Both lanes build their
+// Candidate in it, one after the other, and only one of them ever pushes.
+const cwd = isDryRun ? mkdtempSync(join(tmpdir(), DRY_RUN_WORKTREE_PREFIX)) : REPOSITORY_ROOT;
+if (isDryRun) runGit(["worktree", "add", "--detach", cwd, developSha]);
+// Every exit path below is a `process.exit`, and a dry run's worktree must survive none of them — including the
+// Ones that throw. One listener covers them all, where a finalizer around a script that exits from ten places
+// Cannot.
+if (isDryRun)
+  process.on("exit", () => {
+    getResult(() => runGit(["worktree", "remove", "--force", cwd])).orTee(console.error);
+  });
+
+// The express lane, before the pull request is even looked up: it spends no review slot and needs no pull
+// Request open, which also makes it the one thing that moves the pipeline while there is none. A mechanical
+// Commit reaches `main` directly and the return stroke carries it to `develop` on the next run.
+const express = portExpress({ cwd, developSha, mainSha, queueSha });
+if (express.targetSha !== undefined) {
+  console.info(`express: ${express.shas.length.toString()} mechanical commits, nothing in them to review`);
+  if (isDryRun) console.info(`would push ${express.targetSha} to ${MAIN_BRANCH}`);
+  // `main` is production and CI is the only gate these commits get, so the cut earns the same checks a window
+  // Does. A red one is not held back — it simply takes the review lane, where a person reads why.
+  else if (verifyCandidate(cwd)) {
+    runGit(["fetch", "origin", MAIN_BRANCH]);
+    if (readSha(`origin/${MAIN_BRANCH}`) === mainSha) {
+      runGit(["push", "origin", `${express.targetSha}:refs/heads/${MAIN_BRANCH}`], cwd);
+      console.info(`pushed ${express.targetSha} to ${MAIN_BRANCH}`);
+      // One irreversible act per run. The push fires the cycle again, which fast-forwards `develop` onto it and
+      // Then measures a window against a frontier that has already moved.
+      process.exit(0);
+    } else console.info(`${MAIN_BRANCH} moved during the run — nothing pushed, the next run re-measures`);
+  } else console.info("the express cut is red — it takes the review lane instead");
+}
 
 const pullRequest = pullRequestArgument ? Number(pullRequestArgument) : readOpenPullRequest()?.number;
 if (pullRequest === undefined) {
@@ -194,9 +228,6 @@ if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined))
     reviewFixesSha = drain.reviewFixesSha;
   }
 
-// Port into the tree the run owns — a throwaway worktree for a dry run, this checkout otherwise
-const cwd = isDryRun ? mkdtempSync(join(tmpdir(), DRY_RUN_WORKTREE_PREFIX)) : REPOSITORY_ROOT;
-if (isDryRun) runGit(["worktree", "add", "--detach", cwd, developSha]);
 const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha, reviewFixesSha });
 console.info(
   `window: ${port.fixCount.toString()} fix commits + ${port.queueShas.length.toString()} queue commits = ${port.fileCount.toString()} files${port.heldSha ? `, held from ${port.heldSha}` : ""}${port.isMainMerged ? ", main folded in" : ""}${port.isFastForward ? ", fast-forward" : ""}`,
@@ -212,14 +243,12 @@ if (!isReady) {
   if (port.queueShas.length === 0 && port.heldSha) console.info("held — no owed commit fits this window");
   else if (port.fixCount > 0) console.info("parked — fixes wait for the queue");
   else console.info("waiting — the queue is under the fill target");
-  if (isDryRun) runGit(["worktree", "remove", "--force", cwd]);
   process.exit(0);
 }
 if (isDryRun) {
   console.info(
     `would push ${port.isFastForward ? (port.queueShas.at(-1) ?? developSha) : "the cherry-picked candidate"} to ${DEVELOP_BRANCH}`,
   );
-  runGit(["worktree", "remove", "--force", cwd]);
   process.exit(0);
 }
 
