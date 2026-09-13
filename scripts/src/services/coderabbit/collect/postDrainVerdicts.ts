@@ -45,7 +45,7 @@ export const postDrainVerdicts = ({
   const verdicts = readLines(verdictPath);
   if (verdicts.length === 0 || reviewId === undefined) return;
 
-  const body = `${getMarker(DRAINS_MARKER, reviewId)}\nBody-only findings of review ${reviewId.toString()} are rejected:\n${verdicts.map(stripHtmlComments).join("\n")}`;
+  const body = `${getMarker(DRAINS_MARKER, reviewId)}\nBody-only findings of review ${reviewId.toString()} are rejected:\n${verdicts.map((verdict) => stripHtmlComments(verdict)).join("\n")}`;
   console.info(`verdict comment for review ${reviewId.toString()}`);
   runGh(["pr", "comment", pullRequest.toString(), "--body", body]);
 };
