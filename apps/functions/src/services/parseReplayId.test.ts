@@ -26,7 +26,7 @@ describe(parseReplayId, () => {
   test("id with a non-numeric suffix is a plain id", () => {
     expect.hasAssertions();
 
-    const id = `${eventId}${ID_SEPARATOR}${String(Number.NaN)}`;
+    const id = `${eventId}${ID_SEPARATOR}${Number.NaN}`;
 
     expect(parseReplayId(id)).toStrictEqual({ eventId: id, replayAttempts: 0 } satisfies ReplayId);
   });

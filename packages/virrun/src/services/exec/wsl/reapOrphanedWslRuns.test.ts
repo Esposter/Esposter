@@ -57,7 +57,7 @@ describe(reapOrphanedWslRuns, () => {
     expect.hasAssertions();
 
     const runsDirectory = getWslRunsDirectory();
-    const recycledRunPath = join(runsDirectory, `${process.ppid.toString()}.${RECYCLED_MARKER}`);
+    const recycledRunPath = join(runsDirectory, `${process.ppid}.${RECYCLED_MARKER}`);
     mkdirSync(runsDirectory, { recursive: true });
     writeFileSync(recycledRunPath, "");
     utimesSync(recycledRunPath, 0, 0);

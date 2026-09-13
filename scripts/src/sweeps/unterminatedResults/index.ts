@@ -12,4 +12,4 @@ for (const path of [...getSweepFilePaths("*.ts"), ...getSweepFilePaths("*.vue")]
   checkIsInScope(filePath),
 ))
   for (const { after, line } of getUnterminatedResults(readFileSync(resolve(REPOSITORY_ROOT, path), "utf8")))
-    console.info(`${path}:${line.toString()}  after: ${after}`);
+    console.info(`${path}:${line}  after: ${after}`);

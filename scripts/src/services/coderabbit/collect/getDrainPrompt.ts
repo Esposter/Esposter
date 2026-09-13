@@ -21,12 +21,12 @@ export const getDrainPrompt = ({
   const pullRequestNumber = pullRequest.toString();
   const threadSections = openThreads.map(
     ({ body, commentId, line, path }) =>
-      `### comment ${commentId.toString()} at ${path}:${line?.toString() ?? "outside the diff"}\n\n${getFindingText(body)}`,
+      `### comment ${commentId} at ${path}:${line?.toString() ?? "outside the diff"}\n\n${getFindingText(body)}`,
   );
   const bodySection =
     reviewId === undefined
       ? "Body-only findings: none open."
-      : `Body-only findings (nitpicks, outside-diff-range) of review ${reviewId.toString()} are open. They have no thread. Check each against the current file. A real one is fixed in a commit carrying the trailer \`${DRAINS_TRAILER}: ${reviewId.toString()}\`. If every one of them is rejected, write one verdict line per finding to \`${verdictPath}\` and the collector posts them as a single pull request comment.`;
+      : `Body-only findings (nitpicks, outside-diff-range) of review ${reviewId} are open. They have no thread. Check each against the current file. A real one is fixed in a commit carrying the trailer \`${DRAINS_TRAILER}: ${reviewId}\`. If every one of them is rejected, write one verdict line per finding to \`${verdictPath}\` and the collector posts them as a single pull request comment.`;
 
   return [
     `You are the review collector's drain step for pull request #${pullRequestNumber} of this repository. You are on the branch that holds the fixes. Work in this checkout only: never push, never switch branches, never rewrite history, never amend, and never run \`gh\` or any other command that writes to GitHub — you hold no credential for it, and the collector posts every reply once the fixes are pushed.`,

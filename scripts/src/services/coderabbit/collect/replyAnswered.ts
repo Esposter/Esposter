@@ -21,12 +21,12 @@ export const replyAnswered = (pullRequest: number, range: string, viewerLogin: s
   if (commits.length === 0) return;
 
   const repliesByParent = Map.groupBy(
-    readEntries<PullRequestComment>(`pulls/${pullRequest.toString()}/comments`).filter(
+    readEntries<PullRequestComment>(`pulls/${pullRequest}/comments`).filter(
       ({ in_reply_to_id }) => in_reply_to_id !== undefined,
     ),
     ({ in_reply_to_id }) => in_reply_to_id,
   );
-  const issueComments = readEntries<GitHubEntry>(`issues/${pullRequest.toString()}/comments`);
+  const issueComments = readEntries<GitHubEntry>(`issues/${pullRequest}/comments`);
 
   for (const { answers, sha, subject } of commits)
     for (const commentId of answers) {
@@ -34,12 +34,12 @@ export const replyAnswered = (pullRequest: number, range: string, viewerLogin: s
       if (replies.some(({ body, user }) => user.login === viewerLogin && body.includes(sha))) continue;
 
       const body = `Agreed, fixed in ${sha} — ${subject}`;
-      console.info(`reply ${commentId.toString()}: ${body}`);
+      console.info(`reply ${commentId}: ${body}`);
       if (!isDryRun)
         getResult(() =>
           runGh([
             "api",
-            `repos/{owner}/{repo}/pulls/${pullRequest.toString()}/comments/${commentId.toString()}/replies`,
+            `repos/{owner}/{repo}/pulls/${pullRequest}/comments/${commentId}/replies`,
             "-f",
             `body=${body}`,
           ]),
@@ -55,8 +55,8 @@ export const replyAnswered = (pullRequest: number, range: string, viewerLogin: s
     if (checkHasMarkerComment(issueComments, viewerLogin, marker)) continue;
 
     const lines = drained.map(({ commit }) => `- ${commit.sha} — ${commit.subject}`);
-    const body = `${marker}\nBody-only findings of review ${reviewId.toString()} are answered by:\n${lines.join("\n")}`;
-    console.info(`verdict comment for review ${reviewId.toString()}`);
+    const body = `${marker}\nBody-only findings of review ${reviewId} are answered by:\n${lines.join("\n")}`;
+    console.info(`verdict comment for review ${reviewId}`);
     if (!isDryRun)
       getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).orTee(console.error);
   }

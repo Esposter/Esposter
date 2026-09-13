@@ -37,19 +37,14 @@ export const postDrainVerdicts = ({
     }
 
     const body = `Not a real issue, no change — ${stripHtmlComments(reason.join(" "))}`;
-    console.info(`reply ${commentId.toString()}: ${body}`);
-    runGh([
-      "api",
-      `repos/{owner}/{repo}/pulls/${pullRequest.toString()}/comments/${commentId.toString()}/replies`,
-      "-f",
-      `body=${body}`,
-    ]);
+    console.info(`reply ${commentId}: ${body}`);
+    runGh(["api", `repos/{owner}/{repo}/pulls/${pullRequest}/comments/${commentId}/replies`, "-f", `body=${body}`]);
   }
 
   const verdicts = readLines(verdictPath);
   if (verdicts.length === 0 || reviewId === undefined) return;
 
-  const body = `${getMarker(DRAINS_MARKER, reviewId)}\nBody-only findings of review ${reviewId.toString()} are rejected:\n${verdicts.map((verdict) => stripHtmlComments(verdict)).join("\n")}`;
-  console.info(`verdict comment for review ${reviewId.toString()}`);
+  const body = `${getMarker(DRAINS_MARKER, reviewId)}\nBody-only findings of review ${reviewId} are rejected:\n${verdicts.map((verdict) => stripHtmlComments(verdict)).join("\n")}`;
+  console.info(`verdict comment for review ${reviewId}`);
   runGh(["pr", "comment", pullRequest.toString(), "--body", body]);
 };

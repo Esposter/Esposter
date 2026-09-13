@@ -41,7 +41,7 @@ export const readUnresolvedThreads = (pullRequest: number): ReviewThread[] => {
       "-f",
       `name=${name}`,
       "-F",
-      `pullRequest=${pullRequest.toString()}`,
+      `pullRequest=${pullRequest}`,
       "-f",
       `query=${QUERY}`,
     ]),

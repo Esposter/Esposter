@@ -23,7 +23,7 @@ export const runPnpmOutdated = (root: string): Promise<PnpmOutdatedRun> =>
     const timeout = setTimeout(() => {
       child.kill();
       settle({
-        error: `${PNPM_OUTDATED_COMMAND} timed out after ${PNPM_OUTDATED_TIMEOUT_MS.toString()}ms`,
+        error: `${PNPM_OUTDATED_COMMAND} timed out after ${PNPM_OUTDATED_TIMEOUT_MS}ms`,
         status: null,
         stderr,
         stdout,

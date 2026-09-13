@@ -13,7 +13,7 @@ describe(checkIsOwnerAlive, () => {
   let entryPath = "";
 
   beforeEach(() => {
-    entryPath = seedFile(join(create(), `${process.ppid.toString()}.entry`));
+    entryPath = seedFile(join(create(), `${process.ppid}.entry`));
   });
 
   afterEach(cleanup);

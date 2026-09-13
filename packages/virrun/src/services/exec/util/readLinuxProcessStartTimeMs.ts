@@ -7,6 +7,6 @@ const PROC_BOOT_TIME_REGEX = /^btime (?<seconds>\d+)$/mu;
 
 export const readLinuxProcessStartTimeMs = (pid: number): number => {
   const bootSeconds = Number(PROC_BOOT_TIME_REGEX.exec(readFileSync("/proc/stat", "utf8"))?.groups?.seconds);
-  const ticks = parseProcStatStartTicks(readFileSync(`/proc/${pid.toString()}/stat`, "utf8"));
+  const ticks = parseProcStatStartTicks(readFileSync(`/proc/${pid}/stat`, "utf8"));
   return bootSeconds * 1000 + (ticks * 1000) / PROC_TICKS_PER_SECOND;
 };

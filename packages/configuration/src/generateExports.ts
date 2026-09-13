@@ -49,6 +49,6 @@ export const generateExports = (exportsGeneration: ExportsGeneration = "typescri
     });
     // A stale barrel is a build that succeeds against the wrong export surface, so this fails the build rather
     // Than leaving tsdown to bundle whatever the last successful run happened to write.
-    if (status !== 0) throw new Error(`ctix exited ${String(status)} for ${ctixConfigurationPath}`);
+    if (status !== 0) throw new Error(`ctix exited ${status} for ${ctixConfigurationPath}`);
   }
 };

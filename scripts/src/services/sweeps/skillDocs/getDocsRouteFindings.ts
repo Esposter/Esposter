@@ -17,7 +17,7 @@ export const getDocsRouteFindings = (files: SkillDocsFile[]): SkillDocsFinding[]
         .map((line, index) => ({ index, line }))
         .filter(({ line }) => DOCS_ROUTE_REGEX.test(line))
         .map(({ index }) => ({
-          detail: `line ${(index + 1).toString()}`,
+          detail: `line ${index + 1}`,
           path,
           type: SkillDocsFindingType.DocsRoute,
         })),

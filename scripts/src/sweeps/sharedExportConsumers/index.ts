@@ -27,5 +27,5 @@ for (const path of sourcePaths)
   for (const name of getExportNames(readFileSync(resolve(REPOSITORY_ROOT, path), "utf8"))) {
     const consumerPackagePaths = getConsumerPackagePaths(name, packageIdentifiersMap);
     if (consumerPackagePaths.length < MINIMUM_CONSUMER_PACKAGES)
-      console.info(`${consumerPackagePaths.length.toString()}  ${path} -> ${name}`);
+      console.info(`${consumerPackagePaths.length}  ${path} -> ${name}`);
   }

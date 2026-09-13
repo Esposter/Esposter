@@ -33,7 +33,7 @@ export const getDrainEventLine = (line: string): DrainLogLine | undefined => {
     return text ? { isNarration: true, text } : undefined;
   } else if (event.type === "result") {
     const minutes = Temporal.Duration.from({ milliseconds: event.duration_ms }).total("minutes").toFixed(1);
-    const summary = `result: ${event.subtype} after ${event.num_turns.toString()} turns in ${minutes} min, $${event.total_cost_usd.toFixed(2)}`;
+    const summary = `result: ${event.subtype} after ${event.num_turns} turns in ${minutes} min, $${event.total_cost_usd.toFixed(2)}`;
     // On success the text is the model's closing message — narration, as much as any turn before it. On any
     // Other subtype it is Claude Code's own account of why the session ended, which is where a limit is stated.
     return {

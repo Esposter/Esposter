@@ -12,4 +12,4 @@ import { resolve } from "node:path";
 // The ledger names them (`.agents/ledgers/testing/README.md`); what makes them exceptions is a read, not a flag.
 for (const path of getSweepFilePaths("*.test.ts"))
   for (const { line, name } of getModuleScopeConstants(readFileSync(resolve(REPOSITORY_ROOT, path), "utf8")))
-    console.info(`${path}:${line.toString()}: ${name}`);
+    console.info(`${path}:${line}: ${name}`);
