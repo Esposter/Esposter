@@ -1,5 +1,4 @@
 import type { VersionAnchor } from "#src/models/VersionAnchor";
-import type { ResultAsync } from "neverthrow";
 
 import { createKeyframeStore } from "#src/createKeyframeStore";
 import { createDocumentVersions } from "#src/services/createDocumentVersions.test";
@@ -14,13 +13,6 @@ const BENCH_ROW_COUNTS = [1000, 10000, 100000];
 const SEED = 1;
 const EMPTY_ANCHOR: VersionAnchor = { anchoredBytes: 0, hash: "" };
 const COPY_KEY = "copy";
-const unwrap = <T>(result: ResultAsync<T, Error>) =>
-  result.match(
-    (value) => value,
-    (error) => {
-      throw error;
-    },
-  );
 // One group per document size, so every task in it shares the scale and `vs base` isolates the shape of the
 // Edit — a single cell, half the cells, a rewrite, and bytes that cannot be compressed or differenced at all,
 // Which is the honest worst case — against writing the plaintext straight to the backend, exactly what a
@@ -47,30 +39,88 @@ describe(createKeyframeStore, () => {
     // Iteration so a write never deduplicates against what its own previous iteration stored
     const seededObjectStore = createMemoryObjectStore();
     const seededKeyframeStore = createKeyframeStore(seededObjectStore);
-    const keyframe = await unwrap(seededKeyframeStore.write(baseVersion, EMPTY_ANCHOR));
+    const keyframe = await seededKeyframeStore.write(baseVersion, EMPTY_ANCHOR).match(
+      (value) => value,
+      (error) => {
+        throw error;
+      },
+    );
     const anchor: VersionAnchor = { anchoredBytes: 0, hash: keyframe.hash };
     // Copied before the delta lands, so the write tasks encode against the keyframe alone and never find the
     // Single-cell edit already stored
     const keyframeObjects = new Map(seededObjectStore.objects);
-    const delta = await unwrap(seededKeyframeStore.write(singleEditVersion, anchor));
+    const delta = await seededKeyframeStore.write(singleEditVersion, anchor).match(
+      (value) => value,
+      (error) => {
+        throw error;
+      },
+    );
     const createSeededKeyframeStore = () => createKeyframeStore(createMemoryObjectStore(new Map(keyframeObjects)));
     const copyObjectStore = createMemoryObjectStore();
     await copyObjectStore.write(COPY_KEY, singleEditVersion);
     await bench.compare(
       bench("native — a full copy written to the backend", () =>
         createMemoryObjectStore().write(COPY_KEY, singleEditVersion)),
-      bench("write — content already held", () => unwrap(createSeededKeyframeStore().write(baseVersion, EMPTY_ANCHOR))),
+      bench("write — content already held", () =>
+        createSeededKeyframeStore()
+          .write(baseVersion, EMPTY_ANCHOR)
+          .match(
+            (value) => value,
+            (error) => {
+              throw error;
+            },
+          )),
       bench("write — a single-cell edit, as a delta", () =>
-        unwrap(createSeededKeyframeStore().write(singleEditVersion, anchor))),
+        createSeededKeyframeStore()
+          .write(singleEditVersion, anchor)
+          .match(
+            (value) => value,
+            (error) => {
+              throw error;
+            },
+          )),
       bench("write — a broad edit, as a delta", () =>
-        unwrap(createSeededKeyframeStore().write(broadEditVersion, anchor))),
+        createSeededKeyframeStore()
+          .write(broadEditVersion, anchor)
+          .match(
+            (value) => value,
+            (error) => {
+              throw error;
+            },
+          )),
       bench("write — a wholesale rewrite, promoting", () =>
-        unwrap(createSeededKeyframeStore().write(rewrittenVersion, anchor))),
+        createSeededKeyframeStore()
+          .write(rewrittenVersion, anchor)
+          .match(
+            (value) => value,
+            (error) => {
+              throw error;
+            },
+          )),
       bench("write — an incompressible payload, promoting", () =>
-        unwrap(createSeededKeyframeStore().write(incompressibleVersion, anchor))),
+        createSeededKeyframeStore()
+          .write(incompressibleVersion, anchor)
+          .match(
+            (value) => value,
+            (error) => {
+              throw error;
+            },
+          )),
       bench("read — a full copy from the backend", () => copyObjectStore.read(COPY_KEY)),
-      bench("read — a keyframe", () => unwrap(seededKeyframeStore.read(keyframe.hash))),
-      bench("read — a delta", () => unwrap(seededKeyframeStore.read(delta.hash))),
+      bench("read — a keyframe", () =>
+        seededKeyframeStore.read(keyframe.hash).match(
+          (value) => value,
+          (error) => {
+            throw error;
+          },
+        )),
+      bench("read — a delta", () =>
+        seededKeyframeStore.read(delta.hash).match(
+          (value) => value,
+          (error) => {
+            throw error;
+          },
+        )),
       BENCHMARK_RUN_OPTIONS,
     );
   });

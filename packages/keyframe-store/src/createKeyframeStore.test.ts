@@ -1,7 +1,6 @@
 import type { KeyframeStore } from "#src/models/KeyframeStore";
 import type { VersionAnchor } from "#src/models/VersionAnchor";
 import type { WrittenVersion } from "#src/models/WrittenVersion";
-import type { ResultAsync } from "neverthrow";
 
 import { createKeyframeStore } from "#src/createKeyframeStore";
 import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
@@ -10,13 +9,6 @@ import { createMemoryObjectStore } from "#src/services/createMemoryObjectStore.t
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
-const unwrap = <T>(result: ResultAsync<T, Error>) =>
-  result.match(
-    (value) => value,
-    (error) => {
-      throw error;
-    },
-  );
 const countKeyframes = (writtenVersions: WrittenVersion[]) =>
   writtenVersions.filter(({ baseHash }) => !baseHash).length;
 
@@ -36,7 +28,12 @@ describe(createKeyframeStore, () => {
     let anchor = emptyAnchor;
     const writtenVersions: WrittenVersion[] = [];
     for (const version of sessionVersions) {
-      const writtenVersion = await unwrap(keyframeStore.write(version, anchor));
+      const writtenVersion = await keyframeStore.write(version, anchor).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      );
       anchor = writtenVersion.baseHash
         ? { anchoredBytes: anchor.anchoredBytes + writtenVersion.storedBytes, hash: anchor.hash }
         : { anchoredBytes: 0, hash: writtenVersion.hash };
@@ -57,8 +54,22 @@ describe(createKeyframeStore, () => {
     expect(delta.baseHash).toBe(keyframe.hash);
     // A delta costs the edit, not the document
     expect(delta.storedBytes).toBeLessThan(keyframe.storedBytes / 10);
-    await expect(unwrap(keyframeStore.read(keyframe.hash))).resolves.toStrictEqual(baseVersion);
-    await expect(unwrap(keyframeStore.read(delta.hash))).resolves.toStrictEqual(editedVersion);
+    await expect(
+      keyframeStore.read(keyframe.hash).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).resolves.toStrictEqual(baseVersion);
+    await expect(
+      keyframeStore.read(delta.hash).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).resolves.toStrictEqual(editedVersion);
   });
 
   // A version that repeats content the store already holds is free, in bytes and in charge — and it reports the
@@ -72,8 +83,18 @@ describe(createKeyframeStore, () => {
     const [keyframe, delta] = await writeVersions(keyframeStore, [baseVersion, editedVersion]);
     assert.exists(keyframe);
     assert.exists(delta);
-    const rewrittenKeyframe = await unwrap(keyframeStore.write(baseVersion, emptyAnchor));
-    const rewrittenDelta = await unwrap(keyframeStore.write(editedVersion, emptyAnchor));
+    const rewrittenKeyframe = await keyframeStore.write(baseVersion, emptyAnchor).match(
+      (value) => value,
+      (error) => {
+        throw error;
+      },
+    );
+    const rewrittenDelta = await keyframeStore.write(editedVersion, emptyAnchor).match(
+      (value) => value,
+      (error) => {
+        throw error;
+      },
+    );
 
     expect(rewrittenKeyframe).toStrictEqual({ ...keyframe, isDeduplicated: true, storedBytes: 0 });
     expect(rewrittenDelta).toStrictEqual({ ...delta, isDeduplicated: true, storedBytes: 0 });
@@ -127,7 +148,14 @@ describe(createKeyframeStore, () => {
     // Check can catch it
     memoryObjectStore.objects.set(delta.hash, keyframeBytes);
 
-    await expect(unwrap(keyframeStore.read(delta.hash))).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      keyframeStore.read(delta.hash).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, delta.hash, "object does not hash to its key").message}]`,
     );
 
@@ -136,13 +164,25 @@ describe(createKeyframeStore, () => {
     alteredBytes.fill(0xff, -1);
     memoryObjectStore.objects.set(keyframe.hash, alteredBytes);
 
-    await expect(unwrap(keyframeStore.read(keyframe.hash))).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: Data corruption detected]`,
-    );
+    await expect(
+      keyframeStore.read(keyframe.hash).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Data corruption detected]`);
 
     memoryObjectStore.objects.set(keyframe.hash, Buffer.from(""));
 
-    await expect(unwrap(keyframeStore.read(keyframe.hash))).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      keyframeStore.read(keyframe.hash).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, "not a keyframe store object").message}]`,
     );
   });
@@ -158,13 +198,22 @@ describe(createKeyframeStore, () => {
     assert.exists(keyframe);
     assert.exists(delta);
 
-    await expect(unwrap(keyframeStore.collect([keyframe.hash], [delta.hash, keyframe.hash]))).resolves.toStrictEqual(
-      [],
-    );
-    await expect(unwrap(keyframeStore.collect([keyframe.hash, delta.hash], []))).resolves.toStrictEqual([
-      keyframe.hash,
-      delta.hash,
-    ]);
+    await expect(
+      keyframeStore.collect([keyframe.hash], [delta.hash, keyframe.hash]).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).resolves.toStrictEqual([]);
+    await expect(
+      keyframeStore.collect([keyframe.hash, delta.hash], []).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).resolves.toStrictEqual([keyframe.hash, delta.hash]);
     expect(memoryObjectStore.objects.size).toBe(0);
   });
 
@@ -183,11 +232,25 @@ describe(createKeyframeStore, () => {
     assert.exists(delta);
     memoryObjectStore.objects.delete(keyframe.hash);
 
-    await expect(unwrap(keyframeStore.read(delta.hash))).rejects.toThrow(ObjectNotStoredError);
+    await expect(
+      keyframeStore.read(delta.hash).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).rejects.toThrow(ObjectNotStoredError);
 
     memoryObjectStore.objects.delete(delta.hash);
 
-    await expect(unwrap(keyframeStore.read(delta.hash))).rejects.toThrow(ObjectNotStoredError);
+    await expect(
+      keyframeStore.read(delta.hash).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).rejects.toThrow(ObjectNotStoredError);
   });
 
   // The value proposition itself, pinned: compression ratios are not speed, so the bench cannot gate them, and a
