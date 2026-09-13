@@ -3,9 +3,9 @@ import type { CheckStatus } from "#src/models/coderabbit/collect/CheckStatus";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import { describe, expect, test } from "vitest";
 
-describe(checkIsSlotFree, () => {
-  const getCheckStatus = (bucket: string): CheckStatus => ({ bucket, description: "", name: "" });
+const getCheckStatus = (bucket: string): CheckStatus => ({ bucket, description: "", name: "" });
 
+describe(checkIsSlotFree, () => {
   test.each([
     ["pending", false],
     ["pass", true],

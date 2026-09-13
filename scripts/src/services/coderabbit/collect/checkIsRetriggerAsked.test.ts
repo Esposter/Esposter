@@ -5,18 +5,19 @@ import { RATE_LIMIT_COMMENT_MARKER } from "#src/services/coderabbit/collect/cons
 import { PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
 import { describe, expect, test } from "vitest";
 
+const getComment = (body: string, commentLogin: string, updatedAt: string): GitHubEntry => ({
+  body,
+  id: 0,
+  updated_at: updatedAt,
+  user: { login: commentLogin },
+});
+
 describe(checkIsRetriggerAsked, () => {
   const login = "login";
   const viewerLogin = "viewerLogin";
   const firstDay = "1970-01-01";
   const secondDay = "1970-01-02";
 
-  const getComment = (body: string, commentLogin: string, updatedAt: string): GitHubEntry => ({
-    body,
-    id: 0,
-    updated_at: updatedAt,
-    user: { login: commentLogin },
-  });
   const getBlock = (updatedAt: string): GitHubEntry => getComment(RATE_LIMIT_COMMENT_MARKER, login, updatedAt);
   const getAsk = (updatedAt: string): GitHubEntry => getComment(PROBE_COMMENT, viewerLogin, updatedAt);
 

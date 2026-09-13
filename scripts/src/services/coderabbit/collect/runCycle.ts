@@ -6,6 +6,7 @@ import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKin
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { checkIsRetriggerAsked } from "#src/services/coderabbit/collect/checkIsRetriggerAsked";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
+import { checkIsSlotWorthSpending } from "#src/services/coderabbit/collect/checkIsSlotWorthSpending";
 import {
   DEVELOP_BRANCH,
   EXPRESS_VERIFY_COMMANDS,
@@ -26,6 +27,7 @@ import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
+import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
 import { readOpenPullRequest } from "#src/services/coderabbit/collect/readOpenPullRequest";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
@@ -38,6 +40,7 @@ import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
@@ -121,9 +124,7 @@ export const runCycle = async ({
         `${express.shas.length.toString()} mechanical commits reached ${MAIN_BRANCH}`,
         express.targetSha,
       );
-    } else {
-      console.info("the express cut is red — it takes the review lane instead");
-    }
+    } else console.info("the express cut is red — it takes the review lane instead");
   }
 
   const pullRequest = namedPullRequest ?? readOpenPullRequest()?.number;
@@ -156,32 +157,41 @@ export const runCycle = async ({
     // And not yet reached is handed to the runner's retrigger job, which sleeps it out and dispatches this cycle
     // Again. A deadline reached — or none stated — is asked about instead, and the bot's answer is itself an
     // Event this workflow runs on, so nothing here waits for it.
-    const waitMs = getRateLimitWaitMs(issueComments, Date.now());
-    if (!waitMs) {
+    //
+    // None of that happens while the range is not worth the hour it would cost. The limit skipping this review
+    // Is what lets the range keep growing, so the retrigger waits with it and one review reads the lot.
+    const isSlotWorthSpending = checkIsSlotWorthSpending({
+      fileCount: getFileCount(`${frontier}..${developSha}`),
+      isForced,
+      isQueueOwing: readCherryShas(developSha, queueSha).length > 0,
+    });
+    if (isSlotWorthSpending) {
+      const waitMs = getRateLimitWaitMs(issueComments, Date.now());
       // The ask is posted once per block: the bot's answer to it runs this cycle again, and an unguarded ask
       // Would answer that answer with another one. The run that posts it exits there rather than pushing a
       // Window into the review it has just asked for; a run that finds the ask already standing has nothing new
       // To do about the limit and ports as any rate-limited run does, since the slot is free either way.
-      if (!checkIsRetriggerAsked(issueComments, viewerLogin)) {
-        if (isDryRun)
-          return getOutcome(
-            CycleOutcomeKind.Idle,
-            "would ask for the review the limit refused — a dry run asks for nothing",
-          );
+      if (waitMs) {
+        // A deadline past the longest sleep one job holds is slept in relays, the dispatched run reading what is left
+        retriggerDelaySeconds = Math.ceil(
+          Temporal.Duration.from({ milliseconds: Math.min(waitMs, RETRIGGER_SLEEP_CAP_MS) }).total("seconds"),
+        );
+        console.info(`rate limited — retrigger in ${retriggerDelaySeconds.toString()}s, the deadline the bot stated`);
+      } else if (checkIsRetriggerAsked(issueComments, viewerLogin))
+        console.info("rate limited — the review it refused is already asked for, so the window goes on being cut");
+      else if (isDryRun)
+        return getOutcome(
+          CycleOutcomeKind.Idle,
+          "would ask for the review the limit refused — a dry run asks for nothing",
+        );
+      else {
         runGh(["pr", "comment", pullRequest.toString(), "--body", PROBE_COMMENT]);
         return getOutcome(
           CycleOutcomeKind.Idle,
           "asked for the review the limit refused — the bot's answer fires the cycle again",
         );
       }
-      console.info("rate limited — the review it refused is already asked for, so the window goes on being cut");
-    } else {
-      // A deadline past the longest sleep one job holds is slept in relays, the dispatched run reading what is left
-      retriggerDelaySeconds = Math.ceil(
-        Temporal.Duration.from({ milliseconds: Math.min(waitMs, RETRIGGER_SLEEP_CAP_MS) }).total("seconds"),
-      );
-      console.info(`rate limited — retrigger in ${retriggerDelaySeconds.toString()}s, the deadline the bot stated`);
-    }
+    } else console.info("rate limited — the unreviewed range is under the fill target, so the next window grows it");
   }
 
   // Drain: the open set is what the bot spoke last on and no unported commit answers
@@ -260,9 +270,26 @@ export const runCycle = async ({
   const cut = cutCandidate({ cwd, developSha, fixCount: port.fixCount, queueSha, queueShas: port.queueShas });
   if (cut.queueShas.length === 0 && port.fixCount === 0)
     return getOutcome(CycleOutcomeKind.Idle, "nothing green to push");
+  const cutFileCount = getFileCount(`${frontier}..${cut.targetSha}`, cwd);
   console.info(
-    `cut: ${cut.queueShas.length.toString()} queue commits${cut.isMainMerged ? ", main folded in" : ""}${cut.isFastForward ? ", fast-forward" : ""}`,
+    `cut: ${cut.queueShas.length.toString()} queue commits = ${cutFileCount.toString()} files${cut.isMainMerged ? ", main folded in" : ""}${cut.isFastForward ? ", fast-forward" : ""}`,
   );
+  // Readiness is asked again of the cut, because the window that was measured is not the window that ships: the
+  // Green cut drops queue commits until the head passes the checks, and a fold of `main` that turned it red is
+  // Undone. A cut shrunk past what a slot is worth must not go out — the push is auto-reviewed, so it would
+  // Spend the hour the fill target exists to protect on whatever survived. Same rule, asked of the real window.
+  if (
+    !getIsReady({
+      fileCount: cutFileCount,
+      fixCount: port.fixCount,
+      isForced,
+      queueCommitCount: cut.queueShas.length,
+    })
+  )
+    return getOutcome(
+      CycleOutcomeKind.Idle,
+      `the green cut is ${cutFileCount.toString()} files with ${cut.queueShas.length.toString()} queue commits — it waits rather than spending a slot`,
+    );
 
   // Compare-and-swap: a fresh fetch, the develop head still the one measured against, no review started meanwhile
   runGit(["fetch", "origin", DEVELOP_BRANCH]);
