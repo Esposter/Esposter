@@ -15,12 +15,8 @@ export const DRAINS_TRAILER = "Drains";
 
 export const CHECK_NAME = "CodeRabbit";
 
-// The retrigger the probe posts, spelled once so the collector recognises its own
+// The retrigger, spelled once so the manual probe and the runner's delayed job ask for a review the same way
 export const PROBE_COMMENT = "@coderabbitai review";
-
-// CodeRabbit's rate limit lifts on an hourly window and answers every retrigger inside one with the same notice,
-// So a probe is worth posting again only once that window has turned over
-export const PROBE_BACKOFF_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 
 export const PENDING_BUCKET = "pending";
 
@@ -49,11 +45,8 @@ export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 // A dry run ports into a throwaway worktree so the caller's tree is never switched
 export const DRY_RUN_WORKTREE_PREFIX = "review-collector-";
 
-// The walkthrough CodeRabbit rewrites when the limit makes it skip a review, and the deadline stated inside it.
-// The block is removed the moment the limit no longer applies, so its presence is the live rate-limited state.
-export const RATE_LIMIT_COMMENT_MARKER = "auto-generated comment: rate limited by coderabbit.ai";
-
-export const RATE_LIMIT_RESET_PATTERN = /Next included review available in (?<amount>\d+) (?<unit>hours?|minutes?)/;
+// What the plan grants when no block states otherwise: one included review per hour, so an hour is the floor
+export const RATE_LIMIT_FALLBACK_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 
 // Slack on the stated deadline: the bot is answering a clock the collector cannot read exactly, and a retrigger
 // A second early spends the run for the same notice

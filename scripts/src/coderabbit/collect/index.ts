@@ -2,8 +2,6 @@ import type { GitHubReview } from "#src/models/coderabbit/GitHubReview";
 
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
-import { checkIsProbeDue } from "#src/services/coderabbit/collect/checkIsProbeDue";
-import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import {
   DEVELOP_BRANCH,
   DRAINS_MARKER,
@@ -12,12 +10,15 @@ import {
   MAIN_BRANCH,
   PENDING_BUCKET,
   QUEUE_BRANCH,
+  RETRIGGER_DELAY_OUTPUT,
+  RETRIGGER_PULL_REQUEST_OUTPUT,
   REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
 import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
 import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
+import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
@@ -26,9 +27,9 @@ import { readOpenPullRequest } from "#src/services/coderabbit/collect/readOpenPu
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { replyAnswered } from "#src/services/coderabbit/collect/replyAnswered";
 import { verifyCandidate } from "#src/services/coderabbit/collect/verifyCandidate";
+import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
 import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
-import { runProbe } from "#src/services/coderabbit/probe/runProbe";
 import { readBotEntries } from "#src/services/coderabbit/readBotEntries";
 import { runGit } from "#src/services/coderabbit/runGit";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
@@ -117,23 +118,22 @@ console.info(`gate: ${gate.kind} — ${gate.reason}`);
 if (gate.kind === GateDecisionKind.Exit) process.exit(0);
 else if (gate.kind === GateDecisionKind.Fail)
   throw new InvalidOperationError(Operation.Read, "coderabbit", gate.reason);
-else if (gate.kind === GateDecisionKind.Probe) {
-  if (isDryRun) {
-    console.info("would probe — a dry run posts nothing");
-    process.exit(0);
+else if (gate.kind === GateDecisionKind.RateLimited) {
+  // The bot ran nothing, so the slot is free and the window is measured from the frontier it left alone. What is
+  // Owed is the review it skipped, and the limit lifts without announcing it — so the run reads the deadline the
+  // Bot published and hands it to the runner's retrigger job, whose review submits the event the cycle already
+  // Resumes on. Asking the bot instead, by posting a retrigger to be told the deadline it has already written
+  // Down, is the poll this replaces.
+  const waitSeconds = Math.ceil(
+    Temporal.Duration.from({ milliseconds: getRateLimitWaitMs(issueComments, Date.now()) }).total("seconds"),
+  );
+  if (!isDryRun) {
+    writeJobOutput(RETRIGGER_DELAY_OUTPUT, waitSeconds.toString());
+    writeJobOutput(RETRIGGER_PULL_REQUEST_OUTPUT, pullRequest.toString());
   }
-  const headCommittedAtMs = Number(runGit(["show", "--no-patch", "--format=%ct", developSha]).trim()) * 1000;
-  const isProbeDue = checkIsProbeDue({ headCommittedAtMs, issueComments, nowMs: Date.now(), viewerLogin });
-  if (!isProbeDue) {
-    console.info("probed for this head inside the rate-limit window — the next event retriggers");
-    process.exit(0);
-  }
-  const reply = await runProbe(pullRequest);
-  if (!checkIsSlotFree(reply)) {
-    console.info("the probe started a review — its completion re-fires the collector");
-    process.exit(0);
-  }
-  console.info("still rate limited — the bot ran nothing, so the window is measured from the stale frontier");
+  console.info(
+    `rate limited — retrigger in ${waitSeconds.toString()}s, the deadline the bot stated${isDryRun ? " (dry run: not scheduled)" : ""}`,
+  );
 }
 
 // Drain: the open set is what the bot spoke last on and no unported commit answers

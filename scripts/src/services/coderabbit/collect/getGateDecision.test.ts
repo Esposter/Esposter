@@ -31,7 +31,7 @@ describe(getGateDecision, () => {
   test.each([
     ["pending", "Review in progress", GateDecisionKind.Exit],
     ["pass", "Review completed", GateDecisionKind.Exit],
-    ["pass", "Review rate limited", GateDecisionKind.Probe],
+    ["pass", "Review rate limited", GateDecisionKind.RateLimited],
     ["fail", "Review failed", GateDecisionKind.Fail],
   ])("decides %s / %s as %s when the body is behind the head", (bucket, description, expected) => {
     expect.hasAssertions();

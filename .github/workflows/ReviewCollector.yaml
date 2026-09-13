@@ -1,16 +1,25 @@
 name: ♻️ Review Collector
 
-# The garbage collector of the review budget (docs: proposals/infra/review-collector). Allocation — the session
-# pushing `queue` — and freeing — CodeRabbit submitting a review — run the same idempotent cycle, and the cycle's
-# gates decide whether anything is done. There is deliberately no `schedule`: both signals are webhooks the
-# platform already delivers, and a cron here would be polling wearing an ops hat.
+# The garbage collector of the review budget (docs: infra/review-collector). Allocation — the session pushing
+# `queue` — and freeing — CodeRabbit finishing a review — run the same idempotent cycle, and the cycle's gates
+# decide whether anything is done. There is deliberately no `schedule`: every one of these is a webhook the
+# platform already delivers, and the one state change that sends none — a rate limit lifting — is answered by
+# the `retrigger` job below, which waits out the deadline the bot itself publishes rather than asking on a timer.
 on:
   push:
     branches:
       - queue
+      # The return stroke. A release merging, or a dependency bump landing directly, both move `main`; the cycle
+      # fast-forwards `develop` onto it when `develop` is an ancestor. The release pull request is closed by then,
+      # so no review event will ever fire for it and this is the only thing that carries `develop` forward.
+      - main
   pull_request_review:
     types:
       - submitted
+  # CodeRabbit's verdict is a commit status (context `CodeRabbit`), and it flips it a moment after writing the
+  # review body. Listening to both ends of that gap is what keeps a dropped `pull_request_review` delivery, or a
+  # review that ends by status alone, from parking the pipeline until the session's next push.
+  status:
   workflow_dispatch:
     inputs:
       force:
@@ -21,22 +30,27 @@ on:
 permissions:
   contents: read
 
-# Every fire waits for the one ahead of it and re-reads the remote. The bot's own replies arrive as reviews, so
-# a drain is followed by several fires within seconds — each after the first exits at the gates.
-concurrency:
-  group: review-collector
-  cancel-in-progress: false
-
 jobs:
   collect:
     name: Collect
     # A review event fires for every review on every main-based pull request — renovate's included — and for
-    # every batch of replies the bot answers. Only the bot's reviews of the release pull request run a cycle.
+    # every batch of replies the bot answers. Only the bot's reviews of the release pull request run a cycle, and
+    # only CodeRabbit's own status does: every deployment writes one of its own against the same commits.
     if: >-
-      github.event_name != 'pull_request_review' ||
-      (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.ref == 'develop')
+      (github.event_name != 'pull_request_review' ||
+      (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.ref == 'develop')) &&
+      (github.event_name != 'status' || github.event.context == 'CodeRabbit')
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    # Every fire waits for the one ahead of it and re-reads the remote. The bot's own replies arrive as reviews,
+    # so a drain is followed by several fires within seconds — each after the first exits at the gates. The group
+    # is on the job rather than the workflow so the retrigger's wait never holds it.
+    concurrency:
+      group: review-collector
+      cancel-in-progress: false
+    outputs:
+      retriggerDelaySeconds: ${{ steps.collect.outputs.retriggerDelaySeconds }}
+      retriggerPullRequest: ${{ steps.collect.outputs.retriggerPullRequest }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -83,8 +97,39 @@ jobs:
           '
 
       - name: ♻️ Collect
+        id: collect
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
           FORCE_FLAG: ${{ inputs.force == true && '--force' || '' }}
         run: pnpm ai:coderabbit:collect $FORCE_FLAG
+
+  # The one missing webhook, supplied. A rate limit lifts on CodeRabbit's clock and announces nothing when it
+  # does, so the cycle reads the deadline the bot states — "Next included review available in N minutes" — and
+  # this job sleeps it out and retriggers. The review that starts submits a `pull_request_review`, which is the
+  # event the collector already runs on, so the pipeline resumes itself without anything polling for it.
+  retrigger:
+    name: Retrigger
+    needs: collect
+    if: needs.collect.outputs.retriggerDelaySeconds != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    # Its own group: `collect` serialises the cycles, and a wait measured in the bot's minutes must not sit in
+    # that queue holding back a session push. A newer run supersedes a pending one — it carries the newer
+    # deadline, and the bot answers both retriggers identically anyway.
+    concurrency:
+      group: review-collector-retrigger
+      cancel-in-progress: true
+    steps:
+      - name: ⏳ Wait out the rate limit
+        env:
+          DELAY_SECONDS: ${{ needs.collect.outputs.retriggerDelaySeconds }}
+        run: sleep "$DELAY_SECONDS"
+
+      # The retrigger is spelled out rather than read from `PROBE_COMMENT`, for the reason every literal a config
+      # outside the TypeScript graph repeats: there is nothing here that can import it.
+      - name: 🐇 Ask for the review the limit refused
+        env:
+          GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+          PULL_REQUEST: ${{ needs.collect.outputs.retriggerPullRequest }}
+        run: gh pr comment "$PULL_REQUEST" --repo "$GITHUB_REPOSITORY" --body "@coderabbitai review"

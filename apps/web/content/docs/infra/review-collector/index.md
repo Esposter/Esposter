@@ -11,7 +11,7 @@ Local work is pushed to **one permanent `queue` branch** with no window boundari
 
 ## The parts
 
-The pipelining rules are prose in the `coderabbit` skill, and the commands under `scripts/src/coderabbit/` read the facts they turn on — the reviewed frontier and the window size (`window`), every open finding across the three endpoints (`feedback`), whether the checkpoint covers the head (`probe`). The collector composes them into one cycle that runs without a person, in three self-contained parts:
+The pipelining rules are prose in the `coderabbit` skill, and the commands under `scripts/src/coderabbit/` read the facts they turn on — the reviewed frontier and the window size (`window`), every open finding across the three endpoints (`feedback`), whether the checkpoint covers the head (`probe`, which a session runs by hand). The collector composes them into one cycle that runs without a person, in three self-contained parts:
 
 1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — the state the collector reads, the gates it must clear, how it drains findings into a parked `review-fixes` branch, ports the largest green prefix of `queue` under the cap, pushes and replies with the pushed sha. One script, `ai:coderabbit:collect`, with Claude invoked for exactly one step.
 2. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle from the allocation and free events, the credentials it holds, why it has no cron, and what a failed run leaves behind.
@@ -66,7 +66,7 @@ The cap and the fill target live where the CodeRabbit tooling declares its share
 | `scripts/src/services/coderabbit/constants.ts`       | the cap and the fill target                                                                      |
 | `scripts/src/coderabbit/window/index.ts`             | the frontier and window-size read the gates reuse                                                |
 | `scripts/src/coderabbit/feedback/index.ts`           | the finding read the drain step feeds to Claude                                                  |
-| `scripts/src/coderabbit/probe/index.ts`              | the checkpoint probe the frontier gate runs on a rate-limited status                             |
+| `scripts/src/coderabbit/probe/index.ts`              | the checkpoint probe a session runs by hand to ask the bot to take the head                      |
 | `.github/workflows/claude-warmup.yaml`               | the headless Claude Code invocation and trust-dialog shim the runner copies                      |
 | `.agents/skills/coderabbit/references/pipelining.md` | the human side of the loop — pushing `queue` and catching up after a window                      |
 

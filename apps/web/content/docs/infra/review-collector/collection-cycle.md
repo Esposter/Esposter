@@ -16,6 +16,7 @@ Nothing is remembered between runs, so every input is a remote fact with a singl
 | the release pull request      | the one open pull request with base `main` and head `develop` — none means exit                 |
 | the frontier                  | the last sha named by a review body's `between … and …` range, as `ai:coderabbit:window` reads  |
 | the check                     | the CodeRabbit commit status, read by `bucket` first and `description` second                   |
+| the rate-limit deadline       | the `Next included review available in …` the bot states in the walkthrough it last rewrote     |
 | open findings                 | unresolved threads whose last comment is the bot's, plus the newest review body's own buckets   |
 | fixes awaiting a push         | `git cherry origin/develop origin/review-fixes` — the branch stays, what it owes is what counts |
 | what the queue still owes     | `git cherry origin/develop origin/queue` — commits not yet upstream by patch id                 |
@@ -42,16 +43,17 @@ flowchart TD
   B -->|no| ST{Check bucket}
   ST -->|pending| X1[Exit — review running]
   ST -->|pass, Review completed| X2[Exit — last push not yet reviewed]
-  ST -->|pass, Review rate limited| PB[Probe with a retrigger]
-  PB -->|still rate limited| OK
-  PB -->|review starts| X3[Exit — its completion re-fires]
+  ST -->|pass, Review rate limited| SR[Schedule the retrigger<br/>for the deadline the bot stated]
+  SR --> OK
   ST -->|anything else| X4[Fail — a person looks]
   OK --> D[Drain]
 ```
 
 **The reply step runs before the gates, not after the push.** A reply is owed the moment a fix commit is on `develop`, and the run that pushed it may die before replying. Putting replies first makes every later run finish them: it scans the commits between the frontier and the `develop` head for `Answers:` trailers and posts on each thread that lacks a reply citing that commit. Once the review of that push completes, the frontier moves to the head and the scan is empty. This is why the runner must never exit at "review running" before replying — the running review is exactly the one that will resolve those threads, and it resolves them only if the reply is there.
 
-**The review body, not the status, says a review is complete.** CodeRabbit writes the body naming its range at completion and flips the commit status a moment later, and the review event fires in that gap. Reading the status alone at that moment reads `pending`, exits, and nothing re-fires until the next queue push. So the primary test is whether the newest body's range ends at the `develop` head, and the status only decides when it does not. A `Review rate limited` status with a stale body is the one case that needs the probe: nothing is running, so nothing can be cancelled, and the retrigger is the only thing that says whether the bot will now take the head. Its answer is read from its status line alone, because every reply carries the same note — CodeRabbit does not re-review already reviewed commits — including the reply announcing the review it has just started, so a reply read for those words reports a reviewed head whatever happened and the collector pushes into its own retrigger's review. A reply naming the rate limit means the bot ran nothing; anything else leaves the slot spoken for and the run exits for that review's completion to re-fire it. The retrigger is posted once per `develop` head and once per rate-limit window: a rate-limited bot answers every probe with the same notice, so a run finding the collector's own retrigger already posted since that head was committed exits rather than posting another. The window is what makes that suppression expire, and it has to expire — the limit lifts silently, no push moves `develop` while the measured window already fills the cap, and a retrigger kept by the head alone would leave the collector waiting on an answer that arrived an hour ago and said nothing. Anything unrecognised fails the run rather than guessing, because being wrong about a running review costs its findings.
+**The review body, not the status, says a review is complete.** CodeRabbit writes the body naming its range at completion and flips the commit status a moment later, and the review event fires in that gap. Reading the status alone at that moment reads `pending`, exits, and nothing re-fires until the next queue push. So the primary test is whether the newest body's range ends at the `develop` head, and the status only decides when it does not. Anything unrecognised fails the run rather than guessing, because being wrong about a running review costs its findings.
+
+**A rate limit leaves the slot free and owes a retrigger.** `Review rate limited` means the bot ran nothing: the frontier has not moved, and a window measured from that stale frontier can only over-count, which is the safe direction. So the cycle proceeds. What it owes is the review the limit refused, and the limit lifts without announcing it — so the run reads the deadline the bot published in the walkthrough it rewrote, and hands it to the [runner](/docs/infra/review-collector/runner)'s delayed retrigger job, whose review re-fires the cycle on completion. The deadline is counted from the comment that states it rather than from now, because the block outlives the limit: a merged pull request still shows the one its last skipped review wrote, and an expired block therefore resolves to no wait rather than to an hour of one.
 
 ## Drain
 
@@ -111,7 +113,7 @@ Nothing is deleted afterwards. `review-fixes` stays, owing nothing, until the ne
 | Step  | Precondition read from the remote                | Effect                    | Second run against unchanged state                                                 |
 | :---- | :----------------------------------------------- | :------------------------ | :--------------------------------------------------------------------------------- |
 | reply | a trailer's thread lacks a reply citing that sha | posts the reply           | every thread has one — nothing                                                     |
-| gate  | body range end, check bucket                     | none                      | same verdict                                                                       |
+| gate  | body range end, check bucket                     | a scheduled retrigger     | same verdict, same deadline — the bot re-answers a redundant retrigger and no more |
 | drain | a finding is open by the predicate               | commits on `review-fixes` | every finding carries a trailer or a reply — nothing                               |
 | port  | `git cherry` lists unported commits, readiness   | a local branch            | same branch, discarded with the runner                                             |
 | push  | `origin/develop` unchanged since the read        | fast-forwards `develop`   | the last push moved the head, so the body no longer ends at it — exits at the gate |

@@ -23,8 +23,8 @@ export const getGateDecision = ({ checkStatus, developSha, lastReviewedSha }: Ga
     return { kind: GateDecisionKind.Exit, reason: "the last push is not yet reviewed — its completion re-fires" };
   else if (checkStatus.bucket === PASS_BUCKET && checkStatus.description === RATE_LIMITED_DESCRIPTION)
     return {
-      kind: GateDecisionKind.Probe,
-      reason: "rate limited with a stale body — only a retrigger says whether the checkpoint moved",
+      kind: GateDecisionKind.RateLimited,
+      reason: "rate limited with a stale body — the bot ran nothing, so the frontier is where it was",
     };
   return {
     kind: GateDecisionKind.Fail,
