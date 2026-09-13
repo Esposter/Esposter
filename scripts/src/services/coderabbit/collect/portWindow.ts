@@ -1,7 +1,7 @@
 import type { PortInput } from "#src/models/coderabbit/collect/PortInput";
 import type { PortResult } from "#src/models/coderabbit/collect/PortResult";
 
-import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
+import { mergeMain, MergeMainOutcome } from "#src/services/coderabbit/collect/mergeMain";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/constants";
 import { runGit } from "#src/services/coderabbit/runGit";
@@ -67,7 +67,18 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
   // Ahead of it, the queue sitting on develop, and no skipped merge among the cut's ancestors — a merge's own
   // Diff was never counted, and a fast-forward would land it anyway.
   const cutSha = queueShas.at(-1);
-  const isMainMerged = mergeMain(cwd);
+  const preMergeSha = runGit(["rev-parse", "HEAD"], cwd).trim();
+  const mergeOutcome = mergeMain(cwd);
+  // A merge's own diff is otherwise never measured against the cap — the loop above only ever counts fixes and
+  // Queue commits — so a fold that lands main's own backlog of files is undone rather than pushed over budget.
+  // Undone, not shrunk: nothing here knows which of main's files to drop, and the fold tries again next window
+  const isOverCapAfterMerge =
+    mergeOutcome === MergeMainOutcome.Merged && getFileCount(`${frontierSha}..HEAD`, cwd) > REVIEW_FILE_CAP;
+  if (isOverCapAfterMerge) {
+    runGit(["reset", "--hard", preMergeSha], cwd);
+    console.info("main not folded — the fold alone put the window over the file cap");
+  }
+  const isMainMerged = mergeOutcome === MergeMainOutcome.Merged && !isOverCapAfterMerge;
   const mergeBase = runGit(["merge-base", developSha, queueSha], cwd).trim();
   const isMergeFree =
     cutSha === undefined ||
@@ -77,6 +88,7 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
     fixCount: fixShas.length,
     heldSha,
     isFastForward: fixShas.length === 0 && mergeBase === developSha && isMergeFree && !isMainMerged,
+    isMainConflicted: mergeOutcome === MergeMainOutcome.Conflicted,
     isMainMerged,
     queueShas,
   };
