@@ -241,8 +241,11 @@ if (readSha(`origin/${DEVELOP_BRANCH}`) !== developSha) {
   console.info(`${DEVELOP_BRANCH} moved during the run — nothing pushed, the next run re-measures`);
   process.exit(0);
 }
-if (readCheckStatus(pullRequest)?.bucket === PENDING_BUCKET) {
-  console.info("a review started during the run — nothing pushed");
+// Fail closed: an unreadable status is not a free slot. `gh` answering nothing is indistinguishable from a
+// Review that started a second ago, and the next run re-reads it for the cost of one skipped window.
+const finalCheckStatus = readCheckStatus(pullRequest);
+if (finalCheckStatus === undefined || finalCheckStatus.bucket === PENDING_BUCKET) {
+  console.info("a review started during the run, or its status could not be read — nothing pushed");
   process.exit(0);
 }
 const target = port.isFastForward ? (port.queueShas.at(-1) ?? developSha) : runGit(["rev-parse", "HEAD"], cwd).trim();

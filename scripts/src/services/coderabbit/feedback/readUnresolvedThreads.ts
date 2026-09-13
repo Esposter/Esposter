@@ -49,9 +49,9 @@ export const readUnresolvedThreads = (pullRequest: number): ReviewThread[] => {
     .flatMap(({ data }) => data.repository.pullRequest.reviewThreads.nodes)
     .filter(({ isResolved }) => !isResolved)
     .flatMap(({ firstComment, lastComment, line, path }) => {
-      const lastAuthorLogin = lastComment.nodes.at(-1)?.author.login ?? "";
+      const lastAuthorLogin = lastComment.nodes.at(-1)?.author?.login ?? "";
       return firstComment.nodes
-        .filter(({ author }) => author.login === CODERABBIT_GRAPHQL_LOGIN)
+        .filter(({ author }) => author?.login === CODERABBIT_GRAPHQL_LOGIN)
         .map(({ body, databaseId }) => ({
           body,
           commentId: databaseId,
