@@ -1,32 +1,23 @@
-import { checkIsImportPathOnlyDiff } from "#src/services/coderabbit/exclusions/checkIsImportPathOnlyDiff";
 import { checkIsRelocatablePath } from "#src/services/coderabbit/exclusions/checkIsRelocatablePath";
-import { getPureRenamePaths } from "#src/services/coderabbit/exclusions/getPureRenamePaths";
-import { getRenamedFromPaths } from "#src/services/coderabbit/exclusions/getRenamedFromPaths";
-import { getRenamePathspec } from "#src/services/coderabbit/exclusions/getRenamePathspec";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { readMechanicalPaths } from "#src/services/coderabbit/exclusions/readMechanicalPaths";
 
 // Whether a commit has anything a reviewer could comment on. Every file in it must be a move that changed no
 // Bytes, or a move whose only edit is its own imports following it, or a file that stayed put and repathed an
-// Import — which together are what a folder sweep is and nothing else is. One file failing sinks the commit,
-// Because a window is cut at commit boundaries and half a commit cannot skip a review.
+// Import of something that moved — and none of them may be a file whose location is itself a decision.
 //
 // The two halves guard different things and neither is redundant. The per-file diff proof is what rules out a
 // Content change, so protection against content edits would restate it — what the path rule adds is the case the
-// Diff cannot see: a file read by *where it is*, where moving it with no content change is still a decision.
+// Diff cannot see: a file read by *where it is*, where moving it with no content change is still a decision, and
+// It is asked of both ends of a move.
 export const checkIsMechanicalCommit = (sha: string, cwd?: string): boolean => {
-  const range = [`${sha}^`, sha];
-  const nameStatus = runGit(["diff", "--name-status", "-M", ...range], cwd);
-  const changedPaths = getNonEmptyLines(runGit(["diff", "--name-only", "-M", ...range], cwd));
+  const { mechanicalPaths, rows } = readMechanicalPaths([`${sha}^`, sha], cwd);
   // An empty commit has nothing to prove mechanical, and a merge has no single parent to diff against
-  if (changedPaths.length === 0) return false;
+  if (rows.length === 0) return false;
 
-  const renamedFromPaths = getRenamedFromPaths(nameStatus);
-  const pureRenamePaths = new Set(getPureRenamePaths(nameStatus));
-  return changedPaths.every((path) => {
-    const pathspec = getRenamePathspec(path, renamedFromPaths);
-    if (!pathspec.every((changedPath) => checkIsRelocatablePath(changedPath))) return false;
-    if (pureRenamePaths.has(path)) return true;
-    return checkIsImportPathOnlyDiff(runGit(["diff", "-U0", "-M", ...range, "--", ...pathspec], cwd));
-  });
+  return rows.every(
+    ({ path, renamedFrom }) =>
+      mechanicalPaths.has(path) &&
+      checkIsRelocatablePath(path) &&
+      (renamedFrom === undefined || checkIsRelocatablePath(renamedFrom)),
+  );
 };

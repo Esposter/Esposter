@@ -4,10 +4,5 @@ export interface PortResult {
   fixCount: number;
   // The first queue commit the window could not take — a conflict or the cap — when one exists
   heldSha?: string;
-  // Set when the window is a pure prefix of the queue sitting on develop, so `develop` can move to the queue's
-  // Own sha and the session owes no rebase
-  isFastForward: boolean;
-  // Whether `main` had commits develop lacked and was folded into the candidate as a merge commit
-  isMainMerged: boolean;
   queueShas: string[];
 }

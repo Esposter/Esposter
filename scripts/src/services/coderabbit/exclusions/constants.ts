@@ -1,6 +1,6 @@
-// `R` carries the old and new paths; `M` reuses the one path. `A`/`D` are content decisions, never mechanical
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
-export const RENAME_OR_MODIFY_ROW_REGEX: RegExp = /^(?<status>R\d*|M)\t(?<oldPath>[^\t]+)(?:\t(?<newPath>[^\t]+))?$/u;
+// Git's status for a rename that changed no bytes; one that also edited the file carries its similarity score
+// Instead, and the new path is what `path_filters` names
+export const PURE_RENAME_STATUS = "R100";
 
 // Protection guards what a file says, not where it sits. A test is the behaviour contract, so an edit to one is
 // Never mechanical — but moving it says nothing, and a sweep moves every colocated test with its subject, so a

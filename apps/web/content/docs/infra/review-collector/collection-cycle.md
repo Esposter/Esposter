@@ -5,7 +5,7 @@ description: The one pass the review collector runs on every trigger: read, repl
 
 # Collection Cycle
 
-One script, `pnpm ai:coderabbit:collect <pr>`, run by the [runner](/docs/infra/review-collector/runner) on every trigger and by hand with `--dry-run` to see what it would do. It reads the whole situation from the remote, clears the gates, and then does the most it safely can in one pass. The steps are ordered so that every irreversible effect is either the single fast-forward push or a predicate-guarded write that a later run can finish. Which ref each writer owns is the [two writers](/docs/infra/review-collector/two-writers) page; this page is what the collector does inside its own turn.
+One script, `pnpm ai:coderabbit:collect`, run by the [runner](/docs/infra/review-collector/runner) on every trigger and by hand with `--dry-run` to see what it would do; it finds the release pull request itself. It reads the whole situation from the remote, clears the gates, and then does the most it safely can in one pass. The steps are ordered so that every irreversible effect is either the single fast-forward push or a predicate-guarded write that a later run can finish. Which ref each writer owns is the [two writers](/docs/infra/review-collector/two-writers) page; this page is what the collector does inside its own turn.
 
 ## What it reads
 
@@ -91,10 +91,13 @@ flowchart TD
   RD -->|fixes parked and any queue commit| V
   RD -->|no fixes and count at the target, or force| V
   RD -->|otherwise| W[Wait — nothing pushed, fixes stay parked]
-  V[Verify the candidate head<br/>typecheck and lint, check only] -->|green| P[Push]
+  V[Verify the candidate head<br/>typecheck and lint, check only] -->|green| FM[Fold main in<br/>lockfile rebuilt]
   V -->|red| BK{Retries left}
   BK -->|yes| DR[Drop the last queue commit] --> V
   BK -->|no| HR[Hold — report the red range]
+  FM --> V2{The fold still green}
+  V2 -->|yes| P[Push]
+  V2 -->|no| UF[Undo the fold — it waits for the next window] --> P
 ```
 
 The rules the loop encodes:
@@ -105,7 +108,7 @@ The rules the loop encodes:
 - **Every count is measured from the frontier, never from the `develop` head.** A review covers everything since the one that last wrote a body, so a window pushed on top of one still unreviewed is read as a single range. Measuring from the head counts only the commits this run adds, and the pair then overflows the cap — the one failure the cap exists to prevent, since past it CodeRabbit skips the review outright rather than trimming it. The two bases agree exactly when the previous window has been reviewed, which is why the error is invisible until a rate limit lets a second window go out on top of the first.
 - **A conflict ends the window before the conflicting commit.** The fixes changed something the queue also changed, and only the session can decide how they combine; the collector reports the commit and pushes whatever fit before it if that is ready. When the conflicting commit is the first one, the run pushes nothing and the [two writers](/docs/infra/review-collector/two-writers) page says how the session resolves it.
 - **Readiness is a two-by-two.** Fixes parked and any queue commit fits: push, because the fixes are what the window is for. No fixes and the count reaches the fill target: push. No fixes and the queue is short: wait, the slot is free and nothing is waiting on it. Fixes parked and the queue empty: park, which is the case that motivated `review-fixes`. `--force` collapses the two waits into a push, for the dispatch when a short window is the right trade.
-- **The cut is green on its own.** The pushed head runs CI alone, and interior queue commits were verified by nobody, so the candidate head gets `typecheck` and the lint check — check-only, never `lint:fix`, because a repair the collector wrote would be a commit nobody reviewed. Red drops the last queue commit and tries again a bounded number of times, then holds and names the range. Tests are not run here: `develop` runs its own CI after the push, and a red suite there is one more finding for the next window, which is the pipelining page's existing "correctness on `develop` is eventual".
+- **The cut is green on its own.** The pushed head runs CI alone, and interior queue commits were verified by nobody, so the candidate head gets `typecheck` and the lint check — check-only, never `lint:fix`, because a repair the collector wrote would be a commit nobody reviewed. Red drops the last queue commit and tries again a bounded number of times, then holds and names the range. `main` is folded in only once the cut is green, because the retry drops the candidate's last commit and on a merge commit that would be the fold rather than the queue commit; a fold that turns a green cut red is undone and left for the next window, since the bump on `main` is what broke it rather than anything the queue carried. Tests are not run here: `develop` runs its own CI after the push, and a red suite there is one more finding for the next window, which is the pipelining page's existing "correctness on `develop` is eventual".
 - **Fast-forward when the shas allow it.** When there are no fixes, the queue sits directly on `origin/develop`, no skipped merge sits among the cut's ancestors and `main` had nothing to fold in, the cut is a queue commit and `git push origin <cut>:develop` moves `develop` to it without rewriting a sha, so the session's local branch already matches and no rebase is owed. The cherry-picked candidate is pushed in every other case.
 
 ## Push and reply

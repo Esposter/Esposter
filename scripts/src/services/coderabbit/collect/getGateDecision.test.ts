@@ -8,7 +8,6 @@ const getCheckStatus = (bucket: string, description: string): CheckStatus => ({
   bucket,
   description,
   name: "CodeRabbit",
-  state: "SUCCESS",
 });
 
 describe(getGateDecision, () => {

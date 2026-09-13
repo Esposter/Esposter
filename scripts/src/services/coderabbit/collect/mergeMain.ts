@@ -1,8 +1,8 @@
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
-import { getResult } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
+import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
 
@@ -31,7 +31,8 @@ export const mergeMain = (cwd: string): boolean => {
         return false;
       }
       rmSync(join(cwd, LOCKFILE));
-      execFileSync("pnpm", ["i"], { cwd, encoding: "utf8", shell: process.platform === "win32", stdio: "inherit" });
+      if (spawnPnpm(["i"], { cwd, stdio: "inherit" }).status !== 0)
+        throw new InvalidOperationError(Operation.Update, "coderabbit", "the lockfile could not be rebuilt");
       runGit(["add", LOCKFILE], cwd);
       runGit(["commit", "--no-edit"], cwd);
       return true;

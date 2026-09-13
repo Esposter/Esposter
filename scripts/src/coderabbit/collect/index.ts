@@ -6,7 +6,6 @@ import {
   DEVELOP_BRANCH,
   DRAINS_MARKER,
   DRY_RUN_WORKTREE_PREFIX,
-  GREEN_CUT_RETRY_LIMIT,
   MAIN_BRANCH,
   PENDING_BUCKET,
   QUEUE_BRANCH,
@@ -14,6 +13,7 @@ import {
   RETRIGGER_PULL_REQUEST_OUTPUT,
   REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
+import { cutCandidate } from "#src/services/coderabbit/collect/cutCandidate";
 import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
@@ -24,21 +24,21 @@ import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
-import { readEntries } from "#src/services/coderabbit/collect/readEntries";
 import { readOpenPullRequest } from "#src/services/coderabbit/collect/readOpenPullRequest";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { replyAnswered } from "#src/services/coderabbit/collect/replyAnswered";
+import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { verifyCandidate } from "#src/services/coderabbit/collect/verifyCandidate";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
 import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
+import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -207,11 +207,12 @@ if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined))
     );
     process.exit(0);
   } else {
-    const feedback = execFileSync("pnpm", ["ai:coderabbit:feedback", pullRequest.toString()], {
+    const { status, stdout: feedback } = spawnPnpm(["ai:coderabbit:feedback", pullRequest.toString()], {
       cwd: REPOSITORY_ROOT,
-      encoding: "utf8",
-      shell: process.platform === "win32",
+      stdio: ["ignore", "pipe", "inherit"],
     });
+    if (status !== 0)
+      throw new InvalidOperationError(Operation.Read, "coderabbit", "the feedback read failed — see its output");
     const drain = drainFindings({
       developSha,
       feedback,
@@ -230,7 +231,7 @@ if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined))
 
 const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha, reviewFixesSha });
 console.info(
-  `window: ${port.fixCount.toString()} fix commits + ${port.queueShas.length.toString()} queue commits = ${port.fileCount.toString()} files${port.heldSha ? `, held from ${port.heldSha}` : ""}${port.isMainMerged ? ", main folded in" : ""}${port.isFastForward ? ", fast-forward" : ""}`,
+  `window: ${port.fixCount.toString()} fix commits + ${port.queueShas.length.toString()} queue commits = ${port.fileCount.toString()} files${port.heldSha ? `, held from ${port.heldSha}` : ""}`,
 );
 const isReady = getIsReady({
   fileCount: port.fileCount,
@@ -246,35 +247,18 @@ if (!isReady) {
   process.exit(0);
 }
 if (isDryRun) {
-  console.info(
-    `would push ${port.isFastForward ? (port.queueShas.at(-1) ?? developSha) : "the cherry-picked candidate"} to ${DEVELOP_BRANCH}`,
-  );
+  console.info(`would verify, fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}`);
   process.exit(0);
 }
 
-// The cut is green on its own, or it shrinks until it is
-let retries = GREEN_CUT_RETRY_LIMIT;
-while (!verifyCandidate(cwd)) {
-  if (port.queueShas.length === 0)
-    throw new InvalidOperationError(
-      Operation.Update,
-      "coderabbit",
-      "the fixes alone are red — the drain touched more than its findings",
-    );
-  else if (retries === 0)
-    throw new InvalidOperationError(
-      Operation.Update,
-      "coderabbit",
-      `no green cut within the retry limit — held from ${port.queueShas[0] ?? ""}`,
-    );
-  runGit(["reset", "--hard", "HEAD~1"], cwd);
-  port.queueShas.pop();
-  retries -= 1;
-  if (port.queueShas.length === 0 && port.fixCount === 0) {
-    console.info("nothing green to push");
-    process.exit(0);
-  }
+const cut = cutCandidate({ cwd, developSha, fixCount: port.fixCount, queueSha, queueShas: port.queueShas });
+if (cut.queueShas.length === 0 && port.fixCount === 0) {
+  console.info("nothing green to push");
+  process.exit(0);
 }
+console.info(
+  `cut: ${cut.queueShas.length.toString()} queue commits${cut.isMainMerged ? ", main folded in" : ""}${cut.isFastForward ? ", fast-forward" : ""}`,
+);
 
 // Compare-and-swap: a fresh fetch, the develop head still the one measured against, no review started meanwhile
 runGit(["fetch", "origin", DEVELOP_BRANCH]);
@@ -289,9 +273,8 @@ if (finalCheckStatus === undefined || finalCheckStatus.bucket === PENDING_BUCKET
   console.info("a review started during the run, or its status could not be read — nothing pushed");
   process.exit(0);
 }
-const target = port.isFastForward ? (port.queueShas.at(-1) ?? developSha) : runGit(["rev-parse", "HEAD"], cwd).trim();
-runGit(["push", "origin", `${target}:refs/heads/${DEVELOP_BRANCH}`], cwd);
-console.info(`pushed ${target} to ${DEVELOP_BRANCH}`);
+runGit(["push", "origin", `${cut.targetSha}:refs/heads/${DEVELOP_BRANCH}`], cwd);
+console.info(`pushed ${cut.targetSha} to ${DEVELOP_BRANCH}`);
 
 runGit(["fetch", "origin", DEVELOP_BRANCH]);
-replyAnswered(pullRequest, `${developSha}..${target}`, viewerLogin, false);
+replyAnswered(pullRequest, `${developSha}..${cut.targetSha}`, viewerLogin, false);

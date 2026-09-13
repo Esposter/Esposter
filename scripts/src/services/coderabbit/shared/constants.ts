@@ -4,6 +4,9 @@
 export const CODERABBIT_REST_LOGIN = "coderabbitai[bot]";
 export const CODERABBIT_GRAPHQL_LOGIN = "coderabbitai";
 
+// The retrigger, spelled once so the manual probe and the runner's delayed job ask for a review the same way
+export const PROBE_COMMENT = "@coderabbitai review";
+
 // The Open Source tier's per-review file limit. It is popularity-scaled, so the bot's skip comment states the
 // Current one — this is the last known value, and a skip comment naming another is what changes it.
 export const REVIEW_FILE_CAP = 100;

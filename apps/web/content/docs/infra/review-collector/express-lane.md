@@ -49,15 +49,16 @@ The lane only pays when the mechanical part of a sweep is **its own commit**. A 
 
 ## Key files
 
-| File                                                                      | Role                                                                 |
-| :------------------------------------------------------------------------ | :------------------------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect/portExpress.ts`                  | builds the candidate on `main` and decides whether the lane is open  |
-| `scripts/src/services/coderabbit/exclusions/checkIsMechanicalCommit.ts`   | the per-commit proof                                                 |
-| `scripts/src/services/coderabbit/exclusions/checkIsRelocatablePath.ts`    | whether moving a file is itself a decision                           |
-| `scripts/src/services/coderabbit/exclusions/checkIsImportPathOnlyDiff.ts` | whether a file's whole diff is imports following a move              |
-| `scripts/src/services/coderabbit/exclusions/getRenamedFromPaths.ts`       | the old path a rename must be diffed against for git to see the pair |
+| File                                                                      | Role                                                                |
+| :------------------------------------------------------------------------ | :------------------------------------------------------------------ |
+| `scripts/src/services/coderabbit/collect/portExpress.ts`                  | builds the candidate on `main` and decides whether the lane is open |
+| `scripts/src/services/coderabbit/exclusions/checkIsMechanicalCommit.ts`   | the per-commit proof                                                |
+| `scripts/src/services/coderabbit/exclusions/checkIsRelocatablePath.ts`    | whether moving a file is itself a decision                          |
+| `scripts/src/services/coderabbit/exclusions/checkIsImportPathOnlyDiff.ts` | whether a file's whole diff is imports following a move             |
+| `scripts/src/services/coderabbit/exclusions/readMechanicalPaths.ts`       | the range read once — two git calls — and classified per file       |
+| `scripts/src/services/coderabbit/exclusions/getFileDiffs.ts`              | the whole-range diff split per file, keyed by the rename pair       |
 
 ## Notes
 
-- **A rename is invisible to a diff scoped to one path.** `git diff -- <newPath>` filters the counterpart out of the rename pair, so git has nothing to rename-detect against and reports the file as wholly new — and every classifier above then sees the entire content as added. Both paths go in the pathspec, which is the only reason the moved file that also repathed its own imports, the most common file in a sweep, can be classified at all. The manual exclusions command reads the pair the same way, for the same reason.
+- **A rename is invisible to a diff scoped to one path.** `git diff -- <newPath>` filters the counterpart out of the rename pair, so git has nothing to rename-detect against and reports the file as wholly new — and every classifier above then sees the entire content as added. So the range is diffed whole, once, and split per file on the header the rename pair predicts, which is the only reason the moved file that also repathed its own imports, the most common file in a sweep, can be classified at all — and why a commit costs two git calls rather than one per file. The manual exclusions command reads the same classification, for the same reason.
 - **The lane is measured in files it removes from a window, not in reviews it avoids.** Avoiding a review is not the point; CodeRabbit reads a pure rename and says nothing either way. What it buys is the budget that rename was occupying, which is the scarce thing.

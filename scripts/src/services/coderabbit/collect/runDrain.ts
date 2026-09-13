@@ -2,8 +2,8 @@ import type { DrainRun } from "#src/models/coderabbit/collect/DrainRun";
 
 import { CLAUDE_CODE_PACKAGE } from "#src/services/coderabbit/collect/constants";
 import { getDrainLimitResetMs } from "#src/services/coderabbit/collect/getDrainLimitResetMs";
+import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { spawnSync } from "node:child_process";
 
 // Claude Code headless, the prompt on stdin. Permission prompts are skipped because the checkout is ephemeral
 // Or dedicated and holds one credential scoped to this repository, so the interactive model protects nothing
@@ -26,17 +26,9 @@ export const runDrain = (prompt: string): DrainRun => {
       .filter((key) => !WITHHELD_VARIABLES.has(key))
       .map((key) => [key, process.env[key]]),
   );
-  const { status, stdout } = spawnSync(
-    "pnpm",
+  const { status, stdout } = spawnPnpm(
     ["dlx", CLAUDE_CODE_PACKAGE, "-p", "--dangerously-skip-permissions", "--output-format", "text"],
-    {
-      cwd: REPOSITORY_ROOT,
-      encoding: "utf8",
-      env: environment,
-      input: prompt,
-      shell: process.platform === "win32",
-      stdio: ["pipe", "pipe", "inherit"],
-    },
+    { cwd: REPOSITORY_ROOT, env: environment, input: prompt, stdio: ["pipe", "pipe", "inherit"] },
   );
   console.info(stdout);
   return { isDrained: status === 0, limitResetAtMs: getDrainLimitResetMs(stdout, Date.now()) };
