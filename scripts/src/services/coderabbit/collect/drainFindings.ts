@@ -10,7 +10,6 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
-import { readEntries } from "#src/services/coderabbit/collect/readEntries";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
 import { runGh } from "#src/services/coderabbit/runGh";
 import { runGit } from "#src/services/coderabbit/runGit";
@@ -18,6 +17,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 interface DrainFindingsInput extends DrainInput {
   developSha: string;
+  // The pull request's issue comments, read once by the caller — the markers live in them
+  issueComments: GitHubEntry[];
   // The newest review's id, the unit a drain attempt is counted against
   newestReviewId: number;
   reviewFixesSha: string | undefined;
@@ -31,13 +32,13 @@ interface DrainFindingsInput extends DrainInput {
 // Returns the pushed review-fixes sha, or the one it started from when nothing was drained.
 export const drainFindings = ({
   developSha,
+  issueComments,
   newestReviewId,
   reviewFixesSha,
   viewerLogin,
   ...drainInput
 }: DrainFindingsInput): string | undefined => {
   const pullRequest = drainInput.pullRequest.toString();
-  const issueComments = readEntries<GitHubEntry>(`issues/${pullRequest}/comments`);
   const quarantinedMarker = getMarker(QUARANTINED_MARKER, newestReviewId);
   if (checkHasMarkerComment(issueComments, viewerLogin, quarantinedMarker)) {
     console.info(`review ${newestReviewId.toString()} is quarantined — porting without its fixes`);

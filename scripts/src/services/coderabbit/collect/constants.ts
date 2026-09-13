@@ -15,6 +15,9 @@ export const DRAINS_TRAILER = "Drains";
 
 export const CHECK_NAME = "CodeRabbit";
 
+// The retrigger the probe posts, spelled once so the collector recognises its own
+export const PROBE_COMMENT = "@coderabbitai review";
+
 export const PENDING_BUCKET = "pending";
 
 export const PASS_BUCKET = "pass";

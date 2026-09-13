@@ -1,3 +1,4 @@
+import { PROBE_COMMENT } from "#src/services/coderabbit/collect/constants";
 import { checkIsCheckpointMoved } from "#src/services/coderabbit/probe/checkIsCheckpointMoved";
 import { DEADLINE_MS, POLL_INTERVAL_MS } from "#src/services/coderabbit/probe/constants";
 import { getCheckpoint } from "#src/services/coderabbit/probe/getCheckpoint";
@@ -13,7 +14,7 @@ import { setTimeout as delay } from "node:timers/promises";
 // Here, and an unanswered probe is something to go and look at rather than something to keep waiting on.
 export const runProbe = async (pullRequest: number): Promise<string> => {
   const before = getCheckpoint(readNewestComment(pullRequest));
-  runGh(["pr", "comment", pullRequest.toString(), "--body", "@coderabbitai review"]);
+  runGh(["pr", "comment", pullRequest.toString(), "--body", PROBE_COMMENT]);
 
   const deadline = Date.now() + DEADLINE_MS;
   while (Date.now() < deadline) {

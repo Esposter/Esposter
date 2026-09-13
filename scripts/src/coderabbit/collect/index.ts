@@ -9,6 +9,7 @@ import {
   GREEN_CUT_RETRY_LIMIT,
   MAIN_BRANCH,
   PENDING_BUCKET,
+  PROBE_COMMENT,
   QUEUE_BRANCH,
   REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
@@ -109,6 +110,7 @@ console.info(`develop ${developSha}\nqueue   ${queueSha}\nfixes   ${reviewFixesS
 // And it must happen before any exit — the running review is the one that resolves these threads.
 replyAnswered(pullRequest, `${frontier}..${developSha}`, viewerLogin, isDryRun);
 
+const issueComments = readEntries(`issues/${pullRequest.toString()}/comments`);
 const checkStatus = readCheckStatus(pullRequest);
 const gate = getGateDecision({ checkStatus, developSha, lastReviewedSha });
 console.info(`gate: ${gate.kind} — ${gate.reason}`);
@@ -118,6 +120,17 @@ else if (gate.kind === GateDecisionKind.Fail)
 else if (gate.kind === GateDecisionKind.Probe) {
   if (isDryRun) {
     console.info("would probe — a dry run posts nothing");
+    process.exit(0);
+  }
+  // One retrigger per head: a rate-limited bot answers every probe with the same notice, and every queue push
+  // Would otherwise post another one for the hour the limit lasts
+  const headCommittedAtMs = Number(runGit(["show", "--no-patch", "--format=%ct", developSha]).trim()) * 1000;
+  const isProbePosted = issueComments.some(
+    ({ body, updated_at, user }) =>
+      user.login === viewerLogin && body.trim() === PROBE_COMMENT && Date.parse(updated_at) > headCommittedAtMs,
+  );
+  if (isProbePosted) {
+    console.info("already probed for this head — the bot's answer decides, not another retrigger");
     process.exit(0);
   }
   const reply = await runProbe(pullRequest);
@@ -130,21 +143,15 @@ else if (gate.kind === GateDecisionKind.Probe) {
 
 // Drain: the open set is what the bot spoke last on and no unported commit answers
 const newestReview = reviews.findLast(({ body }) => body);
-const answeredIds = new Set(
-  [
-    ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`) : []),
-    ...readAnsweredCommits(`${developSha}..${queueSha}`),
-  ].flatMap(({ answers }) => answers),
-);
+const unportedCommits = [
+  ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`) : []),
+  ...readAnsweredCommits(`${developSha}..${queueSha}`),
+];
+const answeredIds = new Set(unportedCommits.flatMap(({ answers }) => answers));
 const drainedReviewIds = new Set(
-  [
-    ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`) : []),
-    ...readAnsweredCommits(`${developSha}..${queueSha}`),
-    ...readAnsweredCommits(`${frontier}..${developSha}`),
-  ].flatMap(({ drains }) => drains),
+  [...unportedCommits, ...readAnsweredCommits(`${frontier}..${developSha}`)].flatMap(({ drains }) => drains),
 );
 const openThreads = getOpenFindings(readUnresolvedThreads(pullRequest), answeredIds);
-const issueComments = readEntries(`issues/${pullRequest.toString()}/comments`);
 // A review states its own nitpick and outside-diff counts, so a review with none of either owes no body drain
 const statedCounts = newestReview ? getStatedCounts(newestReview.body) : undefined;
 const openBodyReviewId =
@@ -170,6 +177,7 @@ if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined))
     reviewFixesSha = drainFindings({
       developSha,
       feedback,
+      issueComments,
       newestReviewId: newestReview.id,
       openThreads,
       pullRequest,
