@@ -1,3 +1,7 @@
+// Git's status for a rename that changed no bytes; one that also edited the file carries its similarity score
+// Instead, and the new path is what `path_filters` names
+export const PURE_RENAME_STATUS = "R100";
+
 // Protection guards what a file says, not where it sits. A test is the behaviour contract, so an edit to one is
 // Never mechanical — but moving it says nothing, and a sweep moves every colocated test with its subject, so a
 // Rule that refused those would refuse every sweep there is.

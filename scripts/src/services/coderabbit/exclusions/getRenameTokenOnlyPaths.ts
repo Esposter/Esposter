@@ -2,10 +2,13 @@ import type { RenameSubstitution } from "#src/models/coderabbit/shared/RenameSub
 
 import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkIsProtectedPath";
 import { checkIsSubstitutionExact } from "#src/services/coderabbit/exclusions/checkIsSubstitutionExact";
-import { getNameStatusEntries } from "#src/services/coderabbit/exclusions/getNameStatusEntries";
+import { getNameStatusRows } from "#src/services/coderabbit/exclusions/getNameStatusRows";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+
+// A file that stayed put and changed is `M`; an `A` or a `D` is a content decision, never a token substitution
+const MODIFIED_STATUS = "M";
 
 // The sweep's own commit is the one whose substitutions are replayed, and it must be one of the range's: a sha
 // Outside it would let paths the range never changed into a static filter that then swallows a later real change
@@ -30,17 +33,18 @@ export const getRenameTokenOnlyPaths = (
       .filter((commit) => commit !== sha)
       .flatMap((commit) => getNonEmptyLines(runGit(["show", "--name-only", "--format=", commit]))),
   );
-  return getNameStatusEntries(runGit(["diff", "-M", "--name-status", "-z", `${sha}^`, sha])).flatMap(
-    ({ path: newPath, renamedFromPath }) => {
-      const oldPath = renamedFromPath ?? newPath;
-      if (!changedPaths.has(newPath)) return [];
-      if ([oldPath, newPath].some((path) => checkIsProtectedPath(path) || otherPaths.has(path))) return [];
+  return getNameStatusRows(runGit(["diff", "-M", "--name-status", `${sha}^`, sha])).flatMap(
+    ({ path, renamedFrom, status }) => {
+      if (renamedFrom === undefined && status !== MODIFIED_STATUS) return [];
+      const oldPath = renamedFrom ?? path;
+      if (!changedPaths.has(path)) return [];
+      if ([oldPath, path].some((somePath) => checkIsProtectedPath(somePath) || otherPaths.has(somePath))) return [];
       return checkIsSubstitutionExact(
         runGit(["show", `${sha}^:${oldPath}`]),
-        runGit(["show", `${sha}:${newPath}`]),
+        runGit(["show", `${sha}:${path}`]),
         substitutions,
       )
-        ? [newPath]
+        ? [path]
         : [];
     },
   );

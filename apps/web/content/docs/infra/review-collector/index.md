@@ -56,7 +56,7 @@ Three properties make the picture safe to fire from anything:
 
 ## Parameters
 
-The cap and the fill target live where the CodeRabbit tooling declares its shared values, `scripts/src/services/coderabbit/shared/constants.ts`; the collector's own — the branch names it owns, the trailer keys, the retry and attempt caps, the check and probe strings — sit beside its services in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter at all: an event-triggered collector runs the minute the slot frees, so the hour is a property of the reviewer, not a number anything here waits on. The cap moves with the Open Source tier's popularity scaling, and the bot's skip comment states the current one, which is why it is a constant to read rather than a number to write here.
+The cap, the fill target and the retrigger comment live where the CodeRabbit tooling declares its shared values, `scripts/src/services/coderabbit/shared/constants.ts`; the collector's own — the branch names it owns, the trailer keys, the retry and attempt caps, the check strings — sit beside its services in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter at all: an event-triggered collector runs the minute the slot frees, so the hour is a property of the reviewer, not a number anything here waits on. The cap moves with the Open Source tier's popularity scaling, and the bot's skip comment states the current one, which is why it is a constant to read rather than a number to write here.
 
 ## Key files
 

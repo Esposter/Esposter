@@ -4,7 +4,7 @@ import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
-import { readEntries } from "#src/services/coderabbit/collect/readEntries";
+import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
 
 // Every commit in the range that answers a finding gets its reply — the one the skill says cites a sha the

@@ -5,7 +5,8 @@ export const DEVELOP_BRANCH = "develop";
 // The session's linear history, published after every commit. The collector reads it and never writes it.
 export const QUEUE_BRANCH = "queue";
 
-// Fixes a drain produced that no window has carried yet. The collector writes it and deletes it once ported.
+// Fixes a drain produced that no window has carried yet. The collector writes it, and the next drain after it is
+// Ported re-creates it from `develop` — it is never deleted, so the session can always rebase onto it.
 export const REVIEW_FIXES_BRANCH = "review-fixes";
 
 // The trailer a fix commit carries per inline finding it answers, and the one a body-only fix carries per review
@@ -14,9 +15,6 @@ export const ANSWERS_TRAILER = "Answers";
 export const DRAINS_TRAILER = "Drains";
 
 export const CHECK_NAME = "CodeRabbit";
-
-// The retrigger, spelled once so the manual probe and the runner's delayed job ask for a review the same way
-export const PROBE_COMMENT = "@coderabbitai review";
 
 export const PENDING_BUCKET = "pending";
 

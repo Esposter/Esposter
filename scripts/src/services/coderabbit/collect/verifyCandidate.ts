@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 
 // The pushed head runs CI on its own and the interior queue commits were verified by nobody, so the cut gets
 // The checks CI would fail it on. Check-only: a repair the collector wrote would be a commit nobody reviewed.
@@ -7,21 +7,15 @@ import { spawnSync } from "node:child_process";
 // Checkout is already the isolated copy `virrun` exists to make. Oxlint alone let an import-order error through
 // To a pushed window, and a pre-push control that is not the check protecting `develop` protects nothing.
 const COMMANDS: string[][] = [
-  ["pnpm", "build:packages"],
-  ["pnpm", "-r", "--parallel", "run", "typecheck"],
-  ["pnpm", "exec", "oxlint", "--format=default", "--disable-nested-config"],
-  ["pnpm", "exec", "eslint", "."],
-  ["pnpm", "-r", "--parallel", "run", "lint"],
+  ["build:packages"],
+  ["-r", "--parallel", "run", "typecheck"],
+  ["exec", "oxlint", "--format=default", "--disable-nested-config"],
+  ["exec", "eslint", "."],
+  ["-r", "--parallel", "run", "lint"],
 ];
 
 export const verifyCandidate = (cwd: string): boolean =>
-  COMMANDS.every(([command = "", ...args]) => {
-    console.info(`verify: ${command} ${args.join(" ")}`);
-    const { status } = spawnSync(command, args, {
-      cwd,
-      encoding: "utf8",
-      shell: process.platform === "win32",
-      stdio: "inherit",
-    });
-    return status === 0;
+  COMMANDS.every((args) => {
+    console.info(`verify: pnpm ${args.join(" ")}`);
+    return spawnPnpm(args, { cwd, stdio: "inherit" }).status === 0;
   });

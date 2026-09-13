@@ -8,16 +8,5 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 // Exits on rather than repairs: opening one spends a review slot, and the skill says that is always asked for.
 export const readOpenPullRequest = (): OpenPullRequest | undefined =>
   parseMachineJson<OpenPullRequest[]>(
-    runGh([
-      "pr",
-      "list",
-      "--base",
-      MAIN_BRANCH,
-      "--head",
-      DEVELOP_BRANCH,
-      "--state",
-      "open",
-      "--json",
-      "number,baseRefName,headRefName",
-    ]),
+    runGh(["pr", "list", "--base", MAIN_BRANCH, "--head", DEVELOP_BRANCH, "--state", "open", "--json", "number"]),
   ).at(0);
