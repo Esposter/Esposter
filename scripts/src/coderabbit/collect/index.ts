@@ -196,9 +196,10 @@ const isReady = getIsReady({
   queueCommitCount: port.queueShas.length,
 });
 if (!isReady) {
-  console.info(
-    port.fixCount > 0 ? "parked — fixes wait for the queue" : "waiting — the queue is under the fill target",
-  );
+  // A held first commit is not an under-filled queue — the window is full of carry-over nothing has reviewed yet
+  if (port.queueShas.length === 0 && port.heldSha) console.info("held — no owed commit fits this window");
+  else if (port.fixCount > 0) console.info("parked — fixes wait for the queue");
+  else console.info("waiting — the queue is under the fill target");
   if (isDryRun) runGit(["worktree", "remove", "--force", cwd]);
   process.exit(0);
 }

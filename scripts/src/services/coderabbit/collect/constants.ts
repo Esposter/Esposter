@@ -48,3 +48,18 @@ export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 
 // A dry run ports into a throwaway worktree so the caller's tree is never switched
 export const DRY_RUN_WORKTREE_PREFIX = "review-collector-";
+
+// The walkthrough CodeRabbit rewrites when the limit makes it skip a review, and the deadline stated inside it.
+// The block is removed the moment the limit no longer applies, so its presence is the live rate-limited state.
+export const RATE_LIMIT_COMMENT_MARKER = "auto-generated comment: rate limited by coderabbit.ai";
+
+export const RATE_LIMIT_RESET_PATTERN = /Next included review available in (?<amount>\d+) (?<unit>hours?|minutes?)/;
+
+// Slack on the stated deadline: the bot is answering a clock the collector cannot read exactly, and a retrigger
+// A second early spends the run for the same notice
+export const RETRIGGER_BUFFER_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
+
+// The job outputs the runner's delayed retrigger reads — the only channel between two jobs of one workflow run
+export const RETRIGGER_DELAY_OUTPUT = "retriggerDelaySeconds";
+
+export const RETRIGGER_PULL_REQUEST_OUTPUT = "retriggerPullRequest";
