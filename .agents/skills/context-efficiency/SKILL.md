@@ -1,11 +1,11 @@
 ---
 name: context-efficiency
-description: Esposter context and turn efficiency — delegate wide reads and keep the dumps out of the session, never tail a subagent's transcript, batch verification into one pass at the end, poll for a condition instead of sleeping, and diff against a clean tree before chasing errors in files you never touched. Apply when a task spans many files, when choosing how to wait on something, or when deciding what to pull into the session.
+description: Esposter context and turn efficiency — delegate wide reads and keep the dumps out of the session, never tail a subagent's transcript, read the range not the file, fire independent tool calls in one block, poll for an external condition instead of sleeping, and diff against a clean tree before chasing errors in files you never touched. Apply when a task spans many files, when waiting on an external process from the shell, or when deciding what to pull into the session. When and how a check runs is the running-checks skill.
 ---
 
 # Context Efficiency
 
-The main session's context is the scarce resource. These are the habits that stop it being spent on things that carry no judgment. **Which command to run and from where is the `package-scripts` skill; whether to hand execution to a subagent is `model-delegation`.** This skill is only about what the main session reads, waits on, and re-does.
+The main session's context is the scarce resource. These are the habits that stop it being spent on things that carry no judgment. **Which command to run and from where is the `package-scripts` skill; whether to hand execution to a subagent is `model-delegation`; when a check runs and how the session waits on it is `running-checks`.** This skill is only about what the main session reads, waits on, and re-does.
 
 ## Keep dumps out of the session
 
@@ -15,29 +15,9 @@ The main session's context is the scarce resource. These are the habits that sto
 - **Don't re-read a file to confirm an edit.** `Edit`/`Write` fail loudly; a silent success needs no proof.
 - **Fire independent tool calls in one block.** Sequential round trips cost a turn each and buy nothing when neither call feeds the other.
 
-## One verification pass, not one per chunk
-
-Batch format/typecheck/tests until **all** edits are done. Each pass re-pays a fixed startup cost, so per-chunk checking multiplies it for no extra signal — nothing is learned at chunk 3 that chunk 7 won't also reveal.
-
-**"All edits" means everything going out together, not the sub-task in front of you.** The boundary is the push, so a session covering several units, several files or several ledgers checks once across the lot — a unit finished at noon and a unit finished at three are one pass, however cleanly the first one ended. Sub-task boundaries feel like natural checkpoints and are the commonest way this rule gets misread: the tell is a check whose diff is one file, or a formatter run after a single-line edit.
-
-Commit per coherent chunk regardless: commits are cheap and protect against other sessions' resets, checks are not.
-
-## The pass runs in the background
-
-Every check in it is minutes long — `apps/web` typecheck ~3.5 min, the root oxlint pass ~3 min, a Nuxt suite ~1 min — and none of them needs supervision while it runs. So each goes out with `run_in_background: true` and the session keeps working: the next ledger row, the commit message, the docs sweep, the next unit's edits. Read the output when the completion notification lands.
-
-**A foreground poll of a backgrounded check is a foreground check.** Spending the next turn on `for i in $(seq 1 40); do grep -q done log && break; sleep 10; done` buys back none of what the flag bought: the wall clock is the same, the turn is spent, and the session made no edits while it ran. The wait-on-a-condition loop below is for an **external** process the harness cannot see finish — a dev server, a deploy; a backgrounded check announces its own completion, so the only correct thing to do with one is start the next piece of work and read the notification when it lands.
-
-**Blocking on a check is only correct when the sole remaining step is commit, merge or push**, which is rare by construction — the checks are the last step, so there is almost always something ahead of them that does not depend on their result. The tell that this went wrong is a turn that ran a 3-minute typecheck, waited, ran a 3-minute lint, waited, and produced no edits in between: that is ten minutes of wall clock spent on a single tool result.
-
-Fire the independent ones in **one block** so they run concurrently rather than one after another — typecheck, lint and the touched suites do not feed each other. A check whose result changes what you do next (a lint fix, then the same lint again) is the one case where the second call waits on the first.
-
-The pass runs **after** the review's quality lane, not before — cleanup edits code, so checking first pays the startup cost twice. See "Finishing a change" in `CLAUDE.md` for the full order.
-
 ## Wait on a condition, never a sleep
 
-This is about waiting on an **external process from the shell** — a dev server, a build, a deploy. It is not a loosening of the polling ban, which is about code and tests: inside the repo, a wait is an awaited signal, never a retry loop (`testing` skill, and `apps/web/content/docs/architecture/no-polling.md`). Nothing here may be copied into a test.
+This is about waiting on an **external process from the shell** — a dev server, a build, a deploy. It is not a loosening of the polling ban, which is about code and tests: inside the repo, a wait is an awaited signal, never a retry loop (`testing` skill, and `apps/web/content/docs/architecture/no-polling.md`). Nothing here may be copied into a test. And it is never for a check the session itself started: a backgrounded check announces its own completion, and polling it is the failure `running-checks` exists to stop.
 
 Poll until the thing you need is actually true, with a bounded loop:
 
