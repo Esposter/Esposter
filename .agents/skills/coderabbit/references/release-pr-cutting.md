@@ -65,6 +65,12 @@ Cherry-pick doc and skill commits across the cut so the working tree keeps the c
 
 ## 2. Drain
 
+**The review collector is the drain.** With the cut pushed, `queue/<scope>` is what `queue` still owes, and the
+procedure below is what `pnpm ai:coderabbit:collect` does on every queue push and every completed review
+(`references/pipelining.md`). Port the parked commits onto `queue` — a cherry-pick, never a merge, for the reasons
+this page gives — and the collector sizes, verifies and pushes each window. What follows is the same drain by hand,
+for reading what the collector is doing or for a clone where it cannot run.
+
 Port one queue window onto `develop`, trigger a review, wait for `Review completed`, fix findings, then port the next. Reviews are incremental — each cycle reads only what changed since the last completed one (SKILL.md § PR File Budget) — so every window gets a full-budget review even though the PR's cumulative diff grows past the cap.
 
 Size each window off the queue the way the cut was sized, then **cherry-pick the window, never merge the branch.** `git merge queue/<scope>` takes the whole remainder and rebuilds the over-budget PR in a single push; even merging a single window commit adds a merge commit and replays the queue's shas, and `develop` is tracked most reliably when it only ever grows linearly:

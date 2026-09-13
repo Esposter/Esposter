@@ -59,9 +59,12 @@ jobs:
         run: pnpm --filter "@esposter/shared..." run build
 
       - name: 🪪 Identify the collector
+        # `fileMode` off because the install marks a package's `bin` script executable, and on Linux that mode
+        # flip alone reads as a dirty tree — which the collector refuses to work in.
         run: |
           git config user.name "Q16solver"
           git config user.email "Q16solver@users.noreply.github.com"
+          git config core.fileMode false
 
       - name: 🤝 Trust the workspace
         # A fresh runner has no ~/.claude.json, so Claude Code treats the checkout as untrusted and ignores every

@@ -1,88 +1,81 @@
 # Pipelining a push against a running review
 
-Read when planning the push cadence on `develop` — how work keeps moving while a review runs, and where a window boundary falls. This page holds the whole procedure; `SKILL.md` keeps the cap, the gates and the finding rules it operates under.
+Read when planning the push cadence, when deciding what the session pushes and what it never touches, or when
+the collector has moved `develop` and the session has to catch up. This page holds the whole procedure; `SKILL.md`
+keeps the cap, the gates and the finding rules it operates under. The design in full, with the cycle, the runner
+and the ref ownership as separate pages: `apps/web/content/docs/proposals/infra/review-collector/`.
 
-## Work lands on `develop`, the review runs against the `develop` → `main` PR
+## Three branches, one writer each
 
-**There are no per-chunk feature branches.** Work is committed and pushed straight to `develop`, and the single long-lived PR is `develop` → `main`. Because that PR's base is the default branch, every push to `develop` auto-triggers a review — no trigger comment, no PR per chunk. Keeping that PR open is what makes the pipeline work.
+**There are no per-chunk feature branches, and the session never pushes `develop`.** The session's checked-out
+branch is `queue`; it commits coherent units there and pushes after every commit. The single long-lived
+`develop` → `main` pull request is the release pull request, and every push to `develop` auto-triggers a review
+because that pull request's base is the default branch. What pushes `develop` is the **review collector** —
+`pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow whenever `queue` is pushed or CodeRabbit
+submits a review.
 
-1. Commit continuously on `develop`. When the delta since the last reviewed sha approaches ~90 files, that chunk is ready.
-2. Push it. The push starts a review.
-3. **Keep working locally while it runs.** Commits are free; only pushes trigger reviews. The local commit queue is what absorbs the hour.
-4. When the review completes, address its findings, commit the fixes, verify, and push them **together with** the next queued chunk — then reply to every finding. That single push starts the next cycle. Replying last is what makes a reply checkable: it can name the commit that answers the finding, where a reply written before the push points at nothing.
-5. Repeat, so review effort tracks the work instead of gating it.
+| Ref            | Written by    | What it holds                                                                   |
+| :------------- | :------------ | :------------------------------------------------------------------------------ |
+| `queue`        | the session   | its linear history — every unported commit in authoring order, no window cuts   |
+| `develop`      | the collector | the reviewed frontier plus at most one unreviewed window, moved by fast-forward |
+| `review-fixes` | the collector | fixes a drain produced that no window has carried yet                           |
 
-**Verification does not gate an unsplit push.** When pushing the entire sitting,
-`format`/`typecheck`/`lint`/tests are minutes of wall-clock each and a review slot is an hour, so holding a
-finished chunk until the checks come back spends the scarce resource to protect the cheap one — and the checks
-were going to run either way. Push the chunk, then run them against the same tree while the review works; a
-failure found afterwards is one more commit in the next window, which is where its fix belongs anyway.
-Correctness on `develop` is eventual, and the branch is not the release. The repo's finishing ritual still runs
-in full — the change is only that its verification steps stop standing between the commit and the push.
-When a sitting is cut into a prefix window and leaves a tail held locally, however, the cut sha itself must be
-green on its own before pushing (`references/window-composition.md`): the held tail is not on the remote to
-supply the repairs, so a red cut burns the review slot on a window CI cannot pass.
+A queue push spends nothing: it starts no review, only a collector run that measures. So the standing rule
+that a `develop` push is asked for every time is unchanged and now never applies to the session — the collector
+holds the authorisation, and the four gates of `SKILL.md` are the gates it clears from the remote on every run.
 
-**Cut the commits, not the push.** The window boundary is whatever sha the push names, so the way to fill a slot
-to ~90 files without splitting a coherent change across two reviews is to commit in finer pieces and push
-through the last one that fits. Never undo working-tree edits to make a window smaller: the work stays
-committed and the tail is simply held, so nothing is redone and nothing is lost. A rename too large for one
-window splits by **which identifiers it renames**, never by which files, so every commit is green on its own.
-What makes a sha a valid cut — a tree green on its own, the repairs the checks produced committed behind the units
-they repair, and a change split from its enforcer at the rule the tree already carries — and the flow that cuts a
-sitting into the largest prefix under the cap: `references/window-composition.md`.
+## The session's loop
 
-## A standing sweep queues its windows as branches
-
-A sweep that never stops (`sweeps` skill) produces windows faster than reviews complete, so the local commit queue
-outgrows one sitting and one clone. Each window that fills is **cut and bookmarked**: a branch `queue/<n>-<title>`
-at the cut sha, numbered in push order and titled by what the window carries as a ref-safe slug — lowercase
-letters, digits and hyphens, since the title lands unquoted in a branch name — pushed once so the work exists
-somewhere other than this clone. It is pushed to no PR, so it starts no review; CI and the bench still run on
-every branch push, and only the deployment workflow is limited to `develop`.
-
-```bash
-git branch queue/<n>-<title> <cut> && git push origin queue/<n>-<title>
-```
-
-The window still being filled gets the same bookmark early — pushed after every unit's commit and re-pointed with
-`git branch -f` plus `git push --force-with-lease origin queue/<n>-<title>` — so the remote holds every commit the
-clone does, and a lost clone loses nothing. The cut only fixes where the bookmark stops moving.
-
-`develop` stays linear and local work continues above the cut. Draining is the ordinary push of the oldest
-bookmark's sha to `develop` once the gates open (`SKILL.md`), followed by deleting the branch — there is nothing
-to cherry-pick, because `develop` already holds the commits; the branch only recorded where the cut fell.
-
-```bash
-git push origin <cut>:develop && git push origin --delete queue/<n>-<title>
-```
-
-A review's fixes still lead the next window (`references/window-composition.md`), which rebases every queued
-window above them. The bookmarks are re-pointed with `git branch -f` and, one ref at a time so the push cannot
-fall back to whatever `push.default` selects, `git push --force-with-lease origin queue/<n>-<title>`: a queue
-bookmark is a backup of unpushed work rather than a reviewed artifact, so it may move where a
-`queue/<scope>` cut from a pushed `develop` (`references/release-pr-cutting.md`) may not.
-
-The loop, with the four gates of `SKILL.md` collapsed into the one decision they answer here:
+1. Commit a unit on `queue`. Run the finishing checks; commit their repairs as their own commit behind the unit
+   (`references/window-composition.md`), because the collector cuts at commit boundaries and every cut must be
+   green on its own.
+2. `git push`. Plain while `queue` sits on `develop`'s head, `--force-with-lease` after a rebase — the queue is a
+   backup of unpushed work, not a reviewed artifact, and the lease is what keeps two machines from dropping
+   each other's commits.
+3. Before the next unit, `git fetch`, and when `origin/develop` moved, `git rebase origin/develop`. A
+   fast-forwarded `develop` makes the rebase a no-op; a cherry-picked window drops the ported commits by patch
+   id and re-parents the rest.
+4. Keep working. The collector fires on the push, reads the frontier and the check, drains any open findings
+   onto `review-fixes`, and when the slot is free and the queue has reached the fill target, ports the largest
+   green prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha.
 
 ```mermaid
 flowchart TD
-  U[Sweep the next unit and commit it] --> W{Does the unpushed range approach the cap}
+  U[Commit a unit on queue] --> P[git push queue]
+  P --> C{Collector: slot free and<br/>previous window reviewed}
+  C -->|no| U
+  C -->|yes| F{Open findings}
+  F -->|yes| DR[Drain onto review-fixes]
+  F -->|no| W
+  DR --> W{Fixes parked or<br/>queue at the fill target}
   W -->|no| U
-  W -->|yes| B[Bookmark the cut as queue/n-title and push the branch]
-  B --> R{Has the previous window's review completed}
-  R -->|no| U
-  R -->|yes| F[Fix its findings as one commit and prepend it to the unpushed range]
-  F --> P[Re-point every bookmark, verify the oldest cut is green, push that cut to develop]
-  P --> A[Reply to each finding with the sha, delete the drained bookmark]
-  A --> U
+  W -->|yes| PU[Port fixes then the queue prefix<br/>fast-forward develop]
+  PU --> R[Review runs, replies carry the sha]
+  R --> S[Session rebases queue onto develop]
+  S --> U
 ```
+
+**What the session must not do:** push `develop`, touch `review-fixes`, or cut a window. A commit that would have
+been "the last one under the cap" is just a commit — the collector measures the cut on the tree it is about to
+push, one cherry-pick at a time, and holds the first commit that overflows.
+
+**A finding the session answers itself** is a commit on `queue` carrying the trailer `Answers: <comment id>` (a
+body-only finding: `Drains: <review id>`). The collector's open-finding predicate honours a trailer on the
+queue's unported commits, so it neither re-fixes the finding nor replies before the commit is on `develop`. A
+rejection needs no sha and may be replied to directly.
+
+**When the collector reports a conflict** — its parked fixes changed a file the queue's next commit also changed
+— the session rebases `queue` onto `origin/review-fixes`, not onto `develop`: the fixes will lead the next window,
+and a queue that already carries them replays them as empty.
+
+**A merge of `main` into `queue`** — a dependency bump landing — is never owed to `develop`: the porter skips
+merge commits, and their content reaches `develop` through the `main` sync the `git` skill describes.
 
 ## Re-opening the standing PR after it merges
 
-The pipeline assumes the `develop` → `main` PR is open; once it merges there is none, and the next window has to
-open one. That is a slot spend like any push, so it is asked for rather than assumed (`SKILL.md`, "Opening a PR
-Spends a Review Slot").
+The pipeline assumes the `develop` → `main` PR is open; once it merges there is none, and the collector exits until
+a person opens one. That is a slot spend like any push, so it is asked for rather than assumed (`SKILL.md`,
+"Opening a PR Spends a Review Slot").
 
 Size that window from the **merge base**, not from a reviewed sha — a PR's first review reads the cumulative diff
 (`references/measuring-the-window.md`), so the count is
@@ -100,5 +93,3 @@ gh pr create --base main --head develop --title "<type>(<scope>): <what the wind
 The body is the window's summary rather than the last commit's: what moved, what was deliberately left and why
 (the same reasons the commit messages carry), and a test plan naming the checks that were run. A reader arriving
 at the PR should not have to read sixteen commits to learn what one window did.
-
-The invariant: a chunk is a **push** boundary, not a work boundary. If step 4's fixes plus the queued chunk exceed the budget, push the fixes with only part of the queue and hold the rest — never split a fix away from the finding it answers. Which commits ride in a window, and how a late-authored fix is moved to its front: `references/window-composition.md`.
