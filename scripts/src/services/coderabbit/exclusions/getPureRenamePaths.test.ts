@@ -8,13 +8,14 @@ describe(getPureRenamePaths, () => {
     expect(
       getPureRenamePaths(
         [
-          "R100\tapps/web/app/old.ts\tapps/web/app/new.ts",
+          ["R100", "apps/web/app/old.ts", "apps/web/app/new.ts"],
           // A rename that also edited the file has a content diff to review
-          "R087\tapps/web/app/moved.ts\tapps/web/app/movedAndEdited.ts",
-          "M\tapps/web/app/edited.ts",
-          "A\tapps/web/app/added.ts",
-          "",
-        ].join("\n"),
+          ["R087", "apps/web/app/moved.ts", "apps/web/app/movedAndEdited.ts"],
+          ["M", "apps/web/app/edited.ts"],
+          ["A", "apps/web/app/added.ts"],
+        ]
+          .map((fields) => fields.join("\0"))
+          .join("\0"),
       ),
     ).toStrictEqual(["apps/web/app/new.ts"]);
   });

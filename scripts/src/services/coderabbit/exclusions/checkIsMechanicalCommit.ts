@@ -16,7 +16,7 @@ import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 // Diff cannot see: a file read by *where it is*, where moving it with no content change is still a decision.
 export const checkIsMechanicalCommit = (sha: string, cwd?: string): boolean => {
   const range = [`${sha}^`, sha];
-  const nameStatus = runGit(["diff", "--name-status", "-M", ...range], cwd);
+  const nameStatus = runGit(["diff", "--name-status", "-M", "-z", ...range], cwd);
   const changedPaths = getNonEmptyLines(runGit(["diff", "--name-only", "-M", ...range], cwd));
   // An empty commit has nothing to prove mechanical, and a merge has no single parent to diff against
   if (changedPaths.length === 0) return false;

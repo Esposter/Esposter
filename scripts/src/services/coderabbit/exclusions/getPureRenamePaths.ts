@@ -1,8 +1,7 @@
-// `R100` is git's marker for a rename with no content change, and the new path is what `path_filters` names
-const PURE_RENAME_REGEX = /^R100\t[^\t]+\t(?<path>[^\t]+)$/u;
+import { getNameStatusEntries } from "#src/services/coderabbit/exclusions/getNameStatusEntries";
 
+// `R100` is git's marker for a rename with no content change, and the new path is what `path_filters` names
 export const getPureRenamePaths = (nameStatus: string): string[] =>
-  nameStatus
-    .split("\n")
-    .map((line) => PURE_RENAME_REGEX.exec(line)?.groups?.path)
-    .filter((path) => path !== undefined);
+  getNameStatusEntries(nameStatus)
+    .filter(({ status }) => status === "R100")
+    .map(({ path }) => path);

@@ -2,7 +2,7 @@ import type { RenameSubstitution } from "#src/models/coderabbit/shared/RenameSub
 
 import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkIsProtectedPath";
 import { checkIsSubstitutionExact } from "#src/services/coderabbit/exclusions/checkIsSubstitutionExact";
-import { RENAME_OR_MODIFY_ROW_REGEX } from "#src/services/coderabbit/exclusions/constants";
+import { getNameStatusEntries } from "#src/services/coderabbit/exclusions/getNameStatusEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -30,19 +30,18 @@ export const getRenameTokenOnlyPaths = (
       .filter((commit) => commit !== sha)
       .flatMap((commit) => getNonEmptyLines(runGit(["show", "--name-only", "--format=", commit]))),
   );
-  return getNonEmptyLines(runGit(["diff", "-M", "--name-status", `${sha}^`, sha])).flatMap((row) => {
-    const groups = RENAME_OR_MODIFY_ROW_REGEX.exec(row)?.groups;
-    if (!groups?.oldPath) return [];
-    const oldPath = groups.oldPath;
-    const newPath = groups.newPath ?? oldPath;
-    if (!changedPaths.has(newPath)) return [];
-    if ([oldPath, newPath].some((path) => checkIsProtectedPath(path) || otherPaths.has(path))) return [];
-    return checkIsSubstitutionExact(
-      runGit(["show", `${sha}^:${oldPath}`]),
-      runGit(["show", `${sha}:${newPath}`]),
-      substitutions,
-    )
-      ? [newPath]
-      : [];
-  });
+  return getNameStatusEntries(runGit(["diff", "-M", "--name-status", "-z", `${sha}^`, sha])).flatMap(
+    ({ path: newPath, renamedFromPath }) => {
+      const oldPath = renamedFromPath ?? newPath;
+      if (!changedPaths.has(newPath)) return [];
+      if ([oldPath, newPath].some((path) => checkIsProtectedPath(path) || otherPaths.has(path))) return [];
+      return checkIsSubstitutionExact(
+        runGit(["show", `${sha}^:${oldPath}`]),
+        runGit(["show", `${sha}:${newPath}`]),
+        substitutions,
+      )
+        ? [newPath]
+        : [];
+    },
+  );
 };

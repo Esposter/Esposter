@@ -14,7 +14,7 @@ const [range, renameSha, ...renameArgs] = process.argv.slice(2);
 if (!range?.includes(".."))
   throw new InvalidOperationError(Operation.Read, "coderabbit", "a <base>..<head> range is required");
 
-const nameStatus = runGit(["diff", "--name-status", "-M", range]);
+const nameStatus = runGit(["diff", "--name-status", "-M", "-z", range]);
 const renamedFromPaths = getRenamedFromPaths(nameStatus);
 const changedPaths = getNonEmptyLines(runGit(["diff", "--name-only", "-M", range]));
 const importPathOnlyPaths = changedPaths
