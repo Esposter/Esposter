@@ -40,8 +40,10 @@ The lane needs no pull request open, which makes it the one thing that moves the
 flowchart TD
   S[Read state] --> RS{develop an ancestor of main}
   RS -->|yes| FF[Fast-forward develop to main]
-  RS -->|no| PR
-  FF --> PR{Release PR open}
+  RS -->|no| EL
+  FF --> EL{A queued commit has nothing to review}
+  EL -->|yes| CP[Cherry-pick onto main] --> X3[Exit — the push re-fires the cycle]
+  EL -->|no| PR{Release PR open}
   PR -->|no| X0[Exit — re-opening is a human ask]
   PR -->|yes| RP[Reply for pushed fixes<br/>trailers on frontier..develop without a reply]
   RP --> B{Newest review body<br/>ends at the develop head}
