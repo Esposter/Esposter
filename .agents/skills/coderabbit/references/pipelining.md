@@ -93,7 +93,9 @@ every trigger; `pnpm ai:coderabbit:collect` then runs the same cycle from a chec
 collector's account — never this checkout, which the script switches branches in and refuses when dirty, but a
 detached `git worktree add` on `origin/develop` with its own `pnpm i` and `@esposter/shared` build. It clears the
 four gates from the remote exactly as the runner does, so the standing rule is unchanged: the run is asked for.
-`gh workflow enable ReviewCollector.yaml` hands the cycle back.
+`gh workflow enable ReviewCollector.yaml` hands the cycle back — and from then on the cycle is never also run by
+hand: the compare-and-swap push refuses the loser, but the drain the loser ran was a Claude session spent for
+nothing.
 
 **A finding the session answers on `queue` ports in queue order, not first.** Only `review-fixes` commits lead a
 window. A fix committed at the queue's tail waits for the windows ahead of it, and its thread reply with the sha

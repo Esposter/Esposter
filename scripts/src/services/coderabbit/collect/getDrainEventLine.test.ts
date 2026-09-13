@@ -45,19 +45,35 @@ describe(getDrainEventLine, () => {
     ).toBeUndefined();
   });
 
-  test("prints the result with its turns and cost, and the sentence it ended on", () => {
+  test("prints a successful result with its turns and cost, its closing message as narration", () => {
     expect.hasAssertions();
     const event = {
       duration_ms: Temporal.Duration.from({ minutes: 12, seconds: 30 }).total("milliseconds"),
       num_turns: 41,
-      result: "Every finding is answered.",
+      result: "Fixed the session limit parser; every finding is answered.",
       subtype: "success",
       total_cost_usd: 3.456,
       type: "result",
     };
     expect(getDrainEventLine(JSON.stringify(event))).toStrictEqual({
+      isNarration: true,
+      text: "result: success after 41 turns in 12.5 min, $3.46\nFixed the session limit parser; every finding is answered.",
+    });
+  });
+
+  test("prints a failed result's text as Claude Code's own", () => {
+    expect.hasAssertions();
+    const event = {
+      duration_ms: 1,
+      num_turns: 0,
+      result: "You've hit your session limit · resets 3:10am (UTC)",
+      subtype: "error_during_execution",
+      total_cost_usd: 0,
+      type: "result",
+    };
+    expect(getDrainEventLine(JSON.stringify(event))).toStrictEqual({
       isNarration: false,
-      text: "result: success after 41 turns in 12.5 min, $3.46\nEvery finding is answered.",
+      text: "result: error_during_execution after 0 turns in 0.0 min, $0.00\nYou've hit your session limit · resets 3:10am (UTC)",
     });
   });
 

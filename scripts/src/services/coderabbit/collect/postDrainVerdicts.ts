@@ -19,16 +19,19 @@ const readLines = (path: string): string[] => (existsSync(path) ? getNonEmptyLin
 const stripHtmlComments = (text: string): string => text.replaceAll(/<!--[\s\S]*?-->/gu, "");
 
 export const postDrainVerdicts = ({
+  openThreads,
   pullRequest,
   rejectionsPath,
   reviewId,
   verdictPath,
-}: Pick<DrainPromptInput, "pullRequest" | "rejectionsPath" | "reviewId" | "verdictPath">): void => {
+}: Pick<DrainPromptInput, "openThreads" | "pullRequest" | "rejectionsPath" | "reviewId" | "verdictPath">): void => {
+  const openIds = new Set(openThreads.map(({ commentId }) => commentId));
   for (const line of readLines(rejectionsPath)) {
     const [commentId = "", ...reason] = line.split(" ");
-    // A line the drain wrote malformed is skipped rather than posted against whatever id `parseInt` invents
-    if (!/^\d+$/u.test(commentId)) {
-      console.info(`skipping a rejection line with no comment id: ${line}`);
+    // A line naming no open thread is skipped rather than posted: a malformed id, or one the drain — which reads
+    // Review text it must not trust — was never asked about
+    if (!openIds.has(Number(commentId))) {
+      console.info(`skipping a rejection line that names no open thread: ${line}`);
       continue;
     }
 

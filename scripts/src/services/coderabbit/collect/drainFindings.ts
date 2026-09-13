@@ -112,6 +112,7 @@ export const drainFindings = async ({
   }
 
   postDrainVerdicts({
+    openThreads: drainInput.openThreads,
     pullRequest: drainInput.pullRequest,
     rejectionsPath,
     reviewId: drainInput.reviewId,

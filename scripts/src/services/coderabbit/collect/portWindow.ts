@@ -25,6 +25,14 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
   for (const sha of fixShas)
     if (pickCommit(sha, cwd) === PickOutcome.Conflict)
       throw new InvalidOperationError(Operation.Update, "coderabbit", `fix ${sha} conflicts with develop`);
+  // Fixes ride whole or the run fails: a drain that touched more files than its findings is for a person to see,
+  // Where holding would park the window silently and `--force` would push a range the bot skips outright
+  if (fixShas.length > 0 && getFileCount(`${frontierSha}..HEAD`, cwd) > REVIEW_FILE_CAP)
+    throw new InvalidOperationError(
+      Operation.Update,
+      "coderabbit",
+      `the fixes alone overflow the cap of ${REVIEW_FILE_CAP.toString()} files from the frontier`,
+    );
 
   const queueShas: string[] = [];
   let heldSha: string | undefined;

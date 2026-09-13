@@ -8,6 +8,8 @@ import { getResult } from "@esposter/shared";
 // Which is what tells `git commit` from `pnpm typecheck` without printing a whole file edit into the log
 const TOOL_INPUT_LENGTH = 160;
 
+const SUCCESS_SUBTYPE = "success";
+
 // One log line per event, so the job log reads as the session happens rather than as one block when it ends:
 // The model that answered, each tool call, the prose between them, and the result with its turns and cost. A
 // Line that is not an event prints as it is — Claude Code refusing to start writes a sentence, never JSON, and
@@ -32,7 +34,12 @@ export const getDrainEventLine = (line: string): DrainLogLine | undefined => {
   } else if (event.type === "result") {
     const minutes = Temporal.Duration.from({ milliseconds: event.duration_ms }).total("minutes").toFixed(1);
     const summary = `result: ${event.subtype} after ${event.num_turns.toString()} turns in ${minutes} min, $${event.total_cost_usd.toFixed(2)}`;
-    return { isNarration: false, text: event.result ? `${summary}\n${event.result}` : summary };
+    // On success the text is the model's closing message — narration, as much as any turn before it. On any
+    // Other subtype it is Claude Code's own account of why the session ended, which is where a limit is stated.
+    return {
+      isNarration: event.subtype === SUCCESS_SUBTYPE,
+      text: event.result ? `${summary}\n${event.result}` : summary,
+    };
   }
 
   return undefined;
