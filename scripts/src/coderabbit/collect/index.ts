@@ -205,7 +205,7 @@ const cwd = isDryRun ? mkdtempSync(join(tmpdir(), DRY_RUN_WORKTREE_PREFIX)) : RE
 if (isDryRun) runGit(["worktree", "add", "--detach", cwd, developSha]);
 const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha, reviewFixesSha });
 console.info(
-  `window: ${port.fixCount.toString()} fix commits + ${port.queueShas.length.toString()} queue commits = ${port.fileCount.toString()} files${port.heldSha ? `, held from ${port.heldSha}` : ""}${port.isMainMerged ? ", main folded in" : ""}${port.isFastForward ? ", fast-forward" : ""}`,
+  `window: ${port.fixCount.toString()} fix commits + ${port.queueShas.length.toString()} queue commits = ${port.fileCount.toString()} files${port.heldSha ? `, held from ${port.heldSha}` : ""}${port.isMainMerged ? ", main folded in" : ""}${port.isMainConflicted ? ", main conflicts outside the lockfile — held for a person" : ""}${port.isFastForward ? ", fast-forward" : ""}`,
 );
 const isReady = getIsReady({
   fileCount: port.fileCount,
