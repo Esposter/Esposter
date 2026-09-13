@@ -149,7 +149,7 @@ jobs:
       # checked out, which no cache entry keyed on `packages/` could promise. Seconds, and only these two apps
       # build: nothing reads the web app's output.
       - name: 🏗️ Build the app bundles the suite asserts against
-        run: pnpm -C apps/functions run build && pnpm -C apps/infra run build
+        run: pnpm --filter "@esposter/functions" --filter "@esposter/infra" run build
       # `--shard=i/n` runs a distinct slice of ALL test files (every package + scripts, via the root
       # Vitest `projects` config) on this runner; `--reporter=blob` serialises this shard's results and
       # Coverage data for the merge job, as the per-shard `.vitest/blob/blob-i-n.json` — the directory
