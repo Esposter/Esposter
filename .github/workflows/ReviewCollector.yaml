@@ -124,6 +124,8 @@ jobs:
     needs: collect
     if: needs.collect.outputs.retriggerDelaySeconds != ''
     runs-on: ubuntu-latest
+    # The bot's own stated deadline can run past this — `RETRIGGER_DELAY_CAP_MS` (collect/constants.ts) is what
+    # keeps the sleep below inside it, with margin for the runner to start and post the comment once it wakes.
     timeout-minutes: 90
     # Its own group: `collect` serialises the cycles, and a wait measured in the bot's minutes must not sit in
     # that queue holding back a session push. A newer run supersedes a pending one — it carries the newer

@@ -10,6 +10,7 @@ import {
   MAIN_BRANCH,
   PENDING_BUCKET,
   QUEUE_BRANCH,
+  RETRIGGER_DELAY_CAP_MS,
   RETRIGGER_DELAY_OUTPUT,
   RETRIGGER_PULL_REQUEST_OUTPUT,
   REVIEW_FIXES_BRANCH,
@@ -53,6 +54,11 @@ const {
   allowPositionals: true,
   options: { "dry-run": { default: false, type: "boolean" }, force: { default: false, type: "boolean" } },
 });
+// Checked before anything below it mutates — the return stroke's fast-forward push included — so a typo in a
+// Manually supplied argument fails before any git state moves, not after
+const suppliedPullRequest = pullRequestArgument ? Number(pullRequestArgument) : undefined;
+if (suppliedPullRequest !== undefined && (!Number.isSafeInteger(suppliedPullRequest) || suppliedPullRequest <= 0))
+  throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
 
 const dirtyPaths = getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));
 if (!isDryRun && dirtyPaths.length > 0)
@@ -93,13 +99,11 @@ if (isDevelopBehindMain) {
 }
 const developSha = isDevelopBehindMain ? mainSha : pushedDevelopSha;
 
-const pullRequest = pullRequestArgument ? Number(pullRequestArgument) : readOpenPullRequest()?.number;
+const pullRequest = suppliedPullRequest ?? readOpenPullRequest()?.number;
 if (pullRequest === undefined) {
   console.info(`no open ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request — re-opening one is a human ask`);
   process.exit(0);
 }
-if (!Number.isSafeInteger(pullRequest) || pullRequest <= 0)
-  throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
 
 const reviews = readBotEntries<GitHubReview>(`pulls/${pullRequest.toString()}/reviews`);
 const lastReviewedSha = getLastReviewedSha(reviews.map(({ body }) => body));
@@ -126,7 +130,9 @@ else if (gate.kind === GateDecisionKind.RateLimited) {
   // Resumes on. Asking the bot instead, by posting a retrigger to be told the deadline it has already written
   // Down, is the poll this replaces.
   const waitSeconds = Math.ceil(
-    Temporal.Duration.from({ milliseconds: getRateLimitWaitMs(issueComments, Date.now()) }).total("seconds"),
+    Temporal.Duration.from({
+      milliseconds: Math.min(getRateLimitWaitMs(issueComments, Date.now()), RETRIGGER_DELAY_CAP_MS),
+    }).total("seconds"),
   );
   if (!isDryRun) {
     writeJobOutput(RETRIGGER_DELAY_OUTPUT, waitSeconds.toString());

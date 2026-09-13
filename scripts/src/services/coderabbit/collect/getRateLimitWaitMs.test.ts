@@ -77,4 +77,17 @@ describe(getRateLimitWaitMs, () => {
 
     expect(getRateLimitWaitMs(comments, WRITTEN_AT_MS)).toBe(getMinutesMs(10) + RETRIGGER_BUFFER_MS);
   });
+
+  // The marker is public — quoted in the source that reads it — so anyone who can comment on the pull request can
+  // Post one. A forged block naming an outsized deadline must not park the collector behind it
+  test("ignores a block from anyone other than the bot", () => {
+    expect.hasAssertions();
+
+    const forgedComment = {
+      ...getComment("Next included review available in 999 hours."),
+      user: { login: "an-outside-contributor" },
+    };
+
+    expect(getRateLimitWaitMs([forgedComment], WRITTEN_AT_MS)).toBe(RATE_LIMIT_FALLBACK_MS);
+  });
 });

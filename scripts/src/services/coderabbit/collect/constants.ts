@@ -70,6 +70,12 @@ export const RATE_LIMIT_FALLBACK_MS: number = Temporal.Duration.from({ hours: 1 
 // A second early spends the run for the same notice
 export const RETRIGGER_BUFFER_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 
+// What the retrigger job's own `sleep` may be asked to wait — under its `timeout-minutes: 90` (ReviewCollector.yaml)
+// With margin for the runner to start and post the retrigger comment once it wakes. A wait capped short of the
+// Real deadline is not wrong, only early: the bot answers `Review rate limited` again, and the next collect run
+// (the retrigger's own comment fires one) reads the fresh deadline off the newer comment and reschedules
+export const RETRIGGER_DELAY_CAP_MS: number = Temporal.Duration.from({ minutes: 80 }).total("milliseconds");
+
 // The job outputs the runner's delayed retrigger reads — the only channel between two jobs of one workflow run
 export const RETRIGGER_DELAY_OUTPUT = "retriggerDelaySeconds";
 
