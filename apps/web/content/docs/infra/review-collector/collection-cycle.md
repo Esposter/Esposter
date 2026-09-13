@@ -28,6 +28,12 @@ The trailers are the collector's memory. A fix commit says which finding it answ
 
 Before the pull request is even looked up, the cycle compares `develop` with `main`. When `develop` is an ancestor of `main` and the two differ, the release pull request has just merged: `develop` is fast-forwarded to `main` with a plain push, which spends nothing because no pull request is open to review it. When `main` has commits `develop` lacks and `develop` is not an ancestor — a dependency bump merged straight to `main` — nothing happens here; the port step folds `main` into the candidate as a merge commit, resolving the lockfile the git skill's way (thrown away and rebuilt from the installed tree), so the bump rides the window the collector was pushing anyway and costs no slot of its own. A merge that conflicts anywhere but the lockfile is aborted and the window goes out without it. `queue` and `review-fixes` need no return stroke: the session rebases `queue` onto `develop` before its next unit, and `review-fixes` is re-created from `develop` by the next drain.
 
+## The express lane
+
+After the return stroke and still before the pull request is looked up, the cycle asks whether any commit the queue owes has nothing in it a reviewer could comment on — a folder sweep's moves and the imports that follow them. Those are cherry-picked onto `main` directly, because a review window is budgeted in files and a sweep is the largest thing the queue produces and the emptiest thing a reviewer reads. The push to `main` is the run's one irreversible act and the run exits on it, which fires the cycle again: the next run's return stroke fast-forwards `develop` onto it, and only then is a window measured, against a frontier that has already moved.
+
+The lane needs no pull request open, which makes it the one thing that moves the pipeline while there is none. It is closed whenever `develop` and `main` disagree, and the cut earns the same checks a window's does before it goes anywhere near production. The proof each commit has to pass, and why order is enforced by the cherry-pick rather than by a rule, is the [express lane](/docs/infra/review-collector/express-lane) page.
+
 ## Gates
 
 ```mermaid

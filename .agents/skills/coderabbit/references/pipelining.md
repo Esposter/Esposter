@@ -14,15 +14,27 @@ because that pull request's base is the default branch. What pushes `develop` is
 `pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow whenever `queue` is pushed or CodeRabbit
 submits a review.
 
-| Ref            | Written by    | What it holds                                                                   |
-| :------------- | :------------ | :------------------------------------------------------------------------------ |
-| `queue`        | the session   | its linear history — every unported commit in authoring order, no window cuts   |
-| `develop`      | the collector | the reviewed frontier plus at most one unreviewed window, moved by fast-forward |
-| `review-fixes` | the collector | fixes a drain produced that no window has carried yet                           |
+| Ref            | Written by                                 | What it holds                                                                   |
+| :------------- | :----------------------------------------- | :------------------------------------------------------------------------------ |
+| `queue`        | the session                                | its linear history — every unported commit in authoring order, no window cuts   |
+| `develop`      | the collector                              | the reviewed frontier plus at most one unreviewed window, moved by fast-forward |
+| `review-fixes` | the collector                              | fixes a drain produced that no window has carried yet                           |
+| `main`         | a person, and the collector's express lane | the released trunk, plus the commits that never needed a window                 |
 
 A queue push spends nothing: it starts no review, only a collector run that measures. So the standing rule
 that a `develop` push is asked for every time is unchanged and now never applies to the session — the collector
 holds the authorisation, and the four gates of `SKILL.md` are the gates it clears from the remote on every run.
+
+**A commit with nothing in it to review never occupies a window.** The collector's express lane proves that from
+the diff — every file a 100% rename or an import specifier following one, and no file anything reads by its path
+— and cherry-picks those onto `main`, out of queue order, so a sweep stops eating a budget counted in files and
+spent on findings. Nothing is asked of the session except the composition below; the design is
+`apps/web/content/docs/infra/review-collector/express-lane.md`.
+
+**So commit a sweep's moves apart from its repairs.** A commit that carries the renames _and_ the refreshed size
+snapshot has one content change in it, and one is enough: the proof is per commit, and a window is cut at commit
+boundaries, so half a commit cannot take the lane. This is the rule `references/window-composition.md` already
+states for the cut's sake, and the lane is the second reason for it.
 
 ## The session's loop
 
@@ -51,6 +63,8 @@ flowchart TD
   W -->|no| U
   W -->|yes| PU[Port fixes then the queue prefix<br/>fast-forward develop]
   PU --> R[Review runs, replies carry the sha]
+  C -->|express: nothing to review| MX[Cherry-pick onto main<br/>no window spent]
+  MX --> S
   R --> S[Session rebases queue onto develop]
   S --> U
 ```

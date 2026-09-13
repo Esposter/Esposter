@@ -16,6 +16,7 @@ The pipelining rules are prose in the `coderabbit` skill, and the commands under
 1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — the state the collector reads, the gates it must clear, how it drains findings into a parked `review-fixes` branch, ports the largest green prefix of `queue` under the cap, pushes and replies with the pushed sha. One script, `ai:coderabbit:collect`, with Claude invoked for exactly one step.
 2. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle from the allocation and free events, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 3. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a human session and the collector work the same pull request without racing: the collector alone writes `develop` and `review-fixes`, the session alone writes `queue`.
+4. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window at all, because a proof about their diff says there is nothing in them to comment on.
 
 **Two acts stay human:** merging the release pull request to `main` is a production release, and so is re-opening the pull request after a merge, since that spends a slot the skill says is always asked for. What happens right after the merge is the collector's — the return stroke: a push to `main` runs the cycle, which fast-forwards `develop` to `main` when `develop` is its ancestor, and a `main` that advanced on its own (a dependency bump) is folded into the next window as a merge commit so it rides a slot that was being spent anyway. The collector exits when it finds no open `develop` → `main` pull request.
 
@@ -32,8 +33,10 @@ flowchart TD
   C[Collector run<br/>serialized by concurrency group] --> R[Read remote state<br/>frontier, status, threads, refs]
   R --> RS{develop an ancestor of main}
   RS -->|yes| FF[Fast-forward develop to main<br/>no slot spent]
-  RS -->|no| G
-  FF --> G{Slot free and<br/>previous window reviewed}
+  RS -->|no| E
+  FF --> E{Any owed commit provably<br/>has nothing to review}
+  E -->|yes| EX[Cherry-pick onto main<br/>push, exit — no window spent]
+  E -->|no| G{Slot free and<br/>previous window reviewed}
   G -->|no| X[Exit — nothing to do]
   G -->|yes| O{Open findings}
   O -->|yes| DR[Drain into review-fixes<br/>Claude fixes or rejects each]
@@ -48,27 +51,28 @@ flowchart TD
 Three properties make the picture safe to fire from anything:
 
 - **All state is remote.** The runner is ephemeral, so nothing it learns survives a run: the frontier is read from review bodies, open findings from the threads, fixes awaiting a push from the `review-fixes` branch, which thread a fix answers from a trailer on the fix commit itself, and what the queue still owes from `git cherry` against `develop`. A second run sees exactly what the first saw plus whatever the first pushed.
-- **One irreversible act per run,** the push to `develop`, and it is a compare-and-swap: a non-fast-forward push is refused, so a `develop` that moved between the read and the push fails the run rather than clobbering anything. Everything before it is a local branch in the runner, and everything after it is idempotent by predicate — a reply is posted only where the thread lacks one citing that sha. Nothing is ever deleted: `review-fixes` is re-created from `develop` by the next drain once it owes nothing, and what `queue` still owes is a `git cherry` away.
+- **One irreversible act per run** — the push to `develop`, or the express lane's push to `main`, never both — and it is a compare-and-swap: a non-fast-forward push is refused, so a `develop` that moved between the read and the push fails the run rather than clobbering anything. Everything before it is a local branch in the runner, and everything after it is idempotent by predicate — a reply is posted only where the thread lacks one citing that sha. Nothing is ever deleted: `review-fixes` is re-created from `develop` by the next drain once it owes nothing, and what `queue` still owes is a `git cherry` away.
 - **The cap is measured on the tree that will be pushed,** never estimated. The porter builds the candidate branch one cherry-pick at a time and reads the file count from the frontier after each, so fixes, ported commits and a queue rebased by nobody all count exactly once.
 
 ## Parameters
 
-The cap and the fill target live where the CodeRabbit tooling declares its shared values, `scripts/src/services/coderabbit/constants.ts`; the collector's own — the branch names it owns, the trailer keys, the retry and attempt caps, the check and probe strings — sit beside its services in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter at all: an event-triggered collector runs the minute the slot frees, so the hour is a property of the reviewer, not a number anything here waits on. The cap moves with the Open Source tier's popularity scaling, and the bot's skip comment states the current one, which is why it is a constant to read rather than a number to write here.
+The cap and the fill target live where the CodeRabbit tooling declares its shared values, `scripts/src/services/coderabbit/shared/constants.ts`; the collector's own — the branch names it owns, the trailer keys, the retry and attempt caps, the check and probe strings — sit beside its services in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter at all: an event-triggered collector runs the minute the slot frees, so the hour is a property of the reviewer, not a number anything here waits on. The cap moves with the Open Source tier's popularity scaling, and the bot's skip comment states the current one, which is why it is a constant to read rather than a number to write here.
 
 ## Key files
 
-| File                                                 | Role                                                                                             |
-| :--------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
-| `scripts/src/coderabbit/collect/index.ts`            | the cycle — `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]`                              |
-| `scripts/src/services/coderabbit/collect`            | one service per step — gate, drain, port, the fold of `main`, verify, reply — and the constants  |
-| `scripts/src/models/coderabbit/collect`              | the inputs and outcomes the steps exchange — the gate decision, the port result, the drain input |
-| `.github/workflows/ReviewCollector.yaml`             | the runner                                                                                       |
-| `scripts/src/services/coderabbit/constants.ts`       | the cap and the fill target                                                                      |
-| `scripts/src/coderabbit/window/index.ts`             | the frontier and window-size read the gates reuse                                                |
-| `scripts/src/coderabbit/feedback/index.ts`           | the finding read the drain step feeds to Claude                                                  |
-| `scripts/src/coderabbit/probe/index.ts`              | the checkpoint probe a session runs by hand to ask the bot to take the head                      |
-| `.github/workflows/claude-warmup.yaml`               | the headless Claude Code invocation and trust-dialog shim the runner copies                      |
-| `.agents/skills/coderabbit/references/pipelining.md` | the human side of the loop — pushing `queue` and catching up after a window                      |
+| File                                                  | Role                                                                                             |
+| :---------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
+| `scripts/src/coderabbit/collect/index.ts`             | the cycle — `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]`                              |
+| `scripts/src/services/coderabbit/collect`             | one service per step — gate, drain, port, express, the fold of `main`, verify, reply             |
+| `scripts/src/services/coderabbit/exclusions`          | the diff classifiers the express lane's proof and the manual exclusions command share            |
+| `scripts/src/models/coderabbit/collect`               | the inputs and outcomes the steps exchange — the gate decision, the port result, the drain input |
+| `.github/workflows/ReviewCollector.yaml`              | the runner                                                                                       |
+| `scripts/src/services/coderabbit/shared/constants.ts` | the cap and the fill target                                                                      |
+| `scripts/src/coderabbit/window/index.ts`              | the frontier and window-size read the gates reuse                                                |
+| `scripts/src/coderabbit/feedback/index.ts`            | the finding read the drain step feeds to Claude                                                  |
+| `scripts/src/coderabbit/probe/index.ts`               | the checkpoint probe a session runs by hand to ask the bot to take the head                      |
+| `.github/workflows/claude-warmup.yaml`                | the headless Claude Code invocation and trust-dialog shim the runner copies                      |
+| `.agents/skills/coderabbit/references/pipelining.md`  | the human side of the loop — pushing `queue` and catching up after a window                      |
 
 ## Notes
 
