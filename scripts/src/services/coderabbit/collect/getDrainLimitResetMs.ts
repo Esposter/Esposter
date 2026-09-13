@@ -10,7 +10,12 @@ import { DAY_MS, DRAIN_LIMIT_FALLBACK_MS } from "#src/services/coderabbit/collec
 // Bounded to the line carrying the phrase. Spanning the whole output pairs an early mention with an unrelated
 // "resets" any distance below it, which is an ordinary failed drain reported as a refusal to start, and the
 // Difference is a real attempt going uncounted while the collector waits out a limit nobody imposed.
-const LIMIT_PATTERN = /(?:session|usage) limit[^\n]*\bresets?\b[^\n]*/iu;
+//
+// Bounding to the line is not enough on its own: a failed drain's summary can still say, on one line, that it
+// Could not fix something about the "session limit" while a config value elsewhere on that line "resets" for its
+// Own reasons. So the phrase itself is pinned to the two openers the refusal is actually known to print, never
+// The bare words "session limit" or "usage limit" that ordinary prose reaches for just as often.
+const LIMIT_PATTERN = /(?:you've hit your session limit|usage limit reached)\b[^\n]*\bresets?\b[^\n]*/iu;
 
 // "You've hit your session limit · resets 3:10am (UTC)", and the wording the limit takes when it states an hour
 // Alone. It is read out of the refusal sentence rather than the whole output, so the deadline is the one that

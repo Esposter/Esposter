@@ -48,4 +48,12 @@ describe(getDrainLimitResetMs, () => {
     const output = "Could not fix the session limit finding.\nThe suite resets the fixture between tests.";
     expect(getDrainLimitResetMs(output, nowMs)).toBeUndefined();
   });
+
+  // The same false pairing can land on one line: neither opener the real refusal is known to print, so the bare
+  // Words "session limit" and "resets" next to each other is still ordinary prose, not a refusal to start
+  test("reads a one-line summary pairing the phrase with an unrelated reset as no limit", () => {
+    expect.hasAssertions();
+    const output = "Could not fix the session limit finding; the config value resets nightly for its own reasons.";
+    expect(getDrainLimitResetMs(output, nowMs)).toBeUndefined();
+  });
 });
