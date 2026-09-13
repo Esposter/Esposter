@@ -62,5 +62,13 @@ export const runDrain = async (prompt: string): Promise<DrainRun> => {
     if (!logLine.isNarration) ownLines.push(logLine.text);
   }
   await closed;
-  return { isDrained: child.exitCode === 0, limitResetAtMs: getDrainLimitResetMs(ownLines.join("\n"), Date.now()) };
+  // A limit is a refusal to *start*, so it is only ever read off a non-zero exit. A session that ran to the end
+  // Cannot also be one that never began, and reading its output for the sentence anyway lets a drain discard the
+  // Work it just did over text it merely echoed — the caller acts on `limitResetAtMs` before it looks at
+  // `isDrained`, so the commits, the verdicts and the push would all be dropped.
+  const isDrained = child.exitCode === 0;
+  return {
+    isDrained,
+    limitResetAtMs: isDrained ? undefined : getDrainLimitResetMs(ownLines.join("\n"), Date.now()),
+  };
 };
