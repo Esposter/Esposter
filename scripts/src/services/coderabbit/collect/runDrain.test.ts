@@ -29,6 +29,24 @@ describe(runDrain, () => {
     expect(runDrain("prompt")).toStrictEqual({ isDrained: true, limitResetAtMs: undefined });
   });
 
+  // A refusal to start and a fix that failed both exit non-zero, and only the refusal's own template states a
+  // Reset alongside the phrase — a fix that failed while explaining this very feature must not spend the
+  // Quarantine budget on an outage that never happened
+  test("does not classify a failed fix's own summary as a session limit", () => {
+    expect.hasAssertions();
+
+    spawnSync.mockReturnValue({
+      output: [],
+      pid: 1,
+      signal: null,
+      status: 1,
+      stderr: "",
+      stdout: "Fixed the session limit wording in getDrainLimitResetMs.ts but the commit failed.",
+    });
+
+    expect(runDrain("prompt")).toStrictEqual({ isDrained: false, limitResetAtMs: undefined });
+  });
+
   test("classifies a refusal to start as a session limit", () => {
     expect.hasAssertions();
 

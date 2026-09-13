@@ -3,7 +3,11 @@ import { DAY_MS, DRAIN_LIMIT_FALLBACK_MS } from "#src/services/coderabbit/collec
 // Claude Code refusing to start is not the drain failing. It prints its own sentence and exits non-zero, which
 // Reads from here exactly like a session that tried and could not — and counting it as an attempt spends the
 // Quarantine budget on an outage, so three pushes during one limit would park a review for a person forever.
-const LIMIT_PATTERN = /(?:session|usage) limit/iu;
+//
+// The phrase alone is not proof of a refusal: a drain that ran and then failed for its own reasons is asked to
+// Fix findings about this very wording, so its summary can discuss "session limit" in ordinary prose without ever
+// Stating a reset. Only the refusal's own template does both, so a reset clause is required alongside the phrase
+const LIMIT_PATTERN = /(?:session|usage) limit[\s\S]*\bresets?\b/iu;
 
 // "You've hit your session limit · resets 3:10am (UTC)", and the wording the limit takes when it states an hour
 // Alone. The zone is read rather than assumed: a runner is UTC, a developer's clone is not, and a reset computed
