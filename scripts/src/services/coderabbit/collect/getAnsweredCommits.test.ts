@@ -36,7 +36,7 @@ describe(getAnsweredCommits, () => {
     ]);
   });
 
-  // git reads trailers out of the last contiguous block alone, and every commit here ends with an attribution
+  // Git reads trailers out of the last contiguous block alone, and every commit here ends with an attribution
   // Line — so a trailer a paragraph above it is one `%(trailers:key=…)` reports as absent, and the finding it
   // Answers is drained a second time
   test("reads a trailer separated from the attribution line by a blank line", () => {
