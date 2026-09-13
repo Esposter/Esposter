@@ -40,4 +40,12 @@ describe(getDrainLimitResetMs, () => {
       DRAIN_LIMIT_FALLBACK_MS,
     );
   });
+
+  // A drain that ran and failed writes a summary about this very wording, and something far below it may say
+  // "resets" for its own reasons. Only one sentence saying both is the refusal's template
+  test("reads a failed summary mentioning the phrase as no limit", () => {
+    expect.hasAssertions();
+    const output = "Could not fix the session limit finding.\nThe suite resets the fixture between tests.";
+    expect(getDrainLimitResetMs(output, nowMs)).toBeUndefined();
+  });
 });
