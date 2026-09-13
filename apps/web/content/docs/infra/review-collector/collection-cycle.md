@@ -19,7 +19,7 @@ Nothing is remembered between runs, so every input is a remote fact with a singl
 | the rate-limit deadline       | the `Next included review available in …` the bot states in the walkthrough it last rewrote     |
 | open findings                 | unresolved threads whose last comment is the bot's, plus the newest review body's own buckets   |
 | fixes awaiting a push         | `git cherry origin/develop origin/review-fixes` — the branch stays, what it owes is what counts |
-| what the queue still owes     | `git cherry origin/develop origin/queue` — commits not yet upstream by patch id                 |
+| what the queue still owes     | `git cherry <develop plus the fixes> origin/queue` — commits not yet upstream by patch id       |
 | which thread a commit answers | an `Answers: <comment id>` trailer on the commit, `Drains: <review id>` for a body-only finding |
 
 The trailers are the collector's memory. A fix commit says which finding it answers in its own message, so the reply step can name it after the push, a later run can tell an answered finding from an open one without any table, and a session fixing a finding by hand leaves the same record by writing the same trailer.

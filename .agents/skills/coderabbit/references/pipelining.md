@@ -85,7 +85,8 @@ rejection needs no sha and may be replied to directly.
 
 **When the collector reports a conflict** — its parked fixes changed a file the queue's next commit also changed
 — the session rebases `queue` onto `origin/review-fixes`, not onto `develop`: the fixes will lead the next window,
-and a queue that already carries them replays them as empty.
+and a queue that already carries them owes nothing for them — the porter reads what the queue owes against the tree
+the fixes built, so the copies it carries are ancestors rather than picks.
 
 **`main` is synced by the collector, not the session.** After the release pull request merges, the push to
 `main` runs the cycle and `develop` is fast-forwarded to it; a dependency bump that lands on `main` alone is folded

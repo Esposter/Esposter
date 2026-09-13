@@ -50,7 +50,7 @@ A rejection needs no sha, so a session may post one directly. The collector trea
 
 ## When the collector's fixes conflict with the queue
 
-The drain changed a file the queue's next commit also changed, so the port stops before that commit and reports it. Only the session can decide how the two combine, and it does so by rebasing `queue` onto `origin/review-fixes` rather than onto `develop`: the fixes are not on `develop` yet, and they will lead the next window, so a queue that already contains them — equal by patch id, replayed as empty by the porter and skipped — is a queue that no longer conflicts. `review-fixes` is safe to rebase onto because the collector never rewrites it while it owes commits; it only grows until ported, and its re-creation after that changes nothing for the session, whose copies of those commits are the ones that ride.
+The drain changed a file the queue's next commit also changed, so the port stops before that commit and reports it. Only the session can decide how the two combine, and it does so by rebasing `queue` onto `origin/review-fixes` rather than onto `develop`: the fixes are not on `develop` yet, and they will lead the next window, so a queue that already contains them is a queue that no longer conflicts: the porter reads what the queue owes against the tree the fixes built, where those commits are ancestors and not picks at all. Replaying them would not do — a later fix that rewrote their lines turns the replay from empty into a conflict. `review-fixes` is safe to rebase onto because the collector never rewrites it while it owes commits; it only grows until ported, and its re-creation after that changes nothing for the session, whose copies of those commits are the ones that ride.
 
 ## Parallel work
 

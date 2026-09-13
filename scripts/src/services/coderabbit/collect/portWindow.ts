@@ -34,9 +34,14 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
       `the fixes alone overflow the cap of ${REVIEW_FILE_CAP.toString()} files from the frontier`,
     );
 
+  // What the queue owes is read against the tree the fixes just built, not against develop: a queue rebased onto
+  // `review-fixes` carries the fix commits as ancestors, and against develop they read as owed — re-picked onto
+  // A tree that already holds them, where a later fix that rewrote their lines turns the pick from empty into a
+  // Conflict that holds the whole window
+  const fixesHeadSha = runGit(["rev-parse", "HEAD"], cwd).trim();
   const queueShas: string[] = [];
   let heldSha: string | undefined;
-  for (const sha of readCherryShas(developSha, queueSha, cwd)) {
+  for (const sha of readCherryShas(fixesHeadSha, queueSha, cwd)) {
     const outcome = pickCommit(sha, cwd);
     if (outcome === PickOutcome.Conflict) {
       heldSha = sha;
