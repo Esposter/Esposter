@@ -60,6 +60,11 @@ jobs:
           # starts no workflow runs, so `develop`'s CI and deployment would never fire on a collector push.
           fetch-depth: 0
           token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+          # The drain runs a permission-skipping Claude session over review text it must not trust, in this very
+          # checkout. A persisted credential would sit in `.git/config` where that session can spend it, so git
+          # is authenticated through `gh` instead — which reads the token from an environment the drain's own
+          # child process is not given (`runDrain`).
+          persist-credentials: false
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
@@ -102,7 +107,13 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
           FORCE_FLAG: ${{ inputs.force == true && '--force' || '' }}
-        run: pnpm ai:coderabbit:collect $FORCE_FLAG
+        # The flag is an array rather than a bare expansion: unquoted it fails shellcheck, and quoted it passes
+        # an empty argument on every run that is not forced.
+        run: |
+          gh auth setup-git
+          forceArguments=()
+          if [[ -n "$FORCE_FLAG" ]]; then forceArguments+=("$FORCE_FLAG"); fi
+          pnpm ai:coderabbit:collect "${forceArguments[@]}"
 
   # The one missing webhook, supplied. A rate limit lifts on CodeRabbit's clock and announces nothing when it
   # does, so the cycle reads the deadline the bot states — "Next included review available in N minutes" — and

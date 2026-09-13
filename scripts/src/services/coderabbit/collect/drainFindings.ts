@@ -5,15 +5,23 @@ import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/colle
 import {
   DRAIN_ATTEMPT_CAP,
   DRAIN_FAILED_MARKER,
+  DRAIN_VERDICT_PREFIX,
   QUARANTINED_MARKER,
+  REJECTIONS_FILE,
   REVIEW_FIXES_BRANCH,
+  VERDICT_FILE,
 } from "#src/services/coderabbit/collect/constants";
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
+import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
 import { runGh } from "#src/services/coderabbit/runGh";
 import { runGit } from "#src/services/coderabbit/runGit";
+import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 interface DrainFindingsInput extends DrainInput {
   developSha: string;
@@ -63,8 +71,15 @@ export const drainFindings = ({
   const isOwing = reviewFixesSha !== undefined && readCherryShas(developSha, reviewFixesSha).length > 0;
   const baseSha = isOwing && reviewFixesSha ? reviewFixesSha : developSha;
   runGit(["switch", "--force-create", REVIEW_FIXES_BRANCH, baseSha]);
-  const isDrained = runDrain(getDrainPrompt(drainInput));
-  if (!isDrained) {
+  // Outside the checkout, so the drain's "leave the working tree clean" and its verdicts never contend
+  const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
+  const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
+  const verdictPath = join(verdictDirectory, VERDICT_FILE);
+  const isDrained = runDrain(getDrainPrompt({ ...drainInput, rejectionsPath, verdictPath }));
+  // A zero exit says the session ended, never that it finished the job: a drain that stopped mid-fix leaves the
+  // Rest of a finding in the working tree, and reading `HEAD` there pushes half of one as though it were whole.
+  const dirtyPaths = getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));
+  if (!isDrained || dirtyPaths.length > 0) {
     runGh([
       "pr",
       "comment",
@@ -72,8 +87,19 @@ export const drainFindings = ({
       "--body",
       `${failedMarker}\nDrain attempt ${(attempts + 1).toString()} of review ${newestReviewId.toString()} failed — see the collector run.`,
     ]);
-    throw new InvalidOperationError(Operation.Update, "coderabbit", "the drain step exited non-zero");
+    throw new InvalidOperationError(
+      Operation.Update,
+      "coderabbit",
+      isDrained ? `the drain left the working tree dirty:\n${dirtyPaths.join("\n")}` : "the drain step exited non-zero",
+    );
   }
+
+  postDrainVerdicts({
+    pullRequest: drainInput.pullRequest,
+    rejectionsPath,
+    reviewId: drainInput.reviewId,
+    verdictPath,
+  });
 
   const headSha = runGit(["rev-parse", "HEAD"]).trim();
   if (headSha === baseSha) {

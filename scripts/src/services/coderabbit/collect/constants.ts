@@ -45,6 +45,14 @@ export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 // A dry run ports into a throwaway worktree so the caller's tree is never switched
 export const DRY_RUN_WORKTREE_PREFIX = "review-collector-";
 
+// The drain holds no GitHub credential, so its verdicts leave the session as files the collector posts. They sit
+// Outside the checkout because the drain also owes a clean working tree.
+export const DRAIN_VERDICT_PREFIX = "review-collector-verdicts-";
+
+export const REJECTIONS_FILE = "rejections.txt";
+
+export const VERDICT_FILE = "verdict.txt";
+
 // What the plan grants when no block states otherwise: one included review per hour, so an hour is the floor
 export const RATE_LIMIT_FALLBACK_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 
