@@ -1,4 +1,4 @@
-import { getVersionParts } from "#src/services/getVersionParts";
+import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { describe, expect, test } from "vitest";
 
 describe(getVersionParts, () => {

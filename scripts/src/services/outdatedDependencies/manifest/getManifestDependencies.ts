@@ -1,7 +1,7 @@
 import type { ManifestDependency } from "#src/models/outdatedDependencies/ManifestDependency";
 import type { ManifestFile } from "#src/models/outdatedDependencies/ManifestFile";
 
-import { DependencyFields } from "#src/models/DependencyField";
+import { DependencyFields } from "#src/models/shared/DependencyField";
 
 export const getManifestDependencies = (manifests: ManifestFile[]): ManifestDependency[] => {
   const manifestDependencies: ManifestDependency[] = [];

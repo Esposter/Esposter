@@ -6,7 +6,7 @@ import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas"
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
-import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
 enum PickOutcome {

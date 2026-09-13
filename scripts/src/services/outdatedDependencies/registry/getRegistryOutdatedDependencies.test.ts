@@ -1,11 +1,13 @@
 import type { DependencyEntry } from "#src/models/outdatedDependencies/DependencyEntry";
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
-import { getLatestVersion } from "#src/services/getLatestVersion";
 import { getRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/getRegistryOutdatedDependencies";
+import { getLatestVersion } from "#src/services/shared/getLatestVersion";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/getLatestVersion"), () => ({ getLatestVersion: vi.fn<typeof getLatestVersion>() }));
+vi.mock(import("#src/services/shared/getLatestVersion"), () => ({
+  getLatestVersion: vi.fn<typeof getLatestVersion>(),
+}));
 
 describe(getRegistryOutdatedDependencies, () => {
   test("reports every entry sharing a package name under its own specifier", async () => {

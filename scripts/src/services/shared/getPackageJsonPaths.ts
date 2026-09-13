@@ -1,4 +1,4 @@
-import { getWorkspacePackageDirectories } from "#src/services/getWorkspacePackageDirectories";
+import { getWorkspacePackageDirectories } from "#src/services/shared/getWorkspacePackageDirectories";
 import { resolve } from "node:path";
 
 export const getPackageJsonPaths = (root: string): string[] => [

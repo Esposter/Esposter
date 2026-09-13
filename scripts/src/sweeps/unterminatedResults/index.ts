@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
 import { checkIsInScope } from "#src/services/sweeps/unterminatedResults/checkIsInScope";
 import { getUnterminatedResults } from "#src/services/sweeps/unterminatedResults/getUnterminatedResults";

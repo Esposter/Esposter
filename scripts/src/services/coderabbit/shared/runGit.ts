@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { execFileSync } from "node:child_process";
 
 // Every answer is against the repository root: with `diff.relative` set, a `git diff` run from this package's own

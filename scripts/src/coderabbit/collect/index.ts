@@ -34,8 +34,8 @@ import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnr
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
-import { REPOSITORY_ROOT } from "#src/services/constants";
-import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync } from "node:fs";

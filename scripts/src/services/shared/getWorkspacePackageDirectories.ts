@@ -1,4 +1,4 @@
-import { parseWorkspacePackageGlobs } from "#src/services/parseWorkspacePackageGlobs";
+import { parseWorkspacePackageGlobs } from "#src/services/shared/parseWorkspacePackageGlobs";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

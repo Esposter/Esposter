@@ -1,6 +1,6 @@
 import type { WorkspaceEdge } from "#src/models/dependencyGraph/WorkspaceEdge";
 import type { WorkspaceEdges } from "#src/models/dependencyGraph/WorkspaceEdges";
-import type { WorkspacePackage } from "#src/models/WorkspacePackage";
+import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 
 import {
   CLUSTER_ATTRIBUTES,

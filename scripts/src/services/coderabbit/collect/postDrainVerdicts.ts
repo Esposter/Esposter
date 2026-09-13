@@ -3,7 +3,7 @@ import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromp
 import { getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
-import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { existsSync, readFileSync } from "node:fs";
 
 // The drain's half of the reply, posted by the only process that holds a credential. A rejection is answered

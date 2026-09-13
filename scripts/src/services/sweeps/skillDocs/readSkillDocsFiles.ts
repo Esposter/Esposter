@@ -1,6 +1,6 @@
 import type { SkillDocsFile } from "#src/models/sweeps/skillDocs/SkillDocsFile";
 
-import { REPOSITORY_ROOT } from "#src/services/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";

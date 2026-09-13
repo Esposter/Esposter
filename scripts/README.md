@@ -26,8 +26,8 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `sweeps/`               | The find recipes behind each `ai:sweep:*` script, one per ledger scan (`sweeps` skill)                             |
 | `updateNode/`           | Bumps the node pins and hands installation to fnm through the platform script                                      |
 | `workspace/`            | The workspace invariants — declaration generation, side effects, symlink escapes, private dependency edges         |
-| `services/`, `models/`  | Every command's functions and types, one subfolder per command, with what more than one shares at the root         |
-| `crossOS.ts`            | Runs the per-platform command the root manifest's `crossOS` map names for a script                                 |
+| `services/`, `models/`  | Every command's functions and types, one subfolder per command, with what more than one shares in `shared/`        |
+| `crossOS/`              | Runs the per-platform command the root manifest's `crossOS` map names for a script                                 |
 
 ### Architecture Notes
 

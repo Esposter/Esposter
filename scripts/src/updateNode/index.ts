@@ -1,6 +1,6 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
-import { getLatestVersion } from "#src/services/getLatestVersion";
-import { getVersionParts } from "#src/services/getVersionParts";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getLatestVersion } from "#src/services/shared/getLatestVersion";
+import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { getEnginesNode } from "#src/services/updateNode/getEnginesNode";
 import { getRegistryLatestVersionForPrefix } from "#src/services/updateNode/getRegistryLatestVersionForPrefix";
 import { setCatalogTypesNode } from "#src/services/updateNode/setCatalogTypesNode";

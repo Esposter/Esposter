@@ -1,8 +1,8 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
 import { GRAPH_FILENAME } from "#src/services/dependencyGraph/constants";
 import { getGraphSvg } from "#src/services/dependencyGraph/getGraphSvg";
 import { getWorkspaceEdges } from "#src/services/dependencyGraph/getWorkspaceEdges";
-import { getWorkspacePackages } from "#src/services/getWorkspacePackages";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getWorkspacePackages } from "#src/services/shared/getWorkspacePackages";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 

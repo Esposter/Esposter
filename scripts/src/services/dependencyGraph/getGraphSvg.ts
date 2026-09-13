@@ -1,5 +1,5 @@
 import type { WorkspaceEdges } from "#src/models/dependencyGraph/WorkspaceEdges";
-import type { WorkspacePackage } from "#src/models/WorkspacePackage";
+import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 
 import { getGraphSource } from "#src/services/dependencyGraph/getGraphSource";
 import { getShadowedSvg } from "#src/services/dependencyGraph/getShadowedSvg";

@@ -1,8 +1,8 @@
-import type { WorkspacePackage } from "#src/models/WorkspacePackage";
+import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 import type { PackageManifest } from "@esposter/configuration";
 
-import { getPackageJsonPaths } from "#src/services/getPackageJsonPaths";
-import { parseMachineJson } from "#src/services/parseMachineJson";
+import { getPackageJsonPaths } from "#src/services/shared/getPackageJsonPaths";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFileSync } from "node:fs";
 import { basename, dirname, relative, resolve } from "node:path";
 

@@ -1,4 +1,4 @@
-import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 
 // `git cherry <upstream> <head>` prints `+ <sha>` for a commit whose patch is not upstream and `- <sha>` for one
 // Whose patch is, oldest first. The `+` lines are what a branch still owes; equality by patch id is what makes
