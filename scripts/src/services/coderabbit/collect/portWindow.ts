@@ -33,7 +33,12 @@ const pick = (sha: string, cwd: string): PickOutcome =>
 // Build the window as a branch, one cherry-pick at a time, and measure after each. Fixes ride first and whole,
 // Queue commits in queue order until one conflicts or overflows the cap, and the count that decides it is read
 // From the tree that will be pushed rather than estimated.
-export const portWindow = ({ cwd, developSha, queueSha, reviewFixesSha }: PortInput): PortResult => {
+//
+// Every count is taken from the frontier, never from the develop head. A review covers everything since the one
+// That last wrote a body, so a window pushed on top of one still unreviewed is read as a single range; measuring
+// From the head counts only the new commits and lets the pair overflow the cap, which is the one failure the cap
+// Exists to prevent, since past it CodeRabbit skips the review outright.
+export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixesSha }: PortInput): PortResult => {
   runGit(["switch", "--detach", developSha], cwd);
 
   const fixShas = reviewFixesSha ? readCherryShas(developSha, reviewFixesSha, cwd) : [];
@@ -50,7 +55,7 @@ export const portWindow = ({ cwd, developSha, queueSha, reviewFixesSha }: PortIn
       break;
     } else if (outcome === PickOutcome.Empty) continue;
 
-    if (getFileCount(`${developSha}..HEAD`, cwd) > REVIEW_FILE_CAP) {
+    if (getFileCount(`${frontierSha}..HEAD`, cwd) > REVIEW_FILE_CAP) {
       runGit(["reset", "--hard", "HEAD~1"], cwd);
       heldSha = sha;
       break;
@@ -68,11 +73,11 @@ export const portWindow = ({ cwd, developSha, queueSha, reviewFixesSha }: PortIn
     cutSha === undefined ||
     getNonEmptyLines(runGit(["rev-list", "--merges", `${developSha}..${cutSha}`], cwd)).length === 0;
   return {
-    fileCount: getFileCount(`${developSha}..HEAD`, cwd),
+    fileCount: getFileCount(`${frontierSha}..HEAD`, cwd),
     fixCount: fixShas.length,
     heldSha,
-    isMainMerged,
     isFastForward: fixShas.length === 0 && mergeBase === developSha && isMergeFree && !isMainMerged,
+    isMainMerged,
     queueShas,
   };
 };

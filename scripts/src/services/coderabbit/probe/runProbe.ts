@@ -19,7 +19,7 @@ export const runProbe = async (pullRequest: number): Promise<string> => {
   const deadline = Date.now() + DEADLINE_MS;
   while (Date.now() < deadline) {
     const comment = readNewestComment(pullRequest);
-    // "Already reviewed" means the checkpoint already covers the head; anything else is a review starting
+    // The caller reads the status line of whatever comes back; this loop only waits for it to arrive
     if (checkIsCheckpointMoved(before, getCheckpoint(comment))) return comment?.body ?? "";
     await delay(POLL_INTERVAL_MS);
   }

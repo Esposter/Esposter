@@ -2,6 +2,7 @@ import type { GitHubReview } from "#src/models/coderabbit/GitHubReview";
 
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
+import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import {
   DEVELOP_BRANCH,
   DRAINS_MARKER,
@@ -13,7 +14,6 @@ import {
   QUEUE_BRANCH,
   REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
-import { checkIsAlreadyReviewed } from "#src/services/coderabbit/collect/checkIsAlreadyReviewed";
 import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
@@ -134,11 +134,11 @@ else if (gate.kind === GateDecisionKind.Probe) {
     process.exit(0);
   }
   const reply = await runProbe(pullRequest);
-  if (!checkIsAlreadyReviewed(reply)) {
-    console.info("a review started — its completion re-fires the collector");
+  if (!checkIsSlotFree(reply)) {
+    console.info("the probe started a review — its completion re-fires the collector");
     process.exit(0);
   }
-  console.info("already reviewed — the checkpoint covers the head");
+  console.info("still rate limited — the bot ran nothing, so the window is measured from the stale frontier");
 }
 
 // Drain: the open set is what the bot spoke last on and no unported commit answers
@@ -190,7 +190,7 @@ if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined))
 // Port into the tree the run owns — a throwaway worktree for a dry run, this checkout otherwise
 const cwd = isDryRun ? mkdtempSync(join(tmpdir(), DRY_RUN_WORKTREE_PREFIX)) : REPOSITORY_ROOT;
 if (isDryRun) runGit(["worktree", "add", "--detach", cwd, developSha]);
-const port = portWindow({ cwd, developSha, queueSha, reviewFixesSha });
+const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha, reviewFixesSha });
 console.info(
   `window: ${port.fixCount.toString()} fix commits + ${port.queueShas.length.toString()} queue commits = ${port.fileCount.toString()} files${port.heldSha ? `, held from ${port.heldSha}` : ""}${port.isMainMerged ? ", main folded in" : ""}${port.isFastForward ? ", fast-forward" : ""}`,
 );

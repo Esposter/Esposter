@@ -35,7 +35,7 @@ The pipeline deliberately keeps local commits ahead of the reviewed frontier, so
 
 ## A rate-limited status does not prove the frontier stalled
 
-CodeRabbit advances its incremental checkpoint over commits it never posted a review body for: the status still reads `Review rate limited`, no range names them, and they count as reviewed anyway. Reading that as an unreviewed window inflates the next backlog by everything it silently covered and stalls pushes to protect a review that will never run. The reviewed range is evidence the checkpoint moved, never evidence it did not. The probe is the retrigger itself: `pnpm ai:coderabbit:probe <pr>` replies `Already reviewed` when the checkpoint covers the head, and starts a review when it does not (`references/review-feedback.md`). A decline costs nothing; a start costs the slot, which is why it is asked for.
+CodeRabbit advances its incremental checkpoint over commits it never posted a review body for: the status still reads `Review rate limited`, no range names them, and they count as reviewed anyway. Reading that as an unreviewed window inflates the next backlog by everything it silently covered and stalls pushes to protect a review that will never run. The reviewed range is evidence the checkpoint moved, never evidence it did not. The probe is the retrigger itself: `pnpm ai:coderabbit:probe <pr>` replies `Review rate limited` when the bot ran nothing, and `Review finished` when it started the review that was owed (`references/review-feedback.md`). A decline costs nothing; a start costs the slot, which is why it is asked for.
 
 ## Counting the files a window would carry
 

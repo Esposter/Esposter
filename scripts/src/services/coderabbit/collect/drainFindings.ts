@@ -21,7 +21,7 @@ interface DrainFindingsInput extends DrainInput {
   issueComments: GitHubEntry[];
   // The newest review's id, the unit a drain attempt is counted against
   newestReviewId: number;
-  reviewFixesSha: string | undefined;
+  reviewFixesSha?: string;
   viewerLogin: string;
 }
 

@@ -96,9 +96,12 @@ things that count answers are worth separating:
 pnpm ai:coderabbit:probe "<pr>"
 ```
 
-It posts `@coderabbitai review` and prints the reply — `Already reviewed` means the checkpoint already covers
-the head, anything else means a review is starting. **It spends a slot when a review does start**, so it is
-asked for like any other push-adjacent action.
+It posts `@coderabbitai review` and prints the reply. **Read the status line, never the note under it:** every
+reply says CodeRabbit "does not re-review already reviewed commits", the one announcing a review it has just
+started included, so reading the reply for those words says the head is covered whatever happened.
+`Review rate limited` means the bot ran nothing and the frontier has not moved; `Review finished` means the
+probe triggered the review that was owed, and it runs over the following minutes. **It spends a slot when a
+review does start**, so it is asked for like any other push-adjacent action.
 
 Reading straight back instead races the bot: its reply does not exist yet, so the read returns the previous
 comment — a real CodeRabbit remark that looks exactly like an answer. The script waits for the newest comment to
