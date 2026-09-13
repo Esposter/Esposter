@@ -1,6 +1,6 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
-import { RATE_LIMIT_FALLBACK_MS, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
+import { RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 
 // The walkthrough CodeRabbit rewrites when the limit makes it skip a review, and the deadline stated inside it
@@ -17,7 +17,10 @@ const RATE_LIMIT_RESET_PATTERN = /Next included review available in (?<amount>\d
 // Lifts — a merged pull request still shows the one its last skipped review wrote — so reading it as a wait from
 // The present would park the collector behind a deadline that passed a day ago. Anchoring it to the comment's own
 // Timestamp makes an expired block say what it should, which is that nothing is left to wait for.
-export const getRateLimitWaitMs = (issueComments: GitHubEntry[], nowMs: number): number => {
+//
+// No block, or one whose sentence reads differently than it did, states no deadline at all — and the caller asks
+// The bot rather than guessing one, since a guessed wait is slept out blind and re-guessed on waking.
+export const getRateLimitWaitMs = (issueComments: GitHubEntry[], nowMs: number): number | undefined => {
   // The marker is public — it is quoted in this very file — so anyone who can comment on the pull request can
   // Post one. Scoped to the bot's own login the way every other marker read here is, or a forged comment could
   // Park the collector behind whatever deadline its author chose
@@ -25,8 +28,7 @@ export const getRateLimitWaitMs = (issueComments: GitHubEntry[], nowMs: number):
     ({ body, user }) => user.login === CODERABBIT_REST_LOGIN && body.includes(RATE_LIMIT_COMMENT_MARKER),
   );
   const groups = comment && RATE_LIMIT_RESET_PATTERN.exec(comment.body)?.groups;
-  // No block, or one whose sentence reads differently than it did: the plan's own hourly window is the floor
-  if (!comment || !groups?.amount || !groups.unit) return RATE_LIMIT_FALLBACK_MS;
+  if (!comment || !groups?.amount || !groups.unit) return undefined;
   const amount = Number(groups.amount);
   const statedMs = Temporal.Duration.from(
     groups.unit.startsWith("hour") ? { hours: amount } : { minutes: amount },

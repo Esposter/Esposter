@@ -42,7 +42,7 @@ Five events, and every one runs the identical cycle:
 
 CodeRabbit skips a review when the account is over its hourly limit, sets `Review rate limited` on the commit status, and says nothing at all when the limit turns over. Left there the pipeline parks: the window it skipped is never reviewed, and no event exists to re-fire the cycle.
 
-The bot does publish one thing, though — the walkthrough it rewrites when it skips states **when the next review becomes available**. The cycle reads that sentence, and a second job sleeps it out and posts `@coderabbitai review`. The review that starts submits a `pull_request_review`, which is a trigger the collector already runs on, so the pipeline resumes itself.
+The bot does publish one thing, though — the walkthrough it rewrites when it skips states **when the next review becomes available**. The cycle reads that sentence, and a second job sleeps it out and dispatches the cycle again. That run reads the pull request afresh and, the deadline now passed, posts `@coderabbitai review` itself and reads the bot's reply for a deadline still ahead: the limit restated is a fresh deadline to sleep out next, and anything else means the review may have started — its `pull_request_review` is a trigger the collector already runs on.
 
 ```mermaid
 sequenceDiagram
@@ -53,11 +53,24 @@ sequenceDiagram
   W->>W: read the stated deadline from the walkthrough
   W->>R: retriggerDelaySeconds
   R->>R: sleep out the deadline
-  R->>CR: @coderabbitai review
-  CR->>W: review submitted — the cycle resumes
+  R->>W: workflow_dispatch
+  W->>W: re-read the pull request
+  W->>CR: @coderabbitai review
+  alt the limit is restated
+    CR->>W: a fresh deadline
+    W->>R: retriggerDelaySeconds
+  else the review starts
+    CR->>W: review submitted — the cycle resumes
+  end
 ```
 
-Two things make that sentence safe to act on. It is **relative to the comment that carries it**, never to now: the block is not removed when the limit lifts, so a pull request merged yesterday still shows the one its last skipped review wrote, and a wait read from the present would park the collector behind a deadline that passed a day ago. And it is **the deadline only**, never the fact — whether a limit applies at all is the commit status's answer, which is why an expired block resolves to no wait rather than to a contradiction. A block that states no readable deadline falls back to the hourly window the plan itself grants.
+The dispatch names `develop` as its ref, which picks the copy of this workflow and of the cycle that runs and nothing else — every branch the cycle acts on it reads from `origin`, and `develop` carries the newest copy, being both where the queue's windows land and what a `pull_request_review` already runs from.
+
+**The job that sleeps is not the one that asks.** A session push during the sleep runs a cycle of its own, and once the limit has lifted that push may already have a review running — a retrigger posted from the sleeping job, blind to that, would cancel it and spend a slot on a review that was under way. So the sleeping job only wakes the cycle, and every decision — whether anything is running, whether the deadline has really passed, what the bot answered — is made in the script with fresh state. It also keeps the bot's comment out of the workflow file, where nothing can import the constant the probe already posts.
+
+Two things make the deadline safe to act on. It is **relative to the comment that carries it**, never to now: the block is not removed when the limit lifts, so a pull request merged yesterday still shows the one its last skipped review wrote, and a wait read from the present would park the collector behind a deadline that passed a day ago. And it is **the deadline only**, never the fact — whether a limit applies at all is the commit status's answer, which is why an expired block resolves to no wait rather than to a contradiction. A block that states no readable deadline is not guessed at: the cycle asks, and the bot's answer is a block that does.
+
+One sleep is capped under the job's own timeout. A deadline stated further out — the bot's sentence allows hours — is slept in relays: each dispatched run reads what is left and schedules the next, so a long deadline never reaches the job's wall clock and dies unanswered.
 
 This is the shape [no polling](/docs/architecture/no-polling) calls a scheduled delivery: the work happens _at a time_, and nothing asks in the meantime whether it is time yet.
 
@@ -71,7 +84,7 @@ concurrency:
 
 The group serializes every run, whichever event fired it. The bot's own replies arrive as `pull_request_review` events, so a drain is followed by several fires within seconds; each waits for the one ahead of it and then exits at the gates. `cancel-in-progress` stays false because a run in the port step holds nothing another run needs, and cancelling one mid-push would be the only way to lose work.
 
-It sits on the `collect` job rather than on the workflow so that the retrigger, whose wait is measured in the bot's minutes, does not hold that queue behind it. The retrigger takes a group of its own and cancels in progress, the opposite choice for the opposite reason: it holds nothing, and a newer run carries the newer deadline.
+It sits on the `collect` job rather than on the workflow so that the retrigger, whose wait is measured in the bot's minutes, does not hold that queue behind it. The retrigger takes a group of its own and cancels in progress, the opposite choice for the opposite reason: it holds nothing, a newer run carries the newer deadline, and the cycle either one wakes reads the same state. It runs on the built-in token with only `actions: write`, since a `workflow_dispatch` is the one event that token may start and the one thing the job does.
 
 The steps are the warmup workflow's, plus what the script needs:
 

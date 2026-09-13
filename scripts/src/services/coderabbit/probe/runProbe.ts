@@ -1,3 +1,5 @@
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
+
 import { checkIsCheckpointMoved } from "#src/services/coderabbit/probe/checkIsCheckpointMoved";
 import { DEADLINE_MS, POLL_INTERVAL_MS } from "#src/services/coderabbit/probe/constants";
 import { getCheckpoint } from "#src/services/coderabbit/probe/getCheckpoint";
@@ -12,7 +14,7 @@ import { setTimeout as delay } from "node:timers/promises";
 // The newest comment to *change*, and it is a poll because nothing pushes a bot's reply anywhere this process
 // Can await. It is bounded because a bot that never answers and an API that keeps failing look identical from
 // Here, and an unanswered probe is something to go and look at rather than something to keep waiting on.
-export const runProbe = async (pullRequest: number): Promise<string> => {
+export const runProbe = async (pullRequest: number): Promise<GitHubEntry> => {
   // Unguarded on purpose: a baseline read that failed is not a baseline, and posting the probe against one makes
   // Whatever the bot said last look like the answer. Better to fail before spending the retrigger.
   const before = getCheckpoint(readNewestComment(pullRequest));
@@ -21,8 +23,8 @@ export const runProbe = async (pullRequest: number): Promise<string> => {
   const deadline = Date.now() + DEADLINE_MS;
   while (Date.now() < deadline) {
     const comment = getResult(() => readNewestComment(pullRequest)).unwrapOr(undefined);
-    // The caller reads the status line of whatever comes back; this loop only waits for it to arrive
-    if (checkIsCheckpointMoved(before, getCheckpoint(comment))) return comment?.body ?? "";
+    // The caller reads whatever comes back; this loop only waits for it to arrive
+    if (comment && checkIsCheckpointMoved(before, getCheckpoint(comment))) return comment;
     await delay(POLL_INTERVAL_MS);
   }
 

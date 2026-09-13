@@ -3,4 +3,4 @@ import { getPullRequestArgument } from "#src/services/coderabbit/shared/getPullR
 
 const pullRequest = getPullRequestArgument();
 const reply = await runProbe(pullRequest);
-console.info(reply);
+console.info(reply.body);

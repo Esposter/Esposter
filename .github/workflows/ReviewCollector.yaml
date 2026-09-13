@@ -50,7 +50,6 @@ jobs:
       cancel-in-progress: false
     outputs:
       retriggerDelaySeconds: ${{ steps.collect.outputs.retriggerDelaySeconds }}
-      retriggerPullRequest: ${{ steps.collect.outputs.retriggerPullRequest }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -101,19 +100,29 @@ jobs:
 
   # The one missing webhook, supplied. A rate limit lifts on CodeRabbit's clock and announces nothing when it
   # does, so the cycle reads the deadline the bot states — "Next included review available in N minutes" — and
-  # this job sleeps it out and retriggers. The review that starts submits a `pull_request_review`, which is the
-  # event the collector already runs on, so the pipeline resumes itself without anything polling for it.
+  # this job sleeps it out and runs the cycle again. That run re-reads the pull request before asking anything:
+  # a session push during the sleep may already have a review running, which a retrigger posted blind would
+  # cancel. It is the cycle, in TypeScript, that posts `@coderabbitai review` once the deadline has passed and
+  # reads the bot's answer for a deadline still ahead — which is the next sleep, if one is owed at all.
   retrigger:
     name: Retrigger
     needs: collect
     if: needs.collect.outputs.retriggerDelaySeconds != ''
     runs-on: ubuntu-latest
+<<<<<<< HEAD
     # The bot's own stated deadline can run past this — `RETRIGGER_DELAY_CAP_MS` (collect/constants.ts) is what
     # keeps the sleep below inside it, with margin for the runner to start and post the comment once it wakes.
+=======
+    # The cycle caps one sleep under this (`RETRIGGER_SLEEP_CAP_MS`) and relays a longer deadline across runs
+>>>>>>> 5e370f172 (fix(scripts): the retrigger wakes the cycle rather than the bot, and a stated deadline is never guessed)
     timeout-minutes: 90
+    # The built-in token starts no workflow runs — except by `workflow_dispatch`, which is the one thing this
+    # job does, so the collector token never reaches it.
+    permissions:
+      actions: write
     # Its own group: `collect` serialises the cycles, and a wait measured in the bot's minutes must not sit in
     # that queue holding back a session push. A newer run supersedes a pending one — it carries the newer
-    # deadline, and the bot answers both retriggers identically anyway.
+    # deadline, and the cycle it wakes reads the same state either way.
     concurrency:
       group: review-collector-retrigger
       cancel-in-progress: true
@@ -123,10 +132,10 @@ jobs:
           DELAY_SECONDS: ${{ needs.collect.outputs.retriggerDelaySeconds }}
         run: sleep "$DELAY_SECONDS"
 
-      # The retrigger is spelled out rather than read from `PROBE_COMMENT`, for the reason every literal a config
-      # outside the TypeScript graph repeats: there is nothing here that can import it.
-      - name: 🐇 Ask for the review the limit refused
+      # The ref picks which copy of this file and of the cycle runs, nothing else — every branch the cycle acts
+      # on it reads from `origin`. `develop` carries the newest one: it is where the queue's windows land, and
+      # it is already the copy a `pull_request_review` runs from.
+      - name: ♻️ Run the cycle again
         env:
-          GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
-          PULL_REQUEST: ${{ needs.collect.outputs.retriggerPullRequest }}
-        run: gh pr comment "$PULL_REQUEST" --repo "$GITHUB_REPOSITORY" --body "@coderabbitai review"
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref develop

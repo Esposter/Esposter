@@ -51,8 +51,12 @@ flowchart TD
   B -->|no| ST{Check bucket}
   ST -->|pending| X1[Exit — review running]
   ST -->|pass, Review completed| X2[Exit — last push not yet reviewed]
-  ST -->|pass, Review rate limited| SR[Schedule the retrigger<br/>for the deadline the bot stated]
+  ST -->|pass, Review rate limited| DL{Stated deadline<br/>still ahead}
+  DL -->|yes| SR[Schedule the retrigger<br/>for that deadline]
   SR --> OK
+  DL -->|no| PB[Probe — post the retrigger<br/>and read the reply]
+  PB -->|deadline still ahead| SR
+  PB -->|anything else| X3[Exit — a review may be running]
   ST -->|anything else| X4[Fail — a person looks]
   OK --> D[Drain]
 ```
@@ -61,7 +65,7 @@ flowchart TD
 
 **The review body, not the status, says a review is complete.** CodeRabbit writes the body naming its range at completion and flips the commit status a moment later, and the review event fires in that gap. Reading the status alone at that moment reads `pending`, exits, and nothing re-fires until the next queue push. So the primary test is whether the newest body's range ends at the `develop` head, and the status only decides when it does not. Anything unrecognised fails the run rather than guessing, because being wrong about a running review costs its findings.
 
-**A rate limit leaves the slot free and owes a retrigger.** `Review rate limited` means the bot ran nothing: the frontier has not moved, and a window measured from that stale frontier can only over-count, which is the safe direction. So the cycle proceeds. What it owes is the review the limit refused, and the limit lifts without announcing it — so the run reads the deadline the bot published in the walkthrough it rewrote, and hands it to the [runner](/docs/infra/review-collector/runner)'s delayed retrigger job, whose review re-fires the cycle on completion. The deadline is counted from the comment that states it rather than from now, because the block outlives the limit: a merged pull request still shows the one its last skipped review wrote, and an expired block therefore resolves to no wait rather than to an hour of one.
+**A rate limit leaves the slot free and owes a retrigger.** `Review rate limited` means the bot ran nothing: the frontier has not moved, and a window measured from that stale frontier can only over-count, which is the safe direction. So the cycle proceeds. What it owes is the review the limit refused, and the limit lifts without announcing it — so the run reads the deadline the bot published in the walkthrough it rewrote. A deadline still ahead goes to the [runner](/docs/infra/review-collector/runner)'s delayed retrigger job, which sleeps it out and dispatches the cycle again. A deadline passed, or a block that states none, is asked about instead: the run posts `@coderabbitai review` and reads the reply for a deadline still ahead, which is scheduled like the first. Anything else ends the run, because the review may have started — a push would cancel it, and its completion re-fires the cycle. Only a deadline is read out of that reply, never the fact of a limit: the bot usually answers by editing the walkthrough in place, where a stale block survives whichever way it answered. The deadline is counted from the comment that states it rather than from now, because the block outlives the limit: a merged pull request still shows the one its last skipped review wrote, and an expired block therefore reads as a probe owed rather than an hour of waiting.
 
 ## Drain
 
@@ -73,7 +77,7 @@ The step checks out `review-fixes` while it still owes `develop` commits and re-
 
 **A finding the drain cannot close is quarantined, not retried forever.** Each failed drain of a review leaves a hidden marker in a pull request comment carrying the review id and the attempt count; past the attempt cap the collector stops draining that review, posts that it has, and proceeds to port without fixes. The findings stay open for a person — the cost of that is a window whose fixes do not lead it, and the cost of the alternative is a pipeline stalled on one finding nobody sees. This is the [no manual recovery](/docs/architecture/no-manual-recovery) shape: land the failure durably, cap the attempts, quarantine visibly.
 
-**A drain that never started is not a failed attempt.** Claude Code refusing to run because the account is out of session exits non-zero exactly like a drain that tried and could not, and counting it would spend the quarantine budget on an outage — three pushes during one limit would park a review for a person over something no fix addresses. So the step separates the two by reading the sentence Claude prints on its way out, and a limit writes its own marker carrying the instant it lifts. Until then every cycle skips the drain and stops before the port, because the open findings are untouched and nothing may be ported ahead of them. There is no waiting job for this one: the limit lifts on a clock this repo does not own, and the session pushes `queue` often enough that the next event is never far away.
+**A drain that never started is not a failed attempt.** Claude Code refusing to run because the account is out of session exits non-zero exactly like a drain that tried and could not, and counting it would spend the quarantine budget on an outage — three pushes during one limit would park a review for a person over something no fix addresses. So the step separates the two by reading the sentence Claude prints on its way out, and a limit writes its own marker carrying the instant it lifts. Until then every cycle skips the drain and stops before the port, because the open findings are untouched and nothing may be ported ahead of them. There is no waiting job for this one, and the difference from the review limit is the length of the wait. CodeRabbit's deadline is minutes away and one runner sleeps it out; Claude's reset is a time of day, up to a day off, and a runner relaying that in hour-long sleeps would burn a day of dispatches to re-run a session the account's own work shares — the next `queue` push wakes the cycle for nothing, and is rarely later.
 
 ## Port
 

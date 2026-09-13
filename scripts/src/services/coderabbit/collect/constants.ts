@@ -68,20 +68,13 @@ export const DRAIN_LIMIT_FALLBACK_MS: number = Temporal.Duration.from({ hours: 1
 // The reset is a time of day, so an already-passed one is tomorrow's
 export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
 
-// What the plan grants when no block states otherwise: one included review per hour, so an hour is the floor
-export const RATE_LIMIT_FALLBACK_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
-
 // Slack on the stated deadline: the bot is answering a clock the collector cannot read exactly, and a retrigger
 // A second early spends the run for the same notice
 export const RETRIGGER_BUFFER_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 
-// What the retrigger job's own `sleep` may be asked to wait — under its `timeout-minutes: 90` (ReviewCollector.yaml)
-// With margin for the runner to start and post the retrigger comment once it wakes. A wait capped short of the
-// Real deadline is not wrong, only early: the bot answers `Review rate limited` again, and the next collect run
-// (the retrigger's own comment fires one) reads the fresh deadline off the newer comment and reschedules
-export const RETRIGGER_DELAY_CAP_MS: number = Temporal.Duration.from({ minutes: 80 }).total("milliseconds");
+// The longest one retrigger sleeps, under the job's own `timeout-minutes` (`ReviewCollector.yaml`). A deadline
+// Further out is slept in relays: the run the wake dispatches reads what is left of it and schedules again.
+export const RETRIGGER_SLEEP_CAP_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 
-// The job outputs the runner's delayed retrigger reads — the only channel between two jobs of one workflow run
+// The job output the runner's delayed retrigger reads — the only channel between two jobs of one workflow run
 export const RETRIGGER_DELAY_OUTPUT = "retriggerDelaySeconds";
-
-export const RETRIGGER_PULL_REQUEST_OUTPUT = "retriggerPullRequest";

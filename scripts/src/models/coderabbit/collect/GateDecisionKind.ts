@@ -5,6 +5,6 @@ export enum GateDecisionKind {
   Fail = "Fail",
   Proceed = "Proceed",
   // A rate-limited status with a stale body: the bot ran nothing, so the slot is free and the window is measured
-  // From the stale frontier — and the retrigger that starts the review it skipped is scheduled for the deadline
+  // From the stale frontier — and the review it skipped is asked for at the deadline the bot stated
   RateLimited = "RateLimited",
 }

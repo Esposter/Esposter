@@ -10,7 +10,7 @@ import {
   PENDING_BUCKET,
   QUEUE_BRANCH,
   RETRIGGER_DELAY_OUTPUT,
-  RETRIGGER_PULL_REQUEST_OUTPUT,
+  RETRIGGER_SLEEP_CAP_MS,
   REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
 import { cutCandidate } from "#src/services/coderabbit/collect/cutCandidate";
@@ -32,6 +32,7 @@ import { verifyCandidate } from "#src/services/coderabbit/collect/verifyCandidat
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
 import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
+import { runProbe } from "#src/services/coderabbit/probe/runProbe";
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
@@ -155,20 +156,34 @@ else if (gate.kind === GateDecisionKind.Fail)
   throw new InvalidOperationError(Operation.Read, "coderabbit", gate.reason);
 else if (gate.kind === GateDecisionKind.RateLimited) {
   // The bot ran nothing, so the slot is free and the window is measured from the frontier it left alone. What is
-  // Owed is the review it skipped, and the limit lifts without announcing it — so the run reads the deadline the
-  // Bot published and hands it to the runner's retrigger job, whose review submits the event the cycle already
-  // Resumes on. Asking the bot instead, by posting a retrigger to be told the deadline it has already written
-  // Down, is the poll this replaces.
-  const waitSeconds = Math.ceil(
-    Temporal.Duration.from({ milliseconds: getRateLimitWaitMs(issueComments, Date.now()) }).total("seconds"),
-  );
-  if (!isDryRun) {
-    writeJobOutput(RETRIGGER_DELAY_OUTPUT, waitSeconds.toString());
-    writeJobOutput(RETRIGGER_PULL_REQUEST_OUTPUT, pullRequest.toString());
+  // Owed is the review it skipped, and the limit lifts without announcing it. A deadline the bot has stated and
+  // Not yet reached is handed to the runner's retrigger job, which sleeps it out and dispatches this cycle again.
+  // A deadline reached — or none stated — is asked about instead: the probe posts the retrigger and reads the
+  // Reply. Posting before the deadline, to be told a time the bot has already written down, is the poll the
+  // Sleep replaces.
+  const statedWaitMs = getRateLimitWaitMs(issueComments, Date.now());
+  const isProbeOwed = statedWaitMs === undefined || statedWaitMs === 0;
+  if (isProbeOwed && isDryRun)
+    console.info("would probe — the stated deadline has passed, or none is stated, and a dry run posts nothing");
+  else {
+    // The reply is read for one thing, a deadline still ahead, since the bot usually answers by editing the
+    // Walkthrough in place and the stale block stays in it whether or not the review started. Any other reply
+    // Ends the run: the review may be running, which a push would cancel, and the next event re-reads either way.
+    const reply = isProbeOwed ? await runProbe(pullRequest) : undefined;
+    const waitMs = reply ? getRateLimitWaitMs([reply], Date.now()) : statedWaitMs;
+    if (!waitMs) {
+      console.info("probed — the review the limit refused has started, or the reply states no deadline ahead");
+      process.exit(0);
+    }
+    // A deadline past the longest sleep one job holds is slept in relays, the dispatched run reading what is left
+    const delaySeconds = Math.ceil(
+      Temporal.Duration.from({ milliseconds: Math.min(waitMs, RETRIGGER_SLEEP_CAP_MS) }).total("seconds"),
+    );
+    if (!isDryRun) writeJobOutput(RETRIGGER_DELAY_OUTPUT, delaySeconds.toString());
+    console.info(
+      `rate limited — retrigger in ${delaySeconds.toString()}s, the deadline the bot stated${isDryRun ? " (dry run: not scheduled)" : ""}`,
+    );
   }
-  console.info(
-    `rate limited — retrigger in ${waitSeconds.toString()}s, the deadline the bot stated${isDryRun ? " (dry run: not scheduled)" : ""}`,
-  );
 }
 
 // Drain: the open set is what the bot spoke last on and no unported commit answers

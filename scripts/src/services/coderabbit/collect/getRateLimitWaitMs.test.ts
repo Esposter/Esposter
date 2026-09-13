@@ -1,6 +1,6 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
-import { RATE_LIMIT_FALLBACK_MS, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
+import { RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
 import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
 import { describe, expect, test } from "vitest";
 
@@ -53,18 +53,26 @@ describe(getRateLimitWaitMs, () => {
     expect(getRateLimitWaitMs(comments, WRITTEN_AT_MS + getMinutesMs(60 * 24))).toBe(0);
   });
 
-  test("falls back to the plan's hourly window when no comment carries a block", () => {
+  test("reads a deadline stated in hours", () => {
     expect.hasAssertions();
 
-    expect(getRateLimitWaitMs([], WRITTEN_AT_MS)).toBe(RATE_LIMIT_FALLBACK_MS);
+    const comments = [getComment("Next included review available in 2 hours.")];
+
+    expect(getRateLimitWaitMs(comments, WRITTEN_AT_MS)).toBe(getMinutesMs(120) + RETRIGGER_BUFFER_MS);
   });
 
-  test("falls back to the plan's hourly window when the block states no deadline", () => {
+  test("states no deadline when no comment carries a block", () => {
+    expect.hasAssertions();
+
+    expect(getRateLimitWaitMs([], WRITTEN_AT_MS)).toBeUndefined();
+  });
+
+  test("states no deadline when the block does not say when the limit lifts", () => {
     expect.hasAssertions();
 
     const comments = [getComment("You have used the included review currently available.")];
 
-    expect(getRateLimitWaitMs(comments, WRITTEN_AT_MS)).toBe(RATE_LIMIT_FALLBACK_MS);
+    expect(getRateLimitWaitMs(comments, WRITTEN_AT_MS)).toBeUndefined();
   });
 
   test("reads the newest block when an older one is still on the pull request", () => {
