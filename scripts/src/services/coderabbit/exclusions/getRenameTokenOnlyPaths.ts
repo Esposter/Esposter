@@ -5,6 +5,7 @@ import { checkIsSubstitutionExact } from "#src/services/coderabbit/exclusions/ch
 import { getNameStatusRows } from "#src/services/coderabbit/exclusions/getNameStatusRows";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { getNulSeparatedTokens } from "#src/services/shared/getNulSeparatedTokens";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A file that stayed put and changed is `M`; an `A` or a `D` is a content decision, never a token substitution
@@ -28,10 +29,12 @@ export const getRenameTokenOnlyPaths = (
       getRenameTokenOnlyPaths.name,
       `${renameSha} is not a commit in ${range}`,
     );
+  // `-z` for the same reason the name-status listing reads with it (`getNameStatusRows`): a path git would quote
+  // Would otherwise never equal the literal one the rename row names, and the sibling change would go unseen
   const otherPaths = new Set(
     rangeCommits
       .filter((commit) => commit !== sha)
-      .flatMap((commit) => getNonEmptyLines(runGit(["show", "--name-only", "--format=", commit]))),
+      .flatMap((commit) => getNulSeparatedTokens(runGit(["show", "--name-only", "--format=", "-z", commit]))),
   );
   return getNameStatusRows(runGit(["diff", "-M", "--name-status", "-z", `${sha}^`, sha])).flatMap(
     ({ path, renamedFrom, status }) => {

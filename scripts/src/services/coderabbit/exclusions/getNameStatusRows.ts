@@ -1,5 +1,7 @@
 import type { NameStatusRow } from "#src/models/coderabbit/exclusions/NameStatusRow";
 
+import { getNulSeparatedTokens } from "#src/services/shared/getNulSeparatedTokens";
+
 // The one reading of the listing, so every classifier asks it for the path a row ends at and the one it came from
 // Rather than re-parsing the rows for the field it wants.
 //
@@ -9,7 +11,7 @@ import type { NameStatusRow } from "#src/models/coderabbit/exclusions/NameStatus
 // Field instead, one flat token stream with no quoting to undo: a rename row is three tokens (status, the path it
 // Came from, the path it ends at), every other status two (status, path).
 export const getNameStatusRows = (nameStatus: string): NameStatusRow[] => {
-  const tokens = nameStatus.split("\0").filter((token) => token !== "");
+  const tokens = getNulSeparatedTokens(nameStatus);
   const rows: NameStatusRow[] = [];
   let index = 0;
   while (index < tokens.length) {
