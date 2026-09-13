@@ -1,6 +1,8 @@
 import { checkIsImportPathOnlyDiff } from "#src/services/coderabbit/exclusions/checkIsImportPathOnlyDiff";
 import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkIsProtectedPath";
 import { getPureRenamePaths } from "#src/services/coderabbit/exclusions/getPureRenamePaths";
+import { getRenamedFromPaths } from "#src/services/coderabbit/exclusions/getRenamedFromPaths";
+import { getRenamePathspec } from "#src/services/coderabbit/exclusions/getRenamePathspec";
 import { getRenameSubstitutions } from "#src/services/coderabbit/exclusions/getRenameSubstitutions";
 import { getRenameTokenOnlyPaths } from "#src/services/coderabbit/exclusions/getRenameTokenOnlyPaths";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
@@ -12,17 +14,21 @@ const [range, renameSha, ...renameArgs] = process.argv.slice(2);
 if (!range?.includes(".."))
   throw new InvalidOperationError(Operation.Read, "coderabbit", "a <base>..<head> range is required");
 
+const nameStatus = runGit(["diff", "--name-status", "-M", range]);
+const renamedFromPaths = getRenamedFromPaths(nameStatus);
 const changedPaths = getNonEmptyLines(runGit(["diff", "--name-only", "-M", range]));
 const importPathOnlyPaths = changedPaths
   .filter((path) => !checkIsProtectedPath(path))
-  .filter((path) => checkIsImportPathOnlyDiff(runGit(["diff", "-U0", "-M", range, "--", path])));
+  .filter((path) =>
+    checkIsImportPathOnlyDiff(runGit(["diff", "-U0", "-M", range, "--", ...getRenamePathspec(path, renamedFromPaths)])),
+  );
 const renameTokenOnlyPaths =
   renameSha === undefined
     ? []
     : getRenameTokenOnlyPaths(range, new Set(changedPaths), renameSha, getRenameSubstitutions(renameArgs));
 const excludablePaths = [
   ...new Set([
-    ...getPureRenamePaths(runGit(["diff", "--name-status", "-M", range])).filter((path) => !checkIsProtectedPath(path)),
+    ...getPureRenamePaths(nameStatus).filter((path) => !checkIsProtectedPath(path)),
     ...importPathOnlyPaths,
     ...renameTokenOnlyPaths,
   ]),
