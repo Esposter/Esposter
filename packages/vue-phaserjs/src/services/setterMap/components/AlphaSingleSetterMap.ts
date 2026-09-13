@@ -5,6 +5,7 @@ import type { GameObjects } from "phaser";
 
 export const AlphaSingleSetterMap = {
   alpha: (gameObject) => (value) => {
+    if (value === undefined) return;
     gameObject.setAlpha(value);
   },
 } as const satisfies SetterMap<

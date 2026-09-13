@@ -12,9 +12,18 @@ export const DepthSetterMap = {
     gameObject.setDepth(value);
     // Phaser types `parentContainer` as always present, but a game object added straight to the scene has none
     if (!(gameObject.parentContainer as GameObjects.Container | null)) return;
-    const depthInsertIndex = getDepthInsertIndex(gameObject.parentContainer.list, gameObject.depth);
+    const { list } = gameObject.parentContainer;
+    const depthInsertIndex = getDepthInsertIndex(list, gameObject.depth);
     if (depthInsertIndex === -1) gameObject.parentContainer.bringToTop(gameObject);
-    else gameObject.parentContainer.moveTo(gameObject, Math.max(depthInsertIndex - 1, 0));
+    else {
+      // `moveTo` inserts into the list after removing `gameObject` from its current position, so an insert index
+      // Found ahead of that position has already shifted back by one
+      const currentIndex = list.indexOf(gameObject);
+      gameObject.parentContainer.moveTo(
+        gameObject,
+        currentIndex < depthInsertIndex ? depthInsertIndex - 1 : depthInsertIndex,
+      );
+    }
   },
 } as const satisfies SetterMap<
   DepthConfiguration,

@@ -13,7 +13,8 @@ export const AnimationSetterMap = {
     for (const configuration of configurations) {
       if (!configuration.key) continue;
       const event = `${Animations.Events.ANIMATION_COMPLETE_KEY}${configuration.key}`;
-      gameObject.once(event, () => {
+      // Re-running this setter before a prior animation completes must not stack a second listener for the same key
+      gameObject.off(event).once(event, () => {
         // @ts-expect-error valid runtime event that phaser has no type for
         emit(event);
       });

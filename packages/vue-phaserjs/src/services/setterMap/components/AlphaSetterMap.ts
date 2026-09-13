@@ -5,18 +5,23 @@ import type { GameObjects } from "phaser";
 
 export const AlphaSetterMap = {
   alpha: (gameObject) => (value) => {
+    if (value === undefined) return;
     gameObject.setAlpha(value, value, value, value);
   },
   alphaBottomLeft: (gameObject) => (value) => {
+    if (value === undefined) return;
     gameObject.setAlpha(gameObject.alphaTopLeft, gameObject.alphaTopRight, value, gameObject.alphaBottomRight);
   },
   alphaBottomRight: (gameObject) => (value) => {
+    if (value === undefined) return;
     gameObject.setAlpha(gameObject.alphaTopLeft, gameObject.alphaTopRight, gameObject.alphaBottomLeft, value);
   },
   alphaTopLeft: (gameObject) => (value) => {
+    if (value === undefined) return;
     gameObject.setAlpha(value, gameObject.alphaTopRight, gameObject.alphaBottomLeft, gameObject.alphaBottomRight);
   },
   alphaTopRight: (gameObject) => (value) => {
+    if (value === undefined) return;
     gameObject.setAlpha(gameObject.alphaTopLeft, value, gameObject.alphaBottomLeft, gameObject.alphaBottomRight);
   },
 } as const satisfies SetterMap<AlphaConfiguration, GameObjects.Components.Alpha, AlphaEventEmitsOptions>;
