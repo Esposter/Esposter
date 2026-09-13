@@ -1,4 +1,4 @@
-import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkIsProtectedPath";
+import { checkIsProtectedRow } from "#src/services/coderabbit/exclusions/checkIsProtectedRow";
 import { getRenameSubstitutions } from "#src/services/coderabbit/exclusions/getRenameSubstitutions";
 import { getRenameTokenOnlyPaths } from "#src/services/coderabbit/exclusions/getRenameTokenOnlyPaths";
 import { readMechanicalPaths } from "#src/services/coderabbit/exclusions/readMechanicalPaths";
@@ -16,8 +16,9 @@ const renameTokenOnlyPaths =
     ? []
     : getRenameTokenOnlyPaths(range, changedPaths, renameSha, getRenameSubstitutions(renameArgs));
 // The protected classes never leave review on a content proof, and a token-only path was already tested for them
+const protectedPaths = new Set(rows.filter((row) => checkIsProtectedRow(row)).map(({ path }) => path));
 const excludablePaths = [...new Set([...mechanicalPaths, ...renameTokenOnlyPaths])]
-  .filter((path) => !checkIsProtectedPath(path))
+  .filter((path) => !protectedPaths.has(path))
   .toSorted();
 
 // The summary is a yaml comment so the whole output pastes into `path_filters` as it is

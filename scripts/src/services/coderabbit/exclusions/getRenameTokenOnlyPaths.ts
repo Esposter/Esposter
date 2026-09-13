@@ -1,6 +1,6 @@
 import type { RenameSubstitution } from "#src/models/coderabbit/shared/RenameSubstitution";
 
-import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkIsProtectedPath";
+import { checkIsProtectedRow } from "#src/services/coderabbit/exclusions/checkIsProtectedRow";
 import { checkIsSubstitutionExact } from "#src/services/coderabbit/exclusions/checkIsSubstitutionExact";
 import { getNameStatusRows } from "#src/services/coderabbit/exclusions/getNameStatusRows";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
@@ -36,19 +36,18 @@ export const getRenameTokenOnlyPaths = (
       .filter((commit) => commit !== sha)
       .flatMap((commit) => getNulSeparatedTokens(runGit(["show", "--name-only", "--format=", "-z", commit]))),
   );
-  return getNameStatusRows(runGit(["diff", "-M", "--name-status", "-z", `${sha}^`, sha])).flatMap(
-    ({ path, renamedFrom, status }) => {
-      if (renamedFrom === undefined && status !== MODIFIED_STATUS) return [];
-      const oldPath = renamedFrom ?? path;
-      if (!changedPaths.has(path)) return [];
-      if ([oldPath, path].some((somePath) => checkIsProtectedPath(somePath) || otherPaths.has(somePath))) return [];
-      return checkIsSubstitutionExact(
-        runGit(["show", `${sha}^:${oldPath}`]),
-        runGit(["show", `${sha}:${path}`]),
-        substitutions,
-      )
-        ? [path]
-        : [];
-    },
-  );
+  return getNameStatusRows(runGit(["diff", "-M", "--name-status", "-z", `${sha}^`, sha])).flatMap((row) => {
+    const { path, renamedFrom, status } = row;
+    if (renamedFrom === undefined && status !== MODIFIED_STATUS) return [];
+    const oldPath = renamedFrom ?? path;
+    if (!changedPaths.has(path)) return [];
+    if (checkIsProtectedRow(row) || [oldPath, path].some((somePath) => otherPaths.has(somePath))) return [];
+    return checkIsSubstitutionExact(
+      runGit(["show", `${sha}^:${oldPath}`]),
+      runGit(["show", `${sha}:${path}`]),
+      substitutions,
+    )
+      ? [path]
+      : [];
+  });
 };
