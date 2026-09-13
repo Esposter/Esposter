@@ -6,8 +6,13 @@ import { WINDOW_FILL_TARGET } from "#src/services/coderabbit/shared/constants";
 // Is for. No fixes and the count reaches the target: push. No fixes and a short queue: wait, nothing is waiting
 // On the slot. Fixes parked and an empty queue: park, which is the case review-fixes exists for. Force collapses
 // The two waits into a push for the dispatch that judges a short window worth the slot.
-export const getIsReady = ({ fileCount, fixCount, isForced, queueCommitCount }: ReadinessInput): boolean => {
+//
+// Waiting is only ever worth it while the window can still grow, and a held one cannot: the commit that stopped
+// It overflows the cap or conflicts, and both only clear once this window lands. So a held window is as big as
+// It will ever be, and holding it to the target parks it forever rather than under-filling one review — the same
+// Reasoning the slot check already applies to a queue with nothing left to add.
+export const getIsReady = ({ fileCount, fixCount, isForced, isHeld, queueCommitCount }: ReadinessInput): boolean => {
   if (isForced) return fixCount > 0 || queueCommitCount > 0;
   else if (fixCount > 0) return queueCommitCount > 0;
-  return queueCommitCount > 0 && fileCount >= WINDOW_FILL_TARGET;
+  return queueCommitCount > 0 && (isHeld || fileCount >= WINDOW_FILL_TARGET);
 };

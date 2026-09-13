@@ -42,7 +42,7 @@ flowchart TD
   G -->|yes| O{Open findings}
   O -->|yes| DR[Drain into review-fixes<br/>Claude fixes or rejects each]
   O -->|no| P
-  DR --> P{Fixes parked or<br/>queue at the fill target}
+  DR --> P{Fixes parked, queue at the<br/>fill target, or the window held}
   P -->|neither| PK[Wait — slot stays free]
   P -->|either| W[Port fixes then queue prefix<br/>largest green prefix under the cap, main folded in]
   W --> PU[Compare-and-swap push to develop]

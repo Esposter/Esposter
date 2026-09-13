@@ -252,6 +252,7 @@ export const runCycle = async ({
     fileCount: port.fileCount,
     fixCount: port.fixCount,
     isForced,
+    isHeld: port.heldSha !== undefined,
     queueCommitCount: port.queueShas.length,
   });
   if (!isReady) {
@@ -278,11 +279,15 @@ export const runCycle = async ({
   // Green cut drops queue commits until the head passes the checks, and a fold of `main` that turned it red is
   // Undone. A cut shrunk past what a slot is worth must not go out — the push is auto-reviewed, so it would
   // Spend the hour the fill target exists to protect on whatever survived. Same rule, asked of the real window.
+  // A cut that kept every pick is still the held window; one that dropped a red pick is not, because the drop is
+  // Re-picked next cycle and the window can grow again
+  const isCutHeld = port.heldSha !== undefined && cut.queueShas.length === port.queueShas.length;
   if (
     !getIsReady({
       fileCount: cutFileCount,
       fixCount: port.fixCount,
       isForced,
+      isHeld: isCutHeld,
       queueCommitCount: cut.queueShas.length,
     })
   )

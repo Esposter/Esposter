@@ -48,8 +48,8 @@ states for the cut's sake, and the lane is the second reason for it.
    fast-forwarded `develop` makes the rebase a no-op; a cherry-picked window drops the ported commits by patch
    id and re-parents the rest.
 4. Keep working. The collector fires on the push, reads the frontier and the check, drains any open findings
-   onto `review-fixes`, and when the slot is free and the queue has reached the fill target, ports the largest
-   green prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha.
+   onto `review-fixes`, and when the slot is free and the queue has reached the fill target — or the next commit
+   overflows the cap, so the window is as large as it will ever be — ports the largest green prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha.
 
 ```mermaid
 flowchart TD
@@ -59,7 +59,7 @@ flowchart TD
   C -->|yes| F{Open findings}
   F -->|yes| DR[Drain onto review-fixes]
   F -->|no| W
-  DR --> W{Fixes parked or<br/>queue at the fill target}
+  DR --> W{Fixes parked, queue at the<br/>fill target, or the window held}
   W -->|no| U
   W -->|yes| PU[Port fixes then the queue prefix<br/>fast-forward develop]
   PU --> R[Review runs, replies carry the sha]
