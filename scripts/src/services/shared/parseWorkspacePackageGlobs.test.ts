@@ -47,4 +47,10 @@ catalog:
 
     expect(parseWorkspacePackageGlobs("catalog:\n  vitest: ^5.0.0\n")).toStrictEqual([]);
   });
+
+  test("keeps the final entry when the file ends without a trailing newline", () => {
+    expect.hasAssertions();
+
+    expect(parseWorkspacePackageGlobs("packages:\n  - apps/*\n  - packages/*")).toStrictEqual(["apps/*", "packages/*"]);
+  });
 });
