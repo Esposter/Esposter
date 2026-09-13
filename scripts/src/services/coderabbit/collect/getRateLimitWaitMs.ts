@@ -1,10 +1,7 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
-import { RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
+import { RATE_LIMIT_COMMENT_MARKER, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
-
-// The walkthrough CodeRabbit rewrites when the limit makes it skip a review, and the deadline stated inside it
-const RATE_LIMIT_COMMENT_MARKER = "auto-generated comment: rate limited by coderabbit.ai";
 
 const RATE_LIMIT_RESET_PATTERN = /Next included review available in (?<amount>\d+) (?<unit>hours?|minutes?)/u;
 

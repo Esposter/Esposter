@@ -27,6 +27,27 @@ export const RATE_LIMITED_DESCRIPTION = "Review rate limited";
 // A red cut drops its last queue commit and re-verifies this many times before the window is held
 export const GREEN_CUT_RETRY_LIMIT = 3;
 
+// The checks a candidate earns before it is pushed. The pushed head runs CI on its own and the interior queue
+// Commits were verified by nobody, so the cut gets the checks CI would fail it on. Check-only: a repair the
+// Collector wrote would be a commit nobody reviewed. The two ESLint passes are what the root `lint` script runs
+// After oxlint, minus its `virrun` wrapper — this checkout is already the isolated copy `virrun` exists to make.
+// Oxlint alone let an import-order error through to a pushed window, and a pre-push control that is not the check
+// Protecting `develop` protects nothing.
+export const VERIFY_COMMANDS: string[][] = [
+  ["build:packages"],
+  ["-r", "--parallel", "run", "typecheck"],
+  ["exec", "oxlint", "--format=default", "--disable-nested-config"],
+  ["exec", "eslint", "."],
+  ["-r", "--parallel", "run", "lint"],
+];
+
+// The express lane pays for the gate the window lane leaves to develop's CI, because it is the only lane that
+// Reaches `main` with nobody reading it. A relocation is exactly what a path-coupled test fails on — a bundle's
+// Size snapshot moves when a file crosses a package boundary, a walk over a folder sees a file arrive or leave —
+// And none of that is visible to a build, a typecheck or a lint. On the window lane such a break is one more
+// Finding for the next review; on this one it would land on the branch that deploys.
+export const EXPRESS_VERIFY_COMMANDS: string[][] = [...VERIFY_COMMANDS, ["exec", "vitest", "run"]];
+
 // A review whose drain has failed this many times is quarantined: its findings stay open for a person and the
 // Collector ports without them rather than stalling every window behind one finding nobody sees.
 export const DRAIN_ATTEMPT_CAP = 3;
@@ -67,6 +88,11 @@ export const DRAIN_LIMIT_FALLBACK_MS: number = Temporal.Duration.from({ hours: 1
 
 // The reset is a time of day, so an already-passed one is tomorrow's
 export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
+
+// The walkthrough CodeRabbit rewrites when the limit makes it skip a review. It carries the deadline the cycle
+// Schedules against, and its `updated_at` is when the bot last restated the limit — which is what says whether
+// The retrigger already posted answered this block or the one before it.
+export const RATE_LIMIT_COMMENT_MARKER = "auto-generated comment: rate limited by coderabbit.ai";
 
 // Slack on the stated deadline: the bot is answering a clock the collector cannot read exactly, and a retrigger
 // A second early spends the run for the same notice

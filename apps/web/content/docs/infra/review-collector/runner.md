@@ -26,13 +26,14 @@ sequenceDiagram
   W->>W: cycle — reply, drain, port the next window
 ```
 
-Five events, and every one runs the identical cycle:
+Six events, and every one runs the identical cycle:
 
 - **`push` on `queue`** — the allocation event. Fires on every push the session makes, which under a standing sweep is one per commit; almost all of them exit at the gates within seconds of the checkout. The one that arrives when the slot is free and the queue has reached the target is the one that pushes.
 - **`pull_request_review` of type `submitted`**, filtered in the job's `if` to the bot's login and to a pull request whose head is `develop` — the free event. Renovate's pull requests also target `main` and also get reviewed, and the filter is what keeps their reviews from running a cycle against the release pull request for nothing. The workflow file for this event is taken from the pull request's merge ref, so it runs from `develop`'s copy while the release pull request is open; it does not need to be on `main` first.
 - **`status`**, filtered to the `CodeRabbit` context — the same free event read from its other end. CodeRabbit writes the review body and flips its commit status a moment later, so the two arrive as separate deliveries and either one is enough to run the cycle. Every deployment writes a status against the same commits, which is what the context filter is for.
 - **`push` on `main`** — the return stroke. A release merging, or a dependency bump landing directly, both move `main`; the cycle fast-forwards `develop` to it when `develop` is an ancestor and otherwise leaves the fold to the next window's port. The release pull request is closed by the time a release lands, so no review event will ever fire for it again and this is the only thing that carries `develop` forward.
 - **`workflow_dispatch`** with a `force` boolean, passed through to the script — the manual nudge, for a short window worth pushing anyway or for a webhook that was dropped.
+- **`issue_comment`** of type `created` or `edited`, filtered to the bot's login and to a comment on a pull request — the bot's answer to a retrigger. It replies with a comment, or by editing the walkthrough it already wrote, and neither is a review or a status, so this is the only event that carries it. The login filter is what keeps the collector's own marker comments from waking the cycle that just posted them.
 
 **Which copy of the workflow runs is the event's choice, not the collector's.** A `push` runs the file as that branch has it, and a `pull_request_review` takes it from the pull request's merge ref — which is why the review trigger works from `develop` while the release pull request is open. A `status` has no branch at all, so GitHub runs the default branch's copy: a trigger added here reaches `develop` immediately and only starts firing on statuses once the release that carries it merges to `main`.
 
@@ -42,7 +43,7 @@ Five events, and every one runs the identical cycle:
 
 CodeRabbit skips a review when the account is over its hourly limit, sets `Review rate limited` on the commit status, and says nothing at all when the limit turns over. Left there the pipeline parks: the window it skipped is never reviewed, and no event exists to re-fire the cycle.
 
-The bot does publish one thing, though — the walkthrough it rewrites when it skips states **when the next review becomes available**. The cycle reads that sentence, and a second job sleeps it out and dispatches the cycle again. That run reads the pull request afresh and, the deadline now passed, posts `@coderabbitai review` itself and reads the bot's reply for a deadline still ahead: the limit restated is a fresh deadline to sleep out next, and anything else means the review may have started — its `pull_request_review` is a trigger the collector already runs on.
+The bot does publish one thing, though — the walkthrough it rewrites when it skips states **when the next review becomes available**. The cycle reads that sentence, and a second job sleeps it out and dispatches the cycle again. That run reads the pull request afresh and, the deadline now passed, posts `@coderabbitai review` itself and exits. It does not wait for the reply: the bot answers with a comment or an edit of the walkthrough, and both arrive as `issue_comment`, which is a trigger the collector runs on. A limit restated carries a fresh deadline for that run to sleep out next; a review that started re-fires the cycle when it completes.
 
 ```mermaid
 sequenceDiagram
@@ -54,11 +55,10 @@ sequenceDiagram
   W->>R: retriggerDelaySeconds
   R->>R: sleep out the deadline
   R->>W: workflow_dispatch
-  W->>W: re-read the pull request
-  W->>CR: @coderabbitai review
+  W->>W: re-read the pull request — the deadline has passed
+  W->>CR: @coderabbitai review, then exit
   alt the limit is restated
-    CR->>W: a fresh deadline
-    W->>R: retriggerDelaySeconds
+    CR->>W: issue_comment — a fresh deadline to sleep out
   else the review starts
     CR->>W: review submitted — the cycle resumes
   end

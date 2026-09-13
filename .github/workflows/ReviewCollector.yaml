@@ -20,6 +20,13 @@ on:
   # review body. Listening to both ends of that gap is what keeps a dropped `pull_request_review` delivery, or a
   # review that ends by status alone, from parking the pipeline until the session's next push.
   status:
+  # The bot's answer to the retrigger the cycle posts when a rate limit's deadline has passed. That answer is a
+  # comment, or an edit of the walkthrough it already wrote — never a review and never a status — so this is the
+  # only event that carries it, and it is what lets the cycle ask and exit instead of waiting for the reply.
+  issue_comment:
+    types:
+      - created
+      - edited
   workflow_dispatch:
     inputs:
       force:
@@ -35,11 +42,15 @@ jobs:
     name: Collect
     # A review event fires for every review on every main-based pull request — renovate's included — and for
     # every batch of replies the bot answers. Only the bot's reviews of the release pull request run a cycle, and
-    # only CodeRabbit's own status does: every deployment writes one of its own against the same commits.
+    # only CodeRabbit's own status does: every deployment writes one of its own against the same commits. A
+    # comment runs one only when the bot wrote it on a pull request — the collector's own marker comments would
+    # otherwise wake the cycle that just posted them.
     if: >-
       (github.event_name != 'pull_request_review' ||
       (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.ref == 'develop')) &&
-      (github.event_name != 'status' || github.event.context == 'CodeRabbit')
+      (github.event_name != 'status' || github.event.context == 'CodeRabbit') &&
+      (github.event_name != 'issue_comment' ||
+      (github.event.comment.user.login == 'coderabbitai[bot]' && github.event.issue.pull_request))
     runs-on: ubuntu-latest
     timeout-minutes: 120
     # Every fire waits for the one ahead of it and re-reads the remote. The bot's own replies arrive as reviews,
@@ -102,8 +113,8 @@ jobs:
   # does, so the cycle reads the deadline the bot states — "Next included review available in N minutes" — and
   # this job sleeps it out and runs the cycle again. That run re-reads the pull request before asking anything:
   # a session push during the sleep may already have a review running, which a retrigger posted blind would
-  # cancel. It is the cycle, in TypeScript, that posts `@coderabbitai review` once the deadline has passed and
-  # reads the bot's answer for a deadline still ahead — which is the next sleep, if one is owed at all.
+  # cancel. It is the cycle, in TypeScript, that posts `@coderabbitai review` once the deadline has passed — and
+  # then exits, because the bot's answer arrives as an `issue_comment` this workflow already runs on.
   retrigger:
     name: Retrigger
     needs: collect

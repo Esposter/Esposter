@@ -1,7 +1,7 @@
 import type { CutInput } from "#src/models/coderabbit/collect/CutInput";
 import type { CutResult } from "#src/models/coderabbit/collect/CutResult";
 
-import { GREEN_CUT_RETRY_LIMIT } from "#src/services/coderabbit/collect/constants";
+import { GREEN_CUT_RETRY_LIMIT, VERIFY_COMMANDS } from "#src/services/coderabbit/collect/constants";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
 import { verifyCandidate } from "#src/services/coderabbit/collect/verifyCandidate";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
@@ -17,7 +17,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const cutCandidate = ({ cwd, developSha, fixCount, queueSha, queueShas }: CutInput): CutResult => {
   const keptShas = [...queueShas];
   let retries = GREEN_CUT_RETRY_LIMIT;
-  while (!verifyCandidate(cwd)) {
+  while (!verifyCandidate(VERIFY_COMMANDS, cwd)) {
     if (keptShas.length === 0)
       throw new InvalidOperationError(
         Operation.Update,
@@ -40,7 +40,7 @@ export const cutCandidate = ({ cwd, developSha, fixCount, queueSha, queueShas }:
 
   const pickHeadSha = runGit(["rev-parse", "HEAD"], cwd).trim();
   let isMainMerged = mergeMain(cwd);
-  if (isMainMerged && !verifyCandidate(cwd)) {
+  if (isMainMerged && !verifyCandidate(VERIFY_COMMANDS, cwd)) {
     runGit(["reset", "--hard", pickHeadSha], cwd);
     console.info("main not folded — the fold turned the cut red, so it waits for the next window");
     isMainMerged = false;

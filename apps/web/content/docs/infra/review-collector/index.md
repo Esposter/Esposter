@@ -11,7 +11,7 @@ Local work is pushed to **one permanent `queue` branch** with no window boundari
 
 ## The parts
 
-The pipelining rules are prose in the `coderabbit` skill, and the commands under `scripts/src/coderabbit/` read the facts they turn on — the reviewed frontier and the window size (`window`), every open finding across the three endpoints (`feedback`), whether the checkpoint covers the head (`probe`, which a session runs by hand). The collector composes them into one cycle that runs without a person, in three self-contained parts:
+The pipelining rules are prose in the `coderabbit` skill, and the commands under `scripts/src/coderabbit/` read the facts they turn on — the reviewed frontier and the window size (`window`), every open finding across the three endpoints (`feedback`), whether the checkpoint covers the head (`probe`, which a session runs by hand). The collector composes them into one cycle that runs without a person, in four self-contained parts:
 
 1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — the state the collector reads, the gates it must clear, how it drains findings into a parked `review-fixes` branch, ports the largest green prefix of `queue` under the cap, pushes and replies with the pushed sha. One script, `ai:coderabbit:collect`, with Claude invoked for exactly one step.
 2. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle from the allocation and free events, the credentials it holds, why it has no cron, and what a failed run leaves behind.
@@ -30,6 +30,7 @@ flowchart TD
   F[Review submitted<br/>by the bot on the release PR] --> C
   D[Manual dispatch<br/>optional force] --> C
   MN[main pushed<br/>a release merged or a bump landed] --> C
+  CM[Bot comment<br/>answering a retrigger] --> C
   C[Collector run<br/>serialized by concurrency group] --> R[Read remote state<br/>frontier, status, threads, refs]
   R --> RS{develop an ancestor of main}
   RS -->|yes| FF[Fast-forward develop to main<br/>no slot spent]
@@ -62,7 +63,8 @@ The cap, the fill target and the retrigger comment live where the CodeRabbit too
 
 | File                                                  | Role                                                                                             |
 | :---------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
-| `scripts/src/coderabbit/collect/index.ts`             | the cycle — `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]`                              |
+| `scripts/src/coderabbit/collect/index.ts`             | the entry point — `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]`                        |
+| `scripts/src/services/coderabbit/collect/runCycle.ts` | the pass itself, which returns its verdict rather than exiting                                   |
 | `scripts/src/services/coderabbit/collect`             | one service per step — gate, drain, port, express, the fold of `main`, verify, reply             |
 | `scripts/src/services/coderabbit/exclusions`          | the diff classifiers the express lane's proof and the manual exclusions command share            |
 | `scripts/src/models/coderabbit/collect`               | the inputs and outcomes the steps exchange — the gate decision, the port result, the drain input |

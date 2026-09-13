@@ -26,7 +26,9 @@ flowchart TD
   L -->|yes| D{Every file a 100% rename<br/>or an import-specifier-only diff}
   D -->|no| RV
   D -->|yes| EX[Express: cherry-pick onto main]
-  EX --> V{The cut passes the same<br/>checks a window does}
+  EX --> P{The cut's own diff<br/>still proves mechanical}
+  P -->|no| RV
+  P -->|yes| V{The cut passes a window's<br/>checks and the tests}
   V -->|no| RV
   V -->|yes| PU[Push main]
   PU --> FF[Next run: return stroke<br/>fast-forwards develop]
@@ -39,7 +41,9 @@ flowchart TD
 
 **It does not run while a window is in flight.** The lane is closed unless `develop` and `main` agree. An unreviewed window on `develop` still has to merge back into a `main` these commits have moved under it, and a rename landing on one side of that merge is how a file arrives twice. At rest there is no such merge to lose — and a mechanical commit is never the urgent one, so waiting for the quiet point costs it nothing.
 
-**It does not skip the checks.** `main` is production: a push to it deploys the function app. CI is the only gate these commits get, so the cut earns the same `verifyCandidate` pass a window's cut does — build, typecheck, oxlint, ESLint. A red cut is not held back, it simply takes the review lane, where a person reads why.
+**It does not skip the checks — it pays for more of them.** `main` is production: a push to it deploys the function app. CI is the only gate these commits get, so the cut earns a window's checks — build, typecheck, oxlint, ESLint — **and the tests a window leaves to develop's CI**. A relocation is exactly what a path-coupled test fails on: a bundle's size snapshot moves when a file crosses a package boundary, a walk over a folder sees a file arrive or leave, and none of that is visible to a build, a typecheck or a lint. On the review lane such a break is one more finding for the next window; on this one it would land on the branch that deploys. A red cut is not held back, it simply takes the review lane, where a person reads why.
+
+**It does not trust the proof it selected with.** Each commit is classified as its author wrote it, against a parent from the queue — and what ships is that patch replayed onto `main` and stacked with the siblings the lane took out of order. So the proof is asked again of the **cut**, whose cumulative diff against `main` is both what a cherry-pick actually produced and the unit a reviewer would have read. A cut that fails it takes the review lane whole, rather than the lane guessing which pick changed meaning.
 
 **It does not push twice in a run.** The express push is one irreversible act, and the run exits on it. The push fires the cycle again, which fast-forwards `develop` onto the new `main` and only then measures a window, against a frontier that has already moved.
 
@@ -49,14 +53,15 @@ The lane only pays when the mechanical part of a sweep is **its own commit**. A 
 
 ## Key files
 
-| File                                                                      | Role                                                                |
-| :------------------------------------------------------------------------ | :------------------------------------------------------------------ |
-| `scripts/src/services/coderabbit/collect/portExpress.ts`                  | builds the candidate on `main` and decides whether the lane is open |
-| `scripts/src/services/coderabbit/exclusions/checkIsMechanicalCommit.ts`   | the per-commit proof                                                |
-| `scripts/src/services/coderabbit/exclusions/checkIsRelocatablePath.ts`    | whether moving a file is itself a decision                          |
-| `scripts/src/services/coderabbit/exclusions/checkIsImportPathOnlyDiff.ts` | whether a file's whole diff is imports following a move             |
-| `scripts/src/services/coderabbit/exclusions/readMechanicalPaths.ts`       | the range read once — two git calls — and classified per file       |
-| `scripts/src/services/coderabbit/exclusions/getFileDiffs.ts`              | the whole-range diff split per file, keyed by the rename pair       |
+| File                                                                      | Role                                                                 |
+| :------------------------------------------------------------------------ | :------------------------------------------------------------------- |
+| `scripts/src/services/coderabbit/collect/portExpress.ts`                  | builds the candidate on `main` and decides whether the lane is open  |
+| `scripts/src/services/coderabbit/exclusions/checkIsMechanicalRange.ts`    | the proof itself, asked of a commit to select and of the cut to push |
+| `scripts/src/services/coderabbit/exclusions/checkIsMechanicalCommit.ts`   | that proof against one commit's first parent                         |
+| `scripts/src/services/coderabbit/exclusions/checkIsRelocatablePath.ts`    | whether moving a file is itself a decision                           |
+| `scripts/src/services/coderabbit/exclusions/checkIsImportPathOnlyDiff.ts` | whether a file's whole diff is imports following a move              |
+| `scripts/src/services/coderabbit/exclusions/readMechanicalPaths.ts`       | the range read once — two git calls — and classified per file        |
+| `scripts/src/services/coderabbit/exclusions/getFileDiffs.ts`              | the whole-range diff split per file, keyed by the rename pair        |
 
 ## Notes
 

@@ -5,6 +5,7 @@ import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { checkIsMechanicalCommit } from "#src/services/coderabbit/exclusions/checkIsMechanicalCommit";
+import { checkIsMechanicalRange } from "#src/services/coderabbit/exclusions/checkIsMechanicalRange";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 
 // The express lane. A review window is budgeted in files and spent on findings, so a commit that is all files and
@@ -29,5 +30,16 @@ export const portExpress = ({ cwd, developSha, mainSha, queueSha }: ExpressInput
   runGit(["switch", "--detach", mainSha], cwd);
   const shas = mechanicalShas.filter((sha) => pickCommit(sha, cwd) === PickOutcome.Applied);
   if (shas.length === 0) return { shas };
-  return { shas, targetSha: runGit(["rev-parse", "HEAD"], cwd).trim() };
+
+  // The proof is asked again of the cut, because the commits it selected are not the commits it pushes. Each was
+  // Classified as its author wrote it, on a parent from the queue; what ships is that patch replayed onto `main`
+  // And stacked with the siblings the lane took out of order, which a cherry-pick may resolve into something the
+  // Per-commit proof never saw. The cumulative diff is also the unit a reviewer reads, so it is the honest one to
+  // Claim has nothing in it. A cut that fails simply takes the review lane, where a person sees why.
+  if (checkIsMechanicalRange([mainSha, "HEAD"], cwd))
+    return { shas, targetSha: runGit(["rev-parse", "HEAD"], cwd).trim() };
+
+  runGit(["switch", "--detach", mainSha], cwd);
+  console.info("express: the cut is not mechanical as it lands — it takes the review lane instead");
+  return { shas: [] };
 };

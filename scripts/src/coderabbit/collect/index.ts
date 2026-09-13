@@ -1,42 +1,7 @@
-import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
-
-import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
-import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
-import {
-  DEVELOP_BRANCH,
-  DRAINS_MARKER,
-  DRY_RUN_WORKTREE_PREFIX,
-  MAIN_BRANCH,
-  PENDING_BUCKET,
-  QUEUE_BRANCH,
-  RETRIGGER_DELAY_OUTPUT,
-  RETRIGGER_SLEEP_CAP_MS,
-  REVIEW_FIXES_BRANCH,
-} from "#src/services/coderabbit/collect/constants";
-import { cutCandidate } from "#src/services/coderabbit/collect/cutCandidate";
-import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
-import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
-import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
-import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
-import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
-import { portExpress } from "#src/services/coderabbit/collect/portExpress";
-import { portWindow } from "#src/services/coderabbit/collect/portWindow";
-import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
-import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
-import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
-import { readOpenPullRequest } from "#src/services/coderabbit/collect/readOpenPullRequest";
-import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
-import { replyAnswered } from "#src/services/coderabbit/collect/replyAnswered";
-import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
-import { verifyCandidate } from "#src/services/coderabbit/collect/verifyCandidate";
+import { DRY_RUN_WORKTREE_PREFIX, RETRIGGER_DELAY_OUTPUT } from "#src/services/coderabbit/collect/constants";
+import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
-import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
-import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
-import { runProbe } from "#src/services/coderabbit/probe/runProbe";
-import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
-import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
@@ -45,9 +10,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 
-// One pass: read, reply, gate, drain, port, push, reply. Every input is a remote fact and every write is
-// Either the single fast-forward push or guarded by a predicate a later run re-evaluates, so any event may run
-// This and a run against unchanged state does nothing (docs: infra/review-collector).
+// `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]`. Everything the pass cannot own itself lives here: the
+// Arguments, the tree it works in, and the job output the runner's second job reads.
 const {
   positionals: [pullRequestArgument],
   values: { "dry-run": isDryRun, force: isForced },
@@ -55,6 +19,9 @@ const {
   allowPositionals: true,
   options: { "dry-run": { default: false, type: "boolean" }, force: { default: false, type: "boolean" } },
 });
+const pullRequest = pullRequestArgument === undefined ? undefined : Number(pullRequestArgument);
+if (pullRequest !== undefined && (!Number.isSafeInteger(pullRequest) || pullRequest <= 0))
+  throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
 
 const dirtyPaths = getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));
 if (!isDryRun && dirtyPaths.length > 0)
@@ -64,232 +31,19 @@ if (!isDryRun && dirtyPaths.length > 0)
     `the working tree is dirty — the collector owns it:\n${dirtyPaths.join("\n")}`,
   );
 
-runGit(["fetch", "--prune", "origin"]);
-const readSha = (ref: string): string | undefined =>
-  getResult(() => runGit(["rev-parse", "--verify", "--quiet", ref]).trim()).unwrapOr(undefined);
-const mainSha = readSha(`origin/${MAIN_BRANCH}`);
-const queueSha = readSha(`origin/${QUEUE_BRANCH}`);
-const pushedDevelopSha = readSha(`origin/${DEVELOP_BRANCH}`);
-if (!pushedDevelopSha || !queueSha || !mainSha)
-  throw new InvalidOperationError(
-    Operation.Read,
-    "coderabbit",
-    `origin/${DEVELOP_BRANCH}, origin/${QUEUE_BRANCH} or origin/${MAIN_BRANCH} is missing`,
-  );
-let reviewFixesSha = readSha(`origin/${REVIEW_FIXES_BRANCH}`);
-
-// The return stroke: the release pull request just merged, so develop is an ancestor of main and follows it by
-// Fast-forward — no slot spent, since no pull request is open. Main advancing on its own (a dependency bump)
-// Leaves develop no ancestor, and the porter folds that into the next window instead.
-const isDevelopBehindMain =
-  pushedDevelopSha !== mainSha &&
-  getResult(() => runGit(["merge-base", "--is-ancestor", pushedDevelopSha, mainSha])).match(
-    () => true,
-    () => false,
-  );
-if (isDevelopBehindMain) {
-  console.info(
-    `${DEVELOP_BRANCH} is an ancestor of ${MAIN_BRANCH} — fast-forwarding it${isDryRun ? " (dry run: not pushed)" : ""}`,
-  );
-  if (!isDryRun) runGit(["push", "origin", `${mainSha}:refs/heads/${DEVELOP_BRANCH}`]);
-}
-const developSha = isDevelopBehindMain ? mainSha : pushedDevelopSha;
-
-// The tree the run owns — a throwaway worktree for a dry run, this checkout otherwise. Both lanes build their
-// Candidate in it, one after the other, and only one of them ever pushes.
+// The tree the run owns — a throwaway worktree for a dry run, this checkout otherwise. Both port steps switch it
+// To the base they build on, so what it starts at only has to exist.
 const cwd = isDryRun ? mkdtempSync(join(tmpdir(), DRY_RUN_WORKTREE_PREFIX)) : REPOSITORY_ROOT;
-if (isDryRun) runGit(["worktree", "add", "--detach", cwd, developSha]);
-// Every exit path below is a `process.exit`, and a dry run's worktree must survive none of them — including the
-// Ones that throw. One listener covers them all, where a finalizer around a script that exits from ten places
-// Cannot.
-if (isDryRun)
+if (isDryRun) {
+  runGit(["worktree", "add", "--detach", cwd, "HEAD"]);
+  // The pass returns rather than exits, so a finalizer would cover the normal end — but not a throw from the
+  // Middle of it, and a worktree that survives the process is the one thing the next run trips over.
   process.on("exit", () => {
     getResult(() => runGit(["worktree", "remove", "--force", cwd])).orTee(console.error);
   });
-
-// The express lane, before the pull request is even looked up: it spends no review slot and needs no pull
-// Request open, which also makes it the one thing that moves the pipeline while there is none. A mechanical
-// Commit reaches `main` directly and the return stroke carries it to `develop` on the next run.
-const express = portExpress({ cwd, developSha, mainSha, queueSha });
-if (express.targetSha !== undefined) {
-  console.info(`express: ${express.shas.length.toString()} mechanical commits, nothing in them to review`);
-  if (isDryRun) console.info(`would push ${express.targetSha} to ${MAIN_BRANCH}`);
-  // `main` is production and CI is the only gate these commits get, so the cut earns the same checks a window
-  // Does. A red one is not held back — it simply takes the review lane, where a person reads why.
-  else if (verifyCandidate(cwd)) {
-    runGit(["fetch", "origin", MAIN_BRANCH]);
-    if (readSha(`origin/${MAIN_BRANCH}`) === mainSha) {
-      runGit(["push", "origin", `${express.targetSha}:refs/heads/${MAIN_BRANCH}`], cwd);
-      console.info(`pushed ${express.targetSha} to ${MAIN_BRANCH}`);
-      // One irreversible act per run. The push fires the cycle again, which fast-forwards `develop` onto it and
-      // Then measures a window against a frontier that has already moved.
-      process.exit(0);
-    } else console.info(`${MAIN_BRANCH} moved during the run — nothing pushed, the next run re-measures`);
-  } else console.info("the express cut is red — it takes the review lane instead");
 }
 
-const pullRequest = pullRequestArgument ? Number(pullRequestArgument) : readOpenPullRequest()?.number;
-if (pullRequest === undefined) {
-  console.info(`no open ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request — re-opening one is a human ask`);
-  process.exit(0);
-}
-if (!Number.isSafeInteger(pullRequest) || pullRequest <= 0)
-  throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
-
-const reviews = readBotEntries<GitHubReview>(`pulls/${pullRequest.toString()}/reviews`);
-const lastReviewedSha = getLastReviewedSha(reviews.map(({ body }) => body));
-const frontier = lastReviewedSha ?? runGit(["merge-base", mainSha, developSha]).trim();
-const viewerLogin = readViewerLogin();
-console.info(`pull request #${pullRequest.toString()} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`);
-console.info(`develop ${developSha}\nqueue   ${queueSha}\nfixes   ${reviewFixesSha ?? "none"}\nfrontier ${frontier}`);
-
-// Replies first: a run that pushed and died before replying is finished here, by whichever event fires next,
-// And it must happen before any exit — the running review is the one that resolves these threads.
-replyAnswered(pullRequest, `${frontier}..${developSha}`, viewerLogin, isDryRun);
-
-const issueComments = readEntries(`issues/${pullRequest.toString()}/comments`);
-const checkStatus = readCheckStatus(pullRequest);
-const gate = getGateDecision({ checkStatus, developSha, lastReviewedSha });
-console.info(`gate: ${gate.kind} — ${gate.reason}`);
-if (gate.kind === GateDecisionKind.Exit) process.exit(0);
-else if (gate.kind === GateDecisionKind.Fail)
-  throw new InvalidOperationError(Operation.Read, "coderabbit", gate.reason);
-else if (gate.kind === GateDecisionKind.RateLimited) {
-  // The bot ran nothing, so the slot is free and the window is measured from the frontier it left alone. What is
-  // Owed is the review it skipped, and the limit lifts without announcing it. A deadline the bot has stated and
-  // Not yet reached is handed to the runner's retrigger job, which sleeps it out and dispatches this cycle again.
-  // A deadline reached — or none stated — is asked about instead: the probe posts the retrigger and reads the
-  // Reply. Posting before the deadline, to be told a time the bot has already written down, is the poll the
-  // Sleep replaces.
-  const statedWaitMs = getRateLimitWaitMs(issueComments, Date.now());
-  const isProbeOwed = statedWaitMs === undefined || statedWaitMs === 0;
-  if (isProbeOwed && isDryRun)
-    console.info("would probe — the stated deadline has passed, or none is stated, and a dry run posts nothing");
-  else {
-    // The reply is read for one thing, a deadline still ahead, since the bot usually answers by editing the
-    // Walkthrough in place and the stale block stays in it whether or not the review started. Any other reply
-    // Ends the run: the review may be running, which a push would cancel, and the next event re-reads either way.
-    const reply = isProbeOwed ? await runProbe(pullRequest) : undefined;
-    const waitMs = reply ? getRateLimitWaitMs([reply], Date.now()) : statedWaitMs;
-    if (!waitMs) {
-      console.info("probed — the review the limit refused has started, or the reply states no deadline ahead");
-      process.exit(0);
-    }
-    // A deadline past the longest sleep one job holds is slept in relays, the dispatched run reading what is left
-    const delaySeconds = Math.ceil(
-      Temporal.Duration.from({ milliseconds: Math.min(waitMs, RETRIGGER_SLEEP_CAP_MS) }).total("seconds"),
-    );
-    if (!isDryRun) writeJobOutput(RETRIGGER_DELAY_OUTPUT, delaySeconds.toString());
-    console.info(
-      `rate limited — retrigger in ${delaySeconds.toString()}s, the deadline the bot stated${isDryRun ? " (dry run: not scheduled)" : ""}`,
-    );
-  }
-}
-
-// Drain: the open set is what the bot spoke last on and no unported commit answers
-const newestReview = reviews.findLast(({ body }) => body);
-const unportedCommits = [
-  ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`) : []),
-  ...readAnsweredCommits(`${developSha}..${queueSha}`),
-];
-const answeredIds = new Set(unportedCommits.flatMap(({ answers }) => answers));
-const drainedReviewIds = new Set(
-  [...unportedCommits, ...readAnsweredCommits(`${frontier}..${developSha}`)].flatMap(({ drains }) => drains),
-);
-const openThreads = getOpenFindings(readUnresolvedThreads(pullRequest), answeredIds);
-// A review states its own nitpick and outside-diff counts, so a review with none of either owes no body drain
-const statedCounts = newestReview ? getStatedCounts(newestReview.body) : undefined;
-const openBodyReviewId =
-  newestReview &&
-  statedCounts &&
-  statedCounts.nitpick + statedCounts.outsideDiff > 0 &&
-  !drainedReviewIds.has(newestReview.id) &&
-  !checkHasMarkerComment(issueComments, viewerLogin, getMarker(DRAINS_MARKER, newestReview.id))
-    ? newestReview.id
-    : undefined;
-console.info(
-  `open findings: ${openThreads.length.toString()} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
-);
-
-const drainLimitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
-if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined))
-  if (isDryRun) console.info("would drain — a dry run runs no Claude session");
-  // Claude Code's own limit, read off the marker the run that hit it wrote. Nothing announces it lifting and
-  // Every queue push fires a cycle, so without this each one downloads Claude Code to be refused again.
-  else if (drainLimitResetMs !== undefined && drainLimitResetMs > Date.now()) {
-    console.info(
-      `the drain is limited until ${new Date(drainLimitResetMs).toISOString()} — the findings stay open, so nothing ports ahead of them`,
-    );
-    process.exit(0);
-  } else {
-    const { status, stdout: feedback } = spawnPnpm(["ai:coderabbit:feedback", pullRequest.toString()], {
-      cwd: REPOSITORY_ROOT,
-      stdio: ["ignore", "pipe", "inherit"],
-    });
-    if (status !== 0)
-      throw new InvalidOperationError(Operation.Read, "coderabbit", "the feedback read failed — see its output");
-    const drain = await drainFindings({
-      developSha,
-      feedback,
-      issueComments,
-      newestReviewId: newestReview.id,
-      openThreads,
-      pullRequest,
-      reviewFixesSha,
-      reviewId: openBodyReviewId,
-      viewerLogin,
-    });
-    // The open set is untouched, so porting now would put a window ahead of findings that must lead it
-    if (drain.isLimited) process.exit(0);
-    reviewFixesSha = drain.reviewFixesSha;
-  }
-
-const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha, reviewFixesSha });
-console.info(
-  `window: ${port.fixCount.toString()} fix commits + ${port.queueShas.length.toString()} queue commits = ${port.fileCount.toString()} files${port.heldSha ? `, held from ${port.heldSha}` : ""}`,
-);
-const isReady = getIsReady({
-  fileCount: port.fileCount,
-  fixCount: port.fixCount,
-  isForced,
-  queueCommitCount: port.queueShas.length,
-});
-if (!isReady) {
-  // A held first commit is not an under-filled queue — the window is full of carry-over nothing has reviewed yet
-  if (port.queueShas.length === 0 && port.heldSha) console.info("held — no owed commit fits this window");
-  else if (port.fixCount > 0) console.info("parked — fixes wait for the queue");
-  else console.info("waiting — the queue is under the fill target");
-  process.exit(0);
-}
-if (isDryRun) {
-  console.info(`would verify, fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}`);
-  process.exit(0);
-}
-
-const cut = cutCandidate({ cwd, developSha, fixCount: port.fixCount, queueSha, queueShas: port.queueShas });
-if (cut.queueShas.length === 0 && port.fixCount === 0) {
-  console.info("nothing green to push");
-  process.exit(0);
-}
-console.info(
-  `cut: ${cut.queueShas.length.toString()} queue commits${cut.isMainMerged ? ", main folded in" : ""}${cut.isFastForward ? ", fast-forward" : ""}`,
-);
-
-// Compare-and-swap: a fresh fetch, the develop head still the one measured against, no review started meanwhile
-runGit(["fetch", "origin", DEVELOP_BRANCH]);
-if (readSha(`origin/${DEVELOP_BRANCH}`) !== developSha) {
-  console.info(`${DEVELOP_BRANCH} moved during the run — nothing pushed, the next run re-measures`);
-  process.exit(0);
-}
-// Fail closed: an unreadable status is not a free slot. `gh` answering nothing is indistinguishable from a
-// Review that started a second ago, and the next run re-reads it for the cost of one skipped window.
-const finalCheckStatus = readCheckStatus(pullRequest);
-if (finalCheckStatus === undefined || finalCheckStatus.bucket === PENDING_BUCKET) {
-  console.info("a review started during the run, or its status could not be read — nothing pushed");
-  process.exit(0);
-}
-runGit(["push", "origin", `${cut.targetSha}:refs/heads/${DEVELOP_BRANCH}`], cwd);
-console.info(`pushed ${cut.targetSha} to ${DEVELOP_BRANCH}`);
-
-runGit(["fetch", "origin", DEVELOP_BRANCH]);
-replyAnswered(pullRequest, `${developSha}..${cut.targetSha}`, viewerLogin, false);
+const { kind, reason, retriggerDelaySeconds, targetSha } = await runCycle({ cwd, isDryRun, isForced, pullRequest });
+console.info(`${kind}: ${reason}${targetSha ? ` — ${targetSha}` : ""}`);
+if (retriggerDelaySeconds !== undefined && !isDryRun)
+  writeJobOutput(RETRIGGER_DELAY_OUTPUT, retriggerDelaySeconds.toString());
