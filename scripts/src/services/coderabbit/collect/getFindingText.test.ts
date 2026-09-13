@@ -56,4 +56,28 @@ describe(getFindingText, () => {
     ].join("\n");
     expect(getFindingText(body)).toBe("**Persist failed snapshot collection work for retry.**");
   });
+
+  test("keeps an HTML comment inside a fenced proposed fix", () => {
+    expect.hasAssertions();
+    const body = [
+      "**Mark the region.**",
+      "",
+      "<!-- fingerprinting:phantom:poseidon:lion -->",
+      "",
+      "```diff",
+      "+<!-- eslint-disable-next-line vue/no-v-html -->",
+      '+<div v-html="content" />',
+      "```",
+    ].join("\n");
+    expect(getFindingText(body)).toBe(
+      [
+        "**Mark the region.**",
+        "",
+        "```diff",
+        "+<!-- eslint-disable-next-line vue/no-v-html -->",
+        '+<div v-html="content" />',
+        "```",
+      ].join("\n"),
+    );
+  });
 });
