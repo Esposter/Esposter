@@ -57,12 +57,19 @@ export const portWindow = ({ cwd, developSha, queueSha, reviewFixesSha }: PortIn
     queueShas.push(sha);
   }
 
+  // A fast-forward moves develop to the queue's own sha, so it must carry exactly what was measured: no fixes
+  // Ahead of it, the queue sitting on develop, and no skipped merge among the cut's ancestors — a merge's own
+  // Diff was never counted, and a fast-forward would land it anyway.
+  const cutSha = queueShas.at(-1);
   const mergeBase = runGit(["merge-base", developSha, queueSha], cwd).trim();
+  const isMergeFree =
+    cutSha === undefined ||
+    getNonEmptyLines(runGit(["rev-list", "--merges", `${developSha}..${cutSha}`], cwd)).length === 0;
   return {
     fileCount: getFileCount(`${developSha}..HEAD`, cwd),
     fixCount: fixShas.length,
     heldSha,
-    isFastForward: fixShas.length === 0 && mergeBase === developSha,
+    isFastForward: fixShas.length === 0 && mergeBase === developSha && isMergeFree,
     queueShas,
   };
 };
