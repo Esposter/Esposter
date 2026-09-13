@@ -71,7 +71,8 @@ The cap and the fill target live where the CodeRabbit tooling declares its share
 | `scripts/src/coderabbit/window/index.ts`              | the frontier and window-size read the gates reuse                                                |
 | `scripts/src/coderabbit/feedback/index.ts`            | the finding read the drain step feeds to Claude                                                  |
 | `scripts/src/coderabbit/probe/index.ts`               | the checkpoint probe a session runs by hand to ask the bot to take the head                      |
-| `.github/workflows/claude-warmup.yaml`                | the headless Claude Code invocation and trust-dialog shim the runner copies                      |
+| `.github/workflows/claude-warmup.yaml`                | the headless Claude Code invocation the runner copies                                            |
+| `.github/actions/trust-workspace`                     | the trust-dialog shim the warmup and the runner share                                            |
 | `.agents/skills/coderabbit/references/pipelining.md`  | the human side of the loop — pushing `queue` and catching up after a window                      |
 
 ## Notes

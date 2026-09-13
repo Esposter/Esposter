@@ -77,7 +77,7 @@ jobs:
       - name: 🏗️ Build the shared package
         run: pnpm --filter "@esposter/shared..." run build
 
-      - name: 🪪 Identify the collector
+      - name: 🆔 Identify the collector
         # `fileMode` off because the install marks a package's `bin` script executable, and on Linux that mode
         # flip alone reads as a dirty tree — which the collector refuses to work in.
         run: |
@@ -86,34 +86,18 @@ jobs:
           git config core.fileMode false
 
       - name: 🤝 Trust the workspace
-        # A fresh runner has no ~/.claude.json, so Claude Code treats the checkout as untrusted and ignores every
-        # permissions.allow entry in .agents/settings.local.json. Pre-accepting the trust dialog silences that.
-        run: |
-          node -e '
-            const fs = require("fs");
-            const os = require("os");
-            const path = require("path");
-            const file = path.join(os.homedir(), ".claude.json");
-            const config = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
-            config.projects ??= {};
-            config.projects[process.env.GITHUB_WORKSPACE] ??= {};
-            config.projects[process.env.GITHUB_WORKSPACE].hasTrustDialogAccepted = true;
-            fs.writeFileSync(file, JSON.stringify(config, null, 2));
-          '
+        uses: ./.github/actions/trust-workspace
 
+      # The flag is expanded by the template rather than the shell: the input is a boolean, so the expression can
+      # only ever yield the literal flag or nothing, and the shell never sees an empty argument to quote.
       - name: ♻️ Collect
         id: collect
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
-          FORCE_FLAG: ${{ inputs.force == true && '--force' || '' }}
-        # The flag is an array rather than a bare expansion: unquoted it fails shellcheck, and quoted it passes
-        # an empty argument on every run that is not forced.
         run: |
           gh auth setup-git
-          forceArguments=()
-          if [[ -n "$FORCE_FLAG" ]]; then forceArguments+=("$FORCE_FLAG"); fi
-          pnpm ai:coderabbit:collect "${forceArguments[@]}"
+          pnpm ai:coderabbit:collect ${{ inputs.force == true && '--force' || '' }}
 
   # The one missing webhook, supplied. A rate limit lifts on CodeRabbit's clock and announces nothing when it
   # does, so the cycle reads the deadline the bot states — "Next included review available in N minutes" — and

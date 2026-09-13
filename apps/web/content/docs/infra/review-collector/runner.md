@@ -78,7 +78,7 @@ The steps are the warmup workflow's, plus what the script needs:
 1. Checkout with the full history, authenticated with the collector's token so the push it makes fires `develop`'s own workflows, and with `persist-credentials: false` so the token does not end up in `.git/config` where the drain could spend it. Every ref the cycle reads — `main`, `develop`, `queue` and, when it exists, `review-fixes` — is read from `origin`, and a shallow clone cannot run `git cherry` across them.
 2. The repo's dependency setup action and the install, then a build of `@esposter/shared` and what it depends on, since the script imports the workspace package's built output.
 3. The git identity the fix commits and the fold of `main` carry, and `core.fileMode false`, because the runner's checkout flips an executable bit the cycle would otherwise refuse as a dirty tree.
-4. The trust-dialog shim from `claude-warmup.yaml`, since a fresh runner has no `~/.claude.json` and treats the checkout as untrusted.
+4. The `trust-workspace` action the warmup workflow shares, since a fresh runner has no `~/.claude.json` and treats the checkout as untrusted.
 5. `gh auth setup-git`, which points git's credential helper at `gh` and so at the token in this step's environment alone, then `pnpm ai:coderabbit:collect` with `--force` when the dispatch input says so. The script finds the pull request itself.
 
 The script spawns Claude Code headless for the drain step with the open findings on its stdin and permission prompts bypassed. The runner is ephemeral, holds one credential scoped to this repository, and is discarded when the job ends, so the interactive permission model protects nothing here and would only stall the drain on its first `git commit`. Claude's output is echoed into the job log when the session ends, which is where what it decided is read — and reading it rather than inheriting it is what lets the step tell a drain that failed from one that never started.
@@ -107,12 +107,13 @@ A red run is the poison signal, and the job summary says which step and why — 
 
 ## Key files
 
-| File                                                    | Role                                                        |
-| :------------------------------------------------------ | :---------------------------------------------------------- |
-| `.github/workflows/ReviewCollector.yaml`                | the workflow — triggers, concurrency groups, steps          |
-| `.github/workflows/claude-warmup.yaml`                  | the headless invocation and trust shim this workflow reuses |
-| `.github/actions/setup-project-dependencies`            | the install step                                            |
-| `apps/infra/src/github/secrets/reviewCollectorToken.ts` | the collector token as a Pulumi-managed repository secret   |
+| File                                                    | Role                                                      |
+| :------------------------------------------------------ | :-------------------------------------------------------- |
+| `.github/workflows/ReviewCollector.yaml`                | the workflow — triggers, concurrency groups, steps        |
+| `.github/workflows/claude-warmup.yaml`                  | the headless invocation this workflow reuses              |
+| `.github/actions/trust-workspace`                       | the trust-dialog shim both workflows run                  |
+| `.github/actions/setup-project-dependencies`            | the install step                                          |
+| `apps/infra/src/github/secrets/reviewCollectorToken.ts` | the collector token as a Pulumi-managed repository secret |
 
 ## Notes
 
