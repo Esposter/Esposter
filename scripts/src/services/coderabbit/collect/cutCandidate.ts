@@ -1,10 +1,13 @@
 import type { CutInput } from "#src/models/coderabbit/collect/CutInput";
 import type { CutResult } from "#src/models/coderabbit/collect/CutResult";
 
+import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
 import { GREEN_CUT_RETRY_LIMIT, VERIFY_COMMANDS } from "#src/services/coderabbit/collect/constants";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
 import { verifyCandidate } from "#src/services/coderabbit/collect/verifyCandidate";
+import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -14,7 +17,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // So a fold made first would be silently lost on the first red head while the log kept counting the commit it
 // Meant to drop. A fold that turns a green cut red is undone rather than blamed on the queue: the bump on `main`
 // Is what broke it, and the window goes out without it, as it does when the merge conflicts.
-export const cutCandidate = ({ cwd, developSha, fixCount, queueSha, queueShas }: CutInput): CutResult => {
+export const cutCandidate = ({ cwd, developSha, fixCount, frontierSha, queueSha, queueShas }: CutInput): CutResult => {
   const keptShas = [...queueShas];
   let retries = GREEN_CUT_RETRY_LIMIT;
   while (!verifyCandidate(VERIFY_COMMANDS, cwd)) {
@@ -35,12 +38,26 @@ export const cutCandidate = ({ cwd, developSha, fixCount, queueSha, queueShas }:
     retries -= 1;
     // Nothing left to verify: develop itself is the candidate, and the caller pushes nothing
     if (keptShas.length === 0 && fixCount === 0)
-      return { isFastForward: false, isMainMerged: false, queueShas: keptShas, targetSha: developSha };
+      return {
+        isFastForward: false,
+        isMainConflicted: false,
+        isMainMerged: false,
+        queueShas: keptShas,
+        targetSha: developSha,
+      };
   }
 
   const pickHeadSha = runGit(["rev-parse", "HEAD"], cwd).trim();
-  let isMainMerged = mergeMain(cwd);
-  if (isMainMerged && !verifyCandidate(VERIFY_COMMANDS, cwd)) {
+  const mergeOutcome = mergeMain(cwd);
+  let isMainMerged = mergeOutcome === MergeMainOutcome.Merged;
+  // A merge's own diff is never measured by the pick loop — that counts fixes and queue commits alone — so a fold
+  // Landing main's own backlog of files is undone rather than pushed over budget. Undone, not shrunk: nothing here
+  // Knows which of main's files to drop, and the fold tries again next window.
+  if (isMainMerged && getFileCount(`${frontierSha}..HEAD`, cwd) > REVIEW_FILE_CAP) {
+    runGit(["reset", "--hard", pickHeadSha], cwd);
+    console.info("main not folded — the fold alone put the window over the file cap");
+    isMainMerged = false;
+  } else if (isMainMerged && !verifyCandidate(VERIFY_COMMANDS, cwd)) {
     runGit(["reset", "--hard", pickHeadSha], cwd);
     console.info("main not folded — the fold turned the cut red, so it waits for the next window");
     isMainMerged = false;
@@ -57,6 +74,7 @@ export const cutCandidate = ({ cwd, developSha, fixCount, queueSha, queueShas }:
   const isFastForward = fixCount === 0 && mergeBase === developSha && isMergeFree && !isMainMerged;
   return {
     isFastForward,
+    isMainConflicted: mergeOutcome === MergeMainOutcome.Conflicted,
     isMainMerged,
     queueShas: keptShas,
     targetSha: isFastForward ? (cutSha ?? developSha) : runGit(["rev-parse", "HEAD"], cwd).trim(),

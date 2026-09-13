@@ -120,12 +120,7 @@ jobs:
     needs: collect
     if: needs.collect.outputs.retriggerDelaySeconds != ''
     runs-on: ubuntu-latest
-<<<<<<< HEAD
-    # The bot's own stated deadline can run past this — `RETRIGGER_DELAY_CAP_MS` (collect/constants.ts) is what
-    # keeps the sleep below inside it, with margin for the runner to start and post the comment once it wakes.
-=======
     # The cycle caps one sleep under this (`RETRIGGER_SLEEP_CAP_MS`) and relays a longer deadline across runs
->>>>>>> 5e370f172 (fix(scripts): the retrigger wakes the cycle rather than the bot, and a stated deadline is never guessed)
     timeout-minutes: 90
     # The built-in token starts no workflow runs — except by `workflow_dispatch`, which is the one thing this
     # job does, so the collector token never reaches it.

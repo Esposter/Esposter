@@ -96,6 +96,6 @@ describe(getRateLimitWaitMs, () => {
       user: { login: "an-outside-contributor" },
     };
 
-    expect(getRateLimitWaitMs([forgedComment], WRITTEN_AT_MS)).toBe(RATE_LIMIT_FALLBACK_MS);
+    expect(getRateLimitWaitMs([forgedComment], WRITTEN_AT_MS)).toBeUndefined();
   });
 });

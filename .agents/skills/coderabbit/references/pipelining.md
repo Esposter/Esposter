@@ -46,7 +46,12 @@ states for the cut's sake, and the lane is the second reason for it.
    each other's commits.
 3. Before the next unit, `git fetch`, and when `origin/develop` moved, `git rebase origin/develop`. A
    fast-forwarded `develop` makes the rebase a no-op; a cherry-picked window drops the ported commits by patch
-   id and re-parents the rest.
+   id and re-parents the rest. **Not hygiene — it is what keeps the drain's fixes.** A queue left on an old base
+   carries commits written against files the drain has since repaired on `develop`, and the porter's cherry-pick
+   replays them: where the hunks overlap the window is held, and where they merely sit nearby the queue's older
+   shape lands on top and the fix is gone with nothing reporting it. The rebase is where those two lineages are
+   reconciled, by the one party that can read both — and a queue several windows behind is reconciled by hand,
+   commit by commit, so budget it as work rather than as a command.
 4. Keep working. The collector fires on the push, reads the frontier and the check, drains any open findings
    onto `review-fixes`, and when the slot is free and the queue has reached the fill target — or the next commit
    overflows the cap, so the window is as large as it will ever be — ports the largest green prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha.

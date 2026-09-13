@@ -15,10 +15,18 @@ import { createInterface } from "node:readline";
 //
 // The prompt carries CodeRabbit's finding text verbatim, which is model-written prose about code anyone may have
 // Contributed — untrusted input steering a session that skips its permission prompts. So the drain is given no
-// Credential that can act on this repository: `GH_TOKEN` is dropped here, and the runner checks out with
-// `persist-credentials: false` so the checkout's remote carries none either. `gh` authenticates the collector's
-// Own pushes and replies from the environment of the parent process, which this child does not share.
-const WITHHELD_VARIABLES = new Set(["GH_TOKEN", "GITHUB_TOKEN"]);
+// Credential that can act on this repository: every secret-shaped variable is dropped here, and the runner
+// Checks out with `persist-credentials: false` so the checkout's remote carries none either. `gh` authenticates
+// The collector's own pushes and replies from the environment of the parent process, which this child does not
+// Share.
+//
+// Secret-shaped rather than two names: a fixed denylist only ever protects what it already knew to name, and
+// This job's own environment grows secrets over time (`ReviewCollector.yaml`) without every future one being
+// Added here by hand. A name earns exemption instead — the one credential the drain is deliberately given,
+// Because it authenticates the `claude` invocation itself rather than anything in this repository
+const EXEMPT_SECRET_VARIABLES = new Set(["CLAUDE_CODE_OAUTH_TOKEN"]);
+
+const SECRET_VARIABLE_PATTERN = /credential|key|password|secret|token/iu;
 
 // The session is streamed, one event per line, and each is written to the log as it lands — so a run's log
 // Shows which model answered, what the session is doing twenty minutes in, and what the session cost, rather
@@ -28,7 +36,7 @@ const WITHHELD_VARIABLES = new Set(["GH_TOKEN", "GITHUB_TOKEN"]);
 export const runDrain = async (prompt: string): Promise<DrainRun> => {
   const environment = Object.fromEntries(
     Object.keys(process.env)
-      .filter((key) => !WITHHELD_VARIABLES.has(key))
+      .filter((key) => EXEMPT_SECRET_VARIABLES.has(key) || !SECRET_VARIABLE_PATTERN.test(key))
       .map((key) => [key, process.env[key]]),
   );
   const child = spawn(

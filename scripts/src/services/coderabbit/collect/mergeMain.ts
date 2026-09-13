@@ -1,21 +1,12 @@
+import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { LOCKFILE } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-
-const LOCKFILE = "pnpm-lock.yaml";
-
-export enum MergeMainOutcome {
-  // Already an ancestor — nothing to fold, and nobody's fold to chase
-  AlreadyMerged = "AlreadyMerged",
-  // A conflict outside the lockfile — the merge was aborted, cwd is untouched, and the fold is a person's until
-  // A future window's develop or main resolves it on its own
-  Conflicted = "Conflicted",
-  Merged = "Merged",
-}
 
 // Fold `main` into the candidate so a dependency bump that landed there rides the window the collector is about
 // To push, rather than costing a review slot of its own. The lockfile conflict that merge always brings is

@@ -262,12 +262,19 @@ export const runCycle = async ({
       `would verify, fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}`,
     );
 
-  const cut = cutCandidate({ cwd, developSha, fixCount: port.fixCount, queueSha, queueShas: port.queueShas });
+  const cut = cutCandidate({
+    cwd,
+    developSha,
+    fixCount: port.fixCount,
+    frontierSha: frontier,
+    queueSha,
+    queueShas: port.queueShas,
+  });
   if (cut.queueShas.length === 0 && port.fixCount === 0)
     return getOutcome(CycleOutcomeKind.Idle, "nothing green to push");
   const cutFileCount = getFileCount(`${frontier}..${cut.targetSha}`, cwd);
   console.info(
-    `cut: ${cut.queueShas.length.toString()} queue commits = ${cutFileCount.toString()} files${cut.isMainMerged ? ", main folded in" : ""}${cut.isFastForward ? ", fast-forward" : ""}`,
+    `cut: ${cut.queueShas.length.toString()} queue commits = ${cutFileCount.toString()} files${cut.isMainMerged ? ", main folded in" : ""}${cut.isMainConflicted ? ", main conflicts outside the lockfile — held for a person" : ""}${cut.isFastForward ? ", fast-forward" : ""}`,
   );
   // Readiness is asked again of the cut, because the window that was measured is not the window that ships: the
   // Green cut drops queue commits until the head passes the checks, and a fold of `main` that turned it red is

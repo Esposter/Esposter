@@ -1,75 +1,80 @@
-import type { spawnSync as baseSpawnSync } from "node:child_process";
+import type { spawn as baseSpawn, ChildProcessWithoutNullStreams } from "node:child_process";
 
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { EventEmitter } from "node:events";
+import { PassThrough, Readable } from "node:stream";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { spawnSync } = vi.hoisted(() => ({ spawnSync: vi.fn<typeof baseSpawnSync>() }));
+const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
 
-vi.mock(import("node:child_process"), () => ({ spawnSync: spawnSync as unknown as typeof baseSpawnSync }));
+vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
+
+const REFUSAL_LINE = "You've hit your session limit · resets 3:10am (UTC)";
+
+// A session as Claude Code prints it: one JSON event per line, with whatever it says for itself on its way out
+// Printed as plain text. `close` is emitted once stdout ends, which is the order the real child fires them in —
+// `runDrain` registers its listener before the read loop precisely because that order is this tight.
+const mockSession = (exitCode: number, lines: string[]): void => {
+  const stdout = Readable.from(lines.map((line) => `${line}\n`));
+  const child = Object.assign(new EventEmitter(), { exitCode, stdin: new PassThrough(), stdout });
+  stdout.on("end", () => {
+    child.emit("close", exitCode);
+  });
+  spawn.mockReturnValue(child as unknown as ChildProcessWithoutNullStreams);
+};
+
+const getAssistantLine = (text: string): string =>
+  JSON.stringify({ message: { content: [{ text, type: "text" }] }, type: "assistant" });
+
+const getResultLine = (subtype: string, result: string): string =>
+  JSON.stringify({ duration_ms: 1, num_turns: 1, result, subtype, total_cost_usd: 0, type: "result" });
 
 describe(runDrain, () => {
   beforeEach(() => {
-    spawnSync.mockReset();
+    spawn.mockReset();
   });
 
-  // A drain that ran is asked to fix findings about this very wording, so its own summary can legitimately
-  // Contain the phrase "session limit" — reading that as a refusal to start would report a landed push as limited
-  test("does not classify a successful drain's own summary as a session limit", () => {
+  // A limit is a refusal to *start*, so a session that ran to the end cannot be one — whatever its narration says.
+  // The drain is asked to fix findings about this very wording, so its own summary quotes the phrase routinely
+  test("reads no limit off a session that ran to the end", async () => {
     expect.hasAssertions();
 
-    spawnSync.mockReturnValue({
-      output: [],
-      pid: 1,
-      signal: null,
-      status: 0,
-      stderr: "",
-      stdout: "Fixed the session limit wording in getDrainLimitResetMs.ts and committed.",
-    });
+    mockSession(0, [
+      getAssistantLine(`Fixed the ${REFUSAL_LINE} wording in getDrainLimitResetMs.ts.`),
+      getResultLine("success", REFUSAL_LINE),
+    ]);
 
-    expect(runDrain("prompt")).toStrictEqual({ isDrained: true, limitResetAtMs: undefined });
+    await expect(runDrain("prompt")).resolves.toStrictEqual({ isDrained: true, limitResetAtMs: undefined });
   });
 
-  // A refusal to start and a fix that failed both exit non-zero, and only the refusal's own template states a
-  // Reset alongside the phrase — a fix that failed while explaining this very feature must not spend the
-  // Quarantine budget on an outage that never happened
-  test("does not classify a failed fix's own summary as a session limit", () => {
+  // The model's turns and a successful run's closing message are narration; only what Claude Code says for itself
+  // Reaches the limit parser, which is what keeps a failed fix's own summary from reading as an outage
+  test("reads no limit off the model's narration on a failed session", async () => {
     expect.hasAssertions();
 
-    spawnSync.mockReturnValue({
-      output: [],
-      pid: 1,
-      signal: null,
-      status: 1,
-      stderr: "",
-      stdout: "Fixed the session limit wording in getDrainLimitResetMs.ts but the commit failed.",
-    });
+    mockSession(1, [getAssistantLine(REFUSAL_LINE), getResultLine("error_during_execution", "the commit failed")]);
 
-    expect(runDrain("prompt")).toStrictEqual({ isDrained: false, limitResetAtMs: undefined });
+    await expect(runDrain("prompt")).resolves.toStrictEqual({ isDrained: false, limitResetAtMs: undefined });
   });
 
-  test("classifies a refusal to start as a session limit", () => {
+  // Claude Code refusing to start writes a sentence rather than JSON, and that sentence is the only thing that
+  // States a deadline — so the collector waits it out instead of spending the quarantine budget on an outage
+  test("classifies a refusal to start as a session limit", async () => {
     expect.hasAssertions();
 
-    spawnSync.mockReturnValue({
-      output: [],
-      pid: 1,
-      signal: null,
-      status: 1,
-      stderr: "",
-      stdout: "You've hit your session limit · resets 3:10am (UTC)",
-    });
+    mockSession(1, [REFUSAL_LINE]);
 
-    const drainRun = runDrain("prompt");
+    const { isDrained, limitResetAtMs } = await runDrain("prompt");
 
-    expect(drainRun.isDrained).toBe(false);
-    expect(drainRun.limitResetAtMs).toBeDefined();
+    expect(isDrained).toBe(false);
+    expect(limitResetAtMs).toBeDefined();
   });
 
   // A denylist of two names only ever protects what it already knew to name — this job's own environment grows
   // Secrets over time (`ReviewCollector.yaml`), and every future one would reach the sandbox unless someone
   // Remembered to add it here by hand. Secret-shaped names are withheld instead, whatever they are called,
   // Except the one credential the drain is deliberately given to authenticate `claude` itself
-  test("withholds every secret-shaped variable except the one the drain needs to run", () => {
+  test("withholds every secret-shaped variable except the one the drain needs to run", async () => {
     expect.hasAssertions();
 
     vi.stubEnv("GH_TOKEN", "gh-token");
@@ -77,11 +82,11 @@ describe(runDrain, () => {
     vi.stubEnv("PULUMI_ACCESS_TOKEN", "pulumi-token");
     vi.stubEnv("AZURE_CLIENT_SECRET", "azure-secret");
     vi.stubEnv("CLAUDE_CODE_OAUTH_TOKEN", "claude-token");
-    spawnSync.mockReturnValue({ output: [], pid: 1, signal: null, status: 0, stderr: "", stdout: "" });
+    mockSession(0, [getResultLine("success", "done")]);
 
-    runDrain("prompt");
+    await runDrain("prompt");
 
-    const passedEnvironment = spawnSync.mock.calls[0]?.[2]?.env;
+    const passedEnvironment = spawn.mock.calls[0]?.[2]?.env;
     expect(passedEnvironment).toMatchObject({ CLAUDE_CODE_OAUTH_TOKEN: "claude-token", PATH: expect.anything() });
     expect(passedEnvironment).not.toHaveProperty("GH_TOKEN");
     expect(passedEnvironment).not.toHaveProperty("GITHUB_TOKEN");
