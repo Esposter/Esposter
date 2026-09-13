@@ -236,7 +236,7 @@ catalog:
   write-excel-file: ^4.1.1
   ws: ^8.21.3
   xmlbuilder2: ^4.0.3
-  zod: ^4.6.2
+  zod: ^4.6.4
 
 catalogMode: strict
 
