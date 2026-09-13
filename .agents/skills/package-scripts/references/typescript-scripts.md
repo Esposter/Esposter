@@ -32,7 +32,7 @@ loader to choose.
 ## A check that has to run before an install is CI's own shell
 
 CI's package-build gate asks its question on a cache hit designed to need no install, so nothing under
-`node_modules` can answer it. `node` could run a dependency-free `.ts` there, but the check sits beside the bash
-that computes the cache key in `.github/actions/verify-package-builds`, and the day it grows an enum or an import
-it would need the install it exists to skip. A few lines of bash beside the key is the shape that cannot drift
-into that.
+`node_modules` can answer it. `node` could run a dependency-free `.ts` there, but the check is
+`.github/actions/verify-package-builds`, bash that sits beside the bash computing the cache key in
+`get-build-cache-keys`, and the day it grows an enum or an import it would need the install it exists to skip. A
+few lines of bash beside the key is the shape that cannot drift into that.

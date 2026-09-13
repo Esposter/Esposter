@@ -5,9 +5,7 @@ on:
     paths:
       - "apps/infra/**"
       - ".github/workflows/Pulumi.yaml"
-      - ".github/actions/setup-project-dependencies/**"
-      - ".github/actions/get-build-cache-keys/**"
-      - ".github/actions/verify-package-builds/**"
+      - ".github/actions/**"
 
 permissions:
   id-token: write
@@ -31,42 +29,10 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      # 🏗️ CI already built every library at this content hash and saved it under this key, so on a hit this
-      # job builds only the infra program on top of them — nothing imports that program's `dist`, so it is not
-      # in the entry. Restore only: this job builds a subset, so saving from here would publish a partial
-      # `dist` set under the full build's key.
-      - name: 🔑 Get build cache keys
-        id: keys
-        uses: ./.github/actions/get-build-cache-keys
-
-      - name: ♻️ Restore package builds
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - name: 🏗️ Build the infra program
+        uses: ./.github/actions/build-app
         with:
-          path: ${{ steps.keys.outputs.package-builds-paths }}
-          key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
-
-      # The root and its closure ride along with the program's own, for the reason `setup-packages` states at
-      # Length: the toolchain is declared at the root, and `typescript` in particular is a root devDependency that
-      # No library redeclares — so a selection without it leaves the library build below generating declarations
-      # Against whatever it could resolve on its own. The closure rather than the root alone, because `virrun` is
-      # A workspace project of ours and a filtered install writes `node_modules` for the selected projects only.
-      - name: 📦 Install dependencies
-        run: pnpm --filter "@esposter/infra..." --filter "{.}..." --fail-if-no-match i
-      # Gated on the build output rather than on the restore's `cache-hit`: that flag reports the entry the cache
-      # Found, not what it extracted, so a `path` list that drifted from the save's reports a hit while a build
-      # Skipped on it hands Pulumi an empty program. Every building package's `dist` is read rather than this
-      # One's `dist/index.js` — a partial extract satisfies a single-file probe exactly when it should not.
-      - name: 🔍 Verify package builds
-        id: verify
-        uses: ./.github/actions/verify-package-builds
-
-      - name: 🏗️ Build dependencies
-        if: steps.verify.outputs.complete != 'true'
-        run: pnpm --filter "@esposter/infra^..." build
-      # Always, because the artifact carries libraries only: Pulumi runs this program, so it is built from the
-      # source this job checked out. One tsdown build, measured in seconds.
-      - name: 🏗️ Build
-        run: pnpm -C apps/infra run build
+          package: "@esposter/infra"
 
       - name: 🔍 Pulumi Preview
         uses: pulumi/actions@8e5e406f4007fca908480587cb9893c07090f58d # v7.0.0

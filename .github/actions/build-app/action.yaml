@@ -1,0 +1,59 @@
+name: Build App
+description: Build one app on top of the library builds 🏗️ CI cached — restore them, install the app's closure, rebuild the libraries only when the restore left a `dist` missing, then build the app itself from the source this job checked out
+inputs:
+  package:
+    description: The app's npm name, e.g. `@esposter/functions` — the install, the dependency build and the app build are all selected from it
+    required: true
+runs:
+  using: composite
+  steps:
+    # 🏗️ CI already built every library at this content hash and saved it under this key, so on a hit this job
+    # builds only the app itself on top of them. The app's own `dist` is deliberately not in that entry: nothing
+    # imports it, so carrying it would ship deploy payload to every job that downloads the artifact and cannot
+    # read it. Restore only — this job builds a subset, so saving from here would publish a partial `dist` set
+    # under the full build's key.
+    - name: 🔑 Get build cache keys
+      id: keys
+      uses: ./.github/actions/get-build-cache-keys
+
+    - name: ♻️ Restore package builds
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.keys.outputs.package-builds-paths }}
+        key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
+
+    # The root and its closure ride along with the app's own, for the reason `setup-packages` states at length:
+    # the toolchain is declared at the root, and `typescript` in particular is a root devDependency that no
+    # library redeclares — so a selection without it leaves the library build below generating declarations
+    # against whatever it could resolve on its own. The closure rather than the root alone, because `virrun` is
+    # a workspace project of ours and a filtered install writes `node_modules` for the selected projects only.
+    - name: 📦 Install dependencies
+      shell: bash
+      env:
+        PACKAGE: ${{ inputs.package }}
+      run: pnpm --filter "$PACKAGE..." --filter "{.}..." --fail-if-no-match i
+
+    # Gated on the build output rather than on the restore's `cache-hit`: that flag reports the entry the cache
+    # found, not what it extracted, so a `path` list that drifted from the save's reports a hit while a build
+    # skipped on it hands the app an empty dependency — Pulumi an empty program, the Functions zip a `dist`
+    # that registers nothing with the host still reporting Running. Every building package's `dist` is read
+    # rather than this one's — a partial extract satisfies a single-file probe exactly when it should not.
+    - name: 🔍 Verify package builds
+      id: verify
+      uses: ./.github/actions/verify-package-builds
+
+    - name: 🏗️ Build dependencies
+      if: steps.verify.outputs.complete != 'true'
+      shell: bash
+      env:
+        PACKAGE: ${{ inputs.package }}
+      run: pnpm --filter "$PACKAGE^..." build
+
+    # Always, because the artifact carries libraries only: this bundle is what the caller ships or runs, so it
+    # is built from the source this job checked out rather than inherited from a cache entry keyed for someone
+    # else's purpose. It is a tsdown build of one package — seconds — so no gate is worth its own failure mode.
+    - name: 🏗️ Build
+      shell: bash
+      env:
+        PACKAGE: ${{ inputs.package }}
+      run: pnpm --filter "$PACKAGE" run build

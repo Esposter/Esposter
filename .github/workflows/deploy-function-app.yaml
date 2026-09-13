@@ -1,8 +1,8 @@
 name: 🚀 Deploy Function App
 # Reusable workflow: build `@esposter/functions` and deploy it to one function app. Called by the two
-# Per-branch workflows via `uses: ./.github/workflows/deploy-function-app.yaml`, so a fix to the deploy reaches
-# Both stacks — the pair it replaced differed only in the branch it triggered on and the two resource names
-# Below, which is how a prod-only edit used to become drift.
+# per-branch workflows via `uses: ./.github/workflows/deploy-function-app.yaml`, so a fix to the deploy reaches
+# both stacks — the pair it replaced differed only in the branch it triggered on and the two resource names
+# below, which is how a prod-only edit used to become drift.
 #
 # Concurrency stays on the callers: `github.workflow` inside a called workflow names the caller, and each of
 # them has its own name, so grouping there keeps the two stacks' deploys independent exactly as before.
@@ -29,8 +29,9 @@ on:
         required: true
 
 env:
+  FUNCTION_APP_NAME: ${{ inputs.functionAppName }}
+  STORAGE_ACCOUNT_NAME: ${{ inputs.storageAccountName }}
   OUTPUT_DIRECTORY: dist
-  PACKAGE_PATH: apps/functions
   ZIP_FILE_NAME: release.zip
 
 jobs:
@@ -47,59 +48,21 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: 🔨 Setup Project Dependencies
+      - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      # 🏗️ CI already built every library at this content hash and saved it under this key, so on a hit this
-      # Job builds only the app itself on top of them. The app's own `dist` is deliberately not in that entry:
-      # Nothing imports it, so carrying it would ship deploy payload to every job that downloads the artifact
-      # And cannot read it. Restore only — this job builds a subset, so saving from here would publish a partial
-      # `dist` set under the full build's key.
-      - name: 🔑 Get build cache keys
-        id: keys
-        uses: ./.github/actions/get-build-cache-keys
-
-      - name: ♻️ Restore package builds
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - name: 🏗️ Build the function app
+        uses: ./.github/actions/build-app
         with:
-          path: ${{ steps.keys.outputs.package-builds-paths }}
-          key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
-
-      # The root and its closure ride along with the app's own, for the reason `setup-packages` states at length:
-      # The toolchain is declared at the root, and `typescript` in particular is a root devDependency that no
-      # Library redeclares — so a selection without it leaves the library build below generating declarations
-      # Against whatever it could resolve on its own. The closure rather than the root alone, because `virrun` is
-      # A workspace project of ours and a filtered install writes `node_modules` for the selected projects only.
-      - name: 🔧 Resolve Project Dependencies
-        run: pnpm --filter "@esposter/functions..." --filter "{.}..." --fail-if-no-match i
-      # Gated on the build output rather than on the restore's `cache-hit`: that flag reports the entry the cache
-      # Found, not what it extracted, so a `path` list that drifted from the save's reports a hit while a build
-      # Skipped on it zips an empty `dist` and deploys a function app that registers nothing, with the host still
-      # Reporting Running. Every building package's `dist` is read rather than this one's — a partial extract
-      # Satisfies a single-file probe exactly when it should not.
-      - name: 🔍 Verify package builds
-        id: verify
-        uses: ./.github/actions/verify-package-builds
-
-      - name: 🏗️ Build dependencies
-        if: steps.verify.outputs.complete != 'true'
-        run: pnpm --filter "@esposter/functions^..." build
-      # Always, because the artifact carries libraries only: this bundle is what the deploy ships, so it is
-      # Built from the source this job checked out rather than inherited from a cache entry keyed for someone
-      # Else's purpose. It is a tsdown build of one package — seconds — so no gate is worth its own failure mode.
-      - name: 🏗️ Build
-        run: pnpm -C apps/functions run build
+          package: "@esposter/functions"
 
       - name: 📦 Collect Deployment Output
         run: |
-          pnpm --filter @esposter/functions deploy --prod ${{ env.OUTPUT_DIRECTORY }} --config.inject-workspace-packages=true --config.node-linker=hoisted
-          cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
+          pnpm --filter @esposter/functions deploy --prod "$OUTPUT_DIRECTORY" --config.inject-workspace-packages=true --config.node-linker=hoisted
+          cp apps/functions/host.json "$OUTPUT_DIRECTORY/host.json"
 
       - name: 📦 Zip Artifact for Deployment
-        run: |
-          pushd ${{ env.OUTPUT_DIRECTORY }}
-          zip -r ../${{ env.ZIP_FILE_NAME }} . -x@.funcignore
-          popd
+        run: cd "$OUTPUT_DIRECTORY" && zip -r "../$ZIP_FILE_NAME" . -x@.funcignore
 
       - name: 🔑 Azure CLI Login
         uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3.0.2
@@ -121,21 +84,16 @@ jobs:
       - name: 📡 Allow Runner IP in Storage Account Firewall
         env:
           RUNNER_IP: ${{ steps.get_ip.outputs.runner_ip }}
-        run: |
-          az storage account network-rule add \
-            --account-name ${{ inputs.storageAccountName }} \
-            --ip-address "$RUNNER_IP"
+        run: az storage account network-rule add --account-name "$STORAGE_ACCOUNT_NAME" --ip-address "$RUNNER_IP"
 
       - name: 🚀 Upload Package to Blob Storage
         run: |
-          az storage container create --account-name ${{ inputs.storageAccountName }} --name ${{ inputs.functionAppName }} --auth-mode login --public-access off || true
-          az storage blob upload --account-name ${{ inputs.storageAccountName }} --container-name ${{ inputs.functionAppName }} --name ${{ env.ZIP_FILE_NAME }} --file ${{ env.ZIP_FILE_NAME }} --auth-mode login --overwrite
+          az storage container create --account-name "$STORAGE_ACCOUNT_NAME" --name "$FUNCTION_APP_NAME" --auth-mode login --public-access off || true
+          az storage blob upload --account-name "$STORAGE_ACCOUNT_NAME" --container-name "$FUNCTION_APP_NAME" --name "$ZIP_FILE_NAME" --file "$ZIP_FILE_NAME" --auth-mode login --overwrite
 
+      # `always()` so the rule is removed even when the upload failed.
       - name: 📡 Remove Runner IP from Storage Account Firewall
-        if: always() # This ensures the rule is removed even if deployment fails
+        if: always()
         env:
           RUNNER_IP: ${{ steps.get_ip.outputs.runner_ip }}
-        run: |
-          az storage account network-rule remove \
-            --account-name ${{ inputs.storageAccountName }} \
-            --ip-address "$RUNNER_IP"
+        run: az storage account network-rule remove --account-name "$STORAGE_ACCOUNT_NAME" --ip-address "$RUNNER_IP"

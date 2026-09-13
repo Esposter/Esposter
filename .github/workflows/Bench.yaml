@@ -26,6 +26,7 @@ jobs:
     uses: ./.github/workflows/build-packages.yaml
 
   bench:
+    name: Bench
     needs: build-packages
     runs-on: ubuntu-latest
     steps:
