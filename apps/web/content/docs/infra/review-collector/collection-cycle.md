@@ -51,14 +51,7 @@ flowchart TD
   B -->|no| ST{Check bucket}
   ST -->|pending| X1[Exit — review running]
   ST -->|pass, Review completed| X2[Exit — last push not yet reviewed]
-  ST -->|pass, Review rate limited| WS{Unreviewed range<br/>worth a slot}
-  WS -->|no| OK
-  WS -->|yes| DL{Stated deadline<br/>still ahead}
-  DL -->|yes| SR[Schedule the retrigger<br/>for that deadline]
-  SR --> OK
-  DL -->|no| AK{Retrigger already posted<br/>since the block last moved}
-  AK -->|no| PB[Post it and exit<br/>the bot's answer is an event]
-  AK -->|yes| OK
+  ST -->|pass, Review rate limited| OK
   ST -->|anything else| X4[Fail — a person looks]
   OK --> D[Drain]
 ```
@@ -67,9 +60,9 @@ flowchart TD
 
 **The review body, not the status, says a review is complete.** CodeRabbit writes the body naming its range at completion and flips the commit status a moment later, and the review event fires in that gap. Reading the status alone at that moment reads `pending`, exits, and nothing re-fires until the next queue push. So the primary test is whether the newest body's range ends at the `develop` head, and the status only decides when it does not. Anything unrecognised fails the run rather than guessing, because being wrong about a running review costs its findings.
 
-**A slot is only ever spent on a range worth an hour.** The collector has two ways to start a review and the fill target governs both, because the cost is the same either way: a push to `develop` is auto-reviewed, since the pull request's base is the default branch, and the retrigger asks outright. So before scheduling or asking, the cycle measures `frontier..develop` and stops if it is under the target while the queue still owes commits — the limit that skipped this review is exactly what lets the range keep growing, a later window adds to the same range rather than starting a second review, and one review then reads the lot. With nothing left for the queue to add, the range is as large as it will ever be and the review is owed now.
+**A slot is only ever spent on a range worth an hour.** The collector has two ways to start a review and the cost is the same either way: a push to `develop` is auto-reviewed, since the pull request's base is the default branch, and the retrigger asks outright. A run that ships a window needs no ask at all — the push starts the review, and a limit refusing that one rewrites the block, which arrives as the event this workflow runs on. So the ask is owed exactly when the run has no window to ship and nothing can be added to the range, which is the port taking no commit: the queue is empty, or every owed commit overflows the cap from this frontier. Asking earlier spends the hour on a range still filling — the limit that skipped this review is what lets a later window grow the same range, so one review reads the lot. Asking never is worse: the frontier only moves when a review completes, so a range nothing fits into can neither grow nor ship. One rule decides both, because the port already answers the only question either was asking.
 
-**A rate limit leaves the slot free and owes a retrigger.** `Review rate limited` means the bot ran nothing: the frontier has not moved, and a window measured from that stale frontier can only over-count, which is the safe direction. So the cycle proceeds. What it owes is the review the limit refused, and the limit lifts without announcing it — so the run reads the deadline the bot published in the walkthrough it rewrote. A deadline still ahead goes to the [runner](/docs/infra/review-collector/runner)'s delayed retrigger job, which sleeps it out and dispatches the cycle again. A deadline passed, or a block that states none, is asked about instead: the run posts `@coderabbitai review` and **exits on it**, rather than pushing a window into the review it has just asked for. Nothing waits for the answer, because the answer is itself a trigger — the bot replies with a comment, or by editing the walkthrough it already wrote, and both arrive as the `issue_comment` event the runner listens on. The cycle that event fires re-reads the block and either schedules the restated deadline or finds a review under way and exits at the gate. **The ask is posted once per block**, since that answer runs the cycle again and an unguarded ask would answer the answer with another one; the test is recency rather than order, because the block is a comment the bot rewrites in place, so it is old by creation and new by `updated_at`. A run that finds the ask already standing has nothing new to do about the limit and goes on cutting its window, which is the whole point of a rate limit leaving the slot free. The deadline is counted from the comment that states it rather than from now, because the block outlives the limit: a merged pull request still shows the one its last skipped review wrote, and an expired block therefore reads as an ask owed rather than an hour of waiting.
+**A rate limit leaves the slot free and owes a retrigger.** `Review rate limited` means the bot ran nothing: the frontier has not moved, and a window measured from that stale frontier can only over-count, which is the safe direction. So the cycle proceeds, and what it owes — the review the limit refused — is settled at the readiness step, where the port has already said whether anything can still be added to the range. The limit lifts without announcing it, so the run reads the deadline the bot published in the walkthrough it rewrote. A deadline still ahead goes to the [runner](/docs/infra/review-collector/runner)'s delayed retrigger job, which sleeps it out and dispatches the cycle again. A deadline passed, or a block that states none, is asked about instead: the run posts `@coderabbitai review` and **exits on it**. It is giving up nothing by exiting, because it reached the ask only by having no window to ship. Nothing waits for the answer, because the answer is itself a trigger — the bot replies with a comment, or by editing the walkthrough it already wrote, and both arrive as the `issue_comment` event the runner listens on. The cycle that event fires re-reads the block and either schedules the restated deadline or finds a review under way and exits at the gate. **The ask is posted once per block**, since that answer runs the cycle again and an unguarded ask would answer the answer with another one; the test is recency rather than order, because the block is a comment the bot rewrites in place, so it is old by creation and new by `updated_at`. A run that finds the ask already standing has nothing new to do about the limit and waits on the answer it is already owed. The deadline is counted from the comment that states it rather than from now, because the block outlives the limit: a merged pull request still shows the one its last skipped review wrote, and an expired block therefore reads as an ask owed rather than an hour of waiting.
 
 ## Drain
 
@@ -99,8 +92,14 @@ flowchart TD
   U --> RD
   H --> RD{Ready}
   RD -->|fixes parked and any queue commit| V
-  RD -->|no fixes and count at the target, or force| V
-  RD -->|otherwise| W[Wait — nothing pushed, fixes stay parked]
+  RD -->|no fixes and count at the target or held, or force| V
+  RD -->|otherwise| LM{Rate limited and<br/>the port took nothing}
+  LM -->|no| W[Wait — nothing pushed, fixes stay parked]
+  LM -->|yes| DL{Stated deadline<br/>still ahead}
+  DL -->|yes| SR[Schedule the retrigger<br/>for that deadline] --> W
+  DL -->|no| AK{Retrigger already posted<br/>since the block last moved}
+  AK -->|yes| W
+  AK -->|no| PB[Post it and exit<br/>the bot's answer is an event]
   V[Verify the candidate head<br/>build, typecheck and lint, check only] -->|green| FM[Fold main in<br/>lockfile rebuilt]
   V -->|red| BK{Retries left}
   BK -->|yes| DR[Drop the last queue commit] --> V

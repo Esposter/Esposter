@@ -6,7 +6,6 @@ import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKin
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { checkIsRetriggerAsked } from "#src/services/coderabbit/collect/checkIsRetriggerAsked";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
-import { checkIsSlotWorthSpending } from "#src/services/coderabbit/collect/checkIsSlotWorthSpending";
 import {
   DEVELOP_BRANCH,
   EXPRESS_VERIFY_COMMANDS,
@@ -27,7 +26,6 @@ import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
-import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
 import { readOpenPullRequest } from "#src/services/coderabbit/collect/readOpenPullRequest";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
@@ -151,48 +149,10 @@ export const runCycle = async ({
   if (gate.kind === GateDecisionKind.Exit) return getOutcome(CycleOutcomeKind.Idle, gate.reason);
   else if (gate.kind === GateDecisionKind.Fail)
     throw new InvalidOperationError(Operation.Read, "coderabbit", gate.reason);
-  else if (gate.kind === GateDecisionKind.RateLimited) {
-    // The bot ran nothing, so the slot is free and the window is measured from the frontier it left alone. What
-    // Is owed is the review it skipped, and the limit lifts without announcing it. A deadline the bot has stated
-    // And not yet reached is handed to the runner's retrigger job, which sleeps it out and dispatches this cycle
-    // Again. A deadline reached — or none stated — is asked about instead, and the bot's answer is itself an
-    // Event this workflow runs on, so nothing here waits for it.
-    //
-    // None of that happens while the range is not worth the hour it would cost. The limit skipping this review
-    // Is what lets the range keep growing, so the retrigger waits with it and one review reads the lot.
-    const isSlotWorthSpending = checkIsSlotWorthSpending({
-      fileCount: getFileCount(`${frontier}..${developSha}`),
-      isForced,
-      isQueueOwing: readCherryShas(developSha, queueSha).length > 0,
-    });
-    if (isSlotWorthSpending) {
-      const waitMs = getRateLimitWaitMs(issueComments, Date.now());
-      // The ask is posted once per block: the bot's answer to it runs this cycle again, and an unguarded ask
-      // Would answer that answer with another one. The run that posts it exits there rather than pushing a
-      // Window into the review it has just asked for; a run that finds the ask already standing has nothing new
-      // To do about the limit and ports as any rate-limited run does, since the slot is free either way.
-      if (waitMs) {
-        // A deadline past the longest sleep one job holds is slept in relays, the dispatched run reading what is left
-        retriggerDelaySeconds = Math.ceil(
-          Temporal.Duration.from({ milliseconds: Math.min(waitMs, RETRIGGER_SLEEP_CAP_MS) }).total("seconds"),
-        );
-        console.info(`rate limited — retrigger in ${retriggerDelaySeconds.toString()}s, the deadline the bot stated`);
-      } else if (checkIsRetriggerAsked(issueComments, viewerLogin))
-        console.info("rate limited — the review it refused is already asked for, so the window goes on being cut");
-      else if (isDryRun)
-        return getOutcome(
-          CycleOutcomeKind.Idle,
-          "would ask for the review the limit refused — a dry run asks for nothing",
-        );
-      else {
-        runGh(["pr", "comment", pullRequest.toString(), "--body", PROBE_COMMENT]);
-        return getOutcome(
-          CycleOutcomeKind.Idle,
-          "asked for the review the limit refused — the bot's answer fires the cycle again",
-        );
-      }
-    } else console.info("rate limited — the unreviewed range is under the fill target, so the next window grows it");
-  }
+  // The bot ran nothing, so the slot is free and the window is measured from the frontier it left alone. What is
+  // Owed is the review it skipped — answered once the port has said whether anything can still be added to the
+  // Range, because a range that will grow is not one to spend an hour reading yet.
+  const isRateLimited = gate.kind === GateDecisionKind.RateLimited;
 
   // Drain: the open set is what the bot spoke last on and no unported commit answers
   const newestReview = reviews.findLast(({ body }) => body);
@@ -256,6 +216,40 @@ export const runCycle = async ({
     queueCommitCount: port.queueShas.length,
   });
   if (!isReady) {
+    // The review a limit refused is owed once nothing can be added to the range, and not before: while a commit
+    // Still fits, the limit that skipped this review is exactly what lets the next window grow the same range, and
+    // One review then reads the lot. A port that took nothing is that moment — the queue is empty, or every owed
+    // Commit overflows the cap from this frontier, and the overflow only clears once a review moves the frontier.
+    // Asking any earlier spends the hour on a range still filling; asking never leaves the frontier where it is,
+    // Which is a window that can neither grow nor ship.
+    //
+    // A run that ships a window needs none of this: the push is auto-reviewed, and a limit refusing that one
+    // Rewrites the block, which arrives as the event this workflow runs on.
+    if (isRateLimited && port.queueShas.length === 0) {
+      const waitMs = getRateLimitWaitMs(issueComments, Date.now());
+      if (waitMs) {
+        // A deadline past the longest sleep one job holds is slept in relays, the dispatched run reading what is left
+        retriggerDelaySeconds = Math.ceil(
+          Temporal.Duration.from({ milliseconds: Math.min(waitMs, RETRIGGER_SLEEP_CAP_MS) }).total("seconds"),
+        );
+        console.info(`rate limited — retrigger in ${retriggerDelaySeconds.toString()}s, the deadline the bot stated`);
+        // The ask is posted once per block: the bot's answer to it runs this cycle again, and an unguarded ask would
+        // Answer that answer with another one
+      } else if (checkIsRetriggerAsked(issueComments, viewerLogin))
+        console.info("rate limited — the review it refused is already asked for");
+      else if (isDryRun)
+        return getOutcome(
+          CycleOutcomeKind.Idle,
+          "would ask for the review the limit refused — a dry run asks for nothing",
+        );
+      else {
+        runGh(["pr", "comment", pullRequest.toString(), "--body", PROBE_COMMENT]);
+        return getOutcome(
+          CycleOutcomeKind.Idle,
+          "asked for the review the limit refused — the bot's answer fires the cycle again",
+        );
+      }
+    }
     // A held first commit is not an under-filled queue — the window is full of carry-over nothing has reviewed yet
     if (port.queueShas.length === 0 && port.heldSha)
       return getOutcome(CycleOutcomeKind.Idle, "held — no owed commit fits this window");
