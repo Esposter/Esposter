@@ -331,7 +331,10 @@ without anyone waiting on anyone. Sessions push to `queue` as fast as they commi
 GitHub Actions workflow fired by every `queue` push and every CodeRabbit review — drains the open findings,
 ports the largest green window under CodeRabbit's file cap onto `develop`, and replies on each thread with the
 pushed sha. `develop` merges to `main` once a window comes back clean, and the push to `main` runs the same
-collector, which fast-forwards `develop` back onto it. The design and its fine print live in
+collector, which fast-forwards `develop` back onto it. A window is budgeted in **files** and spent on
+**findings**, so the collector proves which commits have nothing in them to comment on — every file a 100%
+rename or an import specifier following one — and sends those straight to `main` rather than letting a folder
+sweep occupy a window it will return nothing from. The design and its fine print live in
 [the review collector docs](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/infra/review-collector).
 
 ```mermaid
@@ -339,6 +342,7 @@ flowchart LR
   S[AI sessions<br/>commit continuously] -->|git push| Q[(queue)]
   Q -->|push event| C{{Review collector<br/>gates, drains, ports}}
   C -->|largest green window<br/>under the cap| D[(develop)]
+  C -->|express: provably<br/>nothing to review| M
   D -->|pull request synchronized| R[CodeRabbit review<br/>one slot per hour]
   R -->|review submitted| C
   C -->|fixes parked| F[(review-fixes)]
