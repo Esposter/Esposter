@@ -1,6 +1,6 @@
-import { DependencyField } from "#src/models/DependencyField";
-import { REPOSITORY_ROOT } from "#src/services/constants";
-import { getWorkspacePackages } from "#src/services/getWorkspacePackages";
+import { DependencyField } from "#src/models/shared/DependencyField";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getWorkspacePackages } from "#src/services/shared/getWorkspacePackages";
 import { describe, expect, test } from "vitest";
 
 /**

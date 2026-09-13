@@ -1,5 +1,5 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
-import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { execFileSync } from "node:child_process";
 
 // `--others` is load-bearing: without it a suite that is written but not yet `git add`ed is out of scope, and the

@@ -42,7 +42,7 @@
     "ai:sweep:skill-docs": "tsx src/sweeps/skillDocs/index.ts",
     "ai:sweep:unterminated-results": "tsx src/sweeps/unterminatedResults/index.ts",
     "bench": "vitest bench --run",
-    "crossOS": "tsx src/crossOS.ts",
+    "crossOS": "tsx src/crossOS/index.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "graph:gen": "tsx src/dependencyGraph/index.ts",

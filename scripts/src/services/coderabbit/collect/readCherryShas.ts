@@ -1,7 +1,7 @@
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getCherryShas } from "#src/services/coderabbit/collect/getCherryShas";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 
 // What `head` still owes `upstream`, by patch id — so a commit develop already carries as a cherry-picked copy
 // Is not owed, and a queue nobody rebased is measured correctly. Only commits the queue authored count: a merge

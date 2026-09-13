@@ -1,6 +1,6 @@
 import type { ManifestDependency } from "#src/models/outdatedDependencies/ManifestDependency";
 
-import { DependencyField } from "#src/models/DependencyField";
+import { DependencyField } from "#src/models/shared/DependencyField";
 import { getUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/manifest/getUncatalogedManifestDependencies";
 import { describe, expect, test } from "vitest";
 

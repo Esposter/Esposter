@@ -1,6 +1,6 @@
 import type { Packument } from "#src/models/updateNode/Packument";
 
-import { fetchRegistry } from "#src/services/fetchRegistry";
+import { fetchRegistry } from "#src/services/shared/fetchRegistry";
 import { getLatestVersionForPrefix } from "#src/services/updateNode/getLatestVersionForPrefix";
 /** Fetch `pkg` from the npm registry and return its highest published version matching `prefix`. */
 export const getRegistryLatestVersionForPrefix = async (pkg: string, prefix: string): Promise<string> => {

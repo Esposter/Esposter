@@ -4,7 +4,7 @@ import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkI
 import { checkIsSubstitutionExact } from "#src/services/coderabbit/exclusions/checkIsSubstitutionExact";
 import { RENAME_OR_MODIFY_ROW_REGEX } from "#src/services/coderabbit/exclusions/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The sweep's own commit is the one whose substitutions are replayed, and it must be one of the range's: a sha

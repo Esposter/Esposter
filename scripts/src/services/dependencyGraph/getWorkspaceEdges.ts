@@ -1,8 +1,8 @@
 import type { WorkspaceEdge } from "#src/models/dependencyGraph/WorkspaceEdge";
 import type { WorkspaceEdges } from "#src/models/dependencyGraph/WorkspaceEdges";
-import type { WorkspacePackage } from "#src/models/WorkspacePackage";
+import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 
-import { DependencyField } from "#src/models/DependencyField";
+import { DependencyField } from "#src/models/shared/DependencyField";
 import { RUNTIME_DEPENDENCY_FIELDS, WORKSPACE_SPECIFIER_PREFIX } from "#src/services/dependencyGraph/constants";
 
 const getEdgeKey = ({ from, to }: WorkspaceEdge): string => `${from}/${to}`;

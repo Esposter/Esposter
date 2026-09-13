@@ -4,7 +4,7 @@ import { getPureRenamePaths } from "#src/services/coderabbit/exclusions/getPureR
 import { getRenameSubstitutions } from "#src/services/coderabbit/exclusions/getRenameSubstitutions";
 import { getRenameTokenOnlyPaths } from "#src/services/coderabbit/exclusions/getRenameTokenOnlyPaths";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // `pnpm ai:coderabbit:exclusions <base>..<head> [<rename-sha> OldName=NewName ...]`

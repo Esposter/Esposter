@@ -1,4 +1,4 @@
-import type { DependencyField } from "#src/models/DependencyField";
+import type { DependencyField } from "#src/models/shared/DependencyField";
 
 export interface ManifestDependency {
   field: DependencyField;

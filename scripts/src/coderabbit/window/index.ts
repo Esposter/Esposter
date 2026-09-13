@@ -7,7 +7,7 @@ import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
-import { parseMachineJson } from "#src/services/parseMachineJson";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 
 const pullRequest = getPullRequestArgument();
 const { baseRefName, headRefName } = parseMachineJson<PullRequestBranches>(

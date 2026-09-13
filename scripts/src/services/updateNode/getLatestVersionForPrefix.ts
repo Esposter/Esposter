@@ -1,5 +1,5 @@
-import { compareVersionBase } from "#src/services/compareVersionBase";
-import { getVersionParts } from "#src/services/getVersionParts";
+import { compareVersionBase } from "#src/services/shared/compareVersionBase";
+import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 /** Highest stable version in `versions` whose `major.minor.patch` matches every segment of `prefix` (e.g. `26`, `26.4`). */
 export const getLatestVersionForPrefix = (versions: string[], prefix: string): string => {

@@ -1,9 +1,9 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "node:child_process";
 
 // oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#` map can reach
-import packageJson from "../../package.json" with { type: "json" };
+import packageJson from "../../../package.json" with { type: "json" };
 
 const minArgv = 3;
 const property = "crossOS";

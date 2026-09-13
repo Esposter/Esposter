@@ -1,7 +1,7 @@
 import type { CheckStatus } from "#src/models/coderabbit/collect/CheckStatus";
 
 import { CHECK_NAME } from "#src/services/coderabbit/collect/constants";
-import { parseMachineJson } from "#src/services/parseMachineJson";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { spawnSync } from "node:child_process";
 
 // `gh pr checks` exits non-zero when any check is pending or failed, which is precisely the state this read is

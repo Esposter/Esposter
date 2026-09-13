@@ -2,7 +2,7 @@ import type { DrainRun } from "#src/models/coderabbit/collect/DrainRun";
 
 import { CLAUDE_CODE_PACKAGE } from "#src/services/coderabbit/collect/constants";
 import { getDrainLimitResetMs } from "#src/services/coderabbit/collect/getDrainLimitResetMs";
-import { REPOSITORY_ROOT } from "#src/services/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { spawnSync } from "node:child_process";
 
 // Claude Code headless, the prompt on stdin. Permission prompts are skipped because the checkout is ephemeral

@@ -3,12 +3,12 @@ import type { OutdatedDependency } from "#src/models/outdatedDependencies/Outdat
 import type { OutdatedDependencyCheck } from "#src/models/outdatedDependencies/OutdatedDependencyCheck";
 import type { RegistryCheckError } from "#src/models/outdatedDependencies/RegistryCheckError";
 
-import { getLatestVersion } from "#src/services/getLatestVersion";
 import { getSpecifierBase } from "#src/services/outdatedDependencies/getSpecifierBase";
 import { getVersionChangeLevel } from "#src/services/outdatedDependencies/getVersionChangeLevel";
 import { checkIsVersionOutdated } from "#src/services/outdatedDependencies/registry/checkIsVersionOutdated";
 import { REGISTRY_CONCURRENCY } from "#src/services/outdatedDependencies/registry/constants";
 import { GroupMetadataMap } from "#src/services/outdatedDependencies/registry/GroupMetadataMap";
+import { getLatestVersion } from "#src/services/shared/getLatestVersion";
 import { getResultAsync } from "@esposter/shared";
 
 export const getRegistryOutdatedDependencies = async (entries: DependencyEntry[]): Promise<OutdatedDependencyCheck> => {

@@ -1,5 +1,4 @@
 import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
-import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getMismatches } from "#src/services/outdatedDependencies/getMismatches";
 import { getLockCatalogVersions } from "#src/services/outdatedDependencies/lock/getLockCatalogVersions";
 import { getLockConfigDependencyVersions } from "#src/services/outdatedDependencies/lock/getLockConfigDependencyVersions";
@@ -17,6 +16,7 @@ import { printUncatalogedManifestDependencies } from "#src/services/outdatedDepe
 import { getRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/getRegistryOutdatedDependencies";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 

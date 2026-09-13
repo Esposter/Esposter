@@ -19,7 +19,7 @@ import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas"
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";

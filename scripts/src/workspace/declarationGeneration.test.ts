@@ -1,6 +1,6 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
-import { getWorkspacePackageDirectories } from "#src/services/getWorkspacePackageDirectories";
-import { parseMachineJson } from "#src/services/parseMachineJson";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getWorkspacePackageDirectories } from "#src/services/shared/getWorkspacePackageDirectories";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { describe, expect, test } from "vitest";

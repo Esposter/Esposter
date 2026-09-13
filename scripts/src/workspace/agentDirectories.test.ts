@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AGENT_ALIAS_DIRECTORY, AGENT_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
