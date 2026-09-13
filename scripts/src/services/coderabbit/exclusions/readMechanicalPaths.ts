@@ -10,7 +10,7 @@ import { runGit } from "#src/services/coderabbit/shared/runGit";
 // Whole diff split per file. A per-file diff would be one call per path and would have to be handed the rename
 // Pair to see the rename at all (`getFileDiffs`); the whole diff sees every pair on its own.
 export const readMechanicalPaths = (range: string[], cwd?: string): MechanicalPaths => {
-  const rows = getNameStatusRows(runGit(["diff", "--name-status", "-M", ...range], cwd));
+  const rows = getNameStatusRows(runGit(["diff", "--name-status", "-M", "-z", ...range], cwd));
   const mechanicalPaths = new Set(rows.filter(({ status }) => status === PURE_RENAME_STATUS).map(({ path }) => path));
   if (rows.length > mechanicalPaths.size) {
     const fileDiffs = getFileDiffs(runGit(["diff", "-U0", "-M", ...range], cwd), rows);

@@ -33,7 +33,7 @@ export const getRenameTokenOnlyPaths = (
       .filter((commit) => commit !== sha)
       .flatMap((commit) => getNonEmptyLines(runGit(["show", "--name-only", "--format=", commit]))),
   );
-  return getNameStatusRows(runGit(["diff", "-M", "--name-status", `${sha}^`, sha])).flatMap(
+  return getNameStatusRows(runGit(["diff", "-M", "--name-status", "-z", `${sha}^`, sha])).flatMap(
     ({ path, renamedFrom, status }) => {
       if (renamedFrom === undefined && status !== MODIFIED_STATUS) return [];
       const oldPath = renamedFrom ?? path;
