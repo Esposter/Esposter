@@ -11,6 +11,13 @@ import { existsSync, readFileSync } from "node:fs";
 // Reply is `replyAnswered`'s, after the window lands on `develop`.
 const readLines = (path: string): string[] => (existsSync(path) ? getNonEmptyLines(readFileSync(path, "utf8")) : []);
 
+// Every marker this pipeline reads back is an HTML comment (`getMarker`), and these lines are prose the drain
+// Wrote about untrusted review text it must not trust either (`runDrain`). A successful injection cannot call
+// `gh` itself, but it can choose what ends up in a reply this process posts under its own login — the same
+// Login `checkHasMarkerComment` and friends key their trust on — so a comment sequence reaching that far is
+// Stripped before anything leaves the drain's sandbox, rather than trusted to merely be prose
+const stripHtmlComments = (text: string): string => text.replaceAll(/<!--[\s\S]*?-->/gu, "");
+
 export const postDrainVerdicts = ({
   pullRequest,
   rejectionsPath,
@@ -25,7 +32,7 @@ export const postDrainVerdicts = ({
       continue;
     }
 
-    const body = `Not a real issue, no change — ${reason.join(" ")}`;
+    const body = `Not a real issue, no change — ${stripHtmlComments(reason.join(" "))}`;
     console.info(`reply ${commentId}: ${body}`);
     runGh([
       "api",
@@ -38,7 +45,7 @@ export const postDrainVerdicts = ({
   const verdicts = readLines(verdictPath);
   if (verdicts.length === 0 || reviewId === undefined) return;
 
-  const body = `${getMarker(DRAINS_MARKER, reviewId)}\nBody-only findings of review ${reviewId.toString()} are rejected:\n${verdicts.join("\n")}`;
+  const body = `${getMarker(DRAINS_MARKER, reviewId)}\nBody-only findings of review ${reviewId.toString()} are rejected:\n${verdicts.map(stripHtmlComments).join("\n")}`;
   console.info(`verdict comment for review ${reviewId.toString()}`);
   runGh(["pr", "comment", pullRequest.toString(), "--body", body]);
 };
