@@ -46,7 +46,7 @@ export const getDrainPrompt = ({
     }: <comment id>"\`. One commit may answer several findings.`,
     `For each inline finding you reject: append one line \`<comment id> <the evidence that makes it invalid>\` to \`${rejectionsPath}\`. A rejection needs no commit.`,
     "",
-    "When every finding is answered, run the repo's finishing checks over the paths you touched — `pnpm format` at the root, `pnpm typecheck` in the touched package, `pnpm lint:fix` from the repo root, and the touched test suites — and commit any repairs they produce as their own commit. Leave the working tree clean.",
+    "When every finding is answered, run the repo's finishing checks over the paths you touched — `pnpm format` at the root, `pnpm typecheck` in the touched package, `pnpm lint:fix` from the repo root, and the touched test suites — and commit any repairs they produce as their own commit. Run them in the foreground and wait for each to finish: this session is one-shot, so a check started in the background is a check whose result no turn of yours will ever read. Leave the working tree clean.",
     "",
     "The `ai:coderabbit:feedback` output for the pull request follows, for the body-only buckets and the stated counts:",
     "",
