@@ -47,8 +47,10 @@ export const createSnapshotObjectStore = async (resourceId: Resource["id"]): Pro
       ).match(
         () => true,
         (error) => {
-          // Already stored under its own address, by this write's twin
-          if (error instanceof RestError && error.statusCode === 409) return false;
+          // Already stored under its own address, by this write's twin. A single-shot upload violates the
+          // Condition as 409 (Put Blob's own special case for `If-None-Match: *`), while a block list large
+          // Enough to stage and commit separately violates it as the generic 412 every other conditional write uses
+          if (error instanceof RestError && (error.statusCode === 409 || error.statusCode === 412)) return false;
           throw error;
         },
       ),
