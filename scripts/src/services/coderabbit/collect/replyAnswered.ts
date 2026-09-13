@@ -1,11 +1,11 @@
 import type { PullRequestComment } from "#src/models/coderabbit/collect/PullRequestComment";
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readEntries } from "#src/services/coderabbit/collect/readEntries";
-import { runGh } from "#src/services/coderabbit/runGh";
+import { runGh } from "#src/services/coderabbit/shared/runGh";
 
 // Every commit in the range that answers a finding gets its reply — the one the skill says cites a sha the
 // Remote has. Predicate-guarded per thread, so the run that pushed and died before replying is finished by any

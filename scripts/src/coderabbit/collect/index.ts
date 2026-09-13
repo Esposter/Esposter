@@ -1,4 +1,4 @@
-import type { GitHubReview } from "#src/models/coderabbit/GitHubReview";
+import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
@@ -31,8 +31,8 @@ import { verifyCandidate } from "#src/services/coderabbit/collect/verifyCandidat
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
 import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
-import { readBotEntries } from "#src/services/coderabbit/readBotEntries";
-import { runGit } from "#src/services/coderabbit/runGit";
+import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
+import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
 import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getNonEmptyLines } from "#src/services/getNonEmptyLines";

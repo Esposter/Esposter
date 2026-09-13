@@ -1,6 +1,6 @@
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
-import { runGh } from "#src/services/coderabbit/runGh";
+import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 
 // Every entry on a REST list endpoint, any author — the collector needs the replies people and it posted, where

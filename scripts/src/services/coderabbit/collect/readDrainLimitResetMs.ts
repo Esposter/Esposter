@@ -1,4 +1,4 @@
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { DRAIN_LIMITED_MARKER } from "#src/services/coderabbit/collect/constants";
 

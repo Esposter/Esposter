@@ -1,5 +1,5 @@
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
-import { WINDOW_FILL_TARGET } from "#src/services/coderabbit/constants";
+import { WINDOW_FILL_TARGET } from "#src/services/coderabbit/shared/constants";
 import { describe, expect, test } from "vitest";
 
 describe(getIsReady, () => {

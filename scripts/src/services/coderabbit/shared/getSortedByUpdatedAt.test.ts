@@ -1,4 +1,4 @@
-import { getSortedByUpdatedAt } from "#src/services/coderabbit/getSortedByUpdatedAt";
+import { getSortedByUpdatedAt } from "#src/services/coderabbit/shared/getSortedByUpdatedAt";
 import { describe, expect, test } from "vitest";
 
 const createEntry = (id: number, updatedAt: string) => ({

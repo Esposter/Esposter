@@ -1,6 +1,6 @@
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getCherryShas } from "#src/services/coderabbit/collect/getCherryShas";
-import { runGit } from "#src/services/coderabbit/runGit";
+import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
 
 // What `head` still owes `upstream`, by patch id — so a commit develop already carries as a cherry-picked copy

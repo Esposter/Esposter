@@ -1,5 +1,5 @@
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
-import { runGit } from "#src/services/coderabbit/runGit";
+import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";

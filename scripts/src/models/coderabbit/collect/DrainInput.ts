@@ -1,4 +1,4 @@
-import type { ReviewThread } from "#src/models/coderabbit/ReviewThread";
+import type { ReviewThread } from "#src/models/coderabbit/shared/ReviewThread";
 
 export interface DrainInput {
   // The `ai:coderabbit:feedback` output, so the body-only buckets reach Claude in the shape the skill teaches

@@ -1,7 +1,7 @@
 import type { OpenPullRequest } from "#src/models/coderabbit/collect/OpenPullRequest";
 
 import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
-import { runGh } from "#src/services/coderabbit/runGh";
+import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { parseMachineJson } from "#src/services/parseMachineJson";
 
 // The release pull request is the one open pull request from develop to main. None is a state the collector

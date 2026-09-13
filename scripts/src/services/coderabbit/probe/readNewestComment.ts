@@ -1,7 +1,7 @@
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
-import { getSortedByUpdatedAt } from "#src/services/coderabbit/getSortedByUpdatedAt";
-import { readBotEntries } from "#src/services/coderabbit/readBotEntries";
+import { getSortedByUpdatedAt } from "#src/services/coderabbit/shared/getSortedByUpdatedAt";
+import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 
 // A failed read throws rather than reading as an empty pull request: the baseline the probe compares against
 // Cannot tell the two apart, and a baseline of `""` makes the bot's existing comment look like the reply.

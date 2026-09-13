@@ -1,4 +1,4 @@
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 // A REST review comment. `in_reply_to_id` keeps GitHub's spelling and is present only on a reply.
 export interface PullRequestComment extends GitHubEntry {

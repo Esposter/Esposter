@@ -3,7 +3,7 @@ import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkI
 import { getPureRenamePaths } from "#src/services/coderabbit/exclusions/getPureRenamePaths";
 import { getRenameSubstitutions } from "#src/services/coderabbit/exclusions/getRenameSubstitutions";
 import { getRenameTokenOnlyPaths } from "#src/services/coderabbit/exclusions/getRenameTokenOnlyPaths";
-import { runGit } from "#src/services/coderabbit/runGit";
+import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
