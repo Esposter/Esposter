@@ -12,6 +12,7 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 - [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) — failed deliveries land in a blob container whose writes push-trigger an automatic, attempt-capped replay.
 - [Observability](/docs/infra/observability) — why App Insights and Log Analytics are deliberately not provisioned, and what the estate relies on instead.
 - [Pulumi source of truth](/docs/infra/pulumi-source-of-truth) — Function App runtime settings managed in Pulumi.
+- [Review collector](/docs/infra/review-collector) — the event-triggered collector that drains CodeRabbit findings, cuts windows from `queue` onto `develop` and follows a merge to `main` back.
 - [Roadmap](/docs/infra/roadmap) — open items (key-auth-gated hardening); every item links its proposal.
 - [Deferred](/docs/infra/deferred) — ideas waiting on a trigger.
 
@@ -33,3 +34,4 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (naming
 - **Event Grid dead-letter** — `deadletter` container + `deadLetterDestination` on all ten application subscriptions, tightened retry (10 attempts / 1h), 30-day lifecycle expiry, and a storage system topic that push-triggers the `ReplayDeadLetterEvent` function with a two-attempt cap and a quarantine prefix. → [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter)
 - **Observability removal** — deleted App Insights, Log Analytics, smart-detector rules, and scheduled-query alerts (dev + prod) to stay in the free tier; the `$0.01` budget guard is the cost ceiling. → [Observability](/docs/infra/observability)
 - **Pulumi source of truth** — adopted the Function Apps' runtime app settings into Pulumi; secrets flow from ESC. → [Pulumi source of truth](/docs/infra/pulumi-source-of-truth)
+- **Review collector** — the `ReviewCollector` workflow runs the collection cycle on every `queue` push, CodeRabbit review and push to `main`: it drains findings onto `review-fixes` with a headless Claude, ports the largest green prefix of `queue` under the cap onto `develop`, replies on each thread with the pushed sha and fast-forwards `develop` after a release; the collector token is a Pulumi-managed repository secret. → [Review collector](/docs/infra/review-collector)

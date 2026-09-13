@@ -332,7 +332,7 @@ GitHub Actions workflow fired by every `queue` push and every CodeRabbit review 
 ports the largest green window under CodeRabbit's file cap onto `develop`, and replies on each thread with the
 pushed sha. `develop` merges to `main` once a window comes back clean, and the push to `main` runs the same
 collector, which fast-forwards `develop` back onto it. The design and its fine print live in
-[the review collector proposal](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/proposals/infra/review-collector).
+[the review collector docs](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/infra/review-collector).
 
 ```mermaid
 flowchart LR

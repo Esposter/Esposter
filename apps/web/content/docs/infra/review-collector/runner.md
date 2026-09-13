@@ -1,11 +1,11 @@
 ---
 title: Runner
-description: Proposal — the GitHub Actions workflow that fires the collection cycle from the queue push and the review event, what it authenticates with, why it has no schedule, and what a failed run leaves behind.
+description: The GitHub Actions workflow that fires the collection cycle from the queue push, the review event and the push to main, what it authenticates with, why it has no schedule, and what a failed run leaves behind.
 ---
 
 # Runner
 
-The [collection cycle](/docs/proposals/infra/review-collector/collection-cycle) is a script; this page is the thing that runs it when nobody is at a keyboard. It is a GitHub Actions workflow, `ReviewCollector.yaml`, because the two facts the cycle needs to react to — a branch push and a review submission — are webhooks GitHub already delivers to Actions, the repo already runs Claude Code headless there (`claude-warmup.yaml`), and the alternatives fall short in ways that matter: a cloud routine is cron-only with an hour floor and has no event input, a local `/loop` dies with the session that started it, and the raw API would rebuild the agent loop `claude -p` already is, without the skills tree that teaches it how findings are answered.
+The [collection cycle](/docs/infra/review-collector/collection-cycle) is a script; this page is the thing that runs it when nobody is at a keyboard. It is a GitHub Actions workflow, `ReviewCollector.yaml`, because the two facts the cycle needs to react to — a branch push and a review submission — are webhooks GitHub already delivers to Actions, the repo already runs Claude Code headless there (`claude-warmup.yaml`), and the alternatives fall short in ways that matter: a cloud routine is cron-only with an hour floor and has no event input, a local `/loop` dies with the session that started it, and the raw API would rebuild the agent loop `claude -p` already is, without the skills tree that teaches it how findings are answered.
 
 ## Triggers
 
@@ -33,7 +33,7 @@ Four events, and every one runs the identical cycle:
 - **`push` on `main`** — the return stroke. A release merging, or a dependency bump landing directly, both move `main`; the cycle fast-forwards `develop` to it when `develop` is an ancestor and otherwise leaves the fold to the next window's port.
 - **`workflow_dispatch`** with a `force` boolean, passed through to the script — the manual nudge, for a short window worth pushing anyway or for a webhook that was dropped.
 
-**No `schedule`.** [No polling](/docs/architecture/no-polling) is the repo's standing rule and this is the case it was written for: a cron would be a loop asking "anything yet?" against two signals the platform already pushes. The cost of the rule is that a dropped webhook waits until the next queue push, and a session that has stopped pushing has no next push — that is what the dispatch is for. Once the workflow file is on `main`, the `status` event becomes available as a third, more exact free signal, since it fires on the commit status CodeRabbit flips at completion and covers a rate-limited completion that posts no review body; it runs from the default branch only, which is why it is the follow-on rather than the design.
+**No `schedule`.** [No polling](/docs/architecture/no-polling) is the repo's standing rule and this is the case it was written for: a cron would be a loop asking "anything yet?" against two signals the platform already pushes. The cost of the rule is that a dropped webhook waits until the next queue push, and a session that has stopped pushing has no next push — that is what the dispatch is for.
 
 ## The job
 
@@ -45,14 +45,15 @@ concurrency:
 
 The group serializes every run, whichever event fired it. The bot's own replies arrive as `pull_request_review` events, so a drain is followed by several fires within seconds; each waits for the one ahead of it and then exits at the gates. `cancel-in-progress` stays false because a run in the port step holds nothing another run needs, and cancelling one mid-push would be the only way to lose work.
 
-The steps are the warmup workflow's, plus the script:
+The steps are the warmup workflow's, plus what the script needs:
 
-1. Checkout with the full history and the three refs the cycle reads — `develop`, `queue` and, when it exists, `review-fixes`. A shallow clone cannot run `git cherry` across them.
-2. The repo's dependency setup action, so `tsx` and the `scripts` package are available.
-3. The trust-dialog shim from `claude-warmup.yaml`, since a fresh runner has no `~/.claude.json` and treats the checkout as untrusted.
-4. `pnpm ai:coderabbit:collect <pr>` with `--force` when the dispatch input says so. The script finds the pull request itself.
+1. Checkout with the full history, authenticated with the collector's token so the push it makes fires `develop`'s own workflows. Every ref the cycle reads — `main`, `develop`, `queue` and, when it exists, `review-fixes` — is read from `origin`, and a shallow clone cannot run `git cherry` across them.
+2. The repo's dependency setup action and the install, then a build of `@esposter/shared` and what it depends on, since the script imports the workspace package's built output.
+3. The git identity the fix commits and the fold of `main` carry, and `core.fileMode false`, because the runner's checkout flips an executable bit the cycle would otherwise refuse as a dirty tree.
+4. The trust-dialog shim from `claude-warmup.yaml`, since a fresh runner has no `~/.claude.json` and treats the checkout as untrusted.
+5. `pnpm ai:coderabbit:collect` with `--force` when the dispatch input says so. The script finds the pull request itself.
 
-The script spawns `claude -p` for the drain step with the open findings on its stdin and permission prompts bypassed. The runner is ephemeral, holds one credential scoped to this repository, and is discarded when the job ends, so the interactive permission model protects nothing here and would only stall the drain on its first `git commit`. Claude's output streams into the job log, which is where what it decided is read.
+The script spawns Claude Code headless for the drain step with the open findings on its stdin and permission prompts bypassed. The runner is ephemeral, holds one credential scoped to this repository, and is discarded when the job ends, so the interactive permission model protects nothing here and would only stall the drain on its first `git commit`. Claude's output streams into the job log, which is where what it decided is read.
 
 ## Credentials
 
@@ -76,11 +77,12 @@ A red run is the poison signal, and the job summary says which step and why — 
 
 ## Key files
 
-| File                                         | Role after the change                                       |
-| :------------------------------------------- | :---------------------------------------------------------- |
-| `.github/workflows/claude-warmup.yaml`       | the headless invocation and trust shim this workflow reuses |
-| `.github/actions/setup-project-dependencies` | the install step, unchanged                                 |
-| `apps/infra/src/github`                      | gains the collector token as a repository secret            |
+| File                                                    | Role                                                        |
+| :------------------------------------------------------ | :---------------------------------------------------------- |
+| `.github/workflows/ReviewCollector.yaml`                | the workflow — triggers, concurrency group, steps           |
+| `.github/workflows/claude-warmup.yaml`                  | the headless invocation and trust shim this workflow reuses |
+| `.github/actions/setup-project-dependencies`            | the install step                                            |
+| `apps/infra/src/github/secrets/reviewCollectorToken.ts` | the collector token as a Pulumi-managed repository secret   |
 
 ## Notes
 

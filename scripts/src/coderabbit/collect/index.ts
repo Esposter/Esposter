@@ -43,7 +43,7 @@ import { parseArgs } from "node:util";
 
 // One pass: read, reply, gate, drain, port, push, reply. Every input is a remote fact and every write is
 // Either the single fast-forward push or guarded by a predicate a later run re-evaluates, so any event may run
-// This and a run against unchanged state does nothing (docs: proposals/infra/review-collector).
+// This and a run against unchanged state does nothing (docs: infra/review-collector).
 const {
   positionals: [pullRequestArgument],
   values: { "dry-run": isDryRun, force: isForced },

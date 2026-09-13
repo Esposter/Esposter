@@ -3,7 +3,7 @@
 Read when planning the push cadence, when deciding what the session pushes and what it never touches, or when
 the collector has moved `develop` and the session has to catch up. This page holds the whole procedure; `SKILL.md`
 keeps the cap, the gates and the finding rules it operates under. The design in full, with the cycle, the runner
-and the ref ownership as separate pages: `apps/web/content/docs/proposals/infra/review-collector/`.
+and the ref ownership as separate pages: `apps/web/content/docs/infra/review-collector/`.
 
 ## Three branches, one writer each
 
