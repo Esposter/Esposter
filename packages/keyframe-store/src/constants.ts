@@ -9,6 +9,8 @@ export const OBJECT_VERSION_OFFSET = 4;
 export const OBJECT_FLAGS_OFFSET = 5;
 export const OBJECT_WINDOW_LOG_OFFSET = 6;
 export const OBJECT_HEADER_BYTE_COUNT = 8;
+// The two flag values this format writes; any other is a stranger's byte and the object is refused
+export const KEYFRAME_FLAG = 0;
 export const DELTA_FLAG = 1;
 // A content address is the raw SHA-256 of the plaintext — 32 bytes on the wire, 64 hex characters as a key
 export const HASH_BYTE_COUNT = 32;

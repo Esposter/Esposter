@@ -21,8 +21,10 @@ export const createMemoryObjectStore = (objects?: Map<string, Uint8Array>): Memo
       return Promise.resolve(byteCount === undefined ? bytes : bytes?.subarray(0, byteCount));
     },
     write: (key, bytes) => {
+      if (storedObjects.has(key)) return Promise.resolve(false);
+
       storedObjects.set(key, bytes);
-      return Promise.resolve();
+      return Promise.resolve(true);
     },
   };
 };

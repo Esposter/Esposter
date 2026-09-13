@@ -6,5 +6,9 @@ export interface ObjectStore {
   // Serves ranges honours it and one that cannot hands back the whole object — the reader only looks at the
   // Head either way. Undefined when nothing is stored under the key
   read: (key: string, byteCount?: number) => Promise<Uint8Array | undefined>;
-  write: (key: string, bytes: Uint8Array) => Promise<void>;
+  // Create-only, and it says whether this call created the object: false when one already stood under the key,
+  // Which a backend answers from its own conditional write rather than from a read that races it. Two writers of
+  // The same content both pass the store's head read, and the one that lands second must learn it lost, because
+  // The object under the key is its twin's — with the twin's base — and not the one it encoded
+  write: (key: string, bytes: Uint8Array) => Promise<boolean>;
 }

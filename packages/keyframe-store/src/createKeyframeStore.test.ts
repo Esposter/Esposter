@@ -1,7 +1,9 @@
 import type { KeyframeStore } from "#src/models/KeyframeStore";
+import type { ObjectStore } from "#src/models/ObjectStore";
 import type { VersionAnchor } from "#src/models/VersionAnchor";
 import type { WrittenVersion } from "#src/models/WrittenVersion";
 
+import { OBJECT_FLAGS_OFFSET } from "#src/constants";
 import { createKeyframeStore } from "#src/createKeyframeStore";
 import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
 import { createDocumentVersions } from "#src/services/createDocumentVersions.test";
@@ -173,6 +175,22 @@ describe(createKeyframeStore, () => {
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Data corruption detected]`);
 
+    // A flag nobody defined is refused, never read as a keyframe with its payload cut at the wrong offset
+    const strangerFlagBytes = new Uint8Array(keyframeBytes);
+    strangerFlagBytes[OBJECT_FLAGS_OFFSET] = 2;
+    memoryObjectStore.objects.set(keyframe.hash, strangerFlagBytes);
+
+    await expect(
+      keyframeStore.read(keyframe.hash).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, "unknown object flags 2").message}]`,
+    );
+
     memoryObjectStore.objects.set(keyframe.hash, Buffer.from(""));
 
     await expect(
@@ -185,6 +203,76 @@ describe(createKeyframeStore, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, "not a keyframe store object").message}]`,
     );
+  });
+
+  // A keyframe is the dictionary every delta anchored to it encodes against, so one that does not hash to its key
+  // Is refused before anything is written against it: a delta encoded over the damage would depend on it, and
+  // Stop decoding the moment the keyframe was repaired
+  test("refuses to encode against a keyframe that does not hash to its key", async () => {
+    expect.hasAssertions();
+
+    const memoryObjectStore = createMemoryObjectStore();
+    const keyframeStore = createKeyframeStore(memoryObjectStore);
+    const [keyframe] = await writeVersions(keyframeStore, [baseVersion]);
+    assert.exists(keyframe);
+    // Another document's keyframe filed under the anchor's key decompresses cleanly, so only the hash check can
+    // Catch it
+    const strangerObjectStore = createMemoryObjectStore();
+    const [strangerKeyframe] = await writeVersions(createKeyframeStore(strangerObjectStore), [rewrittenVersion]);
+    assert.exists(strangerKeyframe);
+    const strangerBytes = strangerObjectStore.objects.get(strangerKeyframe.hash);
+    assert.exists(strangerBytes);
+    memoryObjectStore.objects.set(keyframe.hash, strangerBytes);
+
+    await expect(
+      keyframeStore.write(editedVersion, { anchoredBytes: 0, hash: keyframe.hash }).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, "object does not hash to its key").message}]`,
+    );
+    expect(memoryObjectStore.objects.size).toBe(1);
+  });
+
+  // Two writers of one content both pass the head read, and each encodes against its own anchor. The one the
+  // Backend refuses reports the object that stands under the key — the twin's, with the twin's base — because a
+  // Record carrying this writer's base would name a keyframe the stored delta never decodes against, and a
+  // Charge for its bytes would be for bytes it never stored
+  test("reports the twin's object when its write lands second", async () => {
+    expect.hasAssertions();
+
+    const memoryObjectStore = createMemoryObjectStore();
+    const [keyframe, delta] = await writeVersions(createKeyframeStore(memoryObjectStore), [baseVersion, editedVersion]);
+    assert.exists(keyframe);
+    assert.exists(delta);
+    const keyframeBytes = memoryObjectStore.objects.get(keyframe.hash);
+    const deltaBytes = memoryObjectStore.objects.get(delta.hash);
+    assert.exists(keyframeBytes);
+    assert.exists(deltaBytes);
+    // The twin lands between this writer's head read and its own write, as a delta against the keyframe, while
+    // This writer — anchored to nothing — encoded a standalone keyframe the backend then refuses
+    const racedObjects = new Map([[keyframe.hash, keyframeBytes]]);
+    const racedObjectStore: ObjectStore = {
+      ...createMemoryObjectStore(racedObjects),
+      write: (key) => {
+        racedObjects.set(key, deltaBytes);
+        return Promise.resolve(false);
+      },
+    };
+
+    await expect(
+      createKeyframeStore(racedObjectStore)
+        .write(editedVersion, emptyAnchor)
+        .match(
+          (value) => value,
+          (error) => {
+            throw error;
+          },
+        ),
+    ).resolves.toStrictEqual({ ...delta, isDeduplicated: true, storedBytes: 0 });
   });
 
   // An object survives while any record names it, as its own hash or as its base — so a keyframe outlives its

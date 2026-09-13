@@ -2,6 +2,7 @@ import {
   DELTA_FLAG,
   DELTA_HEADER_BYTE_COUNT,
   HASH_BYTE_COUNT,
+  KEYFRAME_FLAG,
   OBJECT_FLAGS_OFFSET,
   OBJECT_FORMAT_VERSION,
   OBJECT_HEADER_BYTE_COUNT,
@@ -33,7 +34,7 @@ export const encodeObject = async (
   const bytes = new Uint8Array(headerByteCount + payload.byteLength);
   bytes.set(OBJECT_MAGIC);
   bytes[OBJECT_VERSION_OFFSET] = OBJECT_FORMAT_VERSION;
-  bytes[OBJECT_FLAGS_OFFSET] = base ? DELTA_FLAG : 0;
+  bytes[OBJECT_FLAGS_OFFSET] = base ? DELTA_FLAG : KEYFRAME_FLAG;
   bytes[OBJECT_WINDOW_LOG_OFFSET] = windowLog;
   if (base) bytes.set(Buffer.from(base.hash, "hex").subarray(0, HASH_BYTE_COUNT), OBJECT_HEADER_BYTE_COUNT);
   bytes.set(payload, headerByteCount);

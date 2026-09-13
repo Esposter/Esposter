@@ -11,10 +11,11 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 // The store's only contact with storage: one resource's objects in the resource assets container, keyed by
 // Content address. Write-once is the service's own condition rather than a check followed by a write, so two
-// Writers of the same content cannot race — the second lands on the blob the first created, which is the
-// Outcome it wanted. Deletion goes through the published event rather than a direct delete, because that
-// Path already deletes and releases the ledger entry as one retried unit, and a bare delete would leave the
-// Object's bytes charged to the owner forever
+// Writers of the same content cannot race — the second lands on the blob the first created, and is told so,
+// Because the object under the key is the first writer's and may decode against another keyframe than the one
+// It encoded. Deletion goes through the published event rather than a direct delete, because that path already
+// Deletes and releases the ledger entry as one retried unit, and a bare delete would leave the object's bytes
+// Charged to the owner forever
 export const createSnapshotObjectStore = async (resourceId: Resource["id"]): Promise<ObjectStore> => {
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   return {
@@ -43,10 +44,13 @@ export const createSnapshotObjectStore = async (resourceId: Resource["id"]): Pro
         containerClient
           .getBlockBlobClient(getSnapshotObjectBlobName(resourceId, key))
           .upload(bytes, bytes.byteLength, { conditions: { ifNoneMatch: "*" } }),
-      ).match(noop, (error) => {
-        // Already stored under its own address, by this write's twin
-        if (error instanceof RestError && error.statusCode === 409) return;
-        throw error;
-      }),
+      ).match(
+        () => true,
+        (error) => {
+          // Already stored under its own address, by this write's twin
+          if (error instanceof RestError && error.statusCode === 409) return false;
+          throw error;
+        },
+      ),
   };
 };

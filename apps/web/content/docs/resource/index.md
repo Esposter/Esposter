@@ -34,7 +34,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Recycle bin](/docs/resource/recycle-bin) — soft delete with restore, permanent purge, and a 30-day timer sweep
 - [Activity log](/docs/resource/activity-log) — the per-resource audit trail blade, in Azure Table Storage
 - [Resource snapshots](/docs/resource/resource-snapshots) — published versions and revisions of the working copy in one version history panel, with preview, restore and undo
-- [Resource version store](/docs/resource/resource-version-store) — every retained version as a content-addressed keyframe or delta, so a version costs the edit rather than a copy of the document
+- [Resource version store](/docs/resource/resource-version-store) — every retained version as a content-addressed keyframe or delta, so a run of edits costs a compressed copy plus the edits rather than a copy per version
 - [Resource save state](/docs/resource/resource-save-state) — one derived state in the blade toolbar saying whether the open resource's edits have reached the server, and when
 - [Shell cohesion](/docs/resource/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Breadcrumb trail](/docs/resource/breadcrumb-trail) — crumbs are the click path, the current page is the title, and a direct link shows no ancestor at all

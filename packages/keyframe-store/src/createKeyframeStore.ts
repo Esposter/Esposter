@@ -24,6 +24,16 @@ const verifyContentAddress = (hash: string, plaintext: Uint8Array): Uint8Array =
 
   return plaintext;
 };
+// What a write reports when the store already holds the content: the stored header's own base, because that
+// Is the keyframe the caller's record must name for collection to keep alive — never the base this writer
+// Would have chosen, which is the wrong one whenever the object under the key was written against another
+const adoptStored = (hash: string, storedHead: Uint8Array, plaintextBytes: number): WrittenVersion => ({
+  baseHash: parseObject(hash, storedHead).baseHash,
+  hash,
+  isDeduplicated: true,
+  plaintextBytes,
+  storedBytes: 0,
+});
 // The store: immutable objects addressed by the hash of their plaintext, each either a keyframe compressed
 // On its own or a delta compressed against exactly one keyframe. No chains, no generations, no rewriting —
 // Reconstructing any version is at most two reads, and an object once written is never touched again until
@@ -38,9 +48,10 @@ export const createKeyframeStore = (
     segmentBudgetRatio = DEFAULT_SEGMENT_BUDGET_RATIO,
   }: KeyframeStoreOptions = {},
 ): KeyframeStore => {
-  // A keyframe's plaintext is the dictionary every delta anchored to it decodes against. A base that is
-  // Itself a delta is not a state this store writes, and refusing it is what keeps reconstruction at two
-  // Objects rather than a chain
+  // A keyframe's plaintext is the dictionary every delta anchored to it decodes against, so it is verified
+  // Before anything encodes against it: a delta written against mismatched plaintext depends on the damage and
+  // Stops decoding the moment the keyframe is repaired. A base that is itself a delta is not a state this store
+  // Writes, and refusing it is what keeps reconstruction at two objects rather than a chain
   const readKeyframe = async (hash: string): Promise<undefined | { plaintext: Uint8Array; storedBytes: number }> => {
     const bytes = await objectStore.read(hash);
     if (!bytes) return undefined;
@@ -53,7 +64,7 @@ export const createKeyframeStore = (
         `is a delta against ${parsedObject.baseHash}, not a keyframe`,
       );
 
-    return { plaintext: await decodeObject(parsedObject), storedBytes: bytes.byteLength };
+    return { plaintext: verifyContentAddress(hash, await decodeObject(parsedObject)), storedBytes: bytes.byteLength };
   };
   return {
     // An object survives while any record names it, as its own hash or as its base — the caller answers that
@@ -86,20 +97,27 @@ export const createKeyframeStore = (
         // Which keyframe it decodes against — the base the caller's record has to carry, or collection would
         // Free a keyframe this version still needs
         const storedHead = await objectStore.read(hash, DELTA_HEADER_BYTE_COUNT);
-        if (storedHead)
-          return {
-            baseHash: parseObject(hash, storedHead).baseHash,
-            hash,
-            isDeduplicated: true,
-            plaintextBytes,
-            storedBytes: 0,
-          };
+        if (storedHead) return adoptStored(hash, storedHead, plaintextBytes);
 
-        const keyframeBytes = await encodeObject(plaintext, compressionLevel);
-        const writeKeyframe = async (): Promise<WrittenVersion> => {
-          await objectStore.write(hash, keyframeBytes);
-          return { baseHash: "", hash, isDeduplicated: false, plaintextBytes, storedBytes: keyframeBytes.byteLength };
+        // One place lands an object, whichever kind it is. The head read above and the backend's own create-only
+        // Condition are two checks with a gap between them, and a twin writing the same content can land in it —
+        // Against a different anchor, since each writer chose its own. The loser then reports the twin's object,
+        // Read back for its base, rather than the one it encoded: a record carrying this writer's base would name a
+        // Keyframe the stored delta never decodes against, and a charge for its bytes would be for bytes it never
+        // Stored
+        const writeObject = async (bytes: Uint8Array, baseHash: string): Promise<WrittenVersion> => {
+          const isCreated = await objectStore.write(hash, bytes);
+          if (isCreated)
+            return { baseHash, hash, isDeduplicated: false, plaintextBytes, storedBytes: bytes.byteLength };
+
+          const twinHead = await objectStore.read(hash, DELTA_HEADER_BYTE_COUNT);
+          if (!twinHead)
+            throw new InvalidOperationError(Operation.Create, hash, "refused as already stored, but nothing is stored");
+
+          return adoptStored(hash, twinHead, plaintextBytes);
         };
+        const keyframeBytes = await encodeObject(plaintext, compressionLevel);
+        const writeKeyframe = () => writeObject(keyframeBytes, "");
         if (!anchor.hash) return writeKeyframe();
         // An anchor the store no longer holds cannot be encoded against, so the lineage starts over from this
         // Version — the record it writes is honest about that, and nothing downstream depends on the gap
@@ -119,14 +137,7 @@ export const createKeyframeStore = (
           anchor.anchoredBytes + deltaBytes.byteLength <= keyframe.storedBytes * segmentBudgetRatio;
         if (!isWithinPromotionRatio || !isWithinSegmentBudget) return writeKeyframe();
 
-        await objectStore.write(hash, deltaBytes);
-        return {
-          baseHash: anchor.hash,
-          hash,
-          isDeduplicated: false,
-          plaintextBytes,
-          storedBytes: deltaBytes.byteLength,
-        };
+        return writeObject(deltaBytes, anchor.hash);
       }),
   };
 };

@@ -4,6 +4,7 @@ import {
   DELTA_FLAG,
   DELTA_HEADER_BYTE_COUNT,
   HASH_BYTE_COUNT,
+  KEYFRAME_FLAG,
   OBJECT_FLAGS_OFFSET,
   OBJECT_FORMAT_VERSION,
   OBJECT_HEADER_BYTE_COUNT,
@@ -27,8 +28,11 @@ export const parseObject = (hash: string, bytes: Uint8Array): ParsedObject => {
     );
 
   const windowLog = bytes[OBJECT_WINDOW_LOG_OFFSET] ?? 0;
-  if (bytes[OBJECT_FLAGS_OFFSET] !== DELTA_FLAG)
-    return { baseHash: "", payload: bytes.subarray(OBJECT_HEADER_BYTE_COUNT), windowLog };
+  // Only the two values the format writes are objects: a flag nobody defined would otherwise read as a keyframe
+  // And hand the decompressor a payload cut at the wrong offset
+  const flags = bytes[OBJECT_FLAGS_OFFSET];
+  if (flags === KEYFRAME_FLAG) return { baseHash: "", payload: bytes.subarray(OBJECT_HEADER_BYTE_COUNT), windowLog };
+  else if (flags !== DELTA_FLAG) throw new InvalidOperationError(Operation.Read, hash, `unknown object flags ${flags}`);
   else if (bytes.byteLength < DELTA_HEADER_BYTE_COUNT)
     throw new InvalidOperationError(Operation.Read, hash, "delta object is truncated before its base hash");
 
