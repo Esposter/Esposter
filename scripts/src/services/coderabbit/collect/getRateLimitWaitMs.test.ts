@@ -1,4 +1,4 @@
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { RATE_LIMIT_FALLBACK_MS, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
 import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";

@@ -1,4 +1,4 @@
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 // Oldest first, which is the order every reader here wants: the newest of anything is the last one that matches.
 // `updated_at` rather than `created_at`, because the walkthrough comment is edited in place across reviews — its

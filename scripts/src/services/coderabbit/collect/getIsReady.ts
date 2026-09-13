@@ -1,6 +1,6 @@
 import type { ReadinessInput } from "#src/models/coderabbit/collect/ReadinessInput";
 
-import { WINDOW_FILL_TARGET } from "#src/services/coderabbit/constants";
+import { WINDOW_FILL_TARGET } from "#src/services/coderabbit/shared/constants";
 
 // The two-by-two the cycle encodes. Fixes parked and any queue commit fits: push, the fixes are what the window
 // Is for. No fixes and the count reaches the target: push. No fixes and a short queue: wait, nothing is waiting

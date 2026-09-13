@@ -1,9 +1,9 @@
-import type { RenameSubstitution } from "#src/models/coderabbit/RenameSubstitution";
+import type { RenameSubstitution } from "#src/models/coderabbit/shared/RenameSubstitution";
 
 import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkIsProtectedPath";
 import { checkIsSubstitutionExact } from "#src/services/coderabbit/exclusions/checkIsSubstitutionExact";
 import { RENAME_OR_MODIFY_ROW_REGEX } from "#src/services/coderabbit/exclusions/constants";
-import { runGit } from "#src/services/coderabbit/runGit";
+import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 

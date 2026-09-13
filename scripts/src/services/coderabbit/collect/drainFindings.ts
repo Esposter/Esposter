@@ -1,6 +1,6 @@
 import type { DrainFindingsResult } from "#src/models/coderabbit/collect/DrainFindingsResult";
 import type { DrainInput } from "#src/models/coderabbit/collect/DrainInput";
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import {
@@ -17,8 +17,8 @@ import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt"
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
-import { runGh } from "#src/services/coderabbit/runGh";
-import { runGit } from "#src/services/coderabbit/runGit";
+import { runGh } from "#src/services/coderabbit/shared/runGh";
+import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";

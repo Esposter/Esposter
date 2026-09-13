@@ -3,7 +3,7 @@ import { checkIsCheckpointMoved } from "#src/services/coderabbit/probe/checkIsCh
 import { DEADLINE_MS, POLL_INTERVAL_MS } from "#src/services/coderabbit/probe/constants";
 import { getCheckpoint } from "#src/services/coderabbit/probe/getCheckpoint";
 import { readNewestComment } from "#src/services/coderabbit/probe/readNewestComment";
-import { runGh } from "#src/services/coderabbit/runGh";
+import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { setTimeout as delay } from "node:timers/promises";
 

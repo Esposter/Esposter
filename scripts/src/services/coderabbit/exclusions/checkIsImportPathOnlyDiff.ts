@@ -1,4 +1,4 @@
-import { DiffLineSign } from "#src/models/coderabbit/DiffLineSign";
+import { DiffLineSign } from "#src/models/coderabbit/shared/DiffLineSign";
 // A file's `git diff -U0 -M` output, judged as an import-path-only edit: a module moved and the file's entire
 // Diff is the same imports pointing at the new path. "Every changed line is an import" is not the test — a new
 // Symbol, a new package or an added side-effect import passes it — so the added imports must be the removed ones
