@@ -42,9 +42,9 @@ flowchart TD
   G -->|yes| O{Open findings}
   O -->|yes| DR[Drain into review-fixes<br/>Claude fixes or rejects each]
   O -->|no| P
-  DR --> P{Fixes parked, queue at the<br/>fill target, or the window held}
-  P -->|neither| PK[Wait — slot stays free]
-  P -->|either| W[Port fixes then queue prefix<br/>largest green prefix under the cap, main folded in]
+  DR --> P{Fixes parked with any queue commit,<br/>queue at the fill target,<br/>or the window held}
+  P -->|none| PK[Wait — slot stays free]
+  P -->|any| W[Port fixes then queue prefix<br/>largest green prefix under the cap, main folded in]
   W --> PU[Compare-and-swap push to develop]
   PU --> RP[Reply on each answered thread<br/>with the pushed sha]
 ```
@@ -80,6 +80,6 @@ The cap, the fill target and the retrigger comment live where the CodeRabbit too
 ## Notes
 
 - **One queue, not numbered bookmarks.** A bookmark per window would make a person decide where a window ends and remember to delete it afterwards. The first is what the collector does by measuring, and the second stops existing. `queue` is the session's own checked-out branch, pushed after every commit, carrying every unported commit in the order they were authored, so the session's only job is to push it, and what it still owes is a `git cherry` away rather than a ref to be maintained.
-- **Parking fixes trades finding freshness for a full slot.** A completed review with findings and an empty queue leaves the slot idle rather than spending it on a handful of fix files; the fixes wait on `review-fixes` until the queue has anything at all, and then lead that window. Any queue content is enough once fixes are parked — the fixes are what the window is for, and the findings age by exactly the time until the next commit lands, which under a standing sweep is minutes. A manual dispatch with `force` pushes them alone when that is the wrong trade.
+- **Parking fixes trades finding freshness for a full slot.** A completed review with findings and an empty queue leaves the slot idle rather than spending it on a handful of fix files; the fixes wait on `review-fixes` until the queue has anything at all, and then lead that window. Any queue content is enough once fixes are parked — the fixes are what the window is for, and the findings age by exactly the time until the next commit lands, which under a standing sweep is minutes. A queue whose first commit is held counts too: it is blocked rather than empty, and the fixes landing is what unblocks it, so they go out alone. A manual dispatch with `force` pushes them alone when that is the wrong trade.
 - **Claude does two things and no more:** decide whether each finding is real and write the fix or the rejection. Reading state, gating, porting, pushing and replying are deterministic and stay in tested TypeScript, so the expensive step is the only one that can be wrong in an interesting way, and every other step can be dry-run locally against the live pull request.
 - **The bot's own replies arrive as reviews.** A `pull_request_review` event is not one per run: CodeRabbit submits a review each time it answers a batch of replies, so several fire within seconds of a drain. The concurrency group serializes them and every one after the first exits at the gates. An event that fires too often is the cheap failure; the one this design refuses is an event that never fires.

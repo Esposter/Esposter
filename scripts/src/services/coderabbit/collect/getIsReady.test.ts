@@ -15,6 +15,11 @@ describe(getIsReady, () => {
       false,
     ],
     [
+      "fixes parked and the first queue commit is held",
+      { fileCount: 3, fixCount: 1, isForced: false, isHeld: true, queueCommitCount: 0 },
+      true,
+    ],
+    [
       "no fixes and the count reaches the target",
       { fileCount: WINDOW_FILL_TARGET, fixCount: 0, isForced: false, isHeld: false, queueCommitCount: 4 },
       true,
