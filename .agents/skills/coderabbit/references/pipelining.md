@@ -88,6 +88,18 @@ into the next window as a merge commit, lockfile rebuilt the `git` skill's way, 
 spent anyway. A merge of `main` into `queue` the session makes is never owed to `develop` — the porter takes only
 the commits the queue authored — and the session's next rebase onto `develop` linearises it away.
 
+**The collector can be run by hand when its workflow is off.** `gh workflow disable ReviewCollector.yaml` stops
+every trigger; `pnpm ai:coderabbit:collect` then runs the same cycle from a checkout whose `gh` login is the
+collector's account — never this checkout, which the script switches branches in and refuses when dirty, but a
+detached `git worktree add` on `origin/develop` with its own `pnpm i` and `@esposter/shared` build. It clears the
+four gates from the remote exactly as the runner does, so the standing rule is unchanged: the run is asked for.
+`gh workflow enable ReviewCollector.yaml` hands the cycle back.
+
+**A finding the session answers on `queue` ports in queue order, not first.** Only `review-fixes` commits lead a
+window. A fix committed at the queue's tail waits for the windows ahead of it, and its thread reply with the sha
+comes when it lands; picking it ahead of the commits it was written on top of conflicts, so the wait is the cost
+of answering in-session rather than leaving the drain to it.
+
 ## Re-opening the standing PR after it merges
 
 The pipeline assumes the `develop` → `main` PR is open; once it merges there is none, and the collector exits until
