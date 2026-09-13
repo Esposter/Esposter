@@ -1,14 +1,14 @@
 name: ♻️ Review Collector
 
 # The garbage collector of the review budget (docs: infra/review-collector). Allocation — the session pushing
-# `queue` — and freeing — CodeRabbit finishing a review — run the same idempotent cycle, and the cycle's gates
+# `ai/queue` — and freeing — CodeRabbit finishing a review — run the same idempotent cycle, and the cycle's gates
 # decide whether anything is done. There is deliberately no `schedule`: every one of these is a webhook the
 # platform already delivers, and the one state change that sends none — a rate limit lifting — is answered by
 # the `retrigger` job below, which waits out the deadline the bot itself publishes rather than asking on a timer.
 on:
   push:
     branches:
-      - queue
+      - ai/queue
       # The return stroke. A release merging, or a dependency bump landing directly, both move `main`; the cycle
       # fast-forwards `develop` onto it when `develop` is an ancestor. The release pull request is closed by then,
       # so no review event will ever fire for it and this is the only thing that carries `develop` forward.
@@ -65,7 +65,7 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # The cycle ports across `develop`, `queue` and `review-fixes` with `git cherry`, which a shallow clone
+          # The cycle ports across `develop`, `ai/queue` and `ai/review-fixes` with `git cherry`, which a shallow clone
           # cannot answer. The collector token rather than the built-in one: a push made with `GITHUB_TOKEN`
           # starts no workflow runs, so `develop`'s CI and deployment would never fire on a collector push.
           fetch-depth: 0

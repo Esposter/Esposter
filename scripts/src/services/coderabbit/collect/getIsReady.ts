@@ -4,7 +4,7 @@ import { WINDOW_FILL_TARGET } from "#src/services/coderabbit/shared/constants";
 
 // The two-by-two the cycle encodes. Fixes parked and any queue commit fits: push, the fixes are what the window
 // Is for. No fixes and the count reaches the target: push. No fixes and a short queue: wait, nothing is waiting
-// On the slot. Fixes parked and an empty queue: park, which is the case review-fixes exists for. Force collapses
+// On the slot. Fixes parked and an empty queue: park, which is the case ai/review-fixes exists for. Force collapses
 // The two waits into a push for the dispatch that judges a short window worth the slot.
 //
 // Waiting is only ever worth it while the window can still grow, and a held one cannot: the commit that stopped

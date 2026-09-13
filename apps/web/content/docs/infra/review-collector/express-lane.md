@@ -55,6 +55,7 @@ The lane only pays when the mechanical part of a sweep is **its own commit**. A 
 
 | File                                                                      | Role                                                                 |
 | :------------------------------------------------------------------------ | :------------------------------------------------------------------- |
+| `scripts/src/services/coderabbit/collect/runExpressLane.ts`               | the lane as one step of the cycle — build, prove, verify, push       |
 | `scripts/src/services/coderabbit/collect/portExpress.ts`                  | builds the candidate on `main` and decides whether the lane is open  |
 | `scripts/src/services/coderabbit/exclusions/checkIsMechanicalRange.ts`    | the proof itself, asked of a commit to select and of the cut to push |
 | `scripts/src/services/coderabbit/exclusions/checkIsMechanicalCommit.ts`   | that proof against one commit's first parent                         |

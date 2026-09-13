@@ -2,12 +2,15 @@ export const MAIN_BRANCH = "main";
 
 export const DEVELOP_BRANCH = "develop";
 
+// The pipeline's own refs live under `ai/`, the namespace the `ai:` scripts already claim, so they sit apart from
+// The branches a person reads (`main`, `develop`) and from renovate's.
+//
 // The session's linear history, published after every commit. The collector reads it and never writes it.
-export const QUEUE_BRANCH = "queue";
+export const QUEUE_BRANCH = "ai/queue";
 
 // Fixes a drain produced that no window has carried yet. The collector writes it, and the next drain after it is
 // Ported re-creates it from `develop` — it is never deleted, so the session can always rebase onto it.
-export const REVIEW_FIXES_BRANCH = "review-fixes";
+export const REVIEW_FIXES_BRANCH = "ai/review-fixes";
 
 // The trailer a fix commit carries per inline finding it answers, and the one a body-only fix carries per review
 export const ANSWERS_TRAILER = "Answers";

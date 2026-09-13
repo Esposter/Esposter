@@ -4,24 +4,20 @@ import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
-import { checkIsRetriggerAsked } from "#src/services/coderabbit/collect/checkIsRetriggerAsked";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import {
   DEVELOP_BRANCH,
-  EXPRESS_VERIFY_COMMANDS,
   MAIN_BRANCH,
   QUEUE_BRANCH,
-  RETRIGGER_SLEEP_CAP_MS,
   REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
 import { cutCandidate } from "#src/services/coderabbit/collect/cutCandidate";
 import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
+import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { getOpenBodyReviewId } from "#src/services/coderabbit/collect/getOpenBodyReviewId";
 import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
-import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
-import { portExpress } from "#src/services/coderabbit/collect/portExpress";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
@@ -30,13 +26,12 @@ import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrai
 import { readOpenPullRequest } from "#src/services/coderabbit/collect/readOpenPullRequest";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { replyAnswered } from "#src/services/coderabbit/collect/replyAnswered";
+import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
+import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
-import { verifyCandidate } from "#src/services/coderabbit/collect/verifyCandidate";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
-import { PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
@@ -94,7 +89,8 @@ export const runCycle = async ({
     );
   if (isDevelopBehindMain) {
     console.info(`${DEVELOP_BRANCH} is an ancestor of ${MAIN_BRANCH} — fast-forwarding it`);
-    pushBranch({ branch: DEVELOP_BRANCH, isDryRun, sha: mainSha });
+    if (!pushBranch({ branch: DEVELOP_BRANCH, expectedSha: developSha, isDryRun, sha: mainSha }))
+      return getMovedOutcome(DEVELOP_BRANCH);
     return getOutcome(
       CycleOutcomeKind.FastForwarded,
       `${DEVELOP_BRANCH} followed ${MAIN_BRANCH} — the next event measures against it`,
@@ -102,34 +98,10 @@ export const runCycle = async ({
     );
   }
 
-  // The express lane, before the pull request is even looked up: it spends no review slot and needs no pull
-  // Request open, which also makes it the one thing that moves the pipeline while there is none. A mechanical
-  // Commit reaches `main` directly and the return stroke carries it to `develop` on the next run.
-  const express = portExpress({ cwd, developSha, mainSha, queueSha });
-  if (express.targetSha !== undefined) {
-    console.info(`express: ${express.shas.length.toString()} mechanical commits, nothing in them to review`);
-    if (isDryRun)
-      return getOutcome(CycleOutcomeKind.Expressed, `would verify and push to ${MAIN_BRANCH}`, express.targetSha);
-    // `main` is production and CI is the only gate these commits get, so the cut earns the checks CI would fail
-    // It on — the tests among them. A red one is not held back: it simply takes the review lane, where a person
-    // Reads why.
-    else if (verifyCandidate(EXPRESS_VERIFY_COMMANDS, cwd)) {
-      runGit(["fetch", "origin", MAIN_BRANCH]);
-      if (readSha(`origin/${MAIN_BRANCH}`) !== mainSha)
-        return getOutcome(
-          CycleOutcomeKind.Idle,
-          `${MAIN_BRANCH} moved during the run — nothing pushed, the next run re-measures`,
-        );
-      pushBranch({ branch: MAIN_BRANCH, cwd, isDryRun, sha: express.targetSha });
-      // One irreversible act per run. The push fires the cycle again, which fast-forwards `develop` onto it and
-      // Then measures a window against a frontier that has already moved.
-      return getOutcome(
-        CycleOutcomeKind.Expressed,
-        `${express.shas.length.toString()} mechanical commits reached ${MAIN_BRANCH}`,
-        express.targetSha,
-      );
-    } else console.info("the express cut is red — it takes the review lane instead");
-  }
+  // The express lane, before the pull request is even looked up: a mechanical commit reaches `main` directly and
+  // The return stroke carries it to `develop` on the next run
+  const expressed = runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha });
+  if (expressed) return expressed;
 
   const pullRequest = namedPullRequest ?? readOpenPullRequest()?.number;
   if (pullRequest === undefined)
@@ -138,18 +110,18 @@ export const runCycle = async ({
       `no open ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request — re-opening one is a human ask`,
     );
 
-  const reviews = readBotEntries<GitHubReview>(`pulls/${pullRequest.toString()}/reviews`);
+  const reviews = readBotEntries<GitHubReview>(`pulls/${pullRequest}/reviews`);
   const lastReviewedSha = getLastReviewedSha(reviews.map(({ body }) => body));
   const frontier = lastReviewedSha ?? runGit(["merge-base", mainSha, developSha]).trim();
   const viewerLogin = readViewerLogin();
-  console.info(`pull request #${pullRequest.toString()} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`);
+  console.info(`pull request #${pullRequest} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`);
   console.info(`develop ${developSha}\nqueue   ${queueSha}\nfixes   ${reviewFixesSha ?? "none"}\nfrontier ${frontier}`);
 
   // Replies first: a run that pushed and died before replying is finished here, by whichever event fires next,
   // And it must happen before any exit — the running review is the one that resolves these threads.
   replyAnswered(pullRequest, `${frontier}..${developSha}`, viewerLogin, isDryRun);
 
-  const issueComments = readEntries(`issues/${pullRequest.toString()}/comments`);
+  const issueComments = readEntries(`issues/${pullRequest}/comments`);
   const gate = getGateDecision({ checkStatus: readCheckStatus(pullRequest), developSha, lastReviewedSha });
   console.info(`gate: ${gate.kind} — ${gate.reason}`);
   if (gate.kind === GateDecisionKind.Exit) return getOutcome(CycleOutcomeKind.Idle, gate.reason);
@@ -173,7 +145,7 @@ export const runCycle = async ({
   const openThreads = getOpenFindings(readUnresolvedThreads(pullRequest), answeredIds);
   const openBodyReviewId = getOpenBodyReviewId({ drainedReviewIds, issueComments, newestReview, viewerLogin });
   console.info(
-    `open findings: ${openThreads.length.toString()} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
+    `open findings: ${openThreads.length} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
   );
 
   const drainLimitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
@@ -212,7 +184,7 @@ export const runCycle = async ({
 
   const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha, reviewFixesSha });
   console.info(
-    `window: ${port.fixCount.toString()} fix commits + ${port.queueShas.length.toString()} queue commits = ${port.fileCount.toString()} files${port.heldSha ? `, held from ${port.heldSha}` : ""}`,
+    `window: ${port.fixCount} fix commits + ${port.queueShas.length} queue commits = ${port.fileCount} files${port.heldSha ? `, held from ${port.heldSha}` : ""}`,
   );
   const isReady = getIsReady({
     fileCount: port.fileCount,
@@ -222,39 +194,11 @@ export const runCycle = async ({
     queueCommitCount: port.queueShas.length,
   });
   if (!isReady) {
-    // The review a limit refused is owed once nothing can be added to the range, and not before: while a commit
-    // Still fits, the limit that skipped this review is exactly what lets the next window grow the same range, and
-    // One review then reads the lot. A port that took nothing is that moment — the queue is empty, or every owed
-    // Commit overflows the cap from this frontier, and the overflow only clears once a review moves the frontier.
-    // Asking any earlier spends the hour on a range still filling; asking never leaves the frontier where it is,
-    // Which is a window that can neither grow nor ship.
-    //
-    // A run that ships a window needs none of this: the push is auto-reviewed, and a limit refusing that one
-    // Rewrites the block, which arrives as the event this workflow runs on.
+    // A port that took nothing under a limit is the one moment the review it refused is owed (`settleRateLimit`)
     if (isRateLimited && port.queueShas.length === 0) {
-      const waitMs = getRateLimitWaitMs(issueComments, Date.now());
-      if (waitMs) {
-        // A deadline past the longest sleep one job holds is slept in relays, the dispatched run reading what is left
-        retriggerDelaySeconds = Math.ceil(
-          Temporal.Duration.from({ milliseconds: Math.min(waitMs, RETRIGGER_SLEEP_CAP_MS) }).total("seconds"),
-        );
-        console.info(`rate limited — retrigger in ${retriggerDelaySeconds.toString()}s, the deadline the bot stated`);
-        // The ask is posted once per block: the bot's answer to it runs this cycle again, and an unguarded ask would
-        // Answer that answer with another one
-      } else if (checkIsRetriggerAsked(issueComments, viewerLogin))
-        console.info("rate limited — the review it refused is already asked for");
-      else if (isDryRun)
-        return getOutcome(
-          CycleOutcomeKind.Idle,
-          "would ask for the review the limit refused — a dry run asks for nothing",
-        );
-      else {
-        runGh(["pr", "comment", pullRequest.toString(), "--body", PROBE_COMMENT]);
-        return getOutcome(
-          CycleOutcomeKind.Idle,
-          "asked for the review the limit refused — the bot's answer fires the cycle again",
-        );
-      }
+      const settlement = settleRateLimit({ isDryRun, issueComments, pullRequest, viewerLogin });
+      retriggerDelaySeconds = settlement.retriggerDelaySeconds;
+      if (settlement.outcome) return settlement.outcome;
     }
     // A held first commit is not an under-filled queue — the window is full of carry-over nothing has reviewed yet
     if (port.queueShas.length === 0 && port.heldSha)
@@ -280,7 +224,7 @@ export const runCycle = async ({
     return getOutcome(CycleOutcomeKind.Idle, "nothing green to push");
   const cutFileCount = getFileCount(`${frontier}..${cut.targetSha}`, cwd);
   console.info(
-    `cut: ${cut.queueShas.length.toString()} queue commits = ${cutFileCount.toString()} files${cut.isMainMerged ? ", main folded in" : ""}${cut.isMainConflicted ? ", main conflicts outside the lockfile — held for a person" : ""}${cut.isFastForward ? ", fast-forward" : ""}`,
+    `cut: ${cut.queueShas.length} queue commits = ${cutFileCount} files${cut.isMainMerged ? ", main folded in" : ""}${cut.isMainConflicted ? ", main conflicts outside the lockfile — held for a person" : ""}${cut.isFastForward ? ", fast-forward" : ""}`,
   );
   // Readiness is asked again of the cut, because the window that was measured is not the window that ships: the
   // Green cut drops queue commits until the head passes the checks, and a fold of `main` that turned it red is
@@ -300,28 +244,23 @@ export const runCycle = async ({
   )
     return getOutcome(
       CycleOutcomeKind.Idle,
-      `the green cut is ${cutFileCount.toString()} files with ${cut.queueShas.length.toString()} queue commits — it waits rather than spending a slot`,
+      `the green cut is ${cutFileCount} files with ${cut.queueShas.length} queue commits — it waits rather than spending a slot`,
     );
 
-  // Compare-and-swap: a fresh fetch, the develop head still the one measured against, no review started meanwhile
-  runGit(["fetch", "origin", DEVELOP_BRANCH]);
-  if (readSha(`origin/${DEVELOP_BRANCH}`) !== developSha)
-    return getOutcome(
-      CycleOutcomeKind.Idle,
-      `${DEVELOP_BRANCH} moved during the run — nothing pushed, the next run re-measures`,
-    );
+  // A review a person started with a comment while the run worked is read afresh before the push: the push's own
+  // Compare-and-swap covers the ref, not the slot
   if (!checkIsSlotFree(readCheckStatus(pullRequest)))
     return getOutcome(
       CycleOutcomeKind.Idle,
       "a review started during the run, or its status could not be read — nothing pushed",
     );
-  pushBranch({ branch: DEVELOP_BRANCH, cwd, isDryRun, sha: cut.targetSha });
+  if (!pushBranch({ branch: DEVELOP_BRANCH, cwd, expectedSha: developSha, isDryRun, sha: cut.targetSha }))
+    return getMovedOutcome(DEVELOP_BRANCH);
 
-  runGit(["fetch", "origin", DEVELOP_BRANCH]);
   replyAnswered(pullRequest, `${developSha}..${cut.targetSha}`, viewerLogin, isDryRun);
   return getOutcome(
     CycleOutcomeKind.Pushed,
-    `${cut.queueShas.length.toString()} queue commits and ${port.fixCount.toString()} fix commits reached ${DEVELOP_BRANCH}`,
+    `${cut.queueShas.length} queue commits and ${port.fixCount} fix commits reached ${DEVELOP_BRANCH}`,
     cut.targetSha,
   );
 };

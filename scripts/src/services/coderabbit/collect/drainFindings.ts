@@ -35,7 +35,7 @@ interface DrainFindingsInput extends DrainInput {
   viewerLogin: string;
 }
 
-// Claude works on the fixes branch — review-fixes while it still owes develop commits, develop's head otherwise,
+// Claude works on the fixes branch — ai/review-fixes while it still owes develop commits, develop's head otherwise,
 // So the branch is never deleted and never stale — and the branch is pushed only after it exits cleanly, so a
 // Drain that dies leaves no trace and the next run starts the same open set again. Past the attempt cap the review is quarantined: its findings stay open for a person and the caller
 // Ports without them, because a pipeline stalled on one finding nobody sees costs every window after it.
@@ -53,7 +53,7 @@ export const drainFindings = async ({
   const pullRequest = drainInput.pullRequest.toString();
   const quarantinedMarker = getMarker(QUARANTINED_MARKER, newestReviewId);
   if (checkHasMarkerComment(issueComments, viewerLogin, quarantinedMarker)) {
-    console.info(`review ${newestReviewId.toString()} is quarantined — porting without its fixes`);
+    console.info(`review ${newestReviewId} is quarantined — porting without its fixes`);
     return { isLimited: false, reviewFixesSha };
   }
 
@@ -67,7 +67,7 @@ export const drainFindings = async ({
       "comment",
       pullRequest,
       "--body",
-      `${quarantinedMarker}\nThe drain of review ${newestReviewId.toString()} failed ${attempts.toString()} times. Its findings stay open for a person, and the collector ports without them.`,
+      `${quarantinedMarker}\nThe drain of review ${newestReviewId} failed ${attempts} times. Its findings stay open for a person, and the collector ports without them.`,
     ]);
     return { isLimited: false, reviewFixesSha };
   }
@@ -102,7 +102,7 @@ export const drainFindings = async ({
       "comment",
       pullRequest,
       "--body",
-      `${failedMarker}\nDrain attempt ${(attempts + 1).toString()} of review ${newestReviewId.toString()} failed — see the collector run.`,
+      `${failedMarker}\nDrain attempt ${attempts + 1} of review ${newestReviewId} failed — see the collector run.`,
     ]);
     throw new InvalidOperationError(
       Operation.Update,

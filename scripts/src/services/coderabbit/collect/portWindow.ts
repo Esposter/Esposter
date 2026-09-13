@@ -31,11 +31,11 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
-      `the fixes alone overflow the cap of ${REVIEW_FILE_CAP.toString()} files from the frontier`,
+      `the fixes alone overflow the cap of ${REVIEW_FILE_CAP} files from the frontier`,
     );
 
   // What the queue owes is read against the tree the fixes just built, not against develop: a queue rebased onto
-  // `review-fixes` carries the fix commits as ancestors, and against develop they read as owed — re-picked onto
+  // `ai/review-fixes` carries the fix commits as ancestors, and against develop they read as owed — re-picked onto
   // A tree that already holds them, where a later fix that rewrote their lines turns the pick from empty into a
   // Conflict that holds the whole window
   const fixesHeadSha = runGit(["rev-parse", "HEAD"], cwd).trim();

@@ -21,7 +21,7 @@ Never open side PRs against `main` to slice it up. Each one spends a review slot
 
 **There are only ever two branches beyond the session's own: `develop` and `parked/<scope>`. One PR: the release PR, which stays open the whole time.**
 
-**The park branch cannot live under `queue/`.** Git stores a branch as a file at its own path, so `refs/heads/queue` and `refs/heads/queue/<scope>` cannot both exist — and `queue` is the session's permanent branch (`references/pipelining.md`), so a park named under it fails at `git branch`. It is named `parked/<scope>` for that reason, and because the collector's `push` trigger names the literal `queue`: a park is staging, and pushing it must start no cycle.
+**The park branch cannot live under `queue/`.** Git stores a branch as a file at its own path, so `refs/heads/queue` and `refs/heads/queue/<scope>` cannot both exist — and `ai/queue` is the session's permanent branch (`references/pipelining.md`), so a park named under it fails at `git branch`. It is named `parked/<scope>` for that reason, and because the collector's `push` trigger names the literal `ai/queue`: a park is staging, and pushing it must start no cycle.
 
 **The park branch stages content, never history.** Port its changes onto `develop` as fresh commits and delete the branch — do not merge it. A merge replays the queue's original commits and adds a merge commit, which is exactly the shape that leaves CodeRabbit's checkpoint ambiguous; a linear, purely additive `develop` is what it tracks reliably. Porting does not change the file count — the same files change either way — so this buys history hygiene, not headroom.
 
@@ -67,9 +67,9 @@ Cherry-pick doc and skill commits across the cut so the working tree keeps the c
 
 ## 2. Drain
 
-**The review collector is the drain.** With the cut pushed, `parked/<scope>` is what `queue` still owes, and the
+**The review collector is the drain.** With the cut pushed, `parked/<scope>` is what `ai/queue` still owes, and the
 procedure below is what `pnpm ai:coderabbit:collect` does on every queue push and every completed review
-(`references/pipelining.md`). Port the parked commits onto `queue` — a cherry-pick, never a merge, for the reasons
+(`references/pipelining.md`). Port the parked commits onto `ai/queue` — a cherry-pick, never a merge, for the reasons
 this page gives — and the collector sizes, verifies and pushes each window. What follows is the same drain by hand,
 for reading what the collector is doing or for a clone where it cannot run.
 

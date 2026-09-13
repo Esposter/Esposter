@@ -8,18 +8,18 @@ and the ref ownership as separate pages: `apps/web/content/docs/infra/review-col
 ## Three branches, one writer each
 
 **There are no per-chunk feature branches, and the session never pushes `develop`.** The session's checked-out
-branch is `queue`; it commits coherent units there and pushes after every commit. The single long-lived
+branch is `ai/queue`; it commits coherent units there and pushes after every commit. The single long-lived
 `develop` → `main` pull request is the release pull request, and every push to `develop` auto-triggers a review
 because that pull request's base is the default branch. What pushes `develop` is the **review collector** —
-`pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow whenever `queue` is pushed or CodeRabbit
+`pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow whenever `ai/queue` is pushed or CodeRabbit
 submits a review.
 
-| Ref            | Written by                                 | What it holds                                                                   |
-| :------------- | :----------------------------------------- | :------------------------------------------------------------------------------ |
-| `queue`        | the session                                | its linear history — every unported commit in authoring order, no window cuts   |
-| `develop`      | the collector                              | the reviewed frontier plus at most one unreviewed window, moved by fast-forward |
-| `review-fixes` | the collector                              | fixes a drain produced that no window has carried yet                           |
-| `main`         | a person, and the collector's express lane | the released trunk, plus the commits that never needed a window                 |
+| Ref               | Written by                                 | What it holds                                                                   |
+| :---------------- | :----------------------------------------- | :------------------------------------------------------------------------------ |
+| `ai/queue`        | the session                                | its linear history — every unported commit in authoring order, no window cuts   |
+| `develop`         | the collector                              | the reviewed frontier plus at most one unreviewed window, moved by fast-forward |
+| `ai/review-fixes` | the collector                              | fixes a drain produced that no window has carried yet                           |
+| `main`            | a person, and the collector's express lane | the released trunk, plus the commits that never needed a window                 |
 
 A queue push spends nothing: it starts no review, only a collector run that measures. So the standing rule
 that a `develop` push is asked for every time is unchanged and now never applies to the session — the collector
@@ -38,10 +38,10 @@ states for the cut's sake, and the lane is the second reason for it.
 
 ## The session's loop
 
-1. Commit a unit on `queue`. Run the finishing checks; commit their repairs as their own commit behind the unit
+1. Commit a unit on `ai/queue`. Run the finishing checks; commit their repairs as their own commit behind the unit
    (`references/window-composition.md`), because the collector cuts at commit boundaries and every cut must be
    green on its own.
-2. `git push`. Plain while `queue` sits on `develop`'s head, `--force-with-lease` after a rebase — the queue is a
+2. `git push`. Plain while `ai/queue` sits on `develop`'s head, `--force-with-lease` after a rebase — the queue is a
    backup of unpushed work, not a reviewed artifact, and the lease is what keeps two machines from dropping
    each other's commits.
 3. Before the next unit, `git fetch`, and when `origin/develop` moved, `git rebase origin/develop`. A
@@ -53,16 +53,16 @@ states for the cut's sake, and the lane is the second reason for it.
    reconciled, by the one party that can read both — and a queue several windows behind is reconciled by hand,
    commit by commit, so budget it as work rather than as a command.
 4. Keep working. The collector fires on the push, reads the frontier and the check, drains any open findings
-   onto `review-fixes`, and when the slot is free and the queue has reached the fill target — or the next commit
+   onto `ai/review-fixes`, and when the slot is free and the queue has reached the fill target — or the next commit
    overflows the cap, so the window is as large as it will ever be — ports the largest green prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha.
 
 ```mermaid
 flowchart TD
-  U[Commit a unit on queue] --> P[git push queue]
+  U[Commit a unit on ai/queue] --> P[git push ai/queue]
   P --> C{Collector: slot free and<br/>previous window reviewed}
   C -->|no| U
   C -->|yes| F{Open findings}
-  F -->|yes| DR[Drain onto review-fixes]
+  F -->|yes| DR[Drain onto ai/review-fixes]
   F -->|no| W
   DR --> W{Fixes parked, queue at the<br/>fill target, or the window held}
   W -->|no| U
@@ -70,28 +70,28 @@ flowchart TD
   PU --> R[Review runs, replies carry the sha]
   C -->|express: nothing to review| MX[Cherry-pick onto main<br/>no window spent]
   MX --> S
-  R --> S[Session rebases queue onto develop]
+  R --> S[Session rebases ai/queue onto develop]
   S --> U
 ```
 
-**What the session must not do:** push `develop`, touch `review-fixes`, or cut a window. A commit that would have
+**What the session must not do:** push `develop`, touch `ai/review-fixes`, or cut a window. A commit that would have
 been "the last one under the cap" is just a commit — the collector measures the cut on the tree it is about to
 push, one cherry-pick at a time, and holds the first commit that overflows.
 
-**A finding the session answers itself** is a commit on `queue` carrying the trailer `Answers: <comment id>` (a
+**A finding the session answers itself** is a commit on `ai/queue` carrying the trailer `Answers: <comment id>` (a
 body-only finding: `Drains: <review id>`). The collector's open-finding predicate honours a trailer on the
 queue's unported commits, so it neither re-fixes the finding nor replies before the commit is on `develop`. A
 rejection needs no sha and may be replied to directly.
 
 **When the collector reports a conflict** — its parked fixes changed a file the queue's next commit also changed
-— the session rebases `queue` onto `origin/review-fixes`, not onto `develop`: the fixes will lead the next window,
+— the session rebases `ai/queue` onto `origin/ai/review-fixes`, not onto `develop`: the fixes will lead the next window,
 and a queue that already carries them owes nothing for them — the porter reads what the queue owes against the tree
 the fixes built, so the copies it carries are ancestors rather than picks.
 
 **`main` is synced by the collector, not the session.** After the release pull request merges, the push to
 `main` runs the cycle and `develop` is fast-forwarded to it; a dependency bump that lands on `main` alone is folded
 into the next window as a merge commit, lockfile rebuilt the `git` skill's way, so it rides a slot that was being
-spent anyway. A merge of `main` into `queue` the session makes is never owed to `develop` — the porter takes only
+spent anyway. A merge of `main` into `ai/queue` the session makes is never owed to `develop` — the porter takes only
 the commits the queue authored — and the session's next rebase onto `develop` linearises it away.
 
 **The collector can be run by hand when its workflow is off.** `gh workflow disable ReviewCollector.yaml` stops
@@ -103,7 +103,7 @@ four gates from the remote exactly as the runner does, so the standing rule is u
 hand: the compare-and-swap push refuses the loser, but the drain the loser ran was a Claude session spent for
 nothing.
 
-**A finding the session answers on `queue` ports in queue order, not first.** Only `review-fixes` commits lead a
+**A finding the session answers on `ai/queue` ports in queue order, not first.** Only `ai/review-fixes` commits lead a
 window. A fix committed at the queue's tail waits for the windows ahead of it, and its thread reply with the sha
 comes when it lands; picking it ahead of the commits it was written on top of conflicts, so the wait is the cost
 of answering in-session rather than leaving the drain to it.
