@@ -5,10 +5,10 @@ interface NameStatusEntry {
 }
 
 // Without `-z`, git prints one row per newline with fields tab-separated, and quotes a path holding a tab, a
-// newline or a non-ASCII byte in C-style escapes instead of the literal bytes — a tab-splitting regex then reads
-// the quote marks and escape sequences as part of the path. `-z` NUL-terminates every field of every row instead,
-// so the whole output is one flat token stream with no quoting to undo: a rename row is three tokens (status, the
-// path it moved from, the path it moved to), every other status is two (status, path).
+// Newline or a non-ASCII byte in C-style escapes instead of the literal bytes — a tab-splitting regex then reads
+// The quote marks and escape sequences as part of the path. `-z` NUL-terminates every field of every row instead,
+// So the whole output is one flat token stream with no quoting to undo: a rename row is three tokens (status, the
+// Path it moved from, the path it moved to), every other status is two (status, path).
 export const getNameStatusEntries = (nameStatus: string): NameStatusEntry[] => {
   const tokens = nameStatus.split("\0").filter((token) => token !== "");
   const entries: NameStatusEntry[] = [];
