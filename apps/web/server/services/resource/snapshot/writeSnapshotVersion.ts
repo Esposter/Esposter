@@ -4,11 +4,10 @@ import type { Resource, ResourceVersion } from "@esposter/db-schema";
 import type { WrittenVersion } from "keyframe-store";
 
 import { collectSnapshotObjects } from "@@/server/services/resource/snapshot/collectSnapshotObjects";
-import { createSnapshotObjectStore } from "@@/server/services/resource/snapshot/createSnapshotObjectStore";
+import { createSnapshotKeyframeStore } from "@@/server/services/resource/snapshot/createSnapshotKeyframeStore";
 import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
 import { readSnapshotAnchor } from "@@/server/services/resource/snapshot/readSnapshotAnchor";
 import { resourceVersions } from "@esposter/db-schema";
-import { createKeyframeStore } from "keyframe-store";
 
 // The one way a version is taken, whichever channel it lands in: the content goes into the store against the
 // Channel's current anchor, and the row that makes it visible follows. The object is durable before the row
@@ -23,7 +22,7 @@ export const writeSnapshotVersion = async (
   serializedContent: string,
 ): Promise<WrittenVersion> => {
   const { id } = resource;
-  const keyframeStore = createKeyframeStore(await createSnapshotObjectStore(id));
+  const keyframeStore = await createSnapshotKeyframeStore(id);
   const anchor = await readSnapshotAnchor(db, id, channel);
   const writtenVersion = await keyframeStore.write(Buffer.from(serializedContent), anchor).match(
     (value) => value,

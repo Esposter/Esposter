@@ -2,11 +2,10 @@ import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Context } from "@@/server/trpc/context";
 import type { Resource, ResourceVersion } from "@esposter/db-schema";
 
-import { createSnapshotObjectStore } from "@@/server/services/resource/snapshot/createSnapshotObjectStore";
+import { createSnapshotKeyframeStore } from "@@/server/services/resource/snapshot/createSnapshotKeyframeStore";
 import { resourceVersions } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { createKeyframeStore } from "keyframe-store";
 
 const getNamedHashes = (versions: Pick<ResourceVersion, "baseHash" | "hash">[]) =>
   versions.flatMap(({ baseHash, hash }) => (baseHash ? [hash, baseHash] : [hash]));
@@ -24,7 +23,7 @@ export const collectSnapshotObjects = async (
     .select({ baseHash: resourceVersions.baseHash, hash: resourceVersions.hash })
     .from(resourceVersions)
     .where(eq(resourceVersions.resourceId, resourceId));
-  const keyframeStore = createKeyframeStore(await createSnapshotObjectStore(resourceId));
+  const keyframeStore = await createSnapshotKeyframeStore(resourceId);
   await keyframeStore
     .collect(getNamedHashes(releasedVersions), getNamedHashes(retainedVersions))
     .match(noop, (error) => {

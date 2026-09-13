@@ -2,8 +2,8 @@ import type { Context } from "@@/server/trpc/context";
 import type { Resource, ResourceVersion } from "@esposter/db-schema";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { createSnapshotObjectStore } from "@@/server/services/resource/snapshot/createSnapshotObjectStore";
-import { createKeyframeStore, ObjectNotStoredError } from "keyframe-store";
+import { createSnapshotKeyframeStore } from "@@/server/services/resource/snapshot/createSnapshotKeyframeStore";
+import { ObjectNotStoredError } from "keyframe-store";
 
 // Reconstructs one retained version and parses it with the type's content schema. The row is what says a
 // Version exists, so a version whose row is gone — evicted, or swept by an unpublish between the listing and
@@ -23,7 +23,7 @@ export const readSnapshotVersionContent = async (
   });
   if (!resourceVersion) return undefined;
 
-  const keyframeStore = createKeyframeStore(await createSnapshotObjectStore(resource.id));
+  const keyframeStore = await createSnapshotKeyframeStore(resource.id);
   const plaintext = await keyframeStore.read(resourceVersion.hash).match<Uint8Array | undefined>(
     (value) => value,
     (error) => {
