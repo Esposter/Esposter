@@ -1,4 +1,3 @@
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import {
   FILES_DIRECTORY_SEGMENT,
   RESOURCE_ASSET_URL_REGEX,
@@ -7,6 +6,7 @@ import {
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
+import { SnapshotChannel } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

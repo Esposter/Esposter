@@ -1,4 +1,4 @@
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 // A hidden marker in a pull request comment is the collector's memory for a fact no commit can carry — a review
 // Whose body-only findings are answered, a drain that failed. An HTML comment renders as nothing.

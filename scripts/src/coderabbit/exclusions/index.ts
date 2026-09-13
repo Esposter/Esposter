@@ -1,10 +1,7 @@
-import { checkIsImportPathOnlyDiff } from "#src/services/coderabbit/exclusions/checkIsImportPathOnlyDiff";
-import { checkIsProtectedPath } from "#src/services/coderabbit/exclusions/checkIsProtectedPath";
-import { getPureRenamePaths } from "#src/services/coderabbit/exclusions/getPureRenamePaths";
+import { checkIsProtectedRow } from "#src/services/coderabbit/exclusions/checkIsProtectedRow";
 import { getRenameSubstitutions } from "#src/services/coderabbit/exclusions/getRenameSubstitutions";
 import { getRenameTokenOnlyPaths } from "#src/services/coderabbit/exclusions/getRenameTokenOnlyPaths";
-import { runGit } from "#src/services/coderabbit/runGit";
-import { getNonEmptyLines } from "#src/services/getNonEmptyLines";
+import { readMechanicalPaths } from "#src/services/coderabbit/exclusions/readMechanicalPaths";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // `pnpm ai:coderabbit:exclusions <base>..<head> [<rename-sha> OldName=NewName ...]`
@@ -12,22 +9,18 @@ const [range, renameSha, ...renameArgs] = process.argv.slice(2);
 if (!range?.includes(".."))
   throw new InvalidOperationError(Operation.Read, "coderabbit", "a <base>..<head> range is required");
 
-const changedPaths = getNonEmptyLines(runGit(["diff", "--name-only", "-M", range]));
-const importPathOnlyPaths = changedPaths
-  .filter((path) => !checkIsProtectedPath(path))
-  .filter((path) => checkIsImportPathOnlyDiff(runGit(["diff", "-U0", "-M", range, "--", path])));
+const { mechanicalPaths, rows } = readMechanicalPaths([range]);
+const changedPaths = new Set(rows.map(({ path }) => path));
 const renameTokenOnlyPaths =
   renameSha === undefined
     ? []
-    : getRenameTokenOnlyPaths(range, new Set(changedPaths), renameSha, getRenameSubstitutions(renameArgs));
-const excludablePaths = [
-  ...new Set([
-    ...getPureRenamePaths(runGit(["diff", "--name-status", "-M", range])).filter((path) => !checkIsProtectedPath(path)),
-    ...importPathOnlyPaths,
-    ...renameTokenOnlyPaths,
-  ]),
-].toSorted();
+    : getRenameTokenOnlyPaths(range, changedPaths, renameSha, getRenameSubstitutions(renameArgs));
+// The protected classes never leave review on a content proof, and a token-only path was already tested for them
+const protectedPaths = new Set(rows.filter((row) => checkIsProtectedRow(row)).map(({ path }) => path));
+const excludablePaths = [...new Set([...mechanicalPaths, ...renameTokenOnlyPaths])]
+  .filter((path) => !protectedPaths.has(path))
+  .toSorted();
 
 // The summary is a yaml comment so the whole output pastes into `path_filters` as it is
-console.info(`    # ${excludablePaths.length.toString()} of ${changedPaths.length.toString()} changed files qualify`);
+console.info(`    # ${excludablePaths.length.toString()} of ${changedPaths.size.toString()} changed files qualify`);
 for (const path of excludablePaths) console.info(`    - "!${path}"`);

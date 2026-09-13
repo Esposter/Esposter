@@ -1,7 +1,7 @@
-import type { ReviewThread } from "#src/models/coderabbit/ReviewThread";
+import type { ReviewThread } from "#src/models/coderabbit/shared/ReviewThread";
 
 import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
-import { CODERABBIT_GRAPHQL_LOGIN } from "#src/services/coderabbit/constants";
+import { CODERABBIT_GRAPHQL_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { describe, expect, test } from "vitest";
 
 const getThread = (commentId: number, lastAuthorLogin: string): ReviewThread => ({

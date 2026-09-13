@@ -1,4 +1,4 @@
-import type { WorkspacePackage } from "#src/models/WorkspacePackage";
+import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 
 import { getWorkspaceEdges } from "#src/services/dependencyGraph/getWorkspaceEdges";
 import { describe, expect, test } from "vitest";

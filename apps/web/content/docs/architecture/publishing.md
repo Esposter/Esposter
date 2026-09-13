@@ -13,7 +13,7 @@ Adopters: Dashboard, Email, Flowchart, Note, Survey, Webpage. A type opts in by 
 
 Publish state lives in its own `resource_publications` table ([resources](/docs/architecture/resource)) — a row exists iff the resource is currently published. This keeps publish attributes off resources that can't publish.
 
-- **Publish = snapshot copy.** `publishResource` upserts the `resource_publications` row (bumping `publishVersion` in SQL), then copies the content blob to `{id}/published/{publishVersion}.json`. Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
+- **Publish = snapshot copy.** `publishResource` upserts the `resource_publications` row (bumping `publishVersion` in SQL), then stores the content as a published version — a row and a content-addressed object ([resource version store](/docs/resource/resource-version-store)). Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
 - **Public reads serve only the publish copy**, never the working copy, and are rate-limited with no auth. A resource with no publication row 404s publicly.
 - **Unpublish** deletes the publication row and the publish blobs; the public URL 404s.
 
@@ -27,13 +27,13 @@ sequenceDiagram
   Owner->>R: publishResource(id)
   R->>R: transformPublishedContent(ctx, resource, content)
   R->>PG: upsert row, bump publishVersion
-  R->>BLOB: write {id}/published/{publishVersion}.json
+  R->>BLOB: store published version {publishVersion}
   Note over BLOB: immutable snapshot — later edits invisible until re-publish
 
   actor Viewer
   Viewer->>R: readPublishedResourceContent(id) — public, rate-limited
   R->>PG: 404 unless publication row exists
-  R->>BLOB: serve {id}/published/{publishVersion}.json
+  R->>BLOB: serve published version {publishVersion}
 ```
 
 ## Procedures
@@ -49,7 +49,7 @@ sequenceDiagram
 
 Publish state is also carried by the cross-type `resource.readResource`, whose `publication` field is the row or `null` — `resource_publications` is one table for every type, so the generic read resolves it whatever the resource turns out to be, and the ownership a separate publication read would resolve is the ownership that request already resolved. `null` is the answer "not published" rather than a missing one, so a surface opening a resource learns its publish state from that one response instead of following it with a second round trip. `readResourcePublication` remains the targeted re-read for a caller that wants publish state on its own.
 
-`readPublishedVersionContent` is what the view route's `version` query param reads: an anonymous visitor always gets the latest publish from the public procedure, while the owner can open any snapshot the `{id}/published/` prefix still holds ([resource snapshots](/docs/resource/resource-snapshots)).
+`readPublishedVersionContent` is what the view route's `version` query param reads: an anonymous visitor always gets the latest publish from the public procedure, while the owner can open any published version whose row an unpublish has not removed ([resource snapshots](/docs/resource/resource-snapshots)).
 
 One hook on `createResourceProcedures` supports publishing needs:
 

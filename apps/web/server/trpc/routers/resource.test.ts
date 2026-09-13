@@ -3,8 +3,6 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { Resource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
-import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
@@ -15,6 +13,7 @@ import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchroni
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "@@/server/services/resource/constants";
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { createSnapshotAssetsDirectoryName } from "@@/server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
+import { getSnapshotObjectBlobName } from "@@/server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { createCallerFactory } from "@@/server/trpc";
 import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
@@ -24,7 +23,15 @@ import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { getContentBlobName } from "@esposter/db";
-import { AzureContainer, AzureQueue, AzureTable, ResourceActivityType, ResourceType } from "@esposter/db-schema";
+import {
+  AzureContainer,
+  AzureQueue,
+  AzureTable,
+  ResourceActivityType,
+  ResourceType,
+  SnapshotChannel,
+  SnapshotReason,
+} from "@esposter/db-schema";
 import { ID_SEPARATOR, jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -37,13 +44,17 @@ const readFilesBlobNames = (id: string): string[] => {
   return [...container.keys()].filter((blobName) => blobName.startsWith(`${getFilesDirectoryName(id)}/`));
 };
 
-// Everything a publish writes lands under the resource's published prefix: the snapshot itself beside a
-// Directory of cloned assets
+// Everything a publish writes: the version's object beside a directory of cloned assets under the published
+// Prefix
 const readPublishedBlobSizes = (id: string): number[] => {
   const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
   assert.exists(container);
   return [...container.entries()]
-    .filter(([blobName]) => blobName.startsWith(`${id}/${SnapshotChannel.Published}/`))
+    .filter(
+      ([blobName]) =>
+        blobName.startsWith(`${id}/${SnapshotChannel.Published}/`) ||
+        blobName.startsWith(getSnapshotObjectBlobName(id, "")),
+    )
     .map(([, data]) => data.byteLength);
 };
 

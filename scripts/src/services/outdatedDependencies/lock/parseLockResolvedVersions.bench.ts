@@ -1,9 +1,8 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
 import { parseLockResolvedVersions } from "#src/services/outdatedDependencies/lock/parseLockResolvedVersions";
 import { sliceLockSection } from "#src/services/outdatedDependencies/lock/sliceLockSection";
+import { LOCKFILE_PATH } from "#src/services/shared/constants";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { test } from "vitest";
 // `parseLockResolvedVersions` is the only unit in the dependency check whose input scales — it runs a
 // Global regex over slices of the ~29k-line `pnpm-lock.yaml` (every other helper parses the ~250-line
@@ -12,7 +11,7 @@ import { test } from "vitest";
 // `importers:` slice is small — the contrast makes per-input cost visible, so a regex regression (e.g.
 // Catastrophic backtracking) on a growing lock shows up. Slices are built once at module scope: they are read
 // And never written, so every iteration can share them.
-const lockYaml = readFileSync(resolve(REPOSITORY_ROOT, "pnpm-lock.yaml"), "utf8");
+const lockYaml = readFileSync(LOCKFILE_PATH, "utf8");
 const catalogSection = sliceLockSection(lockYaml, "\ncatalogs:", ["\npackages:", "\nsnapshots:", "\nimporters:"]);
 const importersSection = sliceLockSection(lockYaml, "\nimporters:", ["\npackages:"]);
 

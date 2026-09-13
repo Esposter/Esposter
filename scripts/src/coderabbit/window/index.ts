@@ -1,13 +1,13 @@
-import type { GitHubReview } from "#src/models/coderabbit/GitHubReview";
+import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 import type { PullRequestBranches } from "#src/models/coderabbit/window/PullRequestBranches";
 
-import { getPullRequestArgument } from "#src/services/coderabbit/getPullRequestArgument";
-import { readBotEntries } from "#src/services/coderabbit/readBotEntries";
-import { runGh } from "#src/services/coderabbit/runGh";
-import { runGit } from "#src/services/coderabbit/runGit";
+import { getPullRequestArgument } from "#src/services/coderabbit/shared/getPullRequestArgument";
+import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
+import { runGh } from "#src/services/coderabbit/shared/runGh";
+import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
-import { parseMachineJson } from "#src/services/parseMachineJson";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 
 const pullRequest = getPullRequestArgument();
 const { baseRefName, headRefName } = parseMachineJson<PullRequestBranches>(

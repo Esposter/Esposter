@@ -1,15 +1,21 @@
 import type { PullRequestComment } from "#src/models/coderabbit/collect/PullRequestComment";
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
-import { readEntries } from "#src/services/coderabbit/collect/readEntries";
-import { runGh } from "#src/services/coderabbit/runGh";
+import { readEntries } from "#src/services/coderabbit/shared/readEntries";
+import { runGh } from "#src/services/coderabbit/shared/runGh";
+import { getResult } from "@esposter/shared";
 
 // Every commit in the range that answers a finding gets its reply — the one the skill says cites a sha the
 // Remote has. Predicate-guarded per thread, so the run that pushed and died before replying is finished by any
 // Later run, and a run that finds every reply in place posts nothing.
+//
+// Each post is best-effort, because the state it reports is already durable and the reporting is not: GitHub
+// Answers 500 with an empty body on a thread often enough to have taken a run down after its window had landed,
+// And an exception there ends the run before the replies behind it. The predicate re-attempts every one on the
+// Next run, so a transient refusal costs nothing and a lasting one costs a thread rather than the pipeline.
 export const replyAnswered = (pullRequest: number, range: string, viewerLogin: string, isDryRun: boolean): void => {
   const commits = readAnsweredCommits(range);
   if (commits.length === 0) return;
@@ -30,12 +36,14 @@ export const replyAnswered = (pullRequest: number, range: string, viewerLogin: s
       const body = `Agreed, fixed in ${sha} — ${subject}`;
       console.info(`reply ${commentId.toString()}: ${body}`);
       if (!isDryRun)
-        runGh([
-          "api",
-          `repos/{owner}/{repo}/pulls/${pullRequest.toString()}/comments/${commentId.toString()}/replies`,
-          "-f",
-          `body=${body}`,
-        ]);
+        getResult(() =>
+          runGh([
+            "api",
+            `repos/{owner}/{repo}/pulls/${pullRequest.toString()}/comments/${commentId.toString()}/replies`,
+            "-f",
+            `body=${body}`,
+          ]),
+        ).orTee(console.error);
     }
 
   const commitsByReview = Map.groupBy(
@@ -49,6 +57,7 @@ export const replyAnswered = (pullRequest: number, range: string, viewerLogin: s
     const lines = drained.map(({ commit }) => `- ${commit.sha} — ${commit.subject}`);
     const body = `${marker}\nBody-only findings of review ${reviewId.toString()} are answered by:\n${lines.join("\n")}`;
     console.info(`verdict comment for review ${reviewId.toString()}`);
-    if (!isDryRun) runGh(["pr", "comment", pullRequest.toString(), "--body", body]);
+    if (!isDryRun)
+      getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).orTee(console.error);
   }
 };

@@ -16,6 +16,7 @@ import { resourceAccesses } from "#src/schema/resourceAccesses";
 import { resourceFavorites } from "#src/schema/resourceFavorites";
 import { resourcePublications } from "#src/schema/resourcePublications";
 import { resources, resourceTypeEnum } from "#src/schema/resources";
+import { resourceVersions, snapshotChannelEnum, snapshotReasonEnum } from "#src/schema/resourceVersions";
 import { roomCategoriesInMessage } from "#src/schema/roomCategoriesInMessage";
 import { roomEmojisInMessage } from "#src/schema/roomEmojisInMessage";
 import { roomFiltersInMessage, wordFilterActionEnum } from "#src/schema/roomFiltersInMessage";
@@ -62,6 +63,7 @@ export const schema = {
   resourcePublications,
   resources,
   resourceTypeEnum,
+  resourceVersions,
   roomCategoriesInMessage,
   roomEmojisInMessage,
   roomFiltersInMessage,
@@ -71,6 +73,8 @@ export const schema = {
   scheduledMessageJobsInMessage,
   searchHistoriesInMessage,
   sessions,
+  snapshotChannelEnum,
+  snapshotReasonEnum,
   storageLedger,
   storageTierEnum,
   threadFollowsInMessage,

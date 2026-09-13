@@ -2,13 +2,13 @@
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { Resource } from "@esposter/db-schema";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { SnapshotReasonTitleMap } from "#shared/services/resource/SnapshotReasonTitleMap";
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
+import { SnapshotChannel } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {

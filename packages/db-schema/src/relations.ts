@@ -15,6 +15,7 @@ import { resourceAccessesRelation } from "#src/relations/resourceAccessesRelatio
 import { resourceFavoritesRelation } from "#src/relations/resourceFavoritesRelation";
 import { resourcePublicationsRelation } from "#src/relations/resourcePublicationsRelation";
 import { resourcesRelation } from "#src/relations/resourcesRelation";
+import { resourceVersionsRelation } from "#src/relations/resourceVersionsRelation";
 import { roomCategoriesInMessageRelation } from "#src/relations/roomCategoriesInMessageRelation";
 import { roomEmojisInMessageRelation } from "#src/relations/roomEmojisInMessageRelation";
 import { roomFiltersInMessageRelation } from "#src/relations/roomFiltersInMessageRelation";
@@ -51,6 +52,7 @@ export const relations = {
   ...resourceFavoritesRelation,
   ...resourcePublicationsRelation,
   ...resourcesRelation,
+  ...resourceVersionsRelation,
   ...roomCategoriesInMessageRelation,
   ...roomEmojisInMessageRelation,
   ...roomFiltersInMessageRelation,

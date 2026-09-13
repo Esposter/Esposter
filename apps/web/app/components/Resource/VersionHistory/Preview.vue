@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { parseSnapshotVersionId } from "@/services/resource/parseSnapshotVersionId";
 import { ViewComponentMap } from "@/services/resource/ViewComponentMap";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
+import { SnapshotChannel } from "@esposter/db-schema";
 
 interface Props {
   resource: Resource;

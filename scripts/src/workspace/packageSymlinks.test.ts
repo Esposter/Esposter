@@ -1,5 +1,5 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
-import { getWorkspacePackageDirectories } from "#src/services/getWorkspacePackageDirectories";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getWorkspacePackageDirectories } from "#src/services/shared/getWorkspacePackageDirectories";
 import { readdirSync, readlinkSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { describe, expect, test } from "vitest";

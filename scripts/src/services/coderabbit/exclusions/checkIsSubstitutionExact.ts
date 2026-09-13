@@ -1,4 +1,4 @@
-import type { RenameSubstitution } from "#src/models/coderabbit/RenameSubstitution";
+import type { RenameSubstitution } from "#src/models/coderabbit/shared/RenameSubstitution";
 
 // Replaying the sweep's substitutions on the parent blob must reproduce the committed blob byte for byte: then
 // There is by construction no other content change, so a balanced logic edit cannot be admitted. It errs only

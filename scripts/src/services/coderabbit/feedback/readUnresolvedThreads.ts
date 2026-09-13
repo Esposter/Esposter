@@ -1,10 +1,10 @@
 import type { ReviewThreadsPage } from "#src/models/coderabbit/feedback/ReviewThreadsPage";
-import type { ReviewThread } from "#src/models/coderabbit/ReviewThread";
+import type { ReviewThread } from "#src/models/coderabbit/shared/ReviewThread";
 
-import { CODERABBIT_GRAPHQL_LOGIN } from "#src/services/coderabbit/constants";
-import { getRepository } from "#src/services/coderabbit/getRepository";
-import { runGh } from "#src/services/coderabbit/runGh";
-import { parseMachineJson } from "#src/services/parseMachineJson";
+import { CODERABBIT_GRAPHQL_LOGIN } from "#src/services/coderabbit/shared/constants";
+import { getRepository } from "#src/services/coderabbit/shared/getRepository";
+import { runGh } from "#src/services/coderabbit/shared/runGh";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 
 // `$endCursor` and `pageInfo` are both load-bearing: `gh` follows the cursor only when the query declares one
 // And selects the other, and without them it returns the first page and exits 0. A long-lived pull request
@@ -49,9 +49,9 @@ export const readUnresolvedThreads = (pullRequest: number): ReviewThread[] => {
     .flatMap(({ data }) => data.repository.pullRequest.reviewThreads.nodes)
     .filter(({ isResolved }) => !isResolved)
     .flatMap(({ firstComment, lastComment, line, path }) => {
-      const lastAuthorLogin = lastComment.nodes.at(-1)?.author.login ?? "";
+      const lastAuthorLogin = lastComment.nodes.at(-1)?.author?.login ?? "";
       return firstComment.nodes
-        .filter(({ author }) => author.login === CODERABBIT_GRAPHQL_LOGIN)
+        .filter(({ author }) => author?.login === CODERABBIT_GRAPHQL_LOGIN)
         .map(({ body, databaseId }) => ({
           body,
           commentId: databaseId,

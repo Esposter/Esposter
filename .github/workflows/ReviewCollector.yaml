@@ -1,16 +1,32 @@
 name: ♻️ Review Collector
 
-# The garbage collector of the review budget (docs: proposals/infra/review-collector). Allocation — the session
-# pushing `queue` — and freeing — CodeRabbit submitting a review — run the same idempotent cycle, and the cycle's
-# gates decide whether anything is done. There is deliberately no `schedule`: both signals are webhooks the
-# platform already delivers, and a cron here would be polling wearing an ops hat.
+# The garbage collector of the review budget (docs: infra/review-collector). Allocation — the session pushing
+# `queue` — and freeing — CodeRabbit finishing a review — run the same idempotent cycle, and the cycle's gates
+# decide whether anything is done. There is deliberately no `schedule`: every one of these is a webhook the
+# platform already delivers, and the one state change that sends none — a rate limit lifting — is answered by
+# the `retrigger` job below, which waits out the deadline the bot itself publishes rather than asking on a timer.
 on:
   push:
     branches:
       - queue
+      # The return stroke. A release merging, or a dependency bump landing directly, both move `main`; the cycle
+      # fast-forwards `develop` onto it when `develop` is an ancestor. The release pull request is closed by then,
+      # so no review event will ever fire for it and this is the only thing that carries `develop` forward.
+      - main
   pull_request_review:
     types:
       - submitted
+  # CodeRabbit's verdict is a commit status (context `CodeRabbit`), and it flips it a moment after writing the
+  # review body. Listening to both ends of that gap is what keeps a dropped `pull_request_review` delivery, or a
+  # review that ends by status alone, from parking the pipeline until the session's next push.
+  status:
+  # The bot's answer to the retrigger the cycle posts when a rate limit's deadline has passed. That answer is a
+  # comment, or an edit of the walkthrough it already wrote — never a review and never a status — so this is the
+  # only event that carries it, and it is what lets the cycle ask and exit instead of waiting for the reply.
+  issue_comment:
+    types:
+      - created
+      - edited
   workflow_dispatch:
     inputs:
       force:
@@ -21,22 +37,30 @@ on:
 permissions:
   contents: read
 
-# Every fire waits for the one ahead of it and re-reads the remote. The bot's own replies arrive as reviews, so
-# a drain is followed by several fires within seconds — each after the first exits at the gates.
-concurrency:
-  group: review-collector
-  cancel-in-progress: false
-
 jobs:
   collect:
     name: Collect
     # A review event fires for every review on every main-based pull request — renovate's included — and for
-    # every batch of replies the bot answers. Only the bot's reviews of the release pull request run a cycle.
+    # every batch of replies the bot answers. Only the bot's reviews of the release pull request run a cycle, and
+    # only CodeRabbit's own status does: every deployment writes one of its own against the same commits. A
+    # comment runs one only when the bot wrote it on a pull request — the collector's own marker comments would
+    # otherwise wake the cycle that just posted them.
     if: >-
-      github.event_name != 'pull_request_review' ||
-      (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.ref == 'develop')
+      (github.event_name != 'pull_request_review' ||
+      (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.ref == 'develop')) &&
+      (github.event_name != 'status' || github.event.context == 'CodeRabbit') &&
+      (github.event_name != 'issue_comment' ||
+      (github.event.comment.user.login == 'coderabbitai[bot]' && github.event.issue.pull_request))
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    # Every fire waits for the one ahead of it and re-reads the remote. The bot's own replies arrive as reviews,
+    # so a drain is followed by several fires within seconds — each after the first exits at the gates. The group
+    # is on the job rather than the workflow so the retrigger's wait never holds it.
+    concurrency:
+      group: review-collector
+      cancel-in-progress: false
+    outputs:
+      retriggerDelaySeconds: ${{ steps.collect.outputs.retriggerDelaySeconds }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -46,6 +70,11 @@ jobs:
           # starts no workflow runs, so `develop`'s CI and deployment would never fire on a collector push.
           fetch-depth: 0
           token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+          # The drain runs a permission-skipping Claude session over review text it must not trust, in this very
+          # checkout. A persisted credential would sit in `.git/config` where that session can spend it, so git
+          # is authenticated through `gh` instead — which reads the token from an environment the drain's own
+          # child process is not given (`runDrain`).
+          persist-credentials: false
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
@@ -58,7 +87,7 @@ jobs:
       - name: 🏗️ Build the shared package
         run: pnpm --filter "@esposter/shared..." run build
 
-      - name: 🪪 Identify the collector
+      - name: 🆔 Identify the collector
         # `fileMode` off because the install marks a package's `bin` script executable, and on Linux that mode
         # flip alone reads as a dirty tree — which the collector refuses to work in.
         run: |
@@ -67,24 +96,52 @@ jobs:
           git config core.fileMode false
 
       - name: 🤝 Trust the workspace
-        # A fresh runner has no ~/.claude.json, so Claude Code treats the checkout as untrusted and ignores every
-        # permissions.allow entry in .agents/settings.local.json. Pre-accepting the trust dialog silences that.
-        run: |
-          node -e '
-            const fs = require("fs");
-            const os = require("os");
-            const path = require("path");
-            const file = path.join(os.homedir(), ".claude.json");
-            const config = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
-            config.projects ??= {};
-            config.projects[process.env.GITHUB_WORKSPACE] ??= {};
-            config.projects[process.env.GITHUB_WORKSPACE].hasTrustDialogAccepted = true;
-            fs.writeFileSync(file, JSON.stringify(config, null, 2));
-          '
+        uses: ./.github/actions/trust-workspace
 
+      # The flag is expanded by the template rather than the shell: the input is a boolean, so the expression can
+      # only ever yield the literal flag or nothing, and the shell never sees an empty argument to quote.
       - name: ♻️ Collect
+        id: collect
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
-          FORCE_FLAG: ${{ inputs.force == true && '--force' || '' }}
-        run: pnpm ai:coderabbit:collect $FORCE_FLAG
+        run: |
+          gh auth setup-git
+          pnpm ai:coderabbit:collect ${{ inputs.force == true && '--force' || '' }}
+
+  # The one missing webhook, supplied. A rate limit lifts on CodeRabbit's clock and announces nothing when it
+  # does, so the cycle reads the deadline the bot states — "Next included review available in N minutes" — and
+  # this job sleeps it out and runs the cycle again. That run re-reads the pull request before asking anything:
+  # a session push during the sleep may already have a review running, which a retrigger posted blind would
+  # cancel. It is the cycle, in TypeScript, that posts `@coderabbitai review` once the deadline has passed — and
+  # then exits, because the bot's answer arrives as an `issue_comment` this workflow already runs on.
+  retrigger:
+    name: Retrigger
+    needs: collect
+    if: needs.collect.outputs.retriggerDelaySeconds != ''
+    runs-on: ubuntu-latest
+    # The cycle caps one sleep under this (`RETRIGGER_SLEEP_CAP_MS`) and relays a longer deadline across runs
+    timeout-minutes: 90
+    # The built-in token starts no workflow runs — except by `workflow_dispatch`, which is the one thing this
+    # job does, so the collector token never reaches it.
+    permissions:
+      actions: write
+    # Its own group: `collect` serialises the cycles, and a wait measured in the bot's minutes must not sit in
+    # that queue holding back a session push. A newer run supersedes a pending one — it carries the newer
+    # deadline, and the cycle it wakes reads the same state either way.
+    concurrency:
+      group: review-collector-retrigger
+      cancel-in-progress: true
+    steps:
+      - name: ⏳ Wait out the rate limit
+        env:
+          DELAY_SECONDS: ${{ needs.collect.outputs.retriggerDelaySeconds }}
+        run: sleep "$DELAY_SECONDS"
+
+      # The ref picks which copy of this file and of the cycle runs, nothing else — every branch the cycle acts
+      # on it reads from `origin`. `develop` carries the newest one: it is where the queue's windows land, and
+      # it is already the copy a `pull_request_review` runs from.
+      - name: ♻️ Run the cycle again
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref develop

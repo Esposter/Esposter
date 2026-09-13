@@ -3,7 +3,7 @@
 Read when planning the push cadence, when deciding what the session pushes and what it never touches, or when
 the collector has moved `develop` and the session has to catch up. This page holds the whole procedure; `SKILL.md`
 keeps the cap, the gates and the finding rules it operates under. The design in full, with the cycle, the runner
-and the ref ownership as separate pages: `apps/web/content/docs/proposals/infra/review-collector/`.
+and the ref ownership as separate pages: `apps/web/content/docs/infra/review-collector/`.
 
 ## Three branches, one writer each
 
@@ -14,15 +14,27 @@ because that pull request's base is the default branch. What pushes `develop` is
 `pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow whenever `queue` is pushed or CodeRabbit
 submits a review.
 
-| Ref            | Written by    | What it holds                                                                   |
-| :------------- | :------------ | :------------------------------------------------------------------------------ |
-| `queue`        | the session   | its linear history — every unported commit in authoring order, no window cuts   |
-| `develop`      | the collector | the reviewed frontier plus at most one unreviewed window, moved by fast-forward |
-| `review-fixes` | the collector | fixes a drain produced that no window has carried yet                           |
+| Ref            | Written by                                 | What it holds                                                                   |
+| :------------- | :----------------------------------------- | :------------------------------------------------------------------------------ |
+| `queue`        | the session                                | its linear history — every unported commit in authoring order, no window cuts   |
+| `develop`      | the collector                              | the reviewed frontier plus at most one unreviewed window, moved by fast-forward |
+| `review-fixes` | the collector                              | fixes a drain produced that no window has carried yet                           |
+| `main`         | a person, and the collector's express lane | the released trunk, plus the commits that never needed a window                 |
 
 A queue push spends nothing: it starts no review, only a collector run that measures. So the standing rule
 that a `develop` push is asked for every time is unchanged and now never applies to the session — the collector
 holds the authorisation, and the four gates of `SKILL.md` are the gates it clears from the remote on every run.
+
+**A commit with nothing in it to review never occupies a window.** The collector's express lane proves that from
+the diff — every file a 100% rename or an import specifier following one, and no file anything reads by its path
+— and cherry-picks those onto `main`, out of queue order, so a sweep stops eating a budget counted in files and
+spent on findings. Nothing is asked of the session except the composition below; the design is
+`apps/web/content/docs/infra/review-collector/express-lane.md`.
+
+**So commit a sweep's moves apart from its repairs.** A commit that carries the renames _and_ the refreshed size
+snapshot has one content change in it, and one is enough: the proof is per commit, and a window is cut at commit
+boundaries, so half a commit cannot take the lane. This is the rule `references/window-composition.md` already
+states for the cut's sake, and the lane is the second reason for it.
 
 ## The session's loop
 
@@ -34,10 +46,15 @@ holds the authorisation, and the four gates of `SKILL.md` are the gates it clear
    each other's commits.
 3. Before the next unit, `git fetch`, and when `origin/develop` moved, `git rebase origin/develop`. A
    fast-forwarded `develop` makes the rebase a no-op; a cherry-picked window drops the ported commits by patch
-   id and re-parents the rest.
+   id and re-parents the rest. **Not hygiene — it is what keeps the drain's fixes.** A queue left on an old base
+   carries commits written against files the drain has since repaired on `develop`, and the porter's cherry-pick
+   replays them: where the hunks overlap the window is held, and where they merely sit nearby the queue's older
+   shape lands on top and the fix is gone with nothing reporting it. The rebase is where those two lineages are
+   reconciled, by the one party that can read both — and a queue several windows behind is reconciled by hand,
+   commit by commit, so budget it as work rather than as a command.
 4. Keep working. The collector fires on the push, reads the frontier and the check, drains any open findings
-   onto `review-fixes`, and when the slot is free and the queue has reached the fill target, ports the largest
-   green prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha.
+   onto `review-fixes`, and when the slot is free and the queue has reached the fill target — or the next commit
+   overflows the cap, so the window is as large as it will ever be — ports the largest green prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha.
 
 ```mermaid
 flowchart TD
@@ -47,10 +64,12 @@ flowchart TD
   C -->|yes| F{Open findings}
   F -->|yes| DR[Drain onto review-fixes]
   F -->|no| W
-  DR --> W{Fixes parked or<br/>queue at the fill target}
+  DR --> W{Fixes parked, queue at the<br/>fill target, or the window held}
   W -->|no| U
   W -->|yes| PU[Port fixes then the queue prefix<br/>fast-forward develop]
   PU --> R[Review runs, replies carry the sha]
+  C -->|express: nothing to review| MX[Cherry-pick onto main<br/>no window spent]
+  MX --> S
   R --> S[Session rebases queue onto develop]
   S --> U
 ```
@@ -66,10 +85,28 @@ rejection needs no sha and may be replied to directly.
 
 **When the collector reports a conflict** — its parked fixes changed a file the queue's next commit also changed
 — the session rebases `queue` onto `origin/review-fixes`, not onto `develop`: the fixes will lead the next window,
-and a queue that already carries them replays them as empty.
+and a queue that already carries them owes nothing for them — the porter reads what the queue owes against the tree
+the fixes built, so the copies it carries are ancestors rather than picks.
 
-**A merge of `main` into `queue`** — a dependency bump landing — is never owed to `develop`: the porter skips
-merge commits, and their content reaches `develop` through the `main` sync the `git` skill describes.
+**`main` is synced by the collector, not the session.** After the release pull request merges, the push to
+`main` runs the cycle and `develop` is fast-forwarded to it; a dependency bump that lands on `main` alone is folded
+into the next window as a merge commit, lockfile rebuilt the `git` skill's way, so it rides a slot that was being
+spent anyway. A merge of `main` into `queue` the session makes is never owed to `develop` — the porter takes only
+the commits the queue authored — and the session's next rebase onto `develop` linearises it away.
+
+**The collector can be run by hand when its workflow is off.** `gh workflow disable ReviewCollector.yaml` stops
+every trigger; `pnpm ai:coderabbit:collect` then runs the same cycle from a checkout whose `gh` login is the
+collector's account — never this checkout, which the script switches branches in and refuses when dirty, but a
+detached `git worktree add` on `origin/develop` with its own `pnpm i` and `@esposter/shared` build. It clears the
+four gates from the remote exactly as the runner does, so the standing rule is unchanged: the run is asked for.
+`gh workflow enable ReviewCollector.yaml` hands the cycle back — and from then on the cycle is never also run by
+hand: the compare-and-swap push refuses the loser, but the drain the loser ran was a Claude session spent for
+nothing.
+
+**A finding the session answers on `queue` ports in queue order, not first.** Only `review-fixes` commits lead a
+window. A fix committed at the queue's tail waits for the windows ahead of it, and its thread reply with the sha
+comes when it lands; picking it ahead of the commits it was written on top of conflicts, so the wait is the cost
+of answering in-session rather than leaving the drain to it.
 
 ## Re-opening the standing PR after it merges
 

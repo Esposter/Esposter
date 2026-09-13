@@ -1,0 +1,48 @@
+import { DAY_MS, DRAIN_LIMIT_FALLBACK_MS } from "#src/services/coderabbit/collect/constants";
+
+// Claude Code refusing to start is not the drain failing. It prints its own sentence and exits non-zero, which
+// Reads from here exactly like a session that tried and could not — and counting it as an attempt spends the
+// Quarantine budget on an outage, so three pushes during one limit would park a review for a person forever.
+//
+// The phrase alone is not proof of a refusal: a drain that ran and then failed for its own reasons is asked to
+// Fix findings about this very wording, so its summary can discuss "session limit" in ordinary prose without ever
+// Stating a reset. Only the refusal's own template does both, and it does both in one sentence — so the match is
+// Bounded to the line carrying the phrase. Spanning the whole output pairs an early mention with an unrelated
+// "resets" any distance below it, which is an ordinary failed drain reported as a refusal to start, and the
+// Difference is a real attempt going uncounted while the collector waits out a limit nobody imposed.
+//
+// Bounding to the line is not enough on its own: a failed drain's summary can still say, on one line, that it
+// Could not fix something about the "session limit" while a config value elsewhere on that line "resets" for its
+// Own reasons. So the phrase itself is pinned to the two openers the refusal is actually known to print, never
+// The bare words "session limit" or "usage limit" that ordinary prose reaches for just as often.
+const LIMIT_PATTERN = /(?:you've hit your session limit|usage limit reached)\b[^\n]*\bresets?\b[^\n]*/iu;
+
+// "You've hit your session limit · resets 3:10am (UTC)", and the wording the limit takes when it states an hour
+// Alone. It is read out of the refusal sentence rather than the whole output, so the deadline is the one that
+// Refusal stated. The zone is read rather than assumed: a runner is UTC, a developer's clone is not, and a reset
+// Computed in the wrong one is a backoff that ends early or a day late.
+const RESET_PATTERN = /resets?(?: at)? (?<hour>\d{1,2})(?::(?<minute>\d{2}))?\s*(?<meridiem>am|pm) \(UTC\)/iu;
+
+// When the limit ends, as an instant. `undefined` when the output is not a limit at all, so a caller can tell a
+// Refusal to start from a drain that ran. An unparseable deadline falls back rather than failing: the collector
+// Waits out a fixed backoff instead, and a wait that is too short costs one more skipped run.
+export const getDrainLimitResetMs = (output: string, nowMs: number): number | undefined => {
+  const refusal = LIMIT_PATTERN.exec(output)?.[0];
+  if (!refusal) return undefined;
+
+  const groups = RESET_PATTERN.exec(refusal)?.groups;
+  if (!groups?.hour || !groups.meridiem) return nowMs + DRAIN_LIMIT_FALLBACK_MS;
+
+  const hour = Number(groups.hour) % 12;
+  const hour24 = groups.meridiem.toLowerCase() === "pm" ? hour + 12 : hour;
+  const now = new Date(nowMs);
+  const resetAtMs = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+    hour24,
+    Number(groups.minute ?? 0),
+  );
+  // The sentence states a time of day, never a date, so the reset is the next time that clock reads it
+  return resetAtMs > nowMs ? resetAtMs : resetAtMs + DAY_MS;
+};

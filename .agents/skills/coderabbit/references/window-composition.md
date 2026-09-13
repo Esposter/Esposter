@@ -10,7 +10,7 @@ git push origin <cut-sha>:<branch>      # everything after <cut-sha> stays local
 
 ## Cutting a sitting into a window
 
-The same steps every time, so a window is filled without a rewritten pushed commit or a head that fails CI:
+The same steps every time, so a window is filled without a rewritten pushed commit or a head that fails CI. Keeping the repairs off the unit commit buys a second thing besides a green cut: a unit that is nothing but moves and the imports following them takes the express lane and costs no window at all, and a snapshot refresh folded into it is the one file that sinks the proof (`apps/web/content/docs/infra/review-collector/express-lane.md`).
 
 ```mermaid
 flowchart TD

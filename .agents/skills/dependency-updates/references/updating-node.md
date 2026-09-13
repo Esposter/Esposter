@@ -10,7 +10,7 @@ Don't hand-edit the node version — run `pnpm update:node [version]` from the r
 4. Enables corepack on the new version (a freshly installed node ships it disabled, so `pnpm` would otherwise be missing)
 5. Schedules removal of the old version — fnm can't delete a node version while it's in use, so a detached process retries `fnm uninstall <old>` until this call's node processes exit, then removes it (self-cleaning, no process killing)
 
-The TS orchestration (`scripts/src/updateNode/`) resolves versions and edits the manifests; the per-OS `install.ps1`/`install.sh` (dispatched via `crossOS`, like `refresh:lockfile`) do the fnm work. Pure helpers (version selection, manifest editing) live under `scripts/src/services/updateNode/` with unit tests; the generic registry/version utilities are shared from the `scripts/src/services/` root.
+The TS orchestration (`scripts/src/updateNode/`) resolves versions and edits the manifests; the per-OS `install.ps1`/`install.sh` (dispatched via `crossOS`, like `refresh:lockfile`) do the fnm work. Pure helpers (version selection, manifest editing) live under `scripts/src/services/updateNode/` with unit tests; the generic registry/version utilities live in `scripts/src/services/shared/`.
 
 On Windows the bump also invalidates virrun's warm snapshot, and the re-provision runs `corepack pnpm install` in the WSL guest — a separate fnm install this script never reaches. Node stopped bundling corepack, so a guest on one of those releases fails every sandboxed command with `/bin/sh: 1: corepack: not found` until it is given one (`npm i -g corepack` against the guest's node bin). The warm snapshot is why this surfaces on a node bump rather than on the release that dropped corepack.
 

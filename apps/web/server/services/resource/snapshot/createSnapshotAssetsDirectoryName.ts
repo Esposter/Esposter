@@ -1,5 +1,4 @@
-import type { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
-import type { Resource } from "@esposter/db-schema";
+import type { Resource, SnapshotChannel } from "@esposter/db-schema";
 
 // A fresh directory per snapshot attempt, deliberately not keyed by the version: the publish transaction claims
 // The version, so a clone running before it can only predict one — and two concurrent publishes predict the same,

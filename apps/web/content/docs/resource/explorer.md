@@ -149,7 +149,7 @@ stateDiagram-v2
   Creating --> Draft: createResource (row only, no blob yet)
   Draft --> Draft: edit blade → saveResourceContent (contentVersion++)
   Draft --> Draft: rename → updateResource
-  Draft --> Published: publishResource (Publishable types) — snapshot to {id}/published/{n}
+  Draft --> Published: publishResource (Publishable types) — a published version
   Published --> Published: re-publish (publishVersion++)
   Published --> Draft: unpublishResource (delete publication row)
   Draft --> Deleted: deleteResource (deletedAt set)

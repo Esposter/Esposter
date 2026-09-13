@@ -12,7 +12,7 @@ A Note is the platform's plain **document**: meeting notes, a spec, a README-sty
 ```mermaid
 flowchart LR
   ED["Editor blade<br/>Tiptap document editor"] -->|"onUpdate → saveResourceContent<br/>content = Tiptap JSON doc"| BLOB[("{id}/content")]
-  BLOB -->|publishResource| SNAP[("{id}/published/{n}")]
+  BLOB -->|publishResource| SNAP[("published version n")]
   VIEW["/view/Note/[id]<br/>ViewComponentMap[Note]"] -->|readPublishedResourceContent| HTML["generateHTML(doc) render<br/>sanitized at the boundary"]
 ```
 
@@ -23,7 +23,7 @@ flowchart LR
 
 ## Data model
 
-Note owns no tables. It is one `ResourceType` enum value (`Note`, added to the `resource_type` Postgres enum by migration `20260717000000_add_note_resource_type`) and one `ResourceDefinitionMap` entry (`icon`, `title`, `contentSchema`, `capabilities: { publishable: true }`). Its working copy lives at `{id}/content` and its publish snapshots at `{id}/published/{n}` in the shared `ResourceAssets` blob container, exactly like every other resource — see [resources](/docs/architecture/resource).
+Note owns no tables. It is one `ResourceType` enum value (`Note`, added to the `resource_type` Postgres enum by migration `20260717000000_add_note_resource_type`) and one `ResourceDefinitionMap` entry (`icon`, `title`, `contentSchema`, `capabilities: { publishable: true }`). Its working copy lives at `{id}/content` in the shared `ResourceAssets` blob container and its published versions in the [version store](/docs/resource/resource-version-store), exactly like every other resource — see [resources](/docs/architecture/resource).
 
 ## Key files
 

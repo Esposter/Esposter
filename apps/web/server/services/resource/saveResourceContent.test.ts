@@ -4,8 +4,6 @@ import type { Transaction } from "@@/server/models/db/Transaction";
 import type { Context } from "@@/server/trpc/context";
 import type { Resource } from "@esposter/db-schema";
 
-import { SnapshotChannel } from "#shared/models/resource/SnapshotChannel";
-import { SnapshotReason } from "#shared/models/resource/SnapshotReason";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
@@ -13,8 +11,8 @@ import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchroni
 import { resourceEventEmitter } from "@@/server/services/resource/events/resourceEventEmitter";
 import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { saveResourceContent } from "@@/server/services/resource/saveResourceContent";
-import { getSnapshotContentBlobName } from "@@/server/services/resource/snapshot/getSnapshotContentBlobName";
 import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
+import { readSnapshotVersionContent } from "@@/server/services/resource/snapshot/readSnapshotVersionContent";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
 import {
@@ -24,6 +22,8 @@ import {
   ResourceActivityType,
   resources,
   ResourceType,
+  SnapshotChannel,
+  SnapshotReason,
   storageLedger,
   users,
 } from "@esposter/db-schema";
@@ -93,7 +93,8 @@ describe(saveResourceContent, () => {
       resource: latestResource,
     });
   };
-  const readRevisionCount = async () => (await readSnapshotHistory(resource.id, SnapshotChannel.Revisions)).length;
+  const readRevisionCount = async () =>
+    (await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions)).length;
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(1);
   const item = new TodoListItem({ dueAt, name });
@@ -141,7 +142,9 @@ describe(saveResourceContent, () => {
 
     await saveLatestResourceContent(content);
 
-    await expect(readSnapshotHistory(resource.id, SnapshotChannel.Revisions)).resolves.toStrictEqual([]);
+    await expect(readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions)).resolves.toStrictEqual(
+      [],
+    );
   });
 
   test("keeps a revision of what a save replaces once there is content to keep", async () => {
@@ -149,16 +152,12 @@ describe(saveResourceContent, () => {
 
     await saveLatestResourceContent(content);
     await saveLatestResourceContent({ items: [] });
-    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-    assert.exists(container);
 
     // The revision holds the content this save replaced, not the content it wrote — a point to return *to*
-    expect(
-      jsonDateParse(
-        container.get(getSnapshotContentBlobName(resource.id, SnapshotChannel.Revisions, 1))?.toString() ?? "",
-      ),
-    ).toStrictEqual(jsonDateParse(JSON.stringify(content)));
-    const [snapshotVersion] = await readSnapshotHistory(resource.id, SnapshotChannel.Revisions);
+    await expect(
+      readSnapshotVersionContent(mockContext.db, resource, { channel: SnapshotChannel.Revisions, version: 1 }),
+    ).resolves.toStrictEqual(contentSchema.parse(jsonDateParse(JSON.stringify(content))));
+    const [snapshotVersion] = await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions);
 
     expect(snapshotVersion?.reason).toBe(SnapshotReason.Automatic);
     expect(snapshotVersion?.version).toBe(1);
@@ -252,29 +251,38 @@ describe(saveResourceContent, () => {
     await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength);
   });
 
-  // A revision is a full copy of the content charged like any other stored blob — so the counter carries the
-  // Working copy plus one copy per interval the owner kept editing through, which is the only path that grows
-  // It without a bigger document behind it
+  // A revision is charged for what its object cost to store rather than for a copy of the content — so the
+  // Counter carries the working copy plus what each interval's recovery point added, which is the only path that
+  // Grows it without a bigger document behind it
   test("charges a revision on top of the content once per interval", async () => {
     expect.hasAssertions();
 
+    const readStoredContentBytes = () =>
+      MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(getContentBlobName(resource.id))?.byteLength;
+    const readStoredVersionBytes = async () =>
+      (
+        await mockContext.db.query.resourceVersions.findMany({
+          columns: { storedBytes: true },
+          where: { resourceId: { eq: resource.id } },
+        })
+      ).reduce((total, { storedBytes }) => total + storedBytes, 0);
     await saveLatestResourceContent(content);
-    const storedContent = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(
-      getContentBlobName(resource.id),
-    );
-    assert.exists(storedContent);
 
-    await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength);
+    await expect(readStorageBytesUsed()).resolves.toBe(readStoredContentBytes());
 
-    await saveLatestResourceContent(content);
+    await saveLatestResourceContent({ items: [] });
+    const firstRevisionBytes = await readStoredVersionBytes();
 
-    await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength * 2);
+    expect(firstRevisionBytes).toBeGreaterThan(0);
+    await expect(readStorageBytesUsed()).resolves.toBe((readStoredContentBytes() ?? 0) + firstRevisionBytes);
 
     // A second interval, so the growth is shown to be per interval rather than a one-off first revision
     vi.advanceTimersByTime(SNAPSHOT_INTERVAL_MS);
     await saveLatestResourceContent(content);
+    const secondRevisionBytes = await readStoredVersionBytes();
 
-    await expect(readStorageBytesUsed()).resolves.toBe(storedContent.byteLength * 3);
+    expect(secondRevisionBytes).toBeGreaterThan(firstRevisionBytes);
+    await expect(readStorageBytesUsed()).resolves.toBe((readStoredContentBytes() ?? 0) + secondRevisionBytes);
   });
 
   // The prior content is read before the write overwrites it, so a hook that diffs sees what it replaced —

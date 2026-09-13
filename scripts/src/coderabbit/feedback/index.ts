@@ -1,14 +1,14 @@
-import type { GitHubEntry } from "#src/models/coderabbit/GitHubEntry";
-import type { GitHubReview } from "#src/models/coderabbit/GitHubReview";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
+import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { IN_PROGRESS_MARKER, WALKTHROUGH_MARKERS } from "#src/services/coderabbit/feedback/constants";
 import { getFindingLines } from "#src/services/coderabbit/feedback/getFindingLines";
 import { getLatestMarkedBlock } from "#src/services/coderabbit/feedback/getLatestMarkedBlock";
 import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
-import { getPullRequestArgument } from "#src/services/coderabbit/getPullRequestArgument";
-import { getSortedByUpdatedAt } from "#src/services/coderabbit/getSortedByUpdatedAt";
-import { readBotEntries } from "#src/services/coderabbit/readBotEntries";
+import { getPullRequestArgument } from "#src/services/coderabbit/shared/getPullRequestArgument";
+import { getSortedByUpdatedAt } from "#src/services/coderabbit/shared/getSortedByUpdatedAt";
+import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const pullRequest = getPullRequestArgument();

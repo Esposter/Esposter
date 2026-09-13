@@ -1,9 +1,9 @@
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
 import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
-import { createSceneClass } from "#src/services/createSceneClass";
 import { runLifecycleListeners } from "#src/services/hooks/runLifecycleListeners";
 import { runSceneShutdown } from "#src/services/hooks/runSceneShutdown";
+import { createSceneClass } from "#src/services/shared/createSceneClass";
 import { usePhaserStore } from "#src/store/index";
 import { ExternalSceneStore } from "#src/store/scene";
 import { NotInitializedError } from "@esposter/shared";

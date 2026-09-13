@@ -1,4 +1,4 @@
-import type { RenameSubstitution } from "#src/models/coderabbit/RenameSubstitution";
+import type { RenameSubstitution } from "#src/models/coderabbit/shared/RenameSubstitution";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 // One `OldName=NewName` per rename the sweep made, so the replay can reproduce the committed blob. Both halves must

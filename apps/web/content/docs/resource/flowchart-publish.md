@@ -18,7 +18,7 @@ flowchart LR
   DEF["ResourceDefinitionMap<br/>publishable: true"] -->|derives| UNION["PublishableResourceType"]
   UNION -->|"requires an entry<br/>(compile error otherwise)"| VCM["ViewComponentMap[Flowchart]"]
   UNION -->|grants| PROCS["publish procedures<br/>on the flowchart router"]
-  PROCS -->|"publishResource — plain content copy"| SNAP[("{id}/published/{n}")]
+  PROCS -->|"publishResource — plain content copy"| SNAP[("published version n")]
   VCM -->|readPublishedResourceContent| VIEW["/view/Flowchart/[id]<br/>read-only VueFlow render"]
 ```
 

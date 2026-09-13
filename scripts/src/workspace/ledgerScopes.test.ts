@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AGENT_DIRECTORY } from "@esposter/configuration";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { glob } from "node:fs/promises";

@@ -4,10 +4,10 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { VNode } from "vue";
 
 import { useGame } from "#src/composables/useGame";
-import { createSceneClass } from "#src/services/createSceneClass";
-import { getScene } from "#src/services/getScene";
 import { runSceneShutdown } from "#src/services/hooks/runSceneShutdown";
-import { InjectionKeyMap } from "#src/services/InjectionKeyMap";
+import { createSceneClass } from "#src/services/shared/createSceneClass";
+import { getScene } from "#src/services/shared/getScene";
+import { InjectionKeyMap } from "#src/services/shared/InjectionKeyMap";
 import { useCameraStore } from "#src/store/camera";
 import { usePhaserStore } from "#src/store/index";
 import { useInputStore } from "#src/store/input";

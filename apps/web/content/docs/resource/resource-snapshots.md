@@ -5,7 +5,7 @@ description: Channel-addressed copies of a resource's content — published vers
 
 # Resource snapshots
 
-Every resource type has restorable point-in-time versions of its working copy, whether or not it can be published. A snapshot is addressed by **channel**: `published` is what a publish writes, `revisions` is where the working copy's own recovery points live, and everything between them — the blob address, the listing, the reconstitution, the restore and the ledger — is one mechanism rather than one per channel.
+Every resource type has restorable point-in-time versions of its working copy, whether or not it can be published. A snapshot is addressed by **channel**: `published` is what a publish writes, `revisions` is where the working copy's own recovery points live, and everything between them — the version row, the listing, the reconstitution, the restore and the ledger — is one mechanism rather than one per channel.
 
 A rollback reaches either channel, on any type, from a panel over the thing being restored — never a nav blade of its own, and never restricted to a deliberate publish on a publishable type. Restoring is an operation on one resource, so it belongs beside that resource rather than in a surface of its own.
 
@@ -13,11 +13,12 @@ A rollback reaches either channel, on any type, from a panel over the thing bein
 
 ```text
 {id}/content.json                        working copy
-{id}/revisions/{n}.json                  revision channel — reference kind, owner-only
-{id}/published/{n}.json                  published channel — immutable kind, publicly served
+{id}/objects/{hash}                      every retained version's content, either channel — see the version store
 {id}/published/{publishId}/files/…       the immutable channel's asset clones
 {id}/files/…                             binary assets, FileAssets types only
 ```
+
+A version is a `resourceVersions` row keyed by resource, channel and version number, pointing at a content-addressed object; how a version is encoded, charged and collected is the [resource version store](/docs/resource/resource-version-store). The revision channel is reference kind and owner-only; the published channel is immutable kind and publicly served.
 
 `SnapshotChannelDefinitionMap` is the one place a channel says what it is: its kind, its retention, and the title its rows wear.
 
@@ -25,7 +26,7 @@ A rollback reaches either channel, on any type, from a panel over the thing bein
 
 | Shared by both channels                                    | Owned by each caller                                            |
 | ---------------------------------------------------------- | --------------------------------------------------------------- |
-| the blob address `{id}/{segment}/{n}.json`                 | **taking** a snapshot                                           |
+| the version row, and the object it names                   | **taking** a snapshot                                           |
 | the counter in Postgres, and the history listing beside it | publish's transform, version claim, succession check and repair |
 | **reconstitution** — read, re-apply live state, hand back  | the revision's ring-buffer eviction                             |
 | restore — reconstitute, then `saveResourceContent`         | publish's activity entry, notification and view counting        |
@@ -33,16 +34,16 @@ A rollback reaches either channel, on any type, from a panel over the thing bein
 
 Reconstitution is the row that matters, because sharing it fixed a defect rather than saving lines — see the boundary below.
 
-The counter lives in Postgres and is never derived from the listing: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree, because an unpublish sweep is best-effort and retired blobs outlive the row that numbered them. Revisions take two columns on `resources` rather than a table — `revisionVersion` numbers them and `revisionTakenAt` is the clock the automatic trigger reads. A revision's reason and its one-line summary ride as blob metadata, which the listing returns.
+The counter lives in Postgres and is never derived from the listing: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree, because an unpublish sweep is best-effort and retired blobs outlive the row that numbered them. Revisions take two columns on `resources` rather than a table — `revisionVersion` numbers them and `revisionTakenAt` is the clock the automatic trigger reads. A revision's reason and its one-line summary are columns on its version row, which the listing returns.
 
 ### Two snapshot kinds
 
 The clone is the expensive half of a snapshot, and making it a property of the channel is what makes a second channel affordable:
 
-| Kind          | What is written                                                           | Cost                                            | Survives                                             | Used by     |
-| ------------- | ------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------- | ----------- |
-| **Immutable** | content + a clone of every referenced asset, urls rewritten to the clones | one storage round trip **per referenced asset** | the working copy deleting or replacing an asset      | `published` |
-| **Reference** | content only, urls untouched, resolving to live `{id}/files/…`            | one blob                                        | nothing — an asset the owner deletes is gone from it | `revisions` |
+| Kind          | What is written                                                           | Cost                                           | Survives                                             | Used by     |
+| ------------- | ------------------------------------------------------------------------- | ---------------------------------------------- | ---------------------------------------------------- | ----------- |
+| **Immutable** | content + a clone of every referenced asset, urls rewritten to the clones | one version, plus one round trip **per asset** | the working copy deleting or replacing an asset      | `published` |
+| **Reference** | content only, urls untouched, resolving to live `{id}/files/…`            | one version, usually a delta                   | nothing — an asset the owner deletes is gone from it | `revisions` |
 
 Revisions take the reference kind: `{id}/files/` is only emptied by purge, which destroys the revisions in the same sweep, so the window in which one can rot is exactly "the owner deleted an asset and then rolled back past the deletion". A rolled-back revision with one broken image beats no rollback, and a per-asset clone on every revision would mean no revisions at all.
 
@@ -56,9 +57,9 @@ flowchart LR
   WORK --> TAKEREV["revision take<br/>serialize, bump counter and clock, evict oldest"]
   WORK --> TAKEPUB["publish take<br/>transform, claim in txn, succession repair"]
 
-  TAKEREV --> REV[("{id}/revisions/{n}.json")]
+  TAKEREV --> REV[("revision n")]
   TAKEPUB --> CLONE["cloneContentAssets<br/>published/{publishId}/files/…"]
-  CLONE --> PUB[("{id}/published/{n}.json")]
+  CLONE --> PUB[("published version n")]
 
   REV -.->|"urls resolve to the live assets"| FILES
   PUB -.->|"urls rewritten to its own clones"| CLONE
@@ -82,7 +83,7 @@ sequenceDiagram
   participant WORK as working copy
 
   Owner->>R: restoreSnapshotVersion(id, channel, n)
-  R->>SNAP: read {id}/{channel}/{n}.json
+  R->>SNAP: read version n of the channel
   R->>R: take a BeforeRestore revision of the working copy
   R->>R: re-apply live state over the snapshot
   Note over R: the boundary — survey collection settings, and anything else a type declares live
@@ -120,7 +121,7 @@ A resource's first content write takes none — there is no prior state to keep,
 
 The published channel prunes nothing: publishes are deliberate and rare, and a retired public artifact is something an owner may need to point at.
 
-Revisions are a **ring buffer** — a fixed cap in the tens, oldest evicted when a new one lands. Eviction goes through the blob deletion event like every other delete, so the evicted revision's ledger entry is released with it; a bare delete would make the ring buffer a slow quota leak nothing reconciles ([storage quotas](/docs/resource/storage-quotas)).
+Revisions are a **ring buffer** — a fixed cap in the tens, oldest evicted when a new one lands. Eviction deletes the rows that fell out of the window and hands the deletion event exactly the objects no surviving version still needs ([resource version store](/docs/resource/resource-version-store)), so the evicted bytes' ledger entries are released with them; a bare delete would make the ring buffer a slow quota leak nothing reconciles ([storage quotas](/docs/resource/storage-quotas)).
 
 ## Versions the owner sees
 
@@ -146,7 +147,7 @@ Version history is a **panel over whichever blade is open**, not a nav blade: ro
 - **Opens from `Resource/Blade/Actions`**, because Sheet and TodoList are blade-only types with no Editor blade — the action bar is the one surface every type has. It is the only command the feature has: the history is a place you go, never a thing you maintain.
 - **Deep-linkable by route** — `?versions` opens the panel, `?version={channel}|{n}` names the version being previewed, so the back button, a refresh and a shared link all land in the same place.
 - **One list, two address spaces.** Both channels merge into one time-ordered timeline, because the owner has one question. `Current` is always the first row, so the list is never empty on a resource that has just been created; a `Published only` chip filters on publishable types.
-- **A row is choosable**: its channel and version spelled out rather than a bare ordinal, a relative time with the absolute one on hover, its reason from `SnapshotReasonTitleMap`, and a one-line summary from `SnapshotSummaryMap` — `12 items`, `3 columns · 40 rows`. The summary is computed where the snapshot is taken and carried in its blob metadata, so the listing stays one round trip for the whole history.
+- **A row is choosable**: its channel and version spelled out rather than a bare ordinal, a relative time with the absolute one on hover, its reason from `SnapshotReasonTitleMap`, and a one-line summary from `SnapshotSummaryMap` — `12 items`, `3 columns · 40 rows`. The summary is computed where the snapshot is taken and carried on its version row, so the listing stays one query for the whole history.
 - **Preview in place** renders a published version through the type's own public renderer where the blade was, under a banner carrying `Restore this version` and `Back to current`. A revision has no rendered form of its own — that would be a read-only renderer per type, publishable or not — so its row restores rather than previews.
 - **Restore notifies with an Undo** that restores the `BeforeRestore` revision it had just taken, naming the resource it was offered for rather than whichever is open when it is clicked. Single-use: a second fire would restore a draft the first already replaced.
 
@@ -178,7 +179,7 @@ The channel rides with the version on every command, because a version alone nam
 | `apps/web/shared/services/resource/SnapshotChannelDefinitionMap.ts`   | what a channel is — kind, retention, title                     |
 | `apps/web/shared/services/resource/SnapshotSummaryMap.ts`             | the per-type one line a history row carries                    |
 | `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`  | the revision take, its ring buffer and its ledger charge       |
-| `apps/web/server/services/resource/snapshot/readSnapshotHistory.ts`   | a channel's prefix listing as history rows                     |
+| `apps/web/server/services/resource/snapshot/readSnapshotHistory.ts`   | a channel's version rows as history rows                       |
 | `apps/web/server/services/resource/ResourceLiveContentMap.ts`         | the boundary — what a type declares live                       |
 | `apps/web/server/services/resource/reapplyLiveResourceContent.ts`     | the reconstitution every snapshot read goes through            |
 | `apps/web/server/trpc/routers/resource.ts`                            | history, restore and save-version procedures                   |
@@ -186,11 +187,12 @@ The channel rides with the version on every command, because a version alone nam
 | `apps/web/app/components/Resource/VersionHistory/`                    | the panel, its rows, the preview banner and the restore dialog |
 | `apps/web/app/store/resource/versionHistory.ts`                       | the timeline, the restore and its Undo                         |
 | `packages/db-schema/src/schema/resources.ts`                          | `revisionVersion`, `revisionTakenAt`                           |
+| `packages/db-schema/src/schema/resourceVersions.ts`                   | one row per retained version, in either channel                |
 | `packages/db-schema/src/schema/resourcePublications.ts`               | `publishedContentVersion`                                      |
 
 ## Notes
 
-- After an unpublish the publish numbering restarts at 1, because unpublish deletes the publication row and publishes the prefix for deletion. That sweep is best-effort and asynchronous, so a republish can land while the old snapshots are still present — which is why the live version is read from the publication row rather than inferred from which snapshots exist.
+- After an unpublish the publish numbering restarts at 1, because unpublish deletes the publication row and the published channel's version rows with it, and sweeps the asset clones best-effort. The live version is read from the publication row rather than inferred from which versions exist: the listing answers what can be returned to, the row answers what is being served.
 - Purge and soft delete need no step of their own: purge takes `{id}/` wholesale, which is already every channel.
 - [Named checkpoints](/docs/resource/sheet/rejected/named-checkpoints) was rejected for the Sheet editor because undo/redo already traverses prior states, and the resource-level version of the same idea is rejected in [owner-named versions](/docs/resource/rejected/owner-named-versions) — a row is chosen by its time, its reason and what it holds, none of which the owner has to supply.
 - Whether a resource's edits are durable is [save state](/docs/resource/resource-save-state), not this page: version history is where an owner goes to undo, and the toolbar is where they see that there was nothing to undo in the first place.

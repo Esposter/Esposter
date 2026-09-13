@@ -1,5 +1,4 @@
 import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
-import { REPOSITORY_ROOT } from "#src/services/constants";
 import { getMismatches } from "#src/services/outdatedDependencies/getMismatches";
 import { getLockCatalogVersions } from "#src/services/outdatedDependencies/lock/getLockCatalogVersions";
 import { getLockConfigDependencyVersions } from "#src/services/outdatedDependencies/lock/getLockConfigDependencyVersions";
@@ -17,6 +16,7 @@ import { printUncatalogedManifestDependencies } from "#src/services/outdatedDepe
 import { getRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/getRegistryOutdatedDependencies";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
+import { LOCKFILE_PATH, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -24,7 +24,7 @@ const startedAt = performance.now();
 const color = createColor(!process.env.NO_COLOR);
 
 const workspaceYaml = readFileSync(resolve(REPOSITORY_ROOT, "pnpm-workspace.yaml"), "utf8");
-const lockYaml = readFileSync(resolve(REPOSITORY_ROOT, "pnpm-lock.yaml"), "utf8");
+const lockYaml = readFileSync(LOCKFILE_PATH, "utf8");
 
 const catalogEntries = parseWorkspaceEntries(
   DependencyGroup.Catalog,
