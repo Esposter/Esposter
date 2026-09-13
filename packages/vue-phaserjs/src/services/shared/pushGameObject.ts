@@ -1,6 +1,6 @@
 import type { GameObjects } from "phaser";
 
-import { getDepthInsertIndex } from "#src/services/getDepthInsertIndex";
+import { getDepthInsertIndex } from "#src/services/shared/getDepthInsertIndex";
 
 export const pushGameObject = (
   parentContainer: GameObjects.Container,

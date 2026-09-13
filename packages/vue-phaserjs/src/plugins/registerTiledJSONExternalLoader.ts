@@ -1,7 +1,7 @@
 import type { TupleSlice } from "@esposter/shared";
 
 import { TiledJSONExternalFile } from "#src/models/plugins/TiledJSONExternalFile";
-import { TILEMAP_TILED_JSON_EXTERNAL_KEY } from "#src/services/constants";
+import { TILEMAP_TILED_JSON_EXTERNAL_KEY } from "#src/services/shared/constants";
 import { Loader } from "phaser";
 
 const FileTypesManager = Loader.FileTypesManager;

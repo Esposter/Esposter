@@ -1,6 +1,6 @@
 import type { GameObjects } from "phaser";
 
-import { pushGameObject } from "#src/services/pushGameObject";
+import { pushGameObject } from "#src/services/shared/pushGameObject";
 import { describe, expect, test, vi } from "vitest";
 
 const createMockGameObject = (depth?: number) => ({ depth, type: "GameObject" }) as unknown as GameObjects.GameObject;
