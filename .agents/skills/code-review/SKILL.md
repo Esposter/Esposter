@@ -104,7 +104,7 @@ Deliberately **not** measured here: candidate counts, per-lens ceilings, token e
 1. Verify each finding against current HEAD before fixing — post-merge findings can be stale — and check it against the written record above.
 2. Fix confirmed findings.
 3. Run **`fixing-findings.md`** over your own fixes before verifying — it owns the regression checklist and the order of work (root cause → converge the call sites → docs and skills → then one check pass), and it is the block to paste into a delegated fix round.
-4. Verify with the full sequence — `pnpm format` → `typecheck` → `lint:fix` → tests over the paths touched (`package-scripts`) — then commit per the `git` skill. Before pushing to a branch with an open PR, check CodeRabbit state (`coderabbit` skill).
+4. Verify with the full sequence — `pnpm format` → `typecheck` → `lint:fix` → tests over the paths touched, every one in the background (`running-checks`, `package-scripts`) — then commit per the `git` skill. Before pushing to a branch with an open PR, check CodeRabbit state (`coderabbit` skill).
 
 ## The skill improves itself
 
