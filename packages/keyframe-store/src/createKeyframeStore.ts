@@ -9,6 +9,7 @@ import {
   DEFAULT_SEGMENT_BUDGET_RATIO,
   DELTA_HEADER_BYTE_COUNT,
 } from "#src/constants";
+import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
 import { decodeObject } from "#src/services/decodeObject";
 import { encodeObject } from "#src/services/encodeObject";
 import { getContentAddress } from "#src/services/getContentAddress";
@@ -67,14 +68,13 @@ export const createKeyframeStore = (
     read: (hash) =>
       getResultAsync(async () => {
         const bytes = await objectStore.read(hash);
-        if (!bytes) throw new InvalidOperationError(Operation.Read, hash, "object is not stored");
+        if (!bytes) throw new ObjectNotStoredError(hash, "object is not stored");
 
         const parsedObject = parseObject(hash, bytes);
         if (!parsedObject.baseHash) return verifyContentAddress(hash, await decodeObject(parsedObject));
 
         const keyframe = await readKeyframe(parsedObject.baseHash);
-        if (!keyframe)
-          throw new InvalidOperationError(Operation.Read, hash, `keyframe ${parsedObject.baseHash} is not stored`);
+        if (!keyframe) throw new ObjectNotStoredError(hash, `keyframe ${parsedObject.baseHash} is not stored`);
 
         return verifyContentAddress(hash, await decodeObject(parsedObject, keyframe.plaintext));
       }),

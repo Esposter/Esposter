@@ -4,6 +4,7 @@ import type { WrittenVersion } from "#src/models/WrittenVersion";
 import type { ResultAsync } from "neverthrow";
 
 import { createKeyframeStore } from "#src/createKeyframeStore";
+import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
 import { createDocumentVersions } from "#src/services/createDocumentVersions.test";
 import { createMemoryObjectStore } from "#src/services/createMemoryObjectStore.test";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -165,6 +166,28 @@ describe(createKeyframeStore, () => {
       delta.hash,
     ]);
     expect(memoryObjectStore.objects.size).toBe(0);
+  });
+
+  // Absence and corruption are both read failures and mean opposite things to a caller: a record naming
+  // Collected objects is a version that is simply gone, which a caller may answer with a 404, while an object
+  // That no longer hashes to its key is damage nothing downstream should paper over. The type is what separates
+  // Them, so it is asserted rather than the wording — a delta losing its base is absence just as much as one
+  // Losing itself, because neither can be reconstructed and neither is evidence of damage
+  test("reports a collected version as absent rather than as corruption", async () => {
+    expect.hasAssertions();
+
+    const memoryObjectStore = createMemoryObjectStore();
+    const keyframeStore = createKeyframeStore(memoryObjectStore);
+    const [keyframe, delta] = await writeVersions(keyframeStore, [baseVersion, editedVersion]);
+    assert.exists(keyframe);
+    assert.exists(delta);
+    memoryObjectStore.objects.delete(keyframe.hash);
+
+    await expect(unwrap(keyframeStore.read(delta.hash))).rejects.toThrow(ObjectNotStoredError);
+
+    memoryObjectStore.objects.delete(delta.hash);
+
+    await expect(unwrap(keyframeStore.read(delta.hash))).rejects.toThrow(ObjectNotStoredError);
   });
 
   // The value proposition itself, pinned: compression ratios are not speed, so the bench cannot gate them, and a

@@ -49,7 +49,7 @@ flowchart TD
 
 ## Reading a version
 
-`readSnapshotVersionContent` looks the row up by resource, channel and version, reconstructs the plaintext through the store, and parses it with the type's content schema. A version whose row is gone — evicted, or swept by an unpublish between the listing and the click — reads as no content, which the public read turns into the 404 page rather than an internal error. The history listing is a query over the channel's rows, ordered by version; reason, summary and the taken-at clock are columns, so the listing never opens an object.
+`readSnapshotVersionContent` looks the row up by resource, channel and version, reconstructs the plaintext through the store, and parses it with the type's content schema. A version whose row is gone — evicted, or swept by an unpublish between the listing and the click — reads as no content, which the public read turns into the 404 page rather than an internal error. A row still standing over objects the sweep already deleted is the same absent version wearing a different mask, and answers the same way: the store raises `ObjectNotStoredError` for exactly that case, and nothing else, so the read can convert absence into a 404 without swallowing a truncated or mismatched object, which stays the internal error it is. The history listing is a query over the channel's rows, ordered by version; reason, summary and the taken-at clock are columns, so the listing never opens an object.
 
 ## Collection
 
