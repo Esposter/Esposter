@@ -96,7 +96,7 @@ git diff --name-only -M <last-reviewed-sha>..HEAD | wc -l   # after every commit
 
 Over budget at that point is cheap to fix precisely because nothing is pushed: `git reset --hard` to the last commit that belongs on `develop`, cherry-pick a **shorter prefix** of the window, and re-apply whatever work sat above it. The cursor moves back with the prefix, so the queue simply owes one more window. Prefer dropping a whole trailing commit to hunting individual files — the boundary stays a commit boundary, and the next window is already sized.
 
-`--no-ff` rather than `--ff-only`: the fixes for one window's findings land on `develop`, so from the second window on the queue is no longer a descendant of `develop` and a fast-forward is refused. The park branch itself is never moved — `develop..parked/<scope>` shrinks on its own as windows merge, and it is empty (count `0`) when the branch can be deleted.
+`--no-ff` rather than `--ff-only`: the fixes for one window's findings land on `develop`, so from the second window on the queue is no longer a descendant of `develop` and a fast-forward is refused. The park branch itself is never moved — the cursor-based count from step 2 shrinks as windows merge, and it is empty (count `0`) when the branch can be deleted.
 
 ## 3. Merge
 
