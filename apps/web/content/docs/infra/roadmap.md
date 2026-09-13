@@ -9,7 +9,6 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 ## Review collector follow-ons
 
-- [ ] rotate `REVIEW_COLLECTOR_TOKEN` from the account's `gh` login token to a fine-grained personal access token scoped to this repository, supplied with `pulumi config set --secret` ([runner](/docs/infra/review-collector/runner))
 - [ ] the `status` event as a further free signal for the [runner](/docs/infra/review-collector/runner) — it fires on the commit status CodeRabbit flips at completion, so it covers a rate-limited completion that posts no review body; it runs from the default branch only, so it waits on the workflow file reaching `main`
 
 ## Blocked (app-side migration off key-based auth first)
