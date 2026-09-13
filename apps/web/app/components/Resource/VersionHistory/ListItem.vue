@@ -8,8 +8,8 @@ import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
-import { RoutePath } from "@esposter/shared";
 import { SnapshotChannel } from "@esposter/db-schema";
+import { RoutePath } from "@esposter/shared";
 
 interface Props {
   resource: Resource;

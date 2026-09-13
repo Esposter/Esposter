@@ -4,10 +4,10 @@ import type { Database } from "@esposter/db-schema";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
+import { SnapshotChannel } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { SnapshotChannel } from "@esposter/db-schema";
 
 const { containerClientMock } = vi.hoisted(() => ({
   containerClientMock: {} as { current: ContainerClient },

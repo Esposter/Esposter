@@ -4,8 +4,8 @@ import type { PublishableResourceType } from "#shared/models/resource/Publishabl
 import type { PublishedResourceContent } from "#shared/models/resource/PublishedResourceContent";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
-import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { Transaction } from "@@/server/models/db/Transaction";
+import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
 import type { Context } from "@@/server/trpc/context";
 import type { FileSasEntity, Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 import type { WrittenVersion } from "keyframe-store";

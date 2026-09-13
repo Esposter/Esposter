@@ -6,9 +6,9 @@ import {
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
+import { SnapshotChannel } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { SnapshotChannel } from "@esposter/db-schema";
 
 describe(getResourceAssetUrl, () => {
   const resourceId = crypto.randomUUID();

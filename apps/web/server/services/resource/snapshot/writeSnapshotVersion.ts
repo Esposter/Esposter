@@ -19,7 +19,7 @@ import { createKeyframeStore } from "keyframe-store";
 export const writeSnapshotVersion = async (
   db: Context["db"] | Transaction,
   resource: Pick<Resource, "id" | "type">,
-  { channel, reason, version }: Pick<ResourceVersion, "channel" | "version"> & Partial<Pick<ResourceVersion, "reason">>,
+  { channel, reason, version }: Partial<Pick<ResourceVersion, "reason">> & Pick<ResourceVersion, "channel" | "version">,
   serializedContent: string,
 ): Promise<WrittenVersion> => {
   const { id } = resource;
