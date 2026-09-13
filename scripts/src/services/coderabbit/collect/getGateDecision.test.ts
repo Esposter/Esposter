@@ -4,15 +4,16 @@ import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKin
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { describe, expect, test } from "vitest";
 
+const getCheckStatus = (bucket: string, description: string): CheckStatus => ({
+  bucket,
+  description,
+  name: "CodeRabbit",
+  state: "SUCCESS",
+});
+
 describe(getGateDecision, () => {
   const head = "a".repeat(40);
   const behind = "b".repeat(40);
-  const getCheckStatus = (bucket: string, description: string): CheckStatus => ({
-    bucket,
-    description,
-    name: "CodeRabbit",
-    state: "SUCCESS",
-  });
 
   // A body at the head is a completed review whatever the status still says — the event fires before the flip
   test("proceeds when the newest body ends at the develop head, even with a pending status", () => {

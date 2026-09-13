@@ -4,14 +4,14 @@ import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFinding
 import { CODERABBIT_GRAPHQL_LOGIN } from "#src/services/coderabbit/constants";
 import { describe, expect, test } from "vitest";
 
-describe(getOpenFindings, () => {
-  const getThread = (commentId: number, lastAuthorLogin: string): ReviewThread => ({
-    body: "**A finding**",
-    commentId,
-    lastAuthorLogin,
-    path: "apps/web/app.vue",
-  });
+const getThread = (commentId: number, lastAuthorLogin: string): ReviewThread => ({
+  body: "**A finding**",
+  commentId,
+  lastAuthorLogin,
+  path: "apps/web/app.vue",
+});
 
+describe(getOpenFindings, () => {
   test("keeps a thread the bot spoke last on and nothing answers", () => {
     expect.hasAssertions();
 

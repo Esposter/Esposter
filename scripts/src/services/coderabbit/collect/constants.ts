@@ -23,8 +23,6 @@ export const COMPLETED_DESCRIPTION = "Review completed";
 
 export const RATE_LIMITED_DESCRIPTION = "Review rate limited";
 
-export const ALREADY_REVIEWED_REGEX: RegExp = /already reviewed/iu;
-
 // A red cut drops its last queue commit and re-verifies this many times before the window is held
 export const GREEN_CUT_RETRY_LIMIT = 3;
 

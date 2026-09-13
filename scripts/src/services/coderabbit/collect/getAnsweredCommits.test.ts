@@ -5,9 +5,10 @@ import {
 } from "#src/services/coderabbit/collect/getAnsweredCommits";
 import { describe, expect, test } from "vitest";
 
+const getRecord = (fields: string[]) => `${fields.join(FIELD_SEPARATOR)}${RECORD_SEPARATOR}`;
+
 describe(getAnsweredCommits, () => {
   const sha = "a".repeat(40);
-  const getRecord = (fields: string[]) => `${fields.join(FIELD_SEPARATOR)}${RECORD_SEPARATOR}`;
 
   test("reads every trailer value as a finding id and keeps the subject", () => {
     expect.hasAssertions();

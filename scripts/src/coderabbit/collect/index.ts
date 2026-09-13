@@ -3,7 +3,6 @@ import type { GitHubReview } from "#src/models/coderabbit/GitHubReview";
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import {
-  ALREADY_REVIEWED_REGEX,
   DEVELOP_BRANCH,
   DRAINS_MARKER,
   DRY_RUN_WORKTREE_PREFIX,
@@ -13,6 +12,7 @@ import {
   QUEUE_BRANCH,
   REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
+import { checkIsAlreadyReviewed } from "#src/services/coderabbit/collect/checkIsAlreadyReviewed";
 import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
@@ -59,8 +59,13 @@ if (pullRequest === undefined) {
 if (!Number.isSafeInteger(pullRequest) || pullRequest <= 0)
   throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
 
-if (!isDryRun && getNonEmptyLines(runGit(["status", "--porcelain", "-uall"])).length > 0)
-  throw new InvalidOperationError(Operation.Update, "coderabbit", "the working tree is dirty — the collector owns it");
+const dirtyPaths = getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));
+if (!isDryRun && dirtyPaths.length > 0)
+  throw new InvalidOperationError(
+    Operation.Update,
+    "coderabbit",
+    `the working tree is dirty — the collector owns it:\n${dirtyPaths.join("\n")}`,
+  );
 
 runGit(["fetch", "--prune", "origin"]);
 const readSha = (ref: string): string | undefined =>
@@ -98,7 +103,7 @@ else if (gate.kind === GateDecisionKind.Probe) {
     process.exit(0);
   }
   const reply = await runProbe(pullRequest);
-  if (!ALREADY_REVIEWED_REGEX.test(reply)) {
+  if (!checkIsAlreadyReviewed(reply)) {
     console.info("a review started — its completion re-fires the collector");
     process.exit(0);
   }
@@ -136,7 +141,7 @@ console.info(
   `open findings: ${openThreads.length.toString()} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
 );
 
-if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined)) {
+if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined))
   if (isDryRun) console.info("would drain — a dry run runs no Claude session");
   else {
     const feedback = execFileSync("pnpm", ["ai:coderabbit:feedback", pullRequest.toString()], {
@@ -155,7 +160,6 @@ if (newestReview && (openThreads.length > 0 || openBodyReviewId !== undefined)) 
       viewerLogin,
     });
   }
-}
 
 // Port into the tree the run owns — a throwaway worktree for a dry run, this checkout otherwise
 const cwd = isDryRun ? mkdtempSync(join(tmpdir(), DRY_RUN_WORKTREE_PREFIX)) : REPOSITORY_ROOT;

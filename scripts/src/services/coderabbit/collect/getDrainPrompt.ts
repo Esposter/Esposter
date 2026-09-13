@@ -26,11 +26,11 @@ export const getDrainPrompt = ({ feedback, openThreads, pullRequest, reviewId }:
     "",
     bodySection,
     "",
-    "For each inline finding you accept: fix it and commit. The commit message carries one trailer line per thread it answers, `" +
-      ANSWERS_TRAILER +
-      ': <comment id>`, added with `git commit --trailer "' +
-      ANSWERS_TRAILER +
-      ': <comment id>"`. One commit may answer several findings. Do not reply to an accepted finding — the collector replies once the commit is pushed.',
+    `For each inline finding you accept: fix it and commit. The commit message carries one trailer line per thread it answers, \`${
+      ANSWERS_TRAILER
+    }: <comment id>\`, added with \`git commit --trailer "${
+      ANSWERS_TRAILER
+    }: <comment id>"\`. One commit may answer several findings. Do not reply to an accepted finding — the collector replies once the commit is pushed.`,
     `For each inline finding you reject: reply now with \`gh api repos/{owner}/{repo}/pulls/${pullRequestNumber}/comments/<comment id>/replies -f body="Not a real issue, no change — <evidence>"\`. A rejection needs no commit.`,
     "",
     "When every finding is answered, run the repo's finishing checks over the paths you touched — `pnpm format` at the root, `pnpm typecheck` in the touched package, `pnpm lint:fix` from the repo root, and the touched test suites — and commit any repairs they produce as their own commit. Leave the working tree clean.",
