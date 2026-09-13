@@ -1,4 +1,4 @@
-import type { runGh as baseRunGh } from "#src/services/coderabbit/runGh";
+import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
 
 import { getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { runGh } = vi.hoisted(() => ({ runGh: vi.fn<typeof baseRunGh>() }));
 
-vi.mock(import("#src/services/coderabbit/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
+vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 describe(postDrainVerdicts, () => {
   const pullRequest = 1169;
