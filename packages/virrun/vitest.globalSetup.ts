@@ -1,4 +1,5 @@
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
+import { writeVirrunDebug } from "#src/services/cli/debug/writeVirrunDebug";
 import { getAcceptanceCacheHome } from "#src/services/exec/test/getAcceptanceCacheHome";
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
@@ -13,11 +14,13 @@ export default function setup(): () => void {
     if (!existsSync(acceptanceCacheHome)) return;
     // Best-effort cache hygiene, never a test outcome. A concurrent heavy run (the acceptance home is one fixed path,
     // Shared across processes) can still hold an overlay mounted under it, so the chmod/rm here hits EROFS (read-only
-    // Mount) or EACCES/EBUSY. That is the other run's to clean up on its own teardown — swallow it rather than crash
+    // Mount) or EACCES/EBUSY. That is the other run's to clean up on its own teardown — trace it rather than crash
     // This run's close with an unhandled error after its tests already passed. The keyed-by-hash cache self-heals.
     getResult(() => {
       removeSnapshotDirectory(acceptanceCacheHome);
       rmSync(acceptanceCacheHome, { force: true, recursive: true });
-    }).match(noop, noop);
+    }).match(noop, (error) => {
+      writeVirrunDebug(`acceptance cache removal skipped, the next heavy run re-captures — ${error.message}`);
+    });
   };
 }

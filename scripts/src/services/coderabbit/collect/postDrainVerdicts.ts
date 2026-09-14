@@ -3,7 +3,7 @@ import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromp
 import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
-import { getResult } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 import { existsSync, readFileSync } from "node:fs";
 
 // The drain's half of the reply, posted by the only process that holds a credential. A rejection is answered
@@ -45,7 +45,7 @@ export const postDrainVerdicts = ({
     console.info(`reply ${commentId}: ${body}`);
     getResult(() =>
       runGh(["api", `repos/{owner}/{repo}/pulls/${pullRequest}/comments/${commentId}/replies`, "-f", `body=${body}`]),
-    ).orTee(console.error);
+    ).match(noop, console.error);
   }
 
   const verdicts = readLines(verdictPath);
@@ -57,5 +57,5 @@ export const postDrainVerdicts = ({
     verdicts.map((verdict) => stripHtmlComments(verdict)),
   );
   console.info(`verdict comment for review ${reviewId}`);
-  getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).orTee(console.error);
+  getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).match(noop, console.error);
 };

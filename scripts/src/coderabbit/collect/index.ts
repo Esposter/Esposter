@@ -4,7 +4,7 @@ import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput"
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
-import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -39,7 +39,7 @@ if (isDryRun) {
   // The pass returns rather than exits, so a finalizer would cover the normal end — but not a throw from the
   // Middle of it, and a worktree that survives the process is the one thing the next run trips over.
   process.on("exit", () => {
-    getResult(() => runGit(["worktree", "remove", "--force", cwd])).orTee(console.error);
+    getResult(() => runGit(["worktree", "remove", "--force", cwd])).match(noop, console.error);
   });
 }
 

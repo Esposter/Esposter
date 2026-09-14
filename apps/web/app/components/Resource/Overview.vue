@@ -6,7 +6,7 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { useResourceStore } from "@/store/resource";
-import { getResultAsync, RoutePath } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 interface Props {
   resource: Resource;
@@ -34,21 +34,19 @@ const hasUnpublishedChanges = computed(() =>
   publication.value ? resource.contentVersion > publication.value.publishedContentVersion : false,
 );
 const publicUrl = computed(() => (publication.value ? RoutePath.View(resource.type, resource.id) : undefined));
-// Best-effort telemetry, so a failed count leaves the row out rather than erroring the whole blade
 // The page is keyed by resource id, so this instance only ever describes one resource — the count is
-// Read once on mount rather than watching an id that cannot change underneath it
-const viewCount = ref<number>();
-onMounted(async () => {
-  // Only a published resource has views, and only its row renders the count — reading it for a draft spends
-  // A round trip on a number nothing displays. The capability is what makes the procedure reachable, so the
-  // Guard and the availability are one fact
-  // Called on the local `type` rather than read off `isPublishable`, because it is the type guard that narrows
-  // The router to the one carrying `readResourceViewCount`
+// Read once rather than watching an id that cannot change underneath it. A failed count leaves the row out
+// Only a published resource has views, and only its row renders the count — reading it for a draft spends
+// A round trip on a number nothing displays. The capability is what makes the procedure reachable, so the
+// Guard and the availability are one fact
+// Called on the local `type` rather than read off `isPublishable`, because it is the type guard that narrows
+// The router to the one carrying `readResourceViewCount`
+const { data: viewCount } = useQuery(() => {
   const { type } = resource;
-  if (!publication.value || !checkHasCapability(type, "publishable")) return;
+  if (!publication.value || !checkHasCapability(type, "publishable")) return Promise.resolve(undefined);
 
   const { readResourceViewCount } = getResourceRouter(type);
-  viewCount.value = await getResultAsync(() => readResourceViewCount.query({ id: resource.id })).unwrapOr(undefined);
+  return readResourceViewCount.query({ id: resource.id });
 });
 </script>
 

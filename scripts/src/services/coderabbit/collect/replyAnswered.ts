@@ -7,7 +7,7 @@ import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrains
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
-import { getResult } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 
 // Every commit in the range that answers a finding gets its reply — the one the skill says cites a sha the
 // Remote has. Predicate-guarded per thread, so the run that pushed and died before replying is finished by any
@@ -47,7 +47,7 @@ export const replyAnswered = ({
             "-f",
             `body=${body}`,
           ]),
-        ).orTee(console.error);
+        ).match(noop, console.error);
     }
 
   // The predicate is the review's marker and the shas together: the rejections comment the drain's end posted
@@ -74,6 +74,6 @@ export const replyAnswered = ({
     );
     console.info(`verdict comment for review ${reviewId}`);
     if (!isDryRun)
-      getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).orTee(console.error);
+      getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).match(noop, console.error);
   }
 };
