@@ -1,6 +1,6 @@
 import type { OpenBodyReviewInput } from "#src/models/coderabbit/collect/OpenBodyReviewInput";
 
-import { checkHasMarkerComment } from "#src/services/coderabbit/collect/checkHasMarkerComment";
+import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
@@ -22,7 +22,8 @@ export const getOpenBodyReviewId = ({
 
   const { nitpick, outsideDiff } = getStatedCounts(newestReview.body);
   if (nitpick + outsideDiff === 0 || drainedReviewIds.has(newestReview.id)) return undefined;
-  return checkHasMarkerComment(issueComments, viewerLogin, getMarker(DRAINS_MARKER, newestReview.id))
+  const drainsMarker = getMarker(DRAINS_MARKER, newestReview.id);
+  return issueComments.some((comment) => checkIsMarked(comment, viewerLogin, drainsMarker))
     ? undefined
     : newestReview.id;
 };

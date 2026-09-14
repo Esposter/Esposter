@@ -13,7 +13,7 @@ const readLines = (path: string): string[] => (existsSync(path) ? getNonEmptyLin
 // Every marker this pipeline reads back is an HTML comment (`getMarker`), and these lines are prose the drain
 // Wrote about untrusted review text it must not trust either (`runDrain`). A successful injection cannot call
 // `gh` itself, but it can choose what ends up in a reply this process posts under its own login — the same
-// Login `checkHasMarkerComment` and friends key their trust on — so a comment sequence reaching that far is
+// Login `checkIsMarked` keys its trust on — so a comment sequence reaching that far is
 // Stripped before anything leaves the drain's sandbox, rather than trusted to merely be prose
 const stripHtmlComments = (text: string): string => text.replaceAll(/<!--[\s\S]*?-->/gu, "");
 

@@ -1,6 +1,7 @@
 import type { PullRequestComment } from "#src/models/coderabbit/collect/PullRequestComment";
 import type { ReplyAnsweredInput } from "#src/models/coderabbit/collect/ReplyAnsweredInput";
 
+import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
@@ -34,7 +35,7 @@ export const replyAnswered = ({
   for (const { answers, sha, subject } of commits)
     for (const commentId of answers) {
       const replies = repliesByParent.get(commentId) ?? [];
-      if (replies.some(({ body, user }) => user.login === viewerLogin && body.includes(sha))) continue;
+      if (replies.some((reply) => checkIsMarked(reply, viewerLogin, sha))) continue;
 
       const body = `Agreed, fixed in ${sha} — ${subject}`;
       console.info(`reply ${commentId}: ${body}`);
@@ -61,8 +62,7 @@ export const replyAnswered = ({
     const shas = drained.map(({ commit }) => commit.sha);
     if (
       issueComments.some(
-        ({ body, user }) =>
-          user.login === viewerLogin && body.includes(marker) && shas.every((sha) => body.includes(sha)),
+        (comment) => checkIsMarked(comment, viewerLogin, marker) && shas.every((sha) => comment.body.includes(sha)),
       )
     )
       continue;
