@@ -10,8 +10,6 @@ const tagItems = computed(() =>
     to: { path: RoutePath.ResourceExplorerAll, query: { tagName: name } },
   })),
 );
-
-onMounted(() => refresh());
 </script>
 
 <!-- Tags are the grouping this area actually has: a resource carries many, so the portal's Resource groups —
