@@ -4,10 +4,11 @@ import { RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants"
 import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
 import { describe, expect, test } from "vitest";
 
+const getMinutesMs = (minutes: number): number => Temporal.Duration.from({ minutes }).total("milliseconds");
+
 describe(getRateLimitWaitMs, () => {
   const WRITTEN_AT = "2026-09-13T00:57:05Z";
   const WRITTEN_AT_MS = Date.parse(WRITTEN_AT);
-  const getMinutesMs = (minutes: number): number => Temporal.Duration.from({ minutes }).total("milliseconds");
   // oxlint-disable-next-line unicorn/consistent-function-scoping -- the default parameter captures a suite constant, which the rule does not count as a capture
   const getComment = (statement: string, updatedAt = WRITTEN_AT): GitHubEntry => ({
     body: [
