@@ -37,6 +37,23 @@ describe(getDrainEventLine, () => {
     });
   });
 
+  test("drops a turn's thinking, keeping the tool call beside it", () => {
+    expect.hasAssertions();
+    const event = {
+      message: {
+        content: [
+          { signature: "abc", thinking: "The flag check reads `<` where it wants `<=`.", type: "thinking" },
+          { input: { command: "pnpm typecheck" }, name: "Bash", type: "tool_use" },
+        ],
+      },
+      type: "assistant",
+    };
+    expect(getDrainEventLine(JSON.stringify(event))).toStrictEqual({
+      isNarration: true,
+      text: "→ Bash pnpm typecheck",
+    });
+  });
+
   test("drops a tool result and an empty turn", () => {
     expect.hasAssertions();
     expect(getDrainEventLine(JSON.stringify({ message: { content: [] }, type: "user" }))).toBeUndefined();

@@ -24,10 +24,15 @@ export const getDrainEventLine = (line: string): DrainLogLine | undefined => {
   else if (event.type === "assistant") {
     const lines = event.message.content.map((block) => {
       if (block.type === "text") return block.text.trim();
+      else if (block.type === "tool_use") {
+        const input = Object.values(block.input).find((value) => typeof value === "string") ?? "";
+        const summary = input.split("\n")[0]?.slice(0, TOOL_INPUT_LENGTH) ?? "";
+        return `→ ${block.name} ${summary}`.trim();
+      }
 
-      const input = Object.values(block.input).find((value) => typeof value === "string") ?? "";
-      const summary = input.split("\n")[0]?.slice(0, TOOL_INPUT_LENGTH) ?? "";
-      return `→ ${block.name} ${summary}`.trim();
+      // A thinking block, and any kind a later release adds. Read as a tool call it would take `input` off a
+      // Block that has none, and the throw would end the cycle mid-drain rather than the line
+      return "";
     });
     const text = lines.filter(Boolean).join("\n");
     return text ? { isNarration: true, text } : undefined;
