@@ -54,17 +54,17 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
       from: r.users.id,
       to: r.roomsInMessage.userId,
     }),
-    roomsInMessagesViaInvitesInMessage: r.many.roomsInMessage({
+    roomsInMessageViaInvitesInMessage: r.many.roomsInMessage({
       alias: "roomsInMessage_id_users_id_via_invitesInMessage",
       from: r.users.id.through(r.invitesInMessage.userId),
       to: r.roomsInMessage.id.through(r.invitesInMessage.roomId),
     }),
-    roomsInMessagesViaSearchHistoriesInMessage: r.many.roomsInMessage({
+    roomsInMessageViaSearchHistoriesInMessage: r.many.roomsInMessage({
       alias: "roomsInMessage_id_users_id_via_searchHistoriesInMessage",
       from: r.users.id.through(r.searchHistoriesInMessage.userId),
       to: r.roomsInMessage.id.through(r.searchHistoriesInMessage.roomId),
     }),
-    roomsInMessagesViaUsersToRoomsInMessage: r.many.roomsInMessage({
+    roomsInMessageViaUsersToRoomsInMessage: r.many.roomsInMessage({
       alias: "roomsInMessage_id_users_id_via_usersToRoomsInMessage",
       from: r.users.id.through(r.usersToRoomsInMessage.userId),
       to: r.roomsInMessage.id.through(r.usersToRoomsInMessage.roomId),

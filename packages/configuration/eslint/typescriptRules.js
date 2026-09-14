@@ -32,11 +32,13 @@ export default {
       // The `InMessage` suffix names the Postgres schema a message table sits in, and the table's own name is
       // Already the plural — so a relation key or a local spelled `bansInMessages` has pluralised the schema, and
       // Reads as bans across messages. The suffix is dropped from a variable (`const ban`) or kept whole as the
-      // Table's name (`r.many.bansInMessage`); nothing spells it plural.
+      // Table's name (`r.many.bansInMessage`); nothing spells it plural. Unanchored, because a through-relation
+      // Key carries the table's name mid-word (`roomsInMessageViaInvitesInMessage`) — anchoring to the end read
+      // Three such keys as clean, which is how they shipped.
       message:
         "`InMessage` is a schema suffix, not a noun — the table's own name is the plural, so drop the `s`. See the naming skill and the drizzle relations reference.",
       selector:
-        ":matches(Property, VariableDeclarator, PropertyDefinition, TSPropertySignature)[key.name=/InMessages$/], VariableDeclarator[id.name=/InMessages$/]",
+        ":matches(Property, VariableDeclarator, PropertyDefinition, TSPropertySignature)[key.name=/InMessages/], VariableDeclarator[id.name=/InMessages/]",
     },
     {
       // The `A` prefix marks an abstract class, so an interface wearing it claims a construct it is not and

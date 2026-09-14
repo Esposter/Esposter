@@ -28,7 +28,7 @@ export const foosRelation = defineRelationsPart(schema, (r) => ({
 ## Naming
 
 - **`r.one` → singular, descriptive name after what it represents, not the table**: FK to `foos` → `foo`, named after the role it plays whenever that differs from the table. The role is read off the column: `creatorId` → `creator`, `bannedByUserId` → `bannedByUser`, and a plain `userId` stays `user` even where prose calls that user the creator.
-- **`r.many` → the junction/child table's own name**: `foosToBars`, `bansInMessage`. The table name is already the plural, so nothing is pluralised again — a key ending `InMessages` is a `no-restricted-syntax` error (`typescriptRules.js`).
+- **`r.many` → the junction/child table's own name**: `foosToBars`, `bansInMessage`. The table name is already the plural, so nothing is pluralised again — a key spelling `InMessages` anywhere, a through key included, is a `no-restricted-syntax` error (`typescriptRules.js`).
 - **Through (many-to-many) → `{target}Via{JunctionTable}`**: `foosViaBazes`.
 - **The two better-auth tables are the exception**: `sessions` and `accounts` name their `r.one` to a user `users`, after the table, because better-auth's drizzle adapter derives the relation key it joins on from the schema table key. Renaming either to the singular turns every session read back into two queries, or throws — see `apps/web/content/docs/architecture/auth.md`.
 - **`alias` required for through relations** — format `"{targetTable}_id_{sourceTable}_id_via_{junctionTable}"`, e.g. `"bars_id_foos_id_via_bazes"` for a `foosViaBazes` relation defined on `bars`.
