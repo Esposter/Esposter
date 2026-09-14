@@ -7,7 +7,7 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 | `packages/db-schema/src/schema.ts` + `relations`           | 2026-08-30 | the table/enum registration half is `schema.test.ts`'s rather than a pass's                          |
 | `packages/db-schema/src/schema` — the message tables       | 2026-09-02 | the `*InMessage` family                                                                              |
 | `packages/db-schema/src/schema` — the rest                 | 2026-08-30 | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
-| `app/shared/models/db/message`                             | 2026-08-31 | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
+| `app/shared/models/db/message`                             | 2026-09-14 | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
 | `app/shared/models/db` — the room family                   | 2026-09-02 | `room`, `roomCategory`, `roomEmoji`, `role`, `moderation`, `webhook`                                 |
 | `app/shared/models/db` — the rest                          | 2026-09-02 | `blueprint`, `friend`, `notification`, `post`, `searchHistory`, `user`, `userSettings`, `userToRoom` |
 | `app/shared/models/resource/sheet`                         | 2026-09-02 | the split transformation's form defaults stay on the shared schema — `zod` says why                  |
