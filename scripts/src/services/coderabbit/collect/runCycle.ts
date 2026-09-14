@@ -11,6 +11,7 @@ import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/co
 import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
+import { getLastReviewedSha } from "#src/services/coderabbit/collect/getLastReviewedSha";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { openReleasePullRequest } from "#src/services/coderabbit/collect/openReleasePullRequest";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
@@ -28,7 +29,6 @@ import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimi
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getLastReviewedSha } from "#src/services/coderabbit/collect/getLastReviewedSha";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One pass: read, reply, gate, drain, port, push, reply. Every input is a remote fact and every write is either

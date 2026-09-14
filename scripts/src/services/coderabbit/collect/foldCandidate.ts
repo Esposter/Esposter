@@ -1,10 +1,10 @@
 import type { FoldInput } from "#src/models/coderabbit/collect/FoldInput";
 
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
+import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 
 // Fold `main` into the candidate the port built and name the sha `develop` is pushed to. Nothing is verified
