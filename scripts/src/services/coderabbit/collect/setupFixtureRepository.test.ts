@@ -36,6 +36,9 @@ export const setupFixtureRepository = (): {
     runGit(["init", "--quiet", "--initial-branch", MAIN_BRANCH, cwd]);
     runGit(["config", "user.name", "fixture"], cwd);
     runGit(["config", "user.email", "fixture@example.com"], cwd);
+    // A signature is part of the commit object, so a machine that signs by default would hash every fixture
+    // Commit differently from the shas the snapshots hold
+    runGit(["config", "commit.gpgsign", "false"], cwd);
     runGit(["remote", "add", "origin", origin], cwd);
     commitFile(".gitignore", "");
     publish(MAIN_BRANCH, "HEAD");
