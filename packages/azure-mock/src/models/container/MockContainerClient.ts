@@ -1,5 +1,5 @@
 import type { BlobHierarchyItem } from "#src/models/container/BlobHierarchyItem";
-import type { PagedAsyncIterableIterator } from "#src/models/PagedAsyncIterableIterator";
+import type { PagedAsyncIterableIterator } from "#src/models/shared/PagedAsyncIterableIterator";
 import type {
   AppendBlobClient,
   BlobBatchClient,
@@ -34,7 +34,7 @@ import type { Except } from "type-fest";
 import { BLOB_NOT_FOUND_MESSAGE, MOCK_BLOB_BASE_URL } from "#src/constants";
 import { MockBlobBatchClient } from "#src/models/container/MockBlobBatchClient";
 import { MockBlockBlobClient } from "#src/models/container/MockBlockBlobClient";
-import { MockRestError } from "#src/models/MockRestError";
+import { MockRestError } from "#src/models/shared/MockRestError";
 import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getBlobItemXml } from "#src/services/container/getBlobItemXml";
 import { getBlobPrefixXml } from "#src/services/container/getBlobPrefixXml";
@@ -43,8 +43,8 @@ import { getListBlobsSegmentResponse } from "#src/services/container/getListBlob
 import { getMockContainer } from "#src/services/container/getMockContainer";
 import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { readMockBlobMetadata } from "#src/services/container/readMockBlobMetadata";
-import { createMockResponse } from "#src/services/createMockResponse";
-import { getMockSasUrl } from "#src/services/getMockSasUrl";
+import { createMockResponse } from "#src/services/shared/createMockResponse";
+import { getMockSasUrl } from "#src/services/shared/getMockSasUrl";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 /**

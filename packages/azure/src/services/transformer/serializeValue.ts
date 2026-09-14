@@ -1,4 +1,4 @@
-import type { SerializableValue } from "#src/models/SerializableValue";
+import type { SerializableValue } from "#src/models/shared/SerializableValue";
 
 import { escapeValue } from "#src/services/transformer/escapeValue";
 

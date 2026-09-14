@@ -1,4 +1,4 @@
-import type { MockResponse } from "#src/models/MockResponse";
+import type { MockResponse } from "#src/models/shared/MockResponse";
 
 import { toWebResourceLike } from "#src/services/container/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";

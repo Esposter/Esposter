@@ -1,4 +1,4 @@
-import type { PageSettings } from "#src/models/PageSettings";
+import type { PageSettings } from "#src/models/shared/PageSettings";
 /**
  * An interface that allows async iterable iteration both to completion and by page.
  */

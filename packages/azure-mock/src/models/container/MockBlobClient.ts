@@ -30,15 +30,15 @@ import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { BLOB_NOT_FOUND_MESSAGE } from "#src/constants";
-import { MockRestError } from "#src/models/MockRestError";
+import { MockRestError } from "#src/models/shared/MockRestError";
 import { getBlobUrl } from "#src/services/container/getBlobUrl";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
 import { getMockBlobKey } from "#src/services/container/getMockBlobKey";
 import { getMockContainer } from "#src/services/container/getMockContainer";
 import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { storeMockBlobWrite } from "#src/services/container/storeMockBlobWrite";
-import { createMockResponse } from "#src/services/createMockResponse";
-import { getMockSasUrl } from "#src/services/getMockSasUrl";
+import { createMockResponse } from "#src/services/shared/createMockResponse";
+import { getMockSasUrl } from "#src/services/shared/getMockSasUrl";
 import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";

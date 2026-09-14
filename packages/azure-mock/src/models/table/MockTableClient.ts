@@ -1,4 +1,4 @@
-import type { PagedAsyncIterableIterator } from "#src/models/PagedAsyncIterableIterator";
+import type { PagedAsyncIterableIterator } from "#src/models/shared/PagedAsyncIterableIterator";
 import type {
   CreateTableEntityResponse,
   GetAccessPolicyResponse,
@@ -18,7 +18,7 @@ import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { MOCK_TABLE_BASE_URL } from "#src/constants";
-import { MockRestError } from "#src/models/MockRestError";
+import { MockRestError } from "#src/models/shared/MockRestError";
 import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
 import { compareByCompositeKey } from "#src/services/table/compareByCompositeKey";
 import { MockTableDatabase } from "#src/store/MockTableDatabase";

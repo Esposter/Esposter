@@ -30,8 +30,8 @@ import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { MOCK_QUEUE_BASE_URL } from "#src/constants";
-import { createMockResponse } from "#src/services/createMockResponse";
-import { getMockSasUrl } from "#src/services/getMockSasUrl";
+import { createMockResponse } from "#src/services/shared/createMockResponse";
+import { getMockSasUrl } from "#src/services/shared/getMockSasUrl";
 import { getMockQueueMessageItem } from "#src/services/queue/getMockQueueMessageItem";
 import { MockQueueDatabase } from "#src/store/MockQueueDatabase";
 import { getOrCreate } from "@esposter/shared";

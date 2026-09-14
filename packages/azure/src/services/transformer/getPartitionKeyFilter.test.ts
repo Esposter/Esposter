@@ -1,4 +1,4 @@
-import { BinaryOperator } from "#src/models/BinaryOperator";
+import { BinaryOperator } from "#src/models/shared/BinaryOperator";
 import { CompositeKeyPropertyNames } from "#src/models/table/CompositeKey";
 import { serializeKey } from "#src/services/table/serializeKey";
 import { escapeValue } from "#src/services/transformer/escapeValue";
