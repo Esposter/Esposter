@@ -14,7 +14,7 @@ const theme = useTheme();
 const wrapper = useTemplateRef("wrapper");
 const container = useTemplateRef("container");
 const id = useId();
-const diagram = shallowRef<null | SVGSVGElement>(null);
+const diagram = shallowRef<SVGSVGElement>();
 const { panzoom } = usePanZoom(diagram, {
   cursor: "grab",
   maxScale: MAX_MERMAID_SCALE,
@@ -57,7 +57,7 @@ onMounted(async () => {
   result.match((svg) => {
     if (!container.value) return;
     container.value.innerHTML = svg;
-    diagram.value = container.value.querySelector("svg");
+    diagram.value = container.value.querySelector("svg") ?? undefined;
   }, console.error);
 });
 // Ctrl+wheel (and trackpad pinch, which browsers report as a ctrl wheel) zooms; plain wheel keeps scrolling the page
