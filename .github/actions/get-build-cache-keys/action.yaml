@@ -8,8 +8,13 @@ outputs:
     description: sha256 over every tracked file `pnpm build:packages` could read
     value: ${{ steps.keys.outputs.package-builds-hash }}
   package-builds-paths:
+    # `*/dist` is the build output and `*/src/**/index.ts` the ctix-generated barrels (gitignored). Libraries
+    # only — an app's `dist` is deploy payload nothing imports — and their common ancestor `packages` is where
+    # the artifact unpacks.
     description: The paths the package-builds cache entry and its artifact hold — every library's `dist` and the generated barrels
-    value: ${{ steps.paths.outputs.package-builds-paths }}
+    value: |
+      packages/*/dist
+      packages/*/src/**/index.ts
 runs:
   using: composite
   steps:
@@ -38,17 +43,4 @@ runs:
         {
           echo "app-build-hash=$({ readPackageInputs; readTrackedInputs apps/web; } | sha256sum | cut -d' ' -f1)"
           echo "package-builds-hash=$(readPackageInputs | sha256sum | cut -d' ' -f1)"
-        } >> "$GITHUB_OUTPUT"
-    # `*/dist` is the build output and `*/src/**/index.ts` the ctix-generated barrels (gitignored). Libraries
-    # only — an app's `dist` is deploy payload nothing imports — and their common ancestor `packages` is where
-    # the artifact unpacks.
-    - name: 🗂️ Emit the package-builds path list
-      id: paths
-      shell: bash
-      run: |
-        {
-          echo 'package-builds-paths<<PACKAGE_BUILDS_PATHS'
-          echo 'packages/*/dist'
-          echo 'packages/*/src/**/index.ts'
-          echo 'PACKAGE_BUILDS_PATHS'
         } >> "$GITHUB_OUTPUT"

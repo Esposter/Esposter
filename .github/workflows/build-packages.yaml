@@ -24,9 +24,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: 🔧 Setup Project Dependencies
-        uses: ./.github/actions/setup-project-dependencies
-
       - name: 🔑 Get build cache keys
         id: keys
         uses: ./.github/actions/get-build-cache-keys
@@ -41,9 +38,13 @@ jobs:
       - name: 🔍 Verify package builds
         id: verify
         uses: ./.github/actions/verify-package-builds
-      # The install hangs off the miss too: a hit uploads straight from the restored paths and needs no
-      # `node_modules`. Filtered to the libraries plus the root closure that declares the toolchain — the apps'
-      # trees are install work nothing here reads.
+      # The toolchain and the install hang off the miss too: a hit uploads straight from the restored paths and
+      # needs neither pnpm nor `node_modules`. Filtered to the libraries plus the root closure that declares the
+      # toolchain — the apps' trees are install work nothing here reads.
+      - name: 🔧 Setup Project Dependencies
+        if: steps.verify.outputs.complete != 'true'
+        uses: ./.github/actions/setup-project-dependencies
+
       - name: 📦 Install dependencies
         if: steps.verify.outputs.complete != 'true'
         run: pnpm --filter "./packages/*" --filter "{.}..." --fail-if-no-match i
