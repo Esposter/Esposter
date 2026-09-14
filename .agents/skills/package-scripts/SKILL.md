@@ -47,7 +47,8 @@ A backgrounded run of either reports the _wrapper's_ exit code, which is `0` eve
 failed. Read the output for `exited 1` or a `problem`/`error` line rather than trusting the status.
 
 > `oxfmt` formats markdown too — a table whose cells changed width is realigned by `pnpm format` (or `pnpm exec oxfmt <paths>`
-> for a few files). No prettier binary is installed, so `npx prettier` or `pnpm exec prettier` fails.
+> for a few files). No prettier binary is installed, so `pnpm exec prettier` fails — and `npx prettier` is not the
+> fallback: `npx` is unsupported here, and rather than failing it would fetch an unpinned prettier from the registry.
 
 ## Root Scripts
 
@@ -93,7 +94,7 @@ where the reasoning already sits, so a copy in the manifest is a second one that
 
 ## Check Suite (after edits)
 
-The suite runs **once per coherent chunk, on `develop`, before that chunk is pushed** — not per commit — see the git skill's "Verify On `develop`". Run before declaring work done:
+The suite runs **once per coherent chunk, on `ai/queue`** — not per commit — see the git skill's "Verify Once Per Chunk". Run before declaring work done:
 
 1. `pnpm typecheck`
 2. **`pnpm lint:fix` from the repo root** — CI runs root `pnpm lint`, and root `lint:fix` is that same scope (oxlint, ESLint, every package's lint) with autofix on, so what it leaves unfixed is what CI would report; a package's own `lint:fix` is ESLint over that package alone (`oxlint` skill). Reach for the package-local one only to iterate inside one package mid-change; the last lint a chunk runs is the root one.
