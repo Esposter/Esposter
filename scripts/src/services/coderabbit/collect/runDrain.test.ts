@@ -47,14 +47,28 @@ describe(runDrain, () => {
     await expect(runDrain("prompt")).resolves.toStrictEqual({ isDrained: true, limitResetAtMs: undefined });
   });
 
-  // The model's turns and a successful run's closing message are narration; only what Claude Code says for itself
-  // Reaches the limit parser, which is what keeps a failed fix's own summary from reading as an outage
+  // The model's turns are narration; only what Claude Code says for itself reaches the limit parser, which is
+  // What keeps a failed fix's own summary from reading as an outage
   test("reads no limit off the model's narration on a failed session", async () => {
     expect.hasAssertions();
 
     mockSession(1, [getAssistantLine(REFUSAL_LINE), getResultLine("error_during_execution", "the commit failed")]);
 
     await expect(runDrain("prompt")).resolves.toStrictEqual({ isDrained: false, limitResetAtMs: undefined });
+  });
+
+  // The refusal states `success` in the frame it exits non-zero with, so the subtype is no evidence the session
+  // Ran — read as a closing message it never reaches the parser, and three pushes during one outage quarantine a
+  // Review nobody failed
+  test("classifies a refusal wearing a successful subtype as a session limit", async () => {
+    expect.hasAssertions();
+
+    mockSession(1, [getResultLine("success", REFUSAL_LINE)]);
+
+    const { isDrained, limitResetAtMs } = await runDrain("prompt");
+
+    expect(isDrained).toBe(false);
+    expect(limitResetAtMs).toBeDefined();
   });
 
   // Claude Code refusing to start writes a sentence rather than JSON, and that sentence is the only thing that

@@ -62,7 +62,7 @@ describe(getDrainEventLine, () => {
     ).toBeUndefined();
   });
 
-  test("prints a successful result with its turns and cost, its closing message as narration", () => {
+  test("prints a successful result with its turns and cost, as Claude Code's own", () => {
     expect.hasAssertions();
     const event = {
       duration_ms: Temporal.Duration.from({ minutes: 12, seconds: 30 }).total("milliseconds"),
@@ -73,8 +73,27 @@ describe(getDrainEventLine, () => {
       type: "result",
     };
     expect(getDrainEventLine(JSON.stringify(event))).toStrictEqual({
-      isNarration: true,
+      isNarration: false,
       text: "result: success after 41 turns in 12.5 min, $3.46\nFixed the session limit parser; every finding is answered.",
+    });
+  });
+
+  // The shape the refusal to start actually takes: `success`, one turn, no cost, and the limit's own sentence in
+  // `result`. Read as the model's closing message it never reaches the limit parser, and the outage is counted
+  // Against the review's quarantine budget instead
+  test("prints a refusal wearing a successful subtype as Claude Code's own", () => {
+    expect.hasAssertions();
+    const event = {
+      duration_ms: 421,
+      num_turns: 1,
+      result: "You've hit your session limit · resets 3:20am (UTC)",
+      subtype: "success",
+      total_cost_usd: 0,
+      type: "result",
+    };
+    expect(getDrainEventLine(JSON.stringify(event))).toStrictEqual({
+      isNarration: false,
+      text: "result: success after 1 turns in 0.0 min, $0.00\nYou've hit your session limit · resets 3:20am (UTC)",
     });
   });
 
