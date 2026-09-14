@@ -45,7 +45,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | `packages/db-schema/**`, a migration | `drizzle`                                                                     |
 | a Zod schema                         | `zod`                                                                         |
 | `apps/infra/**`                      | `pulumi-infra`                                                                |
-| `*.test.ts`, `*.bench.ts`            | `testing`, `bench`                                                            |
+| `*.test.ts`, `*.bench.ts`            | `testing`, `test-values`, `bench`                                             |
 | `content/docs/**`                    | `docs`                                                                        |
 | `.agents/skills/**`                  | `skill-authoring`                                                             |
 | `.agents/ledgers/**`                 | `sweeps`                                                                      |

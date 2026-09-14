@@ -9,7 +9,7 @@ import { describe, expect, test } from "vitest";
 describe(getOpenBodyReviewId, () => {
   const login = "login";
   const reviewId = 0;
-  const updatedAt = "1970-01-01";
+  const updatedAt = new Date(0).toISOString();
   const viewerLogin = "viewerLogin";
 
   const getReview = (body: string): GitHubReview => ({

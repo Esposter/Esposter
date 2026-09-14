@@ -58,6 +58,7 @@ The `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-
 ### Process / tooling
 
 - `testing` — Vitest conventions, mock/session patterns, test environments, what to test.
+- `test-values` — the literal a test writes: canonical strings, numbers, ids and paths, dates computed from the epoch, the shared-data shapes.
 - `git` — commit format, safety rules, branch hygiene.
 - `code-review` — the one entry point for every review: the workflow script, its two modes, what a run costs and bounds it, confidence and provenance on findings, closing a finding (`fixing-findings.md`), and the stop rule.
 - `coderabbit` — review config: PR file budget, `.coderabbit.yaml` exclusions, exclude/re-enable commit pair.

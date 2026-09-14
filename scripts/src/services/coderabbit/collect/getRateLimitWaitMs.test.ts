@@ -1,6 +1,7 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
+import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { describe, expect, test } from "vitest";
