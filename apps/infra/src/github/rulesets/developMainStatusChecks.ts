@@ -33,7 +33,7 @@ export const developMainStatusChecks: github.RepositoryRuleset = new github.Repo
     rules: {
       // Contexts are the CI.yaml job names — the `check` matrix contributes one per entry — except
       // `build-packages`, which runs via a reusable workflow (uses:) and so reports prefixed with the caller job
-      // id — `build-packages / Build Packages`.
+      // Id — `build-packages / Build Packages`.
       requiredStatusChecks: {
         requiredChecks: [
           { context: "build-packages / Build Packages" },
