@@ -47,7 +47,7 @@ describe("scheduledMessageJobRouter", () => {
   let roomId: string;
   const message = "message";
   const text = "text";
-  const runAt = new Date("1970-01-01");
+  const runAt = new Date(0);
 
   // Automod blocking the message this suite schedules — the one rejection that is not idempotent, so it is what
   // The burn-the-job tests land on the room

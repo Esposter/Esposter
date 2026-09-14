@@ -45,12 +45,12 @@ describe(useIsCreator, () => {
 
     const message = createMessageEntity({
       appUser: {
-        createdAt: new Date("1970-01-01"),
+        createdAt: new Date(0),
         deletedAt: null,
         id: crypto.randomUUID(),
         image: "",
         name: "name",
-        updatedAt: new Date("1970-01-01"),
+        updatedAt: new Date(0),
       },
       roomId,
       type: MessageType.Webhook,

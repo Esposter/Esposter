@@ -9,13 +9,13 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe(useInviteStore, () => {
   const roomId = crypto.randomUUID();
   const invite: InviteInMessage = {
-    createdAt: new Date("1970-01-01"),
+    createdAt: new Date(0),
     deletedAt: null,
     expiresAt: null,
     id: "a".repeat(INVITE_ID_LENGTH),
     maxUses: 0,
     roomId,
-    updatedAt: new Date("1970-01-01"),
+    updatedAt: new Date(0),
     userId: crypto.randomUUID(),
     uses: 0,
   };

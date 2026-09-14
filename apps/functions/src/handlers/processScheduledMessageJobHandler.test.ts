@@ -85,7 +85,7 @@ describe(processScheduledMessageJobHandler, () => {
     takeOne(
       await mockDb
         .insert(scheduledMessageJobsInMessage)
-        .values({ payload, roomId, runAt: new Date("1970-01-01"), userId, ...overrides })
+        .values({ payload, roomId, runAt: new Date(0), userId, ...overrides })
         .returning(),
     );
 
@@ -137,7 +137,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("skips when job already completed", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob(reminderPayload, { completedAt: new Date("1970-01-01") });
+    const job = await insertJob(reminderPayload, { completedAt: new Date(0) });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const skippedJob = await getJob(job.id);
@@ -149,7 +149,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("skips when job cancelled", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob(reminderPayload, { cancelledAt: new Date("1970-01-01") });
+    const job = await insertJob(reminderPayload, { cancelledAt: new Date(0) });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const skippedJob = await getJob(job.id);
@@ -165,7 +165,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const logSpy = vi.spyOn(context, "log");
-    const job = await insertJob(scheduledMessagePayload, { processingStartedAt: new Date("1970-01-01") });
+    const job = await insertJob(scheduledMessagePayload, { processingStartedAt: new Date(0) });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     expect(logSpy).toHaveBeenCalledWith(`${AzureFunction.ProcessScheduledMessageJob} skipped: no active job`, {

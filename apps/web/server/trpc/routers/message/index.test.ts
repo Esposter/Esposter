@@ -189,41 +189,44 @@ describe("messageRouter", () => {
 
     const userId = getMockSession().user.id;
     const message = createMentionMessage(userId);
+    const epoch = new Date(0);
+    const nextDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
+    const dayAfterNext = new Date(Temporal.Duration.from({ days: 2 }).total("milliseconds"));
     const firstMessage = new StandardMessageEntity({
-      createdAt: new Date("1970-01-02"),
+      createdAt: nextDay,
       message,
       partitionKey: roomId,
       rowKey: crypto.randomUUID(),
       type: MessageType.Message,
-      updatedAt: new Date("1970-01-02"),
+      updatedAt: nextDay,
       userId,
     });
     const secondMessage = new StandardMessageEntity({
-      createdAt: new Date("1970-01-01"),
+      createdAt: epoch,
       message,
       partitionKey: roomId,
       rowKey: crypto.randomUUID(),
       type: MessageType.Message,
-      updatedAt: new Date("1970-01-01"),
+      updatedAt: epoch,
       userId,
     });
     const otherUserMessage = new StandardMessageEntity({
-      createdAt: new Date("1970-01-03"),
+      createdAt: dayAfterNext,
       message,
       partitionKey: roomId,
       rowKey: crypto.randomUUID(),
       type: MessageType.Message,
-      updatedAt: new Date("1970-01-03"),
+      updatedAt: dayAfterNext,
       userId: crypto.randomUUID(),
     });
     const deletedMessage = new StandardMessageEntity({
-      createdAt: new Date("1970-01-03"),
-      deletedAt: new Date("1970-01-03"),
+      createdAt: dayAfterNext,
+      deletedAt: dayAfterNext,
       message,
       partitionKey: roomId,
       rowKey: crypto.randomUUID(),
       type: MessageType.Message,
-      updatedAt: new Date("1970-01-03"),
+      updatedAt: dayAfterNext,
       userId,
     });
     MockSearchDatabase.set(SearchIndex.Messages, [firstMessage, secondMessage, otherUserMessage, deletedMessage]);

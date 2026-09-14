@@ -5,7 +5,7 @@ describe(jsonDateParse, () => {
   test("parses ISO dates", () => {
     expect.hasAssertions();
 
-    const object = { "": new Date("0000-01-01T00:00:00.000Z") };
+    const object = { "": new Date(0) };
 
     expect(jsonDateParse(JSON.stringify(object))).toStrictEqual(object);
   });
