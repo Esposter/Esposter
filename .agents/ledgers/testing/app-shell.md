@@ -7,8 +7,8 @@ composable and store layers no single feature claims.
 | ---------------------------------------------------------------- | ---------- | --------------------------------------------------------- |
 | `composables/data`                                               | 2026-09-15 | one of the two pagination cores                           |
 | `composables/shared`                                             | 2026-09-15 | the other pagination core                                 |
-| `services/{app,auth,login,google}`                               | 2026-09-05 |                                                           |
-| `services/{route,router,notification}`                           | 2026-09-05 |                                                           |
+| `services/{app,auth,login,google}`                               | 2026-09-15 |                                                           |
+| `services/{route,router,notification}`                           | 2026-09-15 |                                                           |
 | `services/trpc`                                                  | 2026-09-05 |                                                           |
 | `services/{azure,cache}`                                         | 2026-09-05 |                                                           |
 | `services/file`                                                  | 2026-09-05 |                                                           |
