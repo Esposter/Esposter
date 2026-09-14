@@ -71,7 +71,7 @@ describe(runDrain, () => {
   });
 
   // A denylist of two names only ever protects what it already knew to name — this job's own environment grows
-  // Secrets over time (`ReviewCollector.yaml`), and every future one would reach the sandbox unless someone
+  // Secrets over time (`run-review-collector.yaml`), and every future one would reach the sandbox unless someone
   // Remembered to add it here by hand. Secret-shaped names are withheld instead, whatever they are called,
   // Except the one credential the drain is deliberately given to authenticate `claude` itself
   test("withholds every secret-shaped variable except the one the drain needs to run", async () => {

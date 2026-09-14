@@ -35,7 +35,7 @@ Six events, and every one runs the identical cycle:
 - **`workflow_dispatch`** with a `force` boolean, passed through to the script — the manual nudge, for a short window worth pushing anyway or for a webhook that was dropped.
 - **`issue_comment`** of type `created` or `edited`, filtered to the bot's login and to a comment on a pull request — the bot's answer to a retrigger. It replies with a comment, or by editing the walkthrough it already wrote, and neither is a review or a status, so this is the only event that carries it. The login filter is what keeps the collector's own marker comments from waking the cycle that just posted them.
 
-**Which copy of the workflow file runs is the event's choice; which copy of the cycle runs is not.** A `push` runs the file as that branch has it, a `pull_request_review` takes it from the pull request's merge ref, and a `status` or a comment has no branch at all, so GitHub runs the default branch's copy — which is the oldest one, a release behind `ai/queue`. The file is only triggers and steps, so that lag costs a trigger added here its statuses until the release that carries it merges. The cycle's code is a different matter: it reads remote state — ref names, markers, trailers — whose shape the newest copy defines, so the checkout pins it to the `ai/queue` head whichever event fired, and one copy runs everywhere. Without the pin a rename of a ref the cycle reads is a deadlock rather than a lag: the copy on `main` fails on the missing ref and so never ports the commit that would have taught it the new name. A test over the file (`scripts/src/services/coderabbit/collect/constants.test.ts`) keeps the pin, the push trigger and the retrigger's dispatch spelling the branch the constant names.
+**One copy of the runner runs, whichever event fired it.** GitHub reads a workflow file from the ref the event names — the pushed branch for a `push`, the pull request's merge ref for a `pull_request_review`, the default branch for a `status` or a comment — and the copy `main` carries is the oldest, a release behind `ai/queue`, while the collector reads remote state whose shape the newest copy defines: ref names, bot logins, the head branch its filter compares. Left to the event, a rename in the collector is a deadlock rather than a lag — the copy on `main` fails on the missing ref and so never ports the commit that would have taught it the new name. So `ReviewCollector.yaml` is nothing but the triggers, the one part that has to exist on the event's ref, and it calls the reusable `run-review-collector.yaml` **at `ai/queue`**, which holds every job, filter and step; that workflow's checkout pins the same ref, because `actions/checkout` follows the caller's event sha rather than the ref the file was read from, and the local actions and the cycle are read from that tree. The queue head is the copy every queue push already runs and the session's own tree. A test (`scripts/src/services/coderabbit/collect/constants.test.ts`) keeps the four places the two files spell the branch — the push trigger, the call, the checkout, the retrigger's dispatch — equal to the constant. What still waits for a release is a trigger added to the shell: it fires from `develop` and the pushed branches at once, and on statuses and comments once the release that carries it merges.
 
 **No `schedule`.** [No polling](/docs/architecture/no-polling) is the repo's standing rule, and every trigger above is a webhook the platform already delivers. The one state change that reports none is a rate limit lifting, and the `retrigger` job below answers it with a scheduled delivery rather than a loop asking whether it has happened yet.
 
@@ -64,7 +64,7 @@ sequenceDiagram
   end
 ```
 
-The dispatch names `ai/queue` as its ref, which picks the copy of this workflow file that runs and nothing else — the cycle's code is pinned at the checkout, and every branch it acts on it reads from `origin`. The queue head carries the newest copy of the file, and it is the one a queue push already runs.
+The dispatch names the trigger shell at `ai/queue`, which picks the copy of the triggers that runs and nothing else — the shell pins the reusable workflow, and every branch the cycle acts on it reads from `origin`.
 
 **The job that sleeps is not the one that asks.** A session push during the sleep runs a cycle of its own, and once the limit has lifted that push may already have a review running — a retrigger posted from the sleeping job, blind to that, would cancel it and spend a slot on a review that was under way. So the sleeping job only wakes the cycle, and every decision — whether anything is running, whether the deadline has really passed, what the bot answered — is made in the script with fresh state. It also keeps the bot's comment out of the workflow file, where nothing can import the constant the probe already posts.
 
@@ -124,14 +124,15 @@ A red run is the poison signal, and the job summary says which step and why — 
 
 ## Key files
 
-| File                                                        | Role                                                                 |
-| :---------------------------------------------------------- | :------------------------------------------------------------------- |
-| `.github/workflows/ReviewCollector.yaml`                    | the workflow — triggers, concurrency groups, steps                   |
-| `scripts/src/services/coderabbit/collect/constants.test.ts` | the pin, the push trigger and the dispatch spelling the queue branch |
-| `.github/workflows/claude-warmup.yaml`                      | the headless invocation this workflow reuses                         |
-| `.github/actions/trust-workspace`                           | the trust-dialog shim both workflows run                             |
-| `.github/actions/setup-project-dependencies`                | the install step                                                     |
-| `apps/infra/src/github/secrets/reviewCollectorToken.ts`     | the collector token as a Pulumi-managed repository secret            |
+| File                                                        | Role                                                                                               |
+| :---------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| `.github/workflows/ReviewCollector.yaml`                    | the triggers — the one file read from the event's ref, calling the reusable workflow at `ai/queue` |
+| `.github/workflows/run-review-collector.yaml`               | the reusable workflow — the jobs, filters, concurrency groups and steps, pinned to the queue head  |
+| `scripts/src/services/coderabbit/collect/constants.test.ts` | the four places the two files spell the queue branch, kept equal to the constant                   |
+| `.github/workflows/claude-warmup.yaml`                      | the headless invocation this workflow reuses                                                       |
+| `.github/actions/trust-workspace`                           | the trust-dialog shim both workflows run                                                           |
+| `.github/actions/setup-project-dependencies`                | the install step                                                                                   |
+| `apps/infra/src/github/secrets/reviewCollectorToken.ts`     | the collector token as a Pulumi-managed repository secret                                          |
 
 ## Notes
 

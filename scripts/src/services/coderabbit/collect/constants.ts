@@ -31,7 +31,7 @@ export const RATE_LIMITED_DESCRIPTION = "Review rate limited";
 export const GREEN_CUT_RETRY_LIMIT = 3;
 
 // The install the candidate's own lockfile asks for. The runner installed once, for the queue head it checked out
-// (`ReviewCollector.yaml`), and the candidate is never that: it is `develop` plus a prefix of the queue, so a
+// (`run-review-collector.yaml`), and the candidate is never that: it is `develop` plus a prefix of the queue, so a
 // Queue commit that adds a dependency reads red against the head's `node_modules` on the review-completion event,
 // The one event the collector exists to act on, and the drop-the-tail retry then blames three commits that were
 // Fine. Frozen, so a lockfile the commit left stale fails here as CI would fail it, and nothing tracked is rewritten.
@@ -109,7 +109,7 @@ export const RATE_LIMIT_COMMENT_MARKER = "auto-generated comment: rate limited b
 // A second early spends the run for the same notice
 export const RETRIGGER_BUFFER_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 
-// The longest one retrigger sleeps, under the job's own `timeout-minutes` (`ReviewCollector.yaml`). A deadline
+// The longest one retrigger sleeps, under the job's own `timeout-minutes` (`run-review-collector.yaml`). A deadline
 // Further out is slept in relays: the run the wake dispatches reads what is left of it and schedules again.
 export const RETRIGGER_SLEEP_CAP_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
 

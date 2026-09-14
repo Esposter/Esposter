@@ -5,25 +5,30 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe("queue branch", () => {
-  // The runner pins the copy of the cycle it runs to the queue head, whichever event fired it: the alternative is
-  // Each event running its own ref's copy, and the oldest of those reading remote state the newest wrote. A
-  // Workflow file cannot import the constant, so the three places it spells the branch are pinned here instead —
-  // A rename that moves the constant and not the file would have the runner check out a branch that no longer
-  // Exists, which is the same deadlock the pin exists to close.
-  const workflowLines = readFileSync(join(REPOSITORY_ROOT, ".github/workflows/ReviewCollector.yaml"), "utf8").split(
-    /\r?\n/u,
-  );
+  // The runner pins everything but its triggers to the queue head, whichever event fired it: the trigger file
+  // Calls the reusable workflow at that ref, the reusable workflow checks it out, and its retrigger dispatches
+  // It. A workflow file cannot import the constant, so every place the two files spell the branch is pinned here
+  // — a rename that moves the constant and not the files would have the runner call and check out a branch that
+  // No longer exists, which is the deadlock the pin exists to close.
+  const readWorkflowLines = (name: string): string[] =>
+    readFileSync(join(REPOSITORY_ROOT, ".github/workflows", name), "utf8").split(/\r?\n/u);
 
   test.each([
-    ["the queue push trigger", `      - ${QUEUE_BRANCH}`],
-    ["the checkout ref", `          ref: ${QUEUE_BRANCH}`],
+    ["the queue push trigger", "ReviewCollector.yaml", `      - ${QUEUE_BRANCH}`],
+    [
+      "the reusable workflow's ref",
+      "ReviewCollector.yaml",
+      `    uses: Esposter/Esposter/.github/workflows/run-review-collector.yaml@${QUEUE_BRANCH}`,
+    ],
+    ["the checkout ref", "run-review-collector.yaml", `          ref: ${QUEUE_BRANCH}`],
     [
       "the retrigger's dispatch ref",
+      "run-review-collector.yaml",
       `        run: gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ${QUEUE_BRANCH}`,
     ],
-  ])("the runner spells %s as the constant", (_, line) => {
+  ])("the runner spells %s as the constant", (_, name, line) => {
     expect.hasAssertions();
 
-    expect(workflowLines).toContain(line);
+    expect(readWorkflowLines(name).includes(line)).toBe(true);
   });
 });
