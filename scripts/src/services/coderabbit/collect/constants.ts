@@ -30,11 +30,11 @@ export const RATE_LIMITED_DESCRIPTION = "Review rate limited";
 // A red cut drops its last queue commit and re-verifies this many times before the window is held
 export const GREEN_CUT_RETRY_LIMIT = 3;
 
-// The install the candidate's own lockfile asks for. The runner installed once, for the tree the event checked
-// Out — the queue head on a queue push, the merge ref on a review, `main` on a status — and none of those is the
-// Candidate: a queue commit that adds a dependency reads red on the review-completion event, the one event the
-// Collector exists to act on, and the drop-the-tail retry then blames three commits that were fine. Frozen, so a
-// Lockfile the commit left stale fails here as CI would fail it, and nothing tracked is rewritten.
+// The install the candidate's own lockfile asks for. The runner installed once, for the queue head it checked out
+// (`ReviewCollector.yaml`), and the candidate is never that: it is `develop` plus a prefix of the queue, so a
+// Queue commit that adds a dependency reads red against the head's `node_modules` on the review-completion event,
+// The one event the collector exists to act on, and the drop-the-tail retry then blames three commits that were
+// Fine. Frozen, so a lockfile the commit left stale fails here as CI would fail it, and nothing tracked is rewritten.
 export const INSTALL_COMMAND: string[] = ["i", "--frozen-lockfile"];
 
 // The checks a candidate earns before it is pushed. The pushed head runs CI on its own and the interior queue

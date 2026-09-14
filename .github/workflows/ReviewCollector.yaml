@@ -65,6 +65,13 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          # One copy of the cycle runs, whichever event fired it: the queue head's. Without the pin each event
+          # checks out its own ref — `main` for a status or a comment, the merge ref for a review, the pushed
+          # branch for a push — and the copy `main` carries is the oldest, reading remote state the newest copy
+          # wrote. A rename of a ref the cycle reads is then a deadlock: the old copy fails on the missing ref and
+          # so never ports the commit that would have taught it the new name. The queue head is already the copy
+          # every queue push runs, and the session's own tree.
+          ref: ai/queue
           # The cycle ports across `develop`, `ai/queue` and `ai/review-fixes` with `git cherry`, which a shallow clone
           # cannot answer. The collector token rather than the built-in one: a push made with `GITHUB_TOKEN`
           # starts no workflow runs, so `develop`'s CI and deployment would never fire on a collector push.
@@ -138,10 +145,10 @@ jobs:
           DELAY_SECONDS: ${{ needs.collect.outputs.retriggerDelaySeconds }}
         run: sleep "$DELAY_SECONDS"
 
-      # The ref picks which copy of this file and of the cycle runs, nothing else — every branch the cycle acts
-      # on it reads from `origin`. `develop` carries the newest one: it is where the queue's windows land, and
-      # it is already the copy a `pull_request_review` runs from.
+      # The ref picks which copy of this file runs and nothing else: the cycle's code is pinned at the checkout
+      # above, and every branch it acts on it reads from `origin`. The queue head carries the newest copy of the
+      # file, and it is the one a queue push already runs.
       - name: ♻️ Run the cycle again
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref develop
+        run: gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ai/queue

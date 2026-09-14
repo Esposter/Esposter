@@ -68,11 +68,20 @@ export const runCycle = async ({
   const mainSha = readSha(`origin/${MAIN_BRANCH}`);
   const queueSha = readSha(`origin/${QUEUE_BRANCH}`);
   const developSha = readSha(`origin/${DEVELOP_BRANCH}`);
+  // Named one by one: a ref missing from the remote is the copy of the cycle that runs disagreeing with the remote
+  // About a name, and which name is the whole of the diagnosis
+  const missingBranches = [
+    [MAIN_BRANCH, mainSha],
+    [QUEUE_BRANCH, queueSha],
+    [DEVELOP_BRANCH, developSha],
+  ]
+    .filter(([, sha]) => !sha)
+    .map(([branch]) => `origin/${branch}`);
   if (!developSha || !queueSha || !mainSha)
     throw new InvalidOperationError(
       Operation.Read,
       "coderabbit",
-      `origin/${DEVELOP_BRANCH}, origin/${QUEUE_BRANCH} or origin/${MAIN_BRANCH} is missing`,
+      `missing on the remote: ${missingBranches.join(", ")}`,
     );
   let reviewFixesSha = readSha(`origin/${REVIEW_FIXES_BRANCH}`);
 
