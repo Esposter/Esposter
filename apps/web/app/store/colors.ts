@@ -1,18 +1,15 @@
 import type { Colors } from "@/models/colors/Colors";
-import type { Store } from "pinia";
 
 import { takeOne } from "@esposter/shared";
 
-const COLORS_STORE_ID = "colors";
-const useBaseColorsStore = defineStore<typeof COLORS_STORE_ID, Colors>(COLORS_STORE_ID, () => {
+// One computed per theme colour, so a component reads the colour it wants without re-deriving the whole palette
+// On every theme change. `Object.fromEntries` cannot carry the key union across, so the shape is stated once here
+export const useColorsStore = defineStore("colors", () => {
   const { global } = useVTheme();
-  const colors = Object.fromEntries(
+  return Object.fromEntries(
     Object.keys(global.current.value.colors).map((color) => [
       color,
       computed(() => takeOne(global.current.value.colors, color)),
     ]),
   ) as Colors;
-  return colors;
 });
-
-export const useColorsStore = () => useBaseColorsStore() as Store<typeof COLORS_STORE_ID, Colors>;

@@ -158,7 +158,7 @@ export const useNotificationStore = defineStore("notification", () => {
   };
   const markAllAsRead = async () => {
     // Copy-on-write is the point: the array and every changed row are replaced so the computed re-evaluates
-    // oxlint-disable-next-line no-map-spread -- see above
+    // oxlint-disable-next-line no-map-spread -- its fix is in-place mutation of rows the computed above hands out; it fires here and not on the identical map below only because this one assigns back to the array it read
     localNotifications.value = localNotifications.value.map((notification) =>
       notification.isRead ? notification : { ...notification, isRead: true },
     );

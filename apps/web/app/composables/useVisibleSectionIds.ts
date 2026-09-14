@@ -1,4 +1,9 @@
 import { getVisibleSectionIds } from "@/services/shared/getVisibleSectionIds";
+// Same members in the same order. Both halves are load-bearing and only one of them is visible at a glance: a
+// Prefix passes `every` on its own, so dropping the length clause reads right and answers wrong
+const checkIsSameOrder = <T>(values: readonly T[], otherValues: readonly T[]) =>
+  values.length === otherValues.length && values.every((value, index) => value === otherValues[index]);
+
 // The one scrollspy behind every section-navigation sidebar — the docs table of contents, the user settings page,
 // The settings dialog. A section spans from its own anchor element down to the next one, so every section
 // Overlapping the viewport is highlighted: reading the body under one heading while the next heading is on screen
@@ -43,17 +48,13 @@ export const useVisibleSectionIds = (
     // Keep the last non-empty set (e.g. a long intro before the first section, a panel still resolving) so the
     // Highlight never drops out, and assign only when it actually moved: a fresh array invalidates every item's
     // Active state and makes the slide indicator remeasure the whole list on the next tick, which reads layout
-    const isUnchanged =
-      newVisibleIds.length === visibleIds.value.length &&
-      newVisibleIds.every((id, index) => id === visibleIds.value[index]);
-    if (newVisibleIds.length > 0 && !isUnchanged) visibleIds.value = newVisibleIds;
+    if (newVisibleIds.length > 0 && !checkIsSameOrder(newVisibleIds, visibleIds.value))
+      visibleIds.value = newVisibleIds;
   };
   const previousSectionIds = shallowRef<string[]>([]);
   const resolveSections = () => {
     const newSectionIds = toValue(sectionIds);
-    const hasSectionIdsChanged =
-      newSectionIds.length !== previousSectionIds.value.length ||
-      newSectionIds.some((id, index) => id !== previousSectionIds.value[index]);
+    const hasSectionIdsChanged = !checkIsSameOrder(newSectionIds, previousSectionIds.value);
     // Copied, not aliased: a caller passing a ref it mutates in place would otherwise hand the same array to
     // Both sides of this comparison, and the change would read as no change at all
     previousSectionIds.value = [...newSectionIds];
@@ -66,10 +67,7 @@ export const useVisibleSectionIds = (
       return element ? [element] : [];
     });
     if (hasSectionIdsChanged) visibleIds.value = [];
-    const isUnchanged =
-      newSections.length === sections.value.length &&
-      newSections.every((section, index) => section === sections.value[index]);
-    if (isUnchanged && !hasSectionIdsChanged) return;
+    if (checkIsSameOrder(newSections, sections.value) && !hasSectionIdsChanged) return;
 
     sections.value = newSections;
     updateVisibleIds();
