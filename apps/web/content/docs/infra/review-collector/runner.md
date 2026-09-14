@@ -23,7 +23,7 @@ sequenceDiagram
   CR->>CR: review runs for up to an hour
   CR->>GH: review submitted
   GH->>W: pull_request_review event
-  W->>W: cycle — reply, drain, port the next window
+  W->>W: cycle — reply, drain, then merge the release or port the next window
 ```
 
 Six events, and every one runs the identical cycle:
@@ -96,7 +96,7 @@ A push made with `GITHUB_TOKEN` starts no workflow runs, so `develop`'s CI and d
 
 ## Failure semantics
 
-A run fails red and leaves the remote in a state the next run resumes from: before the push everything is a local branch in the runner; the drain pushes `ai/review-fixes` only after Claude exits clean with a clean tree, and a crash mid-drain is retried from the same open set until the attempt cap quarantines the review; the push is a single fast-forward that either moves `develop` or is refused; after it, the replies are predicate-guarded and finished by the next run. The job summary says which step and why. Nothing pages — the collector's failures are found where every other workflow's are, in the Actions tab.
+A run fails red and leaves the remote in a state the next run resumes from — and red is also how a person is told the queue needs them: a first owed commit that conflicts with `develop` or overflows the cap alone fails every run until the session rebases or splits it, since no event clears either and a green idle run reports to nobody. Before the push everything is a local branch in the runner; the drain pushes `ai/review-fixes` only after Claude exits clean with a clean tree, and a crash mid-drain is retried from the same open set until the attempt cap quarantines the review; the push is a single fast-forward that either moves `develop` or is refused; after it, the replies are predicate-guarded and finished by the next run. The job summary says which step and why. Nothing pages — the collector's failures are found where every other workflow's are, in the Actions tab.
 
 ## Key files
 

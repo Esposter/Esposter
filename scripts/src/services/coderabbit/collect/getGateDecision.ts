@@ -9,9 +9,10 @@ import {
   RATE_LIMITED_DESCRIPTION,
 } from "#src/services/coderabbit/collect/constants";
 
-// The body ending at the head decides first: CodeRabbit writes the body at completion and flips the status a
-// Moment later, and the review event fires in that gap — a status read alone there says `pending`, and nothing
-// Re-fires until the next queue push. No check at all is a person's problem, where a pending one resolves itself.
+// The stated range ending at the head decides first: CodeRabbit writes the range at completion — in the review
+// Body, or in the walkthrough's recent-review block alone when it found nothing — and flips the status a moment
+// Later, and the review event fires in that gap — a status read alone there says `pending`, and nothing re-fires
+// Until the next queue push. No check at all is a person's problem, where a pending one resolves itself.
 export const getGateDecision = ({ checkStatus, developSha, lastReviewedSha }: GateInput): GateDecision => {
   if (lastReviewedSha === developSha)
     return { kind: GateDecisionKind.Proceed, reason: "the newest review body ends at the develop head" };

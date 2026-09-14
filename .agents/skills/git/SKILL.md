@@ -50,11 +50,11 @@ The session pushes **`ai/queue` after every commit**, which starts no review —
 
 ## Branch Hygiene
 
-**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review collector cuts windows from it onto `develop` and opens the one long-lived `develop` → `main` PR (`review-queue` skill). `develop` and `ai/review-fixes` have one writer, the collector; `main` takes releases by a person merging that PR, plus the collector's express lane. Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
+**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review collector cuts windows from it onto `develop` and opens the one long-lived `develop` → `main` PR (`review-queue` skill). `develop` and `ai/review-fixes` have one writer, the collector; `main` takes releases the collector merges once a review is clean (a person merges one the bot rates riskier), plus the collector's express lane. Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
 
 ## Merging `main` and the Lockfile
 
-`main` takes commits `develop` never saw — a Renovate PR merged straight into it — and the collector folds them into the next window as a merge commit, resolving the lockfile the way below. The same procedure applies to any merge a session makes by hand (`main` into a spike branch, a worktree branch into `ai/queue`). Never rebase a branch whose commits are already pushed and reviewed.
+`main` takes commits `develop` never saw — a Renovate PR merged straight into it — and the collector folds them into the next window as a merge commit, resolving the lockfile the way below. The same procedure applies to any merge a session makes by hand (`main` into a spike branch, a worktree branch into `ai/queue`) — never `main` or `develop` into `ai/queue`, which catches up by rebase alone (`review-queue` skill). Never rebase a branch whose commits are already pushed and reviewed.
 
 `pnpm-workspace.yaml` is authored and usually auto-merges — read the merged catalog anyway, since a clean
 auto-merge proves only that the two sides touched different lines, never that the surviving version is the

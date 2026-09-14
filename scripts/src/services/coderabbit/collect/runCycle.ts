@@ -7,12 +7,20 @@ import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKin
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
-import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
+import {
+  DEVELOP_BRANCH,
+  MAIN_BRANCH,
+  MERGEABLE_RISK_LEVEL,
+  QUEUE_BRANCH,
+} from "#src/services/coderabbit/collect/constants";
 import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
 import { getLastReviewedSha } from "#src/services/coderabbit/collect/getLastReviewedSha";
+import { getMergeRisk } from "#src/services/coderabbit/collect/getMergeRisk";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
+import { getRecentReviewBlock } from "#src/services/coderabbit/collect/getRecentReviewBlock";
+import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeReleasePullRequest";
 import { openReleasePullRequest } from "#src/services/coderabbit/collect/openReleasePullRequest";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
@@ -26,6 +34,7 @@ import { runDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
 import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
+import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
@@ -76,7 +85,15 @@ export const runCycle = async ({
     namedPullRequest ??
     (releasePullRequest?.state === ReleasePullRequestState.Open ? releasePullRequest.number : undefined);
   const reviews = pullRequest === undefined ? [] : readBotEntries<GitHubReview>(`pulls/${pullRequest}/reviews`);
-  const lastReviewedSha = getLastReviewedSha(reviews.map(({ body }) => body));
+  const issueComments = pullRequest === undefined ? [] : readEntries<GitHubEntry>(`issues/${pullRequest}/comments`);
+  // The walkthrough's recent-review block last: it is rewritten at every completion, so it names the newest range
+  // — and for a review that found nothing, the only one
+  const lastReviewedSha = getLastReviewedSha([
+    ...reviews.map(({ body }) => body),
+    ...issueComments
+      .filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)
+      .flatMap(({ body }) => getRecentReviewBlock(body) ?? []),
+  ]);
   const frontier = lastReviewedSha ?? runGit(["merge-base", mainSha, developSha], cwd).trim();
   const viewerLogin = readViewerLogin();
   console.info(
@@ -84,7 +101,6 @@ export const runCycle = async ({
   );
   console.info(`develop ${developSha}\nqueue   ${queueSha}\nfixes   ${reviewFixesSha ?? "none"}\nfrontier ${frontier}`);
 
-  const issueComments = pullRequest === undefined ? [] : readEntries<GitHubEntry>(`issues/${pullRequest}/comments`);
   const frontierCommits = readAnsweredCommits(`${frontier}..${developSha}`, cwd);
   // Replies before any exit: a run that pushed and died before replying is finished here by whichever event fires next
   if (pullRequest !== undefined)
@@ -115,6 +131,16 @@ export const runCycle = async ({
     });
     if (drain.outcome) return drain.outcome;
     reviewFixesSha = drain.reviewFixesSha;
+    // A review that ends at the head and left nothing open is a release: the bot's own risk verdict on that head
+    // Is the last word, and any level but the least is a person's to weigh
+    const mergeRisk = getMergeRisk(issueComments);
+    if (
+      gate.kind === GateDecisionKind.Proceed &&
+      drain.isClean &&
+      mergeRisk?.level === MERGEABLE_RISK_LEVEL &&
+      mergeRisk.coveredSha === developSha
+    )
+      return mergeReleasePullRequest({ isDryRun, pullRequest });
   }
   const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha, reviewFixesSha });
   // With no pull request open, what `develop` already carries above the merge base is the first review's window
@@ -140,10 +166,17 @@ export const runCycle = async ({
       retriggerDelaySeconds = settlement.retriggerDelaySeconds;
       if (settlement.outcome) return settlement.outcome;
     }
-    // A held first commit is not an under-filled queue — the window is full of carry-over nothing has reviewed yet
-    if (port.queueShas.length === 0 && port.heldSha)
-      return getOutcome(CycleOutcomeKind.Idle, "held — no owed commit fits this window");
-    else if (parkedFixCount > 0) return getOutcome(CycleOutcomeKind.Idle, "parked — fixes wait for the queue");
+    // A held first commit is a person's act, not an under-filled queue: it conflicts with the tree or overflows
+    // The cap alone, and no event clears either. The run fails red so someone is told — once the review a limit
+    // Refused has been asked for, since that answer is still owed first.
+    if (port.queueShas.length === 0 && port.heldSha) {
+      if (isRateLimited) return getOutcome(CycleOutcomeKind.Idle, "held — the review the limit refused is owed first");
+      throw new InvalidOperationError(
+        Operation.Update,
+        "coderabbit",
+        `held at ${port.heldSha} — the first owed commit conflicts with ${DEVELOP_BRANCH} or overflows the cap alone, so rebase ${QUEUE_BRANCH} or split it (the git error above says which)`,
+      );
+    } else if (parkedFixCount > 0) return getOutcome(CycleOutcomeKind.Idle, "parked — fixes wait for the queue");
     return getOutcome(CycleOutcomeKind.Idle, "waiting — the queue is under the fill target");
   }
   // Ready with nothing to add: develop already carries the window, and only the pull request is owed

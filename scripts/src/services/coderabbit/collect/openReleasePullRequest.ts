@@ -8,7 +8,7 @@ import { runGit } from "#src/services/coderabbit/shared/runGit";
 
 // Opened once `develop` carries a window worth the slot — the same fill target a push clears, since opening is
 // The first review of `main..develop`. Idempotent by predicate: the cycle reaches here only when none is open.
-// Merging it stays a person's act — that is a release.
+// Merged by `mergeReleasePullRequest` once a review at the head is clean.
 export const openReleasePullRequest = ({ cwd, developSha, isDryRun, mainSha }: OpenReleaseInput): CycleOutcome => {
   const subjects = runGit(["log", "--format=- %s", `${mainSha}..${developSha}`], cwd).trim();
   const title = `release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH}`;

@@ -40,15 +40,19 @@ export const runDrainStep = async ({
     `open findings: ${openThreads.length} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
   );
 
-  if (!newestReview || (openThreads.length === 0 && openBodyReviewId === undefined)) return { reviewFixesSha };
-  else if (isDryRun) {
+  if (!newestReview || (openThreads.length === 0 && openBodyReviewId === undefined)) {
+    // Answered by an unported commit is not answered on `develop`: the release waits for that commit to land
+    const isClean = unportedCommits.every(({ answers, drains }) => answers.length === 0 && drains.length === 0);
+    return { isClean, reviewFixesSha };
+  } else if (isDryRun) {
     console.info("would drain — a dry run runs no Claude session");
-    return { reviewFixesSha };
+    return { isClean: false, reviewFixesSha };
   }
 
   const drainLimitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
   if (drainLimitResetMs !== undefined && drainLimitResetMs > Date.now())
     return {
+      isClean: false,
       outcome: {
         kind: CycleOutcomeKind.Idle,
         reason: `the drain is limited until ${new Date(drainLimitResetMs).toISOString()} — the findings stay open, so nothing ports ahead of them`,
@@ -69,8 +73,9 @@ export const runDrainStep = async ({
   });
   if (drain.isLimited)
     return {
+      isClean: false,
       outcome: { kind: CycleOutcomeKind.Idle, reason: "the drain could not start — the findings stay open" },
       reviewFixesSha,
     };
-  return { reviewFixesSha: drain.reviewFixesSha };
+  return { isClean: false, reviewFixesSha: drain.reviewFixesSha };
 };

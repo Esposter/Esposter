@@ -7,14 +7,14 @@ description: The ref ownership that lets a working session and the review collec
 
 Two actors work the release pull request — the working session and the collector — and two writers on one ref would be a race whatever the gates say. The rule is ownership, not a lock: every ref has exactly one writer, and the two actors communicate only through the refs the other one reads.
 
-| Ref               | Written by                                                                  | Read by          | Moves how                                                                                         |
-| :---------------- | :-------------------------------------------------------------------------- | :--------------- | :------------------------------------------------------------------------------------------------ |
-| `develop`         | the collector                                                               | both, CodeRabbit | fast-forward only, one window per review cycle                                                    |
-| `ai/review-fixes` | the collector                                                               | the session      | grows during a drain, re-created from `develop` by the next one once ported — never deleted       |
-| `ai/queue`        | the working session                                                         | the collector    | the session's checked-out branch, pushed after every commit                                       |
-| `main`            | a person merging the release pull request, and the collector's express lane | everyone         | `develop` follows it by fast-forward on the merge, and a bump landing there rides the next window |
+| Ref               | Written by                                                                                        | Read by          | Moves how                                                                                         |
+| :---------------- | :------------------------------------------------------------------------------------------------ | :--------------- | :------------------------------------------------------------------------------------------------ |
+| `develop`         | the collector                                                                                     | both, CodeRabbit | fast-forward only, one window per review cycle                                                    |
+| `ai/review-fixes` | the collector                                                                                     | the session      | grows during a drain, re-created from `develop` by the next one once ported — never deleted       |
+| `ai/queue`        | the working session                                                                               | the collector    | the session's checked-out branch, pushed after every commit                                       |
+| `main`            | the collector merging a clean release or cutting the express lane, a person merging a riskier one | everyone         | `develop` follows it by fast-forward on the merge, and a bump landing there rides the next window |
 
-The release pull request has one writer too: the collector opens it once the window `develop` carries is worth its first review, and a person merges it. `main`'s two writers never race: the [express lane](/docs/infra/review-collector/express-lane) is closed unless `develop` and `main` agree, so the two never write between a merge base and the merge that consumes it.
+The release pull request has one writer too: the collector opens it once the window `develop` carries is worth its first review, and merges it once a review at the head is clean with the least merge risk; a person merges one the bot rates riskier, or closes it to pause. `main`'s two writers never race: the [express lane](/docs/infra/review-collector/express-lane) is closed unless `develop` and `main` agree, so the two never write between a merge base and the merge that consumes it.
 
 ```mermaid
 sequenceDiagram

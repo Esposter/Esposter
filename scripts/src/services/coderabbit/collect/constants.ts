@@ -96,6 +96,15 @@ export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milli
 // Schedules against, and its `updated_at` is when the bot last restated the limit.
 export const RATE_LIMIT_COMMENT_MARKER = "auto-generated comment: rate limited by coderabbit.ai";
 
+// The same walkthrough's record of the review that last completed — the one place a review that found nothing
+// States the range it read
+export const RECENT_REVIEW_START_MARKER = "<!-- recent_review_start -->";
+
+export const RECENT_REVIEW_END_MARKER = "<!-- recent_review_end -->";
+
+// The one merge risk the bot states that releases without a person: anything else is theirs to weigh
+export const MERGEABLE_RISK_LEVEL = "Minimal";
+
 // Slack on the stated deadline: a retrigger a second early spends the run for the same notice
 export const RETRIGGER_BUFFER_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 
