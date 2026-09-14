@@ -249,9 +249,20 @@ jobs:
       - name: 📝 Format
         run: pnpm format:check
 
-  lint:
-    name: Lint
+  # One job definition for the two repo-wide checks that differ only in the script they run — the matrix
+  # Fans them out as separate runners, and `name` is each entry's own, which is the check context the branch
+  # Ruleset requires (`apps/infra/src/github/rulesets/developMainStatusChecks.ts`).
+  check:
+    name: ${{ matrix.name }}
     needs: build-packages
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Lint
+            script: lint
+          - name: Typecheck
+            script: typecheck
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -265,24 +276,7 @@ jobs:
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
 
-      - name: 🔍 Lint
-        run: pnpm lint
-
-  typecheck:
-    name: Typecheck
-    needs: build-packages
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: 🔧 Setup Project Dependencies
-        uses: ./.github/actions/setup-project-dependencies
-
-      - name: 📦 Setup Packages
-        uses: ./.github/actions/setup-packages
-
-      - name: ✅ Typecheck
-        run: pnpm typecheck
+      - name: ✅ ${{ matrix.name }}
+        env:
+          SCRIPT: ${{ matrix.script }}
+        run: pnpm "$SCRIPT"

@@ -1,46 +1,36 @@
 name: 🚀 Deploy Function App
-# Reusable workflow: build `@esposter/functions` and deploy it to one function app. Called by the two
-# per-branch workflows via `uses: ./.github/workflows/deploy-function-app.yaml`, so a fix to the deploy reaches
-# both stacks — the pair it replaced differed only in the branch it triggered on and the two resource names
-# below, which is how a prod-only edit used to become drift.
-#
-# Concurrency stays on the callers: `github.workflow` inside a called workflow names the caller, and each of
-# them has its own name, so grouping there keeps the two stacks' deploys independent exactly as before.
-on:
-  workflow_call:
-    inputs:
-      functionAppName:
-        description: The function app to deploy to, and the blob container the package is staged in.
-        required: true
-        type: string
-      storageAccountName:
-        description: The storage account holding that container, whose firewall the runner is added to.
-        required: true
-        type: string
-    secrets:
-      AZURE_CLIENT_ID:
-        description: The federated credential azure/login exchanges its OIDC token against.
-        required: true
-      AZURE_SUBSCRIPTION_ID:
-        description: The subscription the storage account and function app live in.
-        required: true
-      AZURE_TENANT_ID:
-        description: The tenant that credential belongs to.
-        required: true
+# One workflow deploys `@esposter/functions` to both stacks: a push to `develop` ships the dev function app, a
+# push to `main` the prod one, and the branch is the only thing that picks the two resource names below — so
+# there is no second copy for a prod-only edit to drift from.
 
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+# Serialize deploys per branch but never cancel an in-flight deploy — a half-applied
+# function deployment is worse than a stale one, so newer pushes queue behind the running deploy.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+# `id-token: write` is never a repository default — without it azure/login has no OIDC token to exchange.
+permissions:
+  contents: read
+  id-token: write
+
+# The maps are keyed by the branches `on.push` lists, so a branch added there without a row here fails on an
+# empty name at the first `az` call rather than deploying anywhere.
 env:
-  FUNCTION_APP_NAME: ${{ inputs.functionAppName }}
-  STORAGE_ACCOUNT_NAME: ${{ inputs.storageAccountName }}
+  FUNCTION_APP_NAME: ${{ fromJSON('{"develop":"dev-func-esposter-001","main":"prod-func-esposter-001"}')[github.ref_name] }}
+  STORAGE_ACCOUNT_NAME: ${{ fromJSON('{"develop":"devstesposter001","main":"prodstesposter001"}')[github.ref_name] }}
   OUTPUT_DIRECTORY: dist
   ZIP_FILE_NAME: release.zip
 
 jobs:
   build-and-deploy:
     name: Build and Deploy
-    permissions:
-      contents: read
-      id-token: write
-
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
