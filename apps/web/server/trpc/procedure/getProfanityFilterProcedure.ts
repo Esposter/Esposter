@@ -4,5 +4,7 @@ import type { z } from "zod";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 
-export const getProfanityFilterProcedure = <T extends z.ZodType>(schema: T, keys: (keyof inferParser<T>["out"])[]) =>
-  addProfanityFilterMiddleware(standardAuthedProcedure.input(schema), keys);
+export const getProfanityFilterProcedure = <T extends z.ZodType>(
+  schema: T,
+  keys: (keyof inferParser<T>["out"] & string)[],
+) => addProfanityFilterMiddleware(standardAuthedProcedure.input(schema), keys);

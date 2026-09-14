@@ -14,16 +14,16 @@ export const addProfanityFilterMiddleware = <
   TCaller extends boolean,
 >(
   procedure: ProcedureBuilder<TContext, TMeta, TContextOverrides, TInputIn, TInputOut, TOutputIn, TOutputOut, TCaller>,
-  keys: (keyof TInputOut)[],
+  keys: (keyof TInputOut & string)[],
 ) =>
   procedure.use(({ input, next }) => {
     for (const key of keys) {
       const value = input[key];
       if (value === null || value === undefined || value === "") continue;
       else if (typeof value !== "string")
-        throw new TRPCError({ code: "BAD_REQUEST", message: `${key.toString()} must be a string.` });
+        throw new TRPCError({ code: "BAD_REQUEST", message: `${key} must be a string.` });
       else if (profanity.exists(value))
-        throw new TRPCError({ code: "BAD_REQUEST", message: `${key.toString()} contains profanity.` });
+        throw new TRPCError({ code: "BAD_REQUEST", message: `${key} contains profanity.` });
     }
     return next();
   });
