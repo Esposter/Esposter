@@ -26,16 +26,17 @@ runs:
     # Every recursive `run`, and the root's own `lint` script ends in `pnpm -r run lint`, which would then
     # Include the root and recurse. `--fail-if-no-match` so a selector that matches nothing fails here, where
     # The cause is readable, instead of as a missing module several steps later.
-    - name: 📦 Install dependencies
+    - name: 📦 Install the selected projects
+      if: ${{ inputs.install-filter != '' }}
       shell: bash
       env:
         INSTALL_FILTER: ${{ inputs.install-filter }}
-      run: |
-        if [ -n "$INSTALL_FILTER" ]; then
-          pnpm --filter "$INSTALL_FILTER" --filter "{.}..." --fail-if-no-match i
-        else
-          pnpm i
-        fi
+      run: pnpm --filter "$INSTALL_FILTER" --filter "{.}..." --fail-if-no-match i
+
+    - name: 📦 Install dependencies
+      if: ${{ inputs.install-filter == '' }}
+      shell: bash
+      run: pnpm i
     # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
     # Barrels (gitignored, absent on a fresh checkout). Both are produced once by the `build-packages` job and
     # Passed here as the `package-builds` artifact, whose entries share `packages` as their common ancestor —
