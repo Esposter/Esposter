@@ -12,7 +12,7 @@ Router structure, the procedure builder each route picks, ownership guards, and 
 | `server/trpc/routers/post`, `like`, `block`, `friend`, `friendRequest`, `user`                                            | 2026-09-14 | no room to gate on — every write scopes to the caller                                         |
 | `server/trpc/routers/dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `survey`                                     | 2026-08-31 | survey's participant routes are rate-limited by design and its owner routes are not           |
 | `server/trpc/routers/achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage` | 2026-08-31 | the two game saves are the shared blob-state builders                                         |
-| `app/plugins` + `app/services/trpc`                                                                                       | 2026-08-30 | the client half — `errorLink` and the alerted-code set it answers from                        |
+| `app/plugins` + `app/services/trpc`                                                                                       | 2026-09-14 | the client half — `errorLink` and the alerted-code set it answers from                        |
 
 ## Exclusions
 

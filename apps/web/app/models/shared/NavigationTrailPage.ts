@@ -6,3 +6,5 @@ export enum NavigationTrailPage {
   All = "all",
   Resources = "resources",
 }
+// Widened to string[] so a slug read back off a history entry can be checked without a cast
+export const NavigationTrailPages: readonly string[] = Object.values(NavigationTrailPage);
