@@ -3,6 +3,7 @@ import type { Like } from "@esposter/db-schema";
 import { createLikeInputSchema } from "#shared/models/db/post/CreateLikeInput";
 import { deleteLikeInputSchema } from "#shared/models/db/post/DeleteLikeInput";
 import { updateLikeInputSchema } from "#shared/models/db/post/UpdateLikeInput";
+import { getLikeWhere } from "@@/server/services/post/getLikeWhere";
 import { readLike } from "@@/server/services/post/readLike";
 import { readLikedPost } from "@@/server/services/post/readLikedPost";
 import { updateLikeCount } from "@@/server/services/post/updateLikeCount";
@@ -14,7 +15,6 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, likes } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { and, eq } from "drizzle-orm";
 
 export const likeRouter = router({
   createLike: standardAuthedProcedure.input(createLikeInputSchema).mutation<Like>(({ ctx, input }) =>
@@ -48,12 +48,7 @@ export const likeRouter = router({
     ctx.db.transaction(async (tx) => {
       const post = await requireEntity(readLikedPost(tx, input), DatabaseEntityType.Post, input);
       const deletedLike = requireMutation(
-        (
-          await tx
-            .delete(likes)
-            .where(and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, input)))
-            .returning()
-        )[0],
+        (await tx.delete(likes).where(getLikeWhere(input, ctx.getSessionPayload.user.id)).returning())[0],
         Operation.Delete,
         DatabaseEntityType.Like,
         input,
@@ -75,11 +70,7 @@ export const likeRouter = router({
 
       const updatedLike = requireMutation(
         (
-          await tx
-            .update(likes)
-            .set({ value })
-            .where(and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, postId)))
-            .returning()
+          await tx.update(likes).set({ value }).where(getLikeWhere(postId, ctx.getSessionPayload.user.id)).returning()
         )[0],
         Operation.Update,
         DatabaseEntityType.Like,
