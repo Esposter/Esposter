@@ -5,7 +5,7 @@ description: The ref ownership that lets a working session and the review collec
 
 # Two Writers
 
-Two actors work the release pull request — the working session and the collector — and two writers on one ref would be a race whatever the gates say. The rule is not a lock but ownership — every ref in the pipeline has exactly one writer, and the two actors communicate only through the refs the other one reads.
+Two actors work the release pull request — the working session and the collector — and two writers on one ref would be a race whatever the gates say. The rule is ownership, not a lock: every ref has exactly one writer, and the two actors communicate only through the refs the other one reads.
 
 | Ref               | Written by                                                                  | Read by          | Moves how                                                                                         |
 | :---------------- | :-------------------------------------------------------------------------- | :--------------- | :------------------------------------------------------------------------------------------------ |
@@ -14,13 +14,7 @@ Two actors work the release pull request — the working session and the collect
 | `ai/queue`        | the working session                                                         | the collector    | the session's checked-out branch, pushed after every commit                                       |
 | `main`            | a person merging the release pull request, and the collector's express lane | everyone         | `develop` follows it by fast-forward on the merge, and a bump landing there rides the next window |
 
-The release pull request has one writer too: the collector opens it, once the window `develop` carries is worth its first review, and a person merges it.
-
-`main` is the one ref with two writers, and it is not a race: a person merges the release pull request, and the [express lane](/docs/infra/review-collector/express-lane) cherry-picks the commits that provably have nothing to review. The lane never runs while a window is in flight — it is closed unless `develop` and `main` agree — so the two never write between a merge base and the merge that consumes it.
-
-The standing authorisation the session holds is to push `ai/queue`, which spends nothing: a queue push starts no review, only a collector run that measures. The four gates of the `coderabbit` skill live in the [collection cycle](/docs/infra/review-collector/collection-cycle), where they are read from the remote every time rather than remembered in a session's head.
-
-## The session's loop
+The release pull request has one writer too: the collector opens it once the window `develop` carries is worth its first review, and a person merges it. `main`'s two writers never race: the [express lane](/docs/infra/review-collector/express-lane) is closed unless `develop` and `main` agree, so the two never write between a merge base and the merge that consumes it.
 
 ```mermaid
 sequenceDiagram
@@ -37,31 +31,15 @@ sequenceDiagram
   S->>Q: git push --force-with-lease
 ```
 
-The session's checked-out branch is `ai/queue`, not `develop`. It commits coherent units there, with two habits:
-
-- **After every commit, push.** A plain `git push` while the queue sits on `develop`'s head, which is the common case after a fast-forward. The queue is the session's history and nothing more — a backup of unpushed work, not a reviewed artifact, exactly as the numbered bookmarks were — so rewriting it after a rebase is by design, and `--force-with-lease` is what makes two sessions on two machines safe: the second push fails instead of dropping the first's commits, and the loser fetches, rebases and pushes again.
-- **Before every unit, sync.** `git fetch` and, when `origin/develop` moved, `git rebase origin/develop`. When the collector fast-forwarded, the session's commits are already ancestors and the rebase is a no-op. When it cherry-picked — fixes led the window, or the queue had drifted — the ported commits are equal by patch id and the rebase drops them, re-parenting the unported rest onto the new head. Either way `ai/queue` is again a strict extension of `develop`, and the next push says so.
-
-The session never checks out `develop` for work, never pushes it, never touches `ai/review-fixes`, and never cuts a window: a commit that would have been "the last one under the cap" is just a commit, because the collector measures the cut on the tree it is about to push. `develop` is what `main` already is — a branch read for its head and written by one process.
-
-## When the session wants to answer findings itself
-
-It may. A finding fixed in the session is a commit on the local branch carrying the same `Answers: <comment id>` trailer the collector writes, and it rides to `ai/queue` with everything else. The collector's open-finding predicate honours a trailer on the queue's unported commits, so it will not fix the same finding twice, and its reply step names the commit once it is on `develop`. What the session must not do is reply to the thread itself before the push — the skill's rule that a reply cites a sha the remote has holds for both writers, and the collector is the one that knows when the push happened.
-
-A rejection needs no sha, so a session may post one directly. The collector treats a thread whose last comment is not the bot's as answered.
-
-## When the collector's fixes conflict with the queue
-
-The drain changed a file the queue's next commit also changed, so the port stops before that commit and reports it. Only the session can decide how the two combine, and it does so by rebasing `ai/queue` onto `origin/ai/review-fixes` rather than onto `develop`: the fixes are not on `develop` yet, and they will lead the next window, so a queue that already contains them is a queue that no longer conflicts: the porter reads what the queue owes against the tree the fixes built, where those commits are ancestors and not picks at all. Replaying them would not do — a later fix that rewrote their lines turns the replay from empty into a conflict. `ai/review-fixes` is safe to rebase onto because the collector never rewrites it while it owes commits; it only grows until ported, and its re-creation after that changes nothing for the session, whose copies of those commits are the ones that ride.
+A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and clears the gates from the remote on every run; the session's side of the loop — the push after every commit, the rebase before every unit, a finding answered by hand with the same trailer, a conflict with parked fixes resolved by rebasing onto `origin/ai/review-fixes` — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
 ## Parallel work
 
-Worktree agents executing specs commit on their own branches and hand the result to the main session, which merges it into its local `ai/queue` and publishes it. There is still one writer of `ai/queue` per machine, and the lease handles the case of two machines. A worktree agent never pushes `ai/queue` itself.
+Worktree agents executing specs commit on their own branches and hand the result to the main session, which merges it into its local `ai/queue` and publishes it. There is one writer of `ai/queue` per machine, and the lease handles two machines. A worktree agent never pushes `ai/queue` itself.
 
 ## Key files
 
-| File                                                         | Role                                                                                     |
-| :----------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
-| `.agents/skills/coderabbit/references/pipelining.md`         | the session publishes `ai/queue`, the collector cuts and pushes windows                  |
-| `.agents/skills/coderabbit/references/release-pr-cutting.md` | the drain half is the collector, the cut half stays a human last resort                  |
-| `.agents/skills/coderabbit/SKILL.md`                         | the standing push ask names `ai/queue`, and the gates cite the collector as their runner |
+| File                                                    | Role                                                                    |
+| :------------------------------------------------------ | :---------------------------------------------------------------------- |
+| `.agents/skills/review-queue/SKILL.md`                  | the session publishes `ai/queue`; the collector cuts and pushes windows |
+| `scripts/src/services/coderabbit/collect/pushBranch.ts` | the compare-and-swap every collector push goes through                  |
