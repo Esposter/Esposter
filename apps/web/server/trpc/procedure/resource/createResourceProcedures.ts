@@ -232,7 +232,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation<void>(
       async ({ input: { blobPath, id } }) => {
         // The path is a single separator-free segment (BLOB_SEGMENT_REGEX) anchored under {id}/files/, so this can
-        // Only ever delete uploaded assets, never the content or published-content blobs beside the files directory
+        // Only ever delete uploaded assets, never the content blob or the version objects beside the files directory
         await publishBlobDeletion(id, AzureContainer.ResourceAssets, [
           `${getFilesDirectoryName(id)}/${blobPath}`,
         ]).match(noop, console.error);
@@ -295,7 +295,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Bump the version and write the version in one transaction so a failed write rolls the version bump
         // Back: the publication row can never point at a publishVersion that was never stored.
         const publication = await ctx.db.transaction(async (tx) => {
-          // The version bump is done in SQL so concurrent publishes each claim a distinct publish blob;
+          // The version bump is done in SQL so concurrent publishes each claim a distinct version;
           // The publication row exists only while the resource is published (the Publishable capability's state)
           const newPublication = requireMutation(
             (

@@ -33,6 +33,6 @@ export const readSnapshotVersionContent = async (
   );
   if (!plaintext) return undefined;
 
-  // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, exactly as readContentBlob relies on
+  // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, exactly as readResourceContent relies on
   return ResourceDefinitionMap[resource.type].contentSchema.parse(JSON.parse(Buffer.from(plaintext).toString()));
 };

@@ -21,14 +21,14 @@ flowchart LR
 
   subgraph blob ["Azure Blob resource-assets — every path under {id}/"]
     CONTENT["content.json — the working copy"]
-    PUB["published/{publishVersion}.json — immutable"]
+    PUB["objects/{hash} — every retained version, keyframe or delta"]
     FILES["files/… — binary assets, FileAssets only"]
   end
 
   DEF["ResourceDefinitionMap entry"]
 
   ROW -- "id is the blob path prefix" --> CONTENT
-  CONTENT -- "publishResource copies" --> PUB
+  CONTENT -- "a publish or a revision takes a version" --> PUB
   DEF -- "contentSchema validates" --> CONTENT
   DEF -- "capabilities gate procedures, blades, commands" --> ROW
 ```
@@ -50,17 +50,18 @@ Drizzle table `resources` (`packages/db-schema/src/schema/resources.ts`) — pur
 
 Publish state is **normalized into its own table**, `resource_publications` — a row exists iff the resource is currently published. Publishing is a capability, not a base attribute, so publish columns do not belong on every resource row:
 
-| Column           | Type                             | Notes                                      |
-| ---------------- | -------------------------------- | ------------------------------------------ |
-| `resourceId`     | uuid PK, FK → resources, cascade | one publication per resource               |
-| `publishVersion` | integer, default 1               | keys the immutable published blob snapshot |
-| `publishedAt`    | timestamp, default now           | when the current publish happened          |
+| Column           | Type                             | Notes                                            |
+| ---------------- | -------------------------------- | ------------------------------------------------ |
+| `resourceId`     | uuid PK, FK → resources, cascade | one publication per resource                     |
+| `publishVersion` | integer, default 1               | the published channel's version row that is live |
+| `publishedAt`    | timestamp, default now           | when the current publish happened                |
 
 Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by id only (type lives in the row; ids are UUIDs — a type prefix would duplicate authoritative data into path strings):
 
 ```text
 {id}/content.json                      working copy (JSON, validated by the type's content schema)
-{id}/published/{publishVersion}.json   publish snapshots (Publishable only)
+{id}/objects/{hash}                    every retained version's content, in either channel (the version store)
+{id}/published/{publishId}/files/…     a published version's asset clones (Publishable only)
 {id}/files/…                           binary assets (FileAssets types only)
 ```
 

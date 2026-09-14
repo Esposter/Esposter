@@ -176,7 +176,7 @@ describe("webpageRouter", () => {
     replayMockSession(foreignSession);
     await caller.publishResource({ id: foreignResource.id });
     const publishedBlobName = `${createSnapshotAssetsDirectoryName(foreignResource.id, SnapshotChannel.Published)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}a`;
-    // Added to the container rather than replacing it — the publish above wrote its own snapshot blob, and
+    // Added to the container rather than replacing it — the publish above wrote its own version object, and
     // Discarding that leaves the fixture's publication with nothing behind it
     const resourceAssets = MockContainerDatabase.get(AzureContainer.ResourceAssets) ?? new Map<string, Buffer>();
     resourceAssets.set(blobName, Buffer.alloc(1));
