@@ -14,6 +14,8 @@ Two actors work the release pull request — the working session and the collect
 | `ai/queue`        | the working session                                                         | the collector    | the session's checked-out branch, pushed after every commit                                       |
 | `main`            | a person merging the release pull request, and the collector's express lane | everyone         | `develop` follows it by fast-forward on the merge, and a bump landing there rides the next window |
 
+The release pull request has one writer too: the collector opens it, once the window `develop` carries is worth its first review, and a person merges it.
+
 `main` is the one ref with two writers, and it is not a race: a person merges the release pull request, and the [express lane](/docs/infra/review-collector/express-lane) cherry-picks the commits that provably have nothing to review. The lane never runs while a window is in flight — it is closed unless `develop` and `main` agree — so the two never write between a merge base and the merge that consumes it.
 
 The standing authorisation the session holds is to push `ai/queue`, which spends nothing: a queue push starts no review, only a collector run that measures. The four gates of the `coderabbit` skill live in the [collection cycle](/docs/infra/review-collector/collection-cycle), where they are read from the remote every time rather than remembered in a session's head.

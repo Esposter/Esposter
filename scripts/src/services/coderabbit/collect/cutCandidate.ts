@@ -37,14 +37,7 @@ export const cutCandidate = ({ cwd, developSha, fixCount, frontierSha, queueSha,
     keptShas.pop();
     retries -= 1;
     // Nothing left to verify: develop itself is the candidate, and the caller pushes nothing
-    if (keptShas.length === 0 && fixCount === 0)
-      return {
-        isFastForward: false,
-        isMainConflicted: false,
-        isMainMerged: false,
-        queueShas: keptShas,
-        targetSha: developSha,
-      };
+    if (keptShas.length === 0 && fixCount === 0) return { queueShas: keptShas, targetSha: developSha };
   }
 
   const pickHeadSha = runGit(["rev-parse", "HEAD"], cwd).trim();
@@ -72,11 +65,9 @@ export const cutCandidate = ({ cwd, developSha, fixCount, frontierSha, queueSha,
     cutSha === undefined ||
     getNonEmptyLines(runGit(["rev-list", "--merges", `${developSha}..${cutSha}`], cwd)).length === 0;
   const isFastForward = fixCount === 0 && mergeBase === developSha && isMergeFree && !isMainMerged;
-  return {
-    isFastForward,
-    isMainConflicted: mergeOutcome === MergeMainOutcome.Conflicted,
-    isMainMerged,
-    queueShas: keptShas,
-    targetSha: isFastForward ? (cutSha ?? developSha) : runGit(["rev-parse", "HEAD"], cwd).trim(),
-  };
+  const targetSha = isFastForward ? (cutSha ?? developSha) : runGit(["rev-parse", "HEAD"], cwd).trim();
+  console.info(
+    `cut: ${keptShas.length} queue commits = ${getFileCount(`${frontierSha}..${targetSha}`, cwd)} files${isMainMerged ? ", main folded in" : ""}${mergeOutcome === MergeMainOutcome.Conflicted ? ", main conflicts outside the lockfile — held for a person" : ""}${isFastForward ? ", fast-forward" : ""}`,
+  );
+  return { queueShas: keptShas, targetSha };
 };

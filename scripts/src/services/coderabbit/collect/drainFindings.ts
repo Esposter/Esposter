@@ -1,6 +1,5 @@
+import type { DrainFindingsInput } from "#src/models/coderabbit/collect/DrainFindingsInput";
 import type { DrainFindingsResult } from "#src/models/coderabbit/collect/DrainFindingsResult";
-import type { DrainInput } from "#src/models/coderabbit/collect/DrainInput";
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import {
@@ -8,6 +7,7 @@ import {
   DRAIN_FAILED_MARKER,
   DRAIN_LIMITED_MARKER,
   DRAIN_VERDICT_PREFIX,
+  INSTALL_COMMAND,
   QUARANTINED_MARKER,
   REJECTIONS_FILE,
   REVIEW_FIXES_BRANCH,
@@ -17,31 +17,24 @@ import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt"
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-interface DrainFindingsInput extends DrainInput {
-  developSha: string;
-  // The pull request's issue comments, read once by the caller — the markers live in them
-  issueComments: GitHubEntry[];
-  // The newest review's id, the unit a drain attempt is counted against
-  newestReviewId: number;
-  reviewFixesSha?: string;
-  viewerLogin: string;
-}
-
 // Claude works on the fixes branch — ai/review-fixes while it still owes develop commits, develop's head otherwise,
 // So the branch is never deleted and never stale — and the branch is pushed only after it exits cleanly, so a
-// Drain that dies leaves no trace and the next run starts the same open set again. Past the attempt cap the review is quarantined: its findings stay open for a person and the caller
-// Ports without them, because a pipeline stalled on one finding nobody sees costs every window after it.
-// Claude Code's own session limit is the one non-zero exit that is not this review's failure, so it neither
-// Counts an attempt nor fails the run: the deadline goes into a marker comment, and every run until it lifts
-// Reads that marker and skips the drain instead of downloading Claude Code to be refused again.
+// Drain that dies leaves no trace and the next run starts the same open set again. Past the attempt cap the review
+// Is quarantined: its findings stay open for a person and the caller ports without them, because a pipeline
+// Stalled on one finding nobody sees costs every window after it. Claude Code's own session limit is the one
+// Non-zero exit that is not this review's failure, so it neither counts an attempt nor fails the run: the deadline
+// Goes into a marker comment, and every run until it lifts reads that marker and skips the drain instead of
+// Downloading Claude Code to be refused again.
 export const drainFindings = async ({
   developSha,
   issueComments,
@@ -75,6 +68,9 @@ export const drainFindings = async ({
   const isOwing = reviewFixesSha !== undefined && readCherryShas(developSha, reviewFixesSha).length > 0;
   const baseSha = isOwing && reviewFixesSha ? reviewFixesSha : developSha;
   runGit(["switch", "--force-create", REVIEW_FIXES_BRANCH, baseSha]);
+  // The tree the drain's own checks run against is this base, not the one the event checked out (`INSTALL_COMMAND`)
+  if (spawnPnpm(INSTALL_COMMAND, { cwd: REPOSITORY_ROOT, stdio: "inherit" }).status !== 0)
+    throw new InvalidOperationError(Operation.Update, "coderabbit", `the install for ${baseSha} failed`);
   // Outside the checkout, so the drain's "leave the working tree clean" and its verdicts never contend
   const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
   const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);

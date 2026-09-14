@@ -3,8 +3,10 @@ import type { RateLimitSettlement } from "#src/models/coderabbit/collect/RateLim
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { checkIsRetriggerAsked } from "#src/services/coderabbit/collect/checkIsRetriggerAsked";
+import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import { RETRIGGER_SLEEP_CAP_MS } from "#src/services/coderabbit/collect/constants";
 import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
+import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import { PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
 
@@ -36,7 +38,19 @@ export const settleRateLimit = ({
   } else if (checkIsRetriggerAsked(issueComments, viewerLogin)) {
     console.info("rate limited — the review it refused is already asked for");
     return {};
-  } else if (isDryRun)
+  }
+
+  // The slot is read again here for the reason the push reads it again: the gate's reading is a drain old by
+  // Now, and a limit that lifted during it may already have a review running that a person asked for — an ask
+  // Posted into that one cancels it
+  if (!checkIsSlotFree(readCheckStatus(pullRequest)))
+    return {
+      outcome: {
+        kind: CycleOutcomeKind.Idle,
+        reason: "a review started during the run, or its status could not be read — the ask is not owed",
+      },
+    };
+  else if (isDryRun)
     return {
       outcome: {
         kind: CycleOutcomeKind.Idle,

@@ -3,7 +3,7 @@ import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromp
 import { ANSWERS_TRAILER, DRAINS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { getFindingText } from "#src/services/coderabbit/collect/getFindingText";
 
-// The one step Claude runs. The skill already teaches how a finding is verified, fixed and answered, so the
+// The one step Claude runs. The skills already teach how a finding is verified, fixed and answered, so the
 // Prompt carries the findings as the reviewer wrote them — the drain holds no `gh` to read a thread itself, so
 // A title alone would have it re-derive the case the reviewer already made — and the two things the collector
 // Needs from the commits: the trailers. It forbids the three things only the collector may do: push, rewrite
@@ -26,12 +26,12 @@ export const getDrainPrompt = ({
   const bodySection =
     reviewId === undefined
       ? "Body-only findings: none open."
-      : `Body-only findings (nitpicks, outside-diff-range) of review ${reviewId} are open. They have no thread. Check each against the current file. A real one is fixed in a commit carrying the trailer \`${DRAINS_TRAILER}: ${reviewId}\`. If every one of them is rejected, write one verdict line per finding to \`${verdictPath}\` and the collector posts them as a single pull request comment.`;
+      : `Body-only findings (nitpicks, outside-diff-range) of review ${reviewId} are open. They have no thread. Check each against the current file. A real one is fixed in a commit carrying the trailer \`${DRAINS_TRAILER}: ${reviewId}\`. For each one you reject, append one verdict line \`<what it named> <the evidence that makes it invalid>\` to \`${verdictPath}\` — the collector posts them as one pull request comment, whether or not any other was fixed.`;
 
   return [
     `You are the review collector's drain step for pull request #${pullRequestNumber} of this repository. You are on the branch that holds the fixes. Work in this checkout only: never push, never switch branches, never rewrite history, never amend, and never run \`gh\` or any other command that writes to GitHub — you hold no credential for it, and the collector posts every reply once the fixes are pushed.`,
     "",
-    "Answer every finding below and nothing else. The `coderabbit` skill in `.agents/skills/coderabbit/SKILL.md` and its `references/answering-findings.md` own how: verify against the code before accepting, grep for the repo's convention before taking a suggested diff, and check whether a real finding has a twin the scan stopped short of.",
+    "Answer every finding below and nothing else. The `coderabbit` skill in `.agents/skills/coderabbit/SKILL.md` and its `references/answering-findings.md` own how: verify against the code before accepting, grep for the repo's convention before taking a suggested diff, and check whether a real finding has a twin the scan stopped short of. This is a delegated fix round, so `.agents/skills/code-review/fixing-findings.md` owns the order of work — the root cause over the symptom, every call site the fix converges, and the docs page or skill the change leaves stale.",
     "",
     "## Open inline findings",
     "",

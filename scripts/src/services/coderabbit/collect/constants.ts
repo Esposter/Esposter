@@ -30,6 +30,13 @@ export const RATE_LIMITED_DESCRIPTION = "Review rate limited";
 // A red cut drops its last queue commit and re-verifies this many times before the window is held
 export const GREEN_CUT_RETRY_LIMIT = 3;
 
+// The install the candidate's own lockfile asks for. The runner installed once, for the tree the event checked
+// Out — the queue head on a queue push, the merge ref on a review, `main` on a status — and none of those is the
+// Candidate: a queue commit that adds a dependency reads red on the review-completion event, the one event the
+// Collector exists to act on, and the drop-the-tail retry then blames three commits that were fine. Frozen, so a
+// Lockfile the commit left stale fails here as CI would fail it, and nothing tracked is rewritten.
+export const INSTALL_COMMAND: string[] = ["i", "--frozen-lockfile"];
+
 // The checks a candidate earns before it is pushed. The pushed head runs CI on its own and the interior queue
 // Commits were verified by nobody, so the cut gets the checks CI would fail it on. Check-only: a repair the
 // Collector wrote would be a commit nobody reviewed. The two ESLint passes are what the root `lint` script runs
@@ -37,6 +44,7 @@ export const GREEN_CUT_RETRY_LIMIT = 3;
 // Oxlint alone let an import-order error through to a pushed window, and a pre-push control that is not the check
 // Protecting `develop` protects nothing.
 export const VERIFY_COMMANDS: string[][] = [
+  INSTALL_COMMAND,
   ["build:packages"],
   ["-r", "--parallel", "run", "typecheck"],
   ["exec", "oxlint", "--format=default", "--disable-nested-config"],

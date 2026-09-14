@@ -31,7 +31,7 @@ as zero is how an over-cap first window gets pushed as a small one.
 
 The pipeline deliberately keeps local commits ahead of the reviewed frontier, so `pushed+unreviewed` omits exactly the commits the push is about to add — it can read comfortably under the cap while the push lands well over it. It answers "is a previous window still unreviewed" and nothing else; `next push adds to` is the one that sizes the window. When a tail is being held back, the cut sha's own count is a `git diff --name-only <frontier>..<cut-sha>` away.
 
-**The budget is measured from that sha, not from the last push**. An unreviewed window does not clear — it accumulates. Two pushes of 35 and 80 that each looked compliant are one 115-file window, over the cap, and the review is skipped outright rather than truncated.
+**The budget is measured from that sha, not from the last push**. An unreviewed window does not clear — it accumulates. Two pushes that each looked compliant on their own add up to one window over the cap, and the review is skipped outright rather than truncated.
 
 ## A rate-limited status does not prove the frontier stalled
 

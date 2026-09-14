@@ -21,6 +21,8 @@ submits a review.
 | `ai/review-fixes` | the collector                              | fixes a drain produced that no window has carried yet                           |
 | `main`            | a person, and the collector's express lane | the released trunk, plus the commits that never needed a window                 |
 
+The release pull request itself is the collector's too: it opens the next one once the window `develop` carries has reached the fill target, so nothing is ever opened on a handful of files, and the session's only remaining act on the pull request is the merge.
+
 A queue push spends nothing: it starts no review, only a collector run that measures. So the standing rule
 that a `develop` push is asked for every time is unchanged and now never applies to the session — the collector
 holds the authorisation, and the four gates of `SKILL.md` are the gates it clears from the remote on every run.
@@ -54,25 +56,8 @@ states for the cut's sake, and the lane is the second reason for it.
    commit by commit, so budget it as work rather than as a command.
 4. Keep working. The collector fires on the push, reads the frontier and the check, drains any open findings
    onto `ai/review-fixes`, and when the slot is free and the queue has reached the fill target — or the next commit
-   overflows the cap, so the window is as large as it will ever be — ports the largest green prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha.
-
-```mermaid
-flowchart TD
-  U[Commit a unit on ai/queue] --> P[git push ai/queue]
-  P --> C{Collector: slot free and<br/>previous window reviewed}
-  C -->|no| U
-  C -->|yes| F{Open findings}
-  F -->|yes| DR[Drain onto ai/review-fixes]
-  F -->|no| W
-  DR --> W{Fixes parked, queue at the<br/>fill target, or the window held}
-  W -->|no| U
-  W -->|yes| PU[Port fixes then the queue prefix<br/>fast-forward develop]
-  PU --> R[Review runs, replies carry the sha]
-  C -->|express: nothing to review| MX[Cherry-pick onto main<br/>no window spent]
-  MX --> S
-  R --> S[Session rebases ai/queue onto develop]
-  S --> U
-```
+   overflows the cap, so the window is as large as it will ever be — ports the largest green prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha. The loop as a sequence, with what each side owns, is drawn once in
+   `apps/web/content/docs/infra/review-collector/two-writers.md`.
 
 **What the session must not do:** push `develop`, touch `ai/review-fixes`, or cut a window. A commit that would have
 been "the last one under the cap" is just a commit — the collector measures the cut on the tree it is about to
@@ -108,25 +93,10 @@ window. A fix committed at the queue's tail waits for the windows ahead of it, a
 comes when it lands; picking it ahead of the commits it was written on top of conflicts, so the wait is the cost
 of answering in-session rather than leaving the drain to it.
 
-## Re-opening the standing PR after it merges
+## After the standing PR merges
 
-The pipeline assumes the `develop` → `main` PR is open; once it merges there is none, and the collector exits until
-a person opens one. That is a slot spend like any push, so it is asked for rather than assumed (`SKILL.md`,
-"Opening a PR Spends a Review Slot").
-
-Size that window from the **merge base**, not from a reviewed sha — a PR's first review reads the cumulative diff
-(`references/measuring-the-window.md`), so the count is
-`git fetch origin main && git diff --name-only $(git merge-base origin/main HEAD)..HEAD` and the ~90-file target
-applies to it whole. Everything already on `main` is outside it, which is why the merge base rather than `main` is
-the left-hand side — and the fetch is load-bearing rather than hygiene, because this measurement is taken exactly
-once the previous PR has merged: `origin/main` is a remote-tracking ref, so an unfetched one still points at the
-commit before that merge and the merge base walks back past it, counting the whole merged window a second time.
-
-```bash
-git push origin develop
-gh pr create --base main --head develop --title "<type>(<scope>): <what the window carries>" --body "<summary>"
-```
-
-The body is the window's summary rather than the last commit's: what moved, what was deliberately left and why
-(the same reasons the commit messages carry), and a test plan naming the checks that were run. A reader arriving
-at the PR should not have to read sixteen commits to learn what one window did.
+Nothing is owed by the session. The push to `main` runs the cycle, which fast-forwards `develop` onto it; the queue
+keeps filling from that merge base, and the cycle that pushes the first window worth a slot opens the next
+`develop` → `main` PR in the same run — a PR's first review reads the cumulative diff, so the collector measures it
+from the merge base and holds it to the same fill target a push clears (`references/measuring-the-window.md`). A
+session that opened one by hand would spend the slot the collector was holding for a full window.

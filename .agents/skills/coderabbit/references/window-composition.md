@@ -37,7 +37,7 @@ flowchart TD
 
 **Verify the cut, not only the head.** The checks ran against the tip, which includes the held tail; the cut's tree is that tip minus the tail, so what the tail touches is re-run against the cut — the package suites whose snapshots it moved, the docs suite whose paths it fixed, and lint with the plugin at the cut (`git worktree add <scratch> <cut>`, a scratch config at the repo root naming that worktree's `scripts/src/oxlint/<plugin>.ts`, both removed after — the entrypoint alone is not the plugin, since its rules resolve through `#src/services/oxlint/<plugin>/`).
 
-**Fill to the cap.** A slot costs an hour whether it reads 20 files or 99, so the prefix is the largest one under the cap, and a prefix that lands at 99 is pushed rather than held at 84. The ~90 figure the skill aims at is what a prefix usually lands on, never a reason to hold one that fits. Other sessions push the same branch, so the count is re-read after a fetch and the push goes out only while the remote tip is still the one it was measured against.
+**Fill to the cap.** A slot costs the same whether it reads a fifth of the cap or all of it, so the prefix is the largest one under the cap, and a prefix that lands just under it is pushed rather than held at the fill target. The target is what a prefix usually lands on, never a reason to hold one that fits. Other sessions push the same branch, so the count is re-read after a fetch and the push goes out only while the remote tip is still the one it was measured against.
 
 ## Reordering so a fix leads
 
@@ -73,4 +73,4 @@ When a push has already overshot, the recovery is to shorten `develop`, park the
 
 ## Batching roadmap items to fill a window
 
-A single roadmap item is typically 8–15 files, so one-item-per-PR wastes most of a slot and multiplies rounds. Batch items until the estimate approaches ~90, grouping by what they touch so coupling stays inside one review: items sharing a schema section, a router or a settings object belong in the same PR — splitting them creates stacked branches that cannot start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land separately with a stated merge order.
+A single roadmap item is typically a small fraction of the cap, so one-item-per-PR wastes most of a slot and multiplies rounds. Batch items until the estimate approaches the fill target, grouping by what they touch so coupling stays inside one review: items sharing a schema section, a router or a settings object belong in the same PR — splitting them creates stacked branches that cannot start until their parent merges. Items whose only overlap is additive (a new row on a shared blade) can land separately with a stated merge order.

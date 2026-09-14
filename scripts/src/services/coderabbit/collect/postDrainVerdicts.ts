@@ -1,7 +1,6 @@
 import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromptInput";
 
-import { getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
-import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
+import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { existsSync, readFileSync } from "node:fs";
@@ -44,7 +43,11 @@ export const postDrainVerdicts = ({
   const verdicts = readLines(verdictPath);
   if (verdicts.length === 0 || reviewId === undefined) return;
 
-  const body = `${getMarker(DRAINS_MARKER, reviewId)}\nBody-only findings of review ${reviewId} are rejected:\n${verdicts.map((verdict) => stripHtmlComments(verdict)).join("\n")}`;
+  const body = getDrainsVerdictBody(
+    reviewId,
+    "rejected",
+    verdicts.map((verdict) => stripHtmlComments(verdict)),
+  );
   console.info(`verdict comment for review ${reviewId}`);
   runGh(["pr", "comment", pullRequest.toString(), "--body", body]);
 };
