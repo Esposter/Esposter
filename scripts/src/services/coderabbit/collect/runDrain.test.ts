@@ -98,7 +98,7 @@ describe(runDrain, () => {
 
     const passedEnvironment = spawn.mock.calls[0]?.[2]?.env;
     expect(passedEnvironment?.CLAUDE_CODE_OAUTH_TOKEN).toBe("claude-token");
-    expect(passedEnvironment).toHaveProperty("PATH");
+    expect(passedEnvironment?.PATH).toBe(process.env.PATH);
     expect(passedEnvironment).not.toHaveProperty("GH_TOKEN");
     expect(passedEnvironment).not.toHaveProperty("GITHUB_TOKEN");
     expect(passedEnvironment).not.toHaveProperty("PULUMI_ACCESS_TOKEN");
