@@ -1,6 +1,6 @@
 ---
 name: github-actions
-description: Esposter GitHub Actions authoring conventions for `.github/workflows` and `.github/actions` — taking the runner's own affordance over a shell reimplementation of it (`working-directory:`, `if:`, `env:`, a composite action), every `${{ }}` expansion of event/matrix/input data reaching the shell as an `env:` variable read as `"$VAR"` rather than interpolated into the command line, a reusable workflow called with named secrets rather than `secrets: inherit` and declaring each `required` so the unpinnable caller's drift fails the call, a skipped job satisfying its required check so an aggregate gate needs `!cancelled()` plus an explicit `needs.*.result` step, and a cleanup step's `always()` being paired with a guard on the value it consumes. Apply when writing or editing any workflow, composite action, job, or step — and read the owner pointers before adding a rule, since caching, job shape, permissions, action pinning and which pnpm script a job runs each belong elsewhere.
+description: Esposter GitHub Actions authoring conventions for `.github/workflows` and `.github/actions` — taking the runner's own affordance over a shell reimplementation of it (`working-directory:`, `if:`, `env:`, a composite action), every `${{ }}` expansion of event/matrix/input data reaching the shell as an `env:` variable read as `"$VAR"` rather than interpolated into the command line, a reusable workflow called with named secrets rather than `secrets: inherit` and declaring each `required` so the unpinnable caller's drift fails the call, a skipped job satisfying its required check so an aggregate gate needs `!cancelled()` plus an explicit `needs.*.result` step, a cleanup step's `always()` being paired with a guard on the value it consumes, and a comment keeping only what the owning docs page does not say. Apply when writing or editing any workflow, composite action, job, or step — and read the owner pointers before adding a rule, since caching, job shape, permissions, action pinning and which pnpm script a job runs each belong elsewhere.
 ---
 
 # GitHub Actions Authoring
@@ -57,6 +57,10 @@ A cleanup step that must run on failure (`always()`) runs on _every_ failure —
 ## Don't swallow an exit code to make a step idempotent
 
 `|| true` on a command that is _already_ idempotent is dead syntax that can only ever hide a real failure — a revoked role, a resource mid-delete — which then resurfaces one step later as something that reads like a different bug. Check whether the tool is idempotent before reaching for it (`az storage container create` is: an existing container is `created: false`, exit 0).
+
+## A comment keeps what the owning page does not say
+
+The argument for a job's shape lives in the page that owns it (below); a workflow comment that carries it a second time drifts the moment the page moves. The file header names the page, and each step's comment keeps only what a reader could not get from there or from the step itself — an ordering constraint (`GITHUB_ENV` reaches only the steps after it), a platform quirk (`ubuntu-26.04` for bwrap >= 0.10.0), a gate's failure mode (a `path` list that drifted still reports a hit).
 
 ## Owned elsewhere — pointers, not copies
 

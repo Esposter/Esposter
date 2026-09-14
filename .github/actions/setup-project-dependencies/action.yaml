@@ -8,34 +8,25 @@ inputs:
 runs:
   using: composite
   steps:
-    # `pnpm -r` interleaves the packages it runs concurrently, so a failure's stack arrives spliced with another
-    # package's output. Live interleaved output is what a local run wants — a watched terminal, one failure at a
-    # time — while a log read after the fact wants each package contiguous. Same scripts either way, so the
-    # difference is stated by environment, and here rather than per workflow: every job that runs pnpm sets up
-    # its toolchain through this action, so one definition covers the fan-outs a workflow-level `env` block kept
-    # missing — the app builds under `build-app`, the collector's filtered build. pnpm reads its settings from
+    # `pnpm -r` interleaves concurrent packages' output, which a log read after the fact wants contiguous. Set
+    # here rather than per workflow because every job that runs pnpm passes through this action. pnpm reads
     # `PNPM_CONFIG_<SETTING>` (`npm_config_*` is not read). First step, because `GITHUB_ENV` reaches the steps
     # after it.
     - name: 🪵 Keep each package's output contiguous
       shell: bash
       run: echo "PNPM_CONFIG_AGGREGATE_OUTPUT=true" >> "$GITHUB_ENV"
-    # One step installs both: pnpm's self-contained executable (the version from `packageManager`), then the
-    # runtime from `devEngines.runtime`. It still fetches from registry.npmjs.org, deliberately — the registry
-    # package is the GitHub release asset byte for byte, and npm signs a checksum over it that `get-pnpm`
-    # verifies against a pinned key. What is gone is the npm CLI: one signed binary over a retrying HTTP client
-    # instead of a dependency resolution, which is what made setup hostage to registry latency.
-    # `install: false` because each caller owns its own install — the root project alone with
-    # `--ignore-scripts` for format, the artifact-aware `setup-packages` everywhere else.
+    # pnpm from `packageManager`, node from `devEngines.runtime`. `install: false` because each caller owns its
+    # own install — the root alone with `--ignore-scripts` for format, the artifact-aware `setup-packages`
+    # everywhere else.
     - name: 📦 Install pnpm and node
       uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
       with:
         cache: true
         install: false
-    # GitHub's Ubuntu image ships neither bubblewrap nor permissive unprivileged user namespaces, so the
-    # virrun os-backend suites would self-gate and silently skip. Test/bench jobs opt into this so the
-    # sandbox is available before Vitest collects host-capability checks. The sysctl is not swallowed: the key
-    # exists on every image that restricts user namespaces (23.10 onward, so every runner this is asked on), and
-    # a refused write surfaces here by name rather than one line later as a probe that fails for no stated reason.
+    # GitHub's Ubuntu image ships neither bubblewrap nor permissive unprivileged user namespaces, so without this
+    # the virrun os-backend suites self-gate and silently skip. The sysctl is not swallowed: the key exists on
+    # every image that restricts user namespaces, so a refused write surfaces here by name rather than one line
+    # later as a probe failing for no stated reason.
     - name: 📦 Enable bubblewrap sandbox
       if: ${{ fromJSON(inputs.bubblewrap-sandbox) }}
       shell: bash

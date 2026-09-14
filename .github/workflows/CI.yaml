@@ -1,4 +1,7 @@
 name: 🏗️ CI
+# The job shape, the two content-hash caches and why every gate reads the disk rather than `cache-hit` are
+# `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape`. Comments here keep only what
+# that page does not say.
 
 on:
   push:
@@ -13,10 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Build every library once and publish the `package-builds` artifact. Extracted into a reusable
-  # workflow so 🏗️ CI and 🏎️ Bench share one definition + one content-hash cache key (a build from either
-  # workflow warms the cache for the other). The job id stays `build-packages`, so every `needs: build-packages`
-  # below is unchanged.
+  # Shared with 🏎️ Bench; the job id stays `build-packages` so every `needs:` below reads unchanged
   build-packages:
     uses: ./.github/workflows/build-packages.yaml
 
@@ -29,15 +29,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # This job is the workflow's critical path — several times the next-longest — and the only build here that
-      # Was paid on every push. What it produces is a verdict rather than an artifact: nothing downstream reads
-      # `.output`, no deploy takes it, so the only thing worth carrying across runs is the fact that this exact
-      # Tree built green. That is what the marker is, and it is why the key may be an app-wide content hash:
-      # A hit means the identical source already built, so the build has nothing left to say.
-      #
-      # The key comes from the same action that keys `package-builds`, over the same inputs plus `apps/web`
-      # — so a change to a package this app bundles moves it too, and the two caches can never disagree about
-      # What the tree is.
+      # The keys come from tracked files, so they are computed before any install: on a hit nothing below runs
       - name: 🔑 Get build cache keys
         id: keys
         uses: ./.github/actions/get-build-cache-keys
@@ -47,18 +39,8 @@ jobs:
         with:
           path: .app-build-marker
           key: app-build-${{ steps.keys.outputs.app-build-hash }}
-      # Every step below hangs off the marker's absence, in this order: the key is computed from tracked files
-      # With `git ls-tree`, so a hit needs neither `node_modules` nor the `package-builds` artifact, and an
-      # Install nothing goes on to use is latency on the job the whole workflow finishes behind.
-      #
-      # Gated on the marker itself rather than on the restore's `cache-hit`, as everywhere else here: a hit whose
-      # `path` no longer matches what was saved reports success and extracts nothing, and a build skipped on that
-      # Flag would report green having built nothing at all. A literal path rather than a glob, so the leading
-      # Dot is matched as the ordinary character it is.
-      #
-      # The app build runs native — no `virrun --` on it: the filtered install (warm pnpm store cache) provisions
-      # node_modules and `nuxt prepare` generates the platform-correct Linux `.nuxt` in place — no sandbox, no
-      # Bubblewrap, no warm overlay layers.
+      # Gated on the marker file rather than `cache-hit`: a hit whose `path` drifted extracts nothing and still
+      # reports success. A literal path, so the leading dot is the ordinary character it is.
       - name: 🔧 Setup Project Dependencies
         if: ${{ hashFiles('.app-build-marker') == '' }}
         uses: ./.github/actions/setup-project-dependencies
@@ -67,13 +49,8 @@ jobs:
         if: ${{ hashFiles('.app-build-marker') == '' }}
         uses: ./.github/actions/setup-packages
         with:
-          # This job builds one project, so the install is that project and what it imports. The two other apps
-          # Are neither imported nor built here, and their trees — the Pulumi SDKs above all — are the largest
-          # Install work in the workflow's longest job.
           install-filter: "@esposter/web..."
-      # The marker is written only after the build returns, so a failed build leaves nothing for the post-run
-      # Save to find and the next push rebuilds. It holds the hash it was saved under, which is the only thing
-      # A restored marker can be read for.
+      # The marker is written only after the build returns, so a failed build leaves the post-run save nothing
       - name: 🏗️ Build app
         if: ${{ hashFiles('.app-build-marker') == '' }}
         env:
@@ -122,11 +99,9 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # The test suite itself exercises virrun's os backend (createOsBackend tests self-gate on bwrap), so the
-      # Sandbox must be installed here — but vitest runs natively below, NOT through virrun. Routing coverage through
-      # virrun would run the suite *inside* bwrap, and isOsBackendSupported() probes by spawning a nested
-      # bwrap+overlay, which unprivileged userns rejects → the os-backend differential tests silently skip via
-      # describe.skipIf, deleting the correctness gate. Coverage stays native to keep that gate live.
+      # bubblewrap is installed for the suites that test virrun's os backend, but vitest itself runs natively:
+      # inside bwrap, isOsBackendSupported() cannot spawn its nested bwrap+overlay probe, and those suites
+      # would self-gate away through describe.skipIf
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
         with:
@@ -134,21 +109,12 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
-      # Two suites assert against a built bundle rather than against source: the Functions package counts the
-      # `app.*` registrations in its `dist` — the one check that catches a bundler tree-shaking every trigger
-      # away — and both apps snapshot their bundle's size. The `package-builds` artifact holds libraries only,
-      # because an app's `dist` is built by the workflow that ships it, and the test suite is the third such
-      # workflow. Built here rather than carried in that artifact so the bundle is always the source this shard
-      # checked out, which no cache entry keyed on `packages/` could promise. Seconds, and only these two apps
-      # build: nothing reads the web app's output.
+      # Two suites assert against a built bundle: the Functions package counts the `app.*` registrations in its
+      # `dist`, and both apps snapshot their bundle's size. The `package-builds` artifact holds libraries only,
+      # so they are built here, from the source this shard checked out.
       - name: 🏗️ Build the app bundles the suite asserts against
         run: pnpm --filter "@esposter/functions" --filter "@esposter/infra" build
-      # `--shard=i/n` runs a distinct slice of ALL test files (every package + scripts, via the root
-      # Vitest `projects` config) on this runner; `--reporter=blob` serialises this shard's results and
-      # Coverage data for the merge job, as the per-shard `.vitest/blob/blob-i-n.json` — the directory
-      # `--merge-reports` reads by default, so neither side names it. We pair it with `--reporter=default`
-      # So failing tests / unhandled errors are also printed to the console — the blob reporter alone writes
-      # The file and prints only where it went, hiding why a shard exits non-zero.
+      # `default` beside `blob`: the blob reporter alone prints only where it wrote, hiding why a shard failed
       - name: 🧪 Test
         env:
           SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
@@ -165,15 +131,12 @@ jobs:
   coverage-merge:
     name: Merge Coverage
     needs: [build-packages, coverage]
-    # Runs even when a dependency failed, because a skipped job reports its required check as *satisfied* —
-    # So without this the one gate that means "every shard passed" goes green precisely when a shard did not,
-    # Which is how a dependency update once merged with a red suite. `!cancelled()` rather than `always()` so
-    # A cancelled run still reads as cancelled instead of turning into a failure.
+    # A skipped job satisfies its required check, so the aggregate gate must run when a shard failed —
+    # `!cancelled()` rather than `always()` so a cancelled run still reads as cancelled
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      # First step, before any setup: turn a failed dependency into a failed check rather than a skipped one.
-      # `needs.*.result` covers the shard matrix as a whole — one failing shard fails the aggregate.
+      # `needs.*.result` covers the shard matrix as a whole — one failing shard fails the aggregate
       - name: 🚦 Gate on the shard results
         if: ${{ contains(needs.*.result, 'failure') }}
         run: exit 1
@@ -195,8 +158,7 @@ jobs:
           path: .vitest/blob
           pattern: coverage-blob-*
           merge-multiple: true
-      # Recombine the sharded runs into one report with unified coverage from the blob data —
-      # This re-emits the report only, it does not re-run any tests.
+      # Re-emits the report from the blobs; no test runs again
       - name: 🧪 Merge coverage
         run: pnpm coverage --merge-reports
 
@@ -207,10 +169,7 @@ jobs:
           path: coverage
           if-no-files-found: error
 
-  # The one check with no `needs: build-packages`. oxfmt is a standalone binary reading source files — no
-  # Barrels, no package `dist`, and no `virrun` in the command to build one for — so gating it on the package
-  # Build only made the workflow's quickest check wait out its slowest job. It installs rather than using
-  # `setup-packages` for the same reason: it wants `node_modules`, not the built artifact.
+  # No `needs`: oxfmt is a standalone binary over source files, so it waits on no build
   format:
     name: Format
     runs-on: ubuntu-latest
@@ -222,31 +181,18 @@ jobs:
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
-
-      # Both narrowings say the same thing: the only thing this job needs out of the install is the
-      # Lockfile-pinned `oxfmt` binary. `--filter "{.}"` is the root project alone, which is where that binary
-      # Is declared — every other project's tree is a dependency graph a formatter reading source files cannot
-      # Observe. The root *alone*, not the `{.}...` closure `setup-packages` takes: that closure exists to
-      # Provision `virrun`, and `format:check` is native by design — one standalone binary over source, with no
-      # Module resolution to isolate. `--ignore-scripts` drops what remains, the app's `postinstall: nuxt
-      # prepare` and every `allowBuilds` native postinstall. Together they are what keeps the workflow's
-      # Quickest check off its slowest install, the same way dropping `needs: build-packages` kept it off the
-      # Slowest job.
-      #
-      # Installing oxfmt globally or through `dlx` would skip more still and is the wrong trade: a formatter's
-      # Version is its output, so a second source of truth for it drifts from the lockfile until `format:check`
-      # Here and `pnpm format` locally disagree — the exact failure this job exists to catch. No
-      # `--fail-if-no-match` here, unlike `setup-packages`: that guard is for a selector that can stop matching,
-      # And `{.}` is the workspace root by path — it matches for as long as there is a workspace to run in.
+      # The root project alone — where the lockfile-pinned `oxfmt` binary is declared — and no scripts. Not
+      # `{.}...`: that closure provisions `virrun`, and this check is native by design. Not a global or `dlx`
+      # install either: a formatter's version is its output, and a second source of truth for it drifts from
+      # the lockfile until this check and `pnpm format` disagree.
       - name: 📦 Install dependencies
         run: pnpm --filter "{.}" i --ignore-scripts
 
       - name: 📝 Format
         run: pnpm format:check
 
-  # One job definition for the two repo-wide checks that differ only in the script they run — the matrix
-  # Fans them out as separate runners, and `name` is each entry's own, which is the check context the branch
-  # Ruleset requires (`apps/infra/src/github/rulesets/developMainStatusChecks.ts`).
+  # Each entry's `name` is the check context the branch ruleset requires
+  # (`apps/infra/src/github/rulesets/developMainStatusChecks.ts`)
   check:
     name: ${{ matrix.name }}
     needs: build-packages

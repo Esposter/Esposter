@@ -1,11 +1,7 @@
 name: 🏗️ Build Packages
-# Reusable workflow: build every library once (ctix barrels + tsdown bundles) and publish the
-# output as the `package-builds` artifact for the caller's downstream jobs. Called by both 🏗️ CI and 🏎️ Bench
-# via `uses: ./.github/workflows/build-packages.yaml`, so there is a single definition of the build + its cache
-# key. Artifacts are run-scoped (a reusable workflow shares the caller's run, so the artifact reaches the
-# caller's other jobs), but the `actions/cache` entry below is keyed by content hash and shared repo-wide across
-# workflows — so a 🏗️ CI build of a given content hash gives 🏎️ Bench a cache hit for free (and vice versa),
-# letting whichever workflow runs second skip the build entirely.
+# Reusable workflow called by 🏗️ CI and 🏎️ Bench: builds every library once and publishes the `package-builds`
+# artifact to the caller's run. Why the build is gated on a repo-wide content-hash cache, and why the gate reads
+# the disk rather than `cache-hit`, is `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape`.
 on:
   workflow_call:
 
@@ -15,14 +11,8 @@ permissions:
 jobs:
   build-packages:
     name: Build Packages
-    # 🏗️ CI and 🏎️ Bench both trigger on a push to any branch, so without this their two copies of this job run
-    # at the same time, each restoring the cache before the other has saved it — the shared-cache benefit above
-    # only ever materialises for a *later* push, never for the pair the same push starts, and the build is paid
-    # twice concurrently. Grouping on the commit serialises exactly that pair: the second one waits and then
-    # restores what the first saved. Never `cancel-in-progress` — the waiting job is the one that still owes its
-    # caller the `package-builds` artifact. `queue: max` for the same reason: the default `single` retains one
-    # pending run and lets the next arrival replace it, so a third invocation of the same commit — a re-run of
-    # either caller while the other waits — would drop a caller that is still owed its artifact.
+    # Serialises the two callers' copies of this job on the same commit, so the second restores what the first
+    # saved; never cancelled, because the waiting job still owes its caller the artifact
     concurrency:
       group: build-packages-${{ github.sha }}
       cancel-in-progress: false
@@ -37,39 +27,23 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      # The key is computed by a shared action so the save here and every restore elsewhere derive it from
-      # One definition — 🏗️ Pulumi and the two Functions deploys restore this same entry.
       - name: 🔑 Get build cache keys
         id: keys
         uses: ./.github/actions/get-build-cache-keys
-      # Exact key only, and it stays that way. The path list also catches the one hand-written directory barrel
-      # Under a package's `src`, which the key covers as the tracked file it is — so a hit proves the restored
-      # Copy is the checked-out copy. A prefix restore would extract another commit's version of that file over
-      # The checkout and build it, green.
+      # Exact key, no prefix restore: the path list includes a hand-written barrel under `src`, and a prefix hit
+      # would extract another commit's copy of it over the checkout and build it, green
       - name: ♻️ Restore package builds
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ steps.keys.outputs.package-builds-paths }}
           key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
-      # What the build hangs off, and it is the disk rather than the restore's `cache-hit`: that flag reports the
-      # Entry the cache found, not what it extracted, so a `path` list that drifted from the save's reports a hit
-      # And leaves this job uploading whatever the checkout happened to contain. This reads every building
-      # Package's `dist` instead, so a partial extract is a miss and gets rebuilt.
+
       - name: 🔍 Verify package builds
         id: verify
         uses: ./.github/actions/verify-package-builds
-      # Both the install and the build hang off that verdict, and in that order: the key is computed from tracked
-      # Files with `git ls-tree`, the verification is shell reading the disk, and the artifact is uploaded straight
-      # From the restored paths — so a hit needs no `node_modules` at all. Every job in both callers
-      # `needs` this one, so an install nothing goes on to use is latency the whole workflow waits behind.
-      #
-      # Filtered rather than a plain `pnpm i`, and by the path it builds: this job builds the libraries, so all
-      # Three apps' dependency trees — the web app's `postinstall: nuxt prepare`, the Pulumi SDKs, the Functions
-      # Host's own deps — are install work nothing here reads. Every other postinstall still runs, for the
-      # Projects that are installed: the project set narrows, scripts are not disabled. The root project and its
-      # Closure are in the selection for the reason `setup-packages` states at length: the toolchain is declared
-      # There, and `typescript` in particular is a root devDependency that no library redeclares, so tsdown would
-      # Generate declarations against whatever it could resolve on its own.
+      # The install hangs off the miss too: a hit uploads straight from the restored paths and needs no
+      # `node_modules`. Filtered to the libraries plus the root closure that declares the toolchain — the apps'
+      # trees are install work nothing here reads.
       - name: 📦 Install dependencies
         if: steps.verify.outputs.complete != 'true'
         run: pnpm --filter "./packages/*" --filter "{.}..." --fail-if-no-match i
@@ -77,22 +51,18 @@ jobs:
       - name: 🏗️ Build packages
         if: steps.verify.outputs.complete != 'true'
         run: pnpm build:packages
-      # The build writes the exports map, the entry fields it owns and `inlinedDependencies` into each manifest,
-      # And nothing downstream reads one — every other check runs against the `dist` this job just made. So an
-      # Uncommitted manifest is green everywhere else. Gated on the miss because that is the only branch that
-      # Builds.
+      # The build writes the exports map and `inlinedDependencies` into each manifest, and nothing downstream
+      # reads one — so an uncommitted manifest is green everywhere else
       - name: 🔍 Check generated manifest fields are committed
         if: steps.verify.outputs.complete != 'true'
         run: git diff --exit-code -- "packages/*/package.json"
-      # The same check again, now as an assertion: every job in both callers reads the artifact this one uploads,
-      # So an incomplete tree here is a broken build rather than a cold cache, and it fails where the cause is
-      # Still readable instead of surfacing as a missing barrel in `typecheck`.
+      # As an assertion this time: after a build an incomplete tree is a broken build, and it fails here where
+      # the cause is readable rather than as a missing barrel in `typecheck`
       - name: 🔍 Verify the build is complete
         uses: ./.github/actions/verify-package-builds
         with:
           fail-when-incomplete: true
-      # Single gated build, then fan the output out to every consuming job as one artifact. No hidden-file flag
-      # Needed — neither `dist` nor `index.ts` is a dotfile.
+
       - name: 📤 Upload package builds
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

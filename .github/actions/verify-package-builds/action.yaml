@@ -12,19 +12,10 @@ outputs:
 runs:
   using: composite
   steps:
-    # `actions/cache` reports `cache-hit` for the entry it found, not for what it wrote: an entry saved under one
-    # `path` list and restored by a job carrying another extracts part of it, or none, and still reports a hit —
-    # And the key covers tracked files, so editing that list moves nothing. Every job here skips a build on that
-    # Answer, so the answer comes from the disk instead.
-    #
-    # The package set is discovered rather than listed, the way the workspace invariants under `scripts/src/workspace`
-    # Discover theirs: a library builds if it has a tsdown config, so one added later is covered by nothing. The
-    # Glob is `packages/*` because that is what the cache entry holds — an app's `dist` is built in its own
-    # Deploy job, so reading for one here would report every restore incomplete.
-    # `dist` alone is checked, deliberately. It is the half that gets deployed and published, so it is the half
-    # Whose absence is silent — a barrel missing beside it fails the consuming `typecheck` and `lint` jobs loudly,
-    # Naming the package. Pure shell for the same reason it is `dist`-shaped: a cache hit is designed to need no
-    # `node_modules`, and a probe that had to be installed could not answer before the install it gates.
+    # The set is discovered, not listed: a library builds if it has a tsdown config, so one added later is
+    # covered with nothing edited. `packages/*` because that is what the cache entry holds. `dist` alone: it is
+    # the half that is deployed and published, so its absence is the silent one — a missing barrel fails
+    # `typecheck` and `lint` by name. Shell, because a hit is designed to need no `node_modules`.
     - name: 🔍 Verify package builds
       id: verify
       shell: bash
@@ -41,8 +32,7 @@ runs:
           exit 0
         fi
         echo "complete=false" >> "$GITHUB_OUTPUT"
-        # Named rather than counted, and the two readings differ: every package is an ordinary cold cache, some of
-        # Them is the partial extract this check exists to catch.
+        # Named rather than counted: every package missing is a cold cache, some of them is the partial extract
         echo "No dist for: ${missingPackages[*]}"
         if [ "$FAIL_WHEN_INCOMPLETE" = "true" ]; then
           exit 1
