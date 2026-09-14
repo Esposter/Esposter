@@ -8,12 +8,17 @@ import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getResult } from "@esposter/shared";
 
-// The return stroke, as one step of the cycle: the release pull request just merged, so `develop` is an ancestor
-// Of `main` and follows it by fast-forward — no slot spent, since no pull request is open. `main` advancing on
-// Its own (a dependency bump) leaves `develop` no ancestor, and the porter folds that into the next window
-// Instead. The push is the run's one irreversible act, so a stroke that pushed ends the run: with `develop` and
-// `main` now agreeing the express lane is open, and taking it here would make two pushes of one run. It waits for
-// The next event, and a mechanical commit is never the urgent one. No outcome means there was nothing to carry.
+// The return stroke, as one step of the cycle: `main` is ahead and `develop` has nothing of its own, so it
+// Follows by fast-forward — no slot spent, since a `develop` that is an ancestor of `main` leaves nothing for a
+// Pull request to review. What moved `main` is not asked and could not change the answer: a release that merged,
+// An express cut and a bump pushed straight at it all arrive in this shape, and all of them already sit on the
+// Branch a window is diffed against, so no window could carry them to a review anyway — while refusing one would
+// Strand `develop` behind `main` and close the express lane, which only opens when the two agree. Divergence is
+// The porter's case instead — `main` advancing under a `develop` already ahead of it leaves neither an ancestor,
+// And the fold rides that into the next window. The push is the run's one irreversible act, so a stroke that
+// Pushed ends the run: with `develop` and `main` now agreeing the express lane is open, and taking it here would
+// Make two pushes of one run. It waits for the next event, and a mechanical commit is never the urgent one. No
+// Outcome means there was nothing to carry.
 export const runReturnStroke = ({ developSha, isDryRun, mainSha }: ReturnStrokeInput): CycleOutcome | undefined => {
   const isDevelopBehindMain =
     developSha !== mainSha &&
