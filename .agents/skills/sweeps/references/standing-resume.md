@@ -50,8 +50,20 @@ files of real work gets deferred as several sittings.
 ## Scope is the convention's domain, not the union of the rows
 
 Declaring only what already has a row makes the command agree with the ledger by construction, which is the one
-thing it must not do — a tree the convention reaches that no unit names is the gap worth surfacing, and scoped to
-the domain it comes back as work on the first resume rather than staying invisible until someone happens to look.
+thing it must not do — a tree the convention reaches that no unit names is the gap worth surfacing.
+
+**The scope alone does not surface it, though: the resume asks which files changed, and a tree nobody has touched
+since the date changes nothing.** So an unnamed tree that is also quiet stays invisible for exactly as long as it
+stays quiet, which is the case where nobody was going to look anyway. Reconciling is its own step, and it is
+cheap — list the scope's own directories and read the rows beside them:
+
+```bash
+find <scope directory> -maxdepth 1
+```
+
+Anything the ledger does not name opens at `—`. One sitting on `quality/` found four: `app/models/message` and
+`app/models/resource` had no row in any ledger, and `components/Resource`'s fourteen root files and five of its
+directories had none in theirs — none of which any resume would have reported, because none of them had changed.
 
 That is also why `Scope` lives on the index row and never inside the ledger file: a resume reads the index to
 find which files to run against, so a scope stored past that point cannot be reached without opening the thing it
