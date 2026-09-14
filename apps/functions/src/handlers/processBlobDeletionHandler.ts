@@ -1,9 +1,9 @@
 import type { EventGridHandler } from "@azure/functions";
 
-import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
-import { db } from "#src/services/shared/db";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
+import { db } from "#src/services/shared/db";
 import { logAndRethrow } from "#src/services/shared/logAndRethrow";
+import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
 import { deleteStorageBlobs, listBlobNames } from "@esposter/db";
 import { AzureFunction, blobDeletionEventGridDataSchema } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";

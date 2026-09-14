@@ -1,7 +1,7 @@
 import type { InvocationContext } from "@azure/functions";
 
-import { db } from "#src/services/shared/db";
 import { webpush } from "#src/services/notification/webpush";
+import { db } from "#src/services/shared/db";
 import { pushSubscriptions } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { eq } from "drizzle-orm";
