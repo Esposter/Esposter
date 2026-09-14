@@ -1,14 +1,15 @@
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { createAzureMetadataMap } from "@/services/shared/metadata/createAzureMetadataMap";
 import { MessageMetadataType } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(createAzureMetadataMap, () => {
   let azureMetadataMap: ReturnType<typeof createAzureMetadataMap<MessageMetadataType.Emoji>>;
-  const currentId = "currentId";
-  const partitionKey = "partitionKey";
-  const rowKey = "rowKey";
-  const messageRowKey = "messageRowKey";
+  const currentId = crypto.randomUUID();
+  const partitionKey = crypto.randomUUID();
+  const rowKey = crypto.randomUUID();
+  const messageRowKey = crypto.randomUUID();
 
   beforeEach(() => {
     azureMetadataMap = createAzureMetadataMap(() => currentId, MessageMetadataType.Emoji);
@@ -32,6 +33,6 @@ describe(createAzureMetadataMap, () => {
     const emojis = getEmojis(messageRowKey);
 
     expect(emojis).toHaveLength(1);
-    expect(emojis[0]).toStrictEqual(newEmoji);
+    expect(takeOne(emojis)).toStrictEqual(newEmoji);
   });
 });

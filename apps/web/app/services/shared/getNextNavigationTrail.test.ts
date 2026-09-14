@@ -7,9 +7,10 @@ import { describe, expect, test } from "vitest";
 import { reactive } from "vue";
 
 describe(getNextNavigationTrail, () => {
-  const resourcePath = RoutePath.Resource("id");
-  const otherResourcePath = RoutePath.Resource("otherId");
-  const bladePath = getResourceBladePath("id", ResourceBladeSlug.Data);
+  const id = crypto.randomUUID();
+  const resourcePath = RoutePath.Resource(id);
+  const otherResourcePath = RoutePath.Resource(crypto.randomUUID());
+  const bladePath = getResourceBladePath(id, ResourceBladeSlug.Data);
 
   test("appends the page drilled in from", () => {
     expect.hasAssertions();
