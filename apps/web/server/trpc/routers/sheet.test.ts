@@ -54,7 +54,7 @@ describe("sheetRouter", () => {
     // A full ISO datetime is exactly the shape `jsonDateParse` would revive into a Date, which
     // `columnValueSchema` (boolean | null | number | string) would then reject — so the cell has to come back
     // As the string it was stored as
-    const cell = "2026-07-15T09:00:00Z";
+    const cell = new Date(0).toISOString();
     const row = new Row({ data: { [column.id]: cell } });
     const sheetResource: SheetResource = {
       data: {

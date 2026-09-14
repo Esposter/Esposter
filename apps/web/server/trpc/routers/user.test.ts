@@ -19,7 +19,13 @@ import { userRouter } from "@@/server/trpc/routers/user";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { AzureContainer, DatabaseEntityType, UserStatus, userStatusesInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MOCK_BLOB_BASE_URL, MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
+import {
+  getMockSasUrl,
+  MOCK_BLOB_BASE_URL,
+  MockContainerDatabase,
+  MockEventGridDatabase,
+  MockTableDatabase,
+} from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const getCallBackgroundErrorMessage = (context: string) =>
@@ -224,9 +230,7 @@ describe("userRouter", () => {
     const { publicUrl, sasUrl } = await caller.generateProfileImageUploadUrl();
 
     expect(publicUrl).toBe(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${userId}/ProfileImage`);
-    expect(sasUrl).toBe(
-      `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${userId}/ProfileImage?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=w`,
-    );
+    expect(sasUrl).toBe(getMockSasUrl(publicUrl, "w", "b"));
   });
 
   test("updates", async () => {

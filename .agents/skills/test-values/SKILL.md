@@ -1,18 +1,30 @@
 ---
 name: test-values
-description: Esposter test values — the one canonical literal for every kind of value a test writes (strings "" and " ", numbers 0 / 0.1 / -1, booleans as a pair, the nonexistent id -1, a real id from crypto.randomUUID(), a field's own name as its value, filesystem names TEST_FILENAME / TEST_DIR), dates and times computed from the epoch (new Date(0), a later one offset by a Temporal duration, an ISO string only as toISOString() of one, never a typed date literal), the three checks every string literal passes before it goes in, the shared-data rule (declare once at describe scope, import what production owns, the base-plus-spread and create* shapes, let for rebuilt-per-test state) — and a Settled list rejecting typed "1970-01-01" and "2026-…" literals, semantic names like "room-1" or "logo.png", and invented prose bodies. Apply when writing or reviewing any literal, fixture, id, date, path or helper argument in a .test.ts, .test-d.ts or .bench.ts file.
+description: Esposter test values — the goal every literal serves (the least value that still distinguishes what the test reads, which is why "" precedes " " and the epoch precedes every other instant, and a differing value moves one step in the one part under test), the one canonical literal for every kind of value a test writes (strings "" and " ", numbers 0 / 0.1 / -1, booleans as a pair, the nonexistent id -1, a real id from crypto.randomUUID(), a field's own name as its value, filesystem names TEST_FILENAME / TEST_DIR), dates and times computed from the epoch (new Date(0), a later one offset by a Temporal duration, an ISO string only as toISOString() of one, never a typed date literal), the three checks every string literal passes before it goes in, the shared-data rule (declare once at describe scope, import what production owns, the base-plus-spread and create* shapes, let for rebuilt-per-test state) — and a Settled list rejecting typed "1970-01-01" literals and calendar dates from any year but the epoch's, semantic names like "room-1" or "logo.png", and invented prose bodies. Apply when writing or reviewing any literal, fixture, id, date, path or helper argument in a .test.ts, .test-d.ts or .bench.ts file.
 ---
 
 # Test Values
 
 The values a test writes. The `testing` skill owns the suite's structure, assertions and mocking; this skill owns
-every literal in it, because a value chosen per file is the thing that drifts — one suite's `"2026-09-13"` beside
-another's `"1970-01-01"` beside a third's `new Date()` — and the drift is what makes a reviewer stop to ask
+every literal in it, because a value chosen per file is the thing that drifts — one suite's typed calendar date
+beside another's typed epoch beside a third's `new Date()` — and the drift is what makes a reviewer stop to ask
 whether the value means something. A canonical value means nothing, and says so.
+
+## The goal: the least value that still distinguishes
+
+Every value a test writes is the least one that tells apart what the test reads, and nothing more. That is the
+whole reason `""` comes before `" "`, `0` before `1`, the epoch before any other instant, and `"a"` before a
+word: the least value carries no part the reader has to explain, so whatever is _not_ least is exactly the part
+under test. When a case needs two values to differ — a sort, a reformat, a day against a month — one of them
+moves, by one step, in the one part the case reads (`""` against `" "`, the epoch against its next day, month
+`13` on the first day rather than a thirteenth month on some other day). Anything further from the least than
+the case needs reads as data someone chose, and the reader stops to ask why. The canonical values below are
+that rule applied per kind; "Dates and times" is it applied to the one kind with many parts.
 
 ## Settled — do not re-propose
 
-- **A typed date or time literal** — `"1970-01-01"`, `"2026-09-13T00:57:05Z"`, `new Date("1970-01-02")`. Each file spells the epoch its own way, and a format read off one string (date-only, seconds, milliseconds, offset) is asserted against another's. The epoch is computed, never typed ("Dates and times").
+- **A typed date or time literal** — `"1970-01-01"`, a `"YYYY-MM-DDTHH:mm:ssZ"` stamp of some real year, `new Date("1970-01-02")`. Each file spells the epoch its own way, and a format read off one string (date-only, seconds, milliseconds, offset) is asserted against another's. The epoch is computed, never typed ("Dates and times").
+- **A calendar date from any year but 1970** — a fixture dated the year the test was written, a "recent" date, a date picked for its month name. Only the epoch has a meaning a reader can name; every other date reads as data someone chose, and the reader checks why. A shape test that needs its parts to differ stays in the epoch's own days ("Dates and times").
 - **A semantic name for a value the code never reads** — `"room-1"`, `"test-id"`, `"logo.png"`, `"helper.cjs"`, `"nested"`. It reads as meaning something, and the next reader has to check whether it does ("Every string literal passes one of three checks").
 - **Prose as a body, title or note** — an invented sentence a human would type. The code matches a substring or stores a blob; the sentence is decoration and is what gets copied into the next suite as if it mattered.
 - **A per-file copy of a value production owns** — a sentinel, marker, prefix, filename or sizing formula restated in the suite. It stays green while asserting the wrong thing after the source moves ("Import what production owns").
@@ -34,7 +46,7 @@ whether the value means something. A canonical value means nothing, and says so.
 - A string is `.toISOString()` of one of those, so the format is the platform's and identical in every file. A date-only string is `.toISOString().slice(0, 10)` of it, with the `slice` read as "the date part" — a helper the suite declares once when it is used twice.
 - Two values that must sort declare both at `describe` scope (`const epoch = new Date(0)`, `const nextDay = …`) and the test reads which is later from the names.
 - `Date.now()` in the code under test is pinned, never awaited around: `vi.useFakeTimers({ now: 0 })` in `beforeEach` (the `testing` skill's timers page), so `createdAt` is asserted with `toStrictEqual(new Date(0))` and never `toBeInstanceOf(Date)`, which passes against a value written a day late.
-- The one exception is a **date the code reads by its shape** — a parser's input, a format table's expected output, a coercion fixture — where the value _is_ the thing under test and a specific calendar date is the point. That value is still one `describe`-scope constant, and the test name says what about its shape is being read.
+- The one exception is a **date the code reads by its shape** — a parser's input, a format table's expected output, a coercion fixture — where the value _is_ the thing under test and a specific calendar date is the point. That value is still one `describe`-scope constant in the epoch's own year, and the test name says what about its shape is being read. **Only the part under test moves, by the smallest step**: a month the calendar lacks is `"1970-13-01"`, not a thirteenth month on some other day; a formatter that must tell day from month and `H` from `h` takes the epoch's second day and first afternoon hour from local parts, every other part zero (`new Date(1970, 0, 2, 13)`); a reformat over data moves its second row one day past the epoch. Never another year, and never a bigger step than the case needs.
 
 ## Every string literal passes one of three checks
 

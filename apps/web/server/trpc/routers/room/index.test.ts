@@ -25,7 +25,13 @@ import {
   roomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MOCK_BLOB_BASE_URL, MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
+import {
+  getMockSasUrl,
+  MOCK_BLOB_BASE_URL,
+  MockBlockBlobClient,
+  MockContainerDatabase,
+  MockEventGridDatabase,
+} from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Uploaded through the client, so the mock dates the blob now
@@ -190,9 +196,7 @@ describe("roomRouter", () => {
     const blobPrefix = `${publicUserAssetsUrlPrefix}rooms/${newRoom.id}/ProfileImage/`;
 
     expect(publicUrl.startsWith(blobPrefix)).toBe(true);
-    expect(sasUrl).toBe(
-      `${publicUrl}?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=w`,
-    );
+    expect(sasUrl).toBe(getMockSasUrl(publicUrl, "w", "b"));
   });
 
   test(`fails generate profile image upload url for a member without ${RoomPermission.ManageRoom} permission`, async () => {

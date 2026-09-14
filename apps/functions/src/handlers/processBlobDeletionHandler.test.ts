@@ -47,7 +47,7 @@ const readContainer = () => {
 const createEventGridEvent = (data: BlobDeletionEventGridData): EventGridEvent => ({
   data,
   dataVersion: "1.0",
-  eventTime: "1970-01-01T00:00:00.000Z",
+  eventTime: new Date(0).toISOString(),
   eventType: "",
   id: crypto.randomUUID(),
   metadataVersion: "1",
