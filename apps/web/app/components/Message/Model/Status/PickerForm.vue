@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SelectableStatusDefinitionList } from "@/models/message/user/status/SelectableStatusDefinitionList";
+import { SelectableStatusDefinitionList } from "@/services/message/user/status/SelectableStatusDefinitionList";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { authClient } from "@/services/auth/authClient";
 import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
