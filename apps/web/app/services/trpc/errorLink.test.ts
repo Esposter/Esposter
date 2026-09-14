@@ -27,8 +27,8 @@ vi.mock(import("#app/composables/router"), async (importOriginal) => ({
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(errorLink, () => {
-  const message = "a";
-  const userId = "b";
+  const message = "";
+  const userId = crypto.randomUUID();
   const session = { value: { data: null as null | { user: { id: string } }, isPending: false } };
   // The scope that was active where the link read the session, which is what decides whether the subscription
   // Better-auth opens is ever disposed
@@ -44,7 +44,7 @@ describe(errorLink, () => {
     const link = errorLink({ op: { context: {} } });
     const operation: Operation = {
       context: { isBackground },
-      id: 1,
+      id: 0,
       input: undefined,
       path: "",
       signal: null,
