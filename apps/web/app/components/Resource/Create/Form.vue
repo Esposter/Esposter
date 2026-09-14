@@ -29,16 +29,14 @@ const fileError = ref("");
 // Submitting mid-parse would create an empty sheet and silently discard the import, so parsing blocks Create
 const isFileParsing = ref(false);
 const nameRules = computed(() => [rules.required(), rules.maxLength(RESOURCE_NAME_MAX_LENGTH)]);
-const buttonProps = computed(() => ({
-  disabled: !isValid.value || Boolean(fileError.value) || isFileParsing.value,
-  loading: isSubmitting.value,
-}));
+const isDisabled = computed(() => !isValid.value || Boolean(fileError.value) || isFileParsing.value);
+const buttonProps = computed(() => ({ disabled: isDisabled.value, loading: isSubmitting.value }));
 // The create call writes no blob, so the parsed rows land through the same first save the Data blade would do.
 // A failed save still leaves a valid empty sheet, so the user keeps the resource and is told what is missing
 const submit = async () => {
-  // Enter can re-fire the form while the first create mutation is still pending, which would create a
-  // Duplicate resource — the button's loading state only guards clicks, not the keyboard
-  if (isSubmitting.value) return;
+  // Enter submits a form the button refuses, and can re-fire it while the first create mutation is still
+  // Pending, which would create a duplicate resource — the button's disabled and loading states only guard clicks
+  if (isDisabled.value || isSubmitting.value) return;
 
   isSubmitting.value = true;
   await executeMutation(() => createResource(type, name.value), {
@@ -81,15 +79,7 @@ const submit = async () => {
   <v-container>
     <v-card max-width="40rem" mx-auto>
       <v-card-text>
-        <v-form
-          v-model="isValid"
-          @submit.prevent="
-            async () => {
-              if (!isValid || fileError || isFileParsing) return;
-              await submit();
-            }
-          "
-        >
+        <v-form v-model="isValid" @submit.prevent="submit()">
           <v-text-field v-model="name" autofocus :counter="RESOURCE_NAME_MAX_LENGTH" label="Name" :rules="nameRules" />
           <ResourceCreateSheetFile
             v-if="type === ResourceType.Sheet"
