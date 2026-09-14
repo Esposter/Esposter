@@ -1,6 +1,6 @@
 ---
 name: github-actions
-description: Esposter GitHub Actions authoring conventions for `.github/workflows` and `.github/actions` — taking the runner's own affordance over a shell reimplementation of it (`working-directory:`, `if:`, `env:`, a composite action), every `${{ }}` expansion of event/matrix/input data reaching the shell as an `env:` variable read as `"$VAR"` rather than interpolated into the command line, a skipped job satisfying its required check so an aggregate gate needs `!cancelled()` plus an explicit `needs.*.result` step, and a cleanup step's `always()` being paired with a guard on the value it consumes. Apply when writing or editing any workflow, composite action, job, or step — and read the owner pointers before adding a rule, since caching, job shape, permissions, action pinning and which pnpm script a job runs each belong elsewhere.
+description: Esposter GitHub Actions authoring conventions for `.github/workflows` and `.github/actions` — taking the runner's own affordance over a shell reimplementation of it (`working-directory:`, `if:`, `env:`, a composite action), every `${{ }}` expansion of event/matrix/input data reaching the shell as an `env:` variable read as `"$VAR"` rather than interpolated into the command line, a reusable workflow called with named secrets rather than `secrets: inherit` and declaring each `required` so the unpinnable caller's drift fails the call, a skipped job satisfying its required check so an aggregate gate needs `!cancelled()` plus an explicit `needs.*.result` step, and a cleanup step's `always()` being paired with a guard on the value it consumes. Apply when writing or editing any workflow, composite action, job, or step — and read the owner pointers before adding a rule, since caching, job shape, permissions, action pinning and which pnpm script a job runs each belong elsewhere.
 ---
 
 # GitHub Actions Authoring
@@ -31,6 +31,12 @@ A `${{ }}` expansion is substituted into the script **before** any shell parsing
 ```
 
 A `${{ }}` is fine in a field the shell never sees — `if:`, `name:`, `with:`, `working-directory:`, `key:` — and fine inline when the expression can only ever yield a literal the workflow wrote itself, as a boolean input rendering a flag: `pnpm … ${{ inputs.force == true && '--force' || '' }}`.
+
+## A reusable workflow is called with named secrets, never `secrets: inherit`
+
+Inheritance hands the callee every secret the caller can see, which is the repository's whole set — here that includes the Azure and Pulumi credentials that deploy the estate, alongside whichever two a given callee actually reads. And a callee is a file, so it lives on a branch: a call pinned to a mutable ref makes that whole set reachable from anything later pushed to the ref. The call therefore lists what the callee reads, and the callee declares each one under `on.workflow_call.secrets` with `required: true`, which turns a secret the caller failed to map into a call GitHub refuses rather than an empty token in the step that spends it.
+
+What a list costs is that the two files have to agree, and the caller is the copy that cannot be pinned — GitHub reads a trigger file from the ref the event names, so a mismatch shows up on some events and not others. Where that is the shape, a test holds the pair, because nothing in either file can import the other (`ReviewCollector.yaml` and `run-review-collector.yaml`, held by `scripts/src/services/coderabbit/collect/constants.test.ts`).
 
 ## A skipped job reports its required check as satisfied
 

@@ -35,9 +35,17 @@ on:
         default: false
 
 # Everything else is the reusable workflow, pinned to the queue head — the reason is written at the top of that
-# file. This one is deliberately nothing but the triggers, because it is the one file GitHub reads from the
-# event's own ref and so the one copy that cannot be pinned. `secrets: inherit` rather than a list: the called
-# workflow's environment grows secrets over time and every one of them is this repository's own.
+# file. This one is deliberately nothing but the triggers and the two secrets the call needs, because it is the
+# one file GitHub reads from the event's own ref and so the one copy that cannot be pinned.
+#
+# A list rather than `secrets: inherit`, which is the only other thing here: the pinned callee is read from
+# `ai/queue`, a branch the working session pushes and whose drain step runs a permission-skipping Claude session
+# over one bot's prose, so whatever the caller hands across is the blast radius of a step added to that branch.
+# Inheritance hands over the Azure and Pulumi deployment credentials the collector never names, and this list is
+# exactly what its two steps read. The cost of the list is the sync it owes the callee — the caller's copy that
+# runs is whichever ref the event names, so a secret added to the callee and not here is a token that arrives
+# empty on a `status` or `issue_comment`. `constants.test.ts` holds the two files to each other for that reason,
+# and the callee declares both `required` so the gap fails the call rather than a step deep inside it.
 permissions:
   contents: read
   actions: write
@@ -48,4 +56,6 @@ jobs:
     uses: Esposter/Esposter/.github/workflows/run-review-collector.yaml@ai/queue
     with:
       force: ${{ inputs.force == true }}
-    secrets: inherit
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      REVIEW_COLLECTOR_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}

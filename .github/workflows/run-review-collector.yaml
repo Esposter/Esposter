@@ -15,6 +15,17 @@ on:
         description: Push the window even when the queue is under the fill target
         type: boolean
         default: false
+    # Named rather than inherited, so the caller hands over these two and not the deployment credentials the
+    # collector never reads — the reason is at the top of the caller. `required` is what makes the sync loud: a
+    # secret this workflow grows and the unpinnable caller does not yet map fails the call instead of arriving
+    # empty in the step that spends it.
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN:
+        description: The Claude Code subscription token the drain's headless session authenticates with
+        required: true
+      REVIEW_COLLECTOR_TOKEN:
+        description: The collector's own login token — its checkout, pushes, replies and the release pull request
+        required: true
 
 jobs:
   collect:
