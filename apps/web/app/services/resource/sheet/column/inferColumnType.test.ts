@@ -7,6 +7,7 @@ import { describe, expect, test } from "vitest";
 
 describe(inferColumnType, () => {
   const EPOCH_DATE = new Date(1970, 0, 1);
+  const epochDate = new Date(0).toISOString().slice(0, 10);
 
   test(`empty array returns ${ColumnType.String}`, () => {
     expect.hasAssertions();
@@ -50,7 +51,7 @@ describe(inferColumnType, () => {
     expect.hasAssertions();
 
     expect(inferColumnType(["true", "0"])).toBe(ColumnType.String);
-    expect(inferColumnType(["0", "1970-01-01"])).toBe(ColumnType.String);
-    expect(inferColumnType(["true", "1970-01-01"])).toBe(ColumnType.String);
+    expect(inferColumnType(["0", epochDate])).toBe(ColumnType.String);
+    expect(inferColumnType(["true", epochDate])).toBe(ColumnType.String);
   });
 });

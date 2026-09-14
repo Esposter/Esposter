@@ -26,7 +26,7 @@ A role assignment reads its `principalId` through `getPrincipalId`, an `apply` o
 output. When the program updates that resource — a Logic App's `definition`, say — the provider cannot promise
 the identity survives, so the preview carries it as `[unknown]`, and an unknown `principalId` on a `protect: true`
 grant is `+-… to replace … marked for protection`: the preview fails on every assignment the identity holds,
-while the only real diff is the property being edited (probed 2026-09-12 editing a `runAfter`). The GUID does not
+while the only real diff is the property being edited (probed with `pnpm infra:preview` editing a `runAfter`). The GUID does not
 change on an update, and an `up` resolves it to the same value, but the failed preview blocks the plain `up`.
 
 Apply it targeted: `pnpm infra:up --yes --suppress-outputs --target '**::<resource-name>'`, one `--target` per
