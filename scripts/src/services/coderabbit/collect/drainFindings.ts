@@ -1,7 +1,7 @@
 import type { DrainFindingsInput } from "#src/models/coderabbit/collect/DrainFindingsInput";
 import type { DrainFindingsResult } from "#src/models/coderabbit/collect/DrainFindingsResult";
 
-import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
+import { checkHasMarkerComment } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import {
   DRAIN_ATTEMPT_CAP,
   DRAIN_FAILED_MARKER,
@@ -14,6 +14,7 @@ import {
   VERDICT_FILE,
 } from "#src/services/coderabbit/collect/constants";
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";

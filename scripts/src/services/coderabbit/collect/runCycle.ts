@@ -7,38 +7,29 @@ import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKin
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
-import {
-  DEVELOP_BRANCH,
-  MAIN_BRANCH,
-  QUEUE_BRANCH,
-  REVIEW_FIXES_BRANCH,
-} from "#src/services/coderabbit/collect/constants";
+import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
-import { getOpenBodyReviewId } from "#src/services/coderabbit/collect/getOpenBodyReviewId";
-import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
 import { openReleasePullRequest } from "#src/services/coderabbit/collect/openReleasePullRequest";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
+import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import { readReleasePullRequest } from "#src/services/coderabbit/collect/readReleasePullRequest";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { replyAnswered } from "#src/services/coderabbit/collect/replyAnswered";
 import { runDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
+import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
 import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
-import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
-import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
-
-const readSha = (ref: string): string | undefined =>
-  getResult(() => runGit(["rev-parse", "--verify", "--quiet", ref]).trim()).unwrapOr(undefined);
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One pass: read, reply, gate, drain, port, push, reply. Every input is a remote fact and every write is either
 // The single fast-forward push or guarded by a predicate a later run re-evaluates, so any event may run this and
@@ -63,50 +54,14 @@ export const runCycle = async ({
     targetSha,
   });
 
-  runGit(["fetch", "--prune", "origin"]);
-  const mainSha = readSha(`origin/${MAIN_BRANCH}`);
-  const queueSha = readSha(`origin/${QUEUE_BRANCH}`);
-  const developSha = readSha(`origin/${DEVELOP_BRANCH}`);
-  // Named one by one: a ref missing from the remote is the copy of the cycle that runs disagreeing with the remote
-  // About a name, and which name is the whole of the diagnosis. The guard reads the three separately because that
-  // Is what narrows them for everything below; the naming is only ever read on the way out.
-  if (!developSha || !queueSha || !mainSha) {
-    const missingBranches = [
-      [MAIN_BRANCH, mainSha],
-      [QUEUE_BRANCH, queueSha],
-      [DEVELOP_BRANCH, developSha],
-    ]
-      .filter(([, sha]) => !sha)
-      .map(([branch]) => `origin/${branch}`);
-    throw new InvalidOperationError(
-      Operation.Read,
-      "coderabbit",
-      `missing on the remote: ${missingBranches.join(", ")}`,
-    );
-  }
-  let reviewFixesSha = readSha(`origin/${REVIEW_FIXES_BRANCH}`);
+  const branchShas = readBranchShas();
+  const { developSha, mainSha, queueSha } = branchShas;
+  // The drain may create or advance the fixes branch mid-pass, so this one is carried rather than re-read
+  let reviewFixesSha = branchShas.reviewFixesSha;
 
-  // The return stroke: the release pull request just merged, so develop is an ancestor of main and follows it by
-  // Fast-forward — no slot spent, since no pull request is open. Main advancing on its own (a dependency bump)
-  // Leaves develop no ancestor, and the porter folds that into the next window instead. The push is this run's
-  // One irreversible act: with develop and main now agreeing the express lane is open, and taking it here would
-  // Make two pushes of one run. It waits for the next event, and a mechanical commit is never the urgent one.
-  const isDevelopBehindMain =
-    developSha !== mainSha &&
-    getResult(() => runGit(["merge-base", "--is-ancestor", developSha, mainSha])).match(
-      () => true,
-      () => false,
-    );
-  if (isDevelopBehindMain) {
-    console.info(`${DEVELOP_BRANCH} is an ancestor of ${MAIN_BRANCH} — fast-forwarding it`);
-    if (!pushBranch({ branch: DEVELOP_BRANCH, expectedSha: developSha, isDryRun, sha: mainSha }))
-      return getMovedOutcome(DEVELOP_BRANCH);
-    return getOutcome(
-      CycleOutcomeKind.FastForwarded,
-      `${DEVELOP_BRANCH} followed ${MAIN_BRANCH} — the next event measures against it`,
-      mainSha,
-    );
-  }
+  // The return stroke first: a release that merged moves `develop` before anything is measured against it
+  const returned = runReturnStroke({ developSha, isDryRun, mainSha });
+  if (returned) return returned;
 
   // The express lane, before the pull request is even looked up: a mechanical commit reaches `main` directly and
   // The return stroke carries it to `develop` on the next run
@@ -156,37 +111,21 @@ export const runCycle = async ({
   // Range, because a range that will grow is not one to spend an hour reading yet.
   const isRateLimited = gate.kind === GateDecisionKind.RateLimited;
 
-  // Drain: the open set is what the bot spoke last on and no unported commit answers
-  const newestReview = reviews.findLast(({ body }) => body);
-  const unportedCommits = [
-    ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`) : []),
-    ...readAnsweredCommits(`${developSha}..${queueSha}`),
-  ];
-  const answeredIds = new Set(unportedCommits.flatMap(({ answers }) => answers));
-  const drainedReviewIds = new Set([...unportedCommits, ...frontierCommits].flatMap(({ drains }) => drains));
-  const threads = pullRequest === undefined ? [] : readUnresolvedThreads(pullRequest);
-  const openThreads = getOpenFindings(threads, answeredIds);
-  const openBodyReviewId = getOpenBodyReviewId({ drainedReviewIds, issueComments, newestReview, viewerLogin });
-  console.info(
-    `open findings: ${openThreads.length} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
-  );
   if (pullRequest !== undefined) {
     const drain = await runDrainStep({
       developSha,
+      frontierCommits,
       isDryRun,
       issueComments,
-      newestReview,
-      openBodyReviewId,
-      openThreads,
       pullRequest,
+      queueSha,
       reviewFixesSha,
-      threads,
+      reviews,
       viewerLogin,
     });
     if (drain.outcome) return drain.outcome;
     reviewFixesSha = drain.reviewFixesSha;
   }
-
   const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha, reviewFixesSha });
   // With no pull request open, whatever `develop` already carries above the merge base is part of the window the
   // First review reads — a run that pushed and died before opening left it there

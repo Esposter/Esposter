@@ -1,5 +1,5 @@
-import { getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 
 // The one comment shape a review's body-only findings are answered in, whichever half of the answer it carries:
 // The rejections the drain wrote, posted the moment it ends, or the commits that fixed the rest, posted once the

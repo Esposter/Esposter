@@ -1,21 +1,18 @@
+import type { AnsweredCommit } from "#src/models/coderabbit/collect/AnsweredCommit";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
-import type { ReviewThread } from "#src/models/coderabbit/shared/ReviewThread";
 
-// What the cycle hands the drain step: the open set it computed, and the reads the step's report and markers
-// Come from, so the step fetches nothing the cycle already holds
+// What the cycle hands the drain step: the reads it already holds, and the two ranges the open set is measured
+// Against. The step computes the open set itself — nothing outside it reads one.
 export interface DrainStepInput {
   developSha: string;
+  // Commits the window already carries; their `Drains` trailers answer a review body the bot has not re-read
+  frontierCommits: AnsweredCommit[];
   isDryRun: boolean;
   issueComments: GitHubEntry[];
-  // The newest review that carries a body; without one there is nothing to drain
-  newestReview?: GitHubReview;
-  // Present when the newest review's body-only findings are still open
-  openBodyReviewId?: number;
-  openThreads: ReviewThread[];
   pullRequest: number;
+  queueSha: string;
   reviewFixesSha?: string;
-  // Every unresolved thread, open or answered — the report reconciles the stated counts against them
-  threads: ReviewThread[];
+  reviews: GitHubReview[];
   viewerLogin: string;
 }

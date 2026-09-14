@@ -1,8 +1,8 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
-import { getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getOpenBodyReviewId } from "#src/services/coderabbit/collect/getOpenBodyReviewId";
 import { describe, expect, test } from "vitest";
 

@@ -1,7 +1,8 @@
 import type { OpenBodyReviewInput } from "#src/models/coderabbit/collect/OpenBodyReviewInput";
 
-import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
+import { checkHasMarkerComment } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
 
 // The newest review's own body is a finding set no thread carries: the nitpicks and the out-of-diff remarks it

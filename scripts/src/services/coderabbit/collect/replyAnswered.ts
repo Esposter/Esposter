@@ -1,9 +1,9 @@
 import type { PullRequestComment } from "#src/models/coderabbit/collect/PullRequestComment";
 import type { ReplyAnsweredInput } from "#src/models/coderabbit/collect/ReplyAnsweredInput";
 
-import { getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { getResult } from "@esposter/shared";

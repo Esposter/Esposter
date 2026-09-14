@@ -1,8 +1,5 @@
-import {
-  FIELD_SEPARATOR,
-  getAnsweredCommits,
-  RECORD_SEPARATOR,
-} from "#src/services/coderabbit/collect/getAnsweredCommits";
+import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/coderabbit/collect/constants";
+import { getAnsweredCommits } from "#src/services/coderabbit/collect/getAnsweredCommits";
 import { describe, expect, test } from "vitest";
 
 const getRecord = (fields: string[]) => `${fields.join(FIELD_SEPARATOR)}${RECORD_SEPARATOR}`;
