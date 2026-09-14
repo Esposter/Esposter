@@ -1,6 +1,6 @@
 import type { FileEntity } from "#src/models/azure/table/FileEntity";
 import type { LinkPreviewResponse } from "#src/models/message/linkPreview/LinkPreviewResponse";
-import type { StandardMessageType } from "#src/models/message/MessageType";
+import type { StandardMessageType } from "#src/models/message/StandardMessageType";
 import type { User } from "#src/schema/users";
 import type { ItemEntityType, ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
@@ -8,7 +8,8 @@ import type { Except } from "type-fest";
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
 import { fileEntitySchema } from "#src/models/azure/table/FileEntity";
 import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
-import { MessageType, standardMessageTypeSchema } from "#src/models/message/MessageType";
+import { MessageType } from "#src/models/message/MessageType";
+import { standardMessageTypeSchema } from "#src/models/message/StandardMessageType";
 import { sanitizedMessageSchema } from "#src/models/message/SanitizedMessage";
 import { selectRoomInMessageSchema } from "#src/schema/roomsInMessage";
 import { selectUserSchema } from "#src/schema/users";

@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export enum MessageType {
   Call = "Call",
   EditRoom = "EditRoom",
@@ -11,9 +9,3 @@ export enum MessageType {
 }
 
 export const MessageTypes: readonly MessageType[] = Object.values(MessageType);
-
-export type StandardMessageType = Exclude<MessageType, MessageType.Webhook>;
-
-export const standardMessageTypeSchema = z.enum(
-  MessageTypes.filter((type) => type !== MessageType.Webhook),
-) satisfies z.ZodType<StandardMessageType>;
