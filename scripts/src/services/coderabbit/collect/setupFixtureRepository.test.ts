@@ -3,16 +3,20 @@ import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { afterEach, beforeEach, describe } from "vitest";
+import { afterEach, beforeEach, describe, vi } from "vitest";
+
+const EPOCH = new Date(0).toISOString();
 
 // A real repository per test — a bare `origin` and one clone whose `main` is published — so the porter, the fold
 // And the lanes are proved against git itself rather than against a transcript of what git would say. The
-// Getters answer for the current test: the hooks rebuild the pair before each and remove it after.
+// Getters answer for the current test: the hooks rebuild the pair before each and remove it after. Every commit
+// Is dated at the epoch, so a sha is a function of its content and a message naming one can be snapshotted.
 export const setupFixtureRepository = (): {
   commitFile: (path: string, content: string) => string;
   commitFiles: (paths: string[], content: string) => string;
   deleteFile: (path: string) => string;
   getCwd: () => string;
+  installPreReceiveHook: (script: string) => void;
   moveFile: (from: string, to: string) => string;
   publish: (branch: string, ref: string) => string;
   readSha: (ref: string) => string;
@@ -20,11 +24,14 @@ export const setupFixtureRepository = (): {
 } => {
   let directory: string;
   let cwd: string;
+  let origin: string;
 
   beforeEach(() => {
+    vi.stubEnv("GIT_AUTHOR_DATE", EPOCH);
+    vi.stubEnv("GIT_COMMITTER_DATE", EPOCH);
     directory = mkdtempSync(join(tmpdir(), "review-collector-fixture-"));
     cwd = join(directory, "clone");
-    const origin = join(directory, "origin.git");
+    origin = join(directory, "origin.git");
     runGit(["init", "--quiet", "--bare", "--initial-branch", MAIN_BRANCH, origin]);
     runGit(["init", "--quiet", "--initial-branch", MAIN_BRANCH, cwd]);
     runGit(["config", "user.name", "fixture"], cwd);
@@ -69,8 +76,28 @@ export const setupFixtureRepository = (): {
   const switchTo = (ref: string): void => {
     runGit(["switch", "--quiet", "--detach", ref], cwd);
   };
+  // What `origin` does while a push is in flight — the one moment a real remote can be made to move or refuse
+  const installPreReceiveHook = (script: string): void => {
+    writeFileSync(
+      join(origin, "hooks", "pre-receive"),
+      `#!/bin/sh
+${script}
+`,
+      { mode: 0o755 },
+    );
+  };
 
-  return { commitFile, commitFiles, deleteFile, getCwd: () => cwd, moveFile, publish, readSha, switchTo };
+  return {
+    commitFile,
+    commitFiles,
+    deleteFile,
+    getCwd: () => cwd,
+    installPreReceiveHook,
+    moveFile,
+    publish,
+    readSha,
+    switchTo,
+  };
 };
 
 describe.todo("setupFixtureRepository");
