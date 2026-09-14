@@ -294,7 +294,7 @@ catalogs:
       specifier: ^5.9.0
       version: 5.9.0
     '@tresjs/core':
-      specifier: ^5.8.3
+      specifier: ^5.9.0
       version: 5.9.0
     '@tresjs/nuxt':
       specifier: ^5.6.3
