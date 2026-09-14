@@ -249,8 +249,8 @@ catalogs:
       specifier: ^0.4.0
       version: 0.4.0
     '@pulumi/azure-native':
-      specifier: ^3.27.0
-      version: 3.27.0
+      specifier: ^3.28.0
+      version: 3.28.0
     '@pulumi/github':
       specifier: ^6.15.0
       version: 6.15.0
@@ -899,7 +899,7 @@ importers:
         version: link:../../packages/shared
       '@pulumi/azure-native':
         specifier: 'catalog:'
-        version: 3.27.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
+        version: 3.28.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
       '@pulumi/github':
         specifier: 'catalog:'
         version: 6.15.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
@@ -5799,8 +5799,8 @@ packages:
     resolution: {integrity: sha512-4EDEmvxWtgsCnnVeBvtFIFZtUhPPt1+bA9JrSwU4Sa//6oKtzCSlGGXYJr44OD9aGISymbieJ4mCKHUygUDU+g==}
     engines: {node: '>=18'}
 
-  '@pulumi/azure-native@3.27.0':
-    resolution: {integrity: sha512-gKBoFZ5jacbW3muMoAOZzVRRF3Pv2Ptq2cE/7ai9dqsWYCJYeZ46o5fyC7TxqX08CkW2K20sHYC53+uvwt2ecQ==}
+  '@pulumi/azure-native@3.28.0':
+    resolution: {integrity: sha512-1VTBgWJ1zjcgTT+FGQ+5f9HpW7Hp6eUwHLS/YRCqG2QSY8MzswoR9F3f5ZTq77VDwJ+py0C+xsjZddvaOVJjRQ==}
 
   '@pulumi/github@6.15.0':
     resolution: {integrity: sha512-U8ZxPQQcOrcTn8y8EZsWmXzMtbw0JnwWCVGmqxBZ/i2SpUlEGMYT9B+EFC/qTALZXkDf7cMiq6fZ3Gy1G23nyQ==}
@@ -19714,7 +19714,7 @@ snapshots:
     dependencies:
       tinyexec: 1.3.1
 
-  '@pulumi/azure-native@3.27.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)':
+  '@pulumi/azure-native@3.28.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)':
     dependencies:
       '@pulumi/pulumi': 3.262.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
     transitivePeerDependencies:
