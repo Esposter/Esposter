@@ -9,7 +9,11 @@ describe("reviewFileCap", () => {
   // Number written there drifts silently when the cap moves, which is the one failure nothing downstream
   // Reports: a page saying "100 files" beside a constant saying 150 breaks no test and no build
   // `git ls-files` matches a glob at any depth, so the skill's references are covered by its own entry
-  const PROSE_GLOBS = [".agents/skills/coderabbit/*.md", "apps/web/content/docs/infra/review-collector/*.md"];
+  const PROSE_GLOBS = [
+    ".agents/skills/coderabbit/*.md",
+    ".agents/skills/review-queue/*.md",
+    "apps/web/content/docs/infra/review-collector/*.md",
+  ];
   const FILE_NUMBER_PATTERN = /\b\d+[- ]files?\b|\bfiles? or \d+\b|\bcap of \d+\b/u;
 
   test("no prose restates the cap or the fill target as a number", () => {

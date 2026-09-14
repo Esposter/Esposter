@@ -63,4 +63,4 @@ A cleanup step that must run on failure (`always()`) runs on _every_ failure —
 - **Which pnpm script a job runs, and how it is invoked** (the root script over the binary, bare `pnpm <script>` over `pnpm run <script>`, never the `-- <args>` separator) — `package-scripts`.
 - **Pinning a third-party action to a dereferenced commit SHA with its `# vX.Y.Z` comment, and bumping one** — `dependency-updates`.
 - **Job shape, the build caches, why a gate reads the disk rather than `cache-hit`, per-job `permissions`, and why `.github/workflows/` is flat** — `apps/web/content/docs/architecture/monorepo-tooling.md`.
-- **The review collector's own workflows** — the pinned `@ai/queue` call, the triggers, the retrigger job — `coderabbit`.
+- **The review collector's own workflows** — the pinned `@ai/queue` call, the triggers, the retrigger job — `apps/web/content/docs/infra/review-collector/runner.md`.

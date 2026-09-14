@@ -1,43 +1,35 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — a Settled list of the directions already rejected (sizing a window with gh pr view --json changedFiles, adding develop to reviews.auto_review.base_branches, excluding files to fit an over-budget window, holding a finished chunk until the checks come back, one roadmap item per PR, grepping the review body for the word nitpick, running the collector's cycle from the event's own ref or from develop's copy rather than the pinned ai/queue head, and verifying a window before the collector pushes it), auto-review runs only on default-branch PRs (develop-base PRs triggered manually with @coderabbitai review, reviews.auto_review.base_branches never added), opening or pushing to a default-branch PR spends a review slot so the push is asked for every time, the four gates that decide a push (open findings drained so they lead the window, nothing running, the previous window reviewed, the backlog under the cap) measured from the last reviewed sha rather than the last push, reading the check's bucket rather than its state string with unknown meaning wait, a rate-limited status not proving the checkpoint stalled and the retrigger as the probe, the largest commit prefix under the file cap, one constant the fill target derives from (refreshing per review cycle, never sized with gh pr view --json changedFiles), the review collector that ports `ai/queue` windows onto `develop`, drains findings and opens the release PR while the session only ever pushes `ai/queue`, every finding of a run in scope at every severity with a reply on each and the fixes pushed before it — plus deep dives on what is settled before a PR is opened and the author's own correction that cancels the review it just started, on reading and answering a run's findings channel by channel (nitpicks and outside-diff-range findings in the review body, reconciling against the stated counts, one reviews.path_instructions entry answering an invalid class), on pipelining a push against a running review, retrieving feedback and counting what is open, measuring the backlog before a push, composing a window (cutting a sitting into a self-contained prefix, re-splitting the unpushed range, reordering a fix to lead it), editing .coderabbit.yaml on the base branch, cutting an over-budget release PR, and which files may be excluded. Apply when fetching, addressing or replying to CodeRabbit comments, nitpicks, minors or outside-diff-range findings, before any git push to a branch with an open PR, when choosing which commits a push should carry, when a PR is too large for review, or when excluding files.
+description: Esposter CodeRabbit conventions — the facts about the bot every session works under. A Settled list of the directions already rejected (adding develop to reviews.auto_review.base_branches, grepping the review body for the word nitpick, force-pushing develop to make a window fit, excluding files to bring a window under the cap), auto-review running only on default-branch PRs (a develop-base PR is triggered by hand with @coderabbitai review), .coderabbit.yaml being read from the PR's base branch, never pushing into a running review and reading the check's bucket before its description with unknown meaning wait, the one file cap constant the fill target derives from and the test that keeps every number out of prose, and every finding of a run being in scope at every severity with a reply on each and the fix pushed before it — plus deep dives on reading a run's findings channel by channel (nitpicks and outside-diff-range findings in the review body, reconciling against the stated counts, one reviews.path_instructions entry answering an invalid class), retrieving feedback and counting what is open, and editing .coderabbit.yaml on the base branch. Apply when fetching, addressing or replying to CodeRabbit comments, nitpicks, minors or outside-diff-range findings, when reading the CodeRabbit check on any PR, or when changing .coderabbit.yaml. The session's push loop and the collector are the review-queue skill's.
 ---
 
 # CodeRabbit Conventions
 
+What the bot does, and what that makes true for every session. The session's own loop — pushing `ai/queue`, never `develop` — is the `review-queue` skill; the collector that clears the gates, drains findings and cuts windows is `apps/web/content/docs/infra/review-collector/`.
+
 ## Settled — do not re-propose
 
-- **Sizing a window with `gh pr view --json changedFiles`.** It counts the cumulative diff against the base branch rather than what moved since the last completed review, so on this repo's standing `develop`→`main` PR it reads a multiple of the real window and manufactures an over-cap emergency out of a healthy push. It is the fastest thing to reach for and wrong every time a PR has been reviewed more than once, which is every time. Read the frontier (`references/measuring-the-window.md`).
-- **Adding `develop` to `reviews.auto_review.base_branches`** so develop-base PRs review themselves. It turns every intermediate PR into a spent slot; a develop-base PR is triggered by hand with `@coderabbitai review` ("What Triggers a Review").
-- **Excluding files to bring an over-budget window under the cap.** Exclusion hides the work from the only review it will ever get. Cut the tail to a queue branch and re-push a sub-cap window instead (`references/exclusions.md`, `references/release-pr-cutting.md`).
-- **Holding a finished chunk until `format`/`typecheck`/`lint`/tests come back.** Checks are minutes and a slot is an hour, so that spends the scarce resource to protect the cheap one — and a failure found afterwards is one more commit in the next window (`references/pipelining.md`).
-- **One roadmap item per PR.** A slot costs the same whether it reads a tenth of the cap or all of it, so an under-filled window is the most expensive kind ("PR File Budget").
-- **Running the collector's cycle from the event's own ref, or from `develop`'s copy.** Each has its reason — `develop` is the verified copy, the event's ref is what GitHub hands over — and both lose to one fact — the cycle reads remote state (ref names, markers, trailers) whose shape the newest copy defines, and a `status` or `issue_comment` runs `main`'s copy, a release behind. So the trigger shell calls the reusable workflow at `ai/queue`, whose checkout and retrigger dispatch pin the same ref, a test holds both files to the constant (`scripts/src/services/coderabbit/collect/constants.test.ts`), and the mechanism is `apps/web/content/docs/infra/review-collector/runner.md`. "Verified" buys nothing: a queue push already runs the queue's copy with the same secrets, and a queue copy that is broken fails the next push loudly for the session that broke it.
-- **Verifying a window before the collector pushes it** — build, typecheck and lint on the candidate, dropping the tail commit until green. A gate with no remedy: the window is a prefix of the queue, so a red commit inside it holds every window behind it — its repair sits commits later and past the cap, and no shorter prefix is green — while each attempt spends runner-minutes finding that out. `develop`'s CI is the check and correctness there is eventual (`references/pipelining.md`); the queue's own CI already names the red commit to the session, which fixes it in the next commit. The express lane alone verifies, because it reaches `main` unread (`apps/web/content/docs/infra/review-collector/express-lane.md`).
+- **Adding `develop` to `reviews.auto_review.base_branches`** so develop-base PRs review themselves. It turns every intermediate PR into a spent slot; a develop-base PR is triggered by hand with `@coderabbitai review` ("What Triggers a Review"). The setting reads like an obvious fix and has been "helpfully" added before.
 - **Grepping the review body for the word "nitpick"** to collect them. The buckets are not a fixed set — duplicates, refactor suggestions and an additional-comments block appear once a review carries many — so a grep silently drops whichever bucket it did not name (`references/review-feedback.md`).
+- **Force-pushing `develop` to make a window fit.** A rewind desynchronises CodeRabbit's incremental checkpoint and it does not recover: the review after one anchors on the start of its own range, so every later window is counted from a sha whose files were already reviewed and arrives over the cap however small it measured. The collector only ever fast-forwards `develop`.
+- **Excluding files to bring a window under the cap.** An exclusion hides the work from the only review it will ever get; the collector holds the overflow for the next window instead.
 
 ## What Triggers a Review
 
-CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)**. Develop-base PRs are skipped ("Auto reviews are disabled on base/target branches other than the default branch") and are triggered by commenting `@coderabbitai review`.
+CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)** — on creation and on every push. Develop-base PRs are skipped ("Auto reviews are disabled on base/target branches other than the default branch") and are triggered by commenting `@coderabbitai review`, which keeps control of _when_ a review starts and stops every intermediate push spending a slot. `.coderabbit.yaml` is read from the PR's **base branch**, so a config change takes effect only once it is there — `references/config-editing.md`.
 
-**Never add `reviews.auto_review.base_branches`.** Manual triggering there is deliberate, not a gap: it keeps control of _when_ a review starts — which is what makes the never-push-into-a-running-review rule below workable — and stops every intermediate push spending a rate-limit slot. If a PR was not reviewed, comment `@coderabbitai review`; do not change the config. The setting reads like an obvious fix and has been "helpfully" added before.
-
-`.coderabbit.yaml` is read from the PR's **base branch**, so a config change only takes effect once it is on that branch — `references/config-editing.md`.
-
-## Opening a PR Spends a Review Slot — `references/opening-a-pr.md`
-
-**Creating a PR against the default branch, and every push to one, starts a review** — so a PR a session opens is asked for every time, and the moment after `gh pr create` is already an in-flight review. The release PR (`develop` → `main`) is the one exception: the collector opens it once the window has reached the fill target, so the session never does (`references/pipelining.md`). What has to be settled before the ask, and what an author's own correction costs right after opening, is that page.
+A review slot is about an hour, and a PR against `main` spends one on arrival: the release PR is the collector's to open, and any other PR against `main` is asked for every time, with its commit range settled before `gh pr create` because the moment after it is already an in-flight review. Corrections found after opening are a later push's commits; the body may be edited freely.
 
 ## Never Push Into an In-Flight Review
 
-Pushing while a review runs cancels it and retriggers a fresh one, costing a slot and losing the in-progress findings. CodeRabbit is **incremental** — it does not re-review commits it has already reviewed — so a cancelled review's comments do not come back on the next run. They are gone.
+Pushing while a review runs cancels it and retriggers a fresh one, costing a slot and losing the in-progress findings. CodeRabbit is **incremental** — it does not re-review commits it has already reviewed — so a cancelled review's comments do not come back.
 
 ```bash
 gh pr checks --json name,state,bucket,description --jq '.[] | select(.name=="CodeRabbit")'
 # {"bucket":"pass","description":"Review rate limited","name":"CodeRabbit","state":"SUCCESS"}
 ```
 
-**Read `bucket` first, then `description`.** `bucket` is gh's normalization across both representations a check can take, so `pending` means a live review whatever CodeRabbit reports underneath — it posts a **commit status** (`pending`/`success`/`failure`/`error`), while Actions entries on the same PR are check runs reporting `IN_PROGRESS`/`QUEUED`. Keying on the state string alone means a representation change reads as terminal.
+**Read `bucket` first, then `description`.** `bucket` is gh's normalization across both representations a check can take — CodeRabbit posts a commit status while Actions entries on the same PR are check runs — so `pending` means a live review whatever is reported underneath.
 
 | bucket / description                          | meaning                        | push?                         |
 | :-------------------------------------------- | :----------------------------- | :---------------------------- |
@@ -47,66 +39,22 @@ gh pr checks --json name,state,bucket,description --jq '.[] | select(.name=="Cod
 | `pass` / skip comment says `Too many files`   | never started                  | push, but fix the count first |
 | `fail`, missing row, or anything unrecognised | unknown                        | **wait**, then look           |
 
-The last row is the default, not an edge case: being wrong about a running review costs its findings and a slot, being wrong about a finished one costs a minute. It is a session's rule, and the collector's gate answers the same row differently on purpose — nothing re-fires a cycle that exits quietly on an unreadable check, so `getGateDecision` throws and paints the run red where a person waits and looks.
+The last row is the default: being wrong about a running review costs its findings and a slot, being wrong about a finished one costs a minute. The collector's gate answers that row differently on purpose — nothing re-fires a cycle that exits quietly, so it fails the run red where a person waits and looks. `Review completed` names no range: it is the status of whichever review ran most recently, never clearance for the current head — the frontier is the last sha a review body names, and the collector reads it from there.
 
 Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit) comment` / `putComment timed out` comment from the bot, or a review returning far fewer comments than the diff warrants.
 
-## The Four Gates
+## The File Cap
 
-They are not interchangeable — the first is about leaving findings unanswered, the second about cancelling a review, the third about accumulating an unreviewed window, the fourth about overflowing the cap.
-
-```mermaid
-flowchart TD
-  C[Commit locally] --> D{Any unresolved findings from a completed review}
-  D -->|yes| DR[Drain them first - they lead the next window]
-  DR --> M[Measure backlog from the last reviewed sha]
-  D -->|no| M
-  M --> R{Is a review running}
-  R -->|yes| W1[Wait - a push cancels it and loses its findings]
-  R -->|no| P{Was the previous window reviewed}
-  P -->|no| W2[Wait - unreviewed windows accumulate into one]
-  P -->|yes| B{Is the backlog under the cap}
-  B -->|no| H[Hold the overflow locally and push a smaller window]
-  B -->|yes| PU[Push]
-  PU --> RV[Review runs against the new range]
-  RV --> F[Fix findings then reply with the pushed sha]
-  F --> C
-```
-
-**Drain the open findings before composing a window — they are its first commits, not its last.** A completed review's findings are the only work with an expiry date: threads go stale as the code under them moves, a finding answered three windows later is answered against code the reviewer never saw, and the reviewer re-raises what looks unaddressed. Fresh work has no such clock, so it always yields. This gates **what the window contains**, not merely its order: a window that would exceed the cap drops queued work to keep the fixes in. Count what is open before deciding it is drained (`references/review-feedback.md` — an empty result is usually a wrong filter, not a clean PR).
-
-**The check answers "is one running", never "has the last push been reviewed".** `Review completed` is the status of whichever review ran most recently, which may have covered a range two pushes back — the check names no range at all, so reading it as clearance for the current head is a category error. Reading the last reviewed sha, sizing the window against it, and why a rate-limited status is not proof the frontier stalled: `references/measuring-the-window.md`.
-
-**This says when a push is _safe_, never when it is _authorised_.** The standing rule overrides everything here: commit the coherent change and **never push `develop` unless the user asks** — rate-limited, recovery and force-pushes alike. Pushing `ai/queue` is not that: it spends nothing and is how work reaches the collector, which holds the standing authorisation for `develop` and clears these gates on every run (`references/pipelining.md`). Given the ask, `Review rate limited` is not a wait state: nothing is running, so holding the branch stalls the working tree for an hour to protect a review that does not exist. Under a standing ask ("keep pushing while it's parked"), treat the review as an async thread and keep pushing rather than waiting for one to be asked for each time. **The ask supplies authorisation, never an exemption from the gates** — every push still clears all four, the in-flight gate included, so a standing ask never licenses pushing into a running review. It applies per push, not per work session: the second push re-reads the gates from scratch, and if the first push's review is still running it waits, however recently permission was given.
-
-## PR File Budget
-
-The cap is one constant, `REVIEW_FILE_CAP` in `scripts/src/services/coderabbit/shared/constants.ts`, and the fill target beside it is a share of the cap — the Open Source tier's limit is popularity-scaled and can move, so the bot's skip comment states the current one and the constant is where it is written, never a page (a test fails on a number written into this skill or the collector's docs). Push the **largest commit prefix under the cap** — the fill target is where one usually lands, never a reason to hold a prefix that fits — counting the union of committed and working-tree changes, and measuring per cycle rather than per PR (`references/measuring-the-window.md`). How a sitting is cut into that prefix so the pushed head is green on its own: `references/window-composition.md`.
-
-The budget is a **target to fill, not only a cap**. A slot costs the same whether it reads a tenth of the cap or all of it, so an under-filled window is the most expensive kind; roadmap items are batched until the estimate approaches the fill target, grouped by what they touch (`references/window-composition.md`).
-
-### Pipelining — `references/pipelining.md`
-
-There are no per-chunk feature branches and the session never pushes `develop`: it works on `ai/queue` and pushes it after every commit, and the **review collector** (`pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow on every queue push and every CodeRabbit review) clears the four gates from the remote, drains open findings onto `ai/review-fixes`, fast-forwards `develop` by the largest window under the cap, and opens the `develop` → `main` PR itself once that window reaches the fill target. The single long-lived release PR auto-reviews every such push; merging it is the one act left to a person. **What the session pushes, what it never touches, and how it catches up after the collector moves `develop`** is that page.
+The cap is one constant, `REVIEW_FILE_CAP` in `scripts/src/services/coderabbit/shared/constants.ts`, and the fill target beside it is a share of the cap — the Open Source tier's limit is popularity-scaled and can move, so the bot's skip comment states the current one and the constant is where it is written, never a page: a test fails on a number written into this skill, the `review-queue` skill or the collector's docs. Past the cap CodeRabbit skips the review outright rather than trimming it. A slot costs the same whether it reads a tenth of the cap or all of it, which is why the collector fills a window to the target before spending one.
 
 ## Reading and Answering Findings
 
-**"Fix the CodeRabbit comments" means every finding the run produced**, at every severity and in every place the
-run put one. Nobody has to list the categories, and a request naming one of them ("the review comments") is not a
-request scoped to that one. A finding is skipped only when it is genuinely invalid, and then it is answered like
-any other: a reply saying why. Severity and delivery channel are different axes — a minor arrives as an inline
-thread as readily as a major — and it is the channel, never the severity, that decides whether a fetch finds it.
+**"Fix the CodeRabbit comments" means every finding the run produced**, at every severity and in every place the run put one — nobody has to list the categories, and a request naming one of them is not scoped to it. Severity and delivery channel are different axes: a minor arrives as an inline thread as readily as a major, and it is the channel, never the severity, that decides whether a fetch finds it.
 
-Every finding gets a reply — the verdict first, then the evidence, rejected ones included — posted after the fix commits are pushed, and nothing is accepted unverified. Where each kind of finding lives, what the stated counts prove, what a reply owes, answering an invalid class in `.coderabbit.yaml`, and why an enforcer over the repo's files does not constrain a pure function's parameter: `references/answering-findings.md`.
+Every finding gets a reply — the verdict first, then the evidence, rejected ones included — posted after the fix commits are pushed, and nothing is accepted unverified. Where each kind of finding lives, what the stated counts prove, what a reply owes, and answering an invalid class in `.coderabbit.yaml`: `references/answering-findings.md`.
 
 ## Deep Dives
 
-- `references/opening-a-pr.md` — before `gh pr create` against the default branch, or in the minutes after one ran.
-- `references/review-feedback.md` — when fetching a PR's feedback, counting what is still open, probing the checkpoint, or replying to a comment.
-- `references/measuring-the-window.md` — before a push: reading the last reviewed sha, counting the backlog against it, and what a rate-limited status does and does not prove.
-- `references/pipelining.md` — when planning the push cadence, or deciding where a window boundary falls.
-- `references/window-composition.md` — when a push would exceed the cap, work authored last has to be reviewed first, or roadmap items are being batched into one window.
 - `references/answering-findings.md` — when a completed review's findings are being collected, fixed and replied to.
+- `references/review-feedback.md` — when fetching a PR's feedback, counting what is still open, or replying to a comment.
 - `references/config-editing.md` — when changing `.coderabbit.yaml`.
-- `references/release-pr-cutting.md` — when a PR has grown past the file limit and its review is skipped outright.
-- `references/exclusions.md` — when deciding whether a file may be excluded, generating the list, or removing the exclusions.

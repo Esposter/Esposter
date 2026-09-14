@@ -1,6 +1,6 @@
 ---
 name: git
-description: Esposter git workflow conventions — commit message format, safety rules, branch hygiene, and syncing `main` back into `develop` with the `pnpm-lock.yaml` conflict that merge always brings. Apply when running git operations, merging a branch, resolving a lockfile conflict, or advising on source control workflows.
+description: Esposter git workflow conventions — commit message format, safety rules (pathspec commits in a shared checkout, no stash, no push into a running review), branch hygiene (the session commits on ai/queue and the collector writes develop and main), and the `pnpm-lock.yaml` conflict every merge of `main` brings, regenerated never hand-resolved. Apply when running git operations, merging a branch, resolving a lockfile conflict, or advising on source control workflows.
 ---
 
 # Git Conventions
@@ -42,37 +42,23 @@ After committing, verify with `git log -1 --format='%B'` before pushing.
 - **Never `git add -A` without reading `git status` first.** The tree can already be dirty with someone else's work — a leftover snapshot refresh, an unfinished edit — and `-A` sweeps it into your commit, where it ships under a message that does not describe it. Stage the paths you touched, or check the status and confirm every extra file belongs. If one already landed in the commit, `git reset --soft HEAD~1` then `git restore --staged <paths>` puts it back in the working tree with its content intact.
 - **Commit by pathspec when another session shares the checkout** — `git commit -F - -- <your paths>`. The index is shared: a rename or edit the other session already staged rides into a plain `git commit` even when only your files were `git add`ed, and staging yours does not unstage theirs. A pathspec commit takes only the paths named and leaves the rest of the index as it was; an `R`, `M` or `A` in `git status --short` on a file you did not touch is the tell that the index is not yours.
 - **Never use `git stash`** — a failed/forgotten pop loses in-progress changes. To inspect prior committed state, use `git show HEAD:path/to/file` or `git diff HEAD`. To set work aside, make a WIP commit.
-- **Never push into a running CodeRabbit review** — if the branch has an open PR, check the review state first; pushing mid-review cancels it, burns a rate-limit slot, and loses the in-progress findings for good (CodeRabbit won't re-review commits it has already seen). The command, the states that mean "running", and the four gates that decide the push are the `coderabbit` skill's — a second copy of that table here is how one of them goes stale.
+- **Never push into a running CodeRabbit review** — on any PR against `main` a person opened, check the review state first; pushing mid-review cancels it, burns a slot, and loses the in-progress findings for good. The command and the states that mean "running" are the `coderabbit` skill's. The release PR is not the session's to push at all (below).
 
 ## Pushing
 
-Batch commits and push **once** per coherent chunk of work. Several pushes in quick succession each retrigger review, so the later ones reliably land mid-review — the exact case the rule above exists to prevent.
+The session pushes **`ai/queue` after every commit**, which starts no review — the `review-queue` skill owns the loop, the rebase onto `origin/develop` before the next unit, and the force-with-lease after it. A branch with a PR a person opened against `main` is pushed once per coherent chunk, since every push there starts a review.
 
 ## Branch Hygiene
 
-**Work is committed straight to `develop`; there are no per-chunk feature branches.** Review happens on one long-lived `develop` → `main` PR, which re-reviews incrementally on every push — the pipeline and its file budget are the **coderabbit** skill's. A feature branch here would only add a merge that buys nothing, since nothing gates entry to `develop`.
+**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review collector cuts windows from it onto `develop` and opens the one long-lived `develop` → `main` PR (`review-queue` skill). `develop` and `ai/review-fixes` have one writer, the collector; `main` takes releases by a person merging that PR, plus the collector's express lane. Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
 
-- `develop` is the working branch; `main` takes releases from it.
-- Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
+## Merging `main` and the Lockfile
 
-## Syncing `main` Into `develop`
+`main` takes commits `develop` never saw — a Renovate PR merged straight into it — and the collector folds them into the next window as a merge commit, resolving the lockfile the way below. The same procedure applies to any merge a session makes by hand (`main` into a spike branch, a worktree branch into `ai/queue`). Never rebase a branch whose commits are already pushed and reviewed.
 
-`main` takes commits `develop` never saw — a Renovate PR merged straight into it, a hotfix — so `develop` goes
-behind and the open `develop` → `main` PR starts showing a diff nobody wrote. Fetch and merge `main` in; never
-rebase `develop`, whose commits are already pushed and already reviewed.
-
-```bash
-git fetch origin
-git merge origin/main --no-edit
-```
-
-The conflict is `pnpm-lock.yaml`, every time, because both sides regenerated it (below). `pnpm-workspace.yaml`
-is authored and usually auto-merges — read the merged catalog anyway rather than trusting that, since a clean
+`pnpm-workspace.yaml` is authored and usually auto-merges — read the merged catalog anyway, since a clean
 auto-merge proves only that the two sides touched different lines, never that the surviving version is the
 higher one.
-
-The merge commit itself is not a review window: it carries whatever `main` already held, and the review that
-matters already ran on the PR those commits came from.
 
 ### `pnpm-lock.yaml` Conflicts — Always Regenerate, Never Hand-Resolve
 
@@ -94,20 +80,14 @@ same reason: under a second, not a reinstall.
 
 `Already up to date` is the normal report, and a rebuilt lock that comes back byte-identical to the one you
 deleted is the expected outcome, not a skipped step — it means the merged catalog was already fully resolved.
-A merge that resolves byte-identical to `develop` is likewise correct: it means `main` brought no catalog entry
-`develop` lacked. The merge commit is still made, since it records the ancestry that keeps the `develop` → `main`
-PR diff clean, and it simply carries a zero-content diff.
+A merge that resolves byte-identical to the branch is likewise correct: it means `main` brought no catalog entry
+it lacked. The merge commit is still made, since it records the ancestry, and it simply carries a zero-content
+diff.
 
 Escalate to `pnpm refresh:lockfile` only when `pnpm i` cannot reconcile the tree — that one deletes every
 `node_modules` as well, kills running node processes, and reinstalls from scratch (minutes, and it takes down any
 dev server or vitest watcher).
 
-## Verify On `develop`
+## Verify Once Per Chunk
 
-The local check suite runs **once per coherent chunk, on `develop`, before pushing it** — not per commit:
-
-1. **Commit** as the work lands; commits are free and nothing is triggered by them.
-2. **Verify** the finished chunk with the check suite (see the package-scripts skill).
-3. **Push** the chunk, which starts the review. Fix forward on `develop`.
-
-Rationale: a per-commit check run is re-invalidated by the next commit in the same chunk, and the pushed state is the only state a reviewer ever sees.
+The local check suite runs **once per coherent chunk** (see the `package-scripts` skill), in the background, and its repairs are committed as their own commit behind the unit — never folded into it, because the collector cuts windows at commit boundaries and every cut must be green on its own. A per-commit check run is re-invalidated by the next commit in the same chunk; a queue push waits for nothing, since it starts no review.

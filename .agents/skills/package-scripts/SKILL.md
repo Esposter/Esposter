@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, bench, graph:gen, outdated:dependencies, release), a Settled list (no root `build:<app>` script per app, the release stays one local script rather than a CI publish, a renamed export of a published package is never a major), `nuxt typecheck` and the root lint being the only checks that match CI, the wrapper exit code a backgrounded run reports, `oxfmt` never touching markdown so a table is realigned by hand, the `scriptsComments` key that holds only a script's `@TODO:`, the check suite run once per chunk with tests scoped to the paths touched, and the pnpm traps (a `--filter` matching nothing exits 0, `pnpm <script> -- <args>` drops the args, a workflow runs the script not the binary, and a script is invoked bare with `run` reserved for a name that shadows a pnpm command) — plus deep dives on how each pnpm trap fails, on running a `.ts` script under `node` where it can and `tsx` where it cannot without ever bending the code to fit `node`, and why a pre-install CI check is shell, and on the `ai:sweep:*` / `ai:coderabbit:*` script catalogue an agent runs. Apply whenever running or recommending package scripts.
+description: Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, bench, graph:gen, outdated:dependencies, release), a Settled list (no root `build:<app>` script per app, the release stays one local script rather than a CI publish, a renamed export of a published package is never a major), `nuxt typecheck` and the root lint being the only checks that match CI, the wrapper exit code a backgrounded run reports, `oxfmt` formatting markdown tables too, the `scriptsComments` key that holds only a script's `@TODO:`, the check suite run once per chunk with tests scoped to the paths touched, and the pnpm traps (a `--filter` matching nothing exits 0, `pnpm <script> -- <args>` drops the args, a workflow runs the script not the binary, and a script is invoked bare with `run` reserved for a name that shadows a pnpm command) — plus deep dives on how each pnpm trap fails, on running a `.ts` script under `node` where it can and `tsx` where it cannot without ever bending the code to fit `node`, and why a pre-install CI check is shell, and on the `ai:sweep:*` / `ai:coderabbit:*` script catalogue an agent runs. Apply whenever running or recommending package scripts.
 ---
 
 # Package Scripts
@@ -46,10 +46,8 @@ the root pass carries, and when a targeted `oxlint` is still worth running, is t
 A backgrounded run of either reports the _wrapper's_ exit code, which is `0` even when the run inside it
 failed. Read the output for `exited 1` or a `problem`/`error` line rather than trusting the status.
 
-> `oxfmt` formats code, not markdown, and no prettier binary is installed — reaching for `npx prettier` or
-> `pnpm exec prettier` fails. A `.md` file's own layout is therefore hand-maintained: a table whose cells changed
-> width is realigned in the edit that changed them, because nothing downstream will do it and nothing fails when
-> it drifts.
+> `oxfmt` formats markdown too — a table whose cells changed width is realigned by `pnpm format` (or `pnpm exec oxfmt <paths>`
+> for a few files). No prettier binary is installed, so `npx prettier` or `pnpm exec prettier` fails.
 
 ## Root Scripts
 
