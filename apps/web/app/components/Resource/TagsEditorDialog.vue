@@ -17,7 +17,7 @@ const nameRules = computed(() => [rules.maxLength(MAX_TAG_NAME_LENGTH)]);
 const valueRules = computed(() => [rules.maxLength(MAX_TAG_VALUE_LENGTH)]);
 // The caller mounts this only while it is open, so the rows start from the current tags on every open.
 // An empty trailing row means the first thing the user sees is somewhere to type.
-const rows = ref(tags && Object.keys(tags).length > 0 ? getTagRows(tags) : [{ name: "", value: "" }]);
+const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags) : [{ name: "", value: "" }]);
 </script>
 
 <template>
