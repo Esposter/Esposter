@@ -15,4 +15,4 @@
 | `Dashboard`, `Dataset`, `FlowchartEditor` + their store, composable and service layers            | 2026-08-20 |                                                                         |
 | `emailEditor`, `webpageEditor`, `grapesjs`, `survey` — store, composables, services               | 2026-08-20 | their components are swept above; their shared models are `shared.md`'s |
 | `app/models/resource/sheet`                                                                       | —          |                                                                         |
-| `app/models/resource` less `sheet`                                                                | —          |                                                                         |
+| `app/models/resource` less `sheet`                                                                | 2026-09-14 |                                                                         |
