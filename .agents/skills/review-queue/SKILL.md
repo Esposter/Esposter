@@ -1,6 +1,6 @@
 ---
 name: review-queue
-description: Esposter's review queue — the session's side of the review collector. A Settled list of the directions already rejected (per-chunk feature branches, pushing develop by hand, cutting or measuring a window in the session, holding a finished chunk until the checks come back, excluding files to fit a window, opening the release pull request by hand), the three refs and their one writer each (the session writes only ai/queue), the loop (commit a unit, push after every commit with --force-with-lease after a rebase, fetch and rebase onto origin/develop before the next unit and why that keeps the drain's fixes), committing a sweep's moves apart from its repairs so the express lane can take them, answering a finding in-session with the Answers / Drains trailers and where that fix ports, resolving a conflict with parked fixes by rebasing onto origin/ai/review-fixes, main being synced by the collector, and running the collector by hand only with its workflow disabled. Apply before any git push, when deciding what branch a commit lands on, when the collector has moved develop, when a CodeRabbit finding is being fixed in the session, or when the collector reports a conflict or is switched off.
+description: Esposter's review queue — the session's side of the review collector. A Settled list of the directions already rejected (per-chunk feature branches, pushing develop by hand, cutting or measuring a window in the session, holding a finished chunk until the checks come back, excluding files to fit a window, opening the release pull request by hand), the refs and their one writer each (the session writes only ai/queue), the loop (commit a unit, push after every commit with --force-with-lease after a rebase, fetch and rebase onto origin/develop before the next unit and why that keeps the drain's fixes), committing a sweep's moves apart from its repairs so the express lane can take them, answering a finding in-session with the Answers / Drains trailers and where that fix ports, resolving a conflict with parked fixes by rebasing onto origin/ai/review-fixes, main being synced by the collector, and running the collector by hand only with its workflow disabled. Apply before any git push, when deciding what branch a commit lands on, when the collector has moved develop, when a CodeRabbit finding is being fixed in the session, or when the collector reports a conflict or is switched off.
 ---
 
 # Review Queue
@@ -16,7 +16,7 @@ The session works on **one permanent branch, `ai/queue`**, and pushes it after e
 - **Excluding files to bring a window under the cap.** The collector holds the overflow for the next window; an exclusion hides the work from the only review it will ever get.
 - **Opening the release pull request by hand.** The collector opens it at the same fill target a push clears; a session that opens one spends the slot on a handful of files.
 
-## Three refs, one writer each
+## The refs, one writer each
 
 | Ref               | Written by                                         | What it holds                                                                   |
 | :---------------- | :------------------------------------------------- | :------------------------------------------------------------------------------ |
@@ -30,7 +30,7 @@ The session never checks out `develop` for work, never touches `ai/review-fixes`
 ## The loop
 
 1. **Commit a unit on `ai/queue`.** Run the finishing checks in the background and commit their repairs as their own commit behind the unit — the collector cuts at commit boundaries, so every cut must be green on its own.
-2. **`git push` after every commit.** Plain while the queue sits on `develop`'s head, `--force-with-lease` after a rebase: the queue is a backup of unpushed work, not a reviewed artifact, and the lease is what keeps two machines from dropping each other's commits.
+2. **`git push` after every commit.** Plain while the queue sits on `develop`'s head, `--force-with-lease` after a rebase: the queue is a backup of unpushed work, not a reviewed artifact, and the lease is what keeps two machines from dropping each other's commits. A queue push spends nothing, so the standing rule that a push is asked for every time is `develop`'s — which the session never pushes.
 3. **Before the next unit, `git fetch`, and when `origin/develop` moved, `git rebase origin/develop`.** A fast-forwarded `develop` makes the rebase a no-op; a cherry-picked window drops the ported commits by patch id and re-parents the rest. **This is what keeps the drain's fixes:** a queue left on an old base carries commits written against files the drain has since repaired, and the porter's cherry-pick replays them — where the hunks overlap the window is held, where they merely sit nearby the queue's older shape lands on top and the fix is gone with nothing reporting it. A queue several windows behind is reconciled commit by commit, so budget it as work.
 4. **Keep working.** The collector fires on the push and does the rest; its replies name the pushed sha.
 

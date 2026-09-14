@@ -39,14 +39,14 @@ export const setupFixtureRepository = (): {
   });
 
   const readSha = (ref: string): string => runGit(["rev-parse", ref], cwd).trim();
-  // Every commit is titled by the first path it touches — a subject is never read, so it carries nothing else
+  // Every commit is titled by the paths it touches — a subject is never read, so it carries nothing else
   const commitFiles = (paths: string[], content: string): string => {
     for (const path of paths) {
       mkdirSync(dirname(join(cwd, path)), { recursive: true });
       writeFileSync(join(cwd, path), content);
     }
     runGit(["add", "--all"], cwd);
-    runGit(["commit", "--quiet", "--message", paths[0] ?? ""], cwd);
+    runGit(["commit", "--quiet", "--message", paths.join(" ")], cwd);
     return readSha("HEAD");
   };
   const commitFile = (path: string, content: string): string => commitFiles([path], content);

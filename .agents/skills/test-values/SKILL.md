@@ -30,7 +30,7 @@ whether the value means something. A canonical value means nothing, and says so.
 
 **Every date is computed from the epoch; none is typed.**
 
-- A `Date` is `new Date(0)`. A later one is the epoch plus a Temporal duration — `new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"))` — never a second literal, and never a raw millisecond count (`feedback_temporal_durations`).
+- A `Date` is `new Date(0)`. A later one is the epoch plus a Temporal duration — `new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"))` — never a second literal, and never a raw millisecond count (the `naming` skill, `references/numbers-and-time.md`).
 - A string is `.toISOString()` of one of those, so the format is the platform's and identical in every file. A date-only string is `.toISOString().slice(0, 10)` of it, with the `slice` read as "the date part" — a helper the suite declares once when it is used twice.
 - Two values that must sort declare both at `describe` scope (`const epoch = new Date(0)`, `const nextDay = …`) and the test reads which is later from the names.
 - `Date.now()` in the code under test is pinned, never awaited around: `vi.useFakeTimers({ now: 0 })` in `beforeEach` (the `testing` skill's timers page), so `createdAt` is asserted with `toStrictEqual(new Date(0))` and never `toBeInstanceOf(Date)`, which passes against a value written a day late.
