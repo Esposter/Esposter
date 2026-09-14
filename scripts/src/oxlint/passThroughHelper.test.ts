@@ -1,9 +1,8 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-const RULE = "pass-through-helper/no-forwarding-wrapper";
-
-describe(RULE, () => {
+describe("passThroughHelper", () => {
+  const RULE = "pass-through-helper/no-forwarding-wrapper";
   const FIXTURES = [
     { name: "forwardsEveryParameter", source: `export const a = (b: string) => f(b);`, violations: 1 },
     { name: "forwardsNothing", source: `export const a = () => f();`, violations: 1 },

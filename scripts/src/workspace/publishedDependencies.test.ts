@@ -10,7 +10,7 @@ import { describe, expect, test } from "vitest";
  * the sibling on disk. It resolves nothing on a stranger's `npm install`, which is the first place it is ever
  * visible.
  */
-describe("published packages", () => {
+describe("publishedDependencies", () => {
   const workspacePackages = getWorkspacePackages(REPOSITORY_ROOT);
   // Every field a consumer's package manager reads as an edge to resolve. `peerDependenciesMeta` counts for the
   // Same reason the build's allowlist reads it: a name declared only there is still externalized, so a private
@@ -27,6 +27,7 @@ describe("published packages", () => {
 
   test("depend on no private sibling", () => {
     expect.hasAssertions();
+
     // Named rather than counted, as an edge: the failure reads as the broken install it is, rather than as a
     // Package to go and diff.
     const privateDependencyEdges = workspacePackages

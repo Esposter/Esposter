@@ -14,7 +14,7 @@ import { describe, expect, test } from "vitest";
  */
 const readJsonFile = (path: string) => parseMachineJson<Record<string, unknown>>(readFileSync(path, "utf8"));
 
-describe("declaration generation", () => {
+describe("declarationGeneration", () => {
   // A package builds with tsdown exactly when it has a tsdown config, so the set is discovered rather than listed:
   // A listed set silently stops covering the package added after it was written, which is the only way this
   // Invariant can be broken. Every member the workspace declares, because two of the ones that build sit under
@@ -51,6 +51,7 @@ describe("declaration generation", () => {
 
   test("emits declarations only where the isolated transform can produce them", () => {
     expect.hasAssertions();
+
     // Named rather than counted: a package that starts emitting declarations without `isolatedDeclarations` names
     // Itself in the failure. An empty discovery cannot pass this either, since the exception must be present.
     const slowPathPackagePaths = PACKAGE_PATHS.filter((packagePath) => {

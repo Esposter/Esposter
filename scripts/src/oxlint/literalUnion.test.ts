@@ -1,9 +1,8 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-const RULE = "literal-union/no-string-literal-union";
-
-describe("literal-union", () => {
+describe("literalUnion", () => {
+  const RULE = "literal-union/no-string-literal-union";
   // Every fixture exports what it declares, so the correctness category oxlint keeps on reports nothing else.
   const FIXTURES = [
     { name: "twoStrings", source: `export type Union = "a" | "b";`, violations: 1 },

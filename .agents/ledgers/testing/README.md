@@ -57,9 +57,8 @@ believing it passed" (`sweeps` skill) a thing that stays proved rather than a th
 Everything it still reports on a swept repo is one of the exceptions below, so a clean pass is a **known** list
 rather than an empty one: the top-level-await clusters in `app/content/docs/index.test.ts`, `app/components/index.test.ts`
 and `app/store/index.test.ts` — each with the constants their module-scope readers pin out there alongside them —
-the `mockDb` a hoisted `vi.mock` factory returns in each `azure-functions` suite, virrun's two mocked path constants,
-and each `scripts/src/oxlint` rule name, which names its own `describe` and so is evaluated before the callback the scope
-rule would move it into.
+the `mockDb` a hoisted `vi.mock` factory returns in each `azure-functions` suite, and virrun's two mocked path
+constants.
 
 ## Judging a match
 

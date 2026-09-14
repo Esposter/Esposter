@@ -25,7 +25,6 @@ describe(postDrainVerdicts, () => {
   let directory: string;
 
   beforeEach(() => {
-    runGh.mockReset();
     directory = mkdtempSync(join(tmpdir(), "postDrainVerdicts-test-"));
   });
 

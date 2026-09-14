@@ -1,9 +1,8 @@
 import { describe, expect, test } from "vitest";
-import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 
 import vuetifyConfig from "./vuetify.config";
 
-describe(defineVuetifyConfiguration, () => {
+describe("vuetifyConfig", () => {
   test("theme, variations, and defaults", () => {
     expect.hasAssertions();
 

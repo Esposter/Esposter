@@ -4,6 +4,7 @@ import { describe, expect, test } from "vitest";
 describe(getDrainEventLine, () => {
   test("names the model the session opened with", () => {
     expect.hasAssertions();
+
     expect(getDrainEventLine(JSON.stringify({ model: "claude-opus", subtype: "init", type: "system" }))).toStrictEqual({
       isNarration: false,
       text: "session: model claude-opus",
@@ -13,6 +14,7 @@ describe(getDrainEventLine, () => {
 
   test("prints an assistant turn as its prose and its tool calls, as narration", () => {
     expect.hasAssertions();
+
     const event = {
       message: {
         content: [
@@ -39,6 +41,7 @@ describe(getDrainEventLine, () => {
 
   test("drops a turn's thinking, keeping the tool call beside it", () => {
     expect.hasAssertions();
+
     const event = {
       message: {
         content: [
@@ -56,6 +59,7 @@ describe(getDrainEventLine, () => {
 
   test("drops a tool result and an empty turn", () => {
     expect.hasAssertions();
+
     expect(getDrainEventLine(JSON.stringify({ message: { content: [] }, type: "user" }))).toBeUndefined();
     expect(
       getDrainEventLine(JSON.stringify({ message: { content: [{ text: " ", type: "text" }] }, type: "assistant" })),
@@ -64,6 +68,7 @@ describe(getDrainEventLine, () => {
 
   test("prints a successful result with its turns and cost, as Claude Code's own", () => {
     expect.hasAssertions();
+
     const event = {
       duration_ms: Temporal.Duration.from({ minutes: 12, seconds: 30 }).total("milliseconds"),
       num_turns: 41,
@@ -83,6 +88,7 @@ describe(getDrainEventLine, () => {
   // Against the review's quarantine budget instead
   test("prints a refusal wearing a successful subtype as Claude Code's own", () => {
     expect.hasAssertions();
+
     const event = {
       duration_ms: 421,
       num_turns: 1,
@@ -99,6 +105,7 @@ describe(getDrainEventLine, () => {
 
   test("prints a failed result's text as Claude Code's own", () => {
     expect.hasAssertions();
+
     const event = {
       duration_ms: 1,
       num_turns: 0,
@@ -115,6 +122,7 @@ describe(getDrainEventLine, () => {
 
   test("passes a line that is not an event through as Claude Code's own", () => {
     expect.hasAssertions();
+
     expect(getDrainEventLine("You've hit your session limit · resets 3:10am (UTC)")).toStrictEqual({
       isNarration: false,
       text: "You've hit your session limit · resets 3:10am (UTC)",

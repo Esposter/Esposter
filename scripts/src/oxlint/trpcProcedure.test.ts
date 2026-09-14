@@ -1,10 +1,9 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-const ERROR_RULE = "trpc-procedure/no-hand-rolled-error";
-const RETURN_TYPE_RULE = "trpc-procedure/require-return-type";
-
-describe("trpc-procedure", () => {
+describe("trpcProcedure", () => {
+  const ERROR_RULE = "trpc-procedure/no-hand-rolled-error";
+  const RETURN_TYPE_RULE = "trpc-procedure/require-return-type";
   const FIXTURES = [
     // `require-return-type` — the generic pins a public API surface, so its absence is the finding.
     { name: "bareQuery", source: `export const a = p.query(() => 1);`, violations: 1 },

@@ -52,7 +52,7 @@ the rows are for is the half no grep sees: what a chain wraps, and who alerts.
 
 ```bash
 # new Error, which InvalidOperationError replaces outside unimplemented stubs
-grep -rn 'new Error(' --include=*.ts --include=*.vue apps/web/app apps/web/server apps/web/shared packages/*/src
+grep -rn 'new Error(' --include=*.ts --include=*.vue apps/web/app apps/web/server apps/web/shared apps/functions/src apps/infra/src packages/*/src scripts/src
 ```
 
 A chain that never terminates cannot be grepped for. A line-anchored `getResult(Async)?\(` reports all 234 call

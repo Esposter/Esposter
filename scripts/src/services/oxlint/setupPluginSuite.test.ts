@@ -1,5 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { jsonDateParse } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -74,7 +74,12 @@ export const setupPluginSuite = ({
       ],
       { encoding: "utf8" },
     );
-    if (!stdout) throw new Error(`oxlint produced no output (status ${status}): ${stderr}`);
+    if (!stdout)
+      throw new InvalidOperationError(
+        Operation.Read,
+        plugin,
+        `oxlint produced no output (status ${status}): ${stderr}`,
+      );
 
     const { diagnostics } = jsonDateParse<{ diagnostics: { code: string; filename: string }[] }>(stdout);
     codes = diagnostics.map(({ code }) => code);

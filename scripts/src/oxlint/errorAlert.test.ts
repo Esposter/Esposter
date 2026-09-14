@@ -1,9 +1,8 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-const RULE = "error-alert/no-raw-error-alert";
-
-describe(RULE, () => {
+describe("errorAlert", () => {
+  const RULE = "error-alert/no-raw-error-alert";
   const FIXTURES = [
     { name: "alertsErrorMessage", source: `createAlert(error.message, "error");`, violations: 1 },
     // The shape a `.match` err handler writes, which is where every real instance was found.
