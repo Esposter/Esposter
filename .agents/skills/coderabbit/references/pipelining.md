@@ -56,7 +56,7 @@ states for the cut's sake, and the lane is the second reason for it.
    commit by commit, so budget it as work rather than as a command.
 4. Keep working. The collector fires on the push, reads the frontier and the check, drains any open findings
    onto `ai/review-fixes`, and when the slot is free and the queue has reached the fill target — or the next commit
-   overflows the cap, so the window is as large as it will ever be — ports the largest green prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha. The loop as a sequence, with what each side owns, is drawn once in
+   overflows the cap, so the window is as large as it will ever be — ports the largest prefix under the cap and fast-forwards `develop`. Its replies name the pushed sha. The loop as a sequence, with what each side owns, is drawn once in
    `apps/web/content/docs/infra/review-collector/two-writers.md`.
 
 **What the session must not do:** push `develop`, touch `ai/review-fixes`, or cut a window. A commit that would have

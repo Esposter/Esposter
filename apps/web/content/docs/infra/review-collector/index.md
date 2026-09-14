@@ -5,7 +5,7 @@ description: The event-triggered, idempotent collector that drains CodeRabbit fi
 
 # Review Collector
 
-Work is committed faster than CodeRabbit reviews complete, and every step that turns a finished review into the next one — fixing the findings, replying on each thread, sizing the next window, cutting it to the cap so its head is green, pushing it — runs without a person at a keyboard. A slot never idles because no session is open: a review completes, its findings are answered, and the next window is pushed the minute the slot frees.
+Work is committed faster than CodeRabbit reviews complete, and every step that turns a finished review into the next one — fixing the findings, replying on each thread, sizing the next window, cutting it to the cap, pushing it — runs without a person at a keyboard. A slot never idles because no session is open: a review completes, its findings are answered, and the next window is pushed the minute the slot frees.
 
 Local work is pushed to **one permanent `ai/queue` branch** with no window boundaries on it at all; the collector cuts the windows. It is the garbage collector of the review budget: allocation (the queue pushed) and freeing (a review completed) both trigger the same run, the run reads every fact it needs from the remote, decides in one pass, and pushes at most one window. Re-running it against unchanged state does nothing, which is what lets any event fire it without a schedule.
 
@@ -13,7 +13,7 @@ Local work is pushed to **one permanent `ai/queue` branch** with no window bound
 
 The pipelining rules are prose in the `coderabbit` skill, and the commands under `scripts/src/coderabbit/` read the facts they turn on — the reviewed frontier and the window size (`window`), every open finding across the three endpoints (`feedback`), whether the checkpoint covers the head (`probe`, which a session runs by hand). The collector composes them into one cycle that runs without a person, in five self-contained parts:
 
-1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — the state the collector reads, the gates it must clear, how it ports the largest green prefix of `ai/queue` under the cap, pushes, replies with the pushed sha, and opens the release pull request once a window is worth its first review. One script, `ai:coderabbit:collect`.
+1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — the state the collector reads, the gates it must clear, how it ports the largest prefix of `ai/queue` under the cap, pushes, replies with the pushed sha, and opens the release pull request once a window is worth its first review. One script, `ai:coderabbit:collect`.
 2. [The drain](/docs/infra/review-collector/drain) — the one step Claude runs: which findings are open, what the session is handed and denied, and how a drain that fails is quarantined rather than retried forever.
 3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle from the allocation and free events, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a human session and the collector work the same pull request without racing: the collector alone writes `develop` and `ai/review-fixes`, the session alone writes `ai/queue`.
@@ -44,7 +44,7 @@ flowchart TD
   O -->|no| P
   DR --> P{Fixes parked with any queue commit,<br/>queue at the fill target,<br/>or the window held}
   P -->|none| PK[Wait — slot stays free]
-  P -->|any| W[Port fixes then queue prefix<br/>largest green prefix under the cap, main folded in]
+  P -->|any| W[Port fixes then queue prefix<br/>largest prefix under the cap, main folded in]
   W --> PU[Compare-and-swap push to develop]
   PU -->|release PR open| RP[Reply on each answered thread<br/>with the pushed sha]
   PU -->|none open| OP[Open the release PR<br/>its first review reads the window]
@@ -58,7 +58,7 @@ Three properties make the picture safe to fire from anything:
 
 ## Parameters
 
-The review budget has one knob, the file cap, in `scripts/src/services/coderabbit/shared/constants.ts`; the fill target is a share of it, so moving the cap moves everything sized in files. No prose restates either as a number — a page says "the cap" and cites that file, and a test over the skill and these pages fails on a number written back in, because a number in prose drifts silently when the constant moves. The collector's own values — the branch names it owns, the trailer keys, the retry and attempt caps, the check strings — sit beside its services in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter at all: an event-triggered collector runs the minute the slot frees, so it is a property of the reviewer, not a number anything here waits on. The cap moves with the Open Source tier's popularity scaling, and the bot's skip comment states the current one.
+The review budget has one knob, the file cap, in `scripts/src/services/coderabbit/shared/constants.ts`; the fill target is a share of it, so moving the cap moves everything sized in files. No prose restates either as a number — a page says "the cap" and cites that file, and a test over the skill and these pages fails on a number written back in, because a number in prose drifts silently when the constant moves. The collector's own values — the branch names it owns, the trailer keys, the drain attempt cap, the check strings — sit beside its services in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter at all: an event-triggered collector runs the minute the slot frees, so it is a property of the reviewer, not a number anything here waits on. The cap moves with the Open Source tier's popularity scaling, and the bot's skip comment states the current one.
 
 ## Key files
 
@@ -66,7 +66,7 @@ The review budget has one knob, the file cap, in `scripts/src/services/coderabbi
 | :---------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
 | `scripts/src/coderabbit/collect/index.ts`             | the entry point — `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]`                           |
 | `scripts/src/services/coderabbit/collect/runCycle.ts` | the pass itself, which returns its verdict rather than exiting                                      |
-| `scripts/src/services/coderabbit/collect`             | one service per step — gate, drain, port, express, the fold of `main`, verify, reply                |
+| `scripts/src/services/coderabbit/collect`             | one service per step — gate, drain, port, express, the fold of `main`, reply                        |
 | `scripts/src/services/coderabbit/exclusions`          | the diff classifiers the express lane's proof and the manual exclusions command share               |
 | `scripts/src/models/coderabbit/collect`               | the inputs and outcomes the steps exchange — the gate decision, the port result, the drain input    |
 | `.github/workflows/ReviewCollector.yaml`              | the runner's triggers, calling `run-review-collector.yaml` at `ai/queue` — the runner page says why |

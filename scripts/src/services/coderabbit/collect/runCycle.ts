@@ -13,7 +13,7 @@ import {
   QUEUE_BRANCH,
   REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
-import { cutCandidate } from "#src/services/coderabbit/collect/cutCandidate";
+import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
@@ -34,7 +34,6 @@ import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnr
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
 import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -224,10 +223,10 @@ export const runCycle = async ({
   else if (isDryRun)
     return getOutcome(
       CycleOutcomeKind.Pushed,
-      `would verify, fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}${pullRequest === undefined ? ", then open the release pull request" : ""}`,
+      `would fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}${pullRequest === undefined ? ", then open the release pull request" : ""}`,
     );
 
-  const cut = cutCandidate({
+  const targetSha = foldCandidate({
     cwd,
     developSha,
     fixCount: port.fixCount,
@@ -235,32 +234,6 @@ export const runCycle = async ({
     queueSha,
     queueShas: port.queueShas,
   });
-  // With no pull request the same state may still be ready on what develop already carries, and the open is owed
-  if (cut.queueShas.length === 0 && port.fixCount === 0 && pullRequest !== undefined)
-    return getOutcome(CycleOutcomeKind.Idle, "nothing green to push");
-  // Readiness is asked again of the cut, because the window that was measured is not the window that ships: the
-  // Green cut drops queue commits until the head passes the checks, and a fold of `main` that turned it red is
-  // Undone. A cut shrunk past what a slot is worth must not go out — the push is auto-reviewed, so it would
-  // Spend the hour the fill target exists to protect on whatever survived. Same rule, asked of the real window.
-  // A cut that kept every pick is still the held window; one that dropped a red pick is not, because the drop is
-  // Re-picked next cycle and the window can grow again
-  const isCutHeld = port.heldSha !== undefined && cut.queueShas.length === port.queueShas.length;
-  const cutFileCount = getFileCount(`${frontier}..${cut.targetSha}`, cwd);
-  if (
-    !getIsReady({
-      fileCount: cutFileCount,
-      fixCount: parkedFixCount,
-      isForced,
-      isHeld: isCutHeld,
-      pendingCommitCount,
-      queueCommitCount: cut.queueShas.length,
-    })
-  )
-    return getOutcome(
-      CycleOutcomeKind.Idle,
-      `the green cut is ${cutFileCount} files with ${cut.queueShas.length} queue commits — it waits rather than spending a slot`,
-    );
-
   // A review a person started with a comment while the run worked is read afresh before the push: the push's own
   // Compare-and-swap covers the ref, not the slot
   if (pullRequest !== undefined && !checkIsSlotFree(readCheckStatus(pullRequest)))
@@ -268,14 +241,14 @@ export const runCycle = async ({
       CycleOutcomeKind.Idle,
       "a review started during the run, or its status could not be read — nothing pushed",
     );
-  if (!pushBranch({ branch: DEVELOP_BRANCH, cwd, expectedSha: developSha, isDryRun, sha: cut.targetSha }))
+  if (!pushBranch({ branch: DEVELOP_BRANCH, cwd, expectedSha: developSha, isDryRun, sha: targetSha }))
     return getMovedOutcome(DEVELOP_BRANCH);
 
   // The window is on `develop`; what is owed now is the pull request that reviews it, or the replies the one
   // Reviewing it resolves
-  if (pullRequest === undefined) return openReleasePullRequest({ cwd, developSha: cut.targetSha, isDryRun, mainSha });
+  if (pullRequest === undefined) return openReleasePullRequest({ cwd, developSha: targetSha, isDryRun, mainSha });
   replyAnswered({
-    commits: readAnsweredCommits(`${developSha}..${cut.targetSha}`),
+    commits: readAnsweredCommits(`${developSha}..${targetSha}`),
     isDryRun,
     issueComments,
     pullRequest,
@@ -283,7 +256,7 @@ export const runCycle = async ({
   });
   return getOutcome(
     CycleOutcomeKind.Pushed,
-    `${cut.queueShas.length} queue commits and ${port.fixCount} fix commits reached ${DEVELOP_BRANCH}`,
-    cut.targetSha,
+    `${port.queueShas.length} queue commits and ${port.fixCount} fix commits reached ${DEVELOP_BRANCH}`,
+    targetSha,
   );
 };

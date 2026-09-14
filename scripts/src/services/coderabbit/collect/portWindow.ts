@@ -12,7 +12,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Build the window as a branch, one cherry-pick at a time, and measure after each. Fixes ride first and whole,
 // Queue commits in queue order until one conflicts or overflows the cap, and the count that decides it is read
 // From the tree that will be pushed rather than estimated. Cheap on purpose — every run ports, and most exit at
-// Readiness — so the checks and the fold of `main` wait for `cutCandidate`, which runs only on a window worth a slot.
+// Readiness — so the fold of `main` waits for `foldCandidate`, which runs only on a window worth a slot.
 //
 // Every count is taken from the frontier, never from the develop head. A review covers everything since the one
 // That last wrote a body, so a window pushed on top of one still unreviewed is read as a single range; measuring

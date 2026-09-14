@@ -27,37 +27,31 @@ export const COMPLETED_DESCRIPTION = "Review completed";
 
 export const RATE_LIMITED_DESCRIPTION = "Review rate limited";
 
-// A red cut drops its last queue commit and re-verifies this many times before the window is held
-export const GREEN_CUT_RETRY_LIMIT = 3;
-
-// The install the candidate's own lockfile asks for. The runner installed once, for the queue head it checked out
-// (`run-review-collector.yaml`), and the candidate is never that: it is `develop` plus a prefix of the queue, so a
-// Queue commit that adds a dependency reads red against the head's `node_modules` on the review-completion event,
-// The one event the collector exists to act on, and the drop-the-tail retry then blames three commits that were
-// Fine. Frozen, so a lockfile the commit left stale fails here as CI would fail it, and nothing tracked is rewritten.
+// The install a candidate's own lockfile asks for. The runner installed once, for the queue head it checked out
+// (`run-review-collector.yaml`), and neither tree the cycle checks is that one: the express cut is `main` plus
+// Queue commits and the drain's base is `develop`, so a commit that adds a dependency would read red against the
+// Head's `node_modules`. Frozen, so a lockfile the commit left stale fails here as CI would fail it, and nothing
+// Tracked is rewritten.
 export const INSTALL_COMMAND: string[] = ["i", "--frozen-lockfile"];
 
-// The checks a candidate earns before it is pushed. The pushed head runs CI on its own and the interior queue
-// Commits were verified by nobody, so the cut gets the checks CI would fail it on. Check-only: a repair the
-// Collector wrote would be a commit nobody reviewed. The two ESLint passes are what the root `lint` script runs
-// After oxlint, minus its `virrun` wrapper — this checkout is already the isolated copy `virrun` exists to make.
-// Oxlint alone let an import-order error through to a pushed window, and a pre-push control that is not the check
-// Protecting `develop` protects nothing.
-export const VERIFY_COMMANDS: string[][] = [
+// The checks the express cut earns before it is pushed, and the only checks the collector runs on anything it
+// Pushes: the lane reaches `main` with nobody reading it, so it pays for everything CI would fail it on. The two
+// ESLint passes are what the root `lint` script runs after oxlint, minus its `virrun` wrapper — this checkout is
+// Already the isolated copy `virrun` exists to make. Check-only: a repair the collector wrote would be a commit
+// Nobody reviewed. The tests are here because a relocation is exactly what a path-coupled test fails on — a
+// Bundle's size snapshot moves when a file crosses a package boundary, a walk over a folder sees a file arrive
+// Or leave — and none of that is visible to a build, a typecheck or a lint. A window is pushed unverified:
+// `develop` runs its own CI on it, and a red there is one more commit in the next window, where a check run here
+// Would hold every window behind a red queue commit whose fix sits commits later and past the cap.
+export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   INSTALL_COMMAND,
   ["build:packages"],
   ["-r", "--parallel", "run", "typecheck"],
   ["exec", "oxlint", "--format=default", "--disable-nested-config"],
   ["exec", "eslint", "."],
   ["-r", "--parallel", "run", "lint"],
+  ["exec", "vitest", "run"],
 ];
-
-// The express lane pays for the gate the window lane leaves to develop's CI, because it is the only lane that
-// Reaches `main` with nobody reading it. A relocation is exactly what a path-coupled test fails on — a bundle's
-// Size snapshot moves when a file crosses a package boundary, a walk over a folder sees a file arrive or leave —
-// And none of that is visible to a build, a typecheck or a lint. On the window lane such a break is one more
-// Finding for the next review; on this one it would land on the branch that deploys.
-export const EXPRESS_VERIFY_COMMANDS: string[][] = [...VERIFY_COMMANDS, ["exec", "vitest", "run"]];
 
 // A review whose drain has failed this many times is quarantined: its findings stay open for a person and the
 // Collector ports without them rather than stalling every window behind one finding nobody sees.
