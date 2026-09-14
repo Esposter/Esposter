@@ -10,14 +10,6 @@ on:
         description: Push the window even when the queue is under the fill target
         type: boolean
         default: false
-    # The two secrets the job spends, declared as its own interface; the caller inherits, so nothing is mapped there
-    secrets:
-      CLAUDE_CODE_OAUTH_TOKEN:
-        description: The Claude Code subscription token the drain's headless session authenticates with
-        required: true
-      REVIEW_COLLECTOR_TOKEN:
-        description: The collector's own login token — its checkout, pushes, replies and the release pull request
-        required: true
 
 jobs:
   collect:
