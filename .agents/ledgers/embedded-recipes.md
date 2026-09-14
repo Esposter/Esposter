@@ -8,12 +8,12 @@ logic is its pattern stays where it is, anything with control flow becomes a tes
 A code example teaching a convention is not a recipe and never migrates — the question is whether a reader is
 meant to **run** the block.
 
-| Unit                                           | Swept      | Notes                                                                              |
-| ---------------------------------------------- | ---------- | ---------------------------------------------------------------------------------- |
-| `.agents/skills/coderabbit/references/*.md`    | 2026-09-11 | feedback, probe and window became `ai:coderabbit:*`; two emergency-path loops left |
-| `.agents/skills/*/references/*.md`, `SKILL.md` | 2026-09-11 |                                                                                    |
-| `.agents/ledgers/*.md`                         | 2026-09-11 | a grep pipeline is one command — the find recipes are mostly already compliant     |
-| `apps/web/content/docs/**/*.md`, root markdown | 2026-09-11 |                                                                                    |
+| Unit                                           | Swept      | Notes                                                                          |
+| ---------------------------------------------- | ---------- | ------------------------------------------------------------------------------ |
+| `.agents/skills/coderabbit/references/*.md`    | 2026-09-11 | feedback became `ai:coderabbit:feedback`; the emergency-path pages are gone    |
+| `.agents/skills/*/references/*.md`, `SKILL.md` | 2026-09-11 |                                                                                |
+| `.agents/ledgers/*.md`                         | 2026-09-11 | a grep pipeline is one command — the find recipes are mostly already compliant |
+| `apps/web/content/docs/**/*.md`, root markdown | 2026-09-11 |                                                                                |
 
 Find recipe, over `*.md`: fenced `bash`/`sh` blocks are the candidates, and a block is a finding when it holds a
 loop, a branch, a fallback or a second process aggregating the first's output.

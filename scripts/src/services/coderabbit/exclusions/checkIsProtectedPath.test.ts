@@ -24,7 +24,7 @@ describe(checkIsProtectedPath, () => {
   test.each([
     "apps/web/app/store/alert.ts",
     "packages/shared/src/util/sleep.ts",
-    "scripts/src/coderabbit/window/index.ts",
+    "scripts/src/coderabbit/feedback/index.ts",
   ])("lets %s be classified", (path) => {
     expect.hasAssertions();
 

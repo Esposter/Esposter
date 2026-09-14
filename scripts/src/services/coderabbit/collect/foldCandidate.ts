@@ -4,7 +4,7 @@ import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcom
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
+import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 
 // Fold `main` into the candidate the port built and name the sha `develop` is pushed to. Nothing is verified

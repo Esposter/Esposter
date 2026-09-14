@@ -28,7 +28,7 @@ import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimi
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
+import { getLastReviewedSha } from "#src/services/coderabbit/collect/getLastReviewedSha";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One pass: read, reply, gate, drain, port, push, reply. Every input is a remote fact and every write is either

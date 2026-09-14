@@ -1,4 +1,4 @@
-import { getLastReviewedSha } from "#src/services/coderabbit/window/getLastReviewedSha";
+import { getLastReviewedSha } from "#src/services/coderabbit/collect/getLastReviewedSha";
 import { describe, expect, test } from "vitest";
 
 describe(getLastReviewedSha, () => {
