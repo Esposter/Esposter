@@ -291,7 +291,7 @@ catalogs:
       specifier: ^3.31.3
       version: 3.31.3
     '@tresjs/cientos':
-      specifier: ^5.8.1
+      specifier: ^5.9.0
       version: 5.9.0
     '@tresjs/core':
       specifier: ^5.8.3
