@@ -45,9 +45,6 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     storeDeleteFriendRequestsByUser(friendUser.id);
     storeCreateFriend(friendUser);
   };
-  const storeDeclineFriendRequest = (friendUserId: User["id"]) => {
-    storeDeleteFriendRequestsByUser(friendUserId);
-  };
   // Non-optimistic: the row carries the sender/receiver user graph the client can't faithfully fabricate, and a
   // Temp-id placeholder would race the echo's server-id row into a transient duplicate.
   const sendFriendRequest = async (receiverId: User["id"]) => {
@@ -77,7 +74,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     await executeDeclineFriendRequestMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
       applyOptimistic: () => {
         const resolvedFriendRequests = getFriendRequestsByUser(senderId);
-        storeDeclineFriendRequest(senderId);
+        storeDeleteFriendRequestsByUser(senderId);
         return () => {
           for (const resolvedFriendRequest of resolvedFriendRequests) storeCreateFriendRequest(resolvedFriendRequest);
         };
@@ -97,7 +94,6 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     sentFriendRequests,
     storeAcceptFriendRequest,
     storeCreateFriendRequest,
-    storeDeclineFriendRequest,
     storeDeleteFriendRequestsByUser,
   };
 });

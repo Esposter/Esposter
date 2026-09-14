@@ -84,9 +84,9 @@ describe(useFriendRequestStore, () => {
 
     const friendRequestStore = useFriendRequestStore();
     const { friendRequests } = storeToRefs(friendRequestStore);
-    const { storeDeclineFriendRequest } = friendRequestStore;
+    const { storeDeleteFriendRequestsByUser } = friendRequestStore;
     friendRequests.value = [firstFriendRequest, secondFriendRequest];
-    storeDeclineFriendRequest(first.id);
+    storeDeleteFriendRequestsByUser(first.id);
 
     expect(friendRequests.value).toStrictEqual([secondFriendRequest]);
   });
