@@ -9,10 +9,10 @@ interface Props {
 }
 
 const { editor } = defineProps<Props>();
-// Empty wherever there is no room in scope — a post's comment editor gets the dataset alone
 </script>
 
 <template>
+  <!-- The room's custom emoji are empty wherever there is no room in scope — a post's comment editor gets the dataset alone -->
   <MessageModelMessageEmojiPicker
     :button-props="{ size: 'small' }"
     @select="
