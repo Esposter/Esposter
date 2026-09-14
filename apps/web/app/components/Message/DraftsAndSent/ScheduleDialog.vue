@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getTextFromHtml } from "@/services/message/draftsAndSent/getTextFromHtml";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 import { useInputStore } from "@/store/message/input";
+import { getResultAsync, noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
@@ -49,7 +51,10 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
       onSuccess: async () => {
         if (!currentTarget.scheduledMessageJobId)
           clearComposer({ roomId: currentTarget.roomId, threadRootRowKey: currentTarget.threadRootRowKey });
-        await readScheduledMessageJobs();
+        // The job is already scheduled by the time this runs, so the refresh reports its own failure rather
+        // Than throwing: a rejection here rejects the write's outcome, and the dialog would sit submitting
+        // Over a message the server took
+        await getResultAsync(readScheduledMessageJobs).match(noop, createErrorAlert);
         target.value = undefined;
       },
     },
