@@ -2,14 +2,8 @@ import type { NameStatusRow } from "#src/models/coderabbit/exclusions/NameStatus
 
 import { getNulSeparatedTokens } from "#src/services/shared/getNulSeparatedTokens";
 
-// The one reading of the listing, so every classifier asks it for the path a row ends at and the one it came from
-// Rather than re-parsing the rows for the field it wants.
-//
-// The listing is read with `-z`. Without it git prints one row per newline with tab-separated fields and quotes a
-// Path holding a tab, a newline or a non-ASCII byte in C-style escapes instead of the literal bytes, so a
-// Tab-splitting regex reads the quote marks and escape sequences as part of the path. `-z` NUL-terminates every
-// Field instead, one flat token stream with no quoting to undo: a rename row is three tokens (status, the path it
-// Came from, the path it ends at), every other status two (status, path).
+// Read with `-z`: without it git quotes a path holding a tab, a newline or a non-ASCII byte in C-style escapes.
+// NUL-terminated, a rename row is three tokens (status, from, to) and every other status two.
 export const getNameStatusRows = (nameStatus: string): NameStatusRow[] => {
   const tokens = getNulSeparatedTokens(nameStatus);
   const rows: NameStatusRow[] = [];

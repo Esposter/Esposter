@@ -1,7 +1,6 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Every one of these scripts is invoked as `pnpm ai:coderabbit:<verb> <pr>`, and a missing or non-numeric
-// Argument has to fail here rather than reach the API — `undefined`, `" "` (which is `0`) and `-1` all answer 404.
+// A missing or non-numeric argument fails here rather than at the API, where `undefined`, `" "` and `-1` all answer 404
 export const getPullRequestArgument = (): number => {
   const argument = process.argv[2];
   const pullRequest = Number(argument);

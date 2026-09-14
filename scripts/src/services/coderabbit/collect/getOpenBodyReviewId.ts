@@ -5,13 +5,10 @@ import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getStatedCounts } from "#src/services/coderabbit/feedback/getStatedCounts";
 
-// The newest review's own body is a finding set no thread carries: the nitpicks and the out-of-diff remarks it
-// States counts for and posts inline nowhere. It is open when the review states any of either, no fix commit's
-// `Drains` trailer names it, and no marker comment says a run already drained it — the two halves of the same
-// Memory, because a trailer is lost the moment its commit is ported and a marker outlives every rebase.
-//
-// A review stating none of either owes no body drain at all, which is what keeps every reply the bot posts —
-// Each of which arrives as a review of its own — from re-opening a set that was answered.
+// The newest review's body is a finding set no thread carries — the nitpicks and out-of-diff remarks it states
+// Counts for. Open when it states any, no `Drains` trailer names it and no marker says a run drained it: a
+// Trailer is lost the moment its commit is ported, a marker outlives every rebase. A review stating none owes
+// Nothing, which keeps the bot's replies — each a review of its own — from re-opening an answered set.
 export const getOpenBodyReviewId = ({
   drainedReviewIds,
   issueComments,

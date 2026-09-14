@@ -10,11 +10,9 @@ import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrai
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 
-// The drain as one step of the cycle: nothing open means nothing to do, a dry run runs no Claude session, and a
-// Limit the last run hit — Claude Code's own, read off the marker that run wrote — ends the run rather than
-// Downloading Claude Code to be refused again. Nothing announces that limit lifting and every queue push fires a
-// Cycle, so without the marker each one would try. A drain that could not start ends the run too: the open set
-// Is untouched, so porting now would put a window ahead of findings that must lead it.
+// A limit the last run hit — Claude Code's own, read off the marker it wrote — ends the run rather than
+// Downloading Claude Code to be refused again; so does a drain that could not start, since porting would put a
+// Window ahead of findings that must lead it.
 export const runDrainStep = async ({
   developSha,
   frontierCommits,
@@ -26,9 +24,8 @@ export const runDrainStep = async ({
   reviews,
   viewerLogin,
 }: DrainStepInput): Promise<DrainStepResult> => {
-  // The open set is what the bot spoke last on and no unported commit answers — a fix sitting on the fixes branch
-  // Or in the queue has already answered its finding, and draining it again spends a session on work the window
-  // Is about to carry
+  // The open set is what the bot spoke last on and no unported commit answers — a fix on the fixes branch or in
+  // The queue has answered its finding already
   const newestReview = reviews.findLast(({ body }) => body);
   const unportedCommits = [
     ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`) : []),

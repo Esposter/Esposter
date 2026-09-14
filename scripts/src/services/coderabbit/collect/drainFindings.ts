@@ -28,14 +28,11 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-// Claude works on the fixes branch — ai/review-fixes while it still owes develop commits, develop's head otherwise,
-// So the branch is never deleted and never stale — and the branch is pushed only after it exits cleanly, so a
-// Drain that dies leaves no trace and the next run starts the same open set again. Past the attempt cap the review
-// Is quarantined: its findings stay open for a person and the caller ports without them, because a pipeline
-// Stalled on one finding nobody sees costs every window after it. Claude Code's own session limit is the one
-// Non-zero exit that is not this review's failure, so it neither counts an attempt nor fails the run: the deadline
-// Goes into a marker comment, and every run until it lifts reads that marker and skips the drain instead of
-// Downloading Claude Code to be refused again.
+// Claude works on the fixes branch — ai/review-fixes while it still owes develop commits, develop's head
+// Otherwise — pushed only after a clean exit, so a drain that dies leaves no trace. Past the attempt cap the
+// Review is quarantined: its findings stay open for a person and the caller ports without them. Claude Code's
+// Own session limit is the one non-zero exit that is not this review's failure: its deadline goes into a marker
+// Comment every run reads until it lifts.
 export const drainFindings = async ({
   developSha,
   issueComments,
@@ -88,8 +85,8 @@ export const drainFindings = async ({
     return { isLimited: true, reviewFixesSha };
   }
 
-  // A zero exit says the session ended, never that it finished the job: a drain that stopped mid-fix leaves the
-  // Rest of a finding in the working tree, and reading `HEAD` there pushes half of one as though it were whole.
+  // A zero exit says the session ended, never that it finished: a drain that stopped mid-fix leaves the rest in
+  // The working tree, and reading `HEAD` there would push half a finding as though it were whole
   const dirtyPaths = getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));
   if (!isDrained || dirtyPaths.length > 0) {
     runGh([

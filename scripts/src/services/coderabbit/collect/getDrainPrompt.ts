@@ -3,13 +3,9 @@ import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromp
 import { ANSWERS_TRAILER, DRAINS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { getFindingText } from "#src/services/coderabbit/collect/getFindingText";
 
-// The one step Claude runs. The skills already teach how a finding is verified, fixed and answered, so the
-// Prompt carries the findings as the reviewer wrote them — the drain holds no `gh` to read a thread itself, so
-// A title alone would have it re-derive the case the reviewer already made — and the two things the collector
-// Needs from the commits: the trailers. It forbids the three things only the collector may do: push, rewrite
-// History, and talk to GitHub. The last of those is why a verdict is written to a file rather than posted: the
-// Drain reads review text it must not trust, so it runs with no credential that could act on this repository
-// (`runDrain`).
+// The skills teach how a finding is verified, fixed and answered; the prompt carries the findings as the reviewer
+// Wrote them (the drain holds no `gh`), the trailers the collector needs, and the three things only the collector
+// May do — push, rewrite history, talk to GitHub. A verdict is a file rather than a post for the same reason.
 export const getDrainPrompt = ({
   feedback,
   openThreads,

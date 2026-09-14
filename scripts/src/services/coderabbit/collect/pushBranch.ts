@@ -8,17 +8,11 @@ const readRemoteSha = (branch: string, cwd?: string): string => {
   return runGit(["rev-parse", "--verify", "--quiet", `origin/${branch}`], cwd).trim();
 };
 
-// Every irreversible act the cycle has, in one place — which is the whole of what a dry run has to withhold.
-// It is a compare-and-swap, and `--force-with-lease` is where the swap happens: the sha every count was measured
-// From is handed to the remote, which refuses the update itself if the branch no longer sits on it. There is
-// Therefore no gap for a concurrent push to land in, and the read above it is only an early exit — what the dry
-// Run reports on, and what saves a push already known to be stale.
-//
-// The lease is what makes the push forced, so the fast-forward git used to refuse for free is asserted here
-// Instead: a target that is not a descendant of the sha it was built on is the porter's bug rather than a race,
-// And it throws rather than rewriting `develop` or `main`. Only a lost lease reads as a moved branch, and the
-// Ref is re-read to decide that rather than the rejection text, which git localizes — anything else (no
-// Network, no credential) has to fail the run as itself instead of as a branch nobody moved.
+// Every irreversible act the cycle has, in one place, which is what a dry run withholds. A compare-and-swap whose
+// Swap is the `--force-with-lease`: the remote refuses the update itself if the branch left the sha every count
+// Was measured from, so the read above it is only an early exit. The lease makes the push forced, so the
+// Fast-forward git used to refuse is asserted here — a non-descendant target is the porter's bug, not a race.
+// A rejection is a moved branch only when the ref re-reads as moved; the rejection text is localized.
 export const pushBranch = ({ branch, cwd, expectedSha, isDryRun, sha }: PushBranchInput): boolean => {
   if (readRemoteSha(branch, cwd) !== expectedSha) return false;
   else if (isDryRun) {

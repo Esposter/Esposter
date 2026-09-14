@@ -10,8 +10,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 
-// `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]`. Everything the pass cannot own itself lives here: the
-// Arguments, the tree it works in, and the job output the runner's second job reads.
+// `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]` — the arguments, the tree and the job output, which the
+// Pass cannot own itself
 const {
   positionals: [pullRequestArgument],
   values: { "dry-run": isDryRun, force: isForced },
@@ -31,13 +31,11 @@ if (!isDryRun && dirtyPaths.length > 0)
     `the working tree is dirty — the collector owns it:\n${dirtyPaths.join("\n")}`,
   );
 
-// The tree the run owns — a throwaway worktree for a dry run, this checkout otherwise. Both port steps switch it
-// To the base they build on, so what it starts at only has to exist.
+// A throwaway worktree for a dry run, this checkout otherwise; both port steps switch to the base they build on
 const cwd = isDryRun ? mkdtempSync(join(tmpdir(), DRY_RUN_WORKTREE_PREFIX)) : REPOSITORY_ROOT;
 if (isDryRun) {
   runGit(["worktree", "add", "--detach", cwd, "HEAD"]);
-  // The pass returns rather than exits, so a finalizer would cover the normal end — but not a throw from the
-  // Middle of it, and a worktree that survives the process is the one thing the next run trips over.
+  // A finalizer would miss a throw from the middle of the pass, and a surviving worktree trips the next run
   process.on("exit", () => {
     getResult(() => runGit(["worktree", "remove", "--force", cwd])).match(noop, console.error);
   });

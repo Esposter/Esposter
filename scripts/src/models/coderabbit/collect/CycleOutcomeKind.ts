@@ -1,5 +1,3 @@
-// What one cycle did. Every branch the pass can end on is one of these, so the run's verdict is a value the
-// Entry point prints and spends rather than a `process.exit` buried in the middle of it.
 export enum CycleOutcomeKind {
   // Mechanical commits reached `main` directly — no review slot spent
   Expressed = "Expressed",

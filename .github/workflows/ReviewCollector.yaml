@@ -1,28 +1,21 @@
 name: ♻️ Review Collector
 
-# The garbage collector of the review budget (docs: infra/review-collector). Allocation — the session pushing
-# `ai/queue` — and freeing — CodeRabbit finishing a review — run the same idempotent cycle, and the cycle's gates
-# decide whether anything is done. There is deliberately no `schedule`: every one of these is a webhook the
-# platform already delivers, and the one state change that sends none — a rate limit lifting — is answered by
-# the `retrigger` job of the called workflow, which waits out the deadline the bot publishes rather than asking on a timer.
+# The garbage collector of the review budget (docs: infra/review-collector): allocation and freeing run the same
+# idempotent cycle. No `schedule` — every trigger is a webhook the platform delivers, and the one state change
+# that sends none, a rate limit lifting, is the called workflow's `retrigger` job.
 on:
   push:
     branches:
       - ai/queue
-      # The return stroke. A release merging, or a dependency bump landing directly, both move `main`; the cycle
-      # fast-forwards `develop` onto it when `develop` is an ancestor. The release pull request is closed by then,
-      # so no review event will ever fire for it and this is the only thing that carries `develop` forward.
+      # The return stroke: a release merging closes the pull request, so no review event carries `develop` forward
       - main
   pull_request_review:
     types:
       - submitted
-  # CodeRabbit's verdict is a commit status (context `CodeRabbit`), and it flips it a moment after writing the
-  # review body. Listening to both ends of that gap is what keeps a dropped `pull_request_review` delivery, or a
-  # review that ends by status alone, from parking the pipeline until the session's next push.
+  # The verdict is a commit status flipped a moment after the review body; listening to both ends of that gap
+  # keeps a dropped delivery from parking the pipeline until the next push
   status:
-  # The bot's answer to the retrigger the cycle posts when a rate limit's deadline has passed. That answer is a
-  # comment, or an edit of the walkthrough it already wrote — never a review and never a status — so this is the
-  # only event that carries it, and it is what lets the cycle ask and exit instead of waiting for the reply.
+  # The bot answers a retrigger with a comment or an edit of its walkthrough — never a review or a status
   issue_comment:
     types:
       - created
@@ -34,18 +27,10 @@ on:
         type: boolean
         default: false
 
-# Everything else is the reusable workflow, pinned to the queue head — the reason is written at the top of that
-# file. This one is deliberately nothing but the triggers and the two secrets the call needs, because it is the
-# one file GitHub reads from the event's own ref and so the one copy that cannot be pinned.
-#
-# A list rather than `secrets: inherit`, which is the only other thing here: the pinned callee is read from
-# `ai/queue`, a branch the working session pushes and whose drain step runs a permission-skipping Claude session
-# over one bot's prose, so whatever the caller hands across is the blast radius of a step added to that branch.
-# Inheritance hands over the Azure and Pulumi deployment credentials the collector never names, and this list is
-# exactly what its two steps read. The cost of the list is the sync it owes the callee — the caller's copy that
-# runs is whichever ref the event names, so a secret added to the callee and not here is a token that arrives
-# empty on a `status` or `issue_comment`. `constants.test.ts` holds the two files to each other for that reason,
-# and the callee declares both `required` so the gap fails the call rather than a step deep inside it.
+# Nothing but the triggers and the two secrets the call reads: this is the one file GitHub reads from the event's
+# own ref, so the one copy that cannot be pinned (the reusable workflow says why). Named rather than inherited so
+# the drain's permission-skipping Claude session on the pinned `ai/queue` copy never holds the deployment
+# credentials; the callee declares both `required` so a secret it grows and this file lacks fails the call.
 permissions:
   contents: read
   actions: write

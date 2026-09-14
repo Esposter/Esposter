@@ -9,11 +9,8 @@ import {
 
 const VALUE_SEPARATOR = ",";
 
-// The whole body is scanned rather than `%(trailers:key=…)`, which reads only the **last** contiguous block of
-// Trailer lines. Every commit here ends with the attribution line, and a blank line before it starts a new block
-// — so an `Answers:` line written a paragraph earlier is invisible to git's own parser, and the finding it names
-// Reads as open. It is then drained a second time: a Claude session spent re-fixing what the queue already
-// Carries, and a second reply on the thread. The line means the same thing wherever the author put it.
+// The whole body rather than `%(trailers:key=…)`, which reads only the last contiguous trailer block: every
+// Commit ends with the attribution line, so an `Answers:` line a paragraph earlier would read as open
 const getIds = (body: string, key: string): number[] =>
   [...body.matchAll(new RegExp(String.raw`^[ \t]*${key}:(?<values>.*)$`, "gimu"))]
     .flatMap(({ groups }) => (groups?.values ?? "").split(VALUE_SEPARATOR))

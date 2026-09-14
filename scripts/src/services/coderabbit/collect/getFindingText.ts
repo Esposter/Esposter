@@ -8,14 +8,9 @@ const BLANK_RUN_REGEX = /\n{3,}/gu;
 // At the odd ones
 const FENCED_BLOCK_REGEX = /(?<fence>```[\s\S]*?```)/u;
 
-// A finding as the reviewer wrote it — its reasoning, its proposed diff and the prompt block it addresses to an
-// Agent — with the machinery around it removed. The drain reads this and nothing else: it holds no `gh`, so a
-// Title alone would have it re-derive the case the reviewer already made.
-//
-// The comments are stripped from the prose alone. A proposed fix to a template or a markdown page carries HTML
-// Comments of its own inside its fence, and a drain handed the diff with those lines missing applies a different
-// Fix from the one the reviewer wrote. The bot's own comments never sit inside a fence, so the fence is the
-// Boundary rather than a list of the comment shapes it writes, which grows with every release
+// A finding as the reviewer wrote it, with the machinery around it removed — the drain holds no `gh`, so a title
+// Alone would have it re-derive the case. Comments are stripped from the prose alone: a proposed fix to a
+// Template carries HTML comments of its own inside its fence, and the bot's never sit inside one.
 export const getFindingText = (body: string): string =>
   body
     .replaceAll(STATIC_ANALYSIS_BLOCK_REGEX, "")

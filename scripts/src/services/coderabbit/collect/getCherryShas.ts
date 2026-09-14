@@ -1,8 +1,6 @@
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 
-// `git cherry <upstream> <head>` prints `+ <sha>` for a commit whose patch is not upstream and `- <sha>` for one
-// Whose patch is, oldest first. The `+` lines are what a branch still owes; equality by patch id is what makes
-// A cherry-picked copy on develop count as the same commit.
+// `git cherry` prints `+ <sha>` for a patch not upstream and `- <sha>` for one that is, oldest first
 const OWED_PREFIX = "+ ";
 
 export const getCherryShas = (output: string): string[] =>
