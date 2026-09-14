@@ -5,9 +5,9 @@ import { describe, expect, test } from "vitest";
 
 describe("clicker data", () => {
   test.each([
-    ["buildingMap", Buildings.map(({ basePrice }) => basePrice)],
-    ["cursorUpgradeMap", CursorUpgrades.map(({ price }) => price)],
-    ["grandmaUpgradeMap", GrandmaUpgrades.map(({ price }) => price)],
+    ["BuildingMap", Buildings.map(({ basePrice }) => basePrice)],
+    ["CursorUpgradeMap", CursorUpgrades.map(({ price }) => price)],
+    ["GrandmaUpgradeMap", GrandmaUpgrades.map(({ price }) => price)],
   ])("%s is sorted by price", (_name, prices) => {
     expect.hasAssertions();
 
