@@ -1,15 +1,21 @@
 import type { Colors } from "@/models/colors/Colors";
+import type { Store } from "pinia";
 
 import { takeOne } from "@esposter/shared";
 
-// One computed per theme colour, so a component reads the colour it wants without re-deriving the whole palette
-// On every theme change. `Object.fromEntries` cannot carry the key union across, so the shape is stated once here
-export const useColorsStore = defineStore("colors", () => {
+// Both casts carry the key union that `Object.fromEntries` drops: it returns an index signature, so under
+// `noUncheckedIndexedAccess` every colour a component reads comes back `Color | undefined` without them, and
+// The store is read as `colorsStore.primary` at dozens of sites that have no undefined to handle
+const COLORS_STORE_ID = "colors";
+const useBaseColorsStore = defineStore<typeof COLORS_STORE_ID, Colors>(COLORS_STORE_ID, () => {
   const { global } = useVTheme();
-  return Object.fromEntries(
+  const colors = Object.fromEntries(
     Object.keys(global.current.value.colors).map((color) => [
       color,
       computed(() => takeOne(global.current.value.colors, color)),
     ]),
   ) as Colors;
+  return colors;
 });
+
+export const useColorsStore = () => useBaseColorsStore() as Store<typeof COLORS_STORE_ID, Colors>;
