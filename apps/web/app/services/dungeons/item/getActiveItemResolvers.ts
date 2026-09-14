@@ -7,5 +7,5 @@ import { HealItemResolver } from "@/models/resolvers/dungeons/item/HealItemResol
 
 export const getActiveItemResolvers = (item: Ref<Item>, monster: Ref<Monster>): AItemResolver[] =>
   [new CaptureItemResolver(), new HealItemResolver()].filter(
-    (itemResolver) => itemResolver.validate(item) && itemResolver.isActive(item, monster),
+    (itemResolver) => itemResolver.checkIsValid(item) && itemResolver.checkIsActive(item, monster),
   );

@@ -11,13 +11,13 @@ export abstract class AVisualTypeResolver implements ItemEntityType<VisualType> 
     this.type = type;
   }
 
+  checkIsActive(type: VisualType) {
+    return type === this.type;
+  }
+
   handleConfiguration(_apexOptions: ApexOptions, _type: VisualType) {}
 
   handleSchema(schema: z.ZodObject): z.ZodObject {
     return schema;
-  }
-
-  isActive(type: VisualType) {
-    return type === this.type;
   }
 }
