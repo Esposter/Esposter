@@ -15,9 +15,10 @@ flowchart TD
   L -->|yes| X[Exit — nothing ports ahead of open findings]
   L -->|no| B[Checkout ai/review-fixes<br/>install for that tree]
   B --> C[Claude: fix with a trailer<br/>or reject to a file]
-  C --> E{Exited clean<br/>with a clean tree}
+  C --> R{Non-zero exit stating<br/>Claude Code's own limit}
+  R -->|yes| M[Limit marker with the reset instant<br/>— no attempt counted]
+  R -->|no| E{Exited clean<br/>with a clean tree}
   E -->|no| F[Failed-attempt marker, run fails]
-  E -->|refused to start| M[Limit marker with the reset instant]
   E -->|yes| V[Post the rejections] --> PU[Push ai/review-fixes with a lease]
 ```
 
@@ -45,7 +46,9 @@ Once Claude exits, the script — the only process with a credential — posts a
 
 **A finding the drain cannot close is quarantined, not retried forever.** Each failed drain of a review leaves a hidden marker in a pull request comment carrying the review id; past the attempt cap the collector stops draining that review, posts that it has, and proceeds to port without fixes. The findings stay open for a person — the cost of that is a window whose fixes do not lead it, and the cost of the alternative is a pipeline stalled on one finding nobody sees. This is the [no manual recovery](/docs/architecture/no-manual-recovery) shape: land the failure durably, cap the attempts, quarantine visibly.
 
-**A drain that never started is not a failed attempt.** Claude Code refusing to run because the account is out of session exits non-zero exactly like a drain that tried and could not, and counting it would spend the quarantine budget on an outage. So the step separates the two by reading the sentence Claude prints on its way out — off the lines Claude Code spoke for itself, never off the model's narration — and a limit writes its own marker carrying the instant it lifts. What that sentence rides in is not to be trusted to say so: the refusal arrives as a result frame stating `success`, with one turn and no cost, while the process exits non-zero, so the exit status is the only thing that says whether the session ran and every result frame is read as Claude Code's own. Until then every cycle skips the drain and stops before the port, because the open findings are untouched and nothing may be ported ahead of them. There is no waiting job for this one: CodeRabbit's deadline is minutes away and one runner sleeps it out, while Claude's reset is a time of day, up to a day off, and the next `ai/queue` push wakes the cycle for nothing and is rarely later.
+**A drain that never started is not a failed attempt.** Claude Code refusing to run because the account is out of session exits non-zero exactly like a drain that tried and could not, and counting it would spend the quarantine budget on an outage. So the step separates the two by reading the sentence Claude prints on its way out — off the lines Claude Code spoke for itself, never off the model's narration — and a limit writes its own marker carrying the instant it lifts. Until then every cycle skips the drain and stops before the port, because the open findings are untouched and nothing may be ported ahead of them. There is no waiting job for this one: CodeRabbit's deadline is minutes away and one runner sleeps it out, while Claude's reset is a time of day, up to a day off, and the next `ai/queue` push wakes the cycle for nothing and is rarely later.
+
+**What the sentence rides in does not say the session refused.** The refusal arrives as a result frame stating `success`, with one turn and no cost, while the process exits non-zero — so a frame read as the model's closing message hides the one line the limit exists to find, and the outage is billed to the review as three failed attempts and a quarantine nobody earned. The exit status is the only thing that says whether the session ran, and every result frame is read as Claude Code's own.
 
 ## Key files
 
