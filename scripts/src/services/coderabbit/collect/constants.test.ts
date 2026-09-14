@@ -10,9 +10,6 @@ describe("queue branch", () => {
   // It. A workflow file cannot import the constant, so every place the two files spell the branch is pinned here
   // — a rename that moves the constant and not the files would have the runner call and check out a branch that
   // No longer exists, which is the deadlock the pin exists to close.
-  const readWorkflowLines = (name: string): string[] =>
-    readFileSync(join(REPOSITORY_ROOT, ".github/workflows", name), "utf8").split(/\r?\n/u);
-
   test.each([
     ["the queue push trigger", "ReviewCollector.yaml", `      - ${QUEUE_BRANCH}`],
     [
@@ -29,6 +26,6 @@ describe("queue branch", () => {
   ])("the runner spells %s as the constant", (_, name, line) => {
     expect.hasAssertions();
 
-    expect(readWorkflowLines(name).includes(line)).toBe(true);
+    expect(readFileSync(join(REPOSITORY_ROOT, ".github/workflows", name), "utf8").split(/\r?\n/u)).toContain(line);
   });
 });

@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import type { RuleAliases } from "vuetify/labs/rules";
-import type { ValidationRule } from "vuetify/lib/composables/validation.mjs";
+import type { ValidationRule } from "vuetify";
+import type { RuleAliases } from "vuetify/lib/composables/rules/index.js";
 
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
