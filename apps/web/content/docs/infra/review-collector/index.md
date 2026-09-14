@@ -11,7 +11,7 @@ Local work is pushed to **one permanent `ai/queue` branch** with no window bound
 
 ## The parts
 
-The pipelining rules are prose in the `coderabbit` skill, and the commands under `scripts/src/coderabbit/` read the facts they turn on — the reviewed frontier and the window size (`window`), every open finding across the three endpoints (`feedback`), whether the checkpoint covers the head (`probe`, which a session runs by hand). The collector composes them into one cycle that runs without a person, in five self-contained parts:
+The pipelining rules are prose in the `coderabbit` skill, and the one command left under `scripts/src/coderabbit/` beside the collector reads the facts it turns on — every open finding across the three endpoints (`feedback`). The collector composes the rest into one cycle that runs without a person, in five self-contained parts:
 
 1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — the state the collector reads, the gates it must clear, how it ports the largest prefix of `ai/queue` under the cap, pushes, replies with the pushed sha, and opens the release pull request once a window is worth its first review. One script, `ai:coderabbit:collect`.
 2. [The drain](/docs/infra/review-collector/drain) — the one step Claude runs: which findings are open, what the session is handed and denied, and how a drain that fails is quarantined rather than retried forever.
@@ -71,9 +71,7 @@ The review budget has one knob, the file cap, in `scripts/src/services/coderabbi
 | `scripts/src/models/coderabbit/collect`               | the inputs and outcomes the steps exchange — the gate decision, the port result, the drain input    |
 | `.github/workflows/ReviewCollector.yaml`              | the runner's triggers, calling `run-review-collector.yaml` at `ai/queue` — the runner page says why |
 | `scripts/src/services/coderabbit/shared/constants.ts` | the cap, and the fill target derived from it                                                        |
-| `scripts/src/coderabbit/window/index.ts`              | the frontier and window-size read the gates reuse                                                   |
 | `scripts/src/coderabbit/feedback/index.ts`            | the finding report, printed here and handed to the drain                                            |
-| `scripts/src/coderabbit/probe/index.ts`               | the checkpoint probe a session runs by hand to ask the bot to take the head                         |
 | `.github/workflows/claude-warmup.yaml`                | the headless Claude Code invocation the runner copies                                               |
 | `.github/actions/trust-workspace`                     | the trust-dialog shim the warmup and the runner share                                               |
 | `.agents/skills/coderabbit/references/pipelining.md`  | the human side of the loop — pushing `ai/queue` and catching up after a window                      |
