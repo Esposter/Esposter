@@ -52,7 +52,8 @@ jobs:
           cp apps/functions/host.json "$OUTPUT_DIRECTORY/host.json"
 
       - name: 📦 Zip Artifact for Deployment
-        run: cd "$OUTPUT_DIRECTORY" && zip -r "../$ZIP_FILE_NAME" . -x@.funcignore
+        working-directory: ${{ env.OUTPUT_DIRECTORY }}
+        run: zip -r "../$ZIP_FILE_NAME" . -x@.funcignore
 
       - name: 🔑 Azure CLI Login
         uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3.0.2
@@ -76,14 +77,19 @@ jobs:
           RUNNER_IP: ${{ steps.get_ip.outputs.runner_ip }}
         run: az storage account network-rule add --account-name "$STORAGE_ACCOUNT_NAME" --ip-address "$RUNNER_IP"
 
+      # `container create` is idempotent — an existing container is `created: false` and exit 0, so the only thing
+      # a `|| true` here could swallow is a real failure (a revoked role, a container mid-delete), which then
+      # surfaces one line later as an upload that cannot find its container.
       - name: 🚀 Upload Package to Blob Storage
         run: |
-          az storage container create --account-name "$STORAGE_ACCOUNT_NAME" --name "$FUNCTION_APP_NAME" --auth-mode login --public-access off || true
+          az storage container create --account-name "$STORAGE_ACCOUNT_NAME" --name "$FUNCTION_APP_NAME" --auth-mode login --public-access off
           az storage blob upload --account-name "$STORAGE_ACCOUNT_NAME" --container-name "$FUNCTION_APP_NAME" --name "$ZIP_FILE_NAME" --file "$ZIP_FILE_NAME" --auth-mode login --overwrite
 
-      # `always()` so the rule is removed even when the upload failed.
+      # `always()` so the rule is removed even when the upload failed — and gated on the IP having been read, so a
+      # run that failed before the firewall was ever touched reports that failure rather than an `az` call with an
+      # empty `--ip-address`.
       - name: 📡 Remove Runner IP from Storage Account Firewall
-        if: always()
+        if: ${{ always() && steps.get_ip.outputs.runner_ip != '' }}
         env:
           RUNNER_IP: ${{ steps.get_ip.outputs.runner_ip }}
         run: az storage account network-rule remove --account-name "$STORAGE_ACCOUNT_NAME" --ip-address "$RUNNER_IP"
