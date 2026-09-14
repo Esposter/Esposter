@@ -27,10 +27,11 @@ on:
         type: boolean
         default: false
 
-# Nothing but the triggers and the two secrets the call reads: this is the one file GitHub reads from the event's
-# own ref, so the one copy that cannot be pinned (the reusable workflow says why). Named rather than inherited so
-# the drain's permission-skipping Claude session on the pinned `ai/queue` copy never holds the deployment
-# credentials; the callee declares both `required` so a secret it grows and this file lacks fails the call.
+# Nothing but the triggers and the call: this is the one file GitHub reads from the event's own ref, so the one
+# copy that cannot be pinned (the reusable workflow says why), and every line here is one that a copy a release
+# behind must still agree with. `inherit` keeps the secrets out of that contract — a named list broke at startup
+# the moment one side grew a secret the other had not seen — and narrows nothing: `CI.yaml` runs on every branch
+# with the same repository secrets.
 permissions:
   contents: read
   actions: write
@@ -41,6 +42,4 @@ jobs:
     uses: Esposter/Esposter/.github/workflows/run-review-collector.yaml@ai/queue
     with:
       force: ${{ inputs.force == true }}
-    secrets:
-      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-      REVIEW_COLLECTOR_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+    secrets: inherit

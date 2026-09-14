@@ -169,6 +169,9 @@ Declare job permissions explicitly and narrowly:
   deploy that needs three Azure credentials would also be handed the release and agent tokens it has no use for.
   The cost of declaring them is that a new secret is named in three places; the benefit is that the workflow's
   own contract says what it may read, and a caller that stops supplying one fails rather than silently widening.
+  That holds for a call on the same ref. A call pinned to another ref inherits, because the list becomes a clause
+  two copies a release apart must agree on — the [review collector's runner](/docs/infra/review-collector/runner)
+  says what that broke.
 - Release jobs: `contents: write`.
 - PR-commenting previews: minimum scopes for OIDC, repo reads, and PR comments.
 
