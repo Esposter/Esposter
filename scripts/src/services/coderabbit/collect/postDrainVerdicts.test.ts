@@ -52,7 +52,7 @@ describe(postDrainVerdicts, () => {
 
     expect(runGh).toHaveBeenCalledExactlyOnceWith([
       "api",
-      `repos/{owner}/{repo}/pulls/${pullRequest.toString()}/comments/123/replies`,
+      `repos/{owner}/{repo}/pulls/${pullRequest}/comments/123/replies`,
       "-f",
       "body=Not a real issue, no change — not real  evidence",
     ]);
@@ -78,7 +78,7 @@ describe(postDrainVerdicts, () => {
       "comment",
       pullRequest.toString(),
       "--body",
-      `${getMarker(DRAINS_MARKER, reviewId)}\nBody-only findings of review ${reviewId.toString()} are rejected:\n456 not real  evidence`,
+      `${getMarker(DRAINS_MARKER, reviewId)}\nBody-only findings of review ${reviewId} are rejected:\n456 not real  evidence`,
     ]);
   });
 

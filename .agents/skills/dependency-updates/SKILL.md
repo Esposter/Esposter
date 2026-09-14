@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs, the typescript bridge alias), version-capped packages (h3, vuetify, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues — plus deep dives on bumping a GitHub Action to a dereferenced commit SHA, moving the node version with `pnpm update:node`, and the Docker base-image rule keyed on the `docker` datasource that exempts every image tag from the repo-wide `updatePinnedDependencies: false` and pins digests, with Renovate's local dry run showing which deps a rule reaches. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs, the typescript bridge alias), version-capped packages (h3, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues — plus deep dives on bumping a GitHub Action to a dereferenced commit SHA, moving the node version with `pnpm update:node`, and the Docker base-image rule keyed on the `docker` datasource that exempts every image tag from the repo-wide `updatePinnedDependencies: false` and pins digests, with Renovate's local dry run showing which deps a rule reaches. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -46,7 +46,6 @@ A `packageRules` entry keyed on `matchDatasources: ["docker"]` exempts every ima
 ## Version-capped packages (keep the caret, cap the range)
 
 - **`h3`** — has `^` (both catalog and `overrides:`). Skip major/RC bumps; only update minor/patch within the current major.
-- **`vuetify`** — `~4.1.13`, a tilde rather than a caret. 4.2.0 does not work under `vuetify-nuxt-module`, and no peer range catches it: the module peers `vuetify: ^3.4.0 || ^4.0.0`, so the install resolves happily and breaks at runtime. The block is a **minor**, so a caret would float straight into it — the cap has to narrow the range itself, and a bump is an explicit widening back to `^` once the module ships support. `vuetify.config.test.ts` is where a bad resolution shows.
 - **`unocss`, `@unocss/nuxt`, `@unocss/eslint-config`** — `~66.9.2`, tildes, and they move as one trio because every `@unocss/*` package pins its siblings to its own exact version. 66.10.0 rewrote `@unocss/inspector` onto `devframe`, which depends on `h3` 2.x; the `h3` override above holds the tree at 1.x, so `devframe` resolves against a major that has no `H3` export and `nuxt build` dies at the Nitro stage with `The requested module 'h3' does not provide an export named 'H3'`. `@unocss/vite` imports the inspector at the top of its entry, so `inspector: false` does not skip the import and no UnoCSS-side setting avoids it. The block is a **minor**, and the unblock is the `h3` cap lifting — not an UnoCSS release — so re-check it whenever `h3` 2.x becomes takeable, and widen both back together.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
@@ -73,7 +72,7 @@ What that trades is real and accepted: a just-published bad version installs imm
 
 ## Caret rules
 
-Every catalog entry has `^` except the exact-pinned packages listed above (`drizzle-kit`, `drizzle-orm`, `typescript`) and the two tilde caps, `vuetify` and the `unocss` trio. Note `h3` **has** a caret — it is capped by policy, not by a missing `^`.
+Every catalog entry has `^` except the exact-pinned packages listed above (`drizzle-kit`, `drizzle-orm`, `typescript`) and the one tilde cap, the `unocss` trio. Note `h3` **has** a caret — it is capped by policy, not by a missing `^`. A tilde is what a block on a **minor** looks like: a caret would float straight into it, so the cap narrows the range itself, and the bump is an explicit widening back to `^` once the block lifts.
 
 Before adding a `^` to a caret-less entry, check it against the exact-pinned list; if it's there, leave it alone. If it isn't, the missing caret is likely an oversight — add it.
 

@@ -21,7 +21,7 @@ import { createInterface } from "node:readline";
 // Share.
 //
 // Secret-shaped rather than two names: a fixed denylist only ever protects what it already knew to name, and
-// This job's own environment grows secrets over time (`ReviewCollector.yaml`) without every future one being
+// This job's own environment grows secrets over time (`run-review-collector.yaml`) without every future one being
 // Added here by hand. A name earns exemption instead — the one credential the drain is deliberately given,
 // Because it authenticates the `claude` invocation itself rather than anything in this repository
 const EXEMPT_SECRET_VARIABLES = new Set(["CLAUDE_CODE_OAUTH_TOKEN"]);

@@ -4,7 +4,7 @@ export enum SnapshotKind {
   // Content plus a clone of every referenced asset, urls rewritten to the clones. Survives the working copy
   // Deleting or replacing an asset, and costs one storage round trip per referenced asset
   Immutable = "Immutable",
-  // Content only, urls left pointing at the live `{id}/files/…`. One blob, and an asset the owner deletes is
+  // Content only, urls left pointing at the live `{id}/files/…`. One object, and an asset the owner deletes is
   // Gone from it (/docs/resource/resource-snapshots)
   Reference = "Reference",
 }

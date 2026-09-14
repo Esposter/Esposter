@@ -1,9 +1,9 @@
 import type { Database } from "@esposter/db-schema";
 
-import { MOCK_ENDPOINT } from "#src/services/constants.test";
+import { MOCK_ENDPOINT } from "#src/services/deadLetter/constants.test";
 import { sendNotification } from "#src/services/notification/sendNotification";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
-import { webpush } from "#src/services/webpush.test";
+import { webpush } from "#src/services/notification/webpush.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -21,13 +21,13 @@ import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/db"), () => ({
+vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
 
-vi.mock(import("#src/services/webpush"), () => import("#src/services/webpush.test"));
+vi.mock(import("#src/services/notification/webpush"), () => import("#src/services/notification/webpush.test"));
 
 // The generic web-push send/expiry matrix lives in sendWebPushNotifications.test.ts; what this one owns is the
 // Fan-out AppNotificationTypeChannelMap decides — which types write a bell row, which reach a device, and which session

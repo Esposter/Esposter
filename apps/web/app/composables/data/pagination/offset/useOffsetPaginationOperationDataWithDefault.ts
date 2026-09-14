@@ -32,7 +32,7 @@ export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems:
       await withFinalizerAsync(async () => {
         const { hasMore: newHasMore, items: newItems } = await query(offset);
         hasMore.value = newHasMore;
-        items.value.push(...newItems);
+        items.value = [...items.value, ...newItems];
         isLoaded.value = true;
       }, onComplete);
     };

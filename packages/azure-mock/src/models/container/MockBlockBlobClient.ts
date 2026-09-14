@@ -14,12 +14,12 @@ import type {
 import type { Except } from "type-fest";
 
 import { MockBlobClient } from "#src/models/container/MockBlobClient";
-import { MockRestError } from "#src/models/MockRestError";
+import { MockRestError } from "#src/models/shared/MockRestError";
 import { bodyToBuffer } from "#src/services/container/bodyToBuffer";
 import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { storeMockBlobMetadata } from "#src/services/container/storeMockBlobMetadata";
 import { storeMockBlobWrite } from "#src/services/container/storeMockBlobWrite";
-import { createMockResponse } from "#src/services/createMockResponse";
+import { createMockResponse } from "#src/services/shared/createMockResponse";
 
 export class MockBlockBlobClient extends MockBlobClient implements Except<BlockBlobClient, "accountName"> {
   commitBlockList(): Promise<BlockBlobCommitBlockListResponse> {

@@ -1,7 +1,7 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { RATE_LIMIT_COMMENT_MARKER } from "#src/services/coderabbit/collect/constants";
-import { PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
+import { CODERABBIT_REST_LOGIN, PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
 
 // Whether the ask the bot still owes an answer to is already posted. The cycle asks for the review a passed
 // Deadline no longer covers and exits on it, and the bot's answer arrives as an event that runs the cycle again —
@@ -13,7 +13,11 @@ import { PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
 // `updated_at`. An ask newer than the block it answers is one already spent; a block that moved past the ask is
 // The limit restated, which is a new one to answer.
 export const checkIsRetriggerAsked = (issueComments: GitHubEntry[], viewerLogin: string): boolean => {
-  const block = issueComments.findLast(({ body }) => body.includes(RATE_LIMIT_COMMENT_MARKER));
+  // The bot's block alone, as `getRateLimitWaitMs` reads it: a forged one newer than the ask would otherwise
+  // Owe an ask on every run
+  const block = issueComments.findLast(
+    ({ body, user }) => user.login === CODERABBIT_REST_LOGIN && body.includes(RATE_LIMIT_COMMENT_MARKER),
+  );
   const ask = issueComments.findLast(({ body, user }) => user.login === viewerLogin && body.includes(PROBE_COMMENT));
   if (!ask) return false;
   return !block || Date.parse(ask.updated_at) > Date.parse(block.updated_at);

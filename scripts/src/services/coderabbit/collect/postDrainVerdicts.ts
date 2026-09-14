@@ -1,7 +1,6 @@
 import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromptInput";
 
-import { getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
-import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
+import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { existsSync, readFileSync } from "node:fs";
@@ -27,28 +26,28 @@ export const postDrainVerdicts = ({
 }: Pick<DrainPromptInput, "openThreads" | "pullRequest" | "rejectionsPath" | "reviewId" | "verdictPath">): void => {
   const openIds = new Set(openThreads.map(({ commentId }) => commentId));
   for (const line of readLines(rejectionsPath)) {
-    const [commentId = "", ...reason] = line.split(" ");
+    const [rawCommentId = "", ...reason] = line.split(" ");
+    const commentId = Number(rawCommentId);
     // A line naming no open thread is skipped rather than posted: a malformed id, or one the drain — which reads
     // Review text it must not trust — was never asked about
-    if (!openIds.has(Number(commentId))) {
+    if (!openIds.has(commentId)) {
       console.info(`skipping a rejection line that names no open thread: ${line}`);
       continue;
     }
 
     const body = `Not a real issue, no change — ${stripHtmlComments(reason.join(" "))}`;
     console.info(`reply ${commentId}: ${body}`);
-    runGh([
-      "api",
-      `repos/{owner}/{repo}/pulls/${pullRequest.toString()}/comments/${commentId}/replies`,
-      "-f",
-      `body=${body}`,
-    ]);
+    runGh(["api", `repos/{owner}/{repo}/pulls/${pullRequest}/comments/${commentId}/replies`, "-f", `body=${body}`]);
   }
 
   const verdicts = readLines(verdictPath);
   if (verdicts.length === 0 || reviewId === undefined) return;
 
-  const body = `${getMarker(DRAINS_MARKER, reviewId)}\nBody-only findings of review ${reviewId.toString()} are rejected:\n${verdicts.map((verdict) => stripHtmlComments(verdict)).join("\n")}`;
-  console.info(`verdict comment for review ${reviewId.toString()}`);
+  const body = getDrainsVerdictBody(
+    reviewId,
+    "rejected",
+    verdicts.map((verdict) => stripHtmlComments(verdict)),
+  );
+  console.info(`verdict comment for review ${reviewId}`);
   runGh(["pr", "comment", pullRequest.toString(), "--body", body]);
 };

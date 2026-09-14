@@ -36,24 +36,24 @@ Never write a finding in either lane for something an enforcer already owns:
 
 The conventions a finding cites live in the domain skills, not here — restating them would give this page a second copy to drift. What this page owns is the routing: **read the window's file list first, load only the rows it hits.**
 
-| The window contains                  | Load                                                      |
-| ------------------------------------ | --------------------------------------------------------- |
-| `.vue`, or anything rendering        | `vue`, `vuetify`, `styling`, `responsive`, `ux`           |
-| `app/store/**`                       | `pinia`                                                   |
-| `app/composables/**`                 | `vue-composable-patterns`, `pagination`                   |
-| `server/trpc/**`                     | `trpc`, `error-handling`                                  |
-| `packages/db-schema/**`, a migration | `drizzle`                                                 |
-| a Zod schema                         | `zod`                                                     |
-| `apps/infra/**`                      | `pulumi-infra`                                            |
-| `*.test.ts`, `*.bench.ts`            | `testing`, `bench`                                        |
-| `content/docs/**`                    | `docs`                                                    |
-| `.agents/skills/**`                  | `skill-authoring`                                         |
-| `.agents/ledgers/**`                 | `sweeps`                                                  |
-| `README.md`                          | `readme-standards`                                        |
-| lint or tooling config               | `oxlint`, `package-scripts`                               |
-| any file at all                      | `naming`, `typescript`, `formatting`, `file-organization` |
+| The window contains                  | Load                                                                          |
+| ------------------------------------ | ----------------------------------------------------------------------------- |
+| `.vue`, or anything rendering        | `vue`, `vuetify`, `styling`, `responsive`, `ux`                               |
+| `app/store/**`                       | `pinia`                                                                       |
+| `app/composables/**`                 | `vue-composable-patterns`, `pagination`                                       |
+| `server/trpc/**`                     | `trpc`, `error-handling`                                                      |
+| `packages/db-schema/**`, a migration | `drizzle`                                                                     |
+| a Zod schema                         | `zod`                                                                         |
+| `apps/infra/**`                      | `pulumi-infra`                                                                |
+| `*.test.ts`, `*.bench.ts`            | `testing`, `bench`                                                            |
+| `content/docs/**`                    | `docs`                                                                        |
+| `.agents/skills/**`                  | `skill-authoring`                                                             |
+| `.agents/ledgers/**`                 | `sweeps`                                                                      |
+| `README.md`                          | `readme-standards`                                                            |
+| lint or tooling config               | `oxlint`, `package-scripts`                                                   |
+| any file at all                      | `naming`, `typescript`, `formatting`, `file-organization`, `over-engineering` |
 
-The last row is the floor, not a default — those four apply to every file in every window. A row you loaded and found nothing against is a result; say so rather than omitting it.
+The last row is the floor, not a default — those five apply to every file in every window. A row you loaded and found nothing against is a result; say so rather than omitting it.
 
 ## The loop
 
@@ -85,7 +85,7 @@ The dominant false-positive class is a finding arguing against a decision alread
 
 `apps/web/content/docs/`, `.agents/skills/**/*.md` and `.agents/ledgers/**/*.md` are the tiebreaker — the whole skill tree, not the index pages alone, and a ledger's **Exclusions** section exists precisely to stop a unit being re-litigated: a binding rule as often sits in a skill's `references/*.md` deep dive as in its `SKILL.md`. A choice any of the three states deliberately, with its consequence acknowledged, is settled — not a finding. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing, or when the change ships behaviour the record does not cover.
 
-Grep all three trees before reporting a finding that argues with a decision. A genuinely undocumented decision that keeps drawing fire is closed by writing the page (`docs` skill), not by arguing it again. A record invalidated by materially new evidence (an advisory, a changed dependency contract) reopens the decision — update the page first, then fix the code against the new record.
+Grep all three trees before reporting a finding that argues with a decision. A genuinely undocumented decision that keeps drawing fire is closed by writing the page (`docs` skill), not by arguing it again. A record invalidated by materially new evidence (an advisory, a changed dependency contract) reopens the decision — update the page first, then fix the code against the new record. **The new record names the direction it replaces as rejected, with the fact that beats it** — in the owning skill's Settled list where one exists. A decision that writes down only its own reason leaves the old reason standing beside it, and the next round reads two winners and flips it back.
 
 ## Reporting — `references/reporting.md`
 

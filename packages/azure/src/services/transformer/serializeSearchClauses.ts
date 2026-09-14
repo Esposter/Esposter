@@ -1,4 +1,4 @@
-import type { Clause } from "#src/models/Clause";
+import type { Clause } from "#src/models/shared/Clause";
 
 import { serializeClausesCore } from "#src/services/transformer/serializeClausesCore";
 

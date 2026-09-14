@@ -69,12 +69,17 @@ Revisit when i18n lands: at that point the locale is being paid for anyway and t
 Declare each alias's type in `app/types/vuetify.d.ts` so it gets autocomplete and option-type checking — use Vuetify's canonical builder helpers, not hand-rolled signatures:
 
 ```ts
-import type { ValidationRuleBuilderWithOptions, ValidationRuleBuilderWithoutOptions } from "vuetify/labs/rules";
+import type {
+  ValidationRuleBuilderWithOptions,
+  ValidationRuleBuilderWithoutOptions,
+} from "vuetify/lib/composables/rules/index.js";
 
-declare module "vuetify/labs/rules" {
+declare module "vuetify/lib/composables/rules/index.js" {
   interface RuleAliases {
     myRule: ValidationRuleBuilderWithoutOptions; // (error?) => ValidationRule
     myRuleWithOption: ValidationRuleBuilderWithOptions<number>; // (option, error?) => ValidationRule
   }
 }
 ```
+
+The augmentation targets the lib subpath, not the `vuetify` root: rules graduated from labs in Vuetify 4, and the root's bundled types keep `RuleAliases` unexported, so an augmentation of `"vuetify"` merges with nothing and every alias reads as possibly undefined under `noUncheckedIndexedAccess`. `configuration/imports.ts` points the `useVRules` auto-import at that same subpath (same runtime module) so the augmented interface is the one every caller sees.

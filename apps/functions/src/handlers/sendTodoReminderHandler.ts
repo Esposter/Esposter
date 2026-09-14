@@ -1,10 +1,10 @@
 import type { ServiceBusQueueHandler } from "@azure/functions";
 
-import { todoReminderContentSchema } from "#src/models/TodoReminderContent";
-import { db } from "#src/services/db";
-import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
-import { getContainerClient } from "#src/services/getContainerClient";
-import { logAndRethrow } from "#src/services/logAndRethrow";
+import { todoReminderContentSchema } from "#src/models/todoReminder/TodoReminderContent";
+import { db } from "#src/services/shared/db";
+import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
+import { getContainerClient } from "#src/services/azure/getContainerClient";
+import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { RestError } from "@azure/storage-blob";
 import { getContentBlobName } from "@esposter/db";
 import {

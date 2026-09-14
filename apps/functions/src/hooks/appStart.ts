@@ -1,4 +1,4 @@
-import { drainDeadLetterContainer } from "#src/services/drainDeadLetterContainer";
+import { drainDeadLetterContainer } from "#src/services/deadLetter/drainDeadLetterContainer";
 import { app } from "@azure/functions";
 import { getResultAsync, noop } from "@esposter/shared";
 

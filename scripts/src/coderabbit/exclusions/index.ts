@@ -22,5 +22,5 @@ const excludablePaths = [...new Set([...mechanicalPaths, ...renameTokenOnlyPaths
   .toSorted();
 
 // The summary is a yaml comment so the whole output pastes into `path_filters` as it is
-console.info(`    # ${excludablePaths.length.toString()} of ${changedPaths.size.toString()} changed files qualify`);
+console.info(`    # ${excludablePaths.length} of ${changedPaths.size} changed files qualify`);
 for (const path of excludablePaths) console.info(`    - "!${path}"`);

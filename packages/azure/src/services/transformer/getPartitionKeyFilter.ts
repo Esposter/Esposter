@@ -1,6 +1,6 @@
 import type { CompositeKey } from "#src/models/table/CompositeKey";
 
-import { BinaryOperator } from "#src/models/BinaryOperator";
+import { BinaryOperator } from "#src/models/shared/BinaryOperator";
 import { CompositeKeyPropertyNames } from "#src/models/table/CompositeKey";
 import { serializeClauses } from "#src/services/transformer/serializeClauses";
 

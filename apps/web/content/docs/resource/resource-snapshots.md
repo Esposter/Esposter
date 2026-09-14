@@ -34,7 +34,7 @@ A version is a `resourceVersions` row keyed by resource, channel and version num
 
 Reconstitution is the row that matters, because sharing it fixed a defect rather than saving lines — see the boundary below.
 
-The counter lives in Postgres and is never derived from the listing: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree, because an unpublish sweep is best-effort and retired blobs outlive the row that numbered them. Revisions take two columns on `resources` rather than a table — `revisionVersion` numbers them and `revisionTakenAt` is the clock the automatic trigger reads. A revision's reason and its one-line summary are columns on its version row, which the listing returns.
+The counter lives in Postgres and is never derived from the listing: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree, because a number is claimed before its write and a write that fails leaves the number with no row. Revisions take two columns on `resources` rather than a table — `revisionVersion` numbers them and `revisionTakenAt` is the clock the automatic trigger reads. A revision's reason and its one-line summary are columns on its version row, which the listing returns.
 
 ### Two snapshot kinds
 

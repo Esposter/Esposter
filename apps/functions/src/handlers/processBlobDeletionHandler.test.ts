@@ -2,7 +2,7 @@ import type { EventGridEvent } from "@azure/functions";
 import type { BlobDeletionEventGridData, Database } from "@esposter/db-schema";
 
 import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
-import { getContainerClient } from "#src/services/getContainerClient";
+import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, storageLedger, users } from "@esposter/db-schema";
@@ -13,13 +13,13 @@ let mockDb: Database;
 
 // The handler releases each deleted blob's storage hold, so it reaches the database even when this suite
 // Only cares about the blobs — the module-scope client would otherwise dial a real Postgres at import
-vi.mock(import("#src/services/db"), () => ({
+vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
 
-vi.mock(import("#src/services/getContainerClient"), () => import("#src/services/getContainerClient.test"));
+vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
 // Released bytes are published to the owner's meter, which lives in the app process — so the group published
 // To is the only observable this handler has for the half of a deletion the owner actually watches
@@ -28,7 +28,7 @@ const { groupMock, sendToAllMock } = vi.hoisted(() => ({
   sendToAllMock: vi.fn<(message: unknown) => Promise<void>>(),
 }));
 
-vi.mock(import("#src/services/getWebPubSubServiceClient"), () => ({
+vi.mock(import("#src/services/azure/getWebPubSubServiceClient"), () => ({
   getWebPubSubServiceClient: () =>
     ({
       group: (group: string) => {

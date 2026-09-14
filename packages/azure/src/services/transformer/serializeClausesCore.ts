@@ -1,6 +1,6 @@
-import type { Clause } from "#src/models/Clause";
+import type { Clause } from "#src/models/shared/Clause";
 
-import { UnaryOperator } from "#src/models/UnaryOperator";
+import { UnaryOperator } from "#src/models/shared/UnaryOperator";
 import { RangeOperators } from "#src/services/transformer/RangeOperators";
 import { serializeClause } from "#src/services/transformer/serializeClause";
 import { takeOne } from "@esposter/shared";

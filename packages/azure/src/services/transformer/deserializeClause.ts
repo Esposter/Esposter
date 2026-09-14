@@ -1,6 +1,6 @@
-import type { Clause } from "#src/models/Clause";
+import type { Clause } from "#src/models/shared/Clause";
 
-import { BinaryOperator } from "#src/models/BinaryOperator";
+import { BinaryOperator } from "#src/models/shared/BinaryOperator";
 import { deserializeKey } from "#src/services/table/deserializeKey";
 import { CLAUSE_REGEX } from "#src/services/transformer/constants";
 import { deserializeValue } from "#src/services/transformer/deserializeValue";

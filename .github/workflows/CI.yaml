@@ -8,13 +8,6 @@ on:
 permissions:
   contents: read
 
-# `pnpm -r` interleaves the packages it runs concurrently, so a failure's stack arrives spliced with another
-# package's output. Live interleaved output is what a local run wants — a watched terminal, one failure at a time —
-# while a log read after the fact wants each package contiguous. Same scripts either way: this is the only place the
-# difference is stated, and pnpm reads its settings from `PNPM_CONFIG_<SETTING>` (`npm_config_*` is not read).
-env:
-  PNPM_CONFIG_AGGREGATE_OUTPUT: true
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -86,7 +79,7 @@ jobs:
         env:
           APP_BUILD_HASH: ${{ steps.keys.outputs.app-build-hash }}
         run: |
-          pnpm -C apps/web run build
+          pnpm -C apps/web build
           echo "$APP_BUILD_HASH" > .app-build-marker
 
   # @TODO: Commented out, not deleted: TypeDoc cannot run against the `typescript-native-bridge` alias. Its
@@ -149,7 +142,7 @@ jobs:
       # checked out, which no cache entry keyed on `packages/` could promise. Seconds, and only these two apps
       # build: nothing reads the web app's output.
       - name: 🏗️ Build the app bundles the suite asserts against
-        run: pnpm --filter "@esposter/functions" --filter "@esposter/infra" run build
+        run: pnpm --filter "@esposter/functions" --filter "@esposter/infra" build
       # `--shard=i/n` runs a distinct slice of ALL test files (every package + scripts, via the root
       # Vitest `projects` config) on this runner; `--reporter=blob` serialises this shard's results and
       # Coverage data for the merge job, as the per-shard `.vitest/blob/blob-i-n.json` — the directory
@@ -249,9 +242,20 @@ jobs:
       - name: 📝 Format
         run: pnpm format:check
 
-  lint:
-    name: Lint
+  # One job definition for the two repo-wide checks that differ only in the script they run — the matrix
+  # Fans them out as separate runners, and `name` is each entry's own, which is the check context the branch
+  # Ruleset requires (`apps/infra/src/github/rulesets/developMainStatusChecks.ts`).
+  check:
+    name: ${{ matrix.name }}
     needs: build-packages
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Lint
+            script: lint
+          - name: Typecheck
+            script: typecheck
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -265,24 +269,7 @@ jobs:
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
 
-      - name: 🔍 Lint
-        run: pnpm lint
-
-  typecheck:
-    name: Typecheck
-    needs: build-packages
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: 🔧 Setup Project Dependencies
-        uses: ./.github/actions/setup-project-dependencies
-
-      - name: 📦 Setup Packages
-        uses: ./.github/actions/setup-packages
-
-      - name: ✅ Typecheck
-        run: pnpm typecheck
+      - name: ✅ ${{ matrix.name }}
+        env:
+          SCRIPT: ${{ matrix.script }}
+        run: pnpm "$SCRIPT"

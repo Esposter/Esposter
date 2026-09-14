@@ -5,8 +5,8 @@ import { ResourceType } from "@esposter/db-schema";
 
 // What one line of a type's content says about itself, so a history row is choosable rather than being a
 // Version number and a time — neither of which is something a person recognises their own work by. Computed
-// When the snapshot is taken and carried in its blob metadata, because the listing is one round trip for the
-// Whole history and a summary derived on read would cost one download per row.
+// When the snapshot is taken and carried on its version row, because the listing is one query for the
+// Whole history and a summary derived on read would cost one object reconstruction per row.
 //
 // A type with no meaningful count declares nothing rather than a line that restates its own name: an
 // Unsummarized row still carries its reason and its time. See /docs/resource/resource-snapshots

@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { pushWebhookHandler } from "#src/handlers/pushWebhookHandler";
-import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/eventGridPublisherClient.test";
+import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/eventGridPublisherClient.test";
 import { HttpRequest, InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { appUsersInMessage, roomsInMessage, users, webhooksInMessage } from "@esposter/db-schema";
@@ -11,13 +11,16 @@ import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/db"), () => ({
+vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
 
-vi.mock(import("#src/services/eventGridPublisherClient"), () => import("#src/services/eventGridPublisherClient.test"));
+vi.mock(
+  import("#src/services/azure/eventGridPublisherClient"),
+  () => import("#src/services/azure/eventGridPublisherClient.test"),
+);
 
 const createMockRequest = (parameters: Record<string, string>, bodyString?: string): HttpRequest =>
   new HttpRequest({

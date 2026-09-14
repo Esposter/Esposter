@@ -1,0 +1,141 @@
+name: ♻️ Run Review Collector
+# Reusable workflow: every job of the review collector — the cycle and its delayed retrigger — called by
+# ♻️ Review Collector as `uses: Esposter/Esposter/.github/workflows/run-review-collector.yaml@ai/queue`. The ref
+# is the point. GitHub runs a workflow file from the ref the event names — `main` for a status or a comment, the
+# merge ref for a review, the pushed branch for a push — and the copy `main` carries is the oldest, a release
+# behind `ai/queue`, reading remote state the newest copy defines: ref names, bot logins, the head branch the
+# `if` below filters on. Pinning the call to the queue head makes one copy of everything below run whichever
+# event fired, so a rename in the collector is a change rather than a deadlock, and the caller is reduced to the
+# one thing that must exist on the event's ref — the triggers. The checkout pins the same ref for the same
+# reason: `actions/checkout` defaults to the caller's event sha, not to the ref this file was read from.
+on:
+  workflow_call:
+    inputs:
+      force:
+        description: Push the window even when the queue is under the fill target
+        type: boolean
+        default: false
+    # Named rather than inherited, so the caller hands over these two and not the deployment credentials the
+    # collector never reads — the reason is at the top of the caller. `required` is what makes the sync loud: a
+    # secret this workflow grows and the unpinnable caller does not yet map fails the call instead of arriving
+    # empty in the step that spends it.
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN:
+        description: The Claude Code subscription token the drain's headless session authenticates with
+        required: true
+      REVIEW_COLLECTOR_TOKEN:
+        description: The collector's own login token — its checkout, pushes, replies and the release pull request
+        required: true
+
+jobs:
+  collect:
+    name: Collect
+    # A review event fires for every review on every main-based pull request — renovate's included — and for
+    # every batch of replies the bot answers. Only the bot's reviews of the release pull request run a cycle, and
+    # only CodeRabbit's own status does: every deployment writes one of its own against the same commits. A
+    # comment runs one only when the bot wrote it on a pull request — the collector's own marker comments would
+    # otherwise wake the cycle that just posted them.
+    if: >-
+      (github.event_name != 'pull_request_review' ||
+      (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.ref == 'develop')) &&
+      (github.event_name != 'status' || github.event.context == 'CodeRabbit') &&
+      (github.event_name != 'issue_comment' ||
+      (github.event.comment.user.login == 'coderabbitai[bot]' && github.event.issue.pull_request))
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    # Every fire waits for the one ahead of it and re-reads the remote. The bot's own replies arrive as reviews,
+    # so a drain is followed by several fires within seconds — each after the first exits at the gates. The group
+    # is on the job rather than the workflow so the retrigger's wait never holds it.
+    concurrency:
+      group: review-collector
+      cancel-in-progress: false
+    outputs:
+      retriggerDelaySeconds: ${{ steps.collect.outputs.retriggerDelaySeconds }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The same pin as the call that reached this file (see the top): the checkout would otherwise follow
+          # the caller's event sha, and the local actions below and the cycle itself are read from this tree
+          ref: ai/queue
+          # The cycle ports across `develop`, `ai/queue` and `ai/review-fixes` with `git cherry`, which a shallow clone
+          # cannot answer. The collector token rather than the built-in one: a push made with `GITHUB_TOKEN`
+          # starts no workflow runs, so `develop`'s CI and deployment would never fire on a collector push.
+          fetch-depth: 0
+          token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+          # The drain runs a permission-skipping Claude session over review text it must not trust, in this very
+          # checkout. A persisted credential would sit in `.git/config` where that session can spend it, so git
+          # is authenticated through `gh` instead — which reads the token from an environment the drain's own
+          # child process is not given (`runDrain`).
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install dependencies
+        run: pnpm i
+
+      # `scripts` imports `@esposter/shared` through its published entry, and a fresh checkout has no `dist`.
+      # The closure selector builds the package and whatever workspace package it depends on.
+      - name: 🏗️ Build the shared package
+        run: pnpm --filter "@esposter/shared..." build
+
+      - name: 🆔 Identify the collector
+        # `fileMode` off because the install marks a package's `bin` script executable, and on Linux that mode
+        # flip alone reads as a dirty tree — which the collector refuses to work in.
+        run: |
+          git config user.name "Q16solver"
+          git config user.email "Q16solver@users.noreply.github.com"
+          git config core.fileMode false
+
+      - name: 🤝 Trust the workspace
+        uses: ./.github/actions/trust-workspace
+
+      # The flag is expanded by the template rather than the shell: the input is a boolean, so the expression can
+      # only ever yield the literal flag or nothing, and the shell never sees an empty argument to quote.
+      - name: ♻️ Collect
+        id: collect
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+        run: |
+          gh auth setup-git
+          pnpm ai:coderabbit:collect ${{ inputs.force == true && '--force' || '' }}
+
+  # The one missing webhook, supplied. A rate limit lifts on CodeRabbit's clock and announces nothing when it
+  # does, so the cycle reads the deadline the bot states — "Next included review available in N minutes" — and
+  # this job sleeps it out and runs the cycle again. That run re-reads the pull request before asking anything:
+  # a session push during the sleep may already have a review running, which a retrigger posted blind would
+  # cancel. It is the cycle, in TypeScript, that posts `@coderabbitai review` once the deadline has passed — and
+  # then exits, because the bot's answer arrives as an `issue_comment` this workflow already runs on.
+  retrigger:
+    name: Retrigger
+    needs: collect
+    if: needs.collect.outputs.retriggerDelaySeconds != ''
+    runs-on: ubuntu-latest
+    # The cycle caps one sleep under this (`RETRIGGER_SLEEP_CAP_MS`) and relays a longer deadline across runs
+    timeout-minutes: 90
+    # The built-in token starts no workflow runs — except by `workflow_dispatch`, which is the one thing this
+    # job does, so the collector token never reaches it.
+    permissions:
+      actions: write
+    # Its own group: `collect` serialises the cycles, and a wait measured in the bot's minutes must not sit in
+    # that queue holding back a session push. A newer run supersedes a pending one — it carries the newer
+    # deadline, and the cycle it wakes reads the same state either way.
+    concurrency:
+      group: review-collector-retrigger
+      cancel-in-progress: true
+    steps:
+      - name: ⏳ Wait out the rate limit
+        env:
+          DELAY_SECONDS: ${{ needs.collect.outputs.retriggerDelaySeconds }}
+        run: sleep "$DELAY_SECONDS"
+
+      # The dispatch names the caller, and its ref only picks which copy of the caller's triggers runs — the
+      # caller pins this file, and every branch the cycle acts on it reads from `origin`
+      - name: ♻️ Run the cycle again
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ai/queue

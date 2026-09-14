@@ -1,10 +1,10 @@
 import type { TimerHandler } from "@azure/functions";
 
-import { broadcastStorageUsage } from "#src/services/broadcastStorageUsage";
-import { db } from "#src/services/db";
-import { getContainerClient } from "#src/services/getContainerClient";
-import { getTableClient } from "#src/services/getTableClient";
-import { logAndRethrow } from "#src/services/logAndRethrow";
+import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
+import { db } from "#src/services/shared/db";
+import { getContainerClient } from "#src/services/azure/getContainerClient";
+import { getTableClient } from "#src/services/azure/getTableClient";
+import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { purgeResource } from "@esposter/db";
 import {
   AzureContainer,

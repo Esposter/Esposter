@@ -2,7 +2,7 @@ import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { checkIsRetriggerAsked } from "#src/services/coderabbit/collect/checkIsRetriggerAsked";
 import { RATE_LIMIT_COMMENT_MARKER } from "#src/services/coderabbit/collect/constants";
-import { PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
+import { CODERABBIT_REST_LOGIN, PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
 import { describe, expect, test } from "vitest";
 
 const getComment = (body: string, commentLogin: string, updatedAt: string): GitHubEntry => ({
@@ -18,7 +18,8 @@ describe(checkIsRetriggerAsked, () => {
   const firstDay = "1970-01-01";
   const secondDay = "1970-01-02";
 
-  const getBlock = (updatedAt: string): GitHubEntry => getComment(RATE_LIMIT_COMMENT_MARKER, login, updatedAt);
+  const getBlock = (updatedAt: string): GitHubEntry =>
+    getComment(RATE_LIMIT_COMMENT_MARKER, CODERABBIT_REST_LOGIN, updatedAt);
   const getAsk = (updatedAt: string): GitHubEntry => getComment(PROBE_COMMENT, viewerLogin, updatedAt);
 
   test("has asked when the retrigger is newer than the block it answers", () => {
@@ -46,6 +47,14 @@ describe(checkIsRetriggerAsked, () => {
     const comments = [getBlock(firstDay), getComment(PROBE_COMMENT, login, secondDay)];
 
     expect(checkIsRetriggerAsked(comments, viewerLogin)).toBe(false);
+  });
+
+  test("ignores a block somebody other than the bot posted", () => {
+    expect.hasAssertions();
+
+    const comments = [getAsk(firstDay), getComment(RATE_LIMIT_COMMENT_MARKER, login, secondDay)];
+
+    expect(checkIsRetriggerAsked(comments, viewerLogin)).toBe(true);
   });
 
   // A retrigger a session posted by hand still counts, and there is no block to date it against

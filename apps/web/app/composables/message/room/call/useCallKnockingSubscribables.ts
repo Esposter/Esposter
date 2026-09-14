@@ -1,4 +1,4 @@
-import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
+import type { OnlineSubscribableContext } from "@/models/shared/OnlineSubscribableContext";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";

@@ -7,4 +7,4 @@ import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 // Cannot tell the two apart, and a baseline of `""` makes the bot's existing comment look like the reply.
 // The poll loop is the one caller that may tolerate a failure, and it wraps this itself.
 export const readNewestComment = (pullRequest: number): GitHubEntry | undefined =>
-  getSortedByUpdatedAt(readBotEntries<GitHubEntry>(`issues/${pullRequest.toString()}/comments`)).at(-1);
+  getSortedByUpdatedAt(readBotEntries<GitHubEntry>(`issues/${pullRequest}/comments`)).at(-1);

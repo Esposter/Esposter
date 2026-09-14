@@ -1,4 +1,4 @@
-import { db } from "#src/services/db";
+import { db } from "#src/services/shared/db";
 
 // Who a message notification is shown as. Resolved here rather than by each publisher, so the per-room nickname
 // ([nicknames](/docs/esbabbler/nicknames)) is applied once and never on the request path a member is waiting on.

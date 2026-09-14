@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { MOCK_ENDPOINT } from "#src/services/constants.test";
+import { MOCK_ENDPOINT } from "#src/services/deadLetter/constants.test";
 import { pushSubscriptions, sessions, users } from "@esposter/db-schema";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { eq } from "drizzle-orm";

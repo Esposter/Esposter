@@ -84,7 +84,7 @@ describe("roomEmojiRouter", () => {
 
     await mockContext.db.insert(roomEmojisInMessage).values(
       Array.from({ length: MAX_ROOM_EMOJIS }, (_, index) => ({
-        name: `emoji_${index.toString()}`,
+        name: `emoji_${index}`,
         roomId,
       })),
     );

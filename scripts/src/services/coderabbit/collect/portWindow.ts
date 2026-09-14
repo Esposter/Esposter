@@ -12,7 +12,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Build the window as a branch, one cherry-pick at a time, and measure after each. Fixes ride first and whole,
 // Queue commits in queue order until one conflicts or overflows the cap, and the count that decides it is read
 // From the tree that will be pushed rather than estimated. Cheap on purpose — every run ports, and most exit at
-// Readiness — so the checks and the fold of `main` wait for `cutCandidate`, which runs only on a window worth a slot.
+// Readiness — so the fold of `main` waits for `foldCandidate`, which runs only on a window worth a slot.
 //
 // Every count is taken from the frontier, never from the develop head. A review covers everything since the one
 // That last wrote a body, so a window pushed on top of one still unreviewed is read as a single range; measuring
@@ -31,11 +31,11 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
-      `the fixes alone overflow the cap of ${REVIEW_FILE_CAP.toString()} files from the frontier`,
+      `the fixes alone overflow the cap of ${REVIEW_FILE_CAP} files from the frontier`,
     );
 
   // What the queue owes is read against the tree the fixes just built, not against develop: a queue rebased onto
-  // `review-fixes` carries the fix commits as ancestors, and against develop they read as owed — re-picked onto
+  // `ai/review-fixes` carries the fix commits as ancestors, and against develop they read as owed — re-picked onto
   // A tree that already holds them, where a later fix that rewrote their lines turns the pick from empty into a
   // Conflict that holds the whole window
   const fixesHeadSha = runGit(["rev-parse", "HEAD"], cwd).trim();

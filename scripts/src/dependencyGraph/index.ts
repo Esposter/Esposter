@@ -11,5 +11,5 @@ const workspaceEdges = getWorkspaceEdges(workspacePackages);
 
 writeFileSync(resolve(REPOSITORY_ROOT, GRAPH_FILENAME), await getGraphSvg(workspacePackages, workspaceEdges));
 console.info(
-  `${GRAPH_FILENAME}: ${String(workspacePackages.length)} packages, ${String(workspaceEdges.runtime.length)} runtime and ${String(workspaceEdges.development.length)} development edges`,
+  `${GRAPH_FILENAME}: ${workspacePackages.length} packages, ${workspaceEdges.runtime.length} runtime and ${workspaceEdges.development.length} development edges`,
 );

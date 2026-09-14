@@ -8,6 +8,17 @@ inputs:
 runs:
   using: composite
   steps:
+    # `pnpm -r` interleaves the packages it runs concurrently, so a failure's stack arrives spliced with another
+    # package's output. Live interleaved output is what a local run wants — a watched terminal, one failure at a
+    # time — while a log read after the fact wants each package contiguous. Same scripts either way, so the
+    # difference is stated by environment, and here rather than per workflow: every job that runs pnpm sets up
+    # its toolchain through this action, so one definition covers the fan-outs a workflow-level `env` block kept
+    # missing — the app builds under `build-app`, the collector's filtered build. pnpm reads its settings from
+    # `PNPM_CONFIG_<SETTING>` (`npm_config_*` is not read). First step, because `GITHUB_ENV` reaches the steps
+    # after it.
+    - name: 🪵 Keep each package's output contiguous
+      shell: bash
+      run: echo "PNPM_CONFIG_AGGREGATE_OUTPUT=true" >> "$GITHUB_ENV"
     # One step installs both: pnpm's self-contained executable (the version from `packageManager`), then the
     # runtime from `devEngines.runtime`. It still fetches from registry.npmjs.org, deliberately — the registry
     # package is the GitHub release asset byte for byte, and npm signs a checksum over it that `get-pnpm`

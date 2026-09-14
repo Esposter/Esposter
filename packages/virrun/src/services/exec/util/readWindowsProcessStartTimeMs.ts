@@ -10,7 +10,7 @@ export const readWindowsProcessStartTimeMs = (pid: number): number =>
         "-NoProfile",
         "-NonInteractive",
         "-Command",
-        `(Get-Process -Id ${pid.toString()} -ErrorAction Stop).StartTime.ToUniversalTime().ToString('o')`,
+        `(Get-Process -Id ${pid} -ErrorAction Stop).StartTime.ToUniversalTime().ToString('o')`,
       ],
       // A pid nothing holds is an error PowerShell prints; the throw is the answer, not the text
       {

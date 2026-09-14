@@ -27,6 +27,14 @@ export default [
     selector: "CallExpression[callee.property.name=/^(catch|finally|then)$/]",
   },
   {
+    // A template literal already runs `ToString` on every substitution, so a `.toString()` inside one spells the
+    // Coercion the syntax performs. A radix call (`toString(16)`) is a different value and is not matched, and
+    // `String(x)` is left alone on purpose: it is how a type the type-aware `restrict-template-expressions`
+    // Rejects (`unknown`, `symbol`) is coerced, and only that rule can tell the two apart.
+    message: "Interpolation coerces — drop the `.toString()` inside the template literal.",
+    selector: "TemplateLiteral > CallExpression[callee.property.name='toString'][arguments.length=0]",
+  },
+  {
     // A spread that exists only to reach `.map` builds a whole intermediate array to throw away; `Array.from`
     // Takes the map function and allocates once. The two are not always the same call, which is why the rewrite
     // Is read rather than applied: the spread drains the iterable before any callback runs where `Array.from`

@@ -1,4 +1,4 @@
-import type { SerializableValue } from "#src/models/SerializableValue";
+import type { SerializableValue } from "#src/models/shared/SerializableValue";
 
 export const deserializeValue = (serializedValue: string): SerializableValue => {
   if (serializedValue === String(true)) return true;

@@ -1,14 +1,14 @@
 import type { EventGridHandler } from "@azure/functions";
 
-import { checkIsReplayable } from "#src/services/checkIsReplayable";
-import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/constants";
-import { deleteReplayedBlob } from "#src/services/deleteReplayedBlob";
-import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
-import { formatReplayId } from "#src/services/formatReplayId";
-import { getContainerClient } from "#src/services/getContainerClient";
-import { logAndRethrow } from "#src/services/logAndRethrow";
-import { parseReplayId } from "#src/services/parseReplayId";
-import { writeDeadLetterBlob } from "#src/services/writeDeadLetterBlob";
+import { checkIsReplayable } from "#src/services/deadLetter/checkIsReplayable";
+import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/deadLetter/constants";
+import { deleteReplayedBlob } from "#src/services/deadLetter/deleteReplayedBlob";
+import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
+import { formatReplayId } from "#src/services/deadLetter/formatReplayId";
+import { getContainerClient } from "#src/services/azure/getContainerClient";
+import { logAndRethrow } from "#src/services/shared/logAndRethrow";
+import { parseReplayId } from "#src/services/deadLetter/parseReplayId";
+import { writeDeadLetterBlob } from "#src/services/deadLetter/writeDeadLetterBlob";
 import {
   AzureContainer,
   AzureFunction,

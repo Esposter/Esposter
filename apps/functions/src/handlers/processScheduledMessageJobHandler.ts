@@ -1,12 +1,12 @@
 import type { ServiceBusQueueHandler } from "@azure/functions";
 
-import { assertCanCreateMessage } from "#src/services/assertCanCreateMessage";
-import { createAndBroadcastMessage } from "#src/services/createAndBroadcastMessage";
-import { db } from "#src/services/db";
-import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
-import { getServiceBusSender } from "#src/services/getServiceBusSender";
-import { getTableClient } from "#src/services/getTableClient";
-import { logAndRethrow } from "#src/services/logAndRethrow";
+import { assertCanCreateMessage } from "#src/services/message/assertCanCreateMessage";
+import { createAndBroadcastMessage } from "#src/services/message/createAndBroadcastMessage";
+import { db } from "#src/services/shared/db";
+import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
+import { getServiceBusSender } from "#src/services/azure/getServiceBusSender";
+import { getTableClient } from "#src/services/azure/getTableClient";
+import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { createReplyThreadFollows, enqueueScheduledMessageJob } from "@esposter/db";
 import {
   AppNotificationType,

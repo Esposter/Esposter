@@ -56,4 +56,4 @@ runs:
       shell: bash
       env:
         PACKAGE: ${{ inputs.package }}
-      run: pnpm --filter "$PACKAGE" run build
+      run: pnpm --filter "$PACKAGE" build

@@ -2,7 +2,7 @@ name: Get Build Cache Keys
 description: Compute the content hashes that key the package-builds and app-build caches, and the path list the package-builds entry is saved and restored with, shared by the workflows that save one and every workflow that restores one
 outputs:
   app-build-hash:
-    description: sha256 over every tracked file `pnpm -C apps/web run build` could read — the package-builds inputs plus `apps/web`
+    description: sha256 over every tracked file `pnpm -C apps/web build` could read — the package-builds inputs plus `apps/web`
     value: ${{ steps.keys.outputs.app-build-hash }}
   package-builds-hash:
     description: sha256 over every tracked file `pnpm build:packages` could read

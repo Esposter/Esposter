@@ -1,4 +1,4 @@
-import { BinaryOperators } from "#src/models/BinaryOperator";
+import { BinaryOperators } from "#src/models/shared/BinaryOperator";
 import { ID_SEPARATOR } from "@esposter/shared";
 
 const VALUE_REGEX = [

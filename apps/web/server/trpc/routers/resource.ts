@@ -275,7 +275,7 @@ export const resourceRouter = router({
   //
   // Both channels in one time-ordered list, because the owner has one question — where can I go back to — and
   // The channels are an address space rather than two things to make them choose between. Every type is asked
-  // For both: a non-publishable one simply has no published prefix to enumerate
+  // For both: a non-publishable one simply has no published rows
   readSnapshotHistory: getOwnerProcedure(undefined, resourceIdInputSchema, "id").query<SnapshotVersion[]>(
     async ({ ctx }) => {
       const publication = await ctx.db.query.resourcePublications.findFirst({

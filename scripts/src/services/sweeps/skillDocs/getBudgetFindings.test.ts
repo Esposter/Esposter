@@ -11,7 +11,7 @@ describe(getBudgetFindings, () => {
 
     expect(getBudgetFindings([{ path, text: "a\n".repeat(MAX_SKILL_LINES) }])).toStrictEqual([
       {
-        detail: `${(MAX_SKILL_LINES * 2).toString()} bytes, ${(MAX_SKILL_LINES + 1).toString()} lines`,
+        detail: `${MAX_SKILL_LINES * 2} bytes, ${MAX_SKILL_LINES + 1} lines`,
         path,
         type: SkillDocsFindingType.Budget,
       },

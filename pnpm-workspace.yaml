@@ -161,7 +161,7 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.15.0
   h3: ^1.15.11
-  happy-dom: ^20.14.3
+  happy-dom: ^20.14.5
   howler: ^2.2.4
   idb: ^8.0.3
   js-beautify: ^2.0.3
@@ -229,14 +229,14 @@ catalog:
   vue-router: ^5.3.1
   vue-tsc: ^3.3.11
   vue3-apexcharts: ^1.11.1
-  vuetify: ~4.1.13
+  vuetify: ^4.2.1
   vuetify-nuxt-module: ^1.0.0-rc.6
   web-push: ^3.6.7
   worker-timers: ^8.0.34
   write-excel-file: ^4.1.1
   ws: ^8.21.3
   xmlbuilder2: ^4.0.3
-  zod: ^4.6.2
+  zod: ^4.6.5
 
 catalogMode: strict
 

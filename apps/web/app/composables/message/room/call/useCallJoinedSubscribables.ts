@@ -1,4 +1,4 @@
-import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
+import type { OnlineSubscribableContext } from "@/models/shared/OnlineSubscribableContext";
 
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useCallStore } from "@/store/message/room/call";

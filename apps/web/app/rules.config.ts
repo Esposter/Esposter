@@ -1,5 +1,5 @@
 import type { TextFieldValue } from "@/models/vuetify/TextFieldValue";
-import type { RulesOptions } from "vuetify/labs/rules";
+import type { RulesOptions } from "vuetify/lib/composables/rules/index.js";
 
 import { profanity } from "@2toad/profanity";
 

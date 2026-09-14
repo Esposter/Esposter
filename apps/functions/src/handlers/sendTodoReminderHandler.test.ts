@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
-import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/eventGridPublisherClient.test";
+import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/eventGridPublisherClient.test";
 import { InvocationContext } from "@azure/functions";
 import { getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
@@ -11,13 +11,16 @@ import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vite
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/db"), () => ({
+vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/eventGridPublisherClient"), () => import("#src/services/eventGridPublisherClient.test"));
-vi.mock(import("#src/services/getContainerClient"), () => import("#src/services/getContainerClient.test"));
+vi.mock(
+  import("#src/services/azure/eventGridPublisherClient"),
+  () => import("#src/services/azure/eventGridPublisherClient.test"),
+);
+vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
 const seedContent = (resourceId: string, items: { dueAt: string; id: string; name: string }[]) => {
   const containerClient = new MockContainerClient("", AzureContainer.ResourceAssets);

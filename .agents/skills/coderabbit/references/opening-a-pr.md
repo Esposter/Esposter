@@ -1,6 +1,6 @@
 # Opening a PR Spends a Review Slot
 
-Read when about to run `gh pr create` against the default branch, or in the minutes after one ran. The rule itself is in `SKILL.md` (creating the PR, and every push to it, starts a review, so the PR is asked for every time); this page is what has to be settled before the ask and what the first correction after opening costs.
+Read when about to run `gh pr create` against the default branch, or in the minutes after one ran. The release PR (`develop` → `main`) is not one a session opens: the collector opens it once the window has reached the fill target (`references/pipelining.md`), so this page is for every other PR against `main`. The rule itself is in `SKILL.md` (creating the PR, and every push to it, starts a review, so the PR is asked for every time); this page is what has to be settled before the ask and what the first correction after opening costs.
 
 **Creating a PR against the default branch, and every push to one, starts a review** — the slot goes immediately and the next is about an hour out.
 

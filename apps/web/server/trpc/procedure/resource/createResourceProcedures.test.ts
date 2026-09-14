@@ -21,11 +21,13 @@ import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, seriali
 import { getBlobName, getTopNEntities } from "@esposter/db";
 import {
   AzureContainer,
+  AzureFunction,
   AzureTable,
   DatabaseEntityType,
   resources,
   ResourceType,
   ResourceViewEntity,
+  SnapshotChannel,
 } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, noop, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import {
@@ -285,22 +287,49 @@ describe(createResourceProcedures, () => {
     );
   });
 
-  test("unpublishes resource", async () => {
+  // The channels number and anchor independently but share one object space: a publish of content the revision
+  // Channel already holds is a row over that channel's object, so the unpublish that releases it must leave
+  // What a revision still names — a bare delete of the channel's objects would be a revision that cannot be read
+  test("unpublishes resource without collecting an object the revision channel still names", async () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await resourceCaller.saveResourceRevision({ id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
+    const [revisionVersion, publishedVersion] = await mockContext.db.query.resourceVersions.findMany({
+      columns: { hash: true },
+      orderBy: { channel: "desc" },
+      where: { resourceId: { eq: newResource.id } },
+    });
+    const publishedEventCount = MockEventGridDatabase.get("")?.length ?? 0;
+
+    // The premise: the published version deduplicated against the revision's object
+    expect(publishedVersion).toStrictEqual(revisionVersion);
+
     await dashboardCaller.unpublishResource({ id: newResource.id });
 
-    const publication = await dashboardCaller.readResourcePublication({ id: newResource.id });
-
-    expect(publication).toBeUndefined();
+    await expect(dashboardCaller.readResourcePublication({ id: newResource.id })).resolves.toBeUndefined();
     await expect(
       dashboardCaller.readPublishedResourceContent(newResource.id),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.ResourcePublication, newResource.id).message}]`,
     );
+    await expect(resourceCaller.readSnapshotHistory({ id: newResource.id })).resolves.toHaveLength(1);
+    // The one deletion an unpublish always publishes is the asset clones' prefix, never the object
+    const blobDeletionEvents = (MockEventGridDatabase.get("")?.slice(publishedEventCount) ?? []).filter(
+      ({ eventType }) => eventType === AzureFunction.ProcessBlobDeletion,
+    );
+
+    expect(blobDeletionEvents).toHaveLength(1);
+    const { createdBefore, ...blobDeletionEventDataRest } = takeOne(blobDeletionEvents)
+      .data as BlobDeletionEventGridData;
+
+    expect(createdBefore).toBeInstanceOf(Date);
+    expect(blobDeletionEventDataRest).toStrictEqual({
+      containerName: AzureContainer.ResourceAssets,
+      prefix: `${newResource.id}/${SnapshotChannel.Published}`,
+    });
   });
 
   // A sweep is bounded at the instant it is decided, so one published for a resource that has nothing published
