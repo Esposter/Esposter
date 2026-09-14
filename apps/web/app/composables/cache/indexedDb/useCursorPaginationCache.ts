@@ -1,4 +1,4 @@
-import type { PaginationCacheOptions } from "@/composables/cache/indexedDb/usePaginationCache";
+import type { PaginationCacheOptions } from "@/models/cache/indexedDb/PaginationCacheOptions";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPaginationSlice";

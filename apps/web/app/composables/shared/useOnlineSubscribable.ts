@@ -1,15 +1,11 @@
+import type { OnlineSubscribableContext } from "@/models/shared/OnlineSubscribableContext";
 import type { OnlineSubscribableSource } from "@/models/shared/OnlineSubscribableSource";
 import type { OnlineSubscribableValues } from "@/models/shared/OnlineSubscribableValues";
 import type { Promisable } from "type-fest";
-import type { ComponentInternalInstance, EffectScope, MultiWatchSources, WatchSource } from "vue";
+import type { MultiWatchSources, WatchSource } from "vue";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getResultAsync, noop } from "@esposter/shared";
-
-export interface OnlineSubscribableContext {
-  instance?: ComponentInternalInstance | null;
-  scope?: EffectScope | null;
-}
 
 export function useOnlineSubscribable<const TSources extends readonly OnlineSubscribableSource[]>(
   source: TSources,

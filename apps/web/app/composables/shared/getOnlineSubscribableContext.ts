@@ -1,4 +1,4 @@
-import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
+import type { OnlineSubscribableContext } from "@/models/shared/OnlineSubscribableContext";
 
 // A subscription established outside a setup frame — inside a watcher, a callback, an `onMounted` body — has no
 // Current instance or scope of its own to bind its teardown to. Capturing them where there still is one and

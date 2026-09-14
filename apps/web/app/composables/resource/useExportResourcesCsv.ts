@@ -1,13 +1,12 @@
 import type { Resource } from "@esposter/db-schema";
 
-import { MimeType } from "#shared/models/file/MimeType";
+import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { MAX_CSV_EXPORT_ROWS } from "@/services/resource/constants";
 import { getResourcesCsv } from "@/services/resource/list/getResourcesCsv";
+import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { useNotificationStore } from "@/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
-
-const CSV_ACCEPT = ".csv";
 
 export const useExportResourcesCsv = () => {
   const notificationStore = useNotificationStore();
@@ -17,8 +16,8 @@ export const useExportResourcesCsv = () => {
     const isExported = await exportFile(
       (mimeType) => Promise.resolve(new Blob([getResourcesCsv(resources)], { type: mimeType })),
       "resources",
-      MimeType.Csv,
-      CSV_ACCEPT,
+      DataSourceConfigurationMap[DataSourceType.Csv].mimeType,
+      DataSourceConfigurationMap[DataSourceType.Csv].accept,
     );
     if (isExported)
       createNotification({
