@@ -8,7 +8,7 @@ export const roomRolesInMessageRelation = defineRelationsPart(schema, (r) => ({
       optional: false,
       to: r.roomsInMessage.id,
     }),
-    usersToRoomRolesInMessages: r.many.usersToRoomRolesInMessage({
+    usersToRoomRolesInMessage: r.many.usersToRoomRolesInMessage({
       from: r.roomRolesInMessage.id,
       to: r.usersToRoomRolesInMessage.roleId,
     }),
