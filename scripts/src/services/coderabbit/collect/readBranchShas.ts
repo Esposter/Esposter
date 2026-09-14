@@ -12,11 +12,11 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Every ref the pass measures against, read once from the remote. A missing one is named: it is the copy of the
 // Cycle that runs disagreeing with the remote about a name, and which name is the whole diagnosis.
-export const readBranchShas = (): BranchShas => {
-  runGit(["fetch", "--prune", "origin"]);
-  const mainSha = readSha(`origin/${MAIN_BRANCH}`);
-  const queueSha = readSha(`origin/${QUEUE_BRANCH}`);
-  const developSha = readSha(`origin/${DEVELOP_BRANCH}`);
+export const readBranchShas = (cwd: string): BranchShas => {
+  runGit(["fetch", "--prune", "origin"], cwd);
+  const mainSha = readSha(`origin/${MAIN_BRANCH}`, cwd);
+  const queueSha = readSha(`origin/${QUEUE_BRANCH}`, cwd);
+  const developSha = readSha(`origin/${DEVELOP_BRANCH}`, cwd);
   if (!developSha || !queueSha || !mainSha) {
     const missingBranches = [
       [MAIN_BRANCH, mainSha],
@@ -31,5 +31,5 @@ export const readBranchShas = (): BranchShas => {
       `missing on the remote: ${missingBranches.join(", ")}`,
     );
   }
-  return { developSha, mainSha, queueSha, reviewFixesSha: readSha(`origin/${REVIEW_FIXES_BRANCH}`) };
+  return { developSha, mainSha, queueSha, reviewFixesSha: readSha(`origin/${REVIEW_FIXES_BRANCH}`, cwd) };
 };
