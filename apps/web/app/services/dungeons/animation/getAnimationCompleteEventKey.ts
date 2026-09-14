@@ -4,5 +4,5 @@ import { Animations } from "phaser";
 
 // The event Phaser emits once the animation registered under `spritesheetKey` finishes: the shared completion
 // Prefix followed by the animation's own key.
-export const getAnimationCompleteEventKey = (spritesheetKey: SpritesheetKey): string =>
+export const getAnimationCompleteEventKey = (spritesheetKey: SpritesheetKey) =>
   `${Animations.Events.ANIMATION_COMPLETE_KEY}${spritesheetKey}`;
