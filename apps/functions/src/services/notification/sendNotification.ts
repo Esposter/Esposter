@@ -1,7 +1,7 @@
 import type { InvocationContext } from "@azure/functions";
 import type { NotificationEventGridData } from "@esposter/db-schema";
 
-import { db } from "#src/services/db";
+import { db } from "#src/services/shared/db";
 import { getPushNotificationPayload } from "#src/services/notification/getPushNotificationPayload";
 import { resolveNotification } from "#src/services/notification/resolveNotification";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";

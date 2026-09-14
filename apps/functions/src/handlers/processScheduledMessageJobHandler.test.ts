@@ -1,7 +1,7 @@
 import type { Database, ScheduledMessageJobPayload } from "@esposter/db-schema";
 
 import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
-import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
+import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
 import { InvocationContext } from "@azure/functions";
 import { createReplyThreadFollows } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
@@ -25,7 +25,7 @@ import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, t
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/db"), () => ({
+vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
     return mockDb;
   },
@@ -40,14 +40,20 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
     createReplyThreadFollows: vi.fn<typeof actual.createReplyThreadFollows>(actual.createReplyThreadFollows),
   };
 });
-vi.mock(import("#src/services/eventGridPublisherClient"), () => import("#src/services/eventGridPublisherClient.test"));
-vi.mock(import("#src/services/getServiceBusSender"), () => import("#src/services/getServiceBusSender.test"));
-vi.mock(import("#src/services/getTableClient"), () => import("#src/services/getTableClient.test"));
 vi.mock(
-  import("#src/services/getWebPubSubServiceClient"),
-  () => import("#src/services/getWebPubSubServiceClient.test"),
+  import("#src/services/azure/eventGridPublisherClient"),
+  () => import("#src/services/azure/eventGridPublisherClient.test"),
 );
-vi.mock(import("#src/services/webpush"), () => import("#src/services/webpush.test"));
+vi.mock(
+  import("#src/services/azure/getServiceBusSender"),
+  () => import("#src/services/azure/getServiceBusSender.test"),
+);
+vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(
+  import("#src/services/azure/getWebPubSubServiceClient"),
+  () => import("#src/services/azure/getWebPubSubServiceClient.test"),
+);
+vi.mock(import("#src/services/notification/webpush"), () => import("#src/services/notification/webpush.test"));
 
 describe(processScheduledMessageJobHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });

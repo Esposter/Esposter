@@ -1,5 +1,5 @@
-import { drainDeadLetterContainer } from "#src/services/drainDeadLetterContainer";
-import { getContainerClient } from "#src/services/getContainerClient";
+import { drainDeadLetterContainer } from "#src/services/deadLetter/drainDeadLetterContainer";
+import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { AzureContainer, DEAD_LETTER_ARCHIVED_PREFIX, DEAD_LETTER_QUARANTINE_PREFIX } from "@esposter/db-schema";
 import {
   getMockBlobKey,
@@ -10,7 +10,7 @@ import {
 } from "azure-mock";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/getContainerClient"), () => import("#src/services/getContainerClient.test"));
+vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
 const readLastModified = (blobName: string) =>
   MockContainerBlobDatesDatabase.get(getMockBlobKey(AzureContainer.DeadLetter, blobName))?.lastModified;

@@ -1,6 +1,6 @@
-import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/constants";
-import { formatReplayId } from "#src/services/formatReplayId";
-import { parseReplayId } from "#src/services/parseReplayId";
+import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/deadLetter/constants";
+import { formatReplayId } from "#src/services/deadLetter/formatReplayId";
+import { parseReplayId } from "#src/services/deadLetter/parseReplayId";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

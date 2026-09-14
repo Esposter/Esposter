@@ -2,7 +2,7 @@ import type { ResolvedNotification } from "#src/models/notification/ResolvedNoti
 import type { InvocationContext } from "@azure/functions";
 import type { NotificationEventGridData } from "@esposter/db-schema";
 
-import { db } from "#src/services/db";
+import { db } from "#src/services/shared/db";
 import { getMessageNotificationAuthor } from "#src/services/notification/getMessageNotificationAuthor";
 import { getMessageNotificationBody } from "#src/services/notification/getMessageNotificationBody";
 import { getMessageRecipientUserIds } from "@esposter/db";

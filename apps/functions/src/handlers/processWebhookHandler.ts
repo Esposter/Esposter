@@ -1,10 +1,10 @@
 import type { EventGridHandler } from "@azure/functions";
 
-import { webhookEventGridDataSchema } from "#src/models/WebhookEventGridData";
-import { createAndBroadcastMessage } from "#src/services/createAndBroadcastMessage";
-import { eventGridPublisherClient } from "#src/services/eventGridPublisherClient";
-import { getWebhookCreateMessageInput } from "#src/services/getWebhookCreateMessageInput";
-import { logAndRethrow } from "#src/services/logAndRethrow";
+import { webhookEventGridDataSchema } from "#src/models/message/WebhookEventGridData";
+import { createAndBroadcastMessage } from "#src/services/message/createAndBroadcastMessage";
+import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
+import { getWebhookCreateMessageInput } from "#src/services/message/getWebhookCreateMessageInput";
+import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { AppNotificationType, AzureFunction, publishNotification } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 

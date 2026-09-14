@@ -1,4 +1,4 @@
-import type { ReplayId } from "#src/models/ReplayId";
+import type { ReplayId } from "#src/models/deadLetter/ReplayId";
 
 import { ID_SEPARATOR } from "@esposter/shared";
 

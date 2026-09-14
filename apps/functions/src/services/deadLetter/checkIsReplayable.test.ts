@@ -1,5 +1,5 @@
-import { checkIsReplayable } from "#src/services/checkIsReplayable";
-import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/constants";
+import { checkIsReplayable } from "#src/services/deadLetter/checkIsReplayable";
+import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/deadLetter/constants";
 import { AzureFunction, AzureFunctionIsIdempotentMap } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 

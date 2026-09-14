@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { assertCanCreateMessage } from "#src/services/assertCanCreateMessage";
+import { assertCanCreateMessage } from "#src/services/message/assertCanCreateMessage";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -17,12 +17,12 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/db"), () => ({
+vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/getTableClient"), () => import("#src/services/getTableClient.test"));
+vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
 
 describe(assertCanCreateMessage, () => {
   const context = new InvocationContext({ logHandler: () => {} });

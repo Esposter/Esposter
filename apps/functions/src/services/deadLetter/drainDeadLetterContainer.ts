@@ -1,4 +1,4 @@
-import { getContainerClient } from "#src/services/getContainerClient";
+import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { checkIsPreconditionFailed } from "@esposter/db";
 import {
   AzureContainer,

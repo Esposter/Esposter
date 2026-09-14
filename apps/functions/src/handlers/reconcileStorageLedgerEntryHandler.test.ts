@@ -9,7 +9,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 
 let mockDb: Database;
 
-vi.mock(import("#src/services/db"), () => ({
+vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
     return mockDb;
   },
@@ -22,7 +22,7 @@ const { groupMock, sendToAllMock } = vi.hoisted(() => ({
   sendToAllMock: vi.fn<(message: unknown) => Promise<void>>(),
 }));
 
-vi.mock(import("#src/services/getWebPubSubServiceClient"), () => ({
+vi.mock(import("#src/services/azure/getWebPubSubServiceClient"), () => ({
   getWebPubSubServiceClient: () =>
     ({
       group: (group: string) => {

@@ -1,7 +1,7 @@
 import type { InvocationContext } from "@azure/functions";
 import type { User } from "@esposter/db-schema";
 
-import { getWebPubSubServiceClient } from "#src/services/getWebPubSubServiceClient";
+import { getWebPubSubServiceClient } from "#src/services/azure/getWebPubSubServiceClient";
 import { AzureWebPubSubHub } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
