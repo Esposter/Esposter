@@ -9,6 +9,8 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 describe(useMutation, () => {
   const key = "";
   const otherKey = " ";
+  const result = "result";
+  const error = new Error("error");
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -31,9 +33,9 @@ describe(useMutation, () => {
 
     const onSuccess = vi.fn<(result: string) => void>();
     const { executeMutation } = useMutation();
-    await executeMutation(() => Promise.resolve("result"), { key, onSuccess });
+    await executeMutation(() => Promise.resolve(result), { key, onSuccess });
 
-    expect(onSuccess).toHaveBeenCalledExactlyOnceWith("result");
+    expect(onSuccess).toHaveBeenCalledExactlyOnceWith(result);
   });
 
   test("rolls back and alerts on failure", async () => {
@@ -44,7 +46,7 @@ describe(useMutation, () => {
     const { executeMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    await executeMutation(() => Promise.reject(new Error("error")), { applyOptimistic, key });
+    await executeMutation(() => Promise.reject(error), { applyOptimistic, key });
 
     expect(rollback).toHaveBeenCalledTimes(1);
     expect(alerts.value).toHaveLength(1);
@@ -57,7 +59,6 @@ describe(useMutation, () => {
     const { executeMutation } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    const error = new Error("error");
     await executeMutation(() => Promise.reject(error), { key, onError });
 
     expect(onError).toHaveBeenCalledExactlyOnceWith(error);
@@ -119,7 +120,7 @@ describe(useMutation, () => {
     const { alerts } = storeToRefs(alertStore);
     const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
     const first = executeMutation(() => firstPromise, { key });
-    const second = executeMutation(() => Promise.reject(new Error("error")), {
+    const second = executeMutation(() => Promise.reject(error), {
       applyOptimistic: () => rollback,
       key,
     });
@@ -141,7 +142,7 @@ describe(useMutation, () => {
     const second = executeMutation(mutate, { key });
     await flushPromises();
     const isSecondStartedWhileFirstInFlight = mutate.mock.calls.length > 0;
-    rejectFirst(new Error("error"));
+    rejectFirst(error);
     await Promise.all([first, second]);
 
     expect(isSecondStartedWhileFirstInFlight).toBe(false);
@@ -190,7 +191,7 @@ describe(useMutation, () => {
       key,
     });
     await executeMutation(() => Promise.resolve(), { isSupersede: true, key });
-    rejectSuperseded(new Error("error"));
+    rejectSuperseded(error);
     await supersededWrite;
 
     expect(rollback).toHaveBeenCalledTimes(1);
@@ -254,7 +255,7 @@ describe(useMutation, () => {
     const { promise: supersededPromise, reject: rejectSuperseded } = Promise.withResolvers<void>();
     const supersededRead = executeQuery(() => supersededPromise, { key });
     await executeQuery(() => Promise.resolve(), { key });
-    rejectSuperseded(new Error("error"));
+    rejectSuperseded(error);
 
     await expect(supersededRead).resolves.toStrictEqual({ status: MutationStatus.Stale });
     expect(alerts.value).toHaveLength(0);
@@ -272,12 +273,12 @@ describe(useMutation, () => {
     const inFlightRead = executeQuery(query, { isExclusive: true, key, onSuccess });
     const joinedRead = executeQuery(query, { isExclusive: true, key, onSuccess: joinedOnSuccess });
     await flushPromises();
-    resolveQuery("result");
+    resolveQuery(result);
 
-    await expect(joinedRead).resolves.toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
-    await expect(inFlightRead).resolves.toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
+    await expect(joinedRead).resolves.toStrictEqual({ result, status: MutationStatus.Succeeded });
+    await expect(inFlightRead).resolves.toStrictEqual({ result, status: MutationStatus.Succeeded });
     expect(query).toHaveBeenCalledTimes(1);
-    expect(onSuccess).toHaveBeenCalledExactlyOnceWith("result");
+    expect(onSuccess).toHaveBeenCalledExactlyOnceWith(result);
     expect(joinedOnSuccess).not.toHaveBeenCalled();
   });
 
@@ -285,7 +286,6 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeQuery } = useMutation();
-    const error = new Error("error");
     const { promise: queryPromise, reject: rejectQuery } = Promise.withResolvers<void>();
     const inFlightRead = executeQuery(() => queryPromise, { isExclusive: true, key, onError: noop });
     const joinedRead = executeQuery(() => Promise.resolve(), { isExclusive: true, key, onError: noop });
@@ -354,7 +354,7 @@ describe(useMutation, () => {
     const { executeQuery } = useMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    const outcome = await executeQuery(() => Promise.reject(new Error("error")), { key });
+    const outcome = await executeQuery(() => Promise.reject(error), { key });
 
     expect(outcome.status).toBe(MutationStatus.Failed);
     expect(alerts.value).toHaveLength(1);
@@ -402,7 +402,7 @@ describe(useMutation, () => {
       executeMutation(() => Promise.resolve(), {
         key,
         onSuccess: () => {
-          throw new Error("error");
+          throw error;
         },
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: error]`);
@@ -417,7 +417,7 @@ describe(useMutation, () => {
     const { checkIsPending, executeMutation, isPending } = useMutation();
 
     await expect(
-      executeMutation(() => Promise.reject(new Error("error")), {
+      executeMutation(() => Promise.reject(error), {
         key,
         onError: () => {
           throw new Error(" ");
@@ -437,7 +437,7 @@ describe(useMutation, () => {
     await expect(
       executeMutation(() => Promise.resolve(), {
         applyOptimistic: () => {
-          throw new Error("error");
+          throw error;
         },
         key,
       }),
@@ -457,7 +457,7 @@ describe(useMutation, () => {
       executeMutation(() => Promise.resolve(), {
         key,
         onSuccess: () => {
-          throw new Error("error");
+          throw error;
         },
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: error]`);
@@ -470,16 +470,15 @@ describe(useMutation, () => {
     expect.hasAssertions();
 
     const { executeMutation } = useMutation();
-    const outcome = await executeMutation(() => Promise.resolve("result"), { key });
+    const outcome = await executeMutation(() => Promise.resolve(result), { key });
 
-    expect(outcome).toStrictEqual({ result: "result", status: MutationStatus.Succeeded });
+    expect(outcome).toStrictEqual({ result, status: MutationStatus.Succeeded });
   });
 
   test("reports the error on failure rather than throwing it", async () => {
     expect.hasAssertions();
 
     const { executeMutation } = useMutation();
-    const error = new Error("error");
     const outcome = await executeMutation(() => Promise.reject(error), { key, onError: noop });
 
     expect(outcome).toStrictEqual({ error, status: MutationStatus.Failed });

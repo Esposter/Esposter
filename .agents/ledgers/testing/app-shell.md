@@ -5,8 +5,8 @@ composable and store layers no single feature claims.
 
 | Unit                                                             | Swept      | Notes                                                     |
 | ---------------------------------------------------------------- | ---------- | --------------------------------------------------------- |
-| `composables/data`                                               | 2026-09-05 | one of the two pagination cores                           |
-| `composables/shared`                                             | 2026-09-05 | the other pagination core                                 |
+| `composables/data`                                               | 2026-09-15 | one of the two pagination cores                           |
+| `composables/shared`                                             | 2026-09-15 | the other pagination core                                 |
 | `services/{app,auth,login,google}`                               | 2026-09-05 |                                                           |
 | `services/{route,router,notification}`                           | 2026-09-05 |                                                           |
 | `services/trpc`                                                  | 2026-09-05 |                                                           |
