@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getTextFromHtml } from "@/services/message/draftsAndSent/getTextFromHtml";
 import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 import { useInputStore } from "@/store/message/input";
@@ -27,8 +28,7 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
     onComplete();
     return;
   }
-  let isSuccessful = false;
-  await executeMutation(
+  const outcome = await executeMutation(
     () =>
       currentTarget.scheduledMessageJobId
         ? $trpc.message.scheduledMessageJob.rescheduleMessage.mutate({
@@ -47,7 +47,6 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
     {
       key: currentTarget.scheduledMessageJobId || Symbol("scheduleMessage"),
       onSuccess: async () => {
-        isSuccessful = true;
         if (!currentTarget.scheduledMessageJobId)
           clearComposer({ roomId: currentTarget.roomId, threadRootRowKey: currentTarget.threadRootRowKey });
         await readScheduledMessageJobs();
@@ -56,7 +55,7 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
     },
   );
   // A failed schedule keeps the dialog open with the chosen time intact so the user can retry
-  onComplete(isSuccessful);
+  onComplete(outcome.status === MutationStatus.Succeeded);
 };
 </script>
 

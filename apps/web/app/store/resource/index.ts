@@ -6,6 +6,7 @@ import { ResourceOperationTitleMap } from "#shared/services/notification/Resourc
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { useNotificationStore } from "@/store/notification";
@@ -171,8 +172,7 @@ export const useResourceStore = defineStore("resource", () => {
     // Refresh prompt or a version the server never issued for it. The notifications are not scoped: the write
     // Failed for the owner either way (/docs/resource/resource-save-state)
     const getActiveResource = () => (resource.value?.id === current.id ? resource.value : undefined);
-    let isSuccessful = false;
-    await executeSaveContentMutation(
+    const outcome = await executeSaveContentMutation(
       () => {
         // Read when the write is sent rather than when it was issued: a save that queued behind another must
         // Carry the contentVersion that one wrote back, or the server rejects our own overlapping saves as a
@@ -209,7 +209,6 @@ export const useResourceStore = defineStore("resource", () => {
           }
         },
         onSuccess: (newResource) => {
-          isSuccessful = true;
           if (!getActiveResource()) return;
 
           mergeResource({ contentVersion: newResource.contentVersion, updatedAt: newResource.updatedAt }, newResource);
@@ -218,7 +217,7 @@ export const useResourceStore = defineStore("resource", () => {
         },
       },
     );
-    return isSuccessful;
+    return outcome.status === MutationStatus.Succeeded;
   };
   const renameResource = async (name: string) => {
     const current = resource.value;
@@ -272,19 +271,20 @@ export const useResourceStore = defineStore("resource", () => {
   const deleteResource = async () => {
     const current = resource.value;
     if (!current) return false;
-    let isSuccessful = false;
-    await executeDeleteMutation(() => getResourceRouter(current.type).deleteResource.mutate({ id: current.id }), {
-      key: current.id,
-      onError: createErrorNotification,
-      onSuccess: () => {
-        createNotification({
-          severity: NotificationSeverity.Success,
-          title: ResourceOperationTitleMap[ResourceOperationType.Deleted](current.name, 1),
-        });
-        isSuccessful = true;
+    const outcome = await executeDeleteMutation(
+      () => getResourceRouter(current.type).deleteResource.mutate({ id: current.id }),
+      {
+        key: current.id,
+        onError: createErrorNotification,
+        onSuccess: () => {
+          createNotification({
+            severity: NotificationSeverity.Success,
+            title: ResourceOperationTitleMap[ResourceOperationType.Deleted](current.name, 1),
+          });
+        },
       },
-    });
-    return isSuccessful;
+    );
+    return outcome.status === MutationStatus.Succeeded;
   };
   const duplicateResource = async () => {
     const current = resource.value;

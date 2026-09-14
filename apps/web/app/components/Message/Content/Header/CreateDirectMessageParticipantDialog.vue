@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { authClient } from "@/services/auth/authClient";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { useFriendStore } from "@/store/message/user/friend";
@@ -28,8 +29,7 @@ const excludedUserIds = computed(() => {
 const confirmButtonAttrs = computed(() => ({ disabled: selectedUserIds.value.length === 0 }));
 const { executeMutation } = useMutation();
 const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boolean) => void) => {
-  let isSuccessful = false;
-  await executeMutation(
+  const outcome = await executeMutation(
     () => $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds: selectedUserIds.value }),
     {
       applyOptimistic: () => {
@@ -49,14 +49,13 @@ const createDirectMessageParticipants = async (onComplete: (isSuccessful?: boole
       },
       key: roomId,
       onSuccess: () => {
-        isSuccessful = true;
         selectedUserIds.value = [];
         friendPicker.value?.reset();
       },
     },
   );
   // A failed add keeps the dialog open with the selection intact so the user can retry
-  onComplete(isSuccessful);
+  onComplete(outcome.status === MutationStatus.Succeeded);
 };
 </script>
 

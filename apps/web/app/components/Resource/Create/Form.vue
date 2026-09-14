@@ -3,6 +3,7 @@ import type { SheetResource } from "#shared/models/resource/sheet/SheetResource"
 import type { CreatableResourceType } from "@/services/resource/CreatableResourceTypes";
 
 import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 import { useNotificationStore } from "@/store/notification";
 import { RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
@@ -49,8 +50,7 @@ const submit = async () => {
         return;
       }
 
-      let isSaved = false;
-      await executeSaveMutation(
+      const saveOutcome = await executeSaveMutation(
         () =>
           $trpc.sheet.saveResourceContent.mutate({
             content: sheetResourceValue,
@@ -60,14 +60,13 @@ const submit = async () => {
         {
           key: resource.id,
           onError: createErrorNotification,
-          onSuccess: () => {
-            isSaved = true;
-          },
         },
       );
       // They came to see their rows, so a successful import lands on the Data blade rather than Overview
       await navigateTo(
-        isSaved ? getResourceBladePath(resource.id, ResourceBladeSlug.Data) : RoutePath.Resource(resource.id),
+        saveOutcome.status === MutationStatus.Succeeded
+          ? getResourceBladePath(resource.id, ResourceBladeSlug.Data)
+          : RoutePath.Resource(resource.id),
       );
     },
   });
