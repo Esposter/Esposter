@@ -36,24 +36,24 @@ Never write a finding in either lane for something an enforcer already owns:
 
 The conventions a finding cites live in the domain skills, not here — restating them would give this page a second copy to drift. What this page owns is the routing: **read the window's file list first, load only the rows it hits.**
 
-| The window contains                  | Load                                                      |
-| ------------------------------------ | --------------------------------------------------------- |
-| `.vue`, or anything rendering        | `vue`, `vuetify`, `styling`, `responsive`, `ux`           |
-| `app/store/**`                       | `pinia`                                                   |
-| `app/composables/**`                 | `vue-composable-patterns`, `pagination`                   |
-| `server/trpc/**`                     | `trpc`, `error-handling`                                  |
-| `packages/db-schema/**`, a migration | `drizzle`                                                 |
-| a Zod schema                         | `zod`                                                     |
-| `apps/infra/**`                      | `pulumi-infra`                                            |
-| `*.test.ts`, `*.bench.ts`            | `testing`, `bench`                                        |
-| `content/docs/**`                    | `docs`                                                    |
-| `.agents/skills/**`                  | `skill-authoring`                                         |
-| `.agents/ledgers/**`                 | `sweeps`                                                  |
-| `README.md`                          | `readme-standards`                                        |
-| lint or tooling config               | `oxlint`, `package-scripts`                               |
-| any file at all                      | `naming`, `typescript`, `formatting`, `file-organization` |
+| The window contains                  | Load                                                                          |
+| ------------------------------------ | ----------------------------------------------------------------------------- |
+| `.vue`, or anything rendering        | `vue`, `vuetify`, `styling`, `responsive`, `ux`                               |
+| `app/store/**`                       | `pinia`                                                                       |
+| `app/composables/**`                 | `vue-composable-patterns`, `pagination`                                       |
+| `server/trpc/**`                     | `trpc`, `error-handling`                                                      |
+| `packages/db-schema/**`, a migration | `drizzle`                                                                     |
+| a Zod schema                         | `zod`                                                                         |
+| `apps/infra/**`                      | `pulumi-infra`                                                                |
+| `*.test.ts`, `*.bench.ts`            | `testing`, `bench`                                                            |
+| `content/docs/**`                    | `docs`                                                                        |
+| `.agents/skills/**`                  | `skill-authoring`                                                             |
+| `.agents/ledgers/**`                 | `sweeps`                                                                      |
+| `README.md`                          | `readme-standards`                                                            |
+| lint or tooling config               | `oxlint`, `package-scripts`                                                   |
+| any file at all                      | `naming`, `typescript`, `formatting`, `file-organization`, `over-engineering` |
 
-The last row is the floor, not a default — those four apply to every file in every window. A row you loaded and found nothing against is a result; say so rather than omitting it.
+The last row is the floor, not a default — those five apply to every file in every window. A row you loaded and found nothing against is a result; say so rather than omitting it.
 
 ## The loop
 
