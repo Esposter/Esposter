@@ -37,17 +37,15 @@ describe("getToolchainVersionRestatements", () => {
     (await Array.fromAsync(glob(pattern, { cwd: repositoryDirectory }))).map((path) => path.replaceAll("\\", "/"));
 
   test.each([
-    ["a caret range", "Install Node.js `^1.0.0` before anything else."],
-    ["a caret major behind a link", "Install [pnpm](https://pnpm.io) `^1`."],
-    ["a bare version", "This needs pnpm 1.0.0."],
-    ["a v-prefixed version", "Built against node v1.0.0."],
-    ["a comparison range", "Requires nodejs >=1.0.0."],
-  ])("flags %s", (_label, markdown) => {
+    ["a caret range", "Install Node.js `^1.0.0` before anything else.", "Node.js `^1.0.0"],
+    ["a caret major behind a link", "Install [pnpm](https://pnpm.io) `^1`.", "pnpm](https://pnpm.io) `^1"],
+    ["a bare version", "This needs pnpm 1.0.0.", "pnpm 1.0.0"],
+    ["a v-prefixed version", "Built against node v1.0.0.", "node v1.0.0"],
+    ["a comparison range", "Requires nodejs >=1.0.0.", "nodejs >=1.0.0"],
+  ])("flags %s", (_label, markdown, restatement) => {
     expect.hasAssertions();
 
-    expect(getToolchainVersionRestatements([{ markdown, path: "a.md" }])).toStrictEqual([
-      expect.stringContaining("a.md:1 → "),
-    ]);
+    expect(getToolchainVersionRestatements([{ markdown, path: "a.md" }])).toStrictEqual([`a.md:1 → ${restatement}`]);
   });
 
   test.each([
