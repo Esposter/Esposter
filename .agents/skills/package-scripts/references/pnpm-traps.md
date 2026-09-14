@@ -1,6 +1,6 @@
 # pnpm Traps
 
-Read when a check behind a `--filter` reports success too quickly, when passing flags through a `pnpm <script>`, or when a workflow step is about to spell out a binary. The rules themselves are in `SKILL.md`, one line each; this page is how each one fails and the shape that avoids it.
+Read when a check behind a `--filter` reports success too quickly, when passing flags through a `pnpm <script>`, when a workflow step is about to spell out a binary, or when reaching for a `run` prefix. The rules themselves are in `SKILL.md`, one line each; this page is how each one fails and the shape that avoids it.
 
 ## A `--filter` that matches nothing exits 0
 
@@ -13,3 +13,9 @@ pnpm forwards the literal `--`, so trailing flags become post-`--` positionals a
 ## A caller runs the script, not the binary under it
 
 `pnpm exec <binary>` in a workflow is a second definition of an invocation the root manifest already owns, and it drifts silently — CI's coverage shards spelled out `vitest run --coverage` for exactly as long as it took the two to disagree. Reach for `pnpm exec` only where no script owns the invocation; if a workflow needs a shape no script has, add the script (that is what `bench:ci` is).
+
+## `pnpm run <script>` — the prefix is noise, except where it is not
+
+pnpm falls through to `run` for any word that is not one of its own commands, so `pnpm build`, `pnpm -C apps/web build` and `pnpm --filter "@esposter/web..." build` all run the script and the prefix says nothing. Leave it off.
+
+What the prefix _does_ decide is a name that collides with a pnpm command, and there the reading flips rather than merely getting longer. `pnpm --filter @esposter/functions deploy` in the Functions deploy workflow is pnpm's own `deploy` — it copies a pruned, production-only package tree into a directory — and spelling it `run deploy` there would look like a tidy-up and change what runs. So the prefix is not a style choice to apply evenly: check the name against pnpm's commands, use `run` only when one shadows a script, and leave it off everywhere else.

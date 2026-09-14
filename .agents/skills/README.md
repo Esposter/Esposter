@@ -64,6 +64,7 @@ The `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-
 - `sweeps` — repo-wide mechanical passes and the `.agents/ledgers/` tree that tracks them: when one earns a file, its metadata/coverage tables, standing vs one-shot, shrinking a sweep into an enforcer. The convention a sweep carries stays owned by its own skill.
 - `oxlint` — lint rule exceptions and disable directives.
 - `package-scripts` — which `pnpm` script to run, and from where.
+- `github-actions` — how a workflow step is written: the runner's affordance over a shell reimplementation, template data reaching the shell through `env:`, the skipped-job-is-a-green-check trap. What the CI _does_ stays in `architecture/monorepo-tooling.md`.
 - `context-efficiency` — how the main session spends its own context/turns: delegating wide reads, polling an external process vs sleeping, baselining before chasing an error.
 - `running-checks` — when a check runs and how the session waits on it: every typecheck, lint, test or build goes out in the background, one verification pass after every edit going out, the verdict is the exit code.
 - `runtime-efficiency` — where runtime work is placed and how it is shaped: resolve once at the consumer, keep derivable work off the request path, index by the lookup, one statement per set, bound growth on the write path.
