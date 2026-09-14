@@ -7,7 +7,6 @@ import { LINKED_ACCOUNTS_MUTATION_KEY } from "@/services/user/constants";
 import { useAlertStore } from "@/store/alert";
 import { RoutePath } from "@esposter/shared";
 
-const { currentRoute } = useRouter();
 const router = useRouter();
 const { linkSocial, listAccounts, unlinkAccount } = authClient;
 const alertStore = useAlertStore();
@@ -18,10 +17,10 @@ const { data: accounts, refresh } = useQuery(() => requireAuthData(listAccounts(
 // Because that is what unlinking takes. One provider holds at most one row here: linking keys on the identity
 // The provider issued and `allowDifferentEmails` is off, so a second account of the same provider would have to
 // Carry the same verified address as the first — which no provider issues twice
-const LinkedAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id])));
+const providerIdAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id])));
 // A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its
 // Outcome never reaches the promise the button awaited
-const linkError = currentRoute.value.query.error;
+const linkError = router.currentRoute.value.query.error;
 if (typeof linkError === "string") {
   createAlert(AccountLinkErrorMessageMap[linkError] ?? "Your account could not be linked.", "error");
   // The alert is this outcome's delivery, so the param has done its job — left in the url it replays the toast on
@@ -47,7 +46,7 @@ if (typeof linkError === "string") {
         v-for="loginButtonProps of LoginButtonItems"
         :key="loginButtonProps.provider"
         :="loginButtonProps"
-        :is-linked="LinkedAccountIdMap.has(loginButtonProps.provider) ? true : undefined"
+        :is-linked="providerIdAccountIdMap.has(loginButtonProps.provider) ? true : undefined"
         :linked-account-count="accounts.length"
         @link="
           async () => {
@@ -66,7 +65,7 @@ if (typeof linkError === "string") {
         "
         @unlink="
           async () => {
-            const accountId = LinkedAccountIdMap.get(loginButtonProps.provider);
+            const accountId = providerIdAccountIdMap.get(loginButtonProps.provider);
             if (!accountId) return;
             await executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
               key: LINKED_ACCOUNTS_MUTATION_KEY,
