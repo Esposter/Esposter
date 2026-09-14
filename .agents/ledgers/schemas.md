@@ -40,19 +40,6 @@ grep -rn '\.extend(' --include=*.ts apps/web/app apps/web/server apps/web/shared
 grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts apps/web/app apps/web/shared packages/*/src
 ```
 
-## Open findings
-
-One migration, run when the user says so (`drizzle`: `db:gen` is never an unprompted side effect), carrying
-every column the sentinel and reference rules reach and the passes so far have read past:
-
-- `bansInMessage.bannedByUserId` and `resources.boundResourceId` hold another table's id with no `.references()`.
-  Each comment argues the row must outlive its target, which is what `onDelete: "set null"` does — the rule's own
-  audit-trail case — so the constraint is the fix, not the exemption.
-- `roomsInMessage.slowmodeMs` and `maxFileSizeBytes` are nullable where the rule writes `.notNull().default(0)`
-  and reads `0` as "none" / "the global cap" — the `maxFoos` example verbatim. The select-schema `min(1)`
-  overrides, the `?? MAX_FILE_REQUEST_SIZE` fallbacks and the `null` on the wire all move with it.
-  `roomFilters.timeoutDurationMs` stays nullable: a CHECK forces it to `null` off the timeout action.
-
 ## Next enforceable
 
 - **The inherited-key rule is not lint-decidable, and a ban on the computed form was wrong.** `.safeExtend`

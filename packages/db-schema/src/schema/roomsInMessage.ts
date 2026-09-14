@@ -32,11 +32,12 @@ export const roomsInMessage = pgTable(
     // Raid in progress, which the links have to survive.
     isInvitePaused: boolean().notNull().default(false),
     isReadOnly: boolean().notNull().default(false),
-    // Per-room attachment size cap in bytes — null falls back to the global MAX_FILE_REQUEST_SIZE.
-    maxFileSizeBytes: integer(),
+    // Per-room attachment size cap in bytes — 0 falls back to the global MAX_FILE_REQUEST_SIZE.
+    maxFileSizeBytes: integer().notNull().default(0),
     name: text().notNull().default(""),
     participantKey: text().unique(),
-    slowmodeMs: integer(),
+    // 0 is no slowmode
+    slowmodeMs: integer().notNull().default(0),
     topic: text().notNull().default(""),
     type: roomTypeEnum().notNull().default(RoomType.Room),
     userId: text()
@@ -53,11 +54,8 @@ export const roomsInMessage = pgTable(
         "rooms_type_participantKey_check",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${participantKey} IS NOT NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${participantKey} IS NULL)`,
       ),
-      check(
-        "rooms_maxFileSizeBytes_check",
-        sql`${maxFileSizeBytes} IS NULL OR ${createMinimumCheckSql(maxFileSizeBytes, 1)}`,
-      ),
-      check("rooms_slowmodeMs_check", sql`${slowmodeMs} IS NULL OR ${createMinimumCheckSql(slowmodeMs, 1)}`),
+      check("rooms_maxFileSizeBytes_check", createMinimumCheckSql(maxFileSizeBytes, 0)),
+      check("rooms_slowmodeMs_check", createMinimumCheckSql(slowmodeMs, 0)),
       check("rooms_topic_length_check", createMaxLengthCheckSql(topic, ROOM_TOPIC_MAX_LENGTH)),
     ],
     schema: messageSchema,
@@ -68,9 +66,9 @@ export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
   allowedMimeCategories: createUniqueArraySchema(mimeCategorySchema),
-  maxFileSizeBytes: (schema) => schema.min(1),
+  maxFileSizeBytes: (schema) => schema.nonnegative(),
   name: (schema) => createNormalizedStringSchema(ROOM_NAME_MAX_LENGTH, schema),
-  slowmodeMs: (schema) => schema.min(1),
+  slowmodeMs: (schema) => schema.nonnegative(),
   topic: (schema) => createNormalizedStringSchema(ROOM_TOPIC_MAX_LENGTH, schema),
   type: roomTypeSchema,
 });

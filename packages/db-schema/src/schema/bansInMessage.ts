@@ -8,8 +8,8 @@ import { createSelectSchema } from "drizzle-orm/zod";
 export const bansInMessage = pgTable(
   "bans",
   {
-    // No FK — audit record must survive moderator account deletion
-    bannedByUserId: text(),
+    // The audit record outlives the moderator's account: their row going nulls this rather than taking the ban
+    bannedByUserId: text().references(() => users.id, { onDelete: "set null" }),
     roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
