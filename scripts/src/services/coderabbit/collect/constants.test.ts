@@ -7,6 +7,12 @@ import { assert, describe, expect, test } from "vitest";
 const readWorkflowLines = (name: string): string[] =>
   readFileSync(join(REPOSITORY_ROOT, ".github/workflows", name), "utf8").split(/\r?\n/u);
 
+// The one file name the fixture repository tests write, distinguished by extension or nesting where two must coexist
+export const TEST_FILENAME = "a";
+
+// A fixture repository test is a dozen git processes, each a spawn on Windows
+export const FIXTURE_TEST_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 60 }).total("milliseconds");
+
 describe("queueBranch", () => {
   // The runner pins everything but its triggers to the queue head, whichever event fired it: the trigger file
   // Calls the reusable workflow at that ref, the reusable workflow checks it out, and its retrigger dispatches
