@@ -1,6 +1,5 @@
-/**
- * Default list of colors
- */
+// The six `Desmos.Colors` the calculator cycles through by default, so an expression list built before the
+// Script loads can still name one
 export enum Colors {
   BLACK = "#000000",
   BLUE = "#2d70b3",
