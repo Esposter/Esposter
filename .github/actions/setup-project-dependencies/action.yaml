@@ -33,14 +33,16 @@ runs:
         install: false
     # GitHub's Ubuntu image ships neither bubblewrap nor permissive unprivileged user namespaces, so the
     # virrun os-backend suites would self-gate and silently skip. Test/bench jobs opt into this so the
-    # sandbox is available before Vitest collects host-capability checks.
+    # sandbox is available before Vitest collects host-capability checks. The sysctl is not swallowed: the key
+    # exists on every image that restricts user namespaces (23.10 onward, so every runner this is asked on), and
+    # a refused write surfaces here by name rather than one line later as a probe that fails for no stated reason.
     - name: 📦 Enable bubblewrap sandbox
       if: ${{ fromJSON(inputs.bubblewrap-sandbox) }}
       shell: bash
       run: |
         sudo apt-get update
         sudo apt-get install -y bubblewrap
-        sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+        sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
         dir="$(mktemp -d)"
         bwrap --unshare-all --die-with-parent --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp \
           --overlay-src "$dir" --tmp-overlay "$dir" --chdir "$dir" -- true

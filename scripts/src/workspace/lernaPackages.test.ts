@@ -13,7 +13,7 @@ import { describe, expect, test } from "vitest";
  * held the day it moved — which is exactly what the move to `apps/` did. So the repeat is enforced rather than
  * trusted, against the one file pnpm actually reads.
  */
-describe("lerna packages", () => {
+describe("lernaPackages", () => {
   const LERNA_FILENAME = "lerna.json";
   const WORKSPACE_FILENAME = "pnpm-workspace.yaml";
 

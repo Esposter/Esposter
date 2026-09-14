@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
-
 interface Props {
   resource: Resource;
 }
@@ -20,12 +18,7 @@ const { previewSnapshotVersionId, stopPreviewingSnapshot } = useVersionHistoryRo
       </div>
     </template>
     <template #subtitle>
-      <v-tooltip location="top">
-        <template #activator="{ props: tooltipActivatorProps }">
-          <NuxtTime :="tooltipActivatorProps" :datetime="resource.updatedAt" relative />
-        </template>
-        <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="resource.updatedAt" />
-      </v-tooltip>
+      <ResourceVersionHistoryTime :datetime="resource.updatedAt" />
     </template>
   </v-list-item>
 </template>

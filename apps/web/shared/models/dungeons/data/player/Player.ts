@@ -1,4 +1,4 @@
-import type { Item } from "#shared/models/dungeons/item/Item";
+import type { Inventory } from "#shared/models/dungeons/data/player/Inventory";
 import type { Direction, Position } from "grid-engine";
 
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
@@ -17,7 +17,7 @@ import { z } from "zod";
 
 export class Player {
   direction: Direction;
-  inventory: Item[] = [
+  inventory: Inventory = [
     { id: ItemId.Potion, quantity: 10 },
     { id: ItemId.DamagedBall, quantity: 5 },
   ].map(({ id, ...rest }) => Object.assign(getItem(id), rest));

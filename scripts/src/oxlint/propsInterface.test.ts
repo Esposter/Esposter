@@ -1,10 +1,9 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-const EXPORTED_TYPE_RULE = "props-interface/no-exported-type";
-const PROPS_NAME_RULE = "props-interface/require-props-name";
-
-describe("props-interface", () => {
+describe("propsInterface", () => {
+  const EXPORTED_TYPE_RULE = "props-interface/no-exported-type";
+  const PROPS_NAME_RULE = "props-interface/require-props-name";
   const FIXTURES = [
     // `require-props-name` — the file path spells everything a longer name would repeat.
     {

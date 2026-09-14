@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getTextFromHtml } from "@/services/message/draftsAndSent/getTextFromHtml";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 import { useInputStore } from "@/store/message/input";
+import { getResultAsync, noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
@@ -27,8 +30,7 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
     onComplete();
     return;
   }
-  let isSuccessful = false;
-  await executeMutation(
+  const outcome = await executeMutation(
     () =>
       currentTarget.scheduledMessageJobId
         ? $trpc.message.scheduledMessageJob.rescheduleMessage.mutate({
@@ -47,16 +49,18 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
     {
       key: currentTarget.scheduledMessageJobId || Symbol("scheduleMessage"),
       onSuccess: async () => {
-        isSuccessful = true;
         if (!currentTarget.scheduledMessageJobId)
           clearComposer({ roomId: currentTarget.roomId, threadRootRowKey: currentTarget.threadRootRowKey });
-        await readScheduledMessageJobs();
+        // The job is already scheduled by the time this runs, so the refresh reports its own failure rather
+        // Than throwing: a rejection here rejects the write's outcome, and the dialog would sit submitting
+        // Over a message the server took
+        await getResultAsync(readScheduledMessageJobs).match(noop, createErrorAlert);
         target.value = undefined;
       },
     },
   );
   // A failed schedule keeps the dialog open with the chosen time intact so the user can retry
-  onComplete(isSuccessful);
+  onComplete(outcome.status === MutationStatus.Succeeded);
 };
 </script>
 

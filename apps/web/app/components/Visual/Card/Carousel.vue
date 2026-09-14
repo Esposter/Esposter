@@ -23,29 +23,23 @@ const {
   duration = Temporal.Duration.from({ seconds: 10 }).total("milliseconds"),
   maxShownCards = 5,
 } = defineProps<Props>();
-/**
- * Generate CSS card styling for smooth, non-jumping animations.
- * Layout is a 1x2 grid: the left item holds the moving card, the right item holds the stack.
- * - The left card animates right -> left, then back to the right for the next card.
- * - Each right card has its own animation describing how it moves to the next position.
- * The right stack size is variable (up to maxShownCards) and breakpoints change card sizing,
- * so we offload the work to SASS generation + Vue style variables and keep the styling generic.
- * When card count exceeds the maximum, the shuffle is kept subtle:
- * - Hide the old last card behind the second-last one.
- * - Slide the left card to the far right.
- * - Shuffle every other right card left, exposing a new card atop the second right-most.
- */
+// Generate CSS card styling for smooth, non-jumping animations.
+// Layout is a 1x2 grid: the left item holds the moving card, the right item holds the stack.
+// - The left card animates right -> left, then back to the right for the next card.
+// - Each right card has its own animation describing how it moves to the next position.
+// The right stack size is variable (up to maxShownCards) and breakpoints change card sizing,
+// So we offload the work to SASS generation + Vue style variables and keep the styling generic.
+// When card count exceeds the maximum, the shuffle is kept subtle:
+// - Hide the old last card behind the second-last one.
+// - Slide the left card to the far right.
+// - Shuffle every other right card left, exposing a new card atop the second right-most.
 // Fake card ids are just the card indexes, so we can "rotate" by incrementing the whole list by 1.
 // They double as a z-index.
 const cardIds = ref<number[]>(cards.map((_card, index) => index));
 // The active card is the card that's moving from right -> left -> right.
 const activeCardId = ref<number>();
 const inactiveCardId = ref<number>();
-const classes = computed<string[]>(() => {
-  const newClasses = [];
-  for (const cardId of cardIds.value) newClasses.push(getClass(cardId));
-  return newClasses;
-});
+const classes = computed(() => cardIds.value.map((cardId) => getClass(cardId)));
 // Four card classes:
 // - Active: moving right -> left -> right.
 // - Overflow: hidden behind the second-last card, no animation.

@@ -3,13 +3,11 @@ import type { spawn as baseSpawn, ChildProcessWithoutNullStreams } from "node:ch
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
 import { EventEmitter } from "node:events";
 import { PassThrough, Readable } from "node:stream";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
 
 vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
-
-const REFUSAL_LINE = "You've hit your session limit · resets 3:10am (UTC)";
 
 // A session as Claude Code prints it: one JSON event per line, with whatever it says for itself on its way out
 // Printed as plain text. `close` is emitted once stdout ends, which is the order the real child fires them in —
@@ -30,9 +28,7 @@ const getResultLine = (subtype: string, result: string): string =>
   JSON.stringify({ duration_ms: 1, num_turns: 1, result, subtype, total_cost_usd: 0, type: "result" });
 
 describe(runDrain, () => {
-  beforeEach(() => {
-    spawn.mockReset();
-  });
+  const REFUSAL_LINE = "You've hit your session limit · resets 3:10am (UTC)";
 
   // A limit is a refusal to *start*, so a session that ran to the end cannot be one — whatever its narration says.
   // The drain is asked to fix findings about this very wording, so its own summary quotes the phrase routinely
@@ -47,14 +43,28 @@ describe(runDrain, () => {
     await expect(runDrain("prompt")).resolves.toStrictEqual({ isDrained: true, limitResetAtMs: undefined });
   });
 
-  // The model's turns and a successful run's closing message are narration; only what Claude Code says for itself
-  // Reaches the limit parser, which is what keeps a failed fix's own summary from reading as an outage
+  // The model's turns are narration; only what Claude Code says for itself reaches the limit parser, which is
+  // What keeps a failed fix's own summary from reading as an outage
   test("reads no limit off the model's narration on a failed session", async () => {
     expect.hasAssertions();
 
     mockSession(1, [getAssistantLine(REFUSAL_LINE), getResultLine("error_during_execution", "the commit failed")]);
 
     await expect(runDrain("prompt")).resolves.toStrictEqual({ isDrained: false, limitResetAtMs: undefined });
+  });
+
+  // The refusal states `success` in the frame it exits non-zero with, so the subtype is no evidence the session
+  // Ran — read as a closing message it never reaches the parser, and three pushes during one outage quarantine a
+  // Review nobody failed
+  test("classifies a refusal wearing a successful subtype as a session limit", async () => {
+    expect.hasAssertions();
+
+    mockSession(1, [getResultLine("success", REFUSAL_LINE)]);
+
+    const { isDrained, limitResetAtMs } = await runDrain("prompt");
+
+    expect(isDrained).toBe(false);
+    expect(limitResetAtMs).toBeDefined();
   });
 
   // Claude Code refusing to start writes a sentence rather than JSON, and that sentence is the only thing that
@@ -87,7 +97,8 @@ describe(runDrain, () => {
     await runDrain("prompt");
 
     const passedEnvironment = spawn.mock.calls[0]?.[2]?.env;
-    expect(passedEnvironment).toMatchObject({ CLAUDE_CODE_OAUTH_TOKEN: "claude-token", PATH: expect.anything() });
+    expect(passedEnvironment?.CLAUDE_CODE_OAUTH_TOKEN).toBe("claude-token");
+    expect(passedEnvironment?.PATH).toBe(process.env.PATH);
     expect(passedEnvironment).not.toHaveProperty("GH_TOKEN");
     expect(passedEnvironment).not.toHaveProperty("GITHUB_TOKEN");
     expect(passedEnvironment).not.toHaveProperty("PULUMI_ACCESS_TOKEN");

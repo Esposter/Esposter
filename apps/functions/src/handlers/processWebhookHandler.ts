@@ -1,8 +1,8 @@
 import type { EventGridHandler } from "@azure/functions";
 
 import { webhookEventGridDataSchema } from "#src/models/message/WebhookEventGridData";
-import { createAndBroadcastMessage } from "#src/services/message/createAndBroadcastMessage";
 import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
+import { createAndBroadcastMessage } from "#src/services/message/createAndBroadcastMessage";
 import { getWebhookCreateMessageInput } from "#src/services/message/getWebhookCreateMessageInput";
 import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { AppNotificationType, AzureFunction, publishNotification } from "@esposter/db-schema";

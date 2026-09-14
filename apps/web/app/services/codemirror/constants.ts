@@ -1,7 +1,8 @@
 import { LanguageDescription } from "@codemirror/language";
 import { languages } from "@codemirror/language-data";
 
-export const extendedLanguages = [
+// `@codemirror/language-data` ships no Vue entry, so the one the app needs most is appended here
+export const EXTENDED_LANGUAGES = [
   ...languages,
   LanguageDescription.of({
     extensions: ["vue"],

@@ -15,7 +15,7 @@ import { describe, expect, test } from "vitest";
  * (resolveMirrorExcludes) — so an index-based check is red on every local run and green only in CI, which runs vitest
  * natively.
  */
-describe("workspace package symlinks", () => {
+describe("packageSymlinks", () => {
   const NODE_MODULES_DIRECTORY = "node_modules";
   const PARENT_DIRECTORY = "..";
   // `node_modules` is the one prune: it is the fetcher's own output rather than package source, and every dependency

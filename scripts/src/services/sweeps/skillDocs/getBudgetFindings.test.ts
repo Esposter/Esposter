@@ -24,7 +24,9 @@ describe(getBudgetFindings, () => {
 
     const text = "—".repeat(MAX_SKILL_BYTES / 2);
 
-    expect(getBudgetFindings([{ path, text }])).toHaveLength(1);
+    expect(getBudgetFindings([{ path, text }])).toStrictEqual([
+      { detail: `${(MAX_SKILL_BYTES / 2) * 3} bytes, 1 lines`, path, type: SkillDocsFindingType.Budget },
+    ]);
   });
 
   test("reports nothing for a page inside both budgets", () => {

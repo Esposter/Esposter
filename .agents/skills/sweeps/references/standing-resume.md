@@ -20,11 +20,50 @@ unquoted is expanded by the shell against the working directory first — which 
 than failing: `*README.md` unquoted becomes the single README at the repo root, so the `docs` sweep resumes over
 one file and reports every other tree as clean.
 
+## A resume set the size of the whole unit is a move, not churn
+
+The command above reports a file as changed whenever a commit in the range touched its **path**, and a
+repo-wide relocation touches every one of them. Under a pathspec the rename is not even visible as a rename:
+`git log --name-status` limits itself to the new path, so the old half is outside the filter and every entry
+comes back `A`. The tell is the shape of the answer — a resume that returns the unit's whole file list, when the
+row was dated precisely because nothing much has happened there since.
+
+So when a resume set is close to the unit's own size, find the commit before believing it:
+
+```bash
+git log --since=<Last swept date> --format="%h %s" -- '<pathspec>' | tail
+git show --name-status --format= -M <suspect> | awk '{print substr($1,1,1)}' | sort | uniq -c
+```
+
+A commit whose status tally is `R` and nothing else changed no content, so it is not work for a content sweep.
+Subtract its files and resume over the remainder:
+
+```bash
+git show --name-only --format= <move> | sort -u > moved
+git log --since=<Last swept date> --name-only --pretty=format: -- '<pathspec>' | sort -u | comm -23 - moved
+```
+
+Left unchecked this is the silent scan of `SKILL.md` inverted — rather than reporting nothing and reading as
+clean, it reports everything and reads as a tree nobody can afford to sweep, which is how a row that is four
+files of real work gets deferred as several sittings.
+
 ## Scope is the convention's domain, not the union of the rows
 
 Declaring only what already has a row makes the command agree with the ledger by construction, which is the one
-thing it must not do — a tree the convention reaches that no unit names is the gap worth surfacing, and scoped to
-the domain it comes back as work on the first resume rather than staying invisible until someone happens to look.
+thing it must not do — a tree the convention reaches that no unit names is the gap worth surfacing.
+
+**The scope alone does not surface it, though: the resume asks which files changed, and a tree nobody has touched
+since the date changes nothing.** So an unnamed tree that is also quiet stays invisible for exactly as long as it
+stays quiet, which is the case where nobody was going to look anyway. Reconciling is its own step, and it is
+cheap — list the scope's own directories and read the rows beside them:
+
+```bash
+find <scope directory> -maxdepth 1
+```
+
+Anything the ledger does not name opens at `—`. One sitting on `quality/` found four: `app/models/message` and
+`app/models/resource` had no row in any ledger, and `components/Resource`'s fourteen root files and five of its
+directories had none in theirs — none of which any resume would have reported, because none of them had changed.
 
 That is also why `Scope` lives on the index row and never inside the ledger file: a resume reads the index to
 find which files to run against, so a scope stored past that point cannot be reached without opening the thing it

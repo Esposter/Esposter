@@ -1,9 +1,8 @@
-import { defineConfig } from "unocss";
 import { describe, expect, test } from "vitest";
 
 import unoConfig from "./uno.config";
 
-describe(defineConfig, () => {
+describe("unoConfig", () => {
   const { rules, safelist, shortcuts, theme } = unoConfig;
 
   test("rules, safelist, shortcuts, and theme", () => {

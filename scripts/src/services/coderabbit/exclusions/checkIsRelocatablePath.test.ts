@@ -24,7 +24,7 @@ describe(checkIsRelocatablePath, () => {
     "apps/web/app/store/alert.test.ts",
     "packages/shared/src/types.test-d.ts",
     "apps/web/app/store/alert.ts",
-    "scripts/src/coderabbit/window/index.ts",
+    "scripts/src/coderabbit/feedback/index.ts",
   ])("lets %s be moved mechanically", (path) => {
     expect.hasAssertions();
 

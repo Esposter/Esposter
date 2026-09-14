@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { KeyboardShortcutList } from "@/models/message/input/KeyboardShortcutList";
+import { KeyboardShortcutList } from "@/services/message/input/KeyboardShortcutList";
 import { useKeyboardShortcutsDialogStore } from "@/store/message/input/keyboardShortcutsDialog";
 
 const keyboardShortcutsDialogStore = useKeyboardShortcutsDialogStore();

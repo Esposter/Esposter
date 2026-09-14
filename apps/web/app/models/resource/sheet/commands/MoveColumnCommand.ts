@@ -2,7 +2,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { takeOne } from "@esposter/shared";
+import { alignRowDataToColumns } from "@/services/resource/sheet/commands/alignRowDataToColumns";
 
 export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn> {
   readonly type = CommandType.MoveColumn;
@@ -36,13 +36,7 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
     const movedColumn = dataSource.columns[fromIndex];
     if (!movedColumn) return;
 
-    const columns = dataSource.columns.toSpliced(fromIndex, 1).toSpliced(toIndex, 0, movedColumn);
-    dataSource.columns = columns;
-    const columnNames = columns.map(({ name }) => name);
-    for (const row of dataSource.rows) {
-      const newData: typeof row.data = {};
-      for (const name of columnNames) newData[name] = takeOne(row.data, name);
-      row.data = newData;
-    }
+    dataSource.columns = dataSource.columns.toSpliced(fromIndex, 1).toSpliced(toIndex, 0, movedColumn);
+    alignRowDataToColumns(dataSource);
   }
 }

@@ -1,5 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { AGENT_ALIAS_DIRECTORY, AGENT_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
+import { AGENT_ALIAS_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -19,38 +19,34 @@ const readGitignorePatterns = (): string[] =>
  * `ignorePatterns` into flat-config global `ignores` through `eslint-plugin-oxlint`, so the oxlint assertions
  * cover both linters.
  */
-describe(AGENT_DIRECTORY, () => {
+describe("agentDirectories", () => {
   // Only a tool that follows directory symlinks enumerates the tree a second time under the alias, which is why
-  // Absent here and present below: oxfmt and git.
-  describe(AGENT_ALIAS_DIRECTORY, () => {
-    test("is excluded from the oxlint ignore patterns the shared eslint config bridges", () => {
-      expect.hasAssertions();
+  // The alias is absent from the two below: oxfmt and git.
+  test("excludes the alias from the oxlint ignore patterns the shared eslint config bridges", () => {
+    expect.hasAssertions();
 
-      expect(readJson(".oxlintrc.json").ignorePatterns).toContain(AGENT_ALIAS_DIRECTORY);
-    });
+    expect(readJson(".oxlintrc.json").ignorePatterns).toContain(AGENT_ALIAS_DIRECTORY);
   });
 
-  describe(AGENT_WORKTREES_DIRECTORY, () => {
-    test("is excluded from the oxlint ignore patterns the shared eslint config bridges", () => {
-      expect.hasAssertions();
+  test("excludes the worktrees from the oxlint ignore patterns the shared eslint config bridges", () => {
+    expect.hasAssertions();
 
-      expect(readJson(".oxlintrc.json").ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
-    });
+    expect(readJson(".oxlintrc.json").ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
+  });
 
-    // A format run reaches further than a lint run: oxfmt rewrites what it walks, so a live worktree would have
-    // Another branch's files reformatted in place.
-    test("is excluded from the formatter", () => {
-      expect.hasAssertions();
+  // A format run reaches further than a lint run: oxfmt rewrites what it walks, so a live worktree would have
+  // Another branch's files reformatted in place.
+  test("excludes the worktrees from the formatter", () => {
+    expect.hasAssertions();
 
-      expect(readJson(".oxfmtrc.json").ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
-    });
+    expect(readJson(".oxfmtrc.json").ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
+  });
 
-    // The agent harness writes `.git/info/exclude`, which is machine-local — no clone or CI runner has it, so the
-    // Checked-in ignore is what keeps a worktree out of `git status` everywhere else.
-    test("is excluded from git", () => {
-      expect.hasAssertions();
+  // The agent harness writes `.git/info/exclude`, which is machine-local — no clone or CI runner has it, so the
+  // Checked-in ignore is what keeps a worktree out of `git status` everywhere else.
+  test("excludes the worktrees from git", () => {
+    expect.hasAssertions();
 
-      expect(readGitignorePatterns()).toContain(AGENT_WORKTREES_DIRECTORY);
-    });
+    expect(readGitignorePatterns()).toContain(AGENT_WORKTREES_DIRECTORY);
   });
 });

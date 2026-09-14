@@ -21,6 +21,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
   const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
   const battlePlayerStore = useBattlePlayerStore();
+  const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
   const { launchScene, previousSceneKey, switchToPreviousScene } = usePreviousScene(SceneKey.MonsterParty);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
@@ -72,12 +73,10 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         await useItem(scene, toRef(itemOptionGrid.value), toRef(value));
         return;
       }
-      default: {
-        const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
+      default:
         monsterDetailsSceneStore.selectedMonster = value;
         launchScene(scene, SceneKey.MonsterDetails);
         return;
-      }
     }
   };
 

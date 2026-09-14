@@ -2,10 +2,10 @@ import type { EventGridEvent } from "@azure/functions";
 import type { EventGridEventInput } from "@esposter/db-schema";
 
 import { replayDeadLetterEventHandler } from "#src/handlers/replayDeadLetterEventHandler";
-import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/deadLetter/constants";
 import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
 import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/eventGridPublisherClient.test";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
+import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/deadLetter/constants";
 import { InvocationContext } from "@azure/functions";
 import {
   AzureContainer,

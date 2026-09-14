@@ -12,6 +12,10 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
     super(ChartType.Basic);
   }
 
+  override checkIsActive() {
+    return true;
+  }
+
   override handleConfiguration(apexOptions: ApexOptions, { dataLabels, subtitle, title }: T) {
     apexOptions.chart = defu(
       {
@@ -43,8 +47,5 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
 
   override handleSchema(schema: z.ZodObject) {
     return z.object({ ...basicChartConfigurationSchema.shape, ...schema.shape });
-  }
-  override isActive() {
-    return true;
   }
 }

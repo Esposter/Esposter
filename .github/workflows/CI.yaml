@@ -150,7 +150,9 @@ jobs:
       # So failing tests / unhandled errors are also printed to the console — the blob reporter alone writes
       # The file and prints only where it went, hiding why a shard exits non-zero.
       - name: 🧪 Test
-        run: pnpm coverage --reporter=default --reporter=blob --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        env:
+          SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
+        run: pnpm coverage --reporter=default --reporter=blob --shard="$SHARD"
 
       - name: 📤 Upload blob report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

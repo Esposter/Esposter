@@ -5,7 +5,6 @@ import type { ItemEntityType } from "@esposter/shared";
 import type { Promisable } from "type-fest";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { useInventorySceneStore } from "@/store/dungeons/inventory/scene";
 import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 
 export abstract class AItemResolver implements ItemEntityType<ItemEffectType> {
@@ -15,25 +14,11 @@ export abstract class AItemResolver implements ItemEntityType<ItemEffectType> {
     this.type = type;
   }
 
-  static postHandleItem(item: Ref<Item>) {
-    const inventorySceneStore = useInventorySceneStore();
-    const { inventory } = storeToRefs(inventorySceneStore);
-
-    item.value.quantity--;
-    if (item.value.quantity > 0) return;
-
-    const index = inventory.value.findIndex(({ id }) => id === item.value.id);
-    if (index === -1) return;
-    inventory.value = inventory.value.toSpliced(index, 1);
-  }
-
-  handleItem(_scene: SceneWithPlugins, _item: Ref<Item>, _monster: Ref<Monster>): Promisable<void> {}
-
-  isActive(_item: Ref<Item>, _monster: Ref<Monster>): boolean {
+  checkIsActive(_item: Ref<Item>, _monster: Ref<Monster>): boolean {
     return true;
   }
 
-  validate(item: Ref<Item>): boolean {
+  checkIsValid(item: Ref<Item>): boolean {
     if (item.value.effect.type !== this.type) return false;
 
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
@@ -46,4 +31,6 @@ export abstract class AItemResolver implements ItemEntityType<ItemEffectType> {
 
     return true;
   }
+
+  handleItem(_scene: SceneWithPlugins, _item: Ref<Item>, _monster: Ref<Monster>): Promisable<void> {}
 }

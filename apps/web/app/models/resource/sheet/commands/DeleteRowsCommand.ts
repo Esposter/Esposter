@@ -1,11 +1,11 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { restoreAtIndices } from "@/services/resource/sheet/commands/restoreAtIndices";
 import { takeOne } from "@esposter/shared";
 
 export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows> {
@@ -37,19 +37,9 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
     );
     for (const { row } of ascendingRows)
       for (const column of dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
-    const restoredRows: Row[] = [];
-    let existingIndex = 0;
-    for (const { index, row } of ascendingRows) {
-      while (restoredRows.length < index) {
-        restoredRows.push(takeOne(dataSource.rows, existingIndex));
-        existingIndex++;
-      }
-      restoredRows.push(row);
-    }
-    while (existingIndex < dataSource.rows.length) {
-      restoredRows.push(takeOne(dataSource.rows, existingIndex));
-      existingIndex++;
-    }
-    dataSource.rows = restoredRows;
+    dataSource.rows = restoreAtIndices(
+      dataSource.rows,
+      ascendingRows.map(({ index, row }) => ({ index, item: row })),
+    );
   }
 }

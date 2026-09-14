@@ -12,7 +12,7 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
       from: r.users.id.through(r.userAchievements.userId),
       to: r.achievements.id.through(r.userAchievements.achievementId),
     }),
-    bansInMessages: r.many.bansInMessage({
+    bansInMessage: r.many.bansInMessage({
       from: r.users.id,
       to: r.bansInMessage.userId,
     }),
@@ -20,7 +20,7 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
       from: r.users.id,
       to: r.blocks.blockerId,
     }),
-    callSessionsInMessages: r.many.callSessionsInMessage({
+    callSessionsInMessage: r.many.callSessionsInMessage({
       from: r.users.id,
       to: r.callSessionsInMessage.userId,
     }),
@@ -46,25 +46,25 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
       from: r.users.id,
       to: r.friendRequests.receiverId,
     }),
-    roomCategoriesInMessages: r.many.roomCategoriesInMessage({
+    roomCategoriesInMessage: r.many.roomCategoriesInMessage({
       from: r.users.id,
       to: r.roomCategoriesInMessage.userId,
     }),
-    roomsInMessages: r.many.roomsInMessage({
+    roomsInMessage: r.many.roomsInMessage({
       from: r.users.id,
       to: r.roomsInMessage.userId,
     }),
-    roomsInMessagesViaInvitesInMessage: r.many.roomsInMessage({
+    roomsInMessageViaInvitesInMessage: r.many.roomsInMessage({
       alias: "roomsInMessage_id_users_id_via_invitesInMessage",
       from: r.users.id.through(r.invitesInMessage.userId),
       to: r.roomsInMessage.id.through(r.invitesInMessage.roomId),
     }),
-    roomsInMessagesViaSearchHistoriesInMessage: r.many.roomsInMessage({
+    roomsInMessageViaSearchHistoriesInMessage: r.many.roomsInMessage({
       alias: "roomsInMessage_id_users_id_via_searchHistoriesInMessage",
       from: r.users.id.through(r.searchHistoriesInMessage.userId),
       to: r.roomsInMessage.id.through(r.searchHistoriesInMessage.roomId),
     }),
-    roomsInMessagesViaUsersToRoomsInMessage: r.many.roomsInMessage({
+    roomsInMessageViaUsersToRoomsInMessage: r.many.roomsInMessage({
       alias: "roomsInMessage_id_users_id_via_usersToRoomsInMessage",
       from: r.users.id.through(r.usersToRoomsInMessage.userId),
       to: r.roomsInMessage.id.through(r.usersToRoomsInMessage.roomId),
@@ -77,15 +77,15 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
       from: r.users.id,
       to: r.userAchievements.userId,
     }),
-    userStatusesInMessages: r.many.userStatusesInMessage({
+    userStatusesInMessage: r.many.userStatusesInMessage({
       from: r.users.id,
       to: r.userStatusesInMessage.userId,
     }),
-    usersToRoomRolesInMessages: r.many.usersToRoomRolesInMessage({
+    usersToRoomRolesInMessage: r.many.usersToRoomRolesInMessage({
       from: r.users.id,
       to: r.usersToRoomRolesInMessage.userId,
     }),
-    webhooksInMessages: r.many.webhooksInMessage({
+    webhooksInMessage: r.many.webhooksInMessage({
       from: r.users.id,
       to: r.webhooksInMessage.creatorId,
     }),

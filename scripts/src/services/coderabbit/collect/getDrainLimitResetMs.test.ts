@@ -9,11 +9,13 @@ describe(getDrainLimitResetMs, () => {
 
   test("reads a drain that ran as no limit", () => {
     expect.hasAssertions();
+
     expect(getDrainLimitResetMs("Fixed three findings and committed.", nowMs)).toBeUndefined();
   });
 
   test("reads the stated reset as an instant in the same day", () => {
     expect.hasAssertions();
+
     expect(getDrainLimitResetMs("You've hit your session limit · resets 3:10am (UTC)", nowMs)).toBe(
       Temporal.Duration.from({ hours: 3, minutes: 10 }).total("milliseconds"),
     );
@@ -21,6 +23,7 @@ describe(getDrainLimitResetMs, () => {
 
   test("reads a stated afternoon hour as the hour it is", () => {
     expect.hasAssertions();
+
     expect(getDrainLimitResetMs("usage limit reached, resets at 12:30pm (UTC)", nowMs)).toBe(
       Temporal.Duration.from({ hours: 12, minutes: 30 }).total("milliseconds"),
     );
@@ -28,6 +31,7 @@ describe(getDrainLimitResetMs, () => {
 
   test("carries a reset the day has already passed to the next one", () => {
     expect.hasAssertions();
+
     expect(getDrainLimitResetMs("You've hit your session limit · resets 3:10am (UTC)", afternoonMs)).toBe(
       DAY_MS + Temporal.Duration.from({ hours: 3, minutes: 10 }).total("milliseconds"),
     );
@@ -36,6 +40,7 @@ describe(getDrainLimitResetMs, () => {
 
   test("falls back when the limit states a deadline this cannot read", () => {
     expect.hasAssertions();
+
     expect(getDrainLimitResetMs("You've hit your session limit · resets 3:10am (PDT)", nowMs)).toBe(
       DRAIN_LIMIT_FALLBACK_MS,
     );
@@ -45,6 +50,7 @@ describe(getDrainLimitResetMs, () => {
   // "resets" for its own reasons. Only one sentence saying both is the refusal's template
   test("reads a failed summary mentioning the phrase as no limit", () => {
     expect.hasAssertions();
+
     const output = "Could not fix the session limit finding.\nThe suite resets the fixture between tests.";
     expect(getDrainLimitResetMs(output, nowMs)).toBeUndefined();
   });
@@ -53,6 +59,7 @@ describe(getDrainLimitResetMs, () => {
   // Words "session limit" and "resets" next to each other is still ordinary prose, not a refusal to start
   test("reads a one-line summary pairing the phrase with an unrelated reset as no limit", () => {
     expect.hasAssertions();
+
     const output = "Could not fix the session limit finding; the config value resets nightly for its own reasons.";
     expect(getDrainLimitResetMs(output, nowMs)).toBeUndefined();
   });

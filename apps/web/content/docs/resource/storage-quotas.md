@@ -142,7 +142,7 @@ Closing these needs a recompute that lists real object sizes per user. Worth doi
 | `apps/web/server/services/azure/webPubSub/generateWebPubSubClientAccessUrl.ts`                   | one hub's client access token, group-scoped       |
 | `packages/db/src/services/storage/releaseStorageLedgerEntriesWhere.ts`                           | the one place bytes leave the counter             |
 | `apps/functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`                              | the `BlobCreated` handler                         |
-| `apps/functions/src/services/broadcastStorageUsage.ts`                                           | tells an owner's meter their counter moved        |
+| `apps/functions/src/services/storage/broadcastStorageUsage.ts`                                   | tells an owner's meter their counter moved        |
 | `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe007.ts` | the subscription, filtered to resource assets     |
 | `apps/web/server/trpc/routers/storage.ts`                                                        | `readUsage`, `onUpdateUsage`, the hub access url  |
 | `apps/web/app/composables/storage/useStorageSubscribables.ts`                                    | both halves of the live meter                     |

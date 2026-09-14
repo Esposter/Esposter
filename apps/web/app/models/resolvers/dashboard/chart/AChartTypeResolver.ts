@@ -11,13 +11,13 @@ export abstract class AChartTypeResolver<T extends Chart["configuration"]> imple
     this.type = type;
   }
 
+  checkIsActive(type: ChartType) {
+    return type === this.type;
+  }
+
   handleConfiguration(_apexOptions: ApexOptions, _configuration: T) {}
 
   handleSchema(schema: z.ZodObject): z.ZodObject {
     return schema;
-  }
-
-  isActive(type: ChartType) {
-    return type === this.type;
   }
 }

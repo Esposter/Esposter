@@ -14,20 +14,7 @@ export class HealItemResolver extends AItemResolver {
     super(ItemEffectType.Heal);
   }
 
-  override async handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
-    const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
-    const { showMessages } = monsterPartyInfoPanelStore;
-    const oldHealth = monster.value.status.health;
-    const newHealth = Math.min(oldHealth + item.value.effect.value, monster.value.statistics.maxHealth);
-
-    monster.value.status.health = newHealth;
-    await showMessages(scene, [`Healed ${monster.value.key} by ${newHealth - oldHealth} HP.`]);
-    phaserEventEmitter.emit("useItem", scene, item.value, monster.value, () =>
-      battleStateMachine.setState(StateName.EnemyInput),
-    );
-  }
-
-  override isActive(_item: Ref<Item>, monster: Ref<Monster>) {
+  override checkIsActive(_item: Ref<Item>, monster: Ref<Monster>) {
     const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
     const { infoDialogMessage } = storeToRefs(monsterPartyInfoPanelStore);
 
@@ -40,5 +27,18 @@ export class HealItemResolver extends AItemResolver {
     }
 
     return true;
+  }
+
+  override async handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
+    const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+    const { showMessages } = monsterPartyInfoPanelStore;
+    const oldHealth = monster.value.status.health;
+    const newHealth = Math.min(oldHealth + item.value.effect.value, monster.value.statistics.maxHealth);
+
+    monster.value.status.health = newHealth;
+    await showMessages(scene, [`Healed ${monster.value.key} by ${newHealth - oldHealth} HP.`]);
+    phaserEventEmitter.emit("useItem", scene, item.value, monster.value, () =>
+      battleStateMachine.setState(StateName.EnemyInput),
+    );
   }
 }

@@ -4,6 +4,7 @@ import { describe, expect, test } from "vitest";
 describe(getFindingText, () => {
   test("keeps the reasoning, the proposed fix and the agent prompt", () => {
     expect.hasAssertions();
+
     const body = [
       "_🎯 Functional Correctness_ | _🟡 Minor_",
       "",
@@ -31,6 +32,7 @@ describe(getFindingText, () => {
 
   test("drops the hidden comments and the static-analysis transcript", () => {
     expect.hasAssertions();
+
     const body = [
       "<details>",
       "<summary>🔎 Supported by static analysis</summary>",
@@ -59,6 +61,7 @@ describe(getFindingText, () => {
 
   test("keeps an HTML comment inside a fenced proposed fix", () => {
     expect.hasAssertions();
+
     const body = [
       "**Mark the region.**",
       "",

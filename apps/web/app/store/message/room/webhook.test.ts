@@ -19,10 +19,10 @@ describe(useWebhookStore, () => {
   const server = setupMswTrpc();
   const first = createWebhook({ name: "first", roomId });
   const second = createWebhook({ name: "second", roomId });
-  // The read hands back each row with the room and the webhook's own user attached, the way the panel renders it
+  // The read hands back each row with the room and the webhook's creator attached, the way the panel renders it
   const room = createRoom("room");
-  const user = createUser();
-  const readWebhook = (webhook: WebhookInMessage) => ({ ...webhook, room, user });
+  const creator = createUser();
+  const readWebhook = (webhook: WebhookInMessage) => ({ ...webhook, creator, room });
 
   beforeEach(() => {
     setActivePinia(createPinia());

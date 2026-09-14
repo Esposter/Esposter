@@ -1,8 +1,8 @@
 import type { ReviewThread } from "#src/models/coderabbit/shared/ReviewThread";
 import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
 
-import { getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -25,7 +25,6 @@ describe(postDrainVerdicts, () => {
   let directory: string;
 
   beforeEach(() => {
-    runGh.mockReset();
     directory = mkdtempSync(join(tmpdir(), "postDrainVerdicts-test-"));
   });
 

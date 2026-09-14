@@ -20,17 +20,7 @@ export class CaptureItemResolver extends AItemResolver {
     super(ItemEffectType.Capture);
   }
 
-  override handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
-    const ballStore = useBallStore();
-    const { texture } = storeToRefs(ballStore);
-    if (!checkIsBallKey(item.value.id)) throw new NotFoundError(this.handleItem.name, item.value.id);
-    texture.value = item.value.id;
-    phaserEventEmitter.emit("useItem", scene, item.value, monster.value, () =>
-      battleStateMachine.setState(StateName.CatchMonster),
-    );
-  }
-
-  override isActive(item: Ref<Item>, _monster: Ref<Monster>) {
+  override checkIsActive(item: Ref<Item>, _monster: Ref<Monster>) {
     const monsterPartySceneStore = useMonsterPartySceneStore();
     const { monsters } = storeToRefs(monsterPartySceneStore);
 
@@ -42,5 +32,15 @@ export class CaptureItemResolver extends AItemResolver {
     }
 
     return true;
+  }
+
+  override handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
+    const ballStore = useBallStore();
+    const { texture } = storeToRefs(ballStore);
+    if (!checkIsBallKey(item.value.id)) throw new NotFoundError(this.handleItem.name, item.value.id);
+    texture.value = item.value.id;
+    phaserEventEmitter.emit("useItem", scene, item.value, monster.value, () =>
+      battleStateMachine.setState(StateName.CatchMonster),
+    );
   }
 }

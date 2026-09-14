@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { MAX_BLUEPRINT_ENTRIES } from "#shared/services/resource/blueprint/constants";
 import { pluralize } from "#shared/util/text/pluralize";
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { useNotificationStore } from "@/store/notification";
 import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
 import { NotificationSeverity, RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
@@ -44,21 +45,22 @@ onUnmounted(() => {
     :confirm-button-props
     @submit="
       async (_event, onComplete) => {
-        let isSuccessful = false;
-        await executeMutation(() => $trpc.blueprint.captureBlueprint.mutate({ ids: captureIds, name }), {
-          key: Symbol('captureBlueprint'),
-          onError: createErrorNotification,
-          onSuccess: async (newBlueprint) => {
-            createNotification({
-              action: { title: 'Go to blueprint', to: RoutePath.Resource(newBlueprint.id) },
-              severity: NotificationSeverity.Success,
-              title: `Created blueprint “${newBlueprint.name}”`,
-            });
-            isSuccessful = true;
-            await navigateTo(RoutePath.Resource(newBlueprint.id));
+        const outcome = await executeMutation(
+          () => $trpc.blueprint.captureBlueprint.mutate({ ids: captureIds, name }),
+          {
+            key: Symbol('captureBlueprint'),
+            onError: createErrorNotification,
+            onSuccess: async (newBlueprint) => {
+              createNotification({
+                action: { title: 'Go to blueprint', to: RoutePath.Resource(newBlueprint.id) },
+                severity: NotificationSeverity.Success,
+                title: `Created blueprint “${newBlueprint.name}”`,
+              });
+              await navigateTo(RoutePath.Resource(newBlueprint.id));
+            },
           },
-        });
-        onComplete(isSuccessful);
+        );
+        onComplete(outcome.status === MutationStatus.Succeeded);
       }
     "
   >

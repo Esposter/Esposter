@@ -3,14 +3,17 @@ import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 
 interface QueryOptions<TResult> {
   // The surface renders the failure itself, as the StyledErrorState with its retry, so the toast is dropped
-  // Rather than stacked on top of it — the same trade useReadCounts makes for the explorer's count reads
+  // Rather than stacked on top of it
   isInlineError?: true;
+  // The read waits for the first `refresh` rather than firing on setup — a lens the surface opens on demand,
+  // Where a fetch at setup would spend a round trip on a read nothing renders yet
+  isLazy?: true;
   onSuccess?: (result: TResult) => void;
 }
 
 export const useQuery = <TResult>(
   query: () => Promise<TResult>,
-  { isInlineError, onSuccess }: QueryOptions<TResult> = {},
+  { isInlineError, isLazy, onSuccess }: QueryOptions<TResult> = {},
 ) => {
   const { executeQuery, isPending } = useMutation();
   const data = shallowRef<TResult>();
@@ -36,7 +39,7 @@ export const useQuery = <TResult>(
     });
   };
   // Fetch on setup without blocking it — no Suspense boundary, unlike a top-level awaited query
-  getSynchronizedFunction(refresh)();
+  if (!isLazy) getSynchronizedFunction(refresh)();
   // The instance reads one target, so the primitive's pending state is this read's loading flag — a consumer
   // Rendering a spinner takes it from here rather than keeping an isLoading ref of its own
   return { data, error, isPending, refresh };

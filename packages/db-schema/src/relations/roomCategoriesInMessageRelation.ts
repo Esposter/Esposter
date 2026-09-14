@@ -3,7 +3,7 @@ import { defineRelationsPart } from "drizzle-orm";
 
 export const roomCategoriesInMessageRelation = defineRelationsPart(schema, (r) => ({
   roomCategoriesInMessage: {
-    roomsInMessages: r.many.roomsInMessage({
+    roomsInMessage: r.many.roomsInMessage({
       from: r.roomCategoriesInMessage.id,
       to: r.roomsInMessage.categoryId,
     }),

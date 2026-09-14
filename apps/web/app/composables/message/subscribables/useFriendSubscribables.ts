@@ -10,7 +10,7 @@ export const useFriendSubscribables = async () => {
   const friendRequestStore = useFriendRequestStore();
   const friendStore = useFriendStore();
   const { storeDeleteFriend } = friendStore;
-  const { storeAcceptFriendRequest, storeCreateFriendRequest, storeDeclineFriendRequest } = friendRequestStore;
+  const { storeAcceptFriendRequest, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
 
   useOnlineSubscribable(
     () => session.value?.user.id,
@@ -30,7 +30,7 @@ export const useFriendSubscribables = async () => {
         }),
         $trpc.friendRequest.onDeclineFriendRequest.subscribe(undefined, {
           onData: (declinerId) => {
-            storeDeclineFriendRequest(declinerId);
+            storeDeleteFriendRequestsByUser(declinerId);
           },
         }),
         $trpc.friend.onDeleteFriend.subscribe(undefined, {

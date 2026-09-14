@@ -33,6 +33,19 @@ describe(useQuery, () => {
     expect(data.value).toBe("result");
   });
 
+  test("waits for the first refresh when lazy", async () => {
+    expect.hasAssertions();
+
+    const { data, isPending, refresh } = useQuery(() => Promise.resolve("result"), { isLazy: true });
+
+    expect(isPending.value).toBe(false);
+    expect(data.value).toBeUndefined();
+
+    await refresh();
+
+    expect(data.value).toBe("result");
+  });
+
   test("alerts and leaves data undefined on failure", async () => {
     expect.hasAssertions();
 

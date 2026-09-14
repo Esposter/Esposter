@@ -3,6 +3,9 @@ import type { Store } from "pinia";
 
 import { takeOne } from "@esposter/shared";
 
+// Both casts carry the key union that `Object.fromEntries` drops: it returns an index signature, so under
+// `noUncheckedIndexedAccess` every colour a component reads comes back `Color | undefined` without them, and
+// The store is read as `colorsStore.primary` at dozens of sites that have no undefined to handle
 const COLORS_STORE_ID = "colors";
 const useBaseColorsStore = defineStore<typeof COLORS_STORE_ID, Colors>(COLORS_STORE_ID, () => {
   const { global } = useVTheme();

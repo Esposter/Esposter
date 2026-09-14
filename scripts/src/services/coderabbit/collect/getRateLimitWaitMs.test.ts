@@ -4,29 +4,28 @@ import { RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants"
 import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
 import { describe, expect, test } from "vitest";
 
-const WRITTEN_AT = "2026-09-13T00:57:05Z";
-
-const WRITTEN_AT_MS = Date.parse(WRITTEN_AT);
-
 const getMinutesMs = (minutes: number): number => Temporal.Duration.from({ minutes }).total("milliseconds");
 
-const getComment = (statement: string, updatedAt = WRITTEN_AT): GitHubEntry => ({
-  body: [
-    "<!-- This is an auto-generated comment: rate limited by coderabbit.ai -->",
-    "",
-    "> [!WARNING]",
-    "> ## Review limit reached",
-    "> ",
-    `> **${statement}**`,
-    "",
-    "<!-- end of auto-generated comment: rate limited by coderabbit.ai -->",
-  ].join("\n"),
-  id: 1,
-  updated_at: updatedAt,
-  user: { login: "coderabbitai[bot]" },
-});
-
 describe(getRateLimitWaitMs, () => {
+  const WRITTEN_AT = "2026-09-13T00:57:05Z";
+  const WRITTEN_AT_MS = Date.parse(WRITTEN_AT);
+  // oxlint-disable-next-line unicorn/consistent-function-scoping -- the default parameter captures a suite constant, which the rule does not count as a capture
+  const getComment = (statement: string, updatedAt = WRITTEN_AT): GitHubEntry => ({
+    body: [
+      "<!-- This is an auto-generated comment: rate limited by coderabbit.ai -->",
+      "",
+      "> [!WARNING]",
+      "> ## Review limit reached",
+      "> ",
+      `> **${statement}**`,
+      "",
+      "<!-- end of auto-generated comment: rate limited by coderabbit.ai -->",
+    ].join("\n"),
+    id: 1,
+    updated_at: updatedAt,
+    user: { login: "coderabbitai[bot]" },
+  });
+
   test("counts the stated deadline from the comment that states it", () => {
     expect.hasAssertions();
 

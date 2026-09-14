@@ -1,14 +1,11 @@
 import type { AnsweredCommit } from "#src/models/coderabbit/collect/AnsweredCommit";
 
-import { ANSWERS_TRAILER, DRAINS_TRAILER } from "#src/services/coderabbit/collect/constants";
-
-// The `git log` format `readAnsweredCommits` asks for: records separated by the ASCII record separator, fields
-// By the unit separator. Control characters rather than newlines because a subject and a body are free text and
-// A newline-delimited format would need a quoting rule. Written as escapes because the characters themselves are
-// Invisible in every editor that shows this file, and a tool that rewrites the line silently drops them.
-export const RECORD_SEPARATOR = "";
-
-export const FIELD_SEPARATOR = "";
+import {
+  ANSWERS_TRAILER,
+  DRAINS_TRAILER,
+  FIELD_SEPARATOR,
+  RECORD_SEPARATOR,
+} from "#src/services/coderabbit/collect/constants";
 
 const VALUE_SEPARATOR = ",";
 

@@ -28,7 +28,7 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
     const usedSlots = new Set(callBackgrounds.value.map(({ slot }) => slot));
     // The client allocates, because it is the only party holding a view that already accounts for a delete it
     // Just made — a listing would still be showing the blob a worker has yet to reclaim
-    const slot = Array.from({ length: MAX_CALL_BACKGROUNDS }, (_, index) => index).find(
+    const slot = Array.from({ length: MAX_CALL_BACKGROUNDS }, (_value, index) => index).find(
       (index) => !usedSlots.has(index),
     );
     if (slot === undefined) return;

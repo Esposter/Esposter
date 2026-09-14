@@ -3,8 +3,12 @@ import type { DrainStepResult } from "#src/models/coderabbit/collect/DrainStepRe
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
+import { getOpenBodyReviewId } from "#src/services/coderabbit/collect/getOpenBodyReviewId";
+import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
+import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
+import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 
 // The drain as one step of the cycle: nothing open means nothing to do, a dry run runs no Claude session, and a
 // Limit the last run hit — Claude Code's own, read off the marker that run wrote — ends the run rather than
@@ -13,16 +17,32 @@ import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedback
 // Is untouched, so porting now would put a window ahead of findings that must lead it.
 export const runDrainStep = async ({
   developSha,
+  frontierCommits,
   isDryRun,
   issueComments,
-  newestReview,
-  openBodyReviewId,
-  openThreads,
   pullRequest,
+  queueSha,
   reviewFixesSha,
-  threads,
+  reviews,
   viewerLogin,
 }: DrainStepInput): Promise<DrainStepResult> => {
+  // The open set is what the bot spoke last on and no unported commit answers — a fix sitting on the fixes branch
+  // Or in the queue has already answered its finding, and draining it again spends a session on work the window
+  // Is about to carry
+  const newestReview = reviews.findLast(({ body }) => body);
+  const unportedCommits = [
+    ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`) : []),
+    ...readAnsweredCommits(`${developSha}..${queueSha}`),
+  ];
+  const answeredIds = new Set(unportedCommits.flatMap(({ answers }) => answers));
+  const drainedReviewIds = new Set([...unportedCommits, ...frontierCommits].flatMap(({ drains }) => drains));
+  const threads = readUnresolvedThreads(pullRequest);
+  const openThreads = getOpenFindings(threads, answeredIds);
+  const openBodyReviewId = getOpenBodyReviewId({ drainedReviewIds, issueComments, newestReview, viewerLogin });
+  console.info(
+    `open findings: ${openThreads.length} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
+  );
+
   if (!newestReview || (openThreads.length === 0 && openBodyReviewId === undefined)) return { reviewFixesSha };
   else if (isDryRun) {
     console.info("would drain — a dry run runs no Claude session");

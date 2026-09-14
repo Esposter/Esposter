@@ -1,5 +1,6 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
+import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { RATE_LIMIT_COMMENT_MARKER } from "#src/services/coderabbit/collect/constants";
 import { CODERABBIT_REST_LOGIN, PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
 
@@ -15,10 +16,10 @@ import { CODERABBIT_REST_LOGIN, PROBE_COMMENT } from "#src/services/coderabbit/s
 export const checkIsRetriggerAsked = (issueComments: GitHubEntry[], viewerLogin: string): boolean => {
   // The bot's block alone, as `getRateLimitWaitMs` reads it: a forged one newer than the ask would otherwise
   // Owe an ask on every run
-  const block = issueComments.findLast(
-    ({ body, user }) => user.login === CODERABBIT_REST_LOGIN && body.includes(RATE_LIMIT_COMMENT_MARKER),
+  const block = issueComments.findLast((comment) =>
+    checkIsMarked(comment, CODERABBIT_REST_LOGIN, RATE_LIMIT_COMMENT_MARKER),
   );
-  const ask = issueComments.findLast(({ body, user }) => user.login === viewerLogin && body.includes(PROBE_COMMENT));
+  const ask = issueComments.findLast((comment) => checkIsMarked(comment, viewerLogin, PROBE_COMMENT));
   if (!ask) return false;
   return !block || Date.parse(ask.updated_at) > Date.parse(block.updated_at);
 };

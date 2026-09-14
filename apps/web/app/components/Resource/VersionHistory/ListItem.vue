@@ -4,7 +4,6 @@ import type { Resource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { SnapshotReasonTitleMap } from "#shared/services/resource/SnapshotReasonTitleMap";
-import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
@@ -50,12 +49,7 @@ const subtitle = computed(() =>
     </template>
     <template #subtitle>
       <div flex flex-wrap gap-x-2 items-center>
-        <v-tooltip location="top">
-          <template #activator="{ props: tooltipActivatorProps }">
-            <NuxtTime :="tooltipActivatorProps" :datetime="snapshotVersion.takenAt" relative />
-          </template>
-          <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="snapshotVersion.takenAt" />
-        </v-tooltip>
+        <ResourceVersionHistoryTime :datetime="snapshotVersion.takenAt" />
         <span v-if="subtitle">· {{ subtitle }}</span>
       </div>
     </template>

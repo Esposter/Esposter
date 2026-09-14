@@ -17,4 +17,4 @@ const chartTypeResolvers: AChartTypeResolver<Chart["configuration"]>[] = [
 ];
 
 export const getActiveChartTypeResolvers = (type: ChartType): AChartTypeResolver<Chart["configuration"]>[] =>
-  chartTypeResolvers.filter((resolver) => resolver.isActive(type));
+  chartTypeResolvers.filter((resolver) => resolver.checkIsActive(type));

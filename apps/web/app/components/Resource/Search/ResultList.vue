@@ -14,12 +14,14 @@ interface Props {
 
 const { items, searchQuery, seeAllTo, selectedIndex } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
+// A subheader precedes the first item of every group
+const checkIsGroupStart = (index: number) => items[index - 1]?.group !== items[index]?.group;
 // StyledList scrolls by DOM child index, so the selected flat index is offset by the subheaders before it
 const selectedDomIndex = computed(() => {
   if (selectedIndex < 0) return undefined;
   let subheaderCount = 0;
-  for (const [index, item] of items.entries()) {
-    if (items[index - 1]?.group !== item.group) subheaderCount++;
+  for (const index of items.keys()) {
+    if (checkIsGroupStart(index)) subheaderCount++;
     if (index === selectedIndex) return index + subheaderCount;
   }
   // The See-all footer sits after every item and subheader
@@ -43,7 +45,7 @@ const selectedDomIndex = computed(() => {
       "
     />
     <template v-for="(item, index) of items" :key="item.id">
-      <v-list-subheader v-if="items[index - 1]?.group !== item.group">{{ item.group }}</v-list-subheader>
+      <v-list-subheader v-if="checkIsGroupStart(index)">{{ item.group }}</v-list-subheader>
       <ResourceSearchResultListItem
         :index
         :is-active="selectedIndex === index"

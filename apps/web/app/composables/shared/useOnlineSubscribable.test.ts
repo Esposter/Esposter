@@ -162,7 +162,7 @@ describe(useOnlineSubscribable, () => {
       defineComponent({
         render: () => h("div"),
         setup: async () => {
-          const context = { instance: getCurrentInstance(), scope: getCurrentScope() };
+          const context = getOnlineSubscribableContext();
           await Promise.resolve();
           useOnlineSubscribable(source, callback, context);
         },
@@ -181,7 +181,7 @@ describe(useOnlineSubscribable, () => {
       defineComponent({
         render: () => h("div"),
         setup: async () => {
-          const context = { instance: getCurrentInstance(), scope: getCurrentScope() };
+          const context = getOnlineSubscribableContext();
           await Promise.resolve();
           useOnlineSubscribable(source, callback, context);
         },

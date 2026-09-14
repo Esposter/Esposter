@@ -34,8 +34,10 @@ const { data, refresh } = useQuery(() => $trpc.room.readMyInvite.query({ roomId 
 - `data` — a `shallowRef` holding the result, `undefined` until the first fetch resolves. Render loading/empty state off `data.value === undefined`.
 - `refresh` — re-runs the query (retry after a failure, or refetch on demand). The initial fetch fires automatically on setup.
 - `onSuccess` — rare; for seeding local state from the loaded result.
+- `isInlineError` — the surface renders the failure itself (a `StyledErrorState` with a retry), so no toast is raised; `error` carries the message.
+- `isLazy` — no fetch on setup; the read waits for the first `refresh`. For a lens the surface opens on demand, such as the explorer's summary cards, where a fetch at setup spends a round trip on a read nothing renders yet.
 
-On failure the real `Error.message` is raised as an alert and `data` stays `undefined`, so the component falls back to its empty state. A superseded fetch (a newer `refresh`, a remounted component) can never overwrite a newer result.
+On failure `data` stays `undefined`, so the component falls back to its empty state, and the real `Error.message` is raised as an alert — unless `isInlineError` is set, which carries it on `error` for the surface to render instead. A superseded fetch (a newer `refresh`, a remounted component) can never overwrite a newer result.
 
 `useQuery`'s data is **per instance**, so two components calling it fetch twice. A read that several surfaces share, and that should be read once per session, is `useCachedRead` on a store instead — see [caching](/docs/architecture/caching).
 
@@ -139,7 +141,7 @@ Both shapes are correct; what is never correct is leaving the state stale becaus
 
 ## When not to use them
 
-`useQuery` is the wrapper for a one-shot setup fetch. A read whose state shape differs — its own cursor, an inline error panel instead of an alert — skips the wrapper but still goes through `executeQuery` on a `useMutation()` instance of its own (`useDataset`, `useReadResourcesPage`, `useReadResourceTypeCounts`), so it inherits the latest-wins guarding and the pending flag without owning either. These stay off both wrappers entirely:
+`useQuery` is the wrapper for a one-shot fetch, on setup or — `isLazy` — on the first `refresh`, and an inline error panel is its `isInlineError` option rather than a reason to leave it. A read whose state shape differs — its own cursor, a page that accumulates — skips the wrapper but still goes through `executeQuery` on a `useMutation()` instance of its own (`useDataset`, `useReadResourcesPage`), so it inherits the latest-wins guarding and the pending flag without owning either. These stay off both wrappers entirely:
 
 - **Search-as-you-type reads** go through `useAutoSearch` (see [Search](/docs/architecture/search)) — it shares the `getResultAsync` → `createAlert` error stack but cancels the superseded request with an `AbortController` instead of merely ignoring its result.
 - **Background bookkeeping writes** (mark-read + mention-count clear on room enter, typing pings, push-subscription registration) — the user didn't act, so surfacing a failure as an alert would be noise; they stay raw fire-and-forget calls. The one that does go through `executeMutation` is the [offline cache](/docs/esbabbler/offline-cache) write, because it needs the per-partition queue — and it passes `onError: console.error` for exactly this reason. Wanting the ordering is not wanting the alert.

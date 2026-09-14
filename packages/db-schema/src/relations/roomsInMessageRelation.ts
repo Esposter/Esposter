@@ -3,7 +3,7 @@ import { defineRelationsPart } from "drizzle-orm";
 
 export const roomsInMessageRelation = defineRelationsPart(schema, (r) => ({
   roomsInMessage: {
-    bansInMessages: r.many.bansInMessage({
+    bansInMessage: r.many.bansInMessage({
       from: r.roomsInMessage.id,
       to: r.bansInMessage.roomId,
     }),
@@ -12,7 +12,7 @@ export const roomsInMessageRelation = defineRelationsPart(schema, (r) => ({
       optional: true,
       to: r.roomCategoriesInMessage.id,
     }),
-    roomRolesInMessages: r.many.roomRolesInMessage({
+    roomRolesInMessage: r.many.roomRolesInMessage({
       from: r.roomsInMessage.id,
       to: r.roomRolesInMessage.roomId,
     }),
@@ -21,7 +21,7 @@ export const roomsInMessageRelation = defineRelationsPart(schema, (r) => ({
       optional: false,
       to: r.users.id,
     }),
-    usersToRoomRolesInMessages: r.many.usersToRoomRolesInMessage({
+    usersToRoomRolesInMessage: r.many.usersToRoomRolesInMessage({
       from: r.roomsInMessage.id,
       to: r.usersToRoomRolesInMessage.roomId,
     }),
@@ -44,7 +44,7 @@ export const roomsInMessageRelation = defineRelationsPart(schema, (r) => ({
       from: r.roomsInMessage.id.through(r.usersToRoomsInMessage.roomId),
       to: r.users.id.through(r.usersToRoomsInMessage.userId),
     }),
-    webhooksInMessages: r.many.webhooksInMessage({
+    webhooksInMessage: r.many.webhooksInMessage({
       from: r.roomsInMessage.id,
       to: r.webhooksInMessage.roomId,
     }),

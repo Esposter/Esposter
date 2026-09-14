@@ -1,5 +1,6 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
+import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { RATE_LIMIT_COMMENT_MARKER, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 
@@ -21,8 +22,8 @@ export const getRateLimitWaitMs = (issueComments: GitHubEntry[], nowMs: number):
   // The marker is public — it is quoted in this very file — so anyone who can comment on the pull request can
   // Post one. Scoped to the bot's own login the way every other marker read here is, or a forged comment could
   // Park the collector behind whatever deadline its author chose
-  const comment = issueComments.findLast(
-    ({ body, user }) => user.login === CODERABBIT_REST_LOGIN && body.includes(RATE_LIMIT_COMMENT_MARKER),
+  const comment = issueComments.findLast((issueComment) =>
+    checkIsMarked(issueComment, CODERABBIT_REST_LOGIN, RATE_LIMIT_COMMENT_MARKER),
   );
   const groups = comment && RATE_LIMIT_RESET_PATTERN.exec(comment.body)?.groups;
   if (!comment || !groups?.amount || !groups.unit) return undefined;

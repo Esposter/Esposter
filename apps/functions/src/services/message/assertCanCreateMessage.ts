@@ -1,7 +1,7 @@
 import type { InvocationContext } from "@azure/functions";
 
-import { db } from "#src/services/shared/db";
 import { getTableClient } from "#src/services/azure/getTableClient";
+import { db } from "#src/services/shared/db";
 import { executeAutomodAction, getMessageCreationRejection } from "@esposter/db";
 import { AzureFunction, AzureTable, DatabaseEntityType, MessageCreationRejectionType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, WordFilteredError } from "@esposter/shared";

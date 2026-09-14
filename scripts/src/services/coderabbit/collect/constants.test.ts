@@ -7,7 +7,7 @@ import { assert, describe, expect, test } from "vitest";
 const readWorkflowLines = (name: string): string[] =>
   readFileSync(join(REPOSITORY_ROOT, ".github/workflows", name), "utf8").split(/\r?\n/u);
 
-describe("queue branch", () => {
+describe("queueBranch", () => {
   // The runner pins everything but its triggers to the queue head, whichever event fired it: the trigger file
   // Calls the reusable workflow at that ref, the reusable workflow checks it out, and its retrigger dispatches
   // It. A workflow file cannot import the constant, so every place the two files spell the branch is pinned here

@@ -2,6 +2,7 @@ import type { ItemMetadata } from "@esposter/shared";
 import type { Resolver, TRPCResolverDef } from "@trpc/client";
 import type { z } from "zod";
 
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { authClient } from "@/services/auth/authClient";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
@@ -44,15 +45,11 @@ export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDe
 
     saveItemMetadata(value);
     let isSuccessful = false;
-    if (session.value.data && auth)
-      await executeSaveMutation(() => auth.save(value), {
-        // This composable persists a single state, so its saves supersede one another under a stable key
-        key: "save",
-        onSuccess: () => {
-          isSuccessful = true;
-        },
-      });
-    else if (unauth) isSuccessful = saveToLocalStorage(unauth.key, unauth.schema, value);
+    if (session.value.data && auth) {
+      // This composable persists a single state, so its saves supersede one another under a stable key
+      const outcome = await executeSaveMutation(() => auth.save(value), { key: "save" });
+      isSuccessful = outcome.status === MutationStatus.Succeeded;
+    } else if (unauth) isSuccessful = saveToLocalStorage(unauth.key, unauth.schema, value);
 
     if (isSuccessful) lastSavedJson = valueJson;
     return isSuccessful;

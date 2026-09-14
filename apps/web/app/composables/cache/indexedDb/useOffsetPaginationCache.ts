@@ -1,6 +1,6 @@
-import type { PaginationCacheOptions } from "@/models/cache/indexedDb/PaginationCacheOptions";
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
+import type { PaginationCacheOptions } from "@/models/cache/indexedDb/PaginationCacheOptions";
 import type { IndexNames } from "idb";
 import type { Except } from "type-fest";
 

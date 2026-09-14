@@ -1,12 +1,13 @@
 import type { PullRequestComment } from "#src/models/coderabbit/collect/PullRequestComment";
 import type { ReplyAnsweredInput } from "#src/models/coderabbit/collect/ReplyAnsweredInput";
 
-import { getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
+import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGh } from "#src/services/coderabbit/shared/runGh";
-import { getResult } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 
 // Every commit in the range that answers a finding gets its reply — the one the skill says cites a sha the
 // Remote has. Predicate-guarded per thread, so the run that pushed and died before replying is finished by any
@@ -34,7 +35,7 @@ export const replyAnswered = ({
   for (const { answers, sha, subject } of commits)
     for (const commentId of answers) {
       const replies = repliesByParent.get(commentId) ?? [];
-      if (replies.some(({ body, user }) => user.login === viewerLogin && body.includes(sha))) continue;
+      if (replies.some((reply) => checkIsMarked(reply, viewerLogin, sha))) continue;
 
       const body = `Agreed, fixed in ${sha} — ${subject}`;
       console.info(`reply ${commentId}: ${body}`);
@@ -46,7 +47,7 @@ export const replyAnswered = ({
             "-f",
             `body=${body}`,
           ]),
-        ).orTee(console.error);
+        ).match(noop, console.error);
     }
 
   // The predicate is the review's marker and the shas together: the rejections comment the drain's end posted
@@ -61,8 +62,7 @@ export const replyAnswered = ({
     const shas = drained.map(({ commit }) => commit.sha);
     if (
       issueComments.some(
-        ({ body, user }) =>
-          user.login === viewerLogin && body.includes(marker) && shas.every((sha) => body.includes(sha)),
+        (comment) => checkIsMarked(comment, viewerLogin, marker) && shas.every((sha) => comment.body.includes(sha)),
       )
     )
       continue;
@@ -74,6 +74,6 @@ export const replyAnswered = ({
     );
     console.info(`verdict comment for review ${reviewId}`);
     if (!isDryRun)
-      getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).orTee(console.error);
+      getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).match(noop, console.error);
   }
 };

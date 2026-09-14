@@ -14,16 +14,10 @@ catalog:
   vitest: ^5.0.0
 `;
 
-  test("reads the globs the packages block declares, in order", () => {
+  test("reads the globs the packages block declares, in order, and stops at the next section", () => {
     expect.hasAssertions();
 
     expect(parseWorkspacePackageGlobs(WORKSPACE_YAML)).toStrictEqual(["apps/*", "packages/*", "scripts"]);
-  });
-
-  test("stops at the first section that is not a package entry", () => {
-    expect.hasAssertions();
-
-    expect(parseWorkspacePackageGlobs(WORKSPACE_YAML)).not.toContain("esbuild: true");
   });
 
   test("reads a quoted entry as the glob it quotes", () => {

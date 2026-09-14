@@ -4,43 +4,31 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 interface UseMediaRecorderOptions {
   constraints?: MaybeRefOrGetter<MediaStreamConstraints>;
-  mediaRecorderOptions?: MaybeRefOrGetter<MediaRecorderOptions>;
   onError?: (event: Event) => void;
-  onPause?: (event: Event) => void;
-  onResume?: (event: Event) => void;
   onStart?: (event: Event) => void;
   onStop?: (event: Event) => void;
 }
 
 export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
-  const { constraints = {}, mediaRecorderOptions = {} } = options;
+  const { constraints = {} } = options;
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const data = ref<Blob[]>([]);
   const mediaRecorder = shallowRef<MediaRecorder>();
   const {
-    isSupported: isUserMediaSupported,
+    isSupported,
     start: startStream,
     stop: stopStream,
     stream,
   } = useUserMedia({ constraints: computed(() => toValue(constraints)) });
-  const isMimeTypeSupported = computed(() => {
-    const requestedMimeType = toValue(mediaRecorderOptions).mimeType;
-    return requestedMimeType ? MediaRecorder.isTypeSupported(requestedMimeType) : true;
-  });
-  const isSupported = computed(() => isUserMediaSupported.value && isMimeTypeSupported.value);
-  // MediaRecorder has no change event, so its imperative state/mimeType are mirrored into refs on each lifecycle event.
+  // MediaRecorder has no change event, so its imperative state is mirrored into a ref on each lifecycle event.
   const state = ref<RecordingState>();
-  const mimeType = ref<string>();
   const setupMediaRecorder = (newMediaRecorder: MediaRecorder) => {
     const onLifecycle = (callback?: (event: Event) => void) => (event: Event) => {
       state.value = newMediaRecorder.state;
-      mimeType.value = newMediaRecorder.mimeType;
       callback?.(event);
     };
     newMediaRecorder.ondataavailable = (event) => {
-      // `mimeType` can resolve only once the first chunk arrives, so refresh it here too.
-      mimeType.value = newMediaRecorder.mimeType;
       data.value.push(event.data);
     };
     newMediaRecorder.onstart = onLifecycle(options.onStart);
@@ -48,12 +36,10 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
       stopStream();
       options.onStop?.(event);
     });
-    newMediaRecorder.onpause = onLifecycle(options.onPause);
-    newMediaRecorder.onresume = onLifecycle(options.onResume);
     newMediaRecorder.onerror = onLifecycle(options.onError);
   };
 
-  const start = async (timeslice?: number) => {
+  const start = async () => {
     if (state.value && state.value !== "inactive") return;
     else if (isSupported.value) {
       data.value = [];
@@ -68,10 +54,10 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
       });
       if (!stream.value) return;
 
-      const newMediaRecorder = new MediaRecorder(stream.value, toValue(mediaRecorderOptions));
+      const newMediaRecorder = new MediaRecorder(stream.value);
       setupMediaRecorder(newMediaRecorder);
       mediaRecorder.value = newMediaRecorder;
-      newMediaRecorder.start(timeslice);
+      newMediaRecorder.start();
     } else createAlert("Media devices API is not supported in this environment.", "error");
   };
 
@@ -80,31 +66,9 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
     mediaRecorder.value?.stop();
   };
 
-  const pause = () => {
-    if (state.value !== "recording") return;
-    mediaRecorder.value?.pause();
-  };
-
-  const resume = () => {
-    if (state.value !== "paused") return;
-    mediaRecorder.value?.resume();
-  };
-
   tryOnScopeDispose(() => {
     mediaRecorder.value?.stop();
   });
 
-  return {
-    data,
-    isMimeTypeSupported,
-    isSupported,
-    mediaRecorder: computed(() => mediaRecorder.value),
-    mimeType,
-    pause,
-    resume,
-    start,
-    state,
-    stop,
-    stream,
-  };
+  return { data, start, state, stop };
 };

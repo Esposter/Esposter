@@ -1,6 +1,6 @@
 import type { IconProps } from "vuetify";
 
-import { IconComponentMap } from "@/services/dungeons/IconComponentMap";
+import { IconComponentMap } from "@/services/vuetify/IconComponentMap";
 import { takeOne } from "@esposter/shared";
 
 export default defineNuxtPlugin((nuxtApp) => {

@@ -4,10 +4,10 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 
 | Unit                                                       | Swept      | Notes                                                                                                |
 | ---------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema.ts` + `relations`           | 2026-08-30 | the table/enum registration half is `schema.test.ts`'s rather than a pass's                          |
-| `packages/db-schema/src/schema` — the message tables       | 2026-09-02 | the `*InMessage` family                                                                              |
-| `packages/db-schema/src/schema` — the rest                 | 2026-08-30 | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
-| `app/shared/models/db/message`                             | 2026-08-31 | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
+| `packages/db-schema/src/schema.ts` + `relations`           | 2026-09-14 | a `r.many` key is the child table's own name; an `r.one` off a role column is the role               |
+| `packages/db-schema/src/schema` — the message tables       | 2026-09-14 | the `*InMessage` family                                                                              |
+| `packages/db-schema/src/schema` — the rest                 | 2026-09-14 | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
+| `app/shared/models/db/message`                             | 2026-09-14 | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
 | `app/shared/models/db` — the room family                   | 2026-09-02 | `room`, `roomCategory`, `roomEmoji`, `role`, `moderation`, `webhook`                                 |
 | `app/shared/models/db` — the rest                          | 2026-09-02 | `blueprint`, `friend`, `notification`, `post`, `searchHistory`, `user`, `userSettings`, `userToRoom` |
 | `app/shared/models/resource/sheet`                         | 2026-09-02 | the split transformation's form defaults stay on the shared schema — `zod` says why                  |
@@ -39,6 +39,19 @@ grep -rn '\.extend(' --include=*.ts apps/web/app apps/web/server apps/web/shared
 # a discriminated union, each of which must carry a trailing satisfies
 grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts apps/web/app apps/web/shared packages/*/src
 ```
+
+## Open findings
+
+One migration, run when the user says so (`drizzle`: `db:gen` is never an unprompted side effect), carrying
+every column the sentinel and reference rules reach and the passes so far have read past:
+
+- `bansInMessage.bannedByUserId` and `resources.boundResourceId` hold another table's id with no `.references()`.
+  Each comment argues the row must outlive its target, which is what `onDelete: "set null"` does — the rule's own
+  audit-trail case — so the constraint is the fix, not the exemption.
+- `roomsInMessage.slowmodeMs` and `maxFileSizeBytes` are nullable where the rule writes `.notNull().default(0)`
+  and reads `0` as "none" / "the global cap" — the `maxFoos` example verbatim. The select-schema `min(1)`
+  overrides, the `?? MAX_FILE_REQUEST_SIZE` fallbacks and the `null` on the wire all move with it.
+  `roomFilters.timeoutDurationMs` stays nullable: a CHECK forces it to `null` off the timeout action.
 
 ## Next enforceable
 

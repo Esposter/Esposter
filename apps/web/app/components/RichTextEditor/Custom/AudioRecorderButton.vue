@@ -5,10 +5,11 @@ import { AUDIO_MESSAGE_DATE_FORMAT, AUDIO_RECORDER_TIMER_INTERVAL_MS } from "@/s
 import { clearInterval, setInterval } from "worker-timers";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
-const timer = ref(0);
+// One tick of AUDIO_RECORDER_TIMER_INTERVAL_MS, which is a second — the display reads it as seconds
+const elapsedSeconds = ref(0);
 let timerInterval: number | undefined;
 const resetTimer = () => {
-  timer.value = 0;
+  elapsedSeconds.value = 0;
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = undefined;
 };
@@ -19,7 +20,7 @@ const { data, start, state, stop } = useMediaRecorder({
   },
   onStart: () => {
     timerInterval = setInterval(() => {
-      timer.value++;
+      elapsedSeconds.value++;
     }, AUDIO_RECORDER_TIMER_INTERVAL_MS);
   },
   onStop: () => {
@@ -41,8 +42,8 @@ const recordButtonProps = computed(() => ({
   size: "small" as const,
 }));
 const formattedTimer = computed(() => {
-  const minutes = Math.floor(timer.value / 60);
-  const seconds = timer.value % 60;
+  const minutes = Math.floor(elapsedSeconds.value / 60);
+  const seconds = elapsedSeconds.value % 60;
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 });
 </script>

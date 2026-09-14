@@ -1,9 +1,8 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
 import { describe, expect, test } from "vitest";
 
-const RULE = "persist-then-notify/no-unhandled-effect-after-emit";
-
-describe(RULE, () => {
+describe("persistThenNotify", () => {
+  const RULE = "persist-then-notify/no-unhandled-effect-after-emit";
   const FIXTURES = [
     // An exemption keyed off static AST containment cannot tell a later iteration from the very next line of
     // The same one, so it would exempt this — the core hazard.

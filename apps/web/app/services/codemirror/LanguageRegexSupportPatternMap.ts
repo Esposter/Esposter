@@ -1,10 +1,13 @@
-import { extendedLanguages } from "@/services/codemirror/extendedLanguages";
-import { getLanguageRegexSupportPattern } from "@/services/codemirror/getLanguageRegexSupportPattern";
+import { EXTENDED_LANGUAGES } from "@/services/codemirror/constants";
 import { ID_SEPARATOR } from "@esposter/shared";
 
+// Keyed by language name, because that is what `getLanguage` hands back and `getLanguageExtension` takes.
+// Every extension is escaped: `c++` and `cmake.in` are real entries, and their punctuation is literal.
+// The dialects that carry none (the SQL family, which `language-data` reaches by name only) are dropped rather
+// Than given an empty alternation, which is a pattern matching every name that ends in a dot
 export const LanguageRegexSupportPatternMap = Object.fromEntries(
-  extendedLanguages.map(({ extensions, name }) => [
+  EXTENDED_LANGUAGES.filter(({ extensions }) => extensions.length > 0).map(({ extensions, name }) => [
     name,
-    getLanguageRegexSupportPattern(extensions.map((extension) => RegExp.escape(extension)).join(ID_SEPARATOR)),
+    new RegExp(String.raw`^.*\.(${extensions.map((extension) => RegExp.escape(extension)).join(ID_SEPARATOR)})$`, "u"),
   ]),
 );

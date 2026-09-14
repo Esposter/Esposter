@@ -4,6 +4,6 @@
 
 | Unit                                              | Swept      | Notes             |
 | ------------------------------------------------- | ---------- | ----------------- |
-| `shared/models`                                   | 2026-08-20 |                   |
-| `shared/services`, `shared/util`, `shared/assets` | 2026-08-20 |                   |
+| `shared/models`                                   | 2026-09-14 |                   |
+| `shared/services`, `shared/util`, `shared/assets` | 2026-09-14 |                   |
 | `app/components/Styled`                           | 2026-09-05 | the shared shells |

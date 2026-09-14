@@ -2,11 +2,11 @@ import type { PortInput } from "#src/models/coderabbit/collect/PortInput";
 import type { PortResult } from "#src/models/coderabbit/collect/PortResult";
 
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
+import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getFileCount } from "#src/services/coderabbit/window/getFileCount";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Build the window as a branch, one cherry-pick at a time, and measure after each. Fixes ride first and whole,

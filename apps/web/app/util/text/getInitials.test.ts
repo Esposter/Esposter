@@ -8,5 +8,6 @@ describe(getInitials, () => {
     expect(getInitials("")).toBe("");
     expect(getInitials("a")).toBe("A");
     expect(getInitials("a a")).toBe("AA");
+    expect(getInitials("a b c")).toBe("AC");
   });
 });

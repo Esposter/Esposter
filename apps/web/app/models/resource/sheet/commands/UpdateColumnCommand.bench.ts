@@ -23,7 +23,7 @@ const originalRowValues100 = getOriginalRowValues(createBenchDataSource(benchRow
 const originalRowValues1k = getOriginalRowValues(createBenchDataSource(benchRows1k), originalName);
 const originalRowValues10k = getOriginalRowValues(createBenchDataSource(benchRows10k), originalName);
 const createRenameCommand = (originalRowValues: ColumnValue[]) => () =>
-  new UpdateColumnCommand(originalName, originalColumn, updatedColumn, originalRowValues);
+  new UpdateColumnCommand(originalColumn, updatedColumn, originalRowValues);
 
 describe(UpdateColumnCommand, () => {
   setupCommandBench("rename column, 100 rows", createRenameCommand(originalRowValues100), () =>

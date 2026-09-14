@@ -70,10 +70,11 @@ export const runDrain = async (prompt: string): Promise<DrainRun> => {
     if (!logLine.isNarration) ownLines.push(logLine.text);
   }
   await closed;
-  // A limit is a refusal to *start*, so it is only ever read off a non-zero exit. A session that ran to the end
-  // Cannot also be one that never began, and reading its output for the sentence anyway lets a drain discard the
-  // Work it just did over text it merely echoed — the caller acts on `limitResetAtMs` before it looks at
-  // `isDrained`, so the commits, the verdicts and the push would all be dropped.
+  // A limit is a refusal to *start*, so it is only ever read off a non-zero exit — and the exit status is the
+  // Only thing that says so, because the refusal's own result frame states `success`. Reading a clean exit's
+  // Output for the sentence anyway lets a drain discard the work it just did over text it merely echoed: the
+  // Caller acts on `limitResetAtMs` before it looks at `isDrained`, so the commits, the verdicts and the push
+  // Would all be dropped.
   const isDrained = child.exitCode === 0;
   return {
     isDrained,

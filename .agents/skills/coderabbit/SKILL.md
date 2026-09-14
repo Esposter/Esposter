@@ -47,7 +47,7 @@ gh pr checks --json name,state,bucket,description --jq '.[] | select(.name=="Cod
 | `pass` / skip comment says `Too many files`   | never started                  | push, but fix the count first |
 | `fail`, missing row, or anything unrecognised | unknown                        | **wait**, then look           |
 
-The last row is the default, not an edge case: being wrong about a running review costs its findings and a slot, being wrong about a finished one costs a minute.
+The last row is the default, not an edge case: being wrong about a running review costs its findings and a slot, being wrong about a finished one costs a minute. It is a session's rule, and the collector's gate answers the same row differently on purpose — nothing re-fires a cycle that exits quietly on an unreadable check, so `getGateDecision` throws and paints the run red where a person waits and looks.
 
 Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit) comment` / `putComment timed out` comment from the bot, or a review returning far fewer comments than the diff warrants.
 

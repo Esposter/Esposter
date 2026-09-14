@@ -11,10 +11,5 @@ export const useUpdateColumn = () =>
     if (columnIndex === -1) return undefined;
     const originalColumn = structuredClone(toRawDeep(takeOne(dataSource.columns, columnIndex)));
     const originalRowValues = getOriginalRowValues(dataSource, originalName);
-    return new UpdateColumnCommand(
-      originalName,
-      originalColumn,
-      structuredClone(toRawDeep(updatedColumn)),
-      originalRowValues,
-    );
+    return new UpdateColumnCommand(originalColumn, structuredClone(toRawDeep(updatedColumn)), originalRowValues);
   });

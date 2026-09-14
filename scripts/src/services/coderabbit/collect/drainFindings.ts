@@ -1,7 +1,7 @@
 import type { DrainFindingsInput } from "#src/models/coderabbit/collect/DrainFindingsInput";
 import type { DrainFindingsResult } from "#src/models/coderabbit/collect/DrainFindingsResult";
 
-import { checkHasMarkerComment, getMarker } from "#src/services/coderabbit/collect/checkHasMarkerComment";
+import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   DRAIN_ATTEMPT_CAP,
   DRAIN_FAILED_MARKER,
@@ -14,6 +14,7 @@ import {
   VERDICT_FILE,
 } from "#src/services/coderabbit/collect/constants";
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
@@ -45,15 +46,13 @@ export const drainFindings = async ({
 }: DrainFindingsInput): Promise<DrainFindingsResult> => {
   const pullRequest = drainInput.pullRequest.toString();
   const quarantinedMarker = getMarker(QUARANTINED_MARKER, newestReviewId);
-  if (checkHasMarkerComment(issueComments, viewerLogin, quarantinedMarker)) {
+  if (issueComments.some((comment) => checkIsMarked(comment, viewerLogin, quarantinedMarker))) {
     console.info(`review ${newestReviewId} is quarantined — porting without its fixes`);
     return { isLimited: false, reviewFixesSha };
   }
 
   const failedMarker = getMarker(DRAIN_FAILED_MARKER, newestReviewId);
-  const attempts = issueComments.filter(
-    ({ body, user }) => user.login === viewerLogin && body.includes(failedMarker),
-  ).length;
+  const attempts = issueComments.filter((comment) => checkIsMarked(comment, viewerLogin, failedMarker)).length;
   if (attempts >= DRAIN_ATTEMPT_CAP) {
     runGh([
       "pr",

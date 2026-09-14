@@ -15,9 +15,10 @@ flowchart TD
   L -->|yes| X[Exit — nothing ports ahead of open findings]
   L -->|no| B[Checkout ai/review-fixes<br/>install for that tree]
   B --> C[Claude: fix with a trailer<br/>or reject to a file]
-  C --> E{Exited clean<br/>with a clean tree}
+  C --> R{Non-zero exit stating<br/>Claude Code's own limit}
+  R -->|yes| M[Limit marker with the reset instant<br/>— no attempt counted]
+  R -->|no| E{Exited clean<br/>with a clean tree}
   E -->|no| F[Failed-attempt marker, run fails]
-  E -->|refused to start| M[Limit marker with the reset instant]
   E -->|yes| V[Post the rejections] --> PU[Push ai/review-fixes with a lease]
 ```
 
@@ -37,7 +38,7 @@ It does for each finding what the `coderabbit` skill already prescribes, in the 
 
 ## What the script does after
 
-Once Claude exits, the script — the only process with a credential — posts a reply on each rejected thread and, if any body-only findings were rejected, one verdict comment naming them, right away since neither cites a sha the push has not landed yet. A line naming a thread that was not open is skipped rather than posted, and an HTML comment inside a reason is stripped, because a reply goes out under the collector's own login and that login is what every marker read keys its trust on. Then it pushes `ai/review-fixes`, with a lease on the sha it read, so a run that dies mid-drain leaves no trace and the next run starts the drain again from the same open set. The accepted findings' replies are the cycle's, after the window lands on `develop`, and the fixes that answered a body-only review are announced in a second verdict comment then — keyed on the commit shas, so a review whose body findings were partly rejected and partly fixed gets both.
+Once Claude exits, the script — the only process with a credential — posts a reply on each rejected thread and, if any body-only findings were rejected, one verdict comment naming them, right away since neither cites a sha the push has not landed yet. A line naming a thread that was not open is skipped rather than posted, and an HTML comment inside a reason is stripped, because a reply goes out under the collector's own login and that login is what every marker read keys its trust on. Each post is best-effort: a GitHub refusal here would otherwise throw away a drain that had already succeeded, and a thread whose reply did not land keeps the bot as its last author, so the next run drains it again. Then it pushes `ai/review-fixes`, with a lease on the sha it read, so a run that dies mid-drain leaves no trace and the next run starts the drain again from the same open set. The accepted findings' replies are the cycle's, after the window lands on `develop`, and the fixes that answered a body-only review are announced in a second verdict comment then — keyed on the commit shas, so a review whose body findings were partly rejected and partly fixed gets both.
 
 **A zero exit says the session ended, never that it finished.** A drain that stopped mid-fix leaves the rest of a finding in the working tree, and reading `HEAD` there would push half of one as though it were whole — so a dirty tree is a failed attempt like a non-zero exit.
 
@@ -47,14 +48,16 @@ Once Claude exits, the script — the only process with a credential — posts a
 
 **A drain that never started is not a failed attempt.** Claude Code refusing to run because the account is out of session exits non-zero exactly like a drain that tried and could not, and counting it would spend the quarantine budget on an outage. So the step separates the two by reading the sentence Claude prints on its way out — off the lines Claude Code spoke for itself, never off the model's narration — and a limit writes its own marker carrying the instant it lifts. Until then every cycle skips the drain and stops before the port, because the open findings are untouched and nothing may be ported ahead of them. There is no waiting job for this one: CodeRabbit's deadline is minutes away and one runner sleeps it out, while Claude's reset is a time of day, up to a day off, and the next `ai/queue` push wakes the cycle for nothing and is rarely later.
 
+**What the sentence rides in does not say the session refused.** The refusal arrives as a result frame stating `success`, with one turn and no cost, while the process exits non-zero — so a frame read as the model's closing message hides the one line the limit exists to find, and the outage is billed to the review as three failed attempts and a quarantine nobody earned. The exit status is the only thing that says whether the session ran, and every result frame is read as Claude Code's own.
+
 ## Key files
 
-| File                                                            | Role                                                                     |
-| :-------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect/runDrainStep.ts`       | the step as the cycle calls it — nothing open, dry run, the Claude limit |
-| `scripts/src/services/coderabbit/collect/drainFindings.ts`      | quarantine, the branch, the install, the session, the verdicts, the push |
-| `scripts/src/services/coderabbit/collect/getDrainPrompt.ts`     | what Claude is told                                                      |
-| `scripts/src/services/coderabbit/collect/runDrain.ts`           | the headless session, its scrubbed environment and its streamed log      |
-| `scripts/src/services/coderabbit/collect/postDrainVerdicts.ts`  | the rejections, posted by the one process holding a credential           |
-| `scripts/src/services/coderabbit/feedback/getFeedbackReport.ts` | the report the CLI prints and the drain is handed                        |
-| `.agents/skills/code-review/fixing-findings.md`                 | the order of work the prompt points the session at                       |
+| File                                                            | Role                                                                               |
+| :-------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `scripts/src/services/coderabbit/collect/runDrainStep.ts`       | the open set it reads, and what stops it — nothing open, dry run, the Claude limit |
+| `scripts/src/services/coderabbit/collect/drainFindings.ts`      | quarantine, the branch, the install, the session, the verdicts, the push           |
+| `scripts/src/services/coderabbit/collect/getDrainPrompt.ts`     | what Claude is told                                                                |
+| `scripts/src/services/coderabbit/collect/runDrain.ts`           | the headless session, its scrubbed environment and its streamed log                |
+| `scripts/src/services/coderabbit/collect/postDrainVerdicts.ts`  | the rejections, posted by the one process holding a credential                     |
+| `scripts/src/services/coderabbit/feedback/getFeedbackReport.ts` | the report the CLI prints and the drain is handed                                  |
+| `.agents/skills/code-review/fixing-findings.md`                 | the order of work the prompt points the session at                                 |

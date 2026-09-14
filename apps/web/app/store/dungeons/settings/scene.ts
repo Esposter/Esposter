@@ -15,8 +15,6 @@ import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
 import { Direction } from "grid-engine";
 
-let isAutoUpdateGridX = false;
-
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const dungeonsStore = useDungeonsStore();
   const { fadeSwitchToScene } = dungeonsStore;
@@ -30,6 +28,10 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     () => SettingsOptionGrid.getValue({ x: 0, y: SettingsOptionGrid.position.value.y }) as SettingsOption,
   );
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
+  // Set by the y watcher below so the x watcher it triggers knows the move was the grid following the option
+  // Rather than the player picking a value — held here rather than at module level so it belongs to this
+  // Pinia instance
+  let isAutoUpdateGridX = false;
   // On option grid update, do one of two things:
   // 1. Position "y" changed (settings option): switch to the active settings value.
   // 2. Position "x" changed (settings value): setSettings to save the game.

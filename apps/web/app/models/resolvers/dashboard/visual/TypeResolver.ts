@@ -6,6 +6,10 @@ import { uncapitalize } from "@esposter/shared";
 import { defu } from "defu";
 
 export class TypeResolver extends AVisualTypeResolver {
+  override checkIsActive() {
+    return true;
+  }
+
   override handleConfiguration(apexOptions: ApexOptions, type: VisualType) {
     apexOptions.chart = defu(
       {
@@ -13,9 +17,5 @@ export class TypeResolver extends AVisualTypeResolver {
       },
       apexOptions.chart,
     );
-  }
-
-  override isActive() {
-    return true;
   }
 }

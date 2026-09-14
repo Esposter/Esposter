@@ -14,10 +14,7 @@ const { currentRoute } = useRouter();
 const items = computed<NavigationItem[]>(() =>
   [
     { icon: "mdi-home-outline", title: "Home", to: RoutePath.ResourceExplorer },
-    ...ResourceListSources.map((source) => {
-      const { icon, title, to } = ResourceListSourceDefinitionMap[source];
-      return { icon, title, to };
-    }),
+    ...ResourceListSources.map((source) => ResourceListSourceDefinitionMap[source]),
     { icon: "mdi-tag-multiple-outline", title: "Tags", to: RoutePath.ResourceExplorerTags },
     { icon: "mdi-delete-outline", title: "Recycle bin", to: RoutePath.ResourceExplorerRecycleBin },
   ].map(({ icon, title, to }) => ({ icon, isActive: currentRoute.value.path === to, title, to })),

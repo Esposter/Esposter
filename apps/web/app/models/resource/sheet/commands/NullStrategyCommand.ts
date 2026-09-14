@@ -6,7 +6,7 @@ import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSource
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
 import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
-import { takeOne } from "@esposter/shared";
+import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
 
 export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStrategy> {
   readonly type = CommandType.NullStrategy;
@@ -27,16 +27,10 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
   }
 
   execute(dataSource: DataSource) {
-    const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
     if (this.#nullStrategy === NullStrategy.ReplaceWithNA)
-      for (const { columnName, rowIndex } of this.#affectedCells) {
-        const row = takeOne(dataSource.rows, rowIndex);
-        const column = columnMap.get(columnName);
-        if (!column) continue;
-        column.size += getValueSize("N/A") - getValueSize(takeOne(row.data, columnName));
-        row.data[columnName] = "N/A";
-      }
+      writeAffectedCells(dataSource, this.#affectedCells, () => "N/A");
     else {
+      const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
       for (const { row } of this.#affectedRows)
         for (const [columnName, value] of Object.entries(row.data)) {
           const column = columnMap.get(columnName);
@@ -47,16 +41,9 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
   }
 
   undo(dataSource: DataSource) {
-    if (this.#nullStrategy === NullStrategy.ReplaceWithNA) {
-      const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
-      for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
-        const row = takeOne(dataSource.rows, rowIndex);
-        const column = columnMap.get(columnName);
-        if (!column) continue;
-        column.size += getValueSize(originalValue) - getValueSize(takeOne(row.data, columnName));
-        row.data[columnName] = originalValue;
-      }
-    } else {
+    if (this.#nullStrategy === NullStrategy.ReplaceWithNA)
+      writeAffectedCells(dataSource, this.#affectedCells, ({ originalValue }) => originalValue);
+    else {
       // Reinserted lowest index first, so each row lands at the index it was removed from — the same order
       // The removal recorded them in
       let restoredRows = dataSource.rows;

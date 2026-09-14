@@ -20,4 +20,4 @@ const visualTypeResolvers: AVisualTypeResolver[] = [
 ];
 
 export const getActiveVisualTypeResolvers = (type: VisualType): AVisualTypeResolver[] =>
-  visualTypeResolvers.filter((resolver) => resolver.isActive(type));
+  visualTypeResolvers.filter((resolver) => resolver.checkIsActive(type));

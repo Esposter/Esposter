@@ -53,6 +53,20 @@ export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   ["exec", "vitest", "run"],
 ];
 
+// The record and field separators of the `git log` output `getAnsweredCommits` splits: ASCII control characters
+// Rather than newlines, because a subject and a body are free text and a newline-delimited format would need a
+// Quoting rule. Written as escapes — the characters themselves are invisible in every editor that shows this
+// File, and a tool that rewrites the line silently drops them.
+export const RECORD_SEPARATOR = "\u001E";
+
+export const FIELD_SEPARATOR = "\u001F";
+
+// The same two characters in git’s own spelling, which is what asks git to emit them rather than passing the
+// Raw bytes through a command line. Beside the pair above because the two spellings are one value: the format
+// Writes what `getAnsweredCommits` splits on, and a drift between them reads as a log with no commits in it. The
+// Body is asked for raw rather than `%(trailers:key=…)`, which reads only the last contiguous trailer block.
+export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
+
 // A review whose drain has failed this many times is quarantined: its findings stay open for a person and the
 // Collector ports without them rather than stalling every window behind one finding nobody sees.
 export const DRAIN_ATTEMPT_CAP = 3;
