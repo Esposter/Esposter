@@ -9,8 +9,8 @@ import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/Az
 import { fileEntitySchema } from "#src/models/azure/table/FileEntity";
 import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
 import { MessageType } from "#src/models/message/MessageType";
-import { standardMessageTypeSchema } from "#src/models/message/StandardMessageType";
 import { sanitizedMessageSchema } from "#src/models/message/SanitizedMessage";
+import { standardMessageTypeSchema } from "#src/models/message/StandardMessageType";
 import { selectRoomInMessageSchema } from "#src/schema/roomsInMessage";
 import { selectUserSchema } from "#src/schema/users";
 import { FILE_MAX_LENGTH } from "#src/services/azure/container/constants";
