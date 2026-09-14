@@ -36,11 +36,12 @@ runs:
         readTrackedInputs() {
           git ls-tree -r HEAD "$@" | awk -F'\t' '$2 ~ /\.(test|test-d|bench)\.ts$/ || $2 ~ /\.bench(\.[^.]+)?\.(json|md)$/ || ($2 ~ /\.md$/ && $2 !~ /^apps\/web\/content\//) { next } { print }'
         }
-        readPackageInputs() {
+        # Walked once: the app key is the package key's inputs plus the app's
+        packageInputs="$(
           readTrackedInputs packages
           git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
-        }
+        )"
         {
-          echo "app-build-hash=$({ readPackageInputs; readTrackedInputs apps/web; } | sha256sum | cut -d' ' -f1)"
-          echo "package-builds-hash=$(readPackageInputs | sha256sum | cut -d' ' -f1)"
+          echo "package-builds-hash=$(echo "$packageInputs" | sha256sum | cut -d' ' -f1)"
+          echo "app-build-hash=$({ echo "$packageInputs"; readTrackedInputs apps/web; } | sha256sum | cut -d' ' -f1)"
         } >> "$GITHUB_OUTPUT"

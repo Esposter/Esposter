@@ -2,11 +2,8 @@ name: 🔥 Claude Warmup
 
 on:
   schedule:
-    # Runs every 6 hours (~02:16, 08:16, 14:16, 20:16 UTC) to reset the rolling
-    # Claude usage window. The extra hour of gap gives buffer since runs can take a while.
-    # ~20:16 UTC (06:16 AEST / UTC+10) stays in the set as the daily anchor.
-    # Minute is offset off :00 on purpose — GitHub delays/drops scheduled runs at the
-    # "start of every hour" (their words), so a mid-hour minute is materially more reliable.
+    # Every 6 hours — the 5-hour usage window plus an hour of slack for a slow run — anchored on 20:16 UTC
+    # (06:16 AEST). Off the hour on purpose: GitHub delays or drops schedules set for the start of one.
     - cron: "16 2,8,14,20 * * *"
   workflow_dispatch:
 
