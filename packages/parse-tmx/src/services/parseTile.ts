@@ -1,6 +1,7 @@
 import type { TMXTileNode } from "#src/models/tmx/node/TMXTileNode";
 import type { TMXTileParsed } from "#src/models/tmx/parsed/TMXTileParsed";
 
+import { TMXNodeType } from "#src/models/tmx/node/TMXNodeType";
 import { parseObject } from "#src/services/parseObject";
 import { parseProperties } from "#src/services/parseProperties";
 import { takeOne } from "@esposter/shared";
@@ -12,7 +13,8 @@ export const parseTile = (node: TMXTileNode): TMXTileParsed => {
     tile.animation = {
       frames: takeOne(takeOne(animation), "frame").map(({ $: frameData }) => structuredClone(frameData)),
     };
-  if (objectgroup) tile.objects = takeOne(takeOne(objectgroup), "object").map((o) => parseObject(o));
+  if (objectgroup)
+    tile.objects = takeOne(takeOne(objectgroup), TMXNodeType.Object).map((objectNode) => parseObject(objectNode));
   if (properties) tile.properties = parseProperties(properties);
   return tile;
 };
