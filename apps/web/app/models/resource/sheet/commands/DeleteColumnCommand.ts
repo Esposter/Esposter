@@ -4,6 +4,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
+import { alignRowDataToColumns } from "@/services/resource/sheet/commands/alignRowDataToColumns";
 import { takeOne } from "@esposter/shared";
 
 export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteColumn> {
@@ -35,12 +36,8 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
       this.#originalColumn,
       ...dataSource.columns.slice(this.#columnIndex),
     ];
-    const restoredColumnNames = dataSource.columns.map(({ name }) => name);
-    for (const [index, row] of dataSource.rows.entries()) {
+    for (const [index, row] of dataSource.rows.entries())
       row.data[this.#originalColumn.name] = takeOne(this.#originalRowValues, index);
-      const newData: typeof row.data = {};
-      for (const name of restoredColumnNames) newData[name] = takeOne(row.data, name);
-      row.data = newData;
-    }
+    alignRowDataToColumns(dataSource);
   }
 }

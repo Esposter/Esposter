@@ -10,6 +10,7 @@ import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSource
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
 import { ColumnTypeCreateMap } from "@/services/resource/sheet/column/ColumnTypeCreateMap";
+import { alignRowDataToColumns } from "@/services/resource/sheet/commands/alignRowDataToColumns";
 import { getRecordDifferenceDescription } from "@/services/resource/sheet/commands/getRecordDifferenceDescription";
 import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
@@ -24,38 +25,22 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
   }
 
   readonly #originalColumn: Column;
-  readonly #originalName: string;
   readonly #originalRowValues: ColumnValue[];
   readonly #updatedColumn: ToData<Column>;
 
-  constructor(
-    originalName: string,
-    originalColumn: Column,
-    updatedColumn: ToData<Column>,
-    originalRowValues: ColumnValue[],
-  ) {
+  constructor(originalColumn: Column, updatedColumn: ToData<Column>, originalRowValues: ColumnValue[]) {
     super();
-    this.#originalName = originalName;
     this.#originalColumn = originalColumn;
     this.#updatedColumn = updatedColumn;
     this.#originalRowValues = originalRowValues;
   }
 
   execute(dataSource: DataSource) {
-    const columnIndex = dataSource.columns.findIndex(({ name }) => name === this.#originalName);
+    const originalName = this.#originalColumn.name;
+    const columnIndex = dataSource.columns.findIndex(({ name }) => name === originalName);
     if (columnIndex === -1) return;
     const column = takeOne(dataSource.columns, columnIndex);
     const updatedName = this.#updatedColumn.name;
-    if (updatedName !== this.#originalName) {
-      const newColumnNames = dataSource.columns.map(({ name }) => (name === this.#originalName ? updatedName : name));
-      for (const row of dataSource.rows) {
-        const newData: typeof row.data = {};
-        for (const name of newColumnNames)
-          newData[name] = name === updatedName ? takeOne(row.data, this.#originalName) : takeOne(row.data, name);
-        row.data = newData;
-      }
-    }
-
     const originalType = column.type;
     const dateFormatChange =
       column.type === ColumnType.Date && this.#updatedColumn.type === ColumnType.Date
@@ -64,6 +49,11 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const newColumn = ColumnTypeCreateMap[this.#updatedColumn.type].create();
     Object.assign(newColumn, this.#updatedColumn);
     dataSource.columns[columnIndex] = newColumn;
+    if (updatedName !== originalName) {
+      for (const row of dataSource.rows) row.data[updatedName] = takeOne(row.data, originalName);
+      alignRowDataToColumns(dataSource);
+    }
+
     if (dateFormatChange && dateFormatChange.oldFormat !== dateFormatChange.newFormat) {
       const { newFormat, oldFormat } = dateFormatChange;
       let size = 0;
@@ -94,24 +84,15 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
   }
 
   undo(dataSource: DataSource) {
+    const originalName = this.#originalColumn.name;
     const updatedName = this.#updatedColumn.name;
     const columnIndex = dataSource.columns.findIndex(({ name }) => name === updatedName);
     if (columnIndex === -1) return;
-    const newColumnNames =
-      updatedName === this.#originalName
-        ? undefined
-        : dataSource.columns.map(({ name }) => (name === updatedName ? this.#originalName : name));
-    for (const [index, row] of dataSource.rows.entries()) {
-      const value = takeOne(this.#originalRowValues, index);
-      if (newColumnNames) {
-        const newData: typeof row.data = {};
-        for (const name of newColumnNames)
-          newData[name] = name === this.#originalName ? value : takeOne(row.data, name);
-        row.data = newData;
-      } else row.data[this.#originalName] = value;
-    }
     const restoredColumn = ColumnTypeCreateMap[this.#originalColumn.type].create();
     Object.assign(restoredColumn, this.#originalColumn);
     dataSource.columns[columnIndex] = restoredColumn;
+    for (const [index, row] of dataSource.rows.entries())
+      row.data[originalName] = takeOne(this.#originalRowValues, index);
+    if (updatedName !== originalName) alignRowDataToColumns(dataSource);
   }
 }

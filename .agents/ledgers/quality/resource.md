@@ -16,5 +16,5 @@
 | `emailEditor`, `webpageEditor`, `grapesjs`, `survey` — store, composables, services               | 2026-09-14 | their components are swept above; their shared models are `shared.md`'s |
 | `Resource/` root files less `Overview.vue`                                                        | 2026-09-14 | the dialogs, toggles and readouts a blade mounts, owned by no blade     |
 | `Resource/Create`, `Home`, `RecycleBin`, `Search`, `VersionHistory`                               | 2026-09-14 |                                                                         |
-| `app/models/resource/sheet`                                                                       | —          |                                                                         |
+| `app/models/resource/sheet`                                                                       | 2026-09-14 |                                                                         |
 | `app/models/resource` less `sheet`                                                                | 2026-09-14 |                                                                         |

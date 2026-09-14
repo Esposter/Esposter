@@ -1,4 +1,3 @@
-import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { ColumnFilter } from "@/models/resource/sheet/column/ColumnFilter";
 import type { ColumnFilterOfType } from "@/models/resource/sheet/column/ColumnFilterOfType";
 import type { ColumnFilterPredicate } from "@/models/resource/sheet/column/ColumnFilterPredicate";
@@ -32,5 +31,5 @@ export const ColumnFilterPredicateMap = {
   },
   [ColumnType.String]: checkIsMatchingStringCell,
 } as const satisfies {
-  [K in ColumnFilter["type"]]: (filter: ColumnFilterOfType<K>, cellValue: ColumnValue) => boolean;
+  [K in ColumnFilter["type"]]: ColumnFilterPredicate<ColumnFilterOfType<K>>;
 };

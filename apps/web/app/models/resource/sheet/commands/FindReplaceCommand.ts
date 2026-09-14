@@ -5,7 +5,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { coerceValue } from "@/services/resource/sheet/column/coerceValue";
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
 import { takeOne } from "@esposter/shared";
 
 export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindReplace> {
@@ -29,26 +29,13 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
   }
 
   execute(dataSource: DataSource) {
-    const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
-    for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
-      const row = takeOne(dataSource.rows, rowIndex);
-      const column = columnMap.get(columnName);
-      if (!column) continue;
+    writeAffectedCells(dataSource, this.#affectedCells, ({ originalValue }, column) => {
       const replacedString = String(originalValue).replaceAll(this.#findValue, this.#replaceValue);
-      const newValue = column.type === ColumnType.String ? replacedString : coerceValue(replacedString, column.type);
-      column.size += getValueSize(newValue) - getValueSize(takeOne(row.data, columnName));
-      row.data[columnName] = newValue;
-    }
+      return column.type === ColumnType.String ? replacedString : coerceValue(replacedString, column.type);
+    });
   }
 
   undo(dataSource: DataSource) {
-    const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
-    for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
-      const row = takeOne(dataSource.rows, rowIndex);
-      const column = columnMap.get(columnName);
-      if (!column) continue;
-      column.size += getValueSize(originalValue) - getValueSize(takeOne(row.data, columnName));
-      row.data[columnName] = originalValue;
-    }
+    writeAffectedCells(dataSource, this.#affectedCells, ({ originalValue }) => originalValue);
   }
 }

@@ -1,10 +1,11 @@
-import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { IndexedColumn } from "@/models/resource/sheet/commands/IndexedColumn";
 
 import { pluralize } from "#shared/util/text/pluralize";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
+import { alignRowDataToColumns } from "@/services/resource/sheet/commands/alignRowDataToColumns";
+import { restoreAtIndices } from "@/services/resource/sheet/commands/restoreAtIndices";
 import { takeOne } from "@esposter/shared";
 
 export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteColumns> {
@@ -33,27 +34,13 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
     const ascendingColumns = this.#indexedColumns.toSorted(
       (firstIndexedColumn, secondIndexedColumn) => firstIndexedColumn.columnIndex - secondIndexedColumn.columnIndex,
     );
-    const restoredColumns: Column[] = [];
-    let existingIndex = 0;
-    for (const { columnIndex, originalColumn } of ascendingColumns) {
-      while (restoredColumns.length < columnIndex) {
-        restoredColumns.push(takeOne(dataSource.columns, existingIndex));
-        existingIndex++;
-      }
-      restoredColumns.push(originalColumn);
-    }
-    while (existingIndex < dataSource.columns.length) {
-      restoredColumns.push(takeOne(dataSource.columns, existingIndex));
-      existingIndex++;
-    }
-    dataSource.columns = restoredColumns;
-    const restoredColumnNames = restoredColumns.map(({ name }) => name);
-    for (const [rowIndex, row] of dataSource.rows.entries()) {
+    dataSource.columns = restoreAtIndices(
+      dataSource.columns,
+      ascendingColumns.map(({ columnIndex, originalColumn }) => ({ index: columnIndex, item: originalColumn })),
+    );
+    for (const [rowIndex, row] of dataSource.rows.entries())
       for (const { originalColumn, originalRowValues } of ascendingColumns)
         row.data[originalColumn.name] = takeOne(originalRowValues, rowIndex);
-      const newData: typeof row.data = {};
-      for (const name of restoredColumnNames) newData[name] = takeOne(row.data, name);
-      row.data = newData;
-    }
+    alignRowDataToColumns(dataSource);
   }
 }
