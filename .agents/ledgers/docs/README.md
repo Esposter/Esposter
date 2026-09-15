@@ -9,23 +9,14 @@ earn its line is the same read against the same owner.
 Two questions per unit: the mandate's, of every page with no diagram, and `references/diagrams.md`'s, of every
 page that has one.
 
-| Unit                                                           | Swept      | Notes                                                                                  |
-| -------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
-| `architecture/*.md`                                            | 2026-09-06 |                                                                                        |
-| `resource/*.md`                                                | 2026-09-06 | every area index carries a `Shipped log`, one line per program of work                 |
-| `esbabbler/*.md`, `esbabbler/calls/`                           | 2026-09-06 | the widest area by some margin                                                         |
-| `virrun/*.md`                                                  | 2026-09-06 | bench figures belong to the artifacts that hold them, never to prose                   |
-| `resource/sheet/`, `infra/`                                    | 2026-09-06 | `eventgrid-dead-letter` keeps two diagrams: a delivery path and an event lifecycle     |
-| `clicker/`, `dungeons/`, `post/`                               | 2026-09-06 | split from `user/` to fit a review window                                              |
-| `user/`                                                        | 2026-09-06 |                                                                                        |
-| `vue-phaserjs/`, `achievement/`, `fluid-simulator/`, `anime/`  | 2026-09-06 |                                                                                        |
-| every `deferred/` and `rejected/` page, every `roadmap.md`     | 2026-09-06 | diagram-exempt — read for revisit triggers and re-argued decisions                     |
-| `proposals/`, `docs/index.md`, every area `index.md`           | 2026-09-06 | index coverage is `content/docs/index.test.ts`'s, not a pass's                         |
-| root — `AGENTS.md`, `README.md`, `SCORE.md`, `CONTRIBUTING.md` | 2026-09-06 | plus `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.agents/*.md`                               |
-| `packages/*/README.md`                                         | 2026-09-06 | `readme-standards` owns the shape; what drifts is the content a reader acts on         |
-| `.agents/skills/*/SKILL.md`                                    | 2026-09-06 |                                                                                        |
-| `.agents/skills/*/SKILL.md` over the ~15 KB budget             | 2026-09-11 | a section over the budget is usually another skill's subject, not a page this one owes |
-| `.agents/skills/*/references/*.md`                             | 2026-09-06 | a citation from inside `references/` to its own skill's root needs `../`               |
+## Areas
+
+Coverage lives in the area file, never here. A pass loads this file and the one area it is sweeping.
+
+| Area                  | What it holds                                                                               |
+| --------------------- | ------------------------------------------------------------------------------------------- |
+| [content](content.md) | `apps/web/content/docs`, the root markdown, every package README                            |
+| [skills](skills.md)   | `.agents/skills` — one skill per row, its `SKILL.md` and its `references/` read as one unit |
 
 Greps, over `*.md`. Each finds a candidate, not a defect — the failures are prose-shaped and the pass is reading.
 What each pattern means is the owning skill's to say:
