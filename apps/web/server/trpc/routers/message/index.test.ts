@@ -1234,7 +1234,6 @@ describe("messageRouter", () => {
     expect(takeOne(updatedMessages).message).toBe(updatedMessage);
   });
 
-  // Only Date, so the message row keys still come from a real `process.hrtime` tick — see the `azure-table` skill
   test("fails createMessage with a second message inside the slowmode window", async () => {
     expect.hasAssertions();
 

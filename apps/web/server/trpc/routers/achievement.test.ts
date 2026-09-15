@@ -32,10 +32,7 @@ describe("achievementRouter", () => {
     caller = getCaller();
   });
 
-  // `unlockedAt` is stamped from `new Date()`, so a frozen clock makes it exactly assertable. Only `Date` is
-  // Faked: vitest's default set includes `process.hrtime`, which is what `now()` reads for the nanosecond tick
-  // Every Azure Table row key is built from — freeze that and every row a test writes to one partition lands on
-  // The same key, so the second is rejected `409` and swallowed by the best-effort activity writer
+  // `unlockedAt` is stamped from `new Date()`, so a frozen clock makes it exactly assertable
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });

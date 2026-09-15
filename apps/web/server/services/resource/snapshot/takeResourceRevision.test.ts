@@ -58,8 +58,6 @@ describe(takeResourceRevision, () => {
     ctx = { ...mockContext, getSessionPayload: getMockSession() };
   });
 
-  // Only `Date` is faked: the default set includes `process.hrtime`, which every Azure Table row key is built
-  // From, and a frozen tick lands two writes to one partition on the same key
   beforeEach(async () => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     resource = takeOne(

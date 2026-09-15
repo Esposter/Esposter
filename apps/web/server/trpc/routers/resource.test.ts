@@ -107,10 +107,7 @@ describe("resourceRouter", () => {
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
-  // `updatedAt` is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency
-  // Deterministic.
-  // Only Date: vitest's default set also fakes `process.hrtime`, which every Azure Table row key is derived from,
-  // And a frozen tick makes two writes to one partition collide on the same key
+  // `updatedAt` is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency assertable
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
