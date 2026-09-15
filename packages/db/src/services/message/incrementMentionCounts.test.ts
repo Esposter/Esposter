@@ -37,7 +37,7 @@ describe(incrementMentionCounts, () => {
 
   beforeAll(async () => {
     db = await createMockDb();
-    const createdAt = new Date();
+    const createdAt = new Date(0);
     await db
       .insert(users)
       .values(

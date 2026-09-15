@@ -43,7 +43,7 @@ describe(getMessageRecipientUserIds, () => {
 
   beforeAll(async () => {
     db = await createMockDb();
-    await db.insert(users).values(userIds.map((id) => createUser(id, new Date(), name)));
+    await db.insert(users).values(userIds.map((id) => createUser(id, new Date(0), name)));
     await db.insert(roomsInMessage).values({ id: roomId, name, type: RoomType.Room, userId: allOnlineUserId });
     await db.insert(usersToRoomsInMessage).values([
       { notificationType: NotificationType.All, roomId, userId: allOnlineUserId },
