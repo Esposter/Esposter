@@ -111,7 +111,7 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
       if (isTerminated) continue;
     } else if (!STATEMENT_START_REGEX.test(before)) continue;
     // Matches arrive in source order, so the line count only ever moves forward from the last hit
-    for (const _newline of text.slice(lineOffset, start[2]).matchAll(NEWLINE_REGEX)) line += 1;
+    for (const _ of text.slice(lineOffset, start[2]).matchAll(NEWLINE_REGEX)) line += 1;
     lineOffset = start[2];
     results.push({ after, line });
   }

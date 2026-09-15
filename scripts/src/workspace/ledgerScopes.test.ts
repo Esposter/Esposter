@@ -12,7 +12,7 @@ const checkIsResolved = async (pathspec: string): Promise<boolean> => {
   if (existsSync(resolve(REPOSITORY_ROOT, pathspec))) return true;
 
   const pattern = pathspec.includes("/") ? pathspec : `**/${pathspec}`;
-  for await (const _match of glob(pattern, { cwd: REPOSITORY_ROOT })) return true;
+  for await (const _ of glob(pattern, { cwd: REPOSITORY_ROOT })) return true;
   return false;
 };
 
