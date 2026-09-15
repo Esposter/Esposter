@@ -43,7 +43,7 @@ sequenceDiagram
 
     A->>T: joinCallByRoomId({ roomId }) / joinCall({ id })
     T->>T: create/reuse session · update callSessionParticipantMap
-    T-->>A: { livekitUrl, livekitToken }
+    T-->>A: { liveKitUrl, liveKitToken }
     A->>LK: room.connect(url, token)
     LK-->>T: webhook participant_joined (backup path)
     T->>B: callEventEmitter → onJoinCall subscription
