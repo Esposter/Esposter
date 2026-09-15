@@ -6,7 +6,7 @@ Read when writing a duration, a date, or a numeric literal big enough to miscoun
 
 Never inline arithmetic (`7 * 24 * 60 * 60 * 1000`) and never a raw literal (`604800`):
 
-```typescript
+```ts
 Temporal.Duration.from({ days: 7 }).total("milliseconds");
 ```
 
