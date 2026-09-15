@@ -18,24 +18,24 @@ export const useRoomSubscribables = () => {
     (roomIdsString) => {
       if (!roomIdsString) return undefined;
 
-      const newRoomIds = roomIdsString.split(",");
+      const roomIds = roomIdsString.split(",");
       return getUnsubscribe(
-        $trpc.room.onUpdateRoom.subscribe(newRoomIds, {
+        $trpc.room.onUpdateRoom.subscribe(roomIds, {
           onData: (updatedRoom) => {
             storeUpdateRoom(updatedRoom);
           },
         }),
-        $trpc.room.onDeleteRoom.subscribe(newRoomIds, {
+        $trpc.room.onDeleteRoom.subscribe(roomIds, {
           onData: getSynchronizedFunction((id) =>
             getResultAsync(() => storeDeleteRoom({ id })).match(noop, console.error),
           ),
         }),
-        $trpc.room.onJoinRoom.subscribe(newRoomIds, {
+        $trpc.room.onJoinRoom.subscribe(roomIds, {
           onData: ({ roomId, user }) => {
             storeCreateMember(roomId, user);
           },
         }),
-        $trpc.room.onLeaveRoom.subscribe(newRoomIds, {
+        $trpc.room.onLeaveRoom.subscribe(roomIds, {
           onData: ({ roomId, userId }) => {
             storeDeleteMember(roomId, userId);
           },
