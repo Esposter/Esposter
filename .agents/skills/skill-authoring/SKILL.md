@@ -50,7 +50,7 @@ A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by eve
 So a skill is two tiers:
 
 - **`SKILL.md`** — the rules that apply to _every_ task in the domain, one line each, plus an index of the deep dives. This is what has to land without anyone asking for it.
-- **`references/<topic>.md`** — a rule set that fires only for a _named sub-task_: a ritual, a file type, a single component, a procedure. It is read when the index line matches, the way `code-review` reads its mode pages.
+- **`references/<topic>.md`** — a rule set that fires only for a _named sub-task_: a ritual, a file type, a single component, a procedure. It is read when the index line matches. **`references/` is the only second tier, and it does not nest**: `ai:sweep:skill-docs` globs `*/SKILL.md` and `*/references/*.md` and nothing else, so a page parked at a skill's root or in a folder of its own is one the budget, index-coverage and citation checks never see.
 
 **The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — as `testing` indexes `references/timers-and-hand-resolved-promises.md` _when a test installs fake timers or holds a call in flight_. An index line that reads "see X for more detail" guarantees the page is never opened.
 
