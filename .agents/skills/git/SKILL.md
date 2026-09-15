@@ -7,7 +7,7 @@ description: Apply when running git operations, merging a branch, resolving a lo
 
 ## Commit Message Format
 
-Conventional-commits format and the type list are in `~/.claude/rules/git-workflow.md`.
+Conventional-commits format and the type list are in `CONTRIBUTING.md` ("Commit Conventions").
 
 **Commit attribution is enabled** — commits carry the `Co-Authored-By` trailer, because `includeCoAuthoredBy` is unset and defaults on. Expect it; don't strip it, and don't add it by hand either.
 
