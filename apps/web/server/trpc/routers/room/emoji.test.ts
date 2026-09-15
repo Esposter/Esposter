@@ -1,6 +1,8 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
+
+import { MimeType } from "#shared/models/file/MimeType";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
@@ -24,7 +26,7 @@ describe("roomEmojiRouter", () => {
   let roomEmojiCaller: DecorateRouterRecord<TRPCRouter["room"]["emoji"]>;
   let roomId: string;
   const name = "party_parrot";
-  const mimetype = "image/png";
+  const mimetype = MimeType.Png;
   const size = 1024;
   const oversizedSize = 1024 * 1024;
   // A slug the dataset owns, which a room may not shadow

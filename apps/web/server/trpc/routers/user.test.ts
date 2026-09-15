@@ -1,6 +1,8 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
+
+import { MimeType } from "#shared/models/file/MimeType";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
@@ -43,7 +45,7 @@ describe("userRouter", () => {
   const biography = "biography";
   const image = "image";
   const message = "message";
-  const mimetype = "image/png";
+  const mimetype = MimeType.Png;
   const name = "name";
   const size = 1;
   const updatedMessage = "updatedMessage";

@@ -3,6 +3,8 @@ import type { PollMessageContent } from "#shared/models/message/poll/PollMessage
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData, MessageEntity, MessageNotificationData } from "@esposter/db-schema";
+
+import { MimeType } from "#shared/models/file/MimeType";
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
 import type { MockInstance } from "vitest";
 
@@ -79,8 +81,8 @@ describe("messageRouter", () => {
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
   const filename = "filename";
-  const mimetype = "image/jpeg";
-  const size = 1000;
+  const mimetype = MimeType.Png;
+  const size = 1;
   const name = "name";
   const updatedMessage = "updatedMessage";
   // A word the message wrapper cannot contain on its own, so a room's filter only ever matches the text a test
