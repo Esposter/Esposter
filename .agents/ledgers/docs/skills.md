@@ -16,7 +16,7 @@
 | `esbabbler`               | —          |       |
 | `esbabbler-call`          | —          |       |
 | `file-organization`       | 2026-09-15 |       |
-| `formatting`              | —          |       |
+| `formatting`              | 2026-09-15 |       |
 | `git`                     | —          |       |
 | `github-actions`          | —          |       |
 | `grapesjs`                | —          |       |

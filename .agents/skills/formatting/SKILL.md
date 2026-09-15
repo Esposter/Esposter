@@ -1,6 +1,6 @@
 ---
 name: formatting
-description: Esposter code formatting — blank-line placement around consts/returns/blocks, the test-file exception, and comment attachment/content rules (comment only exceptional behaviour, describe the present never the history, never argue for the refactor that produced the code, keep error-text quotes, `/** */` only on an exported API surface). Apply when writing or editing any file's whitespace or comments.
+description: Esposter code formatting — blank-line placement around consts/returns/blocks, the test-file exception, and comment attachment/content rules (comment only exceptional behaviour, describe the present never the history, never argue for the refactor that produced the code, keep error-text quotes, `/** */` only on an exported API surface) — plus a deep dive on the `capitalized-comments` rule and the re-read a rewrapped comment owes. Apply when writing or editing any file's whitespace or comments.
 ---
 
 # Formatting
@@ -86,27 +86,12 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 - **`/** */` is for an exported API surface, `//` for everything else.** A doc block on an exported class, interface or helper is what an editor shows at the call site, which a `//` above the declaration is not; anything internal gets `//`. Its **content** obeys every rule above regardless — a doc block that restates the declaration's own name, or claims something typecheck already proves ("correctly implements the interface"), earns nothing and goes.
 - **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line, but keep a bulleted list (one item per `//` line) when enumerating distinct items rather than cramming them into one sentence. If an example helps, show only the minimal fragment. Applies to `//`, `/* */`, and Vue `<!-- -->` alike.
 - **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Trim it to the minimal identifying fragment; drop surrounding example values.
-- **Don't fight `eslint(capitalized-comments)`** — oxlint enforces an uppercase first letter on every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine, and lowercasing one to read better is a lint error rather than a style choice. What it cannot see is the difference between a prose word and a code identifier, so a wrapped line starting with `node_modules`, `pnpm` or `oxlint` gets capitalized into a name that does not exist — and `--fix` writes it. Rewrap so a line starts with prose; a line opening on a backtick or a bracket is exempt, which is why `` `pnpm build` `` may start one.
-
-  **Rewrapping a comment is what creates this**, so it is the edit to re-check rather than the original text. Changing a word early in a block reflows every line after it, and an identifier that sat mid-line lands at the front of one — the corruption is written by the pass that was fixing the previous one. After editing any comment, grep the added lines for a line-initial identifier before committing:
-
-  ```bash
-  git diff -U0 | grep -E '^\+\s*//\s+([A-Z][a-z]+[A-Z-][a-zA-Z]*|(Pnpm|Oxlint|Tsdown|Tinybench|Sdk|Sas))'
-  ```
-
-  Two shapes, because one pattern cannot express both. The first catches an identifier with a later capital to anchor on (`ToPrecision`, `Vue-tsc`); a one-word name (`Pnpm`, `Tinybench`) has none, so it is caught by enumeration instead — the comments ledger keeps that list, since it only grows when a new tool name turns up. Broadening the first to any capitalized token is not the fix: `capitalized-comments` capitalizes _every_ continuation line, so it would match nearly all of them.
-
-  Most hits are prose (`Non-Vue`, `Selector-based`) or a real PascalCase name; what fails is a camelCase or lowercase one (`toPrecision`, `tinybench`, `vue-tsc`, `pnpm`).
-
-  **Read the joined sentence, not the new opening word.** The fix moves an identifier off the line front by
-  putting prose in front of it, and the prose has to agree with the line _above_ — which the editor is no longer
-  looking at. Both failures are silent: the previous line's article is repeated (`… the FORCE_COLOR level string
-the` / `The supports-color convention uses`), or its verb loses the object the identifier was (`… a fork run
-stacks` / `The upperDirectory becomes a read-only lower`). Neither is a lint error and neither is a broken build; a
-  reviewer reads it as a dropped word, because it is one. After a rewrap, read the block start to finish with the
-  leading capitals ignored. Backticking the identifier is the fix that cannot do this — a line opening on a
-  backtick is exempt from the rule, so the sentence is left alone.
+- **Don't fight `eslint(capitalized-comments)`** — oxlint uppercases the first letter of every `//` line, so an identifier that lands at a line front after a rewrap is silently capitalised; put prose in front of it or backtick it, then re-read the joined sentence against the line above. The grep that finds one, and the two silent ways the fix breaks the sentence: `references/capitalized-comments.md`.
 
 ## Line Endings
 
 - Enforced by `.gitattributes` (`text eol=lf` for `.ts`/`.vue`/`.js`/`.json`/`.md`/`.yaml`/`.sh`; `.bat`/`.cmd`/`.ps1` are deliberately `crlf`) and settled by `oxfmt` (`pnpm format`). Never hand-convert line endings.
+
+## Deep Dives
+
+- `references/capitalized-comments.md` — when `capitalized-comments` fires, or after rewrapping a comment block.
