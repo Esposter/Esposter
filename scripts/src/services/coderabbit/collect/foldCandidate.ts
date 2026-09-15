@@ -21,7 +21,6 @@ export const foldCandidate = ({ cwd, developSha, fixCount, frontierSha, queueSha
     console.info("main not folded — the fold alone put the window over the file cap");
     isMainMerged = false;
   }
-
   // A fast-forward moves develop to the queue's own sha, so it must carry exactly what was measured: no fixes
   // Ahead, the queue sitting on develop, no merge among the cut's ancestors, and no fold of `main` on top
   const cutSha = queueShas.at(-1);

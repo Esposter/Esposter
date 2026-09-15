@@ -57,16 +57,13 @@ export const runCycle = async ({
   const { developSha, mainSha, queueSha } = branchShas;
   // The drain may create or advance the fixes branch mid-pass, so this one is carried rather than re-read
   let reviewFixesSha = branchShas.reviewFixesSha;
-
   // The return stroke first: a release that merged moves `develop` before anything is measured against it
   const returned = runReturnStroke({ cwd, developSha, isDryRun, mainSha });
   if (returned) return returned;
-
   // The express lane, before the pull request is even looked up: a mechanical commit reaches `main` directly and
   // The return stroke carries it to `develop` on the next run
   const expressed = runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha });
   if (expressed) return expressed;
-
   // No release pull request: the last one merged and the next window is still filling from the merge base
   const releasePullRequest = namedPullRequest === undefined ? readReleasePullRequest() : undefined;
   // Closed without merging is a person's pause: opening another over it would spend the slot they were withholding

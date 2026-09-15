@@ -32,7 +32,6 @@ export const settleRateLimit = ({
     console.info("rate limited — the review it refused is already asked for");
     return {};
   }
-
   // Read again, as before the push: a review a person started during the drain would be cancelled by the ask
   if (!checkIsSlotFree(readCheckStatus(pullRequest)))
     return {

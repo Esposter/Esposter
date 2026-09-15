@@ -27,7 +27,6 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
       "coderabbit",
       `the fixes alone overflow the cap of ${REVIEW_FILE_CAP} files from the frontier`,
     );
-
   // Owed against the tree the fixes built, not develop: a queue rebased onto `ai/review-fixes` carries the fix
   // Commits as ancestors, and against develop they would be re-picked onto a tree that already holds them
   const fixesHeadSha = readHeadSha(cwd);

@@ -80,7 +80,6 @@ export const drainFindings = async ({
     console.info(`the drain is limited until ${resetAt} — nothing drained, nothing counted`);
     return { isLimited: true, reviewFixesSha };
   }
-
   // A zero exit says the session ended, never that it finished: a drain that stopped mid-fix leaves the rest in
   // The working tree, and reading `HEAD` there would push half a finding as though it were whole
   const dirtyPaths = readDirtyPaths();
@@ -103,7 +102,6 @@ export const drainFindings = async ({
     console.info("the drain produced no commit — every finding was rejected or already answered");
     return { isLimited: false, reviewFixesSha };
   }
-
   // An empty expected sha leases on the branch not existing, which is the first drain's case
   runGit([
     "push",

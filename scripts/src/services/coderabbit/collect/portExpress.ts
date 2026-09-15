@@ -23,7 +23,6 @@ export const portExpress = ({ cwd, developSha, mainSha, queueSha }: ExpressInput
   runGit(["switch", "--detach", mainSha], cwd);
   const shas = mechanicalShas.filter((sha) => pickCommit(sha, cwd) === PickOutcome.Applied);
   if (shas.length === 0) return { shas };
-
   // Asked again of the cut: what ships is each patch replayed onto `main` and stacked with siblings taken out of
   // Order, which is not the diff the per-commit proof saw. A cut that fails takes the review lane instead.
   if (checkIsMechanicalRange([mainSha, "HEAD"], cwd)) return { shas, targetSha: readHeadSha(cwd) };

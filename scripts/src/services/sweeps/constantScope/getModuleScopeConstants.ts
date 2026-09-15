@@ -61,7 +61,6 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
       ([character, depth], position) =>
         character === "=" && depth === 0 && after[position + 1]?.[0] === ">" && after[position + 1]?.[1] === 0,
     );
-
     // `vi.hoisted` is lifted above the imports, so a `describe` scope cannot hold it
     if (!isArrow && !declaration.includes("vi.hoisted") && !EXEMPT_BODY_REGEX.test(body))
       constants.push({ line: index + 1, name });

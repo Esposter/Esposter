@@ -37,7 +37,6 @@ export const replyAnswered = ({
       console.info(`reply ${commentId}: ${body}`);
       if (!isDryRun) getResult(() => postReply(pullRequest, commentId, body)).match(noop, console.error);
     }
-
   // The predicate is the marker and the shas together: the rejections comment carries the marker and none of
   // These commits, so a review partly rejected and partly fixed owes both
   const commitsByReview = Map.groupBy(

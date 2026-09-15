@@ -25,7 +25,6 @@ export const getFeedbackReport = ({ issueComments, review, threads }: FeedbackRe
       body.split("\n").find((entry) => entry.startsWith("**")) ?? "",
       "",
     );
-
   // Inline comments can fail to post outright, and the review says so in a caution block nobody reads. The
   // Stated count against the threads in hand says the same thing as a number, every run.
   lines.push(

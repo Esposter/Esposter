@@ -25,7 +25,6 @@ export const getDrainEventLine = (line: string): DrainLogLine | undefined => {
         const summary = input.split("\n")[0]?.slice(0, TOOL_INPUT_LENGTH) ?? "";
         return `→ ${block.name} ${summary}`.trim();
       }
-
       // A thinking block, or a kind a later release adds: read as a tool call it would throw on a missing `input`
       return "";
     });

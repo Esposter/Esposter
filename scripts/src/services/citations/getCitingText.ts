@@ -22,7 +22,6 @@ export const getCitingText = (markdown: string): string => {
   for (let runIndex = 0; runIndex < runs.length; runIndex++) {
     const opener = runs[runIndex];
     if (opener === undefined) continue;
-
     // Scanned forward from the opener rather than searched from the start: a span closes a run or two later, so
     // The walk is one pass over a page of spans rather than a rescan of every run before each one
     let closerIndex = runIndex + 1;
