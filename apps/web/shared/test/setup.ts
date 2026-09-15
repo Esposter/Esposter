@@ -42,7 +42,7 @@ class MemoryStorage implements Storage {
 
 globalThis.localStorage ??= new MemoryStorage();
 globalThis.sessionStorage ??= new MemoryStorage();
-// Happy-dom implements no `visualViewport`, and Vuetify's overlay location strategy reads it unguarded — so any
+// `happy-dom` implements no `visualViewport`, and Vuetify's overlay location strategy reads it unguarded — so any
 // Test that mounts a real `v-dialog`/`v-menu` dies with `ReferenceError: visualViewport is not defined` before a
 // Single assertion runs. The workaround reached for otherwise is `shallow: true`, which renders no overlay DOM at
 // All and so cannot assert anything about the shell inside it. A stationary 1:1 viewport is exactly what the
