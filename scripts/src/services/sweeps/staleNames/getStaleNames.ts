@@ -17,7 +17,8 @@ const PLACEHOLDER_SEGMENT_REGEX = /(?<=[a-z])X(?![a-z])/u;
 const NAME_SEGMENT_REGEX = /(?<=[a-z\d])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|[._$]+/u;
 const PLURAL_SUFFIX_REGEX = /e?s$/u;
 // A page in these folders describes what does not exist by design — a rejected direction, a deferred idea, a
-// Design not yet shipped — so every name in it is expected to resolve nowhere (the `docs` skill, "location carries status")
+// Design not yet shipped — so every name in it is expected to resolve nowhere (the `docs` skill, "location carries
+// Status")
 const UNSHIPPED_PAGE_REGEX = /\/(?:rejected|deferred|proposals)\//u;
 // A page cites a call as `name(args)` and a destructure as `{ a, b }`; the names judged are the callee and
 // The bound identifiers, since the parens and braces belong to the sentence rather than to any name

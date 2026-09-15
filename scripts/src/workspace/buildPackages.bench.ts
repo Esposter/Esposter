@@ -14,8 +14,8 @@ import { test } from "vitest";
 // `*.bench.md` is written, which is a developer's machine. Skipped here rather than excluded in the workflow
 // So the reason travels with the file.
 const IS_CI = Boolean(process.env.CI);
-// Switched off locally too, and this is that switch. Three iterations over every package is three full `build:packages` runs
-// — ten minutes before any other member's bench starts — and what it measures is tsdown and rolldown rather than
+// Switched off locally too, and this is that switch. Three iterations over every package is three full `build:packages`
+// Runs — ten minutes before any other member's bench starts — and what it measures is tsdown and rolldown rather than
 // Anything in this repo, so it moves when a dependency bumps and not when the code does. It is also the one bench
 // That deletes state it does not own: each `dist` it removes to force a cold build is the same `dist` a concurrent
 // Member's `vitest.config.ts` resolves `@esposter/configuration` through, which is why the root `bench` script
