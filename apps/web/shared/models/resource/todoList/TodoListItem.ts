@@ -21,6 +21,5 @@ export const todoListItemSchema = z.object({
   ...aNamedItemEntitySchema.shape,
   ...createItemEntityTypeSchema(todoListItemTypeSchema).shape,
   dueAt: z.coerce.date().nullable(),
-  // Notes are rich-text HTML rendered with v-html, so they are sanitized at the schema boundary
   notes: z.string().transform(sanitizeTextHtml).pipe(z.string().max(TODO_LIST_ITEM_NOTES_MAX_LENGTH)),
 }) satisfies z.ZodType<ToData<TodoListItem>>;
