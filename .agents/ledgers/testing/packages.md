@@ -18,4 +18,4 @@ splits at `services/exec`'s subdirectories.
 | `parse-tmx`, `xml2js`                                                                               | 2026-09-15 |                                                        |
 | `vue-phaserjs`                                                                                      | 2026-09-05 |                                                        |
 | `configuration`, `infra`                                                                            | 2026-09-15 |                                                        |
-| `keyframe-store`                                                                                    | —          |                                                        |
+| `keyframe-store`                                                                                    | 2026-09-15 |                                                        |
