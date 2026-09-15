@@ -16,6 +16,6 @@ splits at `services/exec`'s subdirectories.
 | `db`, `db-schema`, `db-mock`                                                                        | 2026-09-15 |                                                        |
 | `shared`, `shared-node`                                                                             | 2026-09-15 |                                                        |
 | `parse-tmx`, `xml2js`                                                                               | 2026-09-15 |                                                        |
-| `vue-phaserjs`                                                                                      | 2026-09-05 |                                                        |
+| `vue-phaserjs`                                                                                      | 2026-09-15 |                                                        |
 | `configuration`, `infra`                                                                            | 2026-09-15 |                                                        |
 | `keyframe-store`                                                                                    | 2026-09-15 |                                                        |
