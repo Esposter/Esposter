@@ -1,7 +1,5 @@
 import type { CycleInput } from "#src/models/coderabbit/collect/CycleInput";
 import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
-import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
@@ -16,10 +14,8 @@ import {
 import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
-import { getLastReviewedSha } from "#src/services/coderabbit/collect/getLastReviewedSha";
 import { getMergeRisk } from "#src/services/coderabbit/collect/getMergeRisk";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
-import { getRecentReviewBlock } from "#src/services/coderabbit/collect/getRecentReviewBlock";
 import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeReleasePullRequest";
 import { openReleasePullRequest } from "#src/services/coderabbit/collect/openReleasePullRequest";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
@@ -28,15 +24,13 @@ import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnswer
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import { readReleasePullRequest } from "#src/services/coderabbit/collect/readReleasePullRequest";
+import { readReleaseState } from "#src/services/coderabbit/collect/readReleaseState";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
 import { replyAnswered } from "#src/services/coderabbit/collect/replyAnswered";
 import { runDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
 import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
-import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
-import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
-import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -84,17 +78,12 @@ export const runCycle = async ({
   const pullRequest =
     namedPullRequest ??
     (releasePullRequest?.state === ReleasePullRequestState.Open ? releasePullRequest.number : undefined);
-  const reviews = pullRequest === undefined ? [] : readBotEntries<GitHubReview>(`pulls/${pullRequest}/reviews`);
-  const issueComments = pullRequest === undefined ? [] : readEntries<GitHubEntry>(`issues/${pullRequest}/comments`);
-  // The walkthrough's recent-review block last: it is rewritten at every completion, so it names the newest range
-  // — and for a review that found nothing, the only one
-  const lastReviewedSha = getLastReviewedSha([
-    ...reviews.map(({ body }) => body),
-    ...issueComments
-      .filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)
-      .flatMap(({ body }) => getRecentReviewBlock(body) ?? []),
-  ]);
-  const frontier = lastReviewedSha ?? runGit(["merge-base", mainSha, developSha], cwd).trim();
+  const { frontier, issueComments, lastReviewedSha, reviews } = readReleaseState({
+    cwd,
+    developSha,
+    mainSha,
+    pullRequest,
+  });
   const viewerLogin = readViewerLogin();
   console.info(
     `pull request ${pullRequest === undefined ? "none" : `#${pullRequest}`} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`,

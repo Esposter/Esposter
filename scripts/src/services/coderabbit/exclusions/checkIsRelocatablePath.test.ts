@@ -18,8 +18,7 @@ describe(checkIsRelocatablePath, () => {
     expect(checkIsRelocatablePath(path)).toBe(false);
   });
 
-  // A test moves with its subject in every sweep there is, and where it sits claims nothing about behaviour —
-  // Which is the one place this parts company with `checkIsProtectedPath`
+  // A test moves with its subject in every sweep there is, and where it sits claims nothing about behaviour
   test.each([
     "apps/web/app/store/alert.test.ts",
     "packages/shared/src/types.test-d.ts",

@@ -4,9 +4,6 @@ import type { DrainLogLine } from "#src/models/coderabbit/collect/DrainLogLine";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResult } from "@esposter/shared";
 
-// One log line per event, so the job log reads as the session happens. A line that is not an event prints as
-// It is — Claude Code refusing to start writes a sentence, never JSON, and that sentence is what the limit
-// Parser reads.
 const TOOL_INPUT_LENGTH = 160;
 
 // One log line per event, so the job log reads as the session happens rather than as one block when it ends:
