@@ -5,24 +5,22 @@ import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getResult, noop, withFinalizer } from "@esposter/shared";
-// Whether this host can actually SET UP the overlay sandbox — not merely whether bwrap is on PATH.
-// A `command -v bwrap` probe is insufficient: bubblewrap built without overlayfs support (some WSL2 builds), or a
-// Kernel with unprivileged user namespaces disabled, has bwrap present yet rejects the overlay flags. So we run the real argv
-// From buildBwrapArgs, and on Linux probe the ACTUAL working directory the backend will sandbox (process.cwd()) —
-// Not a throwaway tmpdir. A tmpdir is tmpfs, which hides the one failure that matters most: when cwd is itself an
-// Overlayfs mount (virrun's own suite runs inside the os-backend sandbox via `virrun -- vitest`, so an os test that
-// Overlays the repo directory is overlayfs-on-overlayfs), the kernel rejects the mount with EINVAL ("Can't make overlay
-// Mount ... userxattr: Invalid argument"). A tmpfs probe passes there and the backend then throws mid-run; probing
-// The real cwd keeps the predicate honest and in lockstep with what the backend emits, so a nested/incapable host
-// Degrades (resolveBackend) or refuses (createOsBackend) cleanly instead of crashing. `--tmp-overlay` writes nothing
-// To cwd (the upper is a discarded tmpfs), so the probe is side-effect-free. The probed command is `true`
-// (engine-agnostic): toolchain reachability is an orthogonal axis handled by the captured WSL login PATH
-// (readWslLoginEnvironment), so probing a specific binary here would conflate the two and hardcode an engine. This is
-// The
-// Raw host-capability probe: it does NOT account for nesting (checkIsOsBackendSupported layers the VIRRUN nesting
-// Guard,
-// The in-process memo, and the persisted cache on top), so it is safe to reuse anywhere the un-cached truth is wanted.
-// `undefined` is the third answer, and it means the probe never got one — see readProbeVerdict.
+// Whether this host can actually SET UP the overlay sandbox — not merely whether bwrap is on PATH. A
+// `command -v bwrap` probe is insufficient: bubblewrap built without overlayfs support (some WSL2 builds), or a
+// Kernel with unprivileged user namespaces disabled, has bwrap present yet rejects the overlay flags. So we run the
+// Real argv from buildBwrapArgs, and on Linux probe the ACTUAL working directory the backend will sandbox
+// (process.cwd()) — not a throwaway tmpdir. A tmpdir is tmpfs, which hides the one failure that matters most: when
+// Cwd is itself an overlayfs mount (virrun's own suite runs inside the os-backend sandbox via `virrun -- vitest`, so
+// An os test that overlays the repo directory is overlayfs-on-overlayfs), the kernel rejects the mount with EINVAL
+// ("Can't make overlay mount ... userxattr: Invalid argument"). A tmpfs probe passes there and the backend then throws
+// Mid-run; probing the real cwd keeps the predicate honest and in lockstep with what the backend emits, so a
+// Nested/incapable host degrades (resolveBackend) or refuses (createOsBackend) cleanly instead of crashing.
+// `--tmp-overlay` writes nothing to cwd (the upper is a discarded tmpfs), so the probe is side-effect-free. The probed
+// Command is `true` (engine-agnostic): toolchain reachability is an orthogonal axis handled by the captured WSL login
+// PATH (readWslLoginEnvironment), so probing a specific binary here would conflate the two and hardcode an engine. This
+// Is the raw host-capability probe: it does NOT account for nesting (checkIsOsBackendSupported layers the VIRRUN
+// Nesting guard, the in-process memo, and the persisted cache on top), so it is safe to reuse anywhere the un-cached
+// Truth is wanted. `undefined` is the third answer, and it means the probe never got one — see readProbeVerdict.
 export const probeOsBackendSupported = (): boolean | undefined => {
   switch (process.platform) {
     case "linux":
