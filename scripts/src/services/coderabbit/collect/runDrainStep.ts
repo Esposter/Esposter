@@ -36,8 +36,10 @@ export const runDrainStep = async ({
     ...readCherryShas(developSha, queueSha, cwd),
   ];
   const unportedCommits = unportedShas.length === 0 ? [] : readAnsweredCommits(["--no-walk", ...unportedShas], cwd);
-  const answeredIds = new Set(unportedCommits.flatMap(({ answers }) => answers));
-  const drainedReviewIds = new Set([...unportedCommits, ...frontierCommits].flatMap(({ drains }) => drains));
+  // The window's own commits count too: a fix develop carries is answered whether or not its reply landed
+  const answeringCommits = [...unportedCommits, ...frontierCommits];
+  const answeredIds = new Set(answeringCommits.flatMap(({ answers }) => answers));
+  const drainedReviewIds = new Set(answeringCommits.flatMap(({ drains }) => drains));
   const threads = readUnresolvedThreads(pullRequest);
   const openThreads = getOpenFindings(threads, answeredIds);
   const openBodyReviewId = getOpenBodyReviewId({ drainedReviewIds, issueComments, newestReview, viewerLogin });
