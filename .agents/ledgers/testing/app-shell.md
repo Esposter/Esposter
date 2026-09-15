@@ -19,7 +19,7 @@ composable and store layers no single feature claims.
 | `services/docs`, `composables/docs`, `components/{Docs,content}` | 2026-09-15 |                                                           |
 | `composables` root files                                         | 2026-09-15 |                                                           |
 | `composables/{storage,vuetify,file,notification,cache,azure}`    | 2026-09-15 |                                                           |
-| `store` root files, `store/{user,storage}`                       | 2026-09-05 |                                                           |
+| `store` root files, `store/{user,storage}`                       | 2026-09-15 |                                                           |
 | `app/models/dungeons`                                            | 2026-09-05 |                                                           |
 | `app/models/resource`                                            | 2026-09-05 |                                                           |
 | `app/models/message`                                             | 2026-09-05 |                                                           |

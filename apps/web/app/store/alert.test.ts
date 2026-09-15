@@ -5,8 +5,8 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useAlertStore, () => {
-  const text = "a";
-  const otherText = "b";
+  const text = "";
+  const otherText = " ";
 
   beforeEach(() => {
     setActivePinia(createPinia());
