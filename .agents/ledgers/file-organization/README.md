@@ -54,15 +54,3 @@ prints, so the rule is enforced rather than swept.
 - Two exports sharing module-private state through closure — a pending set, a cached promise, a code set, a
   dispatch map. One-export-per-file cannot reach them without making that state a module global, which trades a
   file boundary for a wider one.
-
-## Open findings
-
-- The keybinds settings page lists three shortcuts (`KEYBIND_SHORTCUTS`) that `KeyboardShortcutList` states in
-  other words and other keys, and one of them (`↑` to edit the last message) appears nowhere else. Rendering the
-  model on the page changes what the page shows, so it is a decision rather than a pass: either the page renders
-  `KeyboardShortcutList` and the three-row list goes, or the three rows are the intended subset and the model
-  gains the missing key.
-- `apps/infra/src/azure/constants/` keeps one PascalCase file per constant, each a default export, and two hundred
-  import sites read them that way. No rule names default exports either way — the file-organization skill only
-  bans `export { }` — so converting the tree to `export const` is a convention to settle first, not a pass: the
-  tree is internally consistent and the swap is sixty files of pure churn.
