@@ -27,7 +27,7 @@ description: z.string().meta({ layout: { comp: "textarea" } }),
 fooId: z.string().meta({ layout: { comp: "select", getItems: "context.fooItems" } }),
 ```
 
-**`GlobalMeta` carries only `layout` + ajv keywords** (`interface GlobalMeta extends AjvKeywords { layout?: Partial<PartialCompObject> }`). Don't add per-feature meta keys to it — filtering that looks like it wants a meta key is done by passing a pre-filtered context key into the field's factory (see `getItems` below).
+**`GlobalMeta` carries only `layout` and the ajv keyword flags**, in two augmentations — `layout` in `shared/types/zod.d.ts`, where both realms read it, and `AjvKeywords` in `app/types/zod.d.ts`, since the keyword definitions are app code. Don't add per-feature meta keys to either — filtering that looks like it wants a meta key is done by passing a pre-filtered context key into the field's factory (see `getItems` below).
 
 ## Cross-Field Validation Is an Ajv Keyword, Not a `getProps` Rules Expression
 
