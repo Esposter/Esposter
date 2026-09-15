@@ -5,6 +5,7 @@ import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
+import { MimeType } from "#shared/models/file/MimeType";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
@@ -38,7 +39,7 @@ import {
   MockTableClient,
   MockTableDatabase,
 } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
 // Per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
@@ -51,7 +52,7 @@ describe(createResourceProcedures, () => {
   const name = "name";
   const updatedName = "updatedName";
   const filename = "filename";
-  const mimetype = "mimetype";
+  const mimetype = MimeType.Png;
   const size = 1;
 
   beforeAll(async () => {
@@ -61,7 +62,14 @@ describe(createResourceProcedures, () => {
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
+  // Only `Date` is faked: the default set includes `process.hrtime`, which every Azure Table row key is built
+  // From, and a frozen tick lands two writes to one partition on the same key
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
   afterEach(async () => {
+    vi.useRealTimers();
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
     // Cascade removes any resourcePublications rows too
@@ -95,7 +103,7 @@ describe(createResourceProcedures, () => {
     await dashboardCaller.publishResource({ id: newResource.id });
     const { items: publishedItems } = await dashboardCaller.readResources();
 
-    expect(publishedItems[0]?.publication?.publishVersion).toBe(1);
+    expect(takeOne(publishedItems).publication?.publishVersion).toBe(1);
   });
 
   test("updates resource", async () => {
@@ -322,12 +330,9 @@ describe(createResourceProcedures, () => {
     );
 
     expect(blobDeletionEvents).toHaveLength(1);
-    const { createdBefore, ...blobDeletionEventDataRest } = takeOne(blobDeletionEvents)
-      .data as BlobDeletionEventGridData;
-
-    expect(createdBefore).toBeInstanceOf(Date);
-    expect(blobDeletionEventDataRest).toStrictEqual({
+    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       containerName: AzureContainer.ResourceAssets,
+      createdBefore: new Date(0),
       prefix: `${newResource.id}/${SnapshotChannel.Published}`,
     });
   });
@@ -355,9 +360,7 @@ describe(createResourceProcedures, () => {
     const newResource = await dashboardCaller.createResource({ name });
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
-    vi.spyOn(MockBlobClient.prototype, "download").mockRejectedValue(
-      new MockRestError("The specified blob does not exist.", 404),
-    );
+    vi.spyOn(MockBlobClient.prototype, "download").mockRejectedValue(new MockRestError("", 404));
 
     await expect(
       dashboardCaller.readPublishedResourceContent(newResource.id),
@@ -533,9 +536,8 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
 
-    await expect(
-      webpageCaller.deleteFile({ blobPath: `../../${crypto.randomUUID()}/content.json`, id: newResource.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+    await expect(webpageCaller.deleteFile({ blobPath: `../../${crypto.randomUUID()}/${filename}`, id: newResource.id }))
+      .rejects.toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: [
         {
           "origin": "string",

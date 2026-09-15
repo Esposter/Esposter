@@ -38,7 +38,7 @@ describe(getRoomEventSubscription, () => {
   test("yields event data for the subscribed room", async () => {
     expect.hasAssertions();
 
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const role = await roleCaller.createRole({ name, roomId });
     const onCreateRole = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
       () => onCreateRole,
@@ -55,8 +55,8 @@ describe(getRoomEventSubscription, () => {
     expect.hasAssertions();
 
     const otherRoom = await roomCaller.createRoom({ name });
-    const otherRole = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId: otherRoom.id });
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const otherRole = await roleCaller.createRole({ name, roomId: otherRoom.id });
+    const role = await roleCaller.createRole({ name, roomId });
     const onCreateRole = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
       () => onCreateRole,
@@ -73,14 +73,14 @@ describe(getRoomEventSubscription, () => {
   test("does not yield events from the same device", async () => {
     expect.hasAssertions();
 
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const role = await roleCaller.createRole({ name, roomId });
     const { session, user } = await mockSessionOnce(mockContext.db, getMockSession().user);
     const onCreateRole = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
       () => onCreateRole,
       () => {
         roleEventEmitter.emit("createRole", [
-          { ...role, name: "sameDevice" },
+          { ...role, name: " " },
           { sessionId: session.id, userId: user.id },
         ]);
         roleEventEmitter.emit("createRole", [role, createDevice()]);
