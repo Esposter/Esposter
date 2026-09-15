@@ -27,6 +27,6 @@ composable and store layers no single feature claims.
 | `app/models` — its root files and the small folders              | 2026-09-15 |                                                           |
 | `app/util`                                                       | 2026-09-15 |                                                           |
 | `app/types`                                                      | 2026-09-15 |                                                           |
-| `components/{App,Nuxt,Transition}`, `Fragment.vue`, `App.vue`    | 2026-09-05 | `components/index.test.ts` is the auto-import name check  |
-| `pages`, `layouts`                                               | 2026-09-05 |                                                           |
-| `plugins`, `middleware`                                          | 2026-09-05 |                                                           |
+| `components/{App,Nuxt,Transition}`, `Fragment.vue`, `App.vue`    | 2026-09-15 | `components/index.test.ts` is the auto-import name check  |
+| `pages`, `layouts`                                               | 2026-09-15 |                                                           |
+| `plugins`, `middleware`                                          | 2026-09-15 |                                                           |
