@@ -9,7 +9,7 @@ Read when a store action calls a tRPC mutation, or when picking its `useMutation
 - **Never hand-roll the alert/rollback/pending wiring** — it surfaces errors via `createAlert` unless you pass `onError`, and runs writes to one `key` one at a time so two actions writing different fields of the same entity both land. Destructure `isPending` only where a control consumes it; the in-flight guard decision tree lives in `apps/web/content/docs/architecture/client-data.md` § In-flight guarding.
 - **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure.
 - **`onSuccess`** is for server-generated results that can't be predicted client-side (a created entity with its id).
-- **Whether the write landed is the outcome's `status`, never a flag `onSuccess` flips.** Both entry points resolve to a `MutationOutcome`, so an action or dialog that answers "did it save" reads `outcome.status === MutationStatus.Succeeded` (the `post` store's `createPost` is the shape); a `let isSuccessful = false` closed over by `onSuccess` restates that discriminant by hand and predates it.
+- **Whether the write landed is the outcome's `status`, never a flag `onSuccess` flips.** Both entry points resolve to a `MutationOutcome`, so an action or dialog that answers "did it save" reads `outcome.status === MutationStatus.Succeeded` (the `post` store's `createPost` is the shape); a `let isSuccessful = false` closed over by `onSuccess` restates that discriminant by hand.
 
 ## A store never orders its own async work
 
@@ -39,8 +39,8 @@ const deleteFoo = async (input: DeleteFooInput) => {
       // Delete running beside it under another key, nor drop a row a subscription delivered meanwhile.
       // Built once and then searched with. Constructing it inside the callback rebuilds the same predicate
       // For every row, and `unicorn/no-array-callback-reference` reports the inline call as a bare reference
-      const getIsDeletedFoo = getIsEntityIdEqualComparator<Foo>(FooKeyPath, input);
-      const deletedFoo = items.value.find(getIsDeletedFoo);
+      const checkIsDeletedFoo = getEntityIdEqualComparator<Foo>(["parentId", "childId"], input);
+      const deletedFoo = items.value.find(checkIsDeletedFoo);
       storeDeleteFoo(input);
       return () => {
         if (deletedFoo) storeCreateFoo(deletedFoo);
