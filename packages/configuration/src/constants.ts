@@ -39,7 +39,7 @@ export const APP_RELATIVE_PREFIXES = [
   "scripts/",
   "server/",
   "shared/",
-];
+] as const;
 // Generated TypeDoc output. It is written into the app's `public/`, so it is served from under the docs route
 // Without being a content page — which is why the docs link check has to allow this one prefix explicitly.
 // The annotation is redundant to oxlint but mandatory to the dts build, as above.
