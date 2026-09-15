@@ -2,7 +2,7 @@
 
 How the engineering skills should consume this repo's domain documentation when exploring the codebase.
 
-This repo has **no root `CONTEXT.md` and no `docs/adr/`**, and neither should be created. The equivalent already exists as the in-app docs site at `apps/web/content/docs`, rendered by `@nuxt/content` at `/docs`. Read that instead.
+This repo has **no root context file and no ADR folder**, and neither should be created. The equivalent already exists as the in-app docs site at `apps/web/content/docs`, rendered by `@nuxt/content` at `/docs`. Read that instead.
 
 ## Before exploring, read these
 

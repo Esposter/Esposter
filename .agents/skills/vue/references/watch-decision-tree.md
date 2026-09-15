@@ -67,7 +67,7 @@ A draft cloned as one object over every field the write sends doubles as the wri
 
 Before watching an id to re-read on change, ask: **can it actually change under this instance?** When the router or the parent already keys the component by that id, a change unmounts and remounts it — the watch's re-run branch is dead code, and any staleness guard defends a transition that cannot happen.
 
-Entity pages are keyed by id (``definePageMeta({ key: (route) => `foo-${route.params.id}` })``), and `BladeOutlet` keys each blade by `` `${foo.id}-${activeBlade}` `` inside `<Suspense>`. So inside a page, an Overview or a blade, the entity id is **fixed for the instance's lifetime** — read it once in `onMounted`, not `watchImmediate(() => foo.id, ...)`:
+Entity pages are keyed by id (``definePageMeta({ key: (route) => `foo-${route.params.id}` })``), and `ResourceBladeOutlet` keys each blade by `` `${foo.id}-${activeBlade}` `` inside `<Suspense>`. So inside a page, an Overview or a blade, the entity id is **fixed for the instance's lifetime** — read it once in `onMounted`, not `watchImmediate(() => foo.id, ...)`:
 
 ```typescript
 const count = ref<number>();

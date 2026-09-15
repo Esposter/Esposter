@@ -10,7 +10,8 @@ const IDENTIFIER_REGEX = /^[A-Za-z_$][\w$]*(?:\.[\w$]+)*$/u;
 const CODE_NAME_REGEX = /[a-z][A-Z]|\.|^[A-Z][A-Z\d]*(?:_[A-Z\d]+)+$/u;
 // The placeholders a rule's example uses (the `skill-authoring` skill, `references/what-belongs.md`) name nothing —
 // Nor does a lone `X` standing in for a segment (`handleX`, `useXStore`)
-const PLACEHOLDER_REGEX = /[Ff]oo|[Bb]ar|[Bb]az|[Qq]ux|[Xx]xx|(?<=[a-z])X(?![a-z])/u;
+const PLACEHOLDER_REGEX = /foo|bar|baz|qux|xxx/iu;
+const PLACEHOLDER_SEGMENT_REGEX = /(?<=[a-z])X(?![a-z])/u;
 // A page in these folders describes what does not exist by design — a rejected direction, a deferred idea, a
 // Design not yet shipped — so every name in it is expected to resolve nowhere (the `docs` skill, "location carries status")
 const UNSHIPPED_PAGE_REGEX = /\/(?:rejected|deferred|proposals)\//u;
@@ -27,6 +28,7 @@ export const getStaleNames = (pages: CitingPage[], sourceNames: ReadonlySet<stri
             IDENTIFIER_REGEX.test(name) &&
             CODE_NAME_REGEX.test(name) &&
             !PLACEHOLDER_REGEX.test(name) &&
+            !PLACEHOLDER_SEGMENT_REGEX.test(name) &&
             !sourceNames.has(name) &&
             !name.split(".").every((segment) => sourceNames.has(segment)),
         )

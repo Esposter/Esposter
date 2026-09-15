@@ -17,7 +17,7 @@ flowchart LR
   React["reactions - useSelectEmoji, EmojiListItem"] --> Index
   Composer["composer ':' autocomplete - EmojiSuggestion"] --> Index
   Tooltip["quick-reaction tooltips"] --> Index
-  Index["getEmojiIndex - byCharacter, bySlug, byGroup"] --> Data["unicode-emoji-json joined with emojilib on the character"]
+  Index["getEmojiIndex - characterEmojiMap, slugEmojiMap, groupEmojisMap"] --> Data["unicode-emoji-json joined with emojilib on the character"]
   Index --> Search["searchEmojis - MiniSearch, built separately"]
 ```
 
@@ -38,17 +38,17 @@ Two data-only MIT packages, both keyed by the emoji character and both tracking 
 
 `getEmojiIndex` builds three maps on first use, once for the whole app. It is deliberately not built at import: a page with no emoji surface never pays for it, and the server never builds it at all.
 
-| Structure          | Answers                                            |
-| ------------------ | -------------------------------------------------- |
-| `byGroup: Map`     | what a category tab shows, in CLDR order           |
-| `bySlug: Map`      | which record an exact shortcode query names        |
-| `byCharacter: Map` | which record a glyph belongs to, for its shortcode |
+| Structure           | Answers                                            |
+| ------------------- | -------------------------------------------------- |
+| `groupEmojisMap`    | what a category tab shows, in CLDR order           |
+| `slugEmojiMap`      | which record an exact shortcode query names        |
+| `characterEmojiMap` | which record a glyph belongs to, for its shortcode |
 
-`byCharacter` is keyed by `getEmojiCharacterKey`, which strips skin-tone modifiers and variation selectors, so a toned glyph (👋🏽) and an unqualified one (`❤` vs `❤️`) still find their record. There are no collisions across the whole dataset under that normalisation, and slugs are unique, so both maps are total.
+`characterEmojiMap` is keyed by `getEmojiCharacterKey`, which strips skin-tone modifiers and variation selectors, so a toned glyph (👋🏽) and an unqualified one (`❤` vs `❤️`) still find their record. There are no collisions across the whole dataset under that normalisation, and slugs are unique, so both maps are total.
 
 ## Reactions store the emoji, not a name for it
 
-`emojiTag` holds **the emoji character exactly as it was picked**, toned or not. That makes a reaction's identity plain string equality, so nothing about storing, matching or rendering one touches the index at all: `EmojiListItem` renders `emoji.emojiTag`, and `useSelectEmoji` finds the existing row with `emojiTag === emoji`. Leaving one is `toggleEmoji`, a store action both surfaces call, so a chip and the quick-reaction bar cannot disagree about what leaving means: the row goes with its last reactor and is only rewritten for everyone else.
+`emojiTag` holds **the emoji character exactly as it was picked**, toned or not. That makes a reaction's identity plain string equality, so nothing about storing, matching or rendering one touches the index at all: `MessageModelMessageEmojiListItem` renders `emoji.emojiTag`, and `useSelectEmoji` finds the existing row with `emojiTag === emoji`. Leaving one is `toggleEmoji`, a store action both surfaces call, so a chip and the quick-reaction bar cannot disagree about what leaving means: the row goes with its last reactor and is only rewritten for everyone else.
 
 This is what Discord and Slack both do, and **reactions are therefore tone-sensitive**: 👍 and 👍🏽 are different strings and so different reactions, each with its own count. It also means there is no shortcode vocabulary in the storage path to keep two ends of agreeing on, no parsing, and no composite tag format to version — the alternative, a `slug` plus an encoded tone suffix, buys nothing over the character it would encode.
 

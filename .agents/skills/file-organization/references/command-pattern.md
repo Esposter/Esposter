@@ -12,6 +12,6 @@ Field order inside the class, blank line between each group:
 4. the constructor
 5. the methods, one blank line apart
 
-Use ECMAScript `#` private members, never the TypeScript `private` keyword (`typescript` skill). Methods a subclass reaches — `doExecute`, `doUndo` — stay `protected`.
+Use ECMAScript `#` private members, never the TypeScript `private` keyword (`typescript` skill). A member a subclass reaches stays `protected`.
 
 Commands live in a store `ref` array, so every instance is `markRaw`'d on entry: a reactive `Proxy` breaks `#` private brand checks at execute and undo time (`pinia` skill, `references/class-instances-in-state.md`).

@@ -87,4 +87,4 @@ Configuration read by the installed engineering skills (`triage`, `to-tickets`, 
 
 - **Issue tracker** — GitHub Issues on `Esposter/Esposter`, via the `gh` CLI; PRs are not a request surface (`.agents/issue-tracker.md`).
 - **Triage labels** — five canonical roles, each label string equal to its name (`.agents/triage-labels.md`).
-- **Domain docs** — already written; `apps/web/content/docs` is the glossary and the ADR set, so no root `CONTEXT.md` or `docs/adr/` is created (`.agents/domain.md`).
+- **Domain docs** — already written; `apps/web/content/docs` is the glossary and the ADR set, so no root context file or ADR folder is created (`.agents/domain.md`).

@@ -36,16 +36,16 @@ export interface SlashCommand extends Description, ItemEntityType<SlashCommandTy
 
 Messages use markdown. Rich text applies: italic `*text*`, bold `**text**`, code `` `text` ``.
 
-Each `case` only builds a plain `StandardCreateMessageInput`. `marked.parse()` and `storeSendMessage` are applied **once**, after the switch — never per-case:
+Each `case` only assigns the markdown `message`. `marked.parse()` and `sendMessage` are applied **once**, after the switch — never per-case:
 
 ```typescript
-if (!createMessageInput) return;
-
-await storeSendMessage({
-  ...createMessageInput,
-  message: createMessageInput.message ? marked.parse(createMessageInput.message, { async: false }) : undefined,
-  replyRowKey: replyRowKey.value,
-});
+if (message)
+  await sendMessage({
+    message: marked.parse(message, { async: false }),
+    replyRowKey: replyRowKey.value,
+    roomId,
+    type: MessageType.Message,
+  });
 ```
 
 Never call `sanitizeHtml`/`sanitizeTextHtml` here. Sanitization is declared at the Zod boundary in the base db-schema schemas — see the `string-utils` skill, which bans manual frontend calls.
@@ -127,7 +127,7 @@ Always use `SlashCommandType.X` enum values, never `"Me"`, `"Shrug"`, etc.
 1. Add value to `SlashCommandType` enum.
 2. Add entry to `SlashCommandDefinitionMap` with `parameters: []` or required/optional params (`as const satisfies Record<SlashCommandType, SlashCommand>` forces this).
 3. Add `case SlashCommandType.X:` to the switch in `useExecuteSlashCommand.ts`:
-   - Posting a message: assign `createMessageInput` and `break` — the shared tail parses + sends it
+   - Posting a message: assign `message` and `break` — the shared tail parses + sends it
    - Opening a dialog: flip the dialog store's state (`isOpen.value = true`, `open(ScheduledMessageJobType.X)`)
    - Neither: do the work inline (e.g. `Topic` runs a room mutation and posts nothing)
 4. No new `MessageType` unless rendering is structurally different (e.g. Poll, Call).
@@ -138,5 +138,5 @@ The enum, the map and the switch must stay in sync — `satisfies Record<SlashCo
 
 Two shapes are worth knowing before reading it, because neither is guessable from the map alone:
 
-- **A command need not post a message at all.** Leave `createMessageInput` unassigned and the shared tail sends nothing — that is how a command which only runs a mutation (setting a room topic) or only opens a dialog is written.
+- **A command need not post a message at all.** Leave `message` empty and the shared tail sends nothing — that is how a command which only runs a mutation (setting a room topic) or only opens a dialog is written.
 - **Inline parameters and a dialog are alternatives.** A command either collects its arguments as inline chips through `parameters`, or opens a dialog and declares none. Never both.

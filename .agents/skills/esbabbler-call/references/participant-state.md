@@ -2,7 +2,7 @@
 
 Read when reading, iterating or mutating call participants on the client, or adding a field that describes one.
 
-The client `callSessionParticipantsMap` mirrors the server structure for O(1) lookups on all participant mutations (`setMute`, `setHandRaised`, `setParticipantCamera`, `deleteCallParticipant`) without scanning arrays.
+The client `callSessionParticipantsMap` mirrors the server structure for O(1) lookups on all participant mutations (`setParticipantMuted`, `setParticipantHandRaised`, `setParticipantCameraEnabled`, `deleteCallParticipant`) without scanning arrays.
 
 - **Don't add a separate tracking collection** for state already on `CallParticipant`. `isHandRaised` on the participant replaces any external `handRaisedIdsMap`. Check whether a new field belongs on `CallParticipant` itself before adding a parallel map.
 - **The tRPC boundary uses `Map<string, CallParticipant>` directly** — SuperJSON natively serializes Maps. Procedures return Maps and `setParticipantMap` stores them as-is. Never convert to/from arrays at the boundary.

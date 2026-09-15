@@ -24,7 +24,6 @@ Every Azure client is reached through a `get*` factory taking the connection str
 | --------------------------- | ----------------------------------------------------------------- |
 | `getTableClient`            | A `TableClient` typed by `AzureTableEntityMap`, table provisioned |
 | `getContainerClient`        | A `ContainerClient`, container created and its properties synced  |
-| `getQueueClient`            | A `QueueClient` for an `AzureQueue`                               |
 | `getServiceBusSender`       | A cached `ServiceBusSender` for an `AzureQueue`                   |
 | `getWebPubSubServiceClient` | A `WebPubSubServiceClient` for an `AzureWebPubSubHub`             |
 

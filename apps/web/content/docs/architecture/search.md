@@ -112,7 +112,7 @@ Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a 
 | `app/components/Styled/SearchDialog.vue`                    | `StyledSearchDialog` — Ctrl+K palette shell (`hotkey` via `useVHotkey`)                 |
 | `app/components/Docs/Search.vue`                            | Palette + client-index results (MiniSearch)                                             |
 | `app/services/message/emoji/searchEmojis.ts`                | Client-index emoji search shared by the picker and the composer's `:` trigger           |
-| `app/components/Message/Model/Room/Searcher.vue`            | Palette + cursor-paginated results (`useSearchStore`)                                   |
+| `app/components/Message/Model/Room/Searcher.vue`            | Palette + cursor-paginated results (`useRoomSearchStore`)                               |
 | `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                           |
 | `app/composables/resource/search/useResourceSearchItems.ts` | Portal dropdown — `useAutoSearch` for the Resources group, client-side groups around it |
 | `app/store/message/room/search.ts`                          | Store returning `useCursorSearcher` for the room palette                                |

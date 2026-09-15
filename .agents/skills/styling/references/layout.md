@@ -45,7 +45,7 @@ A Vuetify input's root (`.v-input`) is `flex: 1 1 auto`. Drop it straight into a
 
 In multi-box layouts (side-by-side panels, nav + content), each edge must be drawn by **one** component — no two adjacent components both border the shared edge. Give each divider a single owner: the container that spans the whole edge owns it. E.g. a full-height column owns the vertical divider (`b-e`) for the whole row; a header owns its own bottom separator (`b-b`); the box below it stays borderless (no redundant `b-t`).
 
-Prefer keeping shared primitives borderless and letting the consumer supply the border — `StyledDataTableServer` takes only `dataTableServerProps`, so a border comes from the consumer rather than being hard-coded and then opted out of.
+Prefer keeping shared primitives borderless and letting the consumer supply the border — a shared table or list shell takes its props through and draws no border of its own, so a border comes from the consumer rather than being hard-coded and then opted out of.
 
 ## Never restore preset-wind4's border reset
 

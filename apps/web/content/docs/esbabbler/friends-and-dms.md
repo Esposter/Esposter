@@ -52,7 +52,7 @@ DMs are invisible to non-participants: invite links are rejected for `RoomType.D
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `friend`                        | `readFriends`, `deleteFriend`, `searchUsers` (excludes self + blocks)                                                                                                  |
 | `friendRequest`                 | `sendFriendRequest`, `acceptFriendRequest`, `declineFriendRequest`, `readFriendRequests`                                                                               |
-| `block`                         | `blockUser`, `unblockUser`, `readBlockedUsers`                                                                                                                         |
+| `block`                         | `createBlock`, `deleteBlock`, `readBlockedUsers`                                                                                                                       |
 | `room` (nested `directMessage`) | `createDirectMessage`, `readDirectMessages`, `readDirectMessageParticipants`, `createDirectMessageParticipants`, `deleteDirectMessageParticipant`, `hideDirectMessage` |
 
 ## Key files

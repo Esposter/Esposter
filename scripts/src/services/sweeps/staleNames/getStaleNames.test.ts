@@ -29,6 +29,7 @@ describe(getStaleNames, () => {
     ["a lone capitalised word", "`Manual`"],
     ["a lowercase word", "`util`"],
     ["a placeholder", "`FooHookMap`"],
+    ["a SCREAMING_SNAKE placeholder", "`FOO_KEY`"],
     ["a lone X standing in for a segment", "`useXStore`"],
     ["a path", "`app/services/readThingById.ts`"],
   ])("reports nothing for %s", (_, text) => {
