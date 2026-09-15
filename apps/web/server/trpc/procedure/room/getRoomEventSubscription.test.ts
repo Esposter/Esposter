@@ -39,9 +39,9 @@ describe(getRoomEventSubscription, () => {
     expect.hasAssertions();
 
     const role = await roleCaller.createRole({ name, roomId });
-    const onCreateRole = await roleCaller.onCreateRole({ roomId });
+    const subscription = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
-      () => onCreateRole,
+      () => subscription,
       () => {
         roleEventEmitter.emit("createRole", [role, createDevice()]);
         return Promise.resolve();
@@ -57,9 +57,9 @@ describe(getRoomEventSubscription, () => {
     const otherRoom = await roomCaller.createRoom({ name });
     const otherRole = await roleCaller.createRole({ name, roomId: otherRoom.id });
     const role = await roleCaller.createRole({ name, roomId });
-    const onCreateRole = await roleCaller.onCreateRole({ roomId });
+    const subscription = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
-      () => onCreateRole,
+      () => subscription,
       () => {
         roleEventEmitter.emit("createRole", [otherRole, createDevice()]);
         roleEventEmitter.emit("createRole", [role, createDevice()]);
@@ -75,9 +75,9 @@ describe(getRoomEventSubscription, () => {
 
     const role = await roleCaller.createRole({ name, roomId });
     const { session, user } = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const onCreateRole = await roleCaller.onCreateRole({ roomId });
+    const subscription = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
-      () => onCreateRole,
+      () => subscription,
       () => {
         roleEventEmitter.emit("createRole", [
           { ...role, name: " " },
@@ -95,9 +95,9 @@ describe(getRoomEventSubscription, () => {
     expect.hasAssertions();
 
     const deleteMessageInput = { partitionKey: roomId, rowKey: crypto.randomUUID() };
-    const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId });
+    const subscription = await messageCaller.onDeleteMessage({ roomId });
     const data = await getFirstEmit(
-      () => onDeleteMessage,
+      () => subscription,
       () => {
         messageEventEmitter.emit("deleteMessage", [{ partitionKey: crypto.randomUUID(), rowKey: "" }]);
         messageEventEmitter.emit("deleteMessage", [deleteMessageInput]);

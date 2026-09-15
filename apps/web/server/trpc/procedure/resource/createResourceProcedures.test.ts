@@ -173,9 +173,9 @@ describe(createResourceProcedures, () => {
     const dashboard = new Dashboard({ visuals: [new Visual()] });
     // The mock session mints a fresh session id per call, so the subscription and the save
     // Naturally run as different devices — the same-device echo filter stays out of the way
-    const onSaveResourceContent = await dashboardCaller.onSaveResourceContent({ id: newResource.id });
+    const subscription = await dashboardCaller.onSaveResourceContent({ id: newResource.id });
     const data = await getFirstEmit(
-      () => onSaveResourceContent,
+      () => subscription,
       () => dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
     );
 
