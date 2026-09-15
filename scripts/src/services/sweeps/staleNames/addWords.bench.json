@@ -1,0 +1,87 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/sweeps/staleNames/addWords.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.012710000000009812,
+              "name": "one identifier",
+              "p99": 0.015973000000018656,
+              "rme": 10.38298861423281,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.19847999999999502,
+              "name": "code",
+              "p99": 0.3332459999999975,
+              "rme": 19.20982598809226,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.29553999999999975,
+              "name": "prose",
+              "p99": 0.4539829999999904,
+              "rme": 18.260647022156544,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "addWords > 10000 bytes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.11754999999999995,
+              "name": "one identifier",
+              "p99": 0.14724900000001698,
+              "rme": 7.271112684227525,
+              "sampleCount": 10
+            },
+            {
+              "mean": 2.005290000000008,
+              "name": "code",
+              "p99": 2.2950999999999717,
+              "rme": 4.983654199087612,
+              "sampleCount": 10
+            },
+            {
+              "mean": 2.954029999999997,
+              "name": "prose",
+              "p99": 3.2296990000000028,
+              "rme": 3.327924552290562,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "addWords > 100000 bytes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 1.028670000000011,
+              "name": "one identifier",
+              "p99": 1.1400920000000634,
+              "rme": 3.0793281926325475,
+              "sampleCount": 10
+            },
+            {
+              "mean": 16.489320000000006,
+              "name": "code",
+              "p99": 16.798896999999986,
+              "rme": 1.0751914389611585,
+              "sampleCount": 10
+            },
+            {
+              "mean": 24.324549999999977,
+              "name": "prose",
+              "p99": 25.917016,
+              "rme": 2.5991207516173445,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "addWords > 1000000 bytes"
+        }
+      ]
+    }
+  ]
+}
