@@ -43,4 +43,4 @@ Paths relative to `packages/virrun/src/`.
 ## Notes
 
 - The full matrix to keep covering as the corpus grows: package managers × {with, without native deps} × backends × cache states (cold, warm store, warm snapshot) × hosts (Linux native, WSL2 bridge). A pass on one cell is not a pass on the matrix.
-- The differential suite is plain Vitest, so it hard-fails the CI coverage shards; speed is tracked separately by the committed bench artifacts ([benchmarking](/docs/virrun/benchmarking)) — a hard wall-clock CI gate is rejected as runner-noise-flaky ([CI wall-time gate](/docs/virrun/rejected/ci-walltime-gate)).
+- The differential suite is plain Vitest, so it hard-fails the CI coverage shards; speed is tracked separately by the committed bench artifacts ([benchmarking](/docs/virrun/benchmarking)), never by a CI wall-clock gate ([rejected](/docs/virrun/rejected/ci-walltime-gate)).

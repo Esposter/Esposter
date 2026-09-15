@@ -13,8 +13,8 @@ disagreeing with itself the moment either copy is edited, so it is deleted rathe
 ## A note may record an accepted trade; it may never record an unfixed defect
 
 The two read almost identically — both are a sentence about behaviour that is not what you would design — and
-only one of them is finished. A trade names what it buys and what it costs ("proportional shares rather than exact
-per-building offline math — close enough for a stat display"); a defect names something that is simply wrong and
+only one of them is finished. A trade names what it buys and what it costs ("one query per page rather than a join — fast enough for a list of ten"); a
+fast enough for a list of ten"); a defect names something that is simply wrong and
 is waiting for a condition to make it visible ("with today's single-target effects this is invisible, but a
 multi-target effect would silently drop later targets"). The second one is a bug report filed where nothing will
 ever pick it up: prose is not a queue, a `## Notes` bullet has no owner, and the condition that makes it bite

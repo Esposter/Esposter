@@ -71,9 +71,9 @@ The gate at the top is the one that matters. Everything below it rests on a sing
 
 **Does:** moves runtime provisioning to `vp env` and the install surface to `vp install`.
 
-**Blocked by:** the double-pin question. The root manifest pins the runtime twice on purpose — one field the CI setup action reads, one every other tool reads — plus a matching catalog entry, and one script is the only thing permitted to write all three. `vp env` owns the runtime half and knows nothing about the other two.
+**Blocked by:** the double-pin question. The root manifest pins the runtime twice on purpose — one field the CI setup action reads, one every other tool reads — plus a matching catalog entry, with `update:node` the sole writer of all three. `vp env` owns the runtime half and knows nothing about the other two.
 
-**Ends when:** there is exactly one writer for all three values. Either the existing script survives in reduced form, writing the pins and delegating the install, or the second pin is proven redundant — which is a separate investigation with its own answer.
+**Ends when:** there is exactly one writer for all three values — by either of the two outcomes [commands](/docs/proposals/refactors/vite-plus/commands) names for `update:node`.
 
 **Killed by:** nothing, but it is the phase most likely to be judged not worth doing. Assuming `vp env` covers the pins is how one of them goes stale in silence, and the symptom is CI provisioning the wrong runtime.
 
@@ -81,7 +81,7 @@ The gate at the top is the one that matters. Everything below it rests on a sing
 
 **Does:** removes the package, the prefix on every root script, and the two coverage-job constraints that exist only for its sandbox ([virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement)).
 
-**Blocked by:** nothing technical. Its task cache is subsumed by phase 1 and its prepare layer is a cost the sandbox imposes on itself, so the only open question is whether the warm-snapshot loop's local speed is worth the maintenance surface that keeps it correct. That is a judgement call, available at any time.
+**Blocked by:** nothing technical. Its task cache is subsumed by phase 1 and its prepare layer is a cost the sandbox imposes on itself, so the only open question is [virrun retirement](/docs/proposals/refactors/vite-plus/virrun-retirement)'s single judgement call, available at any time.
 
 **Ends when:** the package and its documentation area are gone, the coverage job has dropped its sandbox install and its image pin, and the published-package decision has been taken explicitly rather than by omission.
 
@@ -91,12 +91,12 @@ The gate at the top is the one that matters. Everything below it rests on a sing
 
 None of these is scheduled, and none blocks anything above. They are recorded so that a trigger firing is recognised as a trigger rather than rediscovered as an idea.
 
-| Item                          | Reopens when                                                                                                 |
-| :---------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| `vp test` as the runner       | the Nuxt Vitest environment registers under it **and** the shard, blob and merge flags forward cleanly       |
-| `vp build` for the app        | Nuxt stops owning the module graph, or the upstream request to read `nuxt.config.ts` is implemented          |
-| Remote caching                | Vite+ ships it — it is on the roadmap and absent from the beta                                               |
-| Early cutoff on the app build | independent of this migration in both directions; it becomes a roadmap item on its own or it does not happen |
-| Retiring ESLint               | oxlint parses `.vue` templates. Governed by its own migration, and not accelerated by this one               |
+| Item                          | Reopens when                                                                                                      |
+| :---------------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| `vp test` as the runner       | the Nuxt Vitest environment registers under it **and** the shard, blob and merge flags forward cleanly            |
+| `vp build` for the app        | Nuxt stops owning the module graph, or the upstream request to read `nuxt.config.ts` is implemented               |
+| Remote caching                | Vite+ ships it — it is on the roadmap and absent from the beta                                                    |
+| Early cutoff on the app build | independent of this migration in both directions ([task runner](/docs/proposals/refactors/vite-plus/task-runner)) |
+| Retiring ESLint               | oxlint parses `.vue` templates. Governed by its own migration, and not accelerated by this one                    |
 
-The two test triggers are stated as a conjunction deliberately. Either one alone is not enough, and the second is the dangerous one: a wrapper that drops the shard flags does not fail, it quietly stops producing one coverage report, and the aggregate gate that means "every shard passed" has already gone green here while a shard did not.
+The two test triggers are stated as a conjunction deliberately. Either one alone is not enough, and the second is the dangerous one: a wrapper that drops the shard flags does not fail, it quietly stops producing one coverage report, and the aggregate gate (every shard passed) has already gone green here while a shard did not.

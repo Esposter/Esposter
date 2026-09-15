@@ -46,9 +46,9 @@ Only the agent harness's machine-local `.git/info/exclude` hides live worktrees 
 
 ## An agent's programs live in `scripts/`, not in `.agents/`
 
-A recipe pasted into a skill page or a ledger is a program with none of a program's guarantees — nothing typechecks, lints, formats or runs it, and the rot is silent, because a scan that cannot run reports nothing and that is the shape of a clean tree. So a recipe that is more than one command has its entrypoint at `scripts/src/<domain>/<verb>/index.ts` and its functions under `scripts/src/services/<domain>/<verb>/` with a colocated test, where the repository's own toolchain already reaches it: no runner, project or config entry is added to make that work.
+A recipe pasted into a skill page or a ledger rots silently, for the reasons `.agents/skills/skill-authoring/references/embedded-recipes.md` gives. So a recipe that is more than one command has its entrypoint at `scripts/src/<domain>/<verb>/index.ts` and its functions under `scripts/src/services/<domain>/<verb>/` with a colocated test, where the repository's own toolchain already reaches it: no runner, project or config entry is added to make that work.
 
-The tree stays free of executables for one reason — it is the rules an agent reads, and an executable inside it makes "rule or tool" unanswerable from the path. A check **about** the agent tree is an ordinary `scripts` test, which is why `scripts/src/workspace/agentDirectories.test.ts` sits with the other workspace invariants rather than beside the thing it checks.
+The tree stays free of executables for one reason — it is the rules an agent reads, and a path inside it should never have to be asked whether it is a rule or a tool. A check **about** the agent tree is an ordinary `scripts` test, which is why `scripts/src/workspace/agentDirectories.test.ts` sits with the other workspace invariants rather than beside the thing it checks.
 
 ```mermaid
 flowchart LR
@@ -60,7 +60,7 @@ flowchart LR
   Name --> Page["The page keeps the one line and the why"]
 ```
 
-Those scripts are named **`ai:<domain>:<verb>`**, and the prefix is decided by audience rather than by what the script does: `ai:sweep:*` carries the sweep scans, `ai:coderabbit:*` the review tooling, while a script a person types after a manifest edit or a version bump — `graph:gen`, `outdated:dependencies`, `update:node` — keeps its plain name. It is a name rather than a guard: nothing stops a person running one, and it answers the question a manifest reader actually has, which is which entries are not for them.
+Those scripts are named **`ai:<domain>:`**`<verb>`, and the prefix is decided by audience rather than by what the script does: `ai:sweep:*` carries the sweep scans, `ai:coderabbit:*` the review tooling, while `graph:gen`, `outdated:dependencies` and `update:node` — what a person runs by hand — keep their plain names. The prefix guards nothing; it tells whoever opens the manifest which entries were not written for them.
 
 ## Configuration there, documentation in public
 

@@ -23,13 +23,11 @@ Length is not a trigger: a long `--jq` expression that is still one selection st
 
 The domain folder is named for **what the tooling is about**, never for who runs it. The audience is carried by the script name, and an `ai/` folder would rewrite every `#src/…` import to say what the manifest already says.
 
-**Nothing in `.agents/` is executable.** The tree is the rules an agent reads; an executable in it makes "rule or tool" unanswerable from the path. A vitest project over test files inside `.agents/` existed for that and went out again.
+**Nothing in `.agents/` is executable.** A vitest project over test files inside `.agents/` existed for that and went out again.
 
 ## Naming: the `ai:` prefix
 
-A pnpm script whose only caller is an agent is named **`ai:<domain>:<verb>`** — `ai:sweep:<scan>`, `ai:coderabbit:<verb>`. The prefix is decided by **audience**, not by what the script does or where it lives: a script a person types after a manifest edit or a version bump keeps its plain name.
-
-It is a name, not a guard — nothing stops a person running one. It answers the question a manifest reader actually has, which is which entries are not for them. Both manifests carry the same name: the owning package declares the `tsx` command, the root delegates with `pnpm -C <package> run <same name>` (`package-scripts` skill).
+A pnpm script whose only caller is an agent is named **`ai:<domain>:<verb>`** by audience, not by what it does — the rule, and which plain-named scripts stay a person's, is `apps/web/content/docs/architecture/agent-configuration.md`. Both manifests carry the same name: the owning package declares the `tsx` command, the root delegates with `pnpm -C <package> run <same name>` (`package-scripts` skill).
 
 ## What the page keeps
 

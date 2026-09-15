@@ -7,8 +7,8 @@ description: Apply when about to run pnpm typecheck, lint, lint:fix, test, forma
 
 **Every check is a background task, and the session keeps working while it runs.** This skill exists because the
 rule is broken by default: a check looks like a step to wait on, and the tell is a turn that ran a three-minute
-typecheck, waited, ran a three-minute lint, waited, and produced no edits in between. Which command to run and
-from where is the `package-scripts` skill; this page is only _when_ a check runs and _how_ the session waits.
+typecheck, waited, ran a three-minute lint, waited, and produced no edits in between. The command and its
+directory are the `package-scripts` skill's; this page is only _when_ a check runs and _how_ the session waits.
 
 ## Every check goes out with `run_in_background: true`
 

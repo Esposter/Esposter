@@ -25,7 +25,7 @@ flowchart TD
 
 ### Job 1 — the task cache
 
-Content-keyed on environment key, working tree and command, replaying a recorded diff and the captured streams on a hit; default-on locally and off in CI ([virrun task cache](/docs/virrun/task-cache)). This is the Turborepo idea, and the [prior art page](/docs/virrun/prior-art) records it as exactly that.
+Replays a recorded run when its content key matches ([virrun task cache](/docs/virrun/task-cache)). This is the Turborepo idea, and the [prior art page](/docs/virrun/prior-art) records it as exactly that.
 
 `vp run --cache` replaces it and improves on it in the same way it improves on the CI key — the inputs are traced from what the command read rather than derived from a whole-tree hash, so a command that opened three files is not invalidated by a fourth changing. Retiring this job is the migration's cleanest deletion, because it removes one of three competing answers to "is this stale", and three caches that disagree fail toward serving output one of them would have rebuilt.
 
@@ -39,7 +39,7 @@ It is also the job that a change of development platform addresses directly, sin
 
 ### Job 3 — the prepare layer, which is circular
 
-The recorded reason for the layer is narrow and specific: a win32-generated `.nuxt` makes a Linux sandbox's type-aware linter collapse types to `any`, producing a phantom rule finding — **"even though it is fine natively"** ([snapshot and fork](/docs/virrun/snapshot-and-fork)). That last clause is the whole answer, and it was there the entire time.
+The recorded reason for the layer is narrow and specific — a host-generated `.nuxt` misleading a Linux type-aware linter into a phantom finding, **"even though it is fine natively"** ([snapshot and fork](/docs/virrun/snapshot-and-fork)). That last clause is the whole answer, and it was there the entire time.
 
 The mechanism is absolute paths. `nuxt prepare` writes host-absolute paths into its generated declaration files, so on a Windows host the generated module declarations name `C:/…` locations inside the host's package store. Those paths resolve for a consumer running on that host. They resolve for nothing else. A sandbox mounts the source at a different root by construction, so the declarations it reads point at paths that do not exist, the modules do not resolve, the types degrade to `any`, and a type-aware rule fires on the degraded types.
 

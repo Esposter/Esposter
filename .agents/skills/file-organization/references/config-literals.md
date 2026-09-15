@@ -19,7 +19,7 @@ against testing wiring, so it needs that argument made, not assumed.
 
 Any walk that reaches into `.agents/` must exclude `AGENT_WORKTREES_DIRECTORY`, because a live worktree is a full
 second checkout of the monorepo nested inside it — and a walk that follows directory symlinks must also exclude
-`AGENT_ALIAS_DIRECTORY`, or it enumerates the tree twice under two names. Which one a tool needs follows from how
+`AGENT_ALIAS_DIRECTORY`, or it enumerates the tree twice under two names. Which of the two a tool wants follows from how
 far it walks, so check before copying an entry across: a formatter that rewrites what it walks needs the worktrees
 exclusion and not the alias, and `.gitignore` is a tool here too. ESLint states neither — `eslint-plugin-oxlint`
 bridges `.oxlintrc.json`'s `ignorePatterns` into its global `ignores`. `scripts/src/workspace/agentDirectories.test.ts` pins

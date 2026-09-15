@@ -75,6 +75,21 @@ describe(getDuplicateProse, () => {
     ).toStrictEqual([]);
   });
 
+  // A standing intro followed by each page's own first word is shared by whichever two pages start the same way
+  test("reports nothing for a template three pages share plus one word two of them share", () => {
+    expect.hasAssertions();
+
+    const template = words.slice(0, SHINGLE_SIZE - 1).join(" ");
+
+    expect(
+      getDuplicateProse([
+        { path: firstPath, text: `${template} same` },
+        { path: secondPath, text: `${template} same` },
+        { path: "c", text: `${template} other` },
+      ]),
+    ).toStrictEqual([]);
+  });
+
   test("reports nothing for two pages of one skill", () => {
     expect.hasAssertions();
 

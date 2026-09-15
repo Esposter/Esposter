@@ -5,7 +5,7 @@ description: Ideas virrun chose not to build yet — each with the concrete trig
 
 # Deferred
 
-Ideas we chose not to build yet. One page per idea; each states why and the concrete trigger that would revisit it. Check here (and [rejected](/docs/virrun/rejected)) before proposing an idea — never re-argue a decided one.
+Ideas set aside with a trigger that would revisit them, one page each. Check here and [rejected](/docs/virrun/rejected) before proposing — never re-argue a decided one.
 
 - [Prepare layer narrow key](/docs/virrun/deferred/prepare-layer-narrow-key) — stop re-keying the `.nuxt` regen on every source edit; blocked on a provably safe input predicate.
 - [Additional isolation targets](/docs/virrun/deferred/additional-isolation-targets) — macOS bridge (Linux VM) + Firecracker microVM backend.

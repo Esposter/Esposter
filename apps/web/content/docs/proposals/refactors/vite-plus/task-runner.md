@@ -9,9 +9,9 @@ Three caches currently decide whether work is skipped in this repository, and th
 
 - **`package-builds`** — a `git ls-tree` content hash over every tracked file under `packages/` less the three subtractions below, plus the root manifest, the lockfile and the catalog, computed by the `get-build-cache-keys` composite action and read by five workflows. The virrun config is deliberately not an input: neither build runs under the sandbox.
 - **`app-build`** — the same walk plus `apps/web`, keying a marker file that records only that this exact tree built green.
-- **virrun's task cache** — content-keyed on environment key, working tree and command, replaying a recorded diff and the captured streams on a hit. Default-on locally, off in CI, because a fresh commit changes the tree hash and hits are near zero ([virrun task cache](/docs/virrun/task-cache)).
+- **virrun's task cache** — the content-keyed replay of a recorded run, on locally and off in CI where a fresh commit defeats its key ([virrun task cache](/docs/virrun/task-cache)).
 
-Three notions of staleness fail in the direction that matters: one of them serves a `dist` another would have rebuilt. That was already the strongest argument against adding a fourth, and it is now the argument for the swap — `vp run --cache` does not add one, it **subsumes two**.
+Three caches that disagree about staleness fail the way [monorepo task runners](/docs/architecture/rejected/monorepo-task-runners) describes. That was already the strongest argument against adding a fourth, and it is now the argument for the swap — `vp run --cache` does not add one, it **subsumes two**.
 
 ## Why a traced key is different in kind
 

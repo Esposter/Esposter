@@ -18,7 +18,7 @@ Per-room limits live as columns on the `rooms` table and are checked at the SAS-
 The two limits are not enforced equally, and the difference matters:
 
 - **The mime category is enforced.** The category is derived from the declared mimetype, and that same mimetype is signed into the write SAS as the blob's content type, so the PUT cannot store the blob as anything else.
-- **The size cap is not enforced — it is checked against the size the client declares.** An Azure write SAS carries no length constraint, nothing re-reads the committed blob, and the persisted `FileEntity.size` is the declared number rather than a measured one. A client that declares a small size receives a SAS and can write past the room's cap with it until the SAS expires (`WRITE_SAS_DURATION_MS`). The check rejects an honest oversized drop early; it is not a defence against a client that lies.
+- **The size cap is not enforced — it is checked against the size the client declares.** An Azure write SAS carries no length constraint, nothing re-reads the committed blob, and the persisted `FileEntity.size` is what the client declared, never a measurement. A client that declares a small size receives a SAS and can write past the room's cap with it until the SAS expires (`WRITE_SAS_DURATION_MS`). The check rejects an honest oversized drop early; it is not a defence against a client that lies.
 
 Closing that gap needs something the direct-to-blob design does not have: either the upload passes back through the server, or a post-commit reader measures the blob and reconciles it. Neither exists today, so the size cap is a room-configured guardrail rather than a security boundary, and nothing downstream should assume an attachment is no larger than `maxFileSizeBytes`.
 
@@ -93,7 +93,7 @@ Removing an attachment (`deleteFile`), deleting a message with attachments, or d
 | `packages/db/src/services/azure/container/generateUploadFileSasEntities.ts`      | Issues the original and sibling thumbnail write SAS         |
 | `packages/db/src/services/azure/search/filtersToClauses.ts`                      | `has: file` — the non-empty-attachments clause              |
 | `apps/web/app/components/Message/Model/Room/Settings/Type/Attachments/Index.vue` | Room-settings Moderation page editing the limits            |
-| `apps/web/server/services/azure/eventGrid/publishBlobDeletion.ts`                | The one chunked best-effort deletion publish                |
+| `apps/web/server/services/azure/eventGrid/publishBlobDeletion.ts`                | chunked, best-effort blob deletion shared by every delete   |
 | `apps/functions/src/handlers/processBlobDeletionHandler.ts`                      | Durable blob deletion — idempotent `deleteIfExists` worker  |
 | `packages/db-schema/src/models/azure/eventGrid/BlobDeletionEventGridData.ts`     | The deletion event payload and its schema                   |
 

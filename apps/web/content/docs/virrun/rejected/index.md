@@ -5,7 +5,7 @@ description: Ideas virrun decided against — one page per idea with the rationa
 
 # Rejected
 
-Ideas we decided against. One page per idea with the rationale — check here (and [deferred](/docs/virrun/deferred)) before proposing an idea; never re-argue a decided one.
+Ideas decided against, one page each with its rationale. Check here and [deferred](/docs/virrun/deferred) before proposing — never re-argue a decided one.
 
 - [Pure-JS exec engine](/docs/virrun/rejected/pure-js-exec) — a just-bash-style interpreter as the execution engine.
 - [Materialize node_modules](/docs/virrun/rejected/materialize-node-modules) — copy the sandbox install onto host disk; can't beat a native install by filesystem physics.

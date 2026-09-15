@@ -1,7 +1,13 @@
-// Two pages that cite one file share every word its path spells, and the deepest of them run past the shingle
-// Size on their own — neither page is restating the other, it is the one string a citation has to be. A run
-// That is nothing but a path is that; a run carrying prose around one is the pages sharing the prose.
-export const checkIsPathRun = (words: string[], pathTexts: string[]): boolean => {
-  const runText = words.join(" ");
-  return pathTexts.some((pathText) => pathText.includes(runText));
+import { PATH_SHINGLE_SIZE, SHINGLE_SIZE } from "#src/services/sweeps/duplicateProse/constants";
+
+// Two pages that cite one file share every word its path spells, and a key-files row or a link shares the
+// Path plus the few words that label it — neither page is restating the other, it is the one string a citation
+// Has to be. So the words a cited path covers are not prose, and a run is a copy only when what is left of it
+// Once those are set aside is still a run: the same ten words that make a copy anywhere else.
+export const checkIsPathRun = (words: string[], pathShingles: ReadonlySet<string>): boolean => {
+  const isPathWord = words.map(() => false);
+  for (let index = 0; index + PATH_SHINGLE_SIZE <= words.length; index++)
+    if (pathShingles.has(words.slice(index, index + PATH_SHINGLE_SIZE).join(" ")))
+      for (let offset = 0; offset < PATH_SHINGLE_SIZE; offset++) isPathWord[index + offset] = true;
+  return isPathWord.filter((isPath) => !isPath).length < SHINGLE_SIZE;
 };

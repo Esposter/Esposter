@@ -41,14 +41,15 @@ What each pattern means is the owning skill's to say:
 Grep 8's cross-page form is `pnpm ai:sweep:duplicate-prose`: every run of ten words two docs pages or skills of
 different owners share, longest first, which is what a page restating another's rule leaves behind — a paraphrase
 does not, and is still the pass's to read. A run three pages share is a template rather than a copy and is left
-out, as is one that is nothing but a path both pages cite — a citation is the same string on both by design.
+out, and the words of a path both pages cite are not counted — a citation is the same string on both by design,
+so a key-files row or a link is a copy only by the ten prose words around it.
 
-**Which page owns a rule is a judgement, so the scan prints and never exits non-zero — except where the
-convention already decided.** A `## Settled — do not re-propose` line and a `## The catalogue` row name a
-direction and point at the one owner that argues it, so a run either shares with a page its own pointer does not
-name is the argument stated twice rather than a candidate. That subset is
-`scripts/src/workspace/restatedPointers.test.ts` and fails `pnpm test`; everything else the scan prints is a
-reading pass, and a number it reports is a queue rather than a red build.
+**Which page owns a rule is a judgement; that there is one to make is not.** The scan prints, and
+`scripts/src/workspace/duplicateProse.test.ts` fails `pnpm test` on anything it prints: a new run is a
+restatement to resolve — one page keeps the argument, the other a pointer — before the change lands. The subset
+where the convention already names the owner — a `## Settled — do not re-propose` line or a `## The catalogue`
+row pointing at the one page that argues it — is `scripts/src/workspace/restatedPointers.test.ts`, which also
+names the direction.
 
 The skill tree adds a structural check the greps cannot make — a skill over budget, a reference page nothing
 indexes, one whose first paragraph does not open `Read …`, a `## Settled` list that is not its skill's first
