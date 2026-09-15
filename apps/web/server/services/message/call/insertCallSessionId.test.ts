@@ -23,7 +23,9 @@ describe(insertCallSessionId, () => {
   test("reports a taken id as no id, so the caller mints another", async () => {
     expect.hasAssertions();
 
-    const db = createDb(() => Promise.reject(Object.assign(new Error(""), { code: UNIQUE_VIOLATION_ERROR_CODE })));
+    const db = createDb(() =>
+      Promise.reject(Object.assign(new Error("message"), { code: UNIQUE_VIOLATION_ERROR_CODE })),
+    );
 
     await expect(insertCallSessionId(db, { userId })).resolves.toBeUndefined();
   });

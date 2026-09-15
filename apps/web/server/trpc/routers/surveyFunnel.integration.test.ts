@@ -135,7 +135,9 @@ describe("surveyFunnel", () => {
     // 6. The status — 2 of 3 responded, and the third customer shows as added-not-responded
     const { rows: statusRows } = await programCaller.readProgramStatus({ id: program.id });
 
-    expect(statusRows.map(({ isResponded, keyValue }) => ({ isResponded, keyValue }))).toStrictEqual([
+    expect(
+      statusRows.map(({ isResponded, keyValue: statusKeyValue }) => ({ isResponded, keyValue: statusKeyValue })),
+    ).toStrictEqual([
       { isResponded: true, keyValue: firstParticipant.keyValue },
       { isResponded: true, keyValue: secondParticipant.keyValue },
       { isResponded: false, keyValue: silentParticipant.keyValue },
