@@ -54,5 +54,5 @@ const { audioInputs, audioOutputs, videoInputs } = useDevicesList();
     :devices="videoInputs"
     label="Camera"
   />
-  <MessageModelUserSettingsTypeVoiceMicTest />
+  <MessageModelUserSettingsTypeVoiceMicrophoneTest />
 </template>

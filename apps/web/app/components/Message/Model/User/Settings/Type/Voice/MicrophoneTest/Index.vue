@@ -13,6 +13,6 @@ const { isTesting, level, start, stop } = useMicrophoneLevel();
     >
       {{ isTesting ? "Stop Testing" : "Test Mic" }}
     </v-btn>
-    <MessageModelUserSettingsTypeVoiceMicTestMeter v-if="isTesting" :level flex-1 />
+    <MessageModelUserSettingsTypeVoiceMicrophoneTestMeter v-if="isTesting" :level flex-1 />
   </div>
 </template>

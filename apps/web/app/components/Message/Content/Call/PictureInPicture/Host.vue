@@ -33,6 +33,6 @@ watch(pictureInPictureWindow, async (newPictureInPictureWindow) => {
 
 <template>
   <Teleport v-if="pictureInPictureWindow" :to="pictureInPictureWindow.document.body">
-    <MessageContentCallPipView />
+    <MessageContentCallPictureInPictureView />
   </Teleport>
 </template>

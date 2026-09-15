@@ -22,9 +22,9 @@ const { hasMore, rooms } = storeToRefs(roomStore);
 const { readMoreRooms, readRooms } = await useReadRooms();
 const [{ isPending }] = await Promise.all([readRooms(), readRoomCategories()]);
 const categoryIdRoomsMap = computed(() => {
-  const roomsMap = new Map<null | string, RoomInMessage[]>();
-  for (const room of rooms.value) getOrCreate(roomsMap, room.categoryId, () => []).push(room);
-  return roomsMap;
+  const newCategoryIdRoomsMap = new Map<null | string, RoomInMessage[]>();
+  for (const room of rooms.value) getOrCreate(newCategoryIdRoomsMap, room.categoryId, () => []).push(room);
+  return newCategoryIdRoomsMap;
 });
 const uncategorizedRooms = computed(() => categoryIdRoomsMap.value.get(null) ?? []);
 const displayRoomCategories = computed(() =>
