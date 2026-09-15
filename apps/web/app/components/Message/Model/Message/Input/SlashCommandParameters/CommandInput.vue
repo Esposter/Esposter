@@ -20,11 +20,11 @@ useFocusWhenActive(input, () => isFocused);
 
 <template>
   <div inline-flex gap-0.5 items-center>
-    <span font-bold text-body-medium>/</span>
+    <span fw-bold text-body-medium>/</span>
     <input
       ref="input"
       v-model="modelValue"
-      font-bold
+      fw-bold
       outline-none
       b-none
       bg-transparent

@@ -39,7 +39,7 @@ if (session.value) await readNotifications();
           </template>
         </v-toolbar>
         <StyledEmptyState v-if="notifications.length === 0" icon="mdi-bell-outline" title="No notifications" />
-        <v-list v-else max-h-120 overflow-y-auto>
+        <v-list v-else max-h-120 of-y-auto>
           <AppNotificationBellItem v-for="notification of notifications" :key="notification.id" :notification />
           <StyledWaypoint :is-active="hasMore" @change="readMoreNotifications" />
         </v-list>

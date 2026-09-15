@@ -13,8 +13,8 @@ const { isVisible, selectedIndex, title } = defineProps<Props>();
 </script>
 
 <template>
-  <StyledCard v-show="isVisible" flex flex-col max-h-64 overflow-y-auto :elevation="1">
-    <v-card-title font-bold text-title-small>{{ title }}</v-card-title>
+  <StyledCard v-show="isVisible" flex flex-col max-h-64 of-y-auto :elevation="1">
+    <v-card-title fw-bold text-title-small>{{ title }}</v-card-title>
     <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
       <slot />
     </StyledList>

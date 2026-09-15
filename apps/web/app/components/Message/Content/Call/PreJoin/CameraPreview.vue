@@ -8,7 +8,7 @@ const { isCameraEnabled, stream } = defineProps<Props>();
 </script>
 
 <template>
-  <StyledCard flex min-h-0 relative overflow-hidden>
+  <StyledCard flex min-h-0 relative of-hidden>
     <video
       v-show="isCameraEnabled && stream"
       autoplay

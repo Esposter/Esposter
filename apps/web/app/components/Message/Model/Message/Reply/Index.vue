@@ -24,7 +24,7 @@ const scrollToMessage = useScrollToMessage();
       <StyledAvatar :image="creator.image" :name="creator.name" :avatar-props="{ size: 'x-small' }" />
       <div flex gap-x-1 items-center>
         <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
-        <span font-bold text-hint>{{ creator.name }}</span>
+        <span fw-bold text-hint>{{ creator.name }}</span>
         <v-icon v-if="reply.isForward" icon="mdi-share" size="small" />
         <span
           v-if="!EMPTY_TEXT_REGEX.test(reply.message)"

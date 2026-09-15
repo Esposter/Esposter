@@ -51,7 +51,7 @@ onMounted(async () => {
       w-full
       left-0
       absolute
-      overflow-hidden
+      of-hidden
       bg="[linear-gradient(to_right,hsl(55,70%,45%),hsl(120,70%,45%))]"
     >
       <div

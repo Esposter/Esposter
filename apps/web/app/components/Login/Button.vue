@@ -55,7 +55,7 @@ const isLoading = ref(false);
     <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
     <div flex size-full items-center justify-center>
       <v-progress-circular v-if="isLoading" color="white" size="small" indeterminate />
-      <span v-else text-white font-bold>{{ toTitleCase(provider) }}</span>
+      <span v-else text-white fw-bold>{{ toTitleCase(provider) }}</span>
     </div>
   </button>
 </template>

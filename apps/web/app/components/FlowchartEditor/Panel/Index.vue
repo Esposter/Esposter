@@ -14,7 +14,7 @@ const { removeNodes } = useVueFlow();
     <StyledCard p-4>
       <!-- Backspace removes a node too, but nothing on screen names it — draw.io and Miro both hang a delete
         Off the selection itself, and this panel is already the thing that appears when one is made -->
-      <v-card-title font-bold flex gap-x-2 items-center>
+      <v-card-title fw-bold flex gap-x-2 items-center>
         Properties
         <v-spacer />
         <StyledTooltipIconButton

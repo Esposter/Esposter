@@ -12,7 +12,7 @@ const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
 </script>
 
 <template>
-  <v-list py-0 overflow-y-auto density="compact">
+  <v-list py-0 of-y-auto density="compact">
     <template v-if="isPending">
       <StyledSkeletonListItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>

@@ -36,12 +36,12 @@ const formattedDuration = computed(() => {
       <span op-medium-emphasis>Call ended</span>
       <template v-if="formattedDuration">
         <span op-medium-emphasis> · lasted </span>
-        <span font-medium op-medium-emphasis>{{ formattedDuration }}</span>
+        <span fw-medium op-medium-emphasis>{{ formattedDuration }}</span>
       </template>
       <span op-medium-emphasis>. </span>
     </template>
     <template v-else>
-      <span font-bold>{{ creator.name }}</span>
+      <span fw-bold>{{ creator.name }}</span>
       <span op-medium-emphasis> started a call. </span>
     </template>
   </MessageModelMessageTypeSystemLine>

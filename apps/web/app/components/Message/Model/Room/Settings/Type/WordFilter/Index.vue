@@ -22,7 +22,7 @@ const {
   <v-container fluid>
     <v-row>
       <v-col cols="12">
-        <div font-bold text-title-medium>Word Filter</div>
+        <div fw-bold text-title-medium>Word Filter</div>
       </v-col>
     </v-row>
     <v-row>

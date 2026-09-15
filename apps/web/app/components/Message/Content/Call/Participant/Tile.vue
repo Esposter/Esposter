@@ -54,7 +54,7 @@ const { isDeafened, isScreenSharing, isSelf, isSpeaking, participant, videoStrea
       </template>
     </MessageContentCallParticipantActionMenu>
     <StyledCard m-2 px-2 py-1 rd-lg flex gap-x-2 items-center bottom-0 left-0 absolute>
-      <span font-medium truncate text-body-small>
+      <span fw-medium truncate text-body-small>
         {{ isSelf ? `${participant.name} (You)` : participant.name }}
       </span>
       <v-icon v-if="isScreenSharing" text-primary icon="mdi-monitor-share" size="small" />

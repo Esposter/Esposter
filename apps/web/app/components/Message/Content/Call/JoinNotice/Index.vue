@@ -19,7 +19,7 @@ const { joinNoticeParticipant } = storeToRefs(participantStore);
   <StyledCard v-else-if="joinNoticeParticipant" px-4 py-3 right-4 top-4 absolute>
     <div flex gap-x-3 items-center>
       <StyledAvatar :image="joinNoticeParticipant.image" :name="joinNoticeParticipant.name" />
-      <span font-medium text-body-medium>{{ joinNoticeParticipant.name }} joined the call</span>
+      <span fw-medium text-body-medium>{{ joinNoticeParticipant.name }} joined the call</span>
       <StyledTooltipIconButton
         :button-props="{ size: 'small', variant: 'plain' }"
         icon="mdi-close"

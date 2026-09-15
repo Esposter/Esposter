@@ -66,7 +66,7 @@ const fileRules = computed(() => [
       emoji picker.
     </p>
     <div>
-      <p font-semibold m-0 text-body-large>1. Upload an image</p>
+      <p fw-semibold m-0 text-body-large>1. Upload an image</p>
       <p m-0 op-medium-emphasis text-body-medium>
         Square images with transparent backgrounds work best. It has to be under
         {{ MAX_ROOM_EMOJI_SIZE_BYTES / 1024 }} KB — we won't resize it for you.
@@ -85,7 +85,7 @@ const fileRules = computed(() => [
       />
     </div>
     <div>
-      <p font-semibold m-0 text-body-large>2. Give it a name</p>
+      <p fw-semibold m-0 text-body-large>2. Give it a name</p>
       <p m-0 op-medium-emphasis text-body-medium>This is also what you'll type to add this emoji to your messages.</p>
       <MessageModelRoomEmojiNameField v-model="name" autofocus />
     </div>

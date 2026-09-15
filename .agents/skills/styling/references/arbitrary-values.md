@@ -9,7 +9,7 @@ Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and
 
 ```html
 <div sticky top="[calc(1rem+--app-bar-height)]" />
-<div h="[calc(100dvh_-_--app-bar-height)]" overflow-y-auto />
+<div h="[calc(100dvh_-_--app-bar-height)]" of-y-auto />
 <div bg="[#f0f0f0]" />
 ```
 

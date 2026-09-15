@@ -16,7 +16,7 @@ const tagItems = computed(() =>
      one container per resource — has no analogue here and is deliberately not invented. A row is a link into
      the list pre-filtered by that tag, which is where sorting, columns and bulk actions already live -->
 <template>
-  <div flex flex-col h-full min-w-0 overflow-y-auto>
+  <div flex flex-col h-full min-w-0 of-y-auto>
     <StyledSkeleton v-if="isPending" type="list-item@8" />
     <StyledErrorState v-else-if="error" :error @retry="refresh()" />
     <StyledEmptyState

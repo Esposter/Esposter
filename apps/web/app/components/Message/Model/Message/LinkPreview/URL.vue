@@ -6,7 +6,7 @@ const { description, images, siteName, title, url } = defineProps<URLLinkPreview
 
 <template>
   <StyledCard>
-    <v-card-title font-bold>
+    <v-card-title fw-bold>
       <NuxtLink :to="url" external target="_blank">
         {{ title }}
       </NuxtLink>

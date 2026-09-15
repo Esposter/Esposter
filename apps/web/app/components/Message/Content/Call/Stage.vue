@@ -12,9 +12,9 @@ const { activeScreenShareStream, hasScreenShare, pinnedParticipantId } = storeTo
 const { callParticipantMap, participantTilePropsMap, presenterName } = useCallParticipantTiles();
 const isScreenSharePresenting = computed(() => hasScreenShare.value && Boolean(activeScreenShareStream.value));
 const callParticipantGridClass = computed(() => {
-  if (callParticipantMap.value.size <= 1) return "grid-cols-1";
-  else if (callParticipantMap.value.size === 2) return "grid-cols-1 md:grid-cols-2";
-  else return "grid-cols-1 md:grid-cols-2 xl:grid-cols-3";
+  if (callParticipantMap.value.size <= 1) return "cols-1";
+  else if (callParticipantMap.value.size === 2) return "cols-1 md:cols-2";
+  else return "cols-1 md:cols-2 xl:cols-3";
 });
 </script>
 
@@ -47,7 +47,7 @@ const callParticipantGridClass = computed(() => {
       shrink-0
       flex-col
       items-center
-      overflow-y-auto
+      of-y-auto
       :class="isDense ? 'gap-y-2' : 'gap-y-3'"
     >
       <MessageContentCallParticipantTile

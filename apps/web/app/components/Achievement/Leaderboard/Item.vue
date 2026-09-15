@@ -22,11 +22,11 @@ const { entry, isMyEntry } = defineProps<Props>();
     :border="isMyEntry"
     :color="isMyEntry ? 'primary-opacity-10' : undefined"
   >
-    <span font-bold text-center w-8 text-title-medium>{{ entry.rank }}</span>
+    <span fw-bold text-center w-8 text-title-medium>{{ entry.rank }}</span>
     <NuxtInvisibleLink :to="RoutePath.User(entry.user.id)">
       <StyledAvatar :image="entry.user.image" :name="entry.user.name" />
     </NuxtInvisibleLink>
-    <NuxtInvisibleLink font-bold :to="RoutePath.User(entry.user.id)">{{ entry.user.name }}</NuxtInvisibleLink>
+    <NuxtInvisibleLink fw-bold :to="RoutePath.User(entry.user.id)">{{ entry.user.name }}</NuxtInvisibleLink>
     <v-spacer />
     <span text-hint>{{ entry.unlockCount }} unlocked</span>
     <v-chip flex gap-x-1 color="orange" size="small">

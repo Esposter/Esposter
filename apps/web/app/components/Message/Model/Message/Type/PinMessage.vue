@@ -10,10 +10,10 @@ const scrollToMessage = useScrollToMessage();
 
 <template>
   <MessageModelMessageTypeSystemLine :active icon="mdi-pin" :is-preview :message>
-    <span font-bold>{{ creator.name }}</span>
+    <span fw-bold>{{ creator.name }}</span>
     <span op-medium-emphasis> pinned </span>
     <span
-      font-bold
+      fw-bold
       cursor-pointer
       hover:underline
       @click="message.replyRowKey && scrollToMessage(message.partitionKey, message.replyRowKey)"

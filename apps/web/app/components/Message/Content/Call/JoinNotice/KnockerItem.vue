@@ -51,7 +51,7 @@ const dismissButtonProps = computed<VBtn["$props"]>(() => ({
 <template>
   <div flex gap-x-3 items-center>
     <StyledAvatar :image="knocker.image" :name="knocker.name" />
-    <span font-medium flex-1 truncate text-body-medium>{{ knocker.name }} wants to join</span>
+    <span fw-medium flex-1 truncate text-body-medium>{{ knocker.name }} wants to join</span>
     <v-tooltip text="Let in">
       <template #activator="{ props: tooltipProps }">
         <StyledButton :="tooltipProps" :button-props="admitButtonProps" @click="admitCallKnocker" />

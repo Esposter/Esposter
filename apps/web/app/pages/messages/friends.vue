@@ -10,9 +10,9 @@ await readFriends();
     <template #left>
       <MessageLeftSideBar />
     </template>
-    <v-sheet flex flex-col h-full overflow-y-auto>
+    <v-sheet flex flex-col h-full of-y-auto>
       <v-container flex flex-col gap-y-8>
-        <div font-bold text-headline-small>Friends</div>
+        <div fw-bold text-headline-small>Friends</div>
         <MessageFriendsSearch />
         <MessageFriendsRequestList />
         <MessageFriendsList />

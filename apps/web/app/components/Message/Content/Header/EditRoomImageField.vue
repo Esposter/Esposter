@@ -84,7 +84,7 @@ const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfi
     <button
       v-if="modelValue"
       text-error
-      font-bold
+      fw-bold
       type="button"
       :disabled="isLoading"
       hover:underline

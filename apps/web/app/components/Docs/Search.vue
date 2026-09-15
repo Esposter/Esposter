@@ -59,7 +59,7 @@ const results = computed(() => {
     </template>
     <template v-if="query">
       <v-divider />
-      <v-list v-if="results.length > 0" max-h-96 overflow-y-auto>
+      <v-list v-if="results.length > 0" max-h-96 of-y-auto>
         <v-list-item
           v-for="result of results"
           :key="result.id"

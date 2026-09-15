@@ -21,7 +21,7 @@ watchImmediate(target, (newTarget) => {
      room's alone — each is a room-level composition with its own dialog state, and a thread is a conversation
      about a message rather than a second place to run them from -->
 <template>
-  <div pa-2>
+  <div p-2>
     <RichTextEditor
       v-model="threadInput"
       :limit="MESSAGE_MAX_LENGTH"

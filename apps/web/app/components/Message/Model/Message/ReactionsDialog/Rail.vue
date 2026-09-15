@@ -19,8 +19,8 @@ const { emojis } = defineProps<Props>();
       @click="modelValue = emoji.emojiTag"
     >
       <div flex gap-2 items-center>
-        <span leading-none text-title-large><MessageModelMessageEmojiTag :emoji-tag="emoji.emojiTag" /></span>
-        <span font-bold text-body-small>{{ emoji.userIds.length }}</span>
+        <span lh-none text-title-large><MessageModelMessageEmojiTag :emoji-tag="emoji.emojiTag" /></span>
+        <span fw-bold text-body-small>{{ emoji.userIds.length }}</span>
       </div>
     </v-list-item>
   </v-list>

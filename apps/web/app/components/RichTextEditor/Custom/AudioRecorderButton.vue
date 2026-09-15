@@ -50,7 +50,7 @@ const formattedTimer = computed(() => {
 
 <template>
   <div flex gap-x-2 items-center>
-    <span v-if="isRecording" font-bold>
+    <span v-if="isRecording" fw-bold>
       {{ formattedTimer }}
     </span>
     <StyledTooltipIconButton

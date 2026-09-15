@@ -26,7 +26,7 @@ const activeBladeTitle = computed(() => {
       <!-- The resource is what the page is about and the blade is which face of it is open, so only the name
            carries the weight — the same portal shape this explorer follows -->
       <span text-headline-small>
-        <span font-bold>{{ resource.name }}</span>
+        <span fw-bold>{{ resource.name }}</span>
         <template v-if="activeBladeTitle"> | {{ activeBladeTitle }}</template>
       </span>
       <span text-hint>{{ ResourceDefinitionMap[resource.type].title }}</span>

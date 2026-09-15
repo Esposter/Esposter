@@ -11,7 +11,7 @@ const { post } = defineProps<Props>();
 <template>
   <v-card px-2 shadow-none>
     <PostByline :post />
-    <v-card-title v-if="post.title" font-bold px-0 whitespace-normal text-title-large>
+    <v-card-title v-if="post.title" fw-bold px-0 ws-normal text-title-large>
       {{ post.title }}
     </v-card-title>
     <PostDescription :description="post.description" />

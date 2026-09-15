@@ -66,7 +66,7 @@ const disabled = computed(
   >
     <StyledCard p-2>
       <v-card-title>
-        <div font-bold>Personal Information</div>
+        <div fw-bold>Personal Information</div>
         <v-divider mt-2 />
       </v-card-title>
       <v-container px-0 py-6>
@@ -85,7 +85,7 @@ const disabled = computed(
           <v-btn text="Cancel" variant="outlined" @click="editMode = false" />
           <StyledButton type="submit" :button-props="{ disabled, text: 'Save' }" />
         </template>
-        <StyledButton v-else font-bold :button-props="{ text: 'Edit Settings' }" @click="editMode = true" />
+        <StyledButton v-else fw-bold :button-props="{ text: 'Edit Settings' }" @click="editMode = true" />
       </v-card-actions>
     </StyledCard>
   </v-form>

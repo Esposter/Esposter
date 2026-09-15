@@ -8,7 +8,7 @@ const { data: session } = await authClient.useSession(useFetch);
 <template>
   <StyledCard v-if="session" p-6 flex>
     <div flex-1 grid>
-      <div font-bold text-headline-small>{{ session.user.name }}</div>
+      <div fw-bold text-headline-small>{{ session.user.name }}</div>
       <div>
         {{ session.user.email }}
       </div>

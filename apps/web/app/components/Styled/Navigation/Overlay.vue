@@ -19,7 +19,7 @@ const { items } = defineProps<Props>();
      column in the layout and needs nothing to sit flat against the page beside it -->
 <template>
   <v-slide-x-transition>
-    <v-sheet v-if="isOpen" elevation="4" inset-y-0 left-0 absolute z-2 overflow-y-auto :width="LEFT_DRAWER_WIDTH">
+    <v-sheet v-if="isOpen" elevation="4" inset-y-0 left-0 absolute z-2 of-y-auto :width="LEFT_DRAWER_WIDTH">
       <StyledNavigationList :items @select="isOpen = false" />
     </v-sheet>
   </v-slide-x-transition>

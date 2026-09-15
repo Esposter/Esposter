@@ -20,7 +20,7 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
 <template>
   <StyledCard p-2>
     <v-card-title>
-      <div font-bold>Active sessions</div>
+      <div fw-bold>Active sessions</div>
       <v-divider mt-2 />
     </v-card-title>
     <!-- Keyed on the sessions rather than a pending flag: an empty list would read as an account nothing is

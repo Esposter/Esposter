@@ -19,7 +19,7 @@ const { list } = defineProps<Props>();
     :dialog-props="KEYBOARD_SHORTCUTS_DIALOG_PROPS"
   >
     <div v-for="{ category, items } of list" :key="category">
-      <div font-bold mb-2 uppercase op-medium-emphasis text-label-medium>{{ category }}</div>
+      <div fw-bold mb-2 uppercase op-medium-emphasis text-label-medium>{{ category }}</div>
       <div v-for="{ description, keys } of items" :key="description" py-1 flex items-center justify-between>
         <span text-body-medium>{{ description }}</span>
         <div flex gap-1 items-center>

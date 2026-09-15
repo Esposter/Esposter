@@ -50,7 +50,7 @@ const title = computed(() => (snapshotVersion.value ? getSnapshotVersionTitle(sn
         <StyledButton :button-props="{ text: 'Back to current', variant: 'text' }" @click="stopPreviewingSnapshot" />
       </div>
     </v-alert>
-    <div flex-1 min-w-0 overflow-auto>
+    <div flex-1 min-w-0 of-auto>
       <StyledEmptyState
         v-if="!publishedVersion || !viewComponent"
         description="This version has no rendered form of its own — restore it to see its content."

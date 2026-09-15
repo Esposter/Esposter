@@ -88,7 +88,7 @@ const confirm = () => {
       <slot name="header" />
       <template v-if="$slots.default">
         <v-divider />
-        <v-card-text flex-1 overflow-y-auto>
+        <v-card-text flex-1 of-y-auto>
           <!-- The shell owns body rhythm, so consumers pass bare children. The wrapper stays auto-height:
             v-card-text is flex-1, so making it the flex container would stretch v-input children to fill it. -->
           <div flex flex-col gap-y-4>

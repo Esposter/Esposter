@@ -22,7 +22,7 @@ const isCreator = computed(() => post.userId === session.value?.user.id);
     <PostLikeSection left-2 top-2 absolute :post :is-comment-store />
     <v-card px-2 pt-2>
       <PostByline is-link :post />
-      <v-card-title font-bold px-0 whitespace-normal text-title-large>
+      <v-card-title fw-bold px-0 ws-normal text-title-large>
         {{ post.title }}
       </v-card-title>
       <PostDescription :description="post.description" />

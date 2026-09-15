@@ -26,7 +26,7 @@ const { title } = defineProps<Props>();
         <slot name="status" />
       </div>
       <div v-if="title || slots.actions" flex gap-x-2 w-full items-center>
-        <span v-if="title" font-bold text-headline-small>{{ title }}</span>
+        <span v-if="title" fw-bold text-headline-small>{{ title }}</span>
         <v-spacer />
         <div v-if="slots.actions" flex flex-wrap gap-x-2 items-center>
           <slot name="actions" />

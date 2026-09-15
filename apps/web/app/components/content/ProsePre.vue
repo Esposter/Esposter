@@ -17,7 +17,7 @@ const COPY_BUTTON_PROPS = { color: "grey-lighten-1", density: "comfortable", siz
   <!-- Colours are github-dark's own pair (configuration/content.ts) — shiki emits no wrapper background,
     and code stays dark in both app themes, so a --v-theme token cannot supply them -->
   <!-- lh="[1.6]" not lh-1.6 — the bare number is spacing-scaled (calc(var(--spacing) * 1.6) = 0.4rem) -->
-  <div v-else class="group" text-sm my-4 rd-lg relative overflow-hidden bg="[#24292e]" c="[#e1e4e8]" lh="[1.6]">
+  <div v-else class="group" text-sm my-4 rd-lg relative of-hidden bg="[#24292e]" c="[#e1e4e8]" lh="[1.6]">
     <StyledTooltipIconButton
       op-0
       transition-opacity
@@ -32,6 +32,6 @@ const COPY_BUTTON_PROPS = { color: "grey-lighten-1", density: "comfortable", siz
       :text="copied ? 'Copied' : 'Copy'"
       @click="copy()"
     />
-    <pre :="$attrs" m-0 p-4 overflow-x-auto><slot /></pre>
+    <pre :="$attrs" m-0 p-4 of-x-auto><slot /></pre>
   </div>
 </template>

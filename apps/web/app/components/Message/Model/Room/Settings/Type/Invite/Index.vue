@@ -22,7 +22,7 @@ await readRoomInvites();
   <v-container fluid>
     <v-row>
       <v-col cols="12">
-        <div font-bold text-title-medium>Invites</div>
+        <div fw-bold text-title-medium>Invites</div>
         <div text-hint>
           Here's a list of all active invite links in this room. You can revoke any one or
           <StyledActionLink @click="inviteRoomId = room.id">create one</StyledActionLink>.

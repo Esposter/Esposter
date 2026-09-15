@@ -14,7 +14,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <v-alert v-if="error" ma-4 density="compact" type="error" :text="error">
+  <v-alert v-if="error" m-4 density="compact" type="error" :text="error">
     <template #append>
       <v-btn size="small" variant="text" @click="readRecents()">Retry</v-btn>
     </template>

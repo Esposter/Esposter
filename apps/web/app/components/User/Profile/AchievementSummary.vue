@@ -31,7 +31,7 @@ const isOpen = ref(false);
   <div flex flex-col gap-y-3>
     <div flex gap-x-2 items-center>
       <v-icon color="orange" icon="mdi-trophy" />
-      <span font-bold text-title-large>{{ totalPoints }} achievement points</span>
+      <span fw-bold text-title-large>{{ totalPoints }} achievement points</span>
       <span text-hint>{{ unlockedUserAchievements.length }} unlocked</span>
       <v-spacer />
       <!-- Only when there is more than the summary is showing — otherwise it opens the same few again -->

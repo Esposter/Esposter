@@ -85,7 +85,7 @@ watch(editForm, (newEditForm) => {
         </template>
       </StyledEditFormDialogHeader>
       <v-divider thickness="2" />
-      <v-container fluid overflow-y-auto>
+      <v-container fluid of-y-auto>
         <slot name="prepend-form" />
         <v-form :id="formId" ref="editForm" @submit.prevent="emit('save')">
           <slot />

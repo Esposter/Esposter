@@ -27,7 +27,7 @@ const emit = defineEmits<{ select: [] }>();
           <v-icon :icon="item.icon" />
         </v-avatar>
       </template>
-      <v-list-item-title font-bold>{{ item.title }}</v-list-item-title>
+      <v-list-item-title fw-bold>{{ item.title }}</v-list-item-title>
     </v-list-item>
   </NuxtInvisibleLink>
 </template>

@@ -23,7 +23,7 @@ const memberName = computed(() => getMemberName(userId));
     <template #prepend>
       <StyledAvatar :avatar-props="{ size: 'small' }" :="{ image: user?.image }" mr-3 :name="memberName" />
     </template>
-    <v-list-item-title font-bold>{{ memberName }}</v-list-item-title>
+    <v-list-item-title fw-bold>{{ memberName }}</v-list-item-title>
     <!-- Only worth a line when a nickname is standing in front of it, which is Discord's rule too -->
     <v-list-item-subtitle v-if="user && user.name !== memberName">{{ user.name }}</v-list-item-subtitle>
   </v-list-item>

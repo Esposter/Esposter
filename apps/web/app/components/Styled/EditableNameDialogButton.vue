@@ -58,7 +58,7 @@ const confirmButtonAttrs = computed(() => ({
                 :class="isEditable ? undefined : 'pointer-events-none'"
                 :ripple="false"
                 slim
-                font-bold
+                fw-bold
                 rd-lg
                 :="mergeProps(tooltipActivatorProps, hoverProps)"
                 @click="updateIsOpen(true)"

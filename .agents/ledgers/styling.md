@@ -67,11 +67,6 @@ grep -rnoE '(^|[[:space:]])[a-z][A-Za-z0-9:_-]*-\[[^]"'"'"']*\]([[:space:]/>]|$)
 # Are dominated by SVG attributes and third-party APIs, where the unit is not ours
 grep -rnE "(maxWidth|minWidth|maxHeight|minHeight|width|height|size): *[0-9]+ *[,}]" --include=*.vue apps/web/app
 grep -rnE "[[:space:]:](size|(min|max)-(width|height))=\"[0-9]+\"" --include=*.vue apps/web/app
-# A long form where the abbreviation is canonical — `rd` for `rounded`, `op-` for `opacity-`. A bare
-# `rounded` on a Vuetify component is that component's own boolean prop and stays
-grep -rnE "(^|[[:space:]])(rounded(-[a-z0-9]+)?|opacity-[0-9]+)([[:space:]/>]|$)" --include=*.vue apps/web/app
-# A Vuetify helper class where the UnoCSS name belongs — as an attribute it generates nothing at all
-grep -rnE "(^|[^-a-z])font-weight-(thin|light|regular|medium|bold|black)" --include=*.vue apps/web/app
 # A Vuetify theme colour this theme never registers — `warning`/`success` exist at runtime but generate no
 # Utility, so the attribute form is inert while the `color` prop still works
 grep -rnE '(^|[^-a-z"'"'"'])(bg|text|b)-(warning|success)([^-a-z0-9]|$)' --include=*.vue apps/web/app
@@ -87,6 +82,11 @@ grep -rnE '(^|[^-a-z])(b|bg|text)-(medium|high)-emphasis' --include=*.vue apps/w
 ```
 
 ## Next enforceable
+
+- Handed over: a second spelling of a utility family (`rounded-*`, `opacity-*`, `overflow-*`, `font-bold`,
+  `pa-*`, …) is `BLOCKED_SPELLINGS` in `apps/web/uno.config.ts`, which the generator refuses and `unocss/blocklist`
+  reports. A new alias met by a pass joins that list. The Vuetify helper class (`font-weight-bold`) stays a
+  reading finding: as an attribute it generates nothing, and a blocklist entry only sees what the preset matches.
 
 - An MD2 typography utility (`text-h6`, `text-caption`, `text-subtitle-1`, `text-medium-emphasis`) is a closed
   set of names, and as an **attribute** it generates nothing at all — Vuetify ships those as classes, so the

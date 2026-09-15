@@ -52,7 +52,7 @@ const {
         <div pb-2 op-medium-emphasis text-title-small>Select where you want to share this message.</div>
         <v-text-field v-model="searchQuery" append-inner-icon="mdi-magnify" density="compact" placeholder="Search" />
       </v-card-title>
-      <v-card-text p-4 overflow-y-auto>
+      <v-card-text p-4 of-y-auto>
         <v-list py-0>
           <MessageModelMessageForwardRoomListItem v-for="room of rooms" :key="room.id" :room />
           <StyledWaypoint :is-active="hasMore" @change="readMoreSearchedItems">

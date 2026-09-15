@@ -15,7 +15,7 @@ const editedPermissions = ref(role.permissions);
 </script>
 
 <template>
-  <div font-bold mb-2 text-title-medium>{{ role.name }}</div>
+  <div fw-bold mb-2 text-title-medium>{{ role.name }}</div>
   <MessageModelRoomSettingsTypeRolePermissionList v-model="editedPermissions" />
   <!-- Pinned to the bottom rather than trailing the list, which is Discord's own shape here: the switch that made
        the change is scrolled away by the time the reader looks for a save, and a save they cannot see reads as a

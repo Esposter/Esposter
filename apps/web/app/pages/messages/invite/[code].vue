@@ -47,11 +47,11 @@ const isMounted = useMounted();
           <v-card-text>
             <div text-center>
               You've been invited to join
-              <span font-bold>
+              <span fw-bold>
                 {{ invite.room.name }}
               </span>
               by
-              <div font-bold text-headline-small>
+              <div fw-bold text-headline-small>
                 {{ invite.user.name }}
               </div>
               <div>

@@ -17,7 +17,7 @@ const composerFileUrlMap = computed(() => getComposerFileUrlMap(target));
 
 <template>
   <v-container v-if="files.length > 0" fluid pb-0>
-    <v-row m-0 flex-nowrap overflow-x-auto>
+    <v-row m-0 flex-nowrap of-x-auto>
       <MessageModelMessageFileInput
         v-for="(file, index) of files"
         :key="file.id"

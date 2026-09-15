@@ -16,12 +16,12 @@ defineEmits<{ hover: [emoji?: PickableEmoji]; select: [emoji: PickableEmoji] }>(
 
 <template>
   <!-- One category at a time, so the largest list is under four hundred buttons and needs no virtualisation -->
-  <div p-1 flex-1 gap-0.5 grid grid-cols-8 overflow-y-auto>
+  <div p-1 flex-1 gap-0.5 grid cols-8 of-y-auto>
     <button
       v-for="emoji of emojis"
       :key="emoji.slug"
       :aria-label="emoji.name"
-      leading-none
+      lh-none
       rd
       b-none
       bg-transparent

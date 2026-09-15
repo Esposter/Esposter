@@ -61,7 +61,7 @@ onMounted(async () => {
     <FlowchartEditorControls />
     <FlowchartEditorSideBarButton />
     <Panel v-if="isSidebarOpen" position="top-left">
-      <v-sheet rd-1 max-h-full w-64 overflow-y-auto elevation="4">
+      <v-sheet rd-1 max-h-full w-64 of-y-auto elevation="4">
         <FlowchartEditorSideBar />
       </v-sheet>
     </Panel>

@@ -6,7 +6,7 @@ const { favicons, url } = defineProps<DefaultLinkPreviewResponse>();
 
 <template>
   <StyledCard>
-    <v-card-title font-bold>
+    <v-card-title fw-bold>
       <NuxtLink :to="url" external target="_blank">
         {{ url }}
       </NuxtLink>
