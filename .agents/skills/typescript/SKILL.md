@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Apply when writing any TypeScript in this project. Esposter TypeScript conventions — banned patterns (Omit over Except, forEach, parameter properties, mutating array methods, the void operator), as unknown as treated like any, arrow functions, callbacks never taking a bare function reference, regex literals, neverthrow promise style and the void ban, guard clauses and if/else-if chains (the shapes in a deep dive), exhaustive switch guards, inferred return types, for...of loops with .entries(), Array.from over spread+map, environment constants, stable selection IDs, plus deep dives on enum declaration/values arrays/refs and the inline string-literal union that is one, arrays/Maps/Sets (the mutation bans, getOrCreate, dedup, filter narrowing), the "" sentinel and null-vs-undefined and the character that renders as nothing, modelling types instead of casting (Pick from source types, discriminant-keyed dispatch maps, nuxt.d.ts augmentation, a TS2590 suppressed in place), function signatures (overloads, parameter defaults, boolean flags), the floating-promise replacement ladder, the two exceptions to the dynamic-import ban, and declare over ! on class fields.
+description: Apply when writing any TypeScript in this project. Esposter TypeScript conventions — the banned patterns (Omit over Except, forEach, parameter properties, mutating array methods, the void operator, as unknown as), arrow functions with callbacks never a bare reference, regex literals with the u flag, neverthrow promise style, guard clauses and if/else-if chains, exhaustive switch guards, inferred return types, for...of with .entries(), a string-literal union as an enum, the "" sentinel with undefined over null, and modelling a type instead of casting.
 ---
 
 # TypeScript Conventions
@@ -20,8 +20,8 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 
 ## Core Rules
 
-- `strict` mode + `tseslint.configs.strictTypeChecked`. `any`, non-null assertions (`!`), and `==`/`!=` are lint errors (`no-explicit-any`, `no-non-null-assertion`, `eqeqeq`) — for `!` prefer a guard clause or optional chaining over a cast, and a field with no initializer takes `declare` rather than `!` (`references/class-fields.md`).
-- `Omit` → `Except` from `type-fest`, enforced by `@typescript-eslint/no-restricted-types`. Import it from `type-fest` directly; it is **not** re-exported from `@esposter/shared`.
+- `strict` mode, with oxlint's type-aware rules on (`typeAware` in `.oxlintrc.json`). `any`, non-null assertions (`!`), and `==`/`!=` are lint errors (`no-explicit-any`, `no-non-null-assertion`, `eqeqeq`) — for `!` prefer a guard clause or optional chaining over a cast, and a field with no initializer takes `declare` rather than `!` (`references/class-fields.md`).
+- `Omit` → `Except` from `type-fest`, enforced by oxlint `typescript/no-restricted-types`. Import it from `type-fest` directly; it is **not** re-exported from `@esposter/shared`.
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
 - **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
 - `.forEach()` is **BANNED** — use `for...of` (`references/loops.md`); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
