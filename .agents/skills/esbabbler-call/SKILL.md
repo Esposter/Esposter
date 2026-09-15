@@ -24,7 +24,7 @@ Short random codes are always the row's `id` — never a separate `token`/`code`
 - `callSessionsInMessage.id` (`CALL_ID_LENGTH`) — the shareable call/meeting link
 - `createId(length)` from `#shared/util/math/random/createId` — the single generator (uses `crypto.getRandomValues`)
 
-Never a `token` or `code` column, a `createToken`/`createCode` generator, or a `*_TOKEN_LENGTH` constant beside them.
+Never a `token` or `code` column, a generator for one, or a `*_TOKEN_LENGTH` constant beside them.
 
 ## Standalone vs room calls
 
@@ -72,7 +72,7 @@ Room navigation (`useCallSubscribables` cleanup) is **not** a leave boundary —
 
 `useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isPoppedOut`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `participantVolumePercentageMap`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.
 
-`useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`, `setScreenShare`, `setVirtualBackground`, `setActiveDevice`. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers call `room.switchActiveDevice` to restart the live track. The store keeps no `selectedAudioInputDeviceId`-style refs. See `apps/web/content/docs/esbabbler/voice-video.md` (Device selection).
+`useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`, `setScreenShare`, `setVirtualBackground`, `setActiveDevice`. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers call `room.switchActiveDevice` to restart the live track. The store keeps no per-kind selected-device refs. See `apps/web/content/docs/esbabbler/voice-video.md` (Device selection).
 
 ## Deep Dives
 

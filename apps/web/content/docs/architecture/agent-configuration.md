@@ -102,3 +102,4 @@ root `docs/` folder this layout exists to avoid. Point the skill at `.agents/` i
 | `scripts/src/workspace/agentDirectories.test.ts` | Pins both exclusions in the configs that cannot import the constants                             |
 | `scripts/src/workspace/citations.test.ts`        | Fails on a cited repo path or skill name in the docs, the tree or a README that resolves nowhere |
 | `scripts/src/workspace/skillDocs.test.ts`        | Fails on every `ai:sweep:skill-docs` finding but the budget                                      |
+| `scripts/src/workspace/staleNames.test.ts`       | Fails on a backticked code name in the same trees that neither the tree nor a dependency holds   |

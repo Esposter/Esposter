@@ -50,7 +50,7 @@ setFoo(toFoo(await $trpc.foo.readFoo.query()));
 ```
 
 - `save` skips (returning `true`) when the state's JSON snapshot equals the last persisted one — "already persisted" is success, not failure.
-- `setState` assigns loaded state AND resets the snapshot in one call; the `markSaved`-style bookkeeping is internal and callers never see it.
+- `setState` assigns loaded state AND resets the snapshot in one call; the snapshot-reset bookkeeping is internal and callers never see it.
 - The snapshot updates only after a **successful** save, so failures retry on the next trigger.
 - Snapshots are JSON strings (`Serializable.toJSON` handles reactive proxies/class instances) with `updatedAt` excluded — the save path bumps `updatedAt`, so it must not participate in the dirty check.
 - The resource store's `saveContent` runs the same skip over resource content, but its snapshot excludes **nothing**: the content is arbitrary user data, where a key named `updatedAt` can be a spreadsheet column rather than metadata, and dropping it would compare a genuine edit as unchanged. So a content store must never stamp the content before saving it — `saveItemMetadata` belongs to `useSave`, which owns the bump it excludes.

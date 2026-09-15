@@ -14,7 +14,7 @@ and the eight shapes it takes, is `references/names-a-dependency-owns.md`.
 | Two prefixes both look right — derivation vs fetch, setter vs push, on vs handle          | `references/verb-families.md`           |
 | Joining more than one id into one string — a key, a `:key`, a blob name                   | `references/composite-keys.md`          |
 | Writing a duration, a date, or a literal big enough to miscount                           | `references/numbers-and-time.md`        |
-| A module-scope binding could be `SCREAMING_SNAKE_CASE` or PascalCase, or need no name     | `references/constant-casing.md`         |
+| A module-scope binding could be SCREAMING_SNAKE_CASE or PascalCase, or need no name       | `references/constant-casing.md`         |
 | A name could be shortened, or a compound holds a word the denylist cannot see             | `references/abbreviations.md`           |
 | Naming something that mirrors a library — its option, key, method or wire value           | `references/names-a-dependency-owns.md` |
 
@@ -25,7 +25,7 @@ and the eight shapes it takes, is `references/names-a-dependency-owns.md`.
 - `has*` only when `is*` reads unnaturally — possession/membership checks: `hasMore`, `hasThumbnail`. Never `can*` or `should*` — enforced by `no-restricted-syntax` on the declarator name, which leaves a dependency's own key alone (LiveKit's `canPublish` grant, `URL.canParse`). A permission is `hasManageRoles`, a capability `isScreenShareSupported`
 - `show*` is **banned** — rename to `is*Visible`: `showFoo` → `isFooVisible`
 - `isPending` for a request in flight, `isLoading` for a wait that is not one request
-- `isDirty` for tracking unsaved state — never `isChanged`
+- `isDirty` for tracking unsaved state — never a `changed` spelling
 - `initial*` for the last-saved snapshot used in dirty comparisons: `initialDataSource`
 - Boolean-valued `LocalStorageKey` registry entries follow the same `is*` rule (`IsResourceBladeNavigationCollapsed`) — the `file-organization` skill (`references/local-storage-keys.md`) owns that registry
 

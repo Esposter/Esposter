@@ -29,7 +29,7 @@ survives past the call that set it.** Two clean negatives worth knowing before r
 that an `executeMutation` caller sets from `onSuccess`, which is the established way to get an outcome back out of
 a callback and is the majority of what the second grep returns.
 
-Proof the recipe can fail: it was written against `armedAutosaveCount`, and re-running it after that was replaced
+Proof the recipe can fail: it was written against a hand-kept armed-autosave count, and re-running it after that was replaced
 by a flag no longer returns the site.
 
 ## Exclusions

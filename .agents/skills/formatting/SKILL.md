@@ -57,7 +57,7 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 
 - **CRITICAL — comment only _exceptional_ behaviour.** A comment earns its place only when it explains something a competent reader could not infer from the code, its names, or the project's own conventions. **Never restate an established pattern or anything already documented in a skill or feature doc.** The skill/doc is the single source of truth; duplicating it in a comment is noise that rots. Concretely, delete comments that:
   - restate a convention covered by a skill (e.g. "a `.test.ts` so the barrel generator keeps it out of the public barrel", "the result helper turns the throw into false, per the error-handling convention", "memoized because…" when memoization is the obvious idiom);
-  - paraphrase what a well-named function/variable already says ("// resolve the repo root" above `resolveRepoRoot()`);
+  - paraphrase what a well-named function/variable already says ("// resolve the foo" above `resolveFoo()`);
   - duplicate a rationale already written in a sibling file — state it once at the source, not at every call site.
 
   Keep comments for genuinely non-obvious _why_: a workaround for a specific external bug/quirk, a subtle ordering/race constraint, an overlayfs/kernel/platform footgun, a security boundary. When in doubt, prefer deleting — a wrong-but-confident comment is worse than none.

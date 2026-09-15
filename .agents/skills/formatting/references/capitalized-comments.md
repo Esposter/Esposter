@@ -12,7 +12,7 @@ Read when oxlint's `capitalized-comments` fires on a `//` line, or after rewrapp
 git diff -U0 | grep -E '^\+\s*//\s+([A-Z][a-z]+[A-Z-][a-zA-Z]*|(Pnpm|Oxlint|Tsdown|Tinybench|Sdk|Sas)\b)'
 ```
 
-Two shapes, because one pattern cannot express both. The first catches an identifier with a later capital to anchor on (`ToPrecision`, `Vue-tsc`); a one-word name (`Pnpm`, `Tinybench`) has none, so it is caught by enumeration instead — the comments ledger keeps that list, since it only grows when a new tool name turns up. Broadening the first to any capitalized token is not the fix: `capitalized-comments` capitalizes _every_ continuation line, so it would match nearly all of them.
+Two shapes, because one pattern cannot express both. The first catches an identifier with a later capital to anchor on (`FooBar`, `Vue-tsc`); a one-word name (`Pnpm`, `Tinybench`) has none, so it is caught by enumeration instead — the comments ledger keeps that list, since it only grows when a new tool name turns up. Broadening the first to any capitalized token is not the fix: `capitalized-comments` capitalizes _every_ continuation line, so it would match nearly all of them.
 
 Most hits are prose (`Non-Vue`, `Selector-based`) or a real PascalCase name; what fails is a camelCase or lowercase one (`toPrecision`, `tinybench`, `vue-tsc`, `pnpm`).
 

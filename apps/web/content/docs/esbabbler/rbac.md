@@ -9,13 +9,13 @@ Discord-complexity role-based access control per room. Every privileged operatio
 
 ## How it works
 
-Each room has roles (`roomRoles`) carrying a `permissions` **bigint bitfield** of `RoomPermission` flags. `bigint` (not `number`) lets the field grow past 32 bits; since TypeScript enums cannot hold bigints, `RoomPermission` is a `const` object of `1n << n` values. A user's effective permissions are the SQL `BIT_OR` of the room's `@everyone` role plus every role assigned to them in `usersToRoomRoles`.
+Each room has roles (`roomRoles`) carrying a `permissions` **bigint bitfield** of `RoomPermission` flags. `bigint` (not `number`) lets the field grow past 32 bits; since TypeScript enums cannot hold bigints, `RoomPermission` is a `const` object of `1n << n` values. A user's effective permissions are the bitwise OR of the room's `@everyone` role plus every role assigned to them in `usersToRoomRoles`.
 
 ```mermaid
 flowchart TD
     P["Procedure built with getPermissionsProcedure(permission, schema, roomIdKey)"] --> O{"Caller is room owner?<br/>(rooms.userId)"}
     O -->|yes| Allow[Allowed — owner bypasses everything]
-    O -->|no| Q["BIT_OR(roomRoles.permissions)<br/>over @everyone + assigned roles"]
+    O -->|no| Q["OR over roomRoles.permissions<br/>of @everyone + assigned roles"]
     Q --> A{"Administrator bit set?"}
     A -->|yes| Allow
     A -->|no| B{"Required permission bit set?"}
@@ -58,7 +58,7 @@ The functions are split across three homes by who needs them. The two permission
 
 | Function                                                           | Home                         | Purpose                                            |
 | ------------------------------------------------------------------ | ---------------------------- | -------------------------------------------------- |
-| `getPermissions(db, userId, roomId)`                               | `@esposter/db`               | `BIT_OR` aggregate → bigint                        |
+| `getPermissions(db, userId, roomId)`                               | `@esposter/db`               | bitwise OR → bigint                                |
 | `checkHasPermission(db, userId, roomId, perm)`                     | `@esposter/db`               | Owner bypass → Administrator bit → specific bit    |
 | `getTopRolePosition(db, userId, roomId)`                           | `server/services/room/rbac/` | Max assigned-role position                         |
 | `getRoomMemberAuthority(db, userId, roomId)`                       | `server/services/room/rbac/` | One side of a comparison: top position + ownership |
