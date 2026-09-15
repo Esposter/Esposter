@@ -55,5 +55,5 @@
 | `vue-composable-patterns` | —          |       |
 | `vue-page-composition`    | —          |       |
 | `vue-phaserjs`            | —          |       |
-| `vuetify`                 | —          |       |
+| `vuetify`                 | 2026-09-15 |       |
 | `zod`                     | —          |       |
