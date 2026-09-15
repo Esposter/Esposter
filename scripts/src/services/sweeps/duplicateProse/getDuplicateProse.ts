@@ -2,16 +2,13 @@ import type { CitingPage } from "#src/models/citations/CitingPage";
 import type { DuplicateProseFinding } from "#src/models/sweeps/duplicateProse/DuplicateProseFinding";
 
 import { SHINGLE_SIZE } from "#src/services/sweeps/duplicateProse/constants";
+import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords";
 import { takeOne } from "@esposter/shared";
 
-const FRONTMATTER_REGEX = /^---[\s\S]*?^---/mu;
-const NON_WORD_REGEX = /[^a-z0-9']+/gu;
 const SKILL_OWNER_REGEX = /^\.agents\/skills\/(?<skill>[^/]+)\//u;
 // Two pages of one skill restate each other by design — the index line names the trigger its reference page
 // Opens on — so a skill is one owner, and every other page is its own
 const getOwner = (path: string): string => SKILL_OWNER_REGEX.exec(path)?.groups?.skill ?? path;
-const getWords = (text: string): string[] =>
-  text.replace(FRONTMATTER_REGEX, "").toLowerCase().split(NON_WORD_REGEX).filter(Boolean);
 
 // Every run of words two pages of different owners share, longest first. A run is found through its shingles —
 // Every window of `SHINGLE_SIZE` words, keyed by its text — and a shingle on three or more pages is a template
@@ -21,7 +18,7 @@ const getWords = (text: string): string[] =>
 // Anywhere while its neighbour on the first page follows on.
 export const getDuplicateProse = (pages: CitingPage[]): DuplicateProseFinding[] => {
   const shinglePages = new Map<string, Map<string, number>>();
-  const pageWords = new Map(pages.map(({ path, text }) => [path, getWords(text)]));
+  const pageWords = new Map(pages.map(({ path, text }) => [path, getProseWords(text)]));
   for (const [path, words] of pageWords)
     for (let index = 0; index + SHINGLE_SIZE <= words.length; index++) {
       const shingle = words.slice(index, index + SHINGLE_SIZE).join(" ");
