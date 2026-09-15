@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export type ResourceListSortKey = keyof ResourceListItem;
 
-export const resourceListSortKeySchema: z.ZodType<ResourceListSortKey> = z.union([
+export const resourceListSortKeySchema = z.union([
   selectResourceSchema.keyof(),
   z.literal(ResourceListItemPropertyNames.lastAccessedAt),
-]);
+]) satisfies z.ZodType<ResourceListSortKey>;
