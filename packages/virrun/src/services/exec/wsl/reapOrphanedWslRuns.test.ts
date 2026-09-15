@@ -2,6 +2,7 @@ import { DEAD_PID } from "#src/services/exec/test/constants.test";
 import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { spawnBackground } from "#src/services/exec/util/spawnBackground";
+import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
 import { VIRRUN_WSL_PROCESS_MARKER } from "#src/services/exec/wsl/constants";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getWslRunsDirectory } from "#src/services/exec/wsl/getWslRunsDirectory";
@@ -43,8 +44,9 @@ describe(reapOrphanedWslRuns, () => {
 
     reapOrphanedWslRuns();
 
-    expect(spawnBackground).toHaveBeenCalledExactlyOnceWith("wsl.exe", expect.arrayContaining([DEAD_MARKER]));
-    expect(vi.mocked(spawnBackground).mock.calls[0]?.[1]).not.toContain(VIRRUN_WSL_PROCESS_MARKER);
+    const [file, ...args] = buildWslReapCommand([DEAD_MARKER]);
+
+    expect(spawnBackground).toHaveBeenCalledExactlyOnceWith(file, args);
     // The entry is dropped so the corpse is not re-reaped by every later run; the live one is left to its owner.
     expect(existsSync(deadRunPath)).toBe(false);
     expect(readdirSync(getWslRunsDirectory())).toStrictEqual([`${process.pid}.${VIRRUN_WSL_PROCESS_MARKER}`]);
@@ -64,7 +66,9 @@ describe(reapOrphanedWslRuns, () => {
 
     reapOrphanedWslRuns();
 
-    expect(spawnBackground).toHaveBeenCalledExactlyOnceWith("wsl.exe", expect.arrayContaining([RECYCLED_MARKER]));
+    const [file, ...args] = buildWslReapCommand([RECYCLED_MARKER]);
+
+    expect(spawnBackground).toHaveBeenCalledExactlyOnceWith(file, args);
     expect(existsSync(recycledRunPath)).toBe(false);
   });
 
@@ -77,13 +81,12 @@ describe(reapOrphanedWslRuns, () => {
 
     reapOrphanedWslRuns(true);
 
+    // The blocking flag reaches the script, not just the call style: the argv is the one `buildWslReapCommand`
+    // Builds for a blocking reap, whose `sh -c` body carries the wait's deadline.
+    const [, ...args] = buildWslReapCommand([DEAD_MARKER], true);
+
     expect(spawnBackground).not.toHaveBeenCalled();
-    expect(execWsl).toHaveBeenCalledExactlyOnceWith(
-      expect.arrayContaining([DEAD_MARKER]),
-      expect.objectContaining({ timeout: WSL_WORK_TIMEOUT_MS }),
-    );
-    // The blocking flag reaches the script, not just the call style: its `sh -c` body carries the wait's deadline.
-    expect(vi.mocked(execWsl).mock.calls[0]?.[0][3]).toContain("deadline=");
+    expect(execWsl).toHaveBeenCalledExactlyOnceWith(args, { timeout: WSL_WORK_TIMEOUT_MS });
     expect(existsSync(deadRunPath)).toBe(false);
   });
 
