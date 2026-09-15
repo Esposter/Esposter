@@ -12,6 +12,8 @@ export const readCherryShas = (upstream: string, head: string, cwd?: string): st
   const authored = new Set(
     getNonEmptyLines(runGit(["rev-list", "--no-merges", head, `^${upstream}`, `^origin/${MAIN_BRANCH}`], cwd)),
   );
-  const ported = readPortedShas(upstream, head, cwd);
-  return getCherryShas(runGit(["cherry", upstream, head], cwd)).filter((sha) => authored.has(sha) && !ported.has(sha));
+  const portedShas = readPortedShas(upstream, head, cwd);
+  return getCherryShas(runGit(["cherry", upstream, head], cwd)).filter(
+    (sha) => authored.has(sha) && !portedShas.has(sha),
+  );
 };
