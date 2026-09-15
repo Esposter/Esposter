@@ -91,4 +91,20 @@ export default [
     // A module-scope `window.localStorage` matching both selectors reports the same node twice
     selector: "MemberExpression[object.name='window'][property.name!='localStorage']:not(:function *)",
   },
+  {
+    // A failure downgraded to a warning is a failure nobody reads: `console.warn` handed to a Result's error
+    // Side, an `onError`, or any other callback slot is the swallow the error-handling skill bans. A call to
+    // `console.warn(…)` with a sentence of its own is a notice that no chain produced, and stays.
+    message:
+      "Don't hand `console.warn` to an error handler — a failure downgraded to a warning is one nobody reads. Use `console.error` (`.orTee(console.error)`, `.match(noop, console.error)`). See the error-handling skill.",
+    selector:
+      ":matches(CallExpression > MemberExpression.arguments, Property > MemberExpression.value)[object.name='console'][property.name='warn']",
+  },
+  {
+    // A singleton with a name: it bypasses Pinia devtools, HMR and reactive reset, so shared reactive state is a
+    // Pinia store instead (vue-composable-patterns).
+    message:
+      "`createSharedComposable` is banned — shared reactive state lives in a Pinia store. See the vue-composable-patterns skill.",
+    selector: "CallExpression[callee.name='createSharedComposable']",
+  },
 ];

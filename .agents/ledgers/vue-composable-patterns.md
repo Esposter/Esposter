@@ -38,8 +38,14 @@ by a flag no longer returns the site.
 - `useAutoSearch`'s `AbortController` is a sanctioned exception, not a hand-rolled guard: `executeQuery` orders calls but does not cancel the request in flight, which is the whole point of the search input. The `pagination` skill owns it.
 - Whether a composable should exist at all (pass-through, module-scope ref) is in scope here; whether the _page_ should have decomposed differently is `vue-components`.
 
-## Next enforceable
+## Not enforceable — settled
 
-- A `useMutation` call with no `key` is decidable from the call site — the `pinia` ledger already names it.
-- `createSharedComposable` and a module-scope `ref` in a composable file are both greppable and could be lint rules rather than sweep rows.
-- A count that is incremented and decremented on the same ref inside one composable is close to decidable, but only where the pair **brackets one asynchronous operation** — incremented where it starts and decremented where it settles. Monotonicity is not the test: a domain total (members in a room, items in a cart) moves both ways too, and a rule keyed on that alone classifies one as async bookkeeping. What separates them is whether the two writes name the same operation.
+What a program decides here it now decides: `createSharedComposable` is a `no-restricted-syntax` error everywhere,
+and a `ref`/`reactive`/`computed` at the module scope of a `.ts` file is one too (`restrictedModuleSyntaxes.js`,
+`.ts` only because an SFC's `<script setup>` top level is the instance's scope). A `useMutation` call with no
+`key` is a type error, since `key` is required on its options. What is left stays a reading pass:
+
+- A count incremented and decremented on the same ref is decidable only where the pair **brackets one asynchronous
+  operation** — incremented where it starts and decremented where it settles. Monotonicity is not the test: a
+  domain total (members in a room, items in a cart) moves both ways too, and what separates them is whether the two
+  writes name the same operation, which is a question about what the writes mean.

@@ -3,8 +3,11 @@ import nuxtOverrides from "@esposter/configuration/eslint/overrides/nuxt.js";
 import oxlint from "@esposter/configuration/eslint/oxlint.js";
 import plugins from "@esposter/configuration/eslint/plugins/index.js";
 import restrictedDateSyntaxes from "@esposter/configuration/eslint/restrictedDateSyntaxes.js";
+import restrictedModuleSyntaxes from "@esposter/configuration/eslint/restrictedModuleSyntaxes.js";
+import restrictedSourceSyntaxes from "@esposter/configuration/eslint/restrictedSourceSyntaxes.js";
 import restrictedStoreSyntaxes from "@esposter/configuration/eslint/restrictedStoreSyntaxes.js";
 import restrictedTestSyntaxes from "@esposter/configuration/eslint/restrictedTestSyntaxes.js";
+import restrictedUtilImports from "@esposter/configuration/eslint/restrictedUtilImports.js";
 import restrictedWatchSyntaxes from "@esposter/configuration/eslint/restrictedWatchSyntaxes.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 
@@ -20,6 +23,11 @@ export default withNuxt(plugins)
     },
   })
   .append(oxlint)
+  .append({
+    files: ["**/util/**/*.ts"],
+    ignores: ["**/*.bench.ts", "**/*.test-d.ts", "**/*.test.ts"],
+    rules: { "no-restricted-imports": ["error", restrictedUtilImports] },
+  })
   // A component may not format a date itself, where a service may — and eslint replaces a rule's options
   // Rather than merging them, so the script-side bans are carried over and the date ones appended.
   .append({
@@ -28,6 +36,7 @@ export default withNuxt(plugins)
       "no-restricted-syntax": [
         "error",
         ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedSourceSyntaxes,
         ...restrictedDateSyntaxes,
         ...restrictedStoreSyntaxes,
         ...restrictedWatchSyntaxes,
@@ -42,6 +51,8 @@ export default withNuxt(plugins)
       "no-restricted-syntax": [
         "error",
         ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedModuleSyntaxes,
+        ...restrictedSourceSyntaxes,
         ...restrictedWatchSyntaxes,
       ],
     },
@@ -54,6 +65,7 @@ export default withNuxt(plugins)
       "no-restricted-syntax": [
         "error",
         ...typescriptRules["no-restricted-syntax"].slice(1),
+        ...restrictedModuleSyntaxes,
         ...restrictedTestSyntaxes,
         ...restrictedWatchSyntaxes,
       ],
