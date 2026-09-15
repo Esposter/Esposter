@@ -79,6 +79,15 @@ export default {
       selector: "VariableDeclarator[id.name=/^(can|should)[A-Z]/]",
     },
     {
+      // A call that answers with a boolean is `check*`; `get*` reads as a derivation, so the family grows
+      // Unnoticed. The name is all the selector sees, and it is enough: every `getIs*`/`getHas*` the naming
+      // Sweeps found returned a boolean, and a getter that builds something says what — `getIsLoadedRef` is a
+      // Destructuring rename off `useDataMap`, which is a pattern rather than an identifier and stays outside
+      message:
+        "Name a boolean-returning function `check*` — `getIs*`/`getHas*` reads as a derivation. See the naming skill.",
+      selector: "VariableDeclarator[id.name=/^get(Is|Has)[A-Z]/]",
+    },
+    {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
       selector:
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",

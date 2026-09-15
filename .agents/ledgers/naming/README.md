@@ -37,11 +37,6 @@ the grounds that a rename is expensive — that is the argument
   literal is fixed or captures a ref needs scope analysis no `no-restricted-syntax` pattern can do, and the
   narrow branch that is decidable (`Object.values`/`entries`/`keys` at program scope) catches a fraction of
   the sites. Leave with the sweep.
-- **A `getIs*`/`getHas*` declaration is decidable from the name alone, and there is no longer an exception to
-  carve out.** The three that returned a function rather than a boolean now say what they build instead, so
-  every remaining one in the repo is a `check*` the pass has not reached yet. A `no-restricted-syntax` selector
-  on a declarator named `^get(Is|Has)[A-Z]` can therefore be written against the swept paths and widened as the
-  remaining units drain.
 - A where-fragment helper is decidable from the AST alone: a declarator named `*Where` whose initialiser is a
   function must start with `get`. Four routers had written the bare noun, so the rule is now in the `trpc` skill
   and a `no-restricted-syntax` selector can hold it over the swept paths.
