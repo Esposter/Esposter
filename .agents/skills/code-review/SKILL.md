@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Runs entirely in the main session; there is no workflow script and no finder/verifier fan-out. Owns the two lanes a review runs (quality — reuse, simplification, efficiency, altitude; and correctness — defects and broken conventions), the trigger rule that makes an in-thread finding real, the refute-first pass that replaces an independent verifier, how to size the commit window, the written record as tiebreaker, the findings-table report shape, the stop rule for when a round is converged, and the standing rule that `.agents/` stays in every review window so the skill improves itself, with the meta pass's evidence table as a deep dive. Apply on any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one.
+description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Runs entirely in the main session; there is no workflow script and no finder/verifier fan-out. Owns the two lanes a review runs (quality — reuse, simplification, efficiency, altitude; and correctness — defects and broken conventions), the trigger rule that makes an in-thread finding real, the refute-first pass that replaces an independent verifier, how to size the commit window, the written record as tiebreaker, the findings-table report shape, the stop rule for when a round is converged, and the standing rule that `.agents/` stays in every review window so the skill improves itself, with the meta pass's evidence table and what counts as the written record as deep dives. Apply on any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one.
 ---
 
 # Code Review — One Entry Point, One Thread
@@ -12,6 +12,7 @@ Never use the `review` skill/command, the built-in `/simplify`, or `mattpocock-s
 ## Settled — do not re-propose
 
 - **Fanning a review out to finder and verifier agents, or a workflow script.** Cost is agents × material read: a cold subagent re-derives a diff the session already holds, and returns findings whose context died with it. The one thing a separate verifier bought — a judge that did not raise the claim — was its instructions, not its address, and those are the trigger rule and the refute-first pass below, enforced here for free. The price is that the same context that formed a candidate now judges it, which is exactly what those two rules exist to stop, and they are not optional.
+- **Measuring candidate counts, per-lens ceilings or token estimates.** Nothing publishes them, and a prose number with no way to fail is one that fails silently and forever (`fixing-findings.md`, "Restated a number the code could publish").
 
 ## The two lanes
 
@@ -83,9 +84,7 @@ This is the whole of what the independent verifier used to do, and it fails the 
 
 The dominant false-positive class is a finding arguing against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. From the diff alone the argument always sounds right, and it returns every round with a different answer.
 
-`apps/web/content/docs/`, `.agents/skills/**/*.md` and `.agents/ledgers/**/*.md` are the tiebreaker — the whole skill tree, not the index pages alone, and a ledger's **Exclusions** section exists precisely to stop a unit being re-litigated: a binding rule as often sits in a skill's `references/*.md` deep dive as in its `SKILL.md`. A choice any of the three states deliberately, with its consequence acknowledged, is settled — not a finding. **So is a comment beside the line that states the choice and its reason** — a workflow's `# … rather than a list, because …`, a `// …` over a guard — because for a file no page owns, the comment is the record; a finding that argues with it is real only when it refutes the stated reason with a fact verified in the repository, never on the strength of the argument alone. It is a finding again only when the code contradicts the record, when a mitigation the record promises is missing, or when the change ships behaviour the record does not cover.
-
-Grep all three trees before reporting a finding that argues with a decision. A genuinely undocumented decision that keeps drawing fire is closed by writing the page (`docs` skill), not by arguing it again. A record invalidated by materially new evidence (an advisory, a changed dependency contract) reopens the decision — update the page first, then fix the code against the new record. **The new record names the direction it replaces as rejected, with the fact that beats it** — in the owning skill's Settled list where one exists. A decision that writes down only its own reason leaves the old reason standing beside it, and the next round reads two winners and flips it back.
+`apps/web/content/docs/`, `.agents/skills/**/*.md` (deep dives included) and `.agents/ledgers/**/*.md` are the tiebreaker, and so is a comment beside the line stating the choice and its reason. Grep all three trees before reporting a finding that argues with a decision: a choice any of them states deliberately, with its consequence acknowledged, is settled — a finding again only when the code contradicts the record, a promised mitigation is missing, or the change ships behaviour the record does not cover. What counts as the record, and how a decision is overturned so that the old direction does not stand beside the new one: `references/written-record.md`.
 
 ## Reporting — `references/reporting.md`
 
@@ -96,8 +95,6 @@ Grep all three trees before reporting a finding that argues with a decision. A g
 **A round whose confirmed findings are all `minor` is converged.** Fix them if cheap, then stop — minor supply is effectively unbounded on any mature file, so "the round reported something" is a loop with no exit.
 
 Another round is justified by a confirmed `critical`/`major`, or by a fix round that touched lines an earlier fix wrote. Re-reading the same window at the same depth to resample the same ranking is not: go one hop further out instead, or narrow the window so the reading is deeper per file.
-
-Deliberately **not** measured here: candidate counts, per-lens ceilings, token estimates. Nothing publishes them any more, and a prose number with no way to fail is one that fails silently and forever (`fixing-findings.md`, "Restated a number the code could publish").
 
 ## Then: fix, verify, commit
 
