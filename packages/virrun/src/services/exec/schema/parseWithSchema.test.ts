@@ -1,5 +1,5 @@
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { parseWithSchema } from "#src/services/exec/util/parseWithSchema";
+import { parseWithSchema } from "#src/services/exec/schema/parseWithSchema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
