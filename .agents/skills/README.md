@@ -61,7 +61,7 @@ The `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-
 - `testing` — Vitest conventions, mock/session patterns, test environments, what to test.
 - `test-values` — the literal a test writes: canonical strings, numbers, ids and paths, dates computed from the epoch, the shared-data shapes.
 - `git` — commit format, safety rules, branch hygiene.
-- `code-review` — the one entry point for every review, run in the main session: the two lanes, the trigger rule and refute-first pass, the window, the written record as tiebreaker, the findings table, closing a finding (`fixing-findings.md`), and the stop rule.
+- `code-review` — the one entry point for every review, run in the main session: the two lanes, the trigger rule and refute-first pass, the window, the written record as tiebreaker, the findings table, closing a finding (`references/fixing-findings.md`), and the stop rule.
 - `coderabbit` — the facts about the bot: what triggers a review, the in-flight check, the one cap constant, reading and answering a run's findings, `.coderabbit.yaml` on the base branch.
 - `review-queue` — the session's side of the review collector: `ai/queue` pushed after every commit, the rebase onto `develop`, the `Answers`/`Drains` trailers, conflicts with parked fixes.
 - `sweeps` — repo-wide mechanical passes and the `.agents/ledgers/` tree that tracks them: when one earns a file, its metadata/coverage tables, standing vs one-shot, shrinking a sweep into an enforcer. The convention a sweep carries stays owned by its own skill.

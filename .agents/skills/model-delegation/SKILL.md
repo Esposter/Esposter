@@ -78,9 +78,9 @@ Agent worktrees and their branches outlive the agent. Sweep them once their PR m
 
 ## Code reviews
 
-Reviews are execution roles, not the thinking role. The full convention — single entry point, opus-pinned workflow script, scriptPath invocation, findings handling — lives in the `code-review` skill; load it on any review request. Never review inline in the session and never use the `review` skill.
+A review is the thinking role, and it is the exception to this skill: the full convention — single entry point, the two lanes, the window, findings handling — lives in the `code-review` skill, which runs the whole review in the main session, because delegation is priced by files read and a review reads the window twice. Load it on any review request, and never use the `review` skill.
 
-**A delegated fix round carries that skill's closing checklist verbatim in its prompt** (`code-review`, `fixing-findings.md`). An agent handed only a findings list optimises for the finding: it makes each one's own test pass and stops, which is precisely how a round ships a worse defect than it closed — a guard exempted, a sibling site left behind, a mitigation asserted in a comment and never written. The checklist is what the prompt's done-definition is built from, alongside the usual grep audits.
+**A delegated fix round carries that skill's closing checklist verbatim in its prompt** (`code-review`, `references/fixing-findings.md`). An agent handed only a findings list optimises for the finding: it makes each one's own test pass and stops, which is precisely how a round ships a worse defect than it closed — a guard exempted, a sibling site left behind, a mitigation asserted in a comment and never written. The checklist is what the prompt's done-definition is built from, alongside the usual grep audits.
 
 ## Design for agents
 

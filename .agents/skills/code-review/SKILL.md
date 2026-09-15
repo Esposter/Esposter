@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Runs entirely in the main session; there is no workflow script and no finder/verifier fan-out. Owns the two lanes a review runs (quality — reuse, simplification, efficiency, altitude; and correctness — defects and broken conventions), the trigger rule that makes an in-thread finding real, the refute-first pass that replaces an independent verifier, how to size the commit window, the written record as tiebreaker, the findings-table report shape, the stop rule for when a round is converged, and the standing rule that `.agents/` stays in every review window so the skill improves itself, with the meta pass's evidence table and what counts as the written record as deep dives. Apply on any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one.
+description: The single entry point for every code review — a working diff, a branch, a PR number, or an existing subsystem audited against the docs governing it. Runs entirely in the main session; there is no workflow script and no finder/verifier fan-out. Owns the two lanes a review runs (quality — reuse, simplification, efficiency, altitude; and correctness — defects and broken conventions), the trigger rule that makes an in-thread finding real, the refute-first pass that replaces an independent verifier, how to size the commit window, the written record as tiebreaker, the findings-table report shape, and the standing rule that `.agents/` stays in every review window so the skill improves itself — plus deep dives on sizing a diff window and an area window, on everything after the table (the stop rule for when a round is converged, the fix-verify-commit sequence, the order of work and the regression checklist a delegated fix round is handed), on the report shape, on the meta pass's evidence table, and on what counts as the written record. Apply on any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one.
 ---
 
 # Code Review — One Entry Point, One Thread
@@ -12,7 +12,7 @@ Never use the `review` skill/command, the built-in `/simplify`, or `mattpocock-s
 ## Settled — do not re-propose
 
 - **Fanning a review out to finder and verifier agents, or a workflow script.** Cost is agents × material read: a cold subagent re-derives a diff the session already holds, and returns findings whose context died with it. The one thing a separate verifier bought — a judge that did not raise the claim — was its instructions, not its address, and those are the trigger rule and the refute-first pass below, enforced here for free. The price is that the same context that formed a candidate now judges it, which is exactly what those two rules exist to stop, and they are not optional.
-- **Measuring candidate counts, per-lens ceilings or token estimates.** Nothing publishes them, and a prose number with no way to fail is one that fails silently and forever (`fixing-findings.md`, "Restated a number the code could publish").
+- **Measuring candidate counts, per-lens ceilings or token estimates.** Nothing publishes them, and a prose number with no way to fail is one that fails silently and forever (`references/fixing-findings.md`, "Restated a number the code could publish").
 
 ## The two lanes
 
@@ -25,13 +25,7 @@ Never use the `review` skill/command, the built-in `/simplify`, or `mattpocock-s
 
 **Every file in the window is in scope, whatever its extension** — prose included. A docs page, a skill, a ledger, a README, a config file and a migration are each reviewed against the rules that own them, in both lanes: a paragraph restating a rule its owner already states is a quality finding, and a page whose claim the code contradicts is a correctness one. Nothing is skipped for being "not code" except generated output, lockfiles and binaries, which are named as skipped rather than silently dropped.
 
-Never write a finding in either lane for something an enforcer already owns:
-
-| Layer                    | Cost               | Catches                                                                                                            |
-| ------------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| typecheck / lint / tests | ~free              | everything mechanically decidable — never a finding (`feedback_dont_restate_enforced_rules`)                       |
-| CodeRabbit on the PR     | free, already runs | a broad unverified sweep; it reasons from names and asserts semantics this repo does not have (`coderabbit` skill) |
-| **this skill**           | tens of k          | quality cleanups, and correctness defects this repo's shape makes likely — each carrying its trigger               |
+**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (`feedback_dont_restate_enforced_rules`), and CodeRabbit already sweeps every pull request broadly and unverified, reasoning from names and asserting semantics this repo does not have (`coderabbit`). What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
 
 ## Load only the rules the window needs
 
@@ -58,11 +52,11 @@ The last row is the floor, not a default — those six apply to every file in ev
 
 ## The loop
 
-1. **Scope.** Pick the window — `modes/diff.md` for a change, `modes/area.md` for a subsystem with no change. Do this before reading anything: a window chosen afterwards is the window that flatters what you already read.
+1. **Scope.** Pick the window — `references/diff-window.md` for a change, `references/area-window.md` for a subsystem with no change. Do this before reading anything: a window chosen afterwards is the window that flatters what you already read.
 2. **Read.** The diff, plus every file it touches, plus one hop out of anything load-bearing (the caller, the callee, the primitive it wraps). Generated files, lockfiles and binaries are skipped — **say so**, because "no finding against the snapshot" must never read as "the snapshot is clean".
 3. **Find, per lane.** Quality candidates and correctness candidates, kept apart.
 4. **Refute, then report.** Every correctness candidate goes through both rules below. Quality candidates skip this — they are settled by the code they name.
-5. **Report** the table (`references/reporting.md`), then fix (`fixing-findings.md`), then check and commit.
+5. **Report** the table (`references/reporting.md`), then fix (`references/fixing-findings.md`), then check and commit.
 
 ### The trigger rule
 
@@ -84,24 +78,15 @@ This is the whole of what the independent verifier used to do, and it fails the 
 
 The dominant false-positive class is a finding arguing against a decision already made and written down: a tightened retry policy, an ingestion cap, a best-effort publish that swallows its error. From the diff alone the argument always sounds right, and it returns every round with a different answer.
 
-`apps/web/content/docs/`, `.agents/skills/**/*.md` (deep dives included) and `.agents/ledgers/**/*.md` are the tiebreaker, and so is a comment beside the line stating the choice and its reason. Grep all three trees before reporting a finding that argues with a decision: a choice any of them states deliberately, with its consequence acknowledged, is settled — a finding again only when the code contradicts the record, a promised mitigation is missing, or the change ships behaviour the record does not cover. What counts as the record, and how a decision is overturned so that the old direction does not stand beside the new one: `references/written-record.md`.
+**Grep `apps/web/content/docs/`, `.agents/skills/**/*.md` and `.agents/ledgers/**/*.md` before reporting one.** What counts as the record — the deep dives and a comment beside the line included — when a settled decision is a finding again, and how one is overturned so the old direction does not stand beside the new one: `references/written-record.md`.
 
 ## Reporting — `references/reporting.md`
 
 **Show the user every finding, as one compact table and nothing per-finding beyond it.** Never jump to fixes and report only what changed — the visible findings list is the deliverable. Emit the table **flush-left at the top level** of the message, never indented or nested in a list, blockquote or code fence: an indented table degrades into dot points, which is the failure this format exists to prevent.
 
-## The stop rule
+## After the table — `references/fixing-findings.md`
 
-**A round whose confirmed findings are all `minor` is converged.** Fix them if cheap, then stop — minor supply is effectively unbounded on any mature file, so "the round reported something" is a loop with no exit.
-
-Another round is justified by a confirmed `critical`/`major`, or by a fix round that touched lines an earlier fix wrote. Re-reading the same window at the same depth to resample the same ranking is not: go one hop further out instead, or narrow the window so the reading is deeper per file.
-
-## Then: fix, verify, commit
-
-1. Verify each finding against current HEAD before fixing — post-merge findings can be stale — and check it against the written record above.
-2. Fix confirmed findings.
-3. Run **`fixing-findings.md`** over your own fixes before verifying — it owns the regression checklist and the order of work (root cause → converge the call sites → docs and skills → then one check pass), and it is the block to paste into a delegated fix round.
-4. Verify with the full sequence — `pnpm format` → `typecheck` → `lint:fix` → tests over the paths touched, each backgrounded per the `running-checks` skill's own sequencing, never a mutating step (`format`, `lint:fix`) concurrent with a step reading the files it rewrites (`package-scripts`) — then commit per the `git` skill and push `ai/queue` (`review-queue` skill).
+**Deciding whether another round is owed, and applying the fixes**, is that page: the stop rule that makes an all-`minor` round converged, the verify-fix-check-commit sequence, the order of work (root cause → converge the call sites → docs and skills → then one check pass), and the regression checklist that is the block to paste into a delegated fix round.
 
 ## The skill improves itself
 
