@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Esposter Vue 3 SFC conventions — macro ordering, script-setup declaration order, template attribute ordering and template conventions, inlining single-use functions and handlers, v-model vs split bindings, never normalizeString in Vue, optional refs, useTemplateRef, computed by cost, identity and cadence, map lookups, the watch decision tree plus watch aliases, and every rendered date being a NuxtTime — plus deep dives on lifecycle-hook placement with browser globals via window. and SSR guards via checkIsServer, inline handlers, forms and upsert mode, the auth session, computed extraction, template gotchas (v-html, dotted slots, closure narrowing, template casts), the compiled-out Options API runtime, and date rendering. Apply when writing or reviewing .vue files, or rendering a date or time.
+description: Esposter Vue 3 SFC conventions — macro, script-setup declaration and template attribute ordering (the full orders in a deep dive), template conventions, inlining single-use functions and handlers, v-model vs split bindings, never normalizeString in Vue, optional refs, useTemplateRef, computed by cost, identity and cadence, map lookups, the watch decision tree plus watch aliases, and every rendered date being a NuxtTime — plus deep dives on ordering inside an SFC, lifecycle-hook placement with browser globals via window. and SSR guards via checkIsServer, inline handlers, forms and upsert mode, the auth session, computed extraction, template gotchas (v-html, dotted slots, closure narrowing, template casts), the compiled-out Options API runtime, and date rendering. Apply when writing or reviewing .vue files, or rendering a date or time.
 ---
 
 # Vue Conventions
@@ -10,31 +10,9 @@ description: Esposter Vue 3 SFC conventions — macro ordering, script-setup dec
 - Blank-line placement (templates, consts, returns, blocks) and comment attachment — see the `formatting` skill.
 - Links, `:to`, `navigateTo`, reactive route reads, route validation, page keys and route-synced tabs — see the `routing` skill. All Vuetify-specific conventions — see the `vuetify` skill.
 
-## Vue Macro Ordering
+## Ordering — `references/ordering.md`
 
-`defineSlots` → `defineModel` → `defineProps` → `defineEmits`, then all `const` assignments, then `defineExpose` last (preceded by a blank line, before any `watch`/lifecycle hooks).
-
-- **`defineModel`**: always type explicitly, and for booleans pass `{ default: false }` so the type excludes `undefined`. Never declare one unless the value is used in script (`watch`, `computed`, or passed) — otherwise use `:prop` + `@event`. An **unnamed** model's variable is `modelValue`, never `model` or another alias; a **named** model's variable matches the name (`const title = defineModel<string>("title")`).
-- **`defineSlots`**: only assign to `const slots` when `slots` is referenced in script. Otherwise call `defineSlots<...>()` without assignment.
-
-## Script Setup Declaration Order
-
-0. **Page-metadata side-effects** — `useHead`, `useSeoMeta` near the **top**, above the macros when they depend on no local state; one reading reactive state sits just after that state, still above unrelated logic.
-1. **Macros** — see above. No blank line between the macros and the declarations that follow.
-2. **Framework / third-party value composables** — `useNuxtApp`, `useRoute`, `useRouter`, `useRuntimeConfig`, VueUse value composables (`useVDisplay`, `useWindowSize`, …), auth (`authClient.useSession`). Grouped immediately after the macros.
-3. **Custom Pinia stores** — `useXStore` + `storeToRefs` + destructured methods; the per-store grouping order is the `pinia` skill's.
-4. **Custom composables, refs, computeds, watches, functions** — everything else.
-
-```ts
-useHead({ titleTemplate: ... });       // 0. static page metadata — top, may precede macros
-defineSlots<{ default: () => VNode }>();
-const { $trpc } = useNuxtApp();        // 2. third-party
-const fooStore = useFooStore();        // 3. custom store
-const { currentFoo } = storeToRefs(fooStore);
-const fooName = useFooName(...);       // 4. custom composable / state
-```
-
-Never leave a framework value composable stranded at the bottom below custom stores and refs. **Exceptions that stay in category 4:** `useTemplateRef` (a ref — group with refs), and side-effect registrations that depend on local state (`useEventListener`, a `useSeoMeta` reading store refs) which must stay after the state they depend on.
+Macros `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, then every `const`, `defineExpose` last; declarations run page metadata → macros → framework value composables → Pinia stores → everything else; attributes run `v-model`/`v-for` → `class` → attributify → valued props (alphabetical) → bare booleans → `@event`. The exceptions to each, and the typing `defineModel` and `defineSlots` take, are that page.
 
 ## Single-use functions must be inlined — `references/inline-handlers.md`
 
@@ -49,27 +27,6 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 
 - Prefer `v-model="ref"` over the split form whenever the update is a direct assignment to a single ref.
 - **Never apply `normalizeString` (or any trimming) anywhere in Vue**, and **trust the server schema** — tRPC input schemas already normalize, validity is a `safeParse` of the shared schema driving `:disabled`, and submit handlers pass raw values with no guards. Both rules in full, including what dirty-state comparison parses, are on that page.
-
-## Template Attribute Ordering
-
-1. **`v-model`** (or **`v-for`** + **`:key`**) — binding/iteration directives first
-2. **`class`** — static class string
-3. **UnoCSS attributify props** — shorthand utilities as props (`ma-2`, `flex`, `flex-col`)
-4. **Component props with values** — `:prop="value"` / `prop="string"` (alphabetical)
-5. **Shorthand boolean props** — bare names defaulting to `true` (`clearable`, `autofocus`)
-6. **Event handlers** — `@event="..."` last
-
-```vue
-<v-text-field
-  v-model="search"
-  ma-2
-  density="compact"
-  label="Search"
-  autofocus
-  clearable
-  @keydown.enter.stop="submit()"
-/>
-```
 
 ## Template Conventions
 

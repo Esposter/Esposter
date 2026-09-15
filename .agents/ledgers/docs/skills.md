@@ -50,7 +50,7 @@
 | `unocss`                  | —          |       |
 | `ux`                      | —          |       |
 | `vjsf`                    | —          |       |
-| `vue`                     | —          |       |
+| `vue`                     | 2026-09-15 |       |
 | `vue-component-patterns`  | —          |       |
 | `vue-composable-patterns` | —          |       |
 | `vue-page-composition`    | —          |       |
