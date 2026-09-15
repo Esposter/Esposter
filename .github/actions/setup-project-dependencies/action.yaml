@@ -23,16 +23,23 @@ runs:
       with:
         cache: true
         install: false
-    # GitHub's Ubuntu image ships neither bubblewrap nor permissive unprivileged user namespaces, so without this
-    # the virrun os-backend suites self-gate and silently skip. The sysctl is not swallowed: the key exists on
-    # every image that restricts user namespaces, so a refused write surfaces here by name rather than one line
-    # later as a probe failing for no stated reason.
+    # GitHub's Ubuntu images restrict unprivileged user namespaces, and the older ones ship no bubblewrap at all,
+    # so without this the virrun os-backend suites self-gate and silently skip. The sysctl is not swallowed: the
+    # key exists on every image that restricts user namespaces, so a refused write surfaces here by name rather
+    # than one line later as a probe failing for no stated reason.
     - name: 📦 Enable bubblewrap sandbox
       if: ${{ fromJSON(inputs.bubblewrap-sandbox) }}
       shell: bash
+      # apt only where the binary is missing: `ubuntu-26.04`, the image the one caller pins, already carries a
+      # bubblewrap newer than the suites need, so the install is a package-list download that reports
+      # `already the newest version`. An image shipping an *old* one is not a case apt rescues either — it would
+      # install that release's newest, which is the copy already there — so the version gate is the probe below,
+      # whose `--tmp-overlay` needs >= 0.10.0 and fails loudly on anything older.
       run: |
-        sudo apt-get update
-        sudo apt-get install -y bubblewrap
+        command -v bwrap > /dev/null || {
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
+        }
         sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
         dir="$(mktemp -d)"
         bwrap --unshare-all --die-with-parent --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp \
