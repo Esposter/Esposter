@@ -1,6 +1,6 @@
 ---
 name: azure-table
-description: Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code. Esposter Azure Table Storage patterns — the AZURE_MAX_PAGE_SIZE / AZURE_MAX_BATCH_SIZE constants, partition and row key design, reverse-ticked timestamps and the ascending mirror table, batching writes that share a partitionKey instead of one round trip per row, reading through getEntityWithEtag and writing conditionally, serializeClauses filters with entity-typed Clause arrays and CompositeKeyPropertyNames, the shared getPartitionKeyFilter, counting only after a capped read and bounding the walk, optional-init entity constructors, and soft-delete, plus deep dives on the submitTransactionBatches write path and conflict replay, the updateEntityConditionally retry loop, and observing or intercepting table writes in tests.
+description: Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code. Esposter Azure Table Storage patterns — partition and row key design, reverse-ticked timestamps, batched and conditional writes (submitTransactionBatches, getEntityWithEtag, updateEntityConditionally), serializeClauses filters, bounded counts, entity constructors and soft-delete.
 ---
 
 # Azure Table Storage Patterns
@@ -11,14 +11,12 @@ description: Apply when reading or writing Azure Table Storage data (messages, m
 - `references/conditional-writes.md` — when a write's body is computed from an entity the same request just read (a votes map, a `files` array, any `"Replace"`).
 - `references/testing.md` — when a test must observe, intercept or time a table write, or cross a page boundary.
 
-## Key Constants (from `@esposter/db-schema`)
+## Key Constants (from `@esposter/azure`)
 
-| Constant               | Value | When to use                                                         |
-| ---------------------- | ----- | ------------------------------------------------------------------- |
-| `AZURE_MAX_PAGE_SIZE`  | 1000  | `byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE })` for listing entities |
-| `AZURE_MAX_BATCH_SIZE` | 100   | Chunk size for `submitTransaction` — Azure hard limit per call      |
+- `AZURE_MAX_PAGE_SIZE` — `byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE })` for listing entities.
+- `AZURE_MAX_BATCH_SIZE` — the chunk size for `submitTransaction`, Azure's hard limit per call.
 
-Always import from `@esposter/db-schema`, never redefine locally.
+Always import them from `@esposter/azure`, never redefine locally.
 
 ## Partition / Row Key Design
 
@@ -55,27 +53,28 @@ A rejected conditional write is a `412`, meaning only that the version is stale 
 
 Build OData filter strings with `serializeClauses` from `@esposter/azure`.
 
-- **`Clause<T extends Record<string, unknown>>` has no default** — type the array with the entity being queried (`const clauses: Clause<FooEntity>[] = [...]`), never a bare `Clause[]`.
+- **Type the clause array with the entity being queried** (`const clauses: Clause<FooEntity>[] = [...]`) — `Clause` has no default, so typecheck rejects a bare `Clause[]` and a cast on the literal is the same widening written by hand.
 - **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never a string literal.
 - **Entity-specific fields stay on their own `PropertyNames` constant** — `FooEntityPropertyNames.bar`, with `ItemMetadataPropertyNames.deletedAt` for metadata.
 - **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(...)`. `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
 
 ```typescript
-const filter = serializeClauses([
+const clauses: Clause<StandardMessageEntity>[] = [
   { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
   { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: userId },
   getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-] as Clause<StandardMessageEntity>[]);
+];
+const filter = serializeClauses(clauses);
 ```
 
-**"Everything under this partition" is `getPartitionKeyFilter(id)`** (`@esposter/azure`), never a hand-built one-clause `serializeClauses` call and never a template literal. Every table partitions on its owning entity's id, so a read, a count and a purge of the same entity all start from that one filter — writing it once is what keeps the three from disagreeing after a key-shape change. A feature that also filters on its own columns drops back to the clause array above; a feature that only re-labels the partition filter for its domain (`getSurveyResponseFilter`) is a one-line named wrapper over it, not a second implementation.
+**"Everything under this partition" is `getPartitionKeyFilter(id)`** (`@esposter/azure`), never a hand-built one-clause `serializeClauses` call and never a template literal. Every table partitions on its owning entity's id, so a read, a count and a purge of the same entity all start from that one filter — writing it once is what keeps the three from disagreeing after a key-shape change. A feature that also filters on its own columns drops back to the clause array above.
 
 ## Counting — Only After a Capped Read, and Bounded
 
-Azure Table has no count API — `countEntities` (from `@esposter/db`) walks every matching page with a keys-only projection. Two rules keep the walk cheap and honest:
+Azure Table has no count API — `readEntitiesCount` (from `@esposter/db`) walks every matching page with a keys-only projection. Two rules keep the walk cheap and honest:
 
-- **Only count when a capped read filled.** A read under its cap answers for itself (`rows.length < cap ? rows.length : await countFooEntities(...)`); only a full page has something to be missing.
-- **Bound the walk when the count feeds a display.** Pass `countEntities`'s `maxCount` argument (callers name their own bound). A count that hit the bound is a floor, not a total — every surface must render it as one ("N+", via the shared truncation formatter), never as an exact number.
+- **Only count when a capped read filled.** A read under its cap answers for itself (`rows.length < cap ? rows.length : await readFooEntitiesCount(...)`); only a full page has something to be missing.
+- **Bound the walk when the count feeds a display.** Pass `readEntitiesCount`'s `maxCount` argument (callers name their own bound). A count that hit the bound is a floor, not a total — every surface must render it as one ("N+", via the shared truncation formatter), never as an exact number.
 
 ## Entity Class Constructors
 
