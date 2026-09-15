@@ -1,15 +1,6 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getModuleScopeConstants } from "#src/services/sweeps/constantScope/getModuleScopeConstants";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { readConstantScopeFindings } from "#src/services/sweeps/constantScope/readConstantScopeFindings";
 
-// `getSweepFilePaths` pins its own cwd to the repository root, so the paths it answers are relative to that rather
-// Than to wherever this script was started from
-
-// Prints rather than exits non-zero: a clean pass here is a *known* list rather than an empty one, because the
-// Sanctioned exceptions — a hoisted `vi.mock` factory's binding, a top-level-await fixture — are reported too.
-// The ledger names them (`.agents/ledgers/testing/README.md`); what makes them exceptions is a read, not a flag.
-for (const path of getSweepFilePaths("*.test.ts"))
-  for (const { line, name } of getModuleScopeConstants(readFileSync(resolve(REPOSITORY_ROOT, path), "utf8")))
-    console.info(`${path}:${line}: ${name}`);
+// Prints rather than exits non-zero: the pass reads the list, and `src/workspace/constantScope.test.ts` is what
+// Fails on it. A clean repository prints nothing — every shape that cannot move into a describe is the scan's
+// To know, not a list here (`.agents/ledgers/testing/README.md`).
+for (const finding of readConstantScopeFindings()) console.info(finding);

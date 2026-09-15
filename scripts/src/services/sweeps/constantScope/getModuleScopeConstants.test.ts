@@ -68,6 +68,68 @@ describe(getModuleScopeConstants, () => {
     expect(getModuleScopeConstants(`const ${name} = await createEntity();`)).toStrictEqual([]);
   });
 
+  test("skips a top-level await inside a call, which is one all the same", () => {
+    expect.hasAssertions();
+
+    expect(getModuleScopeConstants(`const ${name} = new Set(await readdir(""));`)).toStrictEqual([]);
+  });
+
+  // The factory runs above the imports, where a describe scope is invisible, so what it returns stays out too
+  test("skips a binding a vi.mock factory returns", () => {
+    expect.hasAssertions();
+
+    expect(
+      getModuleScopeConstants(`let ${name}: string;
+
+vi.mock(import("module"), () => ({
+  get db() {
+    return ${name};
+  },
+}));`),
+    ).toStrictEqual([]);
+  });
+
+  // The awaited fixture cannot move in, so neither can what its initializer reads, nor what that reads in turn
+  test("skips the constants a top-level await reads, transitively", () => {
+    expect.hasAssertions();
+
+    expect(
+      getModuleScopeConstants(
+        `const root = "";
+const ${name} = join(root, "");
+const fixture = await readFile(${name});`,
+      ),
+    ).toStrictEqual([]);
+  });
+
+  // A derivation of an awaited fixture can run inside the describe callback; only its reader pins it out
+  test("reports a constant derived from a top-level await that only a describe reads", () => {
+    expect.hasAssertions();
+
+    expect(
+      getModuleScopeConstants(
+        `const fixture = await readFile("");
+const ${name} = fixture.split("\n");
+
+describe("suite", () => {
+  test("", () => {
+    expect(${name}).toStrictEqual([]);
+  });
+});`,
+      ),
+    ).toStrictEqual([{ line: 2, name }]);
+  });
+
+  // A function can move into the describe alongside what it captures, so it pins nothing
+  test("reports a constant only a module-scope arrow function reads", () => {
+    expect.hasAssertions();
+
+    expect(
+      getModuleScopeConstants(`const ${name} = /a/u;
+const check = (token: string) => ${name}.test(token);`),
+    ).toStrictEqual([{ line: 1, name }]);
+  });
+
   test("skips a vi.hoisted block, which is lifted above the imports", () => {
     expect.hasAssertions();
 

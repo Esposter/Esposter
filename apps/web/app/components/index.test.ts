@@ -5,17 +5,6 @@ import { describe, expect, test } from "vitest";
 const componentPaths = (await Array.fromAsync(glob("**/*.vue", { cwd: import.meta.dirname }))).map((componentPath) =>
   componentPath.replaceAll("\\", "/"),
 );
-// Every folder that holds a component, keyed by the folder it sits in. Derived from the component paths rather
-// Than read separately, because a folder with no component in it has nothing to fold into
-const parentFolderNamesMap = componentPaths.reduce<Map<string, Set<string>>>((folderNames, componentPath) => {
-  const segments = componentPath.split("/").slice(0, -1);
-  for (const [index, segment] of segments.entries()) {
-    const parent = segments.slice(0, index).join("/");
-    folderNames.set(parent, (folderNames.get(parent) ?? new Set()).add(segment));
-  }
-  return folderNames;
-}, new Map());
-
 // The other half of the rule — folding a prefix group out of a crowded directory — is a judgement call, because
 // A shared first word can belong to a suffix family that folding would scatter. This half never is: a file whose
 // Leading words spell a folder standing beside it is a stray from that folder, and moving it in is a pure move,
@@ -23,6 +12,16 @@ const parentFolderNamesMap = componentPaths.reduce<Map<string, Set<string>>>((fo
 // (`.agents/skills/vue-component-patterns/references/component-naming.md`)
 describe("componentFolders", () => {
   const WORD_REGEX = /[A-Z][a-z0-9]*|[A-Z]+(?![a-z])/gu;
+  // Every folder that holds a component, keyed by the folder it sits in. Derived from the component paths rather
+  // Than read separately, because a folder with no component in it has nothing to fold into
+  const parentFolderNamesMap = componentPaths.reduce<Map<string, Set<string>>>((folderNames, componentPath) => {
+    const segments = componentPath.split("/").slice(0, -1);
+    for (const [index, segment] of segments.entries()) {
+      const parent = segments.slice(0, index).join("/");
+      folderNames.set(parent, (folderNames.get(parent) ?? new Set()).add(segment));
+    }
+    return folderNames;
+  }, new Map());
 
   test("holds no component beside the folder its own name opens with", () => {
     expect.hasAssertions();

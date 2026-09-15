@@ -35,6 +35,19 @@ describe(scanCode, () => {
     expect(readCode(`a\`text\${b}text\`c`)).toBe("abc");
   });
 
+  // A regex literal's quotes and brackets are pattern: read as code they open a string or a bracket nothing closes
+  test("skips a regex literal, its character class and its flags", () => {
+    expect.hasAssertions();
+
+    expect(readCode(String.raw`a = /"[(]"\/x/gu;b`)).toBe("a = ;b");
+  });
+
+  test("reads a division, which no regex literal follows", () => {
+    expect.hasAssertions();
+
+    expect(readCode("a / b / c")).toBe("a / b / c");
+  });
+
   test("skips a line comment to the end of its line", () => {
     expect.hasAssertions();
 
