@@ -11,7 +11,7 @@ The record bounds the review instead of a change. Before reading the code, build
 Two lenses have no counterpart in diff mode, because a diff supplies them for free:
 
 - **Invariant archaeology** — a guard enforced on one path and bypassed on the sibling path beside it. A diff review sees both sides of a change; here nothing points at the pair, so go looking for it.
-- **The coverage question** — real, load-bearing, deliberate behaviour that nothing documents. That is `fixing-findings.md`'s "the decision was deliberate but written nowhere", and an area review is the cheapest place to close it, before it has drawn fire on three separate diff reviews.
+- **The coverage question** — real, load-bearing, deliberate behaviour that nothing documents. That is `references/fixing-findings.md`'s "the decision was deliberate but written nowhere", and an area review is the cheapest place to close it, before it has drawn fire on three separate diff reviews.
 
 ## Four finding kinds, and they are not interchangeable
 

@@ -114,8 +114,10 @@ describe(MockTableClient, () => {
     await client.updateEntity({ count: 1, partitionKey, rowKey: "0" }, "Merge", { etag });
 
     // The mock applies updates synchronously before resolving, so the stale write throws rather than rejects
-    expect(() => client.updateEntity({ count: 2, partitionKey, rowKey: "0" }, "Merge", { etag })).toThrow(
-      "The update condition specified in the request was not satisfied.",
+    expect(() =>
+      client.updateEntity({ count: 2, partitionKey, rowKey: "0" }, "Merge", { etag }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[MockRestError: The update condition specified in the request was not satisfied.]`,
     );
 
     const storedEntity = await client.getEntity<{ count: number }>(partitionKey, "0");

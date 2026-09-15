@@ -1,6 +1,23 @@
 # Closing a finding so the next review cannot reopen it
 
-Read when **applying** fixes, not when running a review. Paste it into the prompt whenever a fix round is delegated.
+Read when a round has reported — deciding whether another is owed, and applying the fixes — not while running the
+review itself. Paste it into the prompt whenever a fix round is delegated. The lanes, the trigger rule and the
+report shape are `SKILL.md`'s; this page is everything after the table.
+
+## The stop rule
+
+**A round whose confirmed findings are all `minor` is converged.** Fix them if cheap, then stop — minor supply is effectively unbounded on any mature file, so "the round reported something" is a loop with no exit.
+
+Another round is justified by a confirmed `critical`/`major`, or by a fix round that touched lines an earlier fix wrote. Re-reading the same window at the same depth to resample the same ranking is not: go one hop further out instead, or narrow the window so the reading is deeper per file.
+
+## Fix, verify, commit
+
+1. Verify each finding against current HEAD before fixing — post-merge findings can be stale — and check it against the written record (`SKILL.md`, "The written record wins").
+2. Fix confirmed findings, per the order of work below.
+3. Run this page's regression checklist over your own fixes **before** verifying.
+4. Verify with the full sequence — `pnpm format` → `typecheck` → `lint:fix` → tests over the paths touched, each backgrounded per the `running-checks` skill's own sequencing, never a mutating step (`format`, `lint:fix`) concurrent with a step reading the files it rewrites (`package-scripts`) — then commit per the `git` skill and push `ai/queue` (`review-queue` skill).
+
+## Why the checklist exists
 
 The dominant defect class on a re-review is not a missed bug — it is a **regression from the previous round's fixes**, usually at the seam where two independently-tested features meet. Each feature's tests stay green because each is right alone, so a round that adds one test per fix still leaves the seam untested.
 
