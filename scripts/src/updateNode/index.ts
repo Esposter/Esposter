@@ -30,12 +30,16 @@ const oldVersion = getEnginesNode(packageJson);
 const isNewVersion = oldVersion !== version;
 if (isNewVersion) {
   console.info(`Updating node ${oldVersion} → ${version}\n`);
-  writeFileSync(packageJsonPath, setDevEnginesRuntime(setEnginesNode(packageJson, version), version));
+  const packageJsonWithEnginesNode = setEnginesNode(packageJson, version);
+  const packageJsonWithNodePins = setDevEnginesRuntime(packageJsonWithEnginesNode, version);
+  writeFileSync(packageJsonPath, packageJsonWithNodePins);
   console.info(`✔ package.json devEngines.runtime + engines.node → ^${version}`);
   // 3. Bump the @types/node catalog entry to the highest release matching the new node major.
   const typesVersion = await getRegistryLatestVersionForPrefix("@types/node", String(major));
   const workspacePath = resolve(REPOSITORY_ROOT, "pnpm-workspace.yaml");
-  writeFileSync(workspacePath, setCatalogTypesNode(readFileSync(workspacePath, "utf8"), typesVersion));
+  const workspace = readFileSync(workspacePath, "utf8");
+  const workspaceWithTypesNode = setCatalogTypesNode(workspace, typesVersion);
+  writeFileSync(workspacePath, workspaceWithTypesNode);
   console.info(`✔ pnpm-workspace.yaml @types/node → ^${typesVersion}`);
 } else console.info(`node is already ${version} in package.json — ensuring fnm has it installed and defaulted.\n`);
 // 4. Hand off install / default / cleanup of the old version to the native (per-OS) script via crossOS.
