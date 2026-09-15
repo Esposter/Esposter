@@ -2,7 +2,7 @@ import type { Types } from "phaser";
 
 import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { ContentTypePhaserMethodMap } from "@@/scripts/phaser/constants";
-import { outputFile } from "@@/scripts/phaser/util/outputFile";
+import { outputFile } from "@@/scripts/phaser/services/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";
 import { BlobServiceClient } from "@azure/storage-blob";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";

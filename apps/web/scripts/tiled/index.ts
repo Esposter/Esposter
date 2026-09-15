@@ -1,5 +1,5 @@
 import { createPropertyTypes } from "@@/scripts/tiled/propertyTypes/createPropertyTypes";
-import { remove } from "@@/scripts/tiled/util/remove";
+import { remove } from "@@/scripts/tiled/services/remove";
 import { spawn } from "node:child_process";
 /**
  * Order here is important!
