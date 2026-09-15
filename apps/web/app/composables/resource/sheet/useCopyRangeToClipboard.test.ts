@@ -84,14 +84,14 @@ describe(useCopyRangeToClipboard, () => {
 
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
-    const sourceColumn = createNumberColumn("price");
-    const computedColumn = createComputedColumn("priceStr", sourceColumn.id);
-    setupWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ price: 42 })]));
+    const sourceColumn = createNumberColumn("a");
+    const computedColumn = createComputedColumn("b", sourceColumn.id);
+    setupWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ a: 0 })]));
     selectRange(0, 0, 0, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("price\tpriceStr\n42\t42");
+    expect(writeTextMock).toHaveBeenCalledWith("a\tb\n0\t0");
   });
 
   // A range indexes the displayed columns, but computeValue resolves a computed column's source by id against
@@ -102,14 +102,14 @@ describe(useCopyRangeToClipboard, () => {
 
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
-    const sourceColumn = createNumberColumn("price");
+    const sourceColumn = createNumberColumn("a");
     sourceColumn.isHidden = true;
-    const computedColumn = createComputedColumn("priceStr", sourceColumn.id);
-    setupWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ price: 42 })]));
+    const computedColumn = createComputedColumn("b", sourceColumn.id);
+    setupWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ a: 0 })]));
     selectRange(0, 0, 0, 0);
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
 
-    expect(writeTextMock).toHaveBeenCalledWith("priceStr\n42");
+    expect(writeTextMock).toHaveBeenCalledWith("b\n0");
   });
 });
