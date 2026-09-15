@@ -2,7 +2,7 @@
 // Snapshot states. The source directory is always the base read-only lower; these fields stack on top of it:
 //   - ephemeral (default, `{}`): no extra lowers, writes vanish in an invisible tmpfs upper.
 //   - capture (`upperDirectory` + `workDirectory`): writes persist as real files in `upperDirectory` — the warm
-//     snapshot.
+//     Snapshot.
 //   - fork (`lowerDirectories: [snapshotUpper]`): the frozen snapshot stacks above the source as a read-only lower
 //     And writes vanish again, so each forked run reuses the install without an upper of its own.
 export interface OverlayLayers {
