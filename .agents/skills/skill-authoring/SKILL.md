@@ -24,7 +24,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 
 ## One owner per topic
 
-A rule lives in exactly **one** skill. Other skills reference it with a one-line pointer (`See the `formatting` skill`), never a paraphrase — a copy drifts, and two half-statements of a rule are harder to follow than one whole one.
+A rule lives in exactly **one** skill. Other skills reference it with a one-line pointer (``See the `formatting` skill``), never a paraphrase — a copy drifts, and two half-statements of a rule are harder to follow than one whole one.
 
 - When a rule could fit two skills, it belongs to the **most specific** owner.
 - A skill that finds itself explaining another skill's topic to set up its own point should link and move on.

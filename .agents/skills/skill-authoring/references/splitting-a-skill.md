@@ -28,8 +28,8 @@ becoming a reference page here: one owner beats two shallow copies, and the spli
 
 ## A reference page opens by naming its trigger
 
-**Its first paragraph begins with the word `Read`** — `Read when a test needs a DOM`, `Read before writing any
-`watch``. A reader landing on the page from a search rather than from `SKILL.md` has nothing else to tell them
+**Its first paragraph begins with the word `Read`** — `Read when a test needs a DOM`, `` Read before writing any
+`watch` ``. A reader landing on the page from a search rather than from `SKILL.md` has nothing else to tell them
 whether the page is theirs, and the fixed opening is what lets `ai:sweep:skill-docs` decide it (`triggerless`)
 instead of judging a paraphrase (`references/enforceable-shapes.md`).
 
