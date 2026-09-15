@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Apply when writing or reviewing .vue files, or rendering a date or time. Esposter Vue 3 SFC conventions — macro, script-setup declaration and template attribute ordering (the full orders in a deep dive), template conventions, inlining single-use functions and handlers, v-model vs split bindings, never normalizeString in Vue, optional refs, useTemplateRef, computed by cost, identity and cadence, map lookups, the watch decision tree plus watch aliases, and every rendered date being a NuxtTime — plus deep dives on ordering inside an SFC, lifecycle-hook placement with browser globals via window. and SSR guards via checkIsServer, inline handlers, forms and upsert mode, the auth session, computed extraction, template gotchas (v-html, dotted slots, closure narrowing, template casts), the compiled-out Options API runtime, and date rendering.
+description: Apply when writing or reviewing .vue files, or rendering a date or time. Esposter Vue 3 SFC conventions — macro, declaration and template attribute ordering, single-use functions and handlers inlined, v-model over split bindings, never normalizeString in Vue, defineProps on a local Props interface, useTemplateRef, a computed earned by reuse, work or identity, the watch decision tree with watchDeep/watchImmediate, browser globals behind checkIsServer, the Options API runtime compiled out, and every rendered date a NuxtTime.
 ---
 
 # Vue Conventions
