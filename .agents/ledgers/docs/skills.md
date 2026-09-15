@@ -28,7 +28,7 @@
 | `package-scripts`         | —          |       |
 | `pagination`              | —          |       |
 | `pinia`                   | —          |       |
-| `pulumi-infra`            | —          |       |
+| `pulumi-infra`            | 2026-09-15 |       |
 | `readme-standards`        | —          |       |
 | `responsive`              | —          |       |
 | `review-queue`            | —          |       |
