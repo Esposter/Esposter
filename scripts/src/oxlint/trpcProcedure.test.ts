@@ -1,5 +1,5 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 
 describe("trpcProcedure", () => {
   const ERROR_RULE = "trpc-procedure/no-hand-rolled-error";
@@ -92,24 +92,9 @@ describe("trpcProcedure", () => {
       violations: 0,
     },
   ];
-  const { getCodes, getViolations } = setupPluginSuite({
+  setupPluginSuite({
     fixtures: FIXTURES,
     plugin: "trpcProcedure",
     rules: [ERROR_RULE, RETURN_TYPE_RULE],
-  });
-
-  test.each(FIXTURES)("reports $violations violation(s) for $name", ({ name, violations }) => {
-    expect.hasAssertions();
-
-    expect(getViolations(name)).toBe(violations);
-  });
-
-  test("reports nothing but these two rules", () => {
-    expect.hasAssertions();
-
-    expect([...new Set(getCodes())].toSorted()).toStrictEqual([
-      "trpc-procedure(no-hand-rolled-error)",
-      "trpc-procedure(require-return-type)",
-    ]);
   });
 });

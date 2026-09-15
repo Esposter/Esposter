@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
-import { afterAll, beforeAll, describe } from "vitest";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 interface OxlintFixture {
   name: string;
@@ -32,17 +32,16 @@ const TEMPORARY_DIRECTORY_PREFIX = "oxlint-plugin-";
 // A rule only exists as an oxlint JS plugin and @oxlint/plugins ships no RuleTester, so a suite drives the
 // Real oxlint binary over generated fixtures — which covers plugin loading and visitor keys, not just the
 // Predicates. Fixtures are written outside the repo so the deliberately-violating ones are never picked up by
-// The root lint pass. One oxlint pass answers for every fixture, so the whole thing happens once in `beforeAll`
+// The root lint pass. One oxlint pass answers for every fixture, so the whole thing happens once in `beforeAll`.
+// The two tests every plugin suite asks are registered here as well: each fixture's violation count, and that
+// The pass reported every rule under test and nothing else — so a suite is its fixture table and this call
 export const setupPluginSuite = ({
   extension = ".ts",
   fixtures,
   plugin,
   rules,
   wrapSource = (source) => source,
-}: SetupOxlintPluginSuiteOptions): {
-  getCodes: () => string[];
-  getViolations: (name: string) => number | undefined;
-} => {
+}: SetupOxlintPluginSuiteOptions): void => {
   const fixtureViolationsMap = new Map<string, number>();
   let directory = "";
   let codes: string[] = [];
@@ -95,7 +94,19 @@ export const setupPluginSuite = ({
     rmSync(directory, { force: true, recursive: true });
   });
 
-  return { getCodes: () => codes, getViolations: (name: string) => fixtureViolationsMap.get(name) };
+  test.each(fixtures)("reports $violations violation(s) for $name", ({ name, violations }) => {
+    expect.hasAssertions();
+
+    expect(fixtureViolationsMap.get(name)).toBe(violations);
+  });
+
+  test("reports every rule under test and nothing else", () => {
+    expect.hasAssertions();
+
+    // A diagnostic spells `plugin/rule` as `plugin(rule)`
+    const expectedCodes = rules.map((rule) => rule.replace(/^([^/]+)\/(.+)$/u, "$1($2)")).toSorted();
+    expect([...new Set(codes)].toSorted()).toStrictEqual(expectedCodes);
+  });
 };
 
 describe.todo("setupPluginSuite");

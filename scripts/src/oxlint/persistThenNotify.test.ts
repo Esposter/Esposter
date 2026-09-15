@@ -1,5 +1,5 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 
 describe("persistThenNotify", () => {
   const RULE = "persist-then-notify/no-unhandled-effect-after-emit";
@@ -203,22 +203,10 @@ describe("persistThenNotify", () => {
       violations: 1,
     },
   ];
-  const { getCodes, getViolations } = setupPluginSuite({
+  setupPluginSuite({
     fixtures: FIXTURES,
     plugin: "persistThenNotify",
     rules: [RULE],
     wrapSource: (source) => `export const f = async () => { ${source} };`,
-  });
-
-  test.each(FIXTURES)("reports $violations violation(s) for $name", ({ name, violations }) => {
-    expect.hasAssertions();
-
-    expect(getViolations(name)).toBe(violations);
-  });
-
-  test("reports nothing but this rule", () => {
-    expect.hasAssertions();
-
-    expect([...new Set(getCodes())]).toStrictEqual(["persist-then-notify(no-unhandled-effect-after-emit)"]);
   });
 });
