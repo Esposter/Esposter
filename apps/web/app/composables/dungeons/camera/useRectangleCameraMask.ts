@@ -1,9 +1,9 @@
-import type { GameObjects } from "phaser";
+import type { GameObjects, Filters } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useSettingsStore } from "@/store/dungeons/settings";
-import { Filters, Geom, Math } from "phaser";
+import { Geom, Math } from "phaser";
 
 const maskMap = new WeakMap<
   SceneWithPlugins,

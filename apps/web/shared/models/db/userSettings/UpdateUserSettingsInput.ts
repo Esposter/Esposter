@@ -1,6 +1,6 @@
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { selectUserSettingsInMessageSchema } from "@esposter/db-schema";
-import { z } from "zod";
+import type { z } from "zod";
 
 const updatableUserSettingsSchema = selectUserSettingsInMessageSchema.pick({
   autoIdleThresholdMs: true,

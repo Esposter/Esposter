@@ -5,7 +5,8 @@ import type { ToData } from "@esposter/shared";
 import { AColumn, createAColumnSchema } from "#shared/models/resource/sheet/column/AColumn";
 import { columnStatisticsKeySchema } from "#shared/models/resource/sheet/column/ColumnStatisticsKey";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { NumberFormat, numberFormatSchema } from "#shared/models/resource/sheet/column/NumberFormat";
+import type { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
+import { numberFormatSchema } from "#shared/models/resource/sheet/column/NumberFormat";
 import { z } from "zod";
 
 export class NumberColumn extends AColumn<ColumnType.Number> implements Partial<Format<NumberFormat>> {

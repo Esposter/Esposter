@@ -2,7 +2,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { ItemEntityType } from "@esposter/shared";
 
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
-import { CommandType } from "@/models/resource/sheet/commands/CommandType";
+import type { CommandType } from "@/models/resource/sheet/commands/CommandType";
 
 export abstract class ADataSourceCommand<T extends CommandType = CommandType>
   extends AItemEntity

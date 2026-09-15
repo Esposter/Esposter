@@ -1,8 +1,10 @@
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { ColumnFormat } from "@/models/resource/sheet/column/ColumnFormat";
 
-import { BooleanFormat, BooleanFormats } from "#shared/models/resource/sheet/column/BooleanFormat";
-import { NumberFormat, NumberFormats } from "#shared/models/resource/sheet/column/NumberFormat";
+import type { BooleanFormat } from "#shared/models/resource/sheet/column/BooleanFormat";
+import { BooleanFormats } from "#shared/models/resource/sheet/column/BooleanFormat";
+import type { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
+import { NumberFormats } from "#shared/models/resource/sheet/column/NumberFormat";
 import { formatDate } from "#shared/util/date/formatDate";
 import { parseLooseDate } from "#shared/util/date/parseLooseDate";
 import { formatBoolean } from "@/services/resource/sheet/column/formatBoolean";

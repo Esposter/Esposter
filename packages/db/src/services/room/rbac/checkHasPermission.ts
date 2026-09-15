@@ -1,7 +1,7 @@
-import type { Database } from "@esposter/db-schema";
+import type { Database, RoomPermission } from "@esposter/db-schema";
 
 import { getPermissions } from "#src/services/room/rbac/getPermissions";
-import { checkHasPermission as baseCheckHasPermission, RoomPermission } from "@esposter/db-schema";
+import { checkHasPermission as baseCheckHasPermission } from "@esposter/db-schema";
 
 export const checkHasPermission = async (
   db: Database,

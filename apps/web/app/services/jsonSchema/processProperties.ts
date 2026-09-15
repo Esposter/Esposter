@@ -1,5 +1,5 @@
 import { processSchema } from "@/services/jsonSchema/processSchema";
-import { z } from "zod";
+import type { z } from "zod";
 
 export const processProperties = (properties: z.core.JSONSchema.JSONSchema["properties"]) => {
   if (!properties) return;

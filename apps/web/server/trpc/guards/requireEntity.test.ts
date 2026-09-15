@@ -1,6 +1,6 @@
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { getResultAsync, noop, NotFoundError } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import type { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
 describe(requireEntity, () => {

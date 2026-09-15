@@ -2,7 +2,8 @@ import type { Format } from "#shared/models/resource/sheet/column/Format";
 import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/resource/sheet/column/AColumn";
-import { BooleanFormat, booleanFormatSchema } from "#shared/models/resource/sheet/column/BooleanFormat";
+import type { BooleanFormat } from "#shared/models/resource/sheet/column/BooleanFormat";
+import { booleanFormatSchema } from "#shared/models/resource/sheet/column/BooleanFormat";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { z } from "zod";
 

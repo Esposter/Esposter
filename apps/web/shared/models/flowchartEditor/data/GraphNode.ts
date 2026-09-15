@@ -6,7 +6,8 @@ import { graphNodeIdSchema } from "#shared/models/flowchartEditor/data/GraphNode
 import { handleBoundsSchema } from "#shared/models/flowchartEditor/data/HandleBounds";
 import { xyPositionSchema } from "#shared/models/flowchartEditor/data/XYPosition";
 import { xyzPositionSchema } from "#shared/models/flowchartEditor/data/XYZPosition";
-import { GeneralNodeType, generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
+import type { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
+import { generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { z } from "zod";
 
 export type GraphNode = Except<

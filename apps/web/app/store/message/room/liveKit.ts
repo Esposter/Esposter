@@ -1,3 +1,4 @@
+import type { NoiseSuppressionMode } from "@esposter/db-schema";
 import type {
   LocalTrackPublication,
   LocalVideoTrack,
@@ -5,6 +6,7 @@ import type {
   RemoteParticipant,
   RemoteTrack,
   RemoteTrackPublication,
+  Room,
 } from "livekit-client";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
@@ -28,12 +30,11 @@ import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice
 import {
   DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
   DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
-  NoiseSuppressionMode,
   VoiceInputMode,
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
-import { ConnectionQuality, ConnectionState, Room, RoomEvent, Track } from "livekit-client";
+import { ConnectionQuality, ConnectionState, RoomEvent, Track } from "livekit-client";
 
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;

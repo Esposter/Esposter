@@ -3,7 +3,7 @@ import type { WebhookMessageEntity } from "#src/models/message/WebhookMessageEnt
 import type { ItemEntityType } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { MessageType } from "#src/models/message/MessageType";
+import type { MessageType } from "#src/models/message/MessageType";
 
 export interface WebhookCreateMessageInput
   extends Except<StandardCreateMessageInput, "type">, ItemEntityType<MessageType.Webhook> {

@@ -1,5 +1,5 @@
 import { getWorkflowResourceGroupPath } from "#src/azure/services/getWorkflowResourceGroupPath";
-import * as azure_native from "@pulumi/azure-native";
+import type * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
 export const getEventSubscriptionResourcePath = (

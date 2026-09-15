@@ -374,7 +374,10 @@
     "sort-imports": "off",
     "sort-keys": "off",
     "typescript/ban-types": "off",
-    "typescript/consistent-type-imports": "off",
+    "typescript/consistent-type-imports": [
+      "error",
+      { "disallowTypeAnnotations": false, "fixStyle": "separate-type-imports" }
+    ],
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-member-accessibility": [
       "error",

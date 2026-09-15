@@ -3,7 +3,8 @@ import type { GraphEdge as BaseGraphEdge, CustomEvent } from "@vue-flow/core";
 import type { Except } from "type-fest";
 
 import { graphNodeSchema } from "#shared/models/flowchartEditor/data/GraphNode";
-import { GeneralNodeType, generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
+import type { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
+import { generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { z } from "zod";
 
 export type GraphEdge = Except<
