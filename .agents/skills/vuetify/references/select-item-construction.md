@@ -12,7 +12,7 @@ Pick the construction by what each item carries:
 
 Source data whose field names differ is mapped at the call site so no extra props are needed:
 
-```typescript
+```ts
 // CORRECT — map to SelectItemCategoryDefinition<T> so no item-title/item-value needed
 const categoryItems = computed<SelectItemCategoryDefinition<string>[]>(() => [
   { title: "None", value: "" },
