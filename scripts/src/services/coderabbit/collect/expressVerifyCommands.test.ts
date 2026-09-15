@@ -18,8 +18,11 @@ const WHITESPACE_REGEX = /\s+/u;
 const getExpandedCommands = (script: string): string[][] =>
   script.includes(VIRRUN_PREFIX)
     ? script.split("&&").map((segment) => {
-        const [first = "", ...rest] = segment.trim().slice(VIRRUN_PREFIX.length).trim().split(WHITESPACE_REGEX);
-        return first === "pnpm" ? rest : ["exec", first, ...rest];
+        const words = segment.trim().slice(VIRRUN_PREFIX.length).trim().split(WHITESPACE_REGEX);
+        if (words[0] === "pnpm") return words.slice(1);
+
+        words.unshift("exec");
+        return words;
       })
     : [];
 
