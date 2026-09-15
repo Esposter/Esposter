@@ -13,7 +13,7 @@ const NAMES_PER_PAGE = 100;
 const SOURCE_NAME_COUNT = 300_000;
 const sourceNames = new Set(Array.from({ length: SOURCE_NAME_COUNT }, (_, index) => `a${index}B`));
 const getPages = (unit: (index: number) => string, pageCount: number): CitingPage[] =>
-  Array.from({ length: pageCount }, (_, pageIndex) => ({
+  Array.from({ length: pageCount }, (_page, pageIndex) => ({
     path: String(pageIndex),
     text: Array.from({ length: NAMES_PER_PAGE }, (_, index) => `\`${unit(index)}\``).join(" "),
   }));
