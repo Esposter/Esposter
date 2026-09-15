@@ -21,7 +21,7 @@ describe(useThreadStore, () => {
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const message = "message";
-  const rootRowKey = "rootRowKey";
+  const rootRowKey = crypto.randomUUID();
   const createReply = (replyRowKey?: string) =>
     createMessageEntity({ message, replyRowKey, roomId, type: MessageType.Message, userId });
 
