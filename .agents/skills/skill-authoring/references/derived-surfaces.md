@@ -6,7 +6,7 @@ The `docs` skill's rule — never write down what the repo can count — applies
 
 - **The skill listing** is each skill's frontmatter, which Claude Code loads whole; `.agents/skills/README.md` holds the boundaries two descriptions cannot settle between them, never a roster.
 - **A citation's path after a move** is `pnpm ai:citations:sync` over the renames in the working tree (the `docs` skill, "Mechanical follow-through").
-- **A ledger row's date** is the `Ledger:` trailer on the commit that swept it, filled in by `pnpm ai:sweep:ledger-coverage` (`sweeps` skill, `references/ledger-files.md`).
+- **A ledger row's date** is the `Ledger:` trailer on the commit that swept it, filled in by `pnpm ai:sweep:ledger-coverage` (`sweeps` skill, `references/ledger-files.md`) — and **the skills ledger's rows** are the skill directories, written by the same run and held to the tree by `scripts/src/workspace/ledgerUnits.test.ts`.
 
 ## What is worth writing down at all — `references/what-belongs.md`
 

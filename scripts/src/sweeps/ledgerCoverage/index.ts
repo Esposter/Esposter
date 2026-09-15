@@ -4,6 +4,8 @@ import { getGitEnv } from "#src/services/shared/getGitEnv";
 import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
 import { applyLedgerEvents } from "#src/services/sweeps/ledgerCoverage/applyLedgerEvents";
 import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
+import { LedgerUnitsMap } from "#src/services/sweeps/ledgerCoverage/LedgerUnitsMap";
+import { syncLedgerUnits } from "#src/services/sweeps/ledgerCoverage/syncLedgerUnits";
 import { AGENT_DIRECTORY } from "@esposter/configuration";
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -31,7 +33,11 @@ for (const ledgerPath of getSweepFilePaths(`${LEDGER_DIRECTORY}*.md`).filter((pa
   const ledger = ledgerPath.slice(LEDGER_DIRECTORY.length, -".md".length);
   const absolutePath = resolve(REPOSITORY_ROOT, ledgerPath);
   const text = readFileSync(absolutePath, "utf8");
-  const { text: rewritten, unmatched } = applyLedgerEvents(text, ledger, events);
+  // A derived ledger's rows are the tree's before any trailer dates them, so a unit added since opens at `—` and
+  // One removed goes, with no row anyone edits by hand
+  const getUnits = LedgerUnitsMap[ledger];
+  const synced = getUnits ? syncLedgerUnits(text, getUnits()) : text;
+  const { text: rewritten, unmatched } = applyLedgerEvents(synced, ledger, events);
   for (const { date, unit } of unmatched) console.info(`unmatched ${ledgerPath}: ${unit ?? ""} (${date})`);
   if (rewritten === text) continue;
 
