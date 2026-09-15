@@ -410,9 +410,6 @@ describe("roomRouter", () => {
     assert.exists(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
-    // Unbounded in time, unlike every other prefix sweep: the room row is gone, so nothing can re-own this
-    // Prefix and this is its only teardown — a `createdBefore` cutoff would permanently strand the attachment
-    // Of any member still holding a write SAS when the owner deleted
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       containerName: AzureContainer.MessageAssets,
       prefix: newRoom.id,
