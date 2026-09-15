@@ -15,6 +15,7 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - `references/floating-promises.md` — when a lint error flags a floating promise, or an async function must be called from a sync slot.
 - `references/dynamic-imports.md` — when reaching for `await import(...)`, or a dependency's docs mention `optimizeDeps`.
 - `references/class-fields.md` — when adding a field to a class.
+- `references/loops.md` — when writing a loop: an index-based `for` that stays, binding-position destructuring, bounding a zip.
 
 ## Core Rules
 
@@ -22,7 +23,7 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - `Omit` → `Except` from `type-fest`, enforced by `@typescript-eslint/no-restricted-types`. Import it from `type-fest` directly; it is **not** re-exported from `@esposter/shared`.
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
 - **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
-- `.forEach()` is **BANNED** — use `for...of` (see Loops); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
+- `.forEach()` is **BANNED** — use `for...of` (`references/loops.md`); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
 - `type` aliases for object shapes → `interface` (`consistent-type-definitions`).
 - **Non-mutating array methods, enforced.** `sort()`, `reverse()` and `splice()` are all errors — the first two from oxlint (`unicorn/no-array-sort`, `unicorn/no-array-reverse`), `splice` from `no-restricted-syntax`, and all three restated in `vue/no-restricted-syntax` for the template expressions oxlint does not read. Write `toSorted`/`toReversed`/`toSpliced` and assign the result back; draining an array is taking it and putting a fresh one in its place, never `splice(0)`. What is left to judgement is `arr.with(index, value)` over `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`.
 - **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared`. Both hand-rolled shapes are four lines that read as branching logic where the helper reads as one lookup: the `let x = map.get(k); if (!x) { x = …; map.set(k, x); }` block, and the `map.get(k) ?? []` that is mutated and set back — whose `set` is load-bearing only on the miss, so it looks redundant to the next reader.
@@ -69,21 +70,11 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 
 ## Loops and Iteration
 
-- **`Array.from(iterable, mapFn)` over `[...iterable].map(mapFn)`** for any `Set`/`Map`/non-array iterable — the two-arg form maps while converting, producing no intermediate array. A `Map` iterates as `[key, value]` with no `.entries()` needed: `Array.from(fooMap, ([key, value]) => ({ key, value }))`. `no-restricted-syntax` fails the single-spread shape, so what is left to a reader is the two cases where the rewrite is not the same call — a callback reading `.map`'s third argument, and an iterator its own callback advances — both of which keep their evaluation order as `Array.from(iterable).map(fn)`. A multi-element literal (`[...a, ...b]`) is a concatenation rather than a conversion and is untouched.
-- **No index-based `for (let i = 0; i < arr.length; i++)`** for plain array iteration — use `for...of`, and `.entries()` when the index is needed (`for (const [i, item] of arr.entries())`). The `.entries()` iterator cost is negligible (tiny per-element pair alloc, JIT-friendly) versus the readability win.
-- **Index-based `for` stays** only when the loop genuinely isn't sequential array iteration: step counters (`i += 4`, `i += BATCH_SIZE`), pure counts (`for (let i = 0; i < 3; i++)`), `<=` bounds, multi-condition bounds, or in-body index mutation/lookahead (`line.charAt(i + 1)` then `i++`).
-- **Destructure in the binding position (loop var, function param) straight to the props you use** — `for (const [i, { id }] of files.entries())`, never binding the whole object and then reading its fields. This _removes_ a binding, so it does not conflict with the ban on a separate `const { x } = obj` line for a single use. Keep the whole binding only when the object is passed on whole, or used too many ways to enumerate cleanly.
-- **Don't declare intermediate vars that are used once** — inline single-use values; only name a var when it's referenced more than once or the name adds clarity.
-- **Bound a zip with `break`, not a dual condition** — iterate the driving array via `.entries()` and `if (i >= other.length) break;`.
+- **`for...of` with `.entries()` when the index is needed; `Array.from(iterable, mapFn)` over `[...iterable].map(mapFn)`** — `no-restricted-syntax` fails the single-spread shape. When an index-based `for` stays, destructuring in the binding position, and bounding a zip: `references/loops.md`.
 
 ## Environment Checks
 
-**Never use `import.meta.dev` or `import.meta.env.MODE` directly** — use `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`:
-
-```ts
-import { IS_PRODUCTION } from "#shared/util/environment/constants";
-const baseUrl = IS_PRODUCTION ? PRODUCTION_URL : DEVELOPMENT_URL;
-```
+- **Never `import.meta.dev` or `import.meta.env.MODE` directly** — `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`.
 
 ## Absent Values
 
