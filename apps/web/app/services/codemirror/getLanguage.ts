@@ -1,8 +1,7 @@
-import { LanguageRegexSupportPatternMap } from "@/services/codemirror/LanguageRegexSupportPatternMap";
+import { LanguageRegexMap } from "@/services/codemirror/LanguageRegexMap";
 
 export const getLanguage = (filename: string) => {
-  for (const [language, supportPattern] of Object.entries(LanguageRegexSupportPatternMap))
-    if (supportPattern.test(filename)) return language;
+  for (const [language, regex] of Object.entries(LanguageRegexMap)) if (regex.test(filename)) return language;
 
   return undefined;
 };
