@@ -10,8 +10,8 @@ import { writeWslEnvironmentCache } from "#src/services/exec/wsl/writeWslEnviron
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 // The default WSL distro's ext4 home as a Windows UNC (`\\wsl.localhost\<distro>\home\<user>\.virrun`). virrun's
-// Write-heavy cache (snapshot overlay directories, pnpm store, corepack home) lives here rather than under the repo or `~`
-// On the Windows drive, because those resolve to `/mnt/c` (v9fs) inside WSL — 15-64x slower for the many-small-file
+// Write-heavy cache (snapshot overlay directories, pnpm store, corepack home) lives here rather than under the repo or
+// `~` on the Windows drive, because those resolve to `/mnt/c` (v9fs) inside WSL — 15-64x slower for the many-small-file
 // Install, and it silently never finishes capturing the snapshot. readWslPath later maps the UNC back to `/home/...`
 // So the bulk writes happen Linux-side at native ext4 speed.
 // Caching this Windows-side also makes the win32 capability.json read cheap, since getGlobalCacheDirectory calls this

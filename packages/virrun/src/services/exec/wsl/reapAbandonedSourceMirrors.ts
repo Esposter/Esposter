@@ -6,15 +6,15 @@ import { getWslNativeCacheRoot } from "#src/services/exec/wsl/getWslNativeCacheR
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-// Reclaim source mirrors whose host working directory is gone (deleted worktree, moved repo). Unlike snapshots/prepare —
-// Keyed on a lockfile/source hash where every entry but the current one is stale — each mirror is keyed on a distinct
+// Reclaim source mirrors whose host working directory is gone (deleted worktree, moved repo). Unlike snapshots/prepare
+// — keyed on a lockfile/source hash where every entry but the current one is stale — each mirror is keyed on a distinct
 // Live repo path, so "stale" is decided per entry by the recorded `origin` marker: the entry is swept only when the
 // Path it holds is provably absent (existsSync false). A blank marker (a first-run partial another process is
 // Mid-writing) is left alone — reap only what we can prove abandoned, never a concurrent live run's mirror.
 //
 // An entry with NO marker is the one case the marker can't settle, and treating it as untouchable would leak it
-// Forever:
-// CreateWslSourceMirrorSync publishes the marker the instant it creates the entry directory AND republishes it from any
+// Forever: `createWslSourceMirrorSync`
+// Publishes the marker the instant it creates the entry directory AND republishes it from any
 // Later planning pass that finds it missing — including the no-delta early return a live repo takes on nearly every
 // Run — so an absent marker means no planning pass has completed for this entry since it died. Age settles it: past
 // SOURCE_MIRROR_UNMARKED_MAX_AGE_MS no live planner can still be in that gap. That republish is what this arm rests

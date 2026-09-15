@@ -11,7 +11,8 @@ import { reapStaleTempFiles } from "#src/services/exec/wsl/reapStaleTempFiles";
 // Read, and so may a just-dead owner's, because the teardown is spawned asynchronously and `wsl.exe` has to start the
 // WSL relay and `sh` before the script's `< "$1"` redirect opens it — see REMOVE_LIST_REAP_MINIMUM_AGE_MS. Past that
 // Floor the file is either open (an unlink on ext4 leaves the reader's fd intact) or was never going to be read at
-// All. The worst case is re-derivation, not lost teardown: the directories stay stale and the next sweep stages them again.
+// All. The worst case is re-derivation, not lost teardown: the directories stay stale and the next sweep stages them
+// Again.
 export const reapStaleRemoveLists = (directory: string): void => {
   reapStaleTempFiles(directory, [VIRRUN_REMOVE_LIST_TEMP_PREFIX], REMOVE_LIST_REAP_MINIMUM_AGE_MS);
 };

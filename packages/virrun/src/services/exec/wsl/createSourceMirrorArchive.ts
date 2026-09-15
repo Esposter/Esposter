@@ -26,7 +26,8 @@ import { join } from "node:path";
 // Rsync's default: the target is mirrored too, so it resolves at extract, and Node walks
 // The symlink's realpath to bind imports from the right base. All flags parse identically on bsdtar and GNU tar, so
 // Tests exercise the real spawn on any platform. (The win32 bsdtar writer stamps a benign pax LIBARCHIVE.symlinktype
-// Header on each symlink member; the WSL GNU-tar extract quiets its "unknown keyword" warning — createWslSourceMirrorSync.)
+// Header on each symlink member; the WSL GNU-tar extract quiets its "unknown keyword" warning
+// — createWslSourceMirrorSync.)
 //
 // The copy list is consumed and unlinked here whatever tar's verdict, staged under the pid-tag convention so a plan
 // That dies mid-way leaves only reapable corpses (reapStaleSourceMirrorTemps). A failure tar recovered from
