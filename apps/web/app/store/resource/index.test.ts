@@ -31,7 +31,7 @@ describe(useResourceStore, () => {
   const otherResourceId = crypto.randomUUID();
   const newName = "newName";
   const failingName = "failingName";
-  const tags: ResourceTags = { env: "prod" };
+  const tags: ResourceTags = { "": "" };
   const publication = {
     publishedAt: new Date(0),
     publishVersion: 1,
