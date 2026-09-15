@@ -1,6 +1,6 @@
 # Error Assertions
 
-Read when a test asserts that something throws, and the inline snapshot needs filling in. That `toThrowErrorMatchingInlineSnapshot(...)` is the only accepted error assertion is `SKILL.md`'s, because reaching for `toThrow()` is the default behaviour that rule exists to stop; this page is how the snapshot gets its contents.
+Read when a test asserts that something throws, and the inline snapshot needs filling in. That `toThrowErrorMatchingInlineSnapshot(...)` is the only accepted error assertion is `SKILL.md`'s, because reaching for `toThrow()` is the default behaviour that rule exists to stop; this page is how the snapshot gets its contents, and the one case that carries no snapshot at all — an opaque third-party message, where the error's `name` is all there is left to assert.
 
 ## Reconstruct first, empty-snapshot last
 

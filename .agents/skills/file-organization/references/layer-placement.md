@@ -1,6 +1,6 @@
 # Which folder a file goes in
 
-Read when creating or moving a file and choosing between `models/`, `services/`, `utils/`, a feature subfolder and
+Read when creating or moving a file and choosing between `models/`, `services/`, `util/`, a feature subfolder and
 a `shared/` bucket. The one-line map is in `SKILL.md`; this page is each layer's boundary and the exceptions that
 sit on it.
 
@@ -23,10 +23,10 @@ anything but its own model is an ordinary service function (`createDefaultSheetS
 (`services/<lib>/doThing.ts`), not `util/`. A helper over a language global rather than a library is a `util/` one
 (`util/date/formatDate.ts`).
 
-## `utils/` — truly universal utilities only
+## `util/` — truly universal utilities only
 
 Math, string, regex, type utilities, Node/browser engine extensions with no external dependency. If the helper
-imports a third-party package, it belongs in `services/`. Generic browser utilities go in `app/utils/` (e.g.
+imports a third-party package, it belongs in `services/`. Generic browser utilities go in `app/util/` (e.g.
 `readFoo.ts`).
 
 ## Feature folders, and the one consumer
