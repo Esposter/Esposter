@@ -4,6 +4,18 @@ This service wraps the official `livekit/livekit-server` image with a Railway-sp
 
 Railway does not expose UDP publicly, so this follows the TCP-only Railway template pattern: LiveKit advertises the Railway TCP proxy IP for ICE candidates, and HAProxy forwards Railway's application port to the advertised ICE port inside the container. Redis remains a separate Railway Redis service for room state.
 
+```mermaid
+flowchart LR
+  CLIENT["Browser"] -->|"WebSocket signaling"| DOMAIN["Railway public domain"]
+  CLIENT -->|"ICE over TCP"| PROXY["Railway TCP proxy"]
+  DOMAIN --> LIVEKIT["LiveKit"]
+  PROXY -->|"container application port"| HAPROXY["HAProxy"]
+  HAPROXY -->|"advertised ICE/TCP port"| LIVEKIT
+  LIVEKIT -->|"room state"| REDIS["Railway Redis"]
+  LIVEKIT -->|"participant events"| APP["Esposter app webhook"]
+  LIVEKIT -->|"room and participant events"| MONITOR["livekit-monitor"]
+```
+
 ## Railway Setup
 
 1. Create a Railway service from this repo.
@@ -47,7 +59,7 @@ Use the LiveKit service's public Railway/custom domain for `LIVEKIT_URL`.
 ## Notes
 
 - Keep the first Railway deployment to a single LiveKit replica. Railway's TCP proxy assigns one public proxy port, and WebRTC ICE candidates need a stable endpoint.
-- `7882` is the application port entered in Railway's TCP proxy settings. `RAILWAY_TCP_PROXY_PORT` is the public port Railway assigns.
+- `RAILWAY_TCP_PROXY_PORT` is the public port Railway assigns, distinct from the application port the proxy was created with.
 - UDP is the faster transport and this deployment cannot reach it yet: Railway exposes TCP only, so the TCP proxy and the HAProxy forward are what carry media in the meantime. They are the interim half of this setup rather than the target one — the target is Railway routing UDP to the range LiveKit already advertises.
 - The entrypoint resolves `RAILWAY_TCP_PROXY_DOMAIN`, passes it to LiveKit as `--node-ip`, and starts HAProxy to forward Railway's container TCP proxy port to LiveKit's advertised ICE/TCP port.
 - LiveKit does not document an `external_tcp_port` setting, so `rtc.tcp_port` is set to Railway's external TCP proxy port and the container application port forwards to it.
