@@ -1,5 +1,5 @@
-import { getGitEnv } from "#src/services/shared/getGitEnv";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getGitEnv } from "#src/services/shared/getGitEnv";
 import { execFileSync } from "node:child_process";
 
 // Against the repository root: with `diff.relative` set, a `git diff` run from `scripts/` answers about
