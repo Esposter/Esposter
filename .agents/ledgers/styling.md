@@ -39,68 +39,33 @@ What a component looks like rather than how it is composed: attributify props ov
 - Component granularity, extraction and page composition — `vue-components`, over the same files. Different owning skills, so the split is deliberate.
 - Placement and reachability — `ux`, likewise.
 - `app/components/Dungeons` canvas internals: Phaser draw calls are not DOM styling. Only the Vue chrome around them is in scope.
-- `app/assets/dashboard/demo/icon/*.vue` — vendored ApexCharts sample SVGs, kept diff-identical to their source.
-  They are the bulk of what the `px` recipe reports, and none of them is a finding.
-- `app/assets/css/settings.scss`'s breakpoint map — Vuetify's SASS API takes px and computes the rem forms from
-  them, so the unit there is the framework's rather than ours.
-- `app/components/Visual/FloatingAstronaut.scss` — a vendored SVG's own `fclass*` fills, which the skill already
-  names as the one place a raw hex is the source's rather than ours.
+- The three files that keep `px` — the vendored ApexCharts sample SVGs, Vuetify's SASS breakpoint map, a vendored
+  SVG's own fills — are the exclusion list of `apps/web/app/templates.test.ts`, which is the enforcer for that rule.
 - A length a third-party API owns rather than CSS: `NodeResizer`'s flow coordinates, `useDocumentPictureInPicture`'s
   window box, Phaser's scale. The dimension recipes report all three every run and none of them is a finding —
   the unit there is the library's, which is the `px` rule's own stated exception.
 
 ## Find recipe
 
+Everything a program can decide about a template is `apps/web/app/templates.test.ts` and the UnoCSS blocklist
+(below). What is left to read is where `class` stands in for an attribute, and the survivors should be scoped
+refs, dynamic bindings or third-party selectors:
+
 ```bash
-# px in a template or a style block — rem is the rule, with narrow exceptions
-grep -rnE '[^a-z-][0-9]+px' --include=*.vue --include=*.scss apps/web/app
-# class= where attributify would do — the survivors should be scoped refs, dynamic bindings, or third-party selectors
 grep -rn 'class="' --include=*.vue apps/web/app/components
-# A bare --variable inside a colour function in an arbitrary value: the token matches, the declaration is
-# Invalid, and the whole property is dropped with nothing to see (styling/references/arbitrary-values.md)
-grep -rnE '(rgb|rgba|hsl)\(--|color-mix\(in srgb, --' --include=*.vue --include=*.scss apps/web/app
-# A bare bracket attribute — UnoCSS extracts it as a class token, so the rule it emits is a `.class` the
-# Element never carries. Only the valued form `prop="[...]"` produces an attribute selector
-grep -rnoE '(^|[[:space:]])[a-z][A-Za-z0-9:_-]*-\[[^]"'"'"']*\]([[:space:]/>]|$)' --include=*.vue apps/web/app
-# A Vuetify length given a bare number, which renders as px rather than the rem it was authored in. A props
-# Object takes every name; as an attribute only `size` and the `min-`/`max-` pair, because bare `width`/`height`
-# Are dominated by SVG attributes and third-party APIs, where the unit is not ours
-grep -rnE "(maxWidth|minWidth|maxHeight|minHeight|width|height|size): *[0-9]+ *[,}]" --include=*.vue apps/web/app
-grep -rnE "[[:space:]:](size|(min|max)-(width|height))=\"[0-9]+\"" --include=*.vue apps/web/app
-# A Vuetify theme colour this theme never registers — `warning`/`success` exist at runtime but generate no
-# Utility, so the attribute form is inert while the `color` prop still works
-grep -rnE '(^|[^-a-z"'"'"'])(bg|text|b)-(warning|success)([^-a-z0-9]|$)' --include=*.vue apps/web/app
-# A valueless utility bound as an attribute — an empty-string literal emits nothing, so it matches only when
-# An unrelated file writes the same utility bare. `:class` is the reliable form
-grep -rnE ":[a-z][a-z0-9-]*=\"[^\"]*\? *'' *: *undefined\"" --include=*.vue apps/web/app
-# The `text-hint` shortcut written out — uno.config.ts defines it as exactly this pair
-grep -rn 'op-medium-emphasis text-body-small' --include=*.vue apps/web/app
-# A numeric opacity spelling out an emphasis token — op-60 is medium, op-87 is high; op-0/op-100 are reveals
-grep -rnE '(^|[^-a-z0-9])op-(38|60|87)([^0-9]|$)' --include=*.vue apps/web/app
-# An emphasis name used as a colour: they are opacity utilities, so b-/bg-/text- prefixed they generate nothing
-grep -rnE '(^|[^-a-z])(b|bg|text)-(medium|high)-emphasis' --include=*.vue apps/web/app
 ```
 
-## Next enforceable
+## Not enforceable — settled
 
-- Handed over: a second spelling of a utility family (`rounded-*`, `opacity-*`, `overflow-*`, `font-bold`,
-  `pa-*`, …) is `BLOCKED_SPELLINGS` in `apps/web/uno.config.ts`, which the generator refuses and `unocss/blocklist`
-  reports. A new alias met by a pass joins that list. The Vuetify helper class (`font-weight-bold`) stays a
-  reading finding: as an attribute it generates nothing, and a blocklist entry only sees what the preset matches.
+What a program decides here it now decides: a second spelling of a utility family and every Vuetify helper
+class written as an attribute are `BLOCKED_SPELLINGS` in `apps/web/uno.config.ts`, which the generator refuses and
+`unocss/blocklist` reports; a valueless attribute on a **native** element that generates no rule, a bare bracket attribute, the
+`text-hint` pair written out, a Vuetify global default restated on an instance, a Vuetify length given a bare
+number, a `px` length outside the three vendored files and a bare custom property inside a colour function are
+`apps/web/app/templates.test.ts`; a utility bound to `'' : undefined` is `vue/no-restricted-syntax`. What is left stays a reading pass, for these reasons:
 
-- An MD2 typography utility (`text-h6`, `text-caption`, `text-subtitle-1`, `text-medium-emphasis`) is a closed
-  set of names, and as an **attribute** it generates nothing at all — Vuetify ships those as classes, so the
-  attribute form is inert and reads on the page as no typography rather than as the wrong typography. A test over
-  the tree decides it; an oxlint plugin cannot, because oxlint hands a JS plugin no Vue template
-  (`scripts/src/oxlint/errorAlert.ts` says the same about inline handlers). The generic form — every `text-*`
-  attribute in a template resolving to a rule the config generates — catches typos too, and needs an extraction
-  that can tell an attributify utility from a Vuetify `text` prop.
-- The general form of the two greps above — **every attributify attribute in a template producing a rule the
-  config actually emits** — subsumes them and catches the next silent no-op nobody has met yet. The generator
-  answers it directly (`createGenerator(config).generate(source)` returns the matched tokens, and a token that
-  matched can still emit nothing), so the blocker is not the check but the input: an attribute on a component is
-  as likely to be a Vuetify prop as a utility, and reporting `text` on a `v-tab` would bury the real findings.
-  It needs an extraction that reads the tag, which is the same thing the typography item below is waiting for.
-- `px` outside the skill's named exceptions is a regex against templates and style blocks; a custom oxlint plugin or a test over the tree decides it.
-- A Vuetify global default restated on a component is decidable by comparing the tag's props against the defaults object.
-- Theme primitive vs bespoke colour needs the palette in mind and a judgement about intent; it stays with the sweep.
+- An attribute on a **component** that generates nothing is as likely to be one of that component's props as a
+  misspelt utility, and telling the two apart needs the component's prop list, which no extraction of the
+  template has. The blocklist carries every inert family met so far, so the miss is a typo nobody has made yet.
+- Theme primitive vs bespoke colour needs the palette in mind and a judgement about intent.
+- A fixed dimension on a layout region is a judgement about what a region is.

@@ -32,7 +32,7 @@ const progressPercentage = computed(() => uploadFileUrl.progress * 100);
         </v-card>
       </v-card-text>
       <v-card v-if="progressPercentage < 100" pt-4>
-        <v-progress-linear :model-value="progressPercentage" color="light-blue" :height="16" striped>
+        <v-progress-linear :model-value="progressPercentage" color="light-blue" height="1rem" striped>
           <template #default="{ value }">
             <strong>{{ Math.ceil(value) }}%</strong>
           </template>

@@ -62,6 +62,29 @@ const BLOCKED_SPELLINGS: [RegExp, string][] = [
   [/^vertical-/u, "`align-middle` and its siblings"],
   [/^decoration-(?:underline|none|line-through)/u, "`underline`, `no-underline`, `line-through`"],
   [/^case-/u, "`uppercase` and its siblings"],
+  // Vuetify's helper classes. The preset matches none of them, so as an attribute each generates nothing and
+  // Reads on the page as no style rather than the wrong one — the MD2 type set is the loudest, since it lands
+  // As no typography at all
+  [
+    /^text-(?:h[1-6]|subtitle-[12]|body-[12]|caption|overline|(?:medium|high)-emphasis|disabled|truncate|no-wrap|uppercase|lowercase|capitalize)$/u,
+    "the MD3 `text-*` shortcut, `op-*-emphasis`, `truncate`, `text-nowrap`, `uppercase`",
+  ],
+  [/^font-weight-/u, "`fw-`"],
+  [/^text-decoration-/u, "`underline`, `no-underline`, `line-through`"],
+  [
+    /^d-(?:flex|none|block|inline|inline-flex|inline-block)$/u,
+    "`flex`, `hidden`, `block`, `inline`, `inline-flex`, `inline-block`",
+  ],
+  [/^justify-space-/u, "`justify-between`, `justify-around`, `justify-evenly`"],
+  [/^align-(?:center|start|end|stretch)$/u, "`items-center` and its siblings"],
+  [/^flex-(?:column|row-reverse|column-reverse)$/u, "`flex-col`, `flex-row-reverse`, `flex-col-reverse`"],
+  [/^fill-(?:height|width)$/u, "`h-full` / `w-full`"],
+  [/^ga-\d/u, "`gap-`"],
+  [/^m[tblrxya]-n\d/u, "the doubled dash (`mt--1`)"],
+  // The emphasis names are opacity utilities: prefixed as a colour they match nothing, and spelt as their
+  // Numeric value they stop following the theme's own token
+  [/^(?:b|bg|text)-(?:medium|high)-emphasis$/u, "`op-medium-emphasis` / `op-high-emphasis` on their own"],
+  [/^op-(?:38|60|87)$/u, "`op-disabled`, `op-medium-emphasis`, `op-high-emphasis`"],
 ];
 
 export default defineConfig({
