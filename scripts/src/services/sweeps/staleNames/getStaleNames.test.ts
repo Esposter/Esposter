@@ -48,6 +48,7 @@ describe(getStaleNames, () => {
     ["a lone capitalised word", "`Ab`"],
     ["a lowercase word", "`a`"],
     ["a placeholder", "`aFoo`"],
+    ["a placeholder an acronym runs into", "`aHTMLFoo`"],
     ["a pluralised placeholder", "`aFoos`"],
     ["a SCREAMING_SNAKE placeholder", "`FOO_A`"],
     ["a lone X standing in for a segment", "`aX`"],

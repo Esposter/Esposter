@@ -12,8 +12,9 @@ const CODE_NAME_REGEX = /[a-z][A-Z]|\.|^[A-Z][A-Z\d]*(?:_[A-Z\d]+)+$/u;
 // Nor does a lone `X` standing in for a segment (`handleX`, `useXStore`)
 const PLACEHOLDER_WORDS = new Set(["bar", "baz", "foo", "qux", "xxx"]);
 const PLACEHOLDER_SEGMENT_REGEX = /(?<=[a-z])X(?![a-z])/u;
-// A camel hump, a snake underscore or a member dot — where one segment of a name ends and the next begins
-const NAME_SEGMENT_REGEX = /(?<=[a-z\d])(?=[A-Z])|[._$]+/u;
+// A camel hump, a snake underscore or a member dot — where one segment of a name ends and the next begins. An
+// Acronym runs into the word after it without a hump (`aHTMLFoo`), so its last capital is a boundary of its own
+const NAME_SEGMENT_REGEX = /(?<=[a-z\d])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|[._$]+/u;
 const PLURAL_SUFFIX_REGEX = /e?s$/u;
 // A page in these folders describes what does not exist by design — a rejected direction, a deferred idea, a
 // Design not yet shipped — so every name in it is expected to resolve nowhere (the `docs` skill, "location carries status")
