@@ -43,10 +43,10 @@ describe("surveyFunnel", () => {
   const settings = surveySettingsSchema.parse({});
   const name = "name";
   const model = "model";
-  const keyValue = "keyValue";
+  const customerKeyValue = "keyValue";
   // Three customers is the smallest audience exhibiting responded / not-responded / rejected, and a key value
   // Long enough that the "never leaks the participant list" assertions have a needle worth searching for
-  const customers = [keyValue, `${keyValue} `, `${keyValue}  `];
+  const customers = [customerKeyValue, `${customerKeyValue} `, `${customerKeyValue}  `];
 
   beforeAll(async () => {
     mockContext = await createMockContext();
