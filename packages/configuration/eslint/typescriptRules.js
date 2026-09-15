@@ -33,8 +33,7 @@ export default {
       // Already the plural — so a relation key or a local spelled `bansInMessages` has pluralised the schema, and
       // Reads as bans across messages. The suffix is dropped from a variable (`const ban`) or kept whole as the
       // Table's name (`r.many.bansInMessage`); nothing spells it plural. Unanchored, because a through-relation
-      // Key carries the table's name mid-word (`roomsInMessageViaInvitesInMessage`) — anchoring to the end read
-      // Three such keys as clean, which is how they shipped.
+      // Key carries the table's name mid-word (`roomsInMessageViaInvitesInMessage`), which an end anchor passes
       message:
         "`InMessage` is a schema suffix, not a noun — the table's own name is the plural, so drop the `s`. See the naming skill and the drizzle relations reference.",
       selector:
@@ -80,9 +79,9 @@ export default {
     },
     {
       // A call that answers with a boolean is `check*`; `get*` reads as a derivation, so the family grows
-      // Unnoticed. The name is all the selector sees, and it is enough: every `getIs*`/`getHas*` the naming
-      // Sweeps found returned a boolean, and a getter that builds something says what — `getIsLoadedRef` is a
-      // Destructuring rename off `useDataMap`, which is a pattern rather than an identifier and stays outside
+      // Unnoticed. The name is all the selector sees, and it is enough: a `getIs*`/`getHas*` answers with a
+      // Boolean, and a getter that builds something says what — `getIsLoadedRef` is a destructuring rename off
+      // `useDataMap`, which is a pattern rather than an identifier and stays outside
       message:
         "Name a boolean-returning function `check*` — `getIs*`/`getHas*` reads as a derivation. See the naming skill.",
       selector: "VariableDeclarator[id.name=/^get(Is|Has)[A-Z]/]",
