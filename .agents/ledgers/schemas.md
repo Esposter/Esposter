@@ -40,20 +40,18 @@ grep -rn '\.extend(' --include=*.ts apps/web/app apps/web/server apps/web/shared
 grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts apps/web/app apps/web/shared packages/*/src
 ```
 
-## Next enforceable
+## Not enforceable — settled
 
-- **The inherited-key rule is not lint-decidable, and a ban on the computed form was wrong.** `.safeExtend`
-  legitimately adds new fields as well as layering over existing ones, so nothing syntactic separates the key that
-  must match from the key that must not. It stays with the sweep; the `zod` skill carries the measured table of
-  which positions check a key and which do not.
-- **Registration completeness belongs to `schema.test.ts`.** The relations half stays with the sweep:
-  `relations.ts` spreads its parts rather than holding them, so there is no identity to compare and no crisp
-  invariant — not every table earns a relation.
-- **`.extend()` is not cleanly enforceable.** Tiptap's `.extend` and Zod's share one method name and no syntactic
-  rule tells them apart — a receiver-name heuristic would ban the first by accident. It stays with the sweep, and
+What a program decides here it now decides: a `z.discriminatedUnion(…)` declarator with no trailing `satisfies` is
+a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a test's schema is a fixture with no
+interface to drift from), and registration completeness is `schema.test.ts`. What is left stays a reading pass,
+for these reasons:
+
+- **The inherited-key rule** — `.safeExtend` legitimately adds new fields as well as layering over existing ones,
+  so nothing syntactic separates the key that must match from the key that must not; the `zod` skill carries the
+  measured table of which positions check a key and which do not.
+- **Relations completeness** — `relations.ts` spreads its parts rather than holding them, so there is no identity to
+  compare and not every table earns a relation.
+- **`.extend()`** — Tiptap's `.extend` and Zod's share one method name and no syntactic rule tells them apart;
   the recipe above carries the anchor instead.
-- A `z.discriminatedUnion` without a trailing `satisfies` is decidable from the AST, and the skill states the rule
-  with no exceptions — which is exactly what a rule needs. Worth a plugin once a second violation appears; the
-  tree currently holds none.
-- `export type X = z.infer<...>` is allowed in the narrow composed-schema case, so it needs the judgement the
-  sweep provides — leave it.
+- **`export type X = z.infer<…>`** is allowed in the narrow composed-schema case, which needs the judgement.
