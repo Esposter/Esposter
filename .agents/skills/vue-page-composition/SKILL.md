@@ -91,7 +91,7 @@ When you find duplicates, keep the affordance with the **largest hit target and 
 
 ## Settings Tab Permissions — Hide at the Tab Level
 
-Permission-gated settings tabs are hidden via a tab-definition map (`FooPermissionMap` in `services/<domain>/settings/`), which maps each tab type to the permission it requires; the nav component filters visible tabs through `hasPermission` in a `computed`. Individual tab components **never** check permissions — they just fetch and render, because the tab simply isn't shown to users lacking it. **Do NOT** render "Insufficient permissions" text; hide the tab entirely — the same rule as [one affordance per action](#one-affordance-per-action--no-duplicate-behaviour), where a control nobody may use is a control nobody is shown.
+Permission-gated settings tabs are hidden via a tab-definition map (`FooPermissionMap` in `services/<domain>/settings/`), which maps each tab type to the permission it requires; the nav component filters visible tabs through `hasPermission` in a `computed`. Individual tab components **never** check permissions — they just fetch and render, because the tab simply isn't shown to users lacking it. **Do NOT** render "Insufficient permissions" text; hide the tab entirely — the same rule as one affordance per action ("One Affordance Per Action — No Duplicate Behaviour"), where a control nobody may use is a control nobody is shown.
 
 **The map hides the tab; it withholds nothing.** What makes the components' never-check rule safe is that the reads and writes behind a mapped tab are gated on the same permission server-side — that half is the `trpc` skill's, and a tab added here without it is a hidden tab in front of an open endpoint.
 
