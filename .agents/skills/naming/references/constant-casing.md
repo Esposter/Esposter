@@ -1,12 +1,12 @@
 # Constants — casing, and whether to name the value at all
 
 Read when a module-scope binding could be spelled SCREAMING_SNAKE_CASE or PascalCase, or when a literal is
-about to be given a name at all. That a fixed scalar is `SCREAMING_SNAKE_CASE` is `SKILL.md`'s; this page is the
+about to be given a name at all. That a fixed scalar is SCREAMING_SNAKE_CASE is `SKILL.md`'s; this page is the
 three cases where the casing is contested and the one where the name should not exist.
 
 ## A scalar against a lookup table
 
-**A module-scope constant holding a fixed scalar is `SCREAMING_SNAKE_CASE`** — `MAX_INVITE_ID_RETRIES`,
+**A module-scope constant holding a fixed scalar is SCREAMING_SNAKE_CASE** — `MAX_INVITE_ID_RETRIES`,
 `SEARCH_SIMILARITY_THRESHOLD`, `DUPLICATE_NAME_SUFFIX`, `CLOSED_SURVEY_ERROR_REASON`. The casing is what separates
 the value that is fixed for the life of the process from the local that happens to be `const`, and a camelCase one
 reads as the latter at every use site.
