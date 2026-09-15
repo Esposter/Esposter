@@ -18,6 +18,17 @@ const PLURAL_SUFFIX_REGEX = /e?s$/u;
 // A page in these folders describes what does not exist by design — a rejected direction, a deferred idea, a
 // Design not yet shipped — so every name in it is expected to resolve nowhere (the `docs` skill, "location carries status")
 const UNSHIPPED_PAGE_REGEX = /\/(?:rejected|deferred|proposals)\//u;
+// A page cites a call as `name(args)` and a destructure as `{ a, b }`; the names judged are the callee and
+// The bound identifiers, since the parens and braces belong to the sentence rather than to any name
+const CALL_REGEX = /^(?<callee>[^(]+)\(.*\)$/su;
+const DESTRUCTURE_REGEX = /^\{(?<names>.*)\}$/su;
+
+const getCitedNames = (token: string): string[] => {
+  const names = DESTRUCTURE_REGEX.exec(token)?.groups?.names;
+  if (names !== undefined) return names.split(",").map((name) => name.trim());
+
+  return [CALL_REGEX.exec(token)?.groups?.callee ?? token];
+};
 
 // A placeholder is a whole segment of the name rather than a run of letters inside one: `readFoos` is an example
 // And `readFooter` is a name, which a substring test cannot tell apart — so it suppressed every real `Bare`,
@@ -35,7 +46,7 @@ export const getStaleNames = (pages: CitingPage[], sourceNames: ReadonlySet<stri
   pages
     .filter(({ path }) => !UNSHIPPED_PAGE_REGEX.test(path))
     .flatMap(({ path, text }) =>
-      [...new Set(getBacktickedTokens(text))]
+      [...new Set(getBacktickedTokens(text).flatMap((token) => getCitedNames(token)))]
         .filter(
           (name) =>
             IDENTIFIER_REGEX.test(name) &&

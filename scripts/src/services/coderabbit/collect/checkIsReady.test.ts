@@ -1,8 +1,8 @@
-import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
+import { checkIsReady } from "#src/services/coderabbit/collect/checkIsReady";
 import { WINDOW_FILL_TARGET } from "#src/services/coderabbit/shared/constants";
 import { describe, expect, test } from "vitest";
 
-describe(getIsReady, () => {
+describe(checkIsReady, () => {
   test.each([
     [
       "fixes parked and a queue commit fits",
@@ -107,6 +107,6 @@ describe(getIsReady, () => {
   ])("%s", (_, input, expected) => {
     expect.hasAssertions();
 
-    expect(getIsReady(input)).toBe(expected);
+    expect(checkIsReady(input)).toBe(expected);
   });
 });

@@ -27,6 +27,21 @@ describe(getStaleNames, () => {
     expect(getStaleNames([{ path, text: `\`${name}\`` }], sourceNames)).toStrictEqual([{ name, path }]);
   });
 
+  test("reports the callee of a cited call", () => {
+    expect.hasAssertions();
+
+    expect(getStaleNames([{ path, text: "`aC(a)`" }], sourceNames)).toStrictEqual([{ name: "aC", path }]);
+  });
+
+  test("reports every bound name of a cited destructure", () => {
+    expect.hasAssertions();
+
+    expect(getStaleNames([{ path, text: "`{ aB, aC, aD }`" }], sourceNames)).toStrictEqual([
+      { name: "aC", path },
+      { name: "aD", path },
+    ]);
+  });
+
   test.each([
     ["a name the source holds", "`aB`"],
     ["a member access whose every segment the source holds", "`a.b`"],

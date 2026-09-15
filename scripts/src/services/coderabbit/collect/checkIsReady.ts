@@ -5,7 +5,7 @@ import { WINDOW_FILL_TARGET } from "#src/services/coderabbit/shared/constants";
 // The readiness two-by-two of the collection cycle page (docs: infra/review-collector/collection-cycle). The one
 // Non-obvious line: a held window cannot grow — the commit that stopped it overflows the cap or conflicts, and
 // Both only clear once this window lands — so it goes out at whatever size it reached.
-export const getIsReady = ({
+export const checkIsReady = ({
   fileCount,
   fixCount,
   isForced,
