@@ -28,7 +28,8 @@ const getNotificationSubject = (data: NotificationEventGridData): string => {
 
 // The single publish path. Every notification in this system — a chat message, a thread reply, a friend request, a
 // Reminder, a resource operation — leaves its publisher through here, which is what puts all of them behind the
-// One Function, the one dead-letter destination and the one replay ([dead-letter replay](/docs/infra/eventgrid-dead-letter)).
+// One Function, the one dead-letter destination and the one replay
+// ([dead-letter replay](/docs/infra/eventgrid-dead-letter)).
 //
 // The client is a parameter because the two callers authenticate differently: the app holds a topic key, the
 // Functions host uses its managed identity. Neither difference belongs in the publish itself.
