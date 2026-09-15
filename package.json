@@ -36,6 +36,7 @@
   },
   "type": "module",
   "scripts": {
+    "ai:citations:sync": "pnpm -C scripts run ai:citations:sync",
     "ai:coderabbit:collect": "pnpm -C scripts run ai:coderabbit:collect",
     "ai:coderabbit:feedback": "pnpm -C scripts run ai:coderabbit:feedback",
     "ai:sweep:constant-scope": "pnpm -C scripts run ai:sweep:constant-scope",
