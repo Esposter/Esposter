@@ -52,7 +52,7 @@
 | `vjsf`                    | —          |       |
 | `vue`                     | 2026-09-15 |       |
 | `vue-component-patterns`  | 2026-09-15 |       |
-| `vue-composable-patterns` | —          |       |
+| `vue-composable-patterns` | 2026-09-15 |       |
 | `vue-page-composition`    | 2026-09-15 |       |
 | `vue-phaserjs`            | —          |       |
 | `vuetify`                 | 2026-09-15 |       |

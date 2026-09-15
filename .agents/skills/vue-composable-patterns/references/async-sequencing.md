@@ -29,6 +29,8 @@ Latest-wins is **per target**, so an operation whose target moved on entirely (t
 
 ## `useSave` options and snapshot semantics
 
+Two silent offenders the dirty check kills: a `watch` on saveable state firing when the load assigns the just-loaded value (save-on-mount), and an interval that saves every tick even when nothing changed. A load goes through `setState` so the snapshot resets rather than the state ref being assigned directly.
+
 `useSave(state, options)` takes the state `Ref` plus an optional `toSave` mapper (when the persisted shape differs from the in-memory shape) and the `auth` / `unauth` sinks:
 
 ```ts

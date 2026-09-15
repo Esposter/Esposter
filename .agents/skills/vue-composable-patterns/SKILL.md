@@ -84,7 +84,7 @@ Scroll, connectivity and every other browser-only reading has one right shape he
 
 ## Least API Calls — Dirty-Check Saves
 
-Every API call must be necessary. **Never fire a persistence call — tRPC mutation or localStorage write — when the payload equals what was last persisted.** Two silent offenders this kills: a `watch` on saveable state firing when the load assigns the just-loaded value (save-on-mount), and an interval that saves every tick even when nothing changed. The check belongs to `useSave`, and a load goes through its `setState` so the snapshot resets rather than the state ref being assigned directly.
+Every API call must be necessary. **Never fire a persistence call — tRPC mutation or localStorage write — when the payload equals what was last persisted.** The check belongs to `useSave`, and a load goes through its `setState` so the snapshot resets; the two silent offenders (save-on-mount from a `watch`, an interval saving every tick) and the snapshot semantics are `references/async-sequencing.md`.
 
 ## Async Sequencing — One Primitive
 
