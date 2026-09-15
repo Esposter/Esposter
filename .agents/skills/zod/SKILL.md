@@ -1,6 +1,6 @@
 ---
 name: zod
-description: Esposter Zod schema conventions — z namespace imports and the export-type z.infer form, string normalization via transform+pipe and the constraints-on-the-final-pipe rule, createUniqueArraySchema for arrays, Zod 4 shorthand APIs (z.email/z.int/z.strictObject/z.enum) and the ZodError issue-push form, persisted-data latest-shape-only, tightest-possible numeric constraints, minimal strict input schemas, .default() rules, named ID field schemas, a field several models share as one named schema spread by .shape, refineAtLeastOne, record maps over switch, and Except+ToData for class-typed outputs, plus deep dives on validating untrusted boundary payloads, annotating exported schema consts under --isolatedDeclarations, create*Schema factories / discriminated unions / envelope schemas, and which positions check a mirrored field key (the computed keyof().enum form where nothing else does). Apply when writing Zod schemas. Schemas rendered by Vjsf have extra rules — see the `vjsf` skill.
+description: Esposter Zod schema conventions — z namespace imports and the export-type z.infer form, string normalization via transform+pipe and the constraints-on-the-final-pipe rule, createUniqueArraySchema for arrays, Zod 4 shorthand APIs (z.email/z.int/z.strictObject/z.enum) and the ZodError issue-push form, persisted-data latest-shape-only, tightest-possible numeric constraints, minimal strict input schemas, .default() rules, named ID field schemas, a field several models share as one named schema spread by .shape, refineAtLeastOne, record maps over switch, and Except+ToData for class-typed outputs, plus deep dives on the string-normalization helpers and the numeric constraint a field earns, validating untrusted boundary payloads, annotating exported schema consts under --isolatedDeclarations, create*Schema factories / discriminated unions / envelope schemas, and which positions check a mirrored field key (the computed keyof().enum form where nothing else does). Apply when writing Zod schemas. Schemas rendered by Vjsf have extra rules — see the `vjsf` skill.
 ---
 
 # Zod Conventions
@@ -10,6 +10,8 @@ description: Esposter Zod schema conventions — z namespace imports and the exp
 - `references/boundary-payloads.md` — when parsing runtime data that crosses a trust boundary: EventGrid data, a queue message, a webhook body, subprocess stdout, a committed config file.
 - `references/isolated-declarations.md` — when exporting a schema const from a `packages/*` library, or a consumer's `...someSchema.shape` spread breaks against the published package.
 - `references/generic-factories.md` — when a schema needs a type parameter, forms a discriminated union, wraps many payloads in one envelope, or shares a field with only some union members.
+- `references/string-normalization.md` — when a string is trimmed or lowercased before validation: the two shared helpers and the hand-written chain.
+- `references/numeric-constraints.md` — when adding a numeric field: which constraint its meaning earns.
 - `references/field-key-checks.md` — when an object key mirrors another schema's field and the choice is a literal key or the computed `[src.keyof().enum.field]`.
 
 ## Imports and Inferred Types
@@ -19,27 +21,9 @@ description: Esposter Zod schema conventions — z namespace imports and the exp
 - **When you do need infer, always `export type X = z.infer<typeof xSchema>`** — never `interface X extends z.infer<typeof xSchema> {}`. The extends form trips oxlint `import/namespace` (`"infer" not found in imported namespace`), because the `z` namespace can't be resolved in `extends` position.
 - **Declare the `type` directly beneath its schema and reference it by name** — the alias lives next to the `const xSchema = z.object({...})` it derives from, and use sites refer to `X`. Don't inline `z.infer<typeof xSchema>` at the use site.
 
-## String Normalization — Always `.transform().pipe()`
+## String Normalization — `references/string-normalization.md`
 
-When normalizing a string (trim, lowercase, etc.) before further validation, use `.transform(fn).pipe(refinedSchema)`. Never `.overwrite()` — inconsistent with the codebase.
-
-**Reach for a shared helper before writing the chain by hand**, and the choice between the two is only whether the field may be empty:
-
-| Helper                                    | From                  | Emits                               | Use for                                    |
-| ----------------------------------------- | --------------------- | ----------------------------------- | ------------------------------------------ |
-| `createNameSchema(maxLength)`             | `@esposter/db-schema` | `.min(1).max(maxLength)` after trim | a field that must carry something — a name |
-| `createNormalizedStringSchema(maxLength)` | `@esposter/shared`    | `.max(maxLength)` after trim        | optional prose — a topic, a reason, a note |
-
-Which is which is the whole decision, and it is why hand-rolled copies keep appearing: someone who cannot recall whether the helper forces `min(1)` writes the pipe out instead. If the field has an empty-string default or is `.optional()`, it is the second one.
-
-```typescript
-z.string().transform(normalizeString).pipe(z.string().min(1).max(MAX));
-z.string()
-  .transform((v) => normalizeString(v).toLowerCase())
-  .pipe(z.string().min(1).max(MAX));
-```
-
-**Consolidate all string constraints (`min`, `max`, `regex`, …) on the single final `.pipe()` output** — never nest pipes when JSON schema output matters. `z.toJSONSchema` / `zodToJsonSchema` run with `io = "output"`: for any `ZodPipe(A, B)` they use `B` and **silently drop constraints on `A`**, so `createNormalizedStringSchema(maxLength, base).pipe(z.string().min(1))` emits `{ minLength: 1 }` with the `maxLength` missing. A helper that nests pipe layers silently drops the constraints declared on the inner ones.
+`.transform(fn).pipe(refinedSchema)`, never `.refine()` for normalisation, with every string constraint on the single final `.pipe()` output. Reach for `createNameSchema(maxLength)` (`@esposter/db-schema`, required) or `createNormalizedStringSchema(maxLength)` (`@esposter/shared`, optional prose) before writing the chain by hand — which is which is that page.
 
 ## Arrays — Always `createUniqueArraySchema`
 
@@ -68,20 +52,9 @@ Runtime data crossing any trust boundary (EventGrid `event.data`, queue messages
 
 Schemas for persisted client-authoritative data (save blobs, localStorage state) and Azure Table entities model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no migration code, no read-side inference of a field a pre-change row lacks. Data that fails to parse resets to a fresh default; the reset is the migration, and the old shape is deleted in the same commit. Standard: `apps/web/content/docs/architecture/persisted-data-latest-shape-only.md`.
 
-## Tightest Possible Constraints
+## Tightest Possible Constraints — `references/numeric-constraints.md`
 
-Every field carries the tightest constraint its domain allows — a bare `z.number()` / `z.string()` is only correct when the value is genuinely unbounded. Audit each numeric field against what it models, in the app and in `packages/*` libraries alike:
-
-- Count / quantity / index / byte size (whole, ≥ 0) → `z.int().nonnegative()`; a count that can't be zero (frequency, sample count) → `z.int().positive()`.
-- Price / rate / duration / timestamp (fractional, ≥ 0) → `z.number().nonnegative()`; one that can't be zero (price, multiplier) → `z.number().positive()`.
-- Percentage → `z.number().min(0).max(100)`.
-- Genuinely signed value (deltas, statistical `average`/`minimum`/`maximum`/`summation`, coordinates) → leave `z.number()` bare.
-
-Rules:
-
-- **Integers use `z.int()`**, never `z.number().int()` (Zod 4) and never plain `z.number()` when the value is whole by definition (counts, indices, byte sizes).
-- **≥ 0 is `.nonnegative()`, > 0 is `.positive()`** — never `.min(0)` / `.min(1)` for these; reserve `.min(N)` for a domain-specific lower bound (usually paired with an upper).
-- **Check the seed/fixture data** before choosing — if every real value is strictly positive (prices, effect multipliers), use `.positive()`, not the weaker `.nonnegative()`.
+Every field carries the tightest constraint its domain allows — a bare `z.number()` / `z.string()` is only correct where any value is valid. Integers are `z.int()`, ≥ 0 is `.nonnegative()`, > 0 is `.positive()`, and the seed data says which; the mapping from a field's meaning to its constraint is that page.
 
 ## Schema Rules
 

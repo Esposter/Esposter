@@ -56,4 +56,4 @@
 | `vue-page-composition`    | —          |       |
 | `vue-phaserjs`            | —          |       |
 | `vuetify`                 | 2026-09-15 |       |
-| `zod`                     | —          |       |
+| `zod`                     | 2026-09-15 |       |
