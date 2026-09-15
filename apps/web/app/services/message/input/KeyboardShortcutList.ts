@@ -14,6 +14,7 @@ export const KeyboardShortcutList = [
   {
     category: "Editing",
     items: [
+      { description: "Edit your last message", keys: ["↑"] },
       { description: "Save edit", keys: ["Enter"] },
       { description: "Cancel edit", keys: ["Escape"] },
     ],
