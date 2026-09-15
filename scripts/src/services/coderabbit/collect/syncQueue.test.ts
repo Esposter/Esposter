@@ -15,7 +15,7 @@ import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { runDrain, runGh } = vi.hoisted(() => ({
   runDrain: vi.fn<typeof baseRunDrain>(),
@@ -31,7 +31,7 @@ vi.mock(import("#src/services/coderabbit/collect/runDrain"), () => ({
 vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
-  const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
+  const { commitFile, getCwd, installPreReceiveHook, publish, readSha, switchTo } = setupFixtureRepository();
   const viewerLogin = "viewerLogin";
   const baseInput = { isDryRun: false, viewerLogin };
   // The attempts are read off the conflicting commit's own comments, one `gh` page of none unless a test says otherwise
@@ -74,6 +74,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, owedSha, queueSha } = setupDriftedPort();
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
 
+    assert.exists(syncedSha);
     expect(syncedSha).not.toBe(queueSha);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath]);
@@ -91,8 +92,24 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, ""));
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha, reviewFixesSha });
 
+    assert.exists(syncedSha);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath, filePath]);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+  });
+
+  // The session pushed between the read and the rewrite's push: the lease refuses, and the run that push fires
+  // Replays onto what the queue now carries
+  test("reports a queue that moved during the run and leaves the rewrite unpushed", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, ""));
+    switchTo(`${developSha}~1`);
+    const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, ""));
+    const movedSha = publish(TEST_FILENAME, commitFile(`${nestedPath}.ts`, ""));
+    installPreReceiveHook(`env -u GIT_QUARANTINE_PATH git update-ref refs/heads/${QUEUE_BRANCH} ${movedSha}`);
+
+    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBeUndefined();
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(movedSha);
   });
 
   // The queue's commit and develop's fix rewrote the same line; nothing mechanical decides that
@@ -137,6 +154,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
 
+    assert.exists(syncedSha);
     expect(runDrain).toHaveBeenCalledTimes(1);
     expect(runDrain.mock.calls[0]?.[0]).toContain(`stopped on ${queueSha} at these paths:\n\n- ${filePath}`);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath]);

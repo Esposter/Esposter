@@ -133,6 +133,7 @@ export const runCycle = async ({
   // The queue is rebuilt on the tree the window is built on before the port reads it, so a conflict is met here
   // Once rather than held on every run
   const syncedQueueSha = await syncQueue({ cwd, developSha, isDryRun, queueSha, reviewFixesSha, viewerLogin });
+  if (syncedQueueSha === undefined) return getMovedOutcome(QUEUE_BRANCH);
   const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha: syncedQueueSha, reviewFixesSha });
   // With no pull request open, what `develop` already carries above the merge base is the first review's window
   const pendingCommitCount =
