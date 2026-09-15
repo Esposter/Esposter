@@ -32,9 +32,9 @@ import { escapeValue } from "#src/services/transformer/escapeValue";
 
 **`apps/web` is the one tree that keeps `@/`.** Its `@/` and `~/` are Nuxt's own aliases, generated into `.nuxt/tsconfig.*.json`, not a `paths` entry anyone here wrote. Nothing bundles the app from source, publishes it, or resolves into it — it is the leaf — so none of the reasons above apply to it, and converting it would mean fighting generated configuration for a property it cannot use. Anywhere else — a package, `scripts/`, `.agents/` — a `@/` specifier is a bug, and oxlint says so.
 
-The repo-root `scripts/` tree converted too, to the `#src/*` it declares as a member of its own — so **no `paths` entry anyone here wrote survives**, and `resolve.tsconfigPaths` came out of `getVitestConfiguration` with it. The only `paths` left in the repo are the ones Nuxt generates for the app.
+The repo-root `scripts/` tree is a member of its own and declares `#src/*` like any package — so **no `paths` entry anyone here wrote exists**, and `getVitestConfiguration` sets no `resolve.tsconfigPaths`. The only `paths` in the repo are the ones Nuxt generates for the app.
 
-`tsconfig.base.json` carries **no `paths` block at all**, deliberately. The one it used to carry also held a `"*": ["${configDir}/src/*"]` fallback, which shadowed real package names — a mistyped dependency resolved to a same-named local file instead of failing. Don't add either back.
+`tsconfig.base.json` carries **no `paths` block at all**, deliberately: a `"*": ["${configDir}/src/*"]` fallback shadows real package names, so a mistyped dependency resolves to a same-named local file instead of failing. Don't add one.
 
 ## What it buys: source exports
 

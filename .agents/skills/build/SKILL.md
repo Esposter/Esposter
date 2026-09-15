@@ -1,6 +1,6 @@
 ---
 name: build
-description: Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin. Esposter tsdown build conventions — a Settled list (the source split onto the app's bundlers, devExports true, a repo-namespaced condition, an onlyBundle allowlist, skipping barrel generation, cheapening ctix, vendoring CJS as policy, bundling to spare an install, compilerOptions back in the base tsconfigs), the shared configuration factories composed with mergeConfig, dependencies externalized and devDependencies bundled, subpath-aware patterns, inlinedDependencies, sideEffects, externals gated by onlyImport with publint and attw, and the dist size snapshot as the correctness signal — plus deep dives on sideEffects, the build gates, barrel generation, the three opt-outs, the #src/ self-alias and source condition, ambient declarations, and the tsconfig presets.
+description: Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin. Esposter tsdown build conventions — configuration factories composed with mergeConfig, dependencies externalized and devDependencies bundled, getPackagePatterns for every deps entry, sideEffects declared, externals gated by onlyImport with publint and attw, the #src/ self-alias and source condition, and the dist size snapshot as the correctness signal.
 ---
 
 # Build Conventions (tsdown)
