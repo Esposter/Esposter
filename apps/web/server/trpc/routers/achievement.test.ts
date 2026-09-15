@@ -4,6 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
+import { EMOJI_LOVER_EMOJI_COUNT, HIDDEN_ACHIEVEMENT_DESCRIPTION } from "#shared/services/achievement/constants";
 import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
@@ -55,17 +56,14 @@ describe("achievementRouter", () => {
 
     const achievementMap = await caller.achievement.readAchievementMap();
 
-    expect(achievementMap[SpecialAchievementName.EmojiLover].description).toBe("???");
+    expect(achievementMap[SpecialAchievementName.EmojiLover].description).toBe(HIDDEN_ACHIEVEMENT_DESCRIPTION);
   });
 
   test("readAchievementMap reveals a hidden achievement description once it is unlocked", async () => {
     expect.hasAssertions();
 
     const room = await caller.room.createRoom({ name });
-    await caller.message.createMessage({
-      message: "😀😀😀😀😀😀😀😀😀😀",
-      roomId: room.id,
-    });
+    await caller.message.createMessage({ message: "😀".repeat(EMOJI_LOVER_EMOJI_COUNT), roomId: room.id });
     const achievementMap = await caller.achievement.readAchievementMap();
 
     expect(achievementMap[SpecialAchievementName.EmojiLover].description).toBe(
@@ -97,8 +95,7 @@ describe("achievementRouter", () => {
     const otherAchievements = await caller.achievement.readUserAchievements(ownerId);
 
     expect(otherAchievements).not.toStrictEqual([]);
-    expect(otherAchievements.every(({ unlockedAt }) => unlockedAt)).toBe(true);
-    expect(otherAchievements.length).toBeLessThan(ownAchievements.length);
+    expect(otherAchievements).toStrictEqual(ownAchievements.filter(({ unlockedAt }) => unlockedAt));
   });
 
   test("readPointsLeaderboard ranks the authed user first once they have earned a point", async () => {

@@ -1,6 +1,7 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
+import { EMOJI_LOVER_EMOJI_COUNT } from "#shared/services/achievement/constants";
 import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { countEmojis } from "#shared/util/text/countEmojis";
@@ -36,12 +37,12 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   [SpecialAchievementName.EmojiLover]: defineAchievementDefinition({
     amount: 1,
     condition: {
-      operation: (value) => (value ? countEmojis(value) >= 10 : false),
+      operation: (value) => (value ? countEmojis(value) >= EMOJI_LOVER_EMOJI_COUNT : false),
       operator: AchievementOperator.Operation,
       path: "message",
       type: AchievementConditionType.Property,
     },
-    description: "Send a message with 10+ emojis",
+    description: `Send a message with ${EMOJI_LOVER_EMOJI_COUNT}+ emojis`,
     icon: "mdi-emoticon-excited",
     isHidden: true,
     points: 15,
