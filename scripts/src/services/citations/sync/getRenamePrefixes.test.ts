@@ -25,6 +25,16 @@ describe(getRenamePrefixes, () => {
     ]);
   });
 
+  // Unrelated renames strip to the same prefix, which then names no one destination a citation of it could take
+  test("keeps the file paths of a prefix two renames send to different places", () => {
+    expect.hasAssertions();
+
+    expect(getRenamePrefixes("R100\ta/b/c.ts\tx/b/c.ts\nR100\ta/d/e.ts\ty/d/e.ts\n")).toStrictEqual([
+      { from: "a/b/c.ts", to: "x/b/c.ts" },
+      { from: "a/d/e.ts", to: "y/d/e.ts" },
+    ]);
+  });
+
   test("ignores every status but a rename", () => {
     expect.hasAssertions();
 
