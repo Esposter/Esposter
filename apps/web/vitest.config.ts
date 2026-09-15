@@ -34,7 +34,7 @@ const vitestConfig = await defineVitestProject({
     testTimeout: Temporal.Duration.from({ seconds: 30 }).total("milliseconds"),
     // `defineVitestProject` builds its own config rather than taking `getVitestConfiguration`, so the bench
     // Wiring comes from the shared helper the other packages get through that config. Last, because it raises
-    // The two timeouts above for a bench run — a benchmark is a test now, and 30s is a fraction of one — and
+    // The two timeouts above for a bench run — a benchmark is a test to Vitest, and 30s is a fraction of one — and
     // Spreads nothing outside one.
     ...getBenchmarkTestConfiguration(),
   },
