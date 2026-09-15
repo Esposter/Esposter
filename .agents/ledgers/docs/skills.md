@@ -15,7 +15,7 @@
 | `error-handling`          | 2026-09-15 |       |
 | `esbabbler`               | 2026-09-15 |       |
 | `esbabbler-call`          | 2026-09-15 |       |
-| `fallacies`               | —          |       |
+| `fallacies`               | 2026-09-15 |       |
 | `file-organization`       | 2026-09-15 |       |
 | `formatting`              | 2026-09-15 |       |
 | `git`                     | 2026-09-15 |       |
@@ -24,7 +24,7 @@
 | `invariants`              | 2026-09-15 |       |
 | `model-delegation`        | 2026-09-15 |       |
 | `naming`                  | 2026-09-15 |       |
-| `over-engineering`        | —          |       |
+| `over-engineering`        | 2026-09-15 |       |
 | `oxlint`                  | 2026-09-15 |       |
 | `package-scripts`         | 2026-09-15 |       |
 | `pagination`              | 2026-09-15 |       |
@@ -38,7 +38,7 @@
 | `running-checks`          | 2026-09-15 |       |
 | `runtime-efficiency`      | 2026-09-15 |       |
 | `score`                   | 2026-09-15 |       |
-| `skill-authoring`         | —          |       |
+| `skill-authoring`         | 2026-09-15 |       |
 | `slash-commands`          | 2026-09-15 |       |
 | `string-utils`            | 2026-09-15 |       |
 | `styling`                 | 2026-09-15 |       |
