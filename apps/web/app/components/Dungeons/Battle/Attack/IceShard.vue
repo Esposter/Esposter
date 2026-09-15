@@ -10,7 +10,7 @@ const isActive = defineModel<boolean>("isActive", { required: true });
 const { isToEnemy } = defineProps<AttackProps>();
 const emit = defineEmits<{ complete: [] }>();
 const playAnimationKey = usePlayAnimation(AttackKey["Ice Shard Start"], isActive, emit);
-const onCompleteKey = getAnimationCompleteEventKey(AttackKey["Ice Shard Start"]);
+const animationCompleteEventKey = getAnimationCompleteEventKey(AttackKey["Ice Shard Start"]);
 </script>
 
 <template>
@@ -28,6 +28,6 @@ const onCompleteKey = getAnimationCompleteEventKey(AttackKey["Ice Shard Start"])
       ]
     "
     :play-animation-key
-    @[onCompleteKey]="playAnimationKey = AttackKey['Ice Shard']"
+    @[animationCompleteEventKey]="playAnimationKey = AttackKey['Ice Shard']"
   />
 </template>
