@@ -11,7 +11,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 // No way to reach it from the navigation, which is invisible in review because the page itself renders fine
 describe("docsSectionGroupsMap", () => {
   // Pages every section owns that the sidebar map never lists — they trail in an automatic Planning group.
-  const UNMAPPED_PAGES = new Set<string>(["index", DocsNavigationSlug.Roadmap]);
+  const UNMAPPED_PAGES = new Set<string>([DocsNavigationSlug.Roadmap, "index"]);
   const PLANNING_DIRECTORIES = new Set<string>([DocsNavigationSlug.Deferred, DocsNavigationSlug.Rejected]);
   const docsDirectory = join(import.meta.dirname, "..", "..", "..", "content", DOCS_DIRECTORY);
   const checkIsPage = (slugPath: string) =>

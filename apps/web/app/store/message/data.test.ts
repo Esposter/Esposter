@@ -2,13 +2,13 @@
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { Router } from "vue-router";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { useSession } from "@/services/auth/authClient.test";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { MimeType } from "#shared/models/file/MimeType";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
@@ -448,7 +448,11 @@ describe(useDataStore, () => {
     const { items } = storeToRefs(dataStore);
     const { deleteFile, getSlice } = dataStore;
     const newMessage = createMessageEntity({
-      files: [acceptedFileId, rejectedFileId, keptFileId].map((id) => ({ ...baseFile, id })),
+      files: [
+        { ...baseFile, id: acceptedFileId },
+        { ...baseFile, id: rejectedFileId },
+        { ...baseFile, id: keptFileId },
+      ],
       message,
       roomId,
       type: MessageType.Message,
