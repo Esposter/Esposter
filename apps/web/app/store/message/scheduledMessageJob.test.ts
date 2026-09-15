@@ -13,7 +13,7 @@ describe(useScheduledMessageJobStore, () => {
   const id = crypto.randomUUID();
   const otherId = crypto.randomUUID();
   const userId = crypto.randomUUID();
-  const room = createRoom("");
+  const room = createRoom("name");
   const createJob = (jobId: string) => createScheduledMessageJob({ id: jobId, room, userId });
 
   beforeEach(() => {
