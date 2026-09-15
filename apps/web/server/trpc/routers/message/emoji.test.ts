@@ -92,13 +92,13 @@ describe("emojiRouter", () => {
     );
   });
 
-  test("onCreateEmoji emits the created emoji", async () => {
+  test("subscription emits the created emoji", async () => {
     expect.hasAssertions();
 
-    const onCreateEmoji = await emojiCaller.onCreateEmoji({ roomId });
+    const subscription = await emojiCaller.onCreateEmoji({ roomId });
     const newMessage = await messageCaller.createMessage({ message, roomId });
     const data = await getFirstEmit(
-      () => onCreateEmoji,
+      () => subscription,
       () => emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: roomId }),
     );
 

@@ -151,9 +151,9 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    const onLeaveRoom = await roomCaller.onLeaveRoom([roomId]);
+    const subscription = await roomCaller.onLeaveRoom([roomId]);
     const leaveRoom = await getFirstEmit(
-      () => onLeaveRoom,
+      () => subscription,
       () =>
         moderationCaller.executeAdminAction({
           roomId,
@@ -467,15 +467,15 @@ describe("moderationRouter", () => {
     expect(count).toBe(noteCount);
   });
 
-  test("onAdminAction emits the action to the targeted user", async () => {
+  test("subscription emits the action to the targeted user", async () => {
     expect.hasAssertions();
 
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
-    const onAdminAction = await moderationCaller.onAdminAction({ roomId });
+    const subscription = await moderationCaller.onAdminAction({ roomId });
 
     const data = await getFirstEmit(
-      () => onAdminAction,
+      () => subscription,
       () =>
         moderationCaller.executeAdminAction({
           roomId,

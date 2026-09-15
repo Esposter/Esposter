@@ -219,9 +219,9 @@ describe("roomRouter", () => {
     const publicUrl = `${publicUserAssetsUrlPrefix}${blobName}`;
     MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
-    const onUpdateRoom = await roomCaller.onUpdateRoom([newRoom.id]);
+    const subscription = await roomCaller.onUpdateRoom([newRoom.id]);
     const data = await getFirstEmit(
-      () => onUpdateRoom,
+      () => subscription,
       () => roomCaller.updateRoom({ id: newRoom.id, image: "" }),
     );
     const blobDeletionEvents = MockEventGridDatabase.get("");
@@ -372,9 +372,9 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const onUpdateRoom = await roomCaller.onUpdateRoom([newRoom.id]);
+    const subscription = await roomCaller.onUpdateRoom([newRoom.id]);
     const data = await getFirstEmit(
-      () => onUpdateRoom,
+      () => subscription,
       () => roomCaller.updateRoom({ id: newRoom.id, name: updatedName }),
     );
 
@@ -466,9 +466,9 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const onDeleteRoom = await roomCaller.onDeleteRoom([newRoom.id]);
+    const subscription = await roomCaller.onDeleteRoom([newRoom.id]);
     const data = await getFirstEmit(
-      () => onDeleteRoom,
+      () => subscription,
       () => roomCaller.deleteRoom(newRoom.id),
     );
 
@@ -783,10 +783,10 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
-    const onJoinRoom = await roomCaller.onJoinRoom([newRoom.id]);
+    const subscription = await roomCaller.onJoinRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db);
     const data = await getFirstEmit(
-      () => onJoinRoom,
+      () => subscription,
       () => roomCaller.joinRoom(newInvite.id),
     );
 
@@ -824,10 +824,10 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
     vi.advanceTimersByTime(1);
-    const onLeaveRoom = await roomCaller.onLeaveRoom([newRoom.id]);
+    const subscription = await roomCaller.onLeaveRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db, member);
     const data = await getFirstEmit(
-      () => onLeaveRoom,
+      () => subscription,
       () => roomCaller.leaveRoom(newRoom.id),
     );
 

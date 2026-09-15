@@ -292,12 +292,12 @@ describe("roleRouter", () => {
     expect(memberPermissions.permissions & RoomPermission.ManageRoles).toBe(RoomPermission.ManageRoles);
   });
 
-  test("onCreateRole emits the created role", async () => {
+  test("subscription emits the created role", async () => {
     expect.hasAssertions();
 
-    const onCreateRole = await roleCaller.onCreateRole({ roomId });
+    const subscription = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
-      () => onCreateRole,
+      () => subscription,
       () => roleCaller.createRole({ name, roomId }),
     );
 

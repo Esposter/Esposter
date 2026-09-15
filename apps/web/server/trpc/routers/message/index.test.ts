@@ -515,11 +515,11 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    const onCreateMessage = await messageCaller.onCreateMessage({ roomId });
+    const subscription = await messageCaller.onCreateMessage({ roomId });
     const message = createMentionMessage(member.id);
     await mockSessionOnce(mockContext.db, member);
     const trackedData = await getFirstEmit(
-      () => onCreateMessage,
+      () => subscription,
       () => messageCaller.createMessage({ message, roomId }),
     );
 
@@ -539,12 +539,12 @@ describe("messageRouter", () => {
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     const thirdMessage = await messageCaller.createMessage({ message, roomId });
-    const onCreateMessage = await messageCaller.onCreateMessage({
+    const subscription = await messageCaller.onCreateMessage({
       lastEventId: firstMessage.rowKey,
       roomId,
     });
     const trackedData = await withAsyncIterator(
-      () => onCreateMessage,
+      () => subscription,
       (iterator) => iterator.next(),
     );
 
@@ -570,7 +570,7 @@ describe("messageRouter", () => {
       message: createOwnMentionMessage(),
       roomId,
     });
-    const onCreateMessage = await messageCaller.onCreateMessage({
+    const subscription = await messageCaller.onCreateMessage({
       lastEventId: ownerMessage.rowKey,
       roomId,
     });
@@ -582,7 +582,7 @@ describe("messageRouter", () => {
     });
     await mockSessionOnce(mockContext.db, member);
     const trackedData = await withAsyncIterator(
-      () => onCreateMessage,
+      () => subscription,
       async (iterator) => {
         const emit = iterator.next();
         await messageCaller.createMessage({ message: createMentionMessage(member.id), roomId });
@@ -601,10 +601,10 @@ describe("messageRouter", () => {
   test("on creates typing", async () => {
     expect.hasAssertions();
 
-    const onCreateTyping = await messageCaller.onCreateTyping({ roomId });
+    const subscription = await messageCaller.onCreateTyping({ roomId });
     const mockSession = getMockSession();
     const data = await getFirstEmit(
-      () => onCreateTyping,
+      () => subscription,
       () =>
         messageCaller.createTyping({
           roomId,
@@ -661,9 +661,9 @@ describe("messageRouter", () => {
 
     const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    const onUpdateMessage = await messageCaller.onUpdateMessage({ roomId });
+    const subscription = await messageCaller.onUpdateMessage({ roomId });
     const data = await getFirstEmit(
-      () => onUpdateMessage,
+      () => subscription,
       () =>
         messageCaller.updateMessage({
           message: updatedMessage,
@@ -691,9 +691,9 @@ describe("messageRouter", () => {
 
     const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId });
+    const subscription = await messageCaller.onDeleteMessage({ roomId });
     const data = await getFirstEmit(
-      () => onDeleteMessage,
+      () => subscription,
       () => messageCaller.deleteMessage(getCompositeKey(newMessage)),
     );
 
@@ -1090,9 +1090,9 @@ describe("messageRouter", () => {
       roomId,
     });
     setMessageAssetBlob(id);
-    const onCreateMessage = await messageCaller.onCreateMessage({ roomId });
+    const subscription = await messageCaller.onCreateMessage({ roomId });
     const trackedData = await getFirstEmit(
-      () => onCreateMessage,
+      () => subscription,
       () =>
         messageCaller.forwardMessage({
           ...getCompositeKey(newMessage),
