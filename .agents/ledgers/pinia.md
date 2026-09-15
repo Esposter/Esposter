@@ -17,8 +17,12 @@ Store shape and the rules around a mutation: `storeToRefs`, store-to-store dot-a
 - Cursor-pagination mechanics — the `pagination` skill's question, over the same files. It has no ledger yet; until it does, a paging finding is raised rather than swept here.
 - `provide`/`inject` sites that should be stores are a `vue-components` finding, not one here; this ledger reads stores that already exist.
 
-## Next enforceable
+## Not enforceable — settled
 
-- Destructuring a ref off a store without `storeToRefs` is syntactic and already half-covered by the component dot-access ban — extend that plugin rather than sweeping for it.
-- A `useMutation` call with no `key` is decidable from the call site.
-- Optimistic rollback correctness needs the whole write path in mind; it stays with the sweep.
+A component reading a store by dot is `restrictedStoreSyntaxes.js`; a `useMutation` call with no `key` is a type
+error, since `key` is required on its options. What is left stays a reading pass:
+
+- Destructuring a ref off a store without `storeToRefs` — `const { rooms } = roomStore` and
+  `const { createRoom } = roomStore` are the same syntax, and which one loses reactivity is a question about the
+  store's type rather than the shape on the page (`restrictedStoreSyntaxes.js` says the same).
+- Optimistic rollback correctness needs the whole write path in mind.
