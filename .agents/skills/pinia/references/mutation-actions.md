@@ -25,7 +25,7 @@ No promise chained onto the previous one, no `Map<id, Promise>` of in-flight rea
 
 ## Shape
 
-```typescript
+```ts
 // subscription owns the state change — no store action; the caller awaits the mutation at the user
 // action. Never a floating statement: errorLink alerts the rejection but still propagates it, so an
 // un-awaited call leaves an unhandled rejection behind the toast
@@ -54,7 +54,7 @@ const deleteFoo = async (input: DeleteFooInput) => {
 
 A create whose result can't be predicted client-side applies in `onSuccess` instead, and that is also where store-owned selection is updated:
 
-```typescript
+```ts
 const createFoo = async (input: CreateFooInput) => {
   await executeCreateFooMutation(() => $trpc.foo.createFoo.mutate(input), {
     // no natural key yet — the id only exists once the server answers, and creates must not queue
