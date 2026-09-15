@@ -1,4 +1,4 @@
-import { checkIsSameDay } from "#src/util/date/checkIsSameDay";
+import { checkIsSameDay } from "@/util/date/checkIsSameDay";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSameDay, () => {

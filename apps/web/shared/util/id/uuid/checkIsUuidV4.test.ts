@@ -1,4 +1,4 @@
-import { checkIsUuidV4 } from "#src/util/id/uuid/checkIsUuidV4";
+import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsUuidV4, () => {

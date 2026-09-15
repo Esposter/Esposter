@@ -1,5 +1,4 @@
-import { getResultAsync } from "#src/services/error/getResultAsync";
-import { sleep } from "#src/util/time/sleep";
+import { getResultAsync, sleep } from "@esposter/shared";
 
 export const createExponentialBackoff = (
   baseDelayMs: number,

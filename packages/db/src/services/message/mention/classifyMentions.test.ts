@@ -1,12 +1,12 @@
-import { MentionType } from "#src/models/message/MentionType";
-import { classifyMentions } from "#src/services/message/classifyMentions";
+import { createMention } from "#src/services/message/createMention.test";
+import { classifyMentions } from "#src/services/message/mention/classifyMentions";
 import {
   MENTION_EVERYONE_ID,
   MENTION_HERE_ID,
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
-} from "#src/services/message/constants";
-import { createMention } from "#src/services/message/createMention.test";
+  MentionType,
+} from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(classifyMentions, () => {

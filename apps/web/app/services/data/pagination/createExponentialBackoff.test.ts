@@ -1,4 +1,4 @@
-import { createExponentialBackoff } from "#src/services/error/createExponentialBackoff";
+import { createExponentialBackoff } from "@/services/data/pagination/createExponentialBackoff";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(createExponentialBackoff, () => {

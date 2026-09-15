@@ -1,13 +1,13 @@
 import type { ClassifiedMentions } from "#src/models/message/ClassifiedMentions";
 
-import { MentionType } from "#src/models/message/MentionType";
+import { getMentions } from "#src/services/message/mention/getMentions";
 import {
   MENTION_EVERYONE_ID,
   MENTION_HERE_ID,
   MENTION_ID_ATTRIBUTE,
   MENTION_ITEM_TYPE_ATTRIBUTE,
-} from "#src/services/message/constants";
-import { getMentions } from "#src/services/message/getMentions";
+  MentionType,
+} from "@esposter/shared";
 
 const BROADCAST_MENTION_IDS = new Set([MENTION_EVERYONE_ID, MENTION_HERE_ID]);
 
