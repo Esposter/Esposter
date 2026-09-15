@@ -1,5 +1,8 @@
 # Absent Values — the `""` Sentinel, `null` vs `undefined`
 
+Read when a value can be empty or absent — a string ref, an optional field, a cursor, a nullable boundary
+type — or when a character that renders as nothing is about to be written into a literal.
+
 ## `string` — always `""` as the empty sentinel
 
 Prefer `string` with `""` as the absent/empty sentinel. Do not use `string | undefined` for any app-owned string value.
@@ -63,3 +66,16 @@ answering `undefined`:
 ```
 
 When checking `null` at a boundary, use `=== null` (strict equality).
+
+## A character that renders as nothing
+
+**A non-printing character is written as its `\uXXXX` escape, never the raw byte** — `RECORD_SEPARATOR = "\u001E"`,
+never the character itself pasted between the quotes. Settled: the raw byte is the direction this repo wrote first
+and has flip-flopped on since, and it loses.
+
+Both compile to the same string and `oxfmt` keeps either, so it is decided everywhere that is not the compiler — a
+raw escape renders as nothing in a diff, a terminal or an editor, so no reader can tell the pasted byte from an
+empty string, from its neighbour one code point along, or from having been dropped by a tool that rewrote the line.
+
+Where the same value has a second spelling in another realm (git's `%x1E` inside a `--format` string), both live in
+one `constants.ts` block, because a drift between them reads as a parse that simply returns nothing.
