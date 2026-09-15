@@ -9,11 +9,11 @@ import { checkIsMechanicalCommit } from "#src/services/coderabbit/exclusions/che
 import { checkIsMechanicalRange } from "#src/services/coderabbit/exclusions/checkIsMechanicalRange";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 
-// The express lane: a commit that is all files and no findings — a sweep's moves and the imports that follow
-// Them — goes straight to `main`, out of queue order, and the return stroke carries it to `develop`. A commit
-// Whose parent is not on `main` yet cannot apply, which is how dependency is enforced. The lane is closed unless
-// `develop` and `main` agree: a rename landing on one side of the merge an unreviewed window still owes is how
-// A file arrives twice.
+// The express lane: a commit that is all files and no findings — a sweep's moves and the imports that follow them —
+// Goes straight to `main`, out of queue order, and the return stroke carries it to `develop`. A commit whose patch
+// Needs an unported one cannot apply, which is how dependency is enforced — never an ancestry check. The lane is closed
+// Unless `develop` and `main` agree: a rename landing on one side of the merge an unreviewed window still owes is how a
+// File arrives twice.
 export const portExpress = ({ cwd, developSha, mainSha, queueSha }: ExpressInput): ExpressResult => {
   if (developSha !== mainSha) return { shas: [] };
 

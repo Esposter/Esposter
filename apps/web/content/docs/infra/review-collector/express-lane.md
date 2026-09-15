@@ -32,7 +32,7 @@ flowchart TD
 
 ## What the lane does not do
 
-- **It does not preserve queue order.** A mechanical commit stuck behind unported work is the one worth taking early; a commit whose parent is not on `main` yet cannot apply, so the cherry-pick refuses it and the lane moves on. Dependency is enforced by whether the patch lands, not by a rule.
+- **It does not preserve queue order.** A mechanical commit stuck behind unported work is the one worth taking early; a commit whose patch needs an unported one cannot apply, so the cherry-pick refuses it and the lane moves on. Dependency is enforced by whether the patch lands, not by an ancestry check the cherry-pick never makes.
 - **It does not run while a window is in flight.** The lane is closed unless `develop` and `main` agree: a rename landing on one side of the merge an unreviewed window still owes is how a file arrives twice. A mechanical commit is never the urgent one, so waiting costs it nothing.
 - **It is the one lane verified before the push.** `main` is production, and CI is the only gate these commits get, so the cut earns every check CI would fail it on — format, the package build, typecheck, both linters **and the tests**, since a relocation is exactly what a path-coupled test fails on. The app build alone is left to `main`'s own CI: it is the longest job there, and nothing a cut ships waits on it. A red cut takes the review lane, where a person reads why.
 - **It does not trust the proof it selected with.** What ships is each patch replayed onto `main` and stacked with siblings taken out of order, so the proof is asked again of the cut's cumulative diff. A cut that fails takes the review lane whole.
