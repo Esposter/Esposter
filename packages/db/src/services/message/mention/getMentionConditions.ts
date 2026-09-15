@@ -1,6 +1,6 @@
+import type { ClassifiedMentions } from "#src/models/message/ClassifiedMentions";
 import type { MentionConditionBuilder } from "#src/models/message/mention/MentionConditionBuilder";
 import type { Database } from "@esposter/db-schema";
-import type { ClassifiedMentions } from "@esposter/shared";
 import type { SQL } from "drizzle-orm";
 
 // Shared core for resolving classified mentions into SQL conditions — the notification and badge

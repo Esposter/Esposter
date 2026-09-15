@@ -31,7 +31,7 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 
 Before writing a helper, grep for an existing one; before finishing a feature, grep for near-twin functions you may have created and collapse them. When ≥2 functions — or ≥2 call sites, the same condition written inline at each — share a shape and differ only in a predicate/parameter, extract **one functional primitive** (`sweepStaleEntries(directory, isStale)`) and make each caller a thin, intention-revealing wrapper that keeps the domain name and passes the constants.
 
-- **Syntax is never extracted, and an extraction, a flag or a field earns its existence only when a call site stops being able to get something wrong** — the `over-engineering` skill owns both rules, the drift test that tells a rule from a construct, and the catalogue of shapes an extraction fails as; its decidable half is enforced by `pass-through-helper/no-forwarding-wrapper`.
+- **Syntax is never extracted, and an extraction, a flag or a field earns its place only by taking a mistake away from its call sites** — the `over-engineering` skill owns both rules, the drift test that tells a rule from a construct, and the catalogue of shapes an extraction fails as; its decidable half is enforced by `pass-through-helper/no-forwarding-wrapper`.
 - The shapes an extraction takes — the `create*` factory over shared state, why classes stay in `models/`, and the arguments already rejected against both rules above — are `references/extraction-and-duplication.md`.
 
 ## The `scripts/` layout — `references/scripts-layout.md`
@@ -40,7 +40,7 @@ Read it when adding a command, a sub-command or a plugin under the repo-root `sc
 
 ## Cross-package placement — `references/cross-package-placement.md`
 
-Read it before adding a module or constant to a shared package, relocating an existing one for symmetry, or implementing behaviour a second package needs. In short: **a shared package is for code with ≥2 consuming packages** — name the second consumer or leave the code beside its sole one, and when a second appears move the implementation rather than writing another. The home is the lowest package both already depend on. The page also owns the client/node cross-realm exception, env-reading scripts, and the domain-package rule for Azure helpers.
+Read it before adding a module or constant to a shared package, relocating an existing one for symmetry, or implementing behaviour a second package needs. In short: **a shared package is for code with ≥2 consuming packages** — name the second consumer or leave the code beside its sole one, and when a second appears move the implementation rather than writing another. The home is the lowest package both already depend on; `scripts/src/workspace/sharedExportConsumers.test.ts` fails on an export of `packages/shared` fewer than two packages name. The page also owns the client/node cross-realm exception, env-reading scripts, and the domain-package rule for Azure helpers.
 
 ## Symlinks — `references/symlinks.md`
 

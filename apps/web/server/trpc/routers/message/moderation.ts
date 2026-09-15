@@ -11,6 +11,7 @@ import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput"
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
 import { readModerationNotesCountInputSchema } from "#shared/models/db/moderation/ReadModerationNotesCountInput";
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { RoomMemberRemovalAction } from "@@/server/models/room/RoomMemberRemovalAction";
@@ -55,7 +56,7 @@ import {
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { exhaustiveGuard, getResultAsync, ItemMetadataPropertyNames, noop, Operation } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, ilike, isNull } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";

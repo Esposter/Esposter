@@ -1,9 +1,9 @@
 import type { Database, MessageEntity, UserToRoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
+import { classifyMentions } from "#src/services/message/mention/classifyMentions";
 import { getMentionBadgeConditions } from "#src/services/message/mention/getMentionBadgeConditions";
 import { userStatusesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
-import { classifyMentions } from "@esposter/shared";
 import { and, eq, inArray, ne, or, sql } from "drizzle-orm";
 
 // Bumps the per-user mention counter for every member targeted by the message's mentions in a

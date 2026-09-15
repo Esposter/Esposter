@@ -15,4 +15,3 @@ export const MENTION_EVERYONE_ID = "@everyone";
 // Message is rendered. See /docs/esbabbler/emoji
 export const CUSTOM_EMOJI_ID_ATTRIBUTE = "data-custom-emoji-id";
 export const CUSTOM_EMOJI_NAME_ATTRIBUTE = "data-custom-emoji-name";
-export const CUSTOM_EMOJI_TYPE = "customEmoji";

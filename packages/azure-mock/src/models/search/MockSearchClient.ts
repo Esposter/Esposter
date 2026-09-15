@@ -1,3 +1,4 @@
+import type { MapValue } from "#src/util/types/MapValue";
 import type {
   AutocompleteResult,
   CountDocumentsOptions,
@@ -17,7 +18,6 @@ import type {
   SuggestOptions,
   UploadDocumentsOptions,
 } from "@azure/search-documents";
-import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { MOCK_SEARCH_BASE_URL } from "#src/constants";

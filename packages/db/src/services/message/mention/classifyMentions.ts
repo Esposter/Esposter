@@ -1,7 +1,7 @@
 import type { ClassifiedMentions } from "#src/models/message/ClassifiedMentions";
 
-import { getMentions } from "#src/services/message/mention/getMentions";
 import {
+  getMentions,
   MENTION_EVERYONE_ID,
   MENTION_HERE_ID,
   MENTION_ID_ATTRIBUTE,

@@ -1,5 +1,5 @@
+import type { ClassifiedMentions } from "#src/models/message/ClassifiedMentions";
 import type { MentionConditionBuilder } from "#src/models/message/mention/MentionConditionBuilder";
-import type { ClassifiedMentions } from "@esposter/shared";
 
 import { createMentionConditionBuilders } from "#src/services/message/mention/createMentionConditionBuilders";
 import { getMentionedUserIdCondition } from "#src/services/message/mention/getMentionedUserIdCondition";

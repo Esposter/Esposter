@@ -4,8 +4,8 @@ import type { Except } from "type-fest";
 
 import { TodoListItemType } from "#shared/models/resource/todoList/TodoListItemType";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
+import { ItemEntityTypePropertyNames } from "@/models/resource/ItemEntityTypePropertyNames";
 import { prettify } from "@/util/text/prettify";
-import { ItemEntityTypePropertyNames } from "@esposter/shared";
 
 const TodoListItemTypeItemCategoryDefinitionMap = {
   [TodoListItemType.Todo]: {
