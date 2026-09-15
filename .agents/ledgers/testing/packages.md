@@ -7,8 +7,8 @@ splits at `services/exec`'s subdirectories.
 | --------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------ |
 | `virrun` — `services/exec/snapshot`                                                                 | 2026-09-15 |                                                        |
 | `virrun` — `services/exec/wsl`                                                                      | 2026-09-15 |                                                        |
-| `virrun` — `services/exec/util`                                                                     | 2026-09-05 |                                                        |
-| `virrun` — `services/exec/{test,cache,os}`                                                          | 2026-09-05 |                                                        |
+| `virrun` — `services/exec/util`                                                                     | 2026-09-15 |                                                        |
+| `virrun` — `services/exec/{test,cache,os}`                                                          | 2026-09-15 |                                                        |
 | `virrun` — `services/exec` the rest: `vfs`, `bwrap`, `differential`, `store`, `native` and the root | 2026-09-05 |                                                        |
 | `virrun` — `services/{cli,configuration,source,virrun}`, `models`, the root                         | 2026-09-15 | its two mocked path constants stay — see the README    |
 | `azure-functions`                                                                                   | 2026-09-15 | every `mockDb` stays — hoisted factory, see the README |
