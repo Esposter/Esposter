@@ -29,6 +29,10 @@ Math, string, regex, type utilities, Node/browser engine extensions with no exte
 imports a third-party package, it belongs in `services/`. Generic browser utilities go in `app/util/` (e.g.
 `readFoo.ts`).
 
+**Singular `util/`, never `utils/`.** Nuxt auto-imports every export under a `utils/` folder in `app/` into the global namespace,
+which is the one thing a utility folder must not do; the singular name is what keeps it out, and every other
+package spells it the same way so one layer has one name across the repo.
+
 ## Feature folders, and the one consumer
 
 Group related models/services/components under a feature subfolder (e.g. `feature/sub-feature/`).

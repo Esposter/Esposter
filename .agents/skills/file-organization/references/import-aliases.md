@@ -4,7 +4,7 @@ Read when choosing an import specifier, when the alias ban fires on one, or when
 
 ## The app's aliases
 
-- `#shared/` — the app's shared directory (`apps/web/shared/`, **not** `app/shared/`); models, services, constants shared between client and server.
+- `#shared/` — the app's shared directory (`apps/web/shared/`, **not** a `shared/` folder under `app/`); models, services, constants shared between client and server.
 - `@@/` — project root (`apps/web/`); `server/` and other root-level paths.
 - `@/` — app source directory (`apps/web/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
 - Never use `~~/` (old Nuxt alias) — replace with `@@/`.

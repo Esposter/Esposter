@@ -49,6 +49,6 @@ Use `peerDependencies` for packages that:
 - Are framework/runtime singletons, SDKs mirrored in public APIs, or heavy/plugin runtimes the consumer must provide (`vue`, `pinia`, Azure SDKs, `drizzle-orm`, `zod`, `drizzle-kit`, `@electric-sql/pglite`).
 - Are owned by the package that directly imports them. Don't redeclare transitive-only peers from imported workspace packages.
 
-Use `dependencies` for direct runtime imports that are not consumer-provided and must be bundled/auto-installed. Workspace packages imported at runtime usually stay in `dependencies`.
+Use `dependencies` for direct runtime imports that are not consumer-provided — externalized, and installed transitively by the consumer's package manager. Workspace packages imported at runtime usually stay in `dependencies`.
 
-**Example — `packages/db-mock`**, a test-only node package: `@electric-sql/pglite` is a peer (heavy, not bundled, loaded at runtime by `createMockDb`) and is in the shared `external` list; `drizzle-kit` is a `devDependency` only, used by `packages/db-mock/scripts/generateSnapshot.ts` (regenerates the committed `src/snapshot.tar.gz` via `pnpm snapshot:gen`) and the verification test, not the shipped `createMockDb` runtime; `eslint.config.js` re-exports `@esposter/configuration/eslint/index.typescript.js`.
+**Example — `packages/db-mock`**, a test-only node package: `@electric-sql/pglite` is a peer (heavy, not bundled, loaded at runtime by `createMockDb`); `drizzle-kit` is a `devDependency` only, used by `packages/db-mock/scripts/generateSnapshot.ts` (regenerates the committed `src/snapshot.tar.gz` via `pnpm snapshot:gen`) and the verification test, not the shipped `createMockDb` runtime; `eslint.config.js` re-exports `@esposter/configuration/eslint/index.typescript.js`.

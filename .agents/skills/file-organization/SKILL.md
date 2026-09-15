@@ -1,6 +1,6 @@
 ---
 name: file-organization
-description: Apply when creating, moving, renaming, or organising any file, export, constant, or package. Esposter file and folder organisation — alias imports never relative (the alias map and the ban's exemptions in a deep dive) and the shared-may-not-import-client boundary, one export per file, no export{} syntax, no magic strings where a constant already means it, the literal a postinstall-evaluated or JSON config must repeat instead of importing and the two exclusions a walk into .agents/ owes, local type declarations at the top of the block (the two colocation exceptions in a deep dive), layer by kind and folder by consumer, no duplicate constants, syntax never extracted into a helper (pointer to the over-engineering skill), when an extraction or a flag earns its existence, the ≥2-consumers rule for shared packages, renaming without re-export aliases, and file length — plus deep dives on import aliases, colocated types, which folder a file goes in (models/services/util, feature folders, the sole-consumer rule, the shared bucket), the scripts/ layout, cross-package placement, extraction shapes, constants (config literals and repo-wide walks, function names, frozen defaults), constant maps, generic type maps and generic Vue components, symlinks, localStorage keys, command classes, and creating a workspace package.
+description: Apply when creating, moving, renaming, or organising any file, export, constant, or package. Esposter file and folder organisation — alias imports never relative, shared/ never importing the client, one export per file with types under models/, no magic strings or duplicate constants, layer by kind and folder by consumer, syntax never extracted into a helper, the ≥2-consumers rule for shared packages, renaming without re-export aliases, and file length.
 ---
 
 # File & Folder Organisation
@@ -64,7 +64,7 @@ Read it when adding or editing a command in the undo/redo stack: the base class,
 
 ## Creating a New Package — `references/new-package.md`
 
-Read it when adding a package under `packages/`, adding a `bin` entrypoint (no shebang — pnpm generates the shim), or choosing `peerDependencies` vs `dependencies`. It carries the eight-step setup (package.json fields and scripts, the two tsconfigs, the rolldown factory, the re-exporting `eslint.config.js`, the ctix barrel, `pnpm i`, `pnpm build`) and the rule that every peer dependency must also appear in the rolldown `external` array.
+Read it when adding a package under `packages/`, adding a `bin` entrypoint (no shebang — pnpm generates the shim), or choosing `peerDependencies` vs `dependencies`. It carries the eight-step setup (package.json fields and scripts, the two tsconfigs, the tsdown factory, the re-exporting `eslint.config.js`, the ctix barrel, `pnpm i`, `pnpm build`) and the placement rule that decides what the build externalizes.
 
 ## Renaming — no alias re-exports — `references/renames.md`
 
