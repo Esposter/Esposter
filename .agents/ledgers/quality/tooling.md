@@ -10,9 +10,9 @@ left when this ledger was written.
 | `scripts/src/updateNode`                         | 2026-09-15 |                                                                                               |
 | `scripts/src/services`, `scripts/src` root files | 2026-09-06 |                                                                                               |
 | the repository root — config and Markdown        | 2026-09-06 | the composite actions already carry what the workflows share                                  |
-| `apps/web/configuration`                         | 2026-09-06 | the relative imports are the pre-alias config exception; the splash table is generator output |
-| the app's root config files                      | 2026-09-06 |                                                                                               |
-| `content/docs` — the two suites                  | 2026-09-06 | the enforcers, not the pages                                                                  |
+| `apps/web/configuration`                         | 2026-09-15 | the relative imports are the pre-alias config exception; the splash table is generator output |
+| the app's root config files                      | 2026-09-15 |                                                                                               |
+| `content/docs` — the two suites                  | 2026-09-15 | the enforcers, not the pages                                                                  |
 | `content/docs` — `resource`                      | 2026-09-06 |                                                                                               |
 | `content/docs` — `esbabbler`                     | 2026-09-06 |                                                                                               |
 | `content/docs` — `architecture`                  | 2026-09-06 |                                                                                               |
