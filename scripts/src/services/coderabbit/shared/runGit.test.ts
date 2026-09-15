@@ -30,7 +30,13 @@ describe(runGit, () => {
     vi.stubEnv("GIT_OBJECT_DIRECTORY", join(otherDirectory, "objects"));
     vi.stubEnv("GIT_WORK_TREE", directory);
 
-    expect(runGit(["rev-parse", "--absolute-git-dir"], directory).trim()).toContain(directory);
-    expect(runGit(["rev-parse", "--git-path", "objects"], directory).trim()).not.toContain(otherDirectory);
+    // Git prints forward slashes on every platform, so the fixture paths are compared in the same spelling
+    const [gitDirectory, objectsDirectory] = [
+      runGit(["rev-parse", "--absolute-git-dir"], directory),
+      runGit(["rev-parse", "--git-path", "objects"], directory),
+    ].map((output) => output.trim().replaceAll("\\", "/"));
+
+    expect(gitDirectory).toContain(directory.replaceAll("\\", "/"));
+    expect(objectsDirectory).not.toContain(otherDirectory.replaceAll("\\", "/"));
   });
 });
