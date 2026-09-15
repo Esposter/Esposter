@@ -40,7 +40,6 @@ describe(persistRun, () => {
   const onPersist = vi.fn<NonNullable<Parameters<typeof persistRun>[5]>>();
 
   beforeEach(() => {
-    vi.clearAllMocks();
     // The snapshot directory must be a real directory — persistRun mkdtempSyncs the per-run upper/work under it.
     vi.mocked(resolveSnapshotLocation).mockReturnValue({
       directory: create(),

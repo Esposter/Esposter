@@ -49,7 +49,6 @@ describe(removeSnapshotDirectoriesDetached, () => {
   const readStagedList = () => takeOne(writeFileSync.mock.calls)[1];
 
   beforeEach(() => {
-    vi.clearAllMocks();
     spawn.mockReturnValue(child as unknown as ChildProcess);
     // The staged list is written to a UNC no test machine can reach, so the write is captured rather than performed
     writeFileSync.mockImplementation(noop);

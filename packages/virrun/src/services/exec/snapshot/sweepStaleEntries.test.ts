@@ -24,7 +24,6 @@ describe(sweepStaleEntries, () => {
   const seedEntry = (name: string): string => seedDirectory(join(directory, name));
 
   beforeEach(() => {
-    vi.clearAllMocks();
     directory = create();
   });
 
