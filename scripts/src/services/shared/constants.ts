@@ -26,3 +26,10 @@ export const REGISTRY_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ second
 export const LOCKFILE = "pnpm-lock.yaml";
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
+
+// ASCII control characters as the record and field separators of a `git log` output a script splits — the
+// Collector's answered commits, the ledger coverage's trailers — since a subject and a body are free text.
+// Written as escapes because a tool rewriting the line would silently drop the characters themselves.
+export const RECORD_SEPARATOR = "";
+
+export const FIELD_SEPARATOR = "";

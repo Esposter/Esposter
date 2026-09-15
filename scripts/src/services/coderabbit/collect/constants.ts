@@ -41,14 +41,8 @@ export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   ["exec", "vitest", "run"],
 ];
 
-// ASCII control characters as the record and field separators of the `git log` output `getAnsweredCommits`
-// Splits, since a subject and a body are free text. Written as escapes because a tool rewriting the line would
-// Silently drop the characters themselves.
-export const RECORD_SEPARATOR = "\u001E";
-
-export const FIELD_SEPARATOR = "\u001F";
-
-// The same pair in git's own spelling, which is what asks git to emit them. `%B` rather than
+// The record and field separators (`#src/services/shared/constants`) in git's own spelling, which is what asks
+// Git to emit them. `%B` rather than
 // `%(trailers:key=…)`, which reads only the last contiguous trailer block.
 export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
 

@@ -22,14 +22,14 @@ const renames = getRenamePrefixes(
 );
 if (renames.length === 0) console.info(`no renames since ${base}`);
 
-for (const path of CITING_PATHSPECS.flatMap((pathspec) => getSweepFilePaths(pathspec)).filter((path) =>
+for (const citingPath of CITING_PATHSPECS.flatMap((pathspec) => getSweepFilePaths(pathspec)).filter((path) =>
   path.endsWith(".md"),
 )) {
-  const absolutePath = resolve(REPOSITORY_ROOT, path);
+  const absolutePath = resolve(REPOSITORY_ROOT, citingPath);
   const text = readFileSync(absolutePath, "utf8");
   const rewritten = rewriteCitations(text, renames);
   if (rewritten === text) continue;
 
   writeFileSync(absolutePath, rewritten);
-  console.info(path);
+  console.info(citingPath);
 }

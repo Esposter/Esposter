@@ -12,7 +12,10 @@ describe(applyLedgerEvents, () => {
     .toISOString()
     .slice(0, earlier.length);
   const getText = (swept: string) =>
-    `| Unit | Swept      | Notes |\n| ---- | ---------- | ----- |\n| ${unit} | ${swept.padEnd(10)} |       |\n`;
+    `| Unit   | Swept      | Notes |
+| ------ | ---------- | ----- |
+| ${unit}   | ${swept.padEnd(10)} |       |
+`;
   const getEvent = (type: LedgerEventType, date: string, eventUnit?: string): LedgerEvent => ({
     date,
     ledger,

@@ -1,8 +1,8 @@
 import type { PathRename } from "#src/models/citations/PathRename";
 
-// Path prefixes a citation may write relative to `apps/web` instead of the repository root
+import { APP_RELATIVE_PREFIXES } from "@esposter/configuration";
+
 const APP_DIRECTORY = "apps/web/";
-const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "content/", "public/", "scripts/", "server/", "shared/"];
 const CITATION_REGEX = /`(?<citation>[^`\s]+)`/gu;
 
 const getAppRelative = (path: string): string | undefined => {

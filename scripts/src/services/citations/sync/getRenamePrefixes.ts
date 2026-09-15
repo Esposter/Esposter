@@ -14,8 +14,8 @@ export const getRenamePrefixes = (nameStatus: string): PathRename[] => {
     const groups = RENAME_LINE_REGEX.exec(line)?.groups;
     if (!groups) continue;
 
-    const from = groups.from.split("/");
-    const to = groups.to.split("/");
+    const from = (groups.from ?? "").split("/");
+    const to = (groups.to ?? "").split("/");
     while (from.length > 1 && to.length > 1 && from.at(-1) === to.at(-1)) {
       from.pop();
       to.pop();

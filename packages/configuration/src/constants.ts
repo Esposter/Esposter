@@ -29,6 +29,17 @@ export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
 // Three are covered by the docs suite, which lives inside the directory and resolves every link to a real page, so
 // A rename that missed one of them fails loudly rather than silently.
 export const DOCS_DIRECTORY = "docs";
+// Path prefixes a hand-written citation may use relative to `apps/web` instead of the repository root — the
+// Docs' Key Files tables write them, so the docs suite resolves them and the citation sync rewrites them.
+export const APP_RELATIVE_PREFIXES = [
+  "app/",
+  "configuration/",
+  "content/",
+  "public/",
+  "scripts/",
+  "server/",
+  "shared/",
+];
 // Generated TypeDoc output. It is written into the app's `public/`, so it is served from under the docs route
 // Without being a content page — which is why the docs link check has to allow this one prefix explicitly.
 // The annotation is redundant to oxlint but mandatory to the dts build, as above.

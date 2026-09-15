@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { AGENT_DIRECTORY, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
+import { AGENT_DIRECTORY, APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import mermaid from "mermaid";
 import { existsSync } from "node:fs";
@@ -11,8 +11,6 @@ import { describe, expect, test } from "vitest";
 const REPOSITORY_PATH_REGEX = /^[\w./[\]-]+$/u;
 // Real docs routes that are not content pages — the api section is generated TypeDoc output.
 const ALLOWED_LINK_TARGETS = [`/${DOCS_API_DIRECTORY}`];
-// Path prefixes a Key Files cell may use relative to `apps/web` instead of the repo root.
-const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "content/", "public/", "scripts/", "server/", "shared/"];
 const docsDirectory = import.meta.dirname;
 const appDirectory = join(docsDirectory, "..", "..");
 const repositoryDirectory = join(appDirectory, "..", "..");

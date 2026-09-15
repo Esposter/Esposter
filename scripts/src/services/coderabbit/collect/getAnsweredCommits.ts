@@ -1,12 +1,8 @@
 import type { AnsweredCommit } from "#src/models/coderabbit/collect/AnsweredCommit";
 
-import {
-  ANSWERS_TRAILER,
-  DRAINS_TRAILER,
-  FIELD_SEPARATOR,
-  RECORD_SEPARATOR,
-} from "#src/services/coderabbit/collect/constants";
+import { ANSWERS_TRAILER, DRAINS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { checkIsGitHubNumber } from "#src/services/coderabbit/shared/checkIsGitHubNumber";
+import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/shared/constants";
 
 const VALUE_SEPARATOR = ",";
 

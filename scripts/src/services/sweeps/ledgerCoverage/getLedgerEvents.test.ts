@@ -1,5 +1,5 @@
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
-import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
+import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/shared/constants";
 import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
 import { describe, expect, test } from "vitest";
 
