@@ -258,7 +258,7 @@ describe(saveResourceContent, () => {
   test("charges a revision on top of the content once per interval", async () => {
     expect.hasAssertions();
 
-    const readStoredContentBytes = () =>
+    const getStoredContentBytes = () =>
       MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(getContentBlobName(resource.id))?.byteLength;
     const readStoredVersionBytes = async () =>
       (
@@ -269,13 +269,13 @@ describe(saveResourceContent, () => {
       ).reduce((total, { storedBytes }) => total + storedBytes, 0);
     await saveLatestResourceContent(content);
 
-    await expect(readStorageBytesUsed()).resolves.toBe(readStoredContentBytes());
+    await expect(readStorageBytesUsed()).resolves.toBe(getStoredContentBytes());
 
     await saveLatestResourceContent({ items: [] });
     const firstRevisionBytes = await readStoredVersionBytes();
 
     expect(firstRevisionBytes).toBeGreaterThan(0);
-    await expect(readStorageBytesUsed()).resolves.toBe((readStoredContentBytes() ?? 0) + firstRevisionBytes);
+    await expect(readStorageBytesUsed()).resolves.toBe((getStoredContentBytes() ?? 0) + firstRevisionBytes);
 
     // A second interval, so the growth is shown to be per interval rather than a one-off first revision
     vi.advanceTimersByTime(SNAPSHOT_INTERVAL_MS);
@@ -283,7 +283,7 @@ describe(saveResourceContent, () => {
     const secondRevisionBytes = await readStoredVersionBytes();
 
     expect(secondRevisionBytes).toBeGreaterThan(firstRevisionBytes);
-    await expect(readStorageBytesUsed()).resolves.toBe((readStoredContentBytes() ?? 0) + secondRevisionBytes);
+    await expect(readStorageBytesUsed()).resolves.toBe((getStoredContentBytes() ?? 0) + secondRevisionBytes);
   });
 
   // The prior content is read before the write overwrites it, so a hook that diffs sees what it replaced —
