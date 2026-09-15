@@ -31,7 +31,7 @@ const overlayUtilities = {
   "bg-activated": getOverlayBackgroundColor("activated"),
   "bg-hover": getOverlayBackgroundColor("hover"),
 } as const satisfies Record<string, Record<string, string>>;
-const toKebabCase = (str: string) => str.replaceAll(/[A-Z]/gu, (m) => `-${m.toLowerCase()}`);
+const toKebabCase = (text: string) => text.replaceAll(/[A-Z]/gu, (match) => `-${match.toLowerCase()}`);
 
 // The preset accepts two spellings for most of what it generates — `pa-4` beside `p-4`, `border-2` beside
 // `b-2`, `overflow-hidden` beside `of-hidden`, `font-bold` beside `fw-bold` — and every extra spelling is one
