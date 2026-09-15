@@ -9,6 +9,7 @@ import {
   QUEUE_BRANCH,
   REVIEW_FIXES_BRANCH,
   SYNC_FAILED_MARKER,
+  SYNC_PUSH_ATTEMPT_CAP,
 } from "#src/services/coderabbit/collect/constants";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
@@ -22,6 +23,7 @@ import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmerged
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
@@ -31,6 +33,45 @@ import { resolve } from "node:path";
 const checkIsPicking = (cwd: string): boolean =>
   readSha("CHERRY_PICK_HEAD", cwd) !== undefined ||
   existsSync(resolve(cwd, runGit(["rev-parse", "--git-path", "sequencer"], cwd).trim()));
+
+// One sequence rather than a pick per commit: a stop is resumed by `--continue`, and a copy the tree already
+// Holds drops on its own. Whether the sequence ran to its end — a stop leaves it open for the resolver.
+const checkIsPicked = (shas: string[], cwd: string): boolean =>
+  shas.length === 0 ||
+  getResult(() => runGit(["cherry-pick", "--empty=drop", ...shas], cwd)).match(
+    () => true,
+    () => false,
+  );
+
+// The rewrite's compare-and-swap, retried rather than redone: the lease names the sha the run read, and a session
+// Push in between fast-forwards that sha by a commit or two — carried onto the rewrite by the same replay and
+// Pushed under the lease the push moved to. Giving up instead would hand the next run the same conflict, and its
+// Resolver the same minutes, to lose to the next session push. What does give up — the queue's history rewritten
+// Under the run, a carried commit that conflicts with the rewrite, or a session pushing faster than the cap —
+// Leaves the rewrite unpushed for the next run to replay onto what the queue then carries.
+const pushRewrite = (cwd: string, expectedSha: string, isDryRun: boolean): string | undefined => {
+  let leaseSha = expectedSha;
+  for (let attempt = 0; attempt < SYNC_PUSH_ATTEMPT_CAP; attempt++) {
+    const syncedSha = readHeadSha(cwd);
+    if (pushBranch({ branch: QUEUE_BRANCH, cwd, expectedSha: leaseSha, isDryRun, isRewrite: true, sha: syncedSha }))
+      return syncedSha;
+    // `pushBranch` fetched the branch on its way out, so the ref is what the session pushed
+    const movedSha = readSha(`origin/${QUEUE_BRANCH}`, cwd);
+    if (movedSha === undefined || !checkIsAncestor(leaseSha, movedSha, cwd)) {
+      console.info(`sync: ${QUEUE_BRANCH} was rewritten under the run — unpushed`);
+      return undefined;
+    }
+    const carriedShas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${leaseSha}..${movedSha}`], cwd));
+    if (!checkIsPicked(carriedShas, cwd)) {
+      runGit(["cherry-pick", "--abort"], cwd);
+      console.info(`sync: ${QUEUE_BRANCH} moved under the rewrite and a commit it gained conflicts with it — unpushed`);
+      return undefined;
+    }
+    console.info(`sync: ${QUEUE_BRANCH} moved under the rewrite — carried the ${carriedShas.length} commits it gained`);
+    leaseSha = movedSha;
+  }
+  return undefined;
+};
 
 // The queue follows what the collector pushed, rewritten by the collector itself: the commits it still owes are
 // Replayed in order onto the tree the next window is built on — the fixes branch while it owes develop commits,
@@ -60,15 +101,7 @@ export const syncQueue = async ({
   const owedShas = readCherryShas(targetSha, queueSha, cwd);
   console.info(`sync: ${QUEUE_BRANCH} sits behind ${targetBranch} — replaying the ${owedShas.length} commits it owes`);
   runGit(["switch", "--detach", targetSha], cwd);
-  // One sequence rather than a pick per commit: a stop is resumed by `--continue`, and a copy the tree already
-  // Holds drops on its own
-  const isReplayed =
-    owedShas.length === 0 ||
-    getResult(() => runGit(["cherry-pick", "--empty=drop", ...owedShas], cwd)).match(
-      () => true,
-      () => false,
-    );
-  if (!isReplayed) {
+  if (!checkIsPicked(owedShas, cwd)) {
     const conflictSha = readSha("CHERRY_PICK_HEAD", cwd) ?? "";
     const conflictedPaths = readUnmergedPaths(cwd);
     const abort = (reason: string): string => {
@@ -105,8 +138,5 @@ export const syncQueue = async ({
     }
   }
 
-  const syncedSha = readHeadSha(cwd);
-  return pushBranch({ branch: QUEUE_BRANCH, cwd, expectedSha: queueSha, isDryRun, isRewrite: true, sha: syncedSha })
-    ? syncedSha
-    : undefined;
+  return pushRewrite(cwd, queueSha, isDryRun);
 };
