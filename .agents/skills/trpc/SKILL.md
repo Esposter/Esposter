@@ -1,6 +1,6 @@
 ---
 name: trpc
-description: Apply when writing tRPC routers, procedures, or router tests. Esposter tRPC conventions — return-type generics on the method, async only when there is an await, where input schemas, server event emitters and server/shared/@esposter-db helpers live, useQuery/useMutation for every client read and write, calling conventions for all-optional and UUID inputs, router structure mirroring the file path, Function.prototype router-key collisions, procedure and result naming, base*Router composition with mergeRouters, the three room RBAC procedure builders and a read taking the builder its data deserves rather than the one its caller's UI implies, ownedBy ownership guards, one router and store per DB table, BAD_REQUEST messages, plus deep dives on router tests, subscription procedures, read/pagination endpoints, and mutations that write blobs.
+description: Apply when writing tRPC routers, procedures, or router tests. Esposter tRPC conventions — the return-type generic on the method, one input schema file per procedure under shared/models/db, useQuery/useMutation for every client read and write, router structure mirroring the file path with base*Router composition, read*/search*/generate* procedure names and *Result types, the three room RBAC procedure builders, ownedBy guards, one router and store per table, and the error constructors a router rejects with.
 ---
 
 # tRPC Conventions
@@ -95,5 +95,5 @@ Three builders in `server/trpc/procedure/room/`:
 
 ## Error Handling
 
-- **`BAD_REQUEST` always includes a `message`** — never a bare `new TRPCError({ code: "BAD_REQUEST" })`. Use `message: new InvalidOperationError(Operation.X, EntityType, name).message`, picking the `Operation` matching the procedure (`Operation.Read` for a query; `Create`/`Update`/`Delete` for mutations), the entity type, and a `name` identifying the invalid value (`JSON.stringify(input)`, the relevant ID).
+- **`BAD_REQUEST` always carries a message, and the router never assembles it** — `throw getInvalidOperationError(Operation.X, EntityType, name)` from `server/trpc/guards/`, picking the `Operation` matching the procedure (`Operation.Read` for a query; `Create`/`Update`/`Delete` for mutations), the entity type, and a `name` identifying the invalid value (`JSON.stringify(input)`, the relevant ID). A missing entity is `getNotFoundError`; the constructors and the one bare code are the `error-handling` skill's (`references/server-guards.md`).
 - The `typescript` skill's `if/else if` chain rule applies inside procedure bodies: an early-exit `if` that throws is followed by `else if`, even when the conditions are logically independent.
