@@ -27,6 +27,8 @@ The dominant defect class on a re-review is not a missed bug — it is a **regre
 
 Root-cause fix → converge the call sites onto the primitive → docs and skills → **then** one check pass over the finished tree. Never interleave the checks: a session that spends its budget on a fixture's missing field ships the symptom fix and queues the root cause.
 
+**A fix inside an unswept unit sweeps the files it touches first.** The `sweeps` skill's drain-by-contact applies to a review's fixes like any other change: before editing, check the ledgers whose `Scope` reaches the file (`.agents/ledgers/README.md`), and if its unit is still `—`, the sweep of those files goes in its own commit ahead of the fix. Nothing in the review flow surfaces this, so it is the step a round skips — and a tree no ledger's `Scope` reaches at all is a finding in its own right, not a clean result.
+
 **Deleting the compensating code is part of the fix.** When the root-cause fix makes a wrapper, guard or flag unnecessary, it comes out in the same change — a wrapper left behind is one someone must remember to apply, which is the defect class just removed.
 
 ## Why a fixed finding comes back
