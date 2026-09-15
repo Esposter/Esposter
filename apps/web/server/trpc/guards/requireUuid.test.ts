@@ -1,6 +1,7 @@
+import type { TRPCError } from "@trpc/server";
+
 import { requireUuid } from "@@/server/trpc/guards/requireUuid";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import type { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
 describe(requireUuid, () => {

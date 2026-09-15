@@ -1,7 +1,8 @@
+import type { z } from "zod";
+
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { standardMessageEntitySchema } from "@esposter/db-schema";
-import type { z } from "zod";
 
 export const readMySentMessagesInputSchema = createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
   CREATED_AT_DESCENDING_SORT_ITEM,

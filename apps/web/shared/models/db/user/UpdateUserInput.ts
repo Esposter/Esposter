@@ -1,6 +1,7 @@
+import type { z } from "zod";
+
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { selectUserSchema } from "@esposter/db-schema";
-import type { z } from "zod";
 
 const updatableUserSchema = selectUserSchema.pick({ biography: true, image: true, name: true });
 

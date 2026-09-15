@@ -119,7 +119,7 @@ export default {
       message:
         "Don't bind a utility to `'' : undefined` — an empty attribute value generates no rule. Switch the utility with `:class=\"condition ? 'utility' : undefined\"` instead.",
       selector:
-        "VAttribute[directive=true][key.name.name='bind'] > VExpressionContainer > ConditionalExpression:matches([consequent.type='Literal'][consequent.value=''][alternate.name='undefined'], [alternate.type='Literal'][alternate.value=''][consequent.name='undefined'])",
+        "VAttribute[directive=true][key.name.name='bind'] > VExpressionContainer > ConditionalExpression:matches([consequent.type='Literal'][consequent.value=''][alternate.type='Identifier'][alternate.name='undefined'], [alternate.type='Literal'][alternate.value=''][consequent.type='Identifier'][consequent.name='undefined'])",
     },
     ...restrictedDateSyntaxes,
     ...restrictedStoreSyntaxes,

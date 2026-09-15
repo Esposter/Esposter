@@ -101,7 +101,8 @@ export default {
       // Reads as the clause itself rather than the call that builds it. See the trpc skill.
       message:
         "Name a where-fragment builder `get*Where` — the bare `*Where` noun is the clause, not the call that builds it.",
-      selector: "VariableDeclarator[id.name=/Where$/][id.name!=/^get/][init.type=/^(Arrow)?FunctionExpression$/]",
+      selector:
+        "VariableDeclarator[id.name=/(?<!By)Where$/][id.name!=/^get/][init.type=/^(Arrow)?FunctionExpression$/]",
     },
     {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",

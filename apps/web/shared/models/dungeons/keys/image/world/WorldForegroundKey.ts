@@ -1,4 +1,5 @@
 import type { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
+
 import { TilemapKeys } from "#shared/models/dungeons/keys/TilemapKey";
 
 export type WorldForegroundKey = `World${TilemapKey}Foreground`;

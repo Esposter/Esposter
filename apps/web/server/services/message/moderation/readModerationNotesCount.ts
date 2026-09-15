@@ -1,5 +1,5 @@
 import type { Clause } from "@esposter/azure";
-import type { RoomInMessage, User, ModerationNoteEntity } from "@esposter/db-schema";
+import type { ModerationNoteEntity, RoomInMessage, User } from "@esposter/db-schema";
 
 import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";

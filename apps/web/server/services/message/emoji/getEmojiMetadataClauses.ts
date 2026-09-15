@@ -1,6 +1,6 @@
+import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import type { Clause } from "@esposter/azure";
 
-import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { MessageEmojiMetadataEntityPropertyNames } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { MessageMetadataType } from "@esposter/db-schema";

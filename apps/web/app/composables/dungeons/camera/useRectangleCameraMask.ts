@@ -1,4 +1,4 @@
-import type { GameObjects, Filters } from "phaser";
+import type { Filters, GameObjects } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";

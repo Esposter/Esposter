@@ -1,6 +1,6 @@
+import type { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import type { z } from "zod";
 
-import type { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { WorldData, worldDataSchema } from "#shared/models/dungeons/data/world/WorldData";
 import { TilemapKeys, tilemapKeySchema } from "#shared/models/dungeons/keys/TilemapKey";
 import { zodStrictRecord } from "#shared/services/zod/zodStrictRecord";
