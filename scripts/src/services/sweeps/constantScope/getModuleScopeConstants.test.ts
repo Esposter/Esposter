@@ -102,6 +102,24 @@ const fixture = await readFile(${name});`,
     ).toStrictEqual([]);
   });
 
+  // `$` is an identifier character to JavaScript and not one to `\b`, so a borrowed word boundary reads the
+  // Reference backwards in both directions: it finds none of `$name` and finds `name` inside it
+  test("skips a $-prefixed constant a top-level await reads", () => {
+    expect.hasAssertions();
+
+    expect(getModuleScopeConstants(`const $${name} = "";\nconst fixture = await readFile($${name});`)).toStrictEqual(
+      [],
+    );
+  });
+
+  test("reports a constant only a $-prefixed namesake of it is read through", () => {
+    expect.hasAssertions();
+
+    expect(getModuleScopeConstants(`const ${name} = "";\nconst fixture = await readFile($${name});`)).toStrictEqual([
+      { line: 1, name },
+    ]);
+  });
+
   // A derivation of an awaited fixture can run inside the describe callback; only its reader pins it out
   test("reports a constant derived from a top-level await that only a describe reads", () => {
     expect.hasAssertions();

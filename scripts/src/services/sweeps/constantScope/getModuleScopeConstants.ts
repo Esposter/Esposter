@@ -13,7 +13,10 @@ const FUNCTION_BODY_REGEX = /^(?:async\s+)?function\b/u;
 // Anywhere in the initializer, not only at its start: `new Set(await readdir())` is a top-level await too
 const AWAIT_REGEX = /\bawait\b/u;
 
-const getReferenceRegex = (name: string): RegExp => new RegExp(String.raw`\b${name.replaceAll("$", "\\$")}\b`, "u");
+// `$` is an identifier character to JavaScript and not one to `\b`, so the boundary is spelled out rather than
+// Borrowed: `\b$fixture\b` matches nothing, and `\bfixture\b` matches the `fixture` inside `$fixture`
+const getReferenceRegex = (name: string): RegExp =>
+  new RegExp(String.raw`(?:^|[^\w$])${name.replaceAll("$", String.raw`\$`)}(?=$|[^\w$])`, "u");
 
 // The code the tokens spell, with a space wherever the scanner skipped something — a bracket, a string — so two
 // Words it kept from either side never rejoin: `new Set(await …)` must read `Set await`, not `Setawait`
