@@ -10,11 +10,14 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/u;
 // The script never lowers one on its own: a sweep raises the cell to its date, and a reopen clears it only when
 // It is not older than what the cell already says — a reset that predates the pass it would undo is stale. The
 // Events arrive in author-date order, so a sweep landing after a same-day reopen dates the row again.
+// A trailer naming a ledger that was since split into a coverage folder is in scope for every area file in it,
+// And its unit is a row in exactly one of them, so which events went unmatched is the caller's to decide once
+// Across the folder rather than this function's to answer per file.
 export const applyLedgerEvents = (
   text: string,
   ledger: string,
   events: LedgerEvent[],
-): { text: string; unmatched: LedgerEvent[] } => {
+): { matched: LedgerEvent[]; text: string } => {
   const ledgerEvents = events.filter(
     ({ ledger: eventLedger }) => eventLedger === ledger || ledger.startsWith(`${eventLedger}/`),
   );
@@ -39,8 +42,5 @@ export const applyLedgerEvents = (
     // The cell keeps its width so the table stays aligned until the formatter next runs
     return `|${unitCell}|${(date ?? OPEN_CELL).padEnd(sweptCell.length - 1).padStart(sweptCell.length)}|${rest}`;
   });
-  return {
-    text: lines.join("\n"),
-    unmatched: ledgerEvents.filter((event) => event.unit !== undefined && !matched.has(event)),
-  };
+  return { matched: [...matched], text: lines.join("\n") };
 };

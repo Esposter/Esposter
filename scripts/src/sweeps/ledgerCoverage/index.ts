@@ -1,3 +1,5 @@
+import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent";
+
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
@@ -28,6 +30,7 @@ const log = execFileSync(
   { cwd: REPOSITORY_ROOT, encoding: "utf8", env: getGitEnv(), maxBuffer: 1 << 28 },
 );
 const events = getLedgerEvents(log);
+const matchedEvents = new Set<LedgerEvent>();
 
 for (const ledgerPath of getSweepFilePaths(`${LEDGER_DIRECTORY}*.md`).filter((path) => !path.endsWith("README.md"))) {
   const ledger = ledgerPath.slice(LEDGER_DIRECTORY.length, -".md".length);
@@ -37,10 +40,16 @@ for (const ledgerPath of getSweepFilePaths(`${LEDGER_DIRECTORY}*.md`).filter((pa
   // One removed goes, with no row anyone edits by hand
   const getUnits = LedgerUnitsMap[ledger];
   const synced = getUnits ? syncLedgerUnits(text, getUnits()) : text;
-  const { text: rewritten, unmatched } = applyLedgerEvents(synced, ledger, events);
-  for (const { date, unit } of unmatched) console.info(`unmatched ${ledgerPath}: ${unit ?? ""} (${date})`);
+  const { matched, text: rewritten } = applyLedgerEvents(synced, ledger, events);
+  for (const event of matched) matchedEvents.add(event);
   if (rewritten === text) continue;
 
   writeFileSync(absolutePath, rewritten);
   console.info(ledgerPath);
 }
+
+// Reported once the whole tree has been read, because a trailer naming a ledger that is now a coverage folder is
+// In scope for every area file in it and a row in one — reporting per file would call it unmatched in the rest
+for (const event of events)
+  if (event.unit !== undefined && !matchedEvents.has(event))
+    console.info(`unmatched ${event.ledger}: ${event.unit} (${event.date})`);

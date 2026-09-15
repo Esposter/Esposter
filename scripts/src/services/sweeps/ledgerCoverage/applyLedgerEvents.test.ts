@@ -25,29 +25,33 @@ describe(applyLedgerEvents, () => {
   test("dates an open row from its sweep trailer", () => {
     expect.hasAssertions();
 
-    expect(
-      applyLedgerEvents(getText(OPEN_CELL), ledger, [getEvent(LedgerEventType.Ledger, earlier, unit)]),
-    ).toStrictEqual({
+    const event = getEvent(LedgerEventType.Ledger, earlier, unit);
+
+    expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
+      matched: [event],
       text: getText(earlier),
-      unmatched: [],
     });
   });
 
   test("never lowers a date the file already holds", () => {
     expect.hasAssertions();
 
-    expect(applyLedgerEvents(getText(later), ledger, [getEvent(LedgerEventType.Ledger, earlier, unit)])).toStrictEqual({
+    const event = getEvent(LedgerEventType.Ledger, earlier, unit);
+
+    expect(applyLedgerEvents(getText(later), ledger, [event])).toStrictEqual({
+      matched: [event],
       text: getText(later),
-      unmatched: [],
     });
   });
 
   test("reopens a row from a reopen naming the whole ledger", () => {
     expect.hasAssertions();
 
-    expect(applyLedgerEvents(getText(earlier), ledger, [getEvent(LedgerEventType.Reopens, later)])).toStrictEqual({
+    const event = getEvent(LedgerEventType.Reopens, later);
+
+    expect(applyLedgerEvents(getText(earlier), ledger, [event])).toStrictEqual({
+      matched: [event],
       text: getText(OPEN_CELL),
-      unmatched: [],
     });
   });
 
@@ -55,11 +59,11 @@ describe(applyLedgerEvents, () => {
   test("reopens a row from a reopen naming the folder above the ledger", () => {
     expect.hasAssertions();
 
-    expect(
-      applyLedgerEvents(getText(earlier), ledger, [{ ...getEvent(LedgerEventType.Reopens, later), ledger: "a" }]),
-    ).toStrictEqual({
+    const event = { ...getEvent(LedgerEventType.Reopens, later), ledger: "a" };
+
+    expect(applyLedgerEvents(getText(earlier), ledger, [event])).toStrictEqual({
+      matched: [event],
       text: getText(OPEN_CELL),
-      unmatched: [],
     });
   });
 
@@ -67,9 +71,11 @@ describe(applyLedgerEvents, () => {
   test("ignores a reopen older than the row's date", () => {
     expect.hasAssertions();
 
-    expect(applyLedgerEvents(getText(later), ledger, [getEvent(LedgerEventType.Reopens, earlier)])).toStrictEqual({
+    const event = getEvent(LedgerEventType.Reopens, earlier);
+
+    expect(applyLedgerEvents(getText(later), ledger, [event])).toStrictEqual({
+      matched: [event],
       text: getText(later),
-      unmatched: [],
     });
   });
 
@@ -78,30 +84,32 @@ describe(applyLedgerEvents, () => {
 
     const events = [getEvent(LedgerEventType.Reopens, later), getEvent(LedgerEventType.Ledger, later, unit)];
 
-    expect(applyLedgerEvents(getText(earlier), ledger, events)).toStrictEqual({ text: getText(later), unmatched: [] });
+    expect(applyLedgerEvents(getText(earlier), ledger, events)).toStrictEqual({
+      matched: events,
+      text: getText(later),
+    });
   });
 
-  test("reports a sweep trailer naming no row", () => {
+  // Matched is the caller's to aggregate across a folder, so a trailer naming no row here is simply absent from it
+  test("leaves a sweep trailer naming no row out of the matched events", () => {
     expect.hasAssertions();
 
     const event = getEvent(LedgerEventType.Ledger, earlier, "`d`");
 
     expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
+      matched: [],
       text: getText(OPEN_CELL),
-      unmatched: [event],
     });
   });
 
   test("leaves another ledger's events alone", () => {
     expect.hasAssertions();
 
-    expect(
-      applyLedgerEvents(getText(OPEN_CELL), ledger, [
-        { ...getEvent(LedgerEventType.Ledger, earlier, unit), ledger: "x" },
-      ]),
-    ).toStrictEqual({
+    const event = { ...getEvent(LedgerEventType.Ledger, earlier, unit), ledger: "x" };
+
+    expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
+      matched: [],
       text: getText(OPEN_CELL),
-      unmatched: [],
     });
   });
 });
