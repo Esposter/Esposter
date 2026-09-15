@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), the root scripts (test, coverage, bench, graph:gen, outdated:dependencies, release), a Settled list (no root `build:<app>` script per app, the release stays one local script rather than a CI publish, a renamed export of a published package is never a major), `nuxt typecheck` and the root lint being the only checks that match CI, the wrapper exit code a backgrounded run reports, `oxfmt` formatting markdown tables too, the `scriptsComments` key that holds only a script's `@TODO:`, the check suite run once per chunk with tests scoped to the paths touched, and the pnpm traps (a `--filter` matching nothing exits 0, `pnpm <script> -- <args>` drops the args, a workflow runs the script not the binary, and a script is invoked bare with `run` reserved for a name that shadows a pnpm command) — plus deep dives on how each pnpm trap fails, on running a `.ts` script under `node` where it can and `tsx` where it cannot without ever bending the code to fit `node`, and why a pre-install CI check is shell, and on the `ai:sweep:*` / `ai:coderabbit:*` script catalogue an agent runs. Apply whenever running or recommending package scripts.
+description: Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), the root scripts in a deep dive, a Settled list (no root `build:<app>` script per app, the release stays one local script rather than a CI publish, a renamed export of a published package is never a major), `nuxt typecheck` and the root lint being the only checks that match CI, the wrapper exit code a backgrounded run reports, `oxfmt` formatting markdown tables too, the `scriptsComments` key that holds only a script's `@TODO:`, the check suite run once per chunk with tests scoped to the paths touched, and the pnpm traps (a `--filter` matching nothing exits 0, `pnpm <script> -- <args>` drops the args, a workflow runs the script not the binary, and a script is invoked bare with `run` reserved for a name that shadows a pnpm command) — plus deep dives on how each pnpm trap fails, on running a `.ts` script under `node` where it can and `tsx` where it cannot without ever bending the code to fit `node`, and why a pre-install CI check is shell, and on the `ai:sweep:*` / `ai:coderabbit:*` script catalogue an agent runs. Apply whenever running or recommending package scripts.
 ---
 
 # Package Scripts
@@ -9,19 +9,9 @@ description: Esposter pnpm script reference — apps/web scripts (lint, typechec
 
 ## Settled — do not re-propose
 
-- **A root `build:<app>` script per app.** `build:web`, `build:functions` and `build:infra` existed, one
-  `pnpm -C apps/<app> run build` delegation each, and `build:web` carried a `virrun --` besides. One app is that
-  `-C` line at the call site: a root script that only delegates there is a second definition of the same line, one
-  per app, that says nothing the flag does not. The sandbox prefix went with it — the app build is native for the
-  reason `apps/web/content/docs/virrun/adoption.md` gives. A root script earns its line only when it adds what a
-  call site cannot say in a flag: a selector (`build:packages`), a chain (`build`, `release`), or a `virrun --` on
-  a command a win32 developer runs (`typecheck`, `test`).
-- **Majoring the published packages because an export was renamed.** `lerna.json` is `conventionalCommits: true`
-  in fixed mode, so a `BREAKING CHANGE:` footer moves all seven public packages to the next whole number —
-  including the ones that changed nothing. A renamed export is not a breaking change for these packages and a
-  rename ships as the `refactor` it is; the reasoning, and the condition that would end it, are
-  `apps/web/content/docs/architecture/no-compatibility-debt.md`.
-- **Splitting the release into a local `lerna version` and a CI publish** — a tag-triggered job publishing through npm's trusted publishing, which lerna-lite supports out of the box (`id-token: write`, a per-package token exchange, provenance attached for a public package). It buys an attestation that the published tarball is the one CI built. Nobody here is asking for that attestation, and the price is a release path that lives in two places and a per-package trusted-publisher registration on npmjs.com that fails closed the day a new package is added. **One script, run locally, is the whole release**: `pnpm release` gates the tree and hands `lerna publish` a version, a tag and a `dist` it just built, and 🚀 Release turns the pushed tag into a GitHub release. Publishing from a developer's machine is the deliberate simplification, not an oversight.
+- **A root `build:<app>` script per app.** One app is `pnpm -C apps/<app> run build` at the call site, and a root script that only delegates there is a second definition of the same line; a root script earns its line only when it adds a selector, a chain or a `virrun --` (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Recursive script orchestration").
+- **Majoring the published packages because an export was renamed.** `lerna.json` is `conventionalCommits: true` in fixed mode, so a `BREAKING CHANGE:` footer moves all seven public packages to the next whole number; a rename ships as the `refactor` it is (`apps/web/content/docs/architecture/no-compatibility-debt.md`).
+- **Splitting the release into a local `lerna version` and a CI publish** through npm's trusted publishing. It buys an attestation nobody here asks for, at the price of a release path in two places and a per-package registration that fails closed on every new package; one script run locally is the whole release (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Lerna Lite").
 
 ## `apps/web`
 
@@ -50,25 +40,9 @@ failed. Read the output for `exited 1` or a `problem`/`error` line rather than t
 > for a few files). No prettier binary is installed, so `pnpm exec prettier` fails — and `npx prettier` is not the
 > fallback: `npx` is unsupported here, and rather than failing it would fetch an unpinned prettier from the registry.
 
-## Root Scripts
+## Root Scripts — `references/root-scripts.md`
 
-| Command                      | Runs                                                       | Notes                                                                                                                                                                                                                                                                                                                                         |
-| ---------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm i`                     | —                                                          | Refresh deps/lockfile after manifest changes.                                                                                                                                                                                                                                                                                                 |
-| `pnpm test`                  | `virrun -- vitest run`                                     | Whole suite once via the root vitest `projects` config — `apps/*`, `packages/*`, `scripts`. **Never run bare** (`testing` skill): CI shards `vitest` directly rather than calling this, so a bare local run only buys a slower answer. Takes paths and vitest flags — `--project "apps/web"` is the app suite alone.                          |
-| `pnpm test:packages`         | `virrun -- vitest run --project "packages/*"`              | Every library suite, no Nuxt — a `release` gate, and local shorthand for the same filter. Takes paths like `pnpm test` does: pass them.                                                                                                                                                                                                       |
-| `pnpm build`                 | `--filter "@esposter/web..." run build`                    | The app and everything it imports, one derived selector, topological so the app builds last. No `virrun --` and no `build:<app>` — see Settled. The bare name meaning the app rather than the workspace is deliberate — Railway runs it as its default build command.                                                                         |
-| `pnpm build:packages`        | `pnpm -r --filter "./packages/*" run build`                | The libraries as a set: what CI caches and hands to every check. No app is in it, since nothing imports an app's `dist` — the coverage shards build the two whose bundles the suite asserts against.                                                                                                                                          |
-| `pnpm coverage`              | `vitest run --coverage` (no virrun)                        | Root-only (packages have no `coverage` script). Both CI test jobs call it with trailing flags rather than reaching for `vitest` themselves — a shard is `pnpm coverage --reporter=default --reporter=blob --shard=i/n`, the merge is `pnpm coverage --merge-reports`.                                                                         |
-| `pnpm bench`                 | `pnpm -r --workspace-concurrency=1 --if-present run bench` | Every member owning a bench, one at a time — the local gate that rewrites the committed `*.bench.md`. Why the concurrency flag is load-bearing is the `bench` skill's.                                                                                                                                                                        |
-| `pnpm bench:ci`              | `vitest bench --run`                                       | One process over every project's bench files at once — a smoke signal that they all still execute, not a measurement. What the 🏎️ Bench job runs, and the only caller. Not a shorter `pnpm bench`; see the `bench` skill.                                                                                                                     |
-| `pnpm outdated:dependencies` | `pnpm -C scripts run outdated:dependencies`                | Checks manifests use `catalog:`/`workspace:`, and catalog/configDependency/`engines` specifiers against the lockfile + npm latest.                                                                                                                                                                                                            |
-| `pnpm graph:gen`             | `pnpm -C scripts run graph:gen`                            | Regenerate `dependency-graph.svg` from the workspace manifests. Run it after changing one.                                                                                                                                                                                                                                                    |
-| `pnpm release`               | checks, then `lerna publish`                               | The whole release, run locally — see Settled above. Lerna versions EVERY workspace member (`lerna.json`'s `packages` repeats the pnpm globs, or it silently defaults to `packages/*`), while the gates in front of it stay `packages/*`-scoped and publish skips the private ones — `apps/web/content/docs/architecture/monorepo-tooling.md`. |
-
-The `ai:<domain>:<verb>` entries are the scripts no human types, named by audience — the rule is the
-`skill-authoring` skill's (`references/embedded-recipes.md`). Which ones exist and what each prints, read when a
-sweep or a review needs its script: `references/ai-scripts.md`.
+`pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's), `build:packages` for the libraries as a set, `pnpm release` for the whole release. Which script wraps what, is that page; the `ai:<domain>:<verb>` scripts no human types — which exist and what each prints, read when a sweep or a review needs its script — are `references/ai-scripts.md`.
 
 ## A `.ts` script runs under `node` where it can, `tsx` where it cannot — `references/typescript-scripts.md`
 
@@ -76,21 +50,9 @@ Node strips types natively; an `enum`, a tsconfig alias or an extensionless impo
 the code is never bent to fit `node`. **Adding a script, choosing its runner, or writing a check CI runs before an
 install** is that page.
 
-## `scriptsComments`
+## `scriptsComments` — `references/scripts-comments.md`
 
-JSON has no comments, so a script that records something to undo later carries it in a sibling top-level
-**`scriptsComments`** object keyed by the script name — never a `"// …"` key inside `scripts`, which pnpm lists as a
-runnable script. The value is one `@TODO:`-prefixed string naming the condition that ends it, and that is **all**
-the object holds: why a script is shaped as it is lives in this skill's table and the docs page that owns it,
-where the reasoning already sits, so a copy in the manifest is a second one that drifts.
-
-```json
-{
-  "scriptsComments": {
-    "build": "@TODO: restore `pnpm build:docs` to the chain when …"
-  }
-}
-```
+JSON has no comments: a script that records something to undo later carries one `@TODO:` string in a sibling top-level `scriptsComments` object keyed by the script name, and nothing else — never a `"// …"` key inside `scripts`, which pnpm lists as runnable.
 
 ## Check Suite (after edits)
 

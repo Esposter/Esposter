@@ -25,7 +25,7 @@
 | `naming`                  | —          |       |
 | `over-engineering`        | —          |       |
 | `oxlint`                  | —          |       |
-| `package-scripts`         | —          |       |
+| `package-scripts`         | 2026-09-15 |       |
 | `pagination`              | —          |       |
 | `pinia`                   | —          |       |
 | `pulumi-infra`            | 2026-09-15 |       |
