@@ -37,8 +37,10 @@ const checkIsPicking = (cwd: string): boolean =>
 // Develop otherwise — and pushed back under a lease on the sha that was read. A queue left on an old base
 // Carries commits written against files a drain has since repaired, and every one is a conflict the porter would
 // Hold on; here it is met once, by the drain's own session, and the working session's `git pull --rebase`
-// Afterwards replays only what it committed since (`review-queue` skill). Returns the sha the port reads: the
-// Rewritten head, or the one read when nothing was rewritten.
+// Afterwards replays only what it committed since (`review-queue` skill). Returns the sha the port reads — the
+// Rewritten head, or the one read when nothing was rewritten — or nothing when the queue moved under the run: the
+// Push that moved it fires a run of its own, and a port read off the stale head would hold on a conflict the next
+// Run resolves.
 export const syncQueue = async ({
   cwd,
   developSha,
@@ -46,7 +48,7 @@ export const syncQueue = async ({
   queueSha,
   reviewFixesSha,
   viewerLogin,
-}: SyncQueueInput): Promise<string> => {
+}: SyncQueueInput): Promise<string | undefined> => {
   const owingFixesSha =
     reviewFixesSha !== undefined && readCherryShas(developSha, reviewFixesSha, cwd).length > 0
       ? reviewFixesSha
@@ -104,9 +106,7 @@ export const syncQueue = async ({
   }
 
   const syncedSha = readHeadSha(cwd);
-  if (!pushBranch({ branch: QUEUE_BRANCH, cwd, expectedSha: queueSha, isDryRun, isRewrite: true, sha: syncedSha })) {
-    console.info(`sync: ${QUEUE_BRANCH} moved during the run — the next run replays onto what it now carries`);
-    return queueSha;
-  }
-  return syncedSha;
+  return pushBranch({ branch: QUEUE_BRANCH, cwd, expectedSha: queueSha, isDryRun, isRewrite: true, sha: syncedSha })
+    ? syncedSha
+    : undefined;
 };
