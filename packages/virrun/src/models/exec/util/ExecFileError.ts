@@ -7,7 +7,8 @@
 export class ExecFileError extends Error {
   // Node assigns the spawn result onto the error it throws, so a child killed by a signal — a timeout's SIGTERM —
   // Names it here. Surfaced beside stderr because a killed child's output is a truncated fragment rather than a
-  // Verdict on what it did, which anything classifying that stderr has to be able to tell apart (createSourceMirrorArchive)
+  // Verdict on what it did, which anything classifying that stderr has to be able to tell apart
+  // (createSourceMirrorArchive)
   readonly signal?: string;
   readonly stderr: string;
 
