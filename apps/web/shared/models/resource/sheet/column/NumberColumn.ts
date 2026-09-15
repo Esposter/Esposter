@@ -1,11 +1,11 @@
 import type { ColumnStatisticsKey } from "#shared/models/resource/sheet/column/ColumnStatisticsKey";
 import type { Format } from "#shared/models/resource/sheet/column/Format";
+import type { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
 import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/resource/sheet/column/AColumn";
 import { columnStatisticsKeySchema } from "#shared/models/resource/sheet/column/ColumnStatisticsKey";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import type { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
 import { numberFormatSchema } from "#shared/models/resource/sheet/column/NumberFormat";
 import { z } from "zod";
 

@@ -1,4 +1,5 @@
 import type { BallKey } from "#shared/models/dungeons/keys/image/UI/BallKey";
+
 import { BallKeys } from "#shared/models/dungeons/keys/image/UI/BallKey";
 
 // The set holds the narrow type, and `has` only accepts its own element type — asking it about an unknown

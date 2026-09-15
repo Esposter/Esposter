@@ -1,5 +1,6 @@
-import { RoomPermissionCategory } from "@/models/message/room/role/RoomPermissionCategory";
 import type { RoomPermission } from "@esposter/db-schema";
+
+import { RoomPermissionCategory } from "@/models/message/room/role/RoomPermissionCategory";
 // What a bit grants, said to the person deciding whether to grant it. The enum key is what a permission is
 // Called; nothing about `ManageMessages` says it reaches other people's messages, which is the whole question
 // Someone has when they hover the switch. Exhaustive by type, so a new bit cannot reach the screen without one

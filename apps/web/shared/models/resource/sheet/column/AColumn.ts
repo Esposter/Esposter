@@ -1,8 +1,8 @@
+import type { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import type { ItemEntityType } from "@esposter/shared";
 
 import { ANamedItemEntity, aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
 import { descriptionSchema } from "#shared/models/entity/Description";
-import type { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { z } from "zod";
 
 export abstract class AColumn<TColumnType extends ColumnType = ColumnType>

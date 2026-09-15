@@ -1,7 +1,6 @@
 import type { ResourceCapabilities } from "#shared/models/resource/ResourceCapabilities";
-import type { ResourceType } from "@esposter/db-schema";
-
 import type { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import type { ResourceType } from "@esposter/db-schema";
 
 // The subset of ResourceType whose definition declares the given capability
 export type CapabilityResourceType<TCapability extends keyof ResourceCapabilities> = {

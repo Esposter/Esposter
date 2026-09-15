@@ -1,9 +1,9 @@
 import type {
+  AzureTable,
   AzureTableEntityMap,
   CreateMessageInput,
   CustomTableClient,
   MessageTypeEntityMap,
-  AzureTable,
 } from "@esposter/db-schema";
 
 import { createEntity } from "#src/services/azure/table/createEntity";

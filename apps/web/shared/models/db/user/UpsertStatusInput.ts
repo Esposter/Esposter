@@ -1,6 +1,7 @@
+import type { z } from "zod";
+
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { selectUserStatusInMessageSchema } from "@esposter/db-schema";
-import type { z } from "zod";
 
 const upsertableStatusSchema = selectUserStatusInMessageSchema.pick({ message: true, status: true });
 

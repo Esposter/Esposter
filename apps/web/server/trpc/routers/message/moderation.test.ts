@@ -1,5 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -10,7 +11,6 @@ import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { readRoomMembershipRows } from "@@/server/trpc/routers/readRoomMembershipRows.test";
 import { createDirectMessageWithFriend } from "@@/server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
-import type { StandardMessageEntity } from "@esposter/db-schema";
 import {
   AdminActionType,
   AzureTable,
