@@ -1,5 +1,5 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 
 describe("naming", () => {
   const RULE = "naming/no-call-named-binding";
@@ -24,21 +24,9 @@ describe("naming", () => {
     // A destructuring pattern names its fields, not the call.
     { name: "destructuresCall", source: `export const { readA } = b.readA();`, violations: 0 },
   ];
-  const { getCodes, getViolations } = setupPluginSuite({
+  setupPluginSuite({
     fixtures: FIXTURES,
     plugin: "naming",
     rules: [RULE],
-  });
-
-  test.each(FIXTURES)("reports $violations violation(s) for $name", ({ name, violations }) => {
-    expect.hasAssertions();
-
-    expect(getViolations(name)).toBe(violations);
-  });
-
-  test("reports nothing but this rule", () => {
-    expect.hasAssertions();
-
-    expect([...new Set(getCodes())]).toStrictEqual(["naming(no-call-named-binding)"]);
   });
 });

@@ -1,5 +1,5 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 
 describe("errorHandling", () => {
   const RULE = "error-handling/no-bare-error";
@@ -14,21 +14,9 @@ describe("errorHandling", () => {
     // A subclass is named for what it is; only the bare constructor says nothing.
     { name: "throwsErrorSubclass", source: `export const a = () => { throw new TypeError(""); };`, violations: 0 },
   ];
-  const { getCodes, getViolations } = setupPluginSuite({
+  setupPluginSuite({
     fixtures: FIXTURES,
     plugin: "errorHandling",
     rules: [RULE],
-  });
-
-  test.each(FIXTURES)("reports $violations violation(s) for $name", ({ name, violations }) => {
-    expect.hasAssertions();
-
-    expect(getViolations(name)).toBe(violations);
-  });
-
-  test("reports nothing but this rule", () => {
-    expect.hasAssertions();
-
-    expect([...new Set(getCodes())]).toStrictEqual(["error-handling(no-bare-error)"]);
   });
 });
