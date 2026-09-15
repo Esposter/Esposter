@@ -23,12 +23,21 @@ describe(getStaleNames, () => {
     ]);
   });
 
+  // A placeholder word inside a longer word is not a placeholder: substring matching suppressed every real name
+  // Spelling one — and a stale name that reads as English is the one nobody notices
+  test.each(["readBare", "readFooter"])("reports %s, whose word merely spells a placeholder", (name) => {
+    expect.hasAssertions();
+
+    expect(getStaleNames([{ path, text: `\`${name}\`` }], sourceNames)).toStrictEqual([{ name, path }]);
+  });
+
   test.each([
     ["a name the source holds", "`readThing`"],
     ["a member access whose every segment the source holds", "`Thing.id`"],
     ["a lone capitalised word", "`Manual`"],
     ["a lowercase word", "`util`"],
     ["a placeholder", "`FooHookMap`"],
+    ["a pluralised placeholder", "`readFoos`"],
     ["a SCREAMING_SNAKE placeholder", "`FOO_KEY`"],
     ["a lone X standing in for a segment", "`useXStore`"],
     ["a path", "`app/services/readThingById.ts`"],
