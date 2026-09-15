@@ -3,8 +3,8 @@ import { useSingletonDialog } from "@/composables/useSingletonDialog";
 import { describe, expect, test } from "vitest";
 
 describe(useSingletonDialog, () => {
-  const id = "a";
-  const otherId = "b";
+  const id = crypto.randomUUID();
+  const otherId = crypto.randomUUID();
 
   test("resolves the item its target names", () => {
     expect.hasAssertions();
