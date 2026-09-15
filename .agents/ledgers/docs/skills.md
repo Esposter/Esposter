@@ -15,6 +15,7 @@
 | `error-handling`          | 2026-09-15 |       |
 | `esbabbler`               | —          |       |
 | `esbabbler-call`          | —          |       |
+| `fallacies`               | —          |       |
 | `file-organization`       | 2026-09-15 |       |
 | `formatting`              | 2026-09-15 |       |
 | `git`                     | —          |       |
@@ -45,7 +46,7 @@
 | `test-values`             | —          |       |
 | `testing`                 | 2026-09-15 |       |
 | `tiptap`                  | —          |       |
-| `trpc`                    | —          |       |
+| `trpc`                    | 2026-09-15 |       |
 | `typescript`              | 2026-09-15 |       |
 | `unocss`                  | —          |       |
 | `ux`                      | —          |       |
