@@ -38,6 +38,11 @@ What each pattern means is the owning skill's to say:
    a straight line. None of the three has a form a pattern can see — the tells are a node whose label is an
    entity's attributes, a subgraph nothing reads in a direction, and a chain whose order is the sentence above it
 
+Greps 2 and 3 find a rename the prose admits to; `pnpm ai:sweep:stale-names` finds the one it does not — every
+code name a page cites that no tracked source file, file name or Nuxt component name holds. Its noise is a
+dependency's API, a banned name and a naming rule's example, none of which the tree ever held, which is why it is
+a recipe and not a test.
+
 The skill tree adds a structural check the greps cannot make — a skill over budget, a reference page nothing
 indexes, one whose first paragraph does not open `Read …`, a `## Settled` list that is not its skill's first
 section, a `references/` citation resolving nowhere.
@@ -51,18 +56,21 @@ whole tree, one of which has to decide when **not** to resolve a pointer. It was
 Windows checkout prints a Microsoft Store notice and exits 0 — no findings, no error, indistinguishable from a
 clean tree (`sweeps`, `references/find-recipes.md`).
 
-An `unresolved` hit is a pointer nothing resolves, and nothing fails a build on one. A citation from inside
-`references/` to a file at its own skill's root is the recurring shape, and it needs `../`. The one line the
-check cannot judge is `skill-authoring`'s `references/x.md` placeholder.
+Every check but the budget also fails `pnpm test`, in `scripts/src/workspace/skillDocs.test.ts` — the budget stays
+a warning because a skill with no narrow trigger left to move stays over by design. An `unresolved` hit is a
+pointer nothing resolves; a citation from inside `references/` to a file at its own skill's root is the
+recurring shape, and it needs `../`. The one line the check cannot judge is `skill-authoring`'s
+`references/x.md` placeholder.
 
 Excluded: `CHANGELOG.md` (lerna output) · `CLAUDE.md`, `GEMINI.md` (symlinks to `AGENTS.md`) · `public/docs/api` (TypeDoc
 output) · `~/.claude/plugins` skills (external, not ours to edit).
 
 Enforceable next. What is already enforced sits with what it guards: the link, index-coverage,
-Key Files, the label-size cap and both label-line-break checks in `content/docs/index.test.ts`, the sidebar map beside itself in
+Key Files, the label-size cap and both label-line-break checks in `content/docs/index.test.ts`, every backticked
+repo path and every ``the `x` skill`` name across all of this ledger's trees in `scripts/src/workspace/citations.test.ts`, the sidebar map beside itself in
 `DocsSectionGroupsMap.test.ts`, the docs path segment beside the collection that reads it in
 `content.config.test.ts`, and prose restating a node or pnpm version in
-`content/getToolchainVersionRestatements.test.ts`. Greps 4, 5 and 6 are exact and decide themselves — but the link-text half of 4 can only land
+`content/docs/getToolchainVersionRestatements.test.ts`. Greps 4, 5 and 6 are exact and decide themselves — but the link-text half of 4 can only land
 once every row is swept, since an unswept area still holds instances that would fail the build. Grep 1 needs an
 allowlist for the counts that may be exact (package count, configured limits) first. The label-line-break checks
 reach the skill tree too, since the diagram list it runs over already spans both; the rest do not, and

@@ -39,6 +39,7 @@
     "ai:sweep:repeated-list-items": "tsx src/sweeps/repeatedListItems/index.ts",
     "ai:sweep:shared-export-consumers": "tsx src/sweeps/sharedExportConsumers/index.ts",
     "ai:sweep:skill-docs": "tsx src/sweeps/skillDocs/index.ts",
+    "ai:sweep:stale-names": "tsx src/sweeps/staleNames/index.ts",
     "ai:sweep:unterminated-results": "tsx src/sweeps/unterminatedResults/index.ts",
     "bench": "vitest bench --run",
     "crossOS": "tsx src/crossOS/index.ts",

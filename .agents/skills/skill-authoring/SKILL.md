@@ -49,7 +49,7 @@ Reserve full prose for conventions with **no** enforcer — naming, structure, w
 
 ## SKILL.md is the always-on layer; `references/` holds the rest
 
-A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. **A skill is one isolated concept, and its size is whatever that concept takes** — most are a fraction of the ceiling, and that is the shape to expect, not headroom to fill. `ai:sweep:skill-docs` reports a skill past the ceiling as a `budget` warning, and **that warning is the whole trigger** — a skill it names has stopped being one concept and become a manual nobody reads to the end, which is the same failure as not writing it. There is no second number below it: "close to the ceiling" is an intent, and an intent gets applied at one skill's size by this session and not at a slightly smaller one by the next (`references/enforceable-shapes.md`).
+A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. **A skill is one isolated concept, and its size is whatever that concept takes** — most are a fraction of the ceiling, and that is the shape to expect, not headroom to fill. `ai:sweep:skill-docs` reports a skill past the ceiling as a `budget` warning (its every other check is a test, `scripts/src/workspace/skillDocs.test.ts`), and **that warning is the whole trigger** — a skill it names has stopped being one concept and become a manual nobody reads to the end, which is the same failure as not writing it. There is no second number below it: "close to the ceiling" is an intent, and an intent gets applied at one skill's size by this session and not at a slightly smaller one by the next (`references/enforceable-shapes.md`).
 
 So a skill is two tiers:
 
@@ -66,9 +66,13 @@ arrived by search, and the pointer forms a move silently breaks, is that page.
 
 Nothing resolves a link out of a skill: no renderer opens one, and a relative `../../../` hop or a
 `github.com/.../blob/main/...` url is a path the reader has to reconstruct or a network fetch they cannot make.
-So a citation is the **repo-relative path in backticks** — `apps/web/content/docs/architecture/foo.md` — which
+So a citation is the **repo-relative path in backticks** — `apps/web/content/docs/architecture/agent-configuration.md` — which
 is what a reader greps, opens and edits, and which stays right when the skill moves. A path relative to anything
-but the repo root (`docs/architecture/foo.md`) resolves nowhere and is the form that silently rots.
+but the repo root (`docs/architecture/agent-configuration.md`) resolves nowhere and is the form that silently rots.
+`scripts/src/workspace/citations.test.ts` resolves every backticked path, and every ``the `x` skill`` name, across
+the agent tree, the docs and the READMEs, so a citation of a moved file or a renamed skill fails `pnpm test` — and a
+path or skill named only to say it does **not** exist is written as prose (`a shared/ folder under app/`), never as
+a citation the test would try to resolve.
 
 Cite another **skill** by name plus its page (``the `pinia` skill (`references/keyed-state-and-pagination.md`)``),
 never as a path into `.agents/skills/`.

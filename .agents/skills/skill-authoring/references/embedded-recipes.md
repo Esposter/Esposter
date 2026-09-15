@@ -23,7 +23,7 @@ Length is not a trigger: a long `--jq` expression that is still one selection st
 
 The domain folder is named for **what the tooling is about**, never for who runs it. The audience is carried by the script name, and an `ai/` folder would rewrite every `#src/…` import to say what the manifest already says.
 
-**Nothing in `.agents/` is executable.** The tree is the rules an agent reads; an executable in it makes "rule or tool" unanswerable from the path. A vitest project over `.agents/**/*.test.ts` existed for that and went out again.
+**Nothing in `.agents/` is executable.** The tree is the rules an agent reads; an executable in it makes "rule or tool" unanswerable from the path. A vitest project over test files inside `.agents/` existed for that and went out again.
 
 ## Naming: the `ai:` prefix
 

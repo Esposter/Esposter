@@ -107,7 +107,7 @@ Call `setupMswTrpc()` at `describe` scope (`@/services/trpc/mswTrpc.test`) and d
 
 ## Where a helper module may not live
 
-**Never add a non-`.d.ts` module under `apps/web/shared/` for test helpers.** `tsconfig.app.json` includes `../shared/**/*.d.ts` only, so a `.ts` helper there resolves for vitest but not for `vue-tsc` — and importing one from `shared/test/setup.ts` broke auto-import resolution across the whole app project (thousands of phantom `Cannot find name 'ref'` errors, nowhere near the file). Keep helpers colocated with their test, or beside the source they fake (`server/composables/**/useX.test.ts` exports the fake for `useX`).
+**Never add a non-`.d.ts` module under `apps/web/shared/` for test helpers.** `tsconfig.app.json` includes `../shared/**/*.d.ts` only, so a `.ts` helper there resolves for vitest but not for `vue-tsc` — and importing one from `shared/test/setup.ts` broke auto-import resolution across the whole app project (thousands of phantom `Cannot find name 'ref'` errors, nowhere near the file). Keep helpers colocated with their test, or beside the source they fake (`server/composables/azure/table/useTableClient.test.ts` exports the fake for `useTableClient`).
 
 ## `InvocationContext` logHandler
 

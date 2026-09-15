@@ -44,6 +44,7 @@
     "ai:sweep:repeated-list-items": "pnpm -C scripts run ai:sweep:repeated-list-items",
     "ai:sweep:shared-export-consumers": "pnpm -C scripts run ai:sweep:shared-export-consumers",
     "ai:sweep:skill-docs": "pnpm -C scripts run ai:sweep:skill-docs",
+    "ai:sweep:stale-names": "pnpm -C scripts run ai:sweep:stale-names",
     "ai:sweep:unterminated-results": "pnpm -C scripts run ai:sweep:unterminated-results",
     "bench": "pnpm -r --workspace-concurrency=1 --if-present run bench",
     "bench:ci": "vitest bench --run",

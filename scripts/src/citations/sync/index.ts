@@ -1,3 +1,4 @@
+import { CITING_PATHSPECS } from "#src/services/citations/constants";
 import { getRenamePrefixes } from "#src/services/citations/sync/getRenamePrefixes";
 import { rewriteCitations } from "#src/services/citations/sync/rewriteCitations";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -7,8 +8,6 @@ import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-// The trees that cite paths by hand: the docs site, the agent tree, and every README — the `docs` ledger's scope
-const CITING_PATHSPECS = ["apps/web/content/docs", ".agents", "*README.md", "AGENTS.md", "CONTRIBUTING.md", "SCORE.md"];
 // The renames are read against `HEAD` by default, which is where a `git mv` shows; a base of `HEAD~1` reads a
 // Move already committed on its own, which is how a sweep commits its moves apart from their repairs
 const base = process.argv[2] ?? "HEAD";

@@ -5,9 +5,9 @@ description: Apply when handed any review or cleanup request, when choosing the 
 
 # Code Review — One Entry Point, One Thread
 
-Every review request — `/code-review`, `/simplify`, "review this", "review PR N", "clean this up", post-merge audits — is answered here, in the main session. **Read the code yourself and report what you find.** There is no workflow script to invoke — not the built-in `Workflow({ name: "code-review" })`, and nothing under `.agents/workflows/`.
+Every review request — `/code-review`, `/simplify`, "review this", "review PR N", "clean this up", post-merge audits — is answered here, in the main session. **Read the code yourself and report what you find.** There is no workflow script to invoke — not the built-in `Workflow({ name: "code-review" })`, and no workflows directory under `.agents/`.
 
-Never use the `review` skill/command, the built-in `/simplify`, or a plugin skill named `code-review` — all answer to "review this", and several overlapping commands is how the shallowest one gets picked.
+Never use the built-in `/review` command, the built-in `/simplify`, or a plugin skill named `code-review` — all answer to "review this", and several overlapping commands is how the shallowest one gets picked.
 
 ## Settled — do not re-propose
 

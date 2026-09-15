@@ -56,7 +56,7 @@ and a `;` inside a string both fool a bracket count. Its cases are pinned by
 believing it passed" (`sweeps` skill) a thing that stays proved rather than a thing each pass re-does by hand.
 
 Everything it still reports on a swept repo is one of the exceptions below, so a clean pass is a **known** list
-rather than an empty one: the top-level-await clusters in `app/content/docs/index.test.ts`, `app/components/index.test.ts`
+rather than an empty one: the top-level-await clusters in `content/docs/index.test.ts`, `app/components/index.test.ts`
 and `app/store/index.test.ts` — each with the constants their module-scope readers pin out there alongside them —
 the `mockDb` a hoisted `vi.mock` factory returns in each `azure-functions` suite, and virrun's two mocked path
 constants.
