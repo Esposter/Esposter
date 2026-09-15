@@ -15,7 +15,7 @@ Applies **everywhere a store is consumed** — components, composables, services
 - Keep each store's lines grouped — fully extract one store before the next, never all inits, then all refs, then all methods. Order per store: `const xyzStore = useXyzStore()`, then `const { ref1 } = storeToRefs(xyzStore)`, then `const { method1 } = xyzStore` (omit either line if empty).
 - Never use dot-access (`store.method()`) in components. Enforced: `no-restricted-syntax` in the `.vue` configs bans a member expression on a lower-camel `*Store` identifier, on both the script and template sides.
 - **A store's id is its path under `app/store/`**, with a trailing `/index` dropped — `store/resource/sheet/row.ts` is `"resource/sheet/row"`. Asserted by `app/store/index.test.ts`, so a drifting id fails on the line that writes it.
-- **Store-to-store** (inside a store file): declare nested stores at the root of the setup function, never `useXxxStore()` inside an action (repeated lookups). Access refs/computeds by dot syntax (`otherStore.someRef`) to keep reactivity — **never `storeToRefs` inside a store**. Methods **must** be destructured at the root (`const { storeCreateFoo } = fooStore`), never called inline as `otherStore.method()`.
+- **Store-to-store** (inside a store file): declare nested stores at the root of the setup function, never `useXxxStore()` inside an action (repeated lookups). Access refs/computeds by dot syntax (`fooStore.bar`) to keep reactivity — **never `storeToRefs` inside a store**. Methods **must** be destructured at the root (`const { storeCreateFoo } = fooStore`), never called inline as `otherStore.method()`.
 
 ```ts
 // each store fully extracted before the next
@@ -68,7 +68,7 @@ A store action that mutates goes through `useMutation` (`composables/shared/useM
 
 ## CRUD Conventions
 
-- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteRole` not `removeRole`. Reserve domain terms only when there's no clean CRUD mapping.
+- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteFoo` not `removeFoo`. Reserve domain terms only when there's no clean CRUD mapping.
 - **`store*` prefix for subscription-driven state-update counterparts** — `storeCreateFoo`/`storeDeleteFoo`. If the user action is only a direct tRPC call, don't add a matching non-`store*` wrapper. State-update methods use CRUD prefixes (`createXxx` to insert, `deleteXxx` to remove) — never `addXxx`.
 - **update**: `findIndex` first, guard `if (index === -1) return`, then mutate in place with `Object.assign(takeOne(items.value, index), updatedItem)`.
 - **delete**: reassign the array — `items.value = items.value.filter(...)` — never `splice`.

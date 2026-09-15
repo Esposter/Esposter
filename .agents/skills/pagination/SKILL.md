@@ -82,7 +82,7 @@ Why the readonly type rather than a convention everyone remembers: the `invarian
 
 ## StyledWaypoint — Infinite Scroll
 
-Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. Never use a manual "Load more" `v-btn` with `isLoadingMore` state — that belongs to `StyledWaypoint`.
+Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. Never use a manual "Load more" `v-btn` with a loading flag of its own — that belongs to `StyledWaypoint`.
 
 - `:is-active="hasMore"` — `v-show` and deactivated when there are no more pages
 - `@change="readMoreXxx"` — handler must accept `(onComplete: () => void)` and call `onComplete()` when done (via the `onComplete` arg to `readMoreItems`)

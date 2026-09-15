@@ -20,14 +20,13 @@ scalars included, so its casing is the file name's (`pulumi-infra`).
 
 ## A fixed list or object that is not a table
 
-**It takes the scalar's casing, not the table's** — `DELETE_BUTTON_PROPS`, `CARD_PROPS`, `MENU_COMMANDS`,
-`KEYBOARD_SHORTCUTS`. PascalCase is earned by being a lookup with a file of its own to be named after; a bound
+**It takes the scalar's casing, not the table's** — `FOO_PROPS`, `FOO_COMMANDS`, `FOO_SHORTCUTS`. PascalCase is earned by being a lookup with a file of its own to be named after; a bound
 configuration or an iterated list inside a `<script setup>` has neither, and left camelCase it reads as one more
 local among the refs around it.
 
 ## A scalar with one reader is inlined, not named
 
-`:height="64"` rather than a `PANEL_HEIGHT` above it — the same answer the `vue` skill gives a single-use function.
+`:height="64"` rather than a `FOO_HEIGHT` above it — the same answer the `vue` skill gives a single-use function.
 A name earns its line by being read twice, by compressing a derivation the use site would otherwise spell out, or by
 being a list or object in a render position, where a module-scope binding is what stops a fresh allocation every
 render. A lone literal bound once is none of those: the name adds a jump and the casing announces a constant nothing

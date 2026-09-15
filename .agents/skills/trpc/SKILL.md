@@ -52,7 +52,7 @@ Routers nested by domain. Root merger: `server/trpc/routers/index.ts`. The clien
   ```
 
 - **Exception**: `achievement` is merged separately (via `mergeRouters`) to avoid a circular dep with the router that fires achievement events.
-- **Never use `call`, `apply`, `bind`, `then`, `catch` as router keys** — they are `Function.prototype` methods, and tRPC clients use a `Proxy`, so `.call` returns `Function.prototype.call` instead of descending the router, silently breaking the namespace. Use a descriptive compound name: `callSession`, `videoCall`, `roomCall`.
+- **Never use `call`, `apply`, `bind`, `then`, `catch` as router keys** — they are `Function.prototype` methods, and tRPC clients use a `Proxy`, so `.call` returns `Function.prototype.call` instead of descending the router, silently breaking the namespace. Use a descriptive compound name: `callSession`, `fooCall`.
 
 ## Procedure & Result Naming
 

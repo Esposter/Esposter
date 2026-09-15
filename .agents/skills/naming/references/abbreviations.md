@@ -25,7 +25,7 @@ tally, which are calls.
 ## Exported names spell the full English word
 
 `statistics` not `stat`/`stats` (`ColumnStatistics`, `ColumnStatisticsDefinitionMap`, `useColumnStatistics`, never
-`ColumnStatDefinitions`/`defineColumnStat`), `summation` not `sum` as a statistics identifier (the
+the `Stat`-shortened spelling of any of them), `summation` not `sum` as a statistics identifier (the
 `ColumnStatisticsKey` is `summation`). It does **not** reach a math accumulator local (`s`; `acc` is denylisted, so
 the accumulator is `accumulator`) or a display title such as `"Sum"`.
 

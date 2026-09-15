@@ -4,7 +4,7 @@ Read when writing many entities that share a `partitionKey`, or when a batched w
 
 ## `submitTransactionBatches`
 
-`submitTransaction` accepts at most `AZURE_MAX_BATCH_SIZE` actions per call, and all actions in one transaction **must share the same `partitionKey`** (Azure requirement). `submitTransactionBatches` (`@esposter/db`) owns the chunking. Every batch of a page targets the same partition, so it submits them **sequentially**, pacing the writes against that partition's throughput limit — firing them concurrently draws `429`/`TableTransactionFailedError`. Pass `onSubmit` when each batch must be announced as it commits, so a run that stops partway keeps everything it committed:
+`submitTransaction` accepts at most `AZURE_MAX_BATCH_SIZE` actions per call, and all actions in one transaction **must share the same `partitionKey`** (Azure requirement). `submitTransactionBatches` (`@esposter/db`) owns the chunking. Every batch of a page targets the same partition, so it submits them **sequentially**, pacing the writes against that partition's throughput limit — firing them concurrently draws `429`s and rejected transactions. Pass `onSubmit` when each batch must be announced as it commits, so a run that stops partway keeps everything it committed:
 
 ```ts
 for await (const page of tableClient

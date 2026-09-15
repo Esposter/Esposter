@@ -4,7 +4,7 @@ Read when reading, iterating or mutating call participants on the client, or add
 
 The client `callSessionParticipantsMap` mirrors the server structure for O(1) lookups on all participant mutations (`setParticipantMuted`, `setParticipantHandRaised`, `setParticipantCameraEnabled`, `deleteCallParticipant`) without scanning arrays.
 
-- **Don't add a separate tracking collection** for state already on `CallParticipant`. `isHandRaised` on the participant replaces any external `handRaisedIdsMap`. Check whether a new field belongs on `CallParticipant` itself before adding a parallel map.
+- **Don't add a separate tracking collection** for state already on `CallParticipant`. `isHandRaised` on the participant replaces any external ids map. Check whether a new field belongs on `CallParticipant` itself before adding a parallel map.
 - **The tRPC boundary uses `Map<string, CallParticipant>` directly** — SuperJSON natively serializes Maps. Procedures return Maps and `setParticipantMap` stores them as-is. Never convert to/from arrays at the boundary.
 - **Iterate in templates** with `v-for="participant of myMap.values()"`, not via array conversion. Use `.size`, not `.length`.
 - **Mutate through the reactive chain** — obtain a participant via `callSessionParticipantsMap.value.get(callSessionId)?.get(sessionId)`. Storing it in a local (`const participant = ...get(id)`) is fine: the object is Vue-proxied, so `participant.isMuted = true` triggers reactivity. The restriction is against capturing a _stale reference_ before the reactive lookup (e.g. closing over the map in a non-reactive context).

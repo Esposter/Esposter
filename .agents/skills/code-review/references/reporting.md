@@ -9,7 +9,7 @@ The table rule itself — every finding, one compact table, flush-left — is in
 | 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | correctness | 🔴 critical | regression 57dcbd3                 | Fixed                             |
 | 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | correctness | 🟡 major    | new                                | Fixed                             |
 | 3   | Comment names a deleted symbol              | helper.ts:6        | correctness | 🟢 minor    | stale-record readPublishHistory.ts | Fixed                             |
-| 4   | Third copy of the branch-restore rollback   | roomInvite.ts:22   | quality     | 🟢 minor    | new                                | Fixed — extracted to `restoreRow` |
+| 4   | Third copy of the branch-restore rollback   | roomInvite.ts:22   | quality     | 🟢 minor    | new                                | Fixed — extracted to `restoreFoo` |
 
 Fixes committed as abc1234. Refuted while reading: removeThing timeout bound, batch submission ordering.
 

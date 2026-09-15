@@ -60,7 +60,7 @@ After editing `schema.ts`, run `pnpm build` in `packages/db-schema/` (db-mock an
 
 ## Self-Joins (Same Table Twice)
 
-Always use `alias()` for both references — never the raw table object for either side. Name variables and alias strings `tableName1`, `tableName2`, etc. (numeric suffix, no role-based names):
+Always use `alias()` for both references — never the raw table object for either side. Name variables and alias strings `foo1`, `foo2`, etc. (numeric suffix, no role-based names):
 
 ```ts
 const foos1 = alias(foos, "foos1");
