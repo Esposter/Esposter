@@ -6,7 +6,8 @@ import { OverlayEntryKind } from "#src/models/exec/snapshot/OverlayEntryKind";
 import { getPathDepth } from "#src/services/exec/snapshot/getPathDepth";
 import { exhaustiveGuard } from "@esposter/shared";
 // Order a classified overlay-upper walk into host ops (apps/web/content/docs/virrun/write-back.md). Deletes run before
-// Copies so an opaque directory is cleared before its replacement children land; an opaque directory expands to a delete + a copy.
+// Copies so an opaque directory is cleared before its replacement children land; an opaque directory expands to a
+// Delete + a copy.
 export const buildFlushPlan = (
   entries: readonly OverlayEntry[],
   checkIsSnapshotLowerPath: (relativePath: string) => boolean,

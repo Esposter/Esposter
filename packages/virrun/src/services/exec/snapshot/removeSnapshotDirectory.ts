@@ -13,7 +13,8 @@ export const removeSnapshotDirectory = (directory: string, timeoutMs: number = W
   // A snapshot on the WSL distro's ext4 (reached via a `\\wsl.localhost` UNC) has an overlay workDirectory whose
   // `work/work` scratch is owned by the sandbox's namespaced root — the 9p bridge identity Windows uses can't
   // Chmod or remove it (EPERM), so neither makeTraversable nor rmSync works from here. Tear it down inside WSL
-  // Instead, where the distro user owns it (WSL_REMOVE_SCRIPT). rm -rf is idempotent, so a missing directory is a no-op.
+  // Instead, where the distro user owns it (WSL_REMOVE_SCRIPT). rm -rf is idempotent, so a missing directory is a
+  // No-op.
   if (WSL_UNC_REGEX.test(directory)) {
     const linuxDirectory = readWslPath(directory);
     execWsl(["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDirectory], { timeout: timeoutMs });

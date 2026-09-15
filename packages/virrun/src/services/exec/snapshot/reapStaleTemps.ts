@@ -4,9 +4,11 @@ import { parseTempOwnerPid } from "#src/services/exec/util/parseTempOwnerPid";
 // A capture/persist run writes into a private pid-tagged `mkdtemp` sibling of the live snapshot/prepare hash directory
 // (`<base>.<pid>.<rand>`, withPidTempPrefix) and its in-process finalizer removes it on a clean exit. A hard kill
 // (SIGKILL, crash, `wsl --shutdown`) skips that finalizer, stranding the temp; and pruneStale* only evicts whole
-// *Superseded* hash directories, so a corpse in the *live* directory would accumulate forever. Reap it beside the prune — but read
+// *Superseded* hash directories, so a corpse in the *live* directory would accumulate forever. Reap it beside the prune
+// — but read
 // The owner pid back out of the name (parseTempOwnerPid) and reclaim only a *dead* owner's corpse, so a concurrent run
-// Whose temp shares this hash directory (same lockfile) is never deleted mid-exec. The published bare `upper`/`work` and the
+// Whose temp shares this hash directory (same lockfile) is never deleted mid-exec. The published bare `upper`/`work`
+// And the
 // `leases/` sibling carry no owner pid and are always kept. (Not for the shared `os.tmpdir()` source-clone root — that
 // Is concurrent with no per-entry owner, so it is left to the OS's tmp reaping.)
 export const reapStaleTemps = (directory: string, prefixes: readonly string[]): void => {

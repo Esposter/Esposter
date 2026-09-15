@@ -63,7 +63,8 @@ describe(persistRun, () => {
 
     expect(result.exitCode).toBe(0);
 
-    // The per-run upper directory is a random mkdtemp path; capture it to assert the same directory threads into onPersist.
+    // The per-run upper directory is a random mkdtemp path; capture it to assert the same directory threads
+    // Into onPersist.
     const [upperDirectory] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
 
     expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDirectory, HOST_DIRECTORY, PLAN);
