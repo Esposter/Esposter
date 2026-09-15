@@ -67,9 +67,6 @@ export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 // Account's default was last set to, which no log line would say
 export const DRAIN_MODEL = "opus";
 
-// `pnpm` is a shim on Windows that only a shell resolves
-export const IS_PNPM_SHELL: boolean = process.platform === "win32";
-
 export const DRY_RUN_WORKTREE_PREFIX = "review-collector-";
 
 // The drain holds no GitHub credential, so its verdicts leave the session as files the collector posts. They sit

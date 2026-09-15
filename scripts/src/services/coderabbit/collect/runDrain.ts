@@ -1,9 +1,9 @@
 import type { DrainRun } from "#src/models/coderabbit/collect/DrainRun";
 
-import { CLAUDE_CODE_PACKAGE, DRAIN_MODEL, IS_PNPM_SHELL } from "#src/services/coderabbit/collect/constants";
+import { CLAUDE_CODE_PACKAGE, DRAIN_MODEL } from "#src/services/coderabbit/collect/constants";
 import { getDrainEventLine } from "#src/services/coderabbit/collect/getDrainEventLine";
 import { getDrainLimitResetMs } from "#src/services/coderabbit/collect/getDrainLimitResetMs";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { IS_PNPM_SHELL, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { createInterface } from "node:readline";

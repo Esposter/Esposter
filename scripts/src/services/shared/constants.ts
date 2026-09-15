@@ -33,3 +33,6 @@ export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
 export const RECORD_SEPARATOR = "";
 
 export const FIELD_SEPARATOR = "";
+
+// On Windows `pnpm` is a `.cmd` shim, which only a shell resolves
+export const IS_PNPM_SHELL: boolean = process.platform === "win32";

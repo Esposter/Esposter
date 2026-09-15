@@ -20,7 +20,7 @@ export const getRegularOutdatedDependencies = async (root: string): Promise<Outd
     if (result.status !== 0)
       return getPnpmOutdatedFailure(
         result.stderr.trim() ||
-          (result.status === null ? "terminated before completion" : `exit code ${result.status}`),
+          (result.status === undefined ? "terminated before completion" : `exit code ${result.status}`),
       );
 
     return { errors: [], outdatedDependencies: [] };
