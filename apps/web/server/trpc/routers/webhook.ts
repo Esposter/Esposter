@@ -8,7 +8,7 @@ import { updateWebhookInputSchema } from "#shared/models/db/webhook/UpdateWebhoo
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { generateToken } from "@@/server/services/auth/generateToken";
-import { getWebhookRoomWhere } from "@@/server/services/webhook/getWebhookRoomWhere";
+import { inRoom } from "@@/server/services/db/inRoom";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -113,7 +113,7 @@ export const webhookRouter = router({
         await ctx.db
           .update(webhooksInMessage)
           .set({ token: generateToken() })
-          .where(getWebhookRoomWhere(id, roomId))
+          .where(inRoom(webhooksInMessage, id, roomId))
           .returning()
       )[0],
       Operation.Update,
@@ -127,7 +127,13 @@ export const webhookRouter = router({
     "roomId",
   ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) =>
     requireMutation(
-      (await ctx.db.update(webhooksInMessage).set(rest).where(getWebhookRoomWhere(id, roomId)).returning())[0],
+      (
+        await ctx.db
+          .update(webhooksInMessage)
+          .set(rest)
+          .where(inRoom(webhooksInMessage, id, roomId))
+          .returning()
+      )[0],
       Operation.Update,
       DatabaseEntityType.Webhook,
       id,
