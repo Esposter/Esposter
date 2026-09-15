@@ -14,7 +14,7 @@ splits at `services/exec`'s subdirectories.
 | `azure-functions`                                                                                   | 2026-09-05 | every `mockDb` stays — hoisted factory, see the README |
 | `azure`, `azure-mock`                                                                               | 2026-09-15 |                                                        |
 | `db`, `db-schema`, `db-mock`                                                                        | 2026-09-15 |                                                        |
-| `shared`, `shared-node`                                                                             | 2026-09-05 |                                                        |
+| `shared`, `shared-node`                                                                             | 2026-09-15 |                                                        |
 | `parse-tmx`, `xml2js`                                                                               | 2026-09-15 |                                                        |
 | `vue-phaserjs`                                                                                      | 2026-09-05 |                                                        |
 | `configuration`, `infra`                                                                            | 2026-09-15 |                                                        |
