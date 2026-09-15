@@ -20,13 +20,13 @@ composable and store layers no single feature claims.
 | `composables` root files                                         | 2026-09-15 |                                                           |
 | `composables/{storage,vuetify,file,notification,cache,azure}`    | 2026-09-15 |                                                           |
 | `store` root files, `store/{user,storage}`                       | 2026-09-15 |                                                           |
-| `app/models/dungeons`                                            | 2026-09-05 |                                                           |
-| `app/models/resource`                                            | 2026-09-05 |                                                           |
-| `app/models/message`                                             | 2026-09-05 |                                                           |
-| `app/models/{resolvers,shared}`                                  | 2026-09-05 |                                                           |
-| `app/models` — its root files and the small folders              | 2026-09-05 |                                                           |
-| `app/util`                                                       | 2026-09-05 |                                                           |
-| `app/types`                                                      | 2026-09-05 |                                                           |
+| `app/models/dungeons`                                            | 2026-09-15 |                                                           |
+| `app/models/resource`                                            | 2026-09-15 |                                                           |
+| `app/models/message`                                             | 2026-09-15 |                                                           |
+| `app/models/{resolvers,shared}`                                  | 2026-09-15 |                                                           |
+| `app/models` — its root files and the small folders              | 2026-09-15 |                                                           |
+| `app/util`                                                       | 2026-09-15 |                                                           |
+| `app/types`                                                      | 2026-09-15 |                                                           |
 | `components/{App,Nuxt,Transition}`, `Fragment.vue`, `App.vue`    | 2026-09-05 | `components/index.test.ts` is the auto-import name check  |
 | `pages`, `layouts`                                               | 2026-09-05 |                                                           |
 | `plugins`, `middleware`                                          | 2026-09-05 |                                                           |
