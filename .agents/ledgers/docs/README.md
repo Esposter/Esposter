@@ -21,7 +21,9 @@ Coverage lives in the area file, never here. A pass loads this file and the one 
 Greps, over `*.md`. Each finds a candidate, not a defect — the failures are prose-shaped and the pass is reading.
 What each pattern means is the owning skill's to say:
 
-1. `\b\d+ (files|packages|pages|components|stores|routers|tests|rows|procedures)\b`
+1. `\b\d+ (files|packages|pages|components|stores|routers|tests|rows|procedures)\b` for what the repo can
+   count, and `\b\d+(\.\d+)? ?(ms|s|kb|mb|gb|seconds|minutes)\b` for the profiling figures and byte sizes the
+   same rule reaches — a stopwatch reading drifts with the hardware that took it, where a magnitude does not
 2. `(used to|previously|no longer|formerly|was replaced|has been replaced|we now|renamed from|the old )`
 3. `(deprecated|moved to|see instead|superseded by)`
 4. `\]\([^)]*\.md[)#]`, and `\[/docs/[^]]*\]\(` for link text repeating its own route
