@@ -28,15 +28,17 @@ jobs:
         id: restore
         uses: ./.github/actions/restore-package-builds
       # The toolchain and the install hang off the miss too: a hit uploads straight from the restored paths and
-      # needs neither pnpm nor `node_modules`. Filtered to the libraries plus the root closure that declares the
-      # toolchain — the apps' trees are install work nothing here reads.
+      # needs neither pnpm nor `node_modules`. Filtered to the libraries — the apps' trees are install work
+      # nothing here reads.
       - name: 🔧 Setup Project Dependencies
         if: steps.restore.outputs.complete != 'true'
         uses: ./.github/actions/setup-project-dependencies
 
       - name: 📦 Install dependencies
         if: steps.restore.outputs.complete != 'true'
-        run: pnpm --filter "./packages/*" --filter "{.}..." --fail-if-no-match i
+        uses: ./.github/actions/install-projects
+        with:
+          filter: ./packages/*
 
       - name: 🏗️ Build packages
         if: steps.restore.outputs.complete != 'true'

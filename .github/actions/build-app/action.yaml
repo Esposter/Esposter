@@ -10,13 +10,12 @@ runs:
     - name: ♻️ Restore package builds
       id: restore
       uses: ./.github/actions/restore-package-builds
-    # The root closure for the toolchain, as `setup-packages` explains — `typescript` above all, which no
-    # library redeclares and the dependency build below generates declarations with
+    # The root closure rides along for the toolchain — `typescript` above all, which no library redeclares and
+    # the dependency build below generates declarations with
     - name: 📦 Install dependencies
-      shell: bash
-      env:
-        PACKAGE: ${{ inputs.package }}
-      run: pnpm --filter "$PACKAGE..." --filter "{.}..." --fail-if-no-match i
+      uses: ./.github/actions/install-projects
+      with:
+        filter: ${{ inputs.package }}...
 
     - name: 🏗️ Build dependencies
       if: steps.restore.outputs.complete != 'true'
