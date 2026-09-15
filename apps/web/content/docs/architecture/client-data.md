@@ -43,15 +43,15 @@ On failure `data` stays `undefined`, so the component falls back to its empty st
 
 ## useMutation
 
-`useMutation` (`composables/shared/useMutation.ts`) returns `{ executeMutation, executeQuery, getIsPending, isPending }` and bundles the four things every write needs:
+`useMutation` (`composables/shared/useMutation.ts`) returns `{ executeMutation, executeQuery, checkIsPending, isPending }` and bundles the four things every write needs:
 
 - **Optimistic apply + rollback** — write the change to the store immediately, roll it back if the server rejects it.
 - **Concurrency by target** — writes to one `key` run one at a time, so two controls writing different fields of the same entity both land; reads for one `key` are latest-wins. The full model, the opt-ins, and the outcome statuses live in [Async operations](/docs/architecture/async-operations).
-- **Pending state** — `isPending` is true while any of the instance's calls is in flight; `getIsPending(key)` scopes it to one key for per-item surfaces (a table row's own button). They are what the triggering control binds as `:loading`/`:disabled` (see [In-flight guarding](#in-flight-guarding)).
+- **Pending state** — `isPending` is true while any of the instance's calls is in flight; `checkIsPending(key)` scopes it to one key for per-item surfaces (a table row's own button). They are what the triggering control binds as `:loading`/`:disabled` (see [In-flight guarding](#in-flight-guarding)).
 - **Error surfacing** — a failed mutation raises the actual error message as an alert; no call site writes `try`/`catch` or bespoke alert strings.
 
 ```ts
-const { executeMutation, getIsPending, isPending } = useMutation();
+const { executeMutation, checkIsPending, isPending } = useMutation();
 
 await executeMutation(mutate, {
   applyOptimistic: () => {
