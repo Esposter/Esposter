@@ -46,10 +46,11 @@ A function whose whole body assigns a boolean `is*` field is `set` plus that fie
 `setParticipantMuted` writes `isMuted`, `setParticipantCameraEnabled` writes `isCameraEnabled`,
 `setParticipantHandRaised` writes `isHandRaised`.
 
-`setMute`, `setCamera` and `setFooEnabled` each name an action or invent a second word for a field that
-already has one, so the setter and the thing it sets have to be matched up by reading the body. The field's own
-name is the one both sides already share, and where the setter names whose field it is, that qualifier comes
-first (`setParticipant*`) so the family sorts together.
+`setMute` names an action rather than the `isMuted` it writes, `setCamera` drops half of the `isCameraEnabled` it
+writes, and `setFooEnabled` over an `isFoo` invents a second word for a field that already has one — each leaves
+the setter and the thing it sets to be matched up by reading the body. The field's own name is the one both sides
+already share, and where the setter names whose field it is, that qualifier comes first (`setParticipant*`) so the
+family sorts together.
 
 ## `on*` vs `handle*`
 
