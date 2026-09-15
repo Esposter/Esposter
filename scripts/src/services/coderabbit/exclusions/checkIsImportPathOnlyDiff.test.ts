@@ -49,6 +49,19 @@ describe(checkIsImportPathOnlyDiff, () => {
     ).toBe(false);
   });
 
+  // Each end of the repathing names a rename the range carries, but they are two different renames: the import
+  // Reads as followed while it now loads a module it never named
+  test("rejects a specifier repointed from one rename's source to another's destination", () => {
+    expect.hasAssertions();
+
+    expect(
+      checkIsImportPathOnlyDiff(
+        getDiff('-import { a } from "@/util/a";', '+import { a } from "#shared/models/B";'),
+        rows,
+      ),
+    ).toBe(false);
+  });
+
   // Two modules renamed past each other move both ways at once, so a specifier names one rename's source and the
   // Other's destination — the import reads as followed while it now resolves to the other module's contents
   test("rejects a specifier naming both ends of two crossed renames", () => {

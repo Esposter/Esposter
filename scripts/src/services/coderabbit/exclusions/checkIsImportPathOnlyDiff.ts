@@ -5,9 +5,9 @@ import { DiffLineSign } from "#src/models/coderabbit/shared/DiffLineSign";
 // Diff is the same imports pointing at the new path. "Every changed line is an import" is not the test — a new
 // Symbol, a new package or an added side-effect import passes it — so the added imports must be the removed ones
 // With only the quoted specifier differing, which blanking every quoted string turns into a set comparison, and
-// Every specifier must name one end of a rename the same range carries, and only one rename's: a swap between two
-// Modules that both exist is a content change wearing an import's shape, and so is a swap between two the range
-// Renamed past each other.
+// Each removed import and the added import it blanks to must name the two ends of one rename the same range
+// Carries, and of only one rename: a swap between two modules that both exist is a content change wearing an
+// Import's shape, and so is a swap between two the range renamed past each other.
 const MODE_CHANGE_REGEX = /^(?:old|new|deleted file|new file) mode /u;
 const CHANGED_LINE_REGEX = /^[+-]/u;
 const DIFF_HEADER_REGEX = /^(?:\+\+\+|---)/u;
@@ -21,15 +21,27 @@ const ALIAS_OR_RELATIVE_SEGMENT_REGEX = /^[@#~.]/u;
 // A module's extension, and the `/index` a directory import leaves off
 const MODULE_STEM_SUFFIX_REGEX = /(?:\/index)?\.[^./]+$/u;
 
+// A changed line with the path it names blanked out: everything a repathing leaves alone
+const getBlankedLine = (line: string): string => line.slice(1).replaceAll(QUOTED_STRING_REGEX, '""');
+
 // Compared as a sorted set rather than in place: `perfectionist/sort-imports` owns import order, so a repathed import
 // Re-sorts among its neighbours and an in-place compare would keep every such file in review for an order no
 // Reviewer decides. The one import whose position is meaning — a side-effect import — is refused before this runs
 const getBlankedLines = (changedLines: string[], sign: DiffLineSign): string =>
   changedLines
     .filter((line) => line.startsWith(sign))
-    .map((line) => line.slice(1).replaceAll(QUOTED_STRING_REGEX, '""'))
+    .map(getBlankedLine)
     .toSorted()
     .join("\n");
+
+// The importing lines of one sign in the order the set compare above already matched them in, so the line at an
+// Index on one side is the one its counterpart blanks to on the other. A blank line names nothing and is dropped
+const getSortedImportLines = (changedLines: string[], sign: DiffLineSign): string[] =>
+  changedLines
+    .filter((line) => line.startsWith(sign) && line.slice(1).trim() !== "")
+    .map((line) => ({ blanked: getBlankedLine(line), line }))
+    .toSorted(({ blanked: left }, { blanked: right }) => left.localeCompare(right))
+    .map(({ line }) => line);
 
 // The path an import names once its alias or relative prefix is dropped, which is what a rename row's path ends
 // With whichever alias the importer resolved it through
@@ -54,26 +66,31 @@ const checkIsAmbiguous = (moves: { from: string; to: string }[], tail: string): 
       moves.some(({ to }, otherIndex) => otherIndex !== index && checkIsNamedBy(to, tail)),
   );
 
-// Every changed import of one sign names a path on the matching end of some rename, and no other rename answers to
-// The same tail; a blank line names nothing and passes, an import line with no readable specifier proves nothing
-// And fails
-const checkFollowsMoves = (
-  changedLines: string[],
-  sign: DiffLineSign,
-  moves: { from: string; to: string }[],
-): boolean =>
-  changedLines
-    .filter((line) => line.startsWith(sign) && line.slice(1).trim() !== "")
-    .every((line) => {
-      const specifier = SPECIFIER_REGEX.exec(line)?.groups?.specifier;
-      if (specifier === undefined) return false;
+// A removed import and the added import it blanks to are the two halves of one repathing, so one move has to name
+// Both ends of that pair, and no other rename may answer to either tail. Judged a sign at a time instead, a range
+// Carrying `a` -> `b` beside `c` -> `d` reads an import repointed from `a` to `d` as followed, while it now loads
+// The other module's contents — the blanked compare cannot see it, since it reads everything but the specifier.
+// An import line with no readable specifier proves nothing and fails
+const checkFollowsMoves = (changedLines: string[], moves: { from: string; to: string }[]): boolean => {
+  const removedLines = getSortedImportLines(changedLines, DiffLineSign.Removed);
+  const addedLines = getSortedImportLines(changedLines, DiffLineSign.Added);
+  return removedLines.every((removedLine, index) => {
+    const addedLine = addedLines[index];
+    if (addedLine === undefined) return false;
 
-      const tail = getSpecifierTail(specifier);
-      return (
-        !checkIsAmbiguous(moves, tail) &&
-        moves.some(({ from, to }) => checkIsNamedBy(sign === DiffLineSign.Added ? to : from, tail))
-      );
-    });
+    const removedSpecifier = SPECIFIER_REGEX.exec(removedLine)?.groups?.specifier;
+    const addedSpecifier = SPECIFIER_REGEX.exec(addedLine)?.groups?.specifier;
+    if (removedSpecifier === undefined || addedSpecifier === undefined) return false;
+
+    const fromTail = getSpecifierTail(removedSpecifier);
+    const toTail = getSpecifierTail(addedSpecifier);
+    return (
+      !checkIsAmbiguous(moves, fromTail) &&
+      !checkIsAmbiguous(moves, toTail) &&
+      moves.some(({ from, to }) => checkIsNamedBy(from, fromTail) && checkIsNamedBy(to, toTail))
+    );
+  });
+};
 
 export const checkIsImportPathOnlyDiff = (diff: string, rows: NameStatusRow[]): boolean => {
   const lines = diff.split("\n");
@@ -98,8 +115,5 @@ export const checkIsImportPathOnlyDiff = (diff: string, rows: NameStatusRow[]): 
   const moves = rows.flatMap(({ path, renamedFrom }) =>
     renamedFrom === undefined ? [] : [{ from: renamedFrom, to: path }],
   );
-  return (
-    checkFollowsMoves(changedLines, DiffLineSign.Removed, moves) &&
-    checkFollowsMoves(changedLines, DiffLineSign.Added, moves)
-  );
+  return checkFollowsMoves(changedLines, moves);
 };
