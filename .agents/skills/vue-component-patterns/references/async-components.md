@@ -11,7 +11,7 @@ So a registry whose entries are heavy holds loaders, not components — `defineA
 per entry — and consumers are unaffected, since a registry is read for presence (`if (Map[type])`) or for one
 entry at a time.
 
-```typescript
+```ts
 export const FooComponentMap: Record<FooType, Component> = {
   [FooType.Bar]: defineAsyncComponent(() => import("@/components/Foo/Bar.vue")),
 };
