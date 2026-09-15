@@ -18,7 +18,7 @@ Read when a composable issues a read or a write that can overlap another, or per
 
 ## Pending state and sync call sites
 
-- **`isPending` / `getIsPending(key)`** come from the same instance, so a read composable exposes `isPending` renamed (`isPending: isLoading`) instead of keeping its own ref.
+- **`isPending` / `checkIsPending(key)`** come from the same instance, so a read composable exposes `isPending` renamed (`isPending: isLoading`) instead of keeping its own ref.
 - **`getSynchronizedFunction(fn)`** (`#shared/util/function/`) fires an async fn from a sync context (a watcher callback, or a fetch kicked off during setup with no Suspense boundary). Pair it with the entry point instead of floating the promise.
 
 ## Staleness is per target
