@@ -6,14 +6,17 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(runGit, () => {
   let directory: string;
+  let otherDirectory: string;
 
   beforeEach(() => {
     directory = mkdtempSync(join(tmpdir(), "run-git-"));
+    otherDirectory = mkdtempSync(join(tmpdir(), "run-git-other-"));
     runGit(["init", "--quiet", directory]);
   });
 
   afterEach(() => {
     rmSync(directory, { force: true, recursive: true });
+    rmSync(otherDirectory, { force: true, recursive: true });
   });
 
   // Git reads a repository selector from the environment ahead of the cwd, so a hook's exported one would run
@@ -21,8 +24,6 @@ describe(runGit, () => {
   // An ambient object store would leave the objects it writes there rather than in the repository it named
   test("answers about the cwd while the environment names another repository", () => {
     expect.hasAssertions();
-
-    const otherDirectory = mkdtempSync(join(tmpdir(), "run-git-other-"));
 
     vi.stubEnv("GIT_COMMON_DIR", otherDirectory);
     vi.stubEnv("GIT_DIR", join(otherDirectory, ".git"));
