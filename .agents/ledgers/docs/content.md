@@ -14,3 +14,4 @@
 | `proposals/`, `docs/index.md`, every area `index.md`           | 2026-09-06 | index coverage is `content/docs/index.test.ts`'s, not a pass's                     |
 | root — `AGENTS.md`, `README.md`, `SCORE.md`, `CONTRIBUTING.md` | 2026-09-06 | plus `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.agents/*.md`                           |
 | `packages/*/README.md`                                         | 2026-09-06 | `readme-standards` owns the shape; what drifts is the content a reader acts on     |
+| `apps/*/README.md`                                             | —          | the three apps link the docs site root, since typedoc reaches only `packages/*`    |
