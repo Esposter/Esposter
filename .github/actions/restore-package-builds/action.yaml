@@ -6,7 +6,7 @@ outputs:
     value: ${{ steps.verify.outputs.complete }}
   key:
     description: The cache key the entry was looked up under, for the caller that saves the full build
-    value: package-builds-${{ steps.keys.outputs.package-builds-hash }}
+    value: ${{ steps.keys.outputs.package-builds-key }}
   paths:
     description: The path list the entry holds, for the save and the artifact upload
     value: ${{ steps.keys.outputs.package-builds-paths }}
@@ -22,7 +22,7 @@ runs:
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ${{ steps.keys.outputs.package-builds-paths }}
-        key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
+        key: ${{ steps.keys.outputs.package-builds-key }}
     # A build skipped on `cache-hit` over a partial extract hands the caller an empty dependency — Pulumi an empty
     # program, the Functions zip a `dist` that registers nothing while the host reports Running
     - name: 🔍 Verify package builds
