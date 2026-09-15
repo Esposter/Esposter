@@ -23,7 +23,7 @@ const buildTopFrequenciesChartData = (
   };
 };
 
-export const ColumnChartDataMap: Partial<
+export const ColumnTypeChartDataComputeMap: Partial<
   Record<ColumnType, (statistics: ColumnStatistics) => ColumnChartData | undefined>
 > = {
   [ColumnType.Boolean]: (columnStatistics) => ({
