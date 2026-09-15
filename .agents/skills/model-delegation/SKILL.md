@@ -51,7 +51,7 @@ The agent starts with zero conversation context. The prompt must carry:
 1. **The spec** — point at the proposal file (or inline it) and pre-resolve every judgment call you can: exact rename maps, negative lists (what NOT to touch), edge cases already decided. Ambiguity left in the prompt becomes a judgment call made without you.
 2. **Repo conventions the agent can't infer** — always `pnpm`, never `npx`; verify with `pnpm format` + typecheck (and relevant tests); lint with `pnpm lint:fix` from the repo root, which is the only pass that oxlints the app (a package's own `lint:fix` is ESLint over that package alone, so a change that passes it still fails CI); `try/catch` banned (getResult/getResultAsync + `.match`); no relative imports (`@/`, `#shared`, `@esposter/*`); never run `db:gen`/`db:up` and never hand-craft migration folders (cloning `snapshot.json` forks the migration chain — `db:gen` is the only sanctioned producer); when the spec needs a migration, edit the Drizzle schema only (the TS types alone keep typecheck green) and report that the user must run `pnpm db:gen` and apply it.
 3. **A verifiable done-definition** — grep audits that must return zero hits, test files that must pass. "Done" the agent can prove beats "done" it can claim.
-4. **Git discipline** — commit style from the git skill; push when green. **Never `git add -A`**: other sessions' WIP may be dirty (historically `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `scripts/src/refreshLockfile/index.ps1`, but check `git status` fresh) — stage explicit paths only.
+4. **Git discipline** — commit style from the git skill, and the branch the commits land on. **Never `git add -A`**: another session's WIP may be dirty, so read `git status` fresh and stage explicit paths only.
 5. **Report-back contract** — files changed, judgment calls made, verification results, and anything only the user can do (e.g. running `pnpm db:gen` for a pending schema change).
 
 ## While the agent runs
@@ -61,16 +61,15 @@ The agent starts with zero conversation context. The prompt must carry:
 
 ## Running several agents at once
 
-One agent per PR, each in its own git worktree (`isolation: "worktree"` on the Agent tool), is the way to open a batch of PRs in parallel. The shared-working-tree boundary rule above only holds for a single agent; two agents in one tree trample each other. Isolation is what makes concurrency safe, so it is not optional for a batch.
+One agent per unit of work, each in its own git worktree (`isolation: "worktree"` on the Agent tool), is the way to run a batch in parallel. The shared-working-tree boundary rule above only holds for a single agent; two agents in one tree trample each other. Isolation is what makes concurrency safe, so it is not optional for a batch.
 
 Fan-out is earned by the prompt and paid for by the budget. The historical failure mode was agents burning their budget re-reading context and never producing work — that happens when the prompt is a topic instead of a spec. Two conditions gate a parallel batch, and both must hold: every prompt is a self-contained spec-execution task per the section above, and there are excess tokens to burn. Under a tight budget, or for exploratory, ideation, or docs-authoring work, stay sequential in the main session where judgment compounds.
 
 Plan the batch around what the agents touch:
 
-- Size each PR to **fill the review budget, not just stay under it** — the number itself is the `coderabbit` skill's ("PR File Budget"), and a single proposal comes nowhere near it. One-proposal-per-agent therefore wastes most of a review slot and multiplies review rounds; batch several related proposals from one area into a single agent's spec.
-- Give each agent its own branch cut from `develop` and a stated merge order; a PR that depends on another's output is a stacked branch, not a parallel one — fold it into its parent's PR instead.
-- Overlap must be additive only (separate rows on a shared component, separate procedures in a shared router). Shared schema sections or a shared write path mean one PR, not two agents.
-- Each agent commits, pushes, and opens its own PR from its worktree. Verify each landed commit yourself before the next PR merges on top.
+- Give each agent its own worktree branch cut from `ai/queue` and a stated merge order; a unit that depends on another's output is sequential work, not a parallel agent — fold it into its parent's spec instead.
+- Overlap must be additive only (separate rows on a shared component, separate procedures in a shared router). Shared schema sections or a shared write path mean one agent, not two.
+- Each agent commits on its worktree branch and opens no pull request: the session merges each branch into `ai/queue` in the stated order (`git` skill, "Merging `main` and the Lockfile") and pushes the queue, and the collector cuts the windows (`review-queue` skill). Verify each landed commit yourself before merging the next on top.
 
 ## Cleaning up worktrees
 
