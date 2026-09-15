@@ -5,18 +5,18 @@ Read when one page component serves optional or nested segments (`[id]/[[bar]].v
 For pages with **optional or nested route segments** sharing one page component (e.g. `[id]/[[bar]].vue`), each segment change is a different path, so by default the page **remounts** on every in-page navigation — re-running top-level `await` loaders and remounting the whole subtree (a shared sidebar/list refetches on every click).
 
 1. **Key the page by the stable segment only**, so sibling-segment navigations reuse the page instead of remounting it.
-2. **Validate params at the route boundary** — `definePageMeta({ validate })` runs on every navigation, so a bad param 404s _before_ setup. Reuse `@/services/router/validate` (uuid v4 for `id`).
+2. **Validate params at the route boundary** — `definePageMeta({ validate })` runs on every navigation, so a bad param 404s _before_ setup. Reuse `@/services/router/checkIsUuidRouteId` (uuid v4 for `id`).
 
 ```ts
 // pages/foos/[id]/[[bar]].vue
-import { validate } from "@/services/router/validate";
+import { checkIsUuidRouteId } from "@/services/router/checkIsUuidRouteId";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { requireRouteParam } from "@/util/router/requireRouteParam";
 
 definePageMeta({
   key: (route) => `foo-${Array.isArray(route.params.id) ? route.params.id[0] : route.params.id}`,
   middleware: "auth",
-  validate: (route) => validate(route) && (!route.params.bar || typeof route.params.bar === "string"),
+  validate: (route) => checkIsUuidRouteId(route) && (!route.params.bar || typeof route.params.bar === "string"),
 });
 const { currentRoute } = useRouter();
 // Keyed/stable segment → read once (the page remounts on id change), through the throwing helper
