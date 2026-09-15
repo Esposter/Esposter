@@ -6,6 +6,7 @@ import {
   FIELD_SEPARATOR,
   RECORD_SEPARATOR,
 } from "#src/services/coderabbit/collect/constants";
+import { checkIsGitHubNumber } from "#src/services/coderabbit/shared/checkIsGitHubNumber";
 
 const VALUE_SEPARATOR = ",";
 
@@ -15,7 +16,7 @@ const getIds = (body: string, key: string): number[] =>
   [...body.matchAll(new RegExp(String.raw`^[ \t]*${key}:(?<values>.*)$`, "gimu"))]
     .flatMap(({ groups }) => (groups?.values ?? "").split(VALUE_SEPARATOR))
     .map((value) => Number(value.trim()))
-    .filter((id) => Number.isSafeInteger(id) && id > 0);
+    .filter((id) => checkIsGitHubNumber(id));
 
 export const getAnsweredCommits = (log: string): AnsweredCommit[] =>
   log
