@@ -53,7 +53,7 @@
 | `vue`                     | 2026-09-15 |       |
 | `vue-component-patterns`  | 2026-09-15 |       |
 | `vue-composable-patterns` | —          |       |
-| `vue-page-composition`    | —          |       |
+| `vue-page-composition`    | 2026-09-15 |       |
 | `vue-phaserjs`            | —          |       |
 | `vuetify`                 | 2026-09-15 |       |
 | `zod`                     | 2026-09-15 |       |

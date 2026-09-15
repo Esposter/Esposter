@@ -1,6 +1,6 @@
 ---
 name: vue-page-composition
-description: Esposter Vue page and list composition — pages as layout-only orchestrators (no ref/computed/handler belonging to one interactive element), constant arrays in services/ and why a one-off bound configuration literal is not one, maximal component granularity with one action per component (extracted action buttons, keyboard-shortcut buttons, a v-menu as one unit) and the allowed groupings plus when not to over-extract including why relocating a constant, computed or composable is not by itself a refactor, v-for over an array instead of hardcoded repeated list items and why v-for does not exempt the item body, one affordance per action (no duplicate control for one command, no link-styled non-links) and the status-banner carve-out that is not one, permission-gated settings tabs hidden at the tab level rather than a tab rendering an insufficient-permissions message and the tab map hiding rather than withholding, and never mounting a dialog inside a list item, plus deep dives on the singleton-dialog wiring (per-service dialog store target, useSingletonDialog, keyed per-open state), permission-filtered action items built on the shared Item interface, and shared list-item shells with an action slot including controls nested inside a link row. Apply when decomposing a page, building a list/table of repeated items, wiring row or menu actions, or mounting a dialog for list items.
+description: Esposter Vue page and list composition — pages as layout-only orchestrators (no ref/computed/handler belonging to one interactive element), constant arrays in services/ and why a one-off bound configuration literal is not one, maximal component granularity with one action per component (extracted action buttons, keyboard-shortcut buttons, a v-menu as one unit) and the allowed groupings plus when not to over-extract including why relocating a constant, computed or composable is not by itself a refactor, v-for over an array instead of hardcoded repeated list items and why v-for does not exempt the item body, one affordance per action (no duplicate control for one command, no link-styled non-links) and the status-banner carve-out that is not one, permission-gated settings tabs hidden at the tab level rather than a tab rendering an insufficient-permissions message and the tab map hiding rather than withholding, and never mounting a dialog inside a list item, plus deep dives on the singleton-dialog wiring (per-service dialog store target, useSingletonDialog, keyed per-open state), permission-filtered action items built on the shared Item interface and settings tabs hidden by their map, and shared list-item shells with an action slot including controls nested inside a link row. Apply when decomposing a page, building a list/table of repeated items, wiring row or menu actions, or mounting a dialog for list items.
 ---
 
 # Vue Page & List Composition (Esposter)
@@ -43,16 +43,7 @@ Keep together only when items are genuinely the same logic: buttons/items render
 
 ### Do NOT over-extract
 
-Granularity must **simplify the problem** or enable **reuse**. Skip refactors that do neither — and that test
-governs **relocation of any kind**, not only splitting a component: a constant lifted to `services/`, a template
-expression lifted to a `computed`, a block lifted to a composable. Moving code across a file boundary changes
-nothing on its own; what earns the move is what it enables on the far side — a second caller, a loop, a cached
-evaluation, a type the inline form cannot carry. A move justified only by the thing being long, or by looking
-like it belongs somewhere else, leaves the reader two files where there was one and buys nothing back.
-
-- A wrapper that only forwards props/attrs and needs `inheritAttrs: false` plumbing just to make a click reach the inner element is an anti-pattern — inline the `v-tooltip` + `v-btn` instead.
-- Don't extract a component that is used in exactly one place and removes no logic from its parent (pure passthrough). Extract when the child owns a distinct responsibility (an action, a form, a self-contained piece of layout), not to hit a line count.
-- **The mechanical form of that rule**: a component whose template is one element and whose entire script is a `defineEmits` that element re-emits owns no responsibility — it is a rename of `<StyledButton>`. Inline it at its one call site and delete the file. Two of them side by side look like a family and are really one toolbar row that was never written.
+Granularity must **simplify the problem** or enable **reuse** — what earns a move across a file boundary (a second caller, a loop, a cached evaluation, a type the inline form cannot carry) is the `over-engineering` skill's, and a relocation of any kind answers to it. The Vue-specific shape: a wrapper that only forwards props/attrs and needs `inheritAttrs: false` plumbing to make a click reach the inner element is inlined, and a component whose template is one element and whose entire script is a `defineEmits` that element re-emits is a rename of `<StyledButton>` — inline it at its one call site and delete the file.
 
 ## List Item Rendering: Array + v-for over Hardcoded Items
 
@@ -91,9 +82,7 @@ When you find duplicates, keep the affordance with the **largest hit target and 
 
 ## Settings Tab Permissions — Hide at the Tab Level
 
-Permission-gated settings tabs are hidden via a tab-definition map (`FooPermissionMap` in `services/<domain>/settings/`), which maps each tab type to the permission it requires; the nav component filters visible tabs through `hasPermission` in a `computed`. Individual tab components **never** check permissions — they just fetch and render, because the tab simply isn't shown to users lacking it. **Do NOT** render "Insufficient permissions" text; hide the tab entirely — the same rule as one affordance per action ("One Affordance Per Action — No Duplicate Behaviour"), where a control nobody may use is a control nobody is shown.
-
-**The map hides the tab; it withholds nothing.** What makes the components' never-check rule safe is that the reads and writes behind a mapped tab are gated on the same permission server-side — that half is the `trpc` skill's, and a tab added here without it is a hidden tab in front of an open endpoint.
+A permission-gated settings tab is hidden by a tab-definition map (`FooPermissionMap` in `services/<domain>/settings/`) filtered through `hasPermission` in a `computed`; a tab never renders an insufficient-permissions message, and the map hides the tab without withholding anything (`references/action-items.md`, "Settings tabs hide at the tab level").
 
 ## Singleton Dialogs — Store-Driven Target, Never Per-Item
 
