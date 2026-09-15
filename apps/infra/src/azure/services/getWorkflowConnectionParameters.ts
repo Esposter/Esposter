@@ -1,4 +1,5 @@
 import type * as azure_native from "@pulumi/azure-native";
+
 import * as pulumi from "@pulumi/pulumi";
 
 // The `$connections` parameter every workflow passes to the managed API connection it calls through. The

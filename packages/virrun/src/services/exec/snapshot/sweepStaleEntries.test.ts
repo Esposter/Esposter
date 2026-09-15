@@ -6,7 +6,7 @@ import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // The shared predicate under test: everything whose name starts with the stale marker is swept, the rest kept.
-const isStale = (name: string): boolean => name.startsWith(" ");
+const checkIsStale = (name: string): boolean => name.startsWith(" ");
 const { removeSnapshotDirectoriesDetached } = vi.hoisted(() => ({
   removeSnapshotDirectoriesDetached: vi.fn<(directories: readonly string[]) => void>(),
 }));
@@ -35,7 +35,7 @@ describe(sweepStaleEntries, () => {
     const staleEntry = seedEntry(" ");
     const liveEntry = seedEntry(TEST_FILENAME);
 
-    sweepStaleEntries(directory, isStale);
+    sweepStaleEntries(directory, checkIsStale);
 
     expect(existsSync(staleEntry)).toBe(false);
     expect(existsSync(liveEntry)).toBe(true);
@@ -47,7 +47,7 @@ describe(sweepStaleEntries, () => {
     const file = join(directory, " ");
     writeFileSync(file, "");
 
-    sweepStaleEntries(directory, isStale);
+    sweepStaleEntries(directory, checkIsStale);
 
     expect(existsSync(file)).toBe(true);
   });
@@ -57,7 +57,7 @@ describe(sweepStaleEntries, () => {
 
     const staleEntries = [" ", "  "].map((name) => seedEntry(name));
 
-    sweepStaleEntries(directory, isStale);
+    sweepStaleEntries(directory, checkIsStale);
 
     expect(removeSnapshotDirectoriesDetached).toHaveBeenCalledExactlyOnceWith(staleEntries);
   });
@@ -67,7 +67,7 @@ describe(sweepStaleEntries, () => {
 
     const absentDirectory = join(directory, "absent");
 
-    sweepStaleEntries(absentDirectory, isStale);
+    sweepStaleEntries(absentDirectory, checkIsStale);
 
     expect(existsSync(absentDirectory)).toBe(false);
   });

@@ -1,7 +1,8 @@
+import type { applyFlushPlan } from "#src/services/exec/snapshot/applyFlushPlan";
+
 import { TASK_CACHE_TEMP_PREFIX, VIRRUN_TASKS_DIRECTORY_NAME } from "#src/services/exec/cache/constants";
 import { recordTaskCache } from "#src/services/exec/cache/recordTaskCache";
 import { resolveTaskCacheLocation } from "#src/services/exec/cache/resolveTaskCacheLocation";
-import type { applyFlushPlan } from "#src/services/exec/snapshot/applyFlushPlan";
 import { DEAD_PID } from "#src/services/exec/test/constants.test";
 import { seedDirectory } from "#src/services/exec/test/seedDirectory.test";
 import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
