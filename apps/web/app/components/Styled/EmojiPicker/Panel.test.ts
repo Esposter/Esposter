@@ -13,6 +13,7 @@ import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
 import { searchEmojis } from "@/services/message/emoji/searchEmojis";
 import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
+import { getMockSasUrl } from "azure-mock";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -26,11 +27,12 @@ const getGridEmojis = (component: VueWrapper) => {
 };
 
 describe("styledEmojiPickerPanel", () => {
+  const name = "name";
   const customEmoji: CustomEmoji = {
     id: crypto.randomUUID(),
-    name: "party_parrot",
-    sasUrl: "https://storage.test/emoji",
-    slug: "party_parrot",
+    name,
+    sasUrl: getMockSasUrl("", undefined),
+    slug: name,
     type: EmojiType.Custom,
   };
 
@@ -74,7 +76,7 @@ describe("styledEmojiPickerPanel", () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(StyledEmojiPickerPanel);
-    await component.find("input").setValue("zzzzzz");
+    await component.find("input").setValue("-");
 
     expect(getGridEmojis(component)).toStrictEqual([]);
     expect(component.text()).toContain("No results");
@@ -100,7 +102,7 @@ describe("styledEmojiPickerPanel", () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(StyledEmojiPickerPanel, { props: { customEmojis: [customEmoji] } });
-    await component.find("input").setValue("party_parrot");
+    await component.find("input").setValue(name);
     await component.findComponent(StyledEmojiPickerGrid).find("button[aria-label]").trigger("click");
 
     expect(component.emitted("select")).toStrictEqual([[getCustomEmojiTag(customEmoji.id), customEmoji]]);

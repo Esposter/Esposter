@@ -6,8 +6,8 @@ import { describe, expect, test } from "vitest";
 
 describe("styledNavigationOverlay", () => {
   const items = [
-    { icon: "mdi-home-outline", isActive: true, title: "Home", to: RoutePath.ResourceExplorer },
-    { icon: "mdi-view-list-outline", isActive: false, title: "All", to: RoutePath.ResourceExplorerAll },
+    { icon: "", isActive: true, title: "", to: RoutePath.ResourceExplorer },
+    { icon: "", isActive: false, title: "a", to: RoutePath.ResourceExplorerAll },
   ];
 
   test("renders nothing until it is opened", async () => {
@@ -25,7 +25,7 @@ describe("styledNavigationOverlay", () => {
 
     const component = await mountSuspended(StyledNavigationOverlay, { props: { items, modelValue: true } });
 
-    expect(component.text()).toContain("All");
+    expect(component.text()).toBe("a");
 
     await takeOne(component.findAll("a")).trigger("click");
 
