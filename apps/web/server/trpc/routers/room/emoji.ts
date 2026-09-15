@@ -13,7 +13,7 @@ import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishB
 import { checkIsUnicodeEmojiSlug } from "@@/server/services/message/emoji/checkIsUnicodeEmojiSlug";
 import { getRoomEmojiBlobName } from "@@/server/services/message/emoji/getRoomEmojiBlobName";
 import { getRoomEmojiNameQuery } from "@@/server/services/message/emoji/getRoomEmojiNameQuery";
-import { getRoomEmojiWhere } from "@@/server/services/message/emoji/getRoomEmojiWhere";
+import { inRoom } from "@@/server/services/db/inRoom";
 import { getRoomEmojiWithSasUrl } from "@@/server/services/message/emoji/getRoomEmojiWithSasUrl";
 import { roomEmojiEventEmitter } from "@@/server/services/message/events/roomEmojiEventEmitter";
 import { router } from "@@/server/trpc";
@@ -105,7 +105,12 @@ export const roomEmojiRouter = router({
     "roomId",
   ).mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, roomId } }) => {
     const deletedRoomEmoji = requireMutation(
-      (await ctx.db.delete(roomEmojisInMessage).where(getRoomEmojiWhere(id, roomId)).returning())[0],
+      (
+        await ctx.db
+          .delete(roomEmojisInMessage)
+          .where(inRoom(roomEmojisInMessage, id, roomId))
+          .returning()
+      )[0],
       Operation.Delete,
       DatabaseEntityType.RoomEmoji,
       id,
@@ -173,7 +178,9 @@ export const roomEmojiRouter = router({
           .set({ name })
           // The room's other emoji are the ones this name may not already belong to, and the unique index is
           // What makes that true — matching here is what turns a taken name into a stated refusal
-          .where(and(getRoomEmojiWhere(id, roomId), notExists(getRoomEmojiNameQuery(ctx.db, id, name, roomId))))
+          .where(
+            and(inRoom(roomEmojisInMessage, id, roomId), notExists(getRoomEmojiNameQuery(ctx.db, id, name, roomId))),
+          )
           .returning()
       )[0],
       Operation.Update,

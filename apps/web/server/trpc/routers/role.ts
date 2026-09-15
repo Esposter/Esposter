@@ -12,7 +12,7 @@ import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { getDevice } from "@@/server/services/auth/getDevice";
 import { roleEventEmitter } from "@@/server/services/role/events/roleEventEmitter";
-import { getRoomRoleWhere } from "@@/server/services/role/getRoomRoleWhere";
+import { inRoom } from "@@/server/services/db/inRoom";
 import { assertIsMember } from "@@/server/services/room/assertIsMember";
 import { assertCanGrantPermissions } from "@@/server/services/room/rbac/assertCanGrantPermissions";
 import { assertCanManageMemberRole } from "@@/server/services/room/rbac/assertCanManageMemberRole";
@@ -123,7 +123,12 @@ export const roleRouter = router({
     if (!checkIsManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
     const deletedRole = requireMutation(
-      (await ctx.db.delete(roomRolesInMessage).where(getRoomRoleWhere(id, roomId)).returning())[0],
+      (
+        await ctx.db
+          .delete(roomRolesInMessage)
+          .where(inRoom(roomRolesInMessage, id, roomId))
+          .returning()
+      )[0],
       Operation.Delete,
       DatabaseEntityType.RoomRole,
       id,
@@ -234,7 +239,13 @@ export const roleRouter = router({
       await assertCanGrantPermissions(ctx.db, actorUserId, roomId, rest.permissions, isOwner);
 
     const updatedRole = requireMutation(
-      (await ctx.db.update(roomRolesInMessage).set(rest).where(getRoomRoleWhere(id, roomId)).returning())[0],
+      (
+        await ctx.db
+          .update(roomRolesInMessage)
+          .set(rest)
+          .where(inRoom(roomRolesInMessage, id, roomId))
+          .returning()
+      )[0],
       Operation.Update,
       DatabaseEntityType.RoomRole,
       id,
