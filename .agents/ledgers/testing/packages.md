@@ -17,4 +17,5 @@ splits at `services/exec`'s subdirectories.
 | `shared`, `shared-node`                                                                             | 2026-09-05 |                                                        |
 | `parse-tmx`, `xml2js`                                                                               | 2026-09-05 |                                                        |
 | `vue-phaserjs`                                                                                      | 2026-09-05 |                                                        |
-| `configuration`, `infra`                                                                            | 2026-09-05 |                                                        |
+| `configuration`, `infra`                                                                            | 2026-09-15 |                                                        |
+| `keyframe-store`                                                                                    | —          |                                                        |
