@@ -9,7 +9,7 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/u;
 // The file is the readable record and its cell is the starting state, so a hand-written date still counts and
 // The script never lowers one on its own: a sweep raises the cell to its date, and a reopen clears it only when
 // It is not older than what the cell already says — a reset that predates the pass it would undo is stale. The
-// Events arrive in commit order, so a sweep landing after a same-day reopen dates the row again.
+// Events arrive in author-date order, so a sweep landing after a same-day reopen dates the row again.
 export const applyLedgerEvents = (
   text: string,
   ledger: string,

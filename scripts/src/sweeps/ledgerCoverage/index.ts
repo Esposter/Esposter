@@ -11,11 +11,18 @@ import { resolve } from "node:path";
 
 const LEDGER_DIRECTORY = `${AGENT_DIRECTORY}/ledgers/`;
 
-// Oldest first so a later trailer wins, author-dated so a rebase moves nothing, and only the commits carrying a
-// Trailer at all — git matches `--grep` per line, so the anchor holds it to the trailer block's shape
+// Oldest first so a later trailer wins, ordered and dated by author date so a rebase moves neither — the default
+// Traversal is committer-dated, which replays a rebased pass after the reopen that was meant to undo it — and only
+// The commits carrying a trailer at all: git matches `--grep` per line, so the anchor holds it to the block's shape
 const log = execFileSync(
   "git",
-  ["log", "--reverse", "--format=%as%x1F%B%x1E", ...Object.values(LedgerEventType).map((type) => `--grep=^${type}: `)],
+  [
+    "log",
+    "--reverse",
+    "--author-date-order",
+    "--format=%as%x1F%B%x1E",
+    ...Object.values(LedgerEventType).map((type) => `--grep=^${type}: `),
+  ],
   { cwd: REPOSITORY_ROOT, encoding: "utf8", env: getGitEnv(), maxBuffer: 1 << 28 },
 );
 const events = getLedgerEvents(log);
