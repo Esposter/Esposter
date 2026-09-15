@@ -71,7 +71,7 @@ flowchart TD
   A -->|yes| N[Nothing to do]
   A -->|no| R[Replay the owed commits onto it<br/>one sequence, empties dropped]
   R -->|completes| P[Push ai/queue under a lease<br/>the port reads the new head]
-  R -->|stops| C{Dry run, or the attempt cap reached}
+  R -->|stops| C{Dry run, no release pull request,<br/>or the attempt cap reached}
   C -->|yes| AB[Abort — the port holds on it]
   C -->|no| CL[Claude resolves and continues the sequence]
   CL -->|sequence complete, tree clean| P
@@ -79,7 +79,7 @@ flowchart TD
 ```
 
 - **Why the collector and not the session.** A queue left on an old base carries commits written against files a drain has since repaired, and every one is a conflict the porter would hold on, run after run, until a person notices a red run. Here the conflict is met once, where the fixes are, and the working session's `git pull --rebase` afterwards replays only what it committed since (`.agents/skills/review-queue/SKILL.md`).
-- **A conflict is the drain's session pointed at a conflict.** The same headless Claude, the same denials — no push, no branch switch, no GitHub — told which commit stopped the sequence and on which paths, that both sides survive, and that `--skip` is for a commit whose whole change the target already carries. What proves the resolution is a sequence run to its end over a clean tree, never the session's word. A failure counts against the drain's attempt cap under a marker keyed by the commit, and past the cap the commit is a person's: the port holds on it as it always did.
+- **A conflict is the drain's session pointed at a conflict.** The same headless Claude, the same denials — no push, no branch switch, no GitHub — told which commit stopped the sequence and on which paths, that both sides survive, and that `--skip` is for a commit whose whole change the target already carries. What proves the resolution is a sequence run to its end over a clean tree, never the session's word. A failure counts against the drain's attempt cap under a marker keyed by the commit, and past the cap the commit is a person's: the port holds on it as it always did. The marker is a comment on the release pull request, so with none open there is nothing to count against and no session is spent — a conflict met between releases is a person's from the first, rather than one every run resolves afresh.
 - **Two writers of `ai/queue`, one compare-and-swap.** The session pushes the queue plain; the collector rewrites it with `--force-with-lease` on the sha the run read, so a session push in between refuses the rewrite and the next run replays onto what the queue then carries ([two writers](/docs/infra/review-collector/two-writers)).
 
 ## Merge
@@ -126,7 +126,7 @@ flowchart TD
 
 - **Fixes always ride, whole.** A fix split from the finding it answers is a reply that lies. Fixes alone over the cap fail the run — a drain that touched far more than its findings, for a person to see.
 - **Only what the queue authored is owed.** A merge of `main` into `ai/queue` brings `main`'s commits and the merge itself, none of it the queue's. The porter takes the queue's commits that are neither on `develop` by patch id nor reachable from `main`, and a cut with a skipped merge among its ancestors is ported rather than fast-forwarded.
-- **Queue order, never reordered.** The first commit that would overflow the cap or conflicts is where the window ends; the count includes every fix. A conflict reaches the port only when the sync above could not resolve it — a dry run, or a commit past the attempt cap.
+- **Queue order, never reordered.** The first commit that would overflow the cap or conflicts is where the window ends; the count includes every fix. A conflict reaches the port only when the sync above could not resolve it — a dry run, no release pull request to count an attempt on, or a commit past the attempt cap.
 - **Every count is measured from the frontier.** A review covers everything since the one that last wrote a body, so a window pushed on top of an unreviewed one is read as a single range; measuring from the head lets the pair overflow the cap, past which CodeRabbit skips the review outright.
 - **The window is pushed unverified.** `develop` runs its own CI after the push, and a red there is one more commit in the next window. The fold of `main` is undone whole when it puts the window over the cap: the pick loop never counted a merge's own diff, and nothing here knows which of `main`'s files to drop.
 - **Fast-forward when the shas allow it** — no fixes, the queue sitting on `origin/develop`, no skipped merge among the cut's ancestors, nothing folded — so the session's local branch already matches and no rebase is owed.
@@ -155,7 +155,7 @@ With no pull request open, the push is followed by opening one — the same read
 | Step  | Precondition read from the remote                         | Effect                       | Second run against unchanged state                                                 |
 | :---- | :-------------------------------------------------------- | :--------------------------- | :--------------------------------------------------------------------------------- |
 | reply | a trailer's thread lacks a reply citing that sha          | posts the reply              | every thread has one — nothing                                                     |
-| gate  | body range end, check bucket                              | a scheduled retrigger        | same verdict, same deadline — the ask is posted once per block                     |
+| gate  | the newest stated range's end, check bucket               | a scheduled retrigger        | same verdict, same deadline — the ask is posted once per block                     |
 | drain | a finding is open by the predicate                        | commits on `ai/review-fixes` | every finding carries a trailer or a reply — nothing                               |
 | sync  | the queue does not sit on the tree the window is built on | rewrites `ai/queue`          | it sits on it — nothing                                                            |
 | merge | the range at the head, nothing open, least risk           | merges the pull request      | none is open — the next window fills from the merge base                           |

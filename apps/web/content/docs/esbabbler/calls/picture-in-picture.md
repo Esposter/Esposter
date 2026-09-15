@@ -9,7 +9,7 @@ Pop the active call out into an always-on-top OS window (Google Meet / Discord s
 
 Purely client-side: no DB changes, no procedures, no infrastructure. The LiveKit `Room` and every `MediaStream` live in Pinia stores independent of where the DOM renders — **popping out is a DOM relocation, not a media reconnection**. It builds on the [call lifetime boundary](/docs/esbabbler/calls): `activeCallSessionId` already survives navigation.
 
-Chromium 116+ only; the pop-out button is feature-detected and never renders unsupported (the full-page call view is the fallback). VueUse has no Document-PiP composable (its PiP surface drives the single-`<video>` native API), so `useDocumentPictureInPicture` is a small hand-rolled SSR-safe composable in the VueUse return-shape style (`{ isSupported, pictureInPictureWindow, isActive, open, close }`).
+Chromium 116+ only; the pop-out button is feature-detected and never renders unsupported (the full-page call view is the fallback). VueUse has no Document-PiP composable (its PiP surface drives the single-`<video>` native API), so `useDocumentPictureInPicture` is a small hand-rolled SSR-safe composable in the VueUse return-shape style (`{ isSupported, pictureInPictureWindow, open, close }`).
 
 ## How it works
 
