@@ -71,10 +71,3 @@ would have to be believed. So a pass reads every file its unit names; there is n
 - The numbers themselves are never a finding. A bench is a diff over time on one host, and absolute means drift
   between sittings by more than most regressions are worth; a pass that reads a table and calls it slow is
   reading noise.
-
-## Next enforceable
-
-- "Committed artifact exists and names the groups the file registers" is the one rule here a program could hold,
-  and it wants a test rather than a lint rule: the pair of files is discoverable from `git ls-files`, and the
-  group titles are the reporter's own projection of the test names. It is worth writing the day a third bench
-  file lands without its artifact; twice is coincidence.

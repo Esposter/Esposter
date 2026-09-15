@@ -5,6 +5,12 @@ description: Apply when writing Zod schemas. Esposter Zod schema conventions —
 
 # Zod Conventions
 
+## Settled — do not re-propose
+
+- **A lint rule for the inherited-key rule** — `.safeExtend` legitimately adds new fields as well as layering over existing ones, so nothing syntactic separates the key that must match from the key that must not; `references/field-key-checks.md` carries the measured table of which positions check a key.
+- **A ban on `.extend()`** — Tiptap's `.extend` and Zod's share one method name and no syntactic rule tells them apart.
+- **A ban on `export type X = z.infer<…>`** — allowed in the narrow composed-schema case, which needs the judgement.
+
 ## Deep Dives
 
 - `references/boundary-payloads.md` — when parsing runtime data that crosses a trust boundary: EventGrid data, a queue message, a webhook body, subprocess stdout, a committed config file.

@@ -39,19 +39,3 @@ grep -rn '\.extend(' --include=*.ts apps/web/app apps/web/server apps/web/shared
 # a discriminated union, each of which must carry a trailing satisfies
 grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts apps/web/app apps/web/shared packages/*/src
 ```
-
-## Not enforceable — settled
-
-What a program decides here it now decides: a `z.discriminatedUnion(…)` declarator with no trailing `satisfies` is
-a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a test's schema is a fixture with no
-interface to drift from), and registration completeness is `schema.test.ts`. What is left stays a reading pass,
-for these reasons:
-
-- **The inherited-key rule** — `.safeExtend` legitimately adds new fields as well as layering over existing ones,
-  so nothing syntactic separates the key that must match from the key that must not; the `zod` skill carries the
-  measured table of which positions check a key and which do not.
-- **Relations completeness** — `relations.ts` spreads its parts rather than holding them, so there is no identity to
-  compare and not every table earns a relation.
-- **`.extend()`** — Tiptap's `.extend` and Zod's share one method name and no syntactic rule tells them apart;
-  the recipe above carries the anchor instead.
-- **`export type X = z.infer<…>`** is allowed in the narrow composed-schema case, which needs the judgement.

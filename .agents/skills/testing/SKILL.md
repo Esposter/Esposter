@@ -5,6 +5,10 @@ description: Apply when writing .test.ts or .test-d.ts files. Esposter Vitest te
 
 # Testing Conventions (Vitest)
 
+## Settled — do not re-propose
+
+- **A lint rule for constant scope** — an AST selector cannot ask the two whole-Program questions the exceptions turn on (a helper file, a binding read from a hoisted `vi.mock` factory or an awaited initialiser); `scripts/src/workspace/constantScope.test.ts` is the enforcer and asks both.
+
 ## Deep dives
 
 - `references/router-test-setup.md` — tRPC callers, mock sessions, seeded mock-DB rows, naming a router test.

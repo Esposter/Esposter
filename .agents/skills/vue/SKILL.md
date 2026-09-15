@@ -10,6 +10,10 @@ description: Apply when writing or reviewing .vue files, or rendering a date or 
 - Blank-line placement (templates, consts, returns, blocks) and comment attachment — see the `formatting` skill.
 - Links, `:to`, `navigateTo`, reactive route reads, route validation, page keys and route-synced tabs — see the `routing` skill. All Vuetify-specific conventions — see the `vuetify` skill.
 
+## Settled — do not re-propose
+
+- **A lint rule for computed extraction** — oxlint cannot resolve a template identifier back to its script declaration (the SFC's halves are separate ASTs to it), and neither half of the rule is syntactic, since "walks a collection" and "is bound to a prop" both need the other side of the boundary.
+
 ## Ordering — `references/ordering.md`
 
 Macros `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, then every `const`, `defineExpose` last; declarations run page metadata → macros → framework value composables → Pinia stores → everything else; attributes run `v-model`/`v-for` → `class` → attributify → valued props (alphabetical) → bare booleans → `@event`. The exceptions to each, and the typing `defineModel` and `defineSlots` take, are that page.

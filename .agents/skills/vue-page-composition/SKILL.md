@@ -7,6 +7,10 @@ description: Apply when decomposing a page, building a list/table of repeated it
 
 How pages and lists are assembled from components. How an individual component is _written_ — shell primitives, generics, slots, props, emits, naming — is the `vue-component-patterns` skill's.
 
+## Settled — do not re-propose
+
+- **A rule counting `<v-btn>`/`<StyledButton>` per SFC** — the allowed groupings are a roster, and a page may hold route-derived state and `<Head>` values, so neither the button count nor a `ref` under `pages/**` decides anything without reading what the value feeds.
+
 ## Deep dives
 
 - `references/singleton-dialogs.md` — when a list item needs a dialog, menu or other overlay opened from a row, or when a dialog carries per-open local state.

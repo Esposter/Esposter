@@ -5,6 +5,10 @@ description: Apply when writing or reviewing a composable, a form dialog, browse
 
 # Vue Composable & Form Patterns
 
+## Settled — do not re-propose
+
+- **A rule for a hand-kept in-flight count** — decidable only where the pair brackets one asynchronous operation, incremented where it starts and decremented where it settles; monotonicity is not the test, since a domain total moves both ways too, and whether two writes name the same operation is a question about what they mean.
+
 ## Reach for the primitive — hand-rolling BANNED
 
 Most of what a composable is tempted to write by hand already exists here, and the hand-rolled copy is not merely

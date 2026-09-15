@@ -7,6 +7,13 @@ description: Apply when handling errors or logging in components, composables, s
 
 **neverthrow** for explicit error handling. No silent swallows — every error is propagated, logged, or shown to the user.
 
+## Settled — do not re-propose
+
+- **A rule for an unterminated `Result`** — needs the value's type, and nothing type-aware runs in either linter (`oxlint` skill); `pnpm ai:sweep:unterminated-results` reads the code after the bracket instead, so it stays a scan a sitting runs.
+- **A rule for a fire-and-forget body that does not terminate** — whether the body has anything to terminate is a question about what it calls: a body whose whole work is an `executeMutation` with an `onError` is already done.
+- **Reaching a template's inline alert from `error-alert/no-raw-error-alert`** — oxlint hands a JS plugin no Vue template.
+- **Banning `console.warn` outright** — a notice with its own sentence is allowed; the handler slot is the swallow, and that half is the selector.
+
 ## Deep dives
 
 - `references/result-chains.md` — when shaping one chain: a fallback value, an alert, a mid-chain side effect, an `instanceof` branch on the error, an abort/cancel, or a cleanup finalizer.

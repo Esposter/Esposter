@@ -147,15 +147,3 @@ clean grep is the start of the pass, not its result.
 
 - `app/assets/dashboard/demo/icon/*.vue` — chart-icon SVG markup with no script block, so there is no responsibility to split.
 - `packages/vue-phaserjs`, `apps/infra` — engine wrappers whose shape is fixed by Phaser's object model, not app UI.
-
-## Next enforceable
-
-An oxlint rule counting `<v-btn>`/`<StyledButton>` per SFC is a pure AST count and would end the first
-granularity grep.
-
-Nothing else here is lintable. The page-state grep does **not** become a rule by banning `ref(`/`computed(`
-under `pages/**`: a page may hold route-derived state and `<Head>` values, and today every hit is one of those,
-so deciding between them means following what the value feeds. Computed extraction is worse — oxlint cannot
-resolve a template identifier back to its script declaration (the SFC's two halves are separate ASTs to it), and
-neither half of that rule is syntactic anyway, since "walks a collection" and "is bound to a prop" both need the
-other side of the boundary. Both stay reading passes.

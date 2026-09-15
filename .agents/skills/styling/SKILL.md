@@ -5,6 +5,12 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
 
+## Settled — do not re-propose
+
+- **A check for an attribute on a component that generates no rule** — it is as likely one of the component's props as a misspelt utility, and telling the two apart needs the component's prop list no template extraction has; a native element is `apps/web/app/templates.test.ts`, and every inert family met so far is the blocklist (`unocss` skill).
+- **A rule for theme primitive vs bespoke colour** — needs the palette in mind and a judgement about intent.
+- **A rule for a fixed dimension on a layout region** — what a region is, is the judgement.
+
 ## Deep Dives
 
 - `references/layout.md` — when laying out a page, panel, sidebar or column split, sizing a region, drawing a border or finding one you did not ask for, or building a row that reads as one sentence.

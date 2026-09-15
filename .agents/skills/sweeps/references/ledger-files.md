@@ -11,7 +11,7 @@ Read when writing, splitting, merging, promoting or retiring a ledger in `.agent
 - **Nothing a past pass did.** A Note listing the renames a pass made, or a paragraph narrating a split, a merge or a retirement, is a changelog: it describes a repo that no longer exists, it is stale the moment the next commit lands on those files, and git already holds it in full. What a pass found goes in its **commit message**; what a pass decided goes in the owning **skill**; the ledger keeps only what is true right now. A ledger that is deleted — retired to an enforcer, or absorbed into another — leaves no tombstone behind it, because its rule already lives wherever the enforcer or the surviving ledger's skill states it.
 - **The find recipe** — the greps or commands specific to this convention, as bare patterns. Only where no skill states them.
 - **Exclusions** — units deliberately out of scope, one clause of reason, so the next pass does not re-litigate them.
-- **Next enforceable** — the part of the convention a lint rule or test could take over.
+- **Next enforceable** — the part of the convention a lint rule or test could take over, and only while something is left to hand over. A part judged undecidable is a decision rather than progress, so it goes to the owning skill's `## Settled — do not re-propose` list with its one clause of why (`skill-authoring`), never to a second list here that would read as pending.
 - **Open findings** — only while one is genuinely open. A closed finding is deleted: its rule is in a skill, its invariant is in a test, and git holds the argument.
 
 **Promotion to a folder splits that list, it never shortens it.** Coverage is what an area file holds — a table

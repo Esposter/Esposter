@@ -5,6 +5,11 @@ description: Apply when writing or reviewing any Pinia store, or deciding whethe
 
 # Pinia Store Conventions
 
+## Settled — do not re-propose
+
+- **A rule for a ref destructured off a store without `storeToRefs`** — `const { rooms } = roomStore` and `const { createRoom } = roomStore` are the same syntax, and which loses reactivity is a fact about the field's type (`restrictedStoreSyntaxes.js`); the dot read a component makes is the decidable half and is banned.
+- **A rule for optimistic rollback correctness** — needs the whole write path in mind.
+
 ## Consuming a Store
 
 Applies **everywhere a store is consumed** — components, composables, services and **tests alike**. Tests are not exempt: a test that reaches into a store differently from the code it covers stops being a description of how the store is used.

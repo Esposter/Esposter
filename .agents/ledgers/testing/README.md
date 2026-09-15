@@ -105,13 +105,3 @@ file, because the failure names the global that was missing.
   rule, colour or default with no diff in this repo. The `unocss` skill owns the reason; a pass that reaches them
   reads that first. They were deleted once on the restatement rule alone, which is why the reason is written
   down in two places rather than inferred from the files.
-
-## Next enforceable
-
-**Constant scope is enforced by `scripts/src/workspace/constantScope.test.ts`**, not by a lint rule, and the
-reason is recorded so nobody rebuilds the rule. An AST selector — `Program > VariableDeclaration >
-VariableDeclarator[init]` minus function expressions, `AwaitExpression` and `vi.hoisted` initializers — cannot
-ask the two whole-Program questions the exceptions turn on: whether the file is a helper file (a `describe.todo`
-beside one exported helper, `references/test-helper-files.md`) and whether a binding is read from a hoisted
-`vi.mock` factory or an awaited initializer. The scan is a program and asks both, so the test over it is the
-enforcer, and a lint rule would be a second, weaker copy of the same decision.
