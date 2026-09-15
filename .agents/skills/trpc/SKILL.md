@@ -85,7 +85,7 @@ Three builders in `server/trpc/procedure/room/`:
 ## Ownership Guards in Mutations
 
 - **`ownedBy(table, id, userId)`** (`server/services/db/ownedBy.ts`) — the where-predicate for "this row must belong to the caller": `.where(ownedBy(foos, input, ctx.getSessionPayload.user.id))`. Compose extra clauses with `and(ownedBy(...), isNull(...))`. Never hand-write `and(eq(table.id, id), eq(table.userId, userId))`.
-- **A router file holds its `router({ ... })` and nothing else.** Every helper it needs — a repeated where-fragment, a `require*` guard bound to one entity, a typed client wrapper, a transaction two procedures share — is one export per file under `server/services/<feature>/`, never a module-level `const` above the router, which a sibling router re-writes the moment it needs the same predicate. A parameterised fragment is a function named `get*Where` (`getRoomMembershipWhere(roomId, userId)`); only a fragment taking no arguments is a bare `*Where` const, because that name is then a value rather than a call.
+- **A router file holds its `router({ ... })` and nothing else.** Every helper it needs — a repeated where-fragment, a `require*` guard bound to one entity, a typed client wrapper, a transaction two procedures share — is one export per file under `server/services/<feature>/`, never a module-level `const` above the router, which a sibling router re-writes the moment it needs the same predicate. A parameterised fragment is a function named `get*Where` (`getRoomMembershipWhere(roomId, userId)`) — a `*Where` function under any other prefix is a `no-restricted-syntax` error; only a fragment taking no arguments is a bare `*Where` const, because that name is then a value rather than a call.
 
 ## Router and Store Structure
 

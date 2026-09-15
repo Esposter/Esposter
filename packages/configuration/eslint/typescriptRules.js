@@ -88,6 +88,22 @@ export default {
       selector: "VariableDeclarator[id.name=/^get(Is|Has)[A-Z]/]",
     },
     {
+      // The other half of the same family: `is*`/`has*` is a stored boolean, so a function under that name
+      // Reads as a value at every call site. The annotation is what makes it decidable without types — a
+      // Function whose declared return is `boolean` or a type predicate answers with one and is `check*`.
+      message:
+        "Name a boolean-returning function `check*` — `is*`/`has*` is a stored boolean, never a call. See the naming skill.",
+      selector:
+        "VariableDeclarator[id.name=/^(is|has)[A-Z]/][init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > :matches(TSBooleanKeyword, TSTypePredicate)",
+    },
+    {
+      // A where-fragment helper builds a clause, so it is a `get*`: the bare noun (`roomWhere = (id) => …`)
+      // Reads as the clause itself rather than the call that builds it. See the trpc skill.
+      message:
+        "Name a where-fragment builder `get*Where` — the bare `*Where` noun is the clause, not the call that builds it.",
+      selector: "VariableDeclarator[id.name=/Where$/][id.name!=/^get/][init.type=/^(Arrow)?FunctionExpression$/]",
+    },
+    {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
       selector:
         ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",

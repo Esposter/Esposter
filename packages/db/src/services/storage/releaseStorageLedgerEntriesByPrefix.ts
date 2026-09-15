@@ -1,6 +1,6 @@
 import type { AzureContainer, Database, User } from "@esposter/db-schema";
 
-import { releaseStorageLedgerEntriesWhere } from "#src/services/storage/releaseStorageLedgerEntriesWhere";
+import { releaseStorageLedgerEntriesByWhere } from "#src/services/storage/releaseStorageLedgerEntriesByWhere";
 import { storageLedger } from "@esposter/db-schema";
 import { and, eq, sql } from "drizzle-orm";
 
@@ -15,7 +15,7 @@ export const releaseStorageLedgerEntriesByPrefix = (
   containerName: AzureContainer,
   prefix: string,
 ): Promise<User["id"][]> =>
-  releaseStorageLedgerEntriesWhere(
+  releaseStorageLedgerEntriesByWhere(
     db,
     and(eq(storageLedger.containerName, containerName), sql`starts_with(${storageLedger.blobName}, ${prefix})`),
   );

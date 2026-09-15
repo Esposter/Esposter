@@ -65,10 +65,10 @@ describe("directMessageRouter", () => {
     expect.hasAssertions();
 
     const { directMessage } = await createDirectMessageWithFriend(mockContext);
-    const readDirectMessages = await directMessageCaller.readDirectMessages();
+    const directMessages = await directMessageCaller.readDirectMessages();
 
-    expect(readDirectMessages.items).toHaveLength(1);
-    expect(takeOne(readDirectMessages.items).id).toBe(directMessage.id);
+    expect(directMessages.items).toHaveLength(1);
+    expect(takeOne(directMessages.items).id).toBe(directMessage.id);
   });
 
   test("reads direct messages excluding hidden", async () => {
@@ -76,9 +76,9 @@ describe("directMessageRouter", () => {
 
     const { directMessage } = await createDirectMessageWithFriend(mockContext);
     await directMessageCaller.hideDirectMessage(directMessage.id);
-    const readDirectMessages = await directMessageCaller.readDirectMessages();
+    const directMessages = await directMessageCaller.readDirectMessages();
 
-    expect(readDirectMessages.items).toHaveLength(0);
+    expect(directMessages.items).toHaveLength(0);
   });
 
   test("hides direct message", async () => {
@@ -106,10 +106,10 @@ describe("directMessageRouter", () => {
     const { directMessage, user } = await createDirectMessageWithFriend(mockContext);
     await directMessageCaller.hideDirectMessage(directMessage.id);
     await directMessageCaller.createDirectMessage([user.id]);
-    const readDirectMessages = await directMessageCaller.readDirectMessages();
+    const directMessages = await directMessageCaller.readDirectMessages();
 
-    expect(readDirectMessages.items).toHaveLength(1);
-    expect(takeOne(readDirectMessages.items).id).toBe(directMessage.id);
+    expect(directMessages.items).toHaveLength(1);
+    expect(takeOne(directMessages.items).id).toBe(directMessage.id);
   });
 
   test("reads direct message participants", async () => {
@@ -135,14 +135,14 @@ describe("directMessageRouter", () => {
     await createFriends(mockContext, mainUser, addedUser);
     await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
-    const readDirectMessages = await directMessageCaller.readDirectMessages();
+    const directMessages = await directMessageCaller.readDirectMessages();
 
     expect(
       takeOne(participantsData)
         .participants.map(({ id }) => id)
         .toSorted(),
     ).toStrictEqual([addedUser.id, user.id].toSorted());
-    expect(takeOne(readDirectMessages.items).participantKey).toContain(addedUser.id);
+    expect(takeOne(directMessages.items).participantKey).toContain(addedUser.id);
   });
 
   test("deletes direct message participant", async () => {
@@ -154,10 +154,10 @@ describe("directMessageRouter", () => {
     await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
     await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id });
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
-    const readDirectMessages = await directMessageCaller.readDirectMessages();
+    const directMessages = await directMessageCaller.readDirectMessages();
 
     expect(takeOne(participantsData).participants.map(({ id }) => id)).toStrictEqual([user.id]);
-    expect(takeOne(readDirectMessages.items).participantKey).not.toContain(addedUser.id);
+    expect(takeOne(directMessages.items).participantKey).not.toContain(addedUser.id);
   });
 
   test("deletes self as direct message participant", async () => {
@@ -165,9 +165,9 @@ describe("directMessageRouter", () => {
 
     const { directMessage, mainUser } = await createDirectMessageWithFriend(mockContext);
     await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: mainUser.id });
-    const readDirectMessages = await directMessageCaller.readDirectMessages();
+    const directMessages = await directMessageCaller.readDirectMessages();
 
-    expect(readDirectMessages.items).toHaveLength(0);
+    expect(directMessages.items).toHaveLength(0);
   });
 
   test("fails create direct message participant with non-friend", async () => {

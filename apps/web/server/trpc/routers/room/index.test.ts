@@ -82,9 +82,9 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const readRoom = await roomCaller.readRoom(newRoom.id);
+    const room = await roomCaller.readRoom(newRoom.id);
 
-    expect(readRoom).toStrictEqual(newRoom);
+    expect(room).toStrictEqual(newRoom);
   });
 
   test("fails read with non-existent member", async () => {
@@ -101,17 +101,17 @@ describe("roomRouter", () => {
   test("reads empty rooms", async () => {
     expect.hasAssertions();
 
-    const readRooms = await roomCaller.readRooms();
+    const rooms = await roomCaller.readRooms();
 
-    expect(readRooms).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
+    expect(rooms).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
   });
 
   test("reads empty rooms with undefined roomId", async () => {
     expect.hasAssertions();
 
-    const readRooms = await roomCaller.readRooms({ roomId: undefined });
+    const rooms = await roomCaller.readRooms({ roomId: undefined });
 
-    expect(readRooms).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
+    expect(rooms).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
   });
 
   test("reads multiple with roomId with inclusive filter", async () => {
@@ -119,10 +119,10 @@ describe("roomRouter", () => {
 
     const newRoom1 = await roomCaller.createRoom({ name: `${name}1` });
     await roomCaller.createRoom({ name: `${name}2` });
-    const readRooms = await roomCaller.readRooms({ filter: { name: "1" }, roomId: newRoom1.id });
+    const rooms = await roomCaller.readRooms({ filter: { name: "1" }, roomId: newRoom1.id });
 
-    expect(readRooms.items).toHaveLength(1);
-    expect(takeOne(readRooms.items)).toStrictEqual(newRoom1);
+    expect(rooms.items).toHaveLength(1);
+    expect(takeOne(rooms.items)).toStrictEqual(newRoom1);
   });
 
   test("reads multiple with roomId with exclusive filter", async () => {
@@ -130,11 +130,11 @@ describe("roomRouter", () => {
 
     const newRoom1 = await roomCaller.createRoom({ name: `${name}1` });
     const newRoom2 = await roomCaller.createRoom({ name: `${name}2` });
-    const readRooms = await roomCaller.readRooms({ filter: { name: "2" }, roomId: newRoom1.id });
+    const rooms = await roomCaller.readRooms({ filter: { name: "2" }, roomId: newRoom1.id });
 
-    expect(readRooms.items).toHaveLength(2);
-    expect(takeOne(readRooms.items)).toStrictEqual(newRoom2);
-    expect(takeOne(readRooms.items, 1)).toStrictEqual(newRoom1);
+    expect(rooms.items).toHaveLength(2);
+    expect(takeOne(rooms.items)).toStrictEqual(newRoom2);
+    expect(takeOne(rooms.items, 1)).toStrictEqual(newRoom1);
   });
 
   test("fails read multiple with non-existent room", async () => {
@@ -162,17 +162,17 @@ describe("roomRouter", () => {
     await roomCaller.createRoom({ name });
     vi.setSystemTime(1);
     const newRoom = await roomCaller.createRoom({ name });
-    const readRoom = await roomCaller.readRoom();
+    const room = await roomCaller.readRoom();
 
-    expect(readRoom).toStrictEqual(newRoom);
+    expect(room).toStrictEqual(newRoom);
   });
 
   test("reads latest updated room with no rooms to be undefined", async () => {
     expect.hasAssertions();
 
-    const readRoom = await roomCaller.readRoom();
+    const room = await roomCaller.readRoom();
 
-    expect(readRoom).toBeUndefined();
+    expect(room).toBeUndefined();
   });
 
   test("reads latest updated room excluding direct messages", async () => {
@@ -180,9 +180,9 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     await createDirectMessageWithFriend(mockContext);
-    const readRoom = await roomCaller.readRoom();
+    const room = await roomCaller.readRoom();
 
-    expect(readRoom).toStrictEqual(newRoom);
+    expect(room).toStrictEqual(newRoom);
   });
 
   test("generates profile image upload url", async () => {
@@ -477,23 +477,23 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
-    const readInvite = await roomCaller.readInvite(newInvite.id);
+    const invite = await roomCaller.readInvite(newInvite.id);
     const userId = getMockSession().user.id;
 
-    assert.exists(readInvite);
+    assert.exists(invite);
 
-    expect(readInvite.userId).toBe(userId);
-    expect(readInvite.roomId).toBe(newRoom.id);
-    expect(readInvite.id).toBe(newInvite.id);
-    expect(readInvite.isMember).toBe(true);
+    expect(invite.userId).toBe(userId);
+    expect(invite.roomId).toBe(newRoom.id);
+    expect(invite.id).toBe(newInvite.id);
+    expect(invite.isMember).toBe(true);
   });
 
   test("reads non-existent invite", async () => {
     expect.hasAssertions();
 
-    const readInvite = await roomCaller.readInvite(createId(INVITE_ID_LENGTH));
+    const invite = await roomCaller.readInvite(createId(INVITE_ID_LENGTH));
 
-    expect(readInvite).toBeUndefined();
+    expect(invite).toBeUndefined();
   });
 
   test("reads my invite", async () => {
@@ -658,9 +658,9 @@ describe("roomRouter", () => {
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, newInvite.id).message}]`,
     );
 
-    const readInvite = await roomCaller.readInvite(newInvite.id);
+    const invite = await roomCaller.readInvite(newInvite.id);
 
-    expect(readInvite).toBeUndefined();
+    expect(invite).toBeUndefined();
   });
 
   test("revoking own invite makes the link unknown, and another member's is not revocable", async () => {
@@ -680,9 +680,9 @@ describe("roomRouter", () => {
     );
 
     await roomCaller.revokeInvite({ id: newInvite.id, roomId: newRoom.id });
-    const readInvite = await roomCaller.readInvite(newInvite.id);
+    const invite = await roomCaller.readInvite(newInvite.id);
 
-    expect(readInvite).toBeUndefined();
+    expect(invite).toBeUndefined();
   });
 
   test("pausing invites refuses a create and answers a live link like an unknown token", async () => {
@@ -746,10 +746,10 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     await createDirectMessageWithFriend(mockContext);
-    const readRooms = await roomCaller.readRooms();
+    const rooms = await roomCaller.readRooms();
 
-    expect(readRooms.items).toHaveLength(1);
-    expect(takeOne(readRooms.items).id).toBe(newRoom.id);
+    expect(rooms.items).toHaveLength(1);
+    expect(takeOne(rooms.items).id).toBe(newRoom.id);
   });
 
   test("reads rooms with direct message roomId", async () => {
@@ -757,10 +757,10 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const { directMessage } = await createDirectMessageWithFriend(mockContext);
-    const readRooms = await roomCaller.readRooms({ roomId: directMessage.id });
+    const rooms = await roomCaller.readRooms({ roomId: directMessage.id });
 
-    expect(readRooms.items).toHaveLength(1);
-    expect(takeOne(readRooms.items).id).toBe(newRoom.id);
+    expect(rooms.items).toHaveLength(1);
+    expect(takeOne(rooms.items).id).toBe(newRoom.id);
   });
 
   test("fails join with joined room", async () => {
