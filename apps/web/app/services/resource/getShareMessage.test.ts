@@ -2,7 +2,7 @@ import { getShareMessage } from "@/services/resource/getShareMessage";
 import { describe, expect, test } from "vitest";
 
 describe(getShareMessage, () => {
-  const url = "https://esposter.test/view/Survey/id";
+  const url = "";
   const note = "note";
   const link = `<p><a href="${url}" rel="noopener noreferrer" target="_blank">${url}</a></p>`;
 
