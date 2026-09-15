@@ -40,11 +40,7 @@ A store is app-lifetime; a ref a component populates for code outside its subtre
 
 ## Never Redirect Store Functions — Use Them Directly
 
-A store function is defined **once** and consumed directly at every use site by destructuring it from the store. Never insert a layer that only forwards to it:
-
-- **No alias re-export through a composable** — a composable must never `return { foo: store.foo }`. The consumer destructures the method straight from the store.
-- **No one-line wrapper** — never `const selectDevice = (kind, id) => switchDevice(kind, id)` in a store, composable, or component when the body just forwards arguments. Delete it and call the underlying function.
-- **No chain of pass-throughs** — `selectDevice → switchDevice → setActiveDevice` collapses to a single `setActiveDevice` that everyone calls.
+A store function is defined **once** and consumed directly at every use site by destructuring it from the store. Never a layer that only forwards to it — a composable returning `{ foo: store.foo }`, a one-line wrapper, a chain of pass-throughs collapsing to the last function — which is the `over-engineering` skill's first entry and, in its decidable half, `pass-through-helper/no-forwarding-wrapper`.
 
 A composable earns its place **only** when it adds genuine reused behaviour — shared reactive state, multi-step logic, resource lifecycle (`onScopeDispose`), a computed projection — not to re-expose a store's existing API under a new name. Same principle as the mutation-placement rule below: don't add an indirection that carries no logic.
 

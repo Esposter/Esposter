@@ -27,7 +27,7 @@
 | `oxlint`                  | —          |       |
 | `package-scripts`         | 2026-09-15 |       |
 | `pagination`              | —          |       |
-| `pinia`                   | —          |       |
+| `pinia`                   | 2026-09-15 |       |
 | `pulumi-infra`            | 2026-09-15 |       |
 | `readme-standards`        | —          |       |
 | `responsive`              | —          |       |
