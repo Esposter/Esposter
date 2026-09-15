@@ -37,7 +37,7 @@ Six events, and every one runs the identical cycle:
 | `workflow_dispatch` with `force`      | —                                                       | the manual nudge, for a short window worth pushing anyway or a dropped webhook                                           |
 | `issue_comment` `created` or `edited` | the bot's login, on a pull request                      | the bot's answer to a retrigger — a comment or an edit of its walkthrough, never a review or a status                    |
 
-**One copy of the runner runs, whichever event fired it.** GitHub reads a workflow file from the ref the event names — the pushed branch for a `push`, the merge ref for a review, the default branch for a `status` or a comment — and the copy `main` carries is a release behind `ai/queue`, while the collector reads remote state whose shape the newest copy defines: ref names, bot logins, the head branch its filter compares. Left to the event, a rename in the collector is a deadlock — the copy on `main` fails on the missing ref and never ports the commit that would have taught it the new name. So `ReviewCollector.yaml` is nothing but the triggers, the one part that must exist on the event's ref, and calls the reusable `run-review-collector.yaml` **at `ai/queue`**, whose checkout pins the same ref because `actions/checkout` follows the caller's event sha.
+**One copy of the runner runs, whichever event fired it.** GitHub reads a workflow file from the ref the event names, and `main`'s copy is a release behind the remote state the newest copy defines — left to the event, a rename in the collector is a deadlock, since the copy on `main` fails on the missing ref and never ports the commit that would teach it the new name. So `ReviewCollector.yaml` is the triggers alone and calls `run-review-collector.yaml` **at `ai/queue`**, whose checkout pins the same ref.
 
 ```mermaid
 flowchart LR
@@ -46,7 +46,7 @@ flowchart LR
   R -->|checkout ai/queue| S[The cycle<br/>the queue's copy of the script]
 ```
 
-**The trigger and the runner it calls sit on different refs, so what they agree on is what a release lag can break.** That contract is the file name, the `force` input and the queue branch spelled in four places — held to the constant by `scripts/src/services/coderabbit/collect/constants.test.ts` — and nothing else: the call inherits its secrets rather than naming them, because a named list is one more thing the two copies must agree on, and GitHub refuses the call at startup when the caller hands over a secret the runner does not declare, for every event that reads the trigger from `main` or `develop` until the queue rebases past the release. A trigger added to the shell still waits for a release before it fires on statuses and comments.
+**The trigger and the runner it calls sit on different refs, so what they agree on is what a release lag can break.** That contract is the file name, the `force` input and the queue branch spelled in four places — held to the constant by `scripts/src/services/coderabbit/collect/queueBranch.test.ts` — and nothing else; the secrets are inherited, never named (Notes). A trigger added to the shell still waits for a release before it fires on statuses and comments.
 
 **No `schedule`.** [No polling](/docs/architecture/no-polling) is the standing rule, and every trigger above is a webhook the platform delivers. The one state change that reports none is a rate limit lifting, and the retrigger below answers it with a scheduled delivery rather than a loop.
 
@@ -100,21 +100,21 @@ A run fails red and leaves the remote in a state the next run resumes from — a
 
 ## Key files
 
-| File                                                        | Role                                                                                               |
-| :---------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
-| `.github/workflows/ReviewCollector.yaml`                    | the triggers — the one file read from the event's ref, calling the reusable workflow at `ai/queue` |
-| `.github/workflows/run-review-collector.yaml`               | the reusable workflow — the jobs, filters, concurrency groups and steps, pinned to the queue head  |
-| `scripts/src/services/coderabbit/collect/constants.test.ts` | the four places the two files spell the queue branch, kept equal to the constant                   |
-| `scripts/src/services/coderabbit/collect/runCycle.test.ts`  | the pass run end to end against a fixture repository, one test per way it exits                    |
-| `.github/workflows/claude-warmup.yaml`                      | the headless invocation this workflow reuses                                                       |
-| `.github/actions/trust-workspace`                           | the trust-dialog shim both workflows run                                                           |
-| `.github/actions/setup-project-dependencies`                | the install step                                                                                   |
-| `apps/infra/src/github/secrets/reviewCollectorToken.ts`     | the collector token as a Pulumi-managed repository secret                                          |
+| File                                                          | Role                                                                                               |
+| :------------------------------------------------------------ | :------------------------------------------------------------------------------------------------- |
+| `.github/workflows/ReviewCollector.yaml`                      | the triggers — the one file read from the event's ref, calling the reusable workflow at `ai/queue` |
+| `.github/workflows/run-review-collector.yaml`                 | the reusable workflow — the jobs, filters, concurrency groups and steps, pinned to the queue head  |
+| `scripts/src/services/coderabbit/collect/queueBranch.test.ts` | the four places the two files spell the queue branch, kept equal to the constant                   |
+| `scripts/src/services/coderabbit/collect/runCycle.test.ts`    | the pass run end to end against a fixture repository, one test per way it exits                    |
+| `.github/workflows/claude-warmup.yaml`                        | the headless invocation this workflow reuses                                                       |
+| `.github/actions/trust-workspace`                             | the trust-dialog shim both workflows run                                                           |
+| `.github/actions/setup-project-dependencies`                  | the install step                                                                                   |
+| `apps/infra/src/github/secrets/reviewCollectorToken.ts`       | the collector token as a Pulumi-managed repository secret                                          |
 
 ## Notes
 
-- **Rejected: handing the runner its secrets by name, so a step added to `ai/queue` reaches only the two.** The list protected nothing — every repository secret is already readable from `CI.yaml` on the same push — and it broke: a drain fix that grew the list landed on `develop` and `main` ahead of the queue, and every status, review and comment event ran a trigger naming a secret the queue's runner had not declared, a startup failure the cycle could not heal because healing needs a run.
-- **Rejected: GitHub environments for the deployment credentials, so the drain's branch could never reach them.** The Azure login is a federated credential whose subject names the branch (`refs/heads/develop`, `refs/heads/main`), so it is scoped to the deploy workflows on those two branches already and an `environment:` on the job with the same branch policy admits the same set; `PULUMI_ACCESS_TOKEN` serves the preview on every pull request branch, which is every branch; and the two the collector spends live on `ai/queue` by design. An environment would add a `fromJSON` map to the deploy job, two federated credentials in Entra and a Pulumi change for the same reach. What would change the threat model is a required reviewer on the production environment — a person approving each deploy — which is a workflow decision, not a secret-scoping one.
+- **Rejected: handing the runner its secrets by name.** The list protected nothing — every repository secret is readable from `CI.yaml` on the same push — and a name the two copies disagreed on refused every status, review and comment event at startup, a failure the cycle cannot heal because healing needs a run.
+- **Rejected: GitHub environments for the deployment credentials.** The Azure login is a federated credential already scoped to `develop` and `main` by branch, so an environment admits the same set for more configuration; what would change the threat model is a required reviewer on production — a workflow decision, not a secret-scoping one.
 - **Rejected: running the cycle from the event's own ref, or from `develop`'s copy.** `develop` is the verified copy and the event's ref is what GitHub hands over, and both lose to one fact — the cycle reads remote state whose shape the newest copy defines. "Verified" buys nothing: a queue push already runs the queue's copy with the same secrets, and a broken queue copy fails the next push loudly for the session that broke it.
 - **Runner minutes are not the constraint.** The repository is public, so Actions minutes are free, and most runs exit at the gates before the install matters. If that changes, the gates can move into a first job that needs only `gh` and `git`.
 - **The drain has a wall clock.** The job's `timeout-minutes` bounds a Claude session that has lost its way; the cycle's ordering means a timeout costs the same as a crash, which is nothing on the remote.

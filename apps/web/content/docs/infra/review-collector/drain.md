@@ -24,7 +24,7 @@ flowchart TD
 
 ## What is open
 
-An inline finding is open when its thread is unresolved, the bot spoke last on it, and no `Answers: <comment id>` trailer names it on `ai/review-fixes` or on the queue's unported commits. A thread the bot has answered again after the collector's reply is open again.
+An inline finding is open when its thread is unresolved, the bot spoke last on it, and no `Answers: <comment id>` trailer names it on a commit `ai/review-fixes` or `ai/queue` still owes `develop` by patch id — a fixes branch keeps its head after a window carries it, and a queue not yet rebased keeps its ported commits, so a range would read both as unported. A thread the bot has answered again after the collector's reply is open again.
 
 Body-only findings — nitpicks and outside-diff-range comments have no thread — are open when the newest review states a non-zero count of either, no `Drains: <review id>` trailer names it on the unported commits or the commits since the frontier, and no verdict comment carries its marker. The two halves are one memory: a trailer is lost the moment its commit is ported past the frontier, a marker outlives every rebase. A review stating none of either never spins up a Claude session.
 
