@@ -1,4 +1,9 @@
-const FENCE_REGEX = /^```[\s\S]*?^```/gmu;
+// A fenced block as markdown reads one: three or more backticks or tildes, indented by however much the list
+// Item holding it indents its content, closing on a run of the same character at least as long as the opener —
+// So a shorter run inside a longer fence is content rather than the close, which a bare ```-to-``` scan reads as
+// The end of the block and leaves the rest of the example standing as prose
+const FENCE_REGEX =
+  /^[ \t]*(?<fence>(?<character>[`~])\k<character>{2,})[^\n]*\n[\s\S]*?^[ \t]*\k<fence>\k<character>*[ \t]*$/gmu;
 const BACKTICK_RUN_REGEX = /`+/gu;
 
 // The prose of a page that cites: a fence is a program rather than a citation, and a span opened by two or more

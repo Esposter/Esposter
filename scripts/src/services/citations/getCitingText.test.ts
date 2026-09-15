@@ -15,6 +15,26 @@ describe(getCitingText, () => {
     expect(getCitingText("```\n`\n```\n`a`")).toBe("\n`a`");
   });
 
+  // A list item's block is indented by the item's own content column, which is most of the fences in the skill tree
+  test("drops an indented fence", () => {
+    expect.hasAssertions();
+
+    expect(getCitingText("`a`\n  ```\n  `b`\n  ```\n`c`")).toBe("`a`\n\n`c`");
+  });
+
+  test("drops a tilde fence", () => {
+    expect.hasAssertions();
+
+    expect(getCitingText("~~~\n`a`\n~~~\n`b`")).toBe("\n`b`");
+  });
+
+  // A fence closes on a run of its own length or longer, so the example fence inside this one is its content
+  test("drops a four-backtick fence whose body holds a three-backtick fence", () => {
+    expect.hasAssertions();
+
+    expect(getCitingText("````\n```\n`a`\n```\n````\n`b`")).toBe("\n`b`");
+  });
+
   test("drops a double-backtick span and the backticked phrase inside it", () => {
     expect.hasAssertions();
 
