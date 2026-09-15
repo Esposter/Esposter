@@ -2,7 +2,7 @@ import { RoomType } from "#src/models/message/RoomType";
 import { createNameSchema } from "#src/models/shared/Name";
 import { ROOM_NAME_MAX_LENGTH } from "#src/services/room/constants";
 import { normalizeString } from "@esposter/shared";
-import { z } from "zod";
+import type { z } from "zod";
 
 const roomNameSchema = createNameSchema(ROOM_NAME_MAX_LENGTH);
 

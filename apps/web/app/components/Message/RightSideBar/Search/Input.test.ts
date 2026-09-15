@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { z } from "zod";
 
-import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
+import type { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import MessageRightSideBarSearchInput from "@/components/Message/RightSideBar/Search/Input.vue";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";

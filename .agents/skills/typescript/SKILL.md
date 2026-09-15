@@ -5,6 +5,10 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 
 # TypeScript Conventions
 
+## Settled — do not re-propose
+
+- **Turning `typescript/consistent-type-imports` on for `.vue`** — oxlint skips the rule there, since it cannot tell from the script block whether the template uses an import as a value, and nothing in the ESLint config reaches it; the `.ts` half is on (`disallowTypeAnnotations` off, because `vi.mock(import(…))` is the sanctioned Vitest idiom), so a class used only in type position takes `import type` by lint, and a `.vue` file keeps it by reading.
+
 ## Deep dives
 
 - `references/enums.md` — when declaring an enum, its Zod schema, its values array, or a ref that holds one.

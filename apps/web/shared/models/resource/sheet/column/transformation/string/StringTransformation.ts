@@ -3,10 +3,8 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
-import {
-  StringTransformationType,
-  stringTransformationTypeSchema,
-} from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
+import type { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
+import { stringTransformationTypeSchema } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 

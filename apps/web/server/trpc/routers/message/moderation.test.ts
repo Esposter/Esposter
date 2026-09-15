@@ -10,13 +10,13 @@ import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { readRoomMembershipRows } from "@@/server/trpc/routers/readRoomMembershipRows.test";
 import { createDirectMessageWithFriend } from "@@/server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import type { StandardMessageEntity } from "@esposter/db-schema";
 import {
   AdminActionType,
   AzureTable,
   bansInMessage,
   DatabaseEntityType,
   RoomPermission,
-  StandardMessageEntity,
   users,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";

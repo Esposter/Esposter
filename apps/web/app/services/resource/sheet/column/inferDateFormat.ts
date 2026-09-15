@@ -1,4 +1,5 @@
-import { DateFormat, DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
+import type { DateFormat } from "#shared/models/resource/sheet/column/DateFormat";
+import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
 import { parseDate } from "#shared/util/date/parseDate";
 import { normalizeString, takeOne } from "@esposter/shared";
 

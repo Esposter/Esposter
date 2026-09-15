@@ -3,7 +3,8 @@ import type { MessageOperationCaller } from "#shared/models/message/MessageOpera
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { checkIsMessageOperationPermitted } from "#shared/services/message/checkIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
-import { MessageType, MessageTypes } from "@esposter/db-schema";
+import type { MessageType } from "@esposter/db-schema";
+import { MessageTypes } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsMessageOperationPermitted, () => {

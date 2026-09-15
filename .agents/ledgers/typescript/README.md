@@ -30,17 +30,6 @@ rg -U --pcre2 '^(\s*)if \(.*\) return .*;\n(\1//.*\n)*\1(if \(.*\) return .*;|re
 The comment group is load-bearing: a line of prose between the guard and the fall-through return hides a
 chain from the pattern without it, and a guard is exactly where this codebase writes prose.
 
-## Next enforceable
-
-`typescript/consistent-type-imports`, off in `.oxlintrc.json`. A class used only in type position takes
-`import type` everywhere but the odd file, so the rule would decide it — but it also owns
-`disallowTypeAnnotations`, and `vi.mock(import(…))` is the sanctioned Vitest idiom, so it needs that option
-off and its own violation sweep before it can be switched on.
-
-Switching it on would decide `.ts` and nothing else: oxlint skips the rule for `.vue`, since it cannot tell
-from the script block whether the template uses an import as a value, and nothing in the ESLint config turns it
-on there. So the `.vue` rows keep this dimension however `.oxlintrc.json` ends up.
-
 ## Exclusions
 
 - **`apps/web/content/docs`** — prose, and the `docs` ledger's.

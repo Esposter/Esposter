@@ -4,7 +4,8 @@ import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
 import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
-import { AdminActionType, adminActionTypeSchema } from "#src/models/message/AdminActionType";
+import type { AdminActionType } from "#src/models/message/AdminActionType";
+import { adminActionTypeSchema } from "#src/models/message/AdminActionType";
 import { selectRoomInMessageSchema } from "#src/schema/roomsInMessage";
 import { selectUserSchema } from "#src/schema/users";
 import { getPropertyNames } from "@esposter/shared";

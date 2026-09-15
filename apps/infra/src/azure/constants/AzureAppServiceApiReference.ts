@@ -1,6 +1,6 @@
 import AzureAppServiceManagedApiId from "#src/azure/constants/AzureAppServiceManagedApiId";
 import AzureManagedApiType from "#src/azure/constants/AzureManagedApiType";
-import * as azure_native from "@pulumi/azure-native";
+import type * as azure_native from "@pulumi/azure-native";
 
 const AzureAppServiceApiReference: azure_native.types.input.web.ApiReferenceArgs = {
   brandColor: "#FFFFFF",

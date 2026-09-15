@@ -14,7 +14,7 @@ import { getAzureErrorXml } from "#src/services/container/getAzureErrorXml";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
 import { getMockContainer } from "#src/services/container/getMockContainer";
 import { createMockResponse } from "#src/services/shared/createMockResponse";
-import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
+import type { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders } from "@azure/core-rest-pipeline";
 

@@ -1,6 +1,6 @@
 import type { NavigationTrailCrumb } from "@/models/shared/NavigationTrailCrumb";
 
-import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
+import type { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
 import { NavigationTrailPageMap } from "@/services/shared/NavigationTrailPageMap";
 import { RoutePath } from "@esposter/shared";
 

@@ -45,7 +45,7 @@ import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { readMockBlobMetadata } from "#src/services/container/readMockBlobMetadata";
 import { createMockResponse } from "#src/services/shared/createMockResponse";
 import { getMockSasUrl } from "#src/services/shared/getMockSasUrl";
-import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
+import type { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 /**
  * An in-memory mock of the Azure ContainerClient — no emulator and no network.

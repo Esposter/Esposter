@@ -1,6 +1,6 @@
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import type { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
 describe(requireMutation, () => {

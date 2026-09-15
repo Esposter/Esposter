@@ -1,4 +1,4 @@
-import * as azure_native from "@pulumi/azure-native";
+import type * as azure_native from "@pulumi/azure-native";
 
 export interface AzureFunctionEventSubscriptionArguments {
   deadLetterDestination: azure_native.types.input.eventgrid.StorageBlobDeadLetterDestinationArgs;

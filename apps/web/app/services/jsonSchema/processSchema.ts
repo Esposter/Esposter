@@ -3,7 +3,7 @@ import { processItems } from "@/services/jsonSchema/processItems";
 import { processOneOf } from "@/services/jsonSchema/processOneOf";
 import { processProperties } from "@/services/jsonSchema/processProperties";
 import { processTitle } from "@/services/jsonSchema/processTitle";
-import { z } from "zod";
+import type { z } from "zod";
 
 const processedSchemas = new WeakSet<object>();
 
