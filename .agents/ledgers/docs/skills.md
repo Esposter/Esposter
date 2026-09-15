@@ -22,7 +22,7 @@
 | `grapesjs`                | —          |       |
 | `invariants`              | —          |       |
 | `model-delegation`        | —          |       |
-| `naming`                  | —          |       |
+| `naming`                  | 2026-09-15 |       |
 | `over-engineering`        | —          |       |
 | `oxlint`                  | —          |       |
 | `package-scripts`         | 2026-09-15 |       |
