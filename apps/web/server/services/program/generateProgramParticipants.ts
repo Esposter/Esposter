@@ -49,7 +49,6 @@ export const generateProgramParticipants = async (
     },
   );
   if (!columns.some(({ name }) => name === content.keyColumn)) throw getDanglingProgramBindingError();
-
   // The capped page is a warm cache, never the source of truth — a participant past the cap is simply one
   // This read did not see, and the insert below still refuses to issue them a second token
   const existingParticipants = await readProgramParticipantEntities(programId);
