@@ -11,7 +11,7 @@
 | `context-efficiency`      | —          |       |
 | `dependency-updates`      | —          |       |
 | `docs`                    | 2026-09-15 |       |
-| `drizzle`                 | —          |       |
+| `drizzle`                 | 2026-09-15 |       |
 | `error-handling`          | 2026-09-15 |       |
 | `esbabbler`               | —          |       |
 | `esbabbler-call`          | —          |       |

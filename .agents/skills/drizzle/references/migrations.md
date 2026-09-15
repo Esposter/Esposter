@@ -46,6 +46,10 @@ Editing the generated **`migration.sql`** by hand is allowed and expected — bu
 
 **Destructive diffs → rewrite the SQL to preserve data.** drizzle-kit emits drop/recreate where a data-preserving statement exists; an enum-value rename should be `ALTER TYPE "public"."foo_type" RENAME VALUE 'Bar' TO 'Baz';`, not `DROP TYPE` + `CREATE TYPE`. A value-order-only change generates a text-cast recreate (`SET DATA TYPE text` → `DROP TYPE` → `CREATE TYPE` → cast back). Postgres derives an enum's `ORDER BY`, `MIN`/`MAX` and `<`/`>` from its declared value order, so a recreate that reorders values silently changes those results — it is **not** harmless by default. Leave the recreate as-is only after confirming the enum is compared for equality only (never ordered on) and has no default; otherwise rewrite the SQL to preserve the declared value order.
 
+## A new reference over existing rows
+
+A referencing column that a pre-existing row cannot fill is settled in the migration, never by leaving the reference off: **delete those rows or backfill them with a real parent id**, whichever the domain can justify. An empty sentinel is not available to a foreign key — no row has that id, so the constraint rejects every one of them and the migration fails. Deleting is the cheap answer wherever the row is rebuilt by its own client on next use, and the migration says which it is.
+
 ## When drizzle-kit itself crashes
 
 drizzle-kit's JSON parse for json/jsonb column defaults sits outside its try/catch, so a legacy default form in an old snapshot (`'{}'::jsonb`) can crash generation with a parse error. Normalize the offending snapshot's default to the plain form (`'{}'`) and rerun. In normal development this is the only sanctioned `snapshot.json` edit — a parser workaround, not a chain repair.
