@@ -25,10 +25,10 @@ describe("roomEmojiRouter", () => {
   let mockContext: Context;
   let roomEmojiCaller: DecorateRouterRecord<TRPCRouter["room"]["emoji"]>;
   let roomId: string;
-  const name = "party_parrot";
+  const name = "name";
   const mimetype = MimeType.Png;
-  const size = 1024;
-  const oversizedSize = 1024 * 1024;
+  const size = 1;
+  const oversizedSize = MAX_ROOM_EMOJI_SIZE_BYTES + 1;
   // A slug the dataset owns, which a room may not shadow
   const unicodeEmojiSlug = "fire";
   const position = 5;
@@ -175,20 +175,21 @@ describe("roomEmojiRouter", () => {
     expect.hasAssertions();
 
     const roomEmoji = await createRoomEmoji();
-    const updatedRoomEmoji = await roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: "renamed", roomId });
+    const updatedRoomEmoji = await roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: "updated_name", roomId });
 
     expect(updatedRoomEmoji.id).toBe(roomEmoji.id);
-    expect(updatedRoomEmoji.name).toBe("renamed");
+    expect(updatedRoomEmoji.name).toBe("updated_name");
   });
 
   test("fails updateRoomEmoji with a name another emoji in the room holds", async () => {
     expect.hasAssertions();
 
+    const otherName = "other_name";
     const roomEmoji = await createRoomEmoji();
-    await createRoomEmoji("other_emoji");
+    await createRoomEmoji(otherName);
 
     await expect(
-      roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: "other_emoji", roomId }),
+      roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: otherName, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Update, roomEmoji.id)}]`,
     );

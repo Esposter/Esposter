@@ -8,7 +8,7 @@ import { createFriends } from "@@/server/trpc/routers/createFriends.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "@@/server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { DatabaseEntityType, DerivedDatabaseEntityType, friends, roomsInMessage } from "@esposter/db-schema";
+import { DatabaseEntityType, DerivedDatabaseEntityType, friends, roomsInMessage, RoomType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -34,7 +34,7 @@ describe("directMessageRouter", () => {
 
     const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
 
-    expect(directMessage.type).toBe("DirectMessage");
+    expect(directMessage.type).toBe(RoomType.DirectMessage);
     expect(directMessage.participantKey).toContain(user.id);
     expect(directMessage.participantKey).toContain(mainUser.id);
   });

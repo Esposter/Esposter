@@ -547,11 +547,14 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { id: userId } = getMockSession().user;
     const usableInviteId = createId(INVITE_ID_LENGTH);
+    const epoch = new Date(0);
+    const oneSecondIn = new Date(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
+    const twoSecondsIn = new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
     // Newest first, so the two lapsed links are the whole of a two-row page and the usable one sits behind them
     await mockContext.db.insert(invitesInMessage).values([
-      { createdAt: new Date(3), expiresAt: new Date(1), id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
-      { createdAt: new Date(2), expiresAt: new Date(1), id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
-      { createdAt: new Date(1), id: usableInviteId, roomId: newRoom.id, userId },
+      { createdAt: twoSecondsIn, expiresAt: epoch, id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
+      { createdAt: oneSecondIn, expiresAt: epoch, id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
+      { createdAt: epoch, id: usableInviteId, roomId: newRoom.id, userId },
     ]);
     vi.setSystemTime(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
     const lapsedPage = await roomCaller.readRoomInvites({ limit: 2, roomId: newRoom.id });
