@@ -7,7 +7,7 @@ Decide by what the value **is**, not by what is reachable:
 - **Part of what the page shows** (filter, page number, tab) → the **URL**, so a share, a bookmark and a refresh all show the same thing (`useEnumRouteQuery` below).
 - **How the visitor got here** (a breadcrumb trail, whether this was a drill-down) → the **history entry**, read back from `window.history.state` and written by merging into it — spread the current state, or the write erases whatever the router keeps there:
 
-  ```typescript
+  ```ts
   window.history.replaceState({ ...window.history.state, trail }, "");
   ```
 
