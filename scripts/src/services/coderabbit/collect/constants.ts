@@ -66,7 +66,8 @@ export const DRAINS_MARKER = "review-collector drains";
 export const QUARANTINED_MARKER = "review-collector quarantined";
 
 // A queue commit whose conflict with the tree the fixes built the sync could not resolve, counted against the
-// Same cap: past it the commit is a person's, and the port holds on it as it always did
+// Same cap in a comment on the commit itself, since the sync runs with no pull request open as often as with one:
+// Past it the commit is a person's, and the port holds on it as it always did
 export const SYNC_FAILED_MARKER = "review-collector sync-failed";
 
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";

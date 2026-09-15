@@ -75,11 +75,11 @@ flowchart TD
   C -->|yes| AB[Abort — the port holds on it]
   C -->|no| CL[Claude resolves and continues the sequence]
   CL -->|sequence complete, tree clean| P
-  CL -->|anything else| F[Fail red, attempt counted on the pull request]
+  CL -->|anything else| F[Fail red, attempt counted on the commit]
 ```
 
 - **Why the collector and not the session.** A queue left on an old base carries commits written against files a drain has since repaired, and every one is a conflict the porter would hold on, run after run, until a person notices a red run. Here the conflict is met once, where the fixes are, and the working session's `git pull --rebase` afterwards replays only what it committed since (`.agents/skills/review-queue/SKILL.md`).
-- **A conflict is the drain's session pointed at a conflict.** The same headless Claude, the same denials — no push, no branch switch, no GitHub — told which commit stopped the sequence and on which paths, that both sides survive, and that `--skip` is for a commit whose whole change the target already carries. What proves the resolution is a sequence run to its end over a clean tree, never the session's word. A failure counts against the drain's attempt cap under a marker keyed by the commit, and past the cap the commit is a person's: the port holds on it as it always did. The marker is a comment on the release pull request, so with none open there is nothing to count against and no session is spent — a conflict met between releases is a person's from the first, rather than one every run resolves afresh.
+- **A conflict is the drain's session pointed at a conflict.** The same headless Claude, the same denials — no push, no branch switch, no GitHub — told which commit stopped the sequence and on which paths, that both sides survive, and that `--skip` is for a commit whose whole change the target already carries. What proves the resolution is a sequence run to its end over a clean tree, never the session's word. A failure counts against the drain's attempt cap under a marker in a comment on the conflicting commit itself — the queue is synced with no pull request open as often as with one, so a count kept on the pull request would leave the resolver uncapped in between — and past the cap the commit is a person's: the port holds on it as it always did.
 - **Two writers of `ai/queue`, one compare-and-swap.** The lease each side pushes with is [two writers](/docs/infra/review-collector/two-writers)'; a rewrite the session's push beat is simply replayed by the next run onto what the queue then carries.
 
 ## Merge

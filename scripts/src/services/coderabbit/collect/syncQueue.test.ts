@@ -15,7 +15,7 @@ import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { runDrain, runGh } = vi.hoisted(() => ({
   runDrain: vi.fn<typeof baseRunDrain>(),
@@ -33,8 +33,11 @@ vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh a
 describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
   const viewerLogin = "viewerLogin";
-  const pullRequest = 0;
-  const baseInput = { isDryRun: false, issueComments: [], pullRequest, viewerLogin };
+  const baseInput = { isDryRun: false, viewerLogin };
+  // The attempts are read off the conflicting commit's own comments, one `gh` page of none unless a test says otherwise
+  beforeEach(() => {
+    runGh.mockReturnValue("[[]]");
+  });
   const filePath = `${TEST_FILENAME}.ts`;
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
   const readSubjects = (range: string): string[] => runGit(["log", "--format=%s", range], getCwd()).trim().split("\n");
@@ -123,19 +126,6 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runDrain).not.toHaveBeenCalled();
   });
 
-  test("leaves a conflict to a person when no release pull request can count the attempt", async () => {
-    expect.hasAssertions();
-
-    const { developSha, queueSha } = setupConflict();
-
-    await expect(
-      syncQueue({ ...baseInput, cwd: getCwd(), developSha, pullRequest: undefined, queueSha }),
-    ).resolves.toBe(queueSha);
-    expect(runDrain).not.toHaveBeenCalled();
-    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
-    expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
-  });
-
   test("hands a conflict to the resolver and pushes the queue it ran to the end", async () => {
     expect.hasAssertions();
 
@@ -165,24 +155,25 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the resolver left afc657d5e91e3511c65c73f432615a705c835c36 unresolved (attempt 1 of 3)]`,
     );
-    expect(runGh).toHaveBeenCalledTimes(1);
-    expect(runGh.mock.calls[0]?.[0].at(-1)).toContain(getMarker(SYNC_FAILED_MARKER, queueSha));
+    expect(runGh).toHaveBeenCalledTimes(2);
+    expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${queueSha}/comments`);
+    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(SYNC_FAILED_MARKER, queueSha));
   });
 
   test("leaves a conflict past the attempt cap to a person without spending a session", async () => {
     expect.hasAssertions();
 
     const { developSha, queueSha } = setupConflict();
-    const issueComments = Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
+    const commitComments = Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
       body: getMarker(SYNC_FAILED_MARKER, queueSha),
       id,
       updated_at: "",
       user: { login: viewerLogin },
     }));
+    runGh.mockReturnValue(JSON.stringify([commitComments]));
 
-    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, issueComments, queueSha })).resolves.toBe(
-      queueSha,
-    );
+    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
+    expect(runGh.mock.calls[0]?.[0]).toContain(`repos/{owner}/{repo}/commits/${queueSha}/comments?per_page=100`);
     expect(runDrain).not.toHaveBeenCalled();
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
   });
