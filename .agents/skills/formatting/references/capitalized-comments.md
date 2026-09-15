@@ -4,6 +4,8 @@ Read when oxlint's `capitalized-comments` fires on a `//` line, or after rewrapp
 
 **Don't fight `eslint(capitalized-comments)`** — oxlint enforces an uppercase first letter on every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine, and lowercasing one to read better is a lint error rather than a style choice. What it cannot see is the difference between a prose word and a code identifier, so a wrapped line starting with `node_modules`, `pnpm` or `oxlint` gets capitalized into a name that does not exist — and `--fix` writes it. Rewrap so a line starts with prose; a line opening on a backtick or a bracket is exempt, which is why `` `pnpm build` `` may start one.
 
+**Where the rule does not run, the style is corruption.** The capital belongs to the linter, not to the house style: a `#` comment in YAML, and any file oxlint does not lint, keeps ordinary sentence case, and copying the continuation capital into one leaves a mid-sentence word reading as a sentence start with nothing to blame and nothing to fix it — `a network Blip exits non-zero`, `which the bridge's nodes do / Not carry`. Here lowercasing **is** the fix, because the rule that rejects it is the one that is absent. The tell is a line opening on a capitalised common noun or verb that the line above ends mid-clause.
+
 **Rewrapping a comment is what creates this**, so it is the edit to re-check rather than the original text. Changing a word early in a block reflows every line after it, and an identifier that sat mid-line lands at the front of one — the corruption is written by the pass that was fixing the previous one. After editing any comment, grep the added lines for a line-initial identifier before committing:
 
 ```bash

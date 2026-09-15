@@ -1,51 +1,52 @@
 # Comments
 
-| Unit                                                   | Swept      | Notes                                                    |
-| ------------------------------------------------------ | ---------- | -------------------------------------------------------- |
-| `apps/web` — `app/components`                          | 2026-09-05 | the densest prose in the app                             |
-| `apps/web` — `app/services`, `app/util`                | 2026-09-05 | the separator and alerting rules, restated per call site |
-| `apps/web` — `app/composables/message`                 | 2026-09-05 | the file, room and subscribable trees                    |
-| `apps/web` — the rest of `app/composables`             | 2026-09-05 | the pagination binder and readiness rules, per call site |
-| `apps/web` — `app/models`, `app/types`                 | 2026-09-05 | the dungeons tree's legacy prose                         |
-| `apps/web` — `app/store`                               | 2026-09-05 | the rollback rationale, restated per call site           |
-| `apps/web` — `app/pages`, `layouts`, the rest          | 2026-09-05 | plus `middleware`, `plugins`, `assets`                   |
-| `apps/web` — `server/trpc/routers`                     | 2026-09-05 | the per-type router suites                               |
-| `apps/web` — `server/trpc/routers` subtrees            | 2026-09-05 | `message`, `room`, `call`                                |
-| `apps/web` — the rest of `server/trpc`                 | 2026-09-05 | `guards`, `middleware`, `procedure`, `plugins`, root     |
-| `apps/web` — `server/services/resource`                | 2026-09-05 |                                                          |
-| `apps/web` — `server/services/message`                 | 2026-09-05 |                                                          |
-| `apps/web` — `server/services` — the dense rest        | 2026-09-05 | `blueprint`, `azure`, `storage`, `survey`, `program`     |
-| `apps/web` — the rest of `server/services`             | 2026-09-05 |                                                          |
-| `apps/web` — the rest of `server`                      | 2026-09-05 | `models`, `composables`, `api`, `plugins`, `db`, root    |
-| `apps/web` — `shared/models/resource`                  | 2026-09-05 |                                                          |
-| `apps/web` — `shared/models/db`                        | 2026-09-05 |                                                          |
-| `apps/web` — the rest of `shared/models`               | 2026-09-05 |                                                          |
-| `apps/web` — `shared/services`                         | 2026-09-05 |                                                          |
-| `apps/web` — the rest of `shared`                      | 2026-09-05 | `util`, `types`, `assets`, `test`                        |
-| `apps/web` — `configuration`, `content`                | 2026-09-05 | CSP labels, Nuxt config prose                            |
-| `apps/functions` — `handlers`                          | 2026-09-05 | the densest prose in the package                         |
-| `apps/functions` — `services`, the rest                | 2026-09-05 | plus `functions`, `hooks`, `models`, `index.test.ts`     |
-| `packages/azure-mock`                                  | 2026-09-05 | filter/search/container mocks                            |
-| `packages/configuration`                               | 2026-09-05 | external lists, `global.d.ts`                            |
-| `packages/db-mock`                                     | 2026-09-05 |                                                          |
-| `packages/db` — `services/azure`                       | 2026-09-05 | table, container and event-grid helpers                  |
-| `packages/db` — `services/message`                     | 2026-09-05 | moderation, threads, mentions                            |
-| `packages/db` — the rest of `services`, `models`       | 2026-09-05 | notification, resource, room, storage                    |
-| `packages/db-schema` — `models`                        | 2026-09-05 | entity classes, Azure payloads                           |
-| `packages/db-schema` — `schema`, `relations`           | 2026-09-05 | tables and their v2 relations                            |
-| `packages/db-schema` — `services`, package root        | 2026-09-05 | `schema.test.ts`, `pgTable.ts`                           |
-| `apps/infra`                                           | 2026-09-05 | event subscriptions, GitHub rulesets                     |
-| `packages/parse-tmx`                                   | 2026-09-05 | `TMXNode.ts`                                             |
-| `packages/shared`, `packages/shared-node`              | 2026-09-05 | `takeOne`                                                |
-| `packages/virrun` — `models`, package root             | 2026-09-05 |                                                          |
-| `packages/virrun` — `services/cli`, `configuration`    | 2026-09-05 | plus `source`, `vfs`, `virrun`                           |
-| `packages/virrun` — `services/exec/wsl`                | 2026-09-05 | the mirror prose is the bulk of the package              |
-| `packages/virrun` — `services/exec/snapshot`           | 2026-09-05 | layers, leases, overlay capture                          |
-| `packages/virrun` — `services/exec/util`               | 2026-09-05 |                                                          |
-| `packages/virrun` — the rest of `services/exec`        | 2026-09-05 | bwrap, cache, differential, native, os, store, test, vfs |
-| `packages/vue-phaserjs`                                | 2026-09-05 | composables, store, models, test setup                   |
-| `packages/xml2js`                                      | 2026-09-05 | `Parser.ts`                                              |
-| repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-05 | workflow scripts and their tests                         |
+| Unit                                                   | Swept      | Notes                                                                                               |
+| ------------------------------------------------------ | ---------- | --------------------------------------------------------------------------------------------------- |
+| `apps/web` — `app/components`                          | 2026-09-05 | the densest prose in the app                                                                        |
+| `apps/web` — `app/services`, `app/util`                | 2026-09-05 | the separator and alerting rules, restated per call site                                            |
+| `apps/web` — `app/composables/message`                 | 2026-09-05 | the file, room and subscribable trees                                                               |
+| `apps/web` — the rest of `app/composables`             | 2026-09-05 | the pagination binder and readiness rules, per call site                                            |
+| `apps/web` — `app/models`, `app/types`                 | 2026-09-05 | the dungeons tree's legacy prose                                                                    |
+| `apps/web` — `app/store`                               | 2026-09-05 | the rollback rationale, restated per call site                                                      |
+| `apps/web` — `app/pages`, `layouts`, the rest          | 2026-09-05 | plus `middleware`, `plugins`, `assets`                                                              |
+| `apps/web` — `server/trpc/routers`                     | 2026-09-05 | the per-type router suites                                                                          |
+| `apps/web` — `server/trpc/routers` subtrees            | 2026-09-05 | `message`, `room`, `call`                                                                           |
+| `apps/web` — the rest of `server/trpc`                 | 2026-09-05 | `guards`, `middleware`, `procedure`, `plugins`, root                                                |
+| `apps/web` — `server/services/resource`                | 2026-09-05 |                                                                                                     |
+| `apps/web` — `server/services/message`                 | 2026-09-05 |                                                                                                     |
+| `apps/web` — `server/services` — the dense rest        | 2026-09-05 | `blueprint`, `azure`, `storage`, `survey`, `program`                                                |
+| `apps/web` — the rest of `server/services`             | 2026-09-05 |                                                                                                     |
+| `apps/web` — the rest of `server`                      | 2026-09-05 | `models`, `composables`, `api`, `plugins`, `db`, root                                               |
+| `apps/web` — `shared/models/resource`                  | 2026-09-05 |                                                                                                     |
+| `apps/web` — `shared/models/db`                        | 2026-09-05 |                                                                                                     |
+| `apps/web` — the rest of `shared/models`               | 2026-09-05 |                                                                                                     |
+| `apps/web` — `shared/services`                         | 2026-09-05 |                                                                                                     |
+| `apps/web` — the rest of `shared`                      | 2026-09-05 | `util`, `types`, `assets`, `test`                                                                   |
+| `apps/web` — `configuration`, `content`                | 2026-09-05 | CSP labels, Nuxt config prose                                                                       |
+| `apps/functions` — `handlers`                          | 2026-09-05 | the densest prose in the package                                                                    |
+| `apps/functions` — `services`, the rest                | 2026-09-05 | plus `functions`, `hooks`, `models`, `index.test.ts`                                                |
+| `packages/azure-mock`                                  | 2026-09-05 | filter/search/container mocks                                                                       |
+| `packages/configuration`                               | 2026-09-05 | external lists, `global.d.ts`                                                                       |
+| `packages/db-mock`                                     | 2026-09-05 |                                                                                                     |
+| `packages/db` — `services/azure`                       | 2026-09-05 | table, container and event-grid helpers                                                             |
+| `packages/db` — `services/message`                     | 2026-09-05 | moderation, threads, mentions                                                                       |
+| `packages/db` — the rest of `services`, `models`       | 2026-09-05 | notification, resource, room, storage                                                               |
+| `packages/db-schema` — `models`                        | 2026-09-05 | entity classes, Azure payloads                                                                      |
+| `packages/db-schema` — `schema`, `relations`           | 2026-09-05 | tables and their v2 relations                                                                       |
+| `packages/db-schema` — `services`, package root        | 2026-09-05 | `schema.test.ts`, `pgTable.ts`                                                                      |
+| `apps/infra`                                           | 2026-09-05 | event subscriptions, GitHub rulesets                                                                |
+| `packages/parse-tmx`                                   | 2026-09-05 | `TMXNode.ts`                                                                                        |
+| `packages/shared`, `packages/shared-node`              | 2026-09-05 | `takeOne`                                                                                           |
+| `packages/virrun` — `models`, package root             | 2026-09-05 |                                                                                                     |
+| `packages/virrun` — `services/cli`, `configuration`    | 2026-09-05 | plus `source`, `vfs`, `virrun`                                                                      |
+| `packages/virrun` — `services/exec/wsl`                | 2026-09-05 | the mirror prose is the bulk of the package                                                         |
+| `packages/virrun` — `services/exec/snapshot`           | 2026-09-05 | layers, leases, overlay capture                                                                     |
+| `packages/virrun` — `services/exec/util`               | 2026-09-05 |                                                                                                     |
+| `packages/virrun` — the rest of `services/exec`        | 2026-09-05 | bwrap, cache, differential, native, os, store, test, vfs                                            |
+| `packages/vue-phaserjs`                                | 2026-09-05 | composables, store, models, test setup                                                              |
+| `packages/xml2js`                                      | 2026-09-05 | `Parser.ts`                                                                                         |
+| repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-05 | workflow scripts and their tests                                                                    |
+| `.github` — workflows, composite actions               | 2026-09-15 | the densest rationale prose outside `apps/web`; `github-actions` for what a step's comment may keep |
 
 Greps, per unit:
 

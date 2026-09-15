@@ -14,8 +14,9 @@ runs:
   steps:
     # The root closure `{.}...` rides along with any selector, because the toolchain (`virrun`, `vitest`,
     # `oxlint`, `tsx`, the `typescript` alias) is declared at the root and `virrun` is a workspace project whose
-    # own dependency a filtered install would otherwise skip — `apps/web/content/docs/architecture/monorepo-tooling.md`
-    # → `## CI job shape` has the failure each half prevents and why `includeWorkspaceRoot` is refused.
+    # own dependency a filtered install would otherwise skip —
+    # `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape` has the failure each half
+    # prevents and why `includeWorkspaceRoot` is refused.
     # `--fail-if-no-match` so a selector matching nothing fails here rather than as a missing module later.
     - name: 📦 Install the selected projects
       if: ${{ inputs.install-filter != '' }}
