@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SHOW_SCROLL_TO_TOP_OFFSET } from "@/services/app/constants";
+import { SCROLL_TO_TOP_VISIBLE_OFFSET } from "@/services/app/constants";
 
 const { y } = useWindowScroll();
 const goTo = useVGoTo();
@@ -8,7 +8,7 @@ const goTo = useVGoTo();
 <template>
   <v-fade-transition>
     <StyledButton
-      v-show="y > SHOW_SCROLL_TO_TOP_OFFSET"
+      v-show="y > SCROLL_TO_TOP_VISIBLE_OFFSET"
       bottom-4
       right-4
       fixed
