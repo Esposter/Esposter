@@ -101,8 +101,8 @@ describe(resolveVirrunConfiguration, () => {
     const root = create();
     writeFileSync(join(root, typescriptConfigurationFilename), "export default {");
 
-    // jiti's parse error carries the config's absolute path, so the message is not portable and the error's
-    // Own name is what says the failure is ours rather than a silently defaulted backend
+    // The parse error jiti raises carries the config's absolute path, so the message is not portable and the
+    // Error's own name is what says the failure is ours rather than a silently defaulted backend
     const errorName = getResult(() => resolveVirrunConfiguration(root)).match(
       () => "",
       ({ name }) => name,

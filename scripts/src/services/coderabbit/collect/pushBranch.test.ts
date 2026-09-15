@@ -2,6 +2,7 @@ import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/co
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
+import { getResult } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(pushBranch, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
@@ -76,9 +77,14 @@ describe(pushBranch, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     installPreReceiveHook("exit 1");
     const sha = commitFile(TEST_FILENAME, "");
 
-    expect(() =>
+    const message = getResult(() =>
       pushBranch({ branch: DEVELOP_BRANCH, cwd: getCwd(), expectedSha: developSha, isDryRun: false, sha }),
-    ).toThrow(/pre-receive hook declined/u);
+    ).match(
+      () => "",
+      ({ message: errorMessage }) => errorMessage,
+    );
+
+    expect(message).toContain("pre-receive hook declined");
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 

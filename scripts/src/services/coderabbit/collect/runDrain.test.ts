@@ -3,7 +3,7 @@ import type { spawn as baseSpawn, ChildProcessWithoutNullStreams } from "node:ch
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
 import { EventEmitter } from "node:events";
 import { PassThrough, Readable } from "node:stream";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
 
@@ -29,6 +29,17 @@ const getResultLine = (subtype: string, result: string): string =>
 
 describe(runDrain, () => {
   const REFUSAL_LINE = "You've hit your session limit · resets 3:10am (UTC)";
+  // The deadline is read relative to now, so the clock is pinned to the epoch and the reset is an exact
+  // Instant rather than merely a present one. Only `Date` is faked: the session is read off a real stream
+  const LIMIT_RESET_AT_MS = Temporal.Duration.from({ hours: 3, minutes: 10 }).total("milliseconds");
+
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   // A limit is a refusal to *start*, so a session that ran to the end cannot be one — whatever its narration says.
   // The drain is asked to fix findings about this very wording, so its own summary quotes the phrase routinely
@@ -61,10 +72,10 @@ describe(runDrain, () => {
 
     mockSession(1, [getResultLine("success", REFUSAL_LINE)]);
 
-    const { isDrained, limitResetAtMs } = await runDrain("prompt");
-
-    expect(isDrained).toBe(false);
-    expect(limitResetAtMs).toBeDefined();
+    await expect(runDrain("prompt")).resolves.toStrictEqual({
+      isDrained: false,
+      limitResetAtMs: LIMIT_RESET_AT_MS,
+    });
   });
 
   // Claude Code refusing to start writes a sentence rather than JSON, and that sentence is the only thing that
@@ -74,10 +85,10 @@ describe(runDrain, () => {
 
     mockSession(1, [REFUSAL_LINE]);
 
-    const { isDrained, limitResetAtMs } = await runDrain("prompt");
-
-    expect(isDrained).toBe(false);
-    expect(limitResetAtMs).toBeDefined();
+    await expect(runDrain("prompt")).resolves.toStrictEqual({
+      isDrained: false,
+      limitResetAtMs: LIMIT_RESET_AT_MS,
+    });
   });
 
   // A denylist of two names only ever protects what it already knew to name — this job's own environment grows
