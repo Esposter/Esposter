@@ -15,7 +15,7 @@ const sourceNames = new Set(Array.from({ length: SOURCE_NAME_COUNT }, (_, index)
 const getPages = (unit: (index: number) => string, pageCount: number): CitingPage[] =>
   Array.from({ length: pageCount }, (_page, pageIndex) => ({
     path: String(pageIndex),
-    text: Array.from({ length: NAMES_PER_PAGE }, (_, index) => `\`${unit(index)}\``).join(" "),
+    text: Array.from({ length: NAMES_PER_PAGE }, (_name, index) => `\`${unit(index)}\``).join(" "),
   }));
 
 describe(getStaleNames, () => {
