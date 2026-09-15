@@ -88,8 +88,8 @@ describe(useNotificationStore, () => {
   test("counts the unread total the server stated, not the rows a page holds", () => {
     expect.hasAssertions();
 
-    const { createNotification, storeUnreadCount } = notificationStore;
-    storeUnreadCount(1);
+    const { createNotification, setUnreadDeliveredCount } = notificationStore;
+    setUnreadDeliveredCount(1);
     createNotification({ severity: NotificationSeverity.Info, title });
 
     expect(unreadCount.value).toBe(2);

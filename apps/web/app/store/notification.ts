@@ -38,7 +38,7 @@ export const useNotificationStore = defineStore("notification", () => {
   const createSnackbar = (id: string) => {
     snackbarIds.value = [...snackbarIds.value, id];
   };
-  const storeUnreadCount = (count: number) => {
+  const setUnreadDeliveredCount = (count: number) => {
     unreadDeliveredCount.value = count;
   };
   // What a delivered push does to the bell, kept here because only the store can tell the two halves apart. The
@@ -194,9 +194,9 @@ export const useNotificationStore = defineStore("notification", () => {
     isPanelOpen,
     markAllAsRead,
     notifications,
+    setUnreadDeliveredCount,
     snackbarNotification,
     storeDeliveredNotifications,
-    storeUnreadCount,
     unreadCount,
   };
 });
