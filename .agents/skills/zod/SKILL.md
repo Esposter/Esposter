@@ -29,7 +29,7 @@ description: Apply when writing Zod schemas. Esposter Zod schema conventions —
 
 **Never call `.array()` directly** unless duplicates are genuinely valid. Use `createUniqueArraySchema(schema)` from `@esposter/shared` — it wraps `.array()` with a uniqueness refine, and all chaining (`.min()`, `.max()`, `.nullable()`, `.optional()`, `.default()`) works identically after (Zod 4's `.refine()` returns the same `ZodArray` type). For object arrays, pass the uniquely-identifying field name as the second argument:
 
-```typescript
+```ts
 createUniqueArraySchema(z.string()).max(MAX_READ_LIMIT); // not z.string().array()
 createUniqueArraySchema(fooSchema, "id").max(FOO_MAX_LENGTH).default([]);
 ```
@@ -69,7 +69,7 @@ Every field carries the tightest constraint its domain allows — a bare `z.numb
 - **Record maps over switch statements** — when a switch on an enum drives different async operations, prefer `const actionMap: Record<EnumType, (args) => Promise<void>> = {...}` and `await actionMap[type](args)`. Exhaustiveness is enforced by the Record key type; no `exhaustiveGuard` needed.
 - **`satisfies z.ZodType<T>` with class types** — when schema output is plain objects but the interface uses class instances (with `toJSON`), use `Except` + `ToData` to strip `toJSON` from nested classes:
 
-  ```typescript
+  ```ts
   export const fooSchema = z.object({...}) satisfies z.ZodType<Except<Foo, "bars"> & { bars: ToData<Bar>[] }>;
   ```
 

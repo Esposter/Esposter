@@ -13,7 +13,7 @@ When normalizing a string (trim, lowercase, etc.) before further validation, use
 
 Which is which is the whole decision, and it is why hand-rolled copies keep appearing: someone who cannot recall whether the helper forces `min(1)` writes the pipe out instead. If the field has an empty-string default or is `.optional()`, it is the second one.
 
-```typescript
+```ts
 z.string().transform(normalizeString).pipe(z.string().min(1).max(MAX));
 z.string()
   .transform((v) => normalizeString(v).toLowerCase())

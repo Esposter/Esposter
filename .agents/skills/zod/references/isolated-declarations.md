@@ -8,7 +8,7 @@ It is on for `packages/*` libraries — not the app, and `db-schema` opts out vi
 
 **The annotation is always required for an exported schema const** — `tsc` cannot emit a `z.object({...})` expression's type without the checker, so even an all-primitive object fails with TS9010/9013 (verified). There is no "simple schema needs no annotation" exception.
 
-```typescript
+```ts
 export const itemMetadataSchema: z.ZodObject<{
   createdAt: z.ZodDate;
   deletedAt: z.ZodNullable<z.ZodDate>;

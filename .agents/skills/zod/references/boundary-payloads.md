@@ -6,7 +6,7 @@ Runtime data crossing any trust boundary — EventGrid `event.data`, Storage Que
 
 For untrusted JSON that arrives as a string (subprocess output, file contents), parse + validate in **one** `getResult`/`getResultAsync` and wrap the failure in `InvalidOperationError(Operation.Read, fn.name, …)` so malformed JSON and a schema mismatch surface identically at the call site — canonical refs: `virrun/src/services/exec/snapshot/parseOverlayManifest.ts` (process stdout) and `virrun/src/services/configuration/parseVirrunConfiguration.ts` (config file). Use `z.strictObject` for closed configs so an unknown key (a typo) fails loud rather than being silently stripped.
 
-```typescript
+```ts
 // schema co-located next to the interface, parsed at the boundary — never `event.data as unknown as T`
 export interface FooEventGridData {
   foo: Pick<FooEntity, "partitionKey" | "rowKey" | "userId">;
