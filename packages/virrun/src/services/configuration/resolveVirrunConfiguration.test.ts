@@ -4,7 +4,7 @@ import { resolveVirrunConfiguration } from "#src/services/configuration/resolveV
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { VIRRUN_CONFIGURATION_FILENAME, VIRRUN_CONFIGURATION_NAME } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { InvalidOperationError } from "@esposter/shared";
+import { getResult, InvalidOperationError } from "@esposter/shared";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
@@ -101,7 +101,14 @@ describe(resolveVirrunConfiguration, () => {
     const root = create();
     writeFileSync(join(root, typescriptConfigurationFilename), "export default {");
 
-    expect(() => resolveVirrunConfiguration(root)).toThrow(InvalidOperationError);
+    // jiti's parse error carries the config's absolute path, so the message is not portable and the error's
+    // Own name is what says the failure is ours rather than a silently defaulted backend
+    const errorName = getResult(() => resolveVirrunConfiguration(root)).match(
+      () => "",
+      ({ name }) => name,
+    );
+
+    expect(errorName).toBe(InvalidOperationError.name);
   });
 
   test("throws on a TS config with an unknown key", () => {
