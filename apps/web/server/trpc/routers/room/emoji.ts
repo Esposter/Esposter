@@ -10,10 +10,10 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { getDevice } from "@@/server/services/auth/getDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
+import { inRoom } from "@@/server/services/db/inRoom";
 import { checkIsUnicodeEmojiSlug } from "@@/server/services/message/emoji/checkIsUnicodeEmojiSlug";
 import { getRoomEmojiBlobName } from "@@/server/services/message/emoji/getRoomEmojiBlobName";
 import { getRoomEmojiNameQuery } from "@@/server/services/message/emoji/getRoomEmojiNameQuery";
-import { inRoom } from "@@/server/services/db/inRoom";
 import { getRoomEmojiWithSasUrl } from "@@/server/services/message/emoji/getRoomEmojiWithSasUrl";
 import { roomEmojiEventEmitter } from "@@/server/services/message/events/roomEmojiEventEmitter";
 import { router } from "@@/server/trpc";
