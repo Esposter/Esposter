@@ -3,7 +3,7 @@ import type { Plugin } from "@oxlint/plugins";
 import { noHandRolledError } from "#src/services/oxlint/trpcProcedure/noHandRolledError";
 import { requireReturnType } from "#src/services/oxlint/trpcProcedure/requireReturnType";
 import { definePlugin } from "@oxlint/plugins";
-// Oxlint JS plugin enforcing the two decidable halves of the `trpc` skill, scoped in the root .oxlintrc.json to
+// An oxlint JS plugin enforcing the two decidable halves of the `trpc` skill, scoped in the root .oxlintrc.json to
 // `apps/web/server/trpc/**` — `.query`/`.mutation` only mean a procedure there, and `TRPCError` is only
 // Constructed there.
 //
