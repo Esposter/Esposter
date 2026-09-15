@@ -10,7 +10,7 @@
 | `coderabbit`              | —          |       |
 | `context-efficiency`      | —          |       |
 | `dependency-updates`      | —          |       |
-| `docs`                    | —          |       |
+| `docs`                    | 2026-09-15 |       |
 | `drizzle`                 | —          |       |
 | `error-handling`          | 2026-09-15 |       |
 | `esbabbler`               | —          |       |
