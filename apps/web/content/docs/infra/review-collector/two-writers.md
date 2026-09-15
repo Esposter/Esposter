@@ -30,12 +30,12 @@ sequenceDiagram
   C->>D: fast-forward develop by the window
   C->>Q: rewrite the queue onto develop, lease on the sha it read
   Note over C: ported commits drop, the rest re-parent, a conflict is resolved here
-  S->>S: git pull --rebase
-  Note over S: only what the session committed since replays
+  S->>S: git pull --rebase, once git status is clean
+  Note over S: only what the sessions committed since replays
   S->>Q: git push
 ```
 
-A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and clears the gates from the remote on every run; the session's side of the loop — `git pull --rebase` before a unit is started and again before every push, the plain push after every commit, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
+A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and clears the gates from the remote on every run; the session's side of the loop — a unit committed by pathspec, `git pull --rebase` only over a clean tree, the plain push after every pull, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
 ## Parallel work
 

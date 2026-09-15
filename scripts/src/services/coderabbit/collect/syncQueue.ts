@@ -1,4 +1,5 @@
 import type { SyncQueueInput } from "#src/models/coderabbit/collect/SyncQueueInput";
+import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
@@ -11,7 +12,7 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
-import { postComment } from "#src/services/coderabbit/collect/postComment";
+import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
@@ -19,6 +20,7 @@ import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -41,8 +43,6 @@ export const syncQueue = async ({
   cwd,
   developSha,
   isDryRun,
-  issueComments,
-  pullRequest,
   queueSha,
   reviewFixesSha,
   viewerLogin,
@@ -69,19 +69,19 @@ export const syncQueue = async ({
   if (!isReplayed) {
     const conflictSha = readSha("CHERRY_PICK_HEAD", cwd) ?? "";
     const conflictedPaths = readUnmergedPaths(cwd);
-    const marker = getMarker(SYNC_FAILED_MARKER, conflictSha);
-    const attempts = issueComments.filter((comment) => checkIsMarked(comment, viewerLogin, marker)).length;
     const abort = (reason: string): string => {
       runGit(["cherry-pick", "--abort"], cwd);
       console.info(`sync: ${conflictSha} conflicts with ${targetBranch} — ${reason}`);
       return queueSha;
     };
     if (isDryRun) return abort("a dry run resolves nothing");
-    // The attempt cap is counted in markers on the release pull request, so with none open a failed resolution
-    // Leaves no record and every later run would spend another session on the same conflict, uncapped
-    else if (pullRequest === undefined) return abort("no release pull request can hold the attempt count");
-    else if (attempts >= DRAIN_ATTEMPT_CAP)
-      return abort(`its resolution failed ${attempts} times, so it is a person's`);
+    // The attempts are counted on the commit itself: the queue is synced with no pull request open as often as
+    // With one, and a count kept on the pull request would leave the resolver uncapped in between
+    const marker = getMarker(SYNC_FAILED_MARKER, conflictSha);
+    const attempts = readEntries<GitHubEntry>(`commits/${conflictSha}/comments`).filter((comment) =>
+      checkIsMarked(comment, viewerLogin, marker),
+    ).length;
+    if (attempts >= DRAIN_ATTEMPT_CAP) return abort(`its resolution failed ${attempts} times, so it is a person's`);
 
     const { isDrained, limitResetAtMs } = await runDrain(
       getSyncPrompt({ conflictedPaths, conflictSha, targetBranch }),
@@ -89,11 +89,11 @@ export const syncQueue = async ({
     );
     if (limitResetAtMs !== undefined) return abort("the resolver could not start, and no attempt is counted");
     // A clean exit says the session ended; what proves the resolution is a sequence run to its end over a clean
-    // Tree. Anything else fails the run as a drain does, with the attempt counted on the pull request
+    // Tree. Anything else fails the run as a drain does, with the attempt counted on the commit
     else if (!isDrained || checkIsPicking(cwd) || readDirtyPaths(cwd).length > 0) {
-      postComment(
-        pullRequest,
-        `${marker}\nResolution attempt ${attempts + 1} of the conflict ${conflictSha} brings to ${targetBranch} failed — see the collector run.`,
+      postCommitComment(
+        conflictSha,
+        `${marker}\nResolution attempt ${attempts + 1} of the conflict this commit brings to ${targetBranch} failed — see the collector run.`,
       );
       throw new InvalidOperationError(
         Operation.Update,
