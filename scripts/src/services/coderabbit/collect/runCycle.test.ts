@@ -45,6 +45,15 @@ vi.mock(import("#src/services/coderabbit/collect/runDrainStep"), () => ({
   runDrainStep: runDrainStep as unknown as typeof baseRunDrainStep,
 }));
 
+// The bot's walkthrough after a review that found nothing: no review body, the range in the recent-review block
+// And the least merge risk on the head it read
+const getCleanWalkthrough = (sha: string): GitHubEntry => ({
+  body: `${RECENT_REVIEW_START_MARKER}between ${sha} and ${sha}${RECENT_REVIEW_END_MARKER}\n**Merge Risk:** _${TEST_FILENAME} ${MERGEABLE_RISK_LEVEL}_\n<!-- final_review_risk_coverage:{"sourceCommitId":"${sha}","coveredCommitId":"${sha}","kind":"reviewed"} -->`,
+  id: 0,
+  updated_at: "",
+  user: { login: CODERABBIT_REST_LOGIN },
+});
+
 describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, commitFiles, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
     setupFixtureRepository();
@@ -73,14 +82,6 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   };
   const getPrCalls = (subcommand: string) =>
     runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === subcommand);
-  // The bot's walkthrough after a review that found nothing: no review body, the range in the recent-review block
-  // And the least merge risk on the head it read
-  const getCleanWalkthrough = (sha: string): GitHubEntry => ({
-    body: `${RECENT_REVIEW_START_MARKER}between ${sha} and ${sha}${RECENT_REVIEW_END_MARKER}\n**Merge Risk:** _${TEST_FILENAME} ${MERGEABLE_RISK_LEVEL}_\n<!-- final_review_risk_coverage:{"sourceCommitId":"${sha}","coveredCommitId":"${sha}","kind":"reviewed"} -->`,
-    id: 0,
-    updated_at: "",
-    user: { login: CODERABBIT_REST_LOGIN },
-  });
 
   test("fast-forwards develop onto a merged main before measuring anything", async () => {
     expect.hasAssertions();
@@ -302,7 +303,11 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       kind: CycleOutcomeKind.Merged,
       reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
     });
-    expect(getPrCalls("merge")).toStrictEqual([[["pr", "merge", pullRequest.toString(), "--merge", "--admin"]]]);
+    // The head the verdict covers is named in the merge itself: a `develop` that moved since is refused by GitHub
+    // Rather than released on a verdict that never covered it
+    expect(getPrCalls("merge")).toStrictEqual([
+      [["pr", "merge", pullRequest.toString(), "--merge", "--admin", "--match-head-commit", developSha]],
+    ]);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
 

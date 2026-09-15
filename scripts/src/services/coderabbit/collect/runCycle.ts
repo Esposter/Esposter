@@ -119,6 +119,7 @@ export const runCycle = async ({
 
   if (pullRequest !== undefined) {
     const drain = await runDrainStep({
+      cwd,
       developSha,
       frontierCommits,
       isDryRun,
@@ -140,7 +141,7 @@ export const runCycle = async ({
       mergeRisk?.level === MERGEABLE_RISK_LEVEL &&
       mergeRisk.coveredSha === developSha
     )
-      return mergeReleasePullRequest({ isDryRun, pullRequest });
+      return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
   }
   const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha, reviewFixesSha });
   // With no pull request open, what `develop` already carries above the merge base is the first review's window

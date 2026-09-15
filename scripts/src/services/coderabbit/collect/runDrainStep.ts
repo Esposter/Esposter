@@ -14,6 +14,7 @@ import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnr
 // Downloading Claude Code to be refused again; so does a drain that could not start, since porting would put a
 // Window ahead of findings that must lead it.
 export const runDrainStep = async ({
+  cwd,
   developSha,
   frontierCommits,
   isDryRun,
@@ -28,8 +29,8 @@ export const runDrainStep = async ({
   // The queue has answered its finding already
   const newestReview = reviews.findLast(({ body }) => body);
   const unportedCommits = [
-    ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`) : []),
-    ...readAnsweredCommits(`${developSha}..${queueSha}`),
+    ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`, cwd) : []),
+    ...readAnsweredCommits(`${developSha}..${queueSha}`, cwd),
   ];
   const answeredIds = new Set(unportedCommits.flatMap(({ answers }) => answers));
   const drainedReviewIds = new Set([...unportedCommits, ...frontierCommits].flatMap(({ drains }) => drains));
