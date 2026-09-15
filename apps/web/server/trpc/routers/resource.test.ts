@@ -58,6 +58,14 @@ const readPublishedBlobSizes = (id: string): number[] => {
     .map(([, data]) => data.byteLength);
 };
 
+// A stored asset is one byte in the container, which is all a clone or a charge has to find
+const storeAsset = (blobName: string) => {
+  MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+};
+// The one reference a page makes to an asset, read back the same way after a clone rewrote it
+const createImageHtml = (blobName: string) => `<img src="${getResourceAssetUrl(blobName)}">`;
+const createImageEditor = (blobName: string) => new WebpageEditor({ css: "a", html: createImageHtml(blobName) });
+
 describe("resourceRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(resourceRouter);
   let mockContext: Context;
@@ -82,13 +90,6 @@ describe("resourceRouter", () => {
   // An asset lives under the resource's files directory, named by a fresh id in front of its filename
   const createFilesBlobName = (id: Resource["id"]) =>
     `${getFilesDirectoryName(id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-  // A stored asset is one byte in the container, which is all a clone or a charge has to find
-  const storeAsset = (blobName: string) => {
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-  };
-  // The one reference a page makes to an asset, read back the same way after a clone rewrote it
-  const createImageHtml = (blobName: string) => `<img src="${getResourceAssetUrl(blobName)}">`;
-  const createImageEditor = (blobName: string) => new WebpageEditor({ css: "a", html: createImageHtml(blobName) });
   // The version rides the row, so only a test writing a second time has to say which version it is claiming
   const saveWebpageContent = (webpageResource: Resource, content: WebpageEditor, contentVersionOffset = 0) =>
     webpageCaller.saveResourceContent({

@@ -1,10 +1,9 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
-
-import { MimeType } from "#shared/models/file/MimeType";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { getCallBackgroundBlobName } from "@@/server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "@@/server/services/message/call/getCallBackgroundPrefix";

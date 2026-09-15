@@ -5,8 +5,8 @@ import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
-import { MimeType } from "#shared/models/file/MimeType";
 import { Visual } from "#shared/models/dashboard/data/Visual";
+import { MimeType } from "#shared/models/file/MimeType";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { waitForSynchronizedFunctions } from "#shared/util/function/getSynchronizedFunction";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
