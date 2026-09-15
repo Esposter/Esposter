@@ -14,7 +14,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(reserveStorageBytes, () => {
   let mockContext: Context;
@@ -34,7 +34,12 @@ describe(reserveStorageBytes, () => {
     } = await mockSessionOnce(mockContext.db));
   });
 
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0 });
+  });
+
   afterEach(async () => {
+    vi.useRealTimers();
     await mockContext.db.delete(storageLedger);
     await mockContext.db.update(users).set({ storageBytesUsed: 0, storageTier: StorageTier.Free });
   });
@@ -87,7 +92,7 @@ describe(reserveStorageBytes, () => {
     // The counter is still zero, so only the outstanding hold can be what rejects this
     await expect(readStorageBytesUsed()).resolves.toBe(0);
     await expect(
-      reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName}Second`, declaredBytes }]),
+      reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: You have run out of storage.]`);
   });
 
@@ -102,19 +107,14 @@ describe(reserveStorageBytes, () => {
       containerName,
       countedBytes: 0,
       declaredBytes: quotaBytes,
-      expiresAt: new Date(Date.now() - 1),
+      expiresAt: new Date(0),
       userId,
     });
-    await reserveStorageBytes(mockContext.db, userId, containerName, [
-      { blobName: `${blobName}Second`, declaredBytes },
-    ]);
+    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
 
     const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
 
-    expect(storageLedgerEntries.map(({ blobName: name }) => name).toSorted()).toStrictEqual([
-      blobName,
-      `${blobName}Second`,
-    ]);
+    expect(storageLedgerEntries.map(({ blobName: name }) => name).toSorted()).toStrictEqual([blobName, `${blobName} `]);
   });
 
   test("drops a hold once no blob created event for it can still be redelivered", async () => {
@@ -125,19 +125,17 @@ describe(reserveStorageBytes, () => {
       containerName,
       countedBytes: 0,
       declaredBytes: quotaBytes,
-      // An upload that was never made, past the last moment storage could still be telling us otherwise — a PUT
-      // The SAS authorized at the final instant has had its whole completion allowance and its event's retries
-      expiresAt: new Date(Date.now() - EVENT_GRID_DELIVERY_TTL_MS - WRITE_SAS_DURATION_MS - 1),
+      expiresAt: new Date(0),
       userId,
     });
-    await reserveStorageBytes(mockContext.db, userId, containerName, [
-      { blobName: `${blobName}Second`, declaredBytes },
-    ]);
+    // An upload that was never made, past the last moment storage could still be telling us otherwise — a PUT
+    // The SAS authorized at the final instant has had its whole completion allowance and its event's retries
+    vi.setSystemTime(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS);
+    await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
 
     const storageLedgerEntries = await mockContext.db.query.storageLedger.findMany();
 
-    expect(storageLedgerEntries).toHaveLength(1);
-    expect(storageLedgerEntries[0]?.blobName).toBe(`${blobName}Second`);
+    expect(storageLedgerEntries.map(({ blobName: name }) => name)).toStrictEqual([`${blobName} `]);
   });
 
   test("rejects once too many holds are outstanding", async () => {

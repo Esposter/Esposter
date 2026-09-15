@@ -31,7 +31,7 @@ describe(getPermissions, () => {
   test("ors @everyone + assigned role permissions", async () => {
     expect.hasAssertions();
 
-    const { member } = await setupMemberWithRole(RoomPermission.ManageRoom, 1);
+    const { member } = await setupMemberWithRole(RoomPermission.ManageRoom, 0);
     await updateEveryoneRole(RoomPermission.ReadMessages);
 
     const permissions = await getPermissions(getMockContext().db, member.id, getRoomId());

@@ -2,14 +2,12 @@ import type { ConditionalEntityUpdateOptions } from "@@/server/models/azure/tabl
 import type { AzureEntity, AzureUpdateEntity, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
+import { MAX_ENTITY_ETAG_RETRIES } from "@@/server/services/azure/table/constants";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 import { getEntityWithEtag } from "@esposter/db";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
-// Bounded so a hot entity's concurrent writes cannot spin the mutation; on exhaustion the write is refused rather
-// Than dropped, so the caller is told to try again instead of believing a lost change landed
-const MAX_ENTITY_ETAG_RETRIES = 3;
 // A read-modify-write of an entity body, made conditional on the version it was computed against. Two callers
 // Otherwise both derive their write from the same version and the later one echoes back a body that never saw the
 // Earlier change, erasing it with nothing surfaced to either caller

@@ -1,13 +1,9 @@
 import type { Context } from "@@/server/trpc/context";
 
 import { createId } from "#shared/util/math/random/createId";
+import { UNIQUE_VIOLATION_ERROR_CODE } from "@@/server/services/message/call/constants";
 import { CALL_ID_LENGTH, callSessionsInMessage } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
-
-// Postgres `unique_violation`. The id is short enough to collide, so a duplicate key is the one failure that
-// Means "try another id" — every other failure is the database itself, and retrying through it three times only
-// Delays the report and dresses it up as an id-allocation problem
-const UNIQUE_VIOLATION_ERROR_CODE = "23505";
 
 // One attempt at claiming a generated call session id. Returns the id it took, or `undefined` when that id was
 // Already taken — the only case a caller may retry. Anything else throws, because it is not a collision

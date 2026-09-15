@@ -5,7 +5,7 @@ import { UserStatus, UserStatuses } from "@esposter/db-schema";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getDetectedUserStatus, () => {
-  const createdAt = new Date();
+  const createdAt = new Date(0);
   const createStatus = (overrides: Partial<UserStatusInMessage> = {}): UserStatusInMessage => ({
     createdAt,
     deletedAt: null,
