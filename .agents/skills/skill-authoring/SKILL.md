@@ -80,7 +80,7 @@ A skill holds what a reader applies again to different code; git holds what happ
 
 ## A rejected direction goes in a list — `references/settled-lists.md`
 
-A settled decision written as prose two thirds down a skill is re-derived by the reader who loaded the very skill that rejects it, so a domain with rejected directions carries `## Settled — do not re-propose` as its first section. **Recording one**, and what separates a settled direction from a rule, is that page.
+A settled decision written as prose two thirds down a skill is re-derived by the reader who loaded the very skill that rejects it, so a domain with rejected directions carries `## Settled — do not re-propose` as its first section. **Recording one**, what separates a settled direction from a rule, and why the goal is a short list — a line exists because the owning docs page's diagram did not show the edge the direction would cut, so a growing list is a diagram missing an edge — is that page.
 
 ## An exception names what forces it — `references/exceptions.md`
 
