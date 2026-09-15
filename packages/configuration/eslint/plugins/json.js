@@ -4,8 +4,9 @@ import { defineConfig } from "eslint/config";
 
 // Generated JSON is not ours to lint: a drizzle migration snapshot is written and re-read by `db:gen`, the asset
 // Blobs are exports from the tools that drew them, and a vitest file snapshot is rewritten by `-u`. The entry buys
-// Time rather than green — the snapshots are most of the JSON in the repo, and walking one package's held its
-// Lint an order of magnitude above every other — and it keeps a future rule from reporting on a file nobody edits.
+// Time rather than green — the snapshots are most of the JSON in the repo, and the trees one package walks held
+// Its lint an order of magnitude above every other — and it keeps a future rule from reporting on a file nobody
+// Edits.
 const GENERATED_JSON_FILE_PATTERNS = [
   "**/server/db/migrations/**/*.json",
   "**/app/assets/**/*.json",
