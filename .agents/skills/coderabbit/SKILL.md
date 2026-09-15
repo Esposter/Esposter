@@ -46,7 +46,7 @@ Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit)
 
 ## The File Cap
 
-The cap is one constant, `REVIEW_FILE_CAP` in `scripts/src/services/coderabbit/shared/constants.ts`, and the fill target beside it is a share of the cap — the Open Source tier's limit is popularity-scaled and can move, so the bot's skip comment states the current one and the constant is where it is written, never a page: a test fails on a number written into this skill, the `review-queue` skill or the collector's docs. Past the cap CodeRabbit skips the review outright rather than trimming it. A slot costs the same whether it reads a tenth of the cap or all of it, which is why the collector fills a window to the target before spending one.
+The cap is one constant, `REVIEW_FILE_CAP` in `scripts/src/services/coderabbit/shared/constants.ts` — the Open Source tier's limit is popularity-scaled and can move, so the bot's skip comment states the current one and the constant is where it is written, never a page: a test fails on a number written into this skill, the `review-queue` skill or the collector's docs. Past the cap CodeRabbit skips the review outright rather than trimming it, which is why the collector measures the window on the tree it is about to push and holds the first commit that would cross it. There is no floor to go with the cap: the port takes everything the queue owes, so a window comes out small only when that is all there was, and holding it back would only leave the queue unsynced for longer.
 
 ## Reading and Answering Findings
 

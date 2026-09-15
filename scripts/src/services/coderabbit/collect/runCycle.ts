@@ -139,7 +139,6 @@ export const runCycle = async ({
   // Fixes parked with no pull request open answered the one that merged: they ride the window but force nothing
   const parkedFixCount = pullRequest === undefined ? 0 : port.fixCount;
   const isReady = checkIsReady({
-    fileCount: port.fileCount,
     fixCount: parkedFixCount,
     isForced,
     isHeld: port.heldSha !== undefined,
@@ -164,7 +163,7 @@ export const runCycle = async ({
         `held at ${port.heldSha} — the first owed commit conflicts with ${DEVELOP_BRANCH} or overflows the cap alone, so rebase ${QUEUE_BRANCH} or split it (the git error above says which)`,
       );
     } else if (parkedFixCount > 0) return getOutcome(CycleOutcomeKind.Idle, "parked — fixes wait for the queue");
-    return getOutcome(CycleOutcomeKind.Idle, "waiting — the queue is under the fill target");
+    return getOutcome(CycleOutcomeKind.Idle, `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`);
   }
   // Ready with nothing to add: develop already carries the window, and only the pull request is owed
   if (port.queueShas.length === 0 && port.fixCount === 0)

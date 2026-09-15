@@ -14,7 +14,7 @@ Two actors work the release pull request — the working session and the collect
 | `ai/queue`        | the working session                                                                               | the collector    | the session's checked-out branch, pushed after every commit                                       |
 | `main`            | the collector merging a clean release or cutting the express lane, a person merging a riskier one | everyone         | `develop` follows it by fast-forward on the merge, and a bump landing there rides the next window |
 
-The release pull request has one writer too: the collector opens it once the window `develop` carries is worth its first review, and merges it once a review at the head is clean with the least merge risk; a person merges one the bot rates riskier, or closes it to pause. `main`'s two writers never race: the [express lane](/docs/infra/review-collector/express-lane) is closed unless `develop` and `main` agree, so the two never write between a merge base and the merge that consumes it.
+The release pull request has one writer too: the collector opens it over whatever window `develop` carries that no review has read, and merges it once a review at the head is clean with the least merge risk; a person merges one the bot rates riskier, or closes it to pause. `main`'s two writers never race: the [express lane](/docs/infra/review-collector/express-lane) is closed unless `develop` and `main` agree, so the two never write between a merge base and the merge that consumes it.
 
 ```mermaid
 sequenceDiagram

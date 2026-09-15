@@ -9,7 +9,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 
 ## The parts
 
-1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — what the collector reads, the gates it clears, how it merges a release whose review is clean, ports the largest prefix of `ai/queue` under the cap, pushes, replies with the pushed sha, and opens the release pull request once a window is worth its first review. One script, `ai:coderabbit:collect`.
+1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — what the collector reads, the gates it clears, how it merges a release whose review is clean, ports the largest prefix of `ai/queue` under the cap, pushes, replies with the pushed sha, and opens the release pull request over whatever `develop` then carries unreviewed. One script, `ai:coderabbit:collect`.
 2. [The drain](/docs/infra/review-collector/drain) — the one step Claude runs: which findings are open, what the session is handed and denied, and how a drain that fails is quarantined.
 3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one pull request without racing.
@@ -42,7 +42,7 @@ flowchart TD
   O -->|no| CL{Review clean at the head,<br/>least merge risk stated for it}
   CL -->|yes| MG[Merge the release PR<br/>the push to main returns develop, exit]
   CL -->|no| P
-  DR --> P{Fixes parked with any queue commit,<br/>queue at the fill target,<br/>or the window held}
+  DR --> P{Fixes parked with any queue commit,<br/>anything the queue still owes,<br/>or the window held}
   P -->|none| PK[Wait — slot stays free]
   P -->|first commit held alone| FL[Fail — a person rebases or splits it]
   P -->|any| W[Port fixes then queue prefix<br/>largest prefix under the cap, main folded in]
@@ -59,7 +59,7 @@ Three properties make the picture safe to fire from anything:
 
 ## Parameters
 
-The review budget has one knob, the file cap, in `scripts/src/services/coderabbit/shared/constants.ts`; the fill target is a share of it. No prose restates either as a number — a test over the skill and these pages fails on one written back in. The collector's own values — branch names, trailer keys, the drain attempt cap, the check strings — sit in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter: an event-triggered collector runs the minute the slot frees.
+The review budget has one knob, the file cap, in `scripts/src/services/coderabbit/shared/constants.ts`. No prose restates it as a number — a test over the skill and these pages fails on one written back in. There is no second knob beneath it: a window has no minimum size, because the port takes everything the queue owes and a small one is all there was. The collector's own values — branch names, trailer keys, the drain attempt cap, the check strings — sit in `scripts/src/services/coderabbit/collect/constants.ts`. The slot duration is not a parameter: an event-triggered collector runs the minute the slot frees.
 
 ## Key files
 
@@ -71,7 +71,7 @@ The review budget has one knob, the file cap, in `scripts/src/services/coderabbi
 | `scripts/src/services/coderabbit/exclusions`          | the diff classifiers the express lane's proof runs                                                                                       |
 | `scripts/src/models/coderabbit/collect`               | the inputs and outcomes the steps exchange                                                                                               |
 | `.github/workflows/ReviewCollector.yaml`              | the runner's triggers, calling `run-review-collector.yaml` at `ai/queue`                                                                 |
-| `scripts/src/services/coderabbit/shared/constants.ts` | the cap, and the fill target derived from it                                                                                             |
+| `scripts/src/services/coderabbit/shared/constants.ts` | the file cap — the one knob of the review budget                                                                                         |
 | `scripts/src/coderabbit/feedback/index.ts`            | the finding report, printed by hand and handed to the drain                                                                              |
 | `.agents/skills/review-queue/SKILL.md`                | the session's side of the loop — pushing `ai/queue` and catching up after a window                                                       |
 

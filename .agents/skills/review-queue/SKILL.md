@@ -5,16 +5,16 @@ description: Apply when about to git push, when deciding what branch a commit la
 
 # Review Queue
 
-The session works on **one permanent branch, `ai/queue`**, and pushes it after every commit. The review collector — `pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow on every queue push and every CodeRabbit event — drains open findings onto `ai/review-fixes`, cuts the largest window under the cap from the queue, fast-forwards `develop` by it, opens the `develop` → `main` pull request once a window is worth its first review, replies on every thread with the pushed sha, and merges the pull request once a review at the head leaves nothing open with the least merge risk. The mechanism is `apps/web/content/docs/infra/review-collector/`; this skill is what the session does.
+The session works on **one permanent branch, `ai/queue`**, and pushes it after every commit. The review collector — `pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow on every queue push and every CodeRabbit event — drains open findings onto `ai/review-fixes`, cuts the largest window under the cap from the queue, fast-forwards `develop` by it, opens the `develop` → `main` pull request over whatever it then carries unreviewed, replies on every thread with the pushed sha, and merges the pull request once a review at the head leaves nothing open with the least merge risk. The mechanism is `apps/web/content/docs/infra/review-collector/`; this skill is what the session does.
 
 ## Settled — do not re-propose
 
 - **Per-chunk feature branches.** Nothing gates entry to `develop` but the collector, so a branch per chunk only adds a merge that buys nothing; the queue is linear history, and a window is cut at commit boundaries.
-- **Pushing `develop` by hand**, rate-limited or not. `develop` has one writer, the collector, and a hand push races its compare-and-swap and spends a review slot the collector was holding for a full window.
+- **Pushing `develop` by hand**, rate-limited or not. `develop` has one writer, the collector, and a hand push races its compare-and-swap and spends a review slot on a range nothing measured against the cap.
 - **Measuring or cutting a window in the session** — reading the last reviewed sha, counting files since it, pushing a prefix by sha. The collector measures the cut on the tree it is about to push, one cherry-pick at a time; a commit that would have been "the last one under the cap" is just a commit.
 - **Holding a finished chunk until `format`/`typecheck`/`lint`/tests come back.** A queue push spends nothing, and a repair found afterwards is one more commit behind the unit. Push the unit, run the checks in the background, commit the repairs.
 - **Excluding files to bring a window under the cap.** The collector holds the overflow for the next window; an exclusion hides the work from the only review it will ever get.
-- **Opening the release pull request by hand.** The collector opens it at the same fill target a push clears; a session that opens one spends the slot on a handful of files.
+- **Opening the release pull request by hand.** The collector opens it on the same pass that pushes the window, over the range it just measured; a session that opens one races that push, so the first review reads a range nothing cut to the cap.
 - **Merging `main` or `develop` into `ai/queue`.** A merge is never linearised away — `git rebase origin/develop` is a no-op once `origin/develop` is an ancestor — and it blinds the porter: `git cherry` matches patch ids against the commits upstream has and the queue lacks, which a queue containing upstream leaves empty, so every already-ported commit reads as owed and the first one conflicts. The queue catches up by rebase only.
 - **Merging the release pull request by hand when its review is clean.** The collector merges it the moment a review at the head leaves nothing open with the least merge risk; a person merges only one the bot rates riskier.
 

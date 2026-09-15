@@ -92,9 +92,10 @@ flowchart TD
   M -->|no| U[Undo that pick — it is the first held commit]
   U --> RD
   H --> RD{Ready}
-  RD -->|no, a later window takes them| W[Wait — nothing pushed, fixes stay parked]
+  RD -->|fixes parked with no queue commit behind them| W[Wait — nothing pushed, fixes stay parked]
+  RD -->|nothing owed at all| N[Exit — ai/queue is synced with develop]
   RD -->|no fixes and the first queue commit is held| F[Fail red — the session rebases or splits it]
-  RD -->|yes, nothing to add, no PR open| OP[Open the release PR]
+  RD -->|nothing to add, develop already carries the window, no PR open| OP[Open the release PR]
   RD -->|yes| FM[Fold main in<br/>lockfile rebuilt] --> FC{The fold fits the cap}
   FC -->|yes| P[Push — unverified, develop's CI is the check]
   FC -->|no| UF[Undo the fold — it waits for the next window] --> P
@@ -112,18 +113,20 @@ flowchart TD
 
 Whether the window goes out is `checkIsReady`, a two-by-two over what the port holds:
 
-|                  | queue commits fit                                       | none fit                                                              |
-| :--------------- | :------------------------------------------------------ | :-------------------------------------------------------------------- |
-| **fixes parked** | push                                                    | park — unless the queue's first commit is the held one, then push     |
-| **no fixes**     | push at the fill target, or held at whatever it reached | wait, or fail red when the first commit is held: no event clears that |
+|                  | queue commits fit                       | none fit                                                                                                 |
+| :--------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| **fixes parked** | push                                    | park — unless the queue's first commit is the held one, then push                                        |
+| **no fixes**     | push, at whatever size the port reached | push what `develop` carries unreviewed, else nothing is owed — or fail red when the first commit is held |
 
-A held window cannot grow — the commit that stopped it overflows the cap or conflicts, and both only clear once this window lands. `--force` collapses every wait into a push. With no pull request open, the commits `develop` already carries above the merge base count beside the queue's, so a `develop` a dying run left at the target is ready with nothing to add and only the opening is owed. Under a rate limit the review the limit refused is asked for first ([the runner's retrigger](/docs/infra/review-collector/runner)), since its answer is still owed.
+**There is no lower bound on a window.** The port takes every commit the queue owes and stops only at the cap or on a conflict, so a window that came out small is the whole of what was left — and waiting for it to grow waits on a push nothing has promised while the queue stays unsynced. The standing goal is `ai/queue` fully drained into `develop`; the cap is the only size the window is measured against, and it is measured on the tree that will be pushed.
+
+A held window cannot grow — the commit that stopped it overflows the cap or conflicts, and both only clear once this window lands. `--force` is only ever the difference on parked fixes, since everywhere else an owed commit already goes out. With no pull request open, the commits `develop` already carries above the merge base count beside the queue's, so a `develop` a dying run left pushed is ready with nothing to add and only the opening is owed. Under a rate limit the review the limit refused is asked for first ([the runner's retrigger](/docs/infra/review-collector/runner)), since its answer is still owed.
 
 ## Push, reply, open
 
 The push is `git push --force-with-lease=refs/heads/develop:<measured> origin candidate:develop`, preceded by a fresh fetch and a re-read of the check. The lease is the compare-and-swap: the remote refuses the update itself if `origin/develop` left the sha every count was measured from, so there is no gap for a concurrent update to land in; that refusal is read off the ref rather than git's localized rejection text, the run reports a moved outcome and the next one re-measures, while a push that failed for anything else fails the job as itself. The re-read catches a review a person started with a comment while the run worked, and it **fails closed**: a status that cannot be read at all is not a free slot, because `gh` answering nothing looks exactly like a review that began a second ago, and pushing on that reading cancels it for a window nobody re-measures. The ask under a rate limit is guarded the same way, for the same reason. After the push the reply step runs again and posts `Agreed, fixed in <sha>` on every thread a pushed commit's trailer names, and one verdict comment per `Drains:` review id.
 
-With no pull request open, the push is followed by opening one — the same fill target a push clears, because opening is the first review of the range. A run that pushed and died before opening is finished by the next one, which finds `develop` at the target with nothing to add. Nothing is deleted afterwards: `ai/review-fixes` stays, owing nothing, until the next drain re-creates it, and the queue's ported commits drop from the session's history at its next rebase.
+With no pull request open, the push is followed by opening one — the same readiness a push clears, because opening is the first review of the range. A run that pushed and died before opening is finished by the next one, which finds `develop` carrying the window with nothing to add. Nothing is deleted afterwards: `ai/review-fixes` stays, owing nothing, until the next drain re-creates it, and the queue's ported commits drop from the session's history at its next rebase.
 
 ## Why a re-run is a no-op
 

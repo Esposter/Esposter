@@ -23,7 +23,7 @@ import {
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
-import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP, WINDOW_FILL_TARGET } from "#src/services/coderabbit/shared/constants";
+import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { describe, expect, test, vi } from "vitest";
 
 const { readCheckStatus, runDrainStep, runGh } = vi.hoisted(() => ({
@@ -59,7 +59,6 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
   const completedCheck: CheckStatus = { bucket: PASS_BUCKET, description: COMPLETED_DESCRIPTION, name: CHECK_NAME };
-  const fillPaths = Array.from({ length: WINDOW_FILL_TARGET }, (_, index) => `${TEST_FILENAME}/${index}`);
   const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_, index) => `${TEST_FILENAME}/${index}`);
   // What `gh` answers: the login, the release pull request list, the reviews, the issue comments, and `[[]]`
   // For every other paginated list — the one page of nothing a `--slurp` returns
@@ -99,30 +98,14 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runGh).not.toHaveBeenCalled();
   });
 
-  test("waits while the queue is under the fill target", async () => {
-    expect.hasAssertions();
-
-    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
-    answerGh([]);
-    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
-
-    expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Idle,
-      reason: "waiting — the queue is under the fill target",
-      retriggerDelaySeconds: undefined,
-      targetSha: undefined,
-    });
-    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
-    expect(getPrCalls("create")).toHaveLength(0);
-  });
-
-  // The queue sits on develop's head, so the window is a fast-forward to the queue's own sha
-  test("pushes a queue at the fill target and opens the release pull request over it", async () => {
+  // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there
+  // Is nothing a size floor could wait for. The queue sits on develop's head, so the window is a fast-forward to
+  // The queue's own sha.
+  test("pushes a single owed commit and opens the release pull request over it", async () => {
     expect.hasAssertions();
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    const queueSha = publish(QUEUE_BRANCH, commitFiles(fillPaths, ""));
+    const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([]);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
@@ -139,7 +122,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("opens the release pull request over a develop that already carries the window", async () => {
     expect.hasAssertions();
 
-    const developSha = publish(DEVELOP_BRANCH, commitFiles(fillPaths, ""));
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
     publish(QUEUE_BRANCH, developSha);
     answerGh([]);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
@@ -157,7 +140,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFiles(fillPaths, ""));
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([]);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd(), isDryRun: true });
 
@@ -189,7 +172,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFiles(fillPaths, ""));
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([{ number: pullRequest, state: ReleasePullRequestState.Closed }]);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
@@ -206,7 +189,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFiles(fillPaths, ""));
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }]);
     readCheckStatus.mockReturnValue({ bucket: PENDING_BUCKET, description: "", name: CHECK_NAME });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
@@ -225,7 +208,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFiles(fillPaths, ""));
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }]);
     readCheckStatus.mockReturnValue(undefined);
 
@@ -241,7 +224,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    const queueSha = publish(QUEUE_BRANCH, commitFiles(fillPaths, ""));
+    const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
     readCheckStatus.mockReturnValue(completedCheck);
     runDrainStep.mockResolvedValue({ isClean: false, reviewFixesSha: undefined } satisfies DrainStepResult);
@@ -263,7 +246,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFiles(fillPaths, ""));
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     switchTo(developSha);
     const movedSha = publish(TEST_FILENAME, commitFile(TEST_FILENAME, ""));
     installPreReceiveHook(`env -u GIT_QUARANTINE_PATH git update-ref refs/heads/${DEVELOP_BRANCH} ${movedSha}`);
@@ -284,7 +267,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFiles(fillPaths, ""));
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
     answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
     runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });

@@ -24,7 +24,7 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: Push the window even when the queue is under the fill target
+        description: Push fixes parked with no queue commit behind them
         type: boolean
         default: false
 

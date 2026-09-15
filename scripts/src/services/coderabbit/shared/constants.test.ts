@@ -16,7 +16,7 @@ describe("reviewFileCap", () => {
   ];
   const FILE_NUMBER_PATTERN = /\b\d+[- ]files?\b|\bfiles? or \d+\b|\bcap of \d+\b/u;
 
-  test("no prose restates the cap or the fill target as a number", () => {
+  test("no prose restates the cap as a number", () => {
     expect.hasAssertions();
 
     const offenders = PROSE_GLOBS.flatMap((glob) => getSweepFilePaths(glob)).flatMap((path) =>

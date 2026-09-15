@@ -3,11 +3,11 @@ export enum CycleOutcomeKind {
   Expressed = "Expressed",
   // `develop` followed a merged `main` by fast-forward — no review slot spent, no pull request open
   FastForwarded = "FastForwarded",
-  // Nothing was done: a gate closed, the window is under the fill target, or the remote moved under the run
+  // Nothing was done: a gate closed, nothing was owed, or the remote moved under the run
   Idle = "Idle",
   // The release pull request merged itself on a clean review — the push to `main` runs the return stroke
   Merged = "Merged",
-  // The release pull request was opened on a `develop` carrying a window worth its first review
+  // The release pull request was opened over a `develop` carrying a window no review has read
   Opened = "Opened",
   // A window reached `develop`
   Pushed = "Pushed",

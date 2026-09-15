@@ -7,7 +7,7 @@ on:
   workflow_call:
     inputs:
       force:
-        description: Push the window even when the queue is under the fill target
+        description: Push fixes parked with no queue commit behind them
         type: boolean
         default: false
     # @TODO: remove once the release carrying the trigger's `secrets: inherit` has merged to `main`. Until then
