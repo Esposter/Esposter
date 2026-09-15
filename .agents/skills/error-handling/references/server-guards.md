@@ -4,7 +4,7 @@ Read when a tRPC router or server route guards a nullable DB result, attaches a 
 
 ## The guards
 
-```typescript
+```ts
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 
@@ -24,7 +24,7 @@ const updatedFoo = requireMutation(
 
 The guards above cover a DB result that may be missing. When the router decides the rejection itself, reach for the constructors the guards are built on rather than assembling a `TRPCError` around an error message:
 
-```typescript
+```ts
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 
@@ -54,7 +54,7 @@ Best-effort means "its failure doesn't fail the caller" — it does not mean "no
 
 Await it in the function whose failure the rollback compensates, so the rollback cannot start before the write is durable:
 
-```typescript
+```ts
 // The insert and the trail entry a rollback would delete cannot be allowed to drift apart
 await writeBar({ fooId: newFoo.id });
 return newFoo;

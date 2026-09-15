@@ -37,7 +37,7 @@ Only exception: published package README examples aimed at external consumers ma
 
 ## Core Utility
 
-```typescript
+```ts
 import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } from "@esposter/shared";
 // getResult: sync fn → Result<T, Error>
 // getResultAsync: async fn → ResultAsync<T, Error>

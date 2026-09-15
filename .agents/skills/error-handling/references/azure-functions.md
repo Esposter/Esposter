@@ -10,7 +10,7 @@ Which steps may fail the caller is the repo-wide **persist then notify** standar
 
 Top-level handler wrapper. `logAndRethrow` logs then rethrows, so the failure is retried. Use for genuinely retryable steps (input `.parse()`, the persist/create step):
 
-```typescript
+```ts
 return getResultAsync(async () => {
   const input = someSchema.parse(event.data);
   const newMessage = await createAndBroadcastMessage(context, input);
@@ -22,7 +22,7 @@ return getResultAsync(async () => {
 
 Rethrowing here asks for a redelivery that reruns the handler from the top, and a message's fresh time-based `rowKey` makes that rerun a **duplicate** rather than an overwrite. Log and swallow — through `context.error`, not `console.error`, so the failure is attached to the invocation:
 
-```typescript
+```ts
 await getResultAsync(() => webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage)).match(
   noop,
   (error) => {

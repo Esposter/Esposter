@@ -4,7 +4,7 @@ Read when picking the shape of a single chain — a fallback value, an alert, a 
 
 ## Sync operation → fallback value
 
-```typescript
+```ts
 return getResult(() => new RegExp(pattern).exec(value)).match(
   (match) => match?.[groupIndex] ?? null,
   () => null,
@@ -13,7 +13,7 @@ return getResult(() => new RegExp(pattern).exec(value)).match(
 
 ## Async operation → alert on failure (composables)
 
-```typescript
+```ts
 await getResultAsync(() => someAsyncOp())
   .andTee((result) => doSomethingWith(result))
   .match(noop, (error) => {
@@ -23,7 +23,7 @@ await getResultAsync(() => someAsyncOp())
 
 ## Async operation → fallback value (services / routers)
 
-```typescript
+```ts
 return getResultAsync(() => someAsyncOp())
   .orTee(console.error)
   .unwrapOr(defaultValue);
@@ -33,7 +33,7 @@ Best-effort but still logged: same shape with `.unwrapOr(undefined)`.
 
 ## Async operation → boolean success (composables)
 
-```typescript
+```ts
 return getResultAsync(() => auth.save(value)).match(
   () => true,
   (error) => {
@@ -47,7 +47,7 @@ return getResultAsync(() => auth.save(value)).match(
 
 For `instanceof` checks on the error, branch inside the `.match()` err handler:
 
-```typescript
+```ts
 await getResultAsync(() => op()).match(
   (value) => {
     doSomethingWith(value);
@@ -65,7 +65,7 @@ await getResultAsync(() => op()).match(
 
 Use `getResultAsync(() => promise).andThen(...)` when different steps need different error handling (`.orElse()` on a specific step) or mid-chain side effects (`.andTee()`).
 
-```typescript
+```ts
 await getResultAsync(() => showSaveFilePicker())
   .andThen(({ blob, writable }) =>
     getResultAsync(() => writable.write(blob)).orElse((error) =>
@@ -81,7 +81,7 @@ await getResultAsync(() => showSaveFilePicker())
 
 Use `.map()` (not `.andThen`) when the next step is synchronous and doesn't throw. Never chain a sync call via `.then()` on the raw Promise before `getResultAsync` — errors thrown there bypass `orTee`.
 
-```typescript
+```ts
 // sync parseFoos uses .map(); errors from readText() caught by orTee
 getResultAsync(() => window.navigator.clipboard.readText())
   .map((text) => parseFoos(text, source))
@@ -92,7 +92,7 @@ getResultAsync(() => window.navigator.clipboard.readText())
 
 ## Abort / cancel (recover from specific error)
 
-```typescript
+```ts
 await getResultAsync(() => showOpenFilePicker())
   .andThen(...)
   .orElse((error) => {
@@ -105,7 +105,7 @@ await getResultAsync(() => showOpenFilePicker())
 
 ## Finalizers
 
-```typescript
+```ts
 // withFinalizer — restoring a global (see ignoreWarn.ts)
 return withFinalizer(fn, () => {
   console.warn = warn;
