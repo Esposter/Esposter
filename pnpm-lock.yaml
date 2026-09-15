@@ -291,13 +291,13 @@ catalogs:
       specifier: ^3.31.3
       version: 3.31.3
     '@tresjs/cientos':
-      specifier: ^5.8.1
+      specifier: ^5.9.0
       version: 5.9.0
     '@tresjs/core':
-      specifier: ^5.8.3
+      specifier: ^5.9.0
       version: 5.9.0
     '@tresjs/nuxt':
-      specifier: ^5.6.3
+      specifier: ^5.7.0
       version: 5.7.0
     '@trpc/client':
       specifier: ^11.18.0
