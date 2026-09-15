@@ -10,7 +10,7 @@ import {
 import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Only the install-specific delta is asserted here; the shared sandbox options (PATH, corepack home, store binds) are
-// CreateOsExecOptions' contract and are covered by its own suite.
+// `createOsExecOptions`' contract and are covered by its own suite.
 const { osCacheRoot } = vi.hoisted(() => ({ osCacheRoot: { value: "" } }));
 
 vi.mock(import("#src/services/exec/store/createSharedPackageStoreOptions"), () => ({

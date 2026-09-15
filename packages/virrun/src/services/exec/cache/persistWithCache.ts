@@ -79,7 +79,8 @@ export const persistWithCache = async (
     },
   );
   // The run above was hermetic (network unshared). If it FAILED reaching the network, the tool's own error is opaque (a
-  // Buried "fetch failed"), so translate it into the cause + the --no-cache fix — human CLI path only (inherit, matching
+  // Buried "fetch failed"), so translate it into the cause + the --no-cache fix — human CLI path only (inherit,
+  // Matching
   // The hit label; a programmatic pipe caller reads the streams itself). Recording was already skipped (exit != 0).
   if (
     result.exitCode !== 0 &&

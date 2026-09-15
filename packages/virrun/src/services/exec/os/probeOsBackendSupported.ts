@@ -17,8 +17,10 @@ import { getResult, noop, withFinalizer } from "@esposter/shared";
 // Degrades (resolveBackend) or refuses (createOsBackend) cleanly instead of crashing. `--tmp-overlay` writes nothing
 // To cwd (the upper is a discarded tmpfs), so the probe is side-effect-free. The probed command is `true`
 // (engine-agnostic): toolchain reachability is an orthogonal axis handled by the captured WSL login PATH
-// (readWslLoginEnvironment), so probing a specific binary here would conflate the two and hardcode an engine. This is the
-// Raw host-capability probe: it does NOT account for nesting (checkIsOsBackendSupported layers the VIRRUN nesting guard,
+// (readWslLoginEnvironment), so probing a specific binary here would conflate the two and hardcode an engine. This is
+// The
+// Raw host-capability probe: it does NOT account for nesting (checkIsOsBackendSupported layers the VIRRUN nesting
+// Guard,
 // The in-process memo, and the persisted cache on top), so it is safe to reuse anywhere the un-cached truth is wanted.
 // `undefined` is the third answer, and it means the probe never got one — see readProbeVerdict.
 export const probeOsBackendSupported = (): boolean | undefined => {

@@ -36,11 +36,11 @@ export const recordTaskCache = (
   getResult(() => {
     const tasksRoot = dirname(location.directory);
     mkdirSync(tasksRoot, { recursive: true });
-    // Reclaim any hard-killed recorder's pid-tagged temp stranded here (no other sweep touches the tasks directory), then
-    // Mint this run's own — pid-tagged so a concurrent recorder's live temp is never mistaken for a corpse.
+    // Reclaim any hard-killed recorder's pid-tagged temp stranded here (no other sweep touches the tasks directory),
+    // Then mint this run's own — pid-tagged so a concurrent recorder's live temp is never mistaken for a corpse.
     reapStaleTemps(tasksRoot, [TASK_CACHE_TEMP_PREFIX]);
-    // Age-prune published entries beside the temp reap — the tasks directory has no superseded-entry sweep, so recency is
-    // The only bound. Detached and best-effort; a torn removal is re-swept next record and never aborts this run.
+    // Age-prune published entries beside the temp reap — the tasks directory has no superseded-entry sweep, so recency
+    // Is the only bound. Detached and best-effort; a torn removal is re-swept next record and never aborts this run.
     pruneStaleTaskCacheEntries(tasksRoot);
     tempDirectory = mkdtempSync(join(tasksRoot, withPidTempPrefix(TASK_CACHE_TEMP_PREFIX)));
     const payloadDirectory = join(tempDirectory, TASK_CACHE_PAYLOAD_DIRECTORY_NAME);

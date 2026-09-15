@@ -107,7 +107,8 @@ describe(createVirrun, () => {
     // The network — so the orchestrator must turn it back on.
     const backend = createRecordingBackend();
     vi.mocked(createOsBackend).mockReturnValue(backend);
-    // The os path anchors its shared store to the workspace root (nearest lockfile), so use a lockfile-seeded directory.
+    // The os path anchors its shared store to the workspace root (nearest lockfile), so use a lockfile-seeded
+    // Directory.
     const directory = createWorkspace();
     const { dispose, exec } = await createVirrun({
       backend: BackendType.Os,
