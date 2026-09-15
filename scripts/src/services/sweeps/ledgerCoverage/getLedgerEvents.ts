@@ -17,11 +17,11 @@ export const getLedgerEvents = (log: string): LedgerEvent[] =>
     .filter(Boolean)
     .flatMap((record) => {
       const [date = "", body = ""] = record.split(FIELD_SEPARATOR);
-      return Array.from(body.matchAll(TRAILER_REGEX)).flatMap(({ groups }) => {
+      return Array.from(body.matchAll(TRAILER_REGEX), ({ groups }) => {
         const type = LEDGER_EVENT_TYPES.find((candidate) => candidate === groups?.type);
         const [ledger = "", unit] = (groups?.value ?? "").trim().split(TRAILER_VALUE_SEPARATOR);
         return type !== undefined && ledger !== "" && (type === LedgerEventType.Reopens || unit !== undefined)
-          ? [{ date, ledger, type, unit: unit?.trim() }]
-          : [];
-      });
+          ? { date, ledger, type, unit: unit?.trim() }
+          : undefined;
+      }).filter((event) => event !== undefined);
     });
