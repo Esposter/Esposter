@@ -158,7 +158,7 @@ describe("datasetRouter", () => {
     const content: SheetResource = {
       data: {
         columns: [new StringColumn({ name: columnName, sourceName: columnName })],
-        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
+        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name, size: 0 },
         rows: [new Row({ data: { [columnName]: value } })],
       },
       settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
@@ -178,7 +178,7 @@ describe("datasetRouter", () => {
     const content: SheetResource = {
       data: {
         columns: [new StringColumn({ name: columnName, sourceName: columnName })],
-        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
+        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name, size: 0 },
         rows: Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => new Row({ data: { [columnName]: value } })),
       },
       settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },

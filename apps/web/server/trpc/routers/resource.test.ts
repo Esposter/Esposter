@@ -70,7 +70,7 @@ describe("resourceRouter", () => {
   const filename = "filename";
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
-  const dueAt = new Date(1);
+  const dueAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
 
   const readStorageBytesUsed = async (userId: Resource["userId"]) =>
     (await mockContext.db.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))

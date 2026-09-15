@@ -178,7 +178,7 @@ describe("programRouter", () => {
     const grownParticipants = await caller.generateProgramParticipants({ id: program.id });
 
     expect(grownParticipants).toHaveLength(2);
-    expect(grownParticipants[0]).toStrictEqual(participants[0]);
+    expect(takeOne(grownParticipants)).toStrictEqual(takeOne(participants));
   });
 
   test("fails generate with dangling audience binding", async () => {
