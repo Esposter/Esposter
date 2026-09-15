@@ -17,7 +17,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
-**The release merges itself.** A review at `develop`'s head that left nothing open, with the bot's least merge risk stated for that head, is merged to `main` by the cycle ([merge](/docs/infra/review-collector/collection-cycle)); a person merges only one the bot rates riskier, and closing the pull request without merging is their pause.
+**The release merges itself.** A review at `develop`'s head that left nothing open, with the bot's least merge risk stated for that head, is merged to `main` by the cycle ([merge](/docs/infra/review-collector/collection-cycle)); a person merges only one the bot rates riskier — the cycle says so on the pull request, once per head — and closing the pull request without merging is their pause.
 
 ## How it works
 
@@ -41,11 +41,12 @@ flowchart TD
   O -->|yes| DR[Drain into ai/review-fixes<br/>Claude fixes or rejects each]
   O -->|no| CL{Review clean at the head,<br/>least merge risk stated for it}
   CL -->|yes| MG[Merge the release PR<br/>the push to main returns develop, exit]
-  CL -->|no| P
+  CL -->|not clean| P
+  CL -->|clean, risk above the least| RN[Note the level on the PR once<br/>a person merges] --> P
   DR --> SY[Rewrite ai/queue onto the tree<br/>the window is built on — Claude resolves a conflict]
   SY --> P{Fixes parked with any queue commit,<br/>anything the queue still owes,<br/>or the window held}
   P -->|none| PK[Wait — slot stays free]
-  P -->|first commit held alone| FL[Fail — a person resolves or splits it]
+  P -->|first commit held alone| FL[Note it on the commit, fail —<br/>a person resolves or splits it]
   P -->|any| W[Port fixes then queue prefix<br/>largest prefix under the cap, main folded in]
   W --> PU[Compare-and-swap push to develop]
   PU -->|release PR open| RP[Reply on each answered thread<br/>with the pushed sha]

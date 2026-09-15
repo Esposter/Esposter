@@ -13,14 +13,17 @@ import {
   CHECK_NAME,
   COMPLETED_DESCRIPTION,
   DEVELOP_BRANCH,
+  HELD_MARKER,
   MAIN_BRANCH,
   MERGEABLE_RISK_LEVEL,
   PASS_BUCKET,
   PENDING_BUCKET,
   QUEUE_BRANCH,
   RECENT_REVIEW_MARKER,
+  RISK_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
@@ -46,9 +49,9 @@ vi.mock(import("#src/services/coderabbit/collect/runDrainStep"), () => ({
 }));
 
 // The bot's walkthrough after a review that found nothing: no review body, the range in the recent-review block
-// And the least merge risk on the head it read
-const getCleanWalkthrough = (sha: string): GitHubEntry => ({
-  body: `<!-- ${RECENT_REVIEW_MARKER}_start -->between ${sha} and ${sha}<!-- ${RECENT_REVIEW_MARKER}_end -->\n**Merge Risk:** _${TEST_FILENAME} ${MERGEABLE_RISK_LEVEL}_\n<!-- final_review_risk_coverage:{"sourceCommitId":"${sha}","coveredCommitId":"${sha}","kind":"reviewed"} -->`,
+// And the merge risk it states for the head it read — the least unless a test says otherwise
+const getCleanWalkthrough = (sha: string, level = MERGEABLE_RISK_LEVEL): GitHubEntry => ({
+  body: `<!-- ${RECENT_REVIEW_MARKER}_start -->between ${sha} and ${sha}<!-- ${RECENT_REVIEW_MARKER}_end -->\n**Merge Risk:** _${TEST_FILENAME} ${level}_\n<!-- final_review_risk_coverage:{"sourceCommitId":"${sha}","coveredCommitId":"${sha}","kind":"reviewed"} -->`,
   id: 0,
   updated_at: "",
   user: { login: CODERABBIT_REST_LOGIN },
@@ -61,13 +64,14 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const viewerLogin = "viewerLogin";
   const completedCheck: CheckStatus = { bucket: PASS_BUCKET, description: COMPLETED_DESCRIPTION, name: CHECK_NAME };
   const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
-  // What `gh` answers: the login, the release pull request list, the reviews, the issue comments, and `[[]]`
-  // For every other paginated list — the one page of nothing a `--slurp` returns
+  // What `gh` answers: the login, the release pull request list, the reviews, the issue comments, every commit's
+  // Comments, and `[[]]` for every other paginated list — the one page of nothing a `--slurp` returns
   const baseInput = { isDryRun: false, isForced: false };
   const answerGh = (
     releasePullRequests: ReleasePullRequest[],
     reviews: GitHubReview[] = [],
     issueComments: GitHubEntry[] = [],
+    commitComments: GitHubEntry[] = [],
   ) => {
     runGh.mockImplementation((args) => {
       if (args[1] === "user") return viewerLogin;
@@ -76,11 +80,22 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
         return JSON.stringify([reviews]);
       else if (args[1]?.startsWith(`repos/{owner}/{repo}/issues/${pullRequest}/comments`))
         return JSON.stringify([issueComments]);
+      // The read is paginated where the post carries a body
+      else if (args[1]?.startsWith("repos/{owner}/{repo}/commits/") && args.includes("--paginate"))
+        return JSON.stringify([commitComments]);
       return "[[]]";
     });
   };
   const getPrCalls = (subcommand: string) =>
     runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === subcommand);
+  const getCommitCommentPosts = (sha: string) =>
+    runGh.mock.calls.filter(([args]) => args[1] === `repos/{owner}/{repo}/commits/${sha}/comments` && args[2] === "-f");
+  const getMarked = (marker: string): GitHubEntry => ({
+    body: marker,
+    id: 0,
+    updated_at: "",
+    user: { login: viewerLogin },
+  });
 
   test("fast-forwards develop onto a merged main before measuring anything", async () => {
     expect.hasAssertions();
@@ -155,18 +170,42 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getPrCalls("create")).toHaveLength(0);
   });
 
-  // A first commit over the cap can never fit and no event clears it, so the run fails red for a person
-  test("fails the run when the queue's first commit overflows the cap", async () => {
+  // A first commit over the cap can never fit and no event clears it, so the commit is told once and the run
+  // Fails red for a person
+  test("notes the queue's first commit on itself and fails the run when it overflows the cap", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    publish(QUEUE_BRANCH, commitFiles(overflowPaths, ""));
+    const heldSha = publish(QUEUE_BRANCH, commitFiles(overflowPaths, ""));
     answerGh([]);
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Update, name: coderabbit, held at e1b1241d5399c7d8234f33a42c525fc449150d8c — the first owed commit overflows the cap alone or its conflict was not resolved, so split it or rebase ai/queue (the log above says which)]`,
     );
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+    expect(getCommitCommentPosts(heldSha)).toStrictEqual([
+      [
+        [
+          "api",
+          `repos/{owner}/{repo}/commits/${heldSha}/comments`,
+          "-f",
+          expect.stringContaining(getMarker(HELD_MARKER, heldSha)),
+        ],
+      ],
+    ]);
+  });
+
+  test("notes a held commit once", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const heldSha = publish(QUEUE_BRANCH, commitFiles(overflowPaths, ""));
+    answerGh([], [], [], [getMarked(getMarker(HELD_MARKER, heldSha))]);
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, held at e1b1241d5399c7d8234f33a42c525fc449150d8c — the first owed commit overflows the cap alone or its conflict was not resolved, so split it or rebase ai/queue (the log above says which)]`,
+    );
+    expect(getCommitCommentPosts(heldSha)).toHaveLength(0);
   });
 
   test("opens nothing over a release pull request a person closed", async () => {
@@ -309,5 +348,50 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       [["pr", "merge", pullRequest.toString(), "--merge", "--admin", "--match-head-commit", developSha]],
     ]);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
+  // A clean review the bot rates above the least risk is a person's release: the cycle says so once on the pull
+  // Request and ports on, so a green run that merged nothing is not read as a stall
+  test("ports on and notes the level once when a clean review is rated above the least risk", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const queueSha = publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    const marker = getMarker(RISK_MARKER, developSha);
+    answerGh(
+      [{ number: pullRequest, state: ReleasePullRequestState.Open }],
+      [],
+      [getCleanWalkthrough(developSha, TEST_FILENAME)],
+    );
+    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Pushed,
+      reason: `1 queue commits and 0 fix commits reached ${DEVELOP_BRANCH}`,
+      retriggerDelaySeconds: undefined,
+      targetSha: queueSha,
+    });
+    expect(getPrCalls("merge")).toHaveLength(0);
+    expect(getPrCalls("comment")).toStrictEqual([
+      [["pr", "comment", pullRequest.toString(), "--body", expect.stringContaining(marker)]],
+    ]);
+  });
+
+  test("notes the level once per head", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh(
+      [{ number: pullRequest, state: ReleasePullRequestState.Open }],
+      [],
+      [getCleanWalkthrough(developSha, TEST_FILENAME), getMarked(getMarker(RISK_MARKER, developSha))],
+    );
+    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(getPrCalls("merge")).toHaveLength(0);
+    expect(getPrCalls("comment")).toHaveLength(0);
   });
 });

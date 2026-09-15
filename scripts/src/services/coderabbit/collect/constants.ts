@@ -70,6 +70,14 @@ export const QUARANTINED_MARKER = "review-collector quarantined";
 // Past it the commit is a person's, and the port holds on it as it always did
 export const SYNC_FAILED_MARKER = "review-collector sync-failed";
 
+// The queue's first owed commit that no window can take — over the cap alone, or in a conflict past the
+// Resolver's cap — noted once on the commit itself, since under a rate limit the run exits idle rather than red
+export const HELD_MARKER = "review-collector held";
+
+// A clean review the bot rates above the least risk: the release is a person's, noted once per head on the pull
+// Request so a green run that merged nothing is not read as a stall
+export const RISK_MARKER = "review-collector merge-risk";
+
 // How many times the rewrite's push carries what the session pushed under it and tries its lease again: each
 // Carry is seconds, so past this the session is pushing faster than any lease can be read
 export const SYNC_PUSH_ATTEMPT_CAP = 3;

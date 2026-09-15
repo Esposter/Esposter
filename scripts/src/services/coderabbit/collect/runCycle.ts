@@ -19,6 +19,8 @@ import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcom
 import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeReleasePullRequest";
 import { openReleasePullRequest } from "#src/services/coderabbit/collect/openReleasePullRequest";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
+import { postHeldNotice } from "#src/services/coderabbit/collect/postHeldNotice";
+import { postRiskNotice } from "#src/services/coderabbit/collect/postRiskNotice";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
@@ -120,15 +122,14 @@ export const runCycle = async ({
     if (drain.outcome) return drain.outcome;
     reviewFixesSha = drain.reviewFixesSha;
     // A review that ends at the head and left nothing open is a release: the bot's own risk verdict on that head
-    // Is the last word, and any level but the least is a person's to weigh
+    // Is the last word, and any level but the least is a person's to weigh — said once on the pull request, since
+    // The run otherwise ports on and exits green over a release nobody made
     const mergeRisk = getMergeRisk(issueComments);
-    if (
-      gate.kind === GateDecisionKind.Proceed &&
-      drain.isClean &&
-      mergeRisk?.level === MERGEABLE_RISK_LEVEL &&
-      mergeRisk.coveredSha === developSha
-    )
-      return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
+    if (gate.kind === GateDecisionKind.Proceed && drain.isClean && mergeRisk?.coveredSha === developSha) {
+      if (mergeRisk.level === MERGEABLE_RISK_LEVEL)
+        return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
+      postRiskNotice({ developSha, isDryRun, issueComments, level: mergeRisk.level, pullRequest, viewerLogin });
+    }
   }
   // The queue is rebuilt on the tree the window is built on before the port reads it, so a conflict is met here
   // Once rather than held on every run
@@ -158,9 +159,11 @@ export const runCycle = async ({
       if (settlement.outcome) return settlement.outcome;
     }
     // A held first commit is a person's act, not an under-filled queue: it overflows the cap alone, or its
-    // Conflict is one the sync could not resolve, and no event clears either. The run fails red so someone is
-    // Told — once the review a limit refused has been asked for, since that answer is still owed first.
+    // Conflict is one the sync could not resolve, and no event clears either. The commit is told first, then the
+    // Run fails red so someone is — once the review a limit refused has been asked for, since that answer is
+    // Still owed first and a throw here would lose the retrigger the job output carries.
     if (port.queueShas.length === 0 && port.heldSha) {
+      postHeldNotice(port.heldSha, isDryRun, viewerLogin);
       if (isRateLimited) return getOutcome(CycleOutcomeKind.Idle, "held — the review the limit refused is owed first");
       throw new InvalidOperationError(
         Operation.Update,

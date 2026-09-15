@@ -91,13 +91,13 @@ flowchart TD
   D[Drain — nothing open] --> CL{Newest range at the head,<br/>no unported commit answers a finding}
   CL -->|no| P[Port]
   CL -->|yes| MR{Merge risk stated for the head<br/>at the least level}
-  MR -->|no| P
+  MR -->|no| RN[Note the level on the PR<br/>once per head — a person merges] --> P
   MR -->|yes| MG[Merge the release PR as administrator<br/>exit — the push to main returns develop]
 ```
 
 - **The merge names the head the verdict covers.** Every gate above it was measured against the `develop` the pass read, so the merge is made to match that sha — the same compare-and-swap the push makes. A `develop` that moved in between fails the run rather than releasing commits no review covered.
 - **The checks do not gate it.** `develop` runs them, and the release does not wait: the review is the gate, and a red check is one more commit in the next window.
-- **A risk above the least is a person's.** The cycle merges nothing over it and keeps porting; the bot restates the level on every review, so a later window can clear it.
+- **A risk above the least is a person's, and the cycle says so.** It merges nothing over it and keeps porting — which exits green over a release nobody made, and from the pull request reads as a stall — so one comment per head, carrying the level, tells the person the merge is theirs. The bot restates the level on every review, so a later window can clear it.
 
 ## Port
 
@@ -116,7 +116,8 @@ flowchart TD
   H --> RD{Ready}
   RD -->|fixes parked with no queue commit behind them| W[Wait — nothing pushed, fixes stay parked]
   RD -->|nothing owed at all| N[Exit — ai/queue is synced with develop]
-  RD -->|no fixes and the first queue commit is held| F[Fail red — a person resolves or splits it]
+  RD -->|nothing taken under a rate limit| AK[Ask for the review the limit refused<br/>at the deadline the bot stated]
+  RD -->|no fixes and the first queue commit is held| F[Note it on the commit once, then fail red —<br/>idle under a rate limit, the ask first]
   RD -->|nothing to add, develop already carries the window, no PR open| OP[Open the release PR]
   RD -->|yes| FM[Fold main in<br/>lockfile rebuilt] --> FC{The fold fits the cap}
   FC -->|yes| P[Push — unverified, develop's CI is the check]
@@ -142,7 +143,7 @@ Whether the window goes out is `checkIsReady`, a two-by-two over what the port h
 
 **There is no lower bound on a window.** The port takes every commit the queue owes and stops only at the cap or on a conflict, so a window that came out small is the whole of what was left — and waiting for it to grow waits on a push nothing has promised while the queue stays unsynced. The standing goal is `ai/queue` fully drained into `develop`; the cap is the only size the window is measured against, and it is measured on the tree that will be pushed.
 
-A held window cannot grow — the commit that stopped it overflows the cap or conflicts, and both only clear once this window lands. `--force` is only ever the difference on parked fixes, since everywhere else an owed commit already goes out. With no pull request open, the commits `develop` already carries above the merge base count beside the queue's, so a `develop` a dying run left pushed is ready with nothing to add and only the opening is owed. Under a rate limit the review the limit refused is asked for first ([the runner's retrigger](/docs/infra/review-collector/runner)), since its answer is still owed.
+A held window cannot grow — the commit that stopped it overflows the cap or conflicts, and both only clear once this window lands. `--force` is only ever the difference on parked fixes, since everywhere else an owed commit already goes out. With no pull request open, the commits `develop` already carries above the merge base count beside the queue's, so a `develop` a dying run left pushed is ready with nothing to add and only the opening is owed. Under a rate limit the review the limit refused is asked for first ([the runner's retrigger](/docs/infra/review-collector/runner)), since its answer is still owed — and a held first commit exits the run idle there rather than red, because a throw would lose the retrigger the job output carries. So the held commit is told on itself, once, whatever the gate said: a marker comment on the commit, like the sync's attempt marker, posted by the first run that holds on it. Until it is split, every slot the bot grants is spent on the fixes alone — the small window nobody meant — and a red run arrives only with the first clean review, hours later on a one-review-an-hour plan.
 
 ## Push, reply, open
 
