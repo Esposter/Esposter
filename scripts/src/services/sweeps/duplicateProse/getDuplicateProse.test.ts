@@ -22,6 +22,23 @@ describe(getDuplicateProse, () => {
     ).toStrictEqual([{ paths: [firstPath, secondPath], words }]);
   });
 
+  // A shingle the second page repeats is kept at its first position there, so a pair can run on over the first
+  // Page while the second jumps — and the words that run would report are ones the second page never holds in a row
+  test("stops a run where the second page stops being adjacent", () => {
+    expect.hasAssertions();
+
+    const separatedText = `${words.slice(0, SHINGLE_SIZE).join(" ")} c ${words.slice(1).join(" ")}`;
+    expect(
+      getDuplicateProse([
+        { path: firstPath, text },
+        { path: secondPath, text: separatedText },
+      ]),
+    ).toStrictEqual([
+      { paths: [firstPath, secondPath], words: words.slice(0, SHINGLE_SIZE) },
+      { paths: [firstPath, secondPath], words: words.slice(1) },
+    ]);
+  });
+
   test("reports the longest run first", () => {
     expect.hasAssertions();
 

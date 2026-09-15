@@ -16,7 +16,9 @@ const getWords = (text: string): string[] =>
 // Every run of words two pages of different owners share, longest first. A run is found through its shingles —
 // Every window of `SHINGLE_SIZE` words, keyed by its text — and a shingle on three or more pages is a template
 // (an area index's standing intro, a Key Files heading) rather than a copy, so only a shingle exactly two pages
-// Hold counts. Adjacent shingles of one pair merge into the run they came from, positioned by the first page.
+// Hold counts. Adjacent shingles of one pair merge into the run they came from, positioned by the first page —
+// Adjacent on both, since a shingle the second page repeats is kept at its first position there, which can sit
+// Anywhere while its neighbour on the first page follows on.
 export const getDuplicateProse = (pages: CitingPage[]): DuplicateProseFinding[] => {
   const shinglePages = new Map<string, Map<string, number>>();
   const pageWords = new Map(pages.map(({ path, text }) => [path, getWords(text)]));
@@ -28,28 +30,29 @@ export const getDuplicateProse = (pages: CitingPage[]): DuplicateProseFinding[] 
       shinglePages.set(shingle, positions);
     }
 
-  const pairRuns = new Map<string, { end: number; paths: [string, string]; start: number }[]>();
+  const pairRuns = new Map<string, { ends: [number, number]; paths: [string, string]; start: number }[]>();
   for (const positions of shinglePages.values()) {
     if (positions.size !== 2) continue;
 
     const entries = [...positions];
     const [firstPath, firstIndex] = takeOne(entries, 0);
-    const [secondPath] = takeOne(entries, 1);
+    const [secondPath, secondIndex] = takeOne(entries, 1);
     if (getOwner(firstPath) === getOwner(secondPath)) continue;
 
     const pairKey = `${firstPath}\n${secondPath}`;
     const runs = pairRuns.get(pairKey) ?? [];
-    const run = runs.find(({ end }) => end === firstIndex - 1);
-    if (run === undefined) runs.push({ end: firstIndex, paths: [firstPath, secondPath], start: firstIndex });
-    else run.end = firstIndex;
+    const run = runs.find(({ ends }) => ends[0] === firstIndex - 1 && ends[1] === secondIndex - 1);
+    if (run === undefined)
+      runs.push({ ends: [firstIndex, secondIndex], paths: [firstPath, secondPath], start: firstIndex });
+    else run.ends = [firstIndex, secondIndex];
     pairRuns.set(pairKey, runs);
   }
 
   return [...pairRuns.values()]
     .flat()
-    .map(({ end, paths, start }) => ({
+    .map(({ ends, paths, start }) => ({
       paths,
-      words: (pageWords.get(paths[0]) ?? []).slice(start, end + SHINGLE_SIZE),
+      words: (pageWords.get(paths[0]) ?? []).slice(start, ends[0] + SHINGLE_SIZE),
     }))
     .toSorted((first, second) => second.words.length - first.words.length);
 };
