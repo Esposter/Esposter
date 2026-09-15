@@ -1,3 +1,4 @@
+import { DocsNavigationSlug } from "@/models/docs/DocsNavigationSlug";
 import { DocsSectionGroupsMap } from "@/services/docs/DocsSectionGroupsMap";
 import { DOCS_DIRECTORY } from "@esposter/configuration";
 import { existsSync } from "node:fs";
@@ -10,8 +11,8 @@ import { beforeAll, describe, expect, test } from "vitest";
 // No way to reach it from the navigation, which is invisible in review because the page itself renders fine
 describe("docsSectionGroupsMap", () => {
   // Pages every section owns that the sidebar map never lists — they trail in an automatic Planning group.
-  const UNMAPPED_PAGES = new Set(["index", "roadmap"]);
-  const PLANNING_DIRECTORIES = new Set(["deferred", "rejected"]);
+  const UNMAPPED_PAGES = new Set<string>(["index", DocsNavigationSlug.Roadmap]);
+  const PLANNING_DIRECTORIES = new Set<string>([DocsNavigationSlug.Deferred, DocsNavigationSlug.Rejected]);
   const docsDirectory = join(import.meta.dirname, "..", "..", "..", "content", DOCS_DIRECTORY);
   const checkIsPage = (slugPath: string) =>
     existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));

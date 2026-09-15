@@ -15,8 +15,8 @@ composable and store layers no single feature claims.
 | `services/{zod,ajv,jsonSchema}`                                  | 2026-09-15 |                                                           |
 | `util/date`, `services/compiler`                                 | 2026-09-15 | `app/services/compiler` is not `shared/services/compiler` |
 | `services/shared`                                                | 2026-09-15 |                                                           |
-| `services/{styled,entity,vuetify,codemirror}`                    | 2026-09-05 |                                                           |
-| `services/docs`, `composables/docs`, `components/{Docs,content}` | 2026-09-05 |                                                           |
+| `services/{styled,entity,vuetify,codemirror}`                    | 2026-09-15 |                                                           |
+| `services/docs`, `composables/docs`, `components/{Docs,content}` | 2026-09-15 |                                                           |
 | `composables` root files                                         | 2026-09-05 |                                                           |
 | `composables/{storage,vuetify,file,notification,cache,azure}`    | 2026-09-05 |                                                           |
 | `store` root files, `store/{user,storage}`                       | 2026-09-05 |                                                           |
