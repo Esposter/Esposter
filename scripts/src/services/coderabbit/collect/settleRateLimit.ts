@@ -6,9 +6,9 @@ import { checkIsRetriggerAsked } from "#src/services/coderabbit/collect/checkIsR
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import { RETRIGGER_SLEEP_CAP_MS } from "#src/services/coderabbit/collect/constants";
 import { getRateLimitWaitMs } from "#src/services/coderabbit/collect/getRateLimitWaitMs";
+import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
 import { PROBE_COMMENT } from "#src/services/coderabbit/shared/constants";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
 
 // The review a limit refused is owed once nothing can be added to the range — a port that took nothing — and
 // Not before: while a commit still fits, one review will read the lot. A run that ships a window needs none of
@@ -49,7 +49,7 @@ export const settleRateLimit = ({
       },
     };
 
-  runGh(["pr", "comment", pullRequest.toString(), "--body", PROBE_COMMENT]);
+  postComment(pullRequest, PROBE_COMMENT);
   return {
     outcome: {
       kind: CycleOutcomeKind.Idle,

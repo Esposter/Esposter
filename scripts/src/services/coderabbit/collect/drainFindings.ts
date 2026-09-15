@@ -15,14 +15,15 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
+import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -41,7 +42,7 @@ export const drainFindings = async ({
   viewerLogin,
   ...drainInput
 }: DrainFindingsInput): Promise<DrainFindingsResult> => {
-  const pullRequest = drainInput.pullRequest.toString();
+  const { pullRequest } = drainInput;
   const quarantinedMarker = getMarker(QUARANTINED_MARKER, newestReviewId);
   if (issueComments.some((comment) => checkIsMarked(comment, viewerLogin, quarantinedMarker))) {
     console.info(`review ${newestReviewId} is quarantined — porting without its fixes`);
@@ -51,13 +52,10 @@ export const drainFindings = async ({
   const failedMarker = getMarker(DRAIN_FAILED_MARKER, newestReviewId);
   const attempts = issueComments.filter((comment) => checkIsMarked(comment, viewerLogin, failedMarker)).length;
   if (attempts >= DRAIN_ATTEMPT_CAP) {
-    runGh([
-      "pr",
-      "comment",
+    postComment(
       pullRequest,
-      "--body",
       `${quarantinedMarker}\nThe drain of review ${newestReviewId} failed ${attempts} times. Its findings stay open for a person, and the collector ports without them.`,
-    ]);
+    );
     return { isLimited: false, reviewFixesSha };
   }
 
@@ -75,28 +73,22 @@ export const drainFindings = async ({
   const { isDrained, limitResetAtMs } = await runDrain(getDrainPrompt(promptInput));
   if (limitResetAtMs !== undefined) {
     const resetAt = new Date(limitResetAtMs).toISOString();
-    runGh([
-      "pr",
-      "comment",
+    postComment(
       pullRequest,
-      "--body",
       `<!-- ${DRAIN_LIMITED_MARKER} until ${resetAt} -->\nThe drain could not start — the account is out of session until ${resetAt}. No attempt is counted, and the next event after that drains the same open set.`,
-    ]);
+    );
     console.info(`the drain is limited until ${resetAt} — nothing drained, nothing counted`);
     return { isLimited: true, reviewFixesSha };
   }
 
   // A zero exit says the session ended, never that it finished: a drain that stopped mid-fix leaves the rest in
   // The working tree, and reading `HEAD` there would push half a finding as though it were whole
-  const dirtyPaths = getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));
+  const dirtyPaths = readDirtyPaths();
   if (!isDrained || dirtyPaths.length > 0) {
-    runGh([
-      "pr",
-      "comment",
+    postComment(
       pullRequest,
-      "--body",
       `${failedMarker}\nDrain attempt ${attempts + 1} of review ${newestReviewId} failed — see the collector run.`,
-    ]);
+    );
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
@@ -106,7 +98,7 @@ export const drainFindings = async ({
 
   postDrainVerdicts(promptInput);
 
-  const headSha = runGit(["rev-parse", "HEAD"]).trim();
+  const headSha = readHeadSha();
   if (headSha === baseSha) {
     console.info("the drain produced no commit — every finding was rejected or already answered");
     return { isLimited: false, reviewFixesSha };

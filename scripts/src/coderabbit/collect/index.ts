@@ -1,10 +1,10 @@
 import { DRY_RUN_WORKTREE_PREFIX, RETRIGGER_DELAY_OUTPUT } from "#src/services/coderabbit/collect/constants";
+import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
 import { checkIsGitHubNumber } from "#src/services/coderabbit/shared/checkIsGitHubNumber";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -24,7 +24,7 @@ const pullRequest = pullRequestArgument === undefined ? undefined : Number(pullR
 if (pullRequest !== undefined && !checkIsGitHubNumber(pullRequest))
   throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
 
-const dirtyPaths = getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));
+const dirtyPaths = readDirtyPaths();
 if (!isDryRun && dirtyPaths.length > 0)
   throw new InvalidOperationError(
     Operation.Update,

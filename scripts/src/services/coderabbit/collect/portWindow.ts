@@ -5,6 +5,7 @@ import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
 import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -29,7 +30,7 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
 
   // Owed against the tree the fixes built, not develop: a queue rebased onto `ai/review-fixes` carries the fix
   // Commits as ancestors, and against develop they would be re-picked onto a tree that already holds them
-  const fixesHeadSha = runGit(["rev-parse", "HEAD"], cwd).trim();
+  const fixesHeadSha = readHeadSha(cwd);
   const queueShas: string[] = [];
   let heldSha: string | undefined;
   for (const sha of readCherryShas(fixesHeadSha, queueSha, cwd)) {

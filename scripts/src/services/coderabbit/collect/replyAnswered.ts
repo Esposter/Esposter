@@ -5,8 +5,9 @@ import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { postComment } from "#src/services/coderabbit/collect/postComment";
+import { postReply } from "#src/services/coderabbit/collect/postReply";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { getResult, noop } from "@esposter/shared";
 
 // Every commit in the range that answers a finding gets the reply citing its sha. Predicate-guarded per thread,
@@ -34,15 +35,7 @@ export const replyAnswered = ({
 
       const body = `Agreed, fixed in ${sha} — ${subject}`;
       console.info(`reply ${commentId}: ${body}`);
-      if (!isDryRun)
-        getResult(() =>
-          runGh([
-            "api",
-            `repos/{owner}/{repo}/pulls/${pullRequest}/comments/${commentId}/replies`,
-            "-f",
-            `body=${body}`,
-          ]),
-        ).match(noop, console.error);
+      if (!isDryRun) getResult(() => postReply(pullRequest, commentId, body)).match(noop, console.error);
     }
 
   // The predicate is the marker and the shas together: the rejections comment carries the marker and none of
@@ -67,7 +60,6 @@ export const replyAnswered = ({
       drained.map(({ commit }) => `- ${commit.sha} — ${commit.subject}`),
     );
     console.info(`verdict comment for review ${reviewId}`);
-    if (!isDryRun)
-      getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).match(noop, console.error);
+    if (!isDryRun) getResult(() => postComment(pullRequest, body)).match(noop, console.error);
   }
 };

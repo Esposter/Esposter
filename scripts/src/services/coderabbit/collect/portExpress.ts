@@ -4,6 +4,7 @@ import type { ExpressResult } from "#src/models/coderabbit/collect/ExpressResult
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { checkIsMechanicalCommit } from "#src/services/coderabbit/exclusions/checkIsMechanicalCommit";
 import { checkIsMechanicalRange } from "#src/services/coderabbit/exclusions/checkIsMechanicalRange";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
@@ -25,8 +26,7 @@ export const portExpress = ({ cwd, developSha, mainSha, queueSha }: ExpressInput
 
   // Asked again of the cut: what ships is each patch replayed onto `main` and stacked with siblings taken out of
   // Order, which is not the diff the per-commit proof saw. A cut that fails takes the review lane instead.
-  if (checkIsMechanicalRange([mainSha, "HEAD"], cwd))
-    return { shas, targetSha: runGit(["rev-parse", "HEAD"], cwd).trim() };
+  if (checkIsMechanicalRange([mainSha, "HEAD"], cwd)) return { shas, targetSha: readHeadSha(cwd) };
 
   runGit(["switch", "--detach", mainSha], cwd);
   console.info("express: the cut is not mechanical as it lands — it takes the review lane instead");

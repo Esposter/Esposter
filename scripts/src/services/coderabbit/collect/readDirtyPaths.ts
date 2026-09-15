@@ -1,0 +1,6 @@
+import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+
+// Every path the working tree differs on, untracked ones included: the collector owns the checkout, so any is
+// Someone else's work — a person's before the run, the drain's after it
+export const readDirtyPaths = (): string[] => getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));

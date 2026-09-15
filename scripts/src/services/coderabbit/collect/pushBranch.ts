@@ -1,12 +1,13 @@
 import type { PushBranchInput } from "#src/models/coderabbit/collect/PushBranchInput";
 
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { readSha } from "#src/services/coderabbit/collect/readSha";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
-const readRemoteSha = (branch: string, cwd?: string): string => {
+const readRemoteSha = (branch: string, cwd?: string): string | undefined => {
   runGit(["fetch", "origin", branch], cwd);
-  return runGit(["rev-parse", "--verify", "--quiet", `origin/${branch}`], cwd).trim();
+  return readSha(`origin/${branch}`, cwd);
 };
 
 // Every irreversible act the cycle has, in one place, which is what a dry run withholds. A compare-and-swap whose

@@ -1,7 +1,8 @@
 import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromptInput";
 
 import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
+import { postComment } from "#src/services/coderabbit/collect/postComment";
+import { postReply } from "#src/services/coderabbit/collect/postReply";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, readFileSync } from "node:fs";
@@ -35,9 +36,7 @@ export const postDrainVerdicts = ({
 
     const body = `Not a real issue, no change — ${stripHtmlComments(reason.join(" "))}`;
     console.info(`reply ${commentId}: ${body}`);
-    getResult(() =>
-      runGh(["api", `repos/{owner}/{repo}/pulls/${pullRequest}/comments/${commentId}/replies`, "-f", `body=${body}`]),
-    ).match(noop, console.error);
+    getResult(() => postReply(pullRequest, commentId, body)).match(noop, console.error);
   }
 
   const verdicts = readLines(verdictPath);
@@ -49,5 +48,5 @@ export const postDrainVerdicts = ({
     verdicts.map((verdict) => stripHtmlComments(verdict)),
   );
   console.info(`verdict comment for review ${reviewId}`);
-  getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).match(noop, console.error);
+  getResult(() => postComment(pullRequest, body)).match(noop, console.error);
 };

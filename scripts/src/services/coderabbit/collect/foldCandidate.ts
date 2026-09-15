@@ -3,6 +3,7 @@ import type { FoldInput } from "#src/models/coderabbit/collect/FoldInput";
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
 import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
+import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
@@ -10,7 +11,7 @@ import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 // Fold `main` into the candidate the port built and name the sha `develop` is pushed to. Nothing is verified
 // Here: `develop`'s own CI is the check (`EXPRESS_VERIFY_COMMANDS` says why the express lane differs).
 export const foldCandidate = ({ cwd, developSha, fixCount, frontierSha, queueSha, queueShas }: FoldInput): string => {
-  const portHeadSha = runGit(["rev-parse", "HEAD"], cwd).trim();
+  const portHeadSha = readHeadSha(cwd);
   const mergeOutcome = mergeMain(cwd);
   let isMainMerged = mergeOutcome === MergeMainOutcome.Merged;
   // The pick loop never measured the merge's own diff, so a fold landing main's backlog is undone rather than
@@ -29,7 +30,7 @@ export const foldCandidate = ({ cwd, developSha, fixCount, frontierSha, queueSha
     cutSha === undefined ||
     getNonEmptyLines(runGit(["rev-list", "--merges", `${developSha}..${cutSha}`], cwd)).length === 0;
   const isFastForward = fixCount === 0 && mergeBase === developSha && isMergeFree && !isMainMerged;
-  const targetSha = isFastForward ? (cutSha ?? developSha) : runGit(["rev-parse", "HEAD"], cwd).trim();
+  const targetSha = isFastForward ? (cutSha ?? developSha) : readHeadSha(cwd);
   console.info(
     `cut: ${queueShas.length} queue commits = ${getFileCount(`${frontierSha}..${targetSha}`, cwd)} files${isMainMerged ? ", main folded in" : ""}${mergeOutcome === MergeMainOutcome.Conflicted ? ", main conflicts outside the lockfile — held for a person" : ""}${isFastForward ? ", fast-forward" : ""}`,
   );
