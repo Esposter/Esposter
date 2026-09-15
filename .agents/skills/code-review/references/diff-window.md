@@ -1,4 +1,4 @@
-# diff mode — reviewing a change
+# Diff Mode — reviewing a change
 
 Read when picking the window, before reading any code. This is the default mode, anchored on a change: working tree, branch, or PR. The change bounds the review, so the round terminates naturally when the diff is exhausted.
 

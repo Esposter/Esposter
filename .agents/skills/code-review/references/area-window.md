@@ -1,4 +1,4 @@
-# area mode — auditing a subsystem and the docs governing it
+# Area Mode — auditing a subsystem and the docs governing it
 
 Read when picking the window for a review of code that already exists, with no change to review: a subsystem plus the `apps/web/content/docs/` pages and `.agents/skills/**/*.md` pages that govern it. Use it for "review the docs on X and everything implementing them", for hunting bugs in code nobody has touched recently, and before a substantial change to an area you are about to rework.
 
