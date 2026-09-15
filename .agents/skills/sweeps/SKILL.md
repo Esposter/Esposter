@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one. Esposter repo-wide sweep conventions — a Settled list (a sweep filed as a proposal, a progress column on the index row, fanning units out to parallel agents, inheriting a split row's date), progress as a ledger in .agents/ledgers/ named after the owning skill, proving a find recipe can fail, one unit per commit chunked to the review budget, behaviour-preserving passes, every sweep standing, a window filled rather than a ledger finished, and handing a rule to an enforcer — plus deep dives on handing to an enforcer, find recipes as tested scripts, resuming from the index row's Scope, windows and convergence, and the ledger file (what it may hold, a unit sized to one pass, promotion to a folder, keyed by its question).
+description: Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one. Esposter repo-wide sweep conventions — a Settled list (a sweep filed as a proposal, a progress column on the index row, fanning units out to parallel agents, inheriting a split row's date), progress as a ledger in .agents/ledgers/ named after the owning skill, proving a find recipe can fail, one unit per commit chunked to the review budget with the Ledger trailer dating its row and Reopens resetting one (ai:sweep:ledger-coverage), behaviour-preserving passes, every sweep standing, a window filled rather than a ledger finished, and handing a rule to an enforcer — plus deep dives on handing to an enforcer, find recipes as tested scripts, resuming from the index row's Scope, windows and convergence, and the ledger file (what it may hold, a unit sized to one pass, promotion to a folder, keyed by its question).
 ---
 
 # Sweeps
@@ -18,6 +18,7 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 - **Filing a sweep under `apps/web/content/docs/proposals/`.** A proposal designs behaviour that does not exist yet and leaves when it ships; a sweep changes no behaviour and never ends. A ledger is repo state, and lives in `.agents/ledgers/`.
 - **A progress column, percentage or tick count on the index row.** A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to the one file every other pass is also writing. State lives at the leaf ("One pass").
 - **Fanning the units of one sweep out to parallel agents.** A sweep reads a whole tree to change a fraction of it, and delegation is priced by files read rather than files changed; a parallel pass also throws away the carve-out that the first unit teaches every unit after it. Main session, one unit at a time ("One pass").
+- **Dating the `Swept` cell by hand in the sweep commit.** It is a second file in every sweep commit, the one every other pass is also writing, and it is the part a pass forgets; the commit's trailer dates the row and `pnpm ai:sweep:ledger-coverage` writes it in ("One pass").
 - **Inheriting a split row's date onto the children.** The parent was split because it could never have been read, so carrying its date down records the skim as coverage. Children reopen at `—` (`references/ledger-files.md`).
 
 ## A scan that reports nothing
@@ -44,13 +45,13 @@ flowchart LR
   GATE -->|"no"| TESTS["ground it — regression test, dedupe fixtures"]
   RAISE --> TESTS
   TESTS --> CARRY["carry docs + owning skill"]
-  CARRY --> TICK["date the row, commit"]
+  CARRY --> TICK["commit, the Ledger trailer naming the unit"]
   TICK --> PICK
   TICK -.->|"nothing left to sweep this sitting"| CHECK["format · typecheck · lint:fix · tests, once"]
 ```
 
 - **Behaviour-preserving only.** A finding whose fix would change behaviour is raised, never folded in — the pass has to stay revertible as a unit.
-- **One unit per commit**, so a pass that turns out wrong reverts cleanly, and the commit message names the unit.
+- **One unit per commit**, so a pass that turns out wrong reverts cleanly, and the commit's trailer names the unit — `Ledger: <ledger> | <unit>`, the unit cell verbatim (`Ledger: typescript/messaging | `` `app/store/message/room` ``) — which is what dates the row: `pnpm ai:sweep:ledger-coverage`writes the trailers' dates into the ledger files at the start and end of a sitting and reports a trailer naming no row. A rule change that invalidates coverage carries`Reopens: <ledger>` instead (`references/ledger-files.md`, "Coverage").
 - **Chunked for review** — a unit that would exceed the PR file budget is split at a directory boundary and gets its own coverage line (`coderabbit` skill for the budget; the collector cuts the window, `review-queue` skill).
 - **Tests are part of the pass**, not a follow-up: anything the pass exposes gets the regression test it was missing, and repeated fixtures collapse (`testing` skill). A pass that only rewrote what typecheck already proves adds none — that is a result, not a gap.
 - **Verification batches once at the end of everything going out**, not per unit and not per file — several units swept in one sitting are one pass, not one each (`running-checks`, `package-scripts`). Commits stay per unit regardless; commits are cheap and checks are not. **The end is the review window filling, never a unit finishing** (`coderabbit` for the budget): a unit is done when its commit lands, and a pass that runs the checks there has bought a green tree for a diff that is about to grow by everything the sitting has left.

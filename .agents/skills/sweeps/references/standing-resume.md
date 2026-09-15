@@ -5,7 +5,7 @@ sweep is standing; this page holds how one resumes.
 
 ## The command
 
-A pass resumes from what changed since the row's date rather than re-reading the unit, over the pathspecs the
+`pnpm ai:sweep:ledger-coverage` runs first, so the date the command takes is the one the trailers hold; a trailer it reports as naming no row is a unit reworded since its pass, and reopens at `—`. A pass then resumes from what changed since the row's date rather than re-reading the unit, over the pathspecs the
 sweep's **`Scope`** declares in `.agents/ledgers/README.md`:
 
 ```bash

@@ -35,6 +35,7 @@
     "ai:coderabbit:collect": "tsx src/coderabbit/collect/index.ts",
     "ai:coderabbit:feedback": "tsx src/coderabbit/feedback/index.ts",
     "ai:sweep:constant-scope": "tsx src/sweeps/constantScope/index.ts",
+    "ai:sweep:ledger-coverage": "tsx src/sweeps/ledgerCoverage/index.ts",
     "ai:sweep:repeated-list-items": "tsx src/sweeps/repeatedListItems/index.ts",
     "ai:sweep:shared-export-consumers": "tsx src/sweeps/sharedExportConsumers/index.ts",
     "ai:sweep:skill-docs": "tsx src/sweeps/skillDocs/index.ts",
