@@ -15,7 +15,7 @@
 | `error-handling`          | —          |       |
 | `esbabbler`               | —          |       |
 | `esbabbler-call`          | —          |       |
-| `file-organization`       | —          |       |
+| `file-organization`       | 2026-09-15 |       |
 | `formatting`              | —          |       |
 | `git`                     | —          |       |
 | `github-actions`          | —          |       |
@@ -46,7 +46,7 @@
 | `testing`                 | 2026-09-15 |       |
 | `tiptap`                  | —          |       |
 | `trpc`                    | —          |       |
-| `typescript`              | —          |       |
+| `typescript`              | 2026-09-15 |       |
 | `unocss`                  | —          |       |
 | `ux`                      | —          |       |
 | `vjsf`                    | —          |       |
