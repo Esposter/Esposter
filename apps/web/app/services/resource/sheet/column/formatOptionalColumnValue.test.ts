@@ -1,13 +1,12 @@
-import type { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
-
-import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
+import { createNumberColumn } from "@/composables/resource/sheet/commands/createNumberColumn.test";
 import { formatOptionalColumnValue } from "@/services/resource/sheet/column/formatOptionalColumnValue";
 import { getDisplayText } from "@/services/resource/sheet/column/getDisplayText";
 import { describe, expect, test } from "vitest";
 
 describe(formatOptionalColumnValue, () => {
-  const column = { format: NumberFormat.Currency, name: "amount", type: ColumnType.Number } as NumberColumn;
+  const column = createNumberColumn("name");
+  column.format = NumberFormat.Currency;
 
   // A sum sitting under a column of formatted cells is in those same units, so showing it bare reads as a
   // Different quantity from the rows it totals
