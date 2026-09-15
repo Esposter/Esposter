@@ -40,7 +40,7 @@
 | `skill-authoring`         | —          |       |
 | `slash-commands`          | —          |       |
 | `string-utils`            | —          |       |
-| `styling`                 | —          |       |
+| `styling`                 | 2026-09-15 |       |
 | `sweeps`                  | 2026-09-15 |       |
 | `test-values`             | —          |       |
 | `testing`                 | 2026-09-15 |       |
