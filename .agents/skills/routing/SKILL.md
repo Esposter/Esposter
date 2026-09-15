@@ -40,7 +40,7 @@ const { currentRoute } = useRouter(); // script: currentRoute.value.params.id �
 Destructured, because a ref reached through `router.` does not auto-unwrap in a template while `currentRoute` does.
 
 - **A segment the page cannot exist without is read through `requireRouteParam(params, name)`**, never an `as string` cast: params are `string | string[] | undefined`, and a cast hands the empty case to a query that fails at the server instead of here. `getRouteParamString` stays for a genuinely optional segment.
-- **Guard before spending a request** (`uuidValidateV4(id)`) where a read can race a navigation — it resolves the route after the user has left the page that named it, and the lint rule cannot see that.
+- **Guard before spending a request** (`checkIsUuidV4(id)`) where a read can race a navigation — it resolves the route after the user has left the page that named it, and the lint rule cannot see that.
 - Why the ban is total rather than "reactive reads only", the `definePageMeta` callbacks that are not a `useRoute()` call, the one component test that may `mockNuxtImport("useRoute")`, and why typed routes are off: `references/route-reads.md`.
 
 ## Where Navigation State Lives — `references/navigation-state.md`
