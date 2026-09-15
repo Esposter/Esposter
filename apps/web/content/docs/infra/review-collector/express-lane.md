@@ -11,8 +11,8 @@ A review window is budgeted in **files** and spent on **findings**. A folder swe
 
 The gate is a **proof about the diff**, never a claim about the commit message — a `refactor(` prefix has covered a snapshot repair and a `fix(` prefix a pure move. Each file is classified from what changed, with **one failing file sinking the whole commit**, since a window is cut at commit boundaries. A file passes when both halves hold:
 
-- **Its content did not meaningfully change** — a rename git scores at full similarity, or a diff that is nothing but import specifiers pointing at a path that moved. Added and removed imports are compared as a sorted set with every quoted string blanked, because `perfectionist/sort-imports` re-sorts a repathed import among its neighbours; a mode flip, a bare side-effect import whose position is its meaning, and a changed import attribute are each refused first.
-- **Its location is not itself meaning.** The files that fail are the ones something reads by path: a loader finds a config by name, a migration's filename is its ordering, a docs page's folder is its status and a skill's is its ownership. A colocated test moving with its subject passes — where it sits claims nothing — which is the one place this parts company with the rule that refuses a test edit.
+- **Its content did not meaningfully change** — a rename git scores at full similarity, or a diff that is nothing but import specifiers pointing at a path that moved. Added and removed imports are compared as a sorted set with every quoted string blanked, because `perfectionist/sort-imports` re-sorts a repathed import among its neighbours, and every specifier must then name one end of a rename the same range carries — a swap between two modules that both exist is a content change wearing an import's shape; a mode flip, a bare side-effect import whose position is its meaning, and a changed import attribute are each refused first.
+- **Its location is not itself meaning.** The files that fail are the ones something reads by path: a loader finds a config by name, a migration's filename is its ordering, a docs page's folder is its status and a skill's is its ownership — and in the Nuxt app a page's path is its route, a component's its auto-import name, a server route's its URL and a public asset's the URL a template writes as a string, none of which an import edit shows or a typecheck fails on. A colocated test moving with its subject passes — where it sits claims nothing — which is the one place this parts company with the rule that refuses a test edit.
 
 ```mermaid
 flowchart TD
@@ -23,7 +23,7 @@ flowchart TD
   D -->|yes| EX[Express: cherry-pick onto main]
   EX --> P{The cut's own diff<br/>still proves mechanical}
   P -->|no| RV
-  P -->|yes| V{The cut passes the checks<br/>build, typecheck, lint and tests}
+  P -->|yes| V{The cut passes the checks<br/>format, build, typecheck, lint and tests}
   V -->|no| RV
   V -->|yes| PU[Push main]
   PU --> FF[Next run: return stroke<br/>fast-forwards develop]
@@ -34,7 +34,7 @@ flowchart TD
 
 - **It does not preserve queue order.** A mechanical commit stuck behind unported work is the one worth taking early; a commit whose parent is not on `main` yet cannot apply, so the cherry-pick refuses it and the lane moves on. Dependency is enforced by whether the patch lands, not by a rule.
 - **It does not run while a window is in flight.** The lane is closed unless `develop` and `main` agree: a rename landing on one side of the merge an unreviewed window still owes is how a file arrives twice. A mechanical commit is never the urgent one, so waiting costs it nothing.
-- **It is the one lane verified before the push.** `main` is production, and CI is the only gate these commits get, so the cut earns every check CI would fail it on — build, typecheck, both linters **and the tests**, since a relocation is exactly what a path-coupled test fails on. A red cut takes the review lane, where a person reads why.
+- **It is the one lane verified before the push.** `main` is production, and CI is the only gate these commits get, so the cut earns every check CI would fail it on — format, the package build, typecheck, both linters **and the tests**, since a relocation is exactly what a path-coupled test fails on. The app build alone is left to `main`'s own CI: it is the longest job there, and nothing a cut ships waits on it. A red cut takes the review lane, where a person reads why.
 - **It does not trust the proof it selected with.** What ships is each patch replayed onto `main` and stacked with siblings taken out of order, so the proof is asked again of the cut's cumulative diff. A cut that fails takes the review lane whole.
 - **It does not push twice in a run.** The push fires the cycle again, which fast-forwards `develop` and exits; the lane it opened waits for the event after that.
 

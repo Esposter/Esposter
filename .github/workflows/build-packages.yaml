@@ -24,38 +24,27 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: 🔑 Get build cache keys
-        id: keys
-        uses: ./.github/actions/get-build-cache-keys
-      # Exact key, no prefix restore: the path list includes a hand-written barrel under `src`, and a prefix hit
-      # would extract another commit's copy of it over the checkout and build it, green
       - name: ♻️ Restore package builds
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ${{ steps.keys.outputs.package-builds-paths }}
-          key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
-
-      - name: 🔍 Verify package builds
-        id: verify
-        uses: ./.github/actions/verify-package-builds
+        id: restore
+        uses: ./.github/actions/restore-package-builds
       # The toolchain and the install hang off the miss too: a hit uploads straight from the restored paths and
       # needs neither pnpm nor `node_modules`. Filtered to the libraries plus the root closure that declares the
       # toolchain — the apps' trees are install work nothing here reads.
       - name: 🔧 Setup Project Dependencies
-        if: steps.verify.outputs.complete != 'true'
+        if: steps.restore.outputs.complete != 'true'
         uses: ./.github/actions/setup-project-dependencies
 
       - name: 📦 Install dependencies
-        if: steps.verify.outputs.complete != 'true'
+        if: steps.restore.outputs.complete != 'true'
         run: pnpm --filter "./packages/*" --filter "{.}..." --fail-if-no-match i
 
       - name: 🏗️ Build packages
-        if: steps.verify.outputs.complete != 'true'
+        if: steps.restore.outputs.complete != 'true'
         run: pnpm build:packages
       # The build writes the exports map and `inlinedDependencies` into each manifest, and nothing downstream
       # reads one — so an uncommitted manifest is green everywhere else
       - name: 🔍 Check generated manifest fields are committed
-        if: steps.verify.outputs.complete != 'true'
+        if: steps.restore.outputs.complete != 'true'
         run: git diff --exit-code -- "packages/*/package.json"
       # As an assertion this time: after a build an incomplete tree is a broken build, and it fails here where
       # the cause is readable rather than as a missing barrel in `typecheck`
@@ -63,10 +52,18 @@ jobs:
         uses: ./.github/actions/verify-package-builds
         with:
           fail-when-incomplete: true
+      # The one save of the entry every restore above reads, and only after the assertion: a tree that failed it
+      # never reaches the key
+      - name: 💾 Save package builds
+        if: steps.restore.outputs.complete != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.restore.outputs.paths }}
+          key: ${{ steps.restore.outputs.key }}
 
       - name: 📤 Upload package builds
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: package-builds
-          path: ${{ steps.keys.outputs.package-builds-paths }}
+          path: ${{ steps.restore.outputs.paths }}
           if-no-files-found: error

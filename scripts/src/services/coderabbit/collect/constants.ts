@@ -29,11 +29,15 @@ export const INSTALL_COMMAND: string[] = ["i", "--frozen-lockfile"];
 // The checks an express cut earns before it reaches `main` unread, and the only checks the collector runs on
 // Anything it pushes — a window is verified by develop's own CI, since a red queue commit inside it would hold
 // Every window behind a repair that sits commits later. Check-only: a repair the collector wrote would be a
-// Commit nobody reviewed. The two ESLint passes are what the root `lint` runs after oxlint, minus its `virrun`
-// Wrapper; the tests are here because a relocation is exactly what a path-coupled test fails on.
+// Commit nobody reviewed. Each is a root script's own passes minus its `virrun` wrapper — the root `tsc` and
+// The recursive typecheck, oxlint and the two ESLint passes. The app build alone is left out: it is CI's longest
+// Job (`apps/web/content/docs/architecture/monorepo-tooling.md`), and `main`'s own CI runs it on the push. The
+// Tests are here because a relocation is exactly what a path-coupled test fails on.
 export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   INSTALL_COMMAND,
+  ["format:check"],
   ["build:packages"],
+  ["exec", "tsc"],
   ["-r", "--parallel", "run", "typecheck"],
   ["exec", "oxlint", "--format=default", "--disable-nested-config"],
   ["exec", "eslint", "."],
