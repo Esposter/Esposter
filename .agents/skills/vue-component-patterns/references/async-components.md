@@ -23,6 +23,11 @@ registry, not just the one whose blank region someone noticed. SSR is unaffected
 the loader before it emits html, so a server-rendered page keeps its markup and its crawlability); the boundary
 is for client-side navigation, where the chunk is fetched with the visitor watching.
 
+**The boundary carries `:timeout="0"`.** `<Suspense>` defaults to holding the resolved tree up while the next
+entry loads, so a registry switched by a tab or a type selector keeps the panel the reader just left on screen
+with nothing saying the click landed. At zero the fallback goes up on the switch, which is what the skeleton is
+for.
+
 A registry of small components stays static: the split buys nothing and costs a request per entry.
 
 **A component that `await`s in setup is async in the same way**, so it owes the same boundary — and only where

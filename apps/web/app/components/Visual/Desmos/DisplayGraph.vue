@@ -70,7 +70,6 @@ watch(componentsToRender, (newComponentsToRender) => {
 
 onMounted(() => {
   const element = window.document.getElementById(id) as HTMLDivElement;
-
   // The script's own load slot calls this and drops what it returns, so the calculator's construction reports
   // Here or nowhere — a graph that never builds leaves the panel empty rather than the page broken
   onLoaded(({ GraphingCalculator }) =>
