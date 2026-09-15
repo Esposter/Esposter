@@ -1,0 +1,55 @@
+import type { CitingPage } from "#src/models/citations/CitingPage";
+import type { DuplicateProseFinding } from "#src/models/sweeps/duplicateProse/DuplicateProseFinding";
+
+import { SHINGLE_SIZE } from "#src/services/sweeps/duplicateProse/constants";
+import { takeOne } from "@esposter/shared";
+
+const FRONTMATTER_REGEX = /^---[\s\S]*?^---/mu;
+const NON_WORD_REGEX = /[^a-z0-9']+/gu;
+const SKILL_OWNER_REGEX = /^\.agents\/skills\/(?<skill>[^/]+)\//u;
+// Two pages of one skill restate each other by design — the index line names the trigger its reference page
+// Opens on — so a skill is one owner, and every other page is its own
+const getOwner = (path: string): string => SKILL_OWNER_REGEX.exec(path)?.groups?.skill ?? path;
+const getWords = (text: string): string[] =>
+  text.replace(FRONTMATTER_REGEX, "").toLowerCase().split(NON_WORD_REGEX).filter(Boolean);
+
+// Every run of words two pages of different owners share, longest first. A run is found through its shingles —
+// Every window of `SHINGLE_SIZE` words, keyed by its text — and a shingle on three or more pages is a template
+// (an area index's standing intro, a Key Files heading) rather than a copy, so only a shingle exactly two pages
+// Hold counts. Adjacent shingles of one pair merge into the run they came from, positioned by the first page.
+export const getDuplicateProse = (pages: CitingPage[]): DuplicateProseFinding[] => {
+  const shinglePages = new Map<string, Map<string, number>>();
+  const pageWords = new Map(pages.map(({ path, text }) => [path, getWords(text)]));
+  for (const [path, words] of pageWords)
+    for (let index = 0; index + SHINGLE_SIZE <= words.length; index++) {
+      const shingle = words.slice(index, index + SHINGLE_SIZE).join(" ");
+      const positions = shinglePages.get(shingle) ?? new Map<string, number>();
+      if (!positions.has(path)) positions.set(path, index);
+      shinglePages.set(shingle, positions);
+    }
+
+  const pairRuns = new Map<string, { end: number; paths: [string, string]; start: number }[]>();
+  for (const positions of shinglePages.values()) {
+    if (positions.size !== 2) continue;
+
+    const entries = [...positions];
+    const [firstPath, firstIndex] = takeOne(entries, 0);
+    const [secondPath] = takeOne(entries, 1);
+    if (getOwner(firstPath) === getOwner(secondPath)) continue;
+
+    const pairKey = `${firstPath}\n${secondPath}`;
+    const runs = pairRuns.get(pairKey) ?? [];
+    const run = runs.find(({ end }) => end === firstIndex - 1);
+    if (run === undefined) runs.push({ end: firstIndex, paths: [firstPath, secondPath], start: firstIndex });
+    else run.end = firstIndex;
+    pairRuns.set(pairKey, runs);
+  }
+
+  return [...pairRuns.values()]
+    .flat()
+    .map(({ end, paths, start }) => ({
+      paths,
+      words: (pageWords.get(paths[0]) ?? []).slice(start, end + SHINGLE_SIZE),
+    }))
+    .toSorted((first, second) => second.words.length - first.words.length);
+};

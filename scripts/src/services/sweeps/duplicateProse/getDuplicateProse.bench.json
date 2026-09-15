@@ -1,0 +1,87 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/sweeps/duplicateProse/getDuplicateProse.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 8.391600000000016,
+              "name": "one template",
+              "p99": 10.163322000000102,
+              "rme": 9.505984226331202,
+              "sampleCount": 10
+            },
+            {
+              "mean": 12.33569,
+              "name": "paired",
+              "p99": 16.564573000000127,
+              "rme": 14.366619843635917,
+              "sampleCount": 10
+            },
+            {
+              "mean": 13.424300000000017,
+              "name": "distinct",
+              "p99": 17.269747000000123,
+              "rme": 12.679536974783334,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getDuplicateProse > 10 pages"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 123.96236000000026,
+              "name": "one template",
+              "p99": 180.10121799999982,
+              "rme": 15.268392674034189,
+              "sampleCount": 10
+            },
+            {
+              "mean": 153.74985999999996,
+              "name": "distinct",
+              "p99": 185.00316300000043,
+              "rme": 9.425972495931719,
+              "sampleCount": 10
+            },
+            {
+              "mean": 161.25834999999998,
+              "name": "paired",
+              "p99": 288.86834499999975,
+              "rme": 25.303202093458253,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getDuplicateProse > 100 pages"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 708.1137599999979,
+              "name": "one template",
+              "p99": 992.7421819999959,
+              "rme": 13.667079031416396,
+              "sampleCount": 10
+            },
+            {
+              "mean": 717.4923399999985,
+              "name": "paired",
+              "p99": 833.1805579999976,
+              "rme": 7.8356577014115985,
+              "sampleCount": 10
+            },
+            {
+              "mean": 866.2661199999999,
+              "name": "distinct",
+              "p99": 981.0898119999988,
+              "rme": 6.36507887496868,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getDuplicateProse > 500 pages"
+        }
+      ]
+    }
+  ]
+}
