@@ -21,7 +21,7 @@ Never use the built-in `/review` command, the built-in `/simplify`, or a plugin 
 | **Quality**     | reuse (a helper that already exists), simplification (derivable state, copy-paste variation, dead code), efficiency (repeated I/O, sequential independent work, closures pinning large scopes), altitude (a special case layered on shared infrastructure that should have generalised) | looking at the code it names | always `minor`                 |
 | **Correctness** | defects, plus a convention in CLAUDE.md or a skill that the code breaks                                                                                                                                                                                                                 | the trigger rule below       | `critical` / `major` / `minor` |
 
-**Both lanes run by default.** "quality only" (what `/simplify` used to be) or "correctness only" narrows to one. The lanes never merge: a quality finding is a preference with a cost, a correctness finding is a claim that something is wrong.
+**Both lanes run by default.** "quality only" (the request `/simplify` maps to) or "correctness only" narrows to one. The lanes never merge: a quality finding is a preference with a cost, a correctness finding is a claim that something is wrong.
 
 **Every file in the window is in scope, whatever its extension** — prose included. A docs page, a skill, a ledger, a README, a config file and a migration are each reviewed against the rules that own them, in both lanes: a paragraph restating a rule its owner already states is a quality finding, and a page whose claim the code contradicts is a correctness one. Nothing is skipped for being "not code" except generated output, lockfiles and binaries, which are named as skipped rather than silently dropped.
 
@@ -70,7 +70,7 @@ The hops that settle almost everything, cheapest first: one step out to the call
 
 For each correctness candidate, **spend the first pass trying to break it, not to confirm it.** Ask what would have to be true for the code to be right, and go look for that. A candidate you only ever tried to confirm has not been verified, however confident the wording.
 
-This is the whole of what the independent verifier used to do, and it fails the same way when skipped: the finding is plausible, well-argued, and wrong.
+This is the whole of verification, and skipping it fails one way: the finding is plausible, well-argued, and wrong.
 
 **Nothing unsettled ships.** There is no PLAUSIBLE disposition — a candidate is confirmed with its trigger, refuted, or deleted. The one exception is a trigger that genuinely cannot be settled from the repository (a production-only config value, a cloud service's runtime behaviour). That never becomes a table row: write it as a single line below the table naming the blocker and the fact that would settle it, so the user is asked for evidence rather than handed a verdict nobody reached.
 
