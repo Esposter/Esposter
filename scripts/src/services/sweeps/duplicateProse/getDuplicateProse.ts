@@ -10,17 +10,33 @@ const SKILL_OWNER_REGEX = /^\.agents\/skills\/(?<skill>[^/]+)\//u;
 // Opens on — so a skill is one owner, and every other page is its own
 const getOwner = (path: string): string => SKILL_OWNER_REGEX.exec(path)?.groups?.skill ?? path;
 
-// The pages each window of `size` words appears on, with the position it first appears at on each
-const getShinglePages = (pageWords: Map<string, string[]>, size: number): Map<string, Map<string, number>> => {
+// The shingles of every page in one pass: each window of `SHINGLE_SIZE` words with the pages it appears on and
+// The position it first appears at on each, and beside it how many pages hold each window one word shorter —
+// The shorter window is the longer one's prefix, so it costs one concatenation rather than a second walk
+const getShingles = (
+  pageWords: Map<string, string[]>,
+): { shinglePages: Map<string, Map<string, number>>; stemPageCounts: Map<string, number> } => {
   const shinglePages = new Map<string, Map<string, number>>();
+  // A page's positions arrive in order, so a stem's page count moves only when the page does — two flat maps
+  // Rather than a set of paths per stem, which on a corpus of distinct pages is one allocation per word
+  const stemPageCounts = new Map<string, number>();
+  const stemLastPaths = new Map<string, string>();
   for (const [path, words] of pageWords)
-    for (let index = 0; index + size <= words.length; index++) {
-      const shingle = words.slice(index, index + size).join(" ");
+    for (let index = 0; index + SHINGLE_SIZE - 1 <= words.length; index++) {
+      const stem = words.slice(index, index + SHINGLE_SIZE - 1).join(" ");
+      if (stemLastPaths.get(stem) !== path) {
+        stemLastPaths.set(stem, path);
+        stemPageCounts.set(stem, (stemPageCounts.get(stem) ?? 0) + 1);
+      }
+      const last = words[index + SHINGLE_SIZE - 1];
+      if (last === undefined) continue;
+
+      const shingle = `${stem} ${last}`;
       const positions = shinglePages.get(shingle) ?? new Map<string, number>();
       if (!positions.has(path)) positions.set(path, index);
       shinglePages.set(shingle, positions);
     }
-  return shinglePages;
+  return { shinglePages, stemPageCounts };
 };
 
 // Every run of words two pages of different owners share, longest first. A run is found through its shingles —
@@ -33,17 +49,12 @@ const getShinglePages = (pageWords: Map<string, string[]>, size: number): Map<st
 // Follows on.
 export const getDuplicateProse = (pages: CitingPage[]): DuplicateProseFinding[] => {
   const pageWords = new Map(pages.map(({ path, text }) => [path, getProseWords(text)]));
-  const shinglePages = getShinglePages(pageWords, SHINGLE_SIZE);
-  const templateShingles = new Set(
-    getShinglePages(pageWords, SHINGLE_SIZE - 1)
-      .entries()
-      .filter(([, positions]) => positions.size > 2)
-      .map(([shingle]) => shingle),
-  );
-  const checkIsTemplateEdge = (shingle: string): boolean => {
-    const words = shingle.split(" ");
-    return templateShingles.has(words.slice(1).join(" ")) || templateShingles.has(words.slice(0, -1).join(" "));
-  };
+  const { shinglePages, stemPageCounts } = getShingles(pageWords);
+  // The two stems are the shingle less its last word and less its first, read by index: the check runs once per
+  // Shingle two pages share, which on a paired corpus is every shingle
+  const checkIsTemplateEdge = (shingle: string): boolean =>
+    (stemPageCounts.get(shingle.slice(0, shingle.lastIndexOf(" "))) ?? 0) > 2 ||
+    (stemPageCounts.get(shingle.slice(shingle.indexOf(" ") + 1)) ?? 0) > 2;
 
   const pairRuns = new Map<string, { ends: [number, number]; paths: [string, string]; start: number }[]>();
   for (const [shingle, positions] of shinglePages) {
