@@ -19,9 +19,13 @@ describe(getMergeRisk, () => {
     expect(getMergeRisk([comment])).toStrictEqual({ coveredSha: sha, level: MERGEABLE_RISK_LEVEL });
   });
 
+  // A block the cycle cannot read names no head, and a verdict on no head releases nothing — the run reads the
+  // Same comment on every event after it, so throwing here would be the pipeline's end
   test.each([
     ["a comment that is not the bot's", { ...comment, user: { login: TEST_FILENAME } }],
     ["a comment without the block", { ...comment, body: "" }],
+    ["a coverage block that is not JSON", { ...comment, body: body.replace('"kind":"reviewed"', '"kind":') }],
+    ["a coverage block naming no head", { ...comment, body: body.replace(`"coveredCommitId":"${sha}",`, "") }],
   ])("returns undefined for %s", (_, otherComment) => {
     expect.hasAssertions();
 
