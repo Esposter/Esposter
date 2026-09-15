@@ -36,7 +36,7 @@ throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Foo, input.f
 throw getNotFoundError(DatabaseEntityType.Foo, input.fooId);
 ```
 
-`new TRPCError({ code, message: new InvalidOperationError(...).message })` written out at a throw site is the anti-pattern: it re-decides the code per site, and drifts from the guards' text the moment either changes. Where one feature throws the same rejection from several places, give it a named constructor that calls these (`createInvalidBlueprintError`, `danglingProgramBindingError`) so the arguments are stated once too.
+`new TRPCError({ code, message: new InvalidOperationError(...).message })` written out at a throw site is the anti-pattern: it re-decides the code per site, and drifts from the guards' text the moment either changes. Where one feature throws the same rejection from several places, give it a named constructor that calls these (`getInvalidBlueprintError`, `getDanglingProgramBindingError`) so the arguments are stated once too.
 
 ## `UNAUTHORIZED` is the one code thrown bare, and has no constructor
 
