@@ -28,7 +28,8 @@
   },
   "files": [
     ".funcignore",
-    "dist"
+    "dist",
+    "host.json"
   ],
   "type": "module",
   "sideEffects": true,
