@@ -2,7 +2,7 @@
 
 Read when editing `renovate.json`, adding a `FROM` line, or checking why Renovate proposed nothing for an image. This page holds the whole rule; `SKILL.md` keeps the one line that image tags are the exemption from `updatePinnedDependencies: false`.
 
-Renovate's `dockerfile` manager finds every `FROM` line with no "fileMatch" of its own, but what it may do with one is a `packageRules` entry keyed on `matchDatasources: ["docker"]`, because two repo-wide settings work against an image tag:
+Renovate's `dockerfile` manager carries the "fileMatch" deciding which files it reads, and an image it extracts from a `FROM` line in one has no such setting of its own, so what may be done with that image is a `packageRules` entry keyed on `matchDatasources: ["docker"]`, because two repo-wide settings work against an image tag:
 
 - `updatePinnedDependencies: false` is there for the exact-pinned npm deps above that owe a dedicated pass. An image tag is a single version by definition, so without the override every `FROM` is skipped as `is-pinned` and Renovate proposes nothing — not a manager that failed to run, so no log line says the word Docker.
 - A tag that carries no version in it (a distro codename, `latest`) gives Renovate nothing to compare, so it can never be bumped by tag at all. That is a statement about the tag string, not about the image: a publisher can repoint such a tag at a new digest whenever they like, and `latest` is mutable by design. `pinDigests: true` is what reaches it: Renovate rewrites the line to `<tag>@sha256:…` once, then keeps that digest current — which is also what turns an otherwise invisible upstream rebuild into a reviewable diff.
