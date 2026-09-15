@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch and try/finally banned), wrapping only what can actually fail, terminating every chain (.isOk/.isErr banned, never void a ResultAsync, noop as the ok handler, a callback nothing awaits terminating its own Result), .orTee(console.error) over console.warn/catch {}, never new Error (InvalidOperationError, the unimplemented-stub exception, jsonDateParse for JSON with dates), the tRPC backend guards and the getInvalidOperationError/getNotFoundError constructors a router asserts its own rejections with, plus deep dives on who alerts a tRPC rejection (errorLink ownership, createErrorAlert as the caller side of it, background reads, alert coalescing), withFinalizer vs withFinalizerAsync, the worked chain shapes, server guards (requireEntity/requireMutation, TRPCError cause, awaiting a best-effort effect a rollback compensates), and Azure Functions logging/retry with capped dead-letter replay. Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
+description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch and try/finally banned), wrapping only what can actually fail, terminating every chain (.isOk/.isErr banned, never void a ResultAsync, noop as the ok handler, a callback nothing awaits terminating its own Result), .orTee(console.error) over console.warn/catch {}, never new Error (InvalidOperationError, the unimplemented-stub exception, jsonDateParse for JSON with dates), the tRPC backend guards and the getInvalidOperationError/getNotFoundError constructors a router asserts its own rejections with, plus deep dives on what the try/.then ban does not cover and the two disables it allows, who alerts a tRPC rejection (errorLink ownership, createErrorAlert as the caller side of it, background reads, alert coalescing), withFinalizer vs withFinalizerAsync, the worked chain shapes, server guards (requireEntity/requireMutation, TRPCError cause, awaiting a best-effort effect a rollback compensates), and Azure Functions logging/retry with capped dead-letter replay. Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
 ---
 
 # Error Handling Conventions
@@ -13,6 +13,7 @@ description: Esposter Error Handling Conventions — neverthrow getResult/getRes
 - `references/alerting.md` — when wiring the error path of a tRPC call, or a background read that must not alert.
 - `references/finalizers.md` — when a chain has to release something whichever way it resolves.
 - `references/server-guards.md` — when a tRPC router or server route guards a nullable DB result, attaches a `cause` to a `TRPCError`, or has a fire-and-forget tail on a path a caller rolls back.
+- `references/ban-exceptions.md` — when a callback must become a rejection, a throw is being kept synchronous for a test, or a `.then`/`.catch`/`.finally` looks unavoidable.
 - `references/azure-functions.md` — when writing or changing an Azure Functions handler, its dead-letter replay, or a handler that enumerates its own work from a query.
 
 ## try / catch and .then Are BANNED
@@ -24,27 +25,7 @@ description: Esposter Error Handling Conventions — neverthrow getResult/getRes
 
 Only exception: published package README examples aimed at external consumers may use plain `try`/`finally` — a doc example shouldn't force consumers to install `@esposter/shared`.
 
-**Normalising a callback that may throw synchronously is not one of them** — `Promise.try(fn)` is the primitive
-for that, and it trips no ban. Use it wherever a task has to be called through a promise so a synchronous throw
-becomes a rejection (`settleAll` hands the result to `allSettled`). When the outcome is a Result, `getResultAsync`
-already covers it — it is built on `ResultAsync.fromThrowable`, which awaits the callback inside its own `try` —
-so a call site keeps calling `getResultAsync` and never the raw primitive. Never reach back for
-`Promise.resolve().then(fn)`, which only earned a disable before those two existed.
-
-**A trailing value map is not one of them either.** Keeping a function non-`async` so its guard throws
-synchronously buys nothing when every caller awaits it — the two are indistinguishable there, and the only place
-the difference shows is a test, which asserts `rejects` just as happily. Make it `async`, `await` the call and
-return the mapped value; never shape production code so a test can assert the throw one way rather than the other.
-
-A disable is one of exactly two shapes, and says which in its reason:
-
-| Shape                                                      | Why nothing else works                                                                    |
-| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `.finally` deregistering a promise from its own registry   | It must run on both paths and leave the outcome alone; a finalizer rethrows               |
-| `.catch` on the promise under test, in that promise's test | The test asserts the primitive's own rejection; a Result wrapper would assert the wrapper |
-
-Anything else converts. The rule is what makes these two visible: before it they were indistinguishable from an
-ordinary `.then` someone had not got round to replacing.
+`Promise.try(fn)` normalises a synchronously throwing callback and trips no ban, and a guard is never kept non-`async` so a test can assert its throw one way rather than the other. A disable is one of exactly two shapes — a `.finally` deregistering a promise from its own registry, a `.catch` on the promise under test in that promise's own test — and says which in its reason (`references/ban-exceptions.md`).
 
 ## Throwing — never `new Error`
 
@@ -94,7 +75,7 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 
 Located in `server/trpc/guards/`. Test once, use everywhere — routers don't repeat null checks by hand: `requireEntity` turns a `findFirst` that may be `null` into a `TRPCError` `NOT_FOUND`, and `requireMutation` turns a `.returning()[0]` that may be `undefined` into a `BAD_REQUEST`.
 
-**Asserting the rejection yourself uses the same family.** Where no nullable result is being guarded — a validation that fails, a state machine refusing a transition, a caller who may not do this — build the error with `getInvalidOperationError`, `getNotFoundError` or `getForbiddenError` from the same folder, never `new TRPCError({ code, message: new XError(...).message })` by hand. The point is that a rejection reads identically whether a guard produced it or a router asserted it, and that the code paired with each error type is decided once: `getNotFoundError` does not even take a code, because a missing entity is always `NOT_FOUND`, and `getForbiddenError` is always `FORBIDDEN`. A feature whose error is thrown from more than one place wraps this in its own named constructor (`createInvalidBlueprintError`) rather than repeating the arguments.
+**Asserting the rejection yourself uses the same family** — `getInvalidOperationError`, `getNotFoundError` or `getForbiddenError` from `server/trpc/guards/`, never a `TRPCError` assembled by hand (`references/server-guards.md`).
 
 Signatures, and the rule for attaching a `cause` to a `TRPCError`, are in `references/server-guards.md`.
 

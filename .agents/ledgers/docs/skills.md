@@ -12,7 +12,7 @@
 | `dependency-updates`      | —          |       |
 | `docs`                    | —          |       |
 | `drizzle`                 | —          |       |
-| `error-handling`          | —          |       |
+| `error-handling`          | 2026-09-15 |       |
 | `esbabbler`               | —          |       |
 | `esbabbler-call`          | —          |       |
 | `file-organization`       | 2026-09-15 |       |
