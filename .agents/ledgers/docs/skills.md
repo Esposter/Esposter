@@ -3,13 +3,13 @@
 | Unit                      | Swept      | Notes |
 | ------------------------- | ---------- | ----- |
 | `azure-table`             | —          |       |
-| `bench`                   | —          |       |
+| `bench`                   | 2026-09-15 |       |
 | `build`                   | 2026-09-15 |       |
 | `claude-permissions`      | —          |       |
 | `code-review`             | 2026-09-15 |       |
 | `coderabbit`              | —          |       |
 | `context-efficiency`      | —          |       |
-| `dependency-updates`      | —          |       |
+| `dependency-updates`      | 2026-09-15 |       |
 | `docs`                    | 2026-09-15 |       |
 | `drizzle`                 | 2026-09-15 |       |
 | `error-handling`          | 2026-09-15 |       |
@@ -27,7 +27,7 @@
 | `over-engineering`        | —          |       |
 | `oxlint`                  | —          |       |
 | `package-scripts`         | 2026-09-15 |       |
-| `pagination`              | —          |       |
+| `pagination`              | 2026-09-15 |       |
 | `pinia`                   | 2026-09-15 |       |
 | `pulumi-infra`            | 2026-09-15 |       |
 | `readme-standards`        | —          |       |
