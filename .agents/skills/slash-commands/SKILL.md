@@ -9,7 +9,7 @@ description: Apply when writing or modifying slash commands, useExecuteSlashComm
 
 `SlashCommandParameter` extends `Description` — always has both `name` and `description` (never optional):
 
-```typescript
+```ts
 export interface SlashCommandParameter extends Description {
   isRequired: boolean;
   name: string;
@@ -21,7 +21,7 @@ export const slashCommandParameterValueSchema = z.string().transform(normalizeSt
 
 `SlashCommand` — `parameters` is always present (never `parameters?`). Default to `[]` for commands with no parameters:
 
-```typescript
+```ts
 export interface SlashCommand extends Description, ItemEntityType<SlashCommandType> {
   icon: string;
   parameters: SlashCommandParameter[];
@@ -38,7 +38,7 @@ Messages use markdown. Rich text applies: italic `*text*`, bold `**text**`, code
 
 A `case` that posts assigns the markdown `message` and nothing else — one that opens a dialog or runs a mutation leaves it empty. `marked.parse()` and `sendMessage` are applied **once**, after the switch — never per-case:
 
-```typescript
+```ts
 if (message)
   await sendMessage({
     message: marked.parse(message, { async: false }),
@@ -54,7 +54,7 @@ Never call `sanitizeHtml`/`sanitizeTextHtml` here. Sanitization is declared at t
 
 `/me [message]` does NOT introduce `MessageType.Me`. Wrap the argument in `*...*` and post as a regular `MessageType.Message`:
 
-```typescript
+```ts
 case SlashCommandType.Me:
   message = `*${command.parameterValues.message}*`;
   break;
@@ -114,7 +114,7 @@ The only switch over `SlashCommandType` is in `app/composables/message/slashComm
 
 Its argument is a discriminated union pairing each type with its own parameter shape, so `command.parameterValues` is narrowed per case:
 
-```typescript
+```ts
 { [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P } }[SlashCommandType]
 ```
 
