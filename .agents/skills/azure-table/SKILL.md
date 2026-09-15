@@ -58,7 +58,7 @@ Build OData filter strings with `serializeClauses` from `@esposter/azure`.
 - **Entity-specific fields stay on their own `PropertyNames` constant** — `FooEntityPropertyNames.bar`, with `ItemMetadataPropertyNames.deletedAt` for metadata.
 - **Null clause helpers infer automatically** — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(...)`. `getCursorWhereAzureTable` returns `Clause<TItem>[]`, typed via a cast in its body since deserialized cursor keys are plain strings at runtime.
 
-```typescript
+```ts
 const clauses: Clause<StandardMessageEntity>[] = [
   { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
   { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: userId },
@@ -80,7 +80,7 @@ Azure Table has no count API — `readEntitiesCount` (from `@esposter/db`) walks
 
 `deserializeEntity` calls `new cls()` with **no arguments**, so every Azure entity constructor must declare `init` optional (`init?:`) and access via optional chaining:
 
-```typescript
+```ts
 export class MyEntity extends AzureEntity {
   declare myField: string;
 
@@ -96,7 +96,7 @@ export class MyEntity extends AzureEntity {
 
 Set `deletedAt` and `updatedAt` together via `serializeEntity`. `getTableNullClause(ItemMetadataPropertyNames.deletedAt)` filters to non-deleted rows only.
 
-```typescript
+```ts
 const now = new Date();
 serializeEntity({ deletedAt: now, partitionKey, rowKey, updatedAt: now });
 ```
