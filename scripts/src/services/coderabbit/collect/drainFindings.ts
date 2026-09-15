@@ -61,8 +61,8 @@ export const drainFindings = async ({
     return { isLimited: false, reviewFixesSha };
   }
 
-  const isOwing = reviewFixesSha !== undefined && readCherryShas(developSha, reviewFixesSha).length > 0;
-  const baseSha = isOwing && reviewFixesSha ? reviewFixesSha : developSha;
+  const baseSha =
+    reviewFixesSha !== undefined && readCherryShas(developSha, reviewFixesSha).length > 0 ? reviewFixesSha : developSha;
   runGit(["switch", "--force-create", REVIEW_FIXES_BRANCH, baseSha]);
   // The tree the drain's own checks run against is this base, not the one the event checked out (`INSTALL_COMMAND`)
   if (spawnPnpm(INSTALL_COMMAND, { cwd: REPOSITORY_ROOT, stdio: "inherit" }).status !== 0)
@@ -71,7 +71,8 @@ export const drainFindings = async ({
   const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
   const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
   const verdictPath = join(verdictDirectory, VERDICT_FILE);
-  const { isDrained, limitResetAtMs } = await runDrain(getDrainPrompt({ ...drainInput, rejectionsPath, verdictPath }));
+  const promptInput = { ...drainInput, rejectionsPath, verdictPath };
+  const { isDrained, limitResetAtMs } = await runDrain(getDrainPrompt(promptInput));
   if (limitResetAtMs !== undefined) {
     const resetAt = new Date(limitResetAtMs).toISOString();
     runGh([
@@ -103,13 +104,7 @@ export const drainFindings = async ({
     );
   }
 
-  postDrainVerdicts({
-    openThreads: drainInput.openThreads,
-    pullRequest: drainInput.pullRequest,
-    rejectionsPath,
-    reviewId: drainInput.reviewId,
-    verdictPath,
-  });
+  postDrainVerdicts(promptInput);
 
   const headSha = runGit(["rev-parse", "HEAD"]).trim();
   if (headSha === baseSha) {
@@ -117,10 +112,13 @@ export const drainFindings = async ({
     return { isLimited: false, reviewFixesSha };
   }
 
-  const lease = reviewFixesSha
-    ? `--force-with-lease=refs/heads/${REVIEW_FIXES_BRANCH}:${reviewFixesSha}`
-    : `--force-with-lease=refs/heads/${REVIEW_FIXES_BRANCH}:`;
-  runGit(["push", lease, "origin", `${headSha}:refs/heads/${REVIEW_FIXES_BRANCH}`]);
+  // An empty expected sha leases on the branch not existing, which is the first drain's case
+  runGit([
+    "push",
+    `--force-with-lease=refs/heads/${REVIEW_FIXES_BRANCH}:${reviewFixesSha ?? ""}`,
+    "origin",
+    `${headSha}:refs/heads/${REVIEW_FIXES_BRANCH}`,
+  ]);
   console.info(`pushed ${REVIEW_FIXES_BRANCH} at ${headSha}`);
   return { isLimited: false, reviewFixesSha: headSha };
 };

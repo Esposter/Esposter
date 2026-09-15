@@ -1,6 +1,6 @@
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
+import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult } from "@esposter/shared";
 
 // A failed cherry-pick's exit code says nothing about why, and the two reasons need opposite answers: an unmerged
@@ -9,8 +9,7 @@ export const pickCommit = (sha: string, cwd: string): PickOutcome =>
   getResult(() => runGit(["cherry-pick", sha], cwd)).match(
     () => PickOutcome.Applied,
     () => {
-      const unmerged = getNonEmptyLines(runGit(["diff", "--name-only", "--diff-filter=U"], cwd));
-      if (unmerged.length > 0) {
+      if (readUnmergedPaths(cwd).length > 0) {
         runGit(["cherry-pick", "--abort"], cwd);
         return PickOutcome.Conflict;
       }

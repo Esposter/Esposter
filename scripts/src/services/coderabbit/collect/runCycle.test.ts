@@ -18,8 +18,7 @@ import {
   PASS_BUCKET,
   PENDING_BUCKET,
   QUEUE_BRANCH,
-  RECENT_REVIEW_END_MARKER,
-  RECENT_REVIEW_START_MARKER,
+  RECENT_REVIEW_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
@@ -48,7 +47,7 @@ vi.mock(import("#src/services/coderabbit/collect/runDrainStep"), () => ({
 // The bot's walkthrough after a review that found nothing: no review body, the range in the recent-review block
 // And the least merge risk on the head it read
 const getCleanWalkthrough = (sha: string): GitHubEntry => ({
-  body: `${RECENT_REVIEW_START_MARKER}between ${sha} and ${sha}${RECENT_REVIEW_END_MARKER}\n**Merge Risk:** _${TEST_FILENAME} ${MERGEABLE_RISK_LEVEL}_\n<!-- final_review_risk_coverage:{"sourceCommitId":"${sha}","coveredCommitId":"${sha}","kind":"reviewed"} -->`,
+  body: `<!-- ${RECENT_REVIEW_MARKER}_start -->between ${sha} and ${sha}<!-- ${RECENT_REVIEW_MARKER}_end -->\n**Merge Risk:** _${TEST_FILENAME} ${MERGEABLE_RISK_LEVEL}_\n<!-- final_review_risk_coverage:{"sourceCommitId":"${sha}","coveredCommitId":"${sha}","kind":"reviewed"} -->`,
   id: 0,
   updated_at: "",
   user: { login: CODERABBIT_REST_LOGIN },

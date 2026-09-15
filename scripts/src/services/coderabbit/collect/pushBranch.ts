@@ -1,5 +1,6 @@
 import type { PushBranchInput } from "#src/models/coderabbit/collect/PushBranchInput";
 
+import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -20,12 +21,7 @@ export const pushBranch = ({ branch, cwd, expectedSha, isDryRun, sha }: PushBran
     return true;
   }
 
-  // `--is-ancestor` is reflexive, so a target equal to the expected sha passes as the no-op it is
-  const isFastForward = getResult(() => runGit(["merge-base", "--is-ancestor", expectedSha, sha], cwd)).match(
-    () => true,
-    () => false,
-  );
-  if (!isFastForward)
+  if (!checkIsAncestor(expectedSha, sha, cwd))
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",

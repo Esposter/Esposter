@@ -18,7 +18,7 @@ const findRepositoryRoot = (directory: string): string => {
 
 export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
 
-export const REGISTRY_FETCH_TIMEOUT_MS = 10000;
+export const REGISTRY_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
 
 // Pnpm's lockfile, at the repository root. Named here because three unrelated scripts address it — the collector
 // Resolves its merge conflict, the outdated report parses it, its benchmark reads it — and a literal repeated per

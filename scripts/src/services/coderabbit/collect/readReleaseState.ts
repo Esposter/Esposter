@@ -3,8 +3,9 @@ import type { ReleaseStateInput } from "#src/models/coderabbit/collect/ReleaseSt
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 
+import { RECENT_REVIEW_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getLastReviewedSha } from "#src/services/coderabbit/collect/getLastReviewedSha";
-import { getRecentReviewBlock } from "#src/services/coderabbit/collect/getRecentReviewBlock";
+import { getMarkedBlock } from "#src/services/coderabbit/feedback/getMarkedBlock";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
@@ -21,7 +22,7 @@ export const readReleaseState = ({ cwd, developSha, mainSha, pullRequest }: Rele
     ...reviews.map(({ body }) => body),
     ...issueComments
       .filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)
-      .flatMap(({ body }) => getRecentReviewBlock(body) ?? []),
+      .flatMap(({ body }) => getMarkedBlock(body, RECENT_REVIEW_MARKER) ?? []),
   ]);
   return {
     frontier: lastReviewedSha ?? runGit(["merge-base", mainSha, developSha], cwd).trim(),

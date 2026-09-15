@@ -2,11 +2,10 @@ import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import type { ReturnStrokeInput } from "#src/models/coderabbit/collect/ReturnStrokeInput";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
+import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getResult } from "@esposter/shared";
 
 // `main` is ahead and `develop` has nothing of its own, so it follows by fast-forward. What moved `main` is not
 // Asked — a release that merged, an express cut and a bump pushed straight at it all arrive in this shape, and all
@@ -20,13 +19,8 @@ export const runReturnStroke = ({
   isDryRun,
   mainSha,
 }: ReturnStrokeInput): CycleOutcome | undefined => {
-  const isDevelopBehindMain =
-    developSha !== mainSha &&
-    getResult(() => runGit(["merge-base", "--is-ancestor", developSha, mainSha], cwd)).match(
-      () => true,
-      () => false,
-    );
-  if (!isDevelopBehindMain) return undefined;
+  // Equal first: `--is-ancestor` is reflexive, and a branch is nothing to carry to itself
+  if (developSha === mainSha || !checkIsAncestor(developSha, mainSha, cwd)) return undefined;
 
   console.info(`${DEVELOP_BRANCH} is an ancestor of ${MAIN_BRANCH} — fast-forwarding it`);
   if (!pushBranch({ branch: DEVELOP_BRANCH, cwd, expectedSha: developSha, isDryRun, sha: mainSha }))
