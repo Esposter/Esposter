@@ -6,7 +6,7 @@ Reach for `watch` only after exhausting cases 1–4. Cases 5 and 6 are the legit
 
 ## 1. Read-only derived value → `computed`
 
-```typescript
+```ts
 const displayName = computed(() => user.value?.name ?? "");
 ```
 
@@ -16,13 +16,13 @@ A local value entirely derived from — and written back to — a store value is
 
 Local form state that starts from a prop/store value but is independently editable initializes the `ref` directly. **Never use `watchImmediate` just to set an initial value** — always a code smell.
 
-```typescript
+```ts
 const selectedBarId = ref(foo.value?.barId ?? "");
 ```
 
 If the source can change **under** the form — another client editing the same row, a subscription delivering it — the local copy must **resync**. Use VueUse's `useCloned` — never a hand-written `ref` + `watch` mirror:
 
-```typescript
+```ts
 // useCloned owns the editable copy and resyncs automatically
 const { cloned: selectedBarId } = useCloned(() => foo.value?.barId ?? "");
 ```
@@ -33,7 +33,7 @@ const { cloned: selectedBarId } = useCloned(() => foo.value?.barId ?? "");
 - Fold any normalization into the **source getter** (`() => x ?? ""`) rather than a custom clone.
 - Default clone is `JSON.parse(JSON.stringify(...))` — fine for primitives/plain objects. For values JSON can't round-trip (Dates, class instances, reactive proxies), pass a `clone` and `deep: true`, and use the returned `sync` as the reset handler instead of a separate `resetForm`:
 
-  ```typescript
+  ```ts
   const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
     clone: (source) => structuredClone(toRawDeep(source)),
     deep: true,
@@ -53,7 +53,7 @@ Never `watch` an open boolean to reset a draft — `useCloned` re-clones wheneve
 - **The surface stays open and shows the draft as unsaved** — a settings panel whose controls are still there beside the alert, guarded by an `isDirty` computed. The **form** owns the draft: `ref(source)`, no resync, so the refused value stays on screen and the next save retries it instead of the user silently losing what they entered. This is the one place the § 2 rule is deliberately inverted, and the inversion costs something real: an external edit landing mid-draft does not reach the form either, because no watcher distinguishes it from the rollback. That trade is the right way round — a value the user typed and has not yet saved outranks one they have not seen — but it means the form is stale from that moment, so the surface owes them a save that fails loudly on a stale version rather than silently overwriting. Comment it, because the next reader will otherwise "fix" it into the bug below.
 - **The surface closes on submit** — a menu or dialog. The **row** owns the value: `useCloned` so the rollback flows back into the draft, plus an explicit `sync()` when the write fails. A first write that is refused leaves no row to roll back and so never moves the clone's source, which is the one case following the row cannot cover:
 
-  ```typescript
+  ```ts
   const { cloned: editedFoo, sync: syncEditedFoo } = useCloned(() => ({ bar: getBar(id.value) }));
   const { status } = await executeMutation(/* … */);
   if (status === MutationStatus.Failed) syncEditedFoo();
@@ -69,7 +69,7 @@ Before watching an id to re-read on change, ask: **can it actually change under 
 
 Entity pages are keyed by id (``definePageMeta({ key: (route) => `foo-${route.params.id}` })``), and `ResourceBladeOutlet` keys each blade by `` `${foo.id}-${activeBlade}` `` inside `<Suspense>`. So inside a page, an Overview or a blade, the entity id is **fixed for the instance's lifetime** — read it once in `onMounted`, not `watchImmediate(() => foo.id, ...)`:
 
-```typescript
+```ts
 const count = ref<number>();
 onMounted(async () => {
   count.value = await getResultAsync(() => readFooCount({ id: foo.id })).unwrapOr(undefined);
@@ -78,7 +78,7 @@ onMounted(async () => {
 
 A blade sits inside `<Suspense>`, so it can go further and `await` the read at setup — the fallback renders the skeleton, replacing a local `isLoading` ref:
 
-```typescript
+```ts
 const id = route.params.id as string; // keyed by id upstream, so a plain cast is safe
 await refreshFoos(); // Suspense shows StyledSkeleton until this resolves
 ```
@@ -91,7 +91,7 @@ Keep the read in a named function when a mutation must re-run it (a delete dialo
 
 Vue reactivity can't reach Phaser, Three.js, Tiptap, Desmos, or DOM-imperative APIs:
 
-```typescript
+```ts
 watch(isDark, (newIsDark) => {
   calculator.updateSettings({ invertedColors: newIsDark });
 });
@@ -101,7 +101,7 @@ watch(isDark, (newIsDark) => {
 
 Auto-save, API calls on throttled search, typing indicators — the source genuinely changes under a live instance (check case 4 before reaching for this):
 
-```typescript
+```ts
 watch(throttledSearchQuery, async (newQuery) => {
   const results = await search(newQuery);
   initializePaginationData(results);

@@ -17,7 +17,7 @@ Read when placing a lifecycle hook, or when a component reaches for a browser gl
   - **`indexedDB` stays bare everywhere**, source included, and is deliberately absent from the restricted list. `services/cache/indexedDb/` is unit-tested in the node environment against that same polyfill, so prefixing the source breaks its own tests. It is the one browser global this repo treats as environment-agnostic.
 - **Guard browser-only code with `checkIsServer()`** from `@esposter/shared` — never `import.meta.client` or `typeof window !== "undefined"`; `checkIsServer()` is consistent across Nuxt, shared packages and Azure Functions.
 
-  ```typescript
+  ```ts
   if (!checkIsServer()) { ... }
 
   useScript<typeof Desmos>(API_URL, {
