@@ -1,6 +1,6 @@
 ---
 name: oxlint
-description: Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, adding an accessibility attribute to a template, or adding regexes, interface declarations or JSON parsing. Esposter oxlint + ESLint conventions — which lint script runs locally vs in CI (oxlint repo-wide, per-package scripts ESLint only), never hand-fixing lint errors, verifying a rule change check-only, oxlint-disable vs eslint-disable spelled the reporting linter's way, why no type-aware rule of our own exists, and a new ban rolled out from one violation list — plus deep dives on the per-rule notes (require-await, method-signature-style, no-useless-default-assignment, the expect.any and JSON.parse bans, prefer-named-capture-group), the vuejs-accessibility template rules, editing .oxlintrc.json, the eslint-plugin-jsonc setup, and what earns a custom JS plugin.
+description: Apply when fixing lint errors, editing .oxlintrc.json, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, adding an accessibility attribute to a template, or adding regexes, interface declarations or JSON parsing. Esposter oxlint + ESLint conventions — oxlint as one repo-wide pass with per-package scripts ESLint only, never hand-fixing lint errors, a rule change verified check-only, the disable directive spelled the reporting linter's way, no type-aware rule of our own, and a new ban rolled out from one violation list.
 ---
 
 # Oxlint + ESLint Conventions
