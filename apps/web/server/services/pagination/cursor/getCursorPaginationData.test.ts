@@ -3,6 +3,7 @@ import type { CompositeKey } from "@esposter/azure";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
+import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
 import { CompositeKeyPropertyNames } from "@esposter/azure";
 import { describe, expect, test } from "vitest";
 
@@ -19,7 +20,7 @@ describe(getCursorPaginationData, () => {
     expect(getCursorPaginationData(items, 1, sortBy)).toStrictEqual({
       hasMore: false,
       items,
-      nextCursor: "eyJyb3dLZXkiOiIwIn0=",
+      nextCursor: getNextCursor(items, sortBy),
     });
   });
 
@@ -29,7 +30,7 @@ describe(getCursorPaginationData, () => {
     expect(getCursorPaginationData([firstItem, secondItem], 1, sortBy)).toStrictEqual({
       hasMore: true,
       items: [firstItem],
-      nextCursor: "eyJyb3dLZXkiOiIwIn0=",
+      nextCursor: getNextCursor([firstItem], sortBy),
     });
   });
 });

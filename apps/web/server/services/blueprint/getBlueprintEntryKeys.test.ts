@@ -7,21 +7,13 @@ describe(getBlueprintEntryKeys, () => {
   test("kebab-cases names and disambiguates collisions", () => {
     expect.hasAssertions();
 
-    expect(getBlueprintEntryKeys(["Audience Sheet", "Audience Sheet", "Funnel"])).toStrictEqual([
-      "audience-sheet",
-      "audience-sheet-2",
-      "funnel",
-    ]);
+    expect(getBlueprintEntryKeys(["A B", "A B", "C"])).toStrictEqual(["a-b", "a-b-2", "c"]);
   });
 
   test("bumps a suffixed key past another name's natural key", () => {
     expect.hasAssertions();
 
-    expect(getBlueprintEntryKeys(["Audience Sheet", "Audience Sheet", "Audience Sheet 2"])).toStrictEqual([
-      "audience-sheet",
-      "audience-sheet-2",
-      "audience-sheet-2-2",
-    ]);
+    expect(getBlueprintEntryKeys(["A B", "A B", "A B 2"])).toStrictEqual(["a-b", "a-b-2", "a-b-2-2"]);
   });
 
   test("clamps a kebab-cased key that outgrew the manifest's own bound", () => {
@@ -39,10 +31,6 @@ describe(getBlueprintEntryKeys, () => {
   test("bumps a natural key claimed by an earlier suffixed key", () => {
     expect.hasAssertions();
 
-    expect(getBlueprintEntryKeys(["Audience Sheet 2", "Audience Sheet", "Audience Sheet"])).toStrictEqual([
-      "audience-sheet-2",
-      "audience-sheet",
-      "audience-sheet-3",
-    ]);
+    expect(getBlueprintEntryKeys(["A B 2", "A B", "A B"])).toStrictEqual(["a-b-2", "a-b", "a-b-3"]);
   });
 });

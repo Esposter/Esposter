@@ -10,7 +10,7 @@ import {
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { transformPublishedBlobUrls } from "@@/server/services/resource/transformPublishedBlobUrls";
-import { SnapshotChannel } from "@esposter/db-schema";
+import { AzureContainer, SnapshotChannel } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -53,7 +53,7 @@ describe(transformPublishedBlobUrls, () => {
   let containerClient: MockContainerClient;
 
   beforeEach(async () => {
-    containerClient = new MockContainerClient("", "resource-assets");
+    containerClient = new MockContainerClient("", AzureContainer.ResourceAssets);
     containerClientMock.current = containerClient as unknown as ContainerClient;
     await containerClient.getBlockBlobClient(workingBlobName).upload(workingBlobName, workingBlobName.length);
   });

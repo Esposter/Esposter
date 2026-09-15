@@ -10,7 +10,7 @@ import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 
 describe(getCursorWhere, () => {
-  const createdAt = new Date();
+  const createdAt = new Date(0);
   const user: User = {
     biography: "",
     createdAt,

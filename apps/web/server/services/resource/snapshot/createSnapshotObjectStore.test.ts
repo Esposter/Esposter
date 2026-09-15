@@ -16,7 +16,7 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
 describe(createSnapshotObjectStore, () => {
   const resourceId: Resource["id"] = crypto.randomUUID();
   const hash = "hash";
-  const bytes = new Uint8Array([1, 2, 3]);
+  const bytes = new Uint8Array(1);
 
   const getObjectStore = (uploadError: Error) => {
     containerClientMock.current = {
@@ -34,7 +34,7 @@ describe(createSnapshotObjectStore, () => {
   ])("reports a %s conflict as a deduplicated write rather than throwing", async (_, statusCode) => {
     expect.hasAssertions();
 
-    const objectStore = await getObjectStore(new MockRestError("conflict", statusCode));
+    const objectStore = await getObjectStore(new MockRestError("", statusCode));
 
     await expect(objectStore.write(hash, bytes)).resolves.toBe(false);
   });
@@ -42,8 +42,9 @@ describe(createSnapshotObjectStore, () => {
   test("rethrows an upload failure that is not a conditional-write conflict", async () => {
     expect.hasAssertions();
 
-    const objectStore = await getObjectStore(new MockRestError("The server is busy.", 503));
+    const uploadError = new MockRestError("", 503);
+    const objectStore = await getObjectStore(uploadError);
 
-    await expect(objectStore.write(hash, bytes)).rejects.toThrow("The server is busy.");
+    await expect(objectStore.write(hash, bytes)).rejects.toBe(uploadError);
   });
 });

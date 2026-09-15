@@ -11,17 +11,15 @@ describe(sortBlueprintEntriesTopologically, () => {
   test("orders dependencies before dependents", () => {
     expect.hasAssertions();
 
-    const audience = createEntry("audience");
-    const funnel = createEntry("funnel");
     const sortedEntries = sortBlueprintEntriesTopologically(
-      [funnel, audience],
+      [createEntry("b"), createEntry("a")],
       new Map([
-        ["audience", []],
-        ["funnel", ["audience"]],
+        ["a", []],
+        ["b", ["a"]],
       ]),
     );
 
-    expect(sortedEntries.map(({ key }) => key)).toStrictEqual(["audience", "funnel"]);
+    expect(sortedEntries.map(({ key }) => key)).toStrictEqual(["a", "b"]);
   });
 
   test("fails with a cyclic entry reference", () => {
@@ -43,9 +41,9 @@ describe(sortBlueprintEntriesTopologically, () => {
     expect.hasAssertions();
 
     expect(() =>
-      sortBlueprintEntriesTopologically([createEntry("a")], new Map([["a", ["missing"]]])),
+      sortBlueprintEntriesTopologically([createEntry("a")], new Map([["a", ["-1"]]])),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "unknown entry reference missing").message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "unknown entry reference -1").message}]`,
     );
   });
 });

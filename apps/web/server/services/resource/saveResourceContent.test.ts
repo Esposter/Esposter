@@ -157,10 +157,11 @@ describe(saveResourceContent, () => {
     await expect(
       readSnapshotVersionContent(mockContext.db, resource, { channel: SnapshotChannel.Revisions, version: 1 }),
     ).resolves.toStrictEqual(contentSchema.parse(jsonDateParse(JSON.stringify(content))));
-    const [snapshotVersion] = await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions);
+    const snapshotVersions = await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions);
+    const snapshotVersion = takeOne(snapshotVersions);
 
-    expect(snapshotVersion?.reason).toBe(SnapshotReason.Automatic);
-    expect(snapshotVersion?.version).toBe(1);
+    expect(snapshotVersion.reason).toBe(SnapshotReason.Automatic);
+    expect(snapshotVersion.version).toBe(1);
   });
 
   // One revision per interval rather than per save, which is what SNAPSHOT_INTERVAL_MS is for

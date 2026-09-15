@@ -5,6 +5,7 @@ import { useTableClient } from "@@/server/composables/azure/table/useTableClient
 import { deleteCreatedResources } from "@@/server/services/resource/deleteCreatedResources";
 import { createEntity } from "@esposter/db";
 import {
+  AzureContainer,
   AzureTable,
   getReverseTickedTimestamp,
   ResourceActivityEntity,
@@ -50,7 +51,10 @@ describe(deleteCreatedResources, () => {
   };
 
   beforeEach(() => {
-    containerClientMock.current = new MockContainerClient("", "resource-assets") as unknown as ContainerClient;
+    containerClientMock.current = new MockContainerClient(
+      "",
+      AzureContainer.ResourceAssets,
+    ) as unknown as ContainerClient;
   });
 
   afterEach(() => {
@@ -80,7 +84,7 @@ describe(deleteCreatedResources, () => {
     vi.spyOn(console, "error").mockImplementation(noop);
     containerClientMock.current = {
       listBlobsFlat: () => {
-        throw new Error("boom");
+        throw new Error("");
       },
     } as unknown as ContainerClient;
     await createActivity();

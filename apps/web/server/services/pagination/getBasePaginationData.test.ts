@@ -2,8 +2,8 @@ import { getBasePaginationData } from "@@/server/services/pagination/getBasePagi
 import { describe, expect, test } from "vitest";
 
 describe(getBasePaginationData, () => {
-  const firstItem = "first";
-  const secondItem = "second";
+  const firstItem = "";
+  const secondItem = " ";
 
   test("hands back every item when the limit covers them", () => {
     expect.hasAssertions();
