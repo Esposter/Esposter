@@ -58,7 +58,6 @@ export const useInputStore = defineStore("message/input", () => {
       return undefined;
     }
   };
-
   // Restoring is re-sanitizing what a previous session stored, so a draft whose content no longer survives the
   // Sanitizer is dropped here rather than shown. On the server the Map is empty and this does nothing
   for (const [composerKey, storedDraft] of drafts.value)

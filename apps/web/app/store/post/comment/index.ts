@@ -45,7 +45,6 @@ export const useCommentStore = defineStore("post/comment", () => {
   const { executeMutation: executeDeleteCommentMutation } = useMutation();
   const createComment = async (input: CreateCommentInput) => {
     if (EMPTY_TEXT_REGEX.test(input.description)) return;
-
     // Bound when the write is issued, so a reply landing after the reader opened another thread is filed under
     // The comment it was written against rather than under whatever is on screen
     const { createComment: storeCreateComment } = getCommentOperationData(input.parentId);
