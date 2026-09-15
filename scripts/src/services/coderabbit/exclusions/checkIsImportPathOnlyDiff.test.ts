@@ -49,6 +49,19 @@ describe(checkIsImportPathOnlyDiff, () => {
     ).toBe(false);
   });
 
+  // Two modules renamed past each other move both ways at once, so a specifier names one rename's source and the
+  // Other's destination — the import reads as followed while it now resolves to the other module's contents
+  test("rejects a specifier naming both ends of two crossed renames", () => {
+    expect.hasAssertions();
+
+    expect(
+      checkIsImportPathOnlyDiff(getDiff('-import { a } from "@/util/a";', '+import { a } from "#shared/util/a";'), [
+        { path: "apps/web/shared/util/b.ts", renamedFrom: "apps/web/app/util/a.ts", status: "R100" },
+        { path: "apps/web/shared/util/a.ts", renamedFrom: "apps/web/app/util/b.ts", status: "R100" },
+      ]),
+    ).toBe(false);
+  });
+
   test("rejects a repathing in a range carrying no rename", () => {
     expect.hasAssertions();
 

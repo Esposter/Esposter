@@ -5,8 +5,9 @@ import { DiffLineSign } from "#src/models/coderabbit/shared/DiffLineSign";
 // Diff is the same imports pointing at the new path. "Every changed line is an import" is not the test — a new
 // Symbol, a new package or an added side-effect import passes it — so the added imports must be the removed ones
 // With only the quoted specifier differing, which blanking every quoted string turns into a set comparison, and
-// Every specifier must name one end of a rename the same range carries: a swap between two modules that both
-// Exist is a content change wearing an import's shape.
+// Every specifier must name one end of a rename the same range carries, and only one rename's: a swap between two
+// Modules that both exist is a content change wearing an import's shape, and so is a swap between two the range
+// Renamed past each other.
 const MODE_CHANGE_REGEX = /^(?:old|new|deleted file|new file) mode /u;
 const CHANGED_LINE_REGEX = /^[+-]/u;
 const DIFF_HEADER_REGEX = /^(?:\+\+\+|---)/u;
@@ -43,14 +44,35 @@ const checkIsNamedBy = (path: string, tail: string): boolean => {
   return tail !== "" && (stem === tail || stem.endsWith(`/${tail}`));
 };
 
-// Every changed import of one sign names a path on the matching end of some rename; a blank line names nothing
-// And passes, an import line with no readable specifier proves nothing and fails
-const checkFollowsMoves = (changedLines: string[], sign: DiffLineSign, paths: string[]): boolean =>
+// A tail that names one move's source while a different move's destination answers to it too is one name standing
+// For two modules across the same range — two modules renamed past each other, or a chain of renames through one
+// Path — so the import that followed either move reads exactly like the one that changed module
+const checkIsAmbiguous = (moves: { from: string; to: string }[], tail: string): boolean =>
+  moves.some(
+    ({ from }, index) =>
+      checkIsNamedBy(from, tail) &&
+      moves.some(({ to }, otherIndex) => otherIndex !== index && checkIsNamedBy(to, tail)),
+  );
+
+// Every changed import of one sign names a path on the matching end of some rename, and no other rename answers to
+// The same tail; a blank line names nothing and passes, an import line with no readable specifier proves nothing
+// And fails
+const checkFollowsMoves = (
+  changedLines: string[],
+  sign: DiffLineSign,
+  moves: { from: string; to: string }[],
+): boolean =>
   changedLines
     .filter((line) => line.startsWith(sign) && line.slice(1).trim() !== "")
     .every((line) => {
       const specifier = SPECIFIER_REGEX.exec(line)?.groups?.specifier;
-      return specifier !== undefined && paths.some((path) => checkIsNamedBy(path, getSpecifierTail(specifier)));
+      if (specifier === undefined) return false;
+
+      const tail = getSpecifierTail(specifier);
+      return (
+        !checkIsAmbiguous(moves, tail) &&
+        moves.some(({ from, to }) => checkIsNamedBy(sign === DiffLineSign.Added ? to : from, tail))
+      );
     });
 
 export const checkIsImportPathOnlyDiff = (diff: string, rows: NameStatusRow[]): boolean => {
@@ -71,10 +93,13 @@ export const checkIsImportPathOnlyDiff = (diff: string, rows: NameStatusRow[]): 
   if (getBlankedLines(changedLines, DiffLineSign.Added) !== getBlankedLines(changedLines, DiffLineSign.Removed))
     return false;
 
-  const renamedFromPaths = rows.flatMap(({ renamedFrom }) => (renamedFrom === undefined ? [] : [renamedFrom]));
-  const renamedToPaths = rows.filter(({ renamedFrom }) => renamedFrom !== undefined).map(({ path }) => path);
+  // Source and destination stay paired, so a specifier is read against the ends of one rename rather than against
+  // Two sets that no longer say which destination each source moved to
+  const moves = rows.flatMap(({ path, renamedFrom }) =>
+    renamedFrom === undefined ? [] : [{ from: renamedFrom, to: path }],
+  );
   return (
-    checkFollowsMoves(changedLines, DiffLineSign.Removed, renamedFromPaths) &&
-    checkFollowsMoves(changedLines, DiffLineSign.Added, renamedToPaths)
+    checkFollowsMoves(changedLines, DiffLineSign.Removed, moves) &&
+    checkFollowsMoves(changedLines, DiffLineSign.Added, moves)
   );
 };
