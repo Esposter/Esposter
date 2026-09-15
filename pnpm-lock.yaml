@@ -129,8 +129,8 @@ catalogs:
       specifier: ^5.12.0
       version: 5.12.0
     '@azure/functions':
-      specifier: ^4.16.2
-      version: 4.16.2
+      specifier: ^4.16.4
+      version: 4.16.4
     '@azure/identity':
       specifier: ^4.13.2
       version: 4.13.2
@@ -823,7 +823,7 @@ importers:
         version: 5.12.0(supports-color@10.2.2)
       '@azure/functions':
         specifier: 'catalog:'
-        version: 4.16.2
+        version: 4.16.4
       '@azure/identity':
         specifier: 'catalog:'
         version: 4.13.2(supports-color@10.2.2)
@@ -2146,8 +2146,8 @@ packages:
     resolution: {integrity: sha512-Cux0hLu5ZXlC/Kb+yvJVhRLIdkfFwui2HeT5oGZL00r/GCUUkhGTzRfZUjRN4Bq729mPv3okPucz2z7SMQLStA==}
     engines: {node: '>=18.0'}
 
-  '@azure/functions@4.16.2':
-    resolution: {integrity: sha512-6uq0Z7e3njy8fHpgCVIJWDtbkZz+BYXc6L8fQjisf8+hPdnauM5yZ70j9YC8xas6zvL1dFA+EfLuZcNYyuWLTg==}
+  '@azure/functions@4.16.4':
+    resolution: {integrity: sha512-cgkCAnTpaW0jjqzqXeHPIV1Ehppvjn5VVPK1/nmiKZlKImKy2nRLv40CUdh0QCRtbiu58U4EdlL9fwBnKF8hjA==}
     engines: {node: '>=20.0'}
 
   '@azure/identity@4.13.2':
@@ -15262,7 +15262,7 @@ snapshots:
 
   '@azure/functions-extensions-base@0.3.0': {}
 
-  '@azure/functions@4.16.2':
+  '@azure/functions@4.16.4':
     dependencies:
       '@azure/functions-extensions-base': 0.3.0
       cookie: 0.7.2
@@ -25045,7 +25045,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 26.5.1
+      '@types/node': 26.6.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
