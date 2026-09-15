@@ -1,6 +1,6 @@
 ---
 name: naming
-description: Apply when naming any identifier. Esposter naming conventions — booleans (is*/has*/show*, isPending vs isLoading), function prefixes (get*/read*/create*/store*/on*), variables (no abbreviations, <key><value>Map, userId, edited*), interfaces and classes (A prefix, no With prefix), constants (SCREAMING_SNAKE_CASE vs a PascalCase table), regex (_REGEX), and the boundary every rule stops at — a name a dependency owns. Plus deep dives on the families that collide (check vs is vs getIs, isPending vs isLoading, get vs read vs compute, set vs apply, on vs handle), composite keys and ID_SEPARATOR, durations and dates, constant casing and the literal that should carry no name, where the abbreviation ban stops, and names a dependency owns. Framework-specific naming lives in the vue/pinia/trpc skills.
+description: Apply when naming any identifier. Esposter naming conventions — booleans (is*/has*, check* for a predicate, isPending vs isLoading), function prefixes (get*/read*/compute*/set*/store*/on*), variables (no abbreviations, <key><value>Map, userId, edited*), interfaces and classes (A prefix for abstract classes, no With prefix), constants (SCREAMING_SNAKE_CASE for a scalar, _REGEX), and the boundary every rule stops at — a name a dependency owns. Framework-specific naming lives in the vue/pinia/trpc skills.
 ---
 
 # Naming Conventions
