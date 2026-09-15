@@ -34,11 +34,11 @@ const skillPages = await Promise.all(
 // Prefix — which keeps the hundreds of identifier tokens in the same tables (`useQuery`, `--no-cache`,
 // `/all`) out of the check. `scripts/` lives under both roots, so a path is resolved against either.
 const repositoryEntryNames = new Set(await readdir(repositoryDirectory));
-const getIsRepositoryPath = (token: string) =>
+const checkIsRepositoryPath = (token: string) =>
   REPOSITORY_PATH_REGEX.test(token) &&
   (repositoryEntryNames.has(takeOne(token.split("/"), 0)) ||
     APP_RELATIVE_PREFIXES.some((prefix) => token.startsWith(prefix)));
-const getIsPage = (slugPath: string) =>
+const checkIsPage = (slugPath: string) =>
   existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));
 
 describe(mermaid.parse, () => {
@@ -121,7 +121,7 @@ describe("docsLinks", () => {
       .filter(
         ({ target }) =>
           !ALLOWED_LINK_TARGETS.some((allowed) => target === allowed || target.startsWith(`${allowed}/`)) &&
-          !getIsPage(target.replace(DOCS_ROUTE_PREFIX_REGEX, "").replace(/\/$/u, "")),
+          !checkIsPage(target.replace(DOCS_ROUTE_PREFIX_REGEX, "").replace(/\/$/u, "")),
       )
       .map(({ page, target }) => `${page} → ${target}`);
 
@@ -191,7 +191,7 @@ describe("keyFiles", () => {
       })
       .filter(
         ({ token }) =>
-          getIsRepositoryPath(token) &&
+          checkIsRepositoryPath(token) &&
           !existsSync(join(repositoryDirectory, token)) &&
           !existsSync(join(appDirectory, token)),
       )

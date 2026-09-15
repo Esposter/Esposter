@@ -13,7 +13,7 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
-import { getIsReady } from "#src/services/coderabbit/collect/getIsReady";
+import { checkIsReady } from "#src/services/coderabbit/collect/checkIsReady";
 import { getMergeRisk } from "#src/services/coderabbit/collect/getMergeRisk";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeReleasePullRequest";
@@ -141,7 +141,7 @@ export const runCycle = async ({
   );
   // Fixes parked with no pull request open answered the one that merged: they ride the window but force nothing
   const parkedFixCount = pullRequest === undefined ? 0 : port.fixCount;
-  const isReady = getIsReady({
+  const isReady = checkIsReady({
     fileCount: port.fileCount,
     fixCount: parkedFixCount,
     isForced,

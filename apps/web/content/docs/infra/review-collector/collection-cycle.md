@@ -110,7 +110,7 @@ flowchart TD
 
 ### Readiness
 
-Whether the window goes out is `getIsReady`, a two-by-two over what the port holds:
+Whether the window goes out is `checkIsReady`, a two-by-two over what the port holds:
 
 |                  | queue commits fit                                       | none fit                                                              |
 | :--------------- | :------------------------------------------------------ | :-------------------------------------------------------------------- |

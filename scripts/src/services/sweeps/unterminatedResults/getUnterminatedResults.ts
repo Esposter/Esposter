@@ -33,7 +33,7 @@ const AFTER_LENGTH = 34;
 // `.matching(noop)` both read as `.match` followed by more identifier characters — no boundary written against
 // The code can tell them apart. The source is where they separate, exactly as the call's own name is re-read
 // There: `end` is one past the last token the name matched, so that token's index is where the source resumes.
-const getIsCalled = (text: string, tokens: readonly CodeToken[], end: number): boolean => {
+const checkIsCalled = (text: string, tokens: readonly CodeToken[], end: number): boolean => {
   const last = tokens[end - 1];
   if (!last) return false;
 
@@ -84,7 +84,7 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
     const afterCode = afterTokens.map(([character]) => character).join("");
     const after = afterCode.replaceAll(/\s+/gu, " ").trim().slice(0, AFTER_LENGTH);
     const terminator = TERMINATOR_REGEX.exec(afterCode);
-    if (terminator && getIsCalled(text, afterTokens, terminator[0].length)) continue;
+    if (terminator && checkIsCalled(text, afterTokens, terminator[0].length)) continue;
 
     // Where no terminator follows the call, whatever the call's value reaches owns it instead — so the code
     // Before the call decides, and only one of its shapes is still this file's to answer. A binding is
@@ -108,7 +108,7 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
       );
       const bindingMatches = [...code.slice(match.index).matchAll(bindingRegex)];
       const isTerminated = bindingMatches.some((bindingMatch) =>
-        getIsCalled(text, tokens, match.index + bindingMatch.index + bindingMatch[0].length),
+        checkIsCalled(text, tokens, match.index + bindingMatch.index + bindingMatch[0].length),
       );
       if (isTerminated) continue;
     } else if (!STATEMENT_START_REGEX.test(before)) continue;
