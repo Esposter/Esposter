@@ -42,7 +42,7 @@ flowchart TD
   EL -->|no| PR{Release PR open}
   PR -->|no| MB[Frontier is the merge base<br/>nothing running] -->|nothing to drain| D
   PR -->|yes| RP[Reply for pushed fixes<br/>trailers on frontier..develop without a reply]
-  RP --> B{Newest review body<br/>ends at the develop head}
+  RP --> B{Newest stated range<br/>ends at the develop head}
   B -->|yes| OK[Slot free]
   B -->|no| ST{Check bucket}
   ST -->|pending| X1[Exit — review running]

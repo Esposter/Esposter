@@ -5,7 +5,7 @@ description: Esposter's review queue — the session's side of the review collec
 
 # Review Queue
 
-The session works on **one permanent branch, `ai/queue`**, and pushes it after every commit. The review collector — `pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow on every queue push and every CodeRabbit event — drains open findings onto `ai/review-fixes`, cuts the largest window under the cap from the queue, fast-forwards `develop` by it, opens the `develop` → `main` pull request once a window is worth its first review, and replies on every thread with the pushed sha. Merging that pull request is the one act left to a person. The mechanism is `apps/web/content/docs/infra/review-collector/`; this skill is what the session does.
+The session works on **one permanent branch, `ai/queue`**, and pushes it after every commit. The review collector — `pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow on every queue push and every CodeRabbit event — drains open findings onto `ai/review-fixes`, cuts the largest window under the cap from the queue, fast-forwards `develop` by it, opens the `develop` → `main` pull request once a window is worth its first review, replies on every thread with the pushed sha, and merges the pull request once a review at the head leaves nothing open with the least merge risk. The mechanism is `apps/web/content/docs/infra/review-collector/`; this skill is what the session does.
 
 ## Settled — do not re-propose
 

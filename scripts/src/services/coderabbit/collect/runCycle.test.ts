@@ -235,25 +235,15 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
   });
 
-  // The reviewed frontier is read off the review body; a body ending at develop's head is a free slot
+  // A review that found nothing writes no review body, so the frontier is read off the walkthrough's recent-review
+  // Block; a range ending at develop's head is a free slot. A finding answered only by an unported commit keeps
+  // The release from merging, so the window ports instead.
   test("drains, ports the queue behind the fixes and reports the window it pushed", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     const queueSha = publish(QUEUE_BRANCH, commitFiles(fillPaths, ""));
-    answerGh(
-      [{ number: pullRequest, state: ReleasePullRequestState.Open }],
-      [
-        {
-          body: `between ${developSha} and ${developSha}`,
-          commit_id: developSha,
-          id: 0,
-          submitted_at: "",
-          updated_at: "",
-          user: { login: CODERABBIT_REST_LOGIN },
-        },
-      ],
-    );
+    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
     readCheckStatus.mockReturnValue(completedCheck);
     runDrainStep.mockResolvedValue({ isClean: false, reviewFixesSha: undefined } satisfies DrainStepResult);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
@@ -266,6 +256,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       targetSha: queueSha,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
+    expect(getPrCalls("merge")).toHaveLength(0);
   });
 
   // The lease is the compare-and-swap: a develop that moved under the run is refused and reported, never overwritten
@@ -309,25 +300,5 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       [["pr", "merge", pullRequest.toString(), "--merge", "--admin", "--match-head-commit", developSha]],
     ]);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
-  });
-
-  // The same head with a finding answered only on the queue: the release waits for that commit to land
-  test("ports rather than merges while an unported commit still answers a finding", async () => {
-    expect.hasAssertions();
-
-    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    const queueSha = publish(QUEUE_BRANCH, commitFiles(fillPaths, ""));
-    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
-    readCheckStatus.mockReturnValue(completedCheck);
-    runDrainStep.mockResolvedValue({ isClean: false, reviewFixesSha: undefined } satisfies DrainStepResult);
-    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
-
-    expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Pushed,
-      reason: `1 queue commits and 0 fix commits reached ${DEVELOP_BRANCH}`,
-      retriggerDelaySeconds: undefined,
-      targetSha: queueSha,
-    });
-    expect(getPrCalls("merge")).toHaveLength(0);
   });
 });
