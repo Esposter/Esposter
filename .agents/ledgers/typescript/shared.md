@@ -27,7 +27,7 @@
 | `shared/services/message`                                                  | 2026-09-09 |                                                                                                                     |
 | `shared/services/room`, `dungeons`, `compiler`, `pagination`               | 2026-09-09 |                                                                                                                     |
 | `shared/services` — the one-service trees and the top level                | 2026-09-09 | zod, storage, app, trpc, survey, superjson, notification, intl, grapesjs, dataset                                   |
-| `shared/util`                                                              | 2026-09-09 |                                                                                                                     |
+| `shared/util`                                                              | 2026-09-15 |                                                                                                                     |
 | `shared/types`, `shared/assets`, `shared/test`                             | 2026-09-09 |                                                                                                                     |
 | `app/components/Styled` — the top level                                    | 2026-09-09 |                                                                                                                     |
 | `app/components/Styled` — the nested trees                                 | 2026-09-09 | EmojiPicker, EditFormDialog, Navigation, Clipboard, Tooltip                                                         |
