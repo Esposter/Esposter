@@ -33,7 +33,7 @@
 | `readme-standards`        | —          |       |
 | `responsive`              | —          |       |
 | `review-queue`            | —          |       |
-| `routing`                 | —          |       |
+| `routing`                 | 2026-09-15 |       |
 | `run-app`                 | —          |       |
 | `running-checks`          | —          |       |
 | `runtime-efficiency`      | —          |       |
