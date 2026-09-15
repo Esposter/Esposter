@@ -49,7 +49,7 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
     export const useThing = () => {};
     ```
 
-  - **This is a rule about statements inside a block.** Between two **top-level declarations** the blank line is the file's paragraph break and the comment attaches to the declaration below it — the two are doing different jobs, so both stay. Inside a function or a `<script setup>` body there is only one job to do, and the comment does it.
+  - **This is a rule about statements inside a block.** Between two **declarations** the blank line is the paragraph break and the comment attaches to the declaration below it — the two are doing different jobs, so both stay. That is the file's top level, and equally a class body or an object literal, where the members are declarations and closing one up against the next is what deleting the blank line does. Inside a function or a `<script setup>` body there is only one job to do, and the comment does it.
 
   - **Deleting a leading comment takes the separator with it.** A comment above a top-level declaration, or directly under the import block, is standing in for the blank line that would otherwise be there — so a pass that removes the comment has to put the blank line back. The import case fails `import/newline-after-import` at lint; the declaration case fails nothing at all and just reads as two paragraphs run together.
 

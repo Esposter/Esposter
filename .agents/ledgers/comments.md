@@ -34,6 +34,7 @@
 | `packages/db-schema` — `models`                        | 2026-09-15 | entity classes, Azure payloads                                                                      |
 | `packages/db-schema` — `schema`, `relations`           | 2026-09-05 | tables and their v2 relations                                                                       |
 | `packages/db-schema` — `services`, package root        | 2026-09-15 | `schema.test.ts`, `pgTable.ts`                                                                      |
+| `packages/keyframe-store`                              | —          | the stored-object and delta prose                                                                   |
 | `apps/infra`                                           | 2026-09-05 | event subscriptions, GitHub rulesets                                                                |
 | `packages/parse-tmx`                                   | 2026-09-05 | `TMXNode.ts`                                                                                        |
 | `packages/shared`, `packages/shared-node`              | 2026-09-05 | `takeOne`                                                                                           |
@@ -52,7 +53,7 @@ Greps, per unit:
 
 1. `^\s*//.{85,}` over `*.ts`, `*.vue`
 2. `\n[ \t]*\n[ \t]*//` multiline (skip `.test.ts`/`.test-d.ts` and the import→body boundary)
-3. `/\*` over `*.ts`, `*.vue` (ignore `import.meta.glob`)
+3. `/\*` over `*.ts`, `*.vue`. Three shapes are not comments and are most of the hits: `import.meta.glob`, a glob in a string or an attribute value (`accept="image/*"`), and a `<style>` block, where `/* */` is the only syntax CSS has.
 4. `<!--` over `*.vue`
 5. `(used to|previously|no longer|formerly|the old |the former |now that |replaces the |we now )` over `//`/`<!--` lines — the history-narration ban. Most hits are present-tense domain uses (`the old manifest`, `no longer resolvable`); what fails is a clause naming what the code replaced.
 6. `^\s*/\*\*` — a doc block. It stays only on an exported API surface, and its content obeys every comment rule: a line restating the declaration's own name, or claiming what `implements` and typecheck already prove, earns nothing. A paragraph of prose at module scope — the rationale block over a `describe` — is the other place one stays, and converting it to `//` is what a pass must not do (`formatting`).
