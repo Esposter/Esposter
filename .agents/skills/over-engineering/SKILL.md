@@ -40,4 +40,5 @@ A basic construct carries no burden to remove: it was learned once with the lang
 
 - A review finding that names a shape here cites the owning rule, never re-argues it (`code-review`, the written record as tiebreaker).
 - A shape that recurs without an owner is a missing row **and** a missing rule: add the rule to the most specific skill, then the row here — never the rule here alone, because this page is an index and a rule stated only in an index is one nobody loads for the file at hand.
+- The argument that made the shape look necessary — a check nothing reads, a cost nobody measured — is one step earlier and has its own index: `fallacies`.
 - The opposite failure has its own owners: a helper that _should_ exist and was hand-rolled twice is `file-organization`'s duplication rule, and a primitive that exists and was not used is `vue-composable-patterns`' table.

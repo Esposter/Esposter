@@ -24,6 +24,7 @@ If nothing fits, that may signal a missing single-responsibility skill — creat
 - `file-organization` — where files/exports/constants/classes live, alias imports, constant maps, package creation, refactoring, file length.
 - `naming` — identifier naming conventions (booleans, functions, variables). Framework-specific naming lives in the framework's own skill.
 - `typescript` — TypeScript language rules and type patterns.
+- `fallacies` — the arguments that talk a session into work the repo does not need: a gap in a check nothing decides on, a cost or risk asserted without its measurement, and the index of recurring fallacies each pointing at its owner.
 - `over-engineering` — the goal an abstraction is measured against (lower cognitive burden — duplicated business logic, a reused value — never line count), the ban on extracting syntax into a helper, and the one index of over-engineering shapes each pointing at the skill that owns its rule.
 - `invariants` — how a rule that must hold in many places is made to hold: by construction, structurally, by an enforcer, and only last by a remembered guard. Owns the ladder; each convention stays owned by its own skill.
 - `error-handling` — neverthrow `getResult`, tRPC guards, Azure Functions logging/retry.
