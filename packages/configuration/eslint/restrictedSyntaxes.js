@@ -70,7 +70,7 @@ export default [
   },
   {
     // The bare API is the one that has to answer "which environment is this" at every call site, and answers it
-    // Differently each time — which is how a debounced draft save came to throw `window is not defined` in a
+    // Differently each time — which is how a debounced draft save throws `window is not defined` in a
     // Node-environment test. VueUse's ref reads the default off-browser instead. One-shot I/O that genuinely
     // Cannot be a ref belongs in a client-only phase and disables this rule there with that reason. Tests are
     // Unaffected: they address the global bare, which this selector does not match.
