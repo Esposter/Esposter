@@ -45,14 +45,14 @@
 | `packages/configuration`                                         | 2026-09-14 | builds before `@esposter/shared`, so its throws are bare `Error`s by necessity        |
 
 The mechanical half — no `try`/`catch`, no `.isOk`/`.isErr`, no `new Error` outside `toAppError` and
-`requireAuthData`, every `getResult` chain terminated — is clean repo-wide and grepped by the recipe below. What
+`requireAuthData`, no `console.warn` handed to a handler — is lint (`error-handling/no-bare-error` and the
+`no-restricted-syntax` selectors); every `getResult` chain terminated is the scan below. What
 the rows are for is the half no grep sees: what a chain wraps, and who alerts.
 
 ## Find recipe
 
 ```bash
-# new Error, which InvalidOperationError replaces outside unimplemented stubs
-grep -rn 'new Error(' --include=*.ts --include=*.vue apps/web/app apps/web/server apps/web/shared apps/functions/src apps/infra/src packages/*/src scripts/src
+
 ```
 
 A chain that never terminates cannot be grepped for. A line-anchored `getResult(Async)?\(` reports all 234 call
@@ -100,18 +100,20 @@ local writes has nothing to terminate.
 - `requireAuthData`, where the whole point is that the auth api's own sentence reaches the user — the wrapper
   would prefix it with an operation and an entity name and bury it. The reason is written at the call site.
 
-## Next enforceable
+## Not enforceable — settled
 
-- **`new Error` is a `no-restricted-syntax` candidate and nothing bans it today** — the convention is currently
-  carried by review alone. A selector would need the stub exemption above, which is a message match rather than a
-  shape, so it is worth doing only for `apps/web/**` where no stubs live.
-- An unterminated `Result` is the bigger prize: a type-aware rule could flag a `ResultAsync` whose value is
-  discarded, the way `no-floating-promises` does for promises. Nothing checks it today, and the skill says an
-  unterminated chain fails silently — but nothing type-aware runs in either linter here (`oxlint` skill), so this
-  stays with the sweep until that changes.
-- `console.warn` and an empty `catch {}` are syntactic and already candidates.
-- A **fire-and-forget body that does not terminate** is the widest one left, and the census above finds every
-  candidate site. What no selector can decide is whether the body has anything to terminate, since a body whose
-  whole work is an `executeMutation` with an `onError` is already done — so it stays a read.
-- **A Vue template's inline handler** is outside `error-alert/no-raw-error-alert`'s reach, so an alert written
-  there is still the sweep's to find.
+What a program decides here it now decides: `try`/`catch`, `.isOk`/`.isErr` and `console.warn` handed to a
+handler slot are `no-restricted-syntax`; a bare `new Error` is `error-handling/no-bare-error`
+(`scripts/src/oxlint/errorHandling.ts`), off only at the mechanism's own sites — the stubs, the package that builds
+before `@esposter/shared`, `toAppError` and the tests that reject a mock with one; a raw alert in a script block is
+`error-alert/no-raw-error-alert`. What is left stays a reading pass, for these reasons:
+
+- **An unterminated `Result`** needs the value's type, and nothing type-aware runs in either linter (`oxlint`
+  skill); `pnpm ai:sweep:unterminated-results` is the scan, and it reads the code after the bracket rather than a
+  type, so it stays a scan a sitting runs rather than a check CI holds.
+- **A fire-and-forget body that does not terminate** — whether the body has anything to terminate is a question
+  about what it calls, since a body whose whole work is an `executeMutation` with an `onError` is already done.
+- **A raw alert in a template's inline handler** is outside `error-alert/no-raw-error-alert`'s reach, because
+  oxlint hands a JS plugin no Vue template.
+- **A `console.warn` call with its own sentence** is a notice the skill allows; only the handler slot is the swallow,
+  and that half is the selector.
