@@ -88,18 +88,15 @@ With `v-if`, `VueRenderer.element` returns a comment node when the condition is 
 
 ## Wiring extensions into the editor
 
-In `app/components/Message/Model/Message/Input/Index.vue`, each extension is instantiated as a `const` and passed in the `:extensions` array:
+The feature stack a composer shares — keyboard shortcuts, code block, emoji, custom emoji, mention — is built once in `useComposer` (`app/composables/message/composer/useComposer.ts`), as a `computed` because the mention extension restyles itself from the theme, and each composer spreads it into `:extensions`; the room composer (`app/components/Message/Model/Message/Input/Index.vue`) adds the slash-command extension on top, since it is the room's alone:
 
 ```ts
-const keyboardExtension = await useKeyboardShortcutsExtension();
-const codeBlockExtension = useCodeBlockExtension();
-const emojiExtension = useEmojiExtension();
-const mentionExtension = useMentionExtension();
+const { extensions } = await useComposer(target);
 const slashCommandExtension = useSlashCommandExtension();
 ```
 
 ```html
-:extensions="[keyboardExtension, codeBlockExtension, emojiExtension, mentionExtension, slashCommandExtension]"
+:extensions="[...extensions, slashCommandExtension]"
 ```
 
 Every entry is a `use*Extension()` call. `RichTextEditor` owns only the always-on extensions (`StarterKit`, `CharacterCount`, `Placeholder`, `FileHandler`, `useLinkClickExtension`); feature extensions come via the `:extensions` prop.
