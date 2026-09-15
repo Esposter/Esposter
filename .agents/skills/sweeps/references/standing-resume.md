@@ -73,3 +73,7 @@ A pathspec that resolves to nothing is `SKILL.md`'s silent scan wearing a differ
 reads exactly like a swept tree, and nothing else would notice, because a scope is prose to every other tool. So
 `scripts/src/workspace/ledgerScopes.test.ts` holds every pathspec in the index to something that exists, and holds every ledger
 to declaring one.
+
+## A fully dated ledger is kept
+
+A `—` in `Swept` is unswept, and **a fully dated ledger is kept, not deleted**: it is the index that answers "was this area swept, and when" in one read, which git can only answer by archaeology from someone who already knows what to look for. Those dates are also what the next convention change is scoped against. Add a coverage line rather than widening an existing one when a unit turns out too big, and split it into its own file when the lines stop fitting.

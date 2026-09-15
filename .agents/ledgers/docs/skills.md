@@ -41,7 +41,7 @@
 | `slash-commands`          | —          |       |
 | `string-utils`            | —          |       |
 | `styling`                 | —          |       |
-| `sweeps`                  | —          |       |
+| `sweeps`                  | 2026-09-15 |       |
 | `test-values`             | —          |       |
 | `testing`                 | 2026-09-15 |       |
 | `tiptap`                  | —          |       |
