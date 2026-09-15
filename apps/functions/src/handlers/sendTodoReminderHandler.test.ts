@@ -47,7 +47,6 @@ describe(sendTodoReminderHandler, () => {
   });
 
   afterEach(async () => {
-    vi.clearAllMocks();
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
     await mockDb.delete(resources);

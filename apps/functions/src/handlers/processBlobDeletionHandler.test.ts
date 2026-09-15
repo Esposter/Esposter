@@ -81,8 +81,8 @@ describe(processBlobDeletionHandler, () => {
       containerName: AzureContainer.MessageAssets,
       countedBytes,
       declaredBytes: countedBytes,
-      expiresAt: new Date(),
-      reconciledAt: new Date(),
+      expiresAt: new Date(0),
+      reconciledAt: new Date(0),
       userId,
     });
   const readStorageBytesUsed = async () =>
@@ -91,7 +91,7 @@ describe(processBlobDeletionHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    const createdAt = new Date();
+    const createdAt = new Date(0);
     await mockDb.insert(users).values({
       createdAt,
       email: userId,
@@ -105,7 +105,6 @@ describe(processBlobDeletionHandler, () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    vi.clearAllMocks();
     vi.restoreAllMocks();
     await mockDb.delete(storageLedger);
     await mockDb.update(users).set({ storageBytesUsed: 0 });

@@ -5,7 +5,7 @@ import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStora
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, getBlobSubjectPrefix, storageLedger, users } from "@esposter/db-schema";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -55,7 +55,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    const createdAt = new Date();
+    const createdAt = new Date(0);
     await mockDb.insert(users).values({
       createdAt,
       email: userId,
@@ -65,10 +65,6 @@ describe(reconcileStorageLedgerEntryHandler, () => {
       name: "name",
       updatedAt: createdAt,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   afterEach(async () => {
@@ -82,7 +78,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
       containerName,
       countedBytes: 0,
       declaredBytes: 1,
-      expiresAt: new Date(),
+      expiresAt: new Date(0),
       userId,
     });
 
