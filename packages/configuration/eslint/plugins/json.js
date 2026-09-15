@@ -2,10 +2,16 @@ import jsonFilePatterns from "@esposter/configuration/eslint/jsonFilePatterns.js
 import { configs } from "eslint-plugin-jsonc";
 import { defineConfig } from "eslint/config";
 
-// Generated JSON is not ours to lint: a drizzle migration snapshot is written and re-read by `db:gen`, and the
-// Asset blobs are exports from the tools that drew them. The entry buys time rather than green — the snapshots
-// Alone are most of the JSON in the repo — and it keeps a future rule from reporting on a file nobody edits.
-const GENERATED_JSON_FILE_PATTERNS = ["**/server/db/migrations/**/*.json", "**/app/assets/**/*.json"];
+// Generated JSON is not ours to lint: a drizzle migration snapshot is written and re-read by `db:gen`, the asset
+// Blobs are exports from the tools that drew them, and a vitest file snapshot is rewritten by `-u`. The entry buys
+// Time rather than green — the snapshots are most of the JSON in the repo, `parse-tmx`'s 40 MB of them alone an
+// Order of magnitude past every other package's lint — and it keeps a future rule from reporting on a file nobody
+// Edits.
+const GENERATED_JSON_FILE_PATTERNS = [
+  "**/server/db/migrations/**/*.json",
+  "**/app/assets/**/*.json",
+  "**/__snapshots__/**/*.json",
+];
 // JSONC by contract rather than by extension, so a comment is legal in them however the suffix reads.
 // `recommended-with-json` bans comments outright; `recommended-with-jsonc` is that set without the ban.
 const JSONC_FILE_PATTERNS = [".vscode/**/*.json", "**/tsconfig*.json"];
