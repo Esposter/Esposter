@@ -6,8 +6,8 @@ left when this ledger was written.
 | Unit                                             | Swept      | Notes                                                                                         |
 | ------------------------------------------------ | ---------- | --------------------------------------------------------------------------------------------- |
 | `scripts/src/outdatedDependencies`               | 2026-09-15 |                                                                                               |
-| `scripts/src/oxlint`                             | 2026-09-06 |                                                                                               |
-| `scripts/src/updateNode`                         | 2026-09-06 |                                                                                               |
+| `scripts/src/oxlint`                             | 2026-09-15 |                                                                                               |
+| `scripts/src/updateNode`                         | 2026-09-15 |                                                                                               |
 | `scripts/src/services`, `scripts/src` root files | 2026-09-06 |                                                                                               |
 | the repository root — config and Markdown        | 2026-09-06 | the composite actions already carry what the workflows share                                  |
 | `apps/web/configuration`                         | 2026-09-06 | the relative imports are the pre-alias config exception; the splash table is generator output |
