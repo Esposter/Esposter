@@ -1,5 +1,6 @@
 import { DRY_RUN_WORKTREE_PREFIX, RETRIGGER_DELAY_OUTPUT } from "#src/services/coderabbit/collect/constants";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
+import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
 import { checkIsGitHubNumber } from "#src/services/coderabbit/shared/checkIsGitHubNumber";
@@ -39,6 +40,16 @@ if (isDryRun) {
   // A finalizer would miss a throw from the middle of the pass, and a surviving worktree trips the next run
   process.on("exit", () => {
     getResult(() => runGit(["worktree", "remove", "--force", cwd])).match(noop, console.error);
+  });
+} else {
+  // The pass switches this checkout to the tree it builds on — develop, main, the fixes branch — and the runner
+  // Resolves its local actions from the workspace once more at post time, where a tree lacking one fails the job
+  // Red after a pass that succeeded; so the checkout goes back where it was found, by branch when it was on one
+  const startRef = getResult(() => runGit(["symbolic-ref", "--short", "--quiet", "HEAD"]).trim()).unwrapOr(
+    readHeadSha(),
+  );
+  process.on("exit", () => {
+    getResult(() => runGit(["checkout", startRef])).match(noop, console.error);
   });
 }
 
