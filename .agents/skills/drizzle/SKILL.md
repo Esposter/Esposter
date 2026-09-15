@@ -15,7 +15,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 
 **Never pass a name string to a column builder** — call it bare. Casing is handled centrally: the `pgTable` wrapper builds through drizzle's `camelCase` helper (`packages/db-schema/src/pgTable.ts`), and `messageSchema` is `camelCase.schema("message")`, so the DB column name is the camelCase property key automatically.
 
-```typescript
+```ts
 barId: text().notNull(), // not text("barId"), never "bar_id"
 isHidden: boolean().notNull().default(false),
 ```
@@ -29,7 +29,7 @@ isHidden: boolean().notNull().default(false),
 - **Each table writes its own column block, even when two tables are twins.** They declare the same columns, the same CHECK and the same indexes, and they still each spell them out. This is the one place the no-duplication rule does not reach: the file is the schema of record, drizzle-kit diffs exactly what it finds there to emit a migration, and a column builder is a stateful object — shared rather than rebuilt per table it carries the first table's identity into the second. Factor the **predicate** instead where one repeats (`createNameCheckSql`, `createMaxLengthCheckSql`, `createMinimumCheckSql` in `services/shared/`), never the columns.
 - **Tests fighting a new reference are reporting their own fixtures.** A suite that fabricates ids nothing stored goes red across every write path the moment the constraint lands; the constraint is right, and the double is what changes (`.agents/skills/testing/references/module-mocks.md`). Dropping the reference to get a green suite keeps the state it was there to forbid.
 
-```typescript
+```ts
 export const foosInMessage = pgTable("foos", { id: uuid().primaryKey().defaultRandom(), ... }, { schema: messageSchema });
 ```
 
