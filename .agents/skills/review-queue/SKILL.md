@@ -18,16 +18,9 @@ The session works on **one permanent branch, `ai/queue`**, and pushes it after e
 - **Merging `main` or `develop` into `ai/queue`.** A merge is never linearised away — `git rebase origin/develop` is a no-op once `origin/develop` is an ancestor — and it blinds the porter: `git cherry` matches patch ids against the commits upstream has and the queue lacks, which a queue containing upstream leaves empty, so every already-ported commit reads as owed and the first one conflicts. The queue catches up by rebase only.
 - **Merging the release pull request by hand when its review is clean.** The collector merges it the moment a review at the head leaves nothing open with the least merge risk; a person merges only one the bot rates riskier.
 
-## The refs, one writer each
+## The refs
 
-| Ref               | Written by                                                                                        | What it holds                                                                   |
-| :---------------- | :------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------ |
-| `ai/queue`        | the session                                                                                       | its linear history — every unported commit in authoring order, no window cuts   |
-| `develop`         | the collector                                                                                     | the reviewed frontier plus at most one unreviewed window, moved by fast-forward |
-| `ai/review-fixes` | the collector                                                                                     | fixes a drain produced that no window has carried yet                           |
-| `main`            | the collector merging a clean release or cutting the express lane, a person merging a riskier one | the released trunk, plus the commits that never needed a window                 |
-
-The session never checks out `develop` for work, never touches `ai/review-fixes`, and never cuts a window.
+Every ref has one writer, and the session's is `ai/queue` alone — its linear history, every unported commit in authoring order, no window cuts. The session never checks out `develop` for work, never touches `ai/review-fixes`, and never cuts a window; who writes the rest is `apps/web/content/docs/infra/review-collector/two-writers.md`.
 
 ## The loop
 
@@ -44,10 +37,10 @@ A finding the session fixes itself is a commit on `ai/queue` carrying the traile
 
 **When the collector's run fails red naming a held commit** — the queue's first owed commit conflicts with the tree the porter builds on, or overflows the cap alone — the queue is the session's to repair, and every run stays red until it is. A conflict with parked fixes (they changed a file the queue's next commit also changed) is rebased onto `origin/ai/review-fixes`, not onto `develop`: the fixes will lead the next window, and the porter reads what the queue owes against the tree the fixes built, so the copies the queue carries are ancestors rather than picks. A conflict with `develop` itself is the ordinary rebase of step 3. A commit over the cap alone is split.
 
-## `main` is synced by the collector
+## After a release merges
 
-After the release pull request merges — by the collector, once a review at the head is clean with the least merge risk, or by a person otherwise — the push to `main` runs the cycle and `develop` is fast-forwarded to it; a dependency bump that lands on `main` alone is folded into the next window as a merge commit. Nothing is owed by the session after a merge; the queue keeps filling from the new merge base, and the next `git rebase origin/develop` drops the ported commits by patch id. **Never merge `main` or `develop` into `ai/queue`** (Settled): a queue that already carries upstream is one `git cherry` cannot patch-match, so the porter re-picks ported commits and holds on the first conflict. A merge that got in is undone by `git rebase --force-rebase origin/develop`, which replays the queue's own commits and drops the ported ones as empty; conflicts are resolved commit by commit, and `git diff <old head>` afterwards proves the tree unchanged but for what `main` brought.
+Nothing is owed by the session: `develop` follows `main` by the collector's return stroke, the queue keeps filling from the new merge base, and the next `git rebase origin/develop` drops the ported commits by patch id. **Never merge `main` or `develop` into `ai/queue`** (Settled). A merge that got in is undone by `git rebase --force-rebase origin/develop`, which replays the queue's own commits and drops the ported ones as empty; conflicts are resolved commit by commit, and `git diff <old head>` afterwards proves the tree unchanged but for what `main` brought.
 
-## Running the collector by hand
+## Deep Dives
 
-Only with its workflow off: `gh workflow disable ReviewCollector.yaml` stops every trigger, and `pnpm ai:coderabbit:collect` then runs the same cycle from a checkout whose `gh` login is the collector's account — never this checkout, which the script switches branches in and refuses when dirty, but a detached `git worktree add` on `origin/develop` with its own `pnpm i` and `@esposter/shared` build. The run is asked for, like any push to `develop`. `gh workflow enable ReviewCollector.yaml` hands the cycle back, and from then on it is never also run by hand: the compare-and-swap refuses the loser, but the drain the loser ran was a Claude session spent for nothing. `--dry-run` needs none of this: it ports into a throwaway worktree, pushes nothing and runs no Claude session.
+- `references/running-by-hand.md` — when the collector's workflow is off and the cycle is run from a checkout.
