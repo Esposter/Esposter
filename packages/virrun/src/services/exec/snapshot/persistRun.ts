@@ -20,7 +20,7 @@ import { join } from "node:path";
 // The persist sibling of `forkSnapshot`: the deps snapshot (and any `extraLowerDirectories`, e.g. the prepare layer)
 // Stack as read-only lowers, so node_modules is never in the upper and never flushed. `maskedPaths` (an environment's
 // Prepare outputs, e.g. `.nuxt`, plus the source-mirror excludes on win32) are masked from the flush like
-// Node_modules — owned by a layer or by the host alone, so a persist run never writes them back
+// `node_modules` — owned by a layer or by the host alone, so a persist run never writes them back
 // (checkIsUnderSnapshotLower). Requires a captured snapshot; the temp upper/work are always torn down. `onPersist`
 // Fires after the host flush with the still-live upper and the built plan (only on a clean exit — a failed run is
 // Flushed but never cached), so the task cache can record the output diff without re-probing (persistWithCache).
