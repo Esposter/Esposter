@@ -36,7 +36,7 @@ export interface SlashCommand extends Description, ItemEntityType<SlashCommandTy
 
 Messages use markdown. Rich text applies: italic `*text*`, bold `**text**`, code `` `text` ``.
 
-Each `case` only assigns the markdown `message`. `marked.parse()` and `sendMessage` are applied **once**, after the switch — never per-case:
+A `case` that posts assigns the markdown `message` and nothing else — one that opens a dialog or runs a mutation leaves it empty. `marked.parse()` and `sendMessage` are applied **once**, after the switch — never per-case:
 
 ```typescript
 if (message)
@@ -55,11 +55,9 @@ Never call `sanitizeHtml`/`sanitizeTextHtml` here. Sanitization is declared at t
 `/me [message]` does NOT introduce `MessageType.Me`. Wrap the argument in `*...*` and post as a regular `MessageType.Message`:
 
 ```typescript
-case SlashCommandType.Me: {
-  const { message } = command.parameterValues;
-  createMessageInput = { message: `*${message}*`, roomId, type: MessageType.Message };
+case SlashCommandType.Me:
+  message = `*${command.parameterValues.message}*`;
   break;
-}
 ```
 
 ## Parameterized Command UI — Discord-style chips
