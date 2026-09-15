@@ -77,6 +77,9 @@ export const syncQueue = async ({
       return queueSha;
     };
     if (isDryRun) return abort("a dry run resolves nothing");
+    // The attempt cap is counted in markers on the release pull request, so with none open a failed resolution
+    // Leaves no record and every later run would spend another session on the same conflict, uncapped
+    else if (pullRequest === undefined) return abort("no release pull request can hold the attempt count");
     else if (attempts >= DRAIN_ATTEMPT_CAP)
       return abort(`its resolution failed ${attempts} times, so it is a person's`);
 
@@ -86,13 +89,12 @@ export const syncQueue = async ({
     );
     if (limitResetAtMs !== undefined) return abort("the resolver could not start, and no attempt is counted");
     // A clean exit says the session ended; what proves the resolution is a sequence run to its end over a clean
-    // Tree. Anything else fails the run as a drain does, with the attempt counted where a pull request can hold it
+    // Tree. Anything else fails the run as a drain does, with the attempt counted on the pull request
     else if (!isDrained || checkIsPicking(cwd) || readDirtyPaths(cwd).length > 0) {
-      if (pullRequest !== undefined)
-        postComment(
-          pullRequest,
-          `${marker}\nResolution attempt ${attempts + 1} of the conflict ${conflictSha} brings to ${targetBranch} failed — see the collector run.`,
-        );
+      postComment(
+        pullRequest,
+        `${marker}\nResolution attempt ${attempts + 1} of the conflict ${conflictSha} brings to ${targetBranch} failed — see the collector run.`,
+      );
       throw new InvalidOperationError(
         Operation.Update,
         "coderabbit",

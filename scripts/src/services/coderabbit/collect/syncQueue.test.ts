@@ -123,6 +123,19 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runDrain).not.toHaveBeenCalled();
   });
 
+  test("leaves a conflict to a person when no release pull request can count the attempt", async () => {
+    expect.hasAssertions();
+
+    const { developSha, queueSha } = setupConflict();
+
+    await expect(
+      syncQueue({ ...baseInput, cwd: getCwd(), developSha, pullRequest: undefined, queueSha }),
+    ).resolves.toBe(queueSha);
+    expect(runDrain).not.toHaveBeenCalled();
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
+  });
+
   test("hands a conflict to the resolver and pushes the queue it ran to the end", async () => {
     expect.hasAssertions();
 
