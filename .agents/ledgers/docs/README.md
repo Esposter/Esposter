@@ -39,9 +39,10 @@ What each pattern means is the owning skill's to say:
    entity's attributes, a subgraph nothing reads in a direction, and a chain whose order is the sentence above it
 
 Greps 2 and 3 find a rename the prose admits to; `pnpm ai:sweep:stale-names` finds the one it does not — every
-code name a page cites that no tracked source file, file name or Nuxt component name holds. Its noise is a
-dependency's API, a banned name and a naming rule's example, none of which the tree ever held, which is why it is
-a recipe and not a test.
+code name a page cites that no tracked source file, file name, Nuxt component name or installed package's type
+declaration holds. Its noise is a name only an external system declares — an Azure setting, a tool's error code —
+and a naming rule's example, neither of which the tree or the store ever held, which is why it is a recipe and not
+a test.
 
 The skill tree adds a structural check the greps cannot make — a skill over budget, a reference page nothing
 indexes, one whose first paragraph does not open `Read …`, a `## Settled` list that is not its skill's first

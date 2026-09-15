@@ -20,7 +20,10 @@ export const getCitingText = (markdown: string): string => {
     const opener = runs[runIndex];
     if (opener === undefined) continue;
 
-    const closerIndex = runs.findIndex(({ length }, index) => index > runIndex && length === opener.length);
+    // Scanned forward from the opener rather than searched from the start: a span closes a run or two later, so
+    // The walk is one pass over a page of spans rather than a rescan of every run before each one
+    let closerIndex = runIndex + 1;
+    while (closerIndex < runs.length && runs[closerIndex]?.length !== opener.length) closerIndex++;
     const closer = runs[closerIndex];
     if (closer === undefined) continue;
 
