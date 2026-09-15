@@ -6,8 +6,6 @@ import { scanCode } from "#src/services/sweeps/scanCode";
 // Anchored at column zero with no leading-space alternative: that is what scopes the scan to module scope,
 // Since the formatter indents every declaration a `describe` callback holds
 const DECLARATION_REGEX = /^(?:const|let)\s+(?<name>[\w$]+)\s*[:=]/u;
-// A hoisted factory reads its bindings from above the imports, where a `describe` scope is invisible
-const MOCK_REGEX = /^vi\.mock\(/u;
 // Matched on a word boundary, or `functionFactory()` would be exempted by its prefix alone
 const FUNCTION_BODY_REGEX = /^(?:async\s+)?function\b/u;
 // Anywhere in the initializer, not only at its start: `new Set(await readdir())` is a top-level await too
@@ -62,7 +60,8 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
   while (index < lines.length) {
     const line = lines[index] ?? "";
     const name = DECLARATION_REGEX.exec(line)?.groups?.name;
-    const isMock = MOCK_REGEX.test(line);
+    // A hoisted factory reads its bindings from above the imports, where a `describe` scope is invisible
+    const isMock = line.startsWith("vi.mock(");
     if (name === undefined && !isMock) {
       index += 1;
       offset += line.length + 1;
@@ -84,12 +83,10 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
       ([character, depth], position) =>
         character === "=" && depth === 0 && after[position + 1]?.[0] === ">" && after[position + 1]?.[1] === 0,
     );
-    if (isMock) pinningBodies.push(body);
     // `vi.hoisted` is lifted above the imports, so a `describe` scope cannot hold it
-    else if (!isArrow && !statement.includes("vi.hoisted") && !FUNCTION_BODY_REGEX.test(body)) {
-      if (AWAIT_REGEX.test(body)) pinningBodies.push(body);
-      else if (name !== undefined) candidates.push({ body, line: index + 1, name });
-    }
+    const isMovable = !isArrow && !statement.includes("vi.hoisted") && !FUNCTION_BODY_REGEX.test(body);
+    if (isMock || (isMovable && AWAIT_REGEX.test(body))) pinningBodies.push(body);
+    else if (isMovable && name !== undefined) candidates.push({ body, line: index + 1, name });
     // The statement's last line is consumed whole, so a statement sharing it is never read as a declaration
     const lineCount = statement.split("\n").length;
     for (const consumedLine of lines.slice(index, index + lineCount)) offset += consumedLine.length + 1;
@@ -99,9 +96,10 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
   // A pinned constant pins what its own initializer reads, so the closure is taken to a fixed point
   const pinnedNames = new Set<string>();
   while (pinningBodies.length > 0) {
+    // Read through a binding of its own, or the filter closes over a `let` the loop reassigns
+    const bodies = pinningBodies;
     const newlyPinned = candidates.filter(
-      ({ name }) =>
-        !pinnedNames.has(name) && pinningBodies.some((pinningBody) => getReferenceRegex(name).test(pinningBody)),
+      ({ name }) => !pinnedNames.has(name) && bodies.some((pinningBody) => getReferenceRegex(name).test(pinningBody)),
     );
     for (const { name } of newlyPinned) pinnedNames.add(name);
     pinningBodies = newlyPinned.map(({ body }) => body);

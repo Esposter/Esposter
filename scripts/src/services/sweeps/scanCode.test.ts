@@ -52,7 +52,7 @@ describe(scanCode, () => {
   // Regex opener — which then ran to the newline and took the `;` that ends the statement with it
   test.each([
     ["a string", 'a="s"/b;c', "a=/b;c"],
-    ["a template literal", "a=`${s}`/b;c", "a=s/b;c"],
+    ["a template literal", `a=\`\${s}\`/b;c`, "a=s/b;c"],
   ])("reads a division after %s", (_, code, expected) => {
     expect.hasAssertions();
 
