@@ -54,7 +54,8 @@ const blur = () => {
         isMenuOpen = value;
         // 2. Focus gained: save the current search query, because Vuetify is about to clear the field
         if (value) searchQueryOnFocus = searchQuery;
-        // 3. Focus lost with a now-empty query: the user selected an item, so restore empty to stop old text reappearing.
+        // 3. Focus lost with a now-empty query: the user selected an item, so restore empty to stop old text
+        // Reappearing.
         else if (searchQuery === '') searchQueryOnFocus = '';
         // 4. Wait for Vuetify's internal clear to happen, then restore our saved value — but only while it is still
         // Cleared. A character typed inside this tick is the newer value, and restoring the snapshot over it is how a
