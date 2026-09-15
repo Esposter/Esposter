@@ -104,10 +104,10 @@ describe("friendRouter", () => {
     expect.hasAssertions();
 
     const { user: receiverUser, userId } = await createFriendship(mockContext);
-    const onDeleteFriend = await friendCaller.onDeleteFriend();
+    const subscription = await friendCaller.onDeleteFriend();
     await mockSessionOnce(mockContext.db, receiverUser);
     const data = await getFirstEmit(
-      () => onDeleteFriend,
+      () => subscription,
       () => friendCaller.deleteFriend(userId),
     );
 
@@ -119,10 +119,10 @@ describe("friendRouter", () => {
 
     const { user: receiverUser, userId } = await createFriendship(mockContext);
     const receiverPayload = await mockSessionOnce(mockContext.db, receiverUser);
-    const onDeleteFriend = await friendCaller.onDeleteFriend();
+    const subscription = await friendCaller.onDeleteFriend();
     replayMockSession(receiverPayload);
     const data = await getFirstEmit(
-      () => onDeleteFriend,
+      () => subscription,
       () => friendCaller.deleteFriend(userId),
     );
 

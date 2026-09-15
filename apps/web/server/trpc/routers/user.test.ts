@@ -162,11 +162,11 @@ describe("userRouter", () => {
     // The queued session is spent without a request, so the subscription below is opened by the original user
     // While listening for the freshly created one
     await consumeMockSessionOnce();
-    const onUpsertStatus = await caller.onUpsertStatus([user.id]);
+    const subscription = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
     const status = UserStatus.Online;
     const data = await getFirstEmit(
-      () => onUpsertStatus,
+      () => subscription,
       () => caller.upsertStatus({ status }),
     );
 
@@ -179,10 +179,10 @@ describe("userRouter", () => {
 
     const { user } = await mockSessionOnce(mockContext.db);
     await consumeMockSessionOnce();
-    const onUpsertStatus = await caller.onUpsertStatus([user.id]);
+    const subscription = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
     const data = await getFirstEmit(
-      () => onUpsertStatus,
+      () => subscription,
       () => caller.connect(),
     );
 
@@ -195,10 +195,10 @@ describe("userRouter", () => {
 
     const { user } = await mockSessionOnce(mockContext.db);
     await consumeMockSessionOnce();
-    const onUpsertStatus = await caller.onUpsertStatus([user.id]);
+    const subscription = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
     const data = await getFirstEmit(
-      () => onUpsertStatus,
+      () => subscription,
       () => caller.disconnect(),
     );
 
