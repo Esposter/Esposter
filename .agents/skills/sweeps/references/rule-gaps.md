@@ -10,7 +10,7 @@ Three shapes, all found by applying a rule and watching it produce something nob
 
 - **The rule is silent.** It names the cases its author had, and a pass that applies it past them produces
   something nobody would defend — lowering the first letter of a SCREAMING_SNAKE export gives
-  `nON_SOURCE_SUFFIXES`. The carve-out goes in beside the rule, with the reason, so the next pass does not
+  fOO_SUFFIXES. The carve-out goes in beside the rule, with the reason, so the next pass does not
   re-derive it. **Check for an enforcer before writing one**: that name came from `vitest/prefer-lowercase-title`
   rejecting the verbatim one, so the carve-out this pass first reached for — keep the name as it is — was itself
   wrong, and lint said so. What the rule was missing was the whole camelCase, not an exemption.

@@ -8,3 +8,5 @@ export const MIN_OFFLINE_DIALOG_ELAPSED_MS = Temporal.Duration.from({ minutes: 1
 export const OFFLINE_CAP_MS = Temporal.Duration.from({ days: 1 }).total("milliseconds");
 export const OFFLINE_RATE = 0.5;
 export const PRICE_GROWTH = 1.15;
+// How long a click popup animates for, which is also when the store removes it
+export const POPUP_DURATION_MS = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");

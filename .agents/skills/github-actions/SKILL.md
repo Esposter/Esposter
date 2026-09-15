@@ -1,6 +1,6 @@
 ---
 name: github-actions
-description: Esposter GitHub Actions authoring conventions for `.github/workflows` and `.github/actions` — taking the runner's own affordance over a shell reimplementation of it (`working-directory:`, `if:`, `env:`, a composite action), every `${{ }}` expansion of event/matrix/input data reaching the shell as an `env:` variable read as `"$VAR"` rather than interpolated into the command line, a reusable workflow called with named secrets rather than `secrets: inherit` and declaring each `required` so the unpinnable caller's drift fails the call, a skipped job satisfying its required check so an aggregate gate needs `!cancelled()` plus an explicit `needs.*.result` step, and a cleanup step's `always()` being paired with a guard on the value it consumes. Apply when writing or editing any workflow, composite action, job, or step — and read the owner pointers before adding a rule, since caching, job shape, permissions, action pinning and which pnpm script a job runs each belong elsewhere.
+description: Apply when writing or editing any workflow, composite action, job, or step — and read the owner pointers before adding a rule, since caching, job shape, permissions, action pinning and which pnpm script a job runs each belong elsewhere. Esposter GitHub Actions authoring conventions for `.github/workflows` and `.github/actions` — the runner's own affordance over a shell reimplementation, template data reaching the shell only through `env:`, `secrets: inherit` on a reusable workflow, a skipped job satisfying its required check, `always()` paired with a guard, and a comment keeping only what the owning page does not say.
 ---
 
 # GitHub Actions Authoring
@@ -32,11 +32,9 @@ A `${{ }}` expansion is substituted into the script **before** any shell parsing
 
 A `${{ }}` is fine in a field the shell never sees — `if:`, `name:`, `with:`, `working-directory:`, `key:` — and fine inline when the expression can only ever yield a literal the workflow wrote itself, as a boolean input rendering a flag: `pnpm … ${{ inputs.force == true && '--force' || '' }}`.
 
-## A reusable workflow is called with named secrets, never `secrets: inherit`
+## A reusable workflow that spends secrets inherits them
 
-Inheritance hands the callee every secret the caller can see, which is the repository's whole set — here that includes the Azure and Pulumi credentials that deploy the estate, alongside whichever two a given callee actually reads. And a callee is a file, so it lives on a branch: a call pinned to a mutable ref makes that whole set reachable from anything later pushed to the ref. The call therefore lists what the callee reads, and the callee declares each one under `on.workflow_call.secrets` with `required: true`, which turns a secret the caller failed to map into a call GitHub refuses rather than an empty token in the step that spends it.
-
-What a list costs is that the two files have to agree, and the caller is the copy that cannot be pinned — GitHub reads a trigger file from the ref the event names, so a mismatch shows up on some events and not others. Where that is the shape, a test holds the pair, because nothing in either file can import the other (`ReviewCollector.yaml` and `run-review-collector.yaml`, held by `scripts/src/services/coderabbit/collect/constants.test.ts`).
+The call is `secrets: inherit`; the callee reads `secrets.*` in its steps and declares nothing under `on.workflow_call.secrets`. A named list is least privilege only where a secret is otherwise out of a branch's reach, and here none is: `CI.yaml` runs on a push to every branch with the repository's whole secret set, so what a step on any ref can read is decided there, not by the call. What a list does cost is a second contract: a callee pinned to another ref (`run-review-collector.yaml@ai/queue`, called from whichever ref the event names) is two copies a release lag pulls apart, and the moment either side grows a secret the other has not seen, GitHub refuses the call at startup on the events reading the stale copy — a failure no run can heal, since healing needs a run. The clauses that remain in such a call — the file name, the inputs, the ref spelled in each file — are held by a test where nothing in either file can import the constant (`scripts/src/services/coderabbit/collect/queueBranch.test.ts`). Narrowing what a branch can reach, if it is ever wanted, is an environment with a branch policy on the deploy job, not a list on a call.
 
 ## A skipped job reports its required check as satisfied
 
@@ -58,9 +56,13 @@ A cleanup step that must run on failure (`always()`) runs on _every_ failure —
 
 `|| true` on a command that is _already_ idempotent is dead syntax that can only ever hide a real failure — a revoked role, a resource mid-delete — which then resurfaces one step later as something that reads like a different bug. Check whether the tool is idempotent before reaching for it (`az storage container create` is: an existing container is `created: false`, exit 0).
 
+## A comment keeps what the owning page does not say
+
+The argument for a job's shape lives in the page that owns it (below); a workflow comment that carries it a second time drifts the moment the page moves. The file header names the page, and each step's comment keeps only what a reader could not get from there or from the step itself — an ordering constraint (`GITHUB_ENV` reaches only the steps after it), a platform quirk (`ubuntu-26.04` for bwrap >= 0.10.0), a gate's failure mode (a `path` list that drifted still reports a hit).
+
 ## Owned elsewhere — pointers, not copies
 
 - **Which pnpm script a job runs, and how it is invoked** (the root script over the binary, bare `pnpm <script>` over `pnpm run <script>`, never the `-- <args>` separator) — `package-scripts`.
 - **Pinning a third-party action to a dereferenced commit SHA with its `# vX.Y.Z` comment, and bumping one** — `dependency-updates`.
 - **Job shape, the build caches, why a gate reads the disk rather than `cache-hit`, per-job `permissions`, and why `.github/workflows/` is flat** — `apps/web/content/docs/architecture/monorepo-tooling.md`.
-- **The review collector's own workflows** — the pinned `@ai/queue` call, the triggers, the retrigger job — `coderabbit`.
+- **The review collector's own workflows** — the pinned `@ai/queue` call, the triggers, the retrigger job — `apps/web/content/docs/infra/review-collector/runner.md`.

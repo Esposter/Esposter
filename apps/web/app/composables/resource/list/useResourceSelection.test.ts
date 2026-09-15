@@ -3,18 +3,21 @@ import { useResourceSelection } from "@/composables/resource/list/useResourceSel
 import { describe, expect, test } from "vitest";
 
 describe(useResourceSelection, () => {
-  const firstPage = [{ id: "1" }, { id: "2" }];
-  const secondPage = [{ id: "3" }];
+  const id = crypto.randomUUID();
+  const otherId = crypto.randomUUID();
+  const nextPageId = crypto.randomUUID();
+  const firstPage = [{ id }, { id: otherId }];
+  const secondPage = [{ id: nextPageId }];
 
   test("resolves selected rows from the current page", () => {
     expect.hasAssertions();
 
     const items = ref([...firstPage]);
     const { selectedIds, selectedResources, updateSelection } = useResourceSelection(items);
-    updateSelection(["1"]);
+    updateSelection([id]);
 
-    expect(selectedIds.value).toStrictEqual(["1"]);
-    expect(selectedResources.value).toStrictEqual([{ id: "1" }]);
+    expect(selectedIds.value).toStrictEqual([id]);
+    expect(selectedResources.value).toStrictEqual([{ id }]);
   });
 
   test("keeps rows selected on other pages", () => {
@@ -22,11 +25,11 @@ describe(useResourceSelection, () => {
 
     const items = ref([...firstPage]);
     const { selectedResources, updateSelection } = useResourceSelection(items);
-    updateSelection(["1"]);
+    updateSelection([id]);
     items.value = [...secondPage];
-    updateSelection(["1", "3"]);
+    updateSelection([id, nextPageId]);
 
-    expect(selectedResources.value).toStrictEqual([{ id: "1" }, { id: "3" }]);
+    expect(selectedResources.value).toStrictEqual([{ id }, { id: nextPageId }]);
   });
 
   test("drops deselected rows", () => {
@@ -34,10 +37,10 @@ describe(useResourceSelection, () => {
 
     const items = ref([...firstPage]);
     const { selectedResources, updateSelection } = useResourceSelection(items);
-    updateSelection(["1", "2"]);
-    updateSelection(["2"]);
+    updateSelection([id, otherId]);
+    updateSelection([otherId]);
 
-    expect(selectedResources.value).toStrictEqual([{ id: "2" }]);
+    expect(selectedResources.value).toStrictEqual([{ id: otherId }]);
   });
 
   test("clears the selection", () => {
@@ -45,7 +48,7 @@ describe(useResourceSelection, () => {
 
     const items = ref([...firstPage]);
     const { clearSelection, selectedIds, selectedResources, updateSelection } = useResourceSelection(items);
-    updateSelection(["1"]);
+    updateSelection([id]);
     clearSelection();
 
     expect(selectedIds.value).toStrictEqual([]);

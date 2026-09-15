@@ -9,8 +9,9 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useCursorPaginationOperationData, () => {
-  const PAYLOAD_KEY = "read-items";
-
+  const key = "key";
+  const item = "item";
+  const nextCursor = "nextCursor";
   let wrapper: VueWrapper;
   let hydratingNuxtApp: ReturnType<typeof useNuxtApp> | undefined;
   let isLoaded: ReturnType<typeof useCursorPaginationOperationData<string>>["isLoaded"];
@@ -25,7 +26,7 @@ describe(useCursorPaginationOperationData, () => {
   afterEach(() => {
     if (hydratingNuxtApp) {
       hydratingNuxtApp.isHydrating = false;
-      delete hydratingNuxtApp.payload.data[PAYLOAD_KEY];
+      delete hydratingNuxtApp.payload.data[key];
       hydratingNuxtApp = undefined;
     }
     wrapper?.unmount();
@@ -36,14 +37,14 @@ describe(useCursorPaginationOperationData, () => {
     expect.hasAssertions();
 
     // The payload rides to the client as plain data, so the fixture is the shape hydration really reads
-    const serverData: CursorPaginationData<string> = { hasMore: false, items: ["item"], nextCursor: "" };
+    const serverData: CursorPaginationData<string> = { hasMore: false, items: [item], nextCursor: "" };
     wrapper = await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
           hydratingNuxtApp = useNuxtApp();
           hydratingNuxtApp.isHydrating = true;
-          hydratingNuxtApp.payload.data[PAYLOAD_KEY] = serverData;
+          hydratingNuxtApp.payload.data[key] = serverData;
           const cursorPaginationData = ref(new CursorPaginationData<string>());
           const isLoadedSource = ref(false);
           ({ isLoaded, items, readItems } = useCursorPaginationOperationData(
@@ -57,10 +58,10 @@ describe(useCursorPaginationOperationData, () => {
 
     const query = vi.fn<() => Promise<CursorPaginationData<string>>>();
 
-    const { isPending } = await readItems(query, { key: PAYLOAD_KEY });
+    const { isPending } = await readItems(query, { key });
 
     expect(query).not.toHaveBeenCalled();
-    expect(items.value).toStrictEqual(["item"]);
+    expect(items.value).toStrictEqual([item]);
     expect(isLoaded.value).toBe(true);
     expect(isPending.value).toBe(false);
   });
@@ -75,7 +76,7 @@ describe(useCursorPaginationOperationData, () => {
         setup: () => {
           const cursorPaginationData = ref(new CursorPaginationData<string>());
           cursorPaginationData.value.hasMore = true;
-          cursorPaginationData.value.nextCursor = "cursor";
+          cursorPaginationData.value.nextCursor = nextCursor;
           const isLoadedSource = ref(false);
           ({ readMoreItems } = useCursorPaginationOperationData(
             () => cursorPaginationData,
@@ -104,7 +105,7 @@ describe(useCursorPaginationOperationData, () => {
         setup: () => {
           const cursorPaginationData = ref(new CursorPaginationData<string>());
           cursorPaginationData.value.hasMore = true;
-          cursorPaginationData.value.nextCursor = "cursor";
+          cursorPaginationData.value.nextCursor = nextCursor;
           const isLoadedSource = ref(false);
           ({ readMoreItems } = useCursorPaginationOperationData(
             () => cursorPaginationData,

@@ -12,6 +12,7 @@ import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { setupResourceSuite } from "@@/server/trpc/routers/setupResourceSuite.test";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { ResourceType } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -35,10 +36,10 @@ describe("dashboardRouter", () => {
     expect.hasAssertions();
 
     const newSurvey = await createSurvey(surveyCaller, name, {
-      model: JSON.stringify({ pages: [{ elements: [{ name: "satisfaction", type: "rating" }], name: "page1" }] }),
+      model: JSON.stringify({ pages: [{ elements: [{ name, type: "rating" }] }] }),
     });
     await surveyCaller.createSurveyResponse({
-      model: { satisfaction: 5 },
+      model: { [name]: 0 },
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -52,8 +53,8 @@ describe("dashboardRouter", () => {
         new Visual({
           dataset: {
             query: {
-              series: [{ aggregation: DatasetAggregationType.Count, column: "satisfaction" }],
-              xColumn: "satisfaction",
+              series: [{ aggregation: DatasetAggregationType.Count, column: name }],
+              xColumn: name,
             },
             reference: { id: newSurvey.id, type: DatasetProviderType.SurveyResponses },
           },
@@ -64,9 +65,9 @@ describe("dashboardRouter", () => {
     await caller.publishResource({ id: newResource.id });
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
-    expect(publishedContent.content.visuals[0]?.dataset?.snapshot).toStrictEqual({
-      columns: [{ name: "satisfaction", type: ColumnType.Number }],
-      rows: [{ satisfaction: 5 }],
+    expect(takeOne(publishedContent.content.visuals).dataset?.snapshot).toStrictEqual({
+      columns: [{ name, type: ColumnType.Number }],
+      rows: [{ [name]: 0 }],
       totalRows: 1,
     });
   });

@@ -1,7 +1,8 @@
 import { computeStringPatternTransformation } from "@/services/resource/sheet/column/transformation/string/computeStringPatternTransformation";
 import { describe, expect, test } from "vitest";
 
-// The variable substitution matrix lives in decompileVariables.test.ts; here only the positional index mapping of the source values
+// The variable substitution matrix lives in decompileVariables.test.ts; here only the positional index mapping of the
+// Source values
 describe(computeStringPatternTransformation, () => {
   test("maps each value to its positional index", () => {
     expect.hasAssertions();

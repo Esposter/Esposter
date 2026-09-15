@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { AGENT_DIRECTORY, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
+import { AGENT_DIRECTORY, APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY, DOCS_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import mermaid from "mermaid";
 import { existsSync } from "node:fs";
@@ -7,12 +7,6 @@ import { glob, readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// A path token we can resolve, i.e. no glob, placeholder or prose — brackets are Nuxt route segments.
-const REPOSITORY_PATH_REGEX = /^[\w./[\]-]+$/u;
-// Real docs routes that are not content pages — the api section is generated TypeDoc output.
-const ALLOWED_LINK_TARGETS = [`/${DOCS_API_DIRECTORY}`];
-// Path prefixes a Key Files cell may use relative to `apps/web` instead of the repo root.
-const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "content/", "public/", "scripts/", "server/", "shared/"];
 const docsDirectory = import.meta.dirname;
 const appDirectory = join(docsDirectory, "..", "..");
 const repositoryDirectory = join(appDirectory, "..", "..");
@@ -32,15 +26,8 @@ const skillPages = await Promise.all(
     page: `${AGENT_DIRECTORY}/skills/${page}`,
   })),
 );
-// A token is a path when its first segment names something at the repo root or it carries an app-relative
-// Prefix — which keeps the hundreds of identifier tokens in the same tables (`useQuery`, `--no-cache`,
-// `/all`) out of the check. `scripts/` lives under both roots, so a path is resolved against either.
 const repositoryEntryNames = new Set(await readdir(repositoryDirectory));
-const getIsRepositoryPath = (token: string) =>
-  REPOSITORY_PATH_REGEX.test(token) &&
-  (repositoryEntryNames.has(takeOne(token.split("/"), 0)) ||
-    APP_RELATIVE_PREFIXES.some((prefix) => token.startsWith(prefix)));
-const getIsPage = (slugPath: string) =>
+const checkIsPage = (slugPath: string) =>
   existsSync(join(docsDirectory, `${slugPath}.md`)) || existsSync(join(docsDirectory, slugPath, "index.md"));
 
 describe(mermaid.parse, () => {
@@ -112,6 +99,8 @@ describe(mermaid.parse, () => {
 describe("docsLinks", () => {
   const DOCS_LINK_REGEX = new RegExp(String.raw`\]\((?<target>/${DOCS_DIRECTORY}[^)\s#]*)(?:#[^)\s]*)?\)`, "gu");
   const DOCS_ROUTE_PREFIX_REGEX = new RegExp(String.raw`^/${DOCS_DIRECTORY}/?`, "u");
+  // Real docs routes that are not content pages — the api section is generated TypeDoc output.
+  const ALLOWED_LINK_TARGETS = [`/${DOCS_API_DIRECTORY}`];
 
   test("every /docs link resolves to a page", () => {
     expect.hasAssertions();
@@ -123,7 +112,7 @@ describe("docsLinks", () => {
       .filter(
         ({ target }) =>
           !ALLOWED_LINK_TARGETS.some((allowed) => target === allowed || target.startsWith(`${allowed}/`)) &&
-          !getIsPage(target.replace(DOCS_ROUTE_PREFIX_REGEX, "").replace(/\/$/u, "")),
+          !checkIsPage(target.replace(DOCS_ROUTE_PREFIX_REGEX, "").replace(/\/$/u, "")),
       )
       .map(({ page, target }) => `${page} → ${target}`);
 
@@ -169,6 +158,15 @@ describe("keyFiles", () => {
   const BACKTICKED_TOKEN_REGEX = /`(?<token>[^`]+)`/gu;
   const TABLE_ROW_REGEX = /^\s*\|/u;
   const KEY_FILES_HEADER_REGEX = /\bfiles?\b/iu;
+  // A path token we can resolve, i.e. no glob, placeholder or prose — brackets are Nuxt route segments.
+  const REPOSITORY_PATH_REGEX = /^[\w./[\]-]+$/u;
+  // A token is a path when its first segment names something at the repo root or it carries an app-relative
+  // Prefix — which keeps the hundreds of identifier tokens in the same tables (`useQuery`, `--no-cache`,
+  // `/all`) out of the check. `scripts/` lives under both roots, so a path is resolved against either.
+  const checkIsRepositoryPath = (token: string) =>
+    REPOSITORY_PATH_REGEX.test(token) &&
+    (repositoryEntryNames.has(takeOne(token.split("/"), 0)) ||
+      APP_RELATIVE_PREFIXES.some((prefix) => token.startsWith(prefix)));
 
   test("every key files path exists", () => {
     expect.hasAssertions();
@@ -193,7 +191,7 @@ describe("keyFiles", () => {
       })
       .filter(
         ({ token }) =>
-          getIsRepositoryPath(token) &&
+          checkIsRepositoryPath(token) &&
           !existsSync(join(repositoryDirectory, token)) &&
           !existsSync(join(appDirectory, token)),
       )

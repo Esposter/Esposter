@@ -36,7 +36,7 @@ export const useFoo = async () => {
 
 Composables managing tRPC subscriptions for a feature are named `use{Feature}Subscribables` and live in `composables/<domain>/subscribables/`. They are self-registering (no return value) and called from the aggregating `useSubscribables()`.
 
-```typescript
+```ts
 // composables/<domain>/subscribables/useFooSubscribables.ts
 export const useFooSubscribables = () => {
   // calls useOnlineSubscribable, sets up tRPC subscriptions; no return value

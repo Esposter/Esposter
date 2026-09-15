@@ -58,7 +58,7 @@ moves to another file; a video renders with its own controls and does neither. D
 
 Two columns on `rooms` (`packages/db-schema/src/schema/roomsInMessage.ts`):
 
-- `maxFileSizeBytes` — nullable integer; null falls back to the global `MAX_FILE_REQUEST_SIZE`. The server clamps the effective cap to that global maximum regardless of the stored value.
+- `maxFileSizeBytes` — integer; `0` (the default) falls back to the global `MAX_FILE_REQUEST_SIZE`. The server clamps the effective cap to that global maximum regardless of the stored value.
 - `allowedMimeCategories` — a `mime_category` enum array (`Image` / `Video` / `Audio` / `Document`), defaulting to every category. A file's category is derived from its mimetype prefix via `getMimeCategory`.
 
 ## Procedures

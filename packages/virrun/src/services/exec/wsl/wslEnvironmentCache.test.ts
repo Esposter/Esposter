@@ -10,7 +10,7 @@ import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
 // The generic miss/mismatch/corrupt matrix lives in readKeyedCache and the best-effort/atomic/mkdir behavior in
-// WriteKeyedCache; here only the wiring, and the wiring is the pair agreeing on one Windows-side cache file for
+// `writeKeyedCache`; here only the wiring, and the wiring is the pair agreeing on one Windows-side cache file for
 // `filename` — so the reader and the writer share a suite rather than each asserting half a round-trip.
 describe("wslEnvironmentCache", () => {
   const { getCacheHome } = setupTemporaryCacheHome();

@@ -3,18 +3,21 @@ import type { OverlayLayers } from "#src/models/exec/OverlayLayers";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 // Builds the bubblewrap argv (without the `bwrap` binary) wrapping a command in a RAM-overlay sandbox. Flag intent:
-//   - `--ro-bind / /` read-only system view; `--overlay-src <sourceDirectory>` read-only lower (the real source content).
+//   - `--ro-bind / /` read-only system view; `--overlay-src <sourceDirectory>` read-only lower (the real source
+//     Content).
 //   - default `--tmp-overlay <cwd>` makes the upper an invisible tmpfs, so writes stay in RAM, never the host disk.
 //   - `--unshare-all` fresh namespaces (no root, no net); `--die-with-parent` ties sandbox lifetime to ours.
 //   - `isNetworkEnabled` re-adds only the network namespace (`--share-net`, valid only with `--unshare-all`).
-//   - `bindDirectories` bind-mounted writable AFTER the overlay (overmounting it) for host caches whose writes must persist.
+//   - `bindDirectories` bind-mounted writable AFTER the overlay (overmounting it) for host caches whose writes must
+//     Persist.
 //
 // `overlayLayers` parametrizes the working-directory overlay (apps/web/content/docs/virrun/snapshot-and-fork.md):
 // `lowerDirectories` adds extra read-only lowers (a fork stacks the frozen snapshot upper here to shadow the source);
 // `upperDirectory`+`workDirectory` switch to a
 // Persistent `--overlay` so a capture's writes land on disk — both required together, one without the other throws.
 //
-// `sourceDirectory` is the read-only source lower's real location, decoupled from `cwd` (the overlay *mountpoint* + chdir).
+// `sourceDirectory` is the read-only source lower's real location, decoupled from `cwd` (the overlay *mountpoint* +
+// Chdir).
 // They coincide natively, so it defaults to `cwd`. Under the win32 os backend they diverge: the source content lives
 // On the ext4 mirror (fast v9fs-free reads) but the sandbox must present it at — and chdir into — the repo's logical
 // Path, so `pwd` and every absolute path a tool prints match the native baseline instead of leaking the mirror path.

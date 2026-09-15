@@ -16,7 +16,7 @@ const { data: session } = await authClient.useSession(useFetch);
         <StyledClipboardSnackbar />
         <AppNotificationSnackbar v-if="session" />
         <AchievementNotificationSnackBarList v-if="session" />
-        <MessageContentCallPipHost v-if="session" />
+        <MessageContentCallPictureInPictureHost v-if="session" />
         <MessageModelUserSettingsDialog v-if="session" />
       </v-app>
     </NuxtSEO>

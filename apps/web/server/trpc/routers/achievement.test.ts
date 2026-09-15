@@ -4,6 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
+import { EMOJI_LOVER_EMOJI_COUNT, HIDDEN_ACHIEVEMENT_DESCRIPTION } from "#shared/services/achievement/constants";
 import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
@@ -31,10 +32,7 @@ describe("achievementRouter", () => {
     caller = getCaller();
   });
 
-  // `unlockedAt` is stamped from `new Date()`, so a frozen clock makes it exactly assertable. Only `Date` is
-  // Faked: vitest's default set includes `process.hrtime`, which is what `now()` reads for the nanosecond tick
-  // Every Azure Table row key is built from — freeze that and every row a test writes to one partition lands on
-  // The same key, so the second is rejected `409` and swallowed by the best-effort activity writer
+  // `unlockedAt` is stamped from `new Date()`, so a frozen clock makes it exactly assertable
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
@@ -55,17 +53,14 @@ describe("achievementRouter", () => {
 
     const achievementMap = await caller.achievement.readAchievementMap();
 
-    expect(achievementMap[SpecialAchievementName.EmojiLover].description).toBe("???");
+    expect(achievementMap[SpecialAchievementName.EmojiLover].description).toBe(HIDDEN_ACHIEVEMENT_DESCRIPTION);
   });
 
   test("readAchievementMap reveals a hidden achievement description once it is unlocked", async () => {
     expect.hasAssertions();
 
     const room = await caller.room.createRoom({ name });
-    await caller.message.createMessage({
-      message: "😀😀😀😀😀😀😀😀😀😀",
-      roomId: room.id,
-    });
+    await caller.message.createMessage({ message: "😀".repeat(EMOJI_LOVER_EMOJI_COUNT), roomId: room.id });
     const achievementMap = await caller.achievement.readAchievementMap();
 
     expect(achievementMap[SpecialAchievementName.EmojiLover].description).toBe(
@@ -97,8 +92,7 @@ describe("achievementRouter", () => {
     const otherAchievements = await caller.achievement.readUserAchievements(ownerId);
 
     expect(otherAchievements).not.toStrictEqual([]);
-    expect(otherAchievements.every(({ unlockedAt }) => unlockedAt)).toBe(true);
-    expect(otherAchievements.length).toBeLessThan(ownAchievements.length);
+    expect(otherAchievements).toStrictEqual(ownAchievements.filter(({ unlockedAt }) => unlockedAt));
   });
 
   test("readPointsLeaderboard ranks the authed user first once they have earned a point", async () => {
@@ -128,9 +122,9 @@ describe("achievementRouter", () => {
     expect.hasAssertions();
 
     const newResource = await caller.webpage.createResource({ name });
-    const onUpdateAchievement = await caller.achievement.onUpdateAchievement();
+    const subscription = await caller.achievement.onUpdateAchievement();
     const data = await getFirstEmit(
-      () => onUpdateAchievement,
+      () => subscription,
       () =>
         caller.webpage.saveResourceContent({
           content: new WebpageEditor(),

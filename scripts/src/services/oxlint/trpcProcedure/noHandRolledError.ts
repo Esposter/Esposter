@@ -15,7 +15,6 @@ export const noHandRolledError: Rule = defineRule({
         if (node.callee.type !== "Identifier" || node.callee.name !== "TRPCError") return;
         const [argument] = node.arguments;
         if (argument?.type !== "ObjectExpression") return;
-
         // An explicitly written message is hand-rolled wherever it sits — a spread earlier in the object cannot
         // Make `message: new NotFoundError(...).message` mean anything else
         for (const property of argument.properties) {

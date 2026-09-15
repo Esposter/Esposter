@@ -1,6 +1,6 @@
 ---
 name: drizzle
-description: Esposter Drizzle ORM conventions — bare column builders (camelCase applied by the pgTable wrapper), the pgTable wrapper and schema placement, registering every table and pgEnum in the schema object, select patterns (getColumns, aliased selects), relational vs SQL-style API preference and read-limit constants, the v2 relations API at a glance (no v1 relations(), object-based where/orderBy, createSelectSchema from drizzle-orm/zod), self-joins, batch inserts, .returning() with requireMutation, empty-sentinel columns and optional insert values, Ms-suffixed duration columns, primary key choice, plus deep dives on writing v2 relation files, generating and fixing migrations, and naming constraints/indexes and writing CHECK constraints. Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers.
+description: Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers. Esposter Drizzle ORM conventions — bare camelCase column builders through the pgTable wrapper, every table and pgEnum registered in the schema object, the relational API over SQL-style for reads, the v2 relations API (defineRelationsPart, object-based where and orderBy, createSelectSchema from drizzle-orm/zod), .returning() through requireMutation, empty-sentinel columns, Ms-suffixed durations, and db:gen as the only migration generator.
 ---
 
 # Drizzle ORM Conventions
@@ -15,7 +15,7 @@ description: Esposter Drizzle ORM conventions — bare column builders (camelCas
 
 **Never pass a name string to a column builder** — call it bare. Casing is handled centrally: the `pgTable` wrapper builds through drizzle's `camelCase` helper (`packages/db-schema/src/pgTable.ts`), and `messageSchema` is `camelCase.schema("message")`, so the DB column name is the camelCase property key automatically.
 
-```typescript
+```ts
 barId: text().notNull(), // not text("barId"), never "bar_id"
 isHidden: boolean().notNull().default(false),
 ```
@@ -23,13 +23,13 @@ isHidden: boolean().notNull().default(false),
 ## Table Definition
 
 - Use the `pgTable` wrapper from `#src/pgTable` (not raw `drizzle-orm/pg-core`) for all tables, including join tables. Pass composite PKs via `extraConfig`.
-- **Every DB identifier is camelCase** — table names, enum names, constraint and index names alike (`pgTable("roomCategories")`, `pgEnum("resourceType")`). The name string is the literal DDL identifier: the wrapper's `camelCase` casing applies to **columns**, and passes the table name through untouched, so nothing normalises it for you and nothing catches a snake_case one at compile time. `schema.test.ts` asserts each table's name equals its exported const, which is what keeps this from drifting again — it drifted once already, into five snake_case tables and eleven snake_case enums, because the rule lived only in this sentence and the sentence was wrong.
+- **Every DB identifier is camelCase** — table names, enum names, constraint and index names alike (`pgTable("roomCategories")`, `pgEnum("resourceType")`). The name string is the literal DDL identifier: the wrapper's `camelCase` casing applies to **columns**, and passes the table name through untouched, so nothing normalises it for you and nothing catches a snake_case one at compile time — `packages/db-schema/src/schema.test.ts` asserts each table's name equals its exported const instead.
 - Pass `schema: messageSchema` for message-feature tables to group them under the `message` Postgres schema. Tables shared beyond the messaging feature (`friends`, `users`, `posts`, `blocks`) take no `schema` and land in the default schema.
-- **A column holding another table's id gets `.references()`** — the constraint is what makes the impossible state unrepresentable, so it is the default rather than a decision. Pick the `onDelete` the domain means (`cascade` where the row is meaningless without its parent), and never `restrict` on a parent something outside this repo deletes, because that turns their delete into a failure. A referencing column that a pre-existing row cannot fill is settled in the migration, never by leaving the reference off: **delete those rows or backfill them with a real parent id**, whichever the domain can justify. An empty sentinel is not available to a foreign key — no row has that id, so the constraint rejects every one of them and the migration fails. Deleting is the cheap answer wherever the row is rebuilt by its own client on next use, and the migration says which it is.
+- **A column holding another table's id gets `.references()`** — the constraint is what makes the impossible state unrepresentable, so it is the default rather than a decision. Pick the `onDelete` the domain means (`cascade` where the row is meaningless without its parent, `set null` where the row is an audit record that outlives it — `bans.bannedByUserId`), and never `restrict` on a parent something outside this repo deletes, because that turns their delete into a failure. **The one column without a reference is `resources.boundResourceId`**: it is projected from user-authored content on every save, so `set null` on the target's deletion would make the next save of that content rewrite the dangling id and fail on the constraint — the row would be stranded by the very save that keeps it alive. A binding re-resolved on read fails soft instead, and stays a bare id. A referencing column that a pre-existing row cannot fill is settled in the migration — delete those rows or backfill them with a real parent id — never by leaving the reference off (`references/migrations.md`, "A new reference over existing rows").
 - **Each table writes its own column block, even when two tables are twins.** They declare the same columns, the same CHECK and the same indexes, and they still each spell them out. This is the one place the no-duplication rule does not reach: the file is the schema of record, drizzle-kit diffs exactly what it finds there to emit a migration, and a column builder is a stateful object — shared rather than rebuilt per table it carries the first table's identity into the second. Factor the **predicate** instead where one repeats (`createNameCheckSql`, `createMaxLengthCheckSql`, `createMinimumCheckSql` in `services/shared/`), never the columns.
 - **Tests fighting a new reference are reporting their own fixtures.** A suite that fabricates ids nothing stored goes red across every write path the moment the constraint lands; the constraint is right, and the double is what changes (`.agents/skills/testing/references/module-mocks.md`). Dropping the reference to get a green suite keeps the state it was there to forbid.
 
-```typescript
+```ts
 export const foosInMessage = pgTable("foos", { id: uuid().primaryKey().defaultRandom(), ... }, { schema: messageSchema });
 ```
 
@@ -60,7 +60,7 @@ After editing `schema.ts`, run `pnpm build` in `packages/db-schema/` (db-mock an
 
 ## Self-Joins (Same Table Twice)
 
-Always use `alias()` for both references — never the raw table object for either side. Name variables and alias strings `tableName1`, `tableName2`, etc. (numeric suffix, no role-based names):
+Always use `alias()` for both references — never the raw table object for either side. Name variables and alias strings `foo1`, `foo2`, etc. (numeric suffix, no role-based names):
 
 ```ts
 const foos1 = alias(foos, "foos1");
@@ -86,7 +86,7 @@ await tx
 2. **Return the full entity** — never a subset of fields. Let callers destructure what they need.
 3. **Add `DatabaseEntityType` if missing** — to `packages/db-schema/src/models/shared/DatabaseEntityType.ts`, then `pnpm build` in `packages/db-schema/` to rebuild dist.
 4. **`[0]`, not `takeOne`, when a guard consumes the result.** `takeOne` is a type-level assertion that erases `undefined` from the element type, so it is for access whose absence would be a bug. A row that may legitimately be absent keeps `[0]`: `undefined` is precisely what `requireMutation`, `requireEntity` and a `!row` branch exist to read. Putting `takeOne` in front of a guard types the absent case out of existence and leaves the guard unreachable — the same applies to a locked `SELECT … FOR UPDATE` standing in for `findFirst`, whose whole contract is `T | undefined`.
-5. **An empty result is also how a claim is lost, and that is the one exception to rule 1.** Where the write's precondition is a fact about the row — enough time has passed, the flag is still unset, the version is the one that was read — put the predicate in the `WHERE` and read no row back as "another caller got there first", not as an error. A `findFirst` that decides whether to write is a check-then-act every concurrent caller passes, because they all read the same pre-write row (`/docs/architecture/conditional-writes`). Such a write inspects `[0]` directly and branches on `undefined` as contention; `requireMutation` is for every other mutation, where no row back means the row the caller named is not there and the call was wrong to make.
+5. **An empty result is also how a claim is lost, and that is the one exception to rule 1.** Where the write's precondition is a fact about the row, the predicate goes in the `WHERE`, and no returned row means contention — inspect `[0]` directly; a `findFirst` that decides whether to write is a check-then-act every concurrent caller passes (`apps/web/content/docs/architecture/conditional-writes.md`). `requireMutation` is for every other mutation.
 
 ## Empty-Sentinel Columns — the DB Schema Is the Source of Truth
 

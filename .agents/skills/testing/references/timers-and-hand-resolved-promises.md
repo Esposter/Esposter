@@ -25,7 +25,7 @@ Both are needed where the code under test reads instants both ways, which most d
 converts a `Date`, so it follows the `Date` entry rather than the `Temporal` one.
 
 **Name `Temporal` only where the code under test reads `Temporal.Now`**, the same rule as every other entry: this
-is the list of what to fake, not a list of what can be faked. Production code no longer routes an instant through
+is the list of what to fake, not a list of what can be faked. Production code never routes an instant through
 `Date` to stay testable, so a unit that wants the current instant reads `Temporal.Now` and its test names it.
 
 ## A throttled or debounced call wants a bare `vi.useFakeTimers()`

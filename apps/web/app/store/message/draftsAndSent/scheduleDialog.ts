@@ -5,8 +5,8 @@ import { getEarliestScheduledAt } from "@/services/message/getEarliestScheduledA
 export const useDraftsAndSentScheduleDialogStore = defineStore("message/draftsAndSent/scheduleDialog", () => {
   const target = ref<ScheduleDraftsAndSentTarget>();
   const scheduledAt = ref(getEarliestScheduledAt());
-  // A copy of the instant `scheduledAt` opens on rather than a second `getEarliestScheduledAt()` call, so the picker's own
-  // Initial value can never sit a few microseconds below its minimum and open already invalid
+  // A copy of the instant `scheduledAt` opens on rather than a second `getEarliestScheduledAt()` call, so the picker's
+  // Own initial value can never sit a few microseconds below its minimum and open already invalid
   const minScheduledAt = ref(new Date(scheduledAt.value));
   const isOpen = computed({
     get: () => Boolean(target.value),

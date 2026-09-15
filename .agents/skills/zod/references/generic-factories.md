@@ -1,10 +1,13 @@
 # `create*Schema` Factories, Unions and Envelopes
 
+Read when a schema is built by a factory, when several schemas compose into a union, or when one wraps
+another in an envelope.
+
 ## Generic schemas
 
 When an abstract class/interface has a generic type param (e.g. `AFoo<TFooType>`), its schema must be generic too: export a `create*Schema` function taking typed zod schemas as params. Never hardcode type-specific values in a base schema. Use `T` for one param, descriptive `T*` (`TType`, `TConfiguration`) for multiple. Canonical: `createCursorPaginationParamsSchema`, `createSortItemSchema`.
 
-```typescript
+```ts
 // AFooForm.ts — generic factory; concrete literal passed by callers
 export const createAFooFormSchema = <T extends z.ZodType<FooType>>(typeSchema: T) => {
   const aFooSchema = createAFooSchema(typeSchema);
@@ -29,7 +32,7 @@ export const barFooFormSchema = z
 
 The union lives in the file named after the union type (`FooForm.ts`), declared **before** the schema, with `satisfies` — see `~/.claude/rules/zod.md`. Adding a new type = add its schema to the union array.
 
-```typescript
+```ts
 export type FooForm = BarFooForm | BazFooForm;
 
 export const fooFormSchema = z.discriminatedUnion("type", [
@@ -46,7 +49,7 @@ When many payloads share one wrapper and differ only in an inner field, declare 
 
 ## Opt-in shared field schemas for union members
 
-When _some_ (not all) members of a discriminated union share a field, give it its own interface + schema file that members opt into by spreading its `.shape` (`sourceColumnIdSchema`); never force the field onto every member via the base schema. Members that don't need it use `z.object({...})` directly. Naming (`SourceColumnId`, not `WithSourceColumnId`) is the naming skill's rule.
+When _some_ (not all) members of a discriminated union share a field, give it its own interface + schema file that members opt into by spreading its `.shape` (`sourceColumnIdSchema`); never force the field onto every member via the base schema. Members that don't need it use `z.object({...})` directly. Naming (`SourceColumnId`, never `With`-prefixed) is the naming skill's rule.
 
 Make it a plain schema, not a `create*Schema` factory, unless members genuinely need **different validation**. A factory whose only parameter varies presentation — which picker feeds the field, what label it renders under — is a sign the presentation belongs on the other side of a boundary: the shared schema then takes no parameter at all, and the form twin re-metas the field it derives (`file-organization`, "`shared/` may never import `@/`").
 

@@ -1,6 +1,6 @@
 ---
 name: context-efficiency
-description: Esposter context and turn efficiency — delegate wide reads and keep the dumps out of the session, never tail a subagent's transcript, read the range not the file, fire independent tool calls in one block, poll for an external condition instead of sleeping, and diff against a clean tree before chasing errors in files you never touched. Apply when a task spans many files, when waiting on an external process from the shell, or when deciding what to pull into the session. When and how a check runs is the running-checks skill.
+description: Apply when a task spans many files, when waiting on an external process from the shell, or when deciding what to pull into the session. Esposter context and turn efficiency — delegate wide reads and keep the dumps out of the session, never tail a subagent's transcript, read the range not the file, fire independent tool calls in one block, poll for an external condition instead of sleeping, and diff against a clean tree before chasing errors in files you never touched. When and how a check runs is the running-checks skill.
 ---
 
 # Context Efficiency

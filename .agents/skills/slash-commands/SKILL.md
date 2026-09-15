@@ -1,6 +1,6 @@
 ---
 name: slash-commands
-description: Esposter slash command conventions — parameter definitions, execution modes, the chip-based parameter UI and its safeParse/setErrors validation, message formatting, adding new commands, and SlashCommandDefinitionMap being the inventory rather than any page that mirrors it (plus the two shapes the map cannot show — a command that posts nothing, and inline parameters versus a dialog being alternatives). Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components.
+description: Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components. Esposter slash command conventions — parameter definitions, execution modes, the chip-based parameter UI and its safeParse/setErrors validation, message formatting, adding new commands, and SlashCommandDefinitionMap being the inventory rather than any page that mirrors it (plus the two shapes the map cannot show — a command that posts nothing, and inline parameters versus a dialog being alternatives).
 ---
 
 # Slash Command Conventions
@@ -9,7 +9,7 @@ description: Esposter slash command conventions — parameter definitions, execu
 
 `SlashCommandParameter` extends `Description` — always has both `name` and `description` (never optional):
 
-```typescript
+```ts
 export interface SlashCommandParameter extends Description {
   isRequired: boolean;
   name: string;
@@ -21,7 +21,7 @@ export const slashCommandParameterValueSchema = z.string().transform(normalizeSt
 
 `SlashCommand` — `parameters` is always present (never `parameters?`). Default to `[]` for commands with no parameters:
 
-```typescript
+```ts
 export interface SlashCommand extends Description, ItemEntityType<SlashCommandType> {
   icon: string;
   parameters: SlashCommandParameter[];
@@ -36,16 +36,16 @@ export interface SlashCommand extends Description, ItemEntityType<SlashCommandTy
 
 Messages use markdown. Rich text applies: italic `*text*`, bold `**text**`, code `` `text` ``.
 
-Each `case` only builds a plain `StandardCreateMessageInput`. `marked.parse()` and `storeSendMessage` are applied **once**, after the switch — never per-case:
+A `case` that posts assigns the markdown `message` and nothing else — one that opens a dialog or runs a mutation leaves it empty. `marked.parse()` and `sendMessage` are applied **once**, after the switch — never per-case:
 
-```typescript
-if (!createMessageInput) return;
-
-await storeSendMessage({
-  ...createMessageInput,
-  message: createMessageInput.message ? marked.parse(createMessageInput.message, { async: false }) : undefined,
-  replyRowKey: replyRowKey.value,
-});
+```ts
+if (message)
+  await sendMessage({
+    message: marked.parse(message, { async: false }),
+    replyRowKey: replyRowKey.value,
+    roomId,
+    type: MessageType.Message,
+  });
 ```
 
 Never call `sanitizeHtml`/`sanitizeTextHtml` here. Sanitization is declared at the Zod boundary in the base db-schema schemas — see the `string-utils` skill, which bans manual frontend calls.
@@ -54,12 +54,10 @@ Never call `sanitizeHtml`/`sanitizeTextHtml` here. Sanitization is declared at t
 
 `/me [message]` does NOT introduce `MessageType.Me`. Wrap the argument in `*...*` and post as a regular `MessageType.Message`:
 
-```typescript
-case SlashCommandType.Me: {
-  const { message } = command.parameterValues;
-  createMessageInput = { message: `*${message}*`, roomId, type: MessageType.Message };
+```ts
+case SlashCommandType.Me:
+  message = `*${command.parameterValues.message}*`;
   break;
-}
 ```
 
 ## Parameterized Command UI — Discord-style chips
@@ -97,7 +95,7 @@ setErrors(
 
 ### Dismissal — collapse to text, never discard
 
-Escape (and Backspace at `focusedIndex === -1`) calls `collapseToText()`, which round-trips the pending command back into the composer via `buildText()` (`/type name:value …`) rather than dropping the user's input:
+Escape (and Backspace at `focusedIndex === -1`) calls `collapseToText()`, which round-trips the pending command back into the composer via `getText()` (`/type name:value …`) rather than dropping the user's input:
 
 ```ts
 onKeyStroke("Escape", () => collapseToText());
@@ -116,7 +114,7 @@ The only switch over `SlashCommandType` is in `app/composables/message/slashComm
 
 Its argument is a discriminated union pairing each type with its own parameter shape, so `command.parameterValues` is narrowed per case:
 
-```typescript
+```ts
 { [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P } }[SlashCommandType]
 ```
 
@@ -127,7 +125,7 @@ Always use `SlashCommandType.X` enum values, never `"Me"`, `"Shrug"`, etc.
 1. Add value to `SlashCommandType` enum.
 2. Add entry to `SlashCommandDefinitionMap` with `parameters: []` or required/optional params (`as const satisfies Record<SlashCommandType, SlashCommand>` forces this).
 3. Add `case SlashCommandType.X:` to the switch in `useExecuteSlashCommand.ts`:
-   - Posting a message: assign `createMessageInput` and `break` — the shared tail parses + sends it
+   - Posting a message: assign `message` and `break` — the shared tail parses + sends it
    - Opening a dialog: flip the dialog store's state (`isOpen.value = true`, `open(ScheduledMessageJobType.X)`)
    - Neither: do the work inline (e.g. `Topic` runs a room mutation and posts nothing)
 4. No new `MessageType` unless rendering is structurally different (e.g. Poll, Call).
@@ -138,5 +136,5 @@ The enum, the map and the switch must stay in sync — `satisfies Record<SlashCo
 
 Two shapes are worth knowing before reading it, because neither is guessable from the map alone:
 
-- **A command need not post a message at all.** Leave `createMessageInput` unassigned and the shared tail sends nothing — that is how a command which only runs a mutation (setting a room topic) or only opens a dialog is written.
+- **A command need not post a message at all.** Leave `message` empty and the shared tail sends nothing — that is how a command which only runs a mutation (setting a room topic) or only opens a dialog is written.
 - **Inline parameters and a dialog are alternatives.** A command either collects its arguments as inline chips through `parameters`, or opens a dialog and declares none. Never both.

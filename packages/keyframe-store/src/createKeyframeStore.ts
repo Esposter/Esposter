@@ -103,7 +103,6 @@ export const createKeyframeStore = (
         // Free a keyframe this version still needs
         const storedHead = await objectStore.read(hash, DELTA_HEADER_BYTE_COUNT);
         if (storedHead) return adoptStored(hash, plaintextBytes);
-
         // One place lands an object, whichever kind it is. The head read above and the backend's own create-only
         // Condition are two checks with a gap between them, and a twin writing the same content can land in it —
         // Against a different anchor, since each writer chose its own. The loser then reports the twin's object,

@@ -24,7 +24,8 @@ import { afterAll, test } from "vitest";
 // With native?"; this one answers "what is each cache layer worth?". Baseline = cold (declared first, no `native`
 // Task), so the reporter renders each warm layer as a speedup multiplier: cold − (+snapshot) is the install the
 // SNAPSHOT layer saves, (+snapshot) − (+snapshot+prepare) is the `nuxt prepare` the PREPARE layer saves. Gated on
-// `isSandboxInstallSupported` (stronger than checkIsOsBackendSupported — cold performs a real install, so node/pnpm must be
+// `isSandboxInstallSupported` (stronger than checkIsOsBackendSupported — cold performs a real install, so node/pnpm
+// Must be
 // Reachable and $HOME writable). A `.platform.bench.ts`: the os backend runs os/linux natively and os/wsl bridged
 // From win32, so each host writes its own committed artifact.
 //
@@ -68,7 +69,8 @@ const cleanSource = isBenchable ? createCleanRepositoryCheckout(repoRoot) : "";
 // Two throwaway cache homes on the same filesystem getGlobalCacheDirectory picks (win32 → WSL ext4, never /mnt/c
 // V9fs where snapshot capture stalls; else ~/.virrun), under a bench-owned leaf so eviction can never touch the
 // Developer's real cache. COLD_HOME stays empty (cold path installs + prepares into it); SNAPSHOT_HOME is pre-seeded
-// With the deps snapshot only, then grows its prepare layer during the +snapshot task and reuses it in +snapshot+prepare.
+// With the deps snapshot only, then grows its prepare layer during the +snapshot task and reuses it in
+// +snapshot+prepare.
 const cacheRoot = process.platform === "win32" ? getWslNativeCacheRoot() : join(homedir(), VIRRUN_CACHE_DIRECTORY_NAME);
 const COLD_HOME = join(cacheRoot, "bench-cache", "cold");
 const SNAPSHOT_HOME = join(cacheRoot, "bench-cache", "snapshot");
@@ -114,7 +116,8 @@ if (isBenchable) {
 afterAll(() => {
   if (!isBenchable) return;
   restoreCacheHome();
-  // `removeSnapshotDirectory` (not rmSync) handles the mode-000 overlay work directory and, on win32, the \\wsl.localhost
+  // `removeSnapshotDirectory` (not rmSync) handles the mode-000 overlay work directory and, on win32, the
+  // \\wsl.localhost
   // UNC teardown. Safe unconditionally: these homes are bench-owned leaves, never the developer's real cache.
   removeSnapshotDirectory(COLD_HOME);
   removeSnapshotDirectory(SNAPSHOT_HOME);

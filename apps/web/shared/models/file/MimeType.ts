@@ -5,6 +5,7 @@ export enum MimeType {
   Json = "application/json",
   Pdf = "application/pdf",
   PlainText = "text/plain",
+  Png = "image/png",
   Xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   Xml = "application/xml",
 }

@@ -1,26 +1,20 @@
 import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromptInput";
 
 import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
+import { postComment } from "#src/services/coderabbit/collect/postComment";
+import { postReply } from "#src/services/coderabbit/collect/postReply";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, readFileSync } from "node:fs";
 
-// The drain's half of the reply, posted by the only process that holds a credential. A rejection is answered
-// The moment the drain ends — it cites no sha, so nothing waits for the push — while an accepted finding's
-// Reply is `replyAnswered`'s, after the window lands on `develop`.
-//
-// Best-effort for the same reason that one is, and one more: this runs before the fixes branch is pushed, so a
-// GitHub refusal that threw here would discard a drain that had already succeeded. A thread whose reply did not
-// Land keeps the bot as its last author, which is the open set the next run drains again — the reporting retries
-// Itself, where the session that produced the commits does not.
+// The drain's half of the reply, posted by the only process that holds a credential: a rejection cites no sha, so
+// It is answered the moment the drain ends. Best-effort because this runs before the fixes branch is pushed —
+// A refusal that threw would discard a drain that succeeded, and a thread whose reply did not land keeps the bot
+// As its last author, which the next run drains again.
 const readLines = (path: string): string[] => (existsSync(path) ? getNonEmptyLines(readFileSync(path, "utf8")) : []);
 
-// Every marker this pipeline reads back is an HTML comment (`getMarker`), and these lines are prose the drain
-// Wrote about untrusted review text it must not trust either (`runDrain`). A successful injection cannot call
-// `gh` itself, but it can choose what ends up in a reply this process posts under its own login — the same
-// Login `checkIsMarked` keys its trust on — so a comment sequence reaching that far is
-// Stripped before anything leaves the drain's sandbox, rather than trusted to merely be prose
+// These lines are prose the drain wrote about untrusted review text (`runDrain`), posted under the same login
+// `checkIsMarked` keys its trust on — so an HTML comment reaching this far is stripped, not trusted to be prose
 const stripHtmlComments = (text: string): string => text.replaceAll(/<!--[\s\S]*?-->/gu, "");
 
 export const postDrainVerdicts = ({
@@ -34,8 +28,7 @@ export const postDrainVerdicts = ({
   for (const line of readLines(rejectionsPath)) {
     const [rawCommentId = "", ...reason] = line.split(" ");
     const commentId = Number(rawCommentId);
-    // A line naming no open thread is skipped rather than posted: a malformed id, or one the drain — which reads
-    // Review text it must not trust — was never asked about
+    // A line naming no open thread is skipped: a malformed id, or one the drain was never asked about
     if (!openIds.has(commentId)) {
       console.info(`skipping a rejection line that names no open thread: ${line}`);
       continue;
@@ -43,9 +36,7 @@ export const postDrainVerdicts = ({
 
     const body = `Not a real issue, no change — ${stripHtmlComments(reason.join(" "))}`;
     console.info(`reply ${commentId}: ${body}`);
-    getResult(() =>
-      runGh(["api", `repos/{owner}/{repo}/pulls/${pullRequest}/comments/${commentId}/replies`, "-f", `body=${body}`]),
-    ).match(noop, console.error);
+    getResult(() => postReply(pullRequest, commentId, body)).match(noop, console.error);
   }
 
   const verdicts = readLines(verdictPath);
@@ -57,5 +48,5 @@ export const postDrainVerdicts = ({
     verdicts.map((verdict) => stripHtmlComments(verdict)),
   );
   console.info(`verdict comment for review ${reviewId}`);
-  getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).match(noop, console.error);
+  getResult(() => postComment(pullRequest, body)).match(noop, console.error);
 };

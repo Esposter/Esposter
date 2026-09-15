@@ -5,6 +5,7 @@ import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
+import { NULL_STRATEGY_NA_VALUE } from "@/services/resource/sheet/commands/constants";
 import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
 import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
 
@@ -28,7 +29,7 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
 
   execute(dataSource: DataSource) {
     if (this.#nullStrategy === NullStrategy.ReplaceWithNA)
-      writeAffectedCells(dataSource, this.#affectedCells, () => "N/A");
+      writeAffectedCells(dataSource, this.#affectedCells, () => NULL_STRATEGY_NA_VALUE);
     else {
       const columnMap = new Map(dataSource.columns.map((column) => [column.name, column]));
       for (const { row } of this.#affectedRows)

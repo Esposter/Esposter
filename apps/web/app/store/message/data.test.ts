@@ -2,6 +2,7 @@
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { Router } from "vue-router";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { useSession } from "@/services/auth/authClient.test";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
@@ -29,9 +30,11 @@ describe(useDataStore, () => {
   const userId = getMockSession().user.id;
   const message = "message";
   const updatedMessage = "updatedMessage";
-  const filename = "filename";
-  const mimetype = "text/plain";
+  const rejectedMessage = "rejectedMessage";
+  const filename = "a";
+  const mimetype = MimeType.PlainText;
   const size = 1;
+  const baseFile = { filename, hasThumbnail: false, mimetype, size };
   const createFile = () => new File([message], filename, { type: mimetype });
 
   beforeAll(() => {
@@ -148,7 +151,7 @@ describe(useDataStore, () => {
     );
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     await sendMessage({
-      files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
+      files: [{ ...baseFile, id: sentFileId }],
       message,
       replyRowKey: "",
       roomId,
@@ -178,7 +181,7 @@ describe(useDataStore, () => {
     );
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     await sendMessage({
-      files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
+      files: [{ ...baseFile, id: sentFileId }],
       message,
       replyRowKey: "",
       roomId,
@@ -249,7 +252,7 @@ describe(useDataStore, () => {
     const nextFileId = crypto.randomUUID();
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     const createPromise = createMessage({
-      files: [{ filename, hasThumbnail: false, id: sentFileId, mimetype, size }],
+      files: [{ ...baseFile, id: sentFileId }],
       message,
       replyRowKey: "",
       roomId,
@@ -375,7 +378,6 @@ describe(useDataStore, () => {
   test("rolls a queued edit back to the body the edit ahead of it stored", async () => {
     expect.hasAssertions();
 
-    const rejectedMessage = "rejectedMessage";
     server.use(
       trpcMsw.message.updateMessage.mutation(({ input }) => {
         if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
@@ -388,7 +390,7 @@ describe(useDataStore, () => {
       message,
       roomId,
       type: MessageType.Message,
-      userId: getMockSession().user.id,
+      userId,
     });
     getSlice(newMessage.partitionKey).items.value = [newMessage];
     const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
@@ -405,7 +407,6 @@ describe(useDataStore, () => {
   test("rolls a rejected edit back to an empty body", async () => {
     expect.hasAssertions();
 
-    const rejectedMessage = "rejectedMessage";
     server.use(
       trpcMsw.message.updateMessage.mutation(({ input }) => {
         if (input.message === rejectedMessage) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
@@ -418,7 +419,7 @@ describe(useDataStore, () => {
       message: "",
       roomId,
       type: MessageType.Message,
-      userId: getMockSession().user.id,
+      userId,
     });
     getSlice(newMessage.partitionKey).items.value = [newMessage];
     await updateMessage({
@@ -447,17 +448,15 @@ describe(useDataStore, () => {
     const { items } = storeToRefs(dataStore);
     const { deleteFile, getSlice } = dataStore;
     const newMessage = createMessageEntity({
-      files: [acceptedFileId, rejectedFileId, keptFileId].map((id) => ({
-        filename,
-        hasThumbnail: false,
-        id,
-        mimetype,
-        size,
-      })),
+      files: [
+        { ...baseFile, id: acceptedFileId },
+        { ...baseFile, id: rejectedFileId },
+        { ...baseFile, id: keptFileId },
+      ],
       message,
       roomId,
       type: MessageType.Message,
-      userId: getMockSession().user.id,
+      userId,
     });
     getSlice(newMessage.partitionKey).items.value = [newMessage];
     const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
@@ -479,7 +478,7 @@ describe(useDataStore, () => {
       message,
       roomId,
       type: MessageType.Message,
-      userId: getMockSession().user.id,
+      userId,
     });
     await storeCreateMessage(newMessage);
     const updatedInput = { message: updatedMessage, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };

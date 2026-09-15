@@ -53,7 +53,6 @@ describe("roleRouter", () => {
     const role = await roleCaller.createRole({
       name,
       permissions: RoomPermission.ManageMessages,
-      position: 0,
       roomId,
     });
 
@@ -65,7 +64,7 @@ describe("roleRouter", () => {
   test("updates", async () => {
     expect.hasAssertions();
 
-    const createdRole = await roleCaller.createRole({ name, permissions: 0n, position: 0, roomId });
+    const createdRole = await roleCaller.createRole({ name, roomId });
     const updatedRole = await roleCaller.updateRole({ id: createdRole.id, name: updatedName, roomId });
 
     expect(updatedRole.name).toBe(updatedName);
@@ -77,7 +76,7 @@ describe("roleRouter", () => {
   test("deletes", async () => {
     expect.hasAssertions();
 
-    const createdRole = await roleCaller.createRole({ name, permissions: 0n, position: 0, roomId });
+    const createdRole = await roleCaller.createRole({ name, roomId });
     const deletedRole = await roleCaller.deleteRole({ id: createdRole.id, roomId });
 
     expect(deletedRole.id).toBe(createdRole.id);
@@ -99,16 +98,16 @@ describe("roleRouter", () => {
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
 
-    await expect(
-      roleCaller.createRole({ name, permissions: 0n, position: 0, roomId }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(roleCaller.createRole({ name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 
   test("assigns a role to a member", async () => {
     expect.hasAssertions();
 
     const targetMember = await createMember();
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const role = await roleCaller.createRole({ name, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
@@ -118,7 +117,7 @@ describe("roleRouter", () => {
   test("fails assignRole with a target who is not a room member", async () => {
     expect.hasAssertions();
 
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const role = await roleCaller.createRole({ name, roomId });
     const user = await createMockUser(mockContext.db);
 
     await expect(
@@ -132,7 +131,7 @@ describe("roleRouter", () => {
     expect.hasAssertions();
 
     const targetMember = await createMember();
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const role = await roleCaller.createRole({ name, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
 
     const assignedRole = await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
@@ -157,7 +156,7 @@ describe("roleRouter", () => {
     expect.hasAssertions();
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
-    const peerRole = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
+    const peerRole = await roleCaller.createRole({ name, position, roomId });
     const targetMember = await createMember();
     await mockSessionOnce(mockContext.db, actor);
 
@@ -170,7 +169,7 @@ describe("roleRouter", () => {
     expect.hasAssertions();
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
-    const lowRole = await roleCaller.createRole({ name, permissions: 0n, position: 2, roomId });
+    const lowRole = await roleCaller.createRole({ name, roomId });
     const { member: targetMember } = await setupMemberWithRole(0n, position);
     await mockSessionOnce(mockContext.db, actor);
 
@@ -183,7 +182,7 @@ describe("roleRouter", () => {
     expect.hasAssertions();
 
     const targetMember = await createMember();
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const role = await roleCaller.createRole({ name, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
     await roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id });
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
@@ -195,7 +194,7 @@ describe("roleRouter", () => {
     expect.hasAssertions();
 
     const targetMember = await createMember();
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const role = await roleCaller.createRole({ name, roomId });
 
     await expect(roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id })).resolves.toBeUndefined();
   });
@@ -215,31 +214,37 @@ describe("roleRouter", () => {
   test("fails updateRole with a position at or above the actor top", async () => {
     expect.hasAssertions();
 
-    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, 10);
-    const lowRole = await roleCaller.createRole({ name, permissions: 0n, position: 3, roomId });
+    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
+    const lowRole = await roleCaller.createRole({ name, roomId });
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(
-      roleCaller.updateRole({ id: lowRole.id, position: 10, roomId }),
+      roleCaller.updateRole({ id: lowRole.id, position, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails createRole with permissions the actor does not hold", async () => {
     expect.hasAssertions();
 
-    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles | RoomPermission.ReadMessages, 10);
+    const { member: actor } = await setupMemberWithRole(
+      RoomPermission.ManageRoles | RoomPermission.ReadMessages,
+      position,
+    );
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(
-      roleCaller.createRole({ name, permissions: RoomPermission.ManageRoom, position: 3, roomId }),
+      roleCaller.createRole({ name, permissions: RoomPermission.ManageRoom, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails updateRole with permissions the actor does not hold", async () => {
     expect.hasAssertions();
 
-    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles | RoomPermission.ReadMessages, 10);
-    const lowRole = await roleCaller.createRole({ name, permissions: 0n, position: 3, roomId });
+    const { member: actor } = await setupMemberWithRole(
+      RoomPermission.ManageRoles | RoomPermission.ReadMessages,
+      position,
+    );
+    const lowRole = await roleCaller.createRole({ name, roomId });
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(
@@ -250,15 +255,15 @@ describe("roleRouter", () => {
   test("the owner updates a role to any position and permissions", async () => {
     expect.hasAssertions();
 
-    const createdRole = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const createdRole = await roleCaller.createRole({ name, roomId });
     const updatedRole = await roleCaller.updateRole({
       id: createdRole.id,
       permissions: RoomPermission.Administrator,
-      position: 9999,
+      position,
       roomId,
     });
 
-    expect(updatedRole.position).toBe(9999);
+    expect(updatedRole.position).toBe(position);
     expect(updatedRole.permissions).toBe(RoomPermission.Administrator);
   });
 
@@ -287,13 +292,13 @@ describe("roleRouter", () => {
     expect(memberPermissions.permissions & RoomPermission.ManageRoles).toBe(RoomPermission.ManageRoles);
   });
 
-  test("onCreateRole emits the created role", async () => {
+  test("subscription emits the created role", async () => {
     expect.hasAssertions();
 
-    const onCreateRole = await roleCaller.onCreateRole({ roomId });
+    const subscription = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
-      () => onCreateRole,
-      () => roleCaller.createRole({ name, permissions: 0n, position: 1, roomId }),
+      () => subscription,
+      () => roleCaller.createRole({ name, roomId }),
     );
 
     expect(data.name).toBe(name);

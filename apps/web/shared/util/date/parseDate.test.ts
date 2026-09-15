@@ -4,28 +4,26 @@ import { parseDate } from "#shared/util/date/parseDate";
 import { assert, describe, expect, test } from "vitest";
 
 describe(parseDate, () => {
-  const DATE = new Date(2026, 8, 1, 14, 3, 5);
+  const DATE = new Date(0);
 
   test("reads a value written in the same format back to the instant it names", () => {
     expect.hasAssertions();
 
-    expect(parseDate("2026-09-01", "YYYY-MM-DD")).toStrictEqual(new Date(2026, 8, 1));
+    expect(parseDate("1970-01-01", "YYYY-MM-DD")).toStrictEqual(new Date(1970, 0, 1));
   });
 
   test("reads the offset a value carries rather than the reader's own", () => {
     expect.hasAssertions();
 
-    expect(parseDate("2026-09-01T00:00:00+00:00", "YYYY-MM-DDTHH:mm:ssZ")).toStrictEqual(
-      new Date(Date.UTC(2026, 8, 1)),
-    );
+    expect(parseDate("1970-01-01T00:00:00+00:00", "YYYY-MM-DDTHH:mm:ssZ")).toStrictEqual(new Date(0));
   });
 
   test.each([
-    ["a month the calendar does not have", "2026-13-01", "YYYY-MM-DD"],
-    ["a day the month does not have", "2026-02-31", "YYYY-MM-DD"],
-    ["an unpadded part where the format pads", "2026-9-1", "YYYY-MM-DD"],
-    ["anything trailing the value", "2026-09-01T00:00:00", "YYYY-MM-DD"],
-    ["a value written in another format", "01/09/2026", "YYYY-MM-DD"],
+    ["a month the calendar does not have", "1970-13-01", "YYYY-MM-DD"],
+    ["a day the month does not have", "1970-02-30", "YYYY-MM-DD"],
+    ["an unpadded part where the format pads", "1970-1-1", "YYYY-MM-DD"],
+    ["anything trailing the value", "1970-01-01T00:00:00", "YYYY-MM-DD"],
+    ["a value written in another format", "01/01/1970", "YYYY-MM-DD"],
   ])("rejects %s", (_name, value, format) => {
     expect.hasAssertions();
 

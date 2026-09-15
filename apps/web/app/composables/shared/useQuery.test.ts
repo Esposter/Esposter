@@ -5,6 +5,9 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useQuery, () => {
+  const result = "result";
+  const rejection = new Error("error");
+
   beforeEach(() => {
     setActivePinia(createPinia());
   });
@@ -12,10 +15,10 @@ describe(useQuery, () => {
   test("populates data with the resolved result", async () => {
     expect.hasAssertions();
 
-    const { data, refresh } = useQuery(() => Promise.resolve("result"));
+    const { data, refresh } = useQuery(() => Promise.resolve(result));
     await refresh();
 
-    expect(data.value).toBe("result");
+    expect(data.value).toBe(result);
   });
 
   test("reports pending for the duration of the read", async () => {
@@ -26,24 +29,24 @@ describe(useQuery, () => {
 
     expect(isPending.value).toBe(true);
 
-    resolve("result");
+    resolve(result);
     await waitForSynchronizedFunctions();
 
     expect(isPending.value).toBe(false);
-    expect(data.value).toBe("result");
+    expect(data.value).toBe(result);
   });
 
   test("waits for the first refresh when lazy", async () => {
     expect.hasAssertions();
 
-    const { data, isPending, refresh } = useQuery(() => Promise.resolve("result"), { isLazy: true });
+    const { data, isPending, refresh } = useQuery(() => Promise.resolve(result), { isLazy: true });
 
     expect(isPending.value).toBe(false);
     expect(data.value).toBeUndefined();
 
     await refresh();
 
-    expect(data.value).toBe("result");
+    expect(data.value).toBe(result);
   });
 
   test("alerts and leaves data undefined on failure", async () => {
@@ -51,7 +54,7 @@ describe(useQuery, () => {
 
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    const { data, refresh } = useQuery(() => Promise.reject(new Error("error")));
+    const { data, refresh } = useQuery(() => Promise.reject(rejection));
     await refresh();
 
     expect(data.value).toBeUndefined();
@@ -63,10 +66,10 @@ describe(useQuery, () => {
 
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    const { error, refresh } = useQuery(() => Promise.reject(new Error("error")), { isInlineError: true });
+    const { error, refresh } = useQuery(() => Promise.reject(rejection), { isInlineError: true });
     await refresh();
 
-    expect(error.value).toBe("error");
+    expect(error.value).toBe(rejection.message);
     expect(alerts.value).toHaveLength(0);
   });
 
@@ -74,18 +77,17 @@ describe(useQuery, () => {
     expect.hasAssertions();
 
     let isFailing = true;
-    const { data, error, refresh } = useQuery(
-      () => (isFailing ? Promise.reject(new Error("error")) : Promise.resolve("result")),
-      { isInlineError: true },
-    );
+    const { data, error, refresh } = useQuery(() => (isFailing ? Promise.reject(rejection) : Promise.resolve(result)), {
+      isInlineError: true,
+    });
     await waitForSynchronizedFunctions();
 
-    expect(error.value).toBe("error");
+    expect(error.value).toBe(rejection.message);
 
     isFailing = false;
     await refresh();
 
     expect(error.value).toBe("");
-    expect(data.value).toBe("result");
+    expect(data.value).toBe(result);
   });
 });

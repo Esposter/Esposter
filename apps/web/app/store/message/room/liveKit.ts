@@ -248,7 +248,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
           await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
           return;
         }
-
         // Only the presets are SVGs; an uploaded slot arrives as a signed url the processor can take directly
         const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
         if (checkIsStale() || !resolvedPath) return;

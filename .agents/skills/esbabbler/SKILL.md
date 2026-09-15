@@ -1,6 +1,6 @@
 ---
 name: esbabbler
-description: Esposter messaging feature (esbabbler) conventions — the Discord parity default (match behaviour/naming/defaults, diverge only on styling and recorded infra constraints, record unknowns as open questions), display name resolution through getDisplayName/getMemberName with nickname applied everywhere including push titles, the || not ?? empty-string nickname fallback, MessageTypeOperationPermissionMap as the single source of truth for what may be done to a message, and subscriptions written on another member's behalf recording the member's own decision on the row rather than deleting it — plus deep dives on capability vs permission for message operations, subscriptions-as-source-of-truth store mutations and stable subscribable watch sources, the room/user settings dialog surfaces, and the Service Bus scheduled-message-job architecture. Apply when working on the messaging module (apps/web/app/…/message/, server/trpc/routers/message/, userToRoom, roles, members, rooms). Calls/voice internals live in the esbabbler-call skill.
+description: Apply when working on the messaging module (apps/web/app/…/message/, server/trpc/routers/message/, userToRoom, roles, members, rooms). Esposter messaging feature (esbabbler) conventions — Discord parity as the default design rule, display names resolved through getDisplayName/getMemberName with the || nickname fallback, MessageTypeOperationPermissionMap as the one source of what may be done to a message, and a subscription written on another member's behalf recording that member's own decision on the row. Calls/voice internals live in the esbabbler-call skill.
 ---
 
 # Esbabbler (Messaging) Feature Conventions
@@ -29,11 +29,11 @@ The rule has **no room-scoped exceptions** — a surface that renders a member's
 
 Where the plumbing is not obvious:
 
-| Location                                        | How                                                                                                                                                                             |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mention labels and custom emoji in message body | `useMessageHtml(() => message.message, () => message.partitionKey)` — both arguments are getters, and the room is the message's partition key                                   |
-| Profile card                                    | `Message/Model/User/ProfileCard/Index.vue` — `computed(() => getDisplayName(user, currentRoomId.value))`, the room coming from the route rather than a prop                     |
-| Push notification title                         | `server/trpc/routers/message/index.ts` queries `usersToRoomsInMessage.nickname` for the sender before publishing the EventGrid event, and passes it as the notification `title` |
+| Location                                        | How                                                                                                                                                                                      |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mention labels and custom emoji in message body | `useMessageHtml(() => message.message, () => message.partitionKey)` — both arguments are getters, and the room is the message's partition key                                            |
+| Profile card                                    | `Message/Model/User/ProfileCard/Index.vue` — `computed(() => getDisplayName(user, currentRoomId.value))`, the room coming from the route rather than a prop                              |
+| Push notification title                         | `apps/functions/src/services/notification/getMessageNotificationAuthor.ts` resolves the sender's nickname once, in the Function, so the request path a member waits on never pays for it |
 
 ### `||` not `??` for nickname fallback
 

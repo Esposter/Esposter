@@ -14,7 +14,9 @@ const getGradientButtons = (body: HTMLElement) => [
 ];
 
 describe("styledDialog", () => {
-  const text = "Confirm";
+  const text = "text";
+  const body = "<p>a</p>";
+  const prependConfirm = '<button class="v-btn">a</button>';
   const pendingMs = 20;
   // The dialog teleports to the overlay container, so assertions read the document rather than the wrapper —
   // Which makes the teardown load-bearing: every mount appends its own overlay, so without it the second test
@@ -56,17 +58,14 @@ describe("styledDialog", () => {
 
     wrapper = await mountSuspended(
       defineComponent({
-        setup: () => () => [
-          h(PendingSibling),
-          h(StyledDialog, { modelValue: true }, { default: () => h("p", "body") }),
-        ],
+        setup: () => () => [h(PendingSibling), h(StyledDialog, { modelValue: true }, { default: () => h("p", "a") })],
       }),
       { attachTo: document.body },
     );
     // The strategy runs on its own timeout once the overlay activates, so the throw lands after the mount
     await sleep(pendingMs);
 
-    expect(document.body.querySelector(".v-overlay__content")?.textContent).toContain("body");
+    expect(document.body.querySelector(".v-overlay__content")?.textContent).toBe("a");
   });
 
   // Every dialog is meant to reach for this shell, so what these pin are the two shapes whose absence forces a
@@ -74,37 +73,37 @@ describe("styledDialog", () => {
   test("renders no actions row when there is nothing to confirm", async () => {
     expect.hasAssertions();
 
-    const body = await mountOpenDialog({}, { default: "<p>body</p>" });
+    const overlay = await mountOpenDialog({}, { default: body });
 
-    expect(body.querySelector(".v-card-actions")).toBeNull();
+    expect(overlay.querySelector(".v-card-actions")).toBeNull();
     // The row it replaces carried the only explicit dismissal, so the shell owes one back
-    expect(body.querySelector('[aria-label="Close"], button .mdi-close')).not.toBeNull();
+    expect(overlay.querySelector('[aria-label="Close"], button .mdi-close')).not.toBeNull();
   });
 
   test("renders the actions row when there is something to confirm", async () => {
     expect.hasAssertions();
 
-    const body = await mountOpenDialog({ confirmButtonProps: { text } }, { default: "<p>body</p>" });
+    const overlay = await mountOpenDialog({ confirmButtonProps: { text } }, { default: body });
 
-    expect(body.querySelector(".v-card-actions")).not.toBeNull();
-    expect(body.textContent).toContain("Cancel");
+    expect(overlay.querySelector(".v-card-actions")).not.toBeNull();
+    expect(overlay.textContent).toContain("Cancel");
   });
 
   test("keeps the styled confirm button when the caller spells out the primary colour", async () => {
     expect.hasAssertions();
 
-    const body = await mountOpenDialog({ confirmButtonProps: { color: "primary", text } });
+    const overlay = await mountOpenDialog({ confirmButtonProps: { color: "primary", text } });
 
-    expect(getGradientButtons(body)).toHaveLength(1);
+    expect(getGradientButtons(overlay)).toHaveLength(1);
   });
 
   test("drops to a plain button for a colour that is not the default", async () => {
     expect.hasAssertions();
 
-    const body = await mountOpenDialog({ confirmButtonProps: { color: "warning", text } });
+    const overlay = await mountOpenDialog({ confirmButtonProps: { color: "warning", text } });
 
-    expect(getGradientButtons(body)).toHaveLength(0);
-    expect(body.querySelector(".v-card-actions .text-warning")).not.toBeNull();
+    expect(getGradientButtons(overlay)).toStrictEqual([]);
+    expect(overlay.querySelector(".v-card-actions .text-warning")).not.toBeNull();
   });
 
   // A third decision is a button among the other two, so it belongs in the trailing group rather than pushed to
@@ -112,14 +111,11 @@ describe("styledDialog", () => {
   test("renders a third decision between cancel and confirm", async () => {
     expect.hasAssertions();
 
-    const body = await mountOpenDialog(
-      { confirmButtonProps: { text } },
-      { "prepend-confirm": '<button class="v-btn">Discard changes</button>' },
-    );
+    const overlay = await mountOpenDialog({ confirmButtonProps: { text } }, { "prepend-confirm": prependConfirm });
 
     expect(
-      Array.from(body.querySelectorAll(".v-card-actions .v-btn"), ({ textContent }) => textContent?.trim()),
-    ).toStrictEqual(["Cancel", "Discard changes", text]);
+      Array.from(overlay.querySelectorAll(".v-card-actions .v-btn"), ({ textContent }) => textContent?.trim()),
+    ).toStrictEqual(["Cancel", "a", text]);
   });
 
   // The row exists when the row has content, not only when there is a confirm button: a dialog whose only answers
@@ -127,13 +123,13 @@ describe("styledDialog", () => {
   test("renders the actions row for an action slot with nothing to confirm", async () => {
     expect.hasAssertions();
 
-    const body = await mountOpenDialog({}, { "prepend-confirm": '<button class="v-btn">Discard changes</button>' });
+    const overlay = await mountOpenDialog({}, { "prepend-confirm": prependConfirm });
 
     expect(
-      Array.from(body.querySelectorAll(".v-card-actions .v-btn"), ({ textContent }) => textContent?.trim()),
-    ).toStrictEqual(["Cancel", "Discard changes"]);
+      Array.from(overlay.querySelectorAll(".v-card-actions .v-btn"), ({ textContent }) => textContent?.trim()),
+    ).toStrictEqual(["Cancel", "a"]);
     // The row carries the dismissal, so the append close button would be a second one
-    expect(body.querySelector('[aria-label="Close"], button .mdi-close')).toBeNull();
+    expect(overlay.querySelector('[aria-label="Close"], button .mdi-close')).toBeNull();
   });
 
   // The header is the reason a search field can sit above a scrolling list without the consumer rebuilding the
@@ -141,9 +137,9 @@ describe("styledDialog", () => {
   test("renders the header slot outside the scrollable body", async () => {
     expect.hasAssertions();
 
-    const body = await mountOpenDialog({}, { default: "<p>body</p>", header: "<input data-header>" });
+    const overlay = await mountOpenDialog({}, { default: body, header: "<input data-header>" });
 
-    expect(body.querySelector("[data-header]")).not.toBeNull();
-    expect(body.querySelector(".v-card-text [data-header]")).toBeNull();
+    expect(overlay.querySelector("[data-header]")).not.toBeNull();
+    expect(overlay.querySelector(".v-card-text [data-header]")).toBeNull();
   });
 });

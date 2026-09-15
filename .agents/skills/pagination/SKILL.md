@@ -1,6 +1,6 @@
 ---
 name: pagination
-description: Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed write naming its key when issued (the ambient items being readonly), infinite scroll instead of a Load-more button, the ban on hand-rolling search-as-you-type and MiniSearch being the one client-side index, bundling ancillary reads into the primary read, a total over the list being the server's rather than a count of the loaded rows, a re-read after a push being the store's, and the offline IndexedDB cache being self-contained, plus deep dives on wiring useAutoSearch/useCursorSearcher with its sanctioned exceptions, on the feature cache composables, on a total moving under every optimistic write's rollback and a keyed read's query closure never running on the hydrating client so only Pinia state survives it, and on re-reading a list after a push (compare against the server half, pair the timestamp watermark with the ids already held because equal timestamps tie, and queue overlapping re-reads). Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache.
+description: Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache. Esposter paginated-list conventions — the three-layer cursor pagination pattern (store + useRead* composable + StyledWaypoint), a keyed write naming its key when issued, infinite scroll over a Load-more button, useAutoSearch/useCursorSearcher as the only search-as-you-type stack with MiniSearch as the one client-side index, ancillary reads bundled into the primary read, a total being the server's, a push re-read being the store's, and the offline IndexedDB cache being self-contained.
 ---
 
 # Pagination, Search & Offline List Cache
@@ -82,7 +82,7 @@ Why the readonly type rather than a convention everyone remembers: the `invarian
 
 ## StyledWaypoint — Infinite Scroll
 
-Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. Never use a manual "Load more" `v-btn` with `isLoadingMore` state — that belongs to `StyledWaypoint`.
+Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. Never use a manual "Load more" `v-btn` with a loading flag of its own — that belongs to `StyledWaypoint`.
 
 - `:is-active="hasMore"` — `v-show` and deactivated when there are no more pages
 - `@change="readMoreXxx"` — handler must accept `(onComplete: () => void)` and call `onComplete()` when done (via the `onComplete` arg to `readMoreItems`)
@@ -105,7 +105,7 @@ Hand-rolling search-as-you-type around a `$trpc` search query is **banned**: no 
 
 When a component needs ancillary data (permissions, metadata) alongside a primary list load, bundle the ancillary read inside the primary read composable — not in the component's `onMounted`. An ancillary read belongs inside the composable owning the load (`useReadFoos`), called in `Promise.all` alongside other metadata reads. If there is no natural companion read, call it directly in `<script setup>` — still no `onMounted`.
 
-```typescript
+```ts
 // bundle ancillary reads in the owning read composable — not a separate component onMounted fetch
 const readBars = useReadBars();
 const readBazes = useReadBazes();

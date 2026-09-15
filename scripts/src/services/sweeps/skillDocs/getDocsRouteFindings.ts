@@ -4,7 +4,8 @@ import type { SkillDocsFinding } from "#src/models/sweeps/skillDocs/SkillDocsFin
 import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFindingType";
 import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 
-const DOCS_ROUTE_REGEX = /`\/docs\//u;
+// A route in backticks, or a markdown link to one — both name the page by the form only a docs route owner may use
+const DOCS_ROUTE_REGEX = /`\/docs\/|\]\(\/docs\//u;
 // The two that teach the route and url forms, and so are the two that may write one
 const RouteOwnerSkills = new Set(["docs", "readme-standards"]);
 

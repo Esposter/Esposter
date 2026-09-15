@@ -1,31 +1,25 @@
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
+import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { LOCKFILE } from "#src/services/shared/constants";
-import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
 
-// Fold `main` into the candidate so a dependency bump that landed there rides the window the collector is about
-// To push, rather than costing a review slot of its own. The lockfile conflict that merge always brings is
-// Resolved the git skill's way — thrown away and rebuilt from the installed tree — and any other conflict aborts
-// The merge and leaves the fold for a person, since the rest of the window is still worth pushing. The three
-// Outcomes are distinguished because they call for different things from the caller: only `Merged` added a
-// Commit worth counting against the file cap, and only `Conflicted` is worth telling anyone about
+// A dependency bump that landed on `main` rides the window about to be pushed rather than costing a slot. The
+// Lockfile conflict that merge always brings is rebuilt from the installed tree (`git` skill); any other
+// Conflict aborts and leaves the fold for a person, since the rest of the window is still worth pushing.
 export const mergeMain = (cwd: string): MergeMainOutcome => {
   const main = `origin/${MAIN_BRANCH}`;
-  const isAlreadyMerged = getResult(() => runGit(["merge-base", "--is-ancestor", main, "HEAD"], cwd)).match(
-    () => true,
-    () => false,
-  );
-  if (isAlreadyMerged) return MergeMainOutcome.AlreadyMerged;
+  if (checkIsAncestor(main, "HEAD", cwd)) return MergeMainOutcome.AlreadyMerged;
 
   return getResult(() => runGit(["merge", "--no-edit", main], cwd)).match(
     () => MergeMainOutcome.Merged,
     () => {
-      const conflicted = getNonEmptyLines(runGit(["diff", "--name-only", "--diff-filter=U"], cwd));
+      const conflicted = readUnmergedPaths(cwd);
       if (conflicted.length !== 1 || conflicted[0] !== LOCKFILE) {
         runGit(["merge", "--abort"], cwd);
         console.info(`main not folded — conflicts outside the lockfile: ${conflicted.join(", ")}`);

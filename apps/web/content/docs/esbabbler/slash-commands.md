@@ -28,7 +28,7 @@ Adding a command touches three places (per the registry pattern): the `SlashComm
 
 All execution happens in `useExecuteSlashCommand` via a `switch` on `SlashCommandType` — the definition is static metadata only, with no `execute()` method. Three execution paths:
 
-- **Client-only** (`Flip`, `Me`, `Roll`, `Shrug`, `TableFlip`, `Unflip`) — build `createMessageInput` inline and fall through to the normal `sendMessage`.
+- **Client-only** (`Flip`, `Me`, `Roll`, `Shrug`, `TableFlip`, `Unflip`) — build the `sendMessage` input inline and fall through to the normal `sendMessage`.
 - **Server call** (`Topic`) — call a tRPC mutation directly (`room.updateRoom`), no message posted by the command itself.
 - **Dialog** (`Poll`, `Remind`, `Schedule`) — open a dialog that owns its own submit, so richer inputs use normal form controls instead of inline parameter chips.
 

@@ -5,11 +5,11 @@ Read when a store action calls a tRPC mutation, or when picking its `useMutation
 ## Wiring the instance
 
 - **Declare every instance at the store root** — `const { executeMutation } = useMutation()`. Never inside an action (detached effect scope leak).
-- **One `useMutation()` instance per mutation**, via destructure renames (`executeCreateFooMutation`, plus `isPending: isCreateFooPending` / `getIsPending: getIsFooPending` when consumed), so one action's queue and pending state can't hold up another's. **Two mutations that end the same row share one instance instead**, named for the target — the rule and the test for which case you are in are in `apps/web/content/docs/architecture/async-operations.md` § A key queues only within one `useMutation()` instance.
+- **One `useMutation()` instance per mutation**, via destructure renames (`executeCreateFooMutation`, plus `isPending: isCreateFooPending` / `checkIsPending: checkIsFooPending` when consumed), so one action's queue and pending state can't hold up another's. **Two mutations that end the same row share one instance instead**, named for the target — the rule and the test for which case you are in are in `apps/web/content/docs/architecture/async-operations.md` § A key queues only within one `useMutation()` instance.
 - **Never hand-roll the alert/rollback/pending wiring** — it surfaces errors via `createAlert` unless you pass `onError`, and runs writes to one `key` one at a time so two actions writing different fields of the same entity both land. Destructure `isPending` only where a control consumes it; the in-flight guard decision tree lives in `apps/web/content/docs/architecture/client-data.md` § In-flight guarding.
 - **`applyOptimistic`** applies the change immediately and **returns its rollback**, which runs automatically on failure.
 - **`onSuccess`** is for server-generated results that can't be predicted client-side (a created entity with its id).
-- **Whether the write landed is the outcome's `status`, never a flag `onSuccess` flips.** Both entry points resolve to a `MutationOutcome`, so an action or dialog that answers "did it save" reads `outcome.status === MutationStatus.Succeeded` (the `post` store's `createPost` is the shape); a `let isSuccessful = false` closed over by `onSuccess` restates that discriminant by hand and predates it.
+- **Whether the write landed is the outcome's `status`, never a flag `onSuccess` flips.** Both entry points resolve to a `MutationOutcome`, so an action or dialog that answers "did it save" reads `outcome.status === MutationStatus.Succeeded` (the `post` store's `createPost` is the shape); a `let isSuccessful = false` closed over by `onSuccess` restates that discriminant by hand.
 
 ## A store never orders its own async work
 
@@ -25,7 +25,7 @@ No promise chained onto the previous one, no `Map<id, Promise>` of in-flight rea
 
 ## Shape
 
-```typescript
+```ts
 // subscription owns the state change — no store action; the caller awaits the mutation at the user
 // action. Never a floating statement: errorLink alerts the rejection but still propagates it, so an
 // un-awaited call leaves an unhandled rejection behind the toast
@@ -39,8 +39,8 @@ const deleteFoo = async (input: DeleteFooInput) => {
       // Delete running beside it under another key, nor drop a row a subscription delivered meanwhile.
       // Built once and then searched with. Constructing it inside the callback rebuilds the same predicate
       // For every row, and `unicorn/no-array-callback-reference` reports the inline call as a bare reference
-      const getIsDeletedFoo = getIsEntityIdEqualComparator<Foo>(FooKeyPath, input);
-      const deletedFoo = items.value.find(getIsDeletedFoo);
+      const checkIsDeletedFoo = getEntityIdEqualComparator<Foo>(["parentId", "childId"], input);
+      const deletedFoo = items.value.find(checkIsDeletedFoo);
       storeDeleteFoo(input);
       return () => {
         if (deletedFoo) storeCreateFoo(deletedFoo);
@@ -54,7 +54,7 @@ const deleteFoo = async (input: DeleteFooInput) => {
 
 A create whose result can't be predicted client-side applies in `onSuccess` instead, and that is also where store-owned selection is updated:
 
-```typescript
+```ts
 const createFoo = async (input: CreateFooInput) => {
   await executeCreateFooMutation(() => $trpc.foo.createFoo.mutate(input), {
     // no natural key yet — the id only exists once the server answers, and creates must not queue

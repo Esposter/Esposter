@@ -1,7 +1,7 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
 import { probeOsBackendSupported } from "#src/services/exec/os/probeOsBackendSupported";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({
   execFileSync: vi.fn<typeof baseExecFileSync>(),
@@ -16,10 +16,6 @@ vi.mock(import("node:child_process"), () => ({
 // Win32 branch dispatches through wsl.exe (exercised by the WSL suites) and every other platform short-circuits to
 // False before touching child_process.
 describe.skipIf(process.platform !== "linux")(probeOsBackendSupported, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("is true when the bwrap overlay probe mounts", () => {
     expect.hasAssertions();
 

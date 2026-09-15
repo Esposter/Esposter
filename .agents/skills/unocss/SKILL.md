@@ -1,6 +1,6 @@
 ---
 name: unocss
-description: Esposter UnoCSS configuration conventions — theme colors registration, safelist rules for dynamic Vuetify color props, cssLayerName mapping, named shortcuts for recurring utility pairs, and the resolved-config snapshots that catch what a dependency bump changes. Apply when editing uno.config.ts or adding new colors/utilities.
+description: Apply when editing uno.config.ts or adding new colors/utilities. Esposter UnoCSS configuration conventions — theme colors registration, safelist rules for dynamic Vuetify color props, cssLayerName mapping, named shortcuts for recurring utility pairs, and the resolved-config snapshots that catch what a dependency bump changes.
 ---
 
 # UnoCSS Configuration

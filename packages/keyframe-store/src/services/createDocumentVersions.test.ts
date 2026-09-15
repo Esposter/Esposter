@@ -28,7 +28,7 @@ export const createDocumentVersions = ({
   versionCount,
 }: DocumentVersionsOptions): Uint8Array[] => {
   const random = createRandom(seed);
-  const rows = Array.from({ length: rowCount }, (_, index) => ({
+  const rows = Array.from({ length: rowCount }, (_value, index) => ({
     id: index,
     name: `row ${index}`,
     value: random().toString(),

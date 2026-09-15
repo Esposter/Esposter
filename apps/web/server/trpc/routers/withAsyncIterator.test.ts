@@ -25,7 +25,7 @@ describe(withAsyncIterator, () => {
     expect.hasAssertions();
 
     const returnFn = vi.fn<() => Promise<IteratorResult<unknown>>>();
-    await withAsyncIterator(createIterator(returnFn), () => Promise.resolve("result"));
+    await withAsyncIterator(createIterator(returnFn), () => Promise.resolve());
 
     expect(returnFn).toHaveBeenCalledExactlyOnceWith();
   });

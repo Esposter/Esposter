@@ -1,35 +1,37 @@
-import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/coderabbit/collect/constants";
+import { ANSWERS_TRAILER, DRAINS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { getAnsweredCommits } from "#src/services/coderabbit/collect/getAnsweredCommits";
+import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/shared/constants";
 import { describe, expect, test } from "vitest";
 
 const getRecord = (fields: string[]) => `${fields.join(FIELD_SEPARATOR)}${RECORD_SEPARATOR}`;
 
 describe(getAnsweredCommits, () => {
   const sha = "a".repeat(40);
+  const subject = "subject";
 
   test("reads every trailer value as a finding id and keeps the subject", () => {
     expect.hasAssertions();
 
-    const body = "fix(web): guard the empty map\n\nAnswers: 12,34\nDrains: 56\n";
+    const body = `${ANSWERS_TRAILER}: 1,2\n${DRAINS_TRAILER}: 3\n`;
 
-    expect(getAnsweredCommits(getRecord([sha, "fix(web): guard the empty map", body]))).toStrictEqual([
-      { answers: [12, 34], drains: [56], sha, subject: "fix(web): guard the empty map" },
+    expect(getAnsweredCommits(getRecord([sha, subject, body]))).toStrictEqual([
+      { answers: [1, 2], drains: [3], sha, subject },
     ]);
   });
 
   test("drops a commit carrying neither trailer", () => {
     expect.hasAssertions();
 
-    expect(getAnsweredCommits(getRecord([sha, "feat(web): a unit", "feat(web): a unit\n\nA body.\n"]))).toStrictEqual(
-      [],
-    );
+    expect(getAnsweredCommits(getRecord([sha, subject, ""]))).toStrictEqual([]);
   });
 
   test("ignores a value that is not a positive integer", () => {
     expect.hasAssertions();
 
-    expect(getAnsweredCommits(getRecord([sha, "fix", "fix\n\nAnswers: 12, abc, -1, 0\n"]))).toStrictEqual([
-      { answers: [12], drains: [], sha, subject: "fix" },
+    const body = `${ANSWERS_TRAILER}: 1, ${String(Number.NaN)}, -1, 0\n`;
+
+    expect(getAnsweredCommits(getRecord([sha, subject, body]))).toStrictEqual([
+      { answers: [1], drains: [], sha, subject },
     ]);
   });
 
@@ -39,19 +41,10 @@ describe(getAnsweredCommits, () => {
   test("reads a trailer separated from the attribution line by a blank line", () => {
     expect.hasAssertions();
 
-    const body = [
-      "fix(scripts): a limit is read only off a drain that never started",
-      "",
-      "A body paragraph.",
-      "",
-      "Answers: 3998827030",
-      "",
-      "Co-Authored-By: Someone <noreply@example.com>",
-      "",
-    ].join("\n");
+    const body = [`${ANSWERS_TRAILER}: 1`, "", "Co-Authored-By:", ""].join("\n");
 
-    expect(getAnsweredCommits(getRecord([sha, "fix(scripts): a limit", body]))).toStrictEqual([
-      { answers: [3998827030], drains: [], sha, subject: "fix(scripts): a limit" },
+    expect(getAnsweredCommits(getRecord([sha, subject, body]))).toStrictEqual([
+      { answers: [1], drains: [], sha, subject },
     ]);
   });
 
@@ -60,10 +53,10 @@ describe(getAnsweredCommits, () => {
   test("reads a key repeated on its own line", () => {
     expect.hasAssertions();
 
-    const body = "fix\n\nAnswers: 12\nAnswers: 34\n";
+    const body = `${ANSWERS_TRAILER}: 1\n${ANSWERS_TRAILER}: 2\n`;
 
-    expect(getAnsweredCommits(getRecord([sha, "fix", body]))).toStrictEqual([
-      { answers: [12, 34], drains: [], sha, subject: "fix" },
+    expect(getAnsweredCommits(getRecord([sha, subject, body]))).toStrictEqual([
+      { answers: [1, 2], drains: [], sha, subject },
     ]);
   });
 });

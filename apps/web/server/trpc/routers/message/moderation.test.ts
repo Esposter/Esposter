@@ -151,9 +151,9 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    const onLeaveRoom = await roomCaller.onLeaveRoom([roomId]);
+    const subscription = await roomCaller.onLeaveRoom([roomId]);
     const leaveRoom = await getFirstEmit(
-      () => onLeaveRoom,
+      () => subscription,
       () =>
         moderationCaller.executeAdminAction({
           roomId,
@@ -283,8 +283,8 @@ describe("moderationRouter", () => {
   test("readBans filters by the banned user's name", async () => {
     expect.hasAssertions();
 
-    const bannedUserNames = ["searched", "other"];
-    for (const bannedUserName of bannedUserNames) {
+    const searchedName = "a";
+    for (const bannedUserName of [searchedName, "b"]) {
       const member = await createMember();
       await mockContext.db.update(users).set({ name: bannedUserName }).where(eq(users.id, member.id));
       await moderationCaller.executeAdminAction({
@@ -294,10 +294,10 @@ describe("moderationRouter", () => {
       });
     }
 
-    const result = await moderationCaller.readBans({ filter: { name: "search" }, roomId });
+    const result = await moderationCaller.readBans({ filter: { name: searchedName }, roomId });
 
     expect(result.items).toHaveLength(1);
-    expect(takeOne(result.items).user.name).toBe("searched");
+    expect(takeOne(result.items).user.name).toBe(searchedName);
   });
 
   // A name is user input, so the wildcards have to mean themselves — otherwise searching for a literal
@@ -467,15 +467,15 @@ describe("moderationRouter", () => {
     expect(count).toBe(noteCount);
   });
 
-  test("onAdminAction emits the action to the targeted user", async () => {
+  test("subscription emits the action to the targeted user", async () => {
     expect.hasAssertions();
 
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
-    const onAdminAction = await moderationCaller.onAdminAction({ roomId });
+    const subscription = await moderationCaller.onAdminAction({ roomId });
 
     const data = await getFirstEmit(
-      () => onAdminAction,
+      () => subscription,
       () =>
         moderationCaller.executeAdminAction({
           roomId,

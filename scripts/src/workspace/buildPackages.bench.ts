@@ -14,8 +14,8 @@ import { test } from "vitest";
 // `*.bench.md` is written, which is a developer's machine. Skipped here rather than excluded in the workflow
 // So the reason travels with the file.
 const IS_CI = Boolean(process.env.CI);
-// Switched off locally too, and this is that switch. Three iterations over every package is three full `build:packages` runs
-// — ten minutes before any other member's bench starts — and what it measures is tsdown and rolldown rather than
+// Switched off locally too, and this is that switch. Three iterations over every package is three full `build:packages`
+// Runs — ten minutes before any other member's bench starts — and what it measures is tsdown and rolldown rather than
 // Anything in this repo, so it moves when a dependency bumps and not when the code does. It is also the one bench
 // That deletes state it does not own: each `dist` it removes to force a cold build is the same `dist` a concurrent
 // Member's `vitest.config.ts` resolves `@esposter/configuration` through, which is why the root `bench` script
@@ -38,7 +38,7 @@ const quoteArgument = (argument: string): string => (IS_SHELL ? `"${argument}"` 
 // Layer up as `bench.compare() requires at least 2 benchmarks, received 0`.
 const runPnpm = (args: string[]): string =>
   execFileSync("pnpm", args, { cwd: REPOSITORY_ROOT, encoding: "utf8", shell: IS_SHELL });
-// Pnpm orders a recursive run topologically, and `--workspace-concurrency=1` is what makes that order observable:
+// `pnpm` orders a recursive run topologically, and `--workspace-concurrency=1` is what makes that order observable:
 // Each package prints while it is the only one running. Asking pnpm rather than deriving the order from the
 // Manifests keeps one definition of what depends on what — the same one the real build uses. The directory comes
 // Back in the same pass because a package's name does not have to match the folder holding it.
@@ -81,7 +81,7 @@ test.skipIf(!isBenchable)("build - packages", async ({ bench }) => {
   await bench.compare(
     ...packages.map(({ directory, packageName }) =>
       bench(packageName, () => {
-        // Tsdown cleans `dist` before writing anyway, so this states the starting state rather than creating it —
+        // `tsdown` cleans `dist` before writing anyway, so this states the starting state rather than creating it —
         // A package that ever turned `clean` off would otherwise be measured incrementally without the report
         // Saying so. The removal is milliseconds against a build of seconds.
         rmSync(join(directory, "dist"), { force: true, recursive: true });

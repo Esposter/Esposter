@@ -6,16 +6,16 @@ import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
 import { getOpenBodyReviewId } from "#src/services/coderabbit/collect/getOpenBodyReviewId";
 import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
+import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 
-// The drain as one step of the cycle: nothing open means nothing to do, a dry run runs no Claude session, and a
-// Limit the last run hit — Claude Code's own, read off the marker that run wrote — ends the run rather than
-// Downloading Claude Code to be refused again. Nothing announces that limit lifting and every queue push fires a
-// Cycle, so without the marker each one would try. A drain that could not start ends the run too: the open set
-// Is untouched, so porting now would put a window ahead of findings that must lead it.
+// A limit the last run hit — Claude Code's own, read off the marker it wrote — ends the run rather than
+// Downloading Claude Code to be refused again; so does a drain that could not start, since porting would put a
+// Window ahead of findings that must lead it.
 export const runDrainStep = async ({
+  cwd,
   developSha,
   frontierCommits,
   isDryRun,
@@ -26,16 +26,20 @@ export const runDrainStep = async ({
   reviews,
   viewerLogin,
 }: DrainStepInput): Promise<DrainStepResult> => {
-  // The open set is what the bot spoke last on and no unported commit answers — a fix sitting on the fixes branch
-  // Or in the queue has already answered its finding, and draining it again spends a session on work the window
-  // Is about to carry
+  // The open set is what the bot spoke last on and no unported commit answers — a fix on the fixes branch or in
+  // The queue has answered its finding already. Unported by patch id, never by range: a fixes branch a window has
+  // Carried still lists every commit against develop, and so does a queue the session has not rebased, and a
+  // Trailer read off either would keep a release from merging on a finding develop already answers.
   const newestReview = reviews.findLast(({ body }) => body);
-  const unportedCommits = [
-    ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`) : []),
-    ...readAnsweredCommits(`${developSha}..${queueSha}`),
+  const unportedShas = [
+    ...(reviewFixesSha ? readCherryShas(developSha, reviewFixesSha, cwd) : []),
+    ...readCherryShas(developSha, queueSha, cwd),
   ];
-  const answeredIds = new Set(unportedCommits.flatMap(({ answers }) => answers));
-  const drainedReviewIds = new Set([...unportedCommits, ...frontierCommits].flatMap(({ drains }) => drains));
+  const unportedCommits = unportedShas.length === 0 ? [] : readAnsweredCommits(["--no-walk", ...unportedShas], cwd);
+  // The window's own commits count too: a fix develop carries is answered whether or not its reply landed
+  const answeringCommits = [...unportedCommits, ...frontierCommits];
+  const answeredIds = new Set(answeringCommits.flatMap(({ answers }) => answers));
+  const drainedReviewIds = new Set(answeringCommits.flatMap(({ drains }) => drains));
   const threads = readUnresolvedThreads(pullRequest);
   const openThreads = getOpenFindings(threads, answeredIds);
   const openBodyReviewId = getOpenBodyReviewId({ drainedReviewIds, issueComments, newestReview, viewerLogin });
@@ -43,15 +47,19 @@ export const runDrainStep = async ({
     `open findings: ${openThreads.length} inline, body-only review ${openBodyReviewId?.toString() ?? "none"}`,
   );
 
-  if (!newestReview || (openThreads.length === 0 && openBodyReviewId === undefined)) return { reviewFixesSha };
-  else if (isDryRun) {
+  if (!newestReview || (openThreads.length === 0 && openBodyReviewId === undefined)) {
+    // Answered by an unported commit is not answered on `develop`: the release waits for that commit to land
+    const isClean = unportedCommits.every(({ answers, drains }) => answers.length === 0 && drains.length === 0);
+    return { isClean, reviewFixesSha };
+  } else if (isDryRun) {
     console.info("would drain — a dry run runs no Claude session");
-    return { reviewFixesSha };
+    return { isClean: false, reviewFixesSha };
   }
 
   const drainLimitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
   if (drainLimitResetMs !== undefined && drainLimitResetMs > Date.now())
     return {
+      isClean: false,
       outcome: {
         kind: CycleOutcomeKind.Idle,
         reason: `the drain is limited until ${new Date(drainLimitResetMs).toISOString()} — the findings stay open, so nothing ports ahead of them`,
@@ -72,8 +80,9 @@ export const runDrainStep = async ({
   });
   if (drain.isLimited)
     return {
+      isClean: false,
       outcome: { kind: CycleOutcomeKind.Idle, reason: "the drain could not start — the findings stay open" },
       reviewFixesSha,
     };
-  return { reviewFixesSha: drain.reviewFixesSha };
+  return { isClean: false, reviewFixesSha: drain.reviewFixesSha };
 };

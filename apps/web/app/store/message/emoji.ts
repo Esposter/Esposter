@@ -71,7 +71,6 @@ export const useEmojiStore = defineStore("message/emoji", () => {
       key: input.rowKey,
     });
   };
-
   // Reacting again removes this user's own reaction; the last one to leave takes the reaction itself with it
   const toggleEmoji = async (emoji: MessageEmojiMetadataEntity) => {
     if (!session.value.data) return;

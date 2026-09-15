@@ -1,6 +1,6 @@
 ---
 name: score
-description: Esposter repository score review — how to re-run the SCORE.md audit, keep the README badge in sync, and bump the Nuxt compatibilityDate to the review date. Apply when reviewing, re-scoring, or updating SCORE.md.
+description: Apply when reviewing, re-scoring, or updating SCORE.md. Esposter repository score review — how to re-run the SCORE.md audit, keep the README badge in sync, and bump the Nuxt compatibilityDate to the review date.
 ---
 
 # Repository Score Review

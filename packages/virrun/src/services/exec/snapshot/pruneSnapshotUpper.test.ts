@@ -8,7 +8,8 @@ import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(pruneSnapshotUpper, () => {
-  // A file inside the repo-root dependency closure — the canonical thing the lockfile determines, so the prune keeps it.
+  // A file inside the repo-root dependency closure — the canonical thing the lockfile determines, so the prune keeps
+  // It.
   const ROOT_DEPENDENCY = join(NODE_MODULES_DIRECTORY, TEST_FILENAME);
   // A workspace package directory: worth keeping only as the path to its own nested closure.
   const PACKAGE_DIRECTORY = TEST_FILENAME;

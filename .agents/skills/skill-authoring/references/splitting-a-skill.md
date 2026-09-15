@@ -1,8 +1,21 @@
 # Splitting a Skill
 
-Read when a `SKILL.md` has passed its budget and a section is moving out, or when creating a `references/` page.
-The two-tier layout, the budget itself and the index-line rule are in `SKILL.md`; this page is the mechanics of
-the move.
+Read when a `SKILL.md` holds a second concept and a section is moving out, or when creating a `references/` page.
+The two-tier layout and the index-line rule are in `SKILL.md`; this page is what the ceiling is and the mechanics
+of the move.
+
+## The ceiling, and why it is a warning
+
+The ceiling is a byte count and a line count — `MAX_SKILL_BYTES` and `MAX_SKILL_LINES` in
+`scripts/src/services/sweeps/skillDocs/constants.ts`. Bytes are what the context actually costs, lines are the
+readability proxy, and this repo's long prose lines make it easy to pass the first while meeting the second.
+
+**It is a warning, never a target.** A skill the warning names has accumulated topics, and the fix is separating
+them — never shaving prose to land under the number, which buys bytes by making every surviving rule harder to
+read, and never treating the space below it as room a skill is entitled to. The question at any size is whether
+the page still describes one contained concept; a second concept moves to the skill that owns it or opens its own
+the moment it is recognised, which is usually long before the number says anything. Three cohesive pages beat nine
+fragments, and two rules that have to be read together stay on one page.
 
 ## What qualifies
 
@@ -15,8 +28,10 @@ becoming a reference page here: one owner beats two shallow copies, and the spli
 
 ## A reference page opens by naming its trigger
 
-Its first line is "read when X" — a reader landing on the page from a search rather than from `SKILL.md` has
-nothing else to tell them whether the page is theirs.
+**Its first paragraph begins with the word `Read`** — `Read when a test needs a DOM`, `` Read before writing any
+`watch` ``. A reader landing on the page from a search rather than from `SKILL.md` has nothing else to tell them
+whether the page is theirs, and the fixed opening is what lets `ai:sweep:skill-docs` decide it (`triggerless`)
+instead of judging a paraphrase (`references/enforceable-shapes.md`).
 
 **Where `SKILL.md` kept part of the rule, a second line says which part**: "the rule itself is in `SKILL.md`;
 this page is Y". Without it the reader cannot tell whether they are holding the whole rule or its tail, and the

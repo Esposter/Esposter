@@ -5,6 +5,7 @@ import { createRow } from "@/composables/resource/sheet/commands/createRow.test"
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
+import { NULL_STRATEGY_NA_VALUE } from "@/services/resource/sheet/commands/constants";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -21,7 +22,7 @@ describe(useNullStrategy, () => {
     const nullStrategy = useNullStrategy();
     await nullStrategy(NullStrategy.ReplaceWithNA);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe("N/A");
+    expect(takeOne(dataSource.rows).data[""]).toBe(NULL_STRATEGY_NA_VALUE);
   });
 
   test.each([null, ""])(`${NullStrategy.DropRow} drops a row holding a %j cell`, async (value) => {

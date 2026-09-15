@@ -5,6 +5,8 @@ import { formatValue } from "@/services/resource/sheet/column/formatValue";
 import { describe, expect, test } from "vitest";
 
 describe(formatValue, () => {
+  const epochDate = new Date(0).toISOString().slice(0, 10);
+
   test("returns empty string for null value", () => {
     expect.hasAssertions();
     expect(formatValue(null, BooleanFormat.TrueFalse)).toBe("");
@@ -44,7 +46,7 @@ describe(formatValue, () => {
 
   test(`formats date string as ${DateFormat["YYYY-MM-DD"]}`, () => {
     expect.hasAssertions();
-    expect(formatValue("1970-01-01", DateFormat["YYYY-MM-DD"])).toBe("1970-01-01");
+    expect(formatValue(epochDate, DateFormat["YYYY-MM-DD"])).toBe(epochDate);
   });
 
   test("returns raw string for invalid date string", () => {

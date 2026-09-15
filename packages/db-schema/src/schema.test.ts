@@ -92,8 +92,8 @@ describe("schema", () => {
       roomRoles_position_check: "message"."roomRoles"."position" >= 0
       rooms_name_check: ("message"."rooms"."type" = 'DirectMessage' AND LENGTH(TRIM("message"."rooms"."name")) = 0) OR ("message"."rooms"."type" = 'Room' AND LENGTH(TRIM("message"."rooms"."name")) BETWEEN 1 AND 100)
       rooms_type_participantKey_check: ("message"."rooms"."type" = 'DirectMessage' AND "message"."rooms"."participantKey" IS NOT NULL) OR ("message"."rooms"."type" = 'Room' AND "message"."rooms"."participantKey" IS NULL)
-      rooms_maxFileSizeBytes_check: "message"."rooms"."maxFileSizeBytes" IS NULL OR "message"."rooms"."maxFileSizeBytes" >= 1
-      rooms_slowmodeMs_check: "message"."rooms"."slowmodeMs" IS NULL OR "message"."rooms"."slowmodeMs" >= 1
+      rooms_maxFileSizeBytes_check: "message"."rooms"."maxFileSizeBytes" >= 0
+      rooms_slowmodeMs_check: "message"."rooms"."slowmodeMs" >= 0
       rooms_topic_length_check: LENGTH("message"."rooms"."topic") <= 500
       scheduledMessageJobs_payload_type_check: 
                 ("message"."scheduledMessageJobs"."payload"->>'type' = 'Reminder' AND "message"."scheduledMessageJobs"."payload" ? 'text')

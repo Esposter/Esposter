@@ -31,8 +31,8 @@ const createEditor = (blocks: RegisteredBlock[]) => {
 };
 
 describe(setBlocks, () => {
-  const category = "Merge fields";
-  const otherCategory = "Survey invites";
+  const category = "";
+  const otherCategory = " ";
   const createBlock = (block?: Partial<RegisteredBlock>): RegisteredBlock => ({
     category,
     content: "content",
@@ -55,7 +55,7 @@ describe(setBlocks, () => {
   test("leaves every other category untouched", () => {
     expect.hasAssertions();
 
-    const otherBlock = createBlock({ category: otherCategory, id: "other" });
+    const otherBlock = createBlock({ category: otherCategory, id: crypto.randomUUID() });
     const { editor, registry } = createEditor([createBlock({ id: "stale" }), otherBlock]);
 
     setBlocks(editor, category, []);

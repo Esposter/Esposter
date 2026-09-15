@@ -26,7 +26,7 @@ process.on("SIGTERM", () => {
   wss.close();
 });
 
-const getReq = (peer: Peer): IncomingMessage =>
+const getRequest = (peer: Peer): IncomingMessage =>
   (peer.context.node as undefined | { req: IncomingMessage })?.req ??
   ({ headers: Object.fromEntries(peer.request.headers.entries()) } as IncomingMessage);
 
@@ -34,11 +34,11 @@ const getReq = (peer: Peer): IncomingMessage =>
 // Router's UNAUTHORIZED is the connection's ordinary life rather than a failure to report
 const runAsPeer = async (
   peer: Peer,
-  req: IncomingMessage,
+  request: IncomingMessage,
   run: (caller: ReturnType<typeof createCaller>) => Promise<unknown>,
   message: string,
 ) => {
-  const caller = createCaller(createContext({ req, res: peer.wsAdapter } as CreateWSSContextFnOptions));
+  const caller = createCaller(createContext({ req: request, res: peer.wsAdapter } as CreateWSSContextFnOptions));
   await getResultAsync(() => run(caller)).match(
     () => {
       console.log(`${message}, clients: ${wss.clients.size}`);
@@ -55,7 +55,7 @@ export default defineWebSocketHandler({
     if (!peer.wsAdapter) return;
     peer.wsAdapter.readyState = peer.wsAdapter.CLOSED;
     peer.wsAdapter.emit("close", event.code, event.reason);
-    await runAsPeer(peer, getReq(peer), (caller) => caller.disconnect(), "WS connection closed");
+    await runAsPeer(peer, getRequest(peer), (caller) => caller.disconnect(), "WS connection closed");
   },
 
   error: (peer, error) => {
@@ -67,9 +67,9 @@ export default defineWebSocketHandler({
   },
 
   open: async (peer) => {
-    const req = getReq(peer);
+    const request = getRequest(peer);
     peer.wsAdapter = new WsAdapter(peer);
-    wss.addConnection(peer.wsAdapter, req);
-    await runAsPeer(peer, req, (caller) => caller.connect(), "WS connection opened");
+    wss.addConnection(peer.wsAdapter, request);
+    await runAsPeer(peer, request, (caller) => caller.connect(), "WS connection opened");
   },
 });

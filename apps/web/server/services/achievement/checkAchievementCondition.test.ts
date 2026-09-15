@@ -40,7 +40,7 @@ describe(checkAchievementCondition, () => {
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        { ...baseCondition, operator: AchievementOperator.Contains, path: "message", value: "0" },
+        { ...baseCondition, operator: AchievementOperator.Contains, path: "message", value: " " },
         data,
       ),
     ).toBe(false);
@@ -75,7 +75,7 @@ describe(checkAchievementCondition, () => {
     expect(
       checkAchievementCondition(
         { ...baseCondition, operator: AchievementOperator.IsPalindrome, path: "message", value: true },
-        { message: "A man, a plan, a canal: Panama" },
+        { message: "A, a" },
       ),
     ).toBe(true);
     expect(

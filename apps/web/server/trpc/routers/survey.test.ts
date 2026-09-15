@@ -26,7 +26,7 @@ import {
   SnapshotChannel,
   SurveyResponseMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -62,9 +62,9 @@ describe("surveyRouter", () => {
     caller.saveResourceContent({ content, contentVersion, id });
   // A response is always the same envelope — one answer under a fresh row key — and the token is the only part
   // An Anonymous survey leaves empty, so it defaults to what the mode that does not use it sends
-  const createSurveyResponse = (partitionKey: string, satisfaction: number, participantToken = "") =>
+  const createSurveyResponse = (partitionKey: string, answer: number, participantToken = "") =>
     caller.createSurveyResponse({
-      model: { satisfaction },
+      model: { a: answer },
       participantToken,
       partitionKey,
       rowKey: crypto.randomUUID(),
@@ -72,11 +72,11 @@ describe("surveyRouter", () => {
   // An edit addresses the response it is editing, so the row identifies itself rather than being restated
   const updateSurveyResponse = (
     surveyResponse: Awaited<ReturnType<typeof createSurveyResponse>>,
-    satisfaction: number,
+    answer: number,
     participantToken = "",
   ) =>
     caller.updateSurveyResponse({
-      model: { satisfaction },
+      model: { a: answer },
       modelVersion: surveyResponse.modelVersion,
       participantToken,
       partitionKey: surveyResponse.partitionKey,
@@ -92,9 +92,8 @@ describe("surveyRouter", () => {
       sheetCaller,
       surveyId: survey.id,
     });
-    const [participant] = await programCaller.generateProgramParticipants({ id: program.id });
-    assert.exists(participant);
-    return { program, survey, token: participant.token };
+    const participants = await programCaller.generateProgramParticipants({ id: program.id });
+    return { program, survey, token: takeOne(participants).token };
   };
 
   beforeAll(() => {
@@ -164,7 +163,7 @@ describe("surveyRouter", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 1);
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     const surveyResponse = await caller.readSurveyResponse({
       partitionKey: newSurveyResponse.partitionKey,
       rowKey: newSurveyResponse.rowKey,
@@ -192,7 +191,7 @@ describe("surveyRouter", () => {
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1);
 
-    expect(updatedSurveyResponse.model).toStrictEqual({ satisfaction: 1 });
+    expect(updatedSurveyResponse.model).toStrictEqual({ a: 1 });
     expect(updatedSurveyResponse.modelVersion).toBe(newSurveyResponse.modelVersion + 1);
   });
 
@@ -220,7 +219,7 @@ describe("surveyRouter", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
+      model: { a: 0 },
       pageNo: 0,
       participantToken: "",
       partitionKey: newResource.id,
@@ -228,7 +227,7 @@ describe("surveyRouter", () => {
     });
     // Same answers, later page — a real progress write, so it is not a duplicate and the resume position advances
     const updatedSurveyResponse = await caller.updateSurveyResponse({
-      model: { satisfaction: 0 },
+      model: { a: 0 },
       modelVersion: newSurveyResponse.modelVersion,
       pageNo: 1,
       participantToken: "",
@@ -244,7 +243,7 @@ describe("surveyRouter", () => {
 
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await caller.createSurveyResponse({
-      model: { satisfaction: 0 },
+      model: { a: 0 },
       pageNo: 2,
       participantToken: "",
       partitionKey: newResource.id,
@@ -254,7 +253,7 @@ describe("surveyRouter", () => {
     // Navigating back and re-saving unchanged answers must not regress the stored resume page
     await expect(
       caller.updateSurveyResponse({
-        model: { satisfaction: 0 },
+        model: { a: 0 },
         modelVersion: newSurveyResponse.modelVersion,
         pageNo: 1,
         participantToken: "",

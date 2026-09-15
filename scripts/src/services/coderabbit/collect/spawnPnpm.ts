@@ -1,6 +1,6 @@
 import type { SpawnSyncOptions, SpawnSyncReturns } from "node:child_process";
 
-import { IS_PNPM_SHELL } from "#src/services/coderabbit/collect/constants";
+import { IS_PNPM_SHELL } from "#src/services/shared/constants";
 import { spawnSync } from "node:child_process";
 
 // Every `pnpm` the collector waits on — the checks and the installs — is spawned the same way. The exit status is

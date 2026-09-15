@@ -19,9 +19,9 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 
 describe(useEmojiStore, () => {
   const server = setupMswTrpc();
-  const partitionKey = "partitionKey";
-  const rowKey = "rowKey";
-  const messageRowKey = "messageRowKey";
+  const partitionKey = crypto.randomUUID();
+  const rowKey = crypto.randomUUID();
+  const messageRowKey = crypto.randomUUID();
 
   beforeEach(() => {
     setActivePinia(createPinia());

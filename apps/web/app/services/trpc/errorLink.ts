@@ -19,15 +19,18 @@ export const errorLink: TRPCLink<TRPCRouter> =
     observable((observer) => {
       const unsubscribe = next(op).subscribe({
         complete: observer.complete,
-        error: getSynchronizedFunction(async (err) => {
-          observer.error(err);
-          if (!err.data) return;
+        error: getSynchronizedFunction(async (error) => {
+          observer.error(error);
+          if (!error.data) return;
 
-          if (ALERTED_ERROR_CODES.has(err.data.code)) {
+          if (ALERTED_ERROR_CODES.has(error.data.code)) {
             const alertStore = useAlertStore();
             const { createAlert } = alertStore;
-            createAlert(err.message, "error");
-          } else if ((err.data.code === "FORBIDDEN" || err.data.code === "UNAUTHORIZED") && !op.context.isBackground) {
+            createAlert(error.message, "error");
+          } else if (
+            (error.data.code === "FORBIDDEN" || error.data.code === "UNAUTHORIZED") &&
+            !op.context.isBackground
+          ) {
             // A scope the link stops, because better-auth's `useSession` unsubscribes through
             // `onScopeDispose` and nothing else here would ever reach it
             const scope = effectScope(true);

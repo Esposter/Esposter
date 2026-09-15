@@ -65,9 +65,12 @@ describe(useUpdateColumn, () => {
   test("reformats date values when format changes", async () => {
     expect.hasAssertions();
 
+    // The second row is the epoch's next day, so the reformat's day-month order is read off its output
+    const epochDate = new Date(0).toISOString().slice(0, 10);
+    const nextDayDate = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString().slice(0, 10);
     const initialDataSource = createDataSource(
       [createDateColumn("date", DateFormat["YYYY-MM-DD"])],
-      [createRow({ date: "2024-01-15" }), createRow({ date: "2024-06-30" })],
+      [createRow({ date: epochDate }), createRow({ date: nextDayDate })],
     );
     const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
@@ -76,8 +79,8 @@ describe(useUpdateColumn, () => {
     const column = takeOne(dataSource.columns);
     await updateColumn("date", createUpdatedColumn(column, { format: DateFormat["DD/MM/YYYY"] }));
 
-    expect(takeOne(dataSource.rows).data.date).toBe("15/01/2024");
-    expect(takeOne(dataSource.rows, 1).data.date).toBe("30/06/2024");
+    expect(takeOne(dataSource.rows).data.date).toBe("01/01/1970");
+    expect(takeOne(dataSource.rows, 1).data.date).toBe("02/01/1970");
     expect(takeOne(dataSource.columns).size).toBe(24);
 
     undo(dataSource);
@@ -85,8 +88,8 @@ describe(useUpdateColumn, () => {
 
     assert.instanceOf(restoredColumn, DateColumn);
 
-    expect(takeOne(dataSource.rows).data.date).toBe("2024-01-15");
-    expect(takeOne(dataSource.rows, 1).data.date).toBe("2024-06-30");
+    expect(takeOne(dataSource.rows).data.date).toBe(epochDate);
+    expect(takeOne(dataSource.rows, 1).data.date).toBe(nextDayDate);
     expect(restoredColumn.format).toBe(DateFormat["YYYY-MM-DD"]);
   });
 

@@ -29,7 +29,8 @@ export const captureOverlayUpper = (
   options: ExecOptions,
   { directory, failureLabel, lowerDirectories, operationName, prune, upperDirectory }: CaptureOverlayUpperOptions,
 ): Promise<ExecResult> => {
-  // "" until created so the failure finalizer knows whether there is anything to tear down (mkdtemp itself could throw).
+  // "" until created so the failure finalizer knows whether there is anything to tear down (mkdtemp itself could
+  // Throw).
   let captureUpperDirectory = "";
   let captureWorkDirectory = "";
   return getResultAsync(async () => {

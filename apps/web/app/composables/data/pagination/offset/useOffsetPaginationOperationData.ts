@@ -47,7 +47,6 @@ export const useOffsetPaginationOperationData = <TItem>(
         boundIsLoaded.value = true;
       }, onComplete);
     };
-
   // Appends the next page rather than replacing the slice, which is what an infinite list wants and what
   // `getReadMoreItems` deliberately does not do — a paginator reads a page, a waypoint reads the next one.
   // The offset is the slice's own length, so nothing outside has to track how far the list has been read.

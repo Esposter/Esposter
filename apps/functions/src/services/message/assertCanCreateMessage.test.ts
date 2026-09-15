@@ -49,10 +49,7 @@ describe(assertCanCreateMessage, () => {
   });
 
   afterEach(async () => {
-    await mockDb
-      .update(roomsInMessage)
-      .set({ isReadOnly: false, slowmodeMs: null })
-      .where(eq(roomsInMessage.id, roomId));
+    await mockDb.update(roomsInMessage).set({ isReadOnly: false, slowmodeMs: 0 }).where(eq(roomsInMessage.id, roomId));
     await mockDb
       .update(usersToRoomsInMessage)
       .set({ lastMessageAt: null, timeoutUntil: null })

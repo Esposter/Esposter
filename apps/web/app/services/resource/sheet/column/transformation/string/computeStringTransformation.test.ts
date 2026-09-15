@@ -2,7 +2,8 @@ import { StringTransformationType } from "#shared/models/resource/sheet/column/t
 import { computeStringTransformation } from "@/services/resource/sheet/column/transformation/string/computeStringTransformation";
 import { describe, expect, test } from "vitest";
 
-// The null guard and String(...) coercion of the source value live in ColumnTransformationComputeMap; here only the case/whitespace transforms
+// The null guard and String(...) coercion of the source value live in ColumnTransformationComputeMap; here only the
+// Case/whitespace transforms
 describe(computeStringTransformation, () => {
   test(`${StringTransformationType.LowerCase} lowercases every character`, () => {
     expect.hasAssertions();

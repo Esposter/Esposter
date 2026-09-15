@@ -14,7 +14,7 @@ const sourcePaths = getSweepFilePaths("packages/shared/src/*.ts").filter(
 // Every file outside the defining package. `packages/shared` naming its own export is the library using itself,
 // So counting it would let one real consumer clear a threshold that asks for two.
 const packageIdentifiersMap = getPackageIdentifiersMap(
-  [...getSweepFilePaths("*.ts"), ...getSweepFilePaths("*.vue")]
+  getSweepFilePaths("*.ts", "*.vue")
     .filter((path) => !path.includes("/dist/") && getPackagePath(path) !== "packages/shared")
     .map((path) => [path, readFileSync(resolve(REPOSITORY_ROOT, path), "utf8")] as const),
 );
@@ -22,7 +22,7 @@ const packageIdentifiersMap = getPackageIdentifiersMap(
 // Prints rather than exits non-zero: the ≥2-consumers rule is what earns a place in a shared package, and a `0`
 // Here is an export nothing outside `packages/shared` names at all — which may still be a helper the package
 // Uses internally, so the pass tells the two apart by opening the file
-// (`.agents/ledgers/file-organization.md`).
+// (`.agents/ledgers/file-organization/`).
 for (const path of sourcePaths)
   for (const name of getExportNames(readFileSync(resolve(REPOSITORY_ROOT, path), "utf8"))) {
     const consumerPackagePaths = getConsumerPackagePaths(name, packageIdentifiersMap);

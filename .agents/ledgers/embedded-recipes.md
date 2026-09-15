@@ -25,5 +25,4 @@ grep -rn -A 30 '^```bash' --include=*.md .agents apps/web/content/docs *.md |
 
 Each hit is a candidate, not a defect: the pass reads the block and decides whether its logic is its pattern.
 Prose inside the trailing window still slips through, and a placeholder shape taught as an idiom is not a
-recipe, so a hit is read rather than counted. The two known open ones are `release-pr-cutting.md`'s per-commit file-count loops, whose home is a mode of the
-existing window script rather than a script of their own.
+recipe, so a hit is read rather than counted.

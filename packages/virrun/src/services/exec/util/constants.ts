@@ -27,10 +27,11 @@ export const ROOT_ANCHOR_PREFIX = "./";
 export const GIT_WORKTREES_DIRECTORY_NAME = "worktrees";
 export const GIT_WORKTREE_GITDIR_FILENAME = "gitdir";
 export const GIT_WORKTREE_GITDIR_PREFIX = "gitdir: ";
-// Git's own record of where a git directory's common directory is, written into every linked worktree's git directory (`../..`, or an
+// Git's own record of where a git directory's common directory is, written into every linked worktree's git directory
+// (`../..`, or an
 // Absolute path). Its ABSENCE is equally a fact: a git directory that is not a worktree entry — a submodule's
-// `.git/modules/<name>` — is its own common directory. Reading it is what keeps readGitCommonDirectory from inferring the
-// Answer from the path's shape, which only holds for the `worktrees/<name>` layout.
+// `.git/modules/<name>` — is its own common directory. Reading it is what keeps readGitCommonDirectory from inferring
+// The answer from the path's shape, which only holds for the `worktrees/<name>` layout.
 export const GIT_COMMON_DIRECTORY_FILENAME = "commondir";
 // The directory pnpm/npm link executables into; prepended to the sandbox PATH so a bare command resolves the overlaid
 // (current-platform) binary ahead of any host `.bin` the WSL login PATH leaks in. See createOsExecOptions.
@@ -69,7 +70,8 @@ export const PROBE_CACHE_MAX_AGE_MS: number = Temporal.Duration.from({ hours: 6 
 // Set (to any value) to bypass the persisted capability cache and force a fresh probe — the escape hatch for a host
 // Whose bubblewrap/kernel capability changed without a cache-key change (e.g. bwrap was just installed).
 export const VIRRUN_FORCE_PROBE_KEY = "VIRRUN_FORCE_PROBE";
-// Set (to any value) to disable the task cache for a run — the env form of `virrun --no-cache`. See checkIsTaskCacheEnabled.
+// Set (to any value) to disable the task cache for a run — the env form of `virrun --no-cache`.
+// See checkIsTaskCacheEnabled.
 export const VIRRUN_NO_CACHE_KEY = "VIRRUN_NO_CACHE";
 // Set (to any value) to print internal diagnostic lines to stderr — the env form of `virrun run --debug`. The
 // Observability lever for silently-degrading paths (the task cache is best-effort: a failed record leaves the run
@@ -101,7 +103,8 @@ export const PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).
 export const WSL_PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
 // Upper bound for a synchronous WSL-side `rm -rf` of a cache directory (removeSnapshotDirectory). Real work — an
 // Unlink of a whole node_modules closure — so it gets minutes rather than the probe's seconds, and its size is
-// Bounded by one cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p bridge fails
+// Bounded by one cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p
+// Bridge fails
 // The call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents: a run that
 // Never returns and no error to explain it. See apps/web/content/docs/virrun/subprocess-timeouts.md.
 export const WSL_WORK_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
@@ -120,15 +123,15 @@ export const CACHE_CLEAN_TIMEOUT_MS: number = 0;
 // How old a source-mirror entry carrying no `origin` marker must be before the reaper may reclaim it. The marker is
 // Written (atomically) as soon as the entry directory exists, so its absence means a sync died in that same instant — a
 // Corpse, not a live planner — and any window measured in a day is orders of magnitude beyond that gap. Without this
-// The unmarked corpses are unattributable and accumulate forever: a test suite that runs virrun in temp directories strands
-// One per aborted run, hundreds of them holding gigabytes of ext4.
+// The unmarked corpses are unattributable and accumulate forever: a test suite that runs virrun in temp directories
+// Strands one per aborted run, hundreds of them holding gigabytes of ext4.
 export const SOURCE_MIRROR_UNMARKED_MAX_AGE_MS: number = Temporal.Duration.from({ days: 1 }).total("milliseconds");
 // Minimum age before a dead owner's staged remove-list may be reclaimed. A dead owner does NOT mean the teardown is
 // Finished with the file: `spawnBackground` spawns asynchronously, and `wsl.exe` still has to start the WSL relay and
 // `sh` before the script's `< "$1"` redirect opens it — so a short win32 run can exit, and its pid read as dead, while
 // Its own teardown is still cold-starting. Unlinking then leaves that `sh` with a missing input, its `rm -rf` never
-// Runs, and the superseded snapshot directories it named are never reclaimed — the unbounded ext4 growth the batched sweep
-// Exists to prevent, silently, since the spawn ignores its stdio and has no exit handler.
+// Runs, and the superseded snapshot directories it named are never reclaimed — the unbounded ext4 growth the batched
+// Sweep exists to prevent, silently, since the spawn ignores its stdio and has no exit handler.
 export const REMOVE_LIST_REAP_MINIMUM_AGE_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // Upper bound the folded sync script enforces Linux-side — `flock -w` on the mirror lock plus `timeout` on the
 // Archive extract (createWslSourceMirrorSync). A pure hang guard: the extract unpacks one staged archive already
@@ -143,7 +146,8 @@ export const SOURCE_MIRROR_TIMEOUT_SECONDS: number = Temporal.Duration.from({ mi
 export const SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";
-// The host cache directory acceptance corpora/snapshots stage into, under $HOME never os.tmpdir (see createWorkspaceCorpus).
+// The host cache directory acceptance corpora/snapshots stage into, under $HOME never os.tmpdir
+// (see createWorkspaceCorpus).
 export const HOME_CACHE_DIRECTORY_NAME = ".cache";
 // Leaf under the home cache root isolating the heavy tests' shared warm snapshot, so global teardown removes only
 // Test data and never the real cache.

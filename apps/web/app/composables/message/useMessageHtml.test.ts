@@ -14,6 +14,7 @@ import {
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
 } from "@esposter/shared";
+import { getMockSasUrl } from "azure-mock";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -24,9 +25,9 @@ describe(useMessageHtml, () => {
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const roomEmojiId = crypto.randomUUID();
-  const name = "party_parrot";
-  const sasUrl = "https://storage.test/message-assets/emoji?sig=a&se=b";
-  const displayName = "renamed";
+  const name = "name";
+  const sasUrl = getMockSasUrl("", undefined);
+  const displayName = "displayName";
   const roomEmoji: RoomEmojiWithSasUrl = {
     createdAt: new Date(0),
     deletedAt: null,

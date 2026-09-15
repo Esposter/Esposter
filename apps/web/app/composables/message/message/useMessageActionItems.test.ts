@@ -34,6 +34,9 @@ describe(useMessageActionItems, () => {
   const server = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const message = "message";
+  const epoch = new Date(0);
+  const nextDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
+  const dayAfter = new Date(Temporal.Duration.from({ days: 2 }).total("milliseconds"));
   const userToRoom = createUserToRoom({ roomId, userId: getMockSession().user.id });
   const createMessage = (createdAt: Date) => {
     const messageEntity = createMessageEntity({
@@ -64,7 +67,7 @@ describe(useMessageActionItems, () => {
         isFailing = true;
       }),
     );
-    const messageEntity = createMessage(new Date(0));
+    const messageEntity = createMessage(epoch);
     const item = await mountActionItem(messageEntity, "Unpin Message");
     const otherItem = await mountActionItem(messageEntity, "Unpin Message");
     await Promise.all([item.onClick?.(new MouseEvent("click")), otherItem.onClick?.(new MouseEvent("click"))]);
@@ -77,11 +80,13 @@ describe(useMessageActionItems, () => {
   test("rolls a rejected mark-unread back to the marker the write beside it stored", async () => {
     expect.hasAssertions();
 
-    const acceptedLastMessageAt = new Date(1);
+    // The accepted click marks the earlier message unread, so the later one's marker is the write refused
+    let acceptedLastMessageAt: Date | undefined;
     server.use(
       trpcMsw.userToRoom.updateUserToRoom.mutation(({ input }) => {
-        if (input.lastMessageAt?.getTime() !== acceptedLastMessageAt.getTime())
+        if (!input.lastMessageAt || input.lastMessageAt >= nextDay)
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
+        acceptedLastMessageAt = input.lastMessageAt;
         return { ...userToRoom, lastMessageAt: input.lastMessageAt };
       }),
     );
@@ -89,10 +94,11 @@ describe(useMessageActionItems, () => {
     const userToRoomStore = useUserToRoomStore();
     const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
     setMyUserToRoom(roomId, userToRoom);
-    const item = await mountActionItem(createMessage(new Date(2)), "Mark Unread From Here");
-    const rejectedItem = await mountActionItem(createMessage(new Date(4)), "Mark Unread From Here");
+    const item = await mountActionItem(createMessage(nextDay), "Mark Unread From Here");
+    const rejectedItem = await mountActionItem(createMessage(dayAfter), "Mark Unread From Here");
     await Promise.all([item.onClick?.(new MouseEvent("click")), rejectedItem.onClick?.(new MouseEvent("click"))]);
 
+    expect(acceptedLastMessageAt).toBeDefined();
     expect(getMyUserToRoom(roomId)?.lastMessageAt).toStrictEqual(acceptedLastMessageAt);
   });
 });

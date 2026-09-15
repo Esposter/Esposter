@@ -47,34 +47,34 @@ describe(parseStringPromise, () => {
   test("merges attributes onto the node when mergeAttrs is set", async () => {
     expect.hasAssertions();
 
-    const result = await parseStringPromise('<root><child attr="value"/></root>', { mergeAttrs: true });
+    const result = await parseStringPromise('<root><child attr="a"/></root>', { mergeAttrs: true });
 
-    expect(result).toStrictEqual({ root: { child: [{ attr: ["value"] }] } });
+    expect(result).toStrictEqual({ root: { child: [{ attr: ["a"] }] } });
   });
 
   test("drops attributes when ignoreAttrs is set", async () => {
     expect.hasAssertions();
 
-    const result = await parseStringPromise('<root><child attr="value">text</child></root>', { ignoreAttrs: true });
+    const result = await parseStringPromise('<root><child attr="a">a</child></root>', { ignoreAttrs: true });
 
-    expect(result).toStrictEqual({ root: { child: ["text"] } });
+    expect(result).toStrictEqual({ root: { child: ["a"] } });
   });
 
   test("applies the attribute name and value processors", async () => {
     expect.hasAssertions();
 
-    const result = await parseStringPromise('<root><child attr="value"/></root>', {
+    const result = await parseStringPromise('<root><child attr="a"/></root>', {
       attrNameProcessors: [(name) => name.toUpperCase()],
       attrValueProcessors: [(value) => value.toUpperCase()],
     });
 
-    expect(result).toStrictEqual({ root: { child: [{ $: { ATTR: "VALUE" } }] } });
+    expect(result).toStrictEqual({ root: { child: [{ $: { ATTR: "A" } }] } });
   });
 
   test("processes the value a qualified attribute wraps when xmlns is set", async () => {
     expect.hasAssertions();
 
-    const result = await parseStringPromise('<root xmlns:ns="urn:x"><ns:child ns:attr="value"/></root>', {
+    const result = await parseStringPromise('<root xmlns:ns="urn:x"><ns:child ns:attr="a"/></root>', {
       attrValueProcessors: [(value) => value.toUpperCase()],
       xmlns: true,
     });
@@ -83,7 +83,7 @@ describe(parseStringPromise, () => {
       root: {
         $: { "xmlns:ns": "URN:X" },
         $ns: { local: "root", uri: "" },
-        "ns:child": [{ $: { "ns:attr": "VALUE" }, $ns: { local: "child", uri: "urn:x" } }],
+        "ns:child": [{ $: { "ns:attr": "A" }, $ns: { local: "child", uri: "urn:x" } }],
       },
     });
   });
@@ -91,8 +91,8 @@ describe(parseStringPromise, () => {
   test("drops a blank char key", async () => {
     expect.hasAssertions();
 
-    const result = await parseStringPromise('<root><child attr="value">   </child></root>');
+    const result = await parseStringPromise('<root><child attr="a">   </child></root>');
 
-    expect(result).toStrictEqual({ root: { child: [{ $: { attr: "value" } }] } });
+    expect(result).toStrictEqual({ root: { child: [{ $: { attr: "a" } }] } });
   });
 });

@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe(parseMachineJson, () => {
   // A repo-relative path that is itself a legal ISO datetime — a dumped log or export, a legal filename on Linux.
-  const ISO_DATE_PATH = "2026-08-05T12:00:00Z";
+  const ISO_DATE_PATH = new Date(0).toISOString();
 
   // The whole reason this parse exists: every string in a machine document is a path, a symlink target or an exclude
   // Pattern, so reviving one that happens to look like a datetime hands the reading schema a Date where it declared a

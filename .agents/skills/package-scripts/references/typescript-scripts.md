@@ -10,7 +10,7 @@ Node strips types natively and runs a plain `.ts` file with no loader and no dev
 `node path/to/index.ts` first. Three things its stripping cannot do, and each one moves the script to `tsx`:
 
 - **An `enum`** — stripping cannot transform one, and the script dies at startup with
-  `ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`. An enum is this repo's default shape for a categorical value (`typescript`
+  "ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX". An enum is this repo's default shape for a categorical value (`typescript`
   skill), so this is the common trigger.
 - **A tsconfig `paths` alias** — node resolves `imports` subpaths and nothing else, so `@/models/…` is a bare
   specifier it goes looking for in `node_modules`. `apps/web/scripts/*` reaches app source through the

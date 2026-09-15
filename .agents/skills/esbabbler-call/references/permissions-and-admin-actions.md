@@ -4,44 +4,11 @@ Read when adding a `RoomPermission` bit or an `AdminActionType`, or wiring an ad
 
 ## `RoomPermission` bits
 
-Current bit assignments (`packages/db-schema/src/schema/roomRolesInMessage.ts`):
+The bits are `packages/db-schema/src/models/message/RoomPermission.ts`, in the order `apps/web/content/docs/esbabbler/rbac.md` fixes, and what each grants is said once on the screen that grants it (`apps/web/app/services/message/room/role/RoomPermissionDefinitionMap.ts`). `Administrator` is always the last bit: a new permission goes before it and moves it up, and no migration follows — stored values are read as the current shape.
 
-| Permission        | Bit | Value | Notes                                             |
-| ----------------- | --- | ----- | ------------------------------------------------- |
-| `ReadMessages`    | 0   | 1     |                                                   |
-| `SendMessages`    | 1   | 2     |                                                   |
-| `ManageMessages`  | 2   | 4     | delete/pin others'; also Warn admin action        |
-| `MentionEveryone` | 3   | 8     | @here / @everyone                                 |
-| `ManageRoom`      | 4   | 16    | edit room settings                                |
-| `ManageRoles`     | 5   | 32    | create/edit/delete roles below own position       |
-| `ManageInvites`   | 6   | 64    | create/delete invite codes                        |
-| `KickMembers`     | 7   | 128   | KickFromRoom + TimeoutUser                        |
-| `BanMembers`      | 8   | 256   | CreateBan + SoftBan                               |
-| `MuteMembers`     | 9   | 512   | ForceMute / ForceUnmute / **StopScreenShare**     |
-| `MoveMembers`     | 10  | 1024  | KickFromCall                                      |
-| `ManageNicknames` | 11  | 2048  | set per-room nicknames for other members          |
-| `ManageWebhooks`  | 12  | 4096  | create/edit/delete webhooks                       |
-| `Administrator`   | 13  | 8192  | all perms; bypasses hierarchy; always highest bit |
+## `AdminActionType`
 
-`Administrator` **must** remain the highest bit. New permissions go before it, incrementing its bit (which requires a migration to update stored values).
-
-## `AdminActionType` enum
-
-```ts
-enum AdminActionType {
-  CreateBan,
-  ForceMute,
-  ForceUnmute,
-  KickFromCall,
-  KickFromRoom,
-  SoftBan,
-  StopScreenShare,
-  TimeoutUser,
-  Warn,
-}
-```
-
-`StopScreenShare` permission: `MuteMembers`. Its client hook calls `setScreenShare(false)` when `callRoomId` matches. Notification: "Your screen share has been stopped by a moderator."
+The enum is `packages/db-schema/src/models/message/AdminActionType.ts` and the five places an action touches are `apps/web/content/docs/esbabbler/moderation.md`. `StopScreenShare` takes `MuteMembers`; its client hook calls `setScreenShare(false)` when `callRoomId` matches, and the notification reads "Your screen share has been stopped by a moderator."
 
 ## Admin action hooks in the call stores
 

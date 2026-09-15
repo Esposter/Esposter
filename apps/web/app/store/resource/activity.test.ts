@@ -14,7 +14,7 @@ const createReader =
       Object.assign(new CursorPaginationData<ResourceActivityEntity>(), {
         hasMore: true,
         items: rowKeys.map((rowKey) => createActivity(rowKey)),
-        nextCursor: "cursor",
+        nextCursor: "nextCursor",
       }),
     );
 // Set on the route rather than navigated to: the blade's page is auth-guarded, so a real push never resolves.
@@ -28,6 +28,8 @@ const openActivityBlade = (id: string) => {
 describe(useActivityStore, () => {
   const firstResourceId = crypto.randomUUID();
   const secondResourceId = crypto.randomUUID();
+  const firstRowKey = crypto.randomUUID();
+  const secondRowKey = crypto.randomUUID();
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -43,21 +45,21 @@ describe(useActivityStore, () => {
     const { hasMore, items } = storeToRefs(activityStore);
     const { readItems } = activityStore;
     openActivityBlade(firstResourceId);
-    await readItems(createReader("first"));
+    await readItems(createReader(firstRowKey));
 
-    expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual(["first"]);
+    expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual([firstRowKey]);
 
     openActivityBlade(secondResourceId);
 
     expect(items.value).toStrictEqual([]);
     expect(hasMore.value).toBe(false);
 
-    await readItems(createReader("second"));
+    await readItems(createReader(secondRowKey));
 
-    expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual(["second"]);
+    expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual([secondRowKey]);
 
     openActivityBlade(firstResourceId);
 
-    expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual(["first"]);
+    expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual([firstRowKey]);
   });
 });

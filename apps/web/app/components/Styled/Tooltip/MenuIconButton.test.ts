@@ -5,16 +5,16 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("styledTooltipMenuIconButton", () => {
-  const ICON = "mdi-close";
+  const icon = "mdi-close";
 
   test("draws the icon when no activator slot is given", async () => {
     expect.hasAssertions();
 
     // VBtn draws `icon` only while it has no default slot, so a slot registered unconditionally would leave
     // Every icon call site with an empty button
-    const component = await mountSuspended(StyledTooltipMenuIconButton, { props: { icon: ICON } });
+    const component = await mountSuspended(StyledTooltipMenuIconButton, { props: { icon } });
 
-    expect(component.find(`.v-btn .${ICON}`).exists()).toBe(true);
+    expect(component.find(`.v-btn .${icon}`).exists()).toBe(true);
     expect(component.get(".v-btn").classes()).toContain("v-btn--icon");
   });
 
@@ -22,10 +22,10 @@ describe("styledTooltipMenuIconButton", () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(StyledTooltipMenuIconButton, {
-      slots: { activator: "<span>Account</span>" },
+      slots: { activator: "<span>a</span>" },
     });
 
-    expect(component.get(".v-btn").text()).toBe("Account");
+    expect(component.get(".v-btn").text()).toBe("a");
     expect(component.get(".v-btn").classes()).not.toContain("v-btn--icon");
   });
 
@@ -36,7 +36,7 @@ describe("styledTooltipMenuIconButton", () => {
     // Navigates
     const component = await mountSuspended(StyledTooltipMenuIconButton, {
       attrs: { to: RoutePath.ResourceExplorerAll },
-      props: { icon: ICON },
+      props: { icon },
     });
 
     expect(component.get(".v-btn").element.tagName).toBe("A");

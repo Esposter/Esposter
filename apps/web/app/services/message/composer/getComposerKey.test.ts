@@ -2,6 +2,7 @@ import type { ComposerTarget } from "@/models/message/ComposerTarget";
 
 import { getComposerKey } from "@/services/message/composer/getComposerKey";
 import { getComposerTarget } from "@/services/message/composer/getComposerTarget";
+import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(getComposerKey, () => {
@@ -12,7 +13,7 @@ describe(getComposerKey, () => {
   test("round-trips a thread composer through its key", () => {
     expect.hasAssertions();
 
-    const target: ComposerTarget = { roomId, threadRootRowKey: "8586990849174300000" };
+    const target: ComposerTarget = { roomId, threadRootRowKey: getReverseTickedTimestamp() };
 
     expect(getComposerTarget(getComposerKey(target))).toStrictEqual(target);
   });

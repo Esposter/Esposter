@@ -68,7 +68,7 @@ export const createBwrapBackend = (
           // No status block means bwrap never reported, and only one of the reasons is bubblewrap: a folded prelude
           // Failed before the sandbox started (its marker line is in stderr), the run was killed from outside, or
           // Sandbox setup itself failed (bad flag, missing binary, WSL bridge or overlay-mount error).
-          // GetNoStatusFailureHeadline names which; the captured stderr is folded in either way so the user sees why.
+          // `getNoStatusFailureHeadline` names which; the captured stderr is folded in either way so the user sees why.
           const headline = getNoStatusFailureHeadline(
             bwrapStderr.stderr,
             closeCode ?? undefined,

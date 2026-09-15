@@ -12,7 +12,6 @@ export const addTilesetImage = (tilemap: Tilemaps.Tilemap, tilemapKey: TilemapKe
   const tilesetMap = getOrCreate(tilesetCache, tilemapKey, () => new Map<TilesetKey, Tilemaps.Tileset>());
   const tileset = tilesetMap.get(tilesetKey);
   if (tileset) return tileset;
-
   // Phaser warns on tileset keys the tilemap doesn't require, which is harmless because every one of them is
   // Created; the tileset name must exactly match the tileset key
   const newTileset = ignoreWarn(() => tilemap.addTilesetImage(tilesetKey));

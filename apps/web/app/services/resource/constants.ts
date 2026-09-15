@@ -7,7 +7,8 @@ import { UPDATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/con
 
 // How long a pending "G" chord prefix stays armed before the second key must be pressed
 export const KEY_CHORD_TIMEOUT_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
-// One shared cadence for every edit-triggered autosave — injected by the autosave wrappers so call sites never restate it
+// One shared cadence for every edit-triggered autosave — injected by the autosave wrappers so call sites never restate
+// It
 export const RESOURCE_AUTOSAVE_DEBOUNCE_MS = 500;
 export const RECENT_RESOURCES_LIMIT = 5;
 // Enough parsed rows to recognise your own file before committing to it, without rendering the import twice

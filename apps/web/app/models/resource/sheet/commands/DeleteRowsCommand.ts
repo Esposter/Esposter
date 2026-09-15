@@ -28,7 +28,7 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
     const indexSet = new Set(this.#indexedRows.map(({ index }) => index));
     for (const { row } of this.#indexedRows)
       for (const column of dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
-    dataSource.rows = dataSource.rows.filter((_, index) => !indexSet.has(index));
+    dataSource.rows = dataSource.rows.filter((_row, index) => !indexSet.has(index));
   }
 
   undo(dataSource: DataSource) {

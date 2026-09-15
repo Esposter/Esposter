@@ -11,8 +11,9 @@ The prefix roster itself is in `SKILL.md`; this page separates the two families 
 `checkIsManageable(...)` is always a call, `isManageable` is always a value.
 
 **`getIs*` is not an alternative spelling of `check*`.** A boolean is a derivation, so `get*` reads as if it also
-applied, and the family grew to twenty-odd names before anyone noticed. It does not apply: `check*` wins for
-anything whose call returns a boolean, whatever produces it.
+applied, and the family grows unnoticed. It does not apply: `check*` wins for
+anything whose call returns a boolean, whatever produces it — a `getIs*`/`getHas*` declarator is a lint error
+(`no-restricted-syntax`, `packages/configuration/eslint/typescriptRules.js`).
 
 `get*` survives only where the call returns a **function** — a comparator, a middleware factory — and there the
 `Is` in the name is the part that is wrong, not the prefix.

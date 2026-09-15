@@ -7,7 +7,7 @@ import { describe } from "vitest";
 // So this stands in for both
 export const createPost = (overrides: Partial<PostWithRelations> = {}): PostWithRelations => {
   const createdAt = new Date(0);
-  const user = createUser({ emailVerified: true, id: "userId" });
+  const user = createUser({ emailVerified: true });
   return {
     ancestorIds: [],
     commentCount: 0,

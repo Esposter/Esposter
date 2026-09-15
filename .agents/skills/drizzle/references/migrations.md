@@ -42,7 +42,13 @@ grep -cE "DROP|TRUNCATE|DELETE FROM" <migration>.sql   # expect 0
 
 Editing the generated **`migration.sql`** by hand is allowed and expected — but only the SQL, and only before it's applied. The migrator's bookkeeping hash is `sha256(migration.sql)`, computed at apply time, so an un-applied `migration.sql` is free to edit; leave `snapshot.json` exactly as generated.
 
+**A backfill runs under the constraint the migration has not replaced yet.** drizzle-kit groups its statements by column, so a column whose CHECK is being relaxed gets its `UPDATE` while the outgoing one is still live — backfilling `NULL` to a `0` sentinel under `… IS NULL OR … >= 1` fails on the first row it was written for. Swap the constraints first, then backfill, then `SET DEFAULT` and `SET NOT NULL`: a CHECK is unknown rather than false on a `NULL`, so the incoming one admits the rows the backfill has yet to reach. Nothing here catches it — the diff is against the snapshot rather than data, and a database with no such row applies the wrong order green, which is every database a test starts from.
+
 **Destructive diffs → rewrite the SQL to preserve data.** drizzle-kit emits drop/recreate where a data-preserving statement exists; an enum-value rename should be `ALTER TYPE "public"."foo_type" RENAME VALUE 'Bar' TO 'Baz';`, not `DROP TYPE` + `CREATE TYPE`. A value-order-only change generates a text-cast recreate (`SET DATA TYPE text` → `DROP TYPE` → `CREATE TYPE` → cast back). Postgres derives an enum's `ORDER BY`, `MIN`/`MAX` and `<`/`>` from its declared value order, so a recreate that reorders values silently changes those results — it is **not** harmless by default. Leave the recreate as-is only after confirming the enum is compared for equality only (never ordered on) and has no default; otherwise rewrite the SQL to preserve the declared value order.
+
+## A new reference over existing rows
+
+A referencing column that a pre-existing row cannot fill is settled in the migration, never by leaving the reference off: **delete those rows or backfill them with a real parent id**, whichever the domain can justify. An empty sentinel is not available to a foreign key — no row has that id, so the constraint rejects every one of them and the migration fails. Deleting is the cheap answer wherever the row is rebuilt by its own client on next use, and the migration says which it is.
 
 ## When drizzle-kit itself crashes
 

@@ -9,7 +9,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 describe(useThreadFollowStore, () => {
   const server = setupMswTrpc();
   const roomId = crypto.randomUUID();
-  const threadRootRowKey = "threadRootRowKey";
+  const threadRootRowKey = crypto.randomUUID();
 
   beforeEach(() => {
     setActivePinia(createPinia());

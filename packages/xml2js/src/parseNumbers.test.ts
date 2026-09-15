@@ -10,6 +10,6 @@ describe(parseNumbers, () => {
     expect(parseNumbers("1.5")).toBe(1.5);
     expect(parseNumbers("1e3")).toBe(1000);
     expect(parseNumbers("")).toBe(0);
-    expect(parseNumbers("text")).toBe("text");
+    expect(parseNumbers("a")).toBe("a");
   });
 });

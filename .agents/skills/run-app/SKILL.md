@@ -1,6 +1,6 @@
 ---
 name: run-app
-description: Esposter — how a UI change is verified, and why an agent never drives the app in a browser to do it. Driving Chrome over CDP is banned here (flaky and slow); the alternatives are generating the CSS offline for a styling question, a component test when one is cheap under the default setup, and otherwise the user's own eyes. Also covers launching the dev server for the user. Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works.
+description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified, and why an agent never drives the app in a browser to do it. Driving Chrome over CDP is banned here (flaky and slow); the alternatives are generating the CSS offline for a styling question, a component test when one is cheap under the default setup, and otherwise the user's own eyes. Also covers launching the dev server for the user.
 ---
 
 # Verifying a UI Change
@@ -71,8 +71,8 @@ Four things bite, all of them cheaply:
 - **One dev server per directory.** Nuxt takes a lock on `apps/web` and a second `pnpm dev` there refuses to start — `Another Nuxt dev server is already running (PID …)` — whatever port it was given. If the user already has one up, use theirs; do not start a second and do not reach for `NUXT_IGNORE_LOCK=1`, which lets two servers fight over one `.nuxt` cache and corrupts the build for both.
 - **It binds `::1`, not `127.0.0.1`.** `curl http://localhost:PORT` fails with connection-refused while the server is perfectly healthy. Use `http://[::1]:PORT`, or PowerShell's `Invoke-WebRequest` (which resolves both).
 - **The first request builds the client bundle** and can sit for minutes; a 90s timeout looks like a hang. Give it 300s+ before concluding anything.
-- **Killing the wrapper leaves the server.** `TaskStop` on the background shell kills `pnpm`, not the `nuxt.mjs` child — it keeps the port and the lock. Kill by PID tree (`taskkill /PID <pid> /T /F`), and check `Get-NetTCPConnection -State Listen -LocalPort 3000,3001` afterwards.
+- **Killing the wrapper leaves the server.** Stopping the background shell kills `pnpm`, not the `nuxt.mjs` child — it keeps the port and the lock. Kill by PID tree (`taskkill /PID <pid> /T /F`), and check `Get-NetTCPConnection -State Listen -LocalPort 3000,3001` afterwards.
 
 **What a dev server is for:** reading what Vite actually serves — a transformed module, `/_nuxt/@vite/env` for the resolved `define` values, a resolved import graph. That is a fact a test cannot give you, and it is worth the boot. It is **not** for driving the app; see the ban above.
 
-**Never write a temp script under `apps/web`.** Every create/delete triggers a Nitro rebuild, and a few in quick succession corrupt the dev build into `worker entry not found in .nuxt/dev/index.mjs`, which only a restart clears. Run throwaway scripts with `node --input-type=module --eval '<source>'` from `apps/web` instead — module resolution works from the cwd and nothing enters the watched tree.
+**Never write a temp script under `apps/web` while a dev server is running there.** Every create/delete triggers a Nitro rebuild, and a few in quick succession corrupt the dev build into `worker entry not found in .nuxt/dev/index.mjs`, which only a restart clears. Run throwaway scripts with `node --input-type=module --eval '<source>'` from `apps/web` instead — module resolution works from the cwd and nothing enters the watched tree.

@@ -1,8 +1,7 @@
 // @vitest-environment happy-dom
-import type { Resource } from "@esposter/db-schema";
-
 import { createEmailSurveyInviteBlocks } from "@/services/emailEditor/createEmailSurveyInviteBlocks";
 import { SURVEY_INVITE_BUTTON_COLOR } from "@/services/grapesjs/constants";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -15,11 +14,11 @@ describe(createEmailSurveyInviteBlocks, () => {
   test("renders the invite button as MJML", () => {
     expect.hasAssertions();
 
-    const blocks = createEmailSurveyInviteBlocks([{ id, name, type: ResourceType.Survey } as Resource]);
+    const blocks = createEmailSurveyInviteBlocks([createResourceListItem({ id, name, type: ResourceType.Survey })]);
 
     expect(blocks).toStrictEqual([
       {
-        content: `<mj-button background-color="${SURVEY_INVITE_BUTTON_COLOR}" href="http://localhost:3000${RoutePath.View(ResourceType.Survey, id)}">${name}</mj-button>`,
+        content: `<mj-button background-color="${SURVEY_INVITE_BUTTON_COLOR}" href="${window.location.origin}${RoutePath.View(ResourceType.Survey, id)}">${name}</mj-button>`,
         id: `survey-invite-${id}`,
         label: name,
       },

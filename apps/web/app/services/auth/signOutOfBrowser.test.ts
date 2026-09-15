@@ -1,6 +1,6 @@
 import { signOut } from "@/services/auth/authClient.test";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
-import { RoutePath } from "@esposter/shared";
+import { noop, RoutePath } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -36,8 +36,8 @@ describe(signOutOfBrowser, () => {
   test("loads anyway when signing out fails", async () => {
     expect.hasAssertions();
 
-    vi.spyOn(console, "error").mockImplementation(() => {});
-    signOut.mockRejectedValue(new Error("network"));
+    vi.spyOn(console, "error").mockImplementation(noop);
+    signOut.mockRejectedValue(new Error("error"));
     await signOutOfBrowser(RoutePath.Login);
 
     expect(window.location.href).toBe(RoutePath.Login);

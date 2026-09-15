@@ -58,6 +58,14 @@ const readPublishedBlobSizes = (id: string): number[] => {
     .map(([, data]) => data.byteLength);
 };
 
+// A stored asset is one byte in the container, which is all a clone or a charge has to find
+const storeAsset = (blobName: string) => {
+  MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+};
+// The one reference a page makes to an asset, read back the same way after a clone rewrote it
+const createImageHtml = (blobName: string) => `<img src="${getResourceAssetUrl(blobName)}">`;
+const createImageEditor = (blobName: string) => new WebpageEditor({ css: "a", html: createImageHtml(blobName) });
+
 describe("resourceRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(resourceRouter);
   let mockContext: Context;
@@ -67,15 +75,21 @@ describe("resourceRouter", () => {
   let todoListCaller: DecorateRouterRecord<TRPCRouter["todoList"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
+  const updatedName = "updatedName";
   const filename = "filename";
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
+  const updatedWebpageEditor = new WebpageEditor({ css: "b", html: "b" });
+  const tags = { a: "" };
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
-  const dueAt = new Date(1);
+  const dueAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
 
   const readStorageBytesUsed = async (userId: Resource["userId"]) =>
     (await mockContext.db.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;
 
+  // An asset lives under the resource's files directory, named by a fresh id in front of its filename
+  const createFilesBlobName = (id: Resource["id"]) =>
+    `${getFilesDirectoryName(id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
   // The version rides the row, so only a test writing a second time has to say which version it is claiming
   const saveWebpageContent = (webpageResource: Resource, content: WebpageEditor, contentVersionOffset = 0) =>
     webpageCaller.saveResourceContent({
@@ -93,10 +107,7 @@ describe("resourceRouter", () => {
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
-  // `updatedAt` is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency
-  // Deterministic.
-  // Only Date: vitest's default set also fakes `process.hrtime`, which every Azure Table row key is derived from,
-  // And a frozen tick makes two writes to one partition collide on the same key
+  // `updatedAt` is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency assertable
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
@@ -181,9 +192,9 @@ describe("resourceRouter", () => {
   test("filters resources by search query", async () => {
     expect.hasAssertions();
 
-    const matchingResource = await dashboardCaller.createResource({ name: "quarterly report" });
-    await sheetCaller.createResource({ name: "grocery list" });
-    const { items } = await caller.readResources({ searchQuery: "report" });
+    const matchingResource = await dashboardCaller.createResource({ name });
+    await sheetCaller.createResource({ name: "a" });
+    const { items } = await caller.readResources({ searchQuery: name });
 
     expect(items.map(({ id }) => id)).toStrictEqual([matchingResource.id]);
   });
@@ -236,10 +247,10 @@ describe("resourceRouter", () => {
   test("counts resources filtered by search query", async () => {
     expect.hasAssertions();
 
-    await dashboardCaller.createResource({ name: "quarterly report" });
-    await sheetCaller.createResource({ name: "grocery list" });
+    await dashboardCaller.createResource({ name });
+    await sheetCaller.createResource({ name: "a" });
 
-    const count = await caller.readResourcesCount({ searchQuery: "report" });
+    const count = await caller.readResourcesCount({ searchQuery: name });
 
     expect(count).toBe(1);
   });
@@ -273,10 +284,10 @@ describe("resourceRouter", () => {
   test("counts grouped by type filtered by search query", async () => {
     expect.hasAssertions();
 
-    await dashboardCaller.createResource({ name: "quarterly report" });
-    await sheetCaller.createResource({ name: "grocery list" });
+    await dashboardCaller.createResource({ name });
+    await sheetCaller.createResource({ name: "a" });
 
-    const resourceTypeCounts = await caller.readResourceTypeCounts({ searchQuery: "report" });
+    const resourceTypeCounts = await caller.readResourceTypeCounts({ searchQuery: name });
 
     expect(resourceTypeCounts).toStrictEqual([{ count: 1, type: ResourceType.Dashboard }]);
   });
@@ -359,12 +370,9 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    await saveWebpageContent(
-      webpageResource,
-      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
-    );
+    const blobName = createFilesBlobName(webpageResource.id);
+    storeAsset(blobName);
+    await saveWebpageContent(webpageResource, createImageEditor(blobName));
     const storageBytesUsedBeforePublish = await readStorageBytesUsed(webpageResource.userId);
     await webpageCaller.publishResource({ id: webpageResource.id });
     const publishedBlobSizes = readPublishedBlobSizes(webpageResource.id);
@@ -381,12 +389,9 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    await saveWebpageContent(
-      webpageResource,
-      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
-    );
+    const blobName = createFilesBlobName(webpageResource.id);
+    storeAsset(blobName);
+    await saveWebpageContent(webpageResource, createImageEditor(blobName));
     await webpageCaller.publishResource({ id: webpageResource.id });
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
@@ -405,7 +410,7 @@ describe("resourceRouter", () => {
         JSON.stringify(
           new WebpageEditor({
             css: "a",
-            html: `<img src="${getResourceAssetUrl(duplicatedBlobName)}">`,
+            html: createImageHtml(duplicatedBlobName),
             id: content.id,
           }),
         ),
@@ -420,11 +425,8 @@ describe("resourceRouter", () => {
 
     const webpageResource = await webpageCaller.createResource({ name });
     const publishedBlobName = `${createSnapshotAssetsDirectoryName(webpageResource.id, SnapshotChannel.Published)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[publishedBlobName, Buffer.alloc(1)]]));
-    await saveWebpageContent(
-      webpageResource,
-      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(publishedBlobName)}">` }),
-    );
+    storeAsset(publishedBlobName);
+    await saveWebpageContent(webpageResource, createImageEditor(publishedBlobName));
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
     assert.exists(content);
@@ -434,7 +436,7 @@ describe("resourceRouter", () => {
     // The copy is fully self-contained: the published snapshot asset is cloned into the copy's own files
     // Directory — never under its published prefix, which unpublishing wipes — so unpublishing or deleting
     // Either resource never strands the copy
-    expect(content.html).toBe(`<img src="${getResourceAssetUrl(duplicatedBlobName)}">`);
+    expect(content.html).toBe(createImageHtml(duplicatedBlobName));
     expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
   });
 
@@ -442,17 +444,13 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-    const missingBlobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({
-        css: "a",
-        html: `<img src="${getResourceAssetUrl(blobName)}"><img src="${getResourceAssetUrl(missingBlobName)}">`,
-      }),
-      contentVersion: webpageResource.contentVersion,
-      id: webpageResource.id,
-    });
+    const blobName = createFilesBlobName(webpageResource.id);
+    const missingBlobName = createFilesBlobName(webpageResource.id);
+    storeAsset(blobName);
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({ css: "a", html: `${createImageHtml(blobName)}${createImageHtml(missingBlobName)}` }),
+    );
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
     assert.exists(content);
@@ -461,9 +459,7 @@ describe("resourceRouter", () => {
 
     // The existing asset is cloned and rewritten; the dangling url is data, carried verbatim instead of
     // Failing the whole clone
-    expect(content.html).toBe(
-      `<img src="${getResourceAssetUrl(duplicatedBlobName)}"><img src="${getResourceAssetUrl(missingBlobName)}">`,
-    );
+    expect(content.html).toBe(`${createImageHtml(duplicatedBlobName)}${createImageHtml(missingBlobName)}`);
     expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
   });
 
@@ -471,12 +467,9 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    await saveWebpageContent(
-      webpageResource,
-      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
-    );
+    const blobName = createFilesBlobName(webpageResource.id);
+    storeAsset(blobName);
+    await saveWebpageContent(webpageResource, createImageEditor(blobName));
     await webpageCaller.publishResource({ id: webpageResource.id });
     await caller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: webpageResource.id, version: 1 });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
@@ -488,7 +481,7 @@ describe("resourceRouter", () => {
     // The restored draft references its own files directory, never the published snapshot it came from — and
     // Never the name it started under: `deleteFile` may already have published that exact name for deletion,
     // And a named-blob deletion event carries no time bound to disqualify a replay of it
-    expect(content.html).toBe(`<img src="${getResourceAssetUrl(restoredBlobName)}">`);
+    expect(content.html).toBe(createImageHtml(restoredBlobName));
     expect(filesBlobNames).toContain(blobName);
     expect(restoredBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
   });
@@ -548,7 +541,6 @@ describe("resourceRouter", () => {
   test("copies tags when duplicating a resource", async () => {
     expect.hasAssertions();
 
-    const tags = { env: "prod" };
     const dashboardResource = await dashboardCaller.createResource({ name });
     await dashboardCaller.updateResource({ id: dashboardResource.id, name, tags });
     const duplicatedResource = await caller.duplicateResource({ id: dashboardResource.id });
@@ -560,7 +552,7 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const surveyResource = await dashboardCaller.createResource({ name: "Survey" });
-    await sheetCaller.createResource({ name: "grocery list" });
+    await sheetCaller.createResource({ name });
     // No substring of "Survey" contains "survye" — only trigram similarity can bridge the transposition
     const { items } = await caller.readResources({ searchQuery: "survye" });
 
@@ -609,14 +601,14 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const taggedResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.updateResource({ id: taggedResource.id, name, tags: { env: "prod", owner: "ops" } });
+    await dashboardCaller.updateResource({ id: taggedResource.id, name, tags: { ...tags, b: "" } });
     const otherResource = await sheetCaller.createResource({ name });
-    await sheetCaller.updateResource({ id: otherResource.id, name, tags: { env: "dev" } });
-    const { items } = await caller.readResources({ tags: { env: "prod" } });
-    const tagCount = await caller.readResourcesCount({ tags: { env: "prod" } });
+    await sheetCaller.updateResource({ id: otherResource.id, name, tags: { a: "a" } });
+    const { items } = await caller.readResources({ tags });
+    const tagCount = await caller.readResourcesCount({ tags });
 
     expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
-    expect(takeOne(items).tags).toStrictEqual({ env: "prod", owner: "ops" });
+    expect(takeOne(items).tags).toStrictEqual({ ...tags, b: "" });
     expect(tagCount).toBe(1);
   });
 
@@ -624,14 +616,10 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.updateResource({ id: dashboardResource.id, name, tags: { env: "prod", owner: "ops" } });
-    const updatedResource = await dashboardCaller.updateResource({
-      id: dashboardResource.id,
-      name,
-      tags: { env: "dev" },
-    });
+    await dashboardCaller.updateResource({ id: dashboardResource.id, name, tags: { ...tags, b: "" } });
+    const updatedResource = await dashboardCaller.updateResource({ id: dashboardResource.id, name, tags });
 
-    expect(updatedResource.tags).toStrictEqual({ env: "dev" });
+    expect(updatedResource.tags).toStrictEqual(tags);
   });
 
   test("moves a deleted resource to the bin instead of destroying it", async () => {
@@ -732,7 +720,7 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
-    await saveWebpageContent(webpageResource, new WebpageEditor({ css: "b", html: "b" }), 1);
+    await saveWebpageContent(webpageResource, updatedWebpageEditor, 1);
     const { resource: restoredResource } = await caller.restoreSnapshotVersion({
       channel: SnapshotChannel.Published,
       id: webpageResource.id,
@@ -799,8 +787,7 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
-    const revisionEditor = new WebpageEditor({ css: "b", html: "b" });
-    await saveWebpageContent(webpageResource, revisionEditor, 1);
+    await saveWebpageContent(webpageResource, updatedWebpageEditor, 1);
     // Named by what the take reported rather than by an ordinal: the save path keeps points of its own, so
     // Which number this one lands on is the mechanism's business
     const revisionVersion = await caller.saveResourceRevision({ id: webpageResource.id });
@@ -813,19 +800,16 @@ describe("resourceRouter", () => {
     });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
 
-    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(revisionEditor)));
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(updatedWebpageEditor)));
   });
 
   test("restores a revision without cloning the assets it already points at", async () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
-    await saveWebpageContent(
-      webpageResource,
-      new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
-    );
+    const blobName = createFilesBlobName(webpageResource.id);
+    storeAsset(blobName);
+    await saveWebpageContent(webpageResource, createImageEditor(blobName));
     const revisionVersion = await caller.saveResourceRevision({ id: webpageResource.id });
     assert.exists(revisionVersion);
     await saveWebpageContent(webpageResource, webpageEditor, 1);
@@ -837,7 +821,7 @@ describe("resourceRouter", () => {
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
     assert.exists(content);
 
-    expect(content.html).toBe(`<img src="${getResourceAssetUrl(blobName)}">`);
+    expect(content.html).toBe(createImageHtml(blobName));
     expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
   });
 
@@ -849,8 +833,7 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
-    const draftEditor = new WebpageEditor({ css: "b", html: "b" });
-    await saveWebpageContent(webpageResource, draftEditor, 1);
+    await saveWebpageContent(webpageResource, updatedWebpageEditor, 1);
     const { undoRevisionVersion } = await caller.restoreSnapshotVersion({
       channel: SnapshotChannel.Published,
       id: webpageResource.id,
@@ -864,7 +847,7 @@ describe("resourceRouter", () => {
     });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
 
-    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(draftEditor)));
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(updatedWebpageEditor)));
   });
 
   test("records the draft version a publish was taken from", async () => {
@@ -925,7 +908,7 @@ describe("resourceRouter", () => {
 
     const dashboardResource = await dashboardCaller.createResource({ name });
     vi.advanceTimersByTime(1);
-    await dashboardCaller.updateResource({ id: dashboardResource.id, name: "renamed" });
+    await dashboardCaller.updateResource({ id: dashboardResource.id, name: updatedName });
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
     const renamedActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Renamed);
@@ -940,7 +923,7 @@ describe("resourceRouter", () => {
       ),
     );
     expect(renamedActivity?.oldName).toBe(name);
-    expect(renamedActivity?.newName).toBe("renamed");
+    expect(renamedActivity?.newName).toBe(updatedName);
   });
 
   test("writes a descending rowKey per activity so a partition scan reads newest-first", async () => {
@@ -948,7 +931,7 @@ describe("resourceRouter", () => {
 
     const dashboardResource = await dashboardCaller.createResource({ name });
     vi.advanceTimersByTime(1);
-    await dashboardCaller.updateResource({ id: dashboardResource.id, name: "renamed" });
+    await dashboardCaller.updateResource({ id: dashboardResource.id, name: updatedName });
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
     const createdActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Created);
@@ -964,7 +947,7 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    await dashboardCaller.updateResource({ id: dashboardResource.id, tags: { env: "prod" } });
+    await dashboardCaller.updateResource({ id: dashboardResource.id, tags });
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
     const updatedResource = await caller.readResource({ id: dashboardResource.id });

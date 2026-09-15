@@ -37,54 +37,54 @@ export const useMutation = () => {
   const { invalidateTags } = cacheStore;
   // Which call is the latest for a target. Only supersede-mode operations take a number here — every read,
   // And the writes that opt in; a queued write is the latest for its target by the time it runs
-  const callIds = new Map<PropertyKey, number>();
+  const keyCallIdMap = new Map<PropertyKey, number>();
   // The tail of each target's write queue, so two writes to one target run one after the other
-  const queues = new Map<PropertyKey, Promise<void>>();
+  const keyQueueMap = new Map<PropertyKey, Promise<void>>();
   // The in-flight outcome of each target's exclusive read, so a second caller for data already on its way
   // Awaits that response instead of issuing a duplicate request
-  const sharedQueries = new Map<PropertyKey, Promise<MutationOutcome<never>>>();
-  const pendingCounts = ref(new Map<PropertyKey, number>());
-  const isPending = computed(() => pendingCounts.value.size > 0);
+  const keySharedQueryMap = new Map<PropertyKey, Promise<MutationOutcome<never>>>();
+  const keyPendingCountMap = ref(new Map<PropertyKey, number>());
+  const isPending = computed(() => keyPendingCountMap.value.size > 0);
   // Per-key pending for per-item surfaces (a table row's own button), same getter idiom as getRoles(roomId)
-  const checkIsPending = (key: PropertyKey) => pendingCounts.value.has(key);
+  const checkIsPending = (key: PropertyKey) => keyPendingCountMap.value.has(key);
   const getCheckIsStale = (key: PropertyKey) => {
-    const id = (callIds.get(key) ?? 0) + 1;
-    callIds.set(key, id);
-    return () => id !== callIds.get(key);
+    const id = (keyCallIdMap.get(key) ?? 0) + 1;
+    keyCallIdMap.set(key, id);
+    return () => id !== keyCallIdMap.get(key);
   };
   // Marks whatever is in flight for a target stale without issuing anything of its own: a value that reached
   // The caller from outside this primitive — a subscription push — is newer than a read still on its way, and
   // The read that lands after it must not write the older value back over it. Nothing in flight is nothing to
   // Supersede, which is also what keeps the call-id bookkeeping bounded to the calls that exist
   const supersedeKey = (key: PropertyKey) => {
-    if (!pendingCounts.value.has(key)) return;
+    if (!keyPendingCountMap.value.has(key)) return;
 
     getCheckIsStale(key);
     // Whatever was joinable answers for a call this just made stale, so it resolves `Stale` — applying no state
     // And running no callback. A later exclusive caller joining it would resolve holding nothing, so the entry
     // Goes the same way a superseding read's does. The finalizer's identity check is what keeps an older read
     // From dropping the entry a newer one registered after it
-    sharedQueries.delete(key);
+    keySharedQueryMap.delete(key);
   };
   const claimKey = (key: PropertyKey) => {
-    pendingCounts.value.set(key, (pendingCounts.value.get(key) ?? 0) + 1);
+    keyPendingCountMap.value.set(key, (keyPendingCountMap.value.get(key) ?? 0) + 1);
   };
   const releaseKey = (key: PropertyKey) => {
-    const pendingCount = pendingCounts.value.get(key) ?? 0;
+    const pendingCount = keyPendingCountMap.value.get(key) ?? 0;
     if (pendingCount <= 1) {
       // No call remains in flight for this key, so its bookkeeping can be dropped wholesale
-      pendingCounts.value.delete(key);
-      callIds.delete(key);
-      queues.delete(key);
-    } else pendingCounts.value.set(key, pendingCount - 1);
+      keyPendingCountMap.value.delete(key);
+      keyCallIdMap.delete(key);
+      keyQueueMap.delete(key);
+    } else keyPendingCountMap.value.set(key, pendingCount - 1);
   };
   // Chains a target's writes so each starts only after the previous settles, which is what makes a write
   // Build on the state the write ahead of it stored. A rejection neither blocks the queue nor leaks to the
   // Calls behind it
   const enqueue = <TResult>(key: PropertyKey, run: () => Promise<TResult>) => {
-    const previous = queues.get(key) ?? Promise.resolve();
+    const previous = keyQueueMap.get(key) ?? Promise.resolve();
     const { promise, resolve: release } = Promise.withResolvers<void>();
-    queues.set(key, promise);
+    keyQueueMap.set(key, promise);
     return withFinalizerAsync(async () => {
       await previous;
       return run();
@@ -96,7 +96,7 @@ export const useMutation = () => {
     query: (checkIsStale: () => boolean) => Promise<TResult>,
     { isExclusive, key, onError, onSuccess }: QueryOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
-    const sharedQuery = isExclusive ? sharedQueries.get(key) : undefined;
+    const sharedQuery = isExclusive ? keySharedQueryMap.get(key) : undefined;
     // The call already in flight applies the state and runs the callbacks for this target, so awaiting it is
     // The whole read — the joiner sees the same data and the same outcome one request later
     if (sharedQuery) return sharedQuery;
@@ -106,7 +106,7 @@ export const useMutation = () => {
     // This read is the latest for the target now, so whatever was joinable is the answer it just superseded —
     // A stale response applies no state and runs no callback, and a later caller joining it would resolve
     // Holding nothing. It issues its own read instead
-    sharedQueries.delete(key);
+    keySharedQueryMap.delete(key);
     // The finalizer guarantees pending bookkeeping unwinds even when a callback throws,
     // So a thrown callback can never strand the key as permanently pending
     const outcome = withFinalizerAsync(
@@ -115,12 +115,12 @@ export const useMutation = () => {
         releaseKey(key);
         // Only this call's own entry is dropped: the read that superseded it registers its own, and clearing
         // That one would send the next exclusive caller to a duplicate request instead of the call in flight
-        if (isExclusive && sharedQueries.get(key) === outcome) sharedQueries.delete(key);
+        if (isExclusive && keySharedQueryMap.get(key) === outcome) keySharedQueryMap.delete(key);
       },
     );
     // The compiler cannot state that a target's entry carries the result type its registrant read — the map is
     // Heterogeneous by key, which is the contract every caller sharing one key already lives under
-    if (isExclusive) sharedQueries.set(key, outcome as Promise<MutationOutcome<never>>);
+    if (isExclusive) keySharedQueryMap.set(key, outcome as Promise<MutationOutcome<never>>);
     return outcome;
   };
   // Writes queue per target: discarding one loses its error and its rollback, so it is never dropped by
@@ -129,7 +129,7 @@ export const useMutation = () => {
     mutate: (checkIsStale: () => boolean) => Promise<TResult>,
     { applyOptimistic, invalidates, isExclusive, isSupersede, key, onError, onSuccess }: MutationOptions<TResult>,
   ): Promise<MutationOutcome<TResult>> => {
-    if (isExclusive && pendingCounts.value.has(key)) return Promise.resolve({ status: MutationStatus.Dropped });
+    if (isExclusive && keyPendingCountMap.value.has(key)) return Promise.resolve({ status: MutationStatus.Dropped });
 
     const checkIsStale = isSupersede ? getCheckIsStale(key) : () => false;
     claimKey(key);

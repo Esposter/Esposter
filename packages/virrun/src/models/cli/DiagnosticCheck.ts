@@ -1,6 +1,7 @@
 import type { DiagnosticCheckType } from "#src/models/cli/DiagnosticCheckType";
 import type { DiagnosticStatus } from "#src/models/cli/DiagnosticStatus";
-// One row of the `virrun doctor` report: an os-backend prerequisite, its outcome, and — when unsatisfied — how to fix it.
+// One row of the `virrun doctor` report: an os-backend prerequisite, its outcome, and — when unsatisfied — how to fix
+// It.
 export interface DiagnosticCheck {
   // The remediation, shown indented under the check when its status is Missing.
   fix: string;

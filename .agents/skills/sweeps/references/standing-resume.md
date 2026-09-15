@@ -5,7 +5,7 @@ sweep is standing; this page holds how one resumes.
 
 ## The command
 
-A pass resumes from what changed since the row's date rather than re-reading the unit, over the pathspecs the
+`pnpm ai:sweep:ledger-coverage` runs first, so the date the command takes is the one the trailers hold; a trailer it reports as naming no row is a unit reworded since its pass, and reopens at `—`. A pass then resumes from what changed since the row's date rather than re-reading the unit, over the pathspecs the
 sweep's **`Scope`** declares in `.agents/ledgers/README.md`:
 
 ```bash
@@ -43,6 +43,11 @@ git show --name-only --format= <move> | sort -u > moved
 git log --since=<Last swept date> --name-only --pretty=format: -- '<pathspec>' | sort -u | comm -23 - moved
 ```
 
+**The move also hides everything before it.** A pathspec on the new path matches no commit that touched the old
+one, so a resume dated before a relocation reports only what changed after it — `apps/web/shared/models` since a
+date before the workspace move answered a tenth of its real set until "packages/app/shared/models" was passed
+beside it. Pass both paths for any window that straddles a move, and map the old prefix onto the new before dedupe.
+
 Left unchecked this is the silent scan of `SKILL.md` inverted — rather than reporting nothing and reading as
 clean, it reports everything and reads as a tree nobody can afford to sweep, which is how a row that is four
 files of real work gets deferred as several sittings.
@@ -73,3 +78,7 @@ A pathspec that resolves to nothing is `SKILL.md`'s silent scan wearing a differ
 reads exactly like a swept tree, and nothing else would notice, because a scope is prose to every other tool. So
 `scripts/src/workspace/ledgerScopes.test.ts` holds every pathspec in the index to something that exists, and holds every ledger
 to declaring one.
+
+## A fully dated ledger is kept
+
+A `—` in `Swept` is unswept, and **a fully dated ledger is kept, not deleted**: it is the index that answers "was this area swept, and when" in one read, which git can only answer by archaeology from someone who already knows what to look for. Those dates are also what the next convention change is scoped against. Add a coverage line rather than widening an existing one when a unit turns out too big, and split it into its own file when the lines stop fitting.

@@ -33,8 +33,8 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
     );
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
-    const sentScheduledMessageJob = createJob("sent");
-    const otherScheduledMessageJob = createJob("other");
+    const sentScheduledMessageJob = createJob(crypto.randomUUID());
+    const otherScheduledMessageJob = createJob(crypto.randomUUID());
     items.value = [sentScheduledMessageJob, otherScheduledMessageJob];
     scheduledMessageJobCount.value = 2;
 

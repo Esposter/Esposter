@@ -311,7 +311,7 @@ export const baseMessageRouter = router({
     // Carries no length constraint, and the block PUT never passes back through Nitro, so a client that
     // Under-declares can write past this cap until the SAS expires. Checking it here rejects the honest
     // Oversized drop early; it is not a defence against a client that lies. See /docs/esbabbler/file-media.
-    const maxFileSizeBytes = Math.min(room.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
+    const maxFileSizeBytes = Math.min(room.maxFileSizeBytes || MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
     for (const { mimetype, size } of files)
       if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
         throw getInvalidOperationError(Operation.Create, AzureEntityType.File, JSON.stringify({ mimetype, size }));

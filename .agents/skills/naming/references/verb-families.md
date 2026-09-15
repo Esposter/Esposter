@@ -46,10 +46,11 @@ A function whose whole body assigns a boolean `is*` field is `set` plus that fie
 `setParticipantMuted` writes `isMuted`, `setParticipantCameraEnabled` writes `isCameraEnabled`,
 `setParticipantHandRaised` writes `isHandRaised`.
 
-`setMute`, `setCamera` and `setHandRaisedEnabled` each name an action or invent a second word for a field that
-already has one, so the setter and the thing it sets have to be matched up by reading the body. The field's own
-name is the one both sides already share, and where the setter names whose field it is, that qualifier comes
-first (`setParticipant*`) so the family sorts together.
+`setMute` names an action rather than the `isMuted` it writes, `setCamera` drops half of the `isCameraEnabled` it
+writes, and `setFooEnabled` over an `isFoo` invents a second word for a field that already has one — each leaves
+the setter and the thing it sets to be matched up by reading the body. The field's own name is the one both sides
+already share, and where the setter names whose field it is, that qualifier comes first (`setParticipant*`) so the
+family sorts together.
 
 ## `on*` vs `handle*`
 
@@ -71,7 +72,7 @@ composable never has one.
 ## No cardinality suffixes
 
 Upgrading single-item → batch keeps the same name. Never add `Many` or `Batch`, and never pluralize a selector
-because the batch takes several of what it selects on (`readMessagesByRoom` → `readMessagesByRooms`); `readFoo` →
+because the batch takes several of what it selects on (`readFoosByBar` → `readFoosByBars`); `readFoo` →
 `readFoos` is the case this ban is for.
 
 **A `By<Selector>` separating two reads of the same rows is not one of these.** The ban is on a suffix that only

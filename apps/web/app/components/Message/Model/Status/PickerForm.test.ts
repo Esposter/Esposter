@@ -27,7 +27,7 @@ describe("messageModelStatusPickerForm", () => {
     server.use(
       trpcMsw.user.upsertStatus.mutation(() => {
         signalSaveRequested();
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "rejected" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
       }),
     );
     const component = await mountSuspended(MessageModelStatusPickerForm);
@@ -120,7 +120,7 @@ describe("messageModelStatusPickerForm", () => {
 
     useSession.mockReturnValue(ref({ data: null }));
     const upsertStatus = vi.fn<() => never>(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "rejected" });
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
     });
     server.use(trpcMsw.user.upsertStatus.mutation(upsertStatus));
     const component = await mountSuspended(MessageModelStatusPickerForm);

@@ -26,7 +26,7 @@ Props: `image?: User["image"]`, `name: User["name"]`, `avatarProps?: VAvatar["$p
 
 It passes `:icon` by default, and Vuetify's `icon` prop switches the button to the icon-button variant: circular, equal width/height, no min-width. Converting a `<v-tooltip>` + rectangular `<v-btn>` to it silently turns the button into a circle — pass `:is-icon-button="false"` to keep the regular button shape with the icon as a child. `rounded`/`tile` cannot restore it; they only change corners, not the forced square dimensions.
 
-## There is no `StyledTooltipButton`, and that is the answer
+## There is no tooltip-button primitive, and that is the answer
 
 `StyledTooltipIconButton` exists because an **icon** button has no accessible name of its own, so the tooltip
 text is also its `aria-label` and the pair has to be built together every time. A **text** button already reads

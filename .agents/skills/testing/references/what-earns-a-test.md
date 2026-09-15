@@ -1,6 +1,6 @@
 # What Earns a Test
 
-The firing rule — every test earns its line by failing when behaviour a caller depends on breaks, and framework or filesystem wiring earns nothing — is in `SKILL.md`. This page is the case law: the recurring subjects where "should this have a test, and which one" has already been decided.
+Read when deciding whether a subject earns a test at all, or which of two tests to keep. The firing rule — every test earns its line by failing when behaviour a caller depends on breaks, and framework or filesystem wiring earns nothing — is in `SKILL.md`; this page is the case law, the recurring subjects where the question has already been decided.
 
 - **Never add production API for a test's benefit.** Before building a completion signal, reset hook or inspection getter onto a primitive, grep for who else would call it; "only the test" means the signal almost certainly exists already (work through `getSynchronizedFunction` is drained by `waitForSynchronizedFunctions()`, so such a composable returns nothing). A test-only export means you are testing the wrong seam, or re-inventing a drain the repo owns.
 - **Audit for transitive-only coverage.** After writing the suite, ask whether a branch is covered _only_ through a caller. Cover every branch of the contract, guard clauses included (the "skips non-directories" case, the no-op-when-absent case). Test a shared primitive **directly**; its wrappers cover only their unique value-add, as `references/test-helper-files.md` prescribes.

@@ -1,17 +1,19 @@
 import { DRY_RUN_WORKTREE_PREFIX, RETRIGGER_DELAY_OUTPUT } from "#src/services/coderabbit/collect/constants";
+import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
+import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
+import { checkIsGitHubNumber } from "#src/services/coderabbit/shared/checkIsGitHubNumber";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 
-// `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]`. Everything the pass cannot own itself lives here: the
-// Arguments, the tree it works in, and the job output the runner's second job reads.
+// `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]` — the arguments, the tree and the job output, which the
+// Pass cannot own itself
 const {
   positionals: [pullRequestArgument],
   values: { "dry-run": isDryRun, force: isForced },
@@ -20,10 +22,10 @@ const {
   options: { "dry-run": { default: false, type: "boolean" }, force: { default: false, type: "boolean" } },
 });
 const pullRequest = pullRequestArgument === undefined ? undefined : Number(pullRequestArgument);
-if (pullRequest !== undefined && (!Number.isSafeInteger(pullRequest) || pullRequest <= 0))
+if (pullRequest !== undefined && !checkIsGitHubNumber(pullRequest))
   throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
 
-const dirtyPaths = getNonEmptyLines(runGit(["status", "--porcelain", "-uall"]));
+const dirtyPaths = readDirtyPaths();
 if (!isDryRun && dirtyPaths.length > 0)
   throw new InvalidOperationError(
     Operation.Update,
@@ -31,15 +33,23 @@ if (!isDryRun && dirtyPaths.length > 0)
     `the working tree is dirty — the collector owns it:\n${dirtyPaths.join("\n")}`,
   );
 
-// The tree the run owns — a throwaway worktree for a dry run, this checkout otherwise. Both port steps switch it
-// To the base they build on, so what it starts at only has to exist.
+// A throwaway worktree for a dry run, this checkout otherwise; both port steps switch to the base they build on
 const cwd = isDryRun ? mkdtempSync(join(tmpdir(), DRY_RUN_WORKTREE_PREFIX)) : REPOSITORY_ROOT;
 if (isDryRun) {
   runGit(["worktree", "add", "--detach", cwd, "HEAD"]);
-  // The pass returns rather than exits, so a finalizer would cover the normal end — but not a throw from the
-  // Middle of it, and a worktree that survives the process is the one thing the next run trips over.
+  // A finalizer would miss a throw from the middle of the pass, and a surviving worktree trips the next run
   process.on("exit", () => {
     getResult(() => runGit(["worktree", "remove", "--force", cwd])).match(noop, console.error);
+  });
+} else {
+  // The pass switches this checkout to the tree it builds on — develop, main, the fixes branch — and the runner
+  // Resolves its local actions from the workspace once more at post time, where a tree lacking one fails the job
+  // Red after a pass that succeeded; so the checkout goes back where it was found, by branch when it was on one
+  const startRef = getResult(() => runGit(["symbolic-ref", "--short", "--quiet", "HEAD"]).trim()).unwrapOr(
+    readHeadSha(),
+  );
+  process.on("exit", () => {
+    getResult(() => runGit(["checkout", startRef])).match(noop, console.error);
   });
 }
 

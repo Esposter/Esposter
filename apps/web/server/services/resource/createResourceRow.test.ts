@@ -4,7 +4,7 @@ import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@espost
 import { createResourceRow } from "@@/server/services/resource/createResourceRow";
 import { ResourceActivityType, ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { tableClientMock } = vi.hoisted(() => ({
   tableClientMock: {} as { current: { createEntity: (entity: Record<string, unknown>) => Promise<void> } },
@@ -28,6 +28,14 @@ describe(createResourceRow, () => {
       getSessionPayload: { user: { id: userId } },
     }) as unknown as AuthedContext;
 
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   // The row is handed back only once its trail entry is durable, so the compensating cleanup a caller rolls back
   // Through cannot outrun the write — an entry landing after that cleanup deleted the partition would resurrect
   // Itself as an orphan, unreachable once the row gating the read is gone
@@ -49,9 +57,7 @@ describe(createResourceRow, () => {
       return resource;
     })();
     // A timer boundary drains every pending microtask, so anything still unsettled is waiting on the gated write
-    await new Promise((resolve) => {
-      setTimeout(resolve, 0);
-    });
+    await vi.advanceTimersByTimeAsync(0);
 
     const entity = takeOne(entities);
 

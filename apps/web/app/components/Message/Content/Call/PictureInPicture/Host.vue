@@ -1,0 +1,38 @@
+<script setup lang="ts">
+import { useCallStore } from "@/store/message/room/call";
+import { useMediaStore } from "@/store/message/room/call/media";
+
+const { close, open, pictureInPictureWindow } = useDocumentPictureInPicture({ height: 320, width: 420 });
+const callStore = useCallStore();
+const { callRoute, isInCall } = storeToRefs(callStore);
+const mediaStore = useMediaStore();
+const { isPoppedOut } = storeToRefs(mediaStore);
+// Key events don't cross documents — the PiP window needs its own push-to-talk listeners
+usePushToTalk(isInCall, pictureInPictureWindow);
+
+watch(isPoppedOut, async (newIsPoppedOut) => {
+  if (newIsPoppedOut) {
+    await open();
+    // Open() no-ops on unsupported browsers and swallows requestWindow rejections (e.g. activation
+    // Lost after the screen picker), so if no window materialised, clear the stale intent — otherwise
+    // The main view shows an empty PiP placeholder for a call that never popped out.
+    if (!pictureInPictureWindow.value) isPoppedOut.value = false;
+    // `isPoppedOut` flipped back to false while requestWindow was pending: undo the stale open.
+    else if (!isPoppedOut.value) close();
+  } else close();
+});
+// Window closed (native "Back to tab", expand button, or leaveCall clearing isPoppedOut): sync
+// Intent and, if still in the call, surface it on the main tab so a docked call is never invisible.
+watch(pictureInPictureWindow, async (newPictureInPictureWindow) => {
+  if (newPictureInPictureWindow) return;
+  const wasInCall = isInCall.value;
+  isPoppedOut.value = false;
+  if (wasInCall) await navigateTo(callRoute.value);
+});
+</script>
+
+<template>
+  <Teleport v-if="pictureInPictureWindow" :to="pictureInPictureWindow.document.body">
+    <MessageContentCallPictureInPictureView />
+  </Teleport>
+</template>

@@ -1,6 +1,6 @@
 # Azure Native and GitHub provider quirks
 
-Read when picking an Azure Native resource token, naming a Logic App API connection, or touching the GitHub `Repository` resource and its branch protection.
+Read when picking an Azure Native resource token, naming a Logic App API connection, touching the GitHub `Repository` resource and its branch protection, or when a review asks for named imports from a provider package.
 
 ## Azure Native resource tokens
 
@@ -19,3 +19,11 @@ Azure rotates that metadata on its own — `iconUri` moves to a new CDN host and
 ## GitHub branch auto-delete
 
 GitHub's repository `deleteBranchOnMerge` is a system action that **bypasses ruleset deletion rules**, so it deletes a long-lived branch on merge even when the ruleset protects that ref from deletion. Keep `deleteBranchOnMerge: false` on the `Repository` resource and clean merged head branches up via the `Delete Merged Branch` GH Actions workflow (`.github/workflows/DeleteMergedBranch.yaml`), which excludes `main`/`develop` explicitly. Don't rely on rulesets to protect long-lived branches from native auto-delete.
+
+## Why a provider package is imported as a namespace
+
+The rule — `import * as azure_native from "@pulumi/azure-native"`, the one exception to named imports from libraries — is in `SKILL.md`; this is what breaks when it is "fixed".
+
+- Provider packages are CommonJS and lazy-load every resource submodule through `utilities.lazyLoad`, which installs getters on the `exports` object via `Object.defineProperty`. That mechanism only works through the live namespace object from `import * as`.
+- `apps/infra` is `"type": "module"`, so named ESM imports from those CJS modules force Node's interop to evaluate bindings eagerly — `require()`-ing every referenced submodule at import time and defeating the lazy-load (slower startup, higher memory). They are not tree-shakable.
+- Pulumi's own codegen always emits `import * as`. Match it; do not "fix" provider imports for lint/style consistency.

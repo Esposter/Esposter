@@ -41,7 +41,7 @@ export const developMainStatusChecks: github.RepositoryRuleset = new github.Repo
           // @TODO: Restore when the `build-docs` job in .github/workflows/CI.yaml is uncommented — a context no
           // Job reports is never satisfied, so leaving it required blocks every merge.
           // { context: "Build Documentation" },
-          ...Array.from({ length: CoverageShardCount }, (_, shardIndex) => ({
+          ...Array.from({ length: CoverageShardCount }, (_value, shardIndex) => ({
             context: `Coverage (${shardIndex + 1})`,
           })),
           { context: "Merge Coverage" },

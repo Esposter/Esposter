@@ -6,7 +6,7 @@ Read when a constant map associates a discriminant key with a type-parameterised
 
 Define an explicit type map first, then use a mapped type in `satisfies` for per-entry type safety without `as` casts:
 
-```typescript
+```ts
 // 1. Explicit type map (one file, in models/) — one entry per discriminant value
 interface FooItemTypeMap {
   [FooType.Bar]: BarFooItem;
@@ -27,7 +27,7 @@ The uncorrelated `FooItemTypeMap[keyof FooItemTypeMap]` union is still the right
 
 When a component looks up a typed configuration from a generic map using a discriminant key on a generic item, extract the lookup into a composable. Use `MaybeRefOrGetter<TItem>` with `toValue()` so callers pass refs or plain values. Hide the single internal `as` cast and expose a fully typed API:
 
-```typescript
+```ts
 export const useFooConfiguration = <TFooItem extends FooItemTypeMap[keyof FooItemTypeMap]>(
   item: MaybeRefOrGetter<TFooItem>,
 ): ComputedRef<FooConfiguration<TFooItem>> =>

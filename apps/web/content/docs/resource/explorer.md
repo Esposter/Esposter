@@ -67,7 +67,7 @@ The Azure-portal landing. Not a table — a dashboard of entry points: the inlin
 
 ## All resources — `/resource-explorer/all`
 
-`pages/resource-explorer/all.vue` renders the `resource` layout with `title="All"` above a `v-sheet flex-1` wrapping `ResourceListView` — `StyledDataTableServer` over `resource.readResources` (cross-type, owner, offset-paginated). `/favorites` and `/recents` are the same three lines with a different `source` prop, so everything below describes them too ([service menu](/docs/resource/resource-service-menu)):
+`pages/resource-explorer/all.vue` renders the `resource` layout with `title="All"` above a `v-sheet flex-1` wrapping `ResourceListView` — `v-data-table-server` over `resource.readResources` (cross-type, owner, offset-paginated). `/favorites` and `/recents` are the same three lines with a different `source` prop, so everything below describes them too ([service menu](/docs/resource/resource-service-menu)):
 
 - Columns: favorite (the star), type (icon + label from `ResourceDefinitionMap`), name, createdAt, updatedAt, lastAccessedAt (hidden by default), and a trailing actions `⋮`. The chooser offers every column except the pinned ones — name for every source, plus the column the source is ordered by, which is what puts **Last Accessed** permanently on `/recents` (`useResourceListColumns`). Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade and as an opt-in filter pill.
 - Toolbar (a fully-bordered `b-1` box, workbench only): search, group-by-type toggle, column chooser, Export CSV, Refresh, and a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
@@ -120,7 +120,7 @@ flowchart LR
 
 ### Blades
 
-`getResourceBladeDefinitions(type)` is the one answer to "which blades does this type have, in what order". It emits the built-ins first — **Overview** always, **Editor** only when the type registers an inline component, **Activity** always, **Publish history** only for a `PublishableResourceType` — then the type's own blades from `ResourceBladeDefinitionMap`. The `ResourceBladeType` enum is declared in that same nav order with `perfectionist/sort-enums` disabled, so the declaration stays readable as the order rather than alphabetically. Editor-backed types register their inline component in `ResourceEditorComponentMap`; `BladeOutlet` renders it under a `<Suspense>` with a `StyledSkeleton` fallback (GrapesJS and the other content blades use async setup) — the route rule above already keeps it off the server. Blade-only types (Program, Sheet, TodoList) have no `ResourceEditorComponentMap` entry, so their nav skips the Editor blade entirely.
+`getResourceBladeDefinitions(type)` is the one answer to "which blades does this type have, in what order". It emits the built-ins first — **Overview** always, **Editor** only when the type registers an inline component, **Activity** always, **Publish history** only for a `PublishableResourceType` — then the type's own blades from `ResourceBladeDefinitionMap`. The `ResourceBladeType` enum is declared in that same nav order with `perfectionist/sort-enums` disabled, so the declaration stays readable as the order rather than alphabetically. Editor-backed types register their inline component in `ResourceEditorComponentMap`; `ResourceBladeOutlet` renders it under a `<Suspense>` with a `StyledSkeleton` fallback (GrapesJS and the other content blades use async setup) — the route rule above already keeps it off the server. Blade-only types (Program, Sheet, TodoList) have no `ResourceEditorComponentMap` entry, so their nav skips the Editor blade entirely.
 
 | Type      | Blades after Overview                                         |
 | --------- | ------------------------------------------------------------- |
@@ -172,7 +172,7 @@ stateDiagram-v2
 | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
 | `app/pages/resource-explorer/[id]/[[blade]].vue`       | resource page shell: loads `useResourceStore`, 404-guards id + blade, clears the store on unmount       |
 | `app/components/Resource/Explorer/Index.vue`           | the blade body — toolbar, collapsible nav rail and outlet on one surface                                |
-| `app/components/Resource/List/View.vue`                | `StyledDataTableServer` over `resource.readResources` — the workbench, parameterised by `source`        |
+| `app/components/Resource/List/View.vue`                | `v-data-table-server` over `resource.readResources` — the workbench, parameterised by `source`          |
 | `app/components/Resource/ServiceMenu.vue`              | the area's menu, opened from Home's `☰` as a drawer                                                    |
 | `app/components/Styled/Navigation/Overlay.vue`         | the drawer shell behind the service menu                                                                |
 | `app/components/Styled/Navigation/Rail.vue`            | the rail shell behind the blade nav                                                                     |

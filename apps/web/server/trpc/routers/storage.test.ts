@@ -34,9 +34,9 @@ describe("storageRouter", () => {
     expect.hasAssertions();
 
     const newResource = await caller.webpage.createResource({ name });
-    const onUpdateUsage = await caller.storage.onUpdateUsage();
+    const subscription = await caller.storage.onUpdateUsage();
     const emittedUsage = await getFirstEmit(
-      () => onUpdateUsage,
+      () => subscription,
       () =>
         caller.webpage.saveResourceContent({
           content: new WebpageEditor(),

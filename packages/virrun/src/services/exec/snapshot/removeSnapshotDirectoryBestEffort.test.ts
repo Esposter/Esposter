@@ -7,7 +7,7 @@ import { TEST_WSL_CACHE_ROOT_LINUX } from "#src/services/exec/wsl/constants.test
 import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
@@ -15,10 +15,6 @@ vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unk
 
 describe(removeSnapshotDirectoryBestEffort, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   afterEach(() => {
     cleanup();
@@ -40,7 +36,7 @@ describe(removeSnapshotDirectoryBestEffort, () => {
   test("swallows a teardown failure so it can never displace the run's own error", () => {
     expect.hasAssertions();
 
-    // Once, not permanently: `clearAllMocks` resets calls but keeps implementations, so a plain
+    // Once, not permanently: vitest clears recorded calls before every test but keeps implementations, so a plain
     // `mockImplementation` here would hand every test added after this one a throwing `execFileSync`
     execFileSync.mockImplementationOnce(() => {
       throw new Error(" ");

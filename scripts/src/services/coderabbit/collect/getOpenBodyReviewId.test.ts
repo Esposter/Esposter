@@ -9,7 +9,7 @@ import { describe, expect, test } from "vitest";
 describe(getOpenBodyReviewId, () => {
   const login = "login";
   const reviewId = 0;
-  const updatedAt = "1970-01-01";
+  const updatedAt = new Date(0).toISOString();
   const viewerLogin = "viewerLogin";
 
   const getReview = (body: string): GitHubReview => ({
@@ -44,7 +44,7 @@ describe(getOpenBodyReviewId, () => {
   test.each([
     ["out-of-diff remarks", "Actionable comments posted: 0\n\nOutside diff range comments (1)", reviewId],
     ["only inline findings", "Actionable comments posted: 1", undefined],
-  ])("reads a review stating %s as %s", (_, body, expected) => {
+  ])("reads a review stating %s as %s", (_title, body, expected) => {
     expect.hasAssertions();
 
     const openBodyReviewId = getOpenBodyReviewId({

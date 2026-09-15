@@ -72,7 +72,6 @@ export const useVisibleSectionIds = (
     sections.value = newSections;
     updateVisibleIds();
   };
-
   // After render, so the sections the page rendered are in the document — and again whenever the ids change
   watchPostEffect(resolveSections);
   // Sections that arrive later than this composable does: a settings panel resolving its Suspense, a card

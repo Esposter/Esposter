@@ -11,7 +11,8 @@ The one committed on-disk artifact virrun reads in a consuming repo: `virrun.con
 
 ```ts
 // virrun.config.ts — defineConfig is a typed identity from the tiny `virrun/config` subpath entry (never import the
-// `virrun` barrel here: jiti transpiles a config file's imports on every `virrun -- <cmd>`, ~11 s vs ~0.4 s measured)
+// `virrun` barrel here: jiti transpiles a config file's imports on every `virrun -- <cmd>`, and the barrel costs
+// seconds where the subpath costs a fraction of one)
 import { defineConfig } from "virrun/config";
 
 export default defineConfig({

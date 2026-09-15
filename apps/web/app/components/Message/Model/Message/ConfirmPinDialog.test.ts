@@ -28,7 +28,7 @@ describe("messageModelMessageConfirmPinDialog", () => {
 
     server.use(
       trpcMsw.message.pinMessage.mutation(() => {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "rejected" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "error" });
       }),
     );
     const component = await mountSuspended(MessageModelMessageConfirmPinDialog, { shallow: true });

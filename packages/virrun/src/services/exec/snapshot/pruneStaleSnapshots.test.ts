@@ -10,7 +10,8 @@ import { describe, expect, test } from "vitest";
 // Under the global `snapshots/` directory are evicted while the current hash's directory survives.
 describe(pruneStaleSnapshots, () => {
   const { getCacheHome } = setupTemporaryCacheHome();
-  // Canonical hash-shaped directory names: the live entry the current lockfile resolves to, and a superseded one beside it.
+  // Canonical hash-shaped directory names: the live entry the current lockfile resolves to, and a superseded one beside
+  // It.
   const CURRENT_HASH = "0";
   const STALE_HASH = "1";
 

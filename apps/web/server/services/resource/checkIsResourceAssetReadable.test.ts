@@ -33,7 +33,7 @@ describe(checkIsResourceAssetReadable, () => {
     const { db, findFirstPublication, findFirstResource } = createDatabase(true, false);
 
     await expect(checkIsResourceAssetReadable(db, { isPublished: true, resourceId })).resolves.toBe(true);
-    expect(findFirstPublication).toHaveBeenCalledWith({ where: { resourceId: { eq: resourceId } } });
+    expect(findFirstPublication).toHaveBeenCalledExactlyOnceWith({ where: { resourceId: { eq: resourceId } } });
     expect(findFirstResource).not.toHaveBeenCalled();
   });
 
@@ -99,7 +99,7 @@ describe(checkIsResourceAssetReadable, () => {
     const { db, findFirstResource } = createDatabase(false, true);
     await checkIsResourceAssetReadable(db, { isPublished: false, resourceId }, userId);
 
-    expect(findFirstResource).toHaveBeenCalledWith({
+    expect(findFirstResource).toHaveBeenCalledExactlyOnceWith({
       where: { deletedAt: { isNull: true }, id: { eq: resourceId }, userId: { eq: userId } },
     });
   });

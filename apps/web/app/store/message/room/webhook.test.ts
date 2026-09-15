@@ -22,7 +22,7 @@ describe(useWebhookStore, () => {
   // The read hands back each row with the room and the webhook's creator attached, the way the panel renders it
   const room = createRoom("room");
   const creator = createUser();
-  const readWebhook = (webhook: WebhookInMessage) => ({ ...webhook, creator, room });
+  const toWebhookInMessageWithRelations = (webhook: WebhookInMessage) => ({ ...webhook, creator, room });
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -39,7 +39,7 @@ describe(useWebhookStore, () => {
     server.use(
       trpcMsw.webhook.readWebhooks.query(async () => {
         await isRoomSwitched;
-        return [readWebhook(first), readWebhook(second)];
+        return [toWebhookInMessageWithRelations(first), toWebhookInMessageWithRelations(second)];
       }),
     );
     const webhookStore = useWebhookStore();
@@ -54,7 +54,10 @@ describe(useWebhookStore, () => {
 
     setCurrentRoomId(roomId);
 
-    expect(items.value).toStrictEqual([readWebhook(first), readWebhook(second)]);
+    expect(items.value).toStrictEqual([
+      toWebhookInMessageWithRelations(first),
+      toWebhookInMessageWithRelations(second),
+    ]);
   });
 
   // A row's name field and its active switch write different fields of one webhook through one target, so an

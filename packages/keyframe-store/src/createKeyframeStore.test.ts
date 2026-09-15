@@ -307,9 +307,9 @@ describe(createKeyframeStore, () => {
 
   // Absence and corruption are both read failures and mean opposite things to a caller: a record naming
   // Collected objects is a version that is simply gone, which a caller may answer with a 404, while an object
-  // That no longer hashes to its key is damage nothing downstream should paper over. The type is what separates
-  // Them, so it is asserted rather than the wording — a delta losing its base is absence just as much as one
-  // Losing itself, because neither can be reconstructed and neither is evidence of damage
+  // That no longer hashes to its key is damage nothing downstream should paper over. The error's own name is
+  // What separates them — a delta losing its base is absence just as much as one losing itself, because neither
+  // Can be reconstructed and neither is evidence of damage
   test("reports a collected version as absent rather than as corruption", async () => {
     expect.hasAssertions();
 
@@ -327,7 +327,9 @@ describe(createKeyframeStore, () => {
           throw error;
         },
       ),
-    ).rejects.toThrow(ObjectNotStoredError);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[ObjectNotStoredError: ${new ObjectNotStoredError(delta.hash, `keyframe ${keyframe.hash} is not stored`).message}]`,
+    );
 
     memoryObjectStore.objects.delete(delta.hash);
 
@@ -338,7 +340,9 @@ describe(createKeyframeStore, () => {
           throw error;
         },
       ),
-    ).rejects.toThrow(ObjectNotStoredError);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[ObjectNotStoredError: ${new ObjectNotStoredError(delta.hash, "object is not stored").message}]`,
+    );
   });
 
   // The value proposition itself, pinned: compression ratios are not speed, so the bench cannot gate them, and a

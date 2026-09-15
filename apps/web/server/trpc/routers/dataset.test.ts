@@ -31,15 +31,15 @@ describe("datasetRouter", () => {
   const name = "name";
   const columnName = "columnName";
   const value = "value";
+  // One element per column type the model derives, named the least a response key may be
   const model = JSON.stringify({
     pages: [
       {
         elements: [
-          { name: "satisfaction", type: "rating" },
-          { name: "wouldRecommend", type: "boolean" },
-          { name: "comments", type: "text" },
+          { name: "a", type: "rating" },
+          { name: "b", type: "boolean" },
+          { name: "c", type: "text" },
         ],
-        name: "page1",
       },
     ],
   });
@@ -62,18 +62,18 @@ describe("datasetRouter", () => {
 
     const newSurvey = await setupSurvey();
     await surveyCaller.createSurveyResponse({
-      model: { comments: "great", satisfaction: 5, wouldRecommend: true },
+      model: { a: 0, b: true, c: "" },
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.columns).toStrictEqual([
-      { name: "satisfaction", type: ColumnType.Number },
-      { name: "wouldRecommend", type: ColumnType.Boolean },
-      { name: "comments", type: ColumnType.String },
+      { name: "a", type: ColumnType.Number },
+      { name: "b", type: ColumnType.Boolean },
+      { name: "c", type: ColumnType.String },
     ]);
-    expect(dataset.rows).toStrictEqual([{ comments: "great", satisfaction: 5, wouldRecommend: true }]);
+    expect(dataset.rows).toStrictEqual([{ a: 0, b: true, c: "" }]);
     expect(dataset.totalRows).toBe(1);
   });
 
@@ -83,7 +83,7 @@ describe("datasetRouter", () => {
     const newSurvey = await setupSurvey();
     for (let i = 0; i < AZURE_MAX_PAGE_SIZE + 1; i++)
       await surveyCaller.createSurveyResponse({
-        model: { satisfaction: 1 },
+        model: { a: 0 },
         partitionKey: newSurvey.id,
         rowKey: crypto.randomUUID(),
       });
@@ -109,13 +109,13 @@ describe("datasetRouter", () => {
 
     const newSurvey = await setupSurvey();
     await surveyCaller.createSurveyResponse({
-      model: { satisfaction: 3 },
+      model: { a: 0 },
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
-    expect(dataset.rows).toStrictEqual([{ comments: null, satisfaction: 3, wouldRecommend: null }]);
+    expect(dataset.rows).toStrictEqual([{ a: 0, b: null, c: null }]);
   });
 
   test("flattens non-primitive answers to json", async () => {
@@ -123,13 +123,13 @@ describe("datasetRouter", () => {
 
     const newSurvey = await setupSurvey();
     await surveyCaller.createSurveyResponse({
-      model: { comments: ["a", "b"] },
+      model: { c: ["", " "] },
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
-    expect(dataset.rows).toStrictEqual([{ comments: '["a","b"]', satisfaction: null, wouldRecommend: null }]);
+    expect(dataset.rows).toStrictEqual([{ a: null, b: null, c: JSON.stringify(["", " "]) }]);
   });
 
   test("fails read survey responses with wrong user", async () => {
@@ -158,7 +158,7 @@ describe("datasetRouter", () => {
     const content: SheetResource = {
       data: {
         columns: [new StringColumn({ name: columnName, sourceName: columnName })],
-        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
+        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name, size: 0 },
         rows: [new Row({ data: { [columnName]: value } })],
       },
       settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
@@ -178,7 +178,7 @@ describe("datasetRouter", () => {
     const content: SheetResource = {
       data: {
         columns: [new StringColumn({ name: columnName, sourceName: columnName })],
-        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
+        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name, size: 0 },
         rows: Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => new Row({ data: { [columnName]: value } })),
       },
       settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },

@@ -1,6 +1,6 @@
 # Error Assertions
 
-`toThrowErrorMatchingInlineSnapshot(...)` is the only accepted error assertion — that rule is in `SKILL.md`, because reaching for `toThrow()` is the default behaviour it exists to stop. This page is how to fill the snapshot in.
+Read when a test asserts that something throws, and the inline snapshot needs filling in. That `toThrowErrorMatchingInlineSnapshot(...)` is the only accepted error assertion is `SKILL.md`'s, because reaching for `toThrow()` is the default behaviour that rule exists to stop; this page is how the snapshot gets its contents, and the one case that carries no snapshot at all — an opaque third-party message, where the error's `name` is all there is left to assert.
 
 ## Reconstruct first, empty-snapshot last
 
@@ -15,6 +15,8 @@ is only unreconstructable when the test never sees it.
 ## Opaque third-party messages only
 
 A Zod error string you can't cleanly reconstruct: leave the snapshot empty and populate with `pnpm test -u`. The exception, not the default; still never `toBeInstanceOf`. A message no one can reconstruct portably is not snapshotted at all — `references/platform-and-bundle-tests.md`.
+
+Where such a message is all a throw carries — a third-party parse error quoting the absolute path it read — assert the error's **`name`** instead: `getResult(…).match(() => "", ({ name }) => name)` compared to `InvalidOperationError.name`. It is exact, portable, and says the failure is ours rather than a silently defaulted value, which is what `toThrow(SomeError)` was reaching for before it lost the message.
 
 ## An inline snapshot belongs to its call site
 

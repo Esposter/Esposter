@@ -30,7 +30,6 @@ export const useExecuteSlashCommand = () => {
   ) => {
     const roomId = currentRoomId.value;
     if (!roomId) return;
-
     // Every command that posts differs only in the markdown it posts; the rest open a dialog or write a room
     // Field instead, and leave this empty so nothing is sent
     let message = "";

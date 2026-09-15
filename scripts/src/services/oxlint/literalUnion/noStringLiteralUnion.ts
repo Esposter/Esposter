@@ -6,7 +6,7 @@ import { defineRule } from "@oxlint/plugins";
 
 export const noStringLiteralUnion: Rule = defineRule({
   create(context) {
-    // Oxlint hands a union inside a type annotation to the visitor twice, so a report is keyed by where it starts
+    // `oxlint` hands a union inside a type annotation to the visitor twice, so a report is keyed by where it starts
     const reportedStarts = new Set<number>();
     return {
       TSUnionType(node) {

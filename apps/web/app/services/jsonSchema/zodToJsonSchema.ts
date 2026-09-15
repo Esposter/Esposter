@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const zodToJsonSchema = (schema: z.ZodType) => {
   // Strip $schema since vjsf's internal Ajv2019 lacks the draft 2020-12 meta-schema.
-  const { $schema: _, ...result } = z.toJSONSchema(schema, {
+  const { $schema: _schema, ...result } = z.toJSONSchema(schema, {
     override: (ctx) => {
       const zodSchema = ctx.zodSchema as z.ZodObject;
       const jsonSchema = ctx.jsonSchema as Record<string, unknown>;

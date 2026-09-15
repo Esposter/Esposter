@@ -18,11 +18,25 @@ const findRepositoryRoot = (directory: string): string => {
 
 export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
 
-export const REGISTRY_FETCH_TIMEOUT_MS = 10000;
+export const REGISTRY_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
 
-// Pnpm's lockfile, at the repository root. Named here because three unrelated scripts address it — the collector
+// `pnpm`'s lockfile, at the repository root. Named here because three unrelated scripts address it — the collector
 // Resolves its merge conflict, the outdated report parses it, its benchmark reads it — and a literal repeated per
 // Consumer is one rename away from a script that reads a file that no longer exists.
 export const LOCKFILE = "pnpm-lock.yaml";
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
+
+// The formatter's config, at the repository root. Its `ignorePatterns` is the repo's one list of generated files
+// (`oxlint` skill, `references/lint-configuration.md`), which is why a scan that must skip them reads it too.
+export const FORMATTER_CONFIGURATION_FILE = ".oxfmtrc.json";
+
+// ASCII control characters as the record and field separators of a `git log` output a script splits — the
+// Collector's answered commits, the ledger coverage's trailers — since a subject and a body are free text.
+// Written as escapes because a tool rewriting the line would silently drop the characters themselves.
+export const RECORD_SEPARATOR = "";
+
+export const FIELD_SEPARATOR = "";
+
+// On Windows `pnpm` is a `.cmd` shim, which only a shell resolves
+export const IS_PNPM_SHELL: boolean = process.platform === "win32";

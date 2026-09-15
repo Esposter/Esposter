@@ -1,6 +1,6 @@
 ---
 name: pulumi-infra
-description: Esposter Pulumi infrastructure conventions for apps/infra — the package shape and generated ctix barrel, one resource per file under src/<provider>/resources/<ProviderNamespace>/<resourceTypes>/ with camelCase names matching the export, protect on imported resources, the parent every new resource must set, resource outputs over duplicated identifier constants and when a named constant is earned, per-stack files with shared environment-independent constants, Output<string> vs plain string in template literals and object keys, namespace provider imports (never named), the unconditional alias ban, generated output safety, the security-hardening blockers, observability deliberately off for cost, and where infra docs live — plus deep dives on the preview/up ritual and provider bumps, rename/re-parent/import migrations, and Azure Native + GitHub provider quirks. Apply when modifying apps/infra.
+description: Apply when modifying apps/infra. Esposter Pulumi infrastructure conventions for apps/infra — one resource per file under src/<provider>/resources/<ProviderNamespace>/<resourceTypes>/ named after the Azure resource, protect on imported resources, a parent on every new resource, resource outputs over repeated identifier constants, namespace provider imports, the unconditional alias ban, the preview before every up, the declined security hardenings, and observability deliberately off for cost.
 ---
 
 # Pulumi Infrastructure
@@ -9,14 +9,16 @@ Apply when modifying `apps/infra`.
 
 ## Settled — do not re-propose
 
-- **Reading a role assignment's, budget's or event subscription's `scope` from the scoped resource's `.id`.** `.id` carries the leading slash the interpolated `subscriptions/…` shape omits, and `scope` is a path parameter, so the preview is a replacement of every `protect: true` grant (`+-1 to replace … marked for protection`, probed 2026-09-12). The interpolated shape stays; `getWorkflowResourceGroupPath` builds the same prefix for the Logic App actions.
+- **Reading a role assignment's, budget's or event subscription's `scope` from the scoped resource's `.id`.** `.id` carries the leading slash the interpolated `subscriptions/…` shape omits, and `scope` is a path parameter, so the preview is a replacement of every `protect: true` grant (`+-1 to replace … marked for protection` in `pnpm infra:preview`). The interpolated shape stays; `getWorkflowResourceGroupPath` builds the same prefix for the Logic App actions.
 - **Reading the Function Apps' `AzureWebJobsStorage__*ServiceUri` settings and `WEBSITE_RUN_FROM_PACKAGE` from the storage account's `primaryEndpoints`.** Three of the four values lack the trailing slash the endpoint outputs carry, so deriving them is an app-settings update that restarts both apps for a value that cannot drift while the account name is the file's own constant.
 - **Tying `WEBSITE_NODE_DEFAULT_VERSION` to `engines.node`.** The Functions runtime supports fewer majors than the repo runs on, so the setting stays on the major Functions supports and moves by hand when that support lands; `pnpm update:node` deliberately leaves it alone.
 - **A `get<Resource>Arguments` factory for each dev/prod pair of property bags** (storage accounts, blob services, sites, plans, search services, action groups, Web PubSub). Each pair is Azure's exported shape, and a factory per resource type is a second copy of the SDK's argument type; only what the pairs share beyond the SDK's shape — a rule list, a subscription's arguments, a workflow's actions — is a service.
+- **Widening `Pulumi.yaml`'s `paths:` — a gate job over the workspace graph, a content hash at two refs, a `pnpm-workspace.yaml` entry — so a pull request previews on a workspace-package edit or a `@pulumi/*` bump.** Nothing merges to Azure off a pull request: `up` is local with a preview in front of it (`references/operations.md`), and a provider bump automerges without a pull request, so the comment is a courtesy on infra-source pull requests and its gap costs nothing (`apps/web/content/docs/architecture/monorepo-tooling.md` → "What a CI proposal has to beat").
+- **Adding Application Insights, a Log Analytics workspace, diagnostic settings, smart-detector rules or scheduled-query alerts** as an unprompted observability best practice. The estate runs with none by a free-tier cost decision — the `$0.01` guard budgets are the ceiling and portal platform metrics answer operator questions for free — so the suggestion reintroduces ingestion cost with no consumer and is closed, not applied; what a condition worth noticing does instead (`context.error`, the `deadletter` container) and what would reopen it: `apps/web/content/docs/infra/observability.md`.
 
 ## Package Shape
 
-- `apps/infra` is a private Pulumi package managing Azure (and, from v12, GitHub) infrastructure in one `prod` stack.
+- `apps/infra` is a private Pulumi package managing Azure and GitHub infrastructure in one `prod` stack.
 - `Pulumi.yaml` uses the compiled `dist/index.js` as the entrypoint.
 - `src/` is split by provider: `src/azure/{resources,constants,services}` and `src/github/…`. The generated `src/index.ts` barrel stays at the top level and covers every provider.
 - `src/index.ts` is generated by ctix and gitignored like other package barrels; `pnpm build` regenerates it and compiles the program to `dist/index.js`.
@@ -31,70 +33,23 @@ Apply when modifying `apps/infra`.
 - Child resources append the Pulumi resource type name as a suffix. Mandatory singleton Azure names like `default` are omitted (they add no information): `devstesposter001Properties.ts`, `devstesposter001ManagementPolicy.ts`.
 - Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
 - **Never add `aliases` to any resource** — the Pulumi logical name **is** the Azure resource name here, so an alias can never serve the rename it is suggested for. The recurring review suggestion to add one is closed, never applied.
-- **A deployed identity is renamed like any other identifier.** An Azure resource name, a function name, or any string a resource's properties point at (an event subscription's `destination` naming a function) is corrected in place the moment it is wrong — infra being code is what makes that ordinary rather than a migration ([no compatibility debt](/docs/architecture/no-compatibility-debt)). Rename, `pnpm infra:preview`, read the plan. Hesitating on an unpreviewed guess about what a rename would cost is the same false positive as asserting a replacement without one, and it is the more expensive mistake: it leaves the wrong name in place permanently.
+- **A deployed identity is renamed like any other identifier.** An Azure resource name, a function name, or any string a resource's properties point at (an event subscription's `destination` naming a function) is corrected in place the moment it is wrong — infra being code is what makes that ordinary rather than a migration (`apps/web/content/docs/architecture/no-compatibility-debt.md`). Rename, `pnpm infra:preview`, read the plan. Hesitating on an unpreviewed guess about what a rename would cost is the same false positive as asserting a replacement without one, and it is the more expensive mistake: it leaves the wrong name in place permanently.
 
-## Resource Parent Hierarchy
+## Pointing at Another Resource
 
-Every new resource must set the `parent` Pulumi option to the **nearest final Azure containment/extension parent**:
-
-| Resource category                                                                                                                                                              | Correct `parent`                                                    |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| Top-level RG-scoped resources (Logic Apps, API connections, Function Apps, App Service Plans, storage accounts, search services, Web PubSub, Event Grid topics, action groups) | Final resource group (`devRgEsposterAe001` / `prodRgEsposterAe001`) |
-| Child/extension of storage account (blob service properties, management policies)                                                                                              | The storage account resource                                        |
-| Child/extension of Event Grid topic (event subscriptions)                                                                                                                      | The Event Grid topic (once it has a final name)                     |
-| Role assignments scoped to a specific managed resource (Logic App website contributor, EventGrid contributor)                                                                  | That scoped resource                                                |
-| Subscription-scoped resources (budgets, policy assignments, subscription-level role assignments)                                                                               | No parent                                                           |
-
-**Deferral rule:** if the natural parent is still a legacy resource scheduled for rename/deletion, defer setting `parent` until the migration wave that creates the final parent. Create the child directly under the final parent in that same wave — never under the legacy parent.
-
-## Resource References And Dependencies
-
-- Prefer existing Pulumi resource outputs over repeated Azure identifier string literals when one managed resource refers to another. If Pulumi owns the resource, use its output properties (`.name`, `.id`, etc.) as source of truth instead of a separate constant.
-- Add constants only for values external to managed resources, values required as plain strings in Pulumi options/import IDs, or shared built-in/static identifiers (e.g. role definition IDs).
-- A local `const` within a file is fine when it is the **source of truth** for that name and reused more than once in the same file (e.g. `const workflowName = "dev-logic-esposter-ae-001"` used as the Pulumi resource name and the Azure property). Don't introduce a local const that merely duplicates a name owned by another resource file.
-- **Single-use UUIDs inline directly** — don't declare `const roleAssignmentName = "uuid"` if used once; inline it: `roleAssignmentName: "uuid"`. Applies to any UUID/identifier appearing exactly once.
-- **Named constants only for cross-file reuse** — create a constant file only when the value is referenced in ≥2 resource files. A managed resource's principal id is never a constant: it is read from the resource's identity output through `getPrincipalId` in `src/azure/services`, so a recreated identity cannot leave a stale GUID behind. Only an external principal (the deployment service principal, a user) is a literal, and it lives in a named constant under the same ≥2-files rule.
-- **Per-stack files, shared environment-independent values** — dev and prod each keep their own resource file (names, parents, scopes, action groups differ), but any value identical across stacks — KQL alert queries, tags, location, thresholds, repeated literal + explanatory comment pairs — is imported from one shared constant in `src/azure/constants/` rather than duplicated per stack.
-- **A value the infra shares with app code interpolates the same constant that code uses** (e.g. an advanced-filter prefix comes from the constant the handler filters on), so renaming one cannot leave the infra filter and the code it mirrors silently disagreeing.
-- **Mixing resource outputs and enum literals in one file is fine** — use a resource output (`.name`, `.id`) when Pulumi declares the referenced resource, and the plain enum/constant when it does not. The two forms sitting side by side in one `rules` array is correct, not an inconsistency; don't "fix" one to match the other.
-
-## Pulumi Output vs Plain String
-
-`resource.name` and `resource.id` are `Output<string>`, not plain strings:
-
-- **As a property value** — use dot notation directly; Pulumi accepts `Input<T>` (which includes `Output<T>`) for all properties: `connectionId: conn.id` ✓
-- **In a template literal** — plain backtick interpolation silently produces `"[object Object]"`. Use ``pulumi.interpolate`prefix-${conn.name}-suffix` `` ✓
-- **As a computed object key** — `[conn.name]` evaluates to `"[object Object]"` at runtime (JS calls `.toString()` eagerly).
-
-**Preferred fix for object keys:** if the name is used as a key and also in template literals in the same file, define `const connectionKey = "the-name"` as the local source of truth; use the Output (`.id`, `.name`) only for property _values_ inside that keyed object. This avoids `pulumi.all().apply()` and stays readable. `pulumi.all([conn.name]).apply(([name]) => ({ [name]: ... }))` is a valid last resort only when there is genuinely no plain-string source of truth.
+- **Every new resource sets `parent` to the nearest final Azure containment/extension parent** — the category table, and the deferral rule for a natural parent still scheduled for rename: `references/resource-references.md`.
+- **Prefer a resource output over a repeated Azure identifier literal**; a named constant is earned at two resource files, and a managed resource's principal id is never one (it comes from `getPrincipalId`).
+- **`resource.name` and `resource.id` are `Output<string>`** — a plain backtick interpolation and a computed object key both produce `"[object Object]"` silently, so a template literal takes `pulumi.interpolate` and a key takes a plain-string source of truth.
 
 ## Provider Imports (namespace, not named)
 
 Always import Pulumi provider packages as a namespace — `import * as github from "@pulumi/github"`, `import * as azure_native from "@pulumi/azure-native"`, `import * as pulumi from "@pulumi/pulumi"` — and reference members as `github.Repository`, `azure_native.resources.ResourceGroup`.
 
-This is a deliberate **exception** to the repo-wide "prefer named imports from libraries" rule, and the review suggestion to switch a provider to named imports is **wrong**:
-
-- Provider packages are CommonJS and lazy-load every resource submodule through `utilities.lazyLoad`, which installs getters on the `exports` object via `Object.defineProperty`. That mechanism only works through the live namespace object from `import * as`.
-- `apps/infra` is `"type": "module"`, so named ESM imports from those CJS modules force Node's interop to evaluate bindings eagerly — `require()`-ing every referenced submodule at import time and defeating the lazy-load (slower startup, higher memory). They are not tree-shakable.
-- Pulumi's own codegen always emits `import * as`. Match it; do not "fix" provider imports for lint/style consistency.
+This is a deliberate **exception** to the repo-wide "prefer named imports from libraries" rule, and the review suggestion to switch is closed rather than applied: the provider packages are CommonJS lazy-loading every submodule through getters, and a named ESM import evaluates them all eagerly (`references/provider-quirks.md`).
 
 ## Security Constraints
 
-Do not, until the listed app-side migration completes:
-
-- Disable storage shared key access — while app blob clients and SAS generation use connection-string/shared-key auth.
-- Disable storage blob public access — while public blob containers in `AzureContainerPropertiesMap` are unmigrated.
-- Disable Azure Search local auth — while `apps/web` uses `AzureKeyCredential` for Search.
-- Disable Event Grid topic local auth — while the main app Event Grid publisher uses `AzureKeyCredential` (Azure Functions already use `DefaultAzureCredential`, but the app path is still key-based).
-- Restrict Web PubSub to static IP allowlists — while browser clients connect directly from arbitrary public IPs.
-- Disable Web PubSub local auth or public REST API access — while app/functions use Web PubSub connection-string service clients over public endpoints.
-- Set storage network default action to `Deny` without a complete allowlist, private endpoint, or equivalent migration.
-
-## Observability Is Deliberately Off (Cost)
-
-This estate runs with **no Application Insights and no Log Analytics** — removed from both environments as a deliberate free-tier cost decision, so the Function Apps carry no `APPINSIGHTS_*` / `APPLICATIONINSIGHTS_*` app settings. The `$0.01` guard budgets (with their StopFunction/DeleteSub action groups + Logic Apps) are the cost ceiling; Azure portal platform metrics answer operator questions for free. Full rationale: `apps/web/content/docs/infra/observability.md`.
-
-Do **not** add App Insights, a Log Analytics workspace, diagnostic settings, smart-detector rules, or scheduled-query alerts as an unprompted "observability best practice" — that review suggestion is **wrong here** and should be closed, not applied, because it reintroduces recurring ingestion cost with no consumer. Only revisit if paid tiers/quotas, an on-call rotation, or a real incident-investigation need make retained telemetry worth the spend. One consequence to design around: nothing can alert off a query over collected traces, so a condition worth noticing — a dead letter quarantined or discarded — is written with `context.error` and found by inspecting the `deadletter` container.
+Every hardening the estate declines — shared-key and public blob access, local auth on Search, Event Grid and Web PubSub, a `Deny` storage default — is an accepted trade gated on an app-side migration, each with its blocker and its path in `apps/infra/docs/azure/security-constraints.md`. None is applied until its migration completes.
 
 ## Docs
 
@@ -106,4 +61,5 @@ Do **not** add App Insights, a Log Analytics workspace, diagnostic settings, sma
 
 - `references/operations.md` — when running `infra:preview`/`infra:up`, after a catalog bump to a provider package, or when something reads as deployed but does not work.
 - `references/migrations.md` — when renaming, re-parenting, or replacing an already-deployed resource, when a review suggests adding an `alias`, or when importing an existing Azure resource with `pulumi import --generate-code`.
+- `references/resource-references.md` — when setting a resource's `parent`, reading another resource's `.name`/`.id`, or choosing between an output and a named constant.
 - `references/provider-quirks.md` — when picking an Azure Native resource token, naming a Logic App API connection, or touching the GitHub `Repository` resource and branch protection.

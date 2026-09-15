@@ -4,11 +4,13 @@ import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
 describe(requireEntity, () => {
+  const name = "name";
+
   test("returns the entity when the query resolves with one", async () => {
     expect.hasAssertions();
 
     const entity = { id: "" };
-    const returnedEntity = await requireEntity(Promise.resolve(entity), "Entity", "");
+    const returnedEntity = await requireEntity(Promise.resolve(entity), name, "");
 
     expect(returnedEntity).toBe(entity);
   });
@@ -16,9 +18,9 @@ describe(requireEntity, () => {
   test("throws TRPCError with code NOT_FOUND when the query resolves with undefined", async () => {
     expect.hasAssertions();
 
-    await getResultAsync(() => requireEntity(Promise.resolve(undefined), "Entity", "1")).match(noop, (error) => {
+    await getResultAsync(() => requireEntity(Promise.resolve(undefined), name, "-1")).match(noop, (error) => {
       expect((error as TRPCError).code).toBe("NOT_FOUND");
-      expect(error).toMatchInlineSnapshot(`[TRPCError: ${new NotFoundError("Entity", "1").message}]`);
+      expect(error).toMatchInlineSnapshot(`[TRPCError: ${new NotFoundError(name, "-1").message}]`);
     });
   });
 });

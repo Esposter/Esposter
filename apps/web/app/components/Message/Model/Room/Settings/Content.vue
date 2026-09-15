@@ -18,7 +18,6 @@ const component = computed(() => SettingsContentMap[settingsType]);
     <template #header>
       <MessageModelSettingsHeader :title="settingsType" @close="emit('close')" @open:drawer="emit('open:drawer')" />
     </template>
-    <!-- Timeout 0 shows the skeleton on every tab switch instead of keeping the stale panel -->
     <Suspense v-if="component" :timeout="0">
       <component :is="component" :room />
       <template #fallback>

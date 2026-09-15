@@ -7,7 +7,7 @@ describe(parseJsonWithSchema, () => {
   // (overlay manifest entries, task cache plan entries, source mirror symlink targets).
   const pathSchema = z.object({ relativePath: z.string() });
   // A path that is itself a legal ISO datetime — a dumped log or export, a legal filename on Linux.
-  const ISO_DATE_PATH = "2026-08-05T12:00:00Z";
+  const ISO_DATE_PATH = new Date(0).toISOString();
 
   // A date reviver here would hand `z.string()` a Date and fail the read over one filename. On the write-back path
   // That throw lands after the command already ran, so the plan is never built and every file it wrote is lost.

@@ -46,10 +46,10 @@ const { isPending } = useAutoSearch(searchQuery, {
 
 ### `useCursorSearcher` — cursor-paginated results
 
-`app/composables/useCursorSearcher.ts` composes `useAutoSearch` with `useCursorPaginationData` for searches whose results paginate (room pickers, forward-to dialogs). The query callback receives `(searchQuery, cursor, opts)` and must forward `opts` — it carries the abort signal. It returns `{ hasMore, items, readItemsSearched, readMoreItemsSearched, searchQuery }`, so the list renders with the standard `StyledWaypoint` infinite-scroll pattern.
+`app/composables/useCursorSearcher.ts` composes `useAutoSearch` with `useCursorPaginationData` for searches whose results paginate (room pickers, forward-to dialogs). The query callback receives `(searchQuery, cursor, opts)` and must forward `opts` — it carries the abort signal. It returns `{ hasMore, items, readSearchedItems, readMoreSearchedItems, searchQuery }`, so the list renders with the standard `StyledWaypoint` infinite-scroll pattern.
 
 ```ts
-export const useSearchStore = defineStore("message/room/search", () => {
+export const useRoomSearchStore = defineStore("message/room/search", () => {
   const { $trpc } = useNuxtApp();
   return useCursorSearcher((searchQuery, cursor, opts) => {
     const normalizedSearchQuery = normalizeString(searchQuery);
@@ -112,7 +112,7 @@ Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a 
 | `app/components/Styled/SearchDialog.vue`                    | `StyledSearchDialog` — Ctrl+K palette shell (`hotkey` via `useVHotkey`)                 |
 | `app/components/Docs/Search.vue`                            | Palette + client-index results (MiniSearch)                                             |
 | `app/services/message/emoji/searchEmojis.ts`                | Client-index emoji search shared by the picker and the composer's `:` trigger           |
-| `app/components/Message/Model/Room/Searcher.vue`            | Palette + cursor-paginated results (`useSearchStore`)                                   |
+| `app/components/Message/Model/Room/Searcher.vue`            | Palette + cursor-paginated results (`useRoomSearchStore`)                               |
 | `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                           |
 | `app/composables/resource/search/useResourceSearchItems.ts` | Portal dropdown — `useAutoSearch` for the Resources group, client-side groups around it |
 | `app/store/message/room/search.ts`                          | Store returning `useCursorSearcher` for the room palette                                |
