@@ -27,7 +27,6 @@ export const useVisualPerspective = (visualId: MaybeRefOrGetter<string>, getChar
     const visualIdValue = toValue(visualId);
     const entry = viewEntries.value.find((viewEntry) => parseViewEntry(viewEntry).visualId === visualIdValue);
     if (!entry) return;
-
     // A link is hand-editable and outlives the chart it was captured from, so a token that no longer decodes
     // Opens the dashboard unfiltered rather than raising something the reader can do nothing about
     getResult(() => {

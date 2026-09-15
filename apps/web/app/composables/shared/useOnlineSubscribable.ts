@@ -66,7 +66,6 @@ export function useOnlineSubscribable(
   onMounted(() => {
     trigger();
   }, instance);
-
   // The teardown is whatever the subscribe handed back — an unsubscribe, a socket stop — and a scope disposing
   // Holds nothing to catch it, so a cleanup that rejects reports here rather than escaping the dispose
   const disposeHandler = getSynchronizedFunction(() =>

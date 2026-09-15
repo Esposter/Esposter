@@ -16,7 +16,6 @@ export const useStorageSubscribables = async () => {
     () => session.value?.user.id,
     async (userId) => {
       if (!userId) return undefined;
-
       // What this process changes, it reports itself, carrying the figure so the meter moves within the save
       const updateUsageUnsubscribable = $trpc.storage.onUpdateUsage.subscribe(undefined, {
         onData: (newStorageUsage) => {
