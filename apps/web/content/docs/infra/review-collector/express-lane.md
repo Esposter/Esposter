@@ -5,7 +5,7 @@ description: Commits that provably have nothing to review — a folder sweep's m
 
 # Express Lane
 
-A review window is budgeted in **files** and spent on **findings**. A folder sweep inverts that trade: it is the largest thing the queue produces and the emptiest thing a reviewer reads. So a commit that provably has nothing to comment on never occupies a window — it is cherry-picked onto `main`, and the [return stroke](/docs/infra/review-collector/collection-cycle) carries it to `develop` on the next run. Nothing else in the pipeline learns a new shape: `main` moving under `develop` is the dependency-bump case already handled, and the session's standing rebase drops a commit that reached `main` by patch id.
+A review window is budgeted in **files** and spent on **findings**. A folder sweep inverts that trade: it is the largest thing the queue produces and the emptiest thing a reviewer reads. So a commit that provably has nothing to comment on never occupies a window — it is cherry-picked onto `main`, and the [return stroke](/docs/infra/review-collector/collection-cycle) carries it to `develop` on the next run. Nothing else in the pipeline learns a new shape: `main` moving under `develop` is the dependency-bump case already handled, and the collector's own sync drops a commit that reached `main` from the queue by the original its copy names.
 
 ## What "nothing to review" means
 
@@ -27,7 +27,7 @@ flowchart TD
   V -->|no| RV
   V -->|yes| PU[Push main]
   PU --> FF[Next run: return stroke<br/>fast-forwards develop]
-  FF --> RB[Session rebase drops it<br/>by patch id]
+  FF --> RB[The sync drops it from the queue<br/>by the original its copy names]
 ```
 
 ## What the lane does not do

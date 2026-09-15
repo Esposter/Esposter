@@ -9,7 +9,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 
 ## The parts
 
-1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — what the collector reads, the gates it clears, how it merges a release whose review is clean, ports the largest prefix of `ai/queue` under the cap, pushes, replies with the pushed sha, and opens the release pull request over whatever `develop` then carries unreviewed. One script, `ai:coderabbit:collect`.
+1. [The collection cycle](/docs/infra/review-collector/collection-cycle) — what the collector reads, the gates it clears, how it merges a release whose review is clean, rewrites `ai/queue` onto the tree the next window is built on, ports the largest prefix of it under the cap, pushes, replies with the pushed sha, and opens the release pull request over whatever `develop` then carries unreviewed. One script, `ai:coderabbit:collect`.
 2. [The drain](/docs/infra/review-collector/drain) — the one step Claude runs: which findings are open, what the session is handed and denied, and how a drain that fails is quarantined.
 3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one pull request without racing.
@@ -42,9 +42,10 @@ flowchart TD
   O -->|no| CL{Review clean at the head,<br/>least merge risk stated for it}
   CL -->|yes| MG[Merge the release PR<br/>the push to main returns develop, exit]
   CL -->|no| P
-  DR --> P{Fixes parked with any queue commit,<br/>anything the queue still owes,<br/>or the window held}
+  DR --> SY[Rewrite ai/queue onto the tree<br/>the window is built on — Claude resolves a conflict]
+  SY --> P{Fixes parked with any queue commit,<br/>anything the queue still owes,<br/>or the window held}
   P -->|none| PK[Wait — slot stays free]
-  P -->|first commit held alone| FL[Fail — a person rebases or splits it]
+  P -->|first commit held alone| FL[Fail — a person resolves or splits it]
   P -->|any| W[Port fixes then queue prefix<br/>largest prefix under the cap, main folded in]
   W --> PU[Compare-and-swap push to develop]
   PU -->|release PR open| RP[Reply on each answered thread<br/>with the pushed sha]
@@ -53,8 +54,8 @@ flowchart TD
 
 Three properties make the picture safe to fire from anything:
 
-- **All state is remote.** The frontier is read from review bodies, open findings from the threads, fixes awaiting a push from `ai/review-fixes`, which thread a fix answers from a trailer on the fix commit, and what the queue still owes from `git cherry` against the tree the fixes built. A second run sees exactly what the first saw plus whatever the first pushed.
-- **One irreversible act per run** — the return stroke's fast-forward, the express lane's push to `main`, or the window's push to `develop` — and it is a compare-and-swap the remote performs: the push carries `--force-with-lease` on the sha every count was measured from, so a `develop` that moved is refused with nothing written and reported as an outcome the next run re-measures against. The lease makes the push forced, so the fast-forward is asserted before it — a non-descendant target is the porter's bug, and that one fails the run. Everything before the push is a local branch in the runner; everything after it is idempotent by predicate — a reply is posted only where the thread lacks one citing that sha, the pull request is opened only when none is open. Nothing is ever deleted.
+- **All state is remote.** The frontier is read from review bodies, open findings from the threads, fixes awaiting a push from `ai/review-fixes`, which thread a fix answers from a trailer on the fix commit, and what the queue still owes from `git cherry` against the tree the fixes built minus the originals its copies name. A second run sees exactly what the first saw plus whatever the first pushed.
+- **One irreversible act per run** — the return stroke's fast-forward, the express lane's push to `main`, or the window's push to `develop` — and it is a compare-and-swap the remote performs (the sync's rewrite of `ai/queue` and the drain's push of `ai/review-fixes` are the collector's own refs, each under the same lease): the push carries `--force-with-lease` on the sha every count was measured from, so a `develop` that moved is refused with nothing written and reported as an outcome the next run re-measures against. The lease makes the push forced, so the fast-forward is asserted before it — a non-descendant target is the porter's bug, and that one fails the run. Everything before the push is a local branch in the runner; everything after it is idempotent by predicate — a reply is posted only where the thread lacks one citing that sha, the pull request is opened only when none is open. Nothing is ever deleted.
 - **The cap is measured on the tree that will be pushed,** never estimated: the porter cherry-picks one commit at a time and reads the file count from the frontier after each.
 
 ## Parameters

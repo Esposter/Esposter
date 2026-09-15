@@ -65,7 +65,20 @@ export const DRAINS_MARKER = "review-collector drains";
 
 export const QUARANTINED_MARKER = "review-collector quarantined";
 
+// A queue commit whose conflict with the tree the fixes built the sync could not resolve, counted against the
+// Same cap: past it the commit is a person's, and the port holds on it as it always did
+export const SYNC_FAILED_MARKER = "review-collector sync-failed";
+
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
+
+// What every headless session in the runner is denied: it holds no credential that can act on this repository,
+// And the collector does each of these itself once the session has exited clean
+export const SESSION_DENIALS =
+  "Work in this checkout only: never push, never switch branches, never rewrite history, never amend, and never run `gh` or any other command that writes to GitHub — you hold no credential for it, and the collector does every one of those itself once you have exited.";
+
+// The finishing ritual a headless session owes, foreground because a `claude -p` session has no next turn
+export const FINISHING_CHECKS_INSTRUCTION =
+  "Run the repo's finishing checks over the paths you touched — `pnpm format` at the root, `pnpm typecheck` in the touched package, `pnpm lint:fix` from the repo root, and the touched test suites — and commit any repairs they produce as their own commit. Run them in the foreground and wait for each to finish: this session is one-shot, so a check started in the background is a check whose result no turn of yours will ever read.";
 
 // The family alias, never a version (`model-delegation`): left unpinned, the drain runs on whatever the
 // Account's default was last set to, which no log line would say

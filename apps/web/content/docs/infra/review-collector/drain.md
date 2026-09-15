@@ -5,7 +5,7 @@ description: The one step of the collection cycle where Claude runs — which fi
 
 # Drain
 
-The drain answers every finding of the newest completed review, at every severity, and is the only step of the [collection cycle](/docs/infra/review-collector/collection-cycle) where Claude runs. Everything around it — which findings are open, whether to run at all, what to post and what to push — is deterministic TypeScript.
+The drain answers every finding of the newest completed review, at every severity, and is the step of the [collection cycle](/docs/infra/review-collector/collection-cycle) where Claude runs — the cycle's sync borrows the same session, with the same denials, to resolve a queue commit's conflict with the fixes. Everything around it — which findings are open, whether to run at all, what to post and what to push — is deterministic TypeScript.
 
 ```mermaid
 flowchart TD

@@ -3,7 +3,7 @@ import type { DrainRun } from "#src/models/coderabbit/collect/DrainRun";
 import { CLAUDE_CODE_PACKAGE, DRAIN_MODEL } from "#src/services/coderabbit/collect/constants";
 import { getDrainEventLine } from "#src/services/coderabbit/collect/getDrainEventLine";
 import { getDrainLimitResetMs } from "#src/services/coderabbit/collect/getDrainLimitResetMs";
-import { IS_PNPM_SHELL, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { IS_PNPM_SHELL } from "#src/services/shared/constants";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { createInterface } from "node:readline";
@@ -20,7 +20,7 @@ const SECRET_VARIABLE_PATTERN = /credential|key|password|secret|token/iu;
 // Stdout is streamed rather than inherited: each event is logged as it lands, and the sentence Claude Code
 // Prints on its way out — parsed off its own lines, never the model's narration — is what separates a drain
 // That failed from one that never started
-export const runDrain = async (prompt: string): Promise<DrainRun> => {
+export const runDrain = async (prompt: string, cwd: string): Promise<DrainRun> => {
   const environment = Object.fromEntries(
     Object.keys(process.env)
       .filter((key) => EXEMPT_SECRET_VARIABLES.has(key) || !SECRET_VARIABLE_PATTERN.test(key))
@@ -39,7 +39,7 @@ export const runDrain = async (prompt: string): Promise<DrainRun> => {
       "stream-json",
       "--verbose",
     ],
-    { cwd: REPOSITORY_ROOT, env: environment, shell: IS_PNPM_SHELL, stdio: ["pipe", "pipe", "inherit"] },
+    { cwd, env: environment, shell: IS_PNPM_SHELL, stdio: ["pipe", "pipe", "inherit"] },
   );
   // Registered before the read loop: `close` fires on the tick after stdout ends, before the loop resumes
   const closed = once(child, "close");

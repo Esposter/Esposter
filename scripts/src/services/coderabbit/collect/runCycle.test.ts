@@ -24,6 +24,7 @@ import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
+import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { describe, expect, test, vi } from "vitest";
 
 const { readCheckStatus, runDrainStep, runGh } = vi.hoisted(() => ({
@@ -163,7 +164,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerGh([]);
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, held at e1b1241d5399c7d8234f33a42c525fc449150d8c — the first owed commit conflicts with develop or overflows the cap alone, so rebase ai/queue or split it (the git error above says which)]`,
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, held at e1b1241d5399c7d8234f33a42c525fc449150d8c — the first owed commit overflows the cap alone or its conflict was not resolved, so split it or rebase ai/queue (the log above says which)]`,
     );
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
   });
@@ -239,6 +240,32 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
     expect(getPrCalls("merge")).toHaveLength(0);
+  });
+
+  // A queue left behind develop is rewritten onto it before the port reads it — the ported commit drops, the owed
+  // One re-parents, and the window is then a fast-forward to the queue's own new head
+  test("rewrites a queue left behind develop and ports what it still owes", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const portedSha = commitFile(TEST_FILENAME, "");
+    publish(QUEUE_BRANCH, commitFile(`${TEST_FILENAME}.ts`, ""));
+    switchTo(mainSha);
+    runGit(["cherry-pick", "-x", "--quiet", portedSha], getCwd());
+    const developSha = publish(DEVELOP_BRANCH, "HEAD");
+    switchTo(mainSha);
+    answerGh([]);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+    const queueSha = readSha(`origin/${QUEUE_BRANCH}`);
+
+    expect(runGit(["log", "--format=%s", `${developSha}..${queueSha}`], getCwd())).toBe(`${TEST_FILENAME}.ts
+`);
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Opened,
+      reason: `the release: ${DEVELOP_BRANCH} → ${MAIN_BRANCH} pull request is open — its first review reads the whole window`,
+      targetSha: queueSha,
+    });
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
   });
 
   // The lease is the compare-and-swap: a develop that moved under the run is refused and reported, never overwritten

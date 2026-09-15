@@ -51,7 +51,7 @@ describe(runDrain, () => {
       getResultLine("success", REFUSAL_LINE),
     ]);
 
-    await expect(runDrain("prompt")).resolves.toStrictEqual({ isDrained: true, limitResetAtMs: undefined });
+    await expect(runDrain("prompt", "")).resolves.toStrictEqual({ isDrained: true, limitResetAtMs: undefined });
   });
 
   // The model's turns are narration; only what Claude Code says for itself reaches the limit parser, which is
@@ -61,7 +61,7 @@ describe(runDrain, () => {
 
     mockSession(1, [getAssistantLine(REFUSAL_LINE), getResultLine("error_during_execution", "the commit failed")]);
 
-    await expect(runDrain("prompt")).resolves.toStrictEqual({ isDrained: false, limitResetAtMs: undefined });
+    await expect(runDrain("prompt", "")).resolves.toStrictEqual({ isDrained: false, limitResetAtMs: undefined });
   });
 
   // The refusal states `success` in the frame it exits non-zero with, so the subtype is no evidence the session
@@ -72,7 +72,7 @@ describe(runDrain, () => {
 
     mockSession(1, [getResultLine("success", REFUSAL_LINE)]);
 
-    await expect(runDrain("prompt")).resolves.toStrictEqual({
+    await expect(runDrain("prompt", "")).resolves.toStrictEqual({
       isDrained: false,
       limitResetAtMs: LIMIT_RESET_AT_MS,
     });
@@ -85,7 +85,7 @@ describe(runDrain, () => {
 
     mockSession(1, [REFUSAL_LINE]);
 
-    await expect(runDrain("prompt")).resolves.toStrictEqual({
+    await expect(runDrain("prompt", "")).resolves.toStrictEqual({
       isDrained: false,
       limitResetAtMs: LIMIT_RESET_AT_MS,
     });
@@ -105,7 +105,7 @@ describe(runDrain, () => {
     vi.stubEnv("CLAUDE_CODE_OAUTH_TOKEN", "claude-token");
     mockSession(0, [getResultLine("success", "done")]);
 
-    await runDrain("prompt");
+    await runDrain("prompt", "");
 
     const passedEnvironment = spawn.mock.calls[0]?.[2]?.env;
     expect(passedEnvironment?.CLAUDE_CODE_OAUTH_TOKEN).toBe("claude-token");

@@ -31,10 +31,11 @@ import { runDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
 import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane";
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
 import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
+import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// One pass: read, reply, gate, drain, port, push, reply. Every input is a remote fact and every write is either
+// One pass: read, reply, gate, drain, sync, port, push, reply. Every input is a remote fact and every write is either
 // The single fast-forward push or guarded by a predicate a later run re-evaluates, so any event may run this
 // And a run against unchanged state does nothing. It returns its verdict rather than exiting, which is what
 // Makes a dry run one mode of the same code path (docs: infra/review-collector).
@@ -129,7 +130,19 @@ export const runCycle = async ({
     )
       return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
   }
-  const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha, reviewFixesSha });
+  // The queue is rebuilt on the tree the window is built on before the port reads it, so a conflict is met here
+  // Once rather than held on every run
+  const syncedQueueSha = await syncQueue({
+    cwd,
+    developSha,
+    isDryRun,
+    issueComments,
+    pullRequest,
+    queueSha,
+    reviewFixesSha,
+    viewerLogin,
+  });
+  const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha: syncedQueueSha, reviewFixesSha });
   // With no pull request open, what `develop` already carries above the merge base is the first review's window
   const pendingCommitCount =
     pullRequest === undefined ? Number(runGit(["rev-list", "--count", `${frontier}..${developSha}`], cwd).trim()) : 0;
@@ -152,15 +165,15 @@ export const runCycle = async ({
       retriggerDelaySeconds = settlement.retriggerDelaySeconds;
       if (settlement.outcome) return settlement.outcome;
     }
-    // A held first commit is a person's act, not an under-filled queue: it conflicts with the tree or overflows
-    // The cap alone, and no event clears either. The run fails red so someone is told — once the review a limit
-    // Refused has been asked for, since that answer is still owed first.
+    // A held first commit is a person's act, not an under-filled queue: it overflows the cap alone, or its
+    // Conflict is one the sync could not resolve, and no event clears either. The run fails red so someone is
+    // Told — once the review a limit refused has been asked for, since that answer is still owed first.
     if (port.queueShas.length === 0 && port.heldSha) {
       if (isRateLimited) return getOutcome(CycleOutcomeKind.Idle, "held — the review the limit refused is owed first");
       throw new InvalidOperationError(
         Operation.Update,
         "coderabbit",
-        `held at ${port.heldSha} — the first owed commit conflicts with ${DEVELOP_BRANCH} or overflows the cap alone, so rebase ${QUEUE_BRANCH} or split it (the git error above says which)`,
+        `held at ${port.heldSha} — the first owed commit overflows the cap alone or its conflict was not resolved, so split it or rebase ${QUEUE_BRANCH} (the log above says which)`,
       );
     } else if (parkedFixCount > 0) return getOutcome(CycleOutcomeKind.Idle, "parked — fixes wait for the queue");
     return getOutcome(CycleOutcomeKind.Idle, `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`);
@@ -179,7 +192,7 @@ export const runCycle = async ({
     developSha,
     fixCount: port.fixCount,
     frontierSha: frontier,
-    queueSha,
+    queueSha: syncedQueueSha,
     queueShas: port.queueShas,
   });
   // The push's compare-and-swap covers the ref, not the slot: a review a person started meanwhile is read afresh

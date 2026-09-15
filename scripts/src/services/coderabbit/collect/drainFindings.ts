@@ -70,7 +70,7 @@ export const drainFindings = async ({
   const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
   const verdictPath = join(verdictDirectory, VERDICT_FILE);
   const promptInput = { ...drainInput, rejectionsPath, verdictPath };
-  const { isDrained, limitResetAtMs } = await runDrain(getDrainPrompt(promptInput));
+  const { isDrained, limitResetAtMs } = await runDrain(getDrainPrompt(promptInput), REPOSITORY_ROOT);
   if (limitResetAtMs !== undefined) {
     const resetAt = new Date(limitResetAtMs).toISOString();
     postComment(

@@ -3,10 +3,12 @@ import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmerged
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getResult } from "@esposter/shared";
 
-// A failed cherry-pick's exit code says nothing about why, and the two reasons need opposite answers: an unmerged
-// Path is a conflict the caller stops on, none means the patch is already in the tree under another sha
+// `-x` names the original in the copy's message, which is how a port survives its patch id drifting
+// (`readCherryShas`). A failed cherry-pick's exit code says nothing about why, and the two reasons need opposite
+// Answers: an unmerged path is a conflict the caller stops on, none means the patch is already in the tree under
+// Another sha
 export const pickCommit = (sha: string, cwd: string): PickOutcome =>
-  getResult(() => runGit(["cherry-pick", sha], cwd)).match(
+  getResult(() => runGit(["cherry-pick", "-x", sha], cwd)).match(
     () => PickOutcome.Applied,
     () => {
       if (readUnmergedPaths(cwd).length > 0) {

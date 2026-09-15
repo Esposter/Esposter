@@ -46,7 +46,7 @@ After committing, verify with `git log -1 --format='%B'` before pushing.
 
 ## Pushing
 
-The session pushes **`ai/queue` after every commit**, which starts no review — the `review-queue` skill owns the loop, the rebase onto `origin/develop` before the next unit, and the force-with-lease after it. A branch with a PR a person opened against `main` is pushed once per coherent chunk, since every push there starts a review.
+The session pushes **`ai/queue` after every commit**, plain, and runs `git pull --rebase` before every commit and push, because the collector rewrites the queue after every window — the `review-queue` skill owns the loop and the one lease a session may ever push with. A branch with a PR a person opened against `main` is pushed once per coherent chunk, since every push there starts a review.
 
 ## Branch Hygiene
 
