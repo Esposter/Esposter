@@ -104,7 +104,9 @@ export const setupPluginSuite = ({
     expect.hasAssertions();
 
     // A diagnostic spells `plugin/rule` as `plugin(rule)`
-    const expectedCodes = rules.map((rule) => rule.replace(/^([^/]+)\/(.+)$/u, "$1($2)")).toSorted();
+    const expectedCodes = rules
+      .map((rule) => rule.replace(/^(?<pluginName>[^/]+)\/(?<ruleName>.+)$/u, "$<pluginName>($<ruleName>)"))
+      .toSorted();
     expect([...new Set(codes)].toSorted()).toStrictEqual(expectedCodes);
   });
 };
