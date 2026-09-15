@@ -66,17 +66,3 @@ prints, so the rule is enforced rather than swept.
   import sites read them that way. No rule names default exports either way — the file-organization skill only
   bans `export { }` — so converting the tree to `export const` is a convention to settle first, not a pass: the
   tree is internally consistent and the swap is sixty files of pure churn.
-
-## Not enforceable — settled
-
-What a program decides here it now decides: a `util/` file importing a third-party package is
-`no-restricted-imports` over `**/util/**` on the ESLint side (`restrictedUtilImports.js` — only ESLint honours the
-anchored package patterns, and a type-only import stays, since a type is not a dependency); an alias import
-under `packages/*/src/**` reaching `@/**` was a ban already; a forwarding wrapper is
-`pass-through-helper/no-forwarding-wrapper`. What is left stays a reading pass, for these reasons:
-
-- **One export per file and the models rule** both fail the `oxlint` skill's roster gate — each one's exceptions
-  are a list of filenames and shapes (`constants.ts`, a schema beside its type, an enum beside its values array, a
-  composable's own options) that grows with the repo; the `oxlint` skill's Settled list carries the models-rule
-  plugin.
-- **Duplicate constants and the sole-consumer rule** need the whole repo in mind.

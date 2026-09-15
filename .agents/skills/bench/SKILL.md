@@ -9,6 +9,10 @@ A benchmark is a test. `bench` comes from the test context, each registration is
 
 `pnpm bench` is `vitest bench --run` in a package (from the root it is the chain under Running below), and a reporter writes colocated `*.bench.{json,md}` you commit and diff — the offline gate. 🏎️ Bench (CI) runs one unsharded `vitest bench --run` every push as an executes-clean smoke signal only: no reporter commit, no dashboard. Sharding it would buy nothing but repeated setup, since nothing reads its numbers.
 
+## Settled — do not re-propose
+
+- **A lint rule or scan for the bench rules** — whether a fixture is fresh all the way down, whether a group holds one scale, whether the thing benched is the unit or its wrapper are questions about what the code means, and the population is a dozen files; the committed-artifact rule is `scripts/src/workspace/benchArtifacts.test.ts`.
+
 ## A stopwatch is a probe, never an answer
 
 A session wanting to know how long something takes reaches for `time` or a `performance.now()` loop, reads the
@@ -44,7 +48,7 @@ whether it lives in a file or in a shell history.
 
 `pnpm bench` in a package is `vitest bench --run`. Nothing else to chain.
 
-From the **repo root** it is `pnpm -r --workspace-concurrency=1 --if-present run bench` — every member that owns a bench, in turn. The flag is the whole point and `pnpm -r` does not default to it: without it four members bench at once, contend for CPU and skew every machine-dependent number. Worse, a member whose bench rebuilds the workspace — `scripts` deletes each `dist` to measure a cold build — rips `@esposter/configuration/dist` out from under a concurrent member still loading its `vitest.config.ts`, which fails as `Failed to resolve entry for package` against whichever workspace import that config reached first. A bare root `vitest bench --run` is the other thing entirely, and what the 🏎️ Bench job runs: one process over every project's bench files at once, which is a smoke test that they all still execute rather than a measurement anything should be compared against.
+From the **repo root** it is `pnpm bench` — every member that owns a bench, in turn, through `pnpm -r` with `--workspace-concurrency=1`. The flag is the whole point and `pnpm -r` does not default to it: without it four members bench at once, contend for CPU and skew every machine-dependent number. Worse, a member whose bench rebuilds the workspace — `scripts` deletes each `dist` to measure a cold build — rips `@esposter/configuration/dist` out from under a concurrent member still loading its `vitest.config.ts`, which fails as `Failed to resolve entry for package` against whichever workspace import that config reached first. A bare root `vitest bench --run` is the other thing entirely, and what the 🏎️ Bench job runs: one process over every project's bench files at once, which is a smoke test that they all still execute rather than a measurement anything should be compared against.
 
 The tooling benches live in `scripts`, which is a member like any other, so `pnpm -r` reaches it and nothing at the root names its path. Only deterministic, CPU-bound units earn a bench there; the network and spawn helpers are I/O-bound and unbenchable. **An `ai:` command's unit earns one where its cost outgrows the corpus** — a shingle map over every page, a word set over every file, a span walk — because that is where a quadratic hides behind inputs a test never reaches, and the bench's scale axis is the page or corpus size the tree actually holds. A per-file regex scan does not: measured over the whole tree it costs tens of milliseconds, the command's walltime is its boot, spawns and reads (`runtime-efficiency` skill, "A script's clock"), and a bench of it measures the regex engine. The same measurement is what a lint plugin gets — the plugins here are together a fortieth of the type-aware run they ride in, so none carries a bench.
 

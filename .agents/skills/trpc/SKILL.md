@@ -5,6 +5,11 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 
 # tRPC Conventions
 
+## Settled — do not re-propose
+
+- **A rule for the procedure builder** — which of the three a route takes is a policy question about the route's data; the two decidable halves are `trpc-procedure/no-hand-rolled-error` and `trpc-procedure/require-return-type`.
+- **A rule that the client path mirrors the file path** — needs both trees, so it would be a test walking them rather than a lint rule.
+
 ## Deep dives
 
 - `references/router-tests.md` — when writing or reviewing a test that drives a tRPC caller.

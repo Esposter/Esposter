@@ -41,9 +41,3 @@ a better arrangement of our own is an acceptable answer to it, as long as a comm
 | resource editors — sheet, dashboard, flowchart   | 2026-09-15 | the sheet's Settings blade is its data-source configuration and nothing else               |
 | user settings and profile                        | 2026-09-15 | the settings dialog and `/user/settings` render the same cards rather than two forms       |
 | posts and achievements                           | 2026-09-15 | the reference products here are Reddit and GitHub                                          |
-
-## Open findings
-
-- **The invite dialog has no friends list** — Discord's offers the people you could invite directly, so inviting
-  one does not go through copying a link and pasting it somewhere else. The panel half of this gap is closed; this
-  half is a picker over the friends list, and it is a feature rather than a placement fix.

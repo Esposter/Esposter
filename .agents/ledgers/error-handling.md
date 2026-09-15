@@ -95,21 +95,3 @@ local writes has nothing to terminate.
   finding, raised rather than swept here.
 - `requireAuthData`, where the whole point is that the auth api's own sentence reaches the user — the wrapper
   would prefix it with an operation and an entity name and bury it. The reason is written at the call site.
-
-## Not enforceable — settled
-
-What a program decides here it now decides: `try`/`catch`, `.isOk`/`.isErr` and `console.warn` handed to a
-handler slot are `no-restricted-syntax`; a bare `new Error` is `error-handling/no-bare-error`
-(`scripts/src/oxlint/errorHandling.ts`), off only at the sites the `error-handling` skill lists, which are the
-ones the mechanism cannot use itself; a raw alert in a script block is `error-alert/no-raw-error-alert`. What is
-left stays a reading pass, for these reasons:
-
-- **An unterminated `Result`** needs the value's type, and nothing type-aware runs in either linter (`oxlint`
-  skill); `pnpm ai:sweep:unterminated-results` is the scan, and it reads the code after the bracket rather than a
-  type, so it stays a scan a sitting runs rather than a check CI holds.
-- **A fire-and-forget body that does not terminate** — whether the body has anything to terminate is a question
-  about what it calls, since a body whose whole work is an `executeMutation` with an `onError` is already done.
-- **A raw alert in a template's inline handler** is outside `error-alert/no-raw-error-alert`'s reach, because
-  oxlint hands a JS plugin no Vue template.
-- **A `console.warn` call with its own sentence** is a notice the skill allows; only the handler slot is the swallow,
-  and that half is the selector.

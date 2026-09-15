@@ -5,6 +5,11 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 
 # File & Folder Organisation
 
+## Settled — do not re-propose
+
+- **A plugin for one export per file** — its exceptions (`constants.ts`, a schema beside its type, an enum beside its values array, a composable's own options) are a roster that grows with the repo; the models-rule plugin is the `oxlint` skill's Settled line for the same reason.
+- **A rule for duplicate constants or the sole-consumer rule** — both need the whole repo in mind; the ≥2-consumers half already has its test.
+
 ## Imports
 
 - **Always use alias imports** — never relative imports (`./`, `../`), even for same-folder files. Enforced by oxlint `no-restricted-imports` against the map each manifest declares; the app's aliases, the exemptions and the one repo-root exception are `references/import-aliases.md`.

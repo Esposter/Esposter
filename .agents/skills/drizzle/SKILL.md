@@ -5,6 +5,10 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 
 # Drizzle ORM Conventions
 
+## Settled — do not re-propose
+
+- **A completeness check over relations** — `relations.ts` spreads its parts rather than holding them, so there is no identity to compare and not every table earns a relation; registration completeness is `schema.test.ts`.
+
 ## Deep dives
 
 - `references/relations-v2.md` — when adding or editing a file in `packages/db-schema/src/relations/`, or writing a relational query's `where` / `orderBy` / `with`.

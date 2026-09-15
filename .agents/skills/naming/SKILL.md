@@ -18,6 +18,14 @@ and the eight shapes it takes, is `references/names-a-dependency-owns.md`.
 | A name could be shortened, or a compound holds a word the denylist cannot see             | `references/abbreviations.md`           |
 | Naming something that mirrors a library — its option, key, method or wire value           | `references/names-a-dependency-owns.md` |
 
+## Settled — do not re-propose
+
+- **A lint rule for filename-is-the-export** — a store file exports `use<Name>Store` for a `<name>.ts` and takes its parent's word where the leaf collides (`battle/player.ts` → `useBattlePlayerStore`), and `index.ts` and `constants.ts` are the two multi-export names, so the exceptions are a roster; it stays a reading rule.
+- **A word list for abbreviations** — only the four short forms with no site left are denylisted (`references/abbreviations.md`); a name still in use would buy disables instead of coverage.
+- **A selector for a `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope analysis no selector has.
+- **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported fifty such sites and no alias.
+- **`_` in `id-denylist`** — xml2js spells an element's text as the `_` key, so parse-tmx and xml2js declare it by that name throughout, and `no-underscore-dangle` refuses a prefixed loop declarator; a loop binding nothing reads stays bare.
+
 ## Booleans
 
 - `is*` prefix for **boolean variables and properties only**: `isMuted`, `isRoomOwner`. Never for callable functions
