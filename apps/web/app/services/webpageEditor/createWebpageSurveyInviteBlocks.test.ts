@@ -1,7 +1,6 @@
 // @vitest-environment happy-dom
-import type { Resource } from "@esposter/db-schema";
-
 import { SURVEY_INVITE_BUTTON_COLOR } from "@/services/grapesjs/constants";
+import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
 import { createWebpageSurveyInviteBlocks } from "@/services/webpageEditor/createWebpageSurveyInviteBlocks";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
@@ -15,11 +14,11 @@ describe(createWebpageSurveyInviteBlocks, () => {
   test("renders the invite button as a self-styled anchor", () => {
     expect.hasAssertions();
 
-    const blocks = createWebpageSurveyInviteBlocks([{ id, name, type: ResourceType.Survey } as Resource]);
+    const blocks = createWebpageSurveyInviteBlocks([createResourceListItem({ id, name, type: ResourceType.Survey })]);
 
     expect(blocks).toStrictEqual([
       {
-        content: `<a href="http://localhost:3000${RoutePath.View(ResourceType.Survey, id)}" style="display: inline-block; padding: 10px 25px; background-color: ${SURVEY_INVITE_BUTTON_COLOR}; color: #ffffff; font-family: Helvetica, sans-serif; font-size: 13px; text-decoration: none; border-radius: 3px;">${name}</a>`,
+        content: `<a href="${window.location.origin}${RoutePath.View(ResourceType.Survey, id)}" style="display: inline-block; padding: 10px 25px; background-color: ${SURVEY_INVITE_BUTTON_COLOR}; color: #ffffff; font-family: Helvetica, sans-serif; font-size: 13px; text-decoration: none; border-radius: 3px;">${name}</a>`,
         id: `survey-invite-${id}`,
         label: name,
       },
