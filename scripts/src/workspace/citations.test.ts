@@ -2,8 +2,8 @@ import { getBacktickedTokens } from "#src/services/citations/getBacktickedTokens
 import { readCitingPages } from "#src/services/citations/readCitingPages";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
-import { takeOne } from "@esposter/shared";
 import { AGENT_DIRECTORY, AGENT_WORKTREES_DIRECTORY, APP_RELATIVE_PREFIXES } from "@esposter/configuration";
+import { takeOne } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { glob } from "node:fs/promises";
 import { join } from "node:path";
