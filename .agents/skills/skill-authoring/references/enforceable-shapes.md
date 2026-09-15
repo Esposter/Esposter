@@ -33,10 +33,10 @@ still an intent — **pick one of the variants and make it the form**. Doing thi
 written against an inconsistent corpus is written weak to avoid false positives, and a weak check is one nobody
 can rely on, so the rule goes on being enforced by whoever happens to notice.
 
-**Normalising what already exists is part of adopting the shape**, in the same change. Nine reference pages once
-opened nine ways; the check written against that corpus could only ask whether a page had any opening prose at all,
-and it missed every page that had a paragraph saying nothing useful. Normalising first made the same check a
-one-line `startsWith` that decides all 180.
+**Normalising what already exists is part of adopting the shape**, in the same change. The reference pages once
+opened however each author felt like; the check written against that corpus could only ask whether a page had any
+opening prose at all, so it missed every page whose opening paragraph said nothing useful. Normalising first made
+the same check a `startsWith` that decides every page in the tree.
 
 ## What the prose keeps once the check exists
 
