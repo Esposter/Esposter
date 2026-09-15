@@ -1,10 +1,10 @@
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 import type { Resource } from "@esposter/db-schema";
 
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { formatDate } from "#shared/util/date/formatDate";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
 import { getPurgesInText } from "@/services/resource/getPurgesInText";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
 // The bin answers two questions the main list never asks: when did this go, and how long have I got
 export const DeletedResourceHeaders: DataTableHeader<Resource>[] = [
   { key: "type", title: "Type" },

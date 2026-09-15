@@ -2,7 +2,7 @@ import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 import type { Content } from "@tiptap/vue-3";
 
 import { EmojiType } from "@/models/message/emoji/EmojiType";
-import { CUSTOM_EMOJI_TYPE } from "@esposter/shared";
+import { CUSTOM_EMOJI_TYPE } from "@/services/message/emoji/constants";
 
 // What the composer inserts for a pick: a character carries itself into the document, while a room's upload
 // Becomes the node that resolves to its image on render. Both come off one pick, so the picker never learns

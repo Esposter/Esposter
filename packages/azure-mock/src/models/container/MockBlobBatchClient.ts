@@ -1,3 +1,4 @@
+import type { MapValue } from "#src/util/types/MapValue";
 import type {
   AnonymousCredential,
   BatchSubResponse,
@@ -6,7 +7,6 @@ import type {
   BlobDeleteOptions,
   StorageSharedKeyCredential,
 } from "@azure/storage-blob";
-import type { MapValue } from "@esposter/shared";
 
 import { BLOB_NOT_FOUND_ERROR_CODE, BLOB_NOT_FOUND_MESSAGE } from "#src/constants";
 import { deleteMockBlob } from "#src/services/container/deleteMockBlob";

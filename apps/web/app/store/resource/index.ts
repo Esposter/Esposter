@@ -5,6 +5,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
+import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
@@ -12,7 +13,7 @@ import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookM
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { checkIsUuidV4, RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor

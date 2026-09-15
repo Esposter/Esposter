@@ -1,10 +1,10 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { formatDate } from "#shared/util/date/formatDate";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
 // Publish status is a capability, not a base feature, so it is surfaced per-resource (Overview / editor)
 // Rather than as a mixed-type list column; created/updated apply to every resource
 export const ResourceHeaders: DataTableHeader<ResourceListItem>[] = [

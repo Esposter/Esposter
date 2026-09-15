@@ -18,3 +18,5 @@ export const SKIN_TONE_PREVIEW_EMOJI_SLUG = "raised_hand";
 // U+FE0F, written escaped because the literal is invisible in source. It qualifies a text-default code point
 // As emoji (the difference between the two red hearts), so it is stripped for lookups and dropped by toning
 export const VARIATION_SELECTOR = "\uFE0F";
+
+export const CUSTOM_EMOJI_TYPE = "customEmoji";

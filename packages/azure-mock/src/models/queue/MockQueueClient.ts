@@ -1,3 +1,4 @@
+import type { MapValue } from "#src/util/types/MapValue";
 import type {
   DequeuedMessageItem,
   EnqueuedMessage,
@@ -26,7 +27,6 @@ import type {
   QueueUpdateMessageResponse,
   SignedIdentifier,
 } from "@azure/storage-queue";
-import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { MOCK_QUEUE_BASE_URL } from "#src/constants";
@@ -151,24 +151,18 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   sendMessage(messageText: string, _options?: QueueSendMessageOptions): Promise<QueueSendMessageResponse> {
     this.queue.push(messageText);
     const { expiresOn, insertedOn, messageId } = getMockQueueMessageItem(messageText);
-    const nextVisibleOn = insertedOn;
-    const popReceipt = crypto.randomUUID();
-    const enqueuedMessages: EnqueuedMessage[] = [
-      {
-        expiresOn,
-        insertedOn,
-        messageId,
-        nextVisibleOn,
-        popReceipt,
-      },
-    ];
-    return Promise.resolve({
-      _response: { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody: enqueuedMessages },
+    // Visible the moment it is inserted: the mock has no visibility timeout
+    const enqueuedMessage: EnqueuedMessage = {
       expiresOn,
       insertedOn,
       messageId,
-      nextVisibleOn,
-      popReceipt,
+      nextVisibleOn: insertedOn,
+      popReceipt: crypto.randomUUID(),
+    };
+    const enqueuedMessages = [enqueuedMessage];
+    return Promise.resolve({
+      _response: { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody: enqueuedMessages },
+      ...enqueuedMessage,
     });
   }
 

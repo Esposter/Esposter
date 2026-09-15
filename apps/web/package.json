@@ -213,6 +213,7 @@
     "@types/ws": "catalog:",
     "@unocss/nuxt": "catalog:",
     "@vite-pwa/nuxt": "catalog:",
+    "@vue/compiler-core": "catalog:",
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",

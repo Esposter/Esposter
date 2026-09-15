@@ -4,6 +4,7 @@ import type { Clause } from "@esposter/azure";
 import type { MessageEntity } from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
 
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -23,7 +24,6 @@ import {
   MessageTypeEntityMap,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 export const readMessages = async ({
   cursor,

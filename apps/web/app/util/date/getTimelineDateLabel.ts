@@ -1,5 +1,6 @@
 import { formatDate } from "#shared/util/date/formatDate";
-import { checkIsToday, checkIsYesterday } from "@esposter/shared";
+import { checkIsToday } from "@/util/date/checkIsToday";
+import { checkIsYesterday } from "@/util/date/checkIsYesterday";
 
 const TIMELINE_DATE_FORMAT = "dddd, MMMM Do";
 

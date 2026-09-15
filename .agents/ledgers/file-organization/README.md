@@ -40,10 +40,12 @@ pnpm ai:sweep:shared-export-consumers
 ```
 
 It excludes the export's own **package**, not merely its own file: `packages/shared` naming its own export is the
-library using itself, and counting that would let one real consumer clear a threshold that asks for two. So a
-`0` names an export nothing outside `packages/shared` references — dead code and a helper the package uses
-internally produce the same result, and the pass tells them apart by opening the file. A `1` is the rule's own
-finding: one consumer does not earn a place in a shared package.
+library using itself, and counting that would let one real consumer clear a threshold that asks for two. An
+export the package's other files read is a piece of one that does clear it and is not reported. What is reported
+says what the pass does: `move to <package>` for an export one package alone names — it goes beside that consumer,
+its colocated test with it, and the alias import replaces the barrel one — and `dead` for an export nothing names.
+A clean pass prints nothing, and `scripts/src/workspace/sharedExportConsumers.test.ts` fails on anything it
+prints, so the rule is enforced rather than swept.
 
 ## Exclusions
 
@@ -65,15 +67,16 @@ finding: one consumer does not earn a place in a shared package.
   bans `export { }` — so converting the tree to `export const` is a convention to settle first, not a pass: the
   tree is internally consistent and the swap is sixty files of pure churn.
 
-## Next enforceable
+## Not enforceable — settled
 
-- One export per file and the models rule both fail the `oxlint` skill's roster gate — each one's exceptions are a
-  list of filenames and shapes (`constants.ts`, a schema beside its type, an enum beside its values array, a
-  composable's own options) that grows with the repo — so both stay with the sweep; the `oxlint` skill's Settled
-  list carries the models-rule plugin.
-- A `util/` file importing a third-party package belongs in `services/`, and that is a specifier test: a
-  `no-restricted-imports` override on `**/util/**` whose `group` is `["*", "!node:*", "!#src/*", "!@esposter/*"]` decides
-  it, if oxlint honours a negated group and an `allowTypeImports` escape for the pure type utilities under
-  `util/types`. Both are unverified — the pass that builds it proves the rule can fail first (`sweeps` skill).
-- Alias imports are already enforced by the `@/**`-under-`packages/*/src/**` ban.
-- Duplicate constants and the sole-consumer rule need the whole repo in mind; they stay with the sweep.
+What a program decides here it now decides: a `util/` file importing a third-party package is
+`no-restricted-imports` over `**/util/**` on the ESLint side (`restrictedUtilImports.js` — only ESLint honours the
+anchored package patterns, and a type-only import stays, since a type is not a dependency); an alias import
+under `packages/*/src/**` reaching `@/**` was a ban already; a forwarding wrapper is
+`pass-through-helper/no-forwarding-wrapper`. What is left stays a reading pass, for these reasons:
+
+- **One export per file and the models rule** both fail the `oxlint` skill's roster gate — each one's exceptions
+  are a list of filenames and shapes (`constants.ts`, a schema beside its type, an enum beside its values array, a
+  composable's own options) that grows with the repo; the `oxlint` skill's Settled list carries the models-rule
+  plugin.
+- **Duplicate constants and the sole-consumer rule** need the whole repo in mind.

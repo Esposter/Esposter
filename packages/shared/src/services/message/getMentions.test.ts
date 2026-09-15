@@ -1,6 +1,7 @@
+import { MENTION_ID_ATTRIBUTE } from "#src/services/message/constants";
 import { createMention } from "#src/services/message/createMention.test";
-import { getMentions } from "#src/services/message/mention/getMentions";
-import { MENTION_ID_ATTRIBUTE, takeOne } from "@esposter/shared";
+import { getMentions } from "#src/services/message/getMentions";
+import { takeOne } from "#src/util/array/takeOne";
 import { describe, expect, test } from "vitest";
 
 describe(getMentions, () => {

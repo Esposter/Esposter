@@ -25,6 +25,7 @@ import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -95,15 +96,7 @@ import {
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import {
-  getResult,
-  ItemMetadataPropertyNames,
-  jsonDateParse,
-  MAX_READ_LIMIT,
-  noop,
-  Operation,
-  takeOne,
-} from "@esposter/shared";
+import { getResult, jsonDateParse, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 

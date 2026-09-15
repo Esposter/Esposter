@@ -1,11 +1,11 @@
 import type { Clause } from "@esposter/azure";
 import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
 import { getTopNEntitiesByType } from "@esposter/db";
 import { AzureTable, MessageTypeEntityMap } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 // A named set of a room's messages in one table scan rather than a point read each, with the deleted ones
 // Filtered out by the same clause every other message read uses. The result is sorted newest-first — the

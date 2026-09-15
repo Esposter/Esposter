@@ -2,6 +2,7 @@ import type { ElementNode, RootNode, TemplateChildNode } from "@vue/compiler-cor
 
 import unoConfig from "@@/uno.config";
 import vuetifyConfig from "@@/vuetify.config";
+import { NodeTypes } from "@vue/compiler-core";
 import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createGenerator } from "unocss";
@@ -17,12 +18,17 @@ const templates = await Promise.all(
     templatePath,
   })),
 );
-const ELEMENT_NODE_TYPE = 1;
-const ATTRIBUTE_NODE_TYPE = 6;
-const DIRECTIVE_NODE_TYPE = 7;
-const walkElements = (node: RootNode | TemplateChildNode, visit: (element: ElementNode) => void) => {
-  if (node.type === ELEMENT_NODE_TYPE) visit(node);
-  if ("children" in node) for (const child of node.children) walkElements(child, visit);
+// Only a root, an element, a `v-for` and a `v-if` branch hold template children; a `v-if` holds branches
+const walkElements = (node: RootNode | TemplateChildNode, visit: (element: ElementNode) => void): void => {
+  if (node.type === NodeTypes.ELEMENT) visit(node);
+  if (node.type === NodeTypes.IF) for (const branch of node.branches) walkElements(branch, visit);
+  else if (
+    node.type === NodeTypes.ROOT ||
+    node.type === NodeTypes.ELEMENT ||
+    node.type === NodeTypes.FOR ||
+    node.type === NodeTypes.IF_BRANCH
+  )
+    for (const child of node.children) walkElements(child, visit);
 };
 const toPascalCase = (tag: string) =>
   tag.replaceAll(/(?:^|-)(?<letter>[a-z])/gu, (_match, letter: string) => letter.toUpperCase());
@@ -75,7 +81,7 @@ describe("attributify", () => {
       walkElements(ast, ({ props, tag }) => {
         if (!/^[a-z][a-z0-9]*$/u.test(tag) || VUE_ELEMENTS.has(tag)) return;
         for (const prop of props)
-          if (prop.type === ATTRIBUTE_NODE_TYPE && !prop.value && !HTML_BOOLEAN_ATTRIBUTES.has(prop.name))
+          if (prop.type === NodeTypes.ATTRIBUTE && !prop.value && !HTML_BOOLEAN_ATTRIBUTES.has(prop.name))
             tokens.add(prop.name);
       });
       for (const token of tokens) {
@@ -97,7 +103,7 @@ describe("attributify", () => {
       if (!ast) continue;
       walkElements(ast, ({ props, tag }) => {
         for (const prop of props)
-          if (prop.type === ATTRIBUTE_NODE_TYPE && !prop.value && prop.name.includes("["))
+          if (prop.type === NodeTypes.ATTRIBUTE && !prop.value && prop.name.includes("["))
             bareBrackets.push(`${templatePath}: <${tag} ${prop.name}>`);
       });
     }
@@ -114,7 +120,7 @@ describe("attributify", () => {
     for (const { ast, templatePath } of templates) {
       if (!ast) continue;
       walkElements(ast, ({ props, tag }) => {
-        const names = new Set(props.flatMap((prop) => (prop.type === ATTRIBUTE_NODE_TYPE ? [prop.name] : [])));
+        const names = new Set(props.flatMap((prop) => (prop.type === NodeTypes.ATTRIBUTE ? [prop.name] : [])));
         if (HINT_PAIR.every((name) => names.has(name))) pairs.push(`${templatePath}: <${tag}>`);
       });
     }
@@ -140,13 +146,13 @@ describe("vuetify lengths", () => {
         if (!tag.startsWith("v-")) return;
         for (const prop of props)
           if (
-            prop.type === ATTRIBUTE_NODE_TYPE &&
+            prop.type === NodeTypes.ATTRIBUTE &&
             LENGTH_PROPS.has(prop.name) &&
             NUMBER_REGEX.test(prop.value?.content ?? "")
           )
             bareLengths.push(`${templatePath}: <${tag} ${prop.name}="${prop.value?.content}">`);
           else if (
-            prop.type === DIRECTIVE_NODE_TYPE &&
+            prop.type === NodeTypes.DIRECTIVE &&
             prop.name === "bind" &&
             prop.arg?.type === 4 &&
             LENGTH_PROPS.has(prop.arg.content) &&
@@ -177,12 +183,12 @@ describe("vuetify defaults", () => {
         const componentDefaults = defaults[toPascalCase(tag)];
         if (!componentDefaults) return;
         for (const prop of props)
-          if (prop.type === ATTRIBUTE_NODE_TYPE) {
+          if (prop.type === NodeTypes.ATTRIBUTE) {
             const defaultValue = componentDefaults[toCamelCase(prop.name)];
             if (defaultValue === (prop.value?.content ?? true))
               restatements.push(`${templatePath}: <${tag} ${prop.name}>`);
           } else if (
-            prop.type === DIRECTIVE_NODE_TYPE &&
+            prop.type === NodeTypes.DIRECTIVE &&
             prop.name === "bind" &&
             prop.arg?.type === 4 &&
             prop.exp?.type === 4

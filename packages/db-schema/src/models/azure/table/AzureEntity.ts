@@ -1,7 +1,8 @@
 import type { CompositeKeyEntityConstraint } from "#src/models/azure/table/CompositeKeyEntity";
 
 import { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
-import { applyItemMetadataMixin, itemMetadataSchema } from "@esposter/shared";
+import { itemMetadataSchema } from "#src/models/azure/table/itemMetadataSchema";
+import { applyItemMetadataMixin } from "@esposter/shared";
 import { z } from "zod";
 
 export const AzureEntity = applyItemMetadataMixin(CompositeKeyEntity);

@@ -1,8 +1,8 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 export const DEFAULT_READ_LIMIT = 15;
 // Paces waypoint-driven refetches so a permanently failing query can't spin into a hot retry loop

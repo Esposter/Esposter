@@ -1,5 +1,6 @@
 import type { BlobHierarchyItem } from "#src/models/container/BlobHierarchyItem";
 import type { PagedAsyncIterableIterator } from "#src/models/shared/PagedAsyncIterableIterator";
+import type { MapValue } from "#src/util/types/MapValue";
 import type {
   AppendBlobClient,
   BlobBatchClient,
@@ -28,7 +29,6 @@ import type {
   HttpRequestBody,
   PageBlobClient,
 } from "@azure/storage-blob";
-import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { BLOB_NOT_FOUND_MESSAGE, MOCK_BLOB_BASE_URL } from "#src/constants";

@@ -1,6 +1,7 @@
 import { formatDate } from "#shared/util/date/formatDate";
+import { checkIsToday } from "@/util/date/checkIsToday";
+import { checkIsYesterday } from "@/util/date/checkIsYesterday";
 import { getShortTimeLabel } from "@/util/date/getShortTimeLabel";
-import { checkIsToday, checkIsYesterday } from "@esposter/shared";
 
 const MESSAGE_DATE_FORMAT = "DD/MM/YYYY H:mm";
 

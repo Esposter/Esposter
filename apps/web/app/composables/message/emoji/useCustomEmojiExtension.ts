@@ -1,5 +1,6 @@
+import { CUSTOM_EMOJI_TYPE } from "@/services/message/emoji/constants";
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
-import { CUSTOM_EMOJI_ID_ATTRIBUTE, CUSTOM_EMOJI_NAME_ATTRIBUTE, CUSTOM_EMOJI_TYPE } from "@esposter/shared";
+import { CUSTOM_EMOJI_ID_ATTRIBUTE, CUSTOM_EMOJI_NAME_ATTRIBUTE } from "@esposter/shared";
 import { mergeAttributes, Node } from "@tiptap/vue-3";
 // An atom, like a mention: one indivisible thing in the document carrying only what identifies it. The node
 // Serializes its id and name and never a url — the image is a short-lived read SAS resolved when the message is
