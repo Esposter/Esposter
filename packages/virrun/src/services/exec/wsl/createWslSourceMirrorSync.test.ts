@@ -28,7 +28,8 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const state = vi.hoisted(() => ({ cacheRoot: "", unarchivedPaths: [] as string[] }));
-// The "UNC" cache root is just a real temp directory here, so the planner's host-side staging/reads — including the real
+// The "UNC" cache root is just a real temp directory here, so the planner's host-side staging/reads — including the
+// Real
 // Host `tar` spawn building the archive — exercise real fs; the same TEST_WSL_PREFIX transform the sibling wsl tests
 // Use derives the Linux-side paths embedded in the script.
 vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
@@ -60,8 +61,8 @@ describe(createWslSourceMirrorSync, () => {
     const name = readdirSync(entryUnc).find((entry) => entry.startsWith(prefix));
     return name === undefined ? "" : readFileSync(join(entryUnc, name), "utf8");
   };
-  // Simulate a prior successful sync: the tree directory exists and the published manifest matches the given tree state,
-  // Recorded under the exclude set in force unless a case is exercising an exclude change.
+  // Simulate a prior successful sync: the tree directory exists and the published manifest matches the given tree
+  // State, recorded under the exclude set in force unless a case is exercising an exclude change.
   const publish = (publishedExcludes: readonly string[] = excludes, extraEntries: SourceMirrorManifest = {}): void => {
     mkdirSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { recursive: true });
     writeFileSync(

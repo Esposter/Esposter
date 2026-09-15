@@ -53,7 +53,8 @@ export const useReadResourcesPage = <TFilterInput>({
       {
         key,
         onError: (readError) => {
-          // A failed read clears the list — keeping the previous query's rows would pass them off as this query's result
+          // A failed read clears the list — keeping the previous query's rows would pass them off as this query's
+          // Result
           items.value = [];
           count.value = 0;
           countedFilterKey = undefined;

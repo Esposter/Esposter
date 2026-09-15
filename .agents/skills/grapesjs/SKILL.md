@@ -1,6 +1,6 @@
 ---
 name: grapesjs
-description: Esposter GrapesJS editor conventions — useGrapesJsEditor init composable, the resource-backed storage adapter, the FileAssets upload adapter, block-category re-sync via setBlocks, save-time HTML/CSS capture for the published views, and merge-field/survey-invite blocks. Apply when working on Resource/Email/Editor.vue, Resource/Webpage/Editor.vue, their View.vue renders, the emailEditor/webpageEditor stores, or any GrapesJS-backed feature.
+description: Apply when working on Resource/Email/Editor.vue, Resource/Webpage/Editor.vue, their View.vue renders, the emailEditor/webpageEditor stores, or any GrapesJS-backed feature. Esposter GrapesJS editor conventions — useGrapesJsEditor init composable, the resource-backed storage adapter, the FileAssets upload adapter, block-category re-sync via setBlocks, save-time HTML/CSS capture for the published views, and merge-field/survey-invite blocks.
 ---
 
 # GrapesJS Conventions
@@ -44,7 +44,7 @@ editor stores spread `getItemMetadata(content.value)` (and Email its `datasetRef
 
 GrapesJS project data is opaque; anything derived from the live editor must be captured in the store callback, not at publish/read time:
 
-- **Webpage** — `saveWebpageEditor(data, { css: editor.getCss(), html: editor.getHtml() })` bakes the standalone render into `WebpageEditor.css/html`; the generic public route `app/pages/view/[type]/[id].vue` renders `Resource/Webpage/View.vue`, which serves it via `srcdoc` in a sandboxed (`sandbox="allow-scripts"`, no `allow-same-origin`) iframe without loading GrapesJS.
+- **Webpage** — `saveWebpageEditor(data, { css: editor.getCss(), html: editor.getHtml() })` bakes the standalone render into `WebpageEditor.css/html`; the generic public route `app/pages/view/[type]/[id].vue` renders `Resource/Webpage/View.vue`, which serves it through the shared `Resource/SrcdocIframe.vue` — a `srcdoc` iframe sandboxed to `allow-scripts` with no `allow-same-origin` — without loading GrapesJS.
 - **Email** — `saveEmailEditor(data, { html: getEmailHtml(editor) })` re-attaches `EmailEditor.datasetReference` and bakes the compiled MJML into `EmailEditor.html` (MJML compiles only in the client editor); `Resource/Email/View.vue` serves it through the same sandboxed iframe as Webpage. Always compile via `app/services/emailEditor/getEmailHtml.ts` — never call `runCommand("mjml-code-to-html")` directly.
 
 ## Custom Blocks — Re-Sync Wholesale via `setBlocks`

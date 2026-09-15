@@ -14,7 +14,7 @@ describe(setCurrentRoomId, () => {
   test("puts the room id on the route and invalidates what reads it", () => {
     expect.hasAssertions();
 
-    const roomId = "roomId";
+    const roomId = crypto.randomUUID();
     const router = useRouter();
     const currentRoomId = computed(() => router.currentRoute.value.params.id);
 

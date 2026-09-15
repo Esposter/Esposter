@@ -1,6 +1,6 @@
 ---
 name: vjsf
-description: Esposter vjsf form-schema conventions — the separate *Form interface/schema (never the entity schema), layout meta (comp/getItems/getProps), ajv keywords for cross-field validation, discriminated-union form quirks (variant titles, .readonly() discriminants, passing the union straight to Vjsf), the getItems context and VjsfOptions typing, *TypeFormSchemaMap for dirty-state narrowing, and inline json-schema snapshot tests. Apply when writing a schema rendered by Vjsf, a vjsf-backed form dialog, or its options/context.
+description: Apply when writing a schema rendered by Vjsf, a vjsf-backed form dialog, or its options/context. Esposter vjsf form-schema conventions — the separate *Form interface/schema (never the entity schema), layout meta (comp/getItems/getProps), ajv keywords for cross-field validation, discriminated-union form quirks (variant titles, .readonly() discriminants, passing the union straight to Vjsf), the getItems context and VjsfOptions typing, *TypeFormSchemaMap for dirty-state narrowing, and inline json-schema snapshot tests.
 ---
 
 # Vjsf Form Schemas
@@ -22,18 +22,18 @@ behaviour-preserving; a field whose label was already wrong is a separate change
 
 Put `comp`, `getItems`, `getProps` under the `layout` key of the field's `.meta()` **in the schema**, never injected dynamically from a composable. `GlobalMeta` (`shared/types/zod.d.ts`) types `layout?: Partial<PartialCompObject>` — its values are vjsf JS expression strings evaluated at runtime against the vjsf `context` (passed via `:options`):
 
-```typescript
+```ts
 description: z.string().meta({ layout: { comp: "textarea" } }),
 fooId: z.string().meta({ layout: { comp: "select", getItems: "context.fooItems" } }),
 ```
 
-**`GlobalMeta` carries only `layout` + ajv keywords** (`interface GlobalMeta extends AjvKeywords { layout?: Partial<PartialCompObject> }`). Don't add per-feature meta keys to it — filtering that looks like it wants a meta key is done by passing a pre-filtered context key into the field's factory (see `getItems` below).
+**`GlobalMeta` carries only `layout` and the ajv keyword flags**, in two augmentations — `layout` in `shared/types/zod.d.ts`, where both realms read it, and `AjvKeywords` in `app/types/zod.d.ts`, since the keyword definitions are app code. Don't add per-feature meta keys to either — filtering that looks like it wants a meta key is done by passing a pre-filtered context key into the field's factory (see `getItems` below).
 
 ## Cross-Field Validation Is an Ajv Keyword, Not a `getProps` Rules Expression
 
 A check needing values outside the field (e.g. name uniqueness against sibling rows) is declared as a `.meta()` ajv keyword flag and implemented as an ajv `validate` fn passed through `options.ajvOptions.keywords`, so the rule stays typed and testable:
 
-```typescript
+```ts
 name: aFooSchema.shape.name.meta({ [uniqueFooNameKeywordDefinition.keyword]: true }),
 ```
 
@@ -43,7 +43,7 @@ Choosing between an ajv keyword, a validation composable, and a global rule alia
 
 - **Every variant needs `.meta({ title })` on the variant object** (not just on its fields), else Vjsf shows "Option 1", "Option 2". Set it on the schema at definition time:
 
-  ```typescript
+  ```ts
   export const barFooSchema = z.object({ ... }).meta({ title: FooType.Bar });
   ```
 
@@ -55,14 +55,14 @@ Choosing between an ajv keyword, a validation composable, and a global rule alia
 
 - **Pass the discriminated union straight to Vjsf.** Because every variant's discriminant is a single `const`, Vjsf auto-detects the active `oneOf` variant when pre-populating and renders its own variant selector. So there is no per-type discriminant ref, no type-selector reset handler, and no precomputed JSON schema map file. `jsonSchema` is a plain `const` (the union schema never changes), not a `computed`:
 
-  ```typescript
+  ```ts
   const jsonSchema = zodToJsonSchema(fooFormSchema);
   // <Vjsf v-model="editedFoo" :schema="jsonSchema" :options />
   ```
 
 - **`*TypeFormSchemaMap` is for narrowing a value to one variant's fields, not for choosing the form schema.** It lives in the union's own file (alongside the union schema), maps each enum key to **its own** variant schema, and is consumed by `extractSchemaFields(FooTypeFormSchemaMap[foo.type], foo)` to compare edited-vs-original for dirty state:
 
-  ```typescript
+  ```ts
   export const FooTypeFormSchemaMap = {
     [FooType.Bar]: barFooFormSchema,
     [FooType.Baz]: bazFooFormSchema,
@@ -74,7 +74,7 @@ Choosing between an ajv keyword, a validation composable, and a global rule alia
 
 To show only certain rows in a select, pass the **pre-filtered context key** into the field's `create*Schema` factory (e.g. `createFooIdSchema(getItems)`, defaulting to `context.fooItems`). The factory bakes `getItems` into `layout`, so consumers just spread its `.shape`. The per-type lists are built once by the form-options composable, not inline in each component:
 
-```typescript
+```ts
 export const barFooSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(FooType.Bar).readonly()).shape,
@@ -90,7 +90,7 @@ export const barFooSchema = z
 
 Type the `options` computed as `VjsfOptions<TContext>` (`VjsfOptions` from `app/models/vjsf/VjsfOptions.ts`); the context interface lives in `app/models/<feature>/<Name>VjsfContext.ts` (one per file), and the computed that builds it is a composable shared by the create and edit dialogs. Alongside `context`, `ajvOptions.keywords` wires the custom ajv keywords:
 
-```typescript
+```ts
 export interface FooFormVjsfContext {
   barItems: SelectItemCategoryDefinition<Foo["id"]>[];
   fooItems: SelectItemCategoryDefinition<Foo["id"]>[];
@@ -107,7 +107,7 @@ A selector that controls _which_ schema renders belongs in the dialog's `#prepen
 
 For every schema passed to `zodToJsonSchema()` and rendered by Vjsf, add a `toMatchInlineSnapshot()` test co-located next to the schema file (same folder/base name). Fill via `pnpm vitest run --update`:
 
-```typescript
+```ts
 describe("Foo", () => {
   test("produces correct json schema for vjsf", () => {
     expect.hasAssertions();

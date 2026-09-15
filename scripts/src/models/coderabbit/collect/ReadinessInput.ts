@@ -1,6 +1,4 @@
 export interface ReadinessInput {
-  // Files from the frontier to the candidate head — what the review will read
-  fileCount: number;
   fixCount: number;
   isForced: boolean;
   isHeld: boolean;

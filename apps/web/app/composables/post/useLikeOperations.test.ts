@@ -11,12 +11,13 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe(useLikeOperations, () => {
   const server = setupMswTrpc();
   const postId = crypto.randomUUID();
+  const userId = crypto.randomUUID();
   const createLike = (value: -1 | 1): Like => ({
     createdAt: new Date(0),
     deletedAt: null,
     postId,
     updatedAt: new Date(0),
-    userId: "userId",
+    userId,
     value,
   });
 

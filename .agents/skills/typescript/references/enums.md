@@ -1,5 +1,8 @@
 # Enums — Declaration, Values Arrays, Refs
 
+Read when declaring an enum, its Zod schema, its values array, or a ref that holds one — and when an inline
+union of string literals could be one instead.
+
 ## Naming
 
 **Never abbreviate enum value names** — full word: `Absolute` not `Abs`, `Subtract` not `Sub`, `Configuration` not `Config`. Applies to both key and string value.
@@ -63,3 +66,14 @@ export const fooTypeSchema = z.enum(FooType) satisfies z.ZodType<FooType>;
 - **Never `ref<EnumType>(EnumValue)`** — TypeScript infers the type from the value: `ref(FooType.Bar)`.
 - **Filter/selection refs where "nothing selected" is a real state** use the string-enum `""` sentinel — `ref<"" | EnumType>("")` — never `| null` or `| undefined`. Pair with an explicit "All …" select item (`value: ""`), never `clearable` (see the `vuetify` skill).
 - **Prefer inferred refs** — `ref("")`, `ref(0)`, `ref(EnumType.Value)`. Annotate only when the value space genuinely exceeds the seed: `ref<"" | EnumType>("")`, literal-union inputs like `ref<CreateFooInput["baz"]>(0)`.
+
+## A union of string literals is one of these
+
+`"delete" | "get"` in an annotation is a closed set spelled inline, so it becomes `enum HttpMethod` in its own
+model file and the annotation names the enum. Four unions are **not** sets: `"" | Foo` (the empty sentinel), a lone
+discriminant (`type: "ApiConnection"`), a numeric union, and a union passed as a type argument
+(`Pick<Foo, "a" | "b">` names keys).
+
+`literal-union/no-string-literal-union` (`scripts/src/oxlint/literalUnion.ts`) enforces it repo-wide; a site that
+genuinely cannot be an enum carries a disable stating why, as `ExportsGeneration` does for tsdown's strip-only
+config loading.

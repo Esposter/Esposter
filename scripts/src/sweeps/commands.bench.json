@@ -1,0 +1,63 @@
+{
+  "files": [
+    {
+      "filepath": "src/sweeps/commands.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 637.8604000000001,
+              "name": "ai:sweep:repeated-list-items",
+              "p99": 676.0364979999998,
+              "rme": 14.181680254344432,
+              "sampleCount": 3
+            },
+            {
+              "mean": 722.0393333333335,
+              "name": "ai:sweep:constant-scope",
+              "p99": 737.2986959999979,
+              "rme": 4.695118608505681,
+              "sampleCount": 3
+            },
+            {
+              "mean": 827.2045666666672,
+              "name": "ai:sweep:skill-docs",
+              "p99": 849.1349179999999,
+              "rme": 6.883264070871934,
+              "sampleCount": 3
+            },
+            {
+              "mean": 1158.1951333333334,
+              "name": "ai:sweep:shared-export-consumers",
+              "p99": 1171.0373940000004,
+              "rme": 2.851291880841999,
+              "sampleCount": 3
+            },
+            {
+              "mean": 1289.5351666666684,
+              "name": "ai:sweep:unterminated-results",
+              "p99": 1325.7987840000044,
+              "rme": 6.513277108541159,
+              "sampleCount": 3
+            },
+            {
+              "mean": 1511.4218666666675,
+              "name": "ai:sweep:ledger-coverage",
+              "p99": 1520.2602739999995,
+              "rme": 1.5119727513601144,
+              "sampleCount": 3
+            },
+            {
+              "mean": 1695.730866666666,
+              "name": "ai:sweep:duplicate-prose",
+              "p99": 1752.6769799999993,
+              "rme": 10.3903655195617,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "ai:sweep commands end to end"
+        }
+      ]
+    }
+  ]
+}

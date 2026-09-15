@@ -4,7 +4,7 @@ import type { Database } from "@esposter/db-schema";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { cloneContentAssets } from "@@/server/services/resource/cloneContentAssets";
-import { SnapshotChannel } from "@esposter/db-schema";
+import { AzureContainer, SnapshotChannel } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -58,7 +58,7 @@ describe(cloneContentAssets, () => {
   let containerClient: MockContainerClient;
 
   beforeEach(async () => {
-    containerClient = new MockContainerClient("", "resource-assets");
+    containerClient = new MockContainerClient("", AzureContainer.ResourceAssets);
     containerClientMock.current = containerClient as unknown as ContainerClient;
     for (const blobName of [workingBlobName, publishedBlobName])
       await containerClient.getBlockBlobClient(blobName).upload(blobName, blobName.length);
@@ -140,7 +140,7 @@ describe(cloneContentAssets, () => {
     const clonedContent = await cloneContentAssets(createDatabase(false).db, userId, content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
-    expect(clonedBlobNames).toHaveLength(0);
+    expect(clonedBlobNames).toStrictEqual([]);
     expect(clonedContent.html).toContain(getResourceAssetUrl(workingBlobName));
   });
 
@@ -187,7 +187,7 @@ describe(cloneContentAssets, () => {
     const clonedContent = await cloneContentAssets(db, userId, content, destinationDirectoryName);
     const clonedBlobNames = await getClonedBlobNames();
 
-    expect(clonedBlobNames).toHaveLength(0);
+    expect(clonedBlobNames).toStrictEqual([]);
     expect(clonedContent.html).toContain(getResourceAssetUrl(publishedBlobName));
     expect(findFirstResource).toHaveBeenCalledTimes(1);
   });

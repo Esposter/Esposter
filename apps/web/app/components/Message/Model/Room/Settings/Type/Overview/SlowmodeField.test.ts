@@ -14,9 +14,9 @@ describe("messageModelRoomSettingsTypeOverviewSlowmodeField", () => {
   // Fractional or oversized entry threw a RangeError out of the handler, leaving the field stuck on it
   test.each([
     ["1.5", Temporal.Duration.from({ seconds: 1 }).total("milliseconds")],
-    ["1e999", null],
-    ["1e16", null],
-    ["0.5", null],
+    ["1e999", 0],
+    ["1e16", 0],
+    ["0.5", 0],
   ])("resolves the typed %s to a whole-second duration", async (typedSeconds, expected) => {
     expect.hasAssertions();
 

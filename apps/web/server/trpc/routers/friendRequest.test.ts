@@ -15,7 +15,7 @@ import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -202,7 +202,7 @@ describe("friendRequestRouter", () => {
 
     const allFriendRequests = await friendRequestCaller.readFriendRequests();
 
-    expect(allFriendRequests).toHaveLength(0);
+    expect(allFriendRequests).toStrictEqual([]);
   });
 
   test("reads received friend requests", async () => {
@@ -212,10 +212,10 @@ describe("friendRequestRouter", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(userId);
     const allFriendRequests = await friendRequestCaller.readFriendRequests();
-    const receivedFriendRequests = allFriendRequests.filter(({ receiverId }) => receiverId === userId);
 
-    expect(receivedFriendRequests).toHaveLength(1);
-    expect(takeOne(receivedFriendRequests).senderId).toBe(user.id);
+    expect(allFriendRequests.map(({ receiverId, senderId }) => ({ receiverId, senderId }))).toStrictEqual([
+      { receiverId: userId, senderId: user.id },
+    ]);
   });
 
   test("reads sent friend requests", async () => {
@@ -226,20 +226,20 @@ describe("friendRequestRouter", () => {
     await friendRequestCaller.sendFriendRequest(userId);
     await mockSessionOnce(mockContext.db, user);
     const allFriendRequests = await friendRequestCaller.readFriendRequests();
-    const sentFriendRequests = allFriendRequests.filter(({ senderId }) => senderId === user.id);
 
-    expect(sentFriendRequests).toHaveLength(1);
-    expect(takeOne(sentFriendRequests).receiverId).toBe(userId);
+    expect(allFriendRequests.map(({ receiverId, senderId }) => ({ receiverId, senderId }))).toStrictEqual([
+      { receiverId: userId, senderId: user.id },
+    ]);
   });
 
   test("on send friend request notifies receiver", async () => {
     expect.hasAssertions();
 
     const receiverUser = getMockSession().user;
-    const onSendFriendRequest = await friendRequestCaller.onSendFriendRequest();
+    const subscription = await friendRequestCaller.onSendFriendRequest();
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     const data = await getFirstEmit(
-      () => onSendFriendRequest,
+      () => subscription,
       () => friendRequestCaller.sendFriendRequest(receiverUser.id),
     );
 
@@ -254,10 +254,10 @@ describe("friendRequestRouter", () => {
     const receiverUser = getMockSession().user;
     const senderPayload = await mockSessionOnce(mockContext.db);
     const { user: senderUser } = senderPayload;
-    const onSendFriendRequest = await friendRequestCaller.onSendFriendRequest();
+    const subscription = await friendRequestCaller.onSendFriendRequest();
     replayMockSession(senderPayload);
     const data = await getFirstEmit(
-      () => onSendFriendRequest,
+      () => subscription,
       () => friendRequestCaller.sendFriendRequest(receiverUser.id),
     );
 
@@ -273,9 +273,9 @@ describe("friendRequestRouter", () => {
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
     await mockSessionOnce(mockContext.db, senderUser);
-    const onAcceptFriendRequest = await friendRequestCaller.onAcceptFriendRequest();
+    const subscription = await friendRequestCaller.onAcceptFriendRequest();
     const data = await getFirstEmit(
-      () => onAcceptFriendRequest,
+      () => subscription,
       () => friendRequestCaller.acceptFriendRequest(senderUser.id),
     );
 
@@ -288,9 +288,9 @@ describe("friendRequestRouter", () => {
     const receiverUser = getMockSession().user;
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
-    const onAcceptFriendRequest = await friendRequestCaller.onAcceptFriendRequest();
+    const subscription = await friendRequestCaller.onAcceptFriendRequest();
     const data = await getFirstEmit(
-      () => onAcceptFriendRequest,
+      () => subscription,
       () => friendRequestCaller.acceptFriendRequest(senderUser.id),
     );
 
@@ -304,9 +304,9 @@ describe("friendRequestRouter", () => {
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
     await mockSessionOnce(mockContext.db, senderUser);
-    const onDeclineFriendRequest = await friendRequestCaller.onDeclineFriendRequest();
+    const subscription = await friendRequestCaller.onDeclineFriendRequest();
     const data = await getFirstEmit(
-      () => onDeclineFriendRequest,
+      () => subscription,
       () => friendRequestCaller.declineFriendRequest(senderUser.id),
     );
 
@@ -319,9 +319,9 @@ describe("friendRequestRouter", () => {
     const receiverUser = getMockSession().user;
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
-    const onDeclineFriendRequest = await friendRequestCaller.onDeclineFriendRequest();
+    const subscription = await friendRequestCaller.onDeclineFriendRequest();
     const data = await getFirstEmit(
-      () => onDeclineFriendRequest,
+      () => subscription,
       () => friendRequestCaller.declineFriendRequest(senderUser.id),
     );
 

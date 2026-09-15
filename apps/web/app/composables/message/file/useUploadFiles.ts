@@ -42,7 +42,7 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
 
     const room = rooms.value.find(({ id }) => id === targetValue.roomId);
     // Mirror the server chokepoint's platform-cap clamp so a room limit above the cap fails here, not at the SAS query.
-    const maxFileSizeBytes = Math.min(room?.maxFileSizeBytes ?? MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
+    const maxFileSizeBytes = Math.min(room?.maxFileSizeBytes || MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
     // Validate before the SAS query and before rendering metadata so a rejected file is surfaced loudly. One
     // Rejected file rejects the whole drop, naming it, rather than silently uploading the rest of the selection.
     for (const file of newFiles)

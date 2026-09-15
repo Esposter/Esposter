@@ -14,7 +14,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 describe("resourceProgramStatus", () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
-  const keyValue = "participant";
+  const keyValue = "keyValue";
   const statusRow: ProgramStatusRow = { addedAt: new Date(0), isResponded: true, keyValue };
 
   beforeEach(() => {

@@ -6,6 +6,7 @@ import type { BlobDeletionEventGridData, MessageEntity, MessageNotificationData 
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
 import type { MockInstance } from "vitest";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -79,8 +80,8 @@ describe("messageRouter", () => {
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
   const filename = "filename";
-  const mimetype = "image/jpeg";
-  const size = 1000;
+  const mimetype = MimeType.Png;
+  const size = 1;
   const name = "name";
   const updatedMessage = "updatedMessage";
   // A word the message wrapper cannot contain on its own, so a room's filter only ever matches the text a test
@@ -189,41 +190,44 @@ describe("messageRouter", () => {
 
     const userId = getMockSession().user.id;
     const message = createMentionMessage(userId);
+    const epoch = new Date(0);
+    const nextDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
+    const dayAfterNext = new Date(Temporal.Duration.from({ days: 2 }).total("milliseconds"));
     const firstMessage = new StandardMessageEntity({
-      createdAt: new Date("1970-01-02"),
+      createdAt: nextDay,
       message,
       partitionKey: roomId,
       rowKey: crypto.randomUUID(),
       type: MessageType.Message,
-      updatedAt: new Date("1970-01-02"),
+      updatedAt: nextDay,
       userId,
     });
     const secondMessage = new StandardMessageEntity({
-      createdAt: new Date("1970-01-01"),
+      createdAt: epoch,
       message,
       partitionKey: roomId,
       rowKey: crypto.randomUUID(),
       type: MessageType.Message,
-      updatedAt: new Date("1970-01-01"),
+      updatedAt: epoch,
       userId,
     });
     const otherUserMessage = new StandardMessageEntity({
-      createdAt: new Date("1970-01-03"),
+      createdAt: dayAfterNext,
       message,
       partitionKey: roomId,
       rowKey: crypto.randomUUID(),
       type: MessageType.Message,
-      updatedAt: new Date("1970-01-03"),
+      updatedAt: dayAfterNext,
       userId: crypto.randomUUID(),
     });
     const deletedMessage = new StandardMessageEntity({
-      createdAt: new Date("1970-01-03"),
-      deletedAt: new Date("1970-01-03"),
+      createdAt: dayAfterNext,
+      deletedAt: dayAfterNext,
       message,
       partitionKey: roomId,
       rowKey: crypto.randomUUID(),
       type: MessageType.Message,
-      updatedAt: new Date("1970-01-03"),
+      updatedAt: dayAfterNext,
       userId,
     });
     MockSearchDatabase.set(SearchIndex.Messages, [firstMessage, secondMessage, otherUserMessage, deletedMessage]);
@@ -511,11 +515,11 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    const onCreateMessage = await messageCaller.onCreateMessage({ roomId });
+    const subscription = await messageCaller.onCreateMessage({ roomId });
     const message = createMentionMessage(member.id);
     await mockSessionOnce(mockContext.db, member);
     const trackedData = await getFirstEmit(
-      () => onCreateMessage,
+      () => subscription,
       () => messageCaller.createMessage({ message, roomId }),
     );
 
@@ -535,12 +539,12 @@ describe("messageRouter", () => {
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     const thirdMessage = await messageCaller.createMessage({ message, roomId });
-    const onCreateMessage = await messageCaller.onCreateMessage({
+    const subscription = await messageCaller.onCreateMessage({
       lastEventId: firstMessage.rowKey,
       roomId,
     });
     const trackedData = await withAsyncIterator(
-      () => onCreateMessage,
+      () => subscription,
       (iterator) => iterator.next(),
     );
 
@@ -566,7 +570,7 @@ describe("messageRouter", () => {
       message: createOwnMentionMessage(),
       roomId,
     });
-    const onCreateMessage = await messageCaller.onCreateMessage({
+    const subscription = await messageCaller.onCreateMessage({
       lastEventId: ownerMessage.rowKey,
       roomId,
     });
@@ -578,7 +582,7 @@ describe("messageRouter", () => {
     });
     await mockSessionOnce(mockContext.db, member);
     const trackedData = await withAsyncIterator(
-      () => onCreateMessage,
+      () => subscription,
       async (iterator) => {
         const emit = iterator.next();
         await messageCaller.createMessage({ message: createMentionMessage(member.id), roomId });
@@ -597,10 +601,10 @@ describe("messageRouter", () => {
   test("on creates typing", async () => {
     expect.hasAssertions();
 
-    const onCreateTyping = await messageCaller.onCreateTyping({ roomId });
+    const subscription = await messageCaller.onCreateTyping({ roomId });
     const mockSession = getMockSession();
     const data = await getFirstEmit(
-      () => onCreateTyping,
+      () => subscription,
       () =>
         messageCaller.createTyping({
           roomId,
@@ -657,9 +661,9 @@ describe("messageRouter", () => {
 
     const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    const onUpdateMessage = await messageCaller.onUpdateMessage({ roomId });
+    const subscription = await messageCaller.onUpdateMessage({ roomId });
     const data = await getFirstEmit(
-      () => onUpdateMessage,
+      () => subscription,
       () =>
         messageCaller.updateMessage({
           message: updatedMessage,
@@ -687,9 +691,9 @@ describe("messageRouter", () => {
 
     const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId });
+    const subscription = await messageCaller.onDeleteMessage({ roomId });
     const data = await getFirstEmit(
-      () => onDeleteMessage,
+      () => subscription,
       () => messageCaller.deleteMessage(getCompositeKey(newMessage)),
     );
 
@@ -1086,9 +1090,9 @@ describe("messageRouter", () => {
       roomId,
     });
     setMessageAssetBlob(id);
-    const onCreateMessage = await messageCaller.onCreateMessage({ roomId });
+    const subscription = await messageCaller.onCreateMessage({ roomId });
     const trackedData = await getFirstEmit(
-      () => onCreateMessage,
+      () => subscription,
       () =>
         messageCaller.forwardMessage({
           ...getCompositeKey(newMessage),
@@ -1230,7 +1234,6 @@ describe("messageRouter", () => {
     expect(takeOne(updatedMessages).message).toBe(updatedMessage);
   });
 
-  // Only Date, so the message row keys still come from a real `process.hrtime` tick — see the `azure-table` skill
   test("fails createMessage with a second message inside the slowmode window", async () => {
     expect.hasAssertions();
 

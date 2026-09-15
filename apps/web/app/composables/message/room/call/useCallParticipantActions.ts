@@ -28,7 +28,6 @@ export const useCallParticipantActions = () => {
     const roomId = callRoomId.value;
     const callSessionId = activeCallSessionId.value;
     if (!roomId || !callSessionId) return [];
-
     // The three moderation actions differ only in which `AdminActionType` they send and how they are labelled
     const getAdminActionItem = (type: UnparameterizedAdminActionInput["type"], icon: string, title: string): Item => ({
       icon,

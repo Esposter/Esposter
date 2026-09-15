@@ -1,6 +1,6 @@
 ---
 name: invariants
-description: How a rule that must hold in many places is made to hold — by construction (the wrong call cannot be written), then structurally (one primitive does it for every caller), then by an enforcer (lint rule or test), and only as a last resort by a guard a caller has to remember. Apply when a fix is an `if` check that other call sites will also need, when a bug turns out to be a missing check, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule.
+description: Apply when a fix is an `if` check that other call sites will also need, when a bug turns out to be a missing check, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule. How a rule that must hold in many places is made to hold — by construction (the wrong call cannot be written), then structurally (one primitive does it for every caller), then by an enforcer (lint rule or test), and only as a last resort by a guard a caller has to remember.
 ---
 
 # Invariants
@@ -79,8 +79,8 @@ Room-scoped Pinia slices are keyed by the room on screen, so `items` and `member
 That is what a rendering component wants and exactly what a **write** must never use: a response that lands after
 the reader opened another room would be filed under the room they are now looking at.
 
-The remembered version was `if (checkIsRoomScoped(roomId))` in every callback. It was present in one store,
-absent in its neighbour, and nothing failed — which is the whole argument. The structural version has no check
+A remembered version — an `if (checkIsRoomScoped(roomId))` in every callback — ends up present in one store,
+absent in its neighbour, with nothing failing — which is the whole argument. The structural version has no check
 anywhere: the write functions are reachable only through `getSlice(roomId)` / `getRoomOperationData(roomId)`,
 so naming the room is how you obtain a writer at all, and a response cannot be filed anywhere but its own slice.
 The convention itself lives in `pinia`.

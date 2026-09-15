@@ -12,7 +12,8 @@ import { existsSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-// GetWslNativeCacheRoot resolves the ext4 cache root the mirrors live under; point it at a per-test temp directory (a plain
+// `getWslNativeCacheRoot` resolves the ext4 cache root the mirrors live under; point it at a per-test temp directory (a
+// Plain
 // Local path, so removeSnapshotDirectoriesDetached teardown stays synchronous and deterministic — no WSL round-trip).
 const { cacheRootHolder } = vi.hoisted(() => ({ cacheRootHolder: { value: "" } }));
 

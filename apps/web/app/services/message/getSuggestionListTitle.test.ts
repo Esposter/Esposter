@@ -12,6 +12,6 @@ describe(getSuggestionListTitle, () => {
   test("appends the triggered query when there is one", () => {
     expect.hasAssertions();
 
-    expect(getSuggestionListTitle(SuggestionTrigger.Mention, "bob")).toBe("MEMBERS MATCHING @bob");
+    expect(getSuggestionListTitle(SuggestionTrigger.Mention, "a")).toBe("MEMBERS MATCHING @a");
   });
 });

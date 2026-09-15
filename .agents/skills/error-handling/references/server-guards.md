@@ -4,7 +4,7 @@ Read when a tRPC router or server route guards a nullable DB result, attaches a 
 
 ## The guards
 
-```typescript
+```ts
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 
@@ -24,7 +24,7 @@ const updatedFoo = requireMutation(
 
 The guards above cover a DB result that may be missing. When the router decides the rejection itself, reach for the constructors the guards are built on rather than assembling a `TRPCError` around an error message:
 
-```typescript
+```ts
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "@@/server/trpc/guards/getNotFoundError";
 
@@ -36,7 +36,7 @@ throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Foo, input.f
 throw getNotFoundError(DatabaseEntityType.Foo, input.fooId);
 ```
 
-`new TRPCError({ code, message: new InvalidOperationError(...).message })` written out at a throw site is the anti-pattern: it re-decides the code per site, and drifts from the guards' text the moment either changes. Where one feature throws the same rejection from several places, give it a named constructor that calls these (`createInvalidBlueprintError`, `danglingProgramBindingError`) so the arguments are stated once too.
+`new TRPCError({ code, message: new InvalidOperationError(...).message })` written out at a throw site is the anti-pattern: it re-decides the code per site, and drifts from the guards' text the moment either changes. Where one feature throws the same rejection from several places, give it a named constructor that calls these (`getInvalidBlueprintError`, `getDanglingProgramBindingError`) so the arguments are stated once too.
 
 ## `UNAUTHORIZED` is the one code thrown bare, and has no constructor
 
@@ -54,7 +54,7 @@ Best-effort means "its failure doesn't fail the caller" — it does not mean "no
 
 Await it in the function whose failure the rollback compensates, so the rollback cannot start before the write is durable:
 
-```typescript
+```ts
 // The insert and the trail entry a rollback would delete cannot be allowed to drift apart
 await writeBar({ fooId: newFoo.id });
 return newFoo;

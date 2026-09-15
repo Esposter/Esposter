@@ -10,7 +10,7 @@ import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 
 describe(getCursorWhere, () => {
-  const createdAt = new Date();
+  const createdAt = new Date(0);
   const user: User = {
     biography: "",
     createdAt,
@@ -37,7 +37,7 @@ describe(getCursorWhere, () => {
     ],
   ];
 
-  test.each(sortItems)("compares %s", (_, sortItem) => {
+  test.each(sortItems)("compares %s", (_title, sortItem) => {
     expect.hasAssertions();
 
     const serializedCursors = serialize(user, [sortItem]);

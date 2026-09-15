@@ -26,7 +26,7 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 // Plan the win32 source-mirror sync for a host cwd and return { lockPath, mirrorPath, script }: the mirror lock every
 // Run holds shared for bwrap's duration, the ext4 mirror tree's Linux path (the `--overlay-src` lower
-// CreateWslBwrapArgs points at), and the sh script that brings it up to date, which `createWslOsBackend` folds into
+// `createWslBwrapArgs` points at), and the sh script that brings it up to date, which `createWslOsBackend` folds into
 // The run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole
 // Win32 os gap was reads of the source lower crossing v9fs (an order of magnitude slower or worse); the mirror moves
 // The toolchain's reads to ext4, the manifest diff moves the per-run change detection to the host FS, and the staged
@@ -107,9 +107,11 @@ export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
     mkdirSync(entryUnc, { recursive: true });
     // The abandonment reaper can only reclaim an entry it can attribute, so the origin marker is published the moment
-    // The entry directory exists rather than at the end of a successful sync: a materialize that dies midway (a killed run,
+    // The entry directory exists rather than at the end of a successful sync: a materialize that dies midway (a killed
+    // Run,
     // A failed archive) would otherwise leave an unattributable directory no sweep may ever touch, and those corpses
-    // Accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp directories.
+    // Accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp
+    // Directories.
     // The publish is best-effort (publishSourceMirrorOrigin), which every planning pass makes safe by republishing
     // A missing marker — including the no-delta early return above, the path a live repo takes on nearly every run
     publishSourceMirrorOrigin(entryUnc, cwd);

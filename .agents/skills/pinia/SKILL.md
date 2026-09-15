@@ -1,6 +1,6 @@
 ---
 name: pinia
-description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access for refs (methods may be destructured), per-service dialog stores, blade-scoped store state torn down on unmount, never redirecting store functions through wrappers, selection state in the store, useDataMap vs a plain Map and keying every field of per-key state, tRPC mutation placement via useMutation with a required key, CRUD verbs and store* subscription handlers, CRUD update/delete mechanics and parameter naming, full tRPC input objects, minimal-input actions, reusing existing store maps, reactive Map mutations, optimistic input clearing, session auth in stores, plus deep dives on keyed state and cursor pagination (why every field is keyed and a write names its key where it is issued), blade-scoped state a component bridges and tears down, wiring a mutation action (instance placement, optimistic rollback, single-flight reads via isExclusive, the outcome status over a success flag), class instances in reactive state, cross-surface state with hook registries, and awaiting a singleton component through a store-owned resolver. Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store.
+description: Apply when writing or reviewing any Pinia store, or deciding whether logic belongs in a store. Esposter Pinia store conventions — full store names destructured through storeToRefs, dot-access between stores, per-service dialog stores, blade-scoped state torn down on unmount, no store function redirected through a wrapper, selection state in the store, useDataMap with every field of per-key state keyed and a write naming its key where it is issued, tRPC mutations through useMutation with a required key, CRUD verbs with store* subscription handlers, and markRaw on class instances.
 ---
 
 # Pinia Store Conventions
@@ -15,9 +15,9 @@ Applies **everywhere a store is consumed** — components, composables, services
 - Keep each store's lines grouped — fully extract one store before the next, never all inits, then all refs, then all methods. Order per store: `const xyzStore = useXyzStore()`, then `const { ref1 } = storeToRefs(xyzStore)`, then `const { method1 } = xyzStore` (omit either line if empty).
 - Never use dot-access (`store.method()`) in components. Enforced: `no-restricted-syntax` in the `.vue` configs bans a member expression on a lower-camel `*Store` identifier, on both the script and template sides.
 - **A store's id is its path under `app/store/`**, with a trailing `/index` dropped — `store/resource/sheet/row.ts` is `"resource/sheet/row"`. Asserted by `app/store/index.test.ts`, so a drifting id fails on the line that writes it.
-- **Store-to-store** (inside a store file): declare nested stores at the root of the setup function, never `useXxxStore()` inside an action (repeated lookups). Access refs/computeds by dot syntax (`otherStore.someRef`) to keep reactivity — **never `storeToRefs` inside a store**. Methods **must** be destructured at the root (`const { storeCreateFoo } = fooStore`), never called inline as `otherStore.method()`.
+- **Store-to-store** (inside a store file): declare nested stores at the root of the setup function, never `useXxxStore()` inside an action (repeated lookups). Access refs/computeds by dot syntax (`fooStore.bar`) to keep reactivity — **never `storeToRefs` inside a store**. Methods **must** be destructured at the root (`const { storeCreateFoo } = fooStore`), never called inline as `fooStore.method()`.
 
-```typescript
+```ts
 // each store fully extracted before the next
 const fooStore = useFooStore();
 const { foos } = storeToRefs(fooStore);
@@ -40,11 +40,7 @@ A store is app-lifetime; a ref a component populates for code outside its subtre
 
 ## Never Redirect Store Functions — Use Them Directly
 
-A store function is defined **once** and consumed directly at every use site by destructuring it from the store. Never insert a layer that only forwards to it:
-
-- **No alias re-export through a composable** — a composable must never `return { foo: store.foo }`. The consumer destructures the method straight from the store.
-- **No one-line wrapper** — never `const selectDevice = (kind, id) => switchDevice(kind, id)` in a store, composable, or component when the body just forwards arguments. Delete it and call the underlying function.
-- **No chain of pass-throughs** — `selectDevice → switchDevice → setActiveDevice` collapses to a single `setActiveDevice` that everyone calls.
+A store function is defined **once** and consumed directly at every use site by destructuring it from the store. Never a layer that only forwards to it — a composable returning `{ foo: store.foo }`, a one-line wrapper, a chain of pass-throughs collapsing to the last function — which is the `over-engineering` skill's first entry and, in its decidable half, `pass-through-helper/no-forwarding-wrapper`.
 
 A composable earns its place **only** when it adds genuine reused behaviour — shared reactive state, multi-step logic, resource lifecycle (`onScopeDispose`), a computed projection — not to re-expose a store's existing API under a new name. Same principle as the mutation-placement rule below: don't add an indirection that carries no logic.
 
@@ -72,7 +68,7 @@ A store action that mutates goes through `useMutation` (`composables/shared/useM
 
 ## CRUD Conventions
 
-- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteRole` not `removeRole`. Reserve domain terms only when there's no clean CRUD mapping.
+- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteFoo` not `removeFoo`. Reserve domain terms only when there's no clean CRUD mapping.
 - **`store*` prefix for subscription-driven state-update counterparts** — `storeCreateFoo`/`storeDeleteFoo`. If the user action is only a direct tRPC call, don't add a matching non-`store*` wrapper. State-update methods use CRUD prefixes (`createXxx` to insert, `deleteXxx` to remove) — never `addXxx`.
 - **update**: `findIndex` first, guard `if (index === -1) return`, then mutate in place with `Object.assign(takeOne(items.value, index), updatedItem)`.
 - **delete**: reassign the array — `items.value = items.value.filter(...)` — never `splice`.

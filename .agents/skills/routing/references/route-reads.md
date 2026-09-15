@@ -1,0 +1,10 @@
+# Why `useRoute()` is banned outright, and the one test that may mock it
+
+Read when a `useRoute()` ban fires and "reactive reads only" looks like the honest scope, when a component test must drive the route, or when typed routes look like the fix. The rule — `useRouter().currentRoute` everywhere, `requireRouteParam` for a segment the page cannot exist without — is in `SKILL.md`.
+
+The message states the fix; what it can't say is why the ban is total rather than "reactive reads only". `useRoute()` resolves through the page's _injected_ route, which is pinned to that page instance and freezes to its last value once the page is swapped out. Anything outliving the page that created it — a Pinia store above all, cached for the app's lifetime — then answers for a route the user has already left, and a route naming no segment yields the `""` sentinel that reaches the server as a uuid and is rejected.
+
+- A `definePageMeta` `validate`/`key` callback receives its own `route` argument. That is not a `useRoute()` call and none of the above applies to it.
+- Tests do not catch the staleness on their own — with no page component in the tree there is no injection to pin, so both forms are the same object there and both pass.
+- **The one earned exception is a component test that must drive the route.** `mockNuxtImport("useRoute")` is supported; `mockNuxtImport("useRouter")` replaces the router Nuxt's own plugins call (`router.beforeResolve`) and takes the whole environment down. A component that reads the route _only_ to render, holds nothing past its page, and needs that mock takes an `eslint-disable-next-line` carrying this reason.
+- Typed routes do not help and are deliberately off. Both `experimental.typedPages` and `nuxt-typed-router` type `params` as a union across every route, narrowed only by naming the route at the call site — and the generic readers (`validate`, the `use*FromRoute` composables) run under several routes, so for them the union is the correct type and no narrowing exists.

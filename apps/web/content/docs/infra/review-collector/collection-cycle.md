@@ -1,39 +1,36 @@
 ---
 title: Collection cycle
-description: The one pass the review collector runs on every trigger: read, reply, gate, drain, port, push, reply, each step re-derived from the remote so a re-run is a no-op.
+description: The one pass the review collector runs on every trigger: read, reply, gate, drain, sync, port, push, reply, each step re-derived from the remote so a re-run is a no-op.
 ---
 
 # Collection Cycle
 
-One script, `pnpm ai:coderabbit:collect`, run by the [runner](/docs/infra/review-collector/runner) on every trigger and by hand with `--dry-run` to see what it would do; it finds the release pull request itself, and opens the next one once a window is worth its first review. It reads the whole situation from the remote, clears the gates, and then does the most it safely can in one pass. The steps are ordered so that every irreversible effect is either the single fast-forward push or a predicate-guarded write that a later run can finish. Which ref each writer owns is the [two writers](/docs/infra/review-collector/two-writers) page; this page is what the collector does inside its own turn.
+One script, `pnpm ai:coderabbit:collect`, run by the [runner](/docs/infra/review-collector/runner) on every trigger and by hand with `--dry-run` to see what it would do. It reads the whole situation from the remote, clears the gates, and does the most it safely can in one pass, ordered so that every irreversible effect is either the single push or a predicate-guarded write a later run can finish. Which ref each writer owns is the [two writers](/docs/infra/review-collector/two-writers) page.
 
 ## What it reads
 
 Nothing is remembered between runs, so every input is a remote fact with a single source:
 
-| Fact                          | Source                                                                                             |
-| :---------------------------- | :------------------------------------------------------------------------------------------------- |
-| the release pull request      | the one open pull request with base `main` and head `develop` — none means the last one merged     |
-| the frontier                  | the last sha named by a review body's `between … and …` range, or the merge base when none is open |
-| the check                     | the CodeRabbit commit status, read by `bucket` first and `description` second                      |
-| the rate-limit deadline       | the `Next included review available in …` the bot states in the walkthrough it last rewrote        |
-| open findings                 | unresolved threads whose last comment is the bot's, plus the newest review body's own buckets      |
-| fixes awaiting a push         | `git cherry origin/develop origin/ai/review-fixes` — the branch stays, what it owes is what counts |
-| what the queue still owes     | `git cherry <develop plus the fixes> origin/ai/queue` — commits not yet upstream by patch id       |
-| the window `develop` carries  | the commits above the frontier no review has read — only ever non-zero with no pull request open   |
-| which thread a commit answers | an `Answers: <comment id>` trailer on the commit, `Drains: <review id>` for a body-only finding    |
+| Fact                          | Source                                                                                                                                                                                              |
+| :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| the release pull request      | the one open pull request with base `main` and head `develop` — none means the last one merged                                                                                                      |
+| the frontier                  | the last sha named by a `between … and …` range — a review body's, or the walkthrough's recent-review block's, the only record of a review that found nothing — or the merge base when none is open |
+| the merge risk                | the level and the covered sha the bot states in the walkthrough's merge-risk block                                                                                                                  |
+| the check                     | the CodeRabbit commit status, read by `bucket` first and `description` second                                                                                                                       |
+| the rate-limit deadline       | the `Next included review available in …` the bot states in the walkthrough it last rewrote                                                                                                         |
+| open findings                 | unresolved threads whose last comment is the bot's, plus the newest review body's own buckets                                                                                                       |
+| fixes awaiting a push         | `git cherry origin/develop origin/ai/review-fixes` minus the ported set — the branch stays, what it owes is what counts                                                                             |
+| what the queue still owes     | `git cherry <develop plus the fixes> origin/ai/queue` minus the ported set — commits not yet upstream by patch id, nor named as a copy's original                                                   |
+| the ported set                | the `(cherry picked from commit …)` line every port writes (`cherry-pick -x`), read off the upstream since the two histories parted — the record a drifted patch id cannot lose                     |
+| which thread a commit answers | an `Answers: <comment id>` trailer on the commit, `Drains: <review id>` for a body-only finding                                                                                                     |
 
-The trailers are the collector's memory. A fix commit says which finding it answers in its own message, so the reply step can name it after the push, a later run can tell an answered finding from an open one without any table, and a session fixing a finding by hand leaves the same record by writing the same trailer.
+The trailers are the collector's memory: a fix commit says which finding it answers in its own message, so the reply step can name it after the push, a later run can tell an answered finding from an open one, and a session fixing a finding by hand leaves the same record by writing the same trailer. The ported line is the same kind of memory for the port itself: a fix landing inside a ported hunk's context lines changes the copy's patch id, after which `git cherry` reads the original as still owed and re-picking it is the conflict nobody authored — so the copy names its original, and the owed set subtracts every original a copy names.
 
-## The return stroke
+## The return stroke and the express lane
 
-Before the pull request is even looked up, the cycle compares `develop` with `main`. When `develop` is an ancestor of `main` and the two differ, `main` holds commits and `develop` holds nothing of its own: `develop` is fast-forwarded to `main` with a plain push, which spends nothing because no pull request is open to review it — and the run exits on it, since that push is its one irreversible act and the express lane it just opened would be a second. What put those commits on `main` is not asked, because all three answers — a release that merged, an express cut, a dependency bump pushed straight at it — already sit on the branch a window is diffed against, so no window could carry them to a review whichever way the stroke went, while refusing one would strand `develop` behind `main` and close the express lane, which only opens when the two agree. When `main` has commits `develop` lacks and `develop` is not an ancestor — a dependency bump that landed while `develop` was already ahead — nothing happens here; the port step folds `main` into the candidate as a merge commit, resolving the lockfile the git skill's way (thrown away and rebuilt from the installed tree), so the bump rides the window the collector was pushing anyway and costs no slot of its own. A merge that conflicts anywhere but the lockfile is aborted and the window goes out without it. `ai/queue` and `ai/review-fixes` need no return stroke: the session rebases `ai/queue` onto `develop` before its next unit, and `ai/review-fixes` is re-created from `develop` by the next drain.
+Before the pull request is looked up, the cycle compares `develop` with `main`. When `develop` is an ancestor of `main` and the two differ, `main` holds commits and `develop` holds nothing of its own: `develop` is fast-forwarded to `main` with a plain push — no pull request is open, so it spends nothing — and the run exits on it. What put those commits on `main` is not asked: a release that merged, an express cut and a dependency bump pushed straight at it all already sit on the branch a window is diffed against, so no window could carry them to a review, while refusing the stroke would strand `develop` behind `main` and close the express lane, which only opens when the two agree. When `main` has commits `develop` lacks and `develop` is not an ancestor (a dependency bump that landed while `develop` was already ahead), the port folds `main` into the candidate as a merge commit, the lockfile rebuilt the `git` skill's way, so the bump rides a window that was being pushed anyway; a merge that conflicts anywhere but the lockfile is aborted and the window goes out without it.
 
-## The express lane
-
-When there was no return stroke to make, and still before the pull request is looked up, the cycle asks whether any commit the queue owes has nothing in it a reviewer could comment on — a folder sweep's moves and the imports that follow them. Those are cherry-picked onto `main` directly, because a review window is budgeted in files and a sweep is the largest thing the queue produces and the emptiest thing a reviewer reads. The push to `main` is the run's one irreversible act and the run exits on it, which fires the cycle again: the next run's return stroke fast-forwards `develop` onto it, and only then is a window measured, against a frontier that has already moved.
-
-The lane needs no pull request open, which makes it the one thing that moves the pipeline while there is none. It is closed whenever `develop` and `main` disagree, its cut has to prove mechanical a second time as it will land, and it earns a window's checks **and the tests** before it goes anywhere near production — the one lane nobody reads is the one that pays for the most. The proof each commit has to pass, and why order is enforced by the cherry-pick rather than by a rule, is the [express lane](/docs/infra/review-collector/express-lane) page.
+With no return stroke to make, the cycle asks whether any commit the queue owes has nothing in it to review and cherry-picks those onto `main` — the [express lane](/docs/infra/review-collector/express-lane). That push is the run's one irreversible act too; the next run's return stroke carries it to `develop`, and only then is a window measured.
 
 ## Gates
 
@@ -46,7 +43,7 @@ flowchart TD
   EL -->|no| PR{Release PR open}
   PR -->|no| MB[Frontier is the merge base<br/>nothing running] -->|nothing to drain| D
   PR -->|yes| RP[Reply for pushed fixes<br/>trailers on frontier..develop without a reply]
-  RP --> B{Newest review body<br/>ends at the develop head}
+  RP --> B{Newest stated range<br/>ends at the develop head}
   B -->|yes| OK[Slot free]
   B -->|no| ST{Check bucket}
   ST -->|pending| X1[Exit — review running]
@@ -56,79 +53,116 @@ flowchart TD
   OK --> D[Drain]
 ```
 
-**The reply step runs before the gates, not after the push.** A reply is owed the moment a fix commit is on `develop`, and the run that pushed it may die before replying. Putting replies first makes every later run finish them: it scans the commits between the frontier and the `develop` head for `Answers:` trailers and posts on each thread that lacks a reply citing that commit. Once the review of that push completes, the frontier moves to the head and the scan is empty. This is why the runner must never exit at "review running" before replying — the running review is exactly the one that will resolve those threads, and it resolves them only if the reply is there.
-
-**The review body, not the status, says a review is complete.** CodeRabbit writes the body naming its range at completion and flips the commit status a moment later, and the review event fires in that gap. Reading the status alone at that moment reads `pending`, exits, and nothing re-fires until the next queue push. So the primary test is whether the newest body's range ends at the `develop` head, and the status only decides when it does not. Anything unrecognised fails the run rather than guessing, because being wrong about a running review costs its findings.
-
-**A slot is only ever spent on a range worth an hour.** The collector has two ways to start a review and the cost is the same either way: a push to `develop` is auto-reviewed, since the pull request's base is the default branch, and the retrigger asks outright. A run that ships a window needs no ask at all — the push starts the review, and a limit refusing that one rewrites the block, which arrives as the event this workflow runs on. So the ask is owed exactly when the run has no window to ship and nothing can be added to the range, which is the port taking no commit: the queue is empty, or every owed commit overflows the cap from this frontier. Asking earlier spends the hour on a range still filling — the limit that skipped this review is what lets a later window grow the same range, so one review reads the lot. Asking never is worse: the frontier only moves when a review completes, so a range nothing fits into can neither grow nor ship. One rule decides both, because the port already answers the only question either was asking.
-
-**A rate limit leaves the slot free and owes a retrigger.** `Review rate limited` means the bot ran nothing: the frontier has not moved, and a window measured from that stale frontier can only over-count, which is the safe direction. So the cycle proceeds, and what it owes — the review the limit refused — is settled at the readiness step once the port has said whether anything can still be added to the range: a deadline still ahead goes to the runner's delayed retrigger job, a deadline passed is asked about with `@coderabbitai review` once per block and after a fresh read of the slot, and the run exits on the ask because the bot's answer is itself a trigger. How the deadline is read and why the job that sleeps is not the one that asks is the [runner](/docs/infra/review-collector/runner)'s delayed-retrigger section.
+- **Replies run before the gates.** A reply is owed the moment a fix commit is on `develop`, and the run that pushed it may die before replying; putting replies first makes every later run finish them, before any exit — the running review is the one that resolves those threads, and only if the reply is there.
+- **The stated range, not the status, says a review is complete.** CodeRabbit writes the range at completion and flips the status a moment later, and the review event fires in that gap; a status read alone there says `pending`, exits, and nothing re-fires until the next queue push. A review that found something states the range in its body; one that found nothing writes no body and states it only in the walkthrough's recent-review block, which is read as the newest range. The same walkthrough's rate-limit section names the range the bot _skipped_, so only the block between the recent-review markers is read. Anything unrecognised fails the run rather than guessing.
+- **A rate limit leaves the slot free.** `Review rate limited` means the bot ran nothing, so a window measured from the unmoved frontier can only over-count, which is the safe direction. The review the limit refused is owed once the port has said nothing can be added to the range — asking earlier spends the hour on a range still filling, asking never leaves a frontier that can neither grow nor ship — and settling it is the [runner's delayed retrigger](/docs/infra/review-collector/runner).
 
 ## Drain
 
-The one step Claude runs, and the only one with a page of its own: which findings are open, what the session is handed and denied, and how a drain that fails is quarantined — [drain](/docs/infra/review-collector/drain). The cycle reaches it only with a pull request open; with none, no review has spoken and there is nothing to drain.
+The one step Claude runs — [drain](/docs/infra/review-collector/drain). The cycle reaches it only with a pull request open; with none, no review has spoken.
+
+## Sync
+
+Before the port reads the queue, the collector rewrites it onto the tree the window is built on — `ai/review-fixes` while it owes `develop` commits, `develop` otherwise — and pushes it back under a lease on the sha it read. The commits the queue still owes are replayed in order as one `cherry-pick` sequence (`--empty=drop`, so a copy the tree already holds falls away); a queue already sitting on that tree is left alone, which is every run but the one after a window.
+
+```mermaid
+flowchart TD
+  T[target = the fixes head while it owes develop,<br/>else develop] --> A{Queue sits on it}
+  A -->|yes| N[Nothing to do]
+  A -->|no| R[Replay the owed commits onto it<br/>one sequence, empties dropped]
+  R -->|completes| P[Push ai/queue under a lease<br/>the port reads the new head]
+  R -->|stops| C{Dry run, no release pull request,<br/>or the attempt cap reached}
+  C -->|yes| AB[Abort — the port holds on it]
+  C -->|no| CL[Claude resolves and continues the sequence]
+  CL -->|sequence complete, tree clean| P
+  CL -->|anything else| F[Fail red, attempt counted on the pull request]
+```
+
+- **Why the collector and not the session.** A queue left on an old base carries commits written against files a drain has since repaired, and every one is a conflict the porter would hold on, run after run, until a person notices a red run. Here the conflict is met once, where the fixes are, and the working session's `git pull --rebase` afterwards replays only what it committed since (`.agents/skills/review-queue/SKILL.md`).
+- **A conflict is the drain's session pointed at a conflict.** The same headless Claude, the same denials — no push, no branch switch, no GitHub — told which commit stopped the sequence and on which paths, that both sides survive, and that `--skip` is for a commit whose whole change the target already carries. What proves the resolution is a sequence run to its end over a clean tree, never the session's word. A failure counts against the drain's attempt cap under a marker keyed by the commit, and past the cap the commit is a person's: the port holds on it as it always did. The marker is a comment on the release pull request, so with none open there is nothing to count against and no session is spent — a conflict met between releases is a person's from the first, rather than one every run resolves afresh.
+- **Two writers of `ai/queue`, one compare-and-swap.** The session pushes the queue plain; the collector rewrites it with `--force-with-lease` on the sha the run read, so a session push in between refuses the rewrite and the next run replays onto what the queue then carries ([two writers](/docs/infra/review-collector/two-writers)).
+
+## Merge
+
+A drain that found nothing to do may mean the release is done: the newest range ends at `develop`'s head, no thread has the bot's word last, the newest body states no findings of its own, no commit on `ai/review-fixes` or `ai/queue` that `develop` lacks by patch id carries a trailer answering one — answered elsewhere is not answered on `develop`, and a ported copy is — and the walkthrough's merge-risk block states the least level for that same head. Then the pull request is merged to `main` as an administrator and the run exits on it; the push to `main` runs the return stroke.
+
+```mermaid
+flowchart TD
+  D[Drain — nothing open] --> CL{Newest range at the head,<br/>no unported commit answers a finding}
+  CL -->|no| P[Port]
+  CL -->|yes| MR{Merge risk stated for the head<br/>at the least level}
+  MR -->|no| P
+  MR -->|yes| MG[Merge the release PR as administrator<br/>exit — the push to main returns develop]
+```
+
+- **The merge names the head the verdict covers.** Every gate above it was measured against the `develop` the pass read, so the merge is made to match that sha — the same compare-and-swap the push makes. A `develop` that moved in between fails the run rather than releasing commits no review covered.
+- **The checks do not gate it.** `develop` runs them, and the release does not wait: the review is the gate, and a red check is one more commit in the next window.
+- **A risk above the least is a person's.** The cycle merges nothing over it and keeps porting; the bot restates the level on every review, so a later window can clear it.
 
 ## Port
 
-The port builds the window as a local branch in the runner, one cherry-pick at a time, and measures after each. Estimation is what the manual process got wrong most often; here the count is read from the tree that will be pushed.
+The port builds the window as a local branch, one cherry-pick at a time, and measures after each from the tree that will be pushed.
 
 ```mermaid
 flowchart TD
   C[candidate = origin/develop] --> FX[Cherry-pick every ai/review-fixes commit<br/>fixes always lead and never split]
   FX --> Q{Next unported queue commit}
   Q -->|none| RD
-  Q -->|conflict| H[Stop before it — the session rebases]
+  Q -->|conflict| H[Stop before it — the sync could not resolve it]
   Q -->|applies| M{Files frontier..candidate<br/>within the cap}
   M -->|yes| Q
   M -->|no| U[Undo that pick — it is the first held commit]
   U --> RD
   H --> RD{Ready}
-  RD -->|fixes parked and any queue commit, or the first held| FM
-  RD -->|no fixes and count at the target or held, or force| FM
-  RD -->|ready with nothing to add and no PR open| OP[Open the release PR]
-  RD -->|otherwise| LM{Rate limited and<br/>the port took nothing}
-  LM -->|no| W[Wait — nothing pushed, fixes stay parked]
-  LM -->|yes| DL{Stated deadline<br/>still ahead}
-  DL -->|yes| SR[Schedule the retrigger<br/>for that deadline] --> W
-  DL -->|no| AK{Retrigger already posted<br/>since the block last moved}
-  AK -->|yes| W
-  AK -->|no| PB[Post it and exit<br/>the bot's answer is an event]
-  FM[Fold main in<br/>lockfile rebuilt] --> FC{The fold fits the cap}
+  RD -->|fixes parked with no queue commit behind them| W[Wait — nothing pushed, fixes stay parked]
+  RD -->|nothing owed at all| N[Exit — ai/queue is synced with develop]
+  RD -->|no fixes and the first queue commit is held| F[Fail red — a person resolves or splits it]
+  RD -->|nothing to add, develop already carries the window, no PR open| OP[Open the release PR]
+  RD -->|yes| FM[Fold main in<br/>lockfile rebuilt] --> FC{The fold fits the cap}
   FC -->|yes| P[Push — unverified, develop's CI is the check]
   FC -->|no| UF[Undo the fold — it waits for the next window] --> P
   P -->|no PR open| OP
 ```
 
-The rules the loop encodes:
+- **Fixes always ride, whole.** A fix split from the finding it answers is a reply that lies. Fixes alone over the cap fail the run — a drain that touched far more than its findings, for a person to see.
+- **Only what the queue authored is owed.** A merge of `main` into `ai/queue` brings `main`'s commits and the merge itself, none of it the queue's. The porter takes the queue's commits that are neither on `develop` by patch id nor reachable from `main`, and a cut with a skipped merge among its ancestors is ported rather than fast-forwarded.
+- **Queue order, never reordered.** The first commit that would overflow the cap or conflicts is where the window ends; the count includes every fix. A conflict reaches the port only when the sync above could not resolve it — a dry run, no release pull request to count an attempt on, or a commit past the attempt cap.
+- **Every count is measured from the frontier.** A review covers everything since the one that last wrote a body, so a window pushed on top of an unreviewed one is read as a single range; measuring from the head lets the pair overflow the cap, past which CodeRabbit skips the review outright.
+- **The window is pushed unverified.** `develop` runs its own CI after the push, and a red there is one more commit in the next window. The fold of `main` is undone whole when it puts the window over the cap: the pick loop never counted a merge's own diff, and nothing here knows which of `main`'s files to drop.
+- **Fast-forward when the shas allow it** — no fixes, the queue sitting on `origin/develop`, no skipped merge among the cut's ancestors, nothing folded — so the session's local branch already matches and no rebase is owed.
 
-- **Fixes always ride, whole.** Every unported `ai/review-fixes` commit is picked first and none is ever dropped to make room, because a fix split from the finding it answers is a reply that lies. If the fixes alone overflow the cap the run fails — that is a drain that touched far more than its findings, and a person should see it.
-- **Only what the queue authored is owed.** `main` merged into `ai/queue` — the way a dependency bump reaches the working branch — brings `main`'s own commits and the merge itself, and none of it is the queue's: a merge cannot be cherry-picked, and `main`'s content reaches `develop` by the same `main` sync the git skill already describes rather than as copies. The porter takes only the queue's commits that are neither on `develop` by patch id nor reachable from `main`, and a cut with a skipped merge among its ancestors is ported rather than fast-forwarded, since a fast-forward would land the merge's uncounted diff.
-- **Commits are taken in queue order and never reordered.** The queue is the session's linear history, and the prefix rule is what keeps every commit's tree the one its author verified. The first commit that would overflow the cap is where the window ends, and the count that decides it includes every fix.
-- **Every count is measured from the frontier, never from the `develop` head.** A review covers everything since the one that last wrote a body, so a window pushed on top of one still unreviewed is read as a single range. Measuring from the head counts only the commits this run adds, and the pair then overflows the cap — the one failure the cap exists to prevent, since past it CodeRabbit skips the review outright rather than trimming it. The two bases agree exactly when the previous window has been reviewed, which is why the error is invisible until a rate limit lets a second window go out on top of the first.
-- **A conflict ends the window before the conflicting commit.** The fixes changed something the queue also changed, and only the session can decide how they combine; the collector reports the commit and pushes whatever fit before it if that is ready. When the conflicting commit is the first one, the run pushes nothing and the [two writers](/docs/infra/review-collector/two-writers) page says how the session resolves it.
-- **Readiness is a two-by-two.** Fixes parked and any queue commit fits: push, because the fixes are what the window is for. No fixes and the count reaches the fill target: push. No fixes and the queue is short: wait, the slot is free and nothing is waiting on it — unless the window is held, because then it is as large as it will ever be. The commit that stopped it overflows the cap or conflicts, and both only clear once this window lands, so holding a held window to the target parks it forever rather than under-filling one review. Fixes parked and the queue empty: park, which is the case that motivated `ai/review-fixes` — unless the queue's first commit is the held one, because then the queue is blocked rather than empty and the fixes landing is what unblocks it. `--force` collapses the two waits into a push, for the dispatch when a short window is the right trade. With no pull request open, the commits `develop` already carries above the merge base count beside the queue's — they are part of the range the first review reads — so a `develop` a dying run left at the target is ready with nothing to add, and the only act owed is opening the pull request. Asked once, because the window that was measured is the window that ships: nothing after readiness drops a commit, and the one thing that can add files — the fold of `main` — is undone whole when it overflows.
-- **The window is pushed unverified.** No build, typecheck, lint or test runs on the candidate: `develop` runs its own CI after the push, and a red there is one more commit in the next window — the pipelining page's "correctness on `develop` is eventual", which already covered the tests and now covers every check. A check run here was a gate with no remedy: the window is a prefix of the queue, so a red commit inside it — a dependency bump whose repair the session committed later, as the finishing checks always produce it — holds every window behind it, since the prefix that carries the repair is past the cap and no shorter one is green; dropping the tail one commit at a time only found that out several runner-minutes per attempt later, and left the pipeline parked. The queue's own CI already names the red commit to the session that can fix it, in the next commit, which is the one place a fix can be written. The express lane is the exception, and pays for the full set (its own page). `main` is folded in after the port, and a fold that puts the window over the file cap is undone whole: the pick loop counts fixes and queue commits, never a merge's own diff, so `main`'s backlog of files would otherwise ride out uncounted past the one limit that makes CodeRabbit skip the review outright — undone rather than shrunk, because nothing here knows which of `main`'s files to drop, and the fold tries again next window.
-- **Fast-forward when the shas allow it.** When there are no fixes, the queue sits directly on `origin/develop`, no skipped merge sits among the cut's ancestors and `main` had nothing to fold in, the cut is a queue commit and `git push origin <cut>:develop` moves `develop` to it without rewriting a sha, so the session's local branch already matches and no rebase is owed. The cherry-picked candidate is pushed in every other case.
+### Readiness
+
+Whether the window goes out is `checkIsReady`, a two-by-two over what the port holds:
+
+|                  | queue commits fit                       | none fit                                                                                                 |
+| :--------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------- |
+| **fixes parked** | push                                    | park — unless the queue's first commit is the held one, then push                                        |
+| **no fixes**     | push, at whatever size the port reached | push what `develop` carries unreviewed, else nothing is owed — or fail red when the first commit is held |
+
+**There is no lower bound on a window.** The port takes every commit the queue owes and stops only at the cap or on a conflict, so a window that came out small is the whole of what was left — and waiting for it to grow waits on a push nothing has promised while the queue stays unsynced. The standing goal is `ai/queue` fully drained into `develop`; the cap is the only size the window is measured against, and it is measured on the tree that will be pushed.
+
+A held window cannot grow — the commit that stopped it overflows the cap or conflicts, and both only clear once this window lands. `--force` is only ever the difference on parked fixes, since everywhere else an owed commit already goes out. With no pull request open, the commits `develop` already carries above the merge base count beside the queue's, so a `develop` a dying run left pushed is ready with nothing to add and only the opening is owed. Under a rate limit the review the limit refused is asked for first ([the runner's retrigger](/docs/infra/review-collector/runner)), since its answer is still owed.
 
 ## Push, reply, open
 
-The push is one command, `git push --force-with-lease=refs/heads/develop:<measured> origin candidate:develop`, preceded by a fresh fetch and a re-read of the check. The lease is the compare-and-swap: the remote is handed the sha every count was measured from and refuses the update itself if `origin/develop` no longer sits on it, so there is no gap between the fetch and the push for a concurrent update to land in. That refusal is read off the ref rather than off git's rejection text, which is localized — the branch moved, so the run reports a moved outcome and the next one re-measures, while a push that failed for anything else fails the job as itself. The fetch before it is only an early exit. The re-read catches a review that a person started with a comment while the run worked: if the bucket is `pending`, the run exits without pushing and nothing is lost, because the candidate was local and the fixes are on `ai/review-fixes`.
+The push is `git push --force-with-lease=refs/heads/develop:<measured> origin candidate:develop`, preceded by a fresh fetch and a re-read of the check. The lease is the compare-and-swap: the remote refuses the update itself if `origin/develop` left the sha every count was measured from, so there is no gap for a concurrent update to land in; that refusal is read off the ref rather than git's localized rejection text, the run reports a moved outcome and the next one re-measures, while a push that failed for anything else fails the job as itself. The re-read catches a review a person started with a comment while the run worked, and it **fails closed**: a status that cannot be read at all is not a free slot, because `gh` answering nothing looks exactly like a review that began a second ago, and pushing on that reading cancels it for a window nobody re-measures. The ask under a rate limit is guarded the same way, for the same reason. After the push the reply step runs again and posts `Agreed, fixed in <sha>` on every thread a pushed commit's trailer names, and one verdict comment per `Drains:` review id.
 
-After the push, the reply step runs again — the same scan the gates ran, now finding the fresh commits — and posts `Agreed, fixed in <sha>` with the commit subject on every thread a pushed commit's trailer names, and one verdict comment per `Drains:` review id listing the commits that answered it. The order is the skill's rule: push, then reply with a sha the remote has, so CodeRabbit can resolve the thread when it reviews the window that just started.
-
-**With no pull request open, the push is followed by opening one.** The last release merged, `develop` followed `main`, and the queue has since filled a window from that merge base — the same fill target a push clears, because opening the pull request is the first review of the range, and a pull request opened on a handful of files spends the hour on them. Opening is idempotent by predicate: the cycle reaches it only when no release pull request is open, so a run that pushed and died before opening is finished by the next one, which measures `develop` already at the target with nothing to add and opens on it. A pull request cannot be opened on an empty range, which is why the push comes first. Merging it stays a person's act — that is a release.
-
-Nothing is deleted afterwards. `ai/review-fixes` stays, owing nothing, until the next drain re-creates it from the new `develop` head. The queue is never touched: what it still owes is measured by `git cherry` on the next run, and the session's next rebase onto `origin/develop` drops the ported commits from its own history. The replies can run on any later run and find nothing to do.
+With no pull request open, the push is followed by opening one — the same readiness a push clears, because opening is the first review of the range. A run that pushed and died before opening is finished by the next one, which finds `develop` carrying the window with nothing to add. Nothing is deleted afterwards: `ai/review-fixes` stays, owing nothing, until the next drain re-creates it, and the queue's ported commits drop from the session's history at its next rebase.
 
 ## Why a re-run is a no-op
 
-| Step  | Precondition read from the remote                | Effect                       | Second run against unchanged state                                                 |
-| :---- | :----------------------------------------------- | :--------------------------- | :--------------------------------------------------------------------------------- |
-| reply | a trailer's thread lacks a reply citing that sha | posts the reply              | every thread has one — nothing                                                     |
-| gate  | body range end, check bucket                     | a scheduled retrigger        | same verdict, same deadline — the ask is posted once per block                     |
-| drain | a finding is open by the predicate               | commits on `ai/review-fixes` | every finding carries a trailer or a reply — nothing                               |
-| port  | `git cherry` lists unported commits, readiness   | a local branch               | same branch, discarded with the runner                                             |
-| push  | `origin/develop` unchanged since the read        | fast-forwards `develop`      | the last push moved the head, so the body no longer ends at it — exits at the gate |
-| open  | no release pull request, `develop` at the target | opens the pull request       | one is open — the ordinary cycle, with its reviews as the frontier                 |
+| Step  | Precondition read from the remote                         | Effect                       | Second run against unchanged state                                                 |
+| :---- | :-------------------------------------------------------- | :--------------------------- | :--------------------------------------------------------------------------------- |
+| reply | a trailer's thread lacks a reply citing that sha          | posts the reply              | every thread has one — nothing                                                     |
+| gate  | the newest stated range's end, check bucket               | a scheduled retrigger        | same verdict, same deadline — the ask is posted once per block                     |
+| drain | a finding is open by the predicate                        | commits on `ai/review-fixes` | every finding carries a trailer or a reply — nothing                               |
+| sync  | the queue does not sit on the tree the window is built on | rewrites `ai/queue`          | it sits on it — nothing                                                            |
+| merge | the range at the head, nothing open, least risk           | merges the pull request      | none is open — the next window fills from the merge base                           |
+| port  | `git cherry` lists unported commits, readiness            | a local branch               | same branch, discarded with the runner                                             |
+| push  | `origin/develop` unchanged since the read                 | fast-forwards `develop`      | the last push moved the head, so the body no longer ends at it — exits at the gate |
+| open  | no release pull request, `develop` at the target          | opens the pull request       | one is open — the ordinary cycle, with its reviews as the frontier                 |
 
-The push row is the load-bearing one. After a push, the very next event finds a body that does not end at the head and a status that is `pending` or about to be, and exits — until CodeRabbit's completion moves the frontier and re-fires the cycle. Nothing here counts runs, remembers the last push, deletes a ref, or sleeps.
+## Notes
+
+- **Rejected: verifying a window before the push** — build, typecheck and lint on the candidate, dropping the tail commit until green. A gate with no remedy: the window is a prefix of the queue, so a red commit inside it holds every window behind it while its repair sits commits later and past the cap, and each attempt spends runner-minutes finding that out. The queue's own CI already names the red commit to the session that can fix it in the next commit. The express lane alone verifies, because it reaches `main` unread.

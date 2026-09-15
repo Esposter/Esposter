@@ -1,6 +1,6 @@
 # Module Mocks (`vi.mock`, colocated doubles, msw-trpc)
 
-What deserves a double at all, how a module-level one is declared, where it lives, which registration form to use, and which cleanup hook it then needs.
+Read when reaching for `vi.mock`, a colocated double or `msw-trpc` — what deserves a double at all, how a module-level one is declared, where it lives, which registration form to use, and which cleanup hook it then needs.
 
 ## What to mock
 
@@ -107,7 +107,7 @@ Call `setupMswTrpc()` at `describe` scope (`@/services/trpc/mswTrpc.test`) and d
 
 ## Where a helper module may not live
 
-**Never add a non-`.d.ts` module under `apps/web/shared/` for test helpers.** `tsconfig.app.json` includes `../shared/**/*.d.ts` only, so a `.ts` helper there resolves for vitest but not for `vue-tsc` — and importing one from `shared/test/setup.ts` broke auto-import resolution across the whole app project (thousands of phantom `Cannot find name 'ref'` errors, nowhere near the file). Keep helpers colocated with their test, or beside the source they fake (`server/composables/**/useX.test.ts` exports the fake for `useX`).
+**Never add a non-`.d.ts` module under `apps/web/shared/` for test helpers.** `tsconfig.app.json` includes `../shared/**/*.d.ts` only, so a `.ts` helper there resolves for vitest but not for `vue-tsc` — and importing one from `shared/test/setup.ts` broke auto-import resolution across the whole app project (thousands of phantom `Cannot find name 'ref'` errors, nowhere near the file). Keep helpers colocated with their test, or beside the source they fake (`server/composables/azure/table/useTableClient.test.ts` exports the fake for `useTableClient`).
 
 ## `InvocationContext` logHandler
 
@@ -118,7 +118,7 @@ Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. A bare 
 Getting this wrong is invisible until a call-count assertion reads a neighbour's calls, so the hook is chosen by creation style, never by habit.
 
 - **`vi.spyOn()` → `vi.restoreAllMocks()`** (default) — restores the original implementation AND clears recorded calls, so spies never leak.
-- **Module-level `vi.fn()` (colocated `vi.mock`) → nothing** — Vitest clears mock history before every test by default, so a module-level `vi.fn()` no longer leaks its calls into the next one. An explicit `vi.clearAllMocks()` is only worth writing where a test clears **mid-test**, between two call-count assertions of its own; in a `beforeEach` it restates the default.
+- **Module-level `vi.fn()` (colocated `vi.mock`) → nothing** — Vitest clears mock history before every test by default, so a module-level `vi.fn()` never leaks its calls into the next one. An explicit `vi.clearAllMocks()` is only worth writing where a test clears **mid-test**, between two call-count assertions of its own; in a `beforeEach` it restates the default.
 - **Never `vi.resetAllMocks()` as routine cleanup** — it resets implementations to empty functions, erasing intentional `vi.mock` defaults.
 
 ## Globals and environment variables

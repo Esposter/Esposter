@@ -46,10 +46,9 @@ jobs:
         with:
           package: "@esposter/functions"
 
+      # `pnpm deploy` copies what the manifest's `files` lists, and that list is where `host.json` rides along
       - name: 📦 Collect Deployment Output
-        run: |
-          pnpm --filter @esposter/functions deploy --prod "$OUTPUT_DIRECTORY" --config.inject-workspace-packages=true --config.node-linker=hoisted
-          cp apps/functions/host.json "$OUTPUT_DIRECTORY/host.json"
+        run: pnpm --filter @esposter/functions deploy --prod "$OUTPUT_DIRECTORY" --config.inject-workspace-packages=true --config.node-linker=hoisted
 
       - name: 📦 Zip Artifact for Deployment
         working-directory: ${{ env.OUTPUT_DIRECTORY }}

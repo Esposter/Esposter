@@ -1,0 +1,48 @@
+# TypeScript
+
+Most of the `typescript` skill is lint- or typecheck-decided; what this sweep carries is the part that needs a reader — whether two branches are mutually exclusive, whether a cast stands in for a type that could be modelled, whether a signature says what it accepts.
+
+## Areas
+
+Coverage lives in the area file, never here. A pass loads this file and the one area it is sweeping. The
+area names are [quality](../quality/)'s, so "was this area swept, for which question, and when" reads off
+one set of names across every promoted ledger.
+
+| Area                      | What it holds                                                                                                                                              |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [app-shell](app-shell.md) | Everything a product mounts inside rather than owns: the chrome, the routes, and the cross-cutting service and composable layers no single feature claims. |
+| [messaging](messaging.md) | Esbabbler — its components, store, composables, services and models.                                                                                       |
+| [resource](resource.md)   | The resource explorer, the sheet editor and the other editors.                                                                                             |
+| [products](products.md)   | The app's smaller products — posts, the clicker, achievements, docs, the user pages and the standalone editors.                                            |
+| [dungeons](dungeons.md)   | The game.                                                                                                                                                  |
+| [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services.                                                                                      |
+| [shared](shared.md)       | `apps/web/shared`, `app/components/Styled` and `packages/shared` — what both halves of the app read.                                                       |
+| [packages](packages.md)   | Every workspace package outside `apps/web` and `packages/shared`.                                                                                          |
+
+## The find recipe
+
+The chain candidates — a guard whose next statement at the same indent is another guard or the fall-through return. Roughly one in four is a chain; the rest are guards over different subjects, or guards each depending on the one above having passed, which the rule keeps split.
+
+```bash
+rg -U --pcre2 '^(\s*)if \(.*\) return .*;\n(\1//.*\n)*\1(if \(.*\) return .*;|return .*;)' -g '*.ts' -g '*.vue' apps packages scripts
+```
+
+The comment group is load-bearing: a line of prose between the guard and the fall-through return hides a
+chain from the pattern without it, and a guard is exactly where this codebase writes prose.
+
+## Next enforceable
+
+`typescript/consistent-type-imports`, off in `.oxlintrc.json`. A class used only in type position takes
+`import type` everywhere but the odd file, so the rule would decide it — but it also owns
+`disallowTypeAnnotations`, and `vi.mock(import(…))` is the sanctioned Vitest idiom, so it needs that option
+off and its own violation sweep before it can be switched on.
+
+Switching it on would decide `.ts` and nothing else: oxlint skips the rule for `.vue`, since it cannot tell
+from the script block whether the template uses an import as a value, and nothing in the ESLint config turns it
+on there. So the `.vue` rows keep this dimension however `.oxlintrc.json` ends up.
+
+## Exclusions
+
+- **`apps/web/content/docs`** — prose, and the `docs` ledger's.
+- **`apps/web/shared/generated`** — generated output, rewritten by its generator rather than by hand.
+- **`*.test.ts`, `*.bench.ts`** — the `testing` ledger reads them against its own skill, which states where a suite may diverge from these rules.

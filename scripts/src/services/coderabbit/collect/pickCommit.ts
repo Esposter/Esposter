@@ -1,17 +1,17 @@
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
+import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getResult } from "@esposter/shared";
 
-// A cherry-pick that fails says nothing about why in its exit code, and the two reasons need opposite answers:
-// An unmerged path is a real conflict the caller stops on, and no unmerged path means the patch is already in
-// The tree under another sha, which is nothing owed. Reading the index is what tells them apart.
+// `-x` names the original in the copy's message, which is how a port survives its patch id drifting
+// (`readCherryShas`). A failed cherry-pick's exit code says nothing about why, and the two reasons need opposite
+// Answers: an unmerged path is a conflict the caller stops on, none means the patch is already in the tree under
+// Another sha
 export const pickCommit = (sha: string, cwd: string): PickOutcome =>
-  getResult(() => runGit(["cherry-pick", sha], cwd)).match(
+  getResult(() => runGit(["cherry-pick", "-x", sha], cwd)).match(
     () => PickOutcome.Applied,
     () => {
-      const unmerged = getNonEmptyLines(runGit(["diff", "--name-only", "--diff-filter=U"], cwd));
-      if (unmerged.length > 0) {
+      if (readUnmergedPaths(cwd).length > 0) {
         runGit(["cherry-pick", "--abort"], cwd);
         return PickOutcome.Conflict;
       }

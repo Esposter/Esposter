@@ -37,14 +37,11 @@ describe("sessionRouter", () => {
   const deviceLabel = "Chrome 141 on Windows";
 
   // The row as better-auth writes it, minus the token the client is never handed
-  const insertSession = async (
-    session: Session,
-    expiresAt = new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
-  ) => {
+  const insertSession = async (session: Session) => {
     await mockContext.db.insert(sessions).values({
-      expiresAt,
+      expiresAt: session.expiresAt,
       id: session.id,
-      ipAddress: "203.0.113.1",
+      ipAddress: "",
       token: session.token,
       updatedAt: session.updatedAt,
       userAgent,
@@ -61,11 +58,13 @@ describe("sessionRouter", () => {
   });
 
   beforeEach(async () => {
+    // Pinned so every session's stamps read off the epoch, and an expired one is the epoch itself
+    vi.useFakeTimers({ now: 0 });
     // The mock context inserts a session row of its own for the default payload, and this file reads the whole
     // Listing back, so it starts from only the rows it wrote
     await mockContext.db.delete(sessions);
-    currentSession = { ...createMockSession(userId), token: "currentToken" };
-    otherSession = { ...createMockSession(userId), token: "otherToken" };
+    currentSession = createMockSession(userId);
+    otherSession = createMockSession(userId);
     await insertSession(currentSession);
     await insertSession(otherSession);
     // The session the request runs as, queued for the auth middleware's own read
@@ -73,17 +72,13 @@ describe("sessionRouter", () => {
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
   test("reads the caller's unexpired sessions, without the stored address", async () => {
     expect.hasAssertions();
 
-    const expiredSession = { ...createMockSession(userId), token: "expiredToken" };
-    await insertSession(
-      expiredSession,
-      new Date(Date.now() - Temporal.Duration.from({ days: 1 }).total("milliseconds")),
-    );
+    await insertSession({ ...createMockSession(userId), expiresAt: new Date(0) });
 
     const sessionSummaries = await caller.readSessions();
 
@@ -110,9 +105,8 @@ describe("sessionRouter", () => {
   test("rejects a session the account does not hold", async () => {
     expect.hasAssertions();
 
-    // A literal rather than a random session id, so the snapshot below is the same string every run
-    await expect(caller.deleteSession("missingSessionId")).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Session is not found for id: missingSessionId]`,
+    await expect(caller.deleteSession("-1")).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Session is not found for id: -1]`,
     );
 
     expect(getMockRevokeSession()).not.toHaveBeenCalled();

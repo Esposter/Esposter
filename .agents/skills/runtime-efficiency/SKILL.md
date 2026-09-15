@@ -1,6 +1,6 @@
 ---
 name: runtime-efficiency
-description: Esposter runtime efficiency — where work is placed and how it is shaped so it stays cheap: resolve a fact once at the consumer rather than at every producer, keep derivable work off the request path someone is waiting on, order an index by the lookup it has to serve rather than by the constraint it was written for, one statement per set instead of one per element, overlap independent reads and say why a sequence is load-bearing, reject cheapest-first, and bound a table's growth on the write path that already holds its keys. Apply when adding a query, an index, a fan-out, a background handler, or a table nothing deletes from — and when reviewing one.
+description: Apply when adding a query, an index, a fan-out, a background handler, or a table nothing deletes from, when a tooling script or sweep feels slow, and when reviewing any of them. Esposter runtime efficiency — where work is placed and how it is shaped so it stays cheap: resolve a fact once at the consumer rather than at every producer, keep derivable work off the request path someone is waiting on, order an index by the lookup it has to serve rather than by the constraint it was written for, one statement per set instead of one per element, overlap independent reads and say why a sequence is load-bearing, reject cheapest-first, bound a table's growth on the write path that already holds its keys, and measure a script end to end before benching a unit — its clock is boot, spawns and reads, so the runner, one git spawn per scan and skipping generated files are where it moves.
 ---
 
 # Runtime Efficiency
@@ -38,6 +38,27 @@ The dangerous case is a sequence that looks independent: rows written for one pu
 ## Reject cheapest-first
 
 The check that can drop the work using nothing already in hand runs before the queries. A payload that renders to nothing, an empty id set, a flag that says this type never reaches this surface — each of those ends the call before it costs anything, and every one of them placed after a query is that query wasted on work that was never going to happen.
+
+## A script's clock is boot, spawns and reads
+
+A tooling script's walltime is measured end to end before any unit in it is, and the measurement is a bench —
+`scripts/src/sweeps/commands.bench.ts` spawns every `ai:sweep:*` command as an agent types it, and its `*.bench.md` is
+the table to read before timing anything by hand (`bench` skill, "A stopwatch is a probe, never an answer"). What it
+shows: a sweep over the whole tree is one to two seconds, of which the scan itself is tens to a few hundred
+milliseconds — the rest is the loader booting, a `git ls-files` per pathspec and every file read. So the savings sit
+at those three:
+
+- **The runner.** `node` boots in a fraction of `tsx`'s time; which one a script gets is the `package-scripts` skill's
+  rule, decided by the syntax in its import graph and never by rewriting that syntax.
+- **One spawn per scan.** `getSweepFilePaths` takes every pathspec a scan wants in one call — git walks its index
+  once and lists an overlap once — where a spawn per pathspec pays the process start each time.
+- **Generated files are skipped, by the list that already names them.** A scan over "every source file" reads what
+  the formatter ignores as generated — snapshots and migration state were five sixths of the bytes one scan read
+  — and a generated file vouches for nothing its source does not, while an old one vouches for what its source
+  since dropped. `.oxfmtrc.json`'s `ignorePatterns` is the one list of them, read rather than restated.
+
+A unit earns a bench only where its cost outgrows the corpus (`bench` skill); one that scans a file with a regex
+does not, whatever the tree's size.
 
 ## Bound growth where the keys already are
 

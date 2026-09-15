@@ -1,5 +1,8 @@
 # Arbitrary Bracket Values — `calc()`, CSS Variables, Transitions, `!important`
 
+Read when a utility needs a value the vocabulary has no token for — a `calc()`, a CSS variable, a transition,
+or an override that wants `!important`.
+
 ## Arbitrary CSS Values
 
 Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and CSS variable references — directly as props. **Always the valued form, `prop="[…]"`; a bare `prop-[…]` attribute is silently inert.** UnoCSS extracts a bracketed token as a class, so `<div font-[Montserrat]>` generates `.font-[Montserrat]` and the element — which carries an attribute, not a class — matches nothing. It fails the same way in every position, so the rule has no exception: brackets go inside the quotes.

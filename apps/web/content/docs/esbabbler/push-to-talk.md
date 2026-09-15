@@ -9,7 +9,7 @@ description: Hold-to-talk keybind driving the mic gate, with a configurable rele
 
 ## How it works
 
-The `usePushToTalk` composable registers `keydown`/`keyup`/`blur` listeners that drive the [`MicrophoneProcessor`](/docs/esbabbler/voice-video) gate from key state instead of the voice-activity dB level. The **call store** hosts it on the main window (isInCall is injected so the store avoids a circular import) — living with the store so the listener survives navigation, like the call itself — and `Pip/Host` registers it again on the PiP window, since key events don't cross documents.
+The `usePushToTalk` composable registers `keydown`/`keyup`/`blur` listeners that drive the [`MicrophoneProcessor`](/docs/esbabbler/voice-video) gate from key state instead of the voice-activity dB level. The **call store** hosts it on the main window (isInCall is injected so the store avoids a circular import) — living with the store so the listener survives navigation, like the call itself — and `PictureInPicture/Host` registers it again on the PiP window, since key events don't cross documents.
 
 - **Key match** — the stored `pushToTalkKeybind` is a single `event.code` captured by the Keybinds field in the Voice & Video panel; a keydown matching it (outside editable targets — composer, inputs, contenteditable) opens the gate and `preventDefault`s.
 - **Gate** — `MicrophoneProcessor.voiceInputMode` selects the gate source per animation frame: `VoiceActivity` compares the live dB level against the sensitivity threshold; `PushToTalk` reads `isPushToTalkKeyHeld`, set by the liveKit store's `setPushToTalkKeyHeld`.
@@ -36,7 +36,7 @@ stateDiagram-v2
 | `apps/web/app/util/dom/checkIsEditableTarget.ts`                                                  | cross-realm-safe editable-target skip                             |
 | `apps/web/app/models/message/room/call/MicrophoneProcessor.ts`                                    | key-driven gate mode (`isPushToTalkKeyHeld`)                      |
 | `apps/web/app/store/message/room/liveKit.ts`                                                      | `setPushToTalkKeyHeld` + release-delay timer                      |
-| `apps/web/app/components/Message/Content/Call/Pip/Host.vue`                                       | PiP window listener wiring                                        |
+| `apps/web/app/components/Message/Content/Call/PictureInPicture/Host.vue`                          | PiP window listener wiring                                        |
 | `apps/web/app/components/Message/Model/User/Settings/Type/Voice/PushToTalkKeybindButton.vue`      | keybind capture field                                             |
 | `apps/web/app/components/Message/Model/User/Settings/Type/Voice/PushToTalkReleaseDelaySlider.vue` | release-delay slider                                              |
 

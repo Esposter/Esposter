@@ -15,7 +15,7 @@ one, so there is no `.match` on the outside of a `withFinalizerAsync` — nestin
 layer therefore has to be `getResultAsync`, because it is the only one of the two that produces something a
 `.match` can end:
 
-```typescript
+```ts
 getSynchronizedFunction((argument) =>
   getResultAsync(() => withFinalizerAsync(operation, finalizer)).match(noop, console.error),
 );

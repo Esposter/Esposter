@@ -36,7 +36,7 @@ describe(getWslSourceMirrorEntryPath, () => {
     );
   });
 
-  // GetWslSourceMirrorPath is `${getWslSourceMirrorEntryPath(cwd)}/tree`, so this also covers its keying.
+  // `getWslSourceMirrorPath` is `${getWslSourceMirrorEntryPath(cwd)}/tree`, so this also covers its keying.
   test("keys on the exact host cwd so a subpackage cwd resolves a distinct entry", () => {
     expect.hasAssertions();
 

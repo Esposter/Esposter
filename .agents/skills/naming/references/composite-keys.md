@@ -7,7 +7,7 @@ Read when joining more than one identifier into a single string — a `useMutati
 
 A composite key is joined with `ID_SEPARATOR` (`@esposter/shared`), never a hand-written `-` or `:`:
 
-```typescript
+```ts
 `${roomId}${ID_SEPARATOR}${userId}`;
 ```
 

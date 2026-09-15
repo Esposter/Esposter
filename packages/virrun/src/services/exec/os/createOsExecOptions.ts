@@ -23,9 +23,10 @@ import { join } from "node:path";
 //
 // The corepack home belongs to every run, not just the capture install: the sandbox mounts `/` read-only, so a command
 // That shells out to `pnpm` resolves the node manager's corepack shim, which downloads the repo's pinned
-// `packageManager` version whenever the host's own corepack cache doesn't already hold it — writing under `$HOME/.cache`
-// And dying with EROFS. Pointing COREPACK_HOME at a bound, host-persisted directory makes that bootstrap writable once and
-// Reused by every later run.
+// `packageManager` version whenever the host's own corepack cache doesn't already hold it — writing under
+// `$HOME/.cache`
+// And dying with EROFS. Pointing COREPACK_HOME at a bound, host-persisted directory makes that bootstrap writable once
+// And reused by every later run.
 //
 // That login PATH also carries the host's `/mnt/c/<repo>/node_modules/.bin` (WSL Windows-interop appends the Windows
 // PATH), whose binaries are the *win32* build. But the sandbox chdir's into the ext4 source mirror, not /mnt/c, so

@@ -19,6 +19,8 @@ Code examples use `Foo`/`Bar`/`baz`, `external-pkg`, `@/models/Bar`. **Never pas
 
 Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine — they describe a class of import, not a specific symbol. A concrete path is fine when the path **is** the rule (a registry file every consumer must edit).
 
+**A name in an example is either real or a placeholder, never a name that was real once.** An example of the right form names an identifier the tree holds, so `scripts/src/workspace/staleNames.test.ts` fails the day it is renamed; an example of the wrong form, or a shape with nothing in the tree to point at, keeps the part the rule is about and takes a placeholder stem for the rest — `dmFoo` against `directMessageFoo`, `FOO_PROPS` for a table wrongly screamed, `readFoosByBar` becoming `readFoosByBars` — which the test skips by design. A realistic name invented for the example — a settings-visible flag, a feature-card component — is the one shape that fails both: it reads as a citation and resolves nowhere.
+
 The same applies to numbers: keep only the magnitudes the rule operates on (a limit, a budget), and drop the evidence numbers from the incident that prompted it — PR numbers, dates, counts from one occurrence, quoted error text with baked-in values. If the operative number may drift, state where to re-check it rather than freezing today's reading.
 
 ## State the rule, never the roster it produced

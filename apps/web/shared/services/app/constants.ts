@@ -9,7 +9,7 @@ export const LEFT_DRAWER_WIDTH = 256;
 export const RIGHT_DRAWER_WIDTH = 256;
 
 // Declared here rather than imported from @esposter/shared, which also has them: this file is pulled into
-// Nuxt.config by configuration/{site,pwa}.ts, and importing the package barrel there drags the whole runtime
+// `nuxt.config` by configuration/{site,pwa}.ts, and importing the package barrel there drags the whole runtime
 // Graph (zod, neverthrow, node-html-parser) into config evaluation
 export const KIBIBYTE = 2 ** 10;
 export const MEGABYTE = KIBIBYTE ** 2;

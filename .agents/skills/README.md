@@ -1,83 +1,16 @@
 # Esposter Skills — Authoring Conventions
 
-How the skills in this directory are organised and maintained. **How to write one is itself a skill — see `skill-authoring`** (frontmatter that drives selection, one owner per topic, don't restate enforcers, generic placeholders). This file is only the index of who owns what.
+How the skills in this directory are organised and maintained. **How to write one is itself a skill — see `skill-authoring`** (frontmatter that drives selection, one owner per topic, don't restate enforcers, generic placeholders). This file holds only what no single skill's frontmatter can say: the boundaries between skills, and how the repo tree relates to the user's global rules.
 
-**Each skill owns exactly one concern, and a given rule lives in exactly one skill** — which is what the map below is for. Everything about how one is written (the most-specific-owner tiebreak, pointers instead of copies, the two-tier layout and its budget, tight-not-fluffy) is `skill-authoring`'s, stated there in full and deliberately not repeated here.
+**Each skill owns exactly one concern, and a given rule lives in exactly one skill.** Everything about how one is written (the most-specific-owner tiebreak, pointers instead of copies, the two-tier layout and its budget, tight-not-fluffy) is `skill-authoring`'s, stated there in full and deliberately not repeated here.
 
-`.agents/skills` is a symlink to `.agents/skills`, so edits to either tree apply to both automatically — no manual mirroring.
+`.claude` is a symlink alias of `.agents` (`apps/web/content/docs/architecture/agent-configuration.md`), so a skill edited under either path is the same file.
 
-## Ownership map
+## Finding a rule's owner
 
-Find a rule's owner here before adding it. **This map lists every skill, and must stay that way** — an absent skill is invisible to that check, so its topic gets re-created somewhere else. That is the exact failure this file exists to prevent.
+The listing of every skill is the `description` in each `SKILL.md` — Claude Code loads all of them at the start of a session, and `pnpm ai:sweep:skill-docs` holds each one to its shape — so there is no roster here to keep current. Find the owner by reading the descriptions; if nothing fits, that signals a missing single-responsibility skill — create one rather than overloading an existing skill.
 
-If nothing fits, that may signal a missing single-responsibility skill — create one rather than overloading an existing skill, and add it here in the same change.
-
-### Meta
-
-- `skill-authoring` — how to write a `SKILL.md`: frontmatter/selection, one owner per topic, the enforcer rule, generic placeholders, the two-tier layout, the `Settled — do not re-propose` list.
-- `docs` — `apps/web/content/docs` conventions: the Mermaid mandate, location-carries-status, page templates, area lifecycle.
-- `readme-standards` — package `README.md` template, badges, published-vs-private split.
-
-### Cross-cutting code
-
-- `formatting` — whitespace, blank-line placement, comment attachment/style. (Import order and line endings are tool-enforced; it points at the enforcer.)
-- `file-organization` — where files/exports/constants/classes live, alias imports, constant maps, package creation, refactoring, file length.
-- `naming` — identifier naming conventions (booleans, functions, variables). Framework-specific naming lives in the framework's own skill.
-- `typescript` — TypeScript language rules and type patterns.
-- `over-engineering` — the goal an abstraction is measured against (lower cognitive burden — duplicated business logic, a reused value — never line count), the ban on extracting syntax into a helper, and the one index of over-engineering shapes each pointing at the skill that owns its rule.
-- `invariants` — how a rule that must hold in many places is made to hold: by construction, structurally, by an enforcer, and only last by a remembered guard. Owns the ladder; each convention stays owned by its own skill.
-- `error-handling` — neverthrow `getResult`, tRPC guards, Azure Functions logging/retry.
-- `string-utils` — `normalizeString` / `sanitizeTextHtml` boundaries.
-- `zod` — schema conventions. **Shares its topic with `~/.claude/rules/zod.md`** — see "Skills vs global rules".
-- `vjsf` — form schemas rendered by Vjsf: `*Form` schemas, `layout` meta, ajv keywords, discriminated-union form quirks, options/context typing.
-
-### Vue / frontend
-
-- `vue` — SFC semantics: macro/declaration order, template patterns, watch, refs, SSR guards.
-- `vue-component-patterns` — component _authoring_: shell primitives, generics, slots, co-location, emit naming, local state init.
-- `vue-page-composition` — page/list _composition_: page decomposition, granularity, `v-for` list items, action items, singleton dialogs.
-- `vue-composable-patterns` — composable _authoring_: `MaybeRefOrGetter`, validation layers, resource lifecycle, async sequencing.
-- `pagination` — paginated lists: the cursor read pattern, `StyledWaypoint`, search-as-you-type, the offline IndexedDB cache.
-- `routing` — links/`:to`, `navigateTo`, route reads, route-synced tabs, `definePageMeta` `validate`/`key`.
-- `styling` / `unocss` — attributify styling usage vs. UnoCSS config.
-- `vuetify` — Vuetify 4 components, dialogs, selects, forms, lists.
-- `responsive` — mobile/narrow-viewport collapse rules.
-- `ux` — where an interaction belongs: point-of-need entry points, what a settings panel configures vs what a dialog creates, and which surfaces earn a management screen at all.
-- `pinia` — store conventions.
-- `tiptap` / `grapesjs` / `vue-phaserjs` / `slash-commands` — feature-library integrations.
-
-The `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-patterns` boundary is **semantics vs one component vs many components vs composables**: a rule about _how an SFC is written_ is `vue`; about _how a single component is built, typed and named_ is `vue-component-patterns`; about _how a page or list is assembled from components_ is `vue-page-composition`; about _a `use*` function_ is `vue-composable-patterns`. A rule that seems to fit two goes to the more specific one and the other links to it — never state it in both.
-
-### Backend / data
-
-- `trpc` — routers, procedures, router tests.
-- `drizzle` — Postgres schema, columns, relations.
-- `azure-table` — Azure Table Storage keys, partitioning, pagination.
-- `esbabbler` / `esbabbler-call` — the messaging domain, and its calls/voice internals.
-
-### Process / tooling
-
-- `testing` — Vitest conventions, mock/session patterns, test environments, what to test.
-- `git` — commit format, safety rules, branch hygiene.
-- `code-review` — the one entry point for every review: the workflow script, its two modes, what a run costs and bounds it, confidence and provenance on findings, closing a finding (`fixing-findings.md`), and the stop rule.
-- `coderabbit` — review config: PR file budget, `.coderabbit.yaml` exclusions, exclude/re-enable commit pair.
-- `sweeps` — repo-wide mechanical passes and the `.agents/ledgers/` tree that tracks them: when one earns a file, its metadata/coverage tables, standing vs one-shot, shrinking a sweep into an enforcer. The convention a sweep carries stays owned by its own skill.
-- `oxlint` — lint rule exceptions and disable directives.
-- `package-scripts` — which `pnpm` script to run, and from where.
-- `github-actions` — how a workflow step is written: the runner's affordance over a shell reimplementation, template data reaching the shell through `env:`, the skipped-job-is-a-green-check trap. What the CI _does_ stays in `architecture/monorepo-tooling.md`.
-- `context-efficiency` — how the main session spends its own context/turns: delegating wide reads, polling an external process vs sleeping, baselining before chasing an error.
-- `running-checks` — when a check runs and how the session waits on it: every typecheck, lint, test or build goes out in the background, one verification pass after every edit going out, the verdict is the exit code.
-- `runtime-efficiency` — where runtime work is placed and how it is shaped: resolve once at the consumer, keep derivable work off the request path, index by the lookup, one statement per set, bound growth on the write path.
-- `run-app` — launching the dev server and driving the app in a real browser to verify UI: session seeding, Chrome/CDP, the dev-build and async-render traps.
-- `build` — rolldown configs and external lists.
-- `bench` — colocated `*.bench.ts` and the benchmark reporter.
-- `dependency-updates` — the catalog, pinning, node bumps.
-- `pulumi-infra` — `apps/infra` Azure resources.
-- `claude-permissions` — `.agents/settings.local.json` rule semantics.
-- `model-delegation` — what to think through in-session vs delegate to a subagent.
-- `score` — the `SCORE.md` repository audit: re-scoring process, README badge sync, `compatibilityDate` bump.
-
-Keep this map current whenever a skill is split, merged, or created.
+The one boundary the descriptions alone do not settle is between the Vue skills, because the same rule can be read four ways. `vue` / `vue-component-patterns` / `vue-page-composition` / `vue-composable-patterns` is **semantics vs one component vs many components vs composables**: a rule about _how an SFC is written_ is `vue`; about _how a single component is built, typed and named_ is `vue-component-patterns`; about _how a page or list is assembled from components_ is `vue-page-composition`; about _a `use*` function_ is `vue-composable-patterns`. A rule that seems to fit two goes to the more specific one and the other links to it — never state it in both.
 
 ## Skills vs global rules
 

@@ -1,6 +1,6 @@
 ---
 name: vue-phaserjs
-description: Esposter vue-phaserjs integration patterns — the four files every game object component takes and what is deliberately absent, markRaw for Phaser objects in Pinia stores, configuration Pick pattern, all-configuration-keys-present-at-setup. Apply when writing Phaser game objects, stores, or vue-phaserjs components.
+description: Apply when writing Phaser game objects, stores, or vue-phaserjs components. Esposter vue-phaserjs integration patterns — the four files every game object component takes and what is deliberately absent, markRaw for Phaser objects in Pinia stores, configuration Pick pattern, all-configuration-keys-present-at-setup.
 ---
 
 # vue-phaserjs Conventions
@@ -61,7 +61,7 @@ Multi-line setters already use braces naturally — no change needed.
 
 ## Phaser Objects in Pinia Stores
 
-**Always use `markRaw()` when assigning a Phaser object to any reactive ref in a Pinia store** — the rule and its rationale live in the `pinia` skill ("Storing Class Instances — markRaw").
+**Always use `markRaw()` when assigning a Phaser object to any reactive ref in a Pinia store** — the rule and its rationale live in the `pinia` skill (`references/class-instances-in-state.md`).
 
 This package itself has zero `markRaw` usages — the rule bites in the consuming app (`apps/web/app/`: `store/`, `components/Dungeons/`, `composables/dungeons/`). Look there for real examples.
 

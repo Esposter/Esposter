@@ -5,19 +5,14 @@ import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
 import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Build the window as a branch, one cherry-pick at a time, and measure after each. Fixes ride first and whole,
-// Queue commits in queue order until one conflicts or overflows the cap, and the count that decides it is read
-// From the tree that will be pushed rather than estimated. Cheap on purpose — every run ports, and most exit at
-// Readiness — so the fold of `main` waits for `foldCandidate`, which runs only on a window worth a slot.
-//
-// Every count is taken from the frontier, never from the develop head. A review covers everything since the one
-// That last wrote a body, so a window pushed on top of one still unreviewed is read as a single range; measuring
-// From the head counts only the new commits and lets the pair overflow the cap, which is the one failure the cap
-// Exists to prevent, since past it CodeRabbit skips the review outright.
+// Build the window as a branch, one cherry-pick at a time, and measure after each from the tree that will be
+// Pushed. Every count is taken from the frontier, never from the develop head: a review covers everything since
+// The one that last wrote a body, so a window pushed on top of an unreviewed one is read as a single range.
 export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixesSha }: PortInput): PortResult => {
   runGit(["switch", "--detach", developSha], cwd);
 
@@ -25,20 +20,16 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
   for (const sha of fixShas)
     if (pickCommit(sha, cwd) === PickOutcome.Conflict)
       throw new InvalidOperationError(Operation.Update, "coderabbit", `fix ${sha} conflicts with develop`);
-  // Fixes ride whole or the run fails: a drain that touched more files than its findings is for a person to see,
-  // Where holding would park the window silently and `--force` would push a range the bot skips outright
+  // Fixes ride whole or the run fails: a drain that touched more files than its findings is for a person to see
   if (fixShas.length > 0 && getFileCount(`${frontierSha}..HEAD`, cwd) > REVIEW_FILE_CAP)
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
       `the fixes alone overflow the cap of ${REVIEW_FILE_CAP} files from the frontier`,
     );
-
-  // What the queue owes is read against the tree the fixes just built, not against develop: a queue rebased onto
-  // `ai/review-fixes` carries the fix commits as ancestors, and against develop they read as owed — re-picked onto
-  // A tree that already holds them, where a later fix that rewrote their lines turns the pick from empty into a
-  // Conflict that holds the whole window
-  const fixesHeadSha = runGit(["rev-parse", "HEAD"], cwd).trim();
+  // Owed against the tree the fixes built, not develop: a queue rebased onto `ai/review-fixes` carries the fix
+  // Commits as ancestors, and against develop they would be re-picked onto a tree that already holds them
+  const fixesHeadSha = readHeadSha(cwd);
   const queueShas: string[] = [];
   let heldSha: string | undefined;
   for (const sha of readCherryShas(fixesHeadSha, queueSha, cwd)) {

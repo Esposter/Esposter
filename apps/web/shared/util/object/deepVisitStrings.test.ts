@@ -6,21 +6,21 @@ describe(deepVisitStrings, () => {
     expect.hasAssertions();
 
     const visited: string[] = [];
-    deepVisitStrings({ a: "one", b: ["two", { c: "three" }], d: 1, e: null, f: undefined, g: new Date(0) }, (value) => {
+    deepVisitStrings({ a: "a", b: ["b", { c: "c" }], d: 1, e: null, f: undefined, g: new Date(0) }, (value) => {
       visited.push(value);
     });
 
-    expect(visited).toStrictEqual(["one", "two", "three"]);
+    expect(visited).toStrictEqual(["a", "b", "c"]);
   });
 
   test("should visit a bare string value", () => {
     expect.hasAssertions();
 
     const visited: string[] = [];
-    deepVisitStrings("one", (value) => {
+    deepVisitStrings("a", (value) => {
       visited.push(value);
     });
 
-    expect(visited).toStrictEqual(["one"]);
+    expect(visited).toStrictEqual(["a"]);
   });
 });

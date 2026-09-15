@@ -14,7 +14,7 @@ Which of the three views you take is the whole of the keying rule (`SKILL.md`):
 | `getDataRef(key)` | the key you name             | any write — the operation names its key where it is **issued** |
 | `getBoundData()`  | the key current _right now_  | a read issued for the current key whose response lands later   |
 
-```typescript
+```ts
 // useDataMap — "current foo" concept applies
 const fooStore = useFooStore();
 const { data: barType, setData } = useDataMap(() => fooStore.currentFooId, BarType.Baz);
@@ -28,7 +28,7 @@ const storeEntity = (entity: Foo) => {
 
 Generic usage — the explicit generic goes on the unions and empty containers, never an as-cast:
 
-```typescript
+```ts
 // CORRECT — generic for union / complex types
 const { data: pendingFoo } = useDataMap<null | Foo>(() => fooStore.currentFooId, null);
 const { data: fooValues } = useDataMap<Record<string, string>>(() => fooStore.currentFooId, {});
@@ -67,7 +67,7 @@ Use it **wherever the item type satisfies `ToData<AEntity>`** — it generates t
 
 `EntityIdKeys<T>` resolves to `["id"]` (SQL entities extending `AItemEntity`), `["partitionKey","rowKey"]` (Azure entities), or `(keyof T & string)[]` as a fallback. Always pass keys matching the DB primary key exactly — a composite PK passes both.
 
-```typescript
+```ts
 // cursor pagination + createOperationData for a typed, composite-key delete
 const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<FooWithRelations>();
 const { deleteFoo: storeDeleteFoo } = createOperationData(items, ["parentId", "childId"], DatabaseEntityType.Foo);

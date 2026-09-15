@@ -44,7 +44,7 @@ describe("blockRouter", () => {
     await blockCaller.createBlock(user.id);
     const friendUsers = await friendCaller.readFriends();
 
-    expect(friendUsers).toHaveLength(0);
+    expect(friendUsers).toStrictEqual([]);
   });
 
   test("fails to block self", async () => {
@@ -96,7 +96,7 @@ describe("blockRouter", () => {
     await blockCaller.deleteBlock(user.id);
     const blockedUsers = await blockCaller.readBlockedUsers();
 
-    expect(blockedUsers).toHaveLength(0);
+    expect(blockedUsers).toStrictEqual([]);
   });
 
   test("fails to unblock self", async () => {
@@ -126,7 +126,7 @@ describe("blockRouter", () => {
     await blockCaller.createBlock(blockedUser.id);
     const searchedUsers = await friendCaller.searchUsers(blockedUser.name);
 
-    expect(searchedUsers.every(({ id }) => id !== blockedUser.id)).toBe(true);
+    expect(searchedUsers).toStrictEqual([]);
   });
 
   test("search excludes users who blocked you", async () => {
@@ -139,6 +139,6 @@ describe("blockRouter", () => {
 
     const searchedUsers = await friendCaller.searchUsers(blockerUser.name);
 
-    expect(searchedUsers.every(({ id }) => id !== blockerUser.id)).toBe(true);
+    expect(searchedUsers).toStrictEqual([]);
   });
 });

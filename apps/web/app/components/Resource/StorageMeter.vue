@@ -39,7 +39,6 @@ onMounted(async () => {
        `openOnClick`, which is a toggle — the click that follows a tap's synthesized mouseenter closes it again -->
   <v-tooltip v-if="storageUsage" location="bottom">
     <template #activator="{ props }">
-      <!-- Focusable so the tooltip is reachable without a pointer -->
       <div :="props" flex gap-2 items-center tabindex="0">
         <v-progress-linear :color="usedColor" height="0.375rem" :model-value="usedPercentage" rounded w-16 />
         <span whitespace-nowrap op-medium-emphasis text-body-medium>{{ usageText }}</span>

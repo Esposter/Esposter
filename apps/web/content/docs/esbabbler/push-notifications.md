@@ -7,7 +7,7 @@ description: Who a chat message notifies — the mention rules, the per-room pre
 
 Delivery is not this page's subject. Every notification in the repo — a message, a friend request, a reminder, a resource operation — is published once and delivered by one Function ([notifications](/docs/architecture/notifications)). What is specific to chat is **who a message reaches**, and that is the one question `ProcessNotification` asks a message-shaped resolver.
 
-The send itself publishes unconditionally: whether anyone is subscribed is no longer a question the request path asks, which is what took a recipient query off every message send.
+The send itself publishes unconditionally: the request path never asks whether anyone is subscribed, so no message send pays a recipient query.
 
 ## Recipients
 

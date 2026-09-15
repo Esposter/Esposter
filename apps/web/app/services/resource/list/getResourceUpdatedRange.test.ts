@@ -35,8 +35,8 @@ describe(getResourceUpdatedRange, () => {
   test("passes through the custom From date and extends the To date to end-of-day", () => {
     expect.hasAssertions();
 
-    const updatedAfter = new Date("1970-01-01");
-    const updatedBefore = new Date("1970-01-02");
+    const updatedAfter = new Date(0);
+    const updatedBefore = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
 
     expect(getResourceUpdatedRange(ResourceUpdatedFilter.Custom)).toStrictEqual({});
     expect(getResourceUpdatedRange(ResourceUpdatedFilter.Custom, updatedAfter)).toStrictEqual({ updatedAfter });

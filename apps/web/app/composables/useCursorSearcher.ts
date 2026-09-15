@@ -4,7 +4,7 @@ import type { ToData } from "@esposter/shared";
 import type { TRPCProcedureOptions } from "@trpc/client";
 
 export const useCursorSearcher = <TItem extends ToData<AEntity>>(
-  query: (searchQuery: string, cursor: string, opts?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
+  query: (searchQuery: string, cursor: string, options?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
   isAutoSearch?: true,
   isIncludeEmptySearchQuery?: true,
 ) => {

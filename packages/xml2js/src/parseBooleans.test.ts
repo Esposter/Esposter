@@ -8,6 +8,6 @@ describe(parseBooleans, () => {
     expect(parseBooleans("true")).toBe(true);
     expect(parseBooleans("TRUE")).toBe(true);
     expect(parseBooleans("false")).toBe(false);
-    expect(parseBooleans("text")).toBe("text");
+    expect(parseBooleans("")).toBe("");
   });
 });

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MAX_SLOWMODE_MS } from "@esposter/db-schema";
 
-const modelValue = defineModel<null | number>({ required: true });
+const modelValue = defineModel<number>({ required: true });
 const emit = defineEmits<{ save: [] }>();
 const rules = useVRules();
 const slowmodeRules = computed(() => [rules.minValue(1)]);
@@ -9,9 +9,7 @@ const slowmodeRules = computed(() => [rules.minValue(1)]);
 // Field's two unit conversions live here rather than inline in the bindings. Both truncate to whole seconds, so a
 // Stored value finer or larger than the field accepts still displays inside the bound the field advertises
 const displaySeconds = computed(() =>
-  modelValue.value === null
-    ? ""
-    : Math.trunc(Temporal.Duration.from({ milliseconds: modelValue.value }).total("seconds")),
+  modelValue.value === 0 ? "" : Math.trunc(Temporal.Duration.from({ milliseconds: modelValue.value }).total("seconds")),
 );
 // The bound doubles as the one that keeps a typed entry inside the range a Temporal duration can represent
 const maxDisplaySeconds = Math.trunc(Temporal.Duration.from({ milliseconds: MAX_SLOWMODE_MS }).total("seconds"));
@@ -22,7 +20,7 @@ const onUpdateModelValue = (newDisplaySeconds: string) => {
   modelValue.value =
     newDisplaySeconds && seconds >= 1 && seconds <= maxDisplaySeconds
       ? Temporal.Duration.from({ seconds }).total("milliseconds")
-      : null;
+      : 0;
 };
 </script>
 

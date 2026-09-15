@@ -15,6 +15,16 @@ describe(getDocsRouteFindings, () => {
     ]);
   });
 
+  test("reports a markdown link to a docs route", () => {
+    expect.hasAssertions();
+
+    const path = ".agents/skills/a/SKILL.md";
+
+    expect(getDocsRouteFindings([{ path, text: "see [a](/docs/architecture/a)" }])).toStrictEqual([
+      { detail: "line 1", path, type: SkillDocsFindingType.DocsRoute },
+    ]);
+  });
+
   test("reports nothing from the two skills that teach the route form", () => {
     expect.hasAssertions();
 

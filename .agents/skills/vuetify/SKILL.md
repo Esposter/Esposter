@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 4 conventions — StyledButton for primary actions, the isIconButton shape switch, :to and type never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated and why a state-conditional style cannot be one, hideDetails auto never true, every drawer through StyledNavigationDrawer, tooltips on icon-only buttons, StyledTooltipIconButton/StyledTooltipMenuIconButton over a hand-rolled activator chain, plain-variant buttons inside input slots, typed SelectItemCategoryDefinition items (clearable banned, no item-title/item-value), enum-value-as-display-title, form validity naming and useVRules, the mount gate a dialog born open owes Vuetify's block scroll strategy, no SASS variables in component styles, plus deep dives on drawers (the inert permanent drawer, elevation following overlap), button backgrounds, router-driven highlighting of linked buttons and tabs, StyledList and StyledAvatar, form dialogs and custom validation rules, constructing items arrays from enums and maps, the CSS custom property registry, scrollspy sub-nav, and mergeProps activator stacks. Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists.
+description: Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists. Esposter Vuetify conventions — StyledButton for primary actions with :to and type outside :button-props, v-prefixed auto-imported composables, a global default never repeated on an instance, every drawer through StyledNavigationDrawer, a tooltip on every icon-only button through StyledTooltipIconButton, typed SelectItemCategoryDefinition items with clearable banned, useVRules with a built-in alias first, the mount gate a dialog born open owes, and no SASS variables in component styles.
 ---
 
 # Vuetify Conventions
@@ -24,13 +24,9 @@ Vuetify composables are auto-imported with a `v` prefix and are globally availab
 
 ## Global Defaults (vuetify.config.ts)
 
-**A prop `vuetify.config.ts` declares must never be repeated on an instance.** Read the `defaults` object there for the current set rather than a copy of it here — it is one screen long. Two entries recur: `variant="outlined"` on every text input, and a `hideDetails` on every input.
+**A prop `vuetify.config.ts` declares must never be repeated on an instance.** Read the `defaults` object there for the current set rather than a copy of it here — it is one screen long. Two entries recur, `variant="outlined"` and `hideDetails: "auto"` on every input — bare `hide-details` swallows the validation error a field with rules exists to report (eslint fails both forms) — and a default is a constant, so a style keyed on a state the component turns on for itself is a `globals.scss` rule in the `vuetify-overrides` layer, the one place a Vuetify SASS API is allowed (`references/global-defaults.md`).
 
-`hideDetails: "auto"` is the one worth understanding, because the value a caller reaches for instead is worse than redundant. `"auto"` renders the details row exactly when there is a message to put in it; bare `hide-details` means `true`, which hides the row unconditionally and so **swallows the validation error a field with rules exists to report**. Both the static and the bound form are eslint errors (`vue/no-restricted-static-attribute` and `vue/no-restricted-syntax` in `packages/configuration/eslint/overrides/vueRules.js`) — a binding computes per render what `"auto"` already answers per render. A layout that genuinely cannot afford the row carries a disable comment stating why; no field in the app does today, and no input is pinned to `true` either — `true` reserves exactly as little space as `"auto"` while also swallowing the message, so it is never the better value, not even on a switch.
-
-**A default is a constant, so anything conditional on component state cannot be one.** A prop set here applies to every instance in every state, and several of the states worth styling are ones the component turns on for itself — `temporary` at the mobile breakpoint, `--active` while a drawer is on-canvas. Style those as a rule in `globals.scss` keyed on Vuetify's own state classes, inside the `vuetify-overrides` layer, using the framework's mixins so the values stay Vuetify's (`@use "vuetify/tools" as vuetify`). This is the one place a Vuetify SASS API is allowed — component `<style>` blocks still may not (below).
-
-**Every drawer goes through `StyledNavigationDrawer`, never `v-navigation-drawer` directly** — a permanent drawer bound to a ref that starts closed renders `inert` for the session, and the wrapper is the one place that resolves it. **A drawer is flat unless it floats over the content**: elevation follows whether the surface overlaps what is behind it (`StyledNavigationOverlay` states `elevation="4"` itself). Adding or debugging one: `references/drawers.md`.
+**Every drawer goes through `StyledNavigationDrawer`, never `v-navigation-drawer` directly** — a permanent drawer bound to a ref that starts closed renders `inert` for the session (`references/drawers.md`).
 
 ## Button Conventions
 
@@ -67,7 +63,7 @@ Hand-rolling either is the single most repeated finding in this area — the cha
 - Name a form validity ref `isEditFormValid`, bind it via `v-model` on `<v-form>`, and init `ref(true)` (optimistic). Prevent invalid submission through validation rules so state stays consistent, rather than catching in the submit handler (see the `error-handling` skill).
 - **`StyledFormDialog` consumers never pass `!isEditFormValid`** — it merges form validity, `isSubmitting`, `type="submit"`, `form` and `loading` into the confirm button internally, so `confirmButtonAttrs` carries only the consumer's own extra condition. **`StyledEditFormDialog` has no `confirmButtonAttrs` at all.**
 - Use the auto-imported `useVRules()` — declare `const rules = useVRules();` at the top of `<script setup>` with the other composables, then reference builders: `:rules="[rules.required(), rules.maxLength(100)]"`. One-off inline arrow rules in the template are fine; extract to script only when shared or unwieldy.
-- **A built-in alias first, always** (`required`, `maxLength`, `minLength`, `email`, `pattern`, `notEmpty`, …) — never reimplement one or its message, including as a rule that surfaces a server Zod schema's issue text. A custom alias is earned only where no built-in covers the check, and is then named and worded in Vuetify's own voice (`minValue` beside `minLength`) as a literal — why the locale is not the place for it is `references/form-dialogs-and-rules.md`. The `required` HTML attribute is not a Vuetify prop — use `:rules="[rules.required()]"`.
+- **A built-in alias first, always** (`required`, `maxLength`, `minLength`, `email`, `pattern`, `notEmpty`, …) — never reimplement one or its message, a server Zod schema's constraints included; a bespoke message is earned only where the generic one would be wrong about what the user sees (`references/form-dialogs-and-rules.md`).
 - Rules validate **what is submitted, not what was typed** — when the sent value is composed from the field (markup wrapper, appended link/suffix), the rule checks the composed value's constraint, even though `counter` still tracks the raw input.
 - Rules depending on reactive component state (uniqueness against a live list) are **not** global aliases — they belong in a composable, or an Ajv keyword when the form is Vjsf. See the `vue-composable-patterns` skill's "Validation Rules — Pick the Right Layer".
 
@@ -77,7 +73,7 @@ Hand-rolling either is the single most repeated finding in this area — the cha
 
 ## A Dialog Born Open Waits for Its Mount
 
-`StyledDialog` gates its own model on `useMounted()`, so consumers pass their open state straight through. A **raw `v-dialog` rendered open on its first render** — one a page's async setup decides, or one that _is_ the page — owes the same gate: `:model-value="isMounted"`. Vuetify's block scroll strategy reads the overlay's root element on a timeout after it activates, and a navigation renders the incoming page inside a suspense that has not mounted one yet, so the strategy dereferences `undefined` and the whole page render goes with it (still unguarded upstream at 4.2.1).
+`StyledDialog` gates its own model on `useMounted()`, so consumers pass their open state straight through. A **raw `v-dialog` rendered open on its first render** — one a page's async setup decides, or one that _is_ the page — owes the same gate: `:model-value="isMounted"`. Vuetify's block scroll strategy reads the overlay's root element on a timeout after it activates, and a navigation renders the incoming page inside a suspense that has not mounted one yet, so the strategy dereferences `undefined` and the whole page render goes with it (still unguarded upstream at the version the catalog pins).
 
 ## HTML Footprint
 
@@ -91,6 +87,7 @@ The goal is always attributify: prefer inline UnoCSS utilities and delete the st
 
 ## Deep Dives
 
+- `references/global-defaults.md` — when a prop `vuetify.config.ts` already sets looks needed on an instance, `hide-details` looks like the answer, or a style depends on a state the component sets for itself.
 - `references/form-dialogs-and-rules.md` — when wiring a form dialog or inline form's validity/error icon, choosing between a built-in rule and a custom one, or adding a custom global validation rule and wording its message.
 - `references/select-item-construction.md` — when building the items constant for a select, list or menu from an enum or map.
 - `references/css-custom-properties.md` — when a component genuinely needs a `<style>` block and a shared value in it.

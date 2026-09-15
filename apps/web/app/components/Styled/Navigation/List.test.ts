@@ -6,8 +6,8 @@ import { describe, expect, test } from "vitest";
 
 describe("styledNavigationList", () => {
   const items = [
-    { icon: "mdi-home-outline", isActive: true, title: "Home", to: RoutePath.ResourceExplorer },
-    { icon: "mdi-view-list-outline", isActive: false, title: "All", to: RoutePath.ResourceExplorerAll },
+    { icon: "", isActive: true, title: "", to: RoutePath.ResourceExplorer },
+    { icon: "", isActive: false, title: "a", to: RoutePath.ResourceExplorerAll },
   ];
 
   // The rail, the mobile dropdown and the drawer all render through this one list, so the row shape it produces
@@ -17,7 +17,7 @@ describe("styledNavigationList", () => {
 
     const component = await mountSuspended(StyledNavigationList, { props: { items } });
 
-    expect(component.findAll("a").map((link) => link.text())).toStrictEqual(["Home", "All"]);
+    expect(component.findAll("a").map((link) => link.text())).toStrictEqual(["", "a"]);
     expect(component.findAll(".v-list-item--active")).toHaveLength(1);
   });
 });

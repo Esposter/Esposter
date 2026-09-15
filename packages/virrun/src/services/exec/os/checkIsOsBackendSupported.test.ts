@@ -4,10 +4,12 @@ import { probeOsBackendSupported } from "#src/services/exec/os/probeOsBackendSup
 import { describe, expect, test } from "vitest";
 
 describe(checkIsOsBackendSupported, () => {
-  // `checkIsOsBackendSupported` layers a nesting guard + in-process memo + persisted cache over the raw host probe, so derive
+  // `checkIsOsBackendSupported` layers a nesting guard + in-process memo + persisted cache over the raw host probe, so
+  // Derive
   // The expected verdict from the SAME two inputs the wrapper reads — the raw overlay probe and the VIRRUN nesting
   // Signal. The two assertions are complementary (exactly one runs per environment: a capable un-nested dev box, a bare
-  // CI runner, a WSL2 build without overlayfs, or a nested `virrun -- vitest`), which pins the wrapper against the probe
+  // CI runner, a WSL2 build without overlayfs, or a nested `virrun -- vitest`), which pins the wrapper against the
+  // Probe
   // Without re-mirroring the bwrap/wsl.exe argv the probe already owns. The nested guard is a hard gate, not a probe
   // Outcome: some kernels happily overlay the already-overlaid cwd, yet the backend still can't run nested (its
   // Persist/snapshot writes hit the outer read-only ~/.virrun), so the wrapper degrades on the VIRRUN signal regardless

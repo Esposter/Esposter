@@ -1,6 +1,6 @@
 # Modelling a Type Instead of Working Around It
 
-For the moments a type is awkward: reaching for a cast, re-declaring fields a source type already has, dispatching per variant, a module config key the compiler can't see, or a TS2590 it cannot represent.
+Read when a type is awkward: reaching for a cast, re-declaring fields a source type already has, dispatching per variant, a module config key the compiler can't see, or a TS2590 it cannot represent.
 
 ## `as unknown as` is `any` with extra steps
 
@@ -40,7 +40,7 @@ export interface FooConfiguration extends BarConfiguration, Pick<SourceType, "a"
 
 Use `Pick` for all properties derived directly from the source type. Keep explicit declarations only for `Parameters<SourceType["method"]>` tuples and their indexed members (no readable property to pick), and plain primitives representing constructor args with no matching readable property on the source type.
 
-The same rule covers **third-party SDK envelopes**: when our code authors or reads a subset of an SDK's own shape, `Pick` from the SDK type instead of restating the fields, and make it generic over the part that actually varies. `EventGridEventInput<TData>` in `packages/db-schema/src/models/azure/eventGrid/` is `Pick<EventGridEvent<TData>, "data" | "dataVersion" | "eventType" | "id" | "subject">` — one definition for every publisher and consumer, and it follows the SDK when the SDK moves. Never define a per-feature alias (`DeadLetteredEvent`, `WebhookEvent`, …) that just re-declares the same envelope; instantiate the generic.
+The same rule covers **third-party SDK envelopes**: when our code authors or reads a subset of an SDK's own shape, `Pick` from the SDK type instead of restating the fields, and make it generic over the part that actually varies. `EventGridEventInput<TData>` in `packages/db-schema/src/models/azure/eventGrid/` is `Pick<EventGridEvent<TData>, "data" | "dataVersion" | "eventType" | "id" | "subject">` — one definition for every publisher and consumer, and it follows the SDK when the SDK moves. Never define a per-feature alias (`FooEvent`, `BarEvent`, …) that just re-declares the same envelope; instantiate the generic.
 
 ## Discriminant-keyed maps — `as const satisfies` a mapped type
 
@@ -61,13 +61,13 @@ The same shape drives **polymorphic dispatch**. Never write a function that swit
 export const FooComputeMap = {
   [FooType.Bar]: (item, { resolve }) => computeBar(resolve(item.sourceId), item),
   [FooType.Baz]: (item, { resolve, find }) => { ... },
-} as const satisfies { [K in FooType]: (item: Extract<Foo, { type: K }>, context: ComputeContext) => Value };
+} as const satisfies { [K in FooType]: (item: Extract<Foo, { type: K }>, context: FooContext) => Value };
 
 return FooComputeMap[foo.type](foo as never, { find, resolve });
 ```
 
 - Each per-variant function lives in its own co-located file; the map file imports them. Adding a variant = one new file + one map entry.
-- Export the `ComputeContext` interface so callers can implement it.
+- Export the `FooContext` interface so callers can implement it.
 - **`as never` at the call site** is required and safe wherever the key↔entry correlation is lost — dispatching by a runtime key (`Map[foo.type](foo as never)`), or destructuring an entry (`format(item[key] as never)`). TypeScript can't correlate the key with the entry's parameter type.
 - Discriminant narrowing inside an entry (`if (foo.type !== FooType.Bar) return undefined;`) gives type-safe subtype access without casts.
 

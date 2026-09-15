@@ -18,13 +18,13 @@ describe(validateBlueprintEntries, () => {
   test("returns the entry references its content walk discovered", () => {
     expect.hasAssertions();
 
-    const funnel = createEntry("funnel", { content: { emailId: buildBlueprintEntryToken("audience") } });
-    const keyReferencesMap = validateBlueprintEntries([createEntry("audience"), funnel]);
+    const funnel = createEntry("b", { content: { emailId: buildBlueprintEntryToken("a") } });
+    const keyReferencesMap = validateBlueprintEntries([createEntry("a"), funnel]);
 
     expect(keyReferencesMap).toStrictEqual(
       new Map([
-        ["audience", []],
-        ["funnel", ["audience"]],
+        ["a", []],
+        ["b", ["a"]],
       ]),
     );
   });
@@ -32,23 +32,21 @@ describe(validateBlueprintEntries, () => {
   test("reads no references out of a nested blueprint's own manifest", () => {
     expect.hasAssertions();
 
-    const nested = createEntry("child-blueprint", {
+    const nested = createEntry("a", {
       content: {
-        entries: [{ content: { emailId: buildBlueprintEntryToken("inner") }, key: "a", name: "a", type: "Program" }],
+        entries: [{ content: { emailId: buildBlueprintEntryToken("b") }, key: "b", name: "b", type: "Program" }],
         parameters: [],
       },
       type: ResourceType.Blueprint,
     });
 
-    expect(validateBlueprintEntries([nested])).toStrictEqual(new Map([["child-blueprint", []]]));
+    expect(validateBlueprintEntries([nested])).toStrictEqual(new Map([["a", []]]));
   });
 
   test("accepts an entry captured from a resource whose content was never written", () => {
     expect.hasAssertions();
 
-    expect(validateBlueprintEntries([createEntry("audience", { content: undefined })])).toStrictEqual(
-      new Map([["audience", []]]),
-    );
+    expect(validateBlueprintEntries([createEntry("a", { content: undefined })])).toStrictEqual(new Map([["a", []]]));
   });
 
   // The name is substituted before this runs, so an over-long parameter value has to reject here rather
@@ -56,20 +54,20 @@ describe(validateBlueprintEntries, () => {
   test("fails a name that a parameter value grew past the resource name bound", () => {
     expect.hasAssertions();
 
-    const entry = createEntry("audience", { name: "a".repeat(RESOURCE_NAME_MAX_LENGTH + 1) });
+    const entry = createEntry("a", { name: "a".repeat(RESOURCE_NAME_MAX_LENGTH + 1) });
 
     expect(() => validateBlueprintEntries([entry])).toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid name for entry audience").message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid name for entry a").message}]`,
     );
   });
 
   test("fails content its own type rejects", () => {
     expect.hasAssertions();
 
-    const entry = createEntry("audience", { content: { emailId: "abc" } });
+    const entry = createEntry("a", { content: { emailId: " " } });
 
     expect(() => validateBlueprintEntries([entry])).toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid content for entry audience").message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid content for entry a").message}]`,
     );
   });
 });

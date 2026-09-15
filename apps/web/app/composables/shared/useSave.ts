@@ -34,7 +34,8 @@ export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDe
   const session = authClient.useSession();
   const { executeMutation: executeSaveMutation } = useMutation();
   const saveToLocalStorage = useSaveToLocalStorage();
-  // T defaults to TState when toSave is omitted, which TypeScript cannot follow — the single `as never` is the centralized cost
+  // T defaults to TState when toSave is omitted, which TypeScript cannot follow — the single `as never` is the
+  // Centralized cost
   const getSaveValue = (): T => (toSave ? toSave(state.value) : (state.value as never));
   // Snapshot of the last persisted state — save() skips the API call/localStorage write when nothing changed
   let lastSavedJson = getSnapshotJson(getSaveValue());
@@ -54,7 +55,8 @@ export const useSave = <TState extends ItemMetadata, TDef extends TRPCResolverDe
     if (isSuccessful) lastSavedJson = valueJson;
     return isSuccessful;
   };
-  // Loading a persisted state must go through here so the snapshot resets — load-triggered watches/autosave ticks then skip
+  // Loading a persisted state must go through here so the snapshot resets — load-triggered watches/autosave ticks then
+  // Skip
   const setState = (newState: TState) => {
     state.value = newState;
     lastSavedJson = getSnapshotJson(getSaveValue());

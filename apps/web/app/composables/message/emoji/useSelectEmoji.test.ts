@@ -26,12 +26,11 @@ vi.mock(import("@/store/message/emoji"), () => ({
 describe(useSelectEmoji, () => {
   const THUMBS_UP = "👍";
   const THUMBS_UP_MEDIUM = "👍🏽";
-  const userId = "userId";
+  const userId = crypto.randomUUID();
   const message = createMessageEntity({ roomId: crypto.randomUUID(), type: MessageType.Message, userId });
 
   beforeEach(() => {
     emojis.length = 0;
-    vi.clearAllMocks();
   });
 
   // A reaction is stored as the emoji itself, so two tones of one emoji are two reactions with their own

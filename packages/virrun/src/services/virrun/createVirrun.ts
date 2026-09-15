@@ -38,8 +38,8 @@ export const createVirrun = async ({
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
   const execBackend = BackendFactoryMap[backend](environment);
   const { cwd, dispose: disposeSource } = await loadSource(source);
-  // Leases this run holds on the snapshot/prepare hash directories it mounts — released on dispose so pruneStale* can reclaim
-  // A superseded layer once no live run is reading it.
+  // Leases this run holds on the snapshot/prepare hash directories it mounts — released on dispose so pruneStale* can
+  // Reclaim A superseded layer once no live run is reading it.
   const leases: Lease[] = [];
   // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store, login PATH, and
   // Network re-enable must still be injected (createOsExecOptions). Non-os backends need only the VIRRUN signal.
@@ -84,12 +84,17 @@ export const createVirrun = async ({
   const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {
     const { directory, exists, hash } = resolveSnapshotLocation(cwd);
     // Announce this process as a live user of the snapshot BEFORE the prune/mint — a concurrent run on a different
-    // Lockfile hash prunes every directory that isn't its own hash and holds no live lease, so leasing first is what stops it
-    // Reclaiming this directory in the window between minting it and mounting it. Released on dispose; a hard-killed run's
-    // Lease is reaped later. createLease mkdirs the leases directory, so the lease exists even on a cold (not-yet-minted) run.
+    // Lockfile hash prunes every directory that isn't its own hash and holds no live lease, so leasing first is what
+    // Stops it
+    // Reclaiming this directory in the window between minting it and mounting it. Released on dispose; a hard-killed
+    // Run's
+    // Lease is reaped later. createLease mkdirs the leases directory, so the lease exists even on a cold
+    // (not-yet-minted) run.
     leases.push(createLease(directory));
-    // Sweep superseded snapshots, then reap any temp a hard-killed run stranded in the live directory (its finalizer never
-    // Ran), before hitting or minting this one — so the cache never grows past the live entry plus its published layers.
+    // Sweep superseded snapshots, then reap any temp a hard-killed run stranded in the live directory (its finalizer
+    // Never
+    // Ran), before hitting or minting this one — so the cache never grows past the live entry plus its published
+    // Layers.
     pruneStaleSnapshots(hash);
     reapStaleTemps(directory, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
     if (!exists) await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
@@ -105,9 +110,11 @@ export const createVirrun = async ({
   const ensurePrepareLayer = async (stdio: ExecStdio): Promise<readonly string[]> => {
     if (prepareStep === undefined) return [];
     const location = resolvePrepareLocation(cwd, prepareStep);
-    // Same live-user lease as the deps snapshot, on the source-keyed prepare directory, and taken FIRST for the same reason:
+    // Same live-user lease as the deps snapshot, on the source-keyed prepare directory, and taken FIRST for the same
+    // Reason:
     // A concurrent run on a different key prunes any layer that isn't its own key and has no live lease, so leasing
-    // Before the prune/materialize is what stops it reclaiming this freshly-built layer in the window before we mount it.
+    // Before the prune/materialize is what stops it reclaiming this freshly-built layer in the window before we mount
+    // It.
     leases.push(createLease(location.directory));
     pruneStalePrepareLayers(location.key);
     reapStaleTemps(location.directory, VIRRUN_SNAPSHOT_TEMP_PREFIXES);

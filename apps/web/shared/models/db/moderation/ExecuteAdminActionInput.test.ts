@@ -10,8 +10,8 @@ describe("executeAdminActionInputSchema", () => {
   test("normalizes a reason and collapses a blank one away", () => {
     expect.hasAssertions();
 
-    expect(executeAdminActionInputSchema.parse({ reason: " spam ", roomId, targetUserId, type })).toStrictEqual({
-      reason: "spam",
+    expect(executeAdminActionInputSchema.parse({ reason: " a ", roomId, targetUserId, type })).toStrictEqual({
+      reason: "a",
       roomId,
       targetUserId,
       type,

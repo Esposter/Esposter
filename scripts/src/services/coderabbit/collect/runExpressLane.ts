@@ -8,13 +8,9 @@ import { portExpress } from "#src/services/coderabbit/collect/portExpress";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 
-// The express lane as one step of the cycle: build the cut, prove it, verify it, push it to `main`. It spends no
-// Review slot and needs no pull request open, which makes it the one thing that moves the pipeline while there
-// Is none. `main` is production and CI is the only gate these commits get, so the cut earns the checks CI would
-// Fail it on — the tests among them — and a red one is not held back: it simply takes the review lane, where a
-// Person reads why. The push is the run's one irreversible act, so a lane that pushed ends the run; the push
-// Fires the cycle again, which fast-forwards `develop` onto it and then measures a window against a frontier that
-// Has already moved. No outcome means the lane was closed or the cut was red, and the cycle carries on.
+// Build the cut, prove it, verify it, push it to `main`. `main` is production and CI is the only gate these
+// Commits get, so the cut earns the checks CI would fail it on; a red one takes the review lane instead. A push
+// Is the run's one irreversible act, so a lane that pushed ends the run.
 export const runExpressLane = ({ cwd, isDryRun, ...expressInput }: ExpressLaneInput): CycleOutcome | undefined => {
   const { shas, targetSha } = portExpress({ cwd, ...expressInput });
   if (targetSha === undefined) return undefined;

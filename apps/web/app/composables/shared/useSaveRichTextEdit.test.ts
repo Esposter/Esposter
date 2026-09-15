@@ -7,8 +7,9 @@ import { describe, expect, test, vi } from "vitest";
 const createEditor = (text: string) => ({ getText: () => text }) as Editor;
 
 describe(useSaveRichTextEdit, () => {
-  const original = "<p>original</p>";
-  const edit = "<p>edit</p>";
+  const original = "";
+  const edit = " ";
+  const text = "a";
   const createSave = (editedValue: string, update = vi.fn<() => Promise<unknown>>(() => Promise.resolve())) => {
     const edited = ref(editedValue);
     // Spelled as one signature over the union of valid calls: `vi.fn` collapses an overloaded emit type to its
@@ -21,7 +22,7 @@ describe(useSaveRichTextEdit, () => {
     expect.hasAssertions();
 
     const { edited, emit, save, update } = createSave(edit);
-    save(createEditor("edit"));
+    save(createEditor(text));
     await waitForSynchronizedFunctions();
 
     expect(update).toHaveBeenCalledTimes(1);
@@ -33,7 +34,7 @@ describe(useSaveRichTextEdit, () => {
   test("hands an emptied editor to delete mode instead of updating", async () => {
     expect.hasAssertions();
 
-    const { emit, save, update } = createSave("<p></p>");
+    const { emit, save, update } = createSave(edit);
     save(createEditor(""));
     await waitForSynchronizedFunctions();
 
@@ -46,7 +47,7 @@ describe(useSaveRichTextEdit, () => {
     expect.hasAssertions();
 
     const { emit, save, update } = createSave(original);
-    save(createEditor("original"));
+    save(createEditor(text));
     await waitForSynchronizedFunctions();
 
     expect(update).not.toHaveBeenCalled();
@@ -61,7 +62,7 @@ describe(useSaveRichTextEdit, () => {
       edit,
       vi.fn<() => Promise<unknown>>(() => Promise.reject(new Error("error"))),
     );
-    save(createEditor("edit"));
+    save(createEditor(text));
     await waitForSynchronizedFunctions();
 
     expect(emit).toHaveBeenCalledExactlyOnceWith("update:update-mode", false);

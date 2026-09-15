@@ -4,7 +4,7 @@ Read when ideating, triaging, or sweeping a whole product area's documentation, 
 
 ## One area at a time
 
-The repo-wide default is to parallelize independent work (see `~/.claude/rules/agents.md`). **Docs ideation and triage are the narrow exception**, for two concrete reasons — not as a blanket ban on subagents:
+Where fan-out is earned at all is the `model-delegation` skill's call. **Docs ideation and triage never earn it**, for two concrete reasons:
 
 - **Triage needs one head.** Deciding implement/deferred/rejected across an area requires holding every idea in view at once and checking each against `deferred/`+`rejected/`. Split across agents, they duplicate ideas, re-argue decided ones, and produce inconsistent buckets.
 - **Conflicting writes.** Agents working one area touch the same `index.md`, `roadmap.md`, and `DocsSectionGroupsMap.ts`, so they clobber each other's edits.

@@ -6,7 +6,7 @@ import { noop } from "@esposter/shared";
 //
 // Deliberately NOT `detached`: on win32 `detached` (the DETACHED_PROCESS CreateProcess flag) makes Windows ignore
 // `windowsHide` (CREATE_NO_WINDOW), so the child flashes an empty console window every time (nodejs/node#21825).
-// WindowsHide alone already gives the child its own windowless console, which
+// `windowsHide` alone already gives the child its own windowless console, which
 // Both hides it AND isolates it from the parent console's Ctrl+C, so unref is all that's needed to outlive the run.
 export const spawnBackground = (file: string, args: readonly string[]): void => {
   const child = spawnHidden(file, args, { stdio: "ignore" });

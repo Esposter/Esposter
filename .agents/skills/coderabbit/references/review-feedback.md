@@ -90,25 +90,6 @@ things that count answers are worth separating:
   `Actionable comments posted: N`. When the pull request feels stuck with nothing open, read the threads
   unfiltered in the UI and the gap is the human ones.
 
-## Probing whether the checkpoint covers the head
-
-```bash
-pnpm ai:coderabbit:probe "<pr>"
-```
-
-It posts `@coderabbitai review` and prints the reply. **Read the status line, never the note under it:** every
-reply says CodeRabbit "does not re-review already reviewed commits", the one announcing a review it has just
-started included, so reading the reply for those words says the head is covered whatever happened.
-`Review rate limited` means the bot ran nothing and the frontier has not moved; `Review finished` means the
-probe triggered the review that was owed, and it runs over the following minutes. **It spends a slot when a
-review does start**, so it is asked for like any other push-adjacent action.
-
-Reading straight back instead races the bot: its reply does not exist yet, so the read returns the previous
-comment — a real CodeRabbit remark that looks exactly like an answer. The script waits for the newest comment to
-_change_, which is why the answer usually arrives as an **in-place edit** of the walkthrough: the edit keeps the
-comment's id and can leave its first line intact, so only the timestamp moves. After ten minutes it fails rather
-than waiting, because an unanswered probe is something to go and look at.
-
 ## Replying to a review comment
 
 ```bash

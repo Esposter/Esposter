@@ -1,10 +1,12 @@
 # External Event / Boundary Payloads — Validate, Never Cast
 
+Read when untyped runtime data enters the program and something is about to be assumed about its shape.
+
 Runtime data crossing any trust boundary — EventGrid `event.data`, Storage Queue messages, webhook bodies, **subprocess stdout, and committed config files** — is untyped. **Never** assert with `x as unknown as SomeType` or hand-roll type guards + casts (`as Record<string, unknown>`, `Object.values(E) as string[]`); a malformed payload then throws deep in the handler instead of at the edge. Define a co-located Zod schema and `.parse()` at the boundary.
 
 For untrusted JSON that arrives as a string (subprocess output, file contents), parse + validate in **one** `getResult`/`getResultAsync` and wrap the failure in `InvalidOperationError(Operation.Read, fn.name, …)` so malformed JSON and a schema mismatch surface identically at the call site — canonical refs: `virrun/src/services/exec/snapshot/parseOverlayManifest.ts` (process stdout) and `virrun/src/services/configuration/parseVirrunConfiguration.ts` (config file). Use `z.strictObject` for closed configs so an unknown key (a typo) fails loud rather than being silently stripped.
 
-```typescript
+```ts
 // schema co-located next to the interface, parsed at the boundary — never `event.data as unknown as T`
 export interface FooEventGridData {
   foo: Pick<FooEntity, "partitionKey" | "rowKey" | "userId">;

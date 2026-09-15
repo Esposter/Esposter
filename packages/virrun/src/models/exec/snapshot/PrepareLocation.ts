@@ -1,7 +1,7 @@
 // The on-disk address of a source-keyed prepare layer in the host-global cache (`~/.virrun/prepare/`), resolved from
 // The lockfile hash + source-tree hash + the resolved prepare step. Pure addressing — produced before anything is
-// Captured; the capture run materializes upperDirectory (via a temp directory it renames into place), and a fork run stacks
-// That `upperDirectory` as a read-only lower above the deps snapshot, so its artifacts shadow the host's
+// Captured; the capture run materializes upperDirectory (via a temp directory it renames into place), and a fork run
+// Stacks that `upperDirectory` as a read-only lower above the deps snapshot, so its artifacts shadow the host's
 // Source copy.
 export interface PrepareLocation {
   // The prepare-layer root: `~/.virrun/prepare/<key>`.

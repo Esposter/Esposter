@@ -9,13 +9,10 @@ import {
   RATE_LIMITED_DESCRIPTION,
 } from "#src/services/coderabbit/collect/constants";
 
-// The review body, not the status, says a review is complete: CodeRabbit writes the body naming its range at
-// Completion and flips the status a moment later, and the review event fires in that gap. A status read alone
-// There says `pending`, exits, and nothing re-fires until the next queue push. So the body ending at the head
-// Decides first, and the status decides only when it does not.
-//
-// No check at all is the one unreadable status this does not simply wait out: a pull request the bot has never
-// Spoken on is a person's problem, where a pending one resolves itself.
+// The stated range ending at the head decides first: CodeRabbit writes the range at completion — in the review
+// Body, or in the walkthrough's recent-review block alone when it found nothing — and flips the status a moment
+// Later, and the review event fires in that gap — a status read alone there says `pending`, and nothing re-fires
+// Until the next queue push. No check at all is a person's problem, where a pending one resolves itself.
 export const getGateDecision = ({ checkStatus, developSha, lastReviewedSha }: GateInput): GateDecision => {
   if (lastReviewedSha === developSha)
     return { kind: GateDecisionKind.Proceed, reason: "the newest review body ends at the develop head" };

@@ -25,7 +25,6 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
     if (!key) return;
     setData(key, newData);
   };
-
   // A view onto one key's slice, whichever key that is. The ambient `data` below is this bound to the current key,
   // And an operation issued for a particular key binds this to that key instead — which is what keeps a response
   // That lands after the current key moved out of the slice it is now pointing at

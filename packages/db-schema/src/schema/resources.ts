@@ -20,8 +20,9 @@ export const resources = pgTable(
     // The one cross-resource link promoted out of blob content into a column, because it is the only one read
     // On an unauthenticated path: `resolveIdentifiedToken` has to know which Programs are bound to a Survey
     // Before it can decide whether a participant token was issued for it, and answering that from blobs means
-    // Reading every one of the owner's Programs on every submission. No foreign key — a binding is a bare id
-    // Re-resolved on read, so a deleted target fails soft rather than stranding the row
+    // Reading every one of the owner's Programs on every submission. No foreign key — the binding is projected
+    // From the content on every save, so a `set null` on the target's deletion would have the next save rewrite
+    // The dangling id and fail on the constraint; a bare id re-resolved on read fails soft instead
     boundResourceId: uuid(),
     contentVersion: integer().notNull().default(0),
     id: uuid().primaryKey().defaultRandom(),

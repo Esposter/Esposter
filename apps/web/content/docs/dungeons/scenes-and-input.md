@@ -5,7 +5,7 @@ description: Phaser scenes as Vue components, scene switching, the input-resolve
 
 # Scenes and Input
 
-Every Phaser scene is a Vue component registered in `SceneKeyMap` and rendered inside vue-phaserjs's `<Game>` on `pages/dungeons.vue`, which also registers the Phaser plugins the game relies on (grid-engine for tile movement, rex virtual joystick, slider, click-outside).
+Every Phaser scene is a Vue component registered in `SceneComponentMap` and rendered inside vue-phaserjs's `<Game>` on `pages/dungeons.vue`, which also registers the Phaser plugins the game relies on (grid-engine for tile movement, rex virtual joystick, slider, click-outside).
 
 ## How it works
 
@@ -36,7 +36,7 @@ Paths relative to `apps/web/app`.
 | File                                            | Role                                              |
 | ----------------------------------------------- | ------------------------------------------------- |
 | `pages/dungeons.vue`                            | `<Game>` configuration + plugin registration      |
-| `services/dungeons/scene/SceneKeyMap.ts`        | scene key → async Vue component                   |
+| `services/dungeons/scene/SceneComponentMap.ts`  | scene key → async Vue component                   |
 | `composables/dungeons/useInitializeControls.ts` | keyboard vs joystick selection                    |
 | `models/dungeons/input/`                        | `Controls` implementations                        |
 | `models/resolvers/dungeons/AInputResolver.ts`   | resolver base; scene folders hold concrete chains |

@@ -7,17 +7,17 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 | `packages/db-schema/src/schema.ts` + `relations`           | 2026-09-14 | a `r.many` key is the child table's own name; an `r.one` off a role column is the role               |
 | `packages/db-schema/src/schema` — the message tables       | 2026-09-14 | the `*InMessage` family                                                                              |
 | `packages/db-schema/src/schema` — the rest                 | 2026-09-14 | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
-| `app/shared/models/db/message`                             | 2026-09-14 | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
-| `app/shared/models/db` — the room family                   | 2026-09-02 | `room`, `roomCategory`, `roomEmoji`, `role`, `moderation`, `webhook`                                 |
-| `app/shared/models/db` — the rest                          | 2026-09-02 | `blueprint`, `friend`, `notification`, `post`, `searchHistory`, `user`, `userSettings`, `userToRoom` |
-| `app/shared/models/resource/sheet`                         | 2026-09-02 | the split transformation's form defaults stay on the shared schema — `zod` says why                  |
-| `app/shared/models/resource` — the rest                    | 2026-09-02 | the per-type content shapes and the capability types                                                 |
-| `app/shared/models/dungeons`                               | 2026-09-02 |                                                                                                      |
-| `app/shared/models` — the editor and game trees            | 2026-09-02 | the GrapesJS subclasses re-declare the catchall a `.shape` spread drops, pinned by a test            |
-| `app/shared/models` — the rest                             | 2026-09-02 | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler` and the singles              |
-| `app/models`, `app/services/*/…` form schemas              | 2026-09-02 | the Vjsf-rendered ones carry extra rules                                                             |
-| `packages/db`, `packages/db-mock`                          | 2026-09-02 | neither declares a table or a zod schema; the mock's snapshot is generated                           |
-| `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | 2026-09-02 | `parse-tmx` and `xml2js` depend on zod nowhere                                                       |
+| `shared/models/db/message`                                 | 2026-09-14 | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
+| `shared/models/db` — the room family                       | 2026-09-15 | `room`, `roomCategory`, `roomEmoji`, `role`, `moderation`, `webhook`                                 |
+| `shared/models/db` — the rest                              | 2026-09-15 | `blueprint`, `friend`, `notification`, `post`, `searchHistory`, `user`, `userSettings`, `userToRoom` |
+| `shared/models/resource/sheet`                             | 2026-09-15 | the split transformation's form defaults stay on the shared schema — `zod` says why                  |
+| `shared/models/resource` — the rest                        | 2026-09-15 | the per-type content shapes and the capability types                                                 |
+| `shared/models/dungeons`                                   | 2026-09-15 |                                                                                                      |
+| `shared/models` — the editor and game trees                | 2026-09-15 | the GrapesJS subclasses re-declare the catchall a `.shape` spread drops, pinned by a test            |
+| `shared/models` — the rest                                 | 2026-09-15 | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler` and the singles              |
+| `app/models`, `app/services/*/…` form schemas              | 2026-09-15 | the Vjsf-rendered ones carry extra rules                                                             |
+| `packages/db`, `packages/db-mock`                          | 2026-09-15 | neither declares a table or a zod schema; the mock's snapshot is generated                           |
+| `packages/shared`, `packages/parse-tmx`, `packages/xml2js` | 2026-09-15 | `parse-tmx` and `xml2js` depend on zod nowhere                                                       |
 
 ## Exclusions
 
@@ -39,19 +39,6 @@ grep -rn '\.extend(' --include=*.ts apps/web/app apps/web/server apps/web/shared
 # a discriminated union, each of which must carry a trailing satisfies
 grep -rn -A 40 'z\.discriminatedUnion(' --include=*.ts apps/web/app apps/web/shared packages/*/src
 ```
-
-## Open findings
-
-One migration, run when the user says so (`drizzle`: `db:gen` is never an unprompted side effect), carrying
-every column the sentinel and reference rules reach and the passes so far have read past:
-
-- `bansInMessage.bannedByUserId` and `resources.boundResourceId` hold another table's id with no `.references()`.
-  Each comment argues the row must outlive its target, which is what `onDelete: "set null"` does — the rule's own
-  audit-trail case — so the constraint is the fix, not the exemption.
-- `roomsInMessage.slowmodeMs` and `maxFileSizeBytes` are nullable where the rule writes `.notNull().default(0)`
-  and reads `0` as "none" / "the global cap" — the `maxFoos` example verbatim. The select-schema `min(1)`
-  overrides, the `?? MAX_FILE_REQUEST_SIZE` fallbacks and the `null` on the wire all move with it.
-  `roomFilters.timeoutDurationMs` stays nullable: a CHECK forces it to `null` off the timeout action.
 
 ## Next enforceable
 

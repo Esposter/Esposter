@@ -1,5 +1,7 @@
 # When a value earns a `computed`
 
+Read when an expression in a template, or a value in a `<script setup>`, is about to be bound to a `computed`.
+
 Use count is not the test. A `computed` is a cache with a price: a `ComputedRefImpl` allocation, a dep link per
 dependency, and dirty-check bookkeeping on every one of those dependencies. It pays for itself only when
 re-evaluating the expression on each render would cost more than that. The render function re-runs and reads the

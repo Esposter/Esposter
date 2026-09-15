@@ -32,6 +32,4 @@ gh api -X PUT "repos/{owner}/{repo}/contents/.coderabbit.yaml" \
 
 Both calls take the resolved base, never a hardcoded `main` — read and write must name the same branch, or the PUT lands config on a branch whose `sha` it was not read from and the API rejects it. On a `develop`-base PR a hardcoded pair would instead write config `main` reads and the review never does.
 
-Count the `path_filters` entries (`references/exclusions.md` § Generating the list) _before_ the PUT — there is no local commit to amend afterwards.
-
-The two branches diverging is expected: `develop` can carry a temporary exclusion block while `main` carries only the permanent entries, picking the block up on a release merge and losing it when the block is removed.
+The two branches diverging is expected: `develop` picks a `main` edit up on the next fold, and an entry added on `develop` reaches `main` with the release.

@@ -38,7 +38,7 @@ describe(checkHasPermission, () => {
   test("administrator bit grants all permissions", async () => {
     expect.hasAssertions();
 
-    const { member } = await setupMemberWithRole(RoomPermission.Administrator, 1);
+    const { member } = await setupMemberWithRole(RoomPermission.Administrator, 0);
     const hasManageMessages = await checkHasPermission(
       getMockContext().db,
       member.id,

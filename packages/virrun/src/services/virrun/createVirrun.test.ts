@@ -11,7 +11,7 @@ import { resolveSnapshotLocation } from "#src/services/exec/snapshot/resolveSnap
 import { createRecordingBackend } from "#src/services/exec/test/createRecordingBackend.test";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { TEST_WSL_CACHE_DIR_NAME } from "#src/services/exec/wsl/constants.test";
+import { TEST_WSL_CACHE_DIRECTORY_NAME } from "#src/services/exec/wsl/constants.test";
 import { createVirrun } from "#src/services/virrun/createVirrun";
 import { takeOne } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
@@ -44,7 +44,8 @@ vi.mock(import("#src/services/exec/wsl/readWslPath"), async () => {
 vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), async () => {
   const { tmpdir: osTmpdir } = await import("node:os");
   const { join: joinPath } = await import("node:path");
-  const { TEST_WSL_CACHE_DIR_NAME: testWslCacheDirectoryName } = await import("#src/services/exec/wsl/constants.test");
+  const { TEST_WSL_CACHE_DIRECTORY_NAME: testWslCacheDirectoryName } =
+    await import("#src/services/exec/wsl/constants.test");
   return { getWslNativeCacheRoot: () => joinPath(osTmpdir(), testWslCacheDirectoryName) };
 });
 
@@ -66,7 +67,7 @@ describe(createVirrun, () => {
   afterEach(() => {
     cleanup();
     // The mocked WSL native cache root lands the os-path store/corepack mkdirs under temp on win32; clean it up.
-    rmSync(join(tmpdir(), TEST_WSL_CACHE_DIR_NAME), { force: true, recursive: true });
+    rmSync(join(tmpdir(), TEST_WSL_CACHE_DIRECTORY_NAME), { force: true, recursive: true });
   });
 
   test("runs the command and captures its result", async () => {
@@ -107,7 +108,8 @@ describe(createVirrun, () => {
     // The network — so the orchestrator must turn it back on.
     const backend = createRecordingBackend();
     vi.mocked(createOsBackend).mockReturnValue(backend);
-    // The os path anchors its shared store to the workspace root (nearest lockfile), so use a lockfile-seeded directory.
+    // The os path anchors its shared store to the workspace root (nearest lockfile), so use a lockfile-seeded
+    // Directory.
     const directory = createWorkspace();
     const { dispose, exec } = await createVirrun({
       backend: BackendType.Os,

@@ -4,7 +4,7 @@ import { describe } from "vitest";
 
 export const createRoomRole = (overrides: Partial<RoomRoleInMessage>): RoomRoleInMessage => ({
   color: "",
-  createdAt: new Date(),
+  createdAt: new Date(0),
   deletedAt: null,
   id: crypto.randomUUID(),
   isEveryone: false,
@@ -12,7 +12,7 @@ export const createRoomRole = (overrides: Partial<RoomRoleInMessage>): RoomRoleI
   permissions: 0n,
   position: 0,
   roomId: crypto.randomUUID(),
-  updatedAt: new Date(),
+  updatedAt: new Date(0),
   ...overrides,
 });
 

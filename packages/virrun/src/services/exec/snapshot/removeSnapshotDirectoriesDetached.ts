@@ -16,7 +16,8 @@ import { getResult, noop } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 // Fire-and-forget teardown for stale-cache sweeps (pruneStaleSnapshots/pruneStalePrepareLayers/
-// ReapAbandonedSourceMirrors) — directories the current run never touches, so their removal has no bearing on correctness
+// `reapAbandonedSourceMirrors`) — directories the current run never touches, so their removal has no bearing on
+// Correctness
 // And must not block the command from starting. A `\\wsl.localhost` snapshot's rm -rf is the expensive case: a full
 // Node_modules / .nuxt closure torn down inside WSL, and during active dev every source edit strands a superseded
 // Prepare layer that the next run would otherwise block on. spawnBackground runs it Linux-side off the 9p bridge,
@@ -27,8 +28,8 @@ import { join } from "node:path";
 // Script reads through `xargs -0`, never into the argv. Each launch costs a service RPC and a relay process, so a
 // Sweep that fanned out took down the host it was tidying — >100 concurrent launches wedged the WSL service, and
 // Every virrun call after it (including the one sweeping) hung until the distro was shut down. Nothing bounds how
-// Many entries a sweep finds (a test suite running virrun in temp directories strands hundreds), so the two ways to lose
-// That property are both closed here rather than traded against each other: passing the paths as arguments has a
+// Many entries a sweep finds (a test suite running virrun in temp directories strands hundreds), so the two ways to
+// Lose that property are both closed here rather than traded against each other: passing the paths as arguments has a
 // Cliff at the win32 32767-char command line, where the spawn fails asynchronously — discarded by spawnBackground's
 // Error handler — and the whole teardown silently does nothing on every run thereafter; batching the argv instead
 // Trades that for one launch per batch, which is the fan-out again. The list file has neither, and xargs's own
@@ -36,9 +37,10 @@ import { join } from "node:path";
 // Left behind by a launch that never ran is reclaimed by the next sweep's reapStaleRemoveLists.
 //
 // Best-effort throughout: a local removal that throws (a file the host still has open) must not cost the remaining
-// Directories their teardown, so each is guarded rather than the batch, and the staging + launch is guarded as a whole —
-// The sweep runs off the critical path for directories this run never touches, so its failure must never fail the user's
-// Command. A sweep that stages nothing simply happens again next run.
+// Directories their teardown, so each is guarded rather than the batch, and the staging + launch is guarded as a whole
+// —
+// The sweep runs off the critical path for directories this run never touches, so its failure must never fail the
+// User's command. A sweep that stages nothing simply happens again next run.
 export const removeSnapshotDirectoriesDetached = (directories: readonly string[]): void => {
   const linuxDirectories: string[] = [];
   for (const directory of directories)

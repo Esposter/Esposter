@@ -36,9 +36,12 @@
   },
   "type": "module",
   "scripts": {
+    "ai:citations:sync": "pnpm -C scripts run ai:citations:sync",
     "ai:coderabbit:collect": "pnpm -C scripts run ai:coderabbit:collect",
     "ai:coderabbit:feedback": "pnpm -C scripts run ai:coderabbit:feedback",
     "ai:sweep:constant-scope": "pnpm -C scripts run ai:sweep:constant-scope",
+    "ai:sweep:duplicate-prose": "pnpm -C scripts run ai:sweep:duplicate-prose",
+    "ai:sweep:ledger-coverage": "pnpm -C scripts run ai:sweep:ledger-coverage",
     "ai:sweep:repeated-list-items": "pnpm -C scripts run ai:sweep:repeated-list-items",
     "ai:sweep:shared-export-consumers": "pnpm -C scripts run ai:sweep:shared-export-consumers",
     "ai:sweep:skill-docs": "pnpm -C scripts run ai:sweep:skill-docs",

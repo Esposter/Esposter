@@ -53,7 +53,7 @@ const cloneStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
 
 export const useDocumentPictureInPicture = (options: UseDocumentPictureInPictureOptions = {}) => {
   const isSupported = useSupported(() => "documentPictureInPicture" in window);
-  const pipWindow = shallowRef<Window>();
+  const pictureInPictureWindow = shallowRef<Window>();
   let styleObserver: MutationObserver | undefined;
   const bridgeStyles = async (target: Window) => {
     const pendingSheets = [
@@ -91,11 +91,11 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
   const close = () => {
     styleObserver?.disconnect();
     styleObserver = undefined;
-    pipWindow.value?.close();
-    pipWindow.value = undefined;
+    pictureInPictureWindow.value?.close();
+    pictureInPictureWindow.value = undefined;
   };
   const open = async () => {
-    if (!isSupported.value || pipWindow.value) return;
+    if (!isSupported.value || pictureInPictureWindow.value) return;
     await getResultAsync(() =>
       window.documentPictureInPicture.requestWindow({ height: options.height, width: options.width }),
     ).match(async (target) => {
@@ -109,11 +109,11 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
       await bridgeStyles(target);
       // The window may have been closed while its stylesheets loaded; don't surface a dead window.
       if (target.closed) return;
-      pipWindow.value = target;
+      pictureInPictureWindow.value = target;
     }, noop);
   };
 
   tryOnScopeDispose(close);
 
-  return { close, isSupported, open, pipWindow };
+  return { close, isSupported, open, pictureInPictureWindow };
 };

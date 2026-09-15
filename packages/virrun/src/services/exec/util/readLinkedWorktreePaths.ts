@@ -13,7 +13,8 @@ import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 // Parallel checkout, not source belonging to the tree it is nested in. It is its own virrun cwd with its own mirror
 // Entry, so mirroring it into the parent's set duplicates an entire repo per worktree and swamps every delta with
 // Paths no command in this tree reads. Which directories those are is a property of the repository, not of whichever
-// Tool created them, so it is read from git's own bookkeeping rather than named: `<commonDirectory>/worktrees/<name>/gitdir`
+// Tool created them, so it is read from git's own bookkeeping rather than named:
+// `<commonDirectory>/worktrees/<name>/gitdir`
 // Holds the path of each linked worktree's `.git` file, so the worktree root is that path's parent — and that file
 // Must still be there pointing back at the entry, which is the only fact that separates a live worktree from a
 // Registry entry whose tree was deleted out from under it. An unregistered directory is just files on disk and

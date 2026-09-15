@@ -26,7 +26,7 @@ A role assignment reads its `principalId` through `getPrincipalId`, an `apply` o
 output. When the program updates that resource — a Logic App's `definition`, say — the provider cannot promise
 the identity survives, so the preview carries it as `[unknown]`, and an unknown `principalId` on a `protect: true`
 grant is `+-… to replace … marked for protection`: the preview fails on every assignment the identity holds,
-while the only real diff is the property being edited (probed 2026-09-12 editing a `runAfter`). The GUID does not
+while the only real diff is the property being edited (probed with `pnpm infra:preview` editing a `runAfter`). The GUID does not
 change on an update, and an `up` resolves it to the same value, but the failed preview blocks the plain `up`.
 
 Apply it targeted: `pnpm infra:up --yes --suppress-outputs --target '**::<resource-name>'`, one `--target` per
@@ -64,9 +64,8 @@ that stop on a date say the configuration was right and something shipped on tha
 setting nothing needed, and an apply against an estate that was fine — and when the user says a thing has been
 working, that is evidence to reconcile against rather than noise to disprove.
 
-The cause seen here was in the repo rather than the estate: the deploy artifact lost the entry field its host
-loads, so every build shipped a package the host could mount and find nothing in
-(`.agents/skills/build/SKILL.md`).
+A cause that lives in the repo rather than the estate: a deploy artifact that loses the entry field its host
+loads ships a package the host can mount and find nothing in (the `build` skill, `references/opt-outs.md`).
 
 On a Consumption plan the app scales to zero and re-fetches `WEBSITE_RUN_FROM_PACKAGE` on the next cold start,
 which is why a deploy that only uploads the package needs no restart or trigger-sync step to take effect.
@@ -81,5 +80,5 @@ at and diagnose.
 
 The trap is what happens meanwhile: the **old** subscription keeps delivering to a name the code no longer
 registers, and every event dead-letters silently, because nothing alerts off the deadletter container
-([observability is off](/docs/infra/observability)). So when a rename touches a function an event subscription
+(observability is off — `apps/web/content/docs/infra/observability.md`). So when a rename touches a function an event subscription
 names, check that container's recency — it is the only place the breakage shows.

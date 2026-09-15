@@ -9,7 +9,7 @@ Dungeons is Esposter's monster-catching RPG at `/dungeons`: walk a tile-based wo
 
 ## Key concepts
 
-- **Scenes are Vue components** — `SceneKeyMap` maps each `SceneKey` (Preloader, Title, World, Battle, Inventory, MonsterParty, MonsterDetails, Settings, MobileJoystick) to an async component rendered inside vue-phaserjs's `<Game>`. See [scenes and input](/docs/dungeons/scenes-and-input).
+- **Scenes are Vue components** — `SceneComponentMap` maps each `SceneKey` (Preloader, Title, World, Battle, Inventory, MonsterParty, MonsterDetails, Settings, MobileJoystick) to an async component rendered inside vue-phaserjs's `<Game>`. See [scenes and input](/docs/dungeons/scenes-and-input).
 - **Generated Tiled types** — maps are authored in Tiled Map Editor; `pnpm tiled:gen` parses the `.tmx` files with `parse-tmx` and generates enums and layer/object-property types into `shared/generated/tiled/`, so map content is type-checked. See [world](/docs/dungeons/world).
 - **Battle state machine** — a 17-state generic `StateMachine` drives every battle turn. See [battle](/docs/dungeons/battle).
 - **Data-driven content** — monsters, attacks, items, NPCs, and encounter areas are constant maps in `assets/dungeons/data/` and `shared/assets/dungeons/data/`. See [monsters and items](/docs/dungeons/monsters-and-items).

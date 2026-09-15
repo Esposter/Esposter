@@ -1,0 +1,87 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/citations/getCitingText.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.00439999999999543,
+              "name": "fences",
+              "p99": 0.00924000000000433,
+              "rme": 32.08889770674259,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.0474699999999956,
+              "name": "double-backtick spans",
+              "p99": 0.07111399999999093,
+              "rme": 17.71710065144957,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.11843000000000074,
+              "name": "prose",
+              "p99": 0.8234840000000087,
+              "rme": 165.92156833747268,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getCitingText > 1000 bytes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.02189000000000476,
+              "name": "fences",
+              "p99": 0.024490999999991346,
+              "rme": 4.6534525879455,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.22406000000000292,
+              "name": "prose",
+              "p99": 0.3785430000000028,
+              "rme": 23.674180691616815,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.3102000000000089,
+              "name": "double-backtick spans",
+              "p99": 0.4992630000000057,
+              "rme": 21.839452553165415,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getCitingText > 10000 bytes"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 0.22370999999998845,
+              "name": "fences",
+              "p99": 0.24056199999996808,
+              "rme": 2.6170136355543305,
+              "sampleCount": 10
+            },
+            {
+              "mean": 2.39966,
+              "name": "prose",
+              "p99": 3.8160689999999895,
+              "rme": 19.274320083772945,
+              "sampleCount": 10
+            },
+            {
+              "mean": 3.7626999999999953,
+              "name": "double-backtick spans",
+              "p99": 5.826298000000001,
+              "rme": 21.058172130607193,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getCitingText > 100000 bytes"
+        }
+      ]
+    }
+  ]
+}

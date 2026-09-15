@@ -37,8 +37,8 @@ describe("docsCategoryTabs", () => {
 
     expect(readTabs(component.element)).toStrictEqual([
       { isColored: true, isSelected: true, title: "Overview" },
-      { isColored: false, isSelected: false, title: "Architecture" },
-      { isColored: false, isSelected: false, title: "Products" },
+      { isColored: false, isSelected: false, title: DocsCategory.Architecture },
+      { isColored: false, isSelected: false, title: DocsCategory.Products },
     ]);
   });
 
@@ -50,8 +50,8 @@ describe("docsCategoryTabs", () => {
 
     expect(readTabs(component.element)).toStrictEqual([
       { isColored: false, isSelected: false, title: "Overview" },
-      { isColored: true, isSelected: true, title: "Architecture" },
-      { isColored: false, isSelected: false, title: "Products" },
+      { isColored: true, isSelected: true, title: DocsCategory.Architecture },
+      { isColored: false, isSelected: false, title: DocsCategory.Products },
     ]);
   });
 
@@ -63,8 +63,8 @@ describe("docsCategoryTabs", () => {
 
     expect(readTabs(component.element)).toStrictEqual([
       { isColored: false, isSelected: false, title: "Overview" },
-      { isColored: false, isSelected: false, title: "Architecture" },
-      { isColored: true, isSelected: true, title: "Products" },
+      { isColored: false, isSelected: false, title: DocsCategory.Architecture },
+      { isColored: true, isSelected: true, title: DocsCategory.Products },
     ]);
   });
 });

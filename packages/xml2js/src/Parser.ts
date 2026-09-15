@@ -42,7 +42,6 @@ export class Parser {
       if (!this.#options.ignoreAttrs)
         for (const [key, attribute] of Object.entries<QualifiedAttribute | string>(node.attributes)) {
           if (!(this.#options.attrkey in newObject) && !this.#options.mergeAttrs) newObject[this.#options.attrkey] = {};
-
           // Under xmlns sax hands over a qualified attribute, and it is the value it wraps that a processor takes
           const attributeValue = typeof attribute === "string" ? attribute : attribute.value;
           const newValue = this.#options.attrValueProcessors

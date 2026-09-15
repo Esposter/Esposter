@@ -5,16 +5,11 @@ import { spawn } from "node:child_process";
 // oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#` map can reach
 import packageJson from "../../../package.json" with { type: "json" };
 
-const minArgv = 3;
 const property = "crossOS";
-if (process.argv.length < minArgv)
-  // Invoked as `pnpm crossOS [args]`
-  throw new RangeError(`${property} requires at least ${minArgv - 2} arguments`);
-
-const script = process.argv[2];
+// Invoked as `pnpm crossOS <script> [args]`
+const [script, ...args] = process.argv.slice(2);
 if (!script) throw new InvalidOperationError(Operation.Read, property, "script is required");
 
-const args = process.argv.slice(3);
 const { platform } = process;
 const command = (packageJson[property] as Record<string, Partial<Record<string, string>>>)[script]?.[platform];
 if (!command)

@@ -38,7 +38,7 @@ describe(createOperationData, () => {
     expect(items.value).toStrictEqual([reversedItem, existingItem, createdItem]);
   });
 
-  test("creates is idempotent", () => {
+  test("createItem is idempotent", () => {
     expect.hasAssertions();
 
     const { createItem } = operationData;

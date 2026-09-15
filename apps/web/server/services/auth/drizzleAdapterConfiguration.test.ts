@@ -3,12 +3,20 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { createMockDb } from "@esposter/db-mock";
 import { accounts, sessions, users } from "@esposter/db-schema";
 import { betterAuth } from "better-auth";
-import { assert, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The adapter derives the relation key it joins on from the schema table key, so the `users` relation `sessions`
 // And `accounts` carry is what makes `advanced.database.joins` resolve rather than throw. Renaming either back to
 // The singular every other table uses is invisible to typecheck and to every other test
 describe("drizzleAdapterConfiguration", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0 });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   // The adapter registers better-auth's schema check, and the handler runs it inside every transaction — so a
   // Column better-auth stopped writing fails sign-in in the running app while a read like the join below never
   // Opens a transaction and passes. Running the check here is what makes that drift a red suite instead
@@ -31,9 +39,9 @@ describe("drizzleAdapterConfiguration", () => {
       advanced: { database: { joins: true } },
       database: drizzleAdapter(db, drizzleAdapterConfiguration),
     });
-    const createdAt = new Date();
+    const createdAt = new Date(0);
     const userId = crypto.randomUUID();
-    const email = "joins@esposter.test";
+    const email = "email";
     await db
       .insert(users)
       .values({ biography: "", createdAt, email, emailVerified: true, id: userId, name: "name", updatedAt: createdAt });
@@ -41,14 +49,14 @@ describe("drizzleAdapterConfiguration", () => {
       accountId: crypto.randomUUID(),
       createdAt,
       id: crypto.randomUUID(),
-      providerId: "github",
+      providerId: "providerId",
       updatedAt: createdAt,
       userId,
     });
     const token = crypto.randomUUID();
     await db.insert(sessions).values({
       createdAt,
-      expiresAt: new Date(createdAt.getTime() + 1),
+      expiresAt: new Date(1),
       id: crypto.randomUUID(),
       token,
       updatedAt: createdAt,

@@ -58,17 +58,22 @@ describe.todo("forkSnapshot - warm fork matches a cold in-place install (equival
     ACCEPTANCE_TIMEOUT_MS,
   );
 
-  // The pre-run dependency verification pnpm does may auto-install inside the sandbox and fail when writing bin shims into the
+  // The pre-run dependency verification pnpm does may auto-install inside the sandbox and fail when writing bin shims
+  // Into the
   // Overlay upper (ENOENT node_modules/.bin/*). A warm fork resolves the binary from the frozen snapshot instead.
   test(
     "a forked warm `pnpm exec` runs over the frozen deps without re-installing and matches a cold install",
     async () => {
       expect.hasAssertions();
 
-      // Corepack pnpm (not the raw binary find the case above uses) so the run actually traverses verify-deps-before-run,
-      // Then `node --version` as the payload — a command pnpm exec always resolves off PATH, so a non-zero exit means the
-      // Pre-run verification tripped an install, not a missing hoisted bin. createOsInstallOptions binds the corepack home
-      // Both sides need to resolve `corepack pnpm`. ESBUILD_VERSION_REGEX is a bare semver, so it matches node's `vX.Y.Z`.
+      // Corepack pnpm (not the raw binary find the case above uses) so the run actually traverses
+      // Verify-deps-before-run,
+      // Then `node --version` as the payload — a command pnpm exec always resolves off PATH, so a non-zero exit means
+      // The
+      // Pre-run verification tripped an install, not a missing hoisted bin. createOsInstallOptions binds the corepack
+      // Home
+      // Both sides need to resolve `corepack pnpm`. ESBUILD_VERSION_REGEX is a bare semver, so it matches node's
+      // `vX.Y.Z`.
       const execCommand = "corepack pnpm exec node --version";
       const { coldResult, warmResult } = await runWarmVsCold(
         execCommand,

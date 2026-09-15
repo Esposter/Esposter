@@ -15,8 +15,8 @@ const mountFilterBar = () =>
     props: {
       hasActiveFilters: true,
       status: ResourceStatusFilter.Published,
-      tagName: "environment",
-      tagValue: "production",
+      tagName: "tagName",
+      tagValue: "tagValue",
       types: [],
       updatedAfter: new Date(0),
       updatedBefore: new Date(0),

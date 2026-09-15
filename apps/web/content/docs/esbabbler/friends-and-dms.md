@@ -22,10 +22,10 @@ stateDiagram-v2
     Pending --> Friends: acceptFriendRequest (transactional delete + insert)
     Pending --> None: declineFriendRequest
     Friends --> None: deleteFriend
-    Pending --> Blocked: blockUser (deletes request)
-    Friends --> Blocked: blockUser (deletes friendship)
-    None --> Blocked: blockUser
-    Blocked --> None: unblockUser
+    Pending --> Blocked: createBlock (deletes request)
+    Friends --> Blocked: createBlock (deletes friendship)
+    None --> Blocked: createBlock
+    Blocked --> None: deleteBlock
 ```
 
 Blocking is unilateral, but a block in either direction prevents friend requests and excludes the user from `searchUsers` results. Self-relationships are rejected by database CHECK constraints, not just router validation.
@@ -52,7 +52,7 @@ DMs are invisible to non-participants: invite links are rejected for `RoomType.D
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `friend`                        | `readFriends`, `deleteFriend`, `searchUsers` (excludes self + blocks)                                                                                                  |
 | `friendRequest`                 | `sendFriendRequest`, `acceptFriendRequest`, `declineFriendRequest`, `readFriendRequests`                                                                               |
-| `block`                         | `blockUser`, `unblockUser`, `readBlockedUsers`                                                                                                                         |
+| `block`                         | `createBlock`, `deleteBlock`, `readBlockedUsers`                                                                                                                       |
 | `room` (nested `directMessage`) | `createDirectMessage`, `readDirectMessages`, `readDirectMessageParticipants`, `createDirectMessageParticipants`, `deleteDirectMessageParticipant`, `hideDirectMessage` |
 
 ## Key files

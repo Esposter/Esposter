@@ -1,6 +1,6 @@
 # Running the Suite and Reading Its Failures
 
-How to narrow a run by name or path without paying for the whole suite, and how to read a failure the targeted run does not produce. **The full run itself belongs to CI** — running it locally is banned (see the skill's "Running Tests"), so this page is about the flags a narrowed run takes and the failures CI reports back, not about reproducing them by sweeping everything.
+Read when narrowing a run by name or path, or when CI reports a failure a targeted run does not produce. **The full run itself belongs to CI** — running it locally is banned (see the skill's "Running Tests"), so this page is the flags a narrowed run takes and the failures CI reports back, not how to reproduce them by sweeping everything.
 
 ## What only the full parallel run catches
 

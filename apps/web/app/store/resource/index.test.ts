@@ -31,7 +31,7 @@ describe(useResourceStore, () => {
   const otherResourceId = crypto.randomUUID();
   const newName = "newName";
   const failingName = "failingName";
-  const tags: ResourceTags = { env: "prod" };
+  const tags: ResourceTags = { "": "" };
   const publication = {
     publishedAt: new Date(0),
     publishVersion: 1,
@@ -124,10 +124,10 @@ describe(useResourceStore, () => {
   test("leaves the loaded resource alone when a save settles for another", async () => {
     expect.hasAssertions();
 
-    const { promise: isNavigated, resolve: resolveNavigated } = Promise.withResolvers<void>();
+    const { promise: navigatedPromise, resolve: resolveNavigated } = Promise.withResolvers<void>();
     server.use(
       trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
-        await isNavigated;
+        await navigatedPromise;
         return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
       }),
     );
@@ -153,10 +153,10 @@ describe(useResourceStore, () => {
   test("reports the loaded resource as saved while another resource's save is still in flight", async () => {
     expect.hasAssertions();
 
-    const { promise: isNavigated, resolve: resolveNavigated } = Promise.withResolvers<void>();
+    const { promise: navigatedPromise, resolve: resolveNavigated } = Promise.withResolvers<void>();
     server.use(
       trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
-        await isNavigated;
+        await navigatedPromise;
         return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
       }),
     );

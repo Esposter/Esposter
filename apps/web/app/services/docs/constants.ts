@@ -5,3 +5,4 @@ export const DOCS_NAVIGATION_OVERVIEW_SUFFIX = "#overview";
 export const MAX_DOCS_SEARCH_RESULTS = 10;
 export const MAX_MERMAID_SCALE = 4;
 export const MIN_MERMAID_SCALE = 0.5;
+export const PLANNING_GROUP_TITLE = "Planning";

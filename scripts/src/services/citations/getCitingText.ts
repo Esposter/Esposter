@@ -1,0 +1,39 @@
+// A fenced block as markdown reads one: three or more backticks or tildes, indented by however much the list
+// Item holding it indents its content, closing on a run of the same character at least as long as the opener —
+// So a shorter run inside a longer fence is content rather than the close, which a bare ```-to-``` scan reads as
+// The end of the block and leaves the rest of the example standing as prose. The two characters take separate
+// Openers because their info strings differ: a backtick fence's cannot hold a backtick, so a line that opens a
+// Run and closes it on the same line (```a``` beside prose) is a span rather than an opener, and reading it as
+// One drops every citation between it and the page's next fence
+const FENCE_REGEX =
+  /^[ \t]*(?<backtickFence>`{3,})[^`\n]*\n[\s\S]*?^[ \t]*\k<backtickFence>`*[ \t]*$|^[ \t]*(?<tildeFence>~{3,})[^\n]*\n[\s\S]*?^[ \t]*\k<tildeFence>~*[ \t]*$/gmu;
+const BACKTICK_RUN_REGEX = /`+/gu;
+
+// The prose of a page that cites: a fence is a program rather than a citation, and a span opened by two or more
+// Backticks quotes a backticked phrase rather than citing what is inside it, so both go before the single-backtick
+// Spans are read as citations. A span closes on the next run of exactly its own length, as markdown reads it — a
+// Longer or shorter run inside it is literal text, which is what a hand-rolled pair count gets wrong.
+export const getCitingText = (markdown: string): string => {
+  const text = markdown.replaceAll(FENCE_REGEX, "");
+  const runs = Array.from(text.matchAll(BACKTICK_RUN_REGEX), ({ 0: run, index }) => ({ index, length: run.length }));
+  let citingText = "";
+  let cursor = 0;
+
+  for (let runIndex = 0; runIndex < runs.length; runIndex++) {
+    const opener = runs[runIndex];
+    if (opener === undefined) continue;
+    // Scanned forward from the opener rather than searched from the start: a span closes a run or two later, so
+    // The walk is one pass over a page of spans rather than a rescan of every run before each one
+    let closerIndex = runIndex + 1;
+    while (closerIndex < runs.length && runs[closerIndex]?.length !== opener.length) closerIndex++;
+    const closer = runs[closerIndex];
+    if (closer === undefined) continue;
+
+    const spanEnd = closer.index + closer.length;
+    citingText += text.slice(cursor, opener.length === 1 ? spanEnd : opener.index);
+    cursor = spanEnd;
+    runIndex = closerIndex;
+  }
+
+  return citingText + text.slice(cursor);
+};

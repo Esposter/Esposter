@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Esposter TypeScript conventions — banned patterns (Omit over Except, forEach, parameter properties, mutating array methods, the void operator), as unknown as treated like any, arrow functions, callbacks never taking a bare function reference, regex literals, neverthrow promise style and the void ban, guard clauses and if/else-if chains (the shapes in a deep dive), exhaustive switch guards, inferred return types, for...of loops with .entries(), Array.from over spread+map, environment constants, stable selection IDs, filter narrowing, plus deep dives on enum declaration/values arrays/refs, the "" sentinel and null-vs-undefined, modelling types instead of casting (Pick from source types, discriminant-keyed dispatch maps, nuxt.d.ts augmentation, a TS2590 suppressed in place), function signatures (overloads, parameter defaults, boolean flags), the floating-promise replacement ladder, the two exceptions to the dynamic-import ban, and declare over ! on class fields. Apply when writing any TypeScript in this project.
+description: Apply when writing any TypeScript in this project. Esposter TypeScript conventions — the banned patterns (Omit over Except, forEach, parameter properties, mutating array methods, the void operator, as unknown as), arrow functions with callbacks never a bare reference, regex literals with the u flag, neverthrow promise style, guard clauses and if/else-if chains, exhaustive switch guards, inferred return types, for...of with .entries(), a string-literal union as an enum, the "" sentinel with undefined over null, and modelling a type instead of casting.
 ---
 
 # TypeScript Conventions
@@ -8,25 +8,26 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 ## Deep dives
 
 - `references/enums.md` — when declaring an enum, its Zod schema, its values array, or a ref that holds one.
-- `references/absent-values.md` — when a value can be empty or absent: a string ref, an optional field, a cursor, a nullable boundary type.
+- `references/absent-values.md` — when a value can be empty or absent: a string ref, an optional field, a cursor, a nullable boundary type, or a character that renders as nothing.
+- `references/collections.md` — when mutating an array, reading-or-inserting on a `Map`, choosing a `Set` over `.some()`, or narrowing what a `.filter()` returns.
 - `references/type-modelling.md` — when reaching for a cast, re-declaring fields a source/SDK type already has, dispatching per variant, a `NuxtConfig` key the compiler can't see, or a TS2590 the compiler cannot represent.
 - `references/control-flow.md` — when writing or reshaping a guard, an `if/else`, or a chain.
 - `references/function-signatures.md` — when writing a function's parameters: overloads, an options object, a default, or a boolean flag.
 - `references/floating-promises.md` — when a lint error flags a floating promise, or an async function must be called from a sync slot.
 - `references/dynamic-imports.md` — when reaching for `await import(...)`, or a dependency's docs mention `optimizeDeps`.
 - `references/class-fields.md` — when adding a field to a class.
+- `references/loops.md` — when writing a loop: an index-based `for` that stays, binding-position destructuring, bounding a zip.
 
 ## Core Rules
 
-- `strict` mode + `tseslint.configs.strictTypeChecked`. `any`, non-null assertions (`!`), and `==`/`!=` are lint errors (`no-explicit-any`, `no-non-null-assertion`, `eqeqeq`) — for `!` prefer a guard clause or optional chaining over a cast, and a field with no initializer takes `declare` rather than `!` (`references/class-fields.md`).
-- `Omit` → `Except` from `type-fest`, enforced by `@typescript-eslint/no-restricted-types`. Import it from `type-fest` directly; it is **not** re-exported from `@esposter/shared`.
+- `strict` mode, with oxlint's type-aware rules on (`typeAware` in `.oxlintrc.json`). `any`, non-null assertions (`!`), and `==`/`!=` are lint errors (`no-explicit-any`, `no-non-null-assertion`, `eqeqeq`) — for `!` prefer a guard clause or optional chaining over a cast, and a field with no initializer takes `declare` rather than `!` (`references/class-fields.md`).
+- `Omit` → `Except` from `type-fest`, enforced by oxlint `typescript/no-restricted-types`. Import it from `type-fest` directly; it is **not** re-exported from `@esposter/shared`.
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
 - **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
-- `.forEach()` is **BANNED** — use `for...of` (see Loops); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
+- `.forEach()` is **BANNED** — use `for...of` (`references/loops.md`); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
 - `type` aliases for object shapes → `interface` (`consistent-type-definitions`).
-- **Non-mutating array methods, enforced.** `sort()`, `reverse()` and `splice()` are all errors — the first two from oxlint (`unicorn/no-array-sort`, `unicorn/no-array-reverse`), `splice` from `no-restricted-syntax`, and all three restated in `vue/no-restricted-syntax` for the template expressions oxlint does not read. Write `toSorted`/`toReversed`/`toSpliced` and assign the result back; draining an array is taking it and putting a fresh one in its place, never `splice(0)`. What is left to judgement is `arr.with(index, value)` over `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`.
-- **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared`. Both hand-rolled shapes are four lines that read as branching logic where the helper reads as one lookup: the `let x = map.get(k); if (!x) { x = …; map.set(k, x); }` block, and the `map.get(k) ?? []` that is mutated and set back — whose `set` is load-bearing only on the miss, so it looks redundant to the next reader.
-- **`new Set` only for dedup** — use `.some()` for unique arrays. `Set` only when (a) deduplication is the goal, or (b) the collection is large enough that O(n) `.some()` hurts perf.
+- **Non-mutating array methods, enforced** — `sort()`, `reverse()` and `splice()` are lint errors; write `toSorted`/`toReversed`/`toSpliced` and assign the result back (`references/collections.md`).
+- **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared` (`references/collections.md`).
 - **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too.
 - Named imports from libraries, but only when not auto-imported by Nuxt/modules (`ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; all VueUse composables are auto-imported — never import manually).
 - **Node built-ins take the `node:` protocol** (`unicorn/prefer-node-protocol`) — but **never import an ambient global**: `process`, `console`, `Buffer`, `URL` and `fetch` are already there, so only the non-ambient built-ins are imported at all.
@@ -36,12 +37,12 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - **Boolean casting** — never `!!`; always `Boolean(value)`.
 - **Interpolation coerces** — `${x}`, never `${x.toString()}`; `no-restricted-syntax` enforces it (a radix `toString(16)` stays). `String(x)` inside a template is only for the types `restrict-template-expressions` rejects (`unknown`, `symbol`).
 - **Regex** — literals for static patterns, `new RegExp(template, flags)` only when the pattern interpolates, and always the `u` flag; all three are lint errors otherwise (`prefer-regex-literals`, `require-unicode-regexp`). Naming (`_REGEX`) is the `naming` skill's rule.
-- **A non-printing character is written as its `\uXXXX` escape, never the raw byte** — `RECORD_SEPARATOR = "\u001E"`, never the character itself pasted between the quotes. Settled: the raw byte is the direction this repo wrote first and has flip-flopped on since, and it loses. Both compile to the same string and `oxfmt` keeps either, so it is decided everywhere that is not the compiler — a raw `\u001E` renders as nothing in a diff, a terminal or an editor, so no reader can tell it from an empty string, from the neighbouring `\u001F`, or from having been dropped by a tool that rewrote the line. Where the same value has a second spelling in another realm (git's `%x1E` inside a `--format` string), both live in one `constants.ts` block, because a drift between them reads as a parse that simply returns nothing.
+- **A non-printing character is written as its `\uXXXX` escape, never the raw byte** — `RECORD_SEPARATOR = "\u001E"`. Settled, and the raw byte loses: it renders as nothing, so no reader can tell it from an empty string, from its neighbour, or from having been dropped by a tool that rewrote the line (`references/absent-values.md`).
 - **Prefer the shortened assignment forms** — compound (`x += y`, `x ??= y`) over `x = x + y`, chained (`a.value = b.value = value`) over repeating the right-hand side. `restrict-plus-operands` and `no-multi-assign` are off for exactly this reason: a cast to silence a lint rule is strictly worse than the operator it replaces.
 - **`as unknown as T` is `any` with extra steps** — it launders a value past every check, isn't lint-enforceable, and needs a stated reason the type cannot be modelled; the default answer is that it never was. Prefer a single `as T` where TS accepts it, and comment what the compiler cannot see — never "this is safe".
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
 - **Never `Object.values(SomeEnum)` inline**, and never abbreviate an enum value name (`Configuration`, not `Config`).
-- **A union of string literals is an enum** — `"delete" | "get"` in an annotation is a closed set spelled inline, so it becomes `enum HttpMethod` in its own model file and the annotation names the enum. `"" | Foo` (the empty sentinel), a lone discriminant (`type: "ApiConnection"`), a numeric union and a union passed as a type argument (`Pick<Foo, "a" | "b">` names keys) are not sets. Enforced repo-wide by `literal-union/no-string-literal-union` (`scripts/src/oxlint/literalUnion.ts`); a site that genuinely cannot be an enum carries a disable stating why, as `ExportsGeneration` does for tsdown's strip-only config loading.
+- **A union of string literals is an enum** — `"delete" | "get"` becomes `enum HttpMethod` in its own model file and the annotation names it, enforced repo-wide by `literal-union/no-string-literal-union`. The four unions that are not sets, and what a genuine disable has to say: `references/enums.md`.
 - **Track selections by stable ID, not name or index** — names change, indices shift on delete/reorder. Use `entity.id` (UUID) as the key for selected/active items. A stale ID is harmless; a stale name/index is a bug.
 
 ## Functions
@@ -65,25 +66,14 @@ description: Esposter TypeScript conventions — banned patterns (Omit over Exce
 - **Use `switch` for type-based branching** — branching on an enum/discriminant with multiple cases uses `switch`, not an `if/else if` chain. Use `if/else if/else` only for non-enum expressions or exactly two branches. Never switch over a discriminant purely to dispatch different logic per case — key a map by the discriminant instead (`references/type-modelling.md`).
 - **Every `switch` on an enum or discriminated-union discriminant needs `default: exhaustiveGuard(value)`** (or `return exhaustiveGuard(value)` in return-position), imported from `@esposter/shared`, so a new variant is a compile error. Nested switches each need their own guard. **Exception**: switches on non-enum values (strings, numbers, class instances).
 - **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to a named constant only if reused.
-- **No redundant type guards after a filtering condition** — if a `.filter()` predicate narrows the type (`filter((v) => typeof v === "number")`), the result is already `number[]`; don't add `: v is number` or a cast inside the callback. Exception: a predicate passed as a function reference (`filter(Boolean)`) can't narrow, so a type predicate is still needed.
 
 ## Loops and Iteration
 
-- **`Array.from(iterable, mapFn)` over `[...iterable].map(mapFn)`** for any `Set`/`Map`/non-array iterable — the two-arg form maps while converting, producing no intermediate array. A `Map` iterates as `[key, value]` with no `.entries()` needed: `Array.from(fooMap, ([key, value]) => ({ key, value }))`. `no-restricted-syntax` fails the single-spread shape, so what is left to a reader is the two cases where the rewrite is not the same call — a callback reading `.map`'s third argument, and an iterator its own callback advances — both of which keep their evaluation order as `Array.from(iterable).map(fn)`. A multi-element literal (`[...a, ...b]`) is a concatenation rather than a conversion and is untouched.
-- **No index-based `for (let i = 0; i < arr.length; i++)`** for plain array iteration — use `for...of`, and `.entries()` when the index is needed (`for (const [i, item] of arr.entries())`). The `.entries()` iterator cost is negligible (tiny per-element pair alloc, JIT-friendly) versus the readability win.
-- **Index-based `for` stays** only when the loop genuinely isn't sequential array iteration: step counters (`i += 4`, `i += BATCH_SIZE`), pure counts (`for (let i = 0; i < 3; i++)`), `<=` bounds, multi-condition bounds, or in-body index mutation/lookahead (`line.charAt(i + 1)` then `i++`).
-- **Destructure in the binding position (loop var, function param) straight to the props you use** — `for (const [i, { id }] of files.entries())`, never binding the whole object and then reading its fields. This _removes_ a binding, so it does not conflict with the ban on a separate `const { x } = obj` line for a single use. Keep the whole binding only when the object is passed on whole, or used too many ways to enumerate cleanly.
-- **Don't declare intermediate vars that are used once** — inline single-use values; only name a var when it's referenced more than once or the name adds clarity.
-- **Bound a zip with `break`, not a dual condition** — iterate the driving array via `.entries()` and `if (i >= other.length) break;`.
+- **`for...of` with `.entries()` when the index is needed; `Array.from(iterable, mapFn)` over `[...iterable].map(mapFn)`** — `no-restricted-syntax` fails the single-spread shape. When an index-based `for` stays, destructuring in the binding position, and bounding a zip: `references/loops.md`.
 
 ## Environment Checks
 
-**Never use `import.meta.dev` or `import.meta.env.MODE` directly** — use `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`:
-
-```ts
-import { IS_PRODUCTION } from "#shared/util/environment/constants";
-const baseUrl = IS_PRODUCTION ? PRODUCTION_URL : DEVELOPMENT_URL;
-```
+- **Never `import.meta.dev` or `import.meta.env.MODE` directly** — `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`.
 
 ## Absent Values
 

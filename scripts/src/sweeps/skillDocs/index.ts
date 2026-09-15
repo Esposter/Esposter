@@ -1,18 +1,7 @@
-import { getBudgetFindings } from "#src/services/sweeps/skillDocs/getBudgetFindings";
-import { getDocsRouteFindings } from "#src/services/sweeps/skillDocs/getDocsRouteFindings";
-import { getUnindexedFindings } from "#src/services/sweeps/skillDocs/getUnindexedFindings";
-import { getUnresolvedFindings } from "#src/services/sweeps/skillDocs/getUnresolvedFindings";
-import { readSkillDocsFiles } from "#src/services/sweeps/skillDocs/readSkillDocsFiles";
+import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFindingType";
+import { readSkillDocsFindings } from "#src/services/sweeps/skillDocs/readSkillDocsFindings";
 
-const skills = readSkillDocsFiles(".agents/skills/*/SKILL.md");
-const pages = readSkillDocsFiles(".agents/skills/*/references/*.md");
-const files = [...skills, ...pages];
-const paths = new Set(files.map(({ path }) => path));
+const typeWidth = Math.max(...Object.values(SkillDocsFindingType).map(({ length }) => length));
 
-for (const { detail, path, type } of [
-  ...getBudgetFindings(skills),
-  ...getUnindexedFindings(skills, pages),
-  ...getDocsRouteFindings(files),
-  ...getUnresolvedFindings(files, paths),
-])
-  console.info(`${type.padEnd(11)} ${path}: ${detail}`);
+for (const { detail, path, type } of readSkillDocsFindings())
+  console.info(`${type.padEnd(typeWidth)} ${path}: ${detail}`);

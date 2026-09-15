@@ -19,7 +19,7 @@ export const createResourceListItem = (overrides: Partial<ResourceListItem> = {}
   tags: {},
   type: ResourceType.Sheet,
   updatedAt: new Date(0),
-  userId: "userId",
+  userId: crypto.randomUUID(),
   ...overrides,
 });
 

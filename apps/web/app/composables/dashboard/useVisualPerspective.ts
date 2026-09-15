@@ -27,19 +27,18 @@ export const useVisualPerspective = (visualId: MaybeRefOrGetter<string>, getChar
     const visualIdValue = toValue(visualId);
     const entry = viewEntries.value.find((viewEntry) => parseViewEntry(viewEntry).visualId === visualIdValue);
     if (!entry) return;
-
     // A link is hand-editable and outlives the chart it was captured from, so a token that no longer decodes
     // Opens the dashboard unfiltered rather than raising something the reader can do nothing about
     getResult(() => {
       chart.perspectives.apply(parseViewEntry(entry).token);
     }).match(noop, console.error);
   };
-  const readViewUrl = () => {
+  const getViewUrl = () => {
     const chart = getChart();
     const token = chart ? getResult(() => chart.perspectives.encode(chart.perspectives.capture())).unwrapOr("") : "";
     const entries = setViewEntryToken(viewEntries.value, toValue(visualId), token);
     const { href } = router.resolve({ query: { ...currentRoute.value.query, [DASHBOARD_VIEW_QUERY_KEY]: entries } });
     return new URL(href, window.location.origin).href;
   };
-  return { applyView, readViewUrl };
+  return { applyView, getViewUrl };
 };

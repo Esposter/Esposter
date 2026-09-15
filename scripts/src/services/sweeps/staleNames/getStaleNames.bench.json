@@ -1,0 +1,87 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/sweeps/staleNames/getStaleNames.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.5123500000000035,
+              "name": "paths",
+              "p99": 0.6300580000000139,
+              "rme": 8.007508284125162,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.6310399999999845,
+              "name": "names the source holds",
+              "p99": 1.0780490000000156,
+              "rme": 23.08844684793546,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1.18836,
+              "name": "stale member accesses",
+              "p99": 1.3692870000000563,
+              "rme": 5.3754565762115165,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getStaleNames > 10 pages"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 2.4585499999999905,
+              "name": "paths",
+              "p99": 2.8733090000000026,
+              "rme": 6.20975033187113,
+              "sampleCount": 10
+            },
+            {
+              "mean": 2.6996899999999875,
+              "name": "names the source holds",
+              "p99": 2.9816759999999896,
+              "rme": 4.07621557467652,
+              "sampleCount": 10
+            },
+            {
+              "mean": 6.559910000000014,
+              "name": "stale member accesses",
+              "p99": 7.10829299999998,
+              "rme": 3.179430235944367,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getStaleNames > 100 pages"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 24.714460000000052,
+              "name": "paths",
+              "p99": 30.454438999999898,
+              "rme": 8.077640113724057,
+              "sampleCount": 10
+            },
+            {
+              "mean": 27.906830000000014,
+              "name": "names the source holds",
+              "p99": 28.570347000000073,
+              "rme": 0.9502725509544079,
+              "sampleCount": 10
+            },
+            {
+              "mean": 73.56690999999996,
+              "name": "stale member accesses",
+              "p99": 77.72852199999987,
+              "rme": 2.588689737795089,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "getStaleNames > 1000 pages"
+        }
+      ]
+    }
+  ]
+}

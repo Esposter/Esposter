@@ -7,7 +7,7 @@ description: A wrong name, shape or deployed identity is corrected in place — 
 
 Nothing in this repository exists to keep an older version of itself working. When a name, a shape or a deployed identity turns out to be wrong, it is corrected in place and every reference moves with it in the same commit. The old form is deleted, not aliased.
 
-This is the rule the codebase's other absences follow from: there are no `@deprecated` markers, no `nameV2`, no re-export shims pointing an old path at a new one, no Pulumi `aliases`, no legacy union arms in a schema, and no read path that accepts two shapes because one of them used to be written.
+This is the rule the codebase's other absences follow from: there are no `@deprecated` markers, no `fooV2`, no re-export shims pointing an old path at a new one, no Pulumi `aliases`, no legacy union arms in a schema, and no read path that accepts two shapes because one of them used to be written.
 
 ## Why the cost argument does not apply here
 
@@ -58,5 +58,5 @@ A name that is still **accurate** is not churn to be renamed for symmetry with i
 - Keeping a stale identifier because renaming it "touches infra" — preview it and read the plan.
 - Shipping a rename with a re-export of the old path "for now", which makes the old name permanent by making nothing fail.
 - A schema that accepts the previous shape alongside the current one.
-- Version-suffixed anything (`useFooV2`, `handlerNew`) as a way of avoiding the rename.
+- Version-suffixed anything (`useFooV2`, `fooNew`) as a way of avoiding the rename.
 - A comment explaining that a name is historical. If it is wrong, change it; the explanation is the cost.

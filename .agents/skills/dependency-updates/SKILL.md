@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, GitHub Actions dereferenced commit SHAs, caret prefix rules, exact-pinned packages (drizzle-kit/drizzle-orm RCs, the typescript bridge alias), version-capped packages (h3, unocss), the deliberate `minimumReleaseAge: 0` that takes a version the day it publishes and what that trades, and tracked open issues — plus deep dives on bumping a GitHub Action to a dereferenced commit SHA, moving the node version with `pnpm update:node`, and the Docker base-image rule keyed on the `docker` datasource that exempts every image tag from the repo-wide `updatePinnedDependencies: false` and pins digests, with Renovate's local dry run showing which deps a rule reaches. Apply when updating package versions.
+description: Apply when updating package versions, bumping a GitHub Action or the node version, or editing renovate.json. Esposter dependency update process — every version in the pnpm-workspace.yaml catalog with a caret unless exact-pinned or capped, actions pinned to a dereferenced commit SHA, node moved only by pnpm update:node, minimumReleaseAge kept at 0, and the tracked issues a bump watches.
 ---
 
 # Dependency Updates
@@ -37,7 +37,7 @@ Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them pe
 ## Exact-pinned packages (no caret)
 
 - **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.
-- **`typescript`** — an exact-pinned `npm:typescript-native-bridge@…` alias, so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`) and a caret would float it across bridge builds. The alias is what runs `tsc`/`vue-tsc` on the Go compiler (`apps/web/content/docs/architecture/monorepo-tooling.md`); a bump moves the bridge, the TypeScript version behind it and `typescript-eslint` at once, so it is a deliberate, dedicated pass and never part of a routine update.
+- **`typescript`** — exact-pinned in the catalog and aliased to `npm:typescript-native-bridge@…` under `overrides:`, so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`) and a caret would float it across bridge builds. The alias is what runs `tsc`/`vue-tsc` on the Go compiler (`apps/web/content/docs/architecture/monorepo-tooling.md`); a bump moves the bridge, the TypeScript version behind it and `typescript-eslint` at once, so it is a deliberate, dedicated pass and never part of a routine update.
 
 ## Docker base images — `references/renovate-docker.md`
 
@@ -46,7 +46,7 @@ A `packageRules` entry keyed on `matchDatasources: ["docker"]` exempts every ima
 ## Version-capped packages (keep the caret, cap the range)
 
 - **`h3`** — has `^` (both catalog and `overrides:`). Skip major/RC bumps; only update minor/patch within the current major.
-- **`unocss`, `@unocss/nuxt`, `@unocss/eslint-config`** — `~66.9.2`, tildes, and they move as one trio because every `@unocss/*` package pins its siblings to its own exact version. 66.10.0 rewrote `@unocss/inspector` onto `devframe`, which depends on `h3` 2.x; the `h3` override above holds the tree at 1.x, so `devframe` resolves against a major that has no `H3` export and `nuxt build` dies at the Nitro stage with `The requested module 'h3' does not provide an export named 'H3'`. `@unocss/vite` imports the inspector at the top of its entry, so `inspector: false` does not skip the import and no UnoCSS-side setting avoids it. The block is a **minor**, and the unblock is the `h3` cap lifting — not an UnoCSS release — so re-check it whenever `h3` 2.x becomes takeable, and widen both back together.
+- **`unocss`, `@unocss/nuxt`, `@unocss/eslint-config`** — tilde-capped in the catalog, and they move as one trio because every `@unocss/*` package pins its siblings to its own exact version. The minor after the cap rewrote `@unocss/inspector` onto `devframe`, which depends on `h3` 2.x; the `h3` override above holds the tree at 1.x, so `devframe` resolves against a major that has no `H3` export and `nuxt build` dies at the Nitro stage with `The requested module 'h3' does not provide an export named 'H3'`. `@unocss/vite` imports the inspector at the top of its entry, so `inspector: false` does not skip the import and no UnoCSS-side setting avoids it. The block is a **minor**, and the unblock is the `h3` cap lifting — not an UnoCSS release — so re-check it whenever `h3` 2.x becomes takeable, and widen both back together.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 
@@ -64,7 +64,7 @@ What that trades is real and accepted: a just-published bad version installs imm
 - **`oxlint-tsgolint`** — a bump here is the one thing that could retire the `ignorePatterns` entry covering tsgo's infinite loop on the recursive `three/tsl` types. It ships its own Go binaries, so the `typescript` alias does not move it. Check it on every bump; the exclusion itself, and the CI symptom that does not look like a hang, are documented in the `oxlint` skill's `references/lint-configuration.md`.
 - **`ajv`, `ajv-errors`, `ajv-formats`, `ajv-i18n`, `debug`** — required by `@koumoul/vjsf`; tracked at https://github.com/json-layout/json-layout/issues/5.
 - **`db:run` script** — workaround for https://github.com/drizzle-team/drizzle-orm/issues/1228.
-- **`vitest`, `@vitest/coverage-v8`** — not capped, but they move as a pair: `@vitest/coverage-v8` peers vitest exactly (`5.0.0` peers `vitest: 5.0.0`). A major also waits on `@nuxt/test-utils` peering the new line — it widened to `^4.0.2 || ^5.0.0` for 5, and a 6 would need the same.
+- **`vitest`, `@vitest/coverage-v8`** — not capped, but they move as a pair: `@vitest/coverage-v8` peers vitest at the exact version. A major also waits on `@nuxt/test-utils` peering the new line — it widens its `vitest` peer one major at a time, and the next major needs the same.
 
 ## Dependency placement (deps vs peerDeps)
 

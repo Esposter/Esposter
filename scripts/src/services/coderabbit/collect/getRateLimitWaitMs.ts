@@ -6,22 +6,12 @@ import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants
 
 const RATE_LIMIT_RESET_PATTERN = /Next included review available in (?<amount>\d+) (?<unit>hours?|minutes?)/u;
 
-// How long is left of the limit the gate has already read off the commit status. The status says a limit applied;
-// This says when it ends, and the only thing that knows is the walkthrough CodeRabbit rewrites when it skips a
-// Review — "Next included review available in 10 minutes". Nothing is emitted when the limit actually lifts, so
-// That sentence is what the collector converts into a retrigger it schedules itself.
-//
-// The sentence is relative to the comment that carries it, never to now: the block is not removed when the limit
-// Lifts — a merged pull request still shows the one its last skipped review wrote — so reading it as a wait from
-// The present would park the collector behind a deadline that passed a day ago. Anchoring it to the comment's own
-// Timestamp makes an expired block say what it should, which is that nothing is left to wait for.
-//
-// No block, or one whose sentence reads differently than it did, states no deadline at all — and the caller asks
-// The bot rather than guessing one, since a guessed wait is slept out blind and re-guessed on waking.
+// How long is left of the limit the gate read off the commit status, from the one thing that knows — the
+// Walkthrough CodeRabbit rewrites when it skips a review. Relative to the comment's own timestamp, never to now:
+// The block is not removed when the limit lifts, so an expired one must read as nothing left to wait for.
+// No block, or a sentence that reads differently, states no deadline and the caller asks the bot instead.
 export const getRateLimitWaitMs = (issueComments: GitHubEntry[], nowMs: number): number | undefined => {
-  // The marker is public — it is quoted in this very file — so anyone who can comment on the pull request can
-  // Post one. Scoped to the bot's own login the way every other marker read here is, or a forged comment could
-  // Park the collector behind whatever deadline its author chose
+  // Scoped to the bot's login: the marker is public, and a forged block could park the collector behind any deadline
   const comment = issueComments.findLast((issueComment) =>
     checkIsMarked(issueComment, CODERABBIT_REST_LOGIN, RATE_LIMIT_COMMENT_MARKER),
   );

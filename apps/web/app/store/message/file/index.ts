@@ -84,7 +84,6 @@ export const useFileStore = defineStore("message/file", () => {
     }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
   if (!checkIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
-
   // The gallery the viewer walks: everything that has something to look at and a url to look at it through. A PDF
   // Opens its own dialog from its own renderer and audio plays from the row, so pulling either in would mean two
   // Dialogs racing for one click

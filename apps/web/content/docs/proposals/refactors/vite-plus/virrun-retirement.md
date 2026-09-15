@@ -23,8 +23,6 @@ flowchart TD
   root --> circular["A cost the sandbox imposes, not a reason it exists — it leaves with virrun"]
 ```
 
-The diagram used to put a gate at job 3, on a decision about which operating system the development loop runs on. That gate was wrong, and the section below is why.
-
 ### Job 1 — the task cache
 
 Content-keyed on environment key, working tree and command, replaying a recorded diff and the captured streams on a hit; default-on locally and off in CI ([virrun task cache](/docs/virrun/task-cache)). This is the Turborepo idea, and the [prior art page](/docs/virrun/prior-art) records it as exactly that.
@@ -37,7 +35,7 @@ Dependencies fetched once into a shared store, `node_modules` and build output l
 
 This is the one genuine loss, and it should be recorded as one rather than argued away. What makes it a defensible trade is that it is a **local-loop** gain on one platform, bought with a maintenance surface that is not local: a published package, a differential correctness harness that hard-fails CI on any divergence from native execution, committed bench artifacts under a speed gate, and a documentation area larger than most product areas here.
 
-It is also the job that a change of development platform addresses directly, since most of what the RAM filesystem is buying back is the cost of `node_modules` on NTFS. That makes moving the loop onto Linux a **substitute** for job 2 rather than a prerequisite for the removal — a distinction the earlier version of this page had backwards.
+It is also the job that a change of development platform addresses directly, since most of what the RAM filesystem is buying back is the cost of `node_modules` on NTFS. That makes moving the loop onto Linux a **substitute** for job 2 rather than a prerequisite for the removal.
 
 ### Job 3 — the prepare layer, which is circular
 

@@ -1,6 +1,7 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { takeOne } from "@esposter/shared";
+import { getMockSasUrl } from "azure-mock";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const stubFetch = () => {
@@ -14,7 +15,7 @@ const stubFetch = () => {
 const getCommitCall = (fetchMock: ReturnType<typeof stubFetch>) => takeOne(fetchMock.mock.calls.slice(-1));
 
 describe(uploadBlocks, () => {
-  const sasUrl = "https://mock/blob?sig=mock";
+  const sasUrl = getMockSasUrl("", "w", "b");
 
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -26,11 +27,11 @@ describe(uploadBlocks, () => {
     expect.hasAssertions();
 
     const fetchMock = stubFetch();
-    const contentType = "image/png";
-    await uploadBlocks(new Blob(["mock"], { type: contentType }), sasUrl);
+    const contentType = MimeType.PlainText;
+    await uploadBlocks(new Blob([" "], { type: contentType }), sasUrl);
     const [commitUrl, commitInit] = getCommitCall(fetchMock);
 
-    expect(commitUrl).toContain("comp=blocklist");
+    expect(commitUrl).toBe(`${sasUrl}&comp=blocklist`);
     expect(commitInit.headers).toStrictEqual({
       "Content-Type": MimeType.Xml,
       "x-ms-blob-content-type": contentType,
@@ -42,7 +43,7 @@ describe(uploadBlocks, () => {
     expect.hasAssertions();
 
     const fetchMock = stubFetch();
-    await uploadBlocks(new Blob(["mock"]), sasUrl);
+    await uploadBlocks(new Blob([" "]), sasUrl);
     const [, commitInit] = getCommitCall(fetchMock);
 
     expect(commitInit.headers).toStrictEqual({ "Content-Type": MimeType.Xml });

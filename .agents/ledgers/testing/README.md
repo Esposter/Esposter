@@ -6,13 +6,14 @@ files changed since.
 
 ## Rules
 
-| Rule                                                       | Owner                                                 |
-| ---------------------------------------------------------- | ----------------------------------------------------- |
-| A test earns its line or is deleted; fixtures written once | `testing` — "What to Test", `references/test-data.md` |
-| Constants inside the `describe`, never module scope        | `testing` — "Structure"                               |
-| Mock cleanup follows how the mock was created              | `testing` — `references/module-mocks.md`              |
-| `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                              |
-| The cheapest environment that runs the file (`app` only)   | this ledger — "The environment a suite declares"      |
+| Rule                                                       | Owner                                                   |
+| ---------------------------------------------------------- | ------------------------------------------------------- |
+| A test earns its line or is deleted; fixtures written once | `testing` — "What to Test"                              |
+| Canonical values; every date computed from the epoch       | `test-values`                                           |
+| Constants inside the `describe`, never module scope        | enforced: `scripts/src/workspace/constantScope.test.ts` |
+| Mock cleanup follows how the mock was created              | `testing` — `references/module-mocks.md`                |
+| `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                                |
+| The cheapest environment that runs the file (`app` only)   | this ledger — "The environment a suite declares"        |
 
 A bare zero-argument `vi.fn` is not in this table because
 `packages/configuration/eslint/restrictedTestSyntaxes.js` fails on the line that writes it.
@@ -49,16 +50,14 @@ pnpm ai:sweep:constant-scope
 
 The scan lives in `scripts/src/sweeps/constantScope/` rather than in this file, because it is a program: a
 line-anchored regex cannot decide constant scope on its own — it reads a multi-line arrow as a constant, since
-the `=>` lands on a later line, and it cannot tell where a declaration ends, since a template literal's `${…}`
-and a `;` inside a string both fool a bracket count. Its cases are pinned by
+the `=>` lands on a later line, and it cannot tell where a declaration ends, since a template literal's `${…}`,
+a `;` inside a string and a quote inside a regex literal all fool a bracket count. Its cases are pinned by
 `getModuleScopeConstants.test.ts` and `scanCode.test.ts`, which is what makes "prove the scan can fail before
 believing it passed" (`sweeps` skill) a thing that stays proved rather than a thing each pass re-does by hand.
 
-Everything it still reports on a swept repo is one of the exceptions below, so a clean pass is a **known** list
-rather than an empty one: the top-level-await clusters in `app/content/docs/index.test.ts`, `app/components/index.test.ts`
-and `app/store/index.test.ts` — each with the constants their module-scope readers pin out there alongside them —
-the `mockDb` a hoisted `vi.mock` factory returns in each `azure-functions` suite, and virrun's two mocked path
-constants.
+A clean pass prints nothing: every exception below is a shape the scan reads for itself, and
+`scripts/src/workspace/constantScope.test.ts` fails on anything it prints, so this rule is enforced rather than
+swept.
 
 ## Judging a match
 
@@ -70,11 +69,13 @@ constants.
 - **`vi.hoisted` and `vi.mock` stay** — mechanically hoisted above the imports.
 - **Anything a `vi.mock` factory closes over stays**, for the same reason the factory does: `let mockDb` read by
   a `get db()` factory, or a path constant a mocked resolver returns, is reached from above the imports, where a
-  `describe` scope is invisible. This is the repo's largest exception — one per `azure-functions` suite.
+  `describe` scope is invisible. The scan reads the module-scope `vi.mock(…)` statements for the names they use.
 - **A `const` initialized by top-level `await` stays**, because a `describe` callback is synchronous and cannot
   hold one. Converting it to `let` + `beforeAll` is worse: it makes a read-only fixture look like rebuilt state,
-  which is the distinction the skill's `let` rule exists to carry. `content/docs/index.test.ts` is the repo's case, and
-  the module-scope helpers reading those fixtures pin the constants they read out there too.
+  which is the distinction the skill's `let` rule exists to carry. What the awaited initializer reads stays with
+  it, transitively — a directory constant a glob is rooted at cannot move below the glob. What merely _derives_
+  from the fixture does not: a map reduced from it, a regex a helper applies to it, can be built inside the
+  describe that reads it, and the scan reports those.
 - **Everything else moves in**, including a factory _call_ (`const message = createMessageEntity(…)`), which is
   state even though a function produced it.
 - **Used by several `describe`s → declare it in each.** Never wrap them in an outer `describe` to share one: the
@@ -107,15 +108,10 @@ file, because the failure names the global that was missing.
 
 ## Next enforceable
 
-**Constant scope cannot be linted yet, and the attempt is recorded so nobody repeats it.** The selector itself is
-easy — `Program > VariableDeclaration > VariableDeclarator[init]` minus function expressions, `AwaitExpression`
-and `vi.hoisted` initializers — and `export const` is excluded for free, since an exported declaration's parent
-is the `ExportNamedDeclaration`. What defeats it is **helper files**: a `*.test.ts` that exports one helper and
-ends in `describe.todo` (`references/test-helper-files.md`) legitimately holds module-scope state, and
-`mswTrpc.test.ts`'s `const server = setupServer()` is exactly the shape the rule is aimed at. Telling the two
-apart means asking whether the file has a real `describe`, which is a whole-Program question an AST selector
-cannot ask.
-
-The `vi.mock`-factory exception defeats it a second time and in the same way: whether a binding is read from a
-hoisted factory is a whole-Program question too. A custom oxlint plugin has both answers available at once, so it
-is the one remaining path — that, or helper files taking a distinct suffix.
+**Constant scope is enforced by `scripts/src/workspace/constantScope.test.ts`**, not by a lint rule, and the
+reason is recorded so nobody rebuilds the rule. An AST selector — `Program > VariableDeclaration >
+VariableDeclarator[init]` minus function expressions, `AwaitExpression` and `vi.hoisted` initializers — cannot
+ask the two whole-Program questions the exceptions turn on: whether the file is a helper file (a `describe.todo`
+beside one exported helper, `references/test-helper-files.md`) and whether a binding is read from a hoisted
+`vi.mock` factory or an awaited initializer. The scan is a program and asks both, so the test over it is the
+enforcer, and a lint rule would be a second, weaker copy of the same decision.

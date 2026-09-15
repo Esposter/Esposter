@@ -42,7 +42,7 @@ class MemoryStorage implements Storage {
 
 globalThis.localStorage ??= new MemoryStorage();
 globalThis.sessionStorage ??= new MemoryStorage();
-// Happy-dom implements no `visualViewport`, and Vuetify's overlay location strategy reads it unguarded — so any
+// `happy-dom` implements no `visualViewport`, and Vuetify's overlay location strategy reads it unguarded — so any
 // Test that mounts a real `v-dialog`/`v-menu` dies with `ReferenceError: visualViewport is not defined` before a
 // Single assertion runs. The workaround reached for otherwise is `shallow: true`, which renders no overlay DOM at
 // All and so cannot assert anything about the shell inside it. A stationary 1:1 viewport is exactly what the
@@ -119,7 +119,7 @@ vi.mock("nitropack/runtime", () => ({
 // Plugins applied on first mount. Charged inside a test body it can blow the per-test timeout — especially
 // Under virrun on win32, where the sandbox reads repo source through WSL's /mnt/c (v9fs) and those cold
 // First-reads are 15-64x slower. Warm it once per worker so that cost lands in a hook (billed to the generous
-// HookTimeout, not a test's testTimeout), keeping per-test timings honest — written once here for every file
+// `hookTimeout`, not a test's testTimeout), keeping per-test timings honest — written once here for every file
 // Rather than duplicated per file. It must be a beforeEach, not a beforeAll: the nuxt env registers its own
 // `beforeAll(setupNuxt)` after this setup file, and beforeAll order is registration order, so a beforeAll here
 // Runs before the app is built; every beforeEach runs after all beforeAlls, so the app is ready by then. The

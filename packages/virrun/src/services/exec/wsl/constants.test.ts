@@ -26,8 +26,9 @@ export const TEST_WSL_PREFIX = "/wsl/";
 export const TEST_WSL_DISTRO = "a";
 export const TEST_WSL_DISTRO_SECONDARY = "b";
 export const TEST_WSL_HOME = "/a";
-// Name of the in-temp directory the getWslNativeCacheRoot mock points at on win32 (joined under os.tmpdir() by the consumer).
-export const TEST_WSL_CACHE_DIR_NAME = "a";
+// Name of the in-temp directory the getWslNativeCacheRoot mock points at on win32 (joined under os.tmpdir() by the
+// Consumer).
+export const TEST_WSL_CACHE_DIRECTORY_NAME = "a";
 // `\\wsl.localhost` (and the legacy `\\wsl$`) UNC prefixes point straight at a distro's ext4 filesystem;
 // `createTestWslUnc` joins the distro segment on (no trailing separator here — it would escape the backtick).
 export const TEST_WSL_UNC_PREFIX: string = String.raw`\\wsl.localhost`;

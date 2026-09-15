@@ -28,7 +28,7 @@ vi.mock("pdfjs-dist/build/pdf.worker?url", () => ({ default: "" }));
 // Not clicking the backdrop
 describe("messageModelFileRendererPdf", () => {
   let wrapper: Awaited<ReturnType<typeof mountSuspended>> | undefined;
-  const filename = "filename.pdf";
+  const filename = "filename";
   const file: Pick<FileEntity, "filename" | "hasThumbnail" | "id" | "mimetype" | "size"> = {
     filename,
     hasThumbnail: false,
@@ -39,7 +39,7 @@ describe("messageModelFileRendererPdf", () => {
   const mountPdf = async (isPreview: boolean) => {
     wrapper = await mountSuspended(MessageModelFileRendererPdf, {
       attachTo: document.body,
-      props: { file, isPreview, url: "https://example.com/file.pdf" },
+      props: { file, isPreview, url: "" },
     });
     return wrapper;
   };

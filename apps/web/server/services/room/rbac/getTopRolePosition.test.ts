@@ -8,7 +8,7 @@ describe(getTopRolePosition, () => {
   const name = "name";
   const updatedName = "updatedName";
   const position = 5;
-  const updatedPosition = 7;
+  const updatedPosition = position + 1;
 
   test("returns -1 with no assigned roles", async () => {
     expect.hasAssertions();
@@ -25,7 +25,7 @@ describe(getTopRolePosition, () => {
     const owner = getMockSession().user;
     const roleCaller = getRoleCaller();
     const roomId = getRoomId();
-    const role = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
+    const role = await roleCaller.createRole({ name, position, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: owner.id });
 
     const topPosition = await getTopRolePosition(getMockContext().db, owner.id, roomId);
@@ -39,13 +39,8 @@ describe(getTopRolePosition, () => {
     const owner = getMockSession().user;
     const roleCaller = getRoleCaller();
     const roomId = getRoomId();
-    const moderatorRole = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
-    const seniorRole = await roleCaller.createRole({
-      name: updatedName,
-      permissions: 0n,
-      position: updatedPosition,
-      roomId,
-    });
+    const moderatorRole = await roleCaller.createRole({ name, position, roomId });
+    const seniorRole = await roleCaller.createRole({ name: updatedName, position: updatedPosition, roomId });
     await roleCaller.assignRole({ roleId: moderatorRole.id, roomId, userId: owner.id });
     await roleCaller.assignRole({ roleId: seniorRole.id, roomId, userId: owner.id });
 
@@ -61,10 +56,9 @@ describe(getTopRolePosition, () => {
     const roleCaller = getRoleCaller();
     const roomId = getRoomId();
     const otherRoom = await getRoomCaller().createRoom({ name: updatedName });
-    const role = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
+    const role = await roleCaller.createRole({ name, position, roomId });
     const otherRole = await roleCaller.createRole({
       name: updatedName,
-      permissions: 0n,
       position: updatedPosition,
       roomId: otherRoom.id,
     });

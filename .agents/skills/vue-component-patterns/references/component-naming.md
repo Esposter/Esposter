@@ -2,7 +2,7 @@
 
 Read when creating, renaming or moving a component file, when a directory of components gets crowded, or when a tag renders empty with no error. The headline rule — the folder path is the prefix, never repeat it in the filename — is in `SKILL.md`.
 
-Nuxt builds the auto-import name from the directory words plus the filename words: `Feature/Group/ItemCard.vue` → `FeatureGroupItemCard`, `Feature/Group/ItemCardHeader.vue` → `FeatureGroupItemCardHeader`. `Index.vue` contributes nothing, so a folder's own root component is `Group/Index.vue` → `FeatureGroup`.
+Nuxt builds the auto-import name from the directory words plus the filename words: `Foo/Group/ItemCard.vue` → `FooGroupItemCard`, `Foo/Group/ItemCardHeader.vue` → `FooGroupItemCardHeader`. `Index.vue` contributes nothing, so a folder's own root component is `Group/Index.vue` → `FooGroup`.
 
 ## Fold a shared prefix into a folder
 
@@ -22,15 +22,15 @@ When a fold **is** warranted, the parent of the folded group becomes `Index.vue`
 
 ## Nuxt name compression
 
-**A filename whose leading words repeat the trailing words of its folder path emits that run only once.** `Feature/ItemList/ListItem.vue` → `FeatureItemListItem`, not `FeatureItemListListItem`:
+**A filename whose leading words repeat the trailing words of its folder path emits that run only once.** `Foo/ItemList/ListItem.vue` → `FooItemListItem`, not `FooItemListListItem`:
 
-- `Feature/Group/GroupCard.vue` → `FeatureGroupCard` (not `FeatureGroupGroupCard`)
-- `Feature/Items/ItemsHeader.vue` → `FeatureItemsHeader` (not `FeatureItemsItemsHeader`)
+- `Foo/Group/GroupCard.vue` → `FooGroupCard` (not `FooGroupGroupCard`)
+- `Foo/Items/ItemsHeader.vue` → `FooItemsHeader` (not `FooItemsItemsHeader`)
 
-The collapse is against the folder path's **trailing run**, not just its last word, and it hits any repeat — including a word repeated from a **compound** folder name higher up (`Feature/ThisAndThat/ThatList.vue` → `FeatureThisAndThatList`).
+The collapse is against the folder path's **trailing run**, not just its last word, and it hits any repeat — including a word repeated from a **compound** folder name higher up (`Foo/ThisAndThat/ThatList.vue` → `FooThisAndThatList`).
 
-**Rule:** the filename's first word must differ from the last word of its folder path. If they must share one, pick a more specific filename (`GroupDetailCard.vue` over `GroupCard.vue`) — otherwise two files can silently generate one name, and the naive un-collapsed tag resolves to no component and renders **empty with no error**.
+**Rule:** the filename's first word must differ from the last word of its folder path. If they must share one, pick a more specific filename (`Foo/FooDetailCard.vue` over `Foo/FooCard.vue`) — otherwise two files can silently generate one name, and the naive un-collapsed tag resolves to no component and renders **empty with no error**.
 
-This is also the one shape where folding a prefix into a folder **does** change the name: the flat file was collapsing against a word further up the path, and the folder form no longer is (`ThisAndThat/ThatList.vue` → `FeatureThisAndThatList` becomes `ThisAndThat/That/List.vue` → `FeatureThisAndThatThatList`). Update the tags in the same change.
+This is also the one shape where folding a prefix into a folder **does** change the name: the flat file was collapsing against a word further up the path, and the folder form no longer is (`ThisAndThat/ThatList.vue` → `FooThisAndThatList` becomes `ThisAndThat/That/List.vue` → `FooThisAndThatThatList`). Update the tags in the same change.
 
 Verify with `typecheck`, which flags an unknown collapsed tag.

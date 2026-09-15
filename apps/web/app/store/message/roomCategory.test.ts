@@ -36,13 +36,13 @@ describe(useRoomCategoryStore, () => {
     const { roomCategories } = storeToRefs(roomCategoryStore);
     const { updateRoomCategory } = roomCategoryStore;
     roomCategories.value = [createRoomCategory({ id })];
-    const storedCategory = takeOne(roomCategories.value);
+    const storedRoomCategory = takeOne(roomCategories.value);
     await Promise.all([updateRoomCategory({ id, name: updatedName }), updateRoomCategory({ id, name: rejectedName })]);
 
     expect(takeOne(roomCategories.value).name).toBe(updatedName);
     // Restored in place rather than by swapping the list for copies, so the create placeholder a list may still
     // Hold keeps the identity its own onSuccess reconciles the server row onto
-    expect(takeOne(roomCategories.value)).toBe(storedCategory);
+    expect(takeOne(roomCategories.value)).toBe(storedRoomCategory);
   });
 
   // A double-confirmed delete queues under the same id, and the second one is refused because the row is already

@@ -9,6 +9,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useNotificationStore, () => {
   const title = "title";
+  const epoch = new Date(0);
+  const nextDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
   const createDeliveredNotification = (id: string, createdAt: Date): AppNotification => ({
     body: "",
     createdAt,
@@ -86,11 +88,11 @@ describe(useNotificationStore, () => {
   test("counts the unread total the server stated, not the rows a page holds", () => {
     expect.hasAssertions();
 
-    const { createNotification, storeUnreadCount } = notificationStore;
-    storeUnreadCount(3);
+    const { createNotification, setUnreadDeliveredCount } = notificationStore;
+    setUnreadDeliveredCount(1);
     createNotification({ severity: NotificationSeverity.Info, title });
 
-    expect(unreadCount.value).toBe(4);
+    expect(unreadCount.value).toBe(2);
   });
 
   // A push re-reads the whole first page, so the rows that just arrived are the ones newer than the newest row the
@@ -103,7 +105,9 @@ describe(useNotificationStore, () => {
 
     const { createNotification, deleteSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } =
       notificationStore;
-    const heldNotification = createDeliveredNotification("held", new Date(1));
+    const heldNotification = createDeliveredNotification(crypto.randomUUID(), epoch);
+    const tiedNotification = createDeliveredNotification(crypto.randomUUID(), epoch);
+    const newestNotification = createDeliveredNotification(crypto.randomUUID(), nextDay);
     initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
     createNotification({ severity: NotificationSeverity.Info, title });
     const [localNotification] = notifications.value;
@@ -113,20 +117,17 @@ describe(useNotificationStore, () => {
     await storeDeliveredNotifications(() => {
       initializeCursorPaginationData({
         hasMore: false,
-        items: [
-          createDeliveredNotification("newest", new Date(3)),
-          createDeliveredNotification("tied", new Date(1)),
-          heldNotification,
-        ],
+        items: [newestNotification, tiedNotification, heldNotification],
         nextCursor: "",
       });
       return Promise.resolve();
     });
 
-    expect(snackbarNotification.value?.id).toBe("tied");
-    deleteSnackbar("tied");
+    expect(snackbarNotification.value?.id).toBe(tiedNotification.id);
 
-    expect(snackbarNotification.value?.id).toBe("newest");
+    deleteSnackbar(tiedNotification.id);
+
+    expect(snackbarNotification.value?.id).toBe(newestNotification.id);
   });
 
   // Two pushes landing together each snapshot the list before their read and compare against it after, so
@@ -136,9 +137,9 @@ describe(useNotificationStore, () => {
     expect.hasAssertions();
 
     const { deleteSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } = notificationStore;
-    const heldNotification = createDeliveredNotification("held", new Date(1));
+    const heldNotification = createDeliveredNotification(crypto.randomUUID(), epoch);
     initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
-    const pushedNotification = createDeliveredNotification("pushed", new Date(2));
+    const pushedNotification = createDeliveredNotification(crypto.randomUUID(), nextDay);
     const storePushedPage = () => {
       initializeCursorPaginationData({ hasMore: false, items: [pushedNotification, heldNotification], nextCursor: "" });
     };

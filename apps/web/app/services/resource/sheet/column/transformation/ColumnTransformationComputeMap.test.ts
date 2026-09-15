@@ -26,6 +26,7 @@ const createContext = (
 
 describe("columnTransformationComputeMap", () => {
   const sourceColumnId = crypto.randomUUID();
+  const epochDate = new Date(0).toISOString().slice(0, 10);
 
   test(`${ColumnTransformationType.String} returns null for a null source value`, () => {
     expect.hasAssertions();
@@ -87,19 +88,19 @@ describe("columnTransformationComputeMap", () => {
     expect(
       ColumnTransformationComputeMap[ColumnTransformationType.DatePart](
         transformation,
-        createContext("1970-01-01", createColumn("")),
+        createContext(epochDate, createColumn("")),
       ),
     ).toBeNull();
     expect(
       ColumnTransformationComputeMap[ColumnTransformationType.DatePart](
         transformation,
-        createContext("1970-01-01", undefined),
+        createContext(epochDate, undefined),
       ),
     ).toBeNull();
     expect(
       ColumnTransformationComputeMap[ColumnTransformationType.DatePart](
         transformation,
-        createContext("1970-01-01", createDateColumn("", DateFormat["YYYY-MM-DD"])),
+        createContext(epochDate, createDateColumn("", DateFormat["YYYY-MM-DD"])),
       ),
     ).toBe(1970);
   });

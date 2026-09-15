@@ -1,3 +1,4 @@
+import { MimeType } from "#shared/models/file/MimeType";
 import { getResultAsync, InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 
 const RASTERIZED_SVG_WIDTH = 1920;
@@ -44,7 +45,7 @@ export const rasterizeSvg = (svgUrl: string) =>
           return;
         }
         resolve(URL.createObjectURL(rasterizedSvgBlob));
-      }, "image/png");
+      }, MimeType.Png);
     });
 
     rasterizedSvgCache.set(svgUrl, rasterizedSvgBlobUrl);

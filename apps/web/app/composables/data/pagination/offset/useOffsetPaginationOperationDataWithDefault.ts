@@ -36,7 +36,6 @@ export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems:
         isLoaded.value = true;
       }, onComplete);
     };
-
   // Appends the next page rather than replacing the slice, matching the keyed variant a consumer may be handed
   // Instead — the offset is the list's own length, so nothing outside tracks how far it has been read.
   // Single-flight for the same reason as there: a waypoint that re-arms mid-read would append the page twice

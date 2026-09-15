@@ -56,7 +56,7 @@ describe("friendRouter", () => {
 
     const friendUsers = await friendCaller.readFriends();
 
-    expect(friendUsers).toHaveLength(0);
+    expect(friendUsers).toStrictEqual([]);
   });
 
   test("fails to delete self as friend", async () => {
@@ -97,17 +97,17 @@ describe("friendRouter", () => {
     const user = getMockSession().user;
     const searchedUsers = await friendCaller.searchUsers(user.name);
 
-    expect(searchedUsers.every(({ id }) => id !== user.id)).toBe(true);
+    expect(searchedUsers).toStrictEqual([]);
   });
 
   test("on delete friend notifies the other party", async () => {
     expect.hasAssertions();
 
     const { user: receiverUser, userId } = await createFriendship(mockContext);
-    const onDeleteFriend = await friendCaller.onDeleteFriend();
+    const subscription = await friendCaller.onDeleteFriend();
     await mockSessionOnce(mockContext.db, receiverUser);
     const data = await getFirstEmit(
-      () => onDeleteFriend,
+      () => subscription,
       () => friendCaller.deleteFriend(userId),
     );
 
@@ -119,10 +119,10 @@ describe("friendRouter", () => {
 
     const { user: receiverUser, userId } = await createFriendship(mockContext);
     const receiverPayload = await mockSessionOnce(mockContext.db, receiverUser);
-    const onDeleteFriend = await friendCaller.onDeleteFriend();
+    const subscription = await friendCaller.onDeleteFriend();
     replayMockSession(receiverPayload);
     const data = await getFirstEmit(
-      () => onDeleteFriend,
+      () => subscription,
       () => friendCaller.deleteFriend(userId),
     );
 

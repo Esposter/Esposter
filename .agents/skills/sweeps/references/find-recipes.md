@@ -19,7 +19,7 @@ module-scope fixture, skips the multi-line arrow, skips the helper file, reads p
 prose that used to explain each trap in the ledger becomes the test that fails when the trap reopens.
 
 **Not `.agents/`.** The tree is the rules an agent reads, and mixing an executable into it makes "is this a rule
-or a tool" unanswerable from the path. It was also tried: an `agents` vitest project over `.agents/**/*.test.ts`
+or a tool" unanswerable from the path. It was also tried: an `agents` vitest project over test files inside `.agents/`
 existed for the review workflow's scripts and went out with it, taking a third `projects` entry and its
 worktree-glob exclusion with it. `scripts/src/workspace/agentDirectories.test.ts` is the shape that stayed — a test **about**
 the agent tree, living where the toolchain already looks.

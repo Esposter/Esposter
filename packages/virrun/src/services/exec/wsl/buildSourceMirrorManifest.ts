@@ -11,8 +11,8 @@ import { join } from "node:path";
 // Is orders of magnitude cheaper — diffing two of these manifests replaces the whole-tree remote walk, and the
 // Manifest's key set is the single source of truth for what the sync's archive carries (createSourceMirrorArchive).
 //
-// Exclude semantics live in checkIsExcludedPath, shared with the write-back mask so the set that never enters the sandbox
-// Is exactly the set that may never leave it; an excluded directory is matched and then not descended.
+// Exclude semantics live in checkIsExcludedPath, shared with the write-back mask so the set that never enters the
+// Sandbox is exactly the set that may never leave it; an excluded directory is matched and then not descended.
 //
 // An entry the host can't lstat/readlink (e.g. Windows-locked) is skipped, exactly as it would be unreadable for the
 // Archiving tar: it drops out of the manifest, so once readable again it diffs as changed and self-heals.

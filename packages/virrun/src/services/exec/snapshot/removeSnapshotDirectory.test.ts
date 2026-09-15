@@ -13,7 +13,7 @@ import { TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_UNC_PREFIX } from "#src/services/ex
 import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
@@ -22,7 +22,8 @@ vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unk
 describe(removeSnapshotDirectory, () => {
   // A snapshot leaf on the distro's ext4 (`/home/user/.virrun/snapshots/<hash>/upper`); `h` is a stand-in hash.
   const linuxDirectory = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SNAPSHOTS_DIRECTORY_NAME}/h/${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}`;
-  // The WSL-side teardown removeSnapshotDirectory shells out for a UNC snapshot directory: chmod traversable, then rm -rf.
+  // The WSL-side teardown removeSnapshotDirectory shells out for a UNC snapshot directory: chmod traversable, then rm
+  // -rf.
   // Paths are passed as positional args, never interpolated, so a quote in one can't break the shell quoting — and the
   // Bound is the work timeout, not the probe's: unlinking a node_modules closure is minutes of real work, while an
   // Unbounded call against a wedged WSL service would never return at all.
@@ -35,10 +36,6 @@ describe(removeSnapshotDirectory, () => {
   };
 
   const { cleanup, create } = createTemporaryDirectoryTracker();
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   afterEach(() => {
     cleanup();

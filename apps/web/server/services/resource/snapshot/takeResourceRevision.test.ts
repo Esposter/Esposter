@@ -4,6 +4,7 @@ import type { BlobDeletionEventGridData, Resource } from "@esposter/db-schema";
 
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { getSnapshotObjectBlobName } from "@@/server/services/resource/snapshot/getSnapshotObjectBlobName";
+import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnapshotSummary";
 import { readSnapshotHistory } from "@@/server/services/resource/snapshot/readSnapshotHistory";
 import { readSnapshotVersionContent } from "@@/server/services/resource/snapshot/readSnapshotVersionContent";
 import { takeResourceRevision } from "@@/server/services/resource/snapshot/takeResourceRevision";
@@ -20,7 +21,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const seedContentBlob = (id: Resource["id"], content: string) => {
   const container = MockContainerDatabase.get(AzureContainer.ResourceAssets) ?? new Map<string, Buffer>();
@@ -37,7 +38,7 @@ describe(takeResourceRevision, () => {
   // Content that shares nothing with the empty list, so a version holding it promotes to a keyframe of its own
   // Rather than anchoring to the one before it
   const rewrittenSerializedContent = JSON.stringify({
-    items: Array.from({ length: 20 }, (_, index) => ({ id: crypto.randomUUID(), name: `${name} ${index}` })),
+    items: Array.from({ length: 20 }, (_value, index) => ({ id: crypto.randomUUID(), name: `${name} ${index}` })),
   });
   const { maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
   const readStorageBytesUsed = async () =>
@@ -58,6 +59,7 @@ describe(takeResourceRevision, () => {
   });
 
   beforeEach(async () => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     resource = takeOne(
       await mockContext.db
         .insert(resources)
@@ -67,6 +69,7 @@ describe(takeResourceRevision, () => {
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
     await mockContext.db.delete(resources);
@@ -87,26 +90,22 @@ describe(takeResourceRevision, () => {
     await expect(
       readSnapshotVersionContent(mockContext.db, resource, { channel: SnapshotChannel.Revisions, version: 1 }),
     ).resolves.toStrictEqual({ items: [] });
-    const [snapshotVersion] = await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions);
-    assert.exists(snapshotVersion);
-
-    // The row's own clock is the service's, so the row is asserted whole minus the one field it dates
-    const { takenAt, ...snapshotVersionRest } = snapshotVersion;
-
-    expect(takenAt).toBeInstanceOf(Date);
-    expect(snapshotVersionRest).toStrictEqual({
-      channel: SnapshotChannel.Revisions,
-      isCurrent: false,
-      reason: SnapshotReason.BeforeImport,
-      summary: "0 items",
-      version: 1,
-    });
-    // Charged for what the object cost to store rather than for a copy of the document
+    const snapshotVersions = await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions);
     const resourceVersion = await readResourceVersion(1);
     assert.exists(resourceVersion);
     const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
     assert.exists(container);
 
+    // Dated by the row's own default clock, which the database keeps rather than the pinned one
+    expect(takeOne(snapshotVersions)).toStrictEqual({
+      channel: SnapshotChannel.Revisions,
+      isCurrent: false,
+      reason: SnapshotReason.BeforeImport,
+      summary: getSnapshotSummary(ResourceType.TodoList, serializedContent),
+      takenAt: resourceVersion.createdAt,
+      version: 1,
+    });
+    // Charged for what the object cost to store rather than for a copy of the document
     expect(resourceVersion.storedBytes).toBe(
       container.get(getSnapshotObjectBlobName(resource.id, resourceVersion.hash))?.byteLength,
     );
@@ -138,7 +137,7 @@ describe(takeResourceRevision, () => {
       where: { id: { eq: resource.id } },
     });
 
-    expect(revisedResource?.revisionTakenAt).toBeInstanceOf(Date);
+    expect(revisedResource?.revisionTakenAt).toStrictEqual(new Date(0));
   });
 
   // Every caller reads its row before it saves, so two concurrent saves both hold a clock from before either
@@ -181,7 +180,7 @@ describe(takeResourceRevision, () => {
     const snapshotVersions = await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions);
 
     expect(snapshotVersions).toHaveLength(maxRetained);
-    expect(snapshotVersions[0]?.version).toBe(2);
+    expect(takeOne(snapshotVersions).version).toBe(2);
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert.exists(blobDeletionEvents);
 

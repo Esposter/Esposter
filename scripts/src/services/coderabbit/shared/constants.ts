@@ -4,19 +4,12 @@
 export const CODERABBIT_REST_LOGIN = "coderabbitai[bot]";
 export const CODERABBIT_GRAPHQL_LOGIN = "coderabbitai";
 
-// The retrigger — what the probe posts, whether a person runs it or the collector does at a stated deadline
+// The retrigger the cycle posts at a stated deadline
 export const PROBE_COMMENT = "@coderabbitai review";
 
-// The one knob of the review budget. The Open Source tier's per-review file limit is popularity-scaled, so the
-// Bot's skip comment states the current one — this is the last known value, and a skip comment naming another is
-// What changes it. Everything else sized in files derives from it, and no prose restates the number: a page says
-// "the cap" and cites this file.
+// The one knob of the review budget, and the only size a window is measured against. The Open Source tier's
+// Per-review file limit is popularity-scaled and the bot's skip comment states the current one; no prose
+// Restates the number — a page says "the cap" and cites this file (a test holds it to that). There is no floor
+// Beneath it: the port takes every commit the queue owes, so a window that came out small is the whole of what
+// Was left, and the standing goal is the queue synced into `develop` rather than a slot spent at its fullest.
 export const REVIEW_FILE_CAP = 100;
-
-// Where a window is worth a slot on its own, as a share of the cap: a slot costs the same whether it reads a
-// Fifth of the cap or all of it, so a shorter window waits for more commits unless fixes are already parked for
-// It. The slot's duration is the reviewer's property rather than a parameter here — the collector is
-// Event-triggered, so nothing waits on it.
-export const WINDOW_FILL_RATIO = 0.9;
-
-export const WINDOW_FILL_TARGET: number = Math.floor(REVIEW_FILE_CAP * WINDOW_FILL_RATIO);

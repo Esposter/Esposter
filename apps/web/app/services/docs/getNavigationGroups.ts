@@ -2,11 +2,11 @@ import type { DocsNavigationGroup } from "@/models/docs/DocsNavigationGroup";
 import type { ContentNavigationItem } from "@nuxt/content";
 
 import { DocsNavigationSlug } from "@/models/docs/DocsNavigationSlug";
+import { PLANNING_GROUP_TITLE } from "@/services/docs/constants";
 import { DocsSectionGroupsMap } from "@/services/docs/DocsSectionGroupsMap";
 import { getSlug } from "@/services/docs/getSlug";
 import { getOrCreate } from "@esposter/shared";
 
-const PLANNING_GROUP_TITLE = "Planning";
 const PlanningSlugs = new Set<string>([
   DocsNavigationSlug.Deferred,
   DocsNavigationSlug.Rejected,

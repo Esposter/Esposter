@@ -25,7 +25,13 @@ import {
   roomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MOCK_BLOB_BASE_URL, MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
+import {
+  getMockSasUrl,
+  MOCK_BLOB_BASE_URL,
+  MockBlockBlobClient,
+  MockContainerDatabase,
+  MockEventGridDatabase,
+} from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Uploaded through the client, so the mock dates the blob now
@@ -190,9 +196,7 @@ describe("roomRouter", () => {
     const blobPrefix = `${publicUserAssetsUrlPrefix}rooms/${newRoom.id}/ProfileImage/`;
 
     expect(publicUrl.startsWith(blobPrefix)).toBe(true);
-    expect(sasUrl).toBe(
-      `${publicUrl}?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=w`,
-    );
+    expect(sasUrl).toBe(getMockSasUrl(publicUrl, "w", "b"));
   });
 
   test(`fails generate profile image upload url for a member without ${RoomPermission.ManageRoom} permission`, async () => {
@@ -215,9 +219,9 @@ describe("roomRouter", () => {
     const publicUrl = `${publicUserAssetsUrlPrefix}${blobName}`;
     MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
-    const onUpdateRoom = await roomCaller.onUpdateRoom([newRoom.id]);
+    const subscription = await roomCaller.onUpdateRoom([newRoom.id]);
     const data = await getFirstEmit(
-      () => onUpdateRoom,
+      () => subscription,
       () => roomCaller.updateRoom({ id: newRoom.id, image: "" }),
     );
     const blobDeletionEvents = MockEventGridDatabase.get("");
@@ -368,9 +372,9 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const onUpdateRoom = await roomCaller.onUpdateRoom([newRoom.id]);
+    const subscription = await roomCaller.onUpdateRoom([newRoom.id]);
     const data = await getFirstEmit(
-      () => onUpdateRoom,
+      () => subscription,
       () => roomCaller.updateRoom({ id: newRoom.id, name: updatedName }),
     );
 
@@ -406,9 +410,6 @@ describe("roomRouter", () => {
     assert.exists(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
-    // Unbounded in time, unlike every other prefix sweep: the room row is gone, so nothing can re-own this
-    // Prefix and this is its only teardown — a `createdBefore` cutoff would permanently strand the attachment
-    // Of any member still holding a write SAS when the owner deleted
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       containerName: AzureContainer.MessageAssets,
       prefix: newRoom.id,
@@ -462,9 +463,9 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const onDeleteRoom = await roomCaller.onDeleteRoom([newRoom.id]);
+    const subscription = await roomCaller.onDeleteRoom([newRoom.id]);
     const data = await getFirstEmit(
-      () => onDeleteRoom,
+      () => subscription,
       () => roomCaller.deleteRoom(newRoom.id),
     );
 
@@ -543,11 +544,14 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { id: userId } = getMockSession().user;
     const usableInviteId = createId(INVITE_ID_LENGTH);
+    const epoch = new Date(0);
+    const oneSecondIn = new Date(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
+    const twoSecondsIn = new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
     // Newest first, so the two lapsed links are the whole of a two-row page and the usable one sits behind them
     await mockContext.db.insert(invitesInMessage).values([
-      { createdAt: new Date(3), expiresAt: new Date(1), id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
-      { createdAt: new Date(2), expiresAt: new Date(1), id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
-      { createdAt: new Date(1), id: usableInviteId, roomId: newRoom.id, userId },
+      { createdAt: twoSecondsIn, expiresAt: epoch, id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
+      { createdAt: oneSecondIn, expiresAt: epoch, id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
+      { createdAt: epoch, id: usableInviteId, roomId: newRoom.id, userId },
     ]);
     vi.setSystemTime(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
     const lapsedPage = await roomCaller.readRoomInvites({ limit: 2, roomId: newRoom.id });
@@ -776,10 +780,10 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
-    const onJoinRoom = await roomCaller.onJoinRoom([newRoom.id]);
+    const subscription = await roomCaller.onJoinRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db);
     const data = await getFirstEmit(
-      () => onJoinRoom,
+      () => subscription,
       () => roomCaller.joinRoom(newInvite.id),
     );
 
@@ -817,10 +821,10 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
     vi.advanceTimersByTime(1);
-    const onLeaveRoom = await roomCaller.onLeaveRoom([newRoom.id]);
+    const subscription = await roomCaller.onLeaveRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db, member);
     const data = await getFirstEmit(
-      () => onLeaveRoom,
+      () => subscription,
       () => roomCaller.leaveRoom(newRoom.id),
     );
 

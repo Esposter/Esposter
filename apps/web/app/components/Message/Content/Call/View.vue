@@ -18,7 +18,7 @@ const callView = useTemplateRef("callView");
       </StyledCard>
       <slot name="append" />
     </header>
-    <MessageContentCallPipPlaceholder v-if="isPoppedOut" />
+    <MessageContentCallPictureInPicturePlaceholder v-if="isPoppedOut" />
     <template v-else>
       <MessageContentCallStage @fullscreen="callView?.requestFullscreen()" />
       <MessageContentCallInviteCard />

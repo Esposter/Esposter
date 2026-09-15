@@ -4,12 +4,12 @@ import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
 describe(requireUuid, () => {
-  const name = "Entity";
+  const name = "name";
 
   test("returns the value when it is a v4 uuid", () => {
     expect.hasAssertions();
 
-    const uuid = "00000000-0000-4000-8000-000000000000";
+    const uuid = crypto.randomUUID();
 
     expect(requireUuid(uuid, name)).toBe(uuid);
   });
@@ -17,10 +17,10 @@ describe(requireUuid, () => {
   test("throws TRPCError with code BAD_REQUEST when the value is not a v4 uuid", () => {
     expect.hasAssertions();
 
-    getResult(() => requireUuid("not-a-uuid", name)).match(noop, (error) => {
+    getResult(() => requireUuid("", name)).match(noop, (error) => {
       expect((error as TRPCError).code).toBe("BAD_REQUEST");
       expect(error).toMatchInlineSnapshot(
-        `[TRPCError: ${new InvalidOperationError(Operation.Read, name, "not-a-uuid").message}]`,
+        `[TRPCError: ${new InvalidOperationError(Operation.Read, name, "").message}]`,
       );
     });
   });

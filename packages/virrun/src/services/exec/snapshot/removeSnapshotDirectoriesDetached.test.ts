@@ -33,8 +33,8 @@ vi.mock(import("node:fs"), async (importOriginal) => {
   return { ...actual, rmSync, writeFileSync };
 });
 // The cache root is a `\\wsl.localhost` UNC in production and nothing else maps back to a Linux path, so the mock
-// Returns one too — the staged list's own path goes through readWslPath exactly like the directories it holds. Writes to a
-// UNC cannot land on a test machine, so the sweep cases capture the staged bytes through the writeFileSync mock
+// Returns one too — the staged list's own path goes through readWslPath exactly like the directories it holds. Writes
+// To a UNC cannot land on a test machine, so the sweep cases capture the staged bytes through the writeFileSync mock
 // Instead of reading them back off disk.
 vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
   getWslNativeCacheRoot: () => cacheRootHolder.value,
@@ -42,14 +42,14 @@ vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
 
 describe(removeSnapshotDirectoriesDetached, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  // A background child never blocks — assert its lifecycle hooks are wired (error swallowed, unref'd so it outlives us).
+  // A background child never blocks — assert its lifecycle hooks are wired (error swallowed, unref'd so it outlives
+  // Us).
   const child = { on: vi.fn<() => void>(), unref: vi.fn<() => void>() };
 
   // What the launched script will read: the staged list is the sweep's only channel for the paths
   const readStagedList = () => takeOne(writeFileSync.mock.calls)[1];
 
   beforeEach(() => {
-    vi.clearAllMocks();
     spawn.mockReturnValue(child as unknown as ChildProcess);
     // The staged list is written to a UNC no test machine can reach, so the write is captured rather than performed
     writeFileSync.mockImplementation(noop);
@@ -83,8 +83,8 @@ describe(removeSnapshotDirectoriesDetached, () => {
       linuxDirectories.map((directory) => createTestWslUnc(directory, TEST_WSL_LEGACY_UNC_PREFIX)),
     );
 
-    // One launch for the whole sweep however many directories it holds, because the paths ride in a list file rather than
-    // The argv: each wsl.exe launch is a service RPC plus a relay process, and a fan-out wedges the WSL service
+    // One launch for the whole sweep however many directories it holds, because the paths ride in a list file rather
+    // Than the argv: each wsl.exe launch is a service RPC plus a relay process, and a fan-out wedges the WSL service
     // Outright, while an argv-sized batch would reintroduce that fan-out one launch at a time. Never `detached`
     // Either: on win32 that flag makes Windows ignore windowsHide and flash an empty console (nodejs#21825).
     expect(spawn).toHaveBeenCalledExactlyOnceWith(

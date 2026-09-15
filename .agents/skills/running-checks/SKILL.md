@@ -1,6 +1,6 @@
 ---
 name: running-checks
-description: Esposter rules for running any check — pnpm format, typecheck, lint, lint:fix, test, build, coverage, bench, or a package's own script — every check goes out with run_in_background true and the session keeps editing, the independent ones fire in one block, a foreground poll of a backgrounded check is banned, blocking is correct only when commit or push is the sole step left, one verification pass batched after every edit going out rather than one per chunk, the verdict is the exit code read from the log rather than a grep of its tail, and a red result is a new edit followed by a new background run. Apply the moment you are about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, before deciding when in a task to run it, and whenever you find yourself waiting on a check's output.
+description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding when in a task to run one, and whenever you find yourself waiting on a check's output. Esposter rules for running any check — every check goes out with run_in_background true while the session keeps editing, independent ones fire in one block, a foreground poll of a backgrounded check is banned, blocking is correct only when commit or push is the sole step left, one verification pass batched after every edit going out, the verdict is the exit code read from the log, and a red result is a new edit followed by a new background run.
 ---
 
 # Running Checks
@@ -12,8 +12,8 @@ from where is the `package-scripts` skill; this page is only _when_ a check runs
 
 ## Every check goes out with `run_in_background: true`
 
-Every check is minutes long — `apps/web` typecheck ~3.5 min, the root oxlint pass ~3 min, a Nuxt suite ~1 min —
-and none of them needs supervision. So each one is a `Bash` call with `run_in_background: true`, redirecting its
+Every check is minutes long — the `apps/web` typecheck and the root oxlint pass each take several, a Nuxt suite
+about one — and none of them needs supervision. So each one is a `Bash` call with `run_in_background: true`, redirecting its
 output to a log file and appending its own exit code (`echo "exit $?" >> log`), and the session moves to the next
 piece of work: the next unit's edits, the commit message, the docs sweep, the ledger row. The harness delivers a
 completion notification; read the log then.
@@ -49,7 +49,7 @@ misread: the tell is a check whose diff is one file, or a formatter run after a 
 coherent chunk regardless — commits are cheap and protect against other sessions' resets, checks are not.
 
 The pass runs **after** the review's quality lane, not before — cleanup edits code, so checking first pays the
-startup cost twice (`CLAUDE.md`, "Finishing a change").
+startup cost twice (`AGENTS.md`, "Finishing a change").
 
 ## Reading the result
 

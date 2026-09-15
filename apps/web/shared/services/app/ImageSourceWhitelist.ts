@@ -1,5 +1,5 @@
 // Relative imports, against the alias rule everywhere else: `configuration/security.ts` pulls this in from
-// Nuxt.config, which is evaluated before the aliases exist. Rewriting them to `#shared/` breaks the build
+// `nuxt.config`, which is evaluated before the aliases exist. Rewriting them to `#shared/` breaks the build
 import "../../types/env.d.ts";
 import {
   BLOGSPOT_BASE_URL,

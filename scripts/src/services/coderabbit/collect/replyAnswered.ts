@@ -5,18 +5,14 @@ import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { postComment } from "#src/services/coderabbit/collect/postComment";
+import { postReply } from "#src/services/coderabbit/collect/postReply";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { getResult, noop } from "@esposter/shared";
 
-// Every commit in the range that answers a finding gets its reply — the one the skill says cites a sha the
-// Remote has. Predicate-guarded per thread, so the run that pushed and died before replying is finished by any
-// Later run, and a run that finds every reply in place posts nothing.
-//
-// Each post is best-effort, because the state it reports is already durable and the reporting is not: GitHub
-// Answers 500 with an empty body on a thread often enough to have taken a run down after its window had landed,
-// And an exception there ends the run before the replies behind it. The predicate re-attempts every one on the
-// Next run, so a transient refusal costs nothing and a lasting one costs a thread rather than the pipeline.
+// Every commit in the range that answers a finding gets the reply citing its sha. Predicate-guarded per thread,
+// So a run that pushed and died before replying is finished by a later one. Each post is best-effort: GitHub
+// Answers 500 on a thread often enough, and the predicate re-attempts it next run.
 export const replyAnswered = ({
   commits,
   isDryRun,
@@ -39,20 +35,10 @@ export const replyAnswered = ({
 
       const body = `Agreed, fixed in ${sha} — ${subject}`;
       console.info(`reply ${commentId}: ${body}`);
-      if (!isDryRun)
-        getResult(() =>
-          runGh([
-            "api",
-            `repos/{owner}/{repo}/pulls/${pullRequest}/comments/${commentId}/replies`,
-            "-f",
-            `body=${body}`,
-          ]),
-        ).match(noop, console.error);
+      if (!isDryRun) getResult(() => postReply(pullRequest, commentId, body)).match(noop, console.error);
     }
-
-  // The predicate is the review's marker and the shas together: the rejections comment the drain's end posted
-  // Carries the marker and none of these commits, so a review whose body findings were partly rejected and partly
-  // Fixed owes both, and one commit draining two reviews owes a comment per review
+  // The predicate is the marker and the shas together: the rejections comment carries the marker and none of
+  // These commits, so a review partly rejected and partly fixed owes both
   const commitsByReview = Map.groupBy(
     commits.flatMap((commit) => commit.drains.map((reviewId) => ({ commit, reviewId }))),
     ({ reviewId }) => reviewId,
@@ -73,7 +59,6 @@ export const replyAnswered = ({
       drained.map(({ commit }) => `- ${commit.sha} — ${commit.subject}`),
     );
     console.info(`verdict comment for review ${reviewId}`);
-    if (!isDryRun)
-      getResult(() => runGh(["pr", "comment", pullRequest.toString(), "--body", body])).match(noop, console.error);
+    if (!isDryRun) getResult(() => postComment(pullRequest, body)).match(noop, console.error);
   }
 };

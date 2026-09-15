@@ -4,11 +4,13 @@ import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
 describe(requireMutation, () => {
+  const name = "name";
+
   test("returns result when defined", () => {
     expect.hasAssertions();
 
     const result = { id: "" };
-    const returnedResult = requireMutation(result, Operation.Create, "Entity", "");
+    const returnedResult = requireMutation(result, Operation.Create, name, "");
 
     expect(returnedResult).toBe(result);
   });
@@ -17,11 +19,11 @@ describe(requireMutation, () => {
     expect.hasAssertions();
 
     getResult(() => {
-      requireMutation(undefined, Operation.Create, "Entity", "1");
+      requireMutation(undefined, Operation.Create, name, "-1");
     }).match(noop, (error) => {
       expect((error as TRPCError).code).toBe("BAD_REQUEST");
       expect(error).toMatchInlineSnapshot(
-        `[TRPCError: ${new InvalidOperationError(Operation.Create, "Entity", "1").message}]`,
+        `[TRPCError: ${new InvalidOperationError(Operation.Create, name, "-1").message}]`,
       );
     });
   });
@@ -30,11 +32,11 @@ describe(requireMutation, () => {
     expect.hasAssertions();
 
     getResult(() => {
-      requireMutation(undefined, Operation.Create, "Entity", "1", "NOT_FOUND");
+      requireMutation(undefined, Operation.Create, name, "-1", "NOT_FOUND");
     }).match(noop, (error) => {
       expect((error as TRPCError).code).toBe("NOT_FOUND");
       expect(error).toMatchInlineSnapshot(
-        `[TRPCError: ${new InvalidOperationError(Operation.Create, "Entity", "1").message}]`,
+        `[TRPCError: ${new InvalidOperationError(Operation.Create, name, "-1").message}]`,
       );
     });
   });

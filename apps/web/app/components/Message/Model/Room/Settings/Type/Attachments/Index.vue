@@ -47,14 +47,14 @@ const save = async () => {
           title="Maximum file size"
         >
           <v-text-field
-            :model-value="editedMaxFileSizeBytes != null ? editedMaxFileSizeBytes / MEGABYTE : ''"
+            :model-value="editedMaxFileSizeBytes ? editedMaxFileSizeBytes / MEGABYTE : ''"
             :max="maxFileSizeMegabytes"
             density="compact"
             placeholder="Default"
             type="number"
             min="1"
             suffix="MB"
-            @update:model-value="editedMaxFileSizeBytes = $event ? Number($event) * MEGABYTE : null"
+            @update:model-value="editedMaxFileSizeBytes = $event ? Number($event) * MEGABYTE : 0"
             @blur="save()"
             @keydown.enter.prevent="save()"
           />

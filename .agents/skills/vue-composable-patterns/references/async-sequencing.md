@@ -18,7 +18,7 @@ Read when a composable issues a read or a write that can overlap another, or per
 
 ## Pending state and sync call sites
 
-- **`isPending` / `getIsPending(key)`** come from the same instance, so a read composable exposes `isPending` renamed (`isPending: isLoading`) instead of keeping its own ref.
+- **`isPending` / `checkIsPending(key)`** come from the same instance, so a read composable exposes `isPending` renamed (`isPending: isLoading`) instead of keeping its own ref.
 - **`getSynchronizedFunction(fn)`** (`#shared/util/function/`) fires an async fn from a sync context (a watcher callback, or a fetch kicked off during setup with no Suspense boundary). Pair it with the entry point instead of floating the promise.
 
 ## Staleness is per target
@@ -28,6 +28,8 @@ An operation that must check mid-flight (a multi-step local media switch) receiv
 Latest-wins is **per target**, so an operation whose target moved on entirely (the room changed while IndexedDB answered) was never superseded — re-check the source after the await and bail.
 
 ## `useSave` options and snapshot semantics
+
+Two silent offenders the dirty check kills: a `watch` on saveable state firing when the load assigns the just-loaded value (save-on-mount), and an interval that saves every tick even when nothing changed. A load goes through `setState` so the snapshot resets rather than the state ref being assigned directly.
 
 `useSave(state, options)` takes the state `Ref` plus an optional `toSave` mapper (when the persisted shape differs from the in-memory shape) and the `auth` / `unauth` sinks:
 
@@ -48,7 +50,7 @@ setFoo(toFoo(await $trpc.foo.readFoo.query()));
 ```
 
 - `save` skips (returning `true`) when the state's JSON snapshot equals the last persisted one — "already persisted" is success, not failure.
-- `setState` assigns loaded state AND resets the snapshot in one call; the `markSaved`-style bookkeeping is internal and callers never see it.
+- `setState` assigns loaded state AND resets the snapshot in one call; the snapshot-reset bookkeeping is internal and callers never see it.
 - The snapshot updates only after a **successful** save, so failures retry on the next trigger.
 - Snapshots are JSON strings (`Serializable.toJSON` handles reactive proxies/class instances) with `updatedAt` excluded — the save path bumps `updatedAt`, so it must not participate in the dirty check.
 - The resource store's `saveContent` runs the same skip over resource content, but its snapshot excludes **nothing**: the content is arbitrary user data, where a key named `updatedAt` can be a spreadsheet column rather than metadata, and dropping it would compare a genuine edit as unchanged. So a content store must never stamp the content before saving it — `saveItemMetadata` belongs to `useSave`, which owns the bump it excludes.

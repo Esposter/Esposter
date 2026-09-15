@@ -38,10 +38,10 @@ describe(getRoomEventSubscription, () => {
   test("yields event data for the subscribed room", async () => {
     expect.hasAssertions();
 
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
-    const onCreateRole = await roleCaller.onCreateRole({ roomId });
+    const role = await roleCaller.createRole({ name, roomId });
+    const subscription = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
-      () => onCreateRole,
+      () => subscription,
       () => {
         roleEventEmitter.emit("createRole", [role, createDevice()]);
         return Promise.resolve();
@@ -55,11 +55,11 @@ describe(getRoomEventSubscription, () => {
     expect.hasAssertions();
 
     const otherRoom = await roomCaller.createRoom({ name });
-    const otherRole = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId: otherRoom.id });
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
-    const onCreateRole = await roleCaller.onCreateRole({ roomId });
+    const otherRole = await roleCaller.createRole({ name, roomId: otherRoom.id });
+    const role = await roleCaller.createRole({ name, roomId });
+    const subscription = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
-      () => onCreateRole,
+      () => subscription,
       () => {
         roleEventEmitter.emit("createRole", [otherRole, createDevice()]);
         roleEventEmitter.emit("createRole", [role, createDevice()]);
@@ -73,14 +73,14 @@ describe(getRoomEventSubscription, () => {
   test("does not yield events from the same device", async () => {
     expect.hasAssertions();
 
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const role = await roleCaller.createRole({ name, roomId });
     const { session, user } = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const onCreateRole = await roleCaller.onCreateRole({ roomId });
+    const subscription = await roleCaller.onCreateRole({ roomId });
     const data = await getFirstEmit(
-      () => onCreateRole,
+      () => subscription,
       () => {
         roleEventEmitter.emit("createRole", [
-          { ...role, name: "sameDevice" },
+          { ...role, name: " " },
           { sessionId: session.id, userId: user.id },
         ]);
         roleEventEmitter.emit("createRole", [role, createDevice()]);
@@ -95,9 +95,9 @@ describe(getRoomEventSubscription, () => {
     expect.hasAssertions();
 
     const deleteMessageInput = { partitionKey: roomId, rowKey: crypto.randomUUID() };
-    const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId });
+    const subscription = await messageCaller.onDeleteMessage({ roomId });
     const data = await getFirstEmit(
-      () => onDeleteMessage,
+      () => subscription,
       () => {
         messageEventEmitter.emit("deleteMessage", [{ partitionKey: crypto.randomUUID(), rowKey: "" }]);
         messageEventEmitter.emit("deleteMessage", [deleteMessageInput]);

@@ -8,7 +8,8 @@ import { getRootCalleeName } from "#src/services/oxlint/persistThenNotify/getRoo
 
 // Never rejects: an absorbing `.match` terminal, an allowed wrapper whose terminal absorbs the error,
 // `Promise.allSettled` over anything, or a rejecting Promise combinator over a fan-out (array literal or `.map`
-// Callback) of such calls — e.g. `Promise.all(users.map((u) => createSystemRoomMessage(u).match(noop, console.error)))`.
+// Callback) of such calls — e.g.
+// `Promise.all(users.map((u) => createSystemRoomMessage(u).match(noop, console.error)))`.
 // Unrecognised syntax falls through to `false`, which reports rather than exempts, so the shapes deliberately left
 // Out (a ternary or `&&` chain in the await position, a `function` expression as the `.map` callback) cost a false
 // Positive and never a miss — and none of them appear anywhere in `apps/web/server`, the only tree this rule

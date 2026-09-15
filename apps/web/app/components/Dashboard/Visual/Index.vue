@@ -39,7 +39,7 @@ const options = useApexOptions(
 const linkedOptions = computed(() =>
   defu({ chart: getVisualLinkChartOptions(visual, options.value.chart?.type) }, options.value),
 );
-const { applyView, readViewUrl } = useVisualPerspective(
+const { applyView, getViewUrl } = useVisualPerspective(
   () => visual.id,
   () => chart.value?.getChart(),
 );
@@ -61,7 +61,7 @@ const { copy } = clipboardStore;
           icon="mdi-link-variant"
           text="Copy link to this view"
           :button-props
-          @click="copy(readViewUrl())"
+          @click="copy(getViewUrl())"
         />
         <!-- A snapshotted binding renders baked data, so there is nothing to refresh -->
         <StyledTooltipIconButton

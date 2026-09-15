@@ -1,5 +1,6 @@
 import type { AzureUpdateEntity, CustomTableClient } from "@esposter/db-schema";
 
+import { MAX_ENTITY_ETAG_RETRIES } from "@@/server/services/azure/table/constants";
 import { updateEntityConditionally } from "@@/server/services/azure/table/updateEntityConditionally";
 import { AzureEntityType, StandardMessageEntity } from "@esposter/db-schema";
 import { noop, NotFoundError } from "@esposter/shared";
@@ -38,7 +39,10 @@ describe(updateEntityConditionally, () => {
   test("re-applies the intent to the version it re-read rather than the one it started from", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi.fn<WriteEntity>().mockRejectedValueOnce(new Error("412")).mockResolvedValueOnce(undefined);
+    const writeEntity = vi
+      .fn<WriteEntity>()
+      .mockRejectedValueOnce(new Error("message"))
+      .mockResolvedValueOnce(undefined);
     const updatedEntity = await updateEntityConditionally(
       getTableClient(() => Promise.resolve(getEntityRecord(concurrentMessage, "2"))),
       StandardMessageEntity,
@@ -50,12 +54,11 @@ describe(updateEntityConditionally, () => {
       },
     );
 
-    expect(writeEntity).toHaveBeenCalledTimes(2);
     // The losing attempt computed from the version it read, the winning one from the version that replaced it
-    expect(writeEntity.mock.calls[0]?.[0].message).toBe(`${message}!`);
-    expect(writeEntity.mock.calls[0]?.[1]).toBe("1");
-    expect(writeEntity.mock.calls[1]?.[0].message).toBe(`${concurrentMessage}!`);
-    expect(writeEntity.mock.calls[1]?.[1]).toBe("2");
+    expect(writeEntity.mock.calls.map(([entity, etag]) => [entity.message, etag])).toStrictEqual([
+      [`${message}!`, "1"],
+      [`${concurrentMessage}!`, "2"],
+    ]);
     expect(updatedEntity.message).toBe(`${concurrentMessage}!`);
   });
 
@@ -83,12 +86,12 @@ describe(updateEntityConditionally, () => {
   test("throws NOT_FOUND when the entity is gone by the time it re-reads", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("412")));
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("message")));
 
     await expect(
       updateEntityConditionally(
         // The service's own 404, which is the only read failure that means the entity is actually gone
-        getTableClient(() => Promise.reject(new MockRestError("The specified resource does not exist.", 404))),
+        getTableClient(() => Promise.reject(new MockRestError("", 404))),
         StandardMessageEntity,
         {
           entityType: AzureEntityType.Message,
@@ -109,8 +112,8 @@ describe(updateEntityConditionally, () => {
     expect.hasAssertions();
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
-    const readError = new MockRestError("The server is busy.", 503);
-    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("412")));
+    const readError = new MockRestError("", 503);
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("message")));
 
     await expect(
       updateEntityConditionally(
@@ -124,7 +127,7 @@ describe(updateEntityConditionally, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: CONFLICT]`);
-    expect(consoleErrorSpy).toHaveBeenCalledWith(readError);
+    expect(consoleErrorSpy).toHaveBeenCalledExactlyOnceWith(readError);
 
     consoleErrorSpy.mockRestore();
   });
@@ -133,7 +136,7 @@ describe(updateEntityConditionally, () => {
   test("throws CONFLICT when every attempt loses the race", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("412")));
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("message")));
     let etag = 1;
 
     await expect(
@@ -151,6 +154,6 @@ describe(updateEntityConditionally, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: CONFLICT]`);
-    expect(writeEntity).toHaveBeenCalledTimes(3);
+    expect(writeEntity).toHaveBeenCalledTimes(MAX_ENTITY_ETAG_RETRIES);
   });
 });

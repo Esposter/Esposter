@@ -12,7 +12,7 @@ describe(getDatasetTruncation, () => {
   const createDataset = (rowCount: number, totalRows?: number, partialColumns?: string[]): Dataset => ({
     columns,
     partialColumns,
-    rows: Array.from({ length: rowCount }, () => ({ [columnName]: "value" })),
+    rows: Array.from({ length: rowCount }, () => ({ [columnName]: "" })),
     totalRows,
   });
 
@@ -63,10 +63,10 @@ describe(getDatasetTruncation, () => {
   test("reports a partial column when no rows are hidden at all", () => {
     expect.hasAssertions();
 
-    expect(getDatasetTruncation(createDataset(2, 2, ["responded"]))).toStrictEqual({
+    expect(getDatasetTruncation(createDataset(2, 2, [columnName]))).toStrictEqual({
       hiddenRows: 0,
       isCountCapped: false,
-      partialColumns: ["responded"],
+      partialColumns: [columnName],
       shownRows: 2,
       totalRows: 2,
     });

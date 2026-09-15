@@ -1,15 +1,10 @@
 // Git's status for a rename that changed no bytes; one that also edited the file carries its similarity score
-// Instead, and the new path is what `path_filters` names
 export const PURE_RENAME_STATUS = "R100";
 
-// Protection guards what a file says, not where it sits. A test is the behaviour contract, so an edit to one is
-// Never mechanical — but moving it says nothing, and a sweep moves every colocated test with its subject, so a
-// Rule that refused those would refuse every sweep there is.
-export const CONTENT_PROTECTED_SUFFIXES: string[] = [".test-d.ts", ".test.ts"];
-
-// The other half is protected by its path rather than by its contents, so a relocation is as much a change as an
-// Edit: a loader reads a config by name, a migration's filename is its ordering, a docs page's folder is its
-// Status and a skill's is its ownership. Moving one of these is a decision, and the sweep that moves it says so.
+// Protected by path rather than by contents, so a relocation is as much a change as an edit: a loader reads a
+// Config by name, a migration's filename is its ordering, a docs page's folder is its status and a skill's is its
+// Ownership. Moving one of these is a decision, and the sweep that moves it says so. A test is not here: it moves
+// With its subject in every sweep there is, and where it sits claims nothing about behaviour.
 export const RELOCATION_PROTECTED_SUFFIXES: string[] = [
   ".config.cjs",
   ".config.js",
@@ -19,9 +14,22 @@ export const RELOCATION_PROTECTED_SUFFIXES: string[] = [
   ".yaml",
   ".yml",
 ];
+// The Nuxt trees a path names something in: a page's path is its route, a layout's, a middleware's and a
+// Plugin's their names, a server route's its URL, a public asset's the URL a template writes as a string, and
+// A component's its auto-import name — each read by nothing an import edit would show, and none of them a
+// Typecheck failure (`typedPages` is off, and an unknown component types as `any`)
 export const RELOCATION_PROTECTED_DIRECTORIES: string[] = [
   ".agents/skills/",
-  "apps/web/content/docs/",
+  "apps/web/app/components/",
+  "apps/web/app/layouts/",
+  "apps/web/app/middleware/",
+  "apps/web/app/pages/",
+  "apps/web/app/plugins/",
+  "apps/web/content/",
+  "apps/web/public/",
+  "apps/web/server/api/",
   "apps/web/server/db/migrations/",
+  "apps/web/server/plugins/",
+  "apps/web/server/routes/",
   "packages/db-schema/",
 ];

@@ -2,6 +2,7 @@ import { DEAD_PID } from "#src/services/exec/test/constants.test";
 import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { spawnBackground } from "#src/services/exec/util/spawnBackground";
+import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
 import { VIRRUN_WSL_PROCESS_MARKER } from "#src/services/exec/wsl/constants";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getWslRunsDirectory } from "#src/services/exec/wsl/getWslRunsDirectory";
@@ -18,8 +19,6 @@ vi.mock(import("#src/services/exec/util/spawnBackground"), () => ({
 
 vi.mock(import("#src/services/exec/wsl/execWsl"), () => ({ execWsl: vi.fn<typeof execWsl>() }));
 
-const DEAD_MARKER = `${VIRRUN_WSL_PROCESS_MARKER}-dead`;
-const RECYCLED_MARKER = `${VIRRUN_WSL_PROCESS_MARKER}-recycled`;
 // A registry entry left by a run whose host process is gone — the one thing the sweep acts on. The directory is
 // Created here rather than left to registerWslRun, since a `cache clean` sweeps without registering a run of its own.
 const seedDeadRun = (marker: string): string => {
@@ -31,6 +30,9 @@ const seedDeadRun = (marker: string): string => {
 };
 
 describe(reapOrphanedWslRuns, () => {
+  const DEAD_MARKER = `${VIRRUN_WSL_PROCESS_MARKER}-dead`;
+  const RECYCLED_MARKER = `${VIRRUN_WSL_PROCESS_MARKER}-recycled`;
+
   setupTemporaryCacheHome();
 
   // The invariant the whole sweep rests on: a live owner is a concurrent run — including this process, whose own
@@ -43,8 +45,9 @@ describe(reapOrphanedWslRuns, () => {
 
     reapOrphanedWslRuns();
 
-    expect(spawnBackground).toHaveBeenCalledExactlyOnceWith("wsl.exe", expect.arrayContaining([DEAD_MARKER]));
-    expect(vi.mocked(spawnBackground).mock.calls[0]?.[1]).not.toContain(VIRRUN_WSL_PROCESS_MARKER);
+    const [file, ...args] = buildWslReapCommand([DEAD_MARKER]);
+
+    expect(spawnBackground).toHaveBeenCalledExactlyOnceWith(file, args);
     // The entry is dropped so the corpse is not re-reaped by every later run; the live one is left to its owner.
     expect(existsSync(deadRunPath)).toBe(false);
     expect(readdirSync(getWslRunsDirectory())).toStrictEqual([`${process.pid}.${VIRRUN_WSL_PROCESS_MARKER}`]);
@@ -64,12 +67,14 @@ describe(reapOrphanedWslRuns, () => {
 
     reapOrphanedWslRuns();
 
-    expect(spawnBackground).toHaveBeenCalledExactlyOnceWith("wsl.exe", expect.arrayContaining([RECYCLED_MARKER]));
+    const [file, ...args] = buildWslReapCommand([RECYCLED_MARKER]);
+
+    expect(spawnBackground).toHaveBeenCalledExactlyOnceWith(file, args);
     expect(existsSync(recycledRunPath)).toBe(false);
   });
 
-  // A clean removes exactly the directories a corpse holds open, so its sweep runs the reaper synchronously and waits for
-  // The trees it TERMs — where the startup sweep stays fire-and-forget off the critical path.
+  // A clean removes exactly the directories a corpse holds open, so its sweep runs the reaper synchronously and waits
+  // For the trees it TERMs — where the startup sweep stays fire-and-forget off the critical path.
   test("runs the reaper synchronously and waits for the trees when blocking", () => {
     expect.hasAssertions();
 
@@ -77,13 +82,12 @@ describe(reapOrphanedWslRuns, () => {
 
     reapOrphanedWslRuns(true);
 
+    // The blocking flag reaches the script, not just the call style: the argv is the one `buildWslReapCommand`
+    // Builds for a blocking reap, whose `sh -c` body carries the wait's deadline.
+    const [, ...args] = buildWslReapCommand([DEAD_MARKER], true);
+
     expect(spawnBackground).not.toHaveBeenCalled();
-    expect(execWsl).toHaveBeenCalledExactlyOnceWith(
-      expect.arrayContaining([DEAD_MARKER]),
-      expect.objectContaining({ timeout: WSL_WORK_TIMEOUT_MS }),
-    );
-    // The blocking flag reaches the script, not just the call style: its `sh -c` body carries the wait's deadline.
-    expect(vi.mocked(execWsl).mock.calls[0]?.[0][3]).toContain("deadline=");
+    expect(execWsl).toHaveBeenCalledExactlyOnceWith(args, { timeout: WSL_WORK_TIMEOUT_MS });
     expect(existsSync(deadRunPath)).toBe(false);
   });
 

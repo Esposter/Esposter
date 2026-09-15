@@ -127,12 +127,14 @@ describe(computeColumnStatisticsForColumn, () => {
   test(`date column computes uniqueCount, nullCount, nullPercentage, mostFrequentValue`, () => {
     expect.hasAssertions();
 
+    const epochDate = new Date(0).toISOString().slice(0, 10);
+    const nextDayDate = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString().slice(0, 10);
     const dataSource = createDataSource(
       [createDateColumn("", takeOne(DateFormats))],
       [
-        createRow({ "": "1970-01-01" }),
-        createRow({ "": "1970-01-02" }),
-        createRow({ "": "1970-01-01" }),
+        createRow({ "": epochDate }),
+        createRow({ "": nextDayDate }),
+        createRow({ "": epochDate }),
         createRow({ "": null }),
       ],
     );
@@ -141,7 +143,7 @@ describe(computeColumnStatisticsForColumn, () => {
     expect(computeColumnStatisticsForColumn(dataSource, column)).toStrictEqual(
       createColumnStatistics({
         columnType: ColumnType.Date,
-        mostFrequentValue: "1970-01-01",
+        mostFrequentValue: epochDate,
         nullCount: 1,
         nullPercentage: 25,
         topFrequencies: [["1970-01", 3]],

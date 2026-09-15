@@ -11,7 +11,8 @@ import { WSL_EXECUTABLE, WSL_REAPER_SHELL_NAME } from "#src/services/exec/wsl/co
 // Cmdline matches the very `pgrep -f` its peers run — and TERMing that group kills a peer mid-wait: a startup sweep
 // Takes out the blocking `cache clean` reaper, whose caller then removes directories whose trees are still alive.
 // WSL_REAPER_SHELL_NAME is the `$0` of every reaper and of nothing else, so one grep over the candidate's own cmdline
-// Excludes peers and self alike. It reads `/proc/<pid>/cmdline` — the same bytes `pgrep -f` matched on, so the two agree — rather than `ps -o args=`, which
+// Excludes peers and self alike. It reads `/proc/<pid>/cmdline` — the same bytes `pgrep -f` matched on, so the two
+// Agree — rather than `ps -o args=`, which
 // Truncates to terminal width and would hide a name that sits past the whole script in the argv. A pid that exits
 // Mid-loop leaves no cmdline to read, which the `$pgid` guard below already treats as nothing to kill.
 const KILL_SCRIPT_LINES: readonly string[] = [
@@ -33,8 +34,8 @@ const KILL_SCRIPT_LINES: readonly string[] = [
 //
 // The wait watches the killed process GROUPS, not the markers it was handed: only the run's shell carries the marker
 // In its cmdline, and TERM kills that shell first while the `bwrap` beneath it — the process actually holding the
-// Store and snapshot directories — is still unwinding, so a marker that stops matching proves nothing. It polls, because a
-// POSIX shell cannot `wait` on a process it did not fork.
+// Store and snapshot directories — is still unwinding, so a marker that stops matching proves nothing. It polls,
+// Because a POSIX shell cannot `wait` on a process it did not fork.
 //
 // Past the deadline it gives up rather than hanging, and exits nonzero saying so. Blocking exists precisely because
 // The caller needs the trees gone, so a wait that never saw them go must not report as one that did: the nonzero
@@ -56,7 +57,7 @@ const WAIT_SCRIPT_LINES: readonly string[] = [
 ];
 // Build the argv for a reaper: a fresh `wsl.exe --exec` running the script above over every marker it is handed.
 // Three callers hand it different sets: the interrupted run itself passes its own marker (createWslOsBackend's
-// OnTerminate), the startup sweep passes every marker whose owning host process is dead (reapOrphanedWslRuns), and a
+// `onTerminate`), the startup sweep passes every marker whose owning host process is dead (reapOrphanedWslRuns), and a
 // `cache clean` passes that same set with `isBlocking` — one `wsl.exe` launch for the whole set either way, since a
 // Launch is a service RPC plus a relay process.
 //

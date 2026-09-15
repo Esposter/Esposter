@@ -11,7 +11,7 @@ export interface MessageEvents {
   // Typing propagates to the account's other devices too, unlike every other event
   createTyping: [[CreateTypingInput, Device]];
   deleteMessage: [[DeleteMessageInput]];
-  // UpdatedAt moves with the write and nothing reads it back, so it is left out of the payload
+  // `updatedAt` moves with the write and nothing reads it back, so it is left out of the payload
   updateMessage: [
     [
       SetOptional<

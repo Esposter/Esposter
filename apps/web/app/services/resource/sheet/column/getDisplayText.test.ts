@@ -12,6 +12,7 @@ import { describe, expect, test } from "vitest";
 
 describe(getDisplayText, () => {
   const name = "name";
+  const epochDate = new Date(0).toISOString().slice(0, 10);
 
   test("renders a boolean through its column's format", () => {
     expect.hasAssertions();
@@ -35,7 +36,7 @@ describe(getDisplayText, () => {
   test("renders a date through its column's format", () => {
     expect.hasAssertions();
 
-    expect(getDisplayText("1970-01-01", createDateColumn(name, DateFormat["DD/MM/YYYY"]))).toBe("01/01/1970");
+    expect(getDisplayText(epochDate, createDateColumn(name, DateFormat["DD/MM/YYYY"]))).toBe("01/01/1970");
   });
 
   test("renders a column with no format chosen as its raw value", () => {

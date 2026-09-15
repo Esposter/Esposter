@@ -1,4 +1,5 @@
 import { DocsNavigationSlug } from "@/models/docs/DocsNavigationSlug";
+import { PLANNING_GROUP_TITLE } from "@/services/docs/constants";
 import { createNavigationItem } from "@/services/docs/createNavigationItem.test";
 import { getNavigationGroups } from "@/services/docs/getNavigationGroups";
 import { RoutePath } from "@esposter/shared";
@@ -24,7 +25,7 @@ describe(getNavigationGroups, () => {
           `${sectionPath}/${DocsNavigationSlug.Deferred}`,
           `${sectionPath}/${DocsNavigationSlug.Rejected}`,
         ],
-        title: "Planning",
+        title: PLANNING_GROUP_TITLE,
       },
     ]);
   });
