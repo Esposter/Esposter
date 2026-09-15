@@ -5,9 +5,9 @@ import { PROBE_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { getResult, noop, withFinalizer } from "@esposter/shared";
-// Whether this host can actually SET UP the overlay sandbox — not merely whether bwrap is on PATH. A `command -v
-// Bwrap` probe is insufficient: bubblewrap built without overlayfs support (some WSL2 builds), or a kernel with
-// Unprivileged user namespaces disabled, has bwrap present yet rejects the overlay flags. So we run the real argv
+// Whether this host can actually SET UP the overlay sandbox — not merely whether bwrap is on PATH.
+// A `command -v bwrap` probe is insufficient: bubblewrap built without overlayfs support (some WSL2 builds), or a kernel
+// With unprivileged user namespaces disabled, has bwrap present yet rejects the overlay flags. So we run the real argv
 // From buildBwrapArgs, and on Linux probe the ACTUAL working directory the backend will sandbox (process.cwd()) —
 // Not a throwaway tmpdir. A tmpdir is tmpfs, which hides the one failure that matters most: when cwd is itself an
 // Overlayfs mount (virrun's own suite runs inside the os-backend sandbox via `virrun -- vitest`, so an os test that
