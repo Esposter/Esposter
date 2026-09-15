@@ -22,10 +22,10 @@ stateDiagram-v2
     Pending --> Friends: acceptFriendRequest (transactional delete + insert)
     Pending --> None: declineFriendRequest
     Friends --> None: deleteFriend
-    Pending --> Blocked: blockUser (deletes request)
-    Friends --> Blocked: blockUser (deletes friendship)
-    None --> Blocked: blockUser
-    Blocked --> None: unblockUser
+    Pending --> Blocked: createBlock (deletes request)
+    Friends --> Blocked: createBlock (deletes friendship)
+    None --> Blocked: createBlock
+    Blocked --> None: deleteBlock
 ```
 
 Blocking is unilateral, but a block in either direction prevents friend requests and excludes the user from `searchUsers` results. Self-relationships are rejected by database CHECK constraints, not just router validation.

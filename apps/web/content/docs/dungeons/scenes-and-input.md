@@ -36,7 +36,7 @@ Paths relative to `apps/web/app`.
 | File                                            | Role                                              |
 | ----------------------------------------------- | ------------------------------------------------- |
 | `pages/dungeons.vue`                            | `<Game>` configuration + plugin registration      |
-| `services/dungeons/scene/SceneKeyMap.ts`        | scene key → async Vue component                   |
+| `services/dungeons/scene/SceneComponentMap.ts`  | scene key → async Vue component                   |
 | `composables/dungeons/useInitializeControls.ts` | keyboard vs joystick selection                    |
 | `models/dungeons/input/`                        | `Controls` implementations                        |
 | `models/resolvers/dungeons/AInputResolver.ts`   | resolver base; scene folders hold concrete chains |

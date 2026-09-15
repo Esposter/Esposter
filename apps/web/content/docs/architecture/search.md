@@ -49,7 +49,7 @@ const { isPending } = useAutoSearch(searchQuery, {
 `app/composables/useCursorSearcher.ts` composes `useAutoSearch` with `useCursorPaginationData` for searches whose results paginate (room pickers, forward-to dialogs). The query callback receives `(searchQuery, cursor, opts)` and must forward `opts` — it carries the abort signal. It returns `{ hasMore, items, readItemsSearched, readMoreItemsSearched, searchQuery }`, so the list renders with the standard `StyledWaypoint` infinite-scroll pattern.
 
 ```ts
-export const useSearchStore = defineStore("message/room/search", () => {
+export const useRoomSearchStore = defineStore("message/room/search", () => {
   const { $trpc } = useNuxtApp();
   return useCursorSearcher((searchQuery, cursor, opts) => {
     const normalizedSearchQuery = normalizeString(searchQuery);
