@@ -19,8 +19,6 @@ vi.mock(import("#src/services/exec/util/spawnBackground"), () => ({
 
 vi.mock(import("#src/services/exec/wsl/execWsl"), () => ({ execWsl: vi.fn<typeof execWsl>() }));
 
-const DEAD_MARKER = `${VIRRUN_WSL_PROCESS_MARKER}-dead`;
-const RECYCLED_MARKER = `${VIRRUN_WSL_PROCESS_MARKER}-recycled`;
 // A registry entry left by a run whose host process is gone — the one thing the sweep acts on. The directory is
 // Created here rather than left to registerWslRun, since a `cache clean` sweeps without registering a run of its own.
 const seedDeadRun = (marker: string): string => {
@@ -32,6 +30,9 @@ const seedDeadRun = (marker: string): string => {
 };
 
 describe(reapOrphanedWslRuns, () => {
+  const DEAD_MARKER = `${VIRRUN_WSL_PROCESS_MARKER}-dead`;
+  const RECYCLED_MARKER = `${VIRRUN_WSL_PROCESS_MARKER}-recycled`;
+
   setupTemporaryCacheHome();
 
   // The invariant the whole sweep rests on: a live owner is a concurrent run — including this process, whose own
