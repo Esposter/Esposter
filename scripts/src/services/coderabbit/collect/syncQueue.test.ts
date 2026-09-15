@@ -97,19 +97,54 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
 
-  // The session pushed between the read and the rewrite's push: the lease refuses, and the run that push fires
-  // Replays onto what the queue now carries
-  test("reports a queue that moved during the run and leaves the rewrite unpushed", async () => {
+  // The session pushed between the read and the rewrite's push: the lease refuses, and the push moved the queue
+  // Forward from the sha the run read — so what it gained rides the rewrite, and the retry's lease is the new head
+  const setupMovedQueue = (
+    movedPath: string,
+    movedContent: string,
+  ): { developSha: string; movedSha: string; queueSha: string } => {
+    const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, "fix"));
+    switchTo(`${developSha}~1`);
+    const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, ""));
+    const movedSha = publish(TEST_FILENAME, commitFile(movedPath, movedContent));
+    installPreReceiveHook(`env -u GIT_QUARANTINE_PATH git update-ref refs/heads/${QUEUE_BRANCH} ${movedSha}`);
+    return { developSha, movedSha, queueSha };
+  };
+
+  test("carries what the session pushed under the rewrite and pushes under the lease it moved to", async () => {
+    expect.hasAssertions();
+
+    const carriedPath = `${nestedPath}.ts`;
+    const { developSha, queueSha } = setupMovedQueue(carriedPath, "");
+    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+
+    assert.exists(syncedSha);
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+    expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([carriedPath, nestedPath]);
+  });
+
+  test("leaves the rewrite unpushed when a commit the session pushed under it conflicts with it", async () => {
+    expect.hasAssertions();
+
+    const { developSha, movedSha, queueSha } = setupMovedQueue(filePath, "queue");
+
+    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBeUndefined();
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(movedSha);
+    expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
+  });
+
+  test("leaves the rewrite unpushed when the session rewrote the queue's history under it", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, ""));
     switchTo(`${developSha}~1`);
     const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, ""));
-    const movedSha = publish(TEST_FILENAME, commitFile(`${nestedPath}.ts`, ""));
-    installPreReceiveHook(`env -u GIT_QUARANTINE_PATH git update-ref refs/heads/${QUEUE_BRANCH} ${movedSha}`);
+    switchTo(`${developSha}~1`);
+    const rewrittenSha = publish(TEST_FILENAME, commitFile(`${nestedPath}.ts`, ""));
+    installPreReceiveHook(`env -u GIT_QUARANTINE_PATH git update-ref refs/heads/${QUEUE_BRANCH} ${rewrittenSha}`);
 
     await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBeUndefined();
-    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(movedSha);
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(rewrittenSha);
   });
 
   // The queue's commit and develop's fix rewrote the same line; nothing mechanical decides that

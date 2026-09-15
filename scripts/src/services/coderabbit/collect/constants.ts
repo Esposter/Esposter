@@ -70,6 +70,10 @@ export const QUARANTINED_MARKER = "review-collector quarantined";
 // Past it the commit is a person's, and the port holds on it as it always did
 export const SYNC_FAILED_MARKER = "review-collector sync-failed";
 
+// How many times the rewrite's push carries what the session pushed under it and tries its lease again: each
+// Carry is seconds, so past this the session is pushing faster than any lease can be read
+export const SYNC_PUSH_ATTEMPT_CAP = 3;
+
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 
 // What every headless session in the runner is denied: it holds no credential that can act on this repository,
