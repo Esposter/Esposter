@@ -12,8 +12,10 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-// Git's own bookkeeping for one linked worktree, both halves of it: `<commonDirectory>/worktrees/<name>/gitdir` holds the
-// Path of that worktree's `.git` file (whose parent is the worktree root), that git directory records the common directory it
+// Git's own bookkeeping for one linked worktree, both halves of it: `<commonDirectory>/worktrees/<name>/gitdir` holds
+// The
+// Path of that worktree's `.git` file (whose parent is the worktree root), that git directory records the common
+// Directory it
 // Belongs to, and the worktree's `.git` file points back at the entry. `gitdirRecord` overrides only the outward
 // Record, for the relative-path form git writes under `worktree.useRelativePaths`.
 const registerWorktree = (commonDirectory: string, name: string, worktreeRoot: string, gitdirRecord = ""): void => {
@@ -32,8 +34,8 @@ describe(readLinkedWorktreePaths, () => {
   const WORKTREE_NAME = "b";
   const DOT_PREFIXED_WORKTREE_NAME = `..${WORKTREE_NAME}`;
   const SUBMODULE_NAME = "sub";
-  // Where git keeps a submodule's git directory inside the superproject — a directory this module never names, since the
-  // Common directory is read from `commondir` rather than inferred from the layout; the test builds the real thing.
+  // Where git keeps a submodule's git directory inside the superproject — a directory this module never names, since
+  // The common directory is read from `commondir` rather than inferred from the layout; the test builds the real thing.
   const GIT_MODULES_DIRECTORY_NAME = "modules";
 
   const { cleanup, create } = createTemporaryDirectoryTracker();
