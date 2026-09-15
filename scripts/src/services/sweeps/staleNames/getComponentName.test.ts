@@ -3,12 +3,12 @@ import { describe, expect, test } from "vitest";
 
 describe(getComponentName, () => {
   test.each([
-    ["a component at the root", "Item.vue", "Item"],
-    ["the folders prefixing the file name", "Message/List/Item.vue", "MessageListItem"],
-    ["a file name repeating its folder", "Message/Room/RoomHeader.vue", "MessageRoomHeader"],
-    ["a file name repeating two folders", "Message/Room/MessageRoomHeader.vue", "MessageRoomHeader"],
-    ["a file named after its folder", "Item/Item.vue", "Item"],
-    ["an index file", "Message/Type/Index.vue", "MessageType"],
+    ["a component at the root", "Ab.vue", "Ab"],
+    ["the folders prefixing the file name", "Ab/Bc/Cd.vue", "AbBcCd"],
+    ["a file name repeating its folder", "Ab/Bc/BcCd.vue", "AbBcCd"],
+    ["a file name repeating two folders", "Ab/Bc/AbBcCd.vue", "AbBcCd"],
+    ["a file named after its folder", "Ab/Ab.vue", "Ab"],
+    ["an index file", "Ab/Bc/Index.vue", "AbBc"],
   ])("derives %s", (_, componentPath, name) => {
     expect.hasAssertions();
 

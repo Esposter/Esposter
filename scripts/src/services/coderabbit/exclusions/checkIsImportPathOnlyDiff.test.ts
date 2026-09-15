@@ -43,7 +43,7 @@ describe(checkIsImportPathOnlyDiff, () => {
 
     expect(
       checkIsImportPathOnlyDiff(
-        getDiff('-import { a } from "@/util/a";', '+import { a } from "#shared/util/other";'),
+        getDiff('-import { a } from "@/util/a";', '+import { a } from "#shared/util/b";'),
         rows,
       ),
     ).toBe(false);

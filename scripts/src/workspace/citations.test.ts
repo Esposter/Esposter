@@ -35,7 +35,7 @@ describe("citations", () => {
   // Install-time paths (`node_modules/.vite`) out of the check.
   const repositoryEntryNames = new Set(getSweepFilePaths(".").map((path) => takeOne(path.split("/"), 0)));
   const generatedDocsDirectory = `public/${DOCS_API_DIRECTORY}`;
-  const getIsRepositoryPath = (token: string) =>
+  const checkIsRepositoryPath = (token: string) =>
     REPOSITORY_PATH_REGEX.test(token) &&
     !token.startsWith(AGENT_WORKTREES_DIRECTORY) &&
     !token.includes(generatedDocsDirectory) &&
@@ -57,7 +57,7 @@ describe("citations", () => {
 
     const citations = pages.flatMap(({ path, text }) =>
       getBacktickedTokens(text)
-        .filter((token) => getIsRepositoryPath(token))
+        .filter((token) => checkIsRepositoryPath(token))
         .map((token) => ({ page: path, token })),
     );
     const resolutions = await Promise.all(
