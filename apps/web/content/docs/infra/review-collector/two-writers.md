@@ -35,7 +35,7 @@ sequenceDiagram
   S->>Q: git push
 ```
 
-A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and clears the gates from the remote on every run; the session's side of the loop — `git pull --rebase` before every commit and push, the plain push after every commit, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
+A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and clears the gates from the remote on every run; the session's side of the loop — `git pull --rebase` before a unit is started and again before every push, the plain push after every commit, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
 ## Parallel work
 
