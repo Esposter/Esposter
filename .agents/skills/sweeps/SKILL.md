@@ -43,15 +43,20 @@ A grep stays inline in the ledger; anything with control flow is a script under 
 
 ```mermaid
 flowchart LR
-  PICK["pick the next unswept unit"] --> APPLY["apply the owning convention"]
-  APPLY --> GATE{"does a fix change behaviour?"}
+  COVER["ai:sweep:ledger-coverage<br/>dates rows from trailers, syncs derived rows"] --> PICK["pick the next unswept unit"]
+  PICK --> APPLY["apply the owning convention"]
+  APPLY --> CHANGED{"did the unit change?"}
+  CHANGED -->|"no"| HOLD["hold its trailer for the next commit"]
+  HOLD --> PICK
+  CHANGED -->|"yes"| GATE{"does a fix change behaviour?"}
   GATE -->|"yes"| RAISE["raise it — Raised section, own proposal"]
   GATE -->|"no"| TESTS["ground it — regression test, dedupe fixtures"]
   RAISE --> TESTS
   TESTS --> CARRY["carry docs + owning skill"]
-  CARRY --> TICK["commit, the Ledger trailer naming the unit"]
+  CARRY --> TICK["commit<br/>Ledger trailer for the unit, plus any held"]
   TICK --> PICK
-  TICK -.->|"nothing left to sweep this sitting"| CHECK["format · typecheck · lint:fix · tests, once"]
+  TICK -.->|"the window is full"| CHECK["format · typecheck · lint:fix · tests, once"]
+  CHECK --> COVER
 ```
 
 - **Behaviour-preserving only.** A finding whose fix would change behaviour is raised, never folded in — the pass has to stay revertible as a unit.
