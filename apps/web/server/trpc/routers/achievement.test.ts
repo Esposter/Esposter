@@ -125,9 +125,9 @@ describe("achievementRouter", () => {
     expect.hasAssertions();
 
     const newResource = await caller.webpage.createResource({ name });
-    const onUpdateAchievement = await caller.achievement.onUpdateAchievement();
+    const subscription = await caller.achievement.onUpdateAchievement();
     const data = await getFirstEmit(
-      () => onUpdateAchievement,
+      () => subscription,
       () =>
         caller.webpage.saveResourceContent({
           content: new WebpageEditor(),
