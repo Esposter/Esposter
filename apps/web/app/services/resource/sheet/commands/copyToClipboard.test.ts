@@ -82,7 +82,7 @@ describe(copyToClipboard, () => {
     expect.hasAssertions();
 
     const capturedItems = stubClipboardItem();
-    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "42" })]);
+    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "0" })]);
     await copyToClipboard(dataSource, { includeHeaders: false });
     const items = takeOne(capturedItems);
     assert.exists(items);
@@ -90,7 +90,7 @@ describe(copyToClipboard, () => {
     const htmlText = await htmlBlob.text();
     const tsvText = await tsvBlob.text();
 
-    expect(htmlText).toMatchInlineSnapshot(`"<table><tr><td>42</td></tr></table>"`);
-    expect(tsvText).toBe("42");
+    expect(htmlText).toMatchInlineSnapshot(`"<table><tr><td>0</td></tr></table>"`);
+    expect(tsvText).toBe("0");
   });
 });

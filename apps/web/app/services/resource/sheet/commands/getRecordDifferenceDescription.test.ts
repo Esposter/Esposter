@@ -1,9 +1,8 @@
+import { RECORD_DIFFERENCE_HEADER } from "@/services/resource/sheet/commands/constants";
 import { getRecordDifferenceDescription } from "@/services/resource/sheet/commands/getRecordDifferenceDescription";
 import { describe, expect, test } from "vitest";
 
 describe(getRecordDifferenceDescription, () => {
-  const HEADER = "key | original | updated\n:---: | :---: | :---:";
-
   test("identical objects returns empty string", () => {
     expect.hasAssertions();
 
@@ -13,7 +12,7 @@ describe(getRecordDifferenceDescription, () => {
   test("changed string value produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": "" }, { "": " " })).toBe(`${HEADER}\n |  |  `);
+    expect(getRecordDifferenceDescription({ "": "" }, { "": " " })).toBe(`${RECORD_DIFFERENCE_HEADER}\n |  |  `);
   });
 
   test("changed date value produces table", () => {
@@ -23,7 +22,7 @@ describe(getRecordDifferenceDescription, () => {
     const updatedValue = new Date(1970, 0, 2);
 
     expect(getRecordDifferenceDescription({ "": originalValue }, { "": updatedValue })).toBe(
-      `${HEADER}\n | 1970-01-01 | 1970-01-02`,
+      `${RECORD_DIFFERENCE_HEADER}\n | 1970-01-01 | 1970-01-02`,
     );
   });
 
@@ -31,25 +30,27 @@ describe(getRecordDifferenceDescription, () => {
     expect.hasAssertions();
 
     expect(getRecordDifferenceDescription({ "": "", " ": 0 }, { "": " ", " ": 1 })).toBe(
-      `${HEADER}\n |  |  \n  | 0 | 1`,
+      `${RECORD_DIFFERENCE_HEADER}\n |  |  \n  | 0 | 1`,
     );
   });
 
   test("unchanged keys are excluded", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": "", " ": 0 }, { "": " ", " ": 0 })).toBe(`${HEADER}\n |  |  `);
+    expect(getRecordDifferenceDescription({ "": "", " ": 0 }, { "": " ", " ": 0 })).toBe(
+      `${RECORD_DIFFERENCE_HEADER}\n |  |  `,
+    );
   });
 
   test("key only in updated produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({}, { "": "" })).toBe(`${HEADER}\n | undefined | `);
+    expect(getRecordDifferenceDescription({}, { "": "" })).toBe(`${RECORD_DIFFERENCE_HEADER}\n | undefined | `);
   });
 
   test("key only in original produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": "" }, {})).toBe(`${HEADER}\n |  | undefined`);
+    expect(getRecordDifferenceDescription({ "": "" }, {})).toBe(`${RECORD_DIFFERENCE_HEADER}\n |  | undefined`);
   });
 });
