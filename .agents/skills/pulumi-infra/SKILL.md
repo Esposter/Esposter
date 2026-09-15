@@ -1,6 +1,6 @@
 ---
 name: pulumi-infra
-description: Apply when modifying apps/infra. Esposter Pulumi infrastructure conventions for apps/infra — the package shape and generated ctix barrel, one resource per file under src/<provider>/resources/<ProviderNamespace>/<resourceTypes>/ with camelCase names matching the export, protect on imported resources, the parent every new resource must set, resource outputs over duplicated identifier constants, namespace provider imports (never named), the unconditional alias ban, generated output safety, the security-hardening blockers, observability deliberately off for cost, and where infra docs live — plus deep dives on what a resource file points at (the parent table, output vs named constant, per-stack shared constants, Output<string> in a template literal or an object key), the preview/up ritual and provider bumps, rename/re-parent/import migrations, and Azure Native + GitHub provider quirks.
+description: Apply when modifying apps/infra. Esposter Pulumi infrastructure conventions for apps/infra — one resource per file under src/<provider>/resources/<ProviderNamespace>/<resourceTypes>/ named after the Azure resource, protect on imported resources, a parent on every new resource, resource outputs over repeated identifier constants, namespace provider imports, the unconditional alias ban, the preview before every up, the declined security hardenings, and observability deliberately off for cost.
 ---
 
 # Pulumi Infrastructure

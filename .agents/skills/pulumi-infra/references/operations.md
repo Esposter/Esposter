@@ -64,9 +64,8 @@ that stop on a date say the configuration was right and something shipped on tha
 setting nothing needed, and an apply against an estate that was fine — and when the user says a thing has been
 working, that is evidence to reconcile against rather than noise to disprove.
 
-The cause seen here was in the repo rather than the estate: the deploy artifact lost the entry field its host
-loads, so every build shipped a package the host could mount and find nothing in
-(`.agents/skills/build/SKILL.md`).
+A cause that lives in the repo rather than the estate: a deploy artifact that loses the entry field its host
+loads ships a package the host can mount and find nothing in (the `build` skill, `references/opt-outs.md`).
 
 On a Consumption plan the app scales to zero and re-fetches `WEBSITE_RUN_FROM_PACKAGE` on the next cold start,
 which is why a deploy that only uploads the package needs no restart or trigger-sync step to take effect.
