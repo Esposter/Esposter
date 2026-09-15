@@ -62,9 +62,17 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm i
 
-      # `scripts` imports `@esposter/shared` through its published entry, and a fresh checkout has no `dist`
-      - name: 🏗️ Build the shared package
-        run: pnpm --filter "@esposter/shared..." build
+      # A fresh checkout has no `dist` and no barrel, and both the cycle and the drain resolve libraries through
+      # them: `scripts` imports `@esposter/shared` by its published entry, and the drain's finishing checks — a
+      # typecheck in the touched package, its test suites — every library the package reads. Restored from the
+      # entry 🏗️ CI saves for this content, so a build here is the miss alone.
+      - name: ♻️ Restore package builds
+        id: restore
+        uses: ./.github/actions/restore-package-builds
+
+      - name: 🏗️ Build packages
+        if: steps.restore.outputs.complete != 'true'
+        run: pnpm build:packages
 
       - name: 🆔 Identify the collector
         # `fileMode` off: the install marks a package's `bin` executable, which reads as a dirty tree on Linux

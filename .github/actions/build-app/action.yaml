@@ -7,16 +7,9 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: 🔑 Get build cache keys
-      id: keys
-      uses: ./.github/actions/get-build-cache-keys
-    # Restore only: this job builds a subset, so saving from here would publish a partial `dist` set under the
-    # full build's key
     - name: ♻️ Restore package builds
-      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-      with:
-        path: ${{ steps.keys.outputs.package-builds-paths }}
-        key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
+      id: restore
+      uses: ./.github/actions/restore-package-builds
     # The root closure for the toolchain, as `setup-packages` explains — `typescript` above all, which no
     # library redeclares and the dependency build below generates declarations with
     - name: 📦 Install dependencies
@@ -24,14 +17,9 @@ runs:
       env:
         PACKAGE: ${{ inputs.package }}
       run: pnpm --filter "$PACKAGE..." --filter "{.}..." --fail-if-no-match i
-    # A build skipped on `cache-hit` over a partial extract hands the app an empty dependency — Pulumi an empty
-    # program, the Functions zip a `dist` that registers nothing while the host reports Running
-    - name: 🔍 Verify package builds
-      id: verify
-      uses: ./.github/actions/verify-package-builds
 
     - name: 🏗️ Build dependencies
-      if: steps.verify.outputs.complete != 'true'
+      if: steps.restore.outputs.complete != 'true'
       shell: bash
       env:
         PACKAGE: ${{ inputs.package }}

@@ -1,0 +1,23 @@
+name: Restore Package Builds
+description: Restore the library builds 🏗️ CI cached for this content and report whether every library's `dist` came back — restore only, so a caller that builds a subset on a miss cannot publish a partial set under the full build's key
+outputs:
+  complete:
+    description: "`true` when every library that builds has a non-empty `dist` after the restore"
+    value: ${{ steps.verify.outputs.complete }}
+runs:
+  using: composite
+  steps:
+    - name: 🔑 Get build cache keys
+      id: keys
+      uses: ./.github/actions/get-build-cache-keys
+
+    - name: ♻️ Restore package builds
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.keys.outputs.package-builds-paths }}
+        key: package-builds-${{ steps.keys.outputs.package-builds-hash }}
+    # A build skipped on `cache-hit` over a partial extract hands the caller an empty dependency — Pulumi an empty
+    # program, the Functions zip a `dist` that registers nothing while the host reports Running
+    - name: 🔍 Verify package builds
+      id: verify
+      uses: ./.github/actions/verify-package-builds
