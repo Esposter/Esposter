@@ -237,7 +237,7 @@ describe(createKeyframeStore, () => {
     expect(memoryObjectStore.objects.size).toBe(1);
   });
 
-  // Two writers of one content both pass the head read, and each encodes against its own anchor. The one the
+  // Two writers of one content both find nothing stored, and each encodes against its own anchor. The one the
   // Backend refuses reports the object that stands under the key — the twin's, with the twin's base — because a
   // Record carrying this writer's base would name a keyframe the stored delta never decodes against, and a
   // Charge for its bytes would be for bytes it never stored
@@ -252,7 +252,7 @@ describe(createKeyframeStore, () => {
     const deltaBytes = memoryObjectStore.objects.get(delta.hash);
     assert.exists(keyframeBytes);
     assert.exists(deltaBytes);
-    // The twin lands between this writer's head read and its own write, as a delta against the keyframe, while
+    // The twin lands between this writer's read and its own write, as a delta against the keyframe, while
     // This writer — anchored to nothing — encoded a standalone keyframe the backend then refuses
     const racedObjects = new Map([[keyframe.hash, keyframeBytes]]);
     const racedObjectStore: ObjectStore = {

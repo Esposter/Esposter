@@ -26,20 +26,42 @@ import { createKeyframeStore } from "keyframe-store";
 
 const objects = new Map<string, Uint8Array>();
 const keyframeStore = createKeyframeStore({
-  delete: async (keys) => keys.forEach((key) => objects.delete(key)),
-  read: async (key, byteCount) => objects.get(key)?.subarray(0, byteCount),
-  write: async (key, bytes) => void objects.set(key, bytes),
+  delete: async (keys) => {
+    for (const key of keys) objects.delete(key);
+  },
+  read: async (key) => objects.get(key),
+  // Create-only: false tells the store another writer of the same content landed first
+  write: async (key, bytes) => {
+    if (objects.has(key)) return false;
+
+    objects.set(key, bytes);
+    return true;
+  },
 });
 
-// The first version of a lineage has no keyframe yet
-const first = await keyframeStore.write(Buffer.from(JSON.stringify(document)), { anchoredBytes: 0, hash: "" });
+// Every operation is a neverthrow ResultAsync. The first version of a lineage has no keyframe yet
+const first = await keyframeStore.write(Buffer.from(JSON.stringify(document)), { anchoredBytes: 0, hash: "" }).match(
+  (writtenVersion) => writtenVersion,
+  (error) => {
+    throw error;
+  },
+);
 // first.baseHash === "" — it became the keyframe, so the lineage's anchor is its hash
-const second = await keyframeStore.write(Buffer.from(JSON.stringify(editedDocument)), {
-  anchoredBytes: 0,
-  hash: first.hash,
-});
+const second = await keyframeStore
+  .write(Buffer.from(JSON.stringify(editedDocument)), { anchoredBytes: 0, hash: first.hash })
+  .match(
+    (writtenVersion) => writtenVersion,
+    (error) => {
+      throw error;
+    },
+  );
 // second.baseHash === first.hash and second.storedBytes is roughly the size of the edit
-const plaintext = await keyframeStore.read(second.hash);
+const plaintext = await keyframeStore.read(second.hash).match(
+  (bytes) => bytes,
+  (error) => {
+    throw error;
+  },
+);
 ```
 
 ## <a name="documentation">📖 Documentation</a>

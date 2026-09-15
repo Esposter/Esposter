@@ -7,7 +7,7 @@ export interface MemoryObjectStore extends ObjectStore {
 }
 
 // The backend the suites and the bench run against: a map, so the measurement is the codec and never the
-// Network. Serves a head read by slicing, exactly as a ranged download would
+// Network
 export const createMemoryObjectStore = (objects?: Map<string, Uint8Array>): MemoryObjectStore => {
   const storedObjects = objects ?? new Map<string, Uint8Array>();
   return {
@@ -16,10 +16,7 @@ export const createMemoryObjectStore = (objects?: Map<string, Uint8Array>): Memo
       return Promise.resolve();
     },
     objects: storedObjects,
-    read: (key, byteCount) => {
-      const bytes = storedObjects.get(key);
-      return Promise.resolve(byteCount === undefined ? bytes : bytes?.subarray(0, byteCount));
-    },
+    read: (key) => Promise.resolve(storedObjects.get(key)),
     write: (key, bytes) => {
       if (storedObjects.has(key)) return Promise.resolve(false);
 
