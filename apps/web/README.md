@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-The main Esposter web application — a Nuxt 4 full-stack app serving the frontend, tRPC API, and server routes.
+The main Esposter web application — a Nuxt full-stack app serving the frontend, tRPC API, and server routes.
 
 ## Table of Contents
 
@@ -56,20 +56,20 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Tech Stack
 
-| Layer      | Technology                                                       |
-| ---------- | ---------------------------------------------------------------- |
-| Framework  | [Nuxt 4](https://nuxt.com)                                       |
-| UI         | [Vue 3.5](https://vuejs.org), [Vuetify 4](https://vuetifyjs.com) |
-| Styling    | [UnoCSS](https://unocss.dev) (Attributify mode), Sass            |
-| State      | [Pinia](https://pinia.vuejs.org)                                 |
-| API        | [tRPC](https://trpc.io) via `trpc-nuxt`                          |
-| Validation | [Zod](https://zod.dev)                                           |
-| Database   | [Drizzle ORM](https://orm.drizzle.team) (PostgreSQL)             |
-| Storage    | Azure Table Storage, Azure Blob Storage                          |
-| Real-time  | Azure WebPubSub + NodeJS EventEmitter                            |
-| Auth       | [better-auth](https://github.com/better-auth/better-auth)        |
-| Testing    | [Vitest](https://vitest.dev)                                     |
-| Linting    | Oxlint + ESLint                                                  |
+| Layer      | Technology                                                 |
+| ---------- | ---------------------------------------------------------- |
+| Framework  | [Nuxt](https://nuxt.com)                                   |
+| UI         | [Vue](https://vuejs.org), [Vuetify](https://vuetifyjs.com) |
+| Styling    | [UnoCSS](https://unocss.dev) (Attributify mode), Sass      |
+| State      | [Pinia](https://pinia.vuejs.org)                           |
+| API        | [tRPC](https://trpc.io) via `trpc-nuxt`                    |
+| Validation | [Zod](https://zod.dev)                                     |
+| Database   | [Drizzle ORM](https://orm.drizzle.team) (PostgreSQL)       |
+| Storage    | Azure Table Storage, Azure Blob Storage                    |
+| Real-time  | Azure WebPubSub + NodeJS EventEmitter                      |
+| Auth       | [better-auth](https://github.com/better-auth/better-auth)  |
+| Testing    | [Vitest](https://vitest.dev)                               |
+| Linting    | Oxlint + ESLint                                            |
 
 ### Commands
 
@@ -90,6 +90,7 @@ pnpm test             # vitest watch mode (coverage is run from the repo root)
 ```text
 apps/web/
 ├── app/
+│   ├── assets/           # Styles and static assets the bundler processes
 │   ├── components/       # Vue components
 │   ├── composables/      # Vue composables
 │   ├── layouts/          # Nuxt layouts
@@ -98,17 +99,26 @@ apps/web/
 │   ├── pages/            # Nuxt file-based routes
 │   ├── plugins/          # Nuxt plugins
 │   ├── services/         # Client-side services
-│   └── store/            # Pinia stores
+│   ├── store/            # Pinia stores
+│   ├── types/            # Client-side type declarations
+│   └── util/             # Client-side utilities
 ├── server/
 │   ├── api/              # Nuxt server API routes
-│   ├── db/               # Migrations output
+│   ├── composables/      # Server-side composables (Azure clients, session)
+│   ├── db/               # Drizzle connection and migrations output
+│   ├── models/           # Server-side models
+│   ├── plugins/          # Nitro plugins (migrations, security, web push)
 │   ├── routes/           # Nuxt server routes
 │   ├── services/         # Server-side services (RBAC, moderation, etc.)
 │   └── trpc/             # tRPC router definitions
 └── shared/
+    ├── assets/           # Assets both halves read
+    ├── generated/        # Generated code (Phaser, Tiled)
     ├── models/           # Isomorphic models (browser + server)
     ├── services/         # Isomorphic services
-    └── types/            # Global type declarations
+    ├── test/             # Vitest setup
+    ├── types/            # Global type declarations
+    └── util/             # Isomorphic utilities
 ```
 
 ## <a name="license">⚖️ License</a>

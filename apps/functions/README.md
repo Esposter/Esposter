@@ -22,31 +22,27 @@ Most functions are triggered by **Azure EventGrid** events published by the main
 | Function                      | Trigger                              | Description                                                                 |
 | ----------------------------- | ------------------------------------ | --------------------------------------------------------------------------- |
 | `ProcessNotification`         | EventGrid                            | Delivers every notification — resolves recipients, writes bell rows, pushes |
-| `ProcessWebhook`              | EventGrid                            | Delivers outgoing webhook payloads to registered endpoints                  |
+| `ProcessWebhook`              | EventGrid                            | Posts the message a pushed webhook carried into its room, then notifies     |
 | `PushWebhook`                 | HTTP (`POST webhooks/{id}/{token}`)  | Accepts inbound webhook pushes, validating the token from the url           |
 | `ProcessBlobDeletion`         | EventGrid                            | Deletes blobs durably once their owning row is gone                         |
 | `ReconcileStorageLedgerEntry` | EventGrid (storage system topic)     | Charges a user's storage counter the blob's real size on `BlobCreated`      |
 | `ReplayDeadLetterEvent`       | EventGrid                            | Replays dead-lettered events it can route, quarantining the rest            |
 | `ProcessScheduledMessageJob`  | Service Bus (`ScheduledMessageJobs`) | Delivers `/schedule` and `/remind` messages at their due time               |
 | `SendTodoReminder`            | Service Bus (`TodoReminders`)        | Publishes a `TodoReminder` notification when a TodoList item comes due      |
-| `PurgeDeletedResources`       | Timer (daily, 03:00)                 | Purges recycle-bin resources past their retention window                    |
+| `PurgeDeletedResources`       | Timer                                | Purges recycle-bin resources past their retention window                    |
 
 ### Flow
 
-One flow of several — the message-created path. The Service Bus and timer triggers in the table above are entered on their own schedules, not from this chain.
+The two paths that chain through EventGrid — a message the app creates, and one a webhook pushes in. The Service Bus and timer triggers in the table above are entered on their own schedules, not from this chain.
 
-```text
-App (createMessage) → Azure EventGrid → ProcessNotification
-                                      → ProcessWebhook
+```mermaid
+flowchart LR
+  APP["App — createMessage"] -->|"notification event"| EG["Azure EventGrid"]
+  PUSH["PushWebhook"] -->|"webhook event"| EG
+  EG -->|"webhook event"| PW["ProcessWebhook"]
+  PW -->|"notification event"| EG
+  EG -->|"notification event"| PN["ProcessNotification"]
 ```
-
-### Dependencies
-
-- `@azure/functions` — Azure Functions runtime
-- `@azure/eventgrid` — EventGrid event parsing
-- `@azure/web-pubsub` — WebPubSub real-time delivery
-- `@esposter/db` + `@esposter/db-schema` — database access
-- `web-push` — RFC 8030 web-push delivery
 
 ### Commands
 
