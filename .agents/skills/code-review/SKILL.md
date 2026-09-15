@@ -1,13 +1,13 @@
 ---
 name: code-review
-description: Apply when handed any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one. The single entry point for every code review — a working diff, a branch, a PR number, or a subsystem audited against the docs governing it — run entirely in the main session with no workflow script and no finder/verifier fan-out. Owns the two lanes (quality — reuse, simplification, efficiency, altitude; correctness — defects and broken conventions), the trigger rule that makes an in-thread finding real, the refute-first pass, sizing the commit window, the written record as tiebreaker, the findings-table report shape, and .agents/ staying in every review window — plus deep dives on sizing a diff or area window, everything after the table (the stop rule, fix-verify-commit, the regression checklist), the report shape, the meta pass's evidence table, and what counts as the written record.
+description: Apply when handed any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one. The single entry point for every code review — a working diff, a branch, a PR number, or a subsystem audited against the docs governing it — run in the main session with no workflow script and no finder/verifier fan-out, in two lanes (quality and correctness), every correctness finding carrying its trigger, the written record as tiebreaker, and one findings table as the report.
 ---
 
 # Code Review — One Entry Point, One Thread
 
-Every review request — `/code-review`, `/simplify`, "review this", "review PR N", "clean this up", post-merge audits — is answered here, in the main session. **Read the code yourself and report what you find.** There is no workflow script to invoke; `Workflow({ name: "code-review" })` and `Workflow({ scriptPath: ".agents/workflows/code-review.js" })` both name a pipeline that no longer exists.
+Every review request — `/code-review`, `/simplify`, "review this", "review PR N", "clean this up", post-merge audits — is answered here, in the main session. **Read the code yourself and report what you find.** There is no workflow script to invoke — not the built-in `Workflow({ name: "code-review" })`, and nothing under `.agents/workflows/`.
 
-Never use the `review` skill/command, the built-in `/simplify`, or `mattpocock-skills:code-review` — all answer to "review this", and several overlapping commands is how the shallowest one gets picked.
+Never use the `review` skill/command, the built-in `/simplify`, or a plugin skill named `code-review` — all answer to "review this", and several overlapping commands is how the shallowest one gets picked.
 
 ## Settled — do not re-propose
 
@@ -25,7 +25,7 @@ Never use the `review` skill/command, the built-in `/simplify`, or `mattpocock-s
 
 **Every file in the window is in scope, whatever its extension** — prose included. A docs page, a skill, a ledger, a README, a config file and a migration are each reviewed against the rules that own them, in both lanes: a paragraph restating a rule its owner already states is a quality finding, and a page whose claim the code contradicts is a correctness one. Nothing is skipped for being "not code" except generated output, lockfiles and binaries, which are named as skipped rather than silently dropped.
 
-**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (`feedback_dont_restate_enforced_rules`), and CodeRabbit already sweeps every pull request broadly and unverified, reasoning from names and asserting semantics this repo does not have (`coderabbit`). What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
+**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (`skill-authoring`, "Don't restate what an enforcer already checks"), and CodeRabbit already sweeps every pull request broadly and unverified, reasoning from names and asserting semantics this repo does not have (`coderabbit`). What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
 
 ## Load only the rules the window needs
 

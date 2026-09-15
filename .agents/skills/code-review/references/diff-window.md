@@ -24,7 +24,7 @@ Two exclusions belong in the window, because they consume real attention otherwi
 
 **`.agents/` is never one of them**, however tooling-shaped the window looks — SKILL.md, "The skill improves itself".
 
-`area` mode pulls the opposite way — narrow the target, don't batch it (`area.md`), because there every line of a file is in scope rather than the hunks.
+`area` mode pulls the opposite way — narrow the target, don't batch it (`references/area-window.md`), because there every line of a file is in scope rather than the hunks.
 
 ## Reading order for a wide diff
 
@@ -52,4 +52,4 @@ So when the ask is "review the PR" (not just "review my last change"), read the 
 
 ## Reporting
 
-Standard table (`../references/reporting.md`). Correctness findings here are a defect or a broken convention; quality findings are the four lenses. `stale-record` appears as a provenance label rather than a finding kind, because a diff review only notices a stale doc when the change happens to walk past it. Auditing the record properly is what `area` mode is for.
+Standard table (`references/reporting.md`). Correctness findings here are a defect or a broken convention; quality findings are the four lenses. `stale-record` appears as a provenance label rather than a finding kind, because a diff review only notices a stale doc when the change happens to walk past it. Auditing the record properly is what `area` mode is for.

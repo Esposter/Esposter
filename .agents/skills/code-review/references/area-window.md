@@ -49,4 +49,4 @@ Everything else — a target the session has already read, a diff of any size, a
 
 ## Reporting
 
-Same table as diff mode (`../references/reporting.md`), plus a **Kind** column after Where, since here the kind decides whether the deliverable is a code fix, a doc edit or a new page. Add one line under the table naming the `record-gap` findings as a docs to-do.
+Same table as diff mode (`references/reporting.md`), plus a **Kind** column after Where, since here the kind decides whether the deliverable is a code fix, a doc edit or a new page. Add one line under the table naming the `record-gap` findings as a docs to-do.
