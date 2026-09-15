@@ -51,7 +51,7 @@
 | `ux`                      | —          |       |
 | `vjsf`                    | —          |       |
 | `vue`                     | 2026-09-15 |       |
-| `vue-component-patterns`  | —          |       |
+| `vue-component-patterns`  | 2026-09-15 |       |
 | `vue-composable-patterns` | —          |       |
 | `vue-page-composition`    | —          |       |
 | `vue-phaserjs`            | —          |       |
