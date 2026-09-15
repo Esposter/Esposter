@@ -7,7 +7,7 @@
 
 Inspired by [phavuer](https://github.com/laineus/phavuer).
 
-Vue 3 integration for the [Phaser 4](https://phaser.io) game engine. Provides Vue components and composables that bridge Phaser scenes, game objects, and Pinia state with the Vue component lifecycle.
+Vue integration for the [Phaser](https://phaser.io) game engine. Provides Vue components and composables that bridge Phaser scenes, game objects, and Pinia state with the Vue component lifecycle.
 
 ## Table of Contents
 
