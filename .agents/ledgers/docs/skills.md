@@ -43,7 +43,7 @@
 | `styling`                 | —          |       |
 | `sweeps`                  | —          |       |
 | `test-values`             | —          |       |
-| `testing`                 | —          |       |
+| `testing`                 | 2026-09-15 |       |
 | `tiptap`                  | —          |       |
 | `trpc`                    | —          |       |
 | `typescript`              | —          |       |

@@ -1,6 +1,10 @@
 # Files That Aren't Plain Test Suites
 
-Shared helpers, fixture constants, canonical filesystem paths, and `.test-d.ts` type tests.
+Read for anything in a suite that is not a `test` inside a `describe` — a shared helper, a fixture constant, what may sit at module scope, a canonical filesystem path, a `.test-d.ts` type test. The module-scope rule itself is in `SKILL.md`; "What may live at module scope" is its exceptions.
+
+## What may live at module scope
+
+The exceptions are what _cannot_ move inward — the `vi.hoisted` block, which `vi.mock` lifts above the imports, and **anything a `vi.mock` factory closes over** (the `let mockDb` a `get db()` factory returns). A helper that captures a suite constant is not the pure kind and moves in with it — but **pure** here means it holds no binding a sibling suite can reach, never that it has no effects: a helper that stubs a global and builds its captured state per call is stateless in the sense the rule is about, and `unicorn/consistent-function-scoping` puts it at module scope for you, because it closes over nothing. A constant shared by sibling `describe`s is declared in each, because duplicating two lines beats a file-scope binding every block can reach. `describe.each` is the one case where the scoping is also a lifetime — its callback runs per case. State rebuilt per test is a `let` in the same place, initialized in `beforeEach` (`test-values` skill).
 
 ## Test utility files
 
