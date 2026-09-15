@@ -53,7 +53,7 @@ describe(getStaleNames, () => {
     ["a SCREAMING_SNAKE placeholder", "`FOO_A`"],
     ["a lone X standing in for a segment", "`aX`"],
     ["a path", "`a/b`"],
-  ])("reports nothing for %s", (_, text) => {
+  ])("reports nothing for %s", (_title, text) => {
     expect.hasAssertions();
 
     expect(getStaleNames([{ path, text }], sourceNames)).toStrictEqual([]);

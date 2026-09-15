@@ -83,7 +83,7 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(
       MAIN_BRANCH,
       commitFiles(
-        Array.from({ length: REVIEW_FILE_CAP }, (_, index) => `${TEST_FILENAME}/${index}`),
+        Array.from({ length: REVIEW_FILE_CAP }, (_value, index) => `${TEST_FILENAME}/${index}`),
         "",
       ),
     );

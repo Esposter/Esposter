@@ -59,7 +59,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
   const completedCheck: CheckStatus = { bucket: PASS_BUCKET, description: COMPLETED_DESCRIPTION, name: CHECK_NAME };
-  const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_, index) => `${TEST_FILENAME}/${index}`);
+  const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
   // What `gh` answers: the login, the release pull request list, the reviews, the issue comments, and `[[]]`
   // For every other paginated list — the one page of nothing a `--slurp` returns
   const baseInput = { isDryRun: false, isForced: false };

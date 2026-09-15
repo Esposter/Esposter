@@ -141,10 +141,13 @@ describe(reserveStorageBytes, () => {
   test("rejects once too many holds are outstanding", async () => {
     expect.hasAssertions();
 
-    const outstandingReservations = Array.from({ length: MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES }, (_, index) => ({
-      blobName: `${blobName}${index}`,
-      declaredBytes,
-    }));
+    const outstandingReservations = Array.from(
+      { length: MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES },
+      (_value, index) => ({
+        blobName: `${blobName}${index}`,
+        declaredBytes,
+      }),
+    );
     await reserveStorageBytes(mockContext.db, userId, containerName, outstandingReservations);
 
     await expect(

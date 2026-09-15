@@ -47,3 +47,6 @@ the grounds that a rename is expensive — that is the argument
 - A `const` bound to the call it names — `const readPost = await caller.readPost(…)` — is decidable from the AST alone
   (declarator name equal to the callee's last property), and it is the finding this ledger has now written in five
   files. The fix is always the same: drop the verb prefix, since the binding is the value rather than the fetch.
+- A bare `_` binding cannot go to `id-denylist`: xml2js spells an element's text as the `_` key, so
+  `packages/parse-tmx` and `packages/xml2js` destructure and declare it by that name throughout, and the ban
+  would buy a disable per site. The sweep keeps the rule — `_value`, `_title`, `_match`, never bare — by hand.

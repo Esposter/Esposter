@@ -12,7 +12,7 @@ const levelFraction = computed(
 );
 // Hue ramps yellow (quiet) to green (loud); unlit bars stay dimmed so the meter is always visible.
 const segments = computed(() =>
-  Array.from({ length: INPUT_LEVEL_METER_SEGMENT_COUNT }, (_, index) => {
+  Array.from({ length: INPUT_LEVEL_METER_SEGMENT_COUNT }, (_value, index) => {
     const fraction = (index + 1) / INPUT_LEVEL_METER_SEGMENT_COUNT;
     return { fraction, hue: 55 + 65 * fraction, isLit: fraction <= levelFraction.value };
   }),

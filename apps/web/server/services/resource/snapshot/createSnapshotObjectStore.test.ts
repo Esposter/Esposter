@@ -31,7 +31,7 @@ describe(createSnapshotObjectStore, () => {
   test.each([
     ["single-shot upload", 409],
     ["staged block list commit", 412],
-  ])("reports a %s conflict as a deduplicated write rather than throwing", async (_, statusCode) => {
+  ])("reports a %s conflict as a deduplicated write rather than throwing", async (_title, statusCode) => {
     expect.hasAssertions();
 
     const objectStore = await getObjectStore(new MockRestError("", statusCode));

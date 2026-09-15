@@ -9,7 +9,7 @@ describe(getComponentName, () => {
     ["a file name repeating two folders", "Ab/Bc/AbBcCd.vue", "AbBcCd"],
     ["a file named after its folder", "Ab/Ab.vue", "Ab"],
     ["an index file", "Ab/Bc/Index.vue", "AbBc"],
-  ])("derives %s", (_, componentPath, name) => {
+  ])("derives %s", (_title, componentPath, name) => {
     expect.hasAssertions();
 
     expect(getComponentName(componentPath)).toBe(name);

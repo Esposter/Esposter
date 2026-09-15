@@ -52,7 +52,7 @@ export const fixAjv = {
       const result = code
         .replace('"use strict";\n', "")
         .replace('"use strict"\n', "")
-        .replaceAll(INLINE_REQUIRE_REGEX, (_, path: string) => {
+        .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {
           const vn = inlineRequireMap.get(path);
           return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
         })
@@ -75,11 +75,14 @@ export const fixAjv = {
         pkgRequireMap.set(path, path.replaceAll(/[^a-zA-Z0-9_$]/gu, "_"));
       }
       const result = code
-        .replaceAll(INLINE_REQUIRE_REGEX, (_, path: string) => {
+        .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {
           const vn = pkgRequireMap.get(path);
           return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
         })
-        .replace(/^module\.exports = (?<id>[\w$]+);?\n/mu, (_, x) => `${x}.default = ${x};\nexport default ${x};\n`);
+        .replace(
+          /^module\.exports = (?<id>[\w$]+);?\n/mu,
+          (_match, name) => `${name}.default = ${name};\nexport default ${name};\n`,
+        );
       const imports = Array.from(pkgRequireMap, ([path, vn]) => `import * as ${vn} from "${path}";\n`).join("");
       return `${imports}${result}`;
     }
@@ -143,15 +146,15 @@ export const fixAjv = {
         return `import * as ${vName} from "${modPath}";\n`;
       })
       // Step 5: inline require() → extracted variable (`.default ?? ns` for CJS compat)
-      .replaceAll(INLINE_REQUIRE_REGEX, (_, path: string) => {
+      .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {
         const vn = inlineRequireMap.get(path);
         return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
       })
       // Steps 6–8: module.exports assignments
       .replaceAll(/^module\.exports = exports = [\w$]+;?\n/gmu, "")
-      .replaceAll(/^module\.exports = (?<id>[\w$]+);?\n/gmu, (_, x) =>
+      .replaceAll(/^module\.exports = (?<id>[\w$]+);?\n/gmu, (_match, name) =>
         // If the file uses `exports.default = X` (__esModule style), skip — step 11 handles it.
-        /^exports\.default = /mu.test(code) ? "" : `export default ${x};\n`,
+        /^exports\.default = /mu.test(code) ? "" : `export default ${name};\n`,
       )
       .replaceAll(/^module\.exports\.[\w$]+ = [\w$]+;?\n/gmu, "")
       // Step 9: `var X = module.exports = function...{}` chained assignment (e.g. json-schema-traverse)
@@ -164,7 +167,7 @@ export const fixAjv = {
       // Steps 11–14: exports.X → named exports
       .replace(/^exports\.default = (?<id>[\w$]+);\n/mu, "export default $1;\n")
       .replaceAll(/^exports\.(?<name>[\w$]+) = \1;\n/gmu, "export { $1 };\n")
-      .replace(ODP_REEXPORT_REGEX, (_, exportName: string, varName: string, propName: string) => {
+      .replace(ODP_REEXPORT_REGEX, (_match, exportName: string, varName: string, propName: string) => {
         const modPath = requireMap.get(varName);
         if (!modPath) return "";
         if (propName === exportName) return `export { ${propName} } from "${modPath}";\n`;
@@ -194,7 +197,7 @@ export const fixAjv = {
     // (expecting old CJS interop wrapping) continue to work alongside `X(...)` callers.
     result = result.replace(
       /^export default (?<name>[\w$]+);\n/mu,
-      (_, name) => `${name}.default = ${name};\nexport default ${name};\n`,
+      (_match, name) => `${name}.default = ${name};\nexport default ${name};\n`,
     );
     return result;
   },

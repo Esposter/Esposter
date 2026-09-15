@@ -63,7 +63,7 @@ export default defineConfig({
     ...Object.entries(opacityUtilities),
   ],
   safelist: [
-    ...Array.from({ length: 6 }, (_, i) => `elevation-${i}`),
+    ...Array.from({ length: 6 }, (_value, index) => `elevation-${index}`),
     ...allColorKeys.flatMap((key) => [`bg-${key}`, `text-${key}`]),
     ...Object.keys(opacityUtilities),
   ],

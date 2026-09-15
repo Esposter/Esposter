@@ -38,7 +38,7 @@ describe(takeResourceRevision, () => {
   // Content that shares nothing with the empty list, so a version holding it promotes to a keyframe of its own
   // Rather than anchoring to the one before it
   const rewrittenSerializedContent = JSON.stringify({
-    items: Array.from({ length: 20 }, (_, index) => ({ id: crypto.randomUUID(), name: `${name} ${index}` })),
+    items: Array.from({ length: 20 }, (_value, index) => ({ id: crypto.randomUUID(), name: `${name} ${index}` })),
   });
   const { maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
   const readStorageBytesUsed = async () =>

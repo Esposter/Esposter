@@ -332,7 +332,7 @@ describe("userRouter", () => {
 
     seedSlots(
       userId,
-      Array.from({ length: MAX_CALL_BACKGROUNDS }, (_, slot) => slot),
+      Array.from({ length: MAX_CALL_BACKGROUNDS }, (_value, slot) => slot),
       size,
     );
 

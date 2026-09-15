@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 describe(getDuplicateProse, () => {
   // One word per position, so a run's length is read straight off its text
-  const words = Array.from({ length: SHINGLE_SIZE + 1 }, (_, index) => `a${index}`);
+  const words = Array.from({ length: SHINGLE_SIZE + 1 }, (_value, index) => `a${index}`);
   const text = words.join(" ");
   const firstPath = "a";
   const secondPath = "b";
@@ -42,7 +42,7 @@ describe(getDuplicateProse, () => {
   test("reports the longest run first", () => {
     expect.hasAssertions();
 
-    const shorterText = Array.from({ length: SHINGLE_SIZE }, (_, index) => `b${index}`).join(" ");
+    const shorterText = Array.from({ length: SHINGLE_SIZE }, (_value, index) => `b${index}`).join(" ");
     expect(
       getDuplicateProse([
         { path: firstPath, text: `${shorterText} c ${text}` },

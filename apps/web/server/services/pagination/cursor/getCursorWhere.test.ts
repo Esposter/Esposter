@@ -37,7 +37,7 @@ describe(getCursorWhere, () => {
     ],
   ];
 
-  test.each(sortItems)("compares %s", (_, sortItem) => {
+  test.each(sortItems)("compares %s", (_title, sortItem) => {
     expect.hasAssertions();
 
     const serializedCursors = serialize(user, [sortItem]);

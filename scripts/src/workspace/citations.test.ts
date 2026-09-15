@@ -46,7 +46,7 @@ describe("citations", () => {
   const checkIsResolved = async (token: string): Promise<boolean> => {
     for (const cwd of [REPOSITORY_ROOT, appDirectory]) {
       if (existsSync(join(cwd, token))) return true;
-      for await (const _ of glob([token, `${token}.*`], { cwd })) return true;
+      for await (const _match of glob([token, `${token}.*`], { cwd })) return true;
     }
     return false;
   };

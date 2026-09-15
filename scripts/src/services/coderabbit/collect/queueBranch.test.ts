@@ -26,7 +26,7 @@ describe("queueBranch", () => {
       "run-review-collector.yaml",
       `        run: gh workflow run ReviewCollector.yaml --repo "$GITHUB_REPOSITORY" --ref ${QUEUE_BRANCH}`,
     ],
-  ])("the runner spells %s as the constant", (_, name, line) => {
+  ])("the runner spells %s as the constant", (_title, name, line) => {
     expect.hasAssertions();
 
     expect(readWorkflowLines(name)).toContain(line);

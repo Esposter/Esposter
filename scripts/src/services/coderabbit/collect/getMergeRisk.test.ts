@@ -26,7 +26,7 @@ describe(getMergeRisk, () => {
     ["a comment without the block", { ...comment, body: "" }],
     ["a coverage block that is not JSON", { ...comment, body: body.replace('"kind":"reviewed"', '"kind":') }],
     ["a coverage block naming no head", { ...comment, body: body.replace(`"coveredCommitId":"${sha}",`, "") }],
-  ])("returns undefined for %s", (_, otherComment) => {
+  ])("returns undefined for %s", (_title, otherComment) => {
     expect.hasAssertions();
 
     expect(getMergeRisk([otherComment])).toBeUndefined();

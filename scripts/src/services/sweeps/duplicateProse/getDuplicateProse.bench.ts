@@ -11,9 +11,9 @@ import { describe, test } from "vitest";
 const BENCH_PAGE_COUNTS = [10, 100, 500];
 const WORDS_PER_PAGE = 1000;
 const getText = (pageIndex: number) =>
-  Array.from({ length: WORDS_PER_PAGE }, (_, index) => `a${pageIndex}b${index}`).join(" ");
+  Array.from({ length: WORDS_PER_PAGE }, (_value, index) => `a${pageIndex}b${index}`).join(" ");
 const getPages = (getPageText: (pageIndex: number) => string, pageCount: number): CitingPage[] =>
-  Array.from({ length: pageCount }, (_, pageIndex) => ({ path: String(pageIndex), text: getPageText(pageIndex) }));
+  Array.from({ length: pageCount }, (_value, pageIndex) => ({ path: String(pageIndex), text: getPageText(pageIndex) }));
 
 describe(getDuplicateProse, () => {
   test.for(BENCH_PAGE_COUNTS)("%i pages", async (pageCount, { bench }) => {

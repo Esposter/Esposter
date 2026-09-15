@@ -13,7 +13,7 @@ describe(checkIsReady, () => {
     // The held commit is the first one: nothing came with it, and only the session clears the hold
     ["held with nothing that fit", { fixCount: 0, isHeld: true, queueCommitCount: 0 }, false],
     ["nothing owed at all", { fixCount: 0, isHeld: false, queueCommitCount: 0 }, false],
-  ])("%s", (_, input, expected) => {
+  ])("%s", (_title, input, expected) => {
     expect.hasAssertions();
 
     expect(checkIsReady({ ...input, isForced: false, pendingCommitCount: 0 })).toBe(expected);
@@ -24,7 +24,7 @@ describe(checkIsReady, () => {
   test.each([
     ["develop ahead with nothing to add", { pendingCommitCount: 3, queueCommitCount: 0 }, true],
     ["develop level with the frontier", { pendingCommitCount: 0, queueCommitCount: 0 }, false],
-  ])("%s", (_, input, expected) => {
+  ])("%s", (_title, input, expected) => {
     expect.hasAssertions();
 
     expect(checkIsReady({ ...input, fixCount: 0, isForced: false, isHeld: false })).toBe(expected);
@@ -36,7 +36,7 @@ describe(checkIsReady, () => {
     ["forced with a queue commit", { fixCount: 0, pendingCommitCount: 0, queueCommitCount: 1 }, true],
     ["forced with develop ahead and nothing to add", { fixCount: 0, pendingCommitCount: 1, queueCommitCount: 0 }, true],
     ["forced with nothing at all", { fixCount: 0, pendingCommitCount: 0, queueCommitCount: 0 }, false],
-  ])("%s", (_, input, expected) => {
+  ])("%s", (_title, input, expected) => {
     expect.hasAssertions();
 
     expect(checkIsReady({ ...input, isForced: true, isHeld: false })).toBe(expected);
