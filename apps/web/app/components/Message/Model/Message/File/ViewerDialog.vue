@@ -26,7 +26,6 @@ const index = computed(() => viewableFiles.value.findIndex(({ id }) => id === vi
 // Read by id rather than captured when the viewer opened, so the store's refresh sweep re-minting an expiring
 // Read SAS reaches a viewer that is still on screen
 const url = computed(() => (file.value ? (fileUrlMap.value.get(file.value.id)?.url ?? "") : ""));
-const isVideo = computed(() => (file.value ? getMimeCategory(file.value.mimetype) === MimeCategory.Video : false));
 const view = (offset: number) => {
   const nextFile = viewableFiles.value[index.value + offset];
   if (nextFile) viewingFileId.value = nextFile.id;
@@ -78,15 +77,16 @@ onKeyStroke(["ArrowLeft", "ArrowRight"], (event) => {
         @click="downloadUrl(url, file.filename)"
       />
     </template>
-    <div
-      flex
-      items-center
-      justify-center
-      overflow-hidden
-      :class="isZoomed ? 'cursor-grab' : 'cursor-zoom-in'"
-      @wheel="zoom"
-    >
-      <video v-if="isVideo" max-h="[80vh]" controls autoplay max-w-full cursor-default :src="url" />
+    <div flex items-center justify-center of-hidden :class="isZoomed ? 'cursor-grab' : 'cursor-zoom-in'" @wheel="zoom">
+      <video
+        v-if="file && getMimeCategory(file.mimetype) === MimeCategory.Video"
+        max-h="[80vh]"
+        controls
+        autoplay
+        max-w-full
+        cursor-default
+        :src="url"
+      />
       <div v-else ref="image">
         <NuxtImg max-h="[80vh]" max-w-full :src="url" :alt="file.filename" />
       </div>

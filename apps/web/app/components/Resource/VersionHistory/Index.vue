@@ -15,9 +15,6 @@ const versionHistoryStore = useVersionHistoryStore();
 const { isPending, versions } = storeToRefs(versionHistoryStore);
 const { clearVersionHistory, readSnapshotHistory } = versionHistoryStore;
 const { closeVersionHistory } = useVersionHistoryRoute();
-// Only a publishable type has two channels to tell apart, so the filter exists where it means something and
-// Nowhere else — on every other type the timeline is revisions and nothing but
-const isPublishable = computed(() => checkHasCapability(resource.type, "publishable"));
 const isPublishedOnly = ref(false);
 const displayVersions = computed(() =>
   isPublishedOnly.value
@@ -34,13 +31,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <v-sheet b-0 b-s-1 b-border b-solid flex flex-col overflow-auto w="full sm:1/3">
+  <v-sheet b-0 b-s-1 b-border b-solid flex flex-col of-auto w="full sm:1/3">
     <div py-2 pl-4 pr-2 b-0 b-b-1 b-border b-solid flex gap-2 items-center>
       <span text-title-medium>Version history</span>
       <v-spacer />
       <StyledTooltipIconButton icon="mdi-close" text="Close version history" @click="closeVersionHistory" />
     </div>
-    <div v-if="isPublishable" px-4 py-2>
+    <!-- Only a publishable type has two channels to tell apart, so the filter exists where it means something and
+      nowhere else — on every other type the timeline is revisions and nothing but -->
+    <div v-if="checkHasCapability(resource.type, 'publishable')" px-4 py-2>
       <v-chip filter :model-value="isPublishedOnly" size="small" @click="isPublishedOnly = !isPublishedOnly">
         Published only
       </v-chip>

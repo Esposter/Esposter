@@ -18,7 +18,6 @@ const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId } = storeToRefs(roomDialogStore);
 const roomInviteStore = useRoomInviteStore();
 const { revokeInvite } = roomInviteStore;
-const inviteLink = computed(() => getInviteLink(runtimeConfig.public.baseUrl, invite.id));
 // The cap belongs beside the count rather than in a column of its own, which is where Discord puts a bare number
 const usesText = computed(() => (invite.maxUses ? `${invite.uses} / ${invite.maxUses}` : String(invite.uses)));
 // Discord's column is a clock rather than a phrase — the reader is watching a link run out, and "in 2 hours"
@@ -43,7 +42,10 @@ const { countdown, isExpired } = useCountdown(() => invite.expiresAt);
     </td>
     <td>
       <div flex justify-end>
-        <StyledClipboardIconButton :source="inviteLink" text="Copy Invite Link" />
+        <StyledClipboardIconButton
+          :source="getInviteLink(runtimeConfig.public.baseUrl, invite.id)"
+          text="Copy Invite Link"
+        />
         <!-- Editing replaces the reader's own link, so it is only offered on the row that is theirs -->
         <StyledTooltipIconButton
           v-if="isCreator"

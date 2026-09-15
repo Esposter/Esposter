@@ -11,7 +11,6 @@ import { MentionType, takeOne } from "@esposter/shared";
 
 const { command, items, query } =
   defineProps<SuggestionProps<BroadcastMentionItem | RoleMentionItem | User, MentionNodeAttributes>>();
-const title = computed(() => getSuggestionListTitle(SuggestionTrigger.Mention, query));
 const checkIsRoleMentionItem = (item: BroadcastMentionItem | RoleMentionItem | User): item is RoleMentionItem =>
   "type" in item && item.type === MentionType.Role;
 const selectItem = (index: number) => {
@@ -26,7 +25,12 @@ defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <MessageModelMessageSuggestionList w-100 :is-visible="items.length > 0" :selected-index :title>
+  <MessageModelMessageSuggestionList
+    w-100
+    :is-visible="items.length > 0"
+    :selected-index
+    :title="getSuggestionListTitle(SuggestionTrigger.Mention, query)"
+  >
     <v-list-item
       v-for="(item, index) of items"
       :key="item.id"
@@ -49,7 +53,7 @@ defineExpose({ onKeyDown });
           <v-icon>mdi-at</v-icon>
         </v-avatar>
       </template>
-      <v-list-item-title font-semibold>{{ item.name }}</v-list-item-title>
+      <v-list-item-title fw-semibold>{{ item.name }}</v-list-item-title>
     </v-list-item>
   </MessageModelMessageSuggestionList>
 </template>
