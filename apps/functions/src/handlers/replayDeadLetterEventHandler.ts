@@ -79,7 +79,8 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
       // Rewriting the quarantine copy is harmless — same path, same bytes — but this line is the only record that the
       // Quarantine happened, so it is tied to the delivery that created the copy: a redelivery of an already
       // Quarantined payload is not a new incident, and delivery is at-least-once. Nothing pages on it — the alert
-      // Rules went with App Insights, and the container is what an operator inspects (/docs/infra/eventgrid-dead-letter)
+      // Rules went with App Insights, and the container is what an operator inspects
+      // (/docs/infra/eventgrid-dead-letter)
       if (isQuarantineCreated)
         context.error(
           `${AzureFunction.ReplayDeadLetterEvent}${DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX} ${blobName}, malformed dead-letter payload: `,
