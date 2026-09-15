@@ -30,7 +30,7 @@ const getBlankedLine = (line: string): string => line.slice(1).replaceAll(QUOTED
 const getBlankedLines = (changedLines: string[], sign: DiffLineSign): string =>
   changedLines
     .filter((line) => line.startsWith(sign))
-    .map(getBlankedLine)
+    .map((line) => getBlankedLine(line))
     .toSorted()
     .join("\n");
 

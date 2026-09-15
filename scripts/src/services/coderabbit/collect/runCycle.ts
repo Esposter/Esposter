@@ -4,6 +4,7 @@ import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
+import { checkIsReady } from "#src/services/coderabbit/collect/checkIsReady";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import {
   DEVELOP_BRANCH,
@@ -13,7 +14,6 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
-import { checkIsReady } from "#src/services/coderabbit/collect/checkIsReady";
 import { getMergeRisk } from "#src/services/coderabbit/collect/getMergeRisk";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
 import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeReleasePullRequest";
