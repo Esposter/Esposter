@@ -1,6 +1,6 @@
 ---
 name: esbabbler-call
-description: Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages). Esposter messaging calls (esbabbler) implementation — the persistent callSessionsInMessage row plus the ephemeral in-memory participant/admission/start-time maps, short random codes always being the row's id (never a token/code column) via createId, standalone vs room calls and which join procedure each uses, the call session lifecycle from readCallSessionId to the duration system message, the four leave boundaries (and room navigation not being one), and which of useCallStore / useParticipantStore / useMediaStore / useLiveKitStore owns each piece of client state — plus deep dives on the Map-based participant state rules, RoomPermission bits and AdminActionType with the admin-action hooks, and the standalone /calls surface with its knock/admit lobby.
+description: Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages). Esposter messaging calls (esbabbler) implementation — the persistent callSessionsInMessage row plus the ephemeral in-memory participant maps, a short random code always being the row's id via createId, standalone vs room calls and their join procedures, the four leave boundaries, and which call store owns each piece of client state.
 ---
 
 # Esbabbler Calls — Implementation
@@ -9,22 +9,22 @@ Calls build on `callSessionsInMessage` (Postgres) + ephemeral in-memory maps. Th
 
 ## Key entities
 
-| Entity                                   | Role                                                                                                                                                                                                                     |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `callSessionsInMessage`                  | Persistent call row. `id` (12-char alphanumeric) is both session key and shareable join code. `userId` is the creator who can join a standalone call directly. Room sessions created lazily on first `joinCallByRoomId`. |
-| `callSessionParticipantMap` (in-memory)  | `Map<callSessionId, Map<sessionId, CallParticipant>>`. Lost on restart.                                                                                                                                                  |
-| `callAdmittedParticipantMap` (in-memory) | `Map<callSessionId, Set<sessionId>>`. One-time standalone waiting-room admissions. Consumed by `joinCall({ id })`.                                                                                                       |
-| `callStartTimeMap` (in-memory)           | `Map<callSessionId, Date>`. Tracks call start for duration calculation.                                                                                                                                                  |
+| Entity                                   | Role                                                                                                                                                                                                                            |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `callSessionsInMessage`                  | Persistent call row. `id` (`CALL_ID_LENGTH` characters) is both session key and shareable join code. `userId` is the creator who can join a standalone call directly. Room sessions created lazily on first `joinCallByRoomId`. |
+| `callSessionParticipantMap` (in-memory)  | `Map<callSessionId, Map<sessionId, CallParticipant>>`. Lost on restart.                                                                                                                                                         |
+| `callAdmittedParticipantMap` (in-memory) | `Map<callSessionId, Set<sessionId>>`. One-time standalone waiting-room admissions. Consumed by `joinCall({ id })`.                                                                                                              |
+| `callStartTimeMap` (in-memory)           | `Map<callSessionId, Date>`. Tracks call start for duration calculation.                                                                                                                                                         |
 
 ## Random id terminology
 
 Short random codes are always the row's `id` — never a separate `token`/`code` column:
 
-- `invitesInMessage.id` (`INVITE_ID_LENGTH` = 8) — the invite link code
-- `callSessionsInMessage.id` (`CALL_ID_LENGTH` = 12) — the shareable call/meeting link
+- `invitesInMessage.id` (`INVITE_ID_LENGTH`) — the invite link code
+- `callSessionsInMessage.id` (`CALL_ID_LENGTH`) — the shareable call/meeting link
 - `createId(length)` from `#shared/util/math/random/createId` — the single generator (uses `crypto.getRandomValues`)
 
-Never use `token`, `code`, `createToken`, `createCode`, or `*_TOKEN_LENGTH` — old names, deleted.
+Never a `token` or `code` column, a `createToken`/`createCode` generator, or a `*_TOKEN_LENGTH` constant beside them.
 
 ## Standalone vs room calls
 
