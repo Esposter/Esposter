@@ -15,7 +15,7 @@ import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -202,7 +202,7 @@ describe("friendRequestRouter", () => {
 
     const allFriendRequests = await friendRequestCaller.readFriendRequests();
 
-    expect(allFriendRequests).toHaveLength(0);
+    expect(allFriendRequests).toStrictEqual([]);
   });
 
   test("reads received friend requests", async () => {
@@ -212,10 +212,10 @@ describe("friendRequestRouter", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(userId);
     const allFriendRequests = await friendRequestCaller.readFriendRequests();
-    const receivedFriendRequests = allFriendRequests.filter(({ receiverId }) => receiverId === userId);
 
-    expect(receivedFriendRequests).toHaveLength(1);
-    expect(takeOne(receivedFriendRequests).senderId).toBe(user.id);
+    expect(allFriendRequests.map(({ receiverId, senderId }) => ({ receiverId, senderId }))).toStrictEqual([
+      { receiverId: userId, senderId: user.id },
+    ]);
   });
 
   test("reads sent friend requests", async () => {
@@ -226,10 +226,10 @@ describe("friendRequestRouter", () => {
     await friendRequestCaller.sendFriendRequest(userId);
     await mockSessionOnce(mockContext.db, user);
     const allFriendRequests = await friendRequestCaller.readFriendRequests();
-    const sentFriendRequests = allFriendRequests.filter(({ senderId }) => senderId === user.id);
 
-    expect(sentFriendRequests).toHaveLength(1);
-    expect(takeOne(sentFriendRequests).receiverId).toBe(userId);
+    expect(allFriendRequests.map(({ receiverId, senderId }) => ({ receiverId, senderId }))).toStrictEqual([
+      { receiverId: userId, senderId: user.id },
+    ]);
   });
 
   test("on send friend request notifies receiver", async () => {

@@ -23,6 +23,11 @@ describe("postRouter", () => {
   const updatedTitle = "updatedTitle";
   const description = "description";
   const updatedDescription = "updatedDescription";
+  const value = 1;
+  const sortBy: SortItem<keyof Post>[] = [
+    { key: "likeCount", order: SortOrder.Desc },
+    { key: "id", order: SortOrder.Desc },
+  ];
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -243,19 +248,19 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const newLike = await likeCaller.createLike({ postId: newPost.id, value: 1 });
+    const newLike = await likeCaller.createLike({ postId: newPost.id, value });
     const post = await postCaller.readPost(newPost.id);
     const { items } = await postCaller.readPosts();
 
     expect(post.viewerLike).toStrictEqual(newLike);
-    expect(takeOne(items, 0).viewerLike).toStrictEqual(newLike);
+    expect(takeOne(items).viewerLike).toStrictEqual(newLike);
   });
 
   test("reads no viewer like for other user", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    await likeCaller.createLike({ postId: newPost.id, value: 1 });
+    await likeCaller.createLike({ postId: newPost.id, value });
     await mockSessionOnce(mockContext.db);
     const post = await postCaller.readPost(newPost.id);
 
@@ -318,11 +323,7 @@ describe("postRouter", () => {
 
     const firstPost = await postCaller.createPost({ title });
     const secondPost = await postCaller.createPost({ title });
-    await likeCaller.createLike({ postId: secondPost.id, value: 1 });
-    const sortBy: SortItem<keyof Post>[] = [
-      { key: "likeCount", order: SortOrder.Desc },
-      { key: "id", order: SortOrder.Desc },
-    ];
+    await likeCaller.createLike({ postId: secondPost.id, value });
     const firstPage = await postCaller.readPosts({ limit: 1, sortBy });
     const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 1, sortBy });
 
@@ -335,10 +336,6 @@ describe("postRouter", () => {
 
     const newPostIds: string[] = [];
     for (let i = 0; i < 3; i++) newPostIds.push((await postCaller.createPost({ title })).id);
-    const sortBy: SortItem<keyof Post>[] = [
-      { key: "likeCount", order: SortOrder.Desc },
-      { key: "id", order: SortOrder.Desc },
-    ];
     const firstPage = await postCaller.readPosts({ limit: 2, sortBy });
     const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 2, sortBy });
 

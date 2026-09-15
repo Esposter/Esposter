@@ -49,6 +49,9 @@ describe("userRouter", () => {
   const name = "name";
   const size = 1;
   const updatedMessage = "updatedMessage";
+  const userId = getMockSession().user.id;
+  const getCallBackgroundUrl = (slot: number) =>
+    `${MOCK_BLOB_BASE_URL}/${AzureContainer.PrivateUserAssets}/${getCallBackgroundBlobName(userId, slot)}`;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -56,7 +59,7 @@ describe("userRouter", () => {
   });
 
   beforeEach(() => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({ now: 0 });
   });
 
   afterEach(async () => {
@@ -70,19 +73,18 @@ describe("userRouter", () => {
   test("reads empty statuses with default values", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const userStatus = takeOne(await caller.readStatuses([userId]));
+    const nonExistentUserId = crypto.randomUUID();
+    const userStatus = takeOne(await caller.readStatuses([nonExistentUserId]));
 
     expect(userStatus.expiresAt).toBeNull();
     expect(userStatus.message).toBe("");
     expect(userStatus.status).toBe(UserStatus.Online);
-    expect(userStatus.userId).toBe(userId);
+    expect(userStatus.userId).toBe(nonExistentUserId);
   });
 
   test.each(["connect", "disconnect"] as const)("%s inserts", async (procedure) => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     const oldUserStatus = takeOne(await caller.readStatuses([userId]));
     vi.advanceTimersByTime(1);
     await caller[procedure]();
@@ -95,7 +97,6 @@ describe("userRouter", () => {
   test.each(["connect", "disconnect"] as const)("%s updates", async (procedure) => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     await caller[procedure]();
     vi.advanceTimersByTime(1);
     const oldUserStatus = takeOne(await caller.readStatuses([userId]));
@@ -110,7 +111,6 @@ describe("userRouter", () => {
   test("connect disconnect connect", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     await caller.connect();
     vi.advanceTimersByTime(1);
     await caller.disconnect();
@@ -133,7 +133,6 @@ describe("userRouter", () => {
     const status = UserStatus.DoNotDisturb;
     const upsertedUserStatus = await caller.upsertStatus({ message, status });
     vi.advanceTimersByTime(1);
-    const userId = getMockSession().user.id;
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(upsertedUserStatus.status).toBe(status);
@@ -149,7 +148,6 @@ describe("userRouter", () => {
     vi.advanceTimersByTime(1);
     const upsertedUserStatus = await caller.upsertStatus({ message: updatedMessage, status: UserStatus.Idle });
     vi.advanceTimersByTime(1);
-    const userId = getMockSession().user.id;
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(upsertedUserStatus.status).toBe(UserStatus.Idle);
@@ -212,7 +210,6 @@ describe("userRouter", () => {
   test("fails on upserts status with self", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     const subscription = await caller.onUpsertStatus([userId]);
 
     await expect(
@@ -228,7 +225,6 @@ describe("userRouter", () => {
   test("generates profile image upload url", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     const { publicUrl, sasUrl } = await caller.generateProfileImageUploadUrl();
 
     expect(publicUrl).toBe(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${userId}/ProfileImage`);
@@ -290,12 +286,11 @@ describe("userRouter", () => {
   test("readCallBackgrounds lists the slots under the caller's own prefix", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     seedSlots(userId, [0, 2], size);
 
     await expect(caller.readCallBackgrounds()).resolves.toStrictEqual([
-      { sasUrl: expect.stringContaining(getCallBackgroundBlobName(userId, 0)) as string, slot: 0 },
-      { sasUrl: expect.stringContaining(getCallBackgroundBlobName(userId, 2)) as string, slot: 2 },
+      { sasUrl: getMockSasUrl(getCallBackgroundUrl(0), "r", "b"), slot: 0 },
+      { sasUrl: getMockSasUrl(getCallBackgroundUrl(2), "r", "b"), slot: 2 },
     ]);
   });
 
@@ -304,7 +299,6 @@ describe("userRouter", () => {
   test.each(["notASlot", "NaN"])("readCallBackgrounds passes over %s under the prefix", async (slotName) => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     MockContainerDatabase.set(
       AzureContainer.PrivateUserAssets,
       new Map([[`${getCallBackgroundPrefix(userId)}${slotName}`, Buffer.alloc(size)]]),
@@ -320,7 +314,6 @@ describe("userRouter", () => {
   test("readCallBackgrounds drops a slot over the size cap and reclaims it", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     seedSlots(userId, [0], MAX_CALL_BACKGROUND_SIZE_BYTES + 1);
     const callBackgrounds = await caller.readCallBackgrounds();
     const blobDeletionEvents = MockEventGridDatabase.get("");
@@ -338,15 +331,14 @@ describe("userRouter", () => {
   test("generateCallBackgroundUploadUrl mints a write target for the slot it is given, occupied or not", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     seedSlots(
       userId,
       Array.from({ length: MAX_CALL_BACKGROUNDS }, (_, slot) => slot),
       size,
     );
 
-    await expect(caller.generateCallBackgroundUploadUrl({ mimetype, size, slot: 3 })).resolves.toContain(
-      getCallBackgroundBlobName(userId, 3),
+    await expect(caller.generateCallBackgroundUploadUrl({ mimetype, size, slot: 0 })).resolves.toBe(
+      getMockSasUrl(getCallBackgroundUrl(0), "w", "b"),
     );
   });
 
@@ -363,7 +355,7 @@ describe("userRouter", () => {
   test("fails generateCallBackgroundUploadUrl with a file that is not an image", async () => {
     expect.hasAssertions();
 
-    const input = { mimetype: "application/pdf", size, slot: 0 };
+    const input = { mimetype: MimeType.Pdf, size, slot: 0 };
 
     await expect(caller.generateCallBackgroundUploadUrl(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${getCallBackgroundErrorMessage(JSON.stringify({ mimetype: input.mimetype, size: input.size }))}]`,
@@ -373,7 +365,6 @@ describe("userRouter", () => {
   test("deleteCallBackground publishes a bounded prefix deletion so a re-upload survives a replay", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
     seedSlots(userId, [0], size);
     await caller.deleteCallBackground({ slot: 0 });
     const blobDeletionEvents = MockEventGridDatabase.get("");
@@ -382,7 +373,7 @@ describe("userRouter", () => {
     // The bound is what stops a redelivered delete taking the image that replaced the one it named
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       containerName: AzureContainer.PrivateUserAssets,
-      createdBefore: new Date(),
+      createdBefore: new Date(0),
       prefix: getCallBackgroundBlobName(userId, 0),
     });
   });
