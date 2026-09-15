@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { FORMATTER_CONFIGURATION_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AGENT_ALIAS_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
@@ -39,7 +39,7 @@ describe("agentDirectories", () => {
   test("excludes the worktrees from the formatter", () => {
     expect.hasAssertions();
 
-    expect(readJson(".oxfmtrc.json").ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
+    expect(readJson(FORMATTER_CONFIGURATION_FILE).ignorePatterns).toContain(AGENT_WORKTREES_DIRECTORY);
   });
 
   // The agent harness writes `.git/info/exclude`, which is machine-local — no clone or CI runner has it, so the

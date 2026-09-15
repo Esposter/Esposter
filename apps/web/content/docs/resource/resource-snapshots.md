@@ -136,7 +136,7 @@ The two counters that reach the UI are different axes: **`publishVersion` is wha
 | Publishable     | published, draft unchanged since | `Published` chip, `v{publishVersion}`, up to date                       |
 | Publishable     | published, draft moved since     | `Published` chip, `v{publishVersion}`, and that changes are unpublished |
 
-The last row is a comparison rather than a guess: `resource_publications.publishedContentVersion` records the `contentVersion` the publish was taken from, and `updatedAt` cannot answer it because a rename or a tag edit moves that too.
+The last row is a comparison rather than a guess: `resourcePublications.publishedContentVersion` records the `contentVersion` the publish was taken from, and `updatedAt` cannot answer it because a rename or a tag edit moves that too.
 
 `revisionVersion` itself is never rendered — an owner picks a version by time, reason and summary, never by ordinal — but it remains what the mechanism counts with.
 

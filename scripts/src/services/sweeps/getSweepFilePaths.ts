@@ -11,9 +11,12 @@ import { execFileSync } from "node:child_process";
 // A scan started from a package directory would quietly cover that package alone and report a short clean list —
 // The same silent-pass this whole scan exists to avoid, wearing a different hat. `getGitEnv` is what makes the
 // Pin hold, since git reads an ambient repository selector ahead of the cwd.
-export const getSweepFilePaths = (glob: string): string[] =>
+//
+// Every pathspec a scan wants goes in one call: git walks its index once for all of them and lists a file matching
+// Two only once, where a spawn per pathspec pays the process start each time and hands back the overlap to dedupe.
+export const getSweepFilePaths = (...pathspecs: string[]): string[] =>
   getNonEmptyLines(
-    execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", glob], {
+    execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", ...pathspecs], {
       cwd: REPOSITORY_ROOT,
       encoding: "utf8",
       env: getGitEnv(),

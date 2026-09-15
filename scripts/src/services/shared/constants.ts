@@ -27,6 +27,10 @@ export const LOCKFILE = "pnpm-lock.yaml";
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
 
+// The formatter's config, at the repository root. Its `ignorePatterns` is the repo's one list of generated files
+// (`oxlint` skill, `references/lint-configuration.md`), which is why a scan that must skip them reads it too.
+export const FORMATTER_CONFIGURATION_FILE = ".oxfmtrc.json";
+
 // ASCII control characters as the record and field separators of a `git log` output a script splits — the
 // Collector's answered commits, the ledger coverage's trailers — since a subject and a body are free text.
 // Written as escapes because a tool rewriting the line would silently drop the characters themselves.

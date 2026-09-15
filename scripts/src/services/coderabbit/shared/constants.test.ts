@@ -19,7 +19,7 @@ describe("reviewFileCap", () => {
   test("no prose restates the cap as a number", () => {
     expect.hasAssertions();
 
-    const offenders = PROSE_GLOBS.flatMap((glob) => getSweepFilePaths(glob)).flatMap((path) =>
+    const offenders = getSweepFilePaths(...PROSE_GLOBS).flatMap((path) =>
       readFileSync(join(REPOSITORY_ROOT, path), "utf8")
         .split("\n")
         .flatMap((line, index) => (FILE_NUMBER_PATTERN.test(line) ? [`${path}:${index + 1}`] : [])),

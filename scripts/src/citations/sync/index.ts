@@ -1,9 +1,8 @@
-import { CITING_PATHSPECS } from "#src/services/citations/constants";
+import { readCitingPaths } from "#src/services/citations/readCitingPaths";
 import { getRenamePrefixes } from "#src/services/citations/sync/getRenamePrefixes";
 import { rewriteCitations } from "#src/services/citations/sync/rewriteCitations";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -19,16 +18,15 @@ const renames = getRenamePrefixes(
     env: getGitEnv(),
   }),
 );
+// Nothing to rewrite means no page to read: the pages are only opened once there is a rename to apply to them
 if (renames.length === 0) console.info(`no renames since ${base}`);
+else
+  for (const citingPath of readCitingPaths()) {
+    const absolutePath = resolve(REPOSITORY_ROOT, citingPath);
+    const text = readFileSync(absolutePath, "utf8");
+    const rewritten = rewriteCitations(text, renames);
+    if (rewritten === text) continue;
 
-for (const citingPath of CITING_PATHSPECS.flatMap((pathspec) => getSweepFilePaths(pathspec)).filter((path) =>
-  path.endsWith(".md"),
-)) {
-  const absolutePath = resolve(REPOSITORY_ROOT, citingPath);
-  const text = readFileSync(absolutePath, "utf8");
-  const rewritten = rewriteCitations(text, renames);
-  if (rewritten === text) continue;
-
-  writeFileSync(absolutePath, rewritten);
-  console.info(citingPath);
-}
+    writeFileSync(absolutePath, rewritten);
+    console.info(citingPath);
+  }

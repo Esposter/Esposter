@@ -1,6 +1,6 @@
 ---
 name: bench
-description: Apply when adding or editing benchmarks, or changing what a *.bench.md contains. Esposter benchmarking conventions — colocated *.bench.ts files run as one bench.compare under BENCHMARK_RUN_OPTIONS, benching the unit rather than its wrapper, fresh fixtures for mutating ops, one test per scale, the bench as the only speed gate, and the colocated report pipeline.
+description: Apply when adding or editing benchmarks, or changing what a *.bench.md contains. Esposter benchmarking conventions — colocated *.bench.ts files run as one bench.compare under BENCHMARK_RUN_OPTIONS, benching the unit rather than its wrapper, fresh fixtures for mutating ops, one test per scale, the bench as the only speed gate, a stopwatch as a probe never an answer, and the colocated report pipeline.
 ---
 
 # Benchmarking Conventions
@@ -8,6 +8,16 @@ description: Apply when adding or editing benchmarks, or changing what a *.bench
 A benchmark is a test. `bench` comes from the test context, each registration is a value, and one `bench.compare(...)` runs the group and is what the report reads — so a bench file carries no bench-only API beyond that fixture, and there is no separate bench runner, bin, or direct `tinybench` dependency (tinybench is underneath, reached through Vitest).
 
 `pnpm bench` is `vitest bench --run` in a package (from the root it is the chain under Running below), and a reporter writes colocated `*.bench.{json,md}` you commit and diff — the offline gate. 🏎️ Bench (CI) runs one unsharded `vitest bench --run` every push as an executes-clean smoke signal only: no reporter commit, no dashboard. Sharding it would buy nothing but repeated setup, since nothing reads its numbers.
+
+## A stopwatch is a probe, never an answer
+
+A session wanting to know how long something takes reaches for `time` or a `performance.now()` loop, reads the
+number, and moves on — and the number dies with the turn, so the next session times it again, on another host, and
+compares two stopwatch readings that agree on nothing. **The number a session would quote, compare or re-check lives
+in a committed `*.bench.md`, and nowhere else.** An ad-hoc timing is allowed for one thing: locating where inside a
+run the time goes before a bench is written — which phase, which spawn, which read — and what it finds becomes a
+bench or is dropped. A timing loop run twice on the same question is the bespoke script the section below refuses,
+whether it lives in a file or in a shell history.
 
 ## Deep dive
 
@@ -36,7 +46,7 @@ A benchmark is a test. `bench` comes from the test context, each registration is
 
 From the **repo root** it is `pnpm -r --workspace-concurrency=1 --if-present run bench` — every member that owns a bench, in turn. The flag is the whole point and `pnpm -r` does not default to it: without it four members bench at once, contend for CPU and skew every machine-dependent number. Worse, a member whose bench rebuilds the workspace — `scripts` deletes each `dist` to measure a cold build — rips `@esposter/configuration/dist` out from under a concurrent member still loading its `vitest.config.ts`, which fails as `Failed to resolve entry for package` against whichever workspace import that config reached first. A bare root `vitest bench --run` is the other thing entirely, and what the 🏎️ Bench job runs: one process over every project's bench files at once, which is a smoke test that they all still execute rather than a measurement anything should be compared against.
 
-The tooling benches live in `scripts`, which is a member like any other, so `pnpm -r` reaches it and nothing at the root names its path. Only deterministic, CPU-bound units earn a bench there; the network and spawn helpers are I/O-bound and unbenchable. **An `ai:` command's CPU-bound units each carry one** (`package-scripts` skill, `references/ai-scripts.md`): the command runs inside an agent's turn, so its walltime is time a session waits, and a scan over a whole tree is where a quadratic hides behind inputs a test never reaches — the bench's scale axis is the page or corpus size the tree actually holds.
+The tooling benches live in `scripts`, which is a member like any other, so `pnpm -r` reaches it and nothing at the root names its path. Only deterministic, CPU-bound units earn a bench there; the network and spawn helpers are I/O-bound and unbenchable. **An `ai:` command's unit earns one where its cost outgrows the corpus** — a shingle map over every page, a word set over every file, a span walk — because that is where a quadratic hides behind inputs a test never reaches, and the bench's scale axis is the page or corpus size the tree actually holds. A per-file regex scan does not: measured over the whole tree it costs tens of milliseconds, the command's walltime is its boot, spawns and reads (`runtime-efficiency` skill, "A script's clock"), and a bench of it measures the regex engine. The same measurement is what a lint plugin gets — the plugins here are together a fortieth of the type-aware run they ride in, so none carries a bench.
 
 **A bench that measures the toolchain or the host rather than this repo, at a cost of minutes, is switched off once its numbers are committed** — re-running it buys nothing until a dependency bumps — and being off is never a default for a new bench. The switch is a module-scope `const IS_ENABLED = false` **ANDed into the gate the file already has** (`IS_ENABLED && checkIsOsBackendSupported()`, `IS_ENABLED && !IS_CI`), never replacing it, so flipping it on a host that cannot support the bench still skips instead of crashing in module-scope setup; every module-scope cost hangs off the same derived boolean, because a file whose test skips while its setup still performs a full install has not been turned off. Flip it when the thing it measures changes, run `pnpm bench` in that package, commit, flip it back — and where the bench is red rather than merely slow, the comment says so. `grep -rl "IS_ENABLED = false" --include=*.bench.ts` lists the ones off today.
 

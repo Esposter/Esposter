@@ -14,7 +14,7 @@ const sourcePaths = getSweepFilePaths("packages/shared/src/*.ts").filter(
 // Every file outside the defining package. `packages/shared` naming its own export is the library using itself,
 // So counting it would let one real consumer clear a threshold that asks for two.
 const packageIdentifiersMap = getPackageIdentifiersMap(
-  [...getSweepFilePaths("*.ts"), ...getSweepFilePaths("*.vue")]
+  getSweepFilePaths("*.ts", "*.vue")
     .filter((path) => !path.includes("/dist/") && getPackagePath(path) !== "packages/shared")
     .map((path) => [path, readFileSync(resolve(REPOSITORY_ROOT, path), "utf8")] as const),
 );
