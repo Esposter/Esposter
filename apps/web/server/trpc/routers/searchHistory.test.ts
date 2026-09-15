@@ -34,22 +34,22 @@ describe("searchHistoryRouter", () => {
   test("reads empty search histories", async () => {
     expect.hasAssertions();
 
-    const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
+    const searchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
 
-    expect(readSearchHistories).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
+    expect(searchHistories).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
   });
 
   test("reads search histories", async () => {
     expect.hasAssertions();
 
     const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
-    const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
-    const readSearchHistory = takeOne(readSearchHistories.items);
+    const searchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
+    const searchHistory = takeOne(searchHistories.items);
 
-    expect(readSearchHistories.items).toHaveLength(1);
-    expect(readSearchHistory.id).toBe(newSearchHistory.id);
-    expect(readSearchHistory.roomId).toBe(roomId);
-    expect(readSearchHistory.query).toBe(query);
+    expect(searchHistories.items).toHaveLength(1);
+    expect(searchHistory.id).toBe(newSearchHistory.id);
+    expect(searchHistory.roomId).toBe(roomId);
+    expect(searchHistory.query).toBe(query);
   });
 
   test("excludes another member's search histories", async () => {
@@ -58,9 +58,9 @@ describe("searchHistoryRouter", () => {
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
     await searchHistoryCaller.createSearchHistory({ query, roomId });
-    const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
+    const searchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
 
-    expect(readSearchHistories.items).toHaveLength(0);
+    expect(searchHistories.items).toHaveLength(0);
   });
 
   test("fails read search histories with non-existent member", async () => {

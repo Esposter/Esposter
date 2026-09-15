@@ -169,9 +169,9 @@ describe("messageRouter", () => {
   test("reads empty", async () => {
     expect.hasAssertions();
 
-    const readMessages = await messageCaller.readMessages({ roomId });
+    const messages = await messageCaller.readMessages({ roomId });
 
-    expect(readMessages).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
+    expect(messages).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
   });
 
   test("reads", async () => {
@@ -179,10 +179,10 @@ describe("messageRouter", () => {
 
     const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    const readMessages = await messageCaller.readMessages({ roomId });
+    const messages = await messageCaller.readMessages({ roomId });
 
-    expect(readMessages.items).toHaveLength(1);
-    expect(takeOne(readMessages.items).message).toBe(newMessage.message);
+    expect(messages.items).toHaveLength(1);
+    expect(takeOne(messages.items).message).toBe(newMessage.message);
   });
 
   test("reads my sent messages", async () => {
@@ -247,21 +247,21 @@ describe("messageRouter", () => {
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     const cursor = serialize({ rowKey: secondMessage.rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]);
-    let readMessages = await messageCaller.readMessages({ cursor, roomId });
+    let messages = await messageCaller.readMessages({ cursor, roomId });
 
-    expect(readMessages.items).toHaveLength(1);
-    expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
+    expect(messages.items).toHaveLength(1);
+    expect(takeOne(messages.items).rowKey).toBe(firstMessage.rowKey);
 
-    readMessages = await messageCaller.readMessages({
+    messages = await messageCaller.readMessages({
       cursor,
       isIncludeValue: true,
       roomId,
     });
 
-    expect(readMessages.items).toHaveLength(2);
+    expect(messages.items).toHaveLength(2);
     // Default read is newest-first (reverse-ticked rowKey), so the included cursor value leads
-    expect(takeOne(readMessages.items).rowKey).toBe(secondMessage.rowKey);
-    expect(takeOne(readMessages.items, 1).rowKey).toBe(firstMessage.rowKey);
+    expect(takeOne(messages.items).rowKey).toBe(secondMessage.rowKey);
+    expect(takeOne(messages.items, 1).rowKey).toBe(firstMessage.rowKey);
   });
 
   test("reads in ascending order with cursor and includes value", async () => {
@@ -270,31 +270,31 @@ describe("messageRouter", () => {
     const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
-    let readMessages = await messageCaller.readMessages({ limit: 1, order: SortOrder.Asc, roomId });
+    let messages = await messageCaller.readMessages({ limit: 1, order: SortOrder.Asc, roomId });
 
-    expect(readMessages.items).toHaveLength(1);
-    expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
+    expect(messages.items).toHaveLength(1);
+    expect(takeOne(messages.items).rowKey).toBe(firstMessage.rowKey);
 
     const cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
-    readMessages = await messageCaller.readMessages({
+    messages = await messageCaller.readMessages({
       cursor,
       order: SortOrder.Asc,
       roomId,
     });
 
-    expect(readMessages.items).toHaveLength(1);
-    expect(takeOne(readMessages.items).rowKey).toBe(secondMessage.rowKey);
+    expect(messages.items).toHaveLength(1);
+    expect(takeOne(messages.items).rowKey).toBe(secondMessage.rowKey);
 
-    readMessages = await messageCaller.readMessages({
+    messages = await messageCaller.readMessages({
       cursor,
       isIncludeValue: true,
       order: SortOrder.Asc,
       roomId,
     });
 
-    expect(readMessages.items).toHaveLength(2);
-    expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
-    expect(takeOne(readMessages.items, 1).rowKey).toBe(secondMessage.rowKey);
+    expect(messages.items).toHaveLength(2);
+    expect(takeOne(messages.items).rowKey).toBe(firstMessage.rowKey);
+    expect(takeOne(messages.items, 1).rowKey).toBe(secondMessage.rowKey);
   });
 
   // The index row lands before the entity, so an ascending page can see a message the join cannot serve. The page
@@ -309,14 +309,14 @@ describe("messageRouter", () => {
     // The state between createMessage's two table writes
     const messageClient = await useTableClient(AzureTable.Messages);
     await messageClient.deleteEntity(roomId, firstMessage.rowKey);
-    const readMessages = await messageCaller.readMessages({ limit: 1, order: SortOrder.Asc, roomId });
+    const messages = await messageCaller.readMessages({ limit: 1, order: SortOrder.Asc, roomId });
 
-    expect(readMessages.items).toStrictEqual([]);
-    expect(readMessages.hasMore).toBe(true);
-    expect(readMessages.nextCursor).not.toBe("");
+    expect(messages.items).toStrictEqual([]);
+    expect(messages.hasMore).toBe(true);
+    expect(messages.nextCursor).not.toBe("");
 
     const nextReadMessages = await messageCaller.readMessages({
-      cursor: readMessages.nextCursor,
+      cursor: messages.nextCursor,
       order: SortOrder.Asc,
       roomId,
     });
@@ -333,10 +333,10 @@ describe("messageRouter", () => {
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
     await messageCaller.deleteMessage({ partitionKey: roomId, rowKey: firstMessage.rowKey });
-    const readMessages = await messageCaller.readMessages({ order: SortOrder.Asc, roomId });
+    const messages = await messageCaller.readMessages({ order: SortOrder.Asc, roomId });
 
-    expect(readMessages.items).toHaveLength(1);
-    expect(takeOne(readMessages.items).rowKey).toBe(secondMessage.rowKey);
+    expect(messages.items).toHaveLength(1);
+    expect(takeOne(messages.items).rowKey).toBe(secondMessage.rowKey);
   });
 
   // Membership is decided by the shared getMemberProcedure, so it is asserted once for the whole router — a
@@ -356,13 +356,13 @@ describe("messageRouter", () => {
 
     const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    const readMessages = await messageCaller.readMessagesByRowKeys({
+    const messages = await messageCaller.readMessagesByRowKeys({
       roomId,
       rowKeys: [newMessage.rowKey],
     });
 
-    expect(readMessages).toHaveLength(1);
-    expect(takeOne(readMessages).message).toBe(message);
+    expect(messages).toHaveLength(1);
+    expect(takeOne(messages).message).toBe(message);
   });
 
   // The batch read is one table scan, and the table serves a partition in ascending rowKey order — which is the
@@ -373,12 +373,12 @@ describe("messageRouter", () => {
     const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
-    const readMessages = await messageCaller.readMessagesByRowKeys({
+    const messages = await messageCaller.readMessagesByRowKeys({
       roomId,
       rowKeys: [firstMessage.rowKey, secondMessage.rowKey],
     });
 
-    expect(readMessages.map(({ rowKey }) => rowKey)).toStrictEqual([secondMessage.rowKey, firstMessage.rowKey]);
+    expect(messages.map(({ rowKey }) => rowKey)).toStrictEqual([secondMessage.rowKey, firstMessage.rowKey]);
   });
 
   test("creates", async () => {
@@ -629,12 +629,12 @@ describe("messageRouter", () => {
       message: updatedMessage,
       ...getCompositeKey(newMessage),
     });
-    const readMessages = await messageCaller.readMessages({ roomId });
+    const messages = await messageCaller.readMessages({ roomId });
 
-    expect(readMessages.items).toHaveLength(1);
-    expect(takeOne(readMessages.items).isEdited).toBe(true);
-    expect(takeOne(readMessages.items).mentions).toHaveLength(0);
-    expect(takeOne(readMessages.items).message).toBe(updatedMessage);
+    expect(messages.items).toHaveLength(1);
+    expect(takeOne(messages.items).isEdited).toBe(true);
+    expect(takeOne(messages.items).mentions).toHaveLength(0);
+    expect(takeOne(messages.items).message).toBe(updatedMessage);
   });
 
   // Who may perform a supported operation is MessageTypeOperationPermissionMap's matrix, which takes `isAuthor`
@@ -681,9 +681,9 @@ describe("messageRouter", () => {
     const newMessage = await messageCaller.createMessage({ message, roomId });
     await messageCaller.deleteMessage(getCompositeKey(newMessage));
 
-    const readMessages = await messageCaller.readMessages({ roomId });
+    const messages = await messageCaller.readMessages({ roomId });
 
-    expect(readMessages.items).toHaveLength(0);
+    expect(messages.items).toHaveLength(0);
   });
 
   test("on deletes", async () => {
@@ -1181,15 +1181,15 @@ describe("messageRouter", () => {
 
     await messageCaller.pinMessage(getCompositeKey(newMessage));
 
-    const readMessages = await messageCaller.readMessages({ roomId });
+    const messages = await messageCaller.readMessages({ roomId });
 
-    expect(readMessages.items).toHaveLength(2);
+    expect(messages.items).toHaveLength(2);
     // Default read is newest-first: the pin system message posts after the pinned message, so it leads
-    expect(takeOne(readMessages.items).type).toBe(MessageType.PinMessage);
-    expect(takeOne(readMessages.items).replyRowKey).toBe(newMessage.rowKey);
-    expect(takeOne(readMessages.items, 1).partitionKey).toBe(newMessage.partitionKey);
-    expect(takeOne(readMessages.items, 1).rowKey).toBe(newMessage.rowKey);
-    expect(takeOne(readMessages.items, 1).isPinned).toBe(true);
+    expect(takeOne(messages.items).type).toBe(MessageType.PinMessage);
+    expect(takeOne(messages.items).replyRowKey).toBe(newMessage.rowKey);
+    expect(takeOne(messages.items, 1).partitionKey).toBe(newMessage.partitionKey);
+    expect(takeOne(messages.items, 1).rowKey).toBe(newMessage.rowKey);
+    expect(takeOne(messages.items, 1).isPinned).toBe(true);
   });
 
   test("unpins message", async () => {
@@ -1201,12 +1201,12 @@ describe("messageRouter", () => {
     await messageCaller.pinMessage(getCompositeKey(newMessage));
     await messageCaller.unpinMessage(getCompositeKey(newMessage));
 
-    const readMessages = await messageCaller.readMessages({ roomId });
+    const messages = await messageCaller.readMessages({ roomId });
 
     // Unpinning posts no system message of its own, so the pin's is still the only one and the unpinned message
     // Sits behind it — asserting the lead item would only prove a system message never carried a pin
-    expect(readMessages.items).toHaveLength(2);
-    expect(takeOne(readMessages.items, 1).isPinned).toBeUndefined();
+    expect(messages.items).toHaveLength(2);
+    expect(takeOne(messages.items, 1).isPinned).toBeUndefined();
   });
 
   // Unpinning needs the same Replace as clearing the preview, and inherits the same hazard: the body it writes

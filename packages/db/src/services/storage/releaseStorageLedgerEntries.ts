@@ -1,6 +1,6 @@
 import type { AzureContainer, Database, User } from "@esposter/db-schema";
 
-import { releaseStorageLedgerEntriesWhere } from "#src/services/storage/releaseStorageLedgerEntriesWhere";
+import { releaseStorageLedgerEntriesByWhere } from "#src/services/storage/releaseStorageLedgerEntriesByWhere";
 import { storageLedger } from "@esposter/db-schema";
 import { and, eq, inArray } from "drizzle-orm";
 
@@ -13,7 +13,7 @@ export const releaseStorageLedgerEntries = (
 ): Promise<User["id"][]> => {
   if (blobNames.length === 0) return Promise.resolve([]);
 
-  return releaseStorageLedgerEntriesWhere(
+  return releaseStorageLedgerEntriesByWhere(
     db,
     and(eq(storageLedger.containerName, containerName), inArray(storageLedger.blobName, blobNames)),
   );

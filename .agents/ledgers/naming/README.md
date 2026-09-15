@@ -24,29 +24,24 @@ the same way it reads any other identifier. The prefix-and-fold question over th
 the grounds that a rename is expensive — that is the argument
 [no compatibility debt](/docs/architecture/no-compatibility-debt) already refuses, migrations included.
 
-## Next enforceable
+## Not enforceable — settled
 
-- Filename-is-the-export is decidable from the AST plus the path; a custom oxlint plugin could take it whole.
-- `is*`/`has*`/`show*` on a boolean-typed declaration needs types, which `typeAware: true` already provides.
-  The **function** half of that needs no types at all: a declarator named `^(is|has)[A-Z]` whose initialiser is
-  an arrow or function expression with an explicit `: boolean` return annotation is decidable from the AST, and
-  every one found so far writes that annotation. A `no-restricted-syntax` selector can hold it over the swept
-  paths and widen as the six remaining `exec` ones drain.
-- Abbreviation bans need a word list, not a rule — leave with the sweep.
-- A `<script setup>` constant's casing is not decidable by selector: whether a top-level array or object
-  literal is fixed or captures a ref needs scope analysis no `no-restricted-syntax` pattern can do, and the
-  narrow branch that is decidable (`Object.values`/`entries`/`keys` at program scope) catches a fraction of
-  the sites. Leave with the sweep.
-- A where-fragment helper is decidable from the AST alone: a declarator named `*Where` whose initialiser is a
-  function must start with `get`. Four routers had written the bare noun, so the rule is now in the `trpc` skill
-  and a `no-restricted-syntax` selector can hold it over the swept paths.
-- A redundant alias is decidable from the AST alone: a declarator whose initialiser is a bare identifier declared
-  in the same scope binds a second name to a value that already has one. Every instance so far is a
-  `Promise.withResolvers` destructured under one name and immediately re-bound under another, and the fix is
-  always to destructure to the name the test actually reads.
-- A `const` bound to the call it names — `const readPost = await caller.readPost(…)` — is decidable from the AST alone
-  (declarator name equal to the callee's last property), and it is the finding this ledger has now written in five
-  files. The fix is always the same: drop the verb prefix, since the binding is the value rather than the fetch.
-- A bare `_` binding cannot go to `id-denylist`: xml2js spells an element's text as the `_` key, so
-  `packages/parse-tmx` and `packages/xml2js` destructure and declare it by that name throughout, and the ban
-  would buy a disable per site. The sweep keeps the rule — `_value`, `_title`, `_match`, never bare — by hand.
+What a program decides here it now decides: an `is*`/`has*` declarator holding a function with a `boolean`
+or type-predicate return, and a `*Where` function not starting with `get`, are `no-restricted-syntax`
+selectors in `packages/configuration/eslint/typescriptRules.js`; a binding named after the call that produced it
+(`const readPost = await readPost(…)`) is `naming/no-call-named-binding` (`scripts/src/oxlint/naming.ts`);
+`getIs*`, `can*`/`should*`, the `A` prefix on an interface, `InMessages` and the `<value>By<key>` map
+spelling were selectors already. What is left stays a reading pass, for these reasons:
+
+- **Filename-is-the-export** — a store file exports `use<Name>Store` for a `<name>.ts`, and takes its parent's
+  word where the leaf collides (`battle/player.ts` → `useBattlePlayerStore`), so the derivation is a roster of
+  store trees and carve-outs; `index.ts` and `constants.ts` are the two multi-export names beside it.
+- **Abbreviations** need a word list, not a rule; only the four short forms with no site left are denylisted.
+- **A `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope
+  analysis no selector has.
+- **A redundant alias** (`const a = b`) — a bare identifier initialiser is also how a mutable binding is
+  snapshotted before it is cleared (`const cleanup = currentCleanup; currentCleanup = undefined`), which syntax
+  cannot tell from an alias; a trial selector reported fifty such sites and nothing else.
+- **A bare `_` binding** cannot go to `id-denylist`: xml2js spells an element's text as the `_` key, so
+  `packages/parse-tmx` and `packages/xml2js` declare it by that name throughout; and `no-underscore-dangle`
+  refuses a prefixed loop declarator, so a loop binding nothing reads stays bare by lint's own rule.

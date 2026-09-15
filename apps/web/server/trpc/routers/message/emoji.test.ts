@@ -52,19 +52,19 @@ describe("emojiRouter", () => {
     expect.hasAssertions();
 
     const newMessage = await messageCaller.createMessage({ message, roomId });
-    const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
+    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
 
-    expect(readEmojis).toHaveLength(0);
+    expect(emojis).toHaveLength(0);
   });
 
   test("reads emojis", async () => {
     expect.hasAssertions();
 
     const { newEmoji, newMessage } = await setupEmoji();
-    const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
+    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
 
-    expect(readEmojis).toHaveLength(1);
-    expect(takeOne(readEmojis)).toStrictEqual(newEmoji);
+    expect(emojis).toHaveLength(1);
+    expect(takeOne(emojis)).toStrictEqual(newEmoji);
   });
 
   test("creates", async () => {
@@ -114,11 +114,11 @@ describe("emojiRouter", () => {
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
     await emojiCaller.updateEmoji(emojiKey);
-    const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
+    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
     const userId = getMockSession().user.id;
 
-    expect(readEmojis).toHaveLength(1);
-    expect(takeOne(readEmojis).userIds).toStrictEqual([userId, member.id]);
+    expect(emojis).toHaveLength(1);
+    expect(takeOne(emojis).userIds).toStrictEqual([userId, member.id]);
   });
 
   test("updateEmoji twice removes the user id", async () => {
@@ -130,11 +130,11 @@ describe("emojiRouter", () => {
     await emojiCaller.updateEmoji(emojiKey);
     await mockSessionOnce(mockContext.db, member);
     await emojiCaller.updateEmoji(emojiKey);
-    const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
+    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
     const userId = getMockSession().user.id;
 
-    expect(readEmojis).toHaveLength(1);
-    expect(takeOne(readEmojis).userIds).toStrictEqual([userId]);
+    expect(emojis).toHaveLength(1);
+    expect(takeOne(emojis).userIds).toStrictEqual([userId]);
   });
 
   test("fails update emoji with non-existent emoji", async () => {
@@ -156,11 +156,11 @@ describe("emojiRouter", () => {
 
     await emojiCaller.deleteEmoji(emojiKey);
 
-    const readEmojis = await emojiCaller.readEmojis({
+    const emojis = await emojiCaller.readEmojis({
       messageRowKeys: [newMessage.rowKey],
       roomId,
     });
 
-    expect(readEmojis).toHaveLength(0);
+    expect(emojis).toHaveLength(0);
   });
 });

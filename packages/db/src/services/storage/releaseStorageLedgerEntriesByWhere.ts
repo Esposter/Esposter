@@ -12,7 +12,7 @@ import { eq, sql } from "drizzle-orm";
 // A user who has more allowance than their tier grants.
 // Returns the owners whose counters moved, so a release running outside the app process — the deletion Function —
 // Can tell their meters. A release covers a set, so that is a list rather than the reconcile path's single owner.
-export const releaseStorageLedgerEntriesWhere = (
+export const releaseStorageLedgerEntriesByWhere = (
   db: Database,
   // Undefined is what `and()` collapses to when every operand is, and an unfiltered delete here would empty
   // The ledger for every user — so it is a no-op rather than a filter drizzle would happily drop
@@ -33,7 +33,9 @@ export const releaseStorageLedgerEntriesWhere = (
       releasedBytesMap.set(userId, (releasedBytesMap.get(userId) ?? 0) + countedBytes);
     // Sorted because `DELETE ... RETURNING` fixes no row order: two releases over an overlapping set of owners
     // Would otherwise take their `users` locks in opposite orders and deadlock
-    const releasedUserEntries = [...releasedBytesMap].toSorted(([a], [b]) => a.localeCompare(b));
+    const releasedUserEntries = [...releasedBytesMap].toSorted(([firstUserId], [secondUserId]) =>
+      firstUserId.localeCompare(secondUserId),
+    );
     for (const [userId, releasedBytes] of releasedUserEntries)
       await tx
         .update(users)

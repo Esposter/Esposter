@@ -27,21 +27,21 @@ describe("categoryRouter", () => {
   test("reads empty room categories", async () => {
     expect.hasAssertions();
 
-    const readRoomCategories = await roomCategoryCaller.readRoomCategories();
+    const roomCategories = await roomCategoryCaller.readRoomCategories();
 
-    expect(readRoomCategories).toHaveLength(0);
+    expect(roomCategories).toHaveLength(0);
   });
 
   test("reads room categories", async () => {
     expect.hasAssertions();
 
     const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
-    const readRoomCategories = await roomCategoryCaller.readRoomCategories();
-    const readRoomCategory = takeOne(readRoomCategories);
+    const roomCategories = await roomCategoryCaller.readRoomCategories();
+    const roomCategory = takeOne(roomCategories);
 
-    expect(readRoomCategories).toHaveLength(1);
-    expect(readRoomCategory.id).toBe(newRoomCategory.id);
-    expect(readRoomCategory.name).toBe(name);
+    expect(roomCategories).toHaveLength(1);
+    expect(roomCategory.id).toBe(newRoomCategory.id);
+    expect(roomCategory.name).toBe(name);
   });
 
   test("creates", async () => {
@@ -97,9 +97,9 @@ describe("categoryRouter", () => {
 
     expect(reorderedRoomCategories).toHaveLength(2);
 
-    const readRoomCategories = await roomCategoryCaller.readRoomCategories();
+    const roomCategories = await roomCategoryCaller.readRoomCategories();
 
-    expect(takeOne(readRoomCategories).id).toBe(second.id);
+    expect(takeOne(roomCategories).id).toBe(second.id);
   });
 
   test("rolls back the whole reorder when a row is not owned", async () => {
@@ -117,9 +117,9 @@ describe("categoryRouter", () => {
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomCategory, missingId).message}]`,
     );
 
-    const readRoomCategories = await roomCategoryCaller.readRoomCategories();
+    const roomCategories = await roomCategoryCaller.readRoomCategories();
 
-    expect(takeOne(readRoomCategories).position).toBe(newRoomCategory.position);
+    expect(takeOne(roomCategories).position).toBe(newRoomCategory.position);
   });
 
   test("deletes", async () => {
