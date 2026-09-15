@@ -4,7 +4,7 @@
 | ------------------------- | ---------- | ----- |
 | `azure-table`             | —          |       |
 | `bench`                   | —          |       |
-| `build`                   | —          |       |
+| `build`                   | 2026-09-15 |       |
 | `claude-permissions`      | —          |       |
 | `code-review`             | 2026-09-15 |       |
 | `coderabbit`              | —          |       |
