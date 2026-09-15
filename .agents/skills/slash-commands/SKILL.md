@@ -95,7 +95,7 @@ setErrors(
 
 ### Dismissal — collapse to text, never discard
 
-Escape (and Backspace at `focusedIndex === -1`) calls `collapseToText()`, which round-trips the pending command back into the composer via `buildText()` (`/type name:value …`) rather than dropping the user's input:
+Escape (and Backspace at `focusedIndex === -1`) calls `collapseToText()`, which round-trips the pending command back into the composer via `getText()` (`/type name:value …`) rather than dropping the user's input:
 
 ```ts
 onKeyStroke("Escape", () => collapseToText());
