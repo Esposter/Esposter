@@ -1,8 +1,21 @@
 # Splitting a Skill
 
 Read when a `SKILL.md` holds a second concept and a section is moving out, or when creating a `references/` page.
-The two-tier layout, the ceiling itself and the index-line rule are in `SKILL.md`; this page is the mechanics of
-the move.
+The two-tier layout and the index-line rule are in `SKILL.md`; this page is what the ceiling is and the mechanics
+of the move.
+
+## The ceiling, and why it is a warning
+
+The ceiling is a byte count and a line count — `MAX_SKILL_BYTES` and `MAX_SKILL_LINES` in
+`scripts/src/services/sweeps/skillDocs/constants.ts`. Bytes are what the context actually costs, lines are the
+readability proxy, and this repo's long prose lines make it easy to pass the first while meeting the second.
+
+**It is a warning, never a target.** A skill the warning names has accumulated topics, and the fix is separating
+them — never shaving prose to land under the number, which buys bytes by making every surviving rule harder to
+read, and never treating the space below it as room a skill is entitled to. The question at any size is whether
+the page still describes one contained concept; a second concept moves to the skill that owns it or opens its own
+the moment it is recognised, which is usually long before the number says anything. Three cohesive pages beat nine
+fragments, and two rules that have to be read together stay on one page.
 
 ## What qualifies
 

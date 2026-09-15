@@ -9,7 +9,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. The ownership map of wh
 
 ## Settled — do not re-propose
 
-- **Shaving prose to bring a skill under the size ceiling.** Separate the topics instead ("SKILL.md is the always-on layer", which argues it) — a rule's reasoning, its example and a settled entry's argument are never cut to land under the number, and a skill with no narrow trigger left to move stays over, saying so in the commit, rather than shaved.
+- **Shaving prose to bring a skill under the size ceiling.** Separate the topics instead (`references/splitting-a-skill.md`, which argues it) — a rule's reasoning, its example and a settled entry's argument are never cut to land under the number, and a skill with no narrow trigger left to move stays over, saying so in the commit, rather than shaved.
 - **Raising a skill's size or its prose volume as a finding or a design concern.** A skill the sweep's `budget` warning names is a to-do with one known fix — separate the narrow-trigger topics (`references/splitting-a-skill.md`) — so the session that notices it runs the split in the same change and reports nothing; "too much prose" is never a review finding, an audit line or a reason a design is not the simplest, because the answer to it is already written here and only its application is owed.
 - **A second size number below the ceiling** — a warn threshold, a split-now line, a percentage. One number is what there is to maintain, and the sweep's `budget` warning is the whole trigger ("SKILL.md is the always-on layer", which argues it).
 - **Moving an over-budget section to a `references/` page here when it is another skill's subject.** It becomes two shallow copies of one topic; it moves to the skill that owns it (`references/splitting-a-skill.md`).
@@ -46,7 +46,7 @@ Reserve full prose for conventions with **no** enforcer — naming, structure, w
 
 ## SKILL.md is the always-on layer; `references/` holds the rest
 
-A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. **A skill is one isolated concept, and its size is whatever that concept takes** — most are a fraction of the ceiling, and that is the shape to expect, not headroom to fill. The ceiling is a byte count and a line count — `MAX_SKILL_BYTES` and `MAX_SKILL_LINES` in `scripts/src/services/sweeps/skillDocs/constants.ts`. Bytes are what the context actually costs, lines are the readability proxy, and this repo's long prose lines make it easy to pass the first while meeting the second. `ai:sweep:skill-docs` reports a skill past either as a `budget` warning, and **that warning is the whole trigger** — a skill it names has stopped being one concept and become a manual nobody reads to the end, which is the same failure as not writing it. There is no second number below it: "close to the ceiling" is an intent, and an intent gets applied at one skill's size by this session and not at a slightly smaller one by the next (`references/enforceable-shapes.md`).
+A selected skill loads **whole**, so every byte of `SKILL.md` is paid for by every task that trips its trigger — including the tasks that needed one rule from it. **A skill is one isolated concept, and its size is whatever that concept takes** — most are a fraction of the ceiling, and that is the shape to expect, not headroom to fill. `ai:sweep:skill-docs` reports a skill past the ceiling as a `budget` warning, and **that warning is the whole trigger** — a skill it names has stopped being one concept and become a manual nobody reads to the end, which is the same failure as not writing it. There is no second number below it: "close to the ceiling" is an intent, and an intent gets applied at one skill's size by this session and not at a slightly smaller one by the next (`references/enforceable-shapes.md`).
 
 So a skill is two tiers:
 
@@ -55,10 +55,9 @@ So a skill is two tiers:
 
 **The index line carries the split**, and it works like frontmatter: name the trigger, not the topic — as `testing` indexes `references/timers-and-hand-resolved-promises.md` _when a test installs fake timers or holds a call in flight_. An index line that reads "see X for more detail" guarantees the page is never opened.
 
-**The ceiling is a warning, never a target.** A skill the warning names has accumulated topics, and the fix is separating them — never shaving prose to land under the number, which buys bytes by making every surviving rule harder to read, and never treating the space below it as room a skill is entitled to. The question at any size is whether the page still describes one contained concept; a second concept moves to the skill that owns it or opens its own the moment it is recognised, which is usually long before the number says anything. Three cohesive pages beat nine fragments, and two rules that have to be read together stay on one page.
-
-**Actually moving a section out — `references/splitting-a-skill.md`.** What qualifies, what a reference page's
-opening lines owe a reader who arrived by search, and the pointer forms a move silently breaks, is that page.
+**Actually moving a section out — `references/splitting-a-skill.md`.** What qualifies, what the ceiling is
+measured in and why it is a warning rather than a target, what a reference page's opening lines owe a reader who
+arrived by search, and the pointer forms a move silently breaks, is that page.
 
 ## Cite a page by its repo path, never by a link
 
