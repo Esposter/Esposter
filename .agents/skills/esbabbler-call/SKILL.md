@@ -43,7 +43,7 @@ Never a `token` or `code` column, a `createToken`/`createCode` generator, or a `
 ## Call session lifecycle
 
 1. **Room entry**: `readCallSessionId({ roomId })` → reads `callSessionsInMessage`, returns `id` (`""` if none). Called by `useCallSubscribables` on viewed-room change; subscriptions skipped when `""`.
-2. **Join via room**: `joinCallByRoomId({ roomId })` → membership required → creates session row if none (3-retry upsert inline) → returns `{ callSessionId, participants, livekitUrl, livekitToken }`.
+2. **Join via room**: `joinCallByRoomId({ roomId })` → membership required → creates session row if none (3-retry upsert inline) → returns `{ callSessionId, participants, liveKitUrl, liveKitToken }`.
 3. **Join via id**: `joinCall({ id })` → auth only → finds **standalone** session by id → allows creator or admitted session → same join flow.
 4. **Subscriptions** (`onJoinCall`, `onLeaveCall`, `onSetCameraEnabled`, `onSetHandRaised`, `onSetMuted`) take `callSessionId` (not `roomId`); auth only — the caller must have obtained the `callSessionId` through an authenticated call.
 5. **Leave**: `leaveCall({ callSessionId })`. Throws `NOT_FOUND` if the caller is not a participant. On the last participant leaving: writes the call duration as a `MessageType.Call` system message to the room.
