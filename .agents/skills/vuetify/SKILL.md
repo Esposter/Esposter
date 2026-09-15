@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists. Esposter Vuetify 4 conventions — StyledButton for primary actions, the isIconButton shape switch, :to and type never inside :button-props, v-prefixed auto-imported composables (useVDisplay/useVTheme), global defaults never repeated and why a state-conditional style cannot be one, hideDetails auto never true, every drawer through StyledNavigationDrawer, tooltips on icon-only buttons, StyledTooltipIconButton/StyledTooltipMenuIconButton over a hand-rolled activator chain, plain-variant buttons inside input slots, typed SelectItemCategoryDefinition items (clearable banned, no item-title/item-value), enum-value-as-display-title, form validity naming and useVRules, the mount gate a dialog born open owes Vuetify's block scroll strategy, no SASS variables in component styles, plus deep dives on global defaults (hideDetails auto, state-keyed styles), drawers (the inert permanent drawer, elevation following overlap), button backgrounds, router-driven highlighting of linked buttons and tabs, StyledList and StyledAvatar, form dialogs and custom validation rules, constructing items arrays from enums and maps, the CSS custom property registry, scrollspy sub-nav, and mergeProps activator stacks.
+description: Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists. Esposter Vuetify conventions — StyledButton for primary actions with :to and type outside :button-props, v-prefixed auto-imported composables, a global default never repeated on an instance, every drawer through StyledNavigationDrawer, a tooltip on every icon-only button through StyledTooltipIconButton, typed SelectItemCategoryDefinition items with clearable banned, useVRules with a built-in alias first, the mount gate a dialog born open owes, and no SASS variables in component styles.
 ---
 
 # Vuetify Conventions
@@ -73,7 +73,7 @@ Hand-rolling either is the single most repeated finding in this area — the cha
 
 ## A Dialog Born Open Waits for Its Mount
 
-`StyledDialog` gates its own model on `useMounted()`, so consumers pass their open state straight through. A **raw `v-dialog` rendered open on its first render** — one a page's async setup decides, or one that _is_ the page — owes the same gate: `:model-value="isMounted"`. Vuetify's block scroll strategy reads the overlay's root element on a timeout after it activates, and a navigation renders the incoming page inside a suspense that has not mounted one yet, so the strategy dereferences `undefined` and the whole page render goes with it (still unguarded upstream at 4.2.1).
+`StyledDialog` gates its own model on `useMounted()`, so consumers pass their open state straight through. A **raw `v-dialog` rendered open on its first render** — one a page's async setup decides, or one that _is_ the page — owes the same gate: `:model-value="isMounted"`. Vuetify's block scroll strategy reads the overlay's root element on a timeout after it activates, and a navigation renders the incoming page inside a suspense that has not mounted one yet, so the strategy dereferences `undefined` and the whole page render goes with it (still unguarded upstream at the version the catalog pins).
 
 ## HTML Footprint
 
