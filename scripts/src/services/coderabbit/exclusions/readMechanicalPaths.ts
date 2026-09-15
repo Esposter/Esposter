@@ -14,7 +14,7 @@ export const readMechanicalPaths = (range: string[], cwd?: string): MechanicalPa
   const mechanicalPaths = new Set(rows.filter(({ status }) => status === PURE_RENAME_STATUS).map(({ path }) => path));
   if (rows.length > mechanicalPaths.size) {
     const fileDiffs = getFileDiffs(runGit(["diff", "-U0", "-M", ...range], cwd), rows);
-    for (const [path, fileDiff] of fileDiffs) if (checkIsImportPathOnlyDiff(fileDiff)) mechanicalPaths.add(path);
+    for (const [path, fileDiff] of fileDiffs) if (checkIsImportPathOnlyDiff(fileDiff, rows)) mechanicalPaths.add(path);
   }
   return { mechanicalPaths, rows };
 };

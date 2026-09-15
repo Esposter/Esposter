@@ -12,6 +12,15 @@ describe(checkIsRelocatablePath, () => {
     "apps/web/vitest.config.ts",
     "packages/db-schema/src/schema/message.ts",
     "apps/web/server/db/migrations/0001_init.sql",
+    "apps/web/app/components/Styled/Dialog.vue",
+    "apps/web/app/layouts/default.vue",
+    "apps/web/app/middleware/auth.ts",
+    "apps/web/app/pages/index.vue",
+    "apps/web/app/plugins/trpc.ts",
+    "apps/web/public/favicon.ico",
+    "apps/web/server/api/trpc/[trpc].ts",
+    "apps/web/server/plugins/migrate.ts",
+    "apps/web/server/routes/ws.ts",
   ])("keeps moving %s a decision", (path) => {
     expect.hasAssertions();
 
@@ -23,6 +32,8 @@ describe(checkIsRelocatablePath, () => {
     "apps/web/app/store/alert.test.ts",
     "packages/shared/src/types.test-d.ts",
     "apps/web/app/store/alert.ts",
+    // Auto-imported by export name, scanned recursively: the path is not the name
+    "apps/web/app/composables/message/useMessage.ts",
     "scripts/src/coderabbit/feedback/index.ts",
   ])("lets %s be moved mechanically", (path) => {
     expect.hasAssertions();

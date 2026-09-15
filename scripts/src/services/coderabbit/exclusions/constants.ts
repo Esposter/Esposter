@@ -14,9 +14,22 @@ export const RELOCATION_PROTECTED_SUFFIXES: string[] = [
   ".yaml",
   ".yml",
 ];
+// The Nuxt trees a path names something in: a page's path is its route, a layout's, a middleware's and a
+// Plugin's their names, a server route's its URL, a public asset's the URL a template writes as a string, and
+// A component's its auto-import name — each read by nothing an import edit would show, and none of them a
+// Typecheck failure (`typedPages` is off, and an unknown component types as `any`)
 export const RELOCATION_PROTECTED_DIRECTORIES: string[] = [
   ".agents/skills/",
-  "apps/web/content/docs/",
+  "apps/web/app/components/",
+  "apps/web/app/layouts/",
+  "apps/web/app/middleware/",
+  "apps/web/app/pages/",
+  "apps/web/app/plugins/",
+  "apps/web/content/",
+  "apps/web/public/",
+  "apps/web/server/api/",
   "apps/web/server/db/migrations/",
+  "apps/web/server/plugins/",
+  "apps/web/server/routes/",
   "packages/db-schema/",
 ];
