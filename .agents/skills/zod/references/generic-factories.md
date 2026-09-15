@@ -1,5 +1,8 @@
 # `create*Schema` Factories, Unions and Envelopes
 
+Read when a schema is built by a factory, when several schemas compose into a union, or when one wraps
+another in an envelope.
+
 ## Generic schemas
 
 When an abstract class/interface has a generic type param (e.g. `AFoo<TFooType>`), its schema must be generic too: export a `create*Schema` function taking typed zod schemas as params. Never hardcode type-specific values in a base schema. Use `T` for one param, descriptive `T*` (`TType`, `TConfiguration`) for multiple. Canonical: `createCursorPaginationParamsSchema`, `createSortItemSchema`.

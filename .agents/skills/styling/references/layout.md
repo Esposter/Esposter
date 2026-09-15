@@ -1,5 +1,7 @@
 # Layout — Regions, Page Surfaces, Borders
 
+Read when sizing a layout region, laying out a page surface, or putting a border between two of them.
+
 ## Layout Dimensions
 
 A hardcoded rem dimension on a **layout region** is banned — it doesn't adapt to the container or viewport (`w-56` sidebar, `h-96` panel). Distinguish two cases:

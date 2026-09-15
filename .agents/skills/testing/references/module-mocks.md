@@ -1,6 +1,6 @@
 # Module Mocks (`vi.mock`, colocated doubles, msw-trpc)
 
-What deserves a double at all, how a module-level one is declared, where it lives, which registration form to use, and which cleanup hook it then needs.
+Read when reaching for `vi.mock`, a colocated double or `msw-trpc` — what deserves a double at all, how a module-level one is declared, where it lives, which registration form to use, and which cleanup hook it then needs.
 
 ## What to mock
 

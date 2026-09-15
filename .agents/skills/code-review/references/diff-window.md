@@ -1,6 +1,6 @@
 # diff mode — reviewing a change
 
-The default. Anchored on a change: working tree, branch, or PR. The change bounds the review, so the round terminates naturally when the diff is exhausted. Read this when picking the window, before reading any code.
+Read when picking the window, before reading any code. This is the default mode, anchored on a change: working tree, branch, or PR. The change bounds the review, so the round terminates naturally when the diff is exhausted.
 
 ## Choosing the window — batch up to one, never review dribs
 

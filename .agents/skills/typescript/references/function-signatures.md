@@ -1,5 +1,8 @@
 # Function Signatures — Overloads, Defaults, Flag Parameters
 
+Read when writing a function's parameters: a second call shape, an options object, a default, or a boolean
+flag.
+
 ## Arrow function overloads
 
 Use call signature syntax on the variable type — never `function` declarations for overloads:

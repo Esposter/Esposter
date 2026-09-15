@@ -1,5 +1,8 @@
 # Skipped Suites, Host-Dependent Output and Bundle Size Snapshots
 
+Read when a suite is skipped on a platform, when its output depends on the host running it (a terminal's
+colour, a path separator, a locale), or when it snapshots a bundle's size.
+
 ## Output that depends on the host
 
 - **Strip ANSI before snapshotting CLI output** — `checkIsColorEnabled()` reads the ambient terminal/env (TTY, `FORCE_COLOR`, `NO_COLOR`), so a raw snapshot of colorized output flip-flops between an interactive shell, `-u` and CI. Wrap the value in `stripAnsi(...)` (`#src/services/cli/color/stripAnsi.test` in virrun) so the snapshot checks message content alone; colouring is verified in the `colorize`/`checkIsColorEnabled` tests. Narrow a `string | undefined` with `assert.exists(value)` first.

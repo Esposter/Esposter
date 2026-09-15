@@ -1,6 +1,6 @@
 # Extraction and Duplication
 
-`SKILL.md` states when to extract (≥2 functions sharing a shape) and the two tests an extraction and a flag each have to pass. This page is the shapes that extraction takes, and the arguments that have already been settled against it.
+Read when an extraction is about to be made — or argued for. `SKILL.md` states when to extract (≥2 functions sharing a shape) and the two tests an extraction and a flag each have to pass; this page is the shapes that extraction takes, and the arguments already settled against it.
 
 ## Stop at the primitive
 

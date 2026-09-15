@@ -1,6 +1,8 @@
 # Exported Schema Consts Under `--isolatedDeclarations`
 
-`--isolatedDeclarations` is on for `packages/*` libraries — not the app, and `db-schema` opts out via `isolatedDeclarations: false`. There, **annotate the concrete `z.ZodObject<{...}>` shape AND keep `satisfies`**.
+Read when exporting a schema const from a package built with `--isolatedDeclarations`.
+
+It is on for `packages/*` libraries — not the app, and `db-schema` opts out via `isolatedDeclarations: false`. There, **annotate the concrete `z.ZodObject<{...}>` shape AND keep `satisfies`**.
 
 **Never shortcut with `: z.ZodType<T>`** — it erases the shape, so the built `dist/*.d.ts` exposes no `.shape` and consumers spreading `...someSchema.shape` break against the published package.
 

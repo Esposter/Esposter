@@ -1,6 +1,6 @@
 # Modelling a Type Instead of Working Around It
 
-For the moments a type is awkward: reaching for a cast, re-declaring fields a source type already has, dispatching per variant, a module config key the compiler can't see, or a TS2590 it cannot represent.
+Read when a type is awkward: reaching for a cast, re-declaring fields a source type already has, dispatching per variant, a module config key the compiler can't see, or a TS2590 it cannot represent.
 
 ## `as unknown as` is `any` with extra steps
 

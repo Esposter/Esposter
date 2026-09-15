@@ -35,13 +35,14 @@ What each pattern means is the owning skill's to say:
    entity's attributes, a subgraph nothing reads in a direction, and a chain whose order is the sentence above it
 
 The skill tree adds a structural check the greps cannot make — a skill over budget, a reference page nothing
-indexes, a `references/` citation resolving nowhere.
+indexes, one whose first paragraph does not open `Read …`, a `## Settled` list that is not its skill's first
+section, a `references/` citation resolving nowhere.
 
 ```bash
 pnpm ai:sweep:skill-docs
 ```
 
-It lives in `scripts/src/sweeps/skillDocs/` rather than in this file, because it is a program: four checks over the
+It lives in `scripts/src/sweeps/skillDocs/` rather than in this file, because it is a program: six checks over the
 whole tree, one of which has to decide when **not** to resolve a pointer. It was a `python3` heredoc, which on a
 Windows checkout prints a Microsoft Store notice and exits 0 — no findings, no error, indistinguishable from a
 clean tree (`sweeps`, `references/find-recipes.md`).

@@ -1,5 +1,9 @@
 # Maintaining `.oxlintrc.json` and Disable Directives
 
+Read when turning a rule on or off, loosening its options, probing what one would report, or writing a
+disable directive. The two linters and which script runs each are in `SKILL.md`; this page is the file and
+the directive.
+
 ## Changing a rule is a check-only exercise — never run `lint:fix`
 
 Turning a rule on, loosening its options, or probing what one would report all mean running the linter against code that has not agreed to the rule yet, and a fix variant then **rewrites the repo to satisfy a decision nobody has made**. An autofixable rule lands across the whole tree in one pass, so the diff is too large to read, and the fixes for a rule you go on to reject have to be picked back out of a commit carrying the ones you kept. Some of them do not come back by re-running either: `require-await` strips a keyword the signature needed (`SKILL.md`), and a `no-duplicate-imports` merge folds a top-level `import type` back inline — the opposite of what `import/consistent-type-specifier-style` asks for.

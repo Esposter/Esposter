@@ -1,6 +1,6 @@
 # Template Gotchas
 
-Four template forms that compile and are still wrong — two that render nothing while typechecking cleanly, and two where vue-tsc's error points somewhere other than its cause. Read when a directive or slot renders nothing, when vue-tsc reports a template identifier it should be able to see, or when a guarded value goes `possibly undefined` inside an inline handler.
+Read when a directive or slot renders nothing, when vue-tsc reports a template identifier it should be able to see, or when a guarded value goes `possibly undefined` inside an inline handler. Four template forms compile and are still wrong — two render nothing while typechecking cleanly, and two put vue-tsc's error somewhere other than its cause.
 
 ## `v-html` only on a plain element
 

@@ -1,6 +1,6 @@
 # Router and DB Test Setup
 
-For tests that drive tRPC callers, queue mock sessions, seed rows into the mock DB, or name a router test.
+Read when a test drives tRPC callers, queues mock sessions, seeds rows into the mock DB, or needs naming.
 
 ## Naming and coverage
 

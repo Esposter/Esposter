@@ -1,6 +1,6 @@
 # Test Environment and Component Mounting
 
-For tests that need a DOM, the nuxt runtime, a mounted component, or that dispatch events.
+Read when a test needs a DOM, the nuxt runtime, a mounted component, or dispatches events.
 
 ## Environment
 

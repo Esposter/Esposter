@@ -1,5 +1,7 @@
 import { getBudgetFindings } from "#src/services/sweeps/skillDocs/getBudgetFindings";
 import { getDocsRouteFindings } from "#src/services/sweeps/skillDocs/getDocsRouteFindings";
+import { getSettledOrderFindings } from "#src/services/sweeps/skillDocs/getSettledOrderFindings";
+import { getTriggerlessFindings } from "#src/services/sweeps/skillDocs/getTriggerlessFindings";
 import { getUnindexedFindings } from "#src/services/sweeps/skillDocs/getUnindexedFindings";
 import { getUnresolvedFindings } from "#src/services/sweeps/skillDocs/getUnresolvedFindings";
 import { readSkillDocsFiles } from "#src/services/sweeps/skillDocs/readSkillDocsFiles";
@@ -11,8 +13,10 @@ const paths = new Set(files.map(({ path }) => path));
 
 for (const { detail, path, type } of [
   ...getBudgetFindings(skills),
+  ...getSettledOrderFindings(skills),
+  ...getTriggerlessFindings(pages),
   ...getUnindexedFindings(skills, pages),
   ...getDocsRouteFindings(files),
   ...getUnresolvedFindings(files, paths),
 ])
-  console.info(`${type.padEnd(11)} ${path}: ${detail}`);
+  console.info(`${type.padEnd(13)} ${path}: ${detail}`);

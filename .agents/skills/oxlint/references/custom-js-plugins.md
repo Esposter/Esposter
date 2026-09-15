@@ -1,5 +1,7 @@
 # Authoring a Custom Oxlint JS Plugin
 
+Read when a repo convention has no off-the-shelf rule and a custom one is being considered.
+
 The repo authors its own oxlint rules as **JS plugins** (`jsPlugins` in `.oxlintrc.json`) — for repo-specific conventions no off-the-shelf rule covers. Only viable for **purely syntactic** rules: oxlint JS plugins get no type information, so anything needing the type checker cannot be authored here (see the SKILL's note on why nothing type-aware runs in either linter).
 
 ## Settled — do not re-propose
