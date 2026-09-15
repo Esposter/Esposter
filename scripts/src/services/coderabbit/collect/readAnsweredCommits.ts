@@ -4,5 +4,6 @@ import { ANSWERED_COMMIT_FORMAT } from "#src/services/coderabbit/collect/constan
 import { getAnsweredCommits } from "#src/services/coderabbit/collect/getAnsweredCommits";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 
-export const readAnsweredCommits = (range: string, cwd?: string): AnsweredCommit[] =>
-  getAnsweredCommits(runGit(["log", `--format=${ANSWERED_COMMIT_FORMAT}`, range], cwd));
+// A range, or `--no-walk` and the shas to read alone
+export const readAnsweredCommits = (revisions: string[], cwd?: string): AnsweredCommit[] =>
+  getAnsweredCommits(runGit(["log", `--format=${ANSWERED_COMMIT_FORMAT}`, ...revisions], cwd));

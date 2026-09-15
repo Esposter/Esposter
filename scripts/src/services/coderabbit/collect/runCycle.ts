@@ -101,7 +101,7 @@ export const runCycle = async ({
   );
   console.info(`develop ${developSha}\nqueue   ${queueSha}\nfixes   ${reviewFixesSha ?? "none"}\nfrontier ${frontier}`);
 
-  const frontierCommits = readAnsweredCommits(`${frontier}..${developSha}`, cwd);
+  const frontierCommits = readAnsweredCommits([`${frontier}..${developSha}`], cwd);
   // Replies before any exit: a run that pushed and died before replying is finished here by whichever event fires next
   if (pullRequest !== undefined)
     replyAnswered({ commits: frontierCommits, isDryRun, issueComments, pullRequest, viewerLogin });
@@ -208,7 +208,7 @@ export const runCycle = async ({
 
   if (pullRequest === undefined) return openReleasePullRequest({ cwd, developSha: targetSha, isDryRun, mainSha });
   replyAnswered({
-    commits: readAnsweredCommits(`${developSha}..${targetSha}`, cwd),
+    commits: readAnsweredCommits([`${developSha}..${targetSha}`], cwd),
     isDryRun,
     issueComments,
     pullRequest,

@@ -6,6 +6,7 @@ import { drainFindings } from "#src/services/coderabbit/collect/drainFindings";
 import { getOpenBodyReviewId } from "#src/services/coderabbit/collect/getOpenBodyReviewId";
 import { getOpenFindings } from "#src/services/coderabbit/collect/getOpenFindings";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
+import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
@@ -26,12 +27,15 @@ export const runDrainStep = async ({
   viewerLogin,
 }: DrainStepInput): Promise<DrainStepResult> => {
   // The open set is what the bot spoke last on and no unported commit answers — a fix on the fixes branch or in
-  // The queue has answered its finding already
+  // The queue has answered its finding already. Unported by patch id, never by range: a fixes branch a window has
+  // Carried still lists every commit against develop, and so does a queue the session has not rebased, and a
+  // Trailer read off either would keep a release from merging on a finding develop already answers.
   const newestReview = reviews.findLast(({ body }) => body);
-  const unportedCommits = [
-    ...(reviewFixesSha ? readAnsweredCommits(`${developSha}..${reviewFixesSha}`, cwd) : []),
-    ...readAnsweredCommits(`${developSha}..${queueSha}`, cwd),
+  const unportedShas = [
+    ...(reviewFixesSha ? readCherryShas(developSha, reviewFixesSha, cwd) : []),
+    ...readCherryShas(developSha, queueSha, cwd),
   ];
+  const unportedCommits = unportedShas.length === 0 ? [] : readAnsweredCommits(["--no-walk", ...unportedShas], cwd);
   const answeredIds = new Set(unportedCommits.flatMap(({ answers }) => answers));
   const drainedReviewIds = new Set([...unportedCommits, ...frontierCommits].flatMap(({ drains }) => drains));
   const threads = readUnresolvedThreads(pullRequest);
