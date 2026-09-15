@@ -36,7 +36,7 @@ describe(runGit, () => {
       runGit(["rev-parse", "--git-path", "objects"], directory),
     ].map((output) => output.trim().replaceAll("\\", "/"));
 
-    expect(gitDirectory).toContain(directory.replaceAll("\\", "/"));
-    expect(objectsDirectory).not.toContain(otherDirectory.replaceAll("\\", "/"));
+    expect(gitDirectory).toBe(`${directory.replaceAll("\\", "/")}/.git`);
+    expect(objectsDirectory).toBe(".git/objects");
   });
 });

@@ -5,7 +5,7 @@ describe(getCitingText, () => {
   test("drops a fence", () => {
     expect.hasAssertions();
 
-    expect(getCitingText("`a`\n```ts\n`b`\n```\n`c`")).toBe("`a`\n\n`c`");
+    expect(getCitingText("`a`\n```\n`b`\n```\n`c`")).toBe("`a`\n\n`c`");
   });
 
   // A fence read as backtick pairs shifts every pairing after it, so what follows is cited from the wrong tokens

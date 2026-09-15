@@ -9,30 +9,6 @@ import { glob } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// A path token we can resolve, i.e. no glob placeholder, line number or prose — brackets are Nuxt route segments.
-const REPOSITORY_PATH_REGEX = /^[\w./[\]*-]+$/u;
-const SKILL_CITATION_REGEX = /`(?<name>[\w-]+)` skill\b/gu;
-const appDirectory = join(REPOSITORY_ROOT, "apps", "web");
-const skillsDirectory = join(REPOSITORY_ROOT, AGENT_DIRECTORY, "skills");
-// A token is a path when its first segment names something git tracks at the repo root or it carries an
-// App-relative prefix — which keeps the identifier tokens in the same prose (`useQuery`, `--no-cache`) and the
-// Install-time paths (`node_modules/.vite`) out of the check.
-const repositoryEntryNames = new Set(getSweepFilePaths(".").map((path) => takeOne(path.split("/"), 0)));
-const getIsRepositoryPath = (token: string) =>
-  REPOSITORY_PATH_REGEX.test(token) &&
-  !token.startsWith(AGENT_WORKTREES_DIRECTORY) &&
-  (repositoryEntryNames.has(takeOne(token.split("/"), 0)) ||
-    APP_RELATIVE_PREFIXES.some((prefix) => token.startsWith(prefix)));
-// A ledger unit may be a glob (`apps/infra/src/*`) or a module named without its extension so the row covers the
-// File and its test (`server/trpc/routers/resource`), so a lookup that misses falls through to a match
-const checkIsResolved = async (token: string): Promise<boolean> => {
-  for (const cwd of [REPOSITORY_ROOT, appDirectory]) {
-    if (existsSync(join(cwd, token))) return true;
-    for await (const _ of glob([token, `${token}.*`], { cwd })) return true;
-  }
-  return false;
-};
-
 /**
  * A skill, a ledger, a docs page or a README cites code by its repo-relative path in backticks and a skill by
  * its name, and nothing resolves either: `ai:citations:sync` rewrites the citations a rename reports, but a
@@ -43,6 +19,29 @@ const checkIsResolved = async (token: string): Promise<boolean> => {
  * gitignored, so it exists only on the machine running an agent.
  */
 describe("citations", () => {
+  // A path token we can resolve, i.e. no glob placeholder, line number or prose — brackets are Nuxt route segments.
+  const REPOSITORY_PATH_REGEX = /^[\w./[\]*-]+$/u;
+  const SKILL_CITATION_REGEX = /`(?<name>[\w-]+)` skill\b/gu;
+  const appDirectory = join(REPOSITORY_ROOT, "apps", "web");
+  const skillsDirectory = join(REPOSITORY_ROOT, AGENT_DIRECTORY, "skills");
+  // A token is a path when its first segment names something git tracks at the repo root or it carries an
+  // App-relative prefix — which keeps the identifier tokens in the same prose (`useQuery`, `--no-cache`) and the
+  // Install-time paths (`node_modules/.vite`) out of the check.
+  const repositoryEntryNames = new Set(getSweepFilePaths(".").map((path) => takeOne(path.split("/"), 0)));
+  const getIsRepositoryPath = (token: string) =>
+    REPOSITORY_PATH_REGEX.test(token) &&
+    !token.startsWith(AGENT_WORKTREES_DIRECTORY) &&
+    (repositoryEntryNames.has(takeOne(token.split("/"), 0)) ||
+      APP_RELATIVE_PREFIXES.some((prefix) => token.startsWith(prefix)));
+  // A ledger unit may be a glob (`apps/infra/src/*`) or a module named without its extension so the row covers the
+  // File and its test (`server/trpc/routers/resource`), so a lookup that misses falls through to a match
+  const checkIsResolved = async (token: string): Promise<boolean> => {
+    for (const cwd of [REPOSITORY_ROOT, appDirectory]) {
+      if (existsSync(join(cwd, token))) return true;
+      for await (const _ of glob([token, `${token}.*`], { cwd })) return true;
+    }
+    return false;
+  };
   const pages = readCitingPages();
 
   test("every cited path exists", async () => {

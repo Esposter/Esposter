@@ -1,24 +1,25 @@
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/shared/constants";
+import { TRAILER_VALUE_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
 import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
 import { describe, expect, test } from "vitest";
 
 describe(getLedgerEvents, () => {
-  const date = new Date(0).toISOString().slice(0, "1970-01-01".length);
+  const date = new Date(0).toISOString().slice(0, 10);
   const getRecord = (body: string) => `${date}${FIELD_SEPARATOR}${body}${RECORD_SEPARATOR}`;
 
   test("reads a sweep trailer as the ledger, the unit and the commit date", () => {
     expect.hasAssertions();
 
-    expect(getLedgerEvents(getRecord("refactor(a): sweep a\n\nLedger: a/b | `c`\n"))).toStrictEqual([
-      { date, ledger: "a/b", type: LedgerEventType.Ledger, unit: "`c`" },
-    ]);
+    expect(getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: a/b${TRAILER_VALUE_SEPARATOR}\`c\`\n`))).toStrictEqual(
+      [{ date, ledger: "a/b", type: LedgerEventType.Ledger, unit: "`c`" }],
+    );
   });
 
   test("reads a reopen naming a whole ledger", () => {
     expect.hasAssertions();
 
-    expect(getLedgerEvents(getRecord("docs(a): a rule changes\n\nReopens: a\n"))).toStrictEqual([
+    expect(getLedgerEvents(getRecord(`${LedgerEventType.Reopens}: a\n`))).toStrictEqual([
       { date, ledger: "a", type: LedgerEventType.Reopens, unit: undefined },
     ]);
   });
@@ -26,7 +27,9 @@ describe(getLedgerEvents, () => {
   test("keeps every trailer of one commit in order", () => {
     expect.hasAssertions();
 
-    expect(getLedgerEvents(getRecord("a\n\nLedger: a | `b`\nLedger: a | `c`\n"))).toStrictEqual([
+    const body = `${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}\`b\`\n${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}\`c\`\n`;
+
+    expect(getLedgerEvents(getRecord(body))).toStrictEqual([
       { date, ledger: "a", type: LedgerEventType.Ledger, unit: "`b`" },
       { date, ledger: "a", type: LedgerEventType.Ledger, unit: "`c`" },
     ]);
@@ -36,6 +39,8 @@ describe(getLedgerEvents, () => {
   test("skips a sweep trailer that names no unit", () => {
     expect.hasAssertions();
 
-    expect(getLedgerEvents(getRecord("a\n\nLedger: `app/pages` — the rest.\nLedger:\n"))).toStrictEqual([]);
+    expect(getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: \`a\`\n${LedgerEventType.Ledger}:\n`))).toStrictEqual(
+      [],
+    );
   });
 });

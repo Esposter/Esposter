@@ -2,15 +2,14 @@ import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent"
 
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { applyLedgerEvents } from "#src/services/sweeps/ledgerCoverage/applyLedgerEvents";
+import { OPEN_CELL } from "#src/services/sweeps/ledgerCoverage/constants";
 import { describe, expect, test } from "vitest";
 
 describe(applyLedgerEvents, () => {
   const ledger = "a/b";
   const unit = "`c`";
-  const earlier = new Date(0).toISOString().slice(0, "1970-01-01".length);
-  const later = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"))
-    .toISOString()
-    .slice(0, earlier.length);
+  const earlier = new Date(0).toISOString().slice(0, 10);
+  const later = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString().slice(0, 10);
   const getText = (swept: string) =>
     `| Unit   | Swept      | Notes |
 | ------ | ---------- | ----- |
@@ -26,7 +25,9 @@ describe(applyLedgerEvents, () => {
   test("dates an open row from its sweep trailer", () => {
     expect.hasAssertions();
 
-    expect(applyLedgerEvents(getText("—"), ledger, [getEvent(LedgerEventType.Ledger, earlier, unit)])).toStrictEqual({
+    expect(
+      applyLedgerEvents(getText(OPEN_CELL), ledger, [getEvent(LedgerEventType.Ledger, earlier, unit)]),
+    ).toStrictEqual({
       text: getText(earlier),
       unmatched: [],
     });
@@ -45,7 +46,19 @@ describe(applyLedgerEvents, () => {
     expect.hasAssertions();
 
     expect(applyLedgerEvents(getText(earlier), ledger, [getEvent(LedgerEventType.Reopens, later)])).toStrictEqual({
-      text: getText("—"),
+      text: getText(OPEN_CELL),
+      unmatched: [],
+    });
+  });
+
+  // A promoted ledger is a folder of area files, and a rule change names the folder
+  test("reopens a row from a reopen naming the folder above the ledger", () => {
+    expect.hasAssertions();
+
+    expect(
+      applyLedgerEvents(getText(earlier), ledger, [{ ...getEvent(LedgerEventType.Reopens, later), ledger: "a" }]),
+    ).toStrictEqual({
+      text: getText(OPEN_CELL),
       unmatched: [],
     });
   });
@@ -73,16 +86,21 @@ describe(applyLedgerEvents, () => {
 
     const event = getEvent(LedgerEventType.Ledger, earlier, "`d`");
 
-    expect(applyLedgerEvents(getText("—"), ledger, [event])).toStrictEqual({ text: getText("—"), unmatched: [event] });
+    expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
+      text: getText(OPEN_CELL),
+      unmatched: [event],
+    });
   });
 
   test("leaves another ledger's events alone", () => {
     expect.hasAssertions();
 
     expect(
-      applyLedgerEvents(getText("—"), ledger, [{ ...getEvent(LedgerEventType.Ledger, earlier, unit), ledger: "x" }]),
+      applyLedgerEvents(getText(OPEN_CELL), ledger, [
+        { ...getEvent(LedgerEventType.Ledger, earlier, unit), ledger: "x" },
+      ]),
     ).toStrictEqual({
-      text: getText("—"),
+      text: getText(OPEN_CELL),
       unmatched: [],
     });
   });

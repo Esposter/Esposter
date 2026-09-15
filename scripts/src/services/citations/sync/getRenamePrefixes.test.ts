@@ -5,9 +5,7 @@ describe(getRenamePrefixes, () => {
   test("reduces a moved file to the prefix that moved", () => {
     expect.hasAssertions();
 
-    expect(getRenamePrefixes("R100\tapps/web/app/a/b/c.ts\tapps/web/app/x/b/c.ts\n")).toStrictEqual([
-      { from: "apps/web/app/a", to: "apps/web/app/x" },
-    ]);
+    expect(getRenamePrefixes("R100\ta/b/c.ts\ta/x/c.ts\n")).toStrictEqual([{ from: "a/b", to: "a/x" }]);
   });
 
   test("keeps the whole path for a file renamed in place", () => {
