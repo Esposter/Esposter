@@ -11,11 +11,9 @@ export const useRoomEmojiSubscribables = () => {
 
   useOnlineSubscribable(currentRoomId, async (roomId) => {
     if (!roomId) return undefined;
-
     // The room's set is read here rather than in a watcher of its own: one room-scoped lifecycle owns both
     // Halves, so the list is in place before the subscription that keeps it current can deliver anything
     await readRoomEmojis(roomId);
-
     // The subscription owns every remote-visible transition: an emoji an admin adds has to reach the picker and
     // The message renderer of everyone already in the room, or a message using it renders its fallback until
     // They next open it

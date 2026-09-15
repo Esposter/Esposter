@@ -86,7 +86,6 @@ export const useReadMessages = () => {
 
   const readMoreNewerMessages = async (onComplete: () => void) => {
     if (!currentRoomId.value) return;
-
     // The room this page was read for, resolved before the request goes out — the reader can open another room
     // While it is in flight, and the page and its cursor belong to the room that asked for them either way
     const roomId = currentRoomId.value;
