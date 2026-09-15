@@ -15,7 +15,7 @@ Return it from the same endpoint as the page rather than adding a second one —
 client cannot forget to ask for. The two statements still run against separate snapshots, so a write landing
 between them can move the total by a row; put both in one statement or one transaction where that matters:
 
-```typescript
+```ts
 // endpoint: the page and the total it belongs to, resolved together
 const [items, [total]] = await Promise.all([findManyPage(), countMatchingRows()]);
 return { paginationData: getCursorPaginationData(items, limit, sortBy), total: total?.count ?? 0 };

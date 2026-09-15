@@ -105,7 +105,7 @@ Hand-rolling search-as-you-type around a `$trpc` search query is **banned**: no 
 
 When a component needs ancillary data (permissions, metadata) alongside a primary list load, bundle the ancillary read inside the primary read composable — not in the component's `onMounted`. An ancillary read belongs inside the composable owning the load (`useReadFoos`), called in `Promise.all` alongside other metadata reads. If there is no natural companion read, call it directly in `<script setup>` — still no `onMounted`.
 
-```typescript
+```ts
 // bundle ancillary reads in the owning read composable — not a separate component onMounted fetch
 const readBars = useReadBars();
 const readBazes = useReadBazes();
