@@ -10,7 +10,7 @@ import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { describe } from "vitest";
 
 // The audience column every funnel fixture keys recipients on
-export const AUDIENCE_KEY_COLUMN = "email";
+export const AUDIENCE_KEY_COLUMN = "keyColumn";
 
 // A Sheet of recipients — the audience every program binds. keyValues drives one row per recipient
 export const createAudienceSheet = async (

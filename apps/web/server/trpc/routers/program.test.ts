@@ -226,7 +226,7 @@ describe("programRouter", () => {
     assert.exists(respondedParticipant);
     assert.exists(unrespondedParticipant);
     await surveyCaller.createSurveyResponse({
-      model: { satisfaction: 0 },
+      model: { a: 0 },
       participantToken: respondedParticipant.token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -263,7 +263,7 @@ describe("programRouter", () => {
     await caller.generateProgramParticipants({ id: program.id });
     // A response carrying no token carries nobody, so it is simply not a participant row
     await surveyCaller.createSurveyResponse({
-      model: { satisfaction: 0 },
+      model: { a: 0 },
       participantToken: "",
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -291,8 +291,7 @@ describe("programRouter", () => {
     // A distinctive key value so the "never leaks the participant list" assertion has a real needle
     const { program } = await setupIdentifiedProgram([keyValue]);
     const participants = await caller.generateProgramParticipants({ id: program.id });
-    const participant = participants[0];
-    assert.exists(participant);
+    const participant = takeOne(participants);
     const dataset = await datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus });
 
     expect(dataset.columns.map(({ name: columnName }) => columnName)).toStrictEqual([

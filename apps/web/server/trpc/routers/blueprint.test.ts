@@ -21,13 +21,13 @@ describe("blueprintRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["blueprint"]>;
   let programCaller: DecorateRouterRecord<TRPCRouter["program"]>;
   const name = "name";
-  // Two program entries: the funnel binds the audience's created id through an {{entry:audience}} alias
+  // Two program entries: the funnel binds the audience's created id through the audience entry's alias
   const wiredManifest: BlueprintResource = {
     entries: [
-      { content: {}, key: "audience", name: "a", type: ResourceType.Program },
+      { content: {}, key: "a", name: "a", type: ResourceType.Program },
       {
-        content: { audience: null, emailId: "{{entry:audience}}", keyColumn: "", surveyId: "" },
-        key: "funnel",
+        content: { audience: null, emailId: buildBlueprintEntryToken("a"), keyColumn: "", surveyId: "" },
+        key: "b",
         name: "b",
         type: ResourceType.Program,
       },
@@ -73,15 +73,15 @@ describe("blueprintRouter", () => {
 
     const blueprint = await createBlueprint(wiredManifest);
     const deployments = await caller.deployBlueprint({ id: blueprint.id, parameterValues: {} });
-    const audience = deployments.find(({ key }) => key === "audience");
-    const funnel = deployments.find(({ key }) => key === "funnel");
+    const audience = deployments.find(({ key }) => key === "a");
+    const funnel = deployments.find(({ key }) => key === "b");
     assert.exists(audience);
     assert.exists(funnel);
     const funnelContent = await programCaller.readResourceContent({ id: funnel.resource.id });
 
     expect(deployments).toHaveLength(2);
     expect(funnel.resource.type).toBe(ResourceType.Program);
-    // The {{entry:audience}} alias resolved to the audience entry's real created id
+    // The audience entry's alias resolved to its real created id
     expect(funnelContent?.emailId).toBe(audience.resource.id);
   });
 
@@ -94,7 +94,7 @@ describe("blueprintRouter", () => {
     const dueAt = new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds"));
     const item = new TodoListItem({ dueAt, name });
     const blueprint = await createBlueprint({
-      entries: [{ content: { items: [item] }, key: "todo", name: "t", type: ResourceType.TodoList }],
+      entries: [{ content: { items: [item] }, key: "a", name, type: ResourceType.TodoList }],
       parameters: [],
     });
     const deployments = await caller.deployBlueprint({ id: blueprint.id, parameterValues: {} });
@@ -110,14 +110,14 @@ describe("blueprintRouter", () => {
     expect.hasAssertions();
 
     const blueprint = await createBlueprint({
-      entries: [{ content: { emailId: "abc" }, key: "audience", name: "a", type: ResourceType.Program }],
+      entries: [{ content: { emailId: " " }, key: "a", name: "a", type: ResourceType.Program }],
       parameters: [],
     });
 
     await expect(
       caller.deployBlueprint({ id: blueprint.id, parameterValues: {} }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid content for entry audience").message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid content for entry a").message}]`,
     );
 
     const programs = await programCaller.readResources();
@@ -131,27 +131,27 @@ describe("blueprintRouter", () => {
 
     const childManifest: BlueprintResource = {
       entries: [
-        { content: {}, key: "leaf", name: "{{parameter:client}}", type: ResourceType.Program },
+        { content: {}, key: "a", name: "{{parameter:a}}", type: ResourceType.Program },
         {
-          content: { audience: null, emailId: "{{entry:leaf}}", keyColumn: "", surveyId: "" },
-          key: "inner",
-          name: "inner",
+          content: { audience: null, emailId: buildBlueprintEntryToken("a"), keyColumn: "", surveyId: "" },
+          key: "b",
+          name: "b",
           type: ResourceType.Program,
         },
       ],
       parameters: [],
     };
     const blueprint = await createBlueprint({
-      entries: [{ content: childManifest, key: "child", name: "child", type: ResourceType.Blueprint }],
-      parameters: [{ defaultValue: "", description: "", key: "client", title: "Client" }],
+      entries: [{ content: childManifest, key: "c", name: "c", type: ResourceType.Blueprint }],
+      parameters: [{ defaultValue: "", description: "", key: "a", title: "" }],
     });
-    const deployments = await caller.deployBlueprint({ id: blueprint.id, parameterValues: { client: "Acme" } });
-    const child = deployments.find(({ key }) => key === "child");
+    const deployments = await caller.deployBlueprint({ id: blueprint.id, parameterValues: { a: " " } });
+    const child = deployments.find(({ key }) => key === "c");
     assert.exists(child);
     const deployedManifest = await caller.readResourceContent({ id: child.resource.id });
 
     // The child's tokens name the child's own entries and parameters, so this deploy neither rejects
-    // {{entry:leaf}} as an unknown reference nor substitutes its own id or parameter value into them
+    // Its entry alias as an unknown reference nor substitutes its own id or parameter value into them
     expect(deployedManifest).toStrictEqual(childManifest);
   });
 
