@@ -8,7 +8,7 @@ So a skill whose domain has directions that were tried or considered and rejecte
 
 - **One line per direction**: what would be proposed, why it fails, what to do instead — ```**Bundling `` `external-pkg` `` into every consumer** — duplicates it in each dist and splits its types, so `` `instanceof` `` fails across copies; externalise and let the consumer dedupe.```
 - **It holds directions, not rules.** A rule says what to do. A settled line exists only because a reader would plausibly propose the alternative — if nobody would, it is a rule and belongs with the rules.
-- **The rationale stays where it already lives.** The line carries one clause of why, never the argument: where the skill makes the case further down, or `apps/web/content/docs/architecture/rejected/` holds a page for it, the line ends with that pointer. Two full statements of one rejection drift like any other copy.
+- **The rationale stays where it already lives.** The line carries one clause of why, never the argument: where the skill makes the case further down, or a page owns it — `apps/web/content/docs/architecture/rejected/`, or the page that owns the mechanism — the line ends with that pointer. Two full statements of one rejection drift like any other copy, and a mechanism several skills reach is where that happens: every skill a proposer might have loaded owes the line, and exactly one owner owes the argument.
 - The reproducible-pattern test applies unchanged: no dates, no PR numbers, no account of the session that got it wrong. What would be proposed and why it fails is the whole entry.
 
 ## The goal is a short list

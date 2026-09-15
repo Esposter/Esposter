@@ -61,7 +61,7 @@ pointer nothing resolves; a citation from inside `references/` to a file at its 
 recurring shape, and it needs `../`. The one line the check cannot judge is `skill-authoring`'s
 `references/x.md` placeholder.
 
-Excluded: `CHANGELOG.md` (lerna output) · `CLAUDE.md`, `GEMINI.md` (symlinks to `AGENTS.md`) · `public/docs/api` (TypeDoc
+Excluded: `CHANGELOG.md` (lerna output) · `CLAUDE.md`, `GEMINI.md` (symlinks to `AGENTS.md`) · "public/docs/api" (TypeDoc
 output) · `~/.claude/plugins` skills (external, not ours to edit).
 
 Enforceable next. What is already enforced sits with what it guards: the link, index-coverage,
