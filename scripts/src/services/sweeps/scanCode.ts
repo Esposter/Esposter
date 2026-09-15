@@ -16,7 +16,8 @@ const CODE_TAIL_LENGTH = 8;
 export const scanCode = function* (text: string): Generator<CodeToken> {
   const stack: string[] = [];
   let quote = "";
-  // The tail of the code so far, brackets included, which is what says whether a `/` opens a regex literal
+  // The tail of the code so far — brackets and the closing delimiter of every skipped literal included, since
+  // Both can end an expression — which is what says whether a `/` opens a regex literal
   let code = "";
   let index = 0;
 
@@ -29,14 +30,21 @@ export const scanCode = function* (text: string): Generator<CodeToken> {
         index += 2;
         continue;
       }
-      if (character === quote) quote = "";
+      // A closed literal is an operand, so its delimiter joins the tail: without it the tail still ends with
+      // Whatever preceded the literal, and `"a" / b` reads an opener there and swallows the rest of the line
+      if (character === quote) {
+        quote = "";
+        code = `${code}${character}`.slice(-CODE_TAIL_LENGTH);
+      }
     } else if (stack.at(-1) === "`") {
       if (character === "\\") {
         index += 2;
         continue;
       }
-      if (character === "`") stack.pop();
-      else if (text.startsWith("${", index)) {
+      if (character === "`") {
+        stack.pop();
+        code = `${code}${character}`.slice(-CODE_TAIL_LENGTH);
+      } else if (text.startsWith("${", index)) {
         stack.push("{");
         index += 2;
         continue;
@@ -64,6 +72,7 @@ export const scanCode = function* (text: string): Generator<CodeToken> {
         }
       }
       while (index < text.length && /[a-z]/u.test(text[index] ?? "")) index += 1;
+      code = `${code}/`.slice(-CODE_TAIL_LENGTH);
       continue;
     } else if (text.startsWith("//", index)) {
       const newline = text.indexOf("\n", index);

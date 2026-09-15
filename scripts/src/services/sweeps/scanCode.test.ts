@@ -48,6 +48,17 @@ describe(scanCode, () => {
     expect(readCode("a / b / c")).toBe("a / b / c");
   });
 
+  // A skipped literal leaves no token behind, so the tail still ended with the `=` before it and read the `/` as a
+  // Regex opener — which then ran to the newline and took the `;` that ends the statement with it
+  test.each([
+    ["a string", 'a="s"/b;c', "a=/b;c"],
+    ["a template literal", "a=`${s}`/b;c", "a=s/b;c"],
+  ])("reads a division after %s", (_, code, expected) => {
+    expect.hasAssertions();
+
+    expect(readCode(code)).toBe(expected);
+  });
+
   test("skips a line comment to the end of its line", () => {
     expect.hasAssertions();
 
