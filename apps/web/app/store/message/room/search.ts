@@ -2,14 +2,14 @@ import { normalizeString } from "@esposter/shared";
 
 export const useRoomSearchStore = defineStore("message/room/search", () => {
   const { $trpc } = useNuxtApp();
-  return useCursorSearcher((searchQuery, cursor, opts) => {
+  return useCursorSearcher((searchQuery, cursor, options) => {
     const normalizedSearchQuery = normalizeString(searchQuery);
     return $trpc.room.readRooms.query(
       {
         cursor,
         filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined,
       },
-      opts,
+      options,
     );
   }, true);
 });

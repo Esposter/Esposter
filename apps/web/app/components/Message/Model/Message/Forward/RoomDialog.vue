@@ -21,14 +21,14 @@ const {
   readMoreSearchedItems,
   searchQuery,
 } = useCursorSearcher(
-  (query, cursor, opts) => {
+  (query, cursor, options) => {
     const normalizedSearchQuery = normalizeString(query);
     return $trpc.room.readRooms.query(
       {
         cursor,
         filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined,
       },
-      opts,
+      options,
     );
   },
   true,

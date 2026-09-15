@@ -2,13 +2,13 @@
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 
-const { close, open, pipWindow } = useDocumentPictureInPicture({ height: 320, width: 420 });
+const { close, open, pictureInPictureWindow } = useDocumentPictureInPicture({ height: 320, width: 420 });
 const callStore = useCallStore();
 const { callRoute, isInCall } = storeToRefs(callStore);
 const mediaStore = useMediaStore();
 const { isPoppedOut } = storeToRefs(mediaStore);
 // Key events don't cross documents — the PiP window needs its own push-to-talk listeners
-usePushToTalk(isInCall, pipWindow);
+usePushToTalk(isInCall, pictureInPictureWindow);
 
 watch(isPoppedOut, async (newIsPoppedOut) => {
   if (newIsPoppedOut) {
@@ -16,15 +16,15 @@ watch(isPoppedOut, async (newIsPoppedOut) => {
     // Open() no-ops on unsupported browsers and swallows requestWindow rejections (e.g. activation
     // Lost after the screen picker), so if no window materialised, clear the stale intent — otherwise
     // The main view shows an empty PiP placeholder for a call that never popped out.
-    if (!pipWindow.value) isPoppedOut.value = false;
+    if (!pictureInPictureWindow.value) isPoppedOut.value = false;
     // `isPoppedOut` flipped back to false while requestWindow was pending: undo the stale open.
     else if (!isPoppedOut.value) close();
   } else close();
 });
 // Window closed (native "Back to tab", expand button, or leaveCall clearing isPoppedOut): sync
 // Intent and, if still in the call, surface it on the main tab so a docked call is never invisible.
-watch(pipWindow, async (newPipWindow) => {
-  if (newPipWindow) return;
+watch(pictureInPictureWindow, async (newPictureInPictureWindow) => {
+  if (newPictureInPictureWindow) return;
   const wasInCall = isInCall.value;
   isPoppedOut.value = false;
   if (wasInCall) await navigateTo(callRoute.value);
@@ -32,7 +32,7 @@ watch(pipWindow, async (newPipWindow) => {
 </script>
 
 <template>
-  <Teleport v-if="pipWindow" :to="pipWindow.document.body">
+  <Teleport v-if="pictureInPictureWindow" :to="pictureInPictureWindow.document.body">
     <MessageContentCallPipView />
   </Teleport>
 </template>
