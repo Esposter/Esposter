@@ -1,6 +1,6 @@
 ---
 name: responsive
-description: Esposter responsive/mobile UI conventions — command bars collapse into a single overflow dropdown of icon+text list items on narrow viewports, which controls never collapse, and when flex-wrap is the allowed exception. Apply when adding or editing any toolbar, action row, or button group that must work on mobile.
+description: Apply when adding or editing any toolbar, action row, or button group that must work on mobile. Esposter responsive/mobile UI conventions — command bars collapse into a single overflow dropdown of icon+text list items on narrow viewports, which controls never collapse, and when flex-wrap is the allowed exception.
 ---
 
 # Responsive / Mobile UI

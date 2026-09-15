@@ -1,6 +1,6 @@
 ---
 name: formatting
-description: Esposter code formatting — blank-line placement around consts/returns/blocks, the test-file exception, and comment attachment/content rules (comment only exceptional behaviour, describe the present never the history, never argue for the refactor that produced the code, keep error-text quotes, `/** */` only on an exported API surface) — plus a deep dive on the `capitalized-comments` rule and the re-read a rewrapped comment owes. Apply when writing or editing any file's whitespace or comments.
+description: Apply when writing or editing any file's whitespace or comments. Esposter code formatting — blank-line placement around consts/returns/blocks, the test-file exception, and comment attachment/content rules (comment only exceptional behaviour, describe the present never the history, never argue for the refactor that produced the code, keep error-text quotes, `/** */` only on an exported API surface) — plus a deep dive on the `capitalized-comments` rule and the re-read a rewrapped comment owes.
 ---
 
 # Formatting

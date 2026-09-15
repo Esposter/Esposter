@@ -1,6 +1,6 @@
 ---
 name: grapesjs
-description: Esposter GrapesJS editor conventions — useGrapesJsEditor init composable, the resource-backed storage adapter, the FileAssets upload adapter, block-category re-sync via setBlocks, save-time HTML/CSS capture for the published views, and merge-field/survey-invite blocks. Apply when working on Resource/Email/Editor.vue, Resource/Webpage/Editor.vue, their View.vue renders, the emailEditor/webpageEditor stores, or any GrapesJS-backed feature.
+description: Apply when working on Resource/Email/Editor.vue, Resource/Webpage/Editor.vue, their View.vue renders, the emailEditor/webpageEditor stores, or any GrapesJS-backed feature. Esposter GrapesJS editor conventions — useGrapesJsEditor init composable, the resource-backed storage adapter, the FileAssets upload adapter, block-category re-sync via setBlocks, save-time HTML/CSS capture for the published views, and merge-field/survey-invite blocks.
 ---
 
 # GrapesJS Conventions

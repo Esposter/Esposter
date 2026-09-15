@@ -1,6 +1,6 @@
 ---
 name: claude-permissions
-description: Esposter Claude Code permission-rule conventions for the allow-only .agents/settings.local.json — the shipped file is the standard (every rule is the trailing space-star form, colon sub-scripts get their own rule), mirroring rules across Bash and PowerShell, and sorting. Generic harness semantics live in the update-config skill. Apply when editing settings.local.json or debugging why a command still prompts.
+description: Apply when editing settings.local.json or debugging why a command still prompts. Esposter Claude Code permission-rule conventions for the allow-only .agents/settings.local.json — the shipped file is the standard (every rule is the trailing space-star form, colon sub-scripts get their own rule), mirroring rules across Bash and PowerShell, and sorting. Generic harness semantics live in the update-config skill.
 ---
 
 # Claude Code Permission Rules (`.agents/settings.local.json`)

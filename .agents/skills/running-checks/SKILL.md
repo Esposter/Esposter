@@ -1,6 +1,6 @@
 ---
 name: running-checks
-description: Esposter rules for running any check — pnpm format, typecheck, lint, lint:fix, test, build, coverage, bench, or a package's own script — every check goes out with run_in_background true and the session keeps editing, the independent ones fire in one block, a foreground poll of a backgrounded check is banned, blocking is correct only when commit or push is the sole step left, one verification pass batched after every edit going out rather than one per chunk, the verdict is the exit code read from the log rather than a grep of its tail, and a red result is a new edit followed by a new background run. Apply the moment you are about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, before deciding when in a task to run it, and whenever you find yourself waiting on a check's output.
+description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding when in a task to run one, and whenever you find yourself waiting on a check's output. Esposter rules for running any check — every check goes out with run_in_background true while the session keeps editing, independent ones fire in one block, a foreground poll of a backgrounded check is banned, blocking is correct only when commit or push is the sole step left, one verification pass batched after every edit going out, the verdict is the exit code read from the log, and a red result is a new edit followed by a new background run.
 ---
 
 # Running Checks

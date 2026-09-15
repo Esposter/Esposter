@@ -1,6 +1,6 @@
 ---
 name: run-app
-description: Esposter — how a UI change is verified, and why an agent never drives the app in a browser to do it. Driving Chrome over CDP is banned here (flaky and slow); the alternatives are generating the CSS offline for a styling question, a component test when one is cheap under the default setup, and otherwise the user's own eyes. Also covers launching the dev server for the user. Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works.
+description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified, and why an agent never drives the app in a browser to do it. Driving Chrome over CDP is banned here (flaky and slow); the alternatives are generating the CSS offline for a styling question, a component test when one is cheap under the default setup, and otherwise the user's own eyes. Also covers launching the dev server for the user.
 ---
 
 # Verifying a UI Change

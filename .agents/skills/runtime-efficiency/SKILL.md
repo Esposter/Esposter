@@ -1,6 +1,6 @@
 ---
 name: runtime-efficiency
-description: Esposter runtime efficiency — where work is placed and how it is shaped so it stays cheap: resolve a fact once at the consumer rather than at every producer, keep derivable work off the request path someone is waiting on, order an index by the lookup it has to serve rather than by the constraint it was written for, one statement per set instead of one per element, overlap independent reads and say why a sequence is load-bearing, reject cheapest-first, and bound a table's growth on the write path that already holds its keys. Apply when adding a query, an index, a fan-out, a background handler, or a table nothing deletes from — and when reviewing one.
+description: Apply when adding a query, an index, a fan-out, a background handler, or a table nothing deletes from — and when reviewing one. Esposter runtime efficiency — where work is placed and how it is shaped so it stays cheap: resolve a fact once at the consumer rather than at every producer, keep derivable work off the request path someone is waiting on, order an index by the lookup it has to serve rather than by the constraint it was written for, one statement per set instead of one per element, overlap independent reads and say why a sequence is load-bearing, reject cheapest-first, and bound a table's growth on the write path that already holds its keys.
 ---
 
 # Runtime Efficiency

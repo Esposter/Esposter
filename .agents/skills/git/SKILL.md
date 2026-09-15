@@ -1,6 +1,6 @@
 ---
 name: git
-description: Esposter git workflow conventions — commit message format, safety rules (pathspec commits in a shared checkout, no stash, no push into a running review), branch hygiene (the session commits on ai/queue and the collector writes develop and main), and the `pnpm-lock.yaml` conflict every merge of `main` brings, regenerated never hand-resolved. Apply when running git operations, merging a branch, resolving a lockfile conflict, or advising on source control workflows.
+description: Apply when running git operations, merging a branch, resolving a lockfile conflict, or advising on source control workflows. Esposter git workflow conventions — commit message format, safety rules (pathspec commits in a shared checkout, no stash, no push into a running review), branch hygiene (the session commits on ai/queue and the collector writes develop and main), and the `pnpm-lock.yaml` conflict every merge of `main` brings, regenerated never hand-resolved.
 ---
 
 # Git Conventions

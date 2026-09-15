@@ -1,11 +1,11 @@
 ---
 name: skill-authoring
-description: Esposter skill-writing conventions for .agents/skills — a Settled list of the directions already rejected (shaving prose to land under the size ceiling, a second size number below it, raising size or prose volume as a finding instead of running the split, giving another skill's subject a reference page here, recording a one-off as context worth preserving, restating what an enforcer checks, citing a page as a markdown link, diagramming a rule list, and keeping a learning in private memory), one owner per topic (with a repo skill outranking a plugin skill of the same name), capturing session learnings into the owning skill in the same session and fixing a stale claim empirically instead of obeying it, not restating what an enforcer already checks, the two-tier layout where a skill is one isolated concept and the sweep's budget warning is the only split trigger, and citing a page by its repo-relative path rather than a link — plus deep dives on the frontmatter that drives selection, on what a skill may record at all (the reproducible-pattern test, generic placeholders, the rule rather than the roster), on giving a rule a decidable shape rather than an intent (a fixed heading, a fixed opening or prefix, a registry) and normalising the corpus as part of adopting it, on the Settled list a domain with rejected directions carries, on what forces a genuine exception, on splitting a skill and what the ceiling it answers to is measured in, on when a cycle earns a diagram, and on the embedded recipes that move out to tested scripts. Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in.
+description: Apply when creating, editing, splitting, merging, or reviewing any SKILL.md, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in. Esposter skill-writing conventions for .agents/skills — a Settled list (shaving prose under the size ceiling, a second size number, size as a finding, another skill's subject as a reference page here, a one-off as context, restating an enforcer, markdown links, diagramming a rule list, private memory, a description that indexes the body, paths: frontmatter, a hand-maintained copy of what the tree or git holds), one owner per topic, capturing session learnings in the owning skill, the two-tier SKILL.md and references/ layout, citing a page by its repo path, and the surfaces a script derives — plus deep dives on the frontmatter (a trigger-first description inside the listing's cap), what a skill may record, decidable shapes, Settled lists, exceptions, splitting a skill, diagrams, and embedded recipes.
 ---
 
 # Skill Authoring
 
-How to write and maintain a `.agents/skills/*/SKILL.md`. The ownership map of which skill owns what lives in `.agents/skills/README.md`; this skill owns how any one skill is written.
+How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what is read off each skill's `description`, with the boundaries no description settles in `.agents/skills/README.md`; this skill owns how any one skill is written.
 
 ## Settled — do not re-propose
 
@@ -18,6 +18,9 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. The ownership map of wh
 - **Citing a page as a markdown link** — a relative hop or a `github.com/.../blob/...` url. Nothing resolves a link out of a skill; the repo-relative path in backticks is what a reader greps ("Cite a page by its repo path").
 - **A diagram to make a rule list scannable.** A diagram of a list is decoration; only an ordered cycle with a gate earns one (`references/diagrams.md`).
 - **Keeping a session's learning in private memory or the conversation** rather than the owning skill. It dies with the session that learned it ("Capture session learnings here").
+- **A `description` that enumerates the body's sections.** The listing shows a fixed prefix of it and a trigger written last is the first thing cut, and every section edit becomes a description edit too. The trigger opens it, the domain is a sentence, and the body indexes itself with its headings (`references/frontmatter.md`).
+- **Scoping a skill with `paths:` frontmatter.** Claude Code then loads it only while a file matching the globs is being worked on, so a question asked with no file in hand never loads it. Which skills a review window's files hit is the `code-review` skill's routing table, and that table is a rule rather than a copy of anything.
+- **A hand-maintained copy of a fact the tree or git already holds** — a roster of the skills, a ledger row's date, a citation's path after a move. It drifts the moment the fact changes and nothing fails; a script derives it ("What a script derives, nobody maintains").
 
 ## One owner per topic
 
@@ -26,14 +29,14 @@ A rule lives in exactly **one** skill. Other skills reference it with a one-line
 - When a rule could fit two skills, it belongs to the **most specific** owner.
 - A skill that finds itself explaining another skill's topic to set up its own point should link and move on.
 - **A pointer earns its place only when it saves real duplication.** Don't redirect to a section the reader reaches by reading on, and don't replace a self-sufficient one-liner with a "see X" link.
-- If a rule fits **no** skill, that's a missing skill — create one rather than overloading an unrelated one. Check `.agents/skills/README.md` first.
+- If a rule fits **no** skill, that's a missing skill — create one rather than overloading an unrelated one. Read the descriptions first.
 - **Installed plugin skills are in the same namespace, and a repo skill outranks one wherever their subjects meet.** A plugin ships general practice; a repo skill states what this repo actually does, so it wins — but only if it says so, because a model picking between two descriptions has nothing else to go on. The repo skill names the plugin one in its own exclusion list rather than trusting the general one to defer, and a plugin skill covering a subject no repo skill owns is left alone. The collision that matters most is a shared **name**: two skills called `code-review` are one wrong pick away from a review that never ran the workflow.
 
 ## Capture session learnings here, not in private memory
 
 When a session discovers or corrects a convention — a shared primitive that must be reused instead of hand-rolled, a lifecycle rule behind a bug class, a claim in an existing skill that turned out to be stale — it lands in the owning skill **in the same session**, not in an assistant's private memory or the conversation. Skills are the compounding layer: they are what every future session, model, and background agent loads; a lesson recorded anywhere else dies with the session that learned it.
 
-- Adding a section is also a frontmatter edit — the `description` must gain the new topic or selection never surfaces it.
+- A learning that changes what the skill is for — its trigger or its domain — is also a frontmatter edit (`references/frontmatter.md`).
 - **A skill claim contradicted by evidence gets verified empirically and fixed, never obeyed.** Run the enforcer, reproduce the behavior, then correct the line — a stale rule that keeps being followed compounds exactly like a good one.
 
 ## Don't restate what an enforcer already checks
@@ -72,15 +75,11 @@ never as a path into `.agents/skills/`.
 
 ## The frontmatter drives selection — `references/frontmatter.md`
 
-The `description` is the only thing read when deciding whether to load a skill, so it is an index of the body rather than a slogan — and every section added, deleted or moved is a description edit. **Writing or revising one** is that page.
+The `description` is the only thing read when deciding whether to load a skill, and the listing shows a fixed prefix of it. So it opens `Apply when …`, names the domain in a sentence, and stays inside the cap `ai:sweep:skill-docs` holds it to — never an index of the body's sections, which is what the headings are for. **Writing or revising one** is that page.
 
-## What is worth writing down at all — `references/what-belongs.md`
+## What a script derives, nobody maintains — `references/derived-surfaces.md`
 
-A skill holds what a reader applies again to different code; git holds what happened once. **Deciding whether a learning belongs here**, what it may name, and why a count or a roster is not a rule, is that page.
-
-## A rule gets a shape, not an intent — `references/enforceable-shapes.md`
-
-A convention stated as an intent can only be judged; one stated as a shape — a fixed heading, a fixed opening or prefix, a registry the code indexes — can be decided, and the three forms this repo uses are the same three a check reads for free. **Writing or revising any convention a check could own**, and why normalising the existing corpus is part of adopting the shape rather than a follow-up, is that page.
+The `docs` skill's rule — never write down what the repo can count — applies to the agent tree too. **Before writing any table, list, roster or date by hand**, which surfaces a script already derives and what to write instead, is that page.
 
 ## A rejected direction goes in a list — `references/settled-lists.md`
 

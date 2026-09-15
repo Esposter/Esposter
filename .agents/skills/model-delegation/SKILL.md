@@ -1,6 +1,6 @@
 ---
 name: model-delegation
-description: Esposter model-delegation conventions — the main session does all thinking (specs, proposals, architecture, review); mechanical implementation is delegated to background subagents with self-contained prompts, but a reading pass over a whole tree stays in the main session because delegation is priced by files read rather than files changed. Apply when deciding whether to implement in-session or delegate, and when writing a delegation prompt.
+description: Apply when deciding whether to implement in-session or delegate, and when writing a delegation prompt. Esposter model-delegation conventions — the main session does all thinking (specs, proposals, architecture, review); mechanical implementation is delegated to background subagents with self-contained prompts, but a reading pass over a whole tree stays in the main session because delegation is priced by files read rather than files changed.
 ---
 
 # Model Delegation — The Main Session Thinks, Subagents Implement

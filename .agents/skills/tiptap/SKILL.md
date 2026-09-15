@@ -1,6 +1,6 @@
 ---
 name: tiptap
-description: Esposter Tiptap/ProseMirror conventions — suggestion extensions, plugin key uniqueness, VueRenderer v-show rule, and SuggestionTrigger enum. Apply when writing or modifying Tiptap extensions, suggestion lists, or editor composables.
+description: Apply when writing or modifying Tiptap extensions, suggestion lists, or editor composables. Esposter Tiptap/ProseMirror conventions — suggestion extensions, plugin key uniqueness, VueRenderer v-show rule, and SuggestionTrigger enum.
 ---
 
 # Tiptap Conventions

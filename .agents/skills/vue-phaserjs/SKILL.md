@@ -1,6 +1,6 @@
 ---
 name: vue-phaserjs
-description: Esposter vue-phaserjs integration patterns — the four files every game object component takes and what is deliberately absent, markRaw for Phaser objects in Pinia stores, configuration Pick pattern, all-configuration-keys-present-at-setup. Apply when writing Phaser game objects, stores, or vue-phaserjs components.
+description: Apply when writing Phaser game objects, stores, or vue-phaserjs components. Esposter vue-phaserjs integration patterns — the four files every game object component takes and what is deliberately absent, markRaw for Phaser objects in Pinia stores, configuration Pick pattern, all-configuration-keys-present-at-setup.
 ---
 
 # vue-phaserjs Conventions

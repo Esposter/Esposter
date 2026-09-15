@@ -1,6 +1,6 @@
 ---
 name: slash-commands
-description: Esposter slash command conventions — parameter definitions, execution modes, the chip-based parameter UI and its safeParse/setErrors validation, message formatting, adding new commands, and SlashCommandDefinitionMap being the inventory rather than any page that mirrors it (plus the two shapes the map cannot show — a command that posts nothing, and inline parameters versus a dialog being alternatives). Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components.
+description: Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components. Esposter slash command conventions — parameter definitions, execution modes, the chip-based parameter UI and its safeParse/setErrors validation, message formatting, adding new commands, and SlashCommandDefinitionMap being the inventory rather than any page that mirrors it (plus the two shapes the map cannot show — a command that posts nothing, and inline parameters versus a dialog being alternatives).
 ---
 
 # Slash Command Conventions

@@ -1,6 +1,6 @@
 ---
 name: invariants
-description: How a rule that must hold in many places is made to hold — by construction (the wrong call cannot be written), then structurally (one primitive does it for every caller), then by an enforcer (lint rule or test), and only as a last resort by a guard a caller has to remember. Apply when a fix is an `if` check that other call sites will also need, when a bug turns out to be a missing check, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule.
+description: Apply when a fix is an `if` check that other call sites will also need, when a bug turns out to be a missing check, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule. How a rule that must hold in many places is made to hold — by construction (the wrong call cannot be written), then structurally (one primitive does it for every caller), then by an enforcer (lint rule or test), and only as a last resort by a guard a caller has to remember.
 ---
 
 # Invariants

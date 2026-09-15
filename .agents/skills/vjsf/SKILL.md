@@ -1,6 +1,6 @@
 ---
 name: vjsf
-description: Esposter vjsf form-schema conventions — the separate *Form interface/schema (never the entity schema), layout meta (comp/getItems/getProps), ajv keywords for cross-field validation, discriminated-union form quirks (variant titles, .readonly() discriminants, passing the union straight to Vjsf), the getItems context and VjsfOptions typing, *TypeFormSchemaMap for dirty-state narrowing, and inline json-schema snapshot tests. Apply when writing a schema rendered by Vjsf, a vjsf-backed form dialog, or its options/context.
+description: Apply when writing a schema rendered by Vjsf, a vjsf-backed form dialog, or its options/context. Esposter vjsf form-schema conventions — the separate *Form interface/schema (never the entity schema), layout meta (comp/getItems/getProps), ajv keywords for cross-field validation, discriminated-union form quirks (variant titles, .readonly() discriminants, passing the union straight to Vjsf), the getItems context and VjsfOptions typing, *TypeFormSchemaMap for dirty-state narrowing, and inline json-schema snapshot tests.
 ---
 
 # Vjsf Form Schemas
