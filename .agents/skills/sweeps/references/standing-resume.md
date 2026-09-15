@@ -43,6 +43,11 @@ git show --name-only --format= <move> | sort -u > moved
 git log --since=<Last swept date> --name-only --pretty=format: -- '<pathspec>' | sort -u | comm -23 - moved
 ```
 
+**The move also hides everything before it.** A pathspec on the new path matches no commit that touched the old
+one, so a resume dated before a relocation reports only what changed after it — `apps/web/shared/models` since a
+date before the workspace move answered a tenth of its real set until `packages/app/shared/models` was passed
+beside it. Pass both paths for any window that straddles a move, and map the old prefix onto the new before dedupe.
+
 Left unchecked this is the silent scan of `SKILL.md` inverted — rather than reporting nothing and reading as
 clean, it reports everything and reads as a tree nobody can afford to sweep, which is how a row that is four
 files of real work gets deferred as several sittings.
