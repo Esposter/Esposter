@@ -15,7 +15,7 @@ splits at `services/exec`'s subdirectories.
 | `azure`, `azure-mock`                                                                               | 2026-09-05 |                                                        |
 | `db`, `db-schema`, `db-mock`                                                                        | 2026-09-05 |                                                        |
 | `shared`, `shared-node`                                                                             | 2026-09-05 |                                                        |
-| `parse-tmx`, `xml2js`                                                                               | 2026-09-05 |                                                        |
+| `parse-tmx`, `xml2js`                                                                               | 2026-09-15 |                                                        |
 | `vue-phaserjs`                                                                                      | 2026-09-05 |                                                        |
 | `configuration`, `infra`                                                                            | 2026-09-15 |                                                        |
 | `keyframe-store`                                                                                    | —          |                                                        |
