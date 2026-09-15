@@ -18,6 +18,7 @@ export const setupRoomSuite = () => {
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
+  const name = "name";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -26,7 +27,7 @@ export const setupRoomSuite = () => {
   });
 
   beforeEach(async () => {
-    const room = await roomCaller.createRoom({ name: "name" });
+    const room = await roomCaller.createRoom({ name });
     roomId = room.id;
   });
 
@@ -52,7 +53,7 @@ export const setupRoomSuite = () => {
 
   const setupMemberWithRole = async (permissions: bigint, position: number) => {
     const member = await createMember();
-    const role = await roleCaller.createRole({ name: crypto.randomUUID(), permissions, position, roomId });
+    const role = await roleCaller.createRole({ name, permissions, position, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: member.id });
     return { member, role };
   };

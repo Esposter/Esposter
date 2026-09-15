@@ -6,6 +6,7 @@ import type { User } from "better-auth";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { createMentionMessage } from "@@/server/trpc/routers/createMentionMessage.test";
+import { createRoomMember } from "@@/server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
@@ -23,9 +24,7 @@ describe("userToRoomRouter", () => {
   // Creates a room as the owner plus a second member whose mention count the tests exercise.
   const setupMentionedMember = async () => {
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
-    const { user: member } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInvite.id);
+    const member = await createRoomMember(mockContext, newRoom.id);
     await messageCaller.createMessage({ message: createMentionMessage(member.id), roomId: newRoom.id });
     return { member, roomId: newRoom.id };
   };
