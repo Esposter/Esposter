@@ -1,7 +1,7 @@
 # Splitting a Skill
 
-Read when a `SKILL.md` has passed its budget and a section is moving out, or when creating a `references/` page.
-The two-tier layout, the budget itself and the index-line rule are in `SKILL.md`; this page is the mechanics of
+Read when a `SKILL.md` holds a second concept and a section is moving out, or when creating a `references/` page.
+The two-tier layout, the ceiling itself and the index-line rule are in `SKILL.md`; this page is the mechanics of
 the move.
 
 ## What qualifies
