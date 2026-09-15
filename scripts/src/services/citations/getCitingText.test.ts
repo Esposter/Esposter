@@ -22,6 +22,14 @@ describe(getCitingText, () => {
     expect(getCitingText("`a`\n  ```\n  `b`\n  ```\n`c`")).toBe("`a`\n\n`c`");
   });
 
+  // A backtick fence's info string cannot hold a backtick, so this line opens no block — read as one, it drops
+  // Every citation up to the page's next fence
+  test("keeps the citations after a line whose backticked info string is no fence opener", () => {
+    expect.hasAssertions();
+
+    expect(getCitingText("```a``` `b`\n`c`\n```\n`d`")).toBe(" `b`\n`c`\n```\n`d`");
+  });
+
   test("drops a tilde fence", () => {
     expect.hasAssertions();
 
