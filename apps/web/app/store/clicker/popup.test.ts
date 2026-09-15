@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import { POPUP_DURATION_MS } from "@/services/clicker/constants";
 import { usePopupStore } from "@/store/clicker/popup";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -11,9 +12,6 @@ vi.mock(import("@/store/colors"), () => ({
 }));
 
 describe(usePopupStore, () => {
-  // The store schedules the removal with the same duration the popup animates for, so anything past it is
-  // Long enough for the timer to have fired
-  const POPUP_DURATION_MS = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
   const event = new MouseEvent("click");
 
   beforeEach(() => {
