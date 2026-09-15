@@ -92,7 +92,8 @@ flowchart TD
   M -->|no| U[Undo that pick — it is the first held commit]
   U --> RD
   H --> RD{Ready}
-  RD -->|no| W[Wait — nothing pushed, fixes stay parked]
+  RD -->|no, a later window takes them| W[Wait — nothing pushed, fixes stay parked]
+  RD -->|no fixes and the first queue commit is held| F[Fail red — the session rebases or splits it]
   RD -->|yes, nothing to add, no PR open| OP[Open the release PR]
   RD -->|yes| FM[Fold main in<br/>lockfile rebuilt] --> FC{The fold fits the cap}
   FC -->|yes| P[Push — unverified, develop's CI is the check]

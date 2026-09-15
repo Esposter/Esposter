@@ -48,7 +48,7 @@ flowchart LR
 
 **The trigger and the runner it calls sit on different refs, so what they agree on is what a release lag can break.** That contract is the file name, the `force` input and the queue branch spelled in four places — held to the constant by `scripts/src/services/coderabbit/collect/queueBranch.test.ts` — and nothing else; the secrets are inherited, never named (Notes). A trigger added to the shell still waits for a release before it fires on statuses and comments.
 
-**No `schedule`.** [No polling](/docs/architecture/no-polling) is the standing rule, and every trigger above is a webhook the platform delivers. The one state change that reports none is a rate limit lifting, and the retrigger below answers it with a scheduled delivery rather than a loop.
+**No `schedule`.** [No polling](/docs/architecture/no-polling) is the standing rule, and every automatic trigger above is a webhook the platform delivers — `workflow_dispatch` is the manual nudge, delivered because a person asked. The one state change that reports none is a rate limit lifting, and the retrigger below answers it with a scheduled delivery rather than a loop.
 
 ## The delayed retrigger
 
@@ -77,7 +77,7 @@ sequenceDiagram
 
 ## The job
 
-The `collect` job carries the concurrency group (`review-collector`, never cancelling in progress): every run waits for the one ahead and re-reads the remote, and cancelling a run mid-push would be the only way to lose work. The group sits on the job rather than the workflow so the retrigger's wait never holds it; the retrigger has a group of its own that does cancel, since a newer run carries the newer deadline, and runs on the built-in token with `actions: write` alone — a `workflow_dispatch` is the one event that token may start.
+The `collect` job carries the concurrency group (`review-collector`, never cancelling in progress): a run waits for the one ahead and re-reads the remote, and cancelling a run mid-push would be the only way to lose work. GitHub holds one run pending per group, so a third arriving while one waits cancels the waiting one — harmless, since every run derives its work from the remote afresh and the newest carries it; the exception is a `--force` dispatch superseded while pending, whose flag no later run inherits, so it is dispatched again. The group sits on the job rather than the workflow so the retrigger's wait never holds it; the retrigger has a group of its own that does cancel, since a newer run carries the newer deadline, and runs on the built-in token with `actions: write` alone — a `workflow_dispatch` is the one event that token may start.
 
 The steps are the warmup workflow's plus what the script needs: a full-history checkout of the `ai/queue` head with the collector's token and `persist-credentials: false`; the dependency setup and a build of `@esposter/shared`; the git identity the fix commits carry and `core.fileMode false`, because the install flips an executable bit that would read as a dirty tree; the `trust-workspace` action; then `gh auth setup-git` and `pnpm ai:coderabbit:collect`, with `--force` when the dispatch says so.
 

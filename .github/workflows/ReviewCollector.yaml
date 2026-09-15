@@ -1,8 +1,9 @@
 name: ♻️ Review Collector
 
 # The garbage collector of the review budget (docs: infra/review-collector): allocation and freeing run the same
-# idempotent cycle. No `schedule` — every trigger is a webhook the platform delivers, and the one state change
-# that sends none, a rate limit lifting, is the called workflow's `retrigger` job.
+# idempotent cycle. No `schedule` — every automatic trigger is a webhook the platform delivers (`workflow_dispatch`
+# is the manual nudge), and the one state change that sends none, a rate limit lifting, is the called workflow's
+# `retrigger` job.
 on:
   push:
     branches:
