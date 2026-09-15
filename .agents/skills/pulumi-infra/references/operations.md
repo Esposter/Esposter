@@ -81,5 +81,5 @@ at and diagnose.
 
 The trap is what happens meanwhile: the **old** subscription keeps delivering to a name the code no longer
 registers, and every event dead-letters silently, because nothing alerts off the deadletter container
-([observability is off](/docs/infra/observability)). So when a rename touches a function an event subscription
+(observability is off — `apps/web/content/docs/infra/observability.md`). So when a rename touches a function an event subscription
 names, check that container's recency — it is the only place the breakage shows.
