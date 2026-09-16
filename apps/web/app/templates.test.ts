@@ -126,10 +126,10 @@ describe("attributify", () => {
       walkElements(ast, ({ props }) => {
         for (const prop of props)
           if (
-            prop.type === DIRECTIVE_NODE_TYPE &&
+            prop.type === NodeTypes.DIRECTIVE &&
             prop.name === "bind" &&
-            prop.arg?.type === 4 &&
-            EMPTY_BRANCH_REGEX.test(prop.exp?.type === 4 ? prop.exp.content : "")
+            prop.arg?.type === NodeTypes.SIMPLE_EXPRESSION &&
+            EMPTY_BRANCH_REGEX.test(prop.exp?.type === NodeTypes.SIMPLE_EXPRESSION ? prop.exp.content : "")
           )
             boundNames.add(prop.arg.content);
       });
@@ -203,9 +203,9 @@ describe("vuetify lengths", () => {
           else if (
             prop.type === NodeTypes.DIRECTIVE &&
             prop.name === "bind" &&
-            prop.arg?.type === 4 &&
+            prop.arg?.type === NodeTypes.SIMPLE_EXPRESSION &&
             LENGTH_PROPS.has(prop.arg.content) &&
-            NUMBER_REGEX.test(prop.exp?.type === 4 ? prop.exp.content : "")
+            NUMBER_REGEX.test(prop.exp?.type === NodeTypes.SIMPLE_EXPRESSION ? prop.exp.content : "")
           )
             bareLengths.push(`${templatePath}: <${tag} :${prop.arg.content}>`);
       });
@@ -239,8 +239,8 @@ describe("vuetify defaults", () => {
           } else if (
             prop.type === NodeTypes.DIRECTIVE &&
             prop.name === "bind" &&
-            prop.arg?.type === 4 &&
-            prop.exp?.type === 4
+            prop.arg?.type === NodeTypes.SIMPLE_EXPRESSION &&
+            prop.exp?.type === NodeTypes.SIMPLE_EXPRESSION
           ) {
             const defaultValue = componentDefaults[toCamelCase(prop.arg.content)];
             if (defaultValue !== undefined && JSON.stringify(defaultValue) === prop.exp.content.replaceAll("'", '"'))
