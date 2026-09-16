@@ -14,7 +14,7 @@ The claim is one trailer line, `Express: <one sentence on why nothing in it need
 - **The reshaper**, on the parts of an over-cap commit it judged need no review — the commit's author is asked for nothing ([sync](/docs/infra/review-collector/collection-cycle)).
 - **A session**, on a commit it knows to be a sweep's moves or a format pass, which skips the reshaper's session outright.
 
-A claim is never a proof. Nothing reads it as true, only as asked: what admits the commit to `main` is the checks — install, format, the package builds, typecheck, both linters and the tests (`EXPRESS_VERIFY_COMMANDS`) — run on the cut as it would land, and a red cut takes the review lane instead. The app build alone is left to `main`'s own CI: it is the longest job there, and nothing a cut ships waits on it.
+A claim is never a proof. Nothing reads it as true, only as asked: what admits the commit to `main` is the checks — install, format, the package builds, typecheck, both linters and the tests (`EXPRESS_VERIFY_COMMANDS`) — run on the cut as it would land. A red cut takes no window either: it is noted on the commits it carried and tried again every run. The app build alone is left to `main`'s own CI: it is the longest job there, and nothing a cut ships waits on it.
 
 ```mermaid
 flowchart TD
