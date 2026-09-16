@@ -40,7 +40,7 @@ Read it when adding a command, a sub-command or a plugin under the repo-root `sc
 
 ## Cross-package placement — `references/cross-package-placement.md`
 
-Read it before adding a module or constant to a shared package, relocating an existing one for symmetry, or implementing behaviour a second package needs. In short: **a shared package is for code with ≥2 consuming packages** — name the second consumer or leave the code beside its sole one, and when a second appears move the implementation rather than writing another. The home is the lowest package both already depend on; `scripts/src/workspace/sharedExportConsumers.test.ts` fails on an export of `packages/shared` fewer than two packages name. The page also owns the client/node cross-realm exception, env-reading scripts, and the domain-package rule for Azure helpers.
+Read it before adding a module or constant to a shared package, relocating an existing one for symmetry, or implementing behaviour a second package needs. In short: **a shared package is for code with ≥2 consuming packages** — name the second consumer or leave the code beside its sole one, and when a second appears move the implementation rather than writing another. The home is the lowest package both already depend on; `scripts/src/workspace/sharedExportConsumers.test.ts` fails on an export of `packages/shared` fewer than two packages name — unless another file in the package reads it, which makes it a piece of one that does clear the threshold. The page also owns the client/node cross-realm exception, env-reading scripts, and the domain-package rule for Azure helpers.
 
 ## Symlinks — `references/symlinks.md`
 

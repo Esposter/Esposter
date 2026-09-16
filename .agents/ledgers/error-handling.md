@@ -44,16 +44,12 @@
 | `packages/keyframe-store`                                        | 2026-09-14 | the store hands back a `ResultAsync` its caller terminates                            |
 | `packages/configuration`                                         | 2026-09-14 | builds before `@esposter/shared`, so its throws are bare `Error`s by necessity        |
 
-The mechanical half — no `try`/`catch`, no `.isOk`/`.isErr`, no `new Error` outside `toAppError` and
-`requireAuthData`, no `console.warn` handed to a handler — is lint (`error-handling/no-bare-error` and the
-`no-restricted-syntax` selectors); every `getResult` chain terminated is the scan below. What
+The mechanical half — no `try`/`catch`, no `.isOk`/`.isErr`, no bare `new Error` outside the sites the
+`error-handling` skill exempts, no `console.warn` handed to a handler — is lint (`error-handling/no-bare-error`
+and the `no-restricted-syntax` selectors); every `getResult` chain terminated is the scan below. What
 the rows are for is the half no grep sees: what a chain wraps, and who alerts.
 
 ## Find recipe
-
-```bash
-
-```
 
 A chain that never terminates cannot be grepped for. A line-anchored `getResult(Async)?\(` reports all 234 call
 sites, and a fixed-size window around one calls the ~40 whose body runs long a finding — the terminator sits
@@ -104,9 +100,9 @@ local writes has nothing to terminate.
 
 What a program decides here it now decides: `try`/`catch`, `.isOk`/`.isErr` and `console.warn` handed to a
 handler slot are `no-restricted-syntax`; a bare `new Error` is `error-handling/no-bare-error`
-(`scripts/src/oxlint/errorHandling.ts`), off only at the mechanism's own sites — the stubs, the package that builds
-before `@esposter/shared`, `toAppError` and the tests that reject a mock with one; a raw alert in a script block is
-`error-alert/no-raw-error-alert`. What is left stays a reading pass, for these reasons:
+(`scripts/src/oxlint/errorHandling.ts`), off only at the sites the `error-handling` skill lists, which are the
+ones the mechanism cannot use itself; a raw alert in a script block is `error-alert/no-raw-error-alert`. What is
+left stays a reading pass, for these reasons:
 
 - **An unterminated `Result`** needs the value's type, and nothing type-aware runs in either linter (`oxlint`
   skill); `pnpm ai:sweep:unterminated-results` is the scan, and it reads the code after the bracket rather than a
