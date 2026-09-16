@@ -66,7 +66,7 @@
     },
     {
       "automerge": true,
-      "description": "A digest bump has no version to read, so it lands on the same branch automerge the minor/patch rule above gives everything else.",
+      "description": "A Docker digest bump has no version to read, so it lands on the same branch automerge the minor/patch rule above gives everything else. An action's digest is left out on purpose: its tag carries a version, so a digest that moves under the same version is a re-pointed tag — the shape a SHA pin exists to catch — and it opens a PR for a person.",
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["digest", "pinDigest"]
     }
