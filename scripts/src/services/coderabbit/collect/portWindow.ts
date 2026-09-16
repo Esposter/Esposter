@@ -2,12 +2,11 @@ import type { PortInput } from "#src/models/coderabbit/collect/PortInput";
 import type { PortResult } from "#src/models/coderabbit/collect/PortResult";
 
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
-import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { getWindowFileCount } from "#src/services/coderabbit/collect/getWindowFileCount";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { readExpressShas } from "#src/services/coderabbit/collect/readExpressShas";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
-import { readTrailerValues } from "#src/services/coderabbit/collect/readTrailerValues";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -17,10 +16,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The one that last wrote a body, so a window pushed on top of an unreviewed one is read as a single range. A
 // Commit alone over the cap never reaches here unheld — the sync reshapes it first — so a hold is the residual
 // Case: a reshaping or a resolution past its attempt cap.
-export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixesSha }: PortInput): PortResult => {
+export const portWindow = ({ cwd, developSha, fixShas, frontierSha, queueSha }: PortInput): PortResult => {
   runGit(["switch", "--detach", developSha], cwd);
 
-  const fixShas = reviewFixesSha ? readCherryShas(developSha, reviewFixesSha, cwd) : [];
   for (const sha of fixShas)
     if (pickCommit(sha, cwd) === PickOutcome.Conflict)
       throw new InvalidOperationError(Operation.Update, "coderabbit", `fix ${sha} conflicts with develop`);
@@ -34,12 +32,14 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
   // Owed against the tree the fixes built, not develop: a queue rebased onto `ai/review-fixes` carries the fix
   // Commits as ancestors, and against develop they would be re-picked onto a tree that already holds them
   const fixesHeadSha = readHeadSha(cwd);
+  const owedShas = readCherryShas(fixesHeadSha, queueSha, cwd);
+  const claimedShas = readExpressShas(owedShas, cwd);
   const queueShas: string[] = [];
   let heldSha: string | undefined;
-  for (const sha of readCherryShas(fixesHeadSha, queueSha, cwd)) {
+  for (const sha of owedShas) {
     // A commit claiming no review is the express lane's, never a window's: the lane cuts it onto `main` when it
     // Applies and passes the checks, and a red one is told on the commit — either way nothing behind it waits
-    if (readTrailerValues(sha, EXPRESS_TRAILER, cwd).length > 0) continue;
+    if (claimedShas.has(sha)) continue;
     const outcome = pickCommit(sha, cwd);
     if (outcome === PickOutcome.Conflict) {
       heldSha = sha;

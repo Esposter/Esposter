@@ -12,7 +12,7 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
-import { readTrailerValues } from "#src/services/coderabbit/collect/readTrailerValues";
+import { readExpressShas } from "#src/services/coderabbit/collect/readExpressShas";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
@@ -94,10 +94,10 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, "HEAD");
-    const reviewFixesSha = publish(REVIEW_FIXES_BRANCH, commitFile(filePath, ""));
+    const owingFixesSha = publish(REVIEW_FIXES_BRANCH, commitFile(filePath, ""));
     switchTo(developSha);
     const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, ""));
-    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha, reviewFixesSha });
+    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, owingFixesSha, queueSha });
 
     assert.exists(syncedSha);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath, filePath]);
@@ -295,7 +295,8 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       `parent of ${oversizedSha}, a commit on \`ai/queue\` that changes ${REVIEW_FILE_CAP + 1} files`,
     );
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, "rule", "moves"]);
-    expect(readTrailerValues(`${syncedSha}~2`, EXPRESS_TRAILER, getCwd())).toStrictEqual([TEST_FILENAME]);
+    const claimedSha = readSha(`${syncedSha}~2`);
+    expect(readExpressShas([claimedSha], getCwd())).toStrictEqual(new Set([claimedSha]));
     expect(runGit(["diff", queueSha, syncedSha], getCwd())).toBe("");
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });

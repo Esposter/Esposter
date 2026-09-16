@@ -2,11 +2,10 @@ import type { ExpressInput } from "#src/models/coderabbit/collect/ExpressInput";
 import type { ExpressResult } from "#src/models/coderabbit/collect/ExpressResult";
 
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
-import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { readExpressShas } from "#src/services/coderabbit/collect/readExpressShas";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
-import { readTrailerValues } from "#src/services/coderabbit/collect/readTrailerValues";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 
 // The express lane: a commit that claims it needs no review — the trailer the reshaper writes on the parts it
@@ -16,9 +15,9 @@ import { runGit } from "#src/services/coderabbit/shared/runGit";
 // Patch needs an unported one cannot apply, which is how dependency is enforced — never an ancestry check.
 export const portExpress = ({ cwd, developSha, mainSha, queueSha }: ExpressInput): ExpressResult => {
   const owedToDevelop = new Set(readCherryShas(developSha, queueSha, cwd));
-  const expressShas = readCherryShas(mainSha, queueSha, cwd).filter(
-    (sha) => owedToDevelop.has(sha) && readTrailerValues(sha, EXPRESS_TRAILER, cwd).length > 0,
-  );
+  const owedToMain = readCherryShas(mainSha, queueSha, cwd);
+  const claimedShas = readExpressShas(owedToMain, cwd);
+  const expressShas = owedToMain.filter((sha) => owedToDevelop.has(sha) && claimedShas.has(sha));
   if (expressShas.length === 0) return { shas: [] };
 
   runGit(["switch", "--detach", mainSha], cwd);

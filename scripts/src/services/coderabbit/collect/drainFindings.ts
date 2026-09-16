@@ -17,7 +17,6 @@ import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
-import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
@@ -35,7 +34,7 @@ import { join } from "node:path";
 // Own session limit is the one non-zero exit that is not this review's failure: its deadline goes into a marker
 // Comment every run reads until it lifts.
 export const drainFindings = async ({
-  developSha,
+  baseSha,
   issueComments,
   newestReviewId,
   reviewFixesSha,
@@ -59,8 +58,6 @@ export const drainFindings = async ({
     return { isLimited: false, reviewFixesSha };
   }
 
-  const baseSha =
-    reviewFixesSha !== undefined && readCherryShas(developSha, reviewFixesSha).length > 0 ? reviewFixesSha : developSha;
   runGit(["switch", "--force-create", REVIEW_FIXES_BRANCH, baseSha]);
   // The tree the drain's own checks run against is this base, not the one the event checked out (`INSTALL_COMMAND`)
   if (spawnPnpm(INSTALL_COMMAND, { cwd: REPOSITORY_ROOT, stdio: "inherit" }).status !== 0)

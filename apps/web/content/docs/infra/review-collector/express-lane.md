@@ -36,11 +36,11 @@ flowchart TD
 
 ## Key files
 
-| File                                                           | Role                                                           |
-| :------------------------------------------------------------- | :------------------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect/runExpressLane.ts`    | the lane as one step of the cycle — build, verify, push        |
-| `scripts/src/services/coderabbit/collect/portExpress.ts`       | which owed commits claim the lane, and the candidate on `main` |
-| `scripts/src/services/coderabbit/collect/readTrailerValues.ts` | the claim, read off the commit                                 |
+| File                                                         | Role                                                           |
+| :----------------------------------------------------------- | :------------------------------------------------------------- |
+| `scripts/src/services/coderabbit/collect/runExpressLane.ts`  | the lane as one step of the cycle — build, verify, push        |
+| `scripts/src/services/coderabbit/collect/portExpress.ts`     | which owed commits claim the lane, and the candidate on `main` |
+| `scripts/src/services/coderabbit/collect/readExpressShas.ts` | which of an owed set claim the lane, in one read               |
 
 ## Notes
 

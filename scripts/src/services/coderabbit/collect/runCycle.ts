@@ -25,6 +25,7 @@ import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
+import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readReleasePullRequest } from "#src/services/coderabbit/collect/readReleasePullRequest";
 import { readReleaseState } from "#src/services/coderabbit/collect/readReleaseState";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
@@ -140,11 +141,15 @@ export const runCycle = async ({
       if (judged) return judged;
     }
   }
+  // What the fixes branch still owes develop, settled once the drain has finished moving it: the sync replays the
+  // Queue onto that tree and the port builds the window on top of the same commits, so both read one answer
+  const fixShas = reviewFixesSha === undefined ? [] : readCherryShas(developSha, reviewFixesSha, cwd);
+  const owingFixesSha = fixShas.length > 0 ? reviewFixesSha : undefined;
   // The queue is rebuilt on the tree the window is built on before the port reads it, so a conflict is met here
   // Once rather than held on every run
-  const syncedQueueSha = await syncQueue({ cwd, developSha, isDryRun, queueSha, reviewFixesSha, viewerLogin });
+  const syncedQueueSha = await syncQueue({ cwd, developSha, isDryRun, owingFixesSha, queueSha, viewerLogin });
   if (syncedQueueSha === undefined) return getMovedOutcome(QUEUE_BRANCH);
-  const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha: syncedQueueSha, reviewFixesSha });
+  const port = portWindow({ cwd, developSha, fixShas, frontierSha: frontier, queueSha: syncedQueueSha });
   // With no pull request open, what `develop` already carries above the merge base is the first review's window
   const pendingCommitCount =
     pullRequest === undefined ? Number(runGit(["rev-list", "--count", `${frontier}..${developSha}`], cwd).trim()) : 0;

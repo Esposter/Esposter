@@ -55,6 +55,8 @@ export const EXPRESS_VERIFY_COMMANDS: string[][] = [
 // `%(trailers:key=…)`, which reads only the last contiguous trailer block.
 export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
 
+export const COMMIT_BODY_FORMAT = "%H%x1F%B%x1E";
+
 // A review whose drain has failed this many times is quarantined: its findings stay open for a person and the
 // Collector ports without them rather than stalling every window behind one finding nobody sees
 export const DRAIN_ATTEMPT_CAP = 3;

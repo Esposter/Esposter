@@ -90,14 +90,10 @@ export const syncQueue = async ({
   cwd,
   developSha,
   isDryRun,
+  owingFixesSha,
   queueSha,
-  reviewFixesSha,
   viewerLogin,
 }: SyncQueueInput): Promise<string | undefined> => {
-  const owingFixesSha =
-    reviewFixesSha !== undefined && readCherryShas(developSha, reviewFixesSha, cwd).length > 0
-      ? reviewFixesSha
-      : undefined;
   const targetSha = owingFixesSha ?? developSha;
   const isOnTarget = checkIsAncestor(targetSha, queueSha, cwd);
   if (isOnTarget) runGit(["switch", "--detach", queueSha], cwd);
