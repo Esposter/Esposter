@@ -3,6 +3,13 @@ packages:
   - packages/*
   - scripts
 
+# A recursive run reports every project's result rather than stopping at the first failure and killing the rest,
+# Because almost every one here is a check: a check reads the tree and produces nothing, so a bailed run hides
+# However many failures sat behind the first, and each one hidden is another full round of fix-and-rerun. The run
+# Still exits non-zero, so nothing is swallowed. `build:packages` is the exception and passes `--bail` itself,
+# Since a later build consumes what an earlier one produced and the failures after it would be that one restated.
+bail: false
+
 allowBuilds:
   "@parcel/watcher": true
   better-sqlite3: true
@@ -181,6 +188,7 @@ catalog:
   msw-trpc: ^2.0.1
   neverthrow: ^8.2.0
   node-html-parser: ^9.0.4
+  npm-run-all2: ^9.0.3
   nuxt: ^4.5.2
   nuxt-security: ^2.6.0
   oxfmt: ^0.68.0

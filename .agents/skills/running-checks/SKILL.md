@@ -53,9 +53,10 @@ startup cost twice (`AGENTS.md`, "Finishing a change").
 
 ## Reading the result
 
-**The verdict is the exit code, never a grep of the output.** The root lint script is three commands chained with
-`&&`, each printing its own summary, and the two that pass print `Found 0 warnings and 0 errors` above the one that
-failed (`oxlint` skill). Read the appended exit line first, then the log for what failed.
+**The verdict is the exit code, never a grep of the output.** The root lint script aggregates one leaf per tool
+and every leaf runs, so a passing one prints `Found 0 warnings and 0 errors` above the one that failed and the
+tail of the log belongs to whichever finished last (`oxlint` skill). Read the appended exit line first, then the
+log for what failed — all of it, since the point of the aggregate is that there may be more than one.
 
 **The exit code is the one in the log, never the one the completion notification carries.** The shape this page
 asks for — `(cmd > log 2>&1; echo "exit $?" >> log)` — makes the subshell's status the `echo`'s, so the
