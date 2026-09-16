@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Apply when running or recommending any pnpm script. Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), a Settled list (no root build:<app> per app, the release as one local script, a renamed export never a major), nuxt typecheck and the root lint as the only checks matching CI, the wrapper exit code a backgrounded run reports, oxfmt formatting markdown tables, the scriptsComments key, the check suite once per chunk with tests scoped to the paths touched, and the pnpm traps (a --filter matching nothing exits 0, pnpm <script> -- <args> drops the args, a workflow runs the script not the binary, a script invoked bare) — plus deep dives on the root scripts, each pnpm trap, running a .ts script under node or tsx, and the ai:sweep:* / ai:coderabbit:* / ai:citations:* catalogue an agent runs.
+description: Apply when running or recommending any pnpm script. Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), a Settled list (no root build:<app> per app, the release as one local script, a renamed export never a major), nuxt typecheck and the root lint as the only checks matching CI, the lint scripts being && chains whose first failure hides the rest, oxfmt formatting markdown tables, the scriptsComments key, the check suite once per chunk with tests scoped to the paths touched, and the pnpm traps (a --filter matching nothing exits 0, pnpm <script> -- <args> drops the args, a workflow runs the script not the binary, a script invoked bare) — plus deep dives on the root scripts, each pnpm trap, running a .ts script under node or tsx, and the ai:sweep:* / ai:coderabbit:* / ai:citations:* catalogue an agent runs.
 ---
 
 # Package Scripts
@@ -33,10 +33,10 @@ strictly less than CI does and reports success while CI fails: the app's real pr
 `.nuxt` tsconfig rather than the one in the package, and a package's `lint` is ESLint alone. Which rules only
 the root pass carries, and when a targeted `oxlint` is still worth running, is the `oxlint` skill's.
 
-A backgrounded run of either reports the _wrapper's_ exit code, which is `0` even when the run inside it
-failed. Read the output for `exited 1` or a `problem`/`error` line rather than trusting the status — and an
-output file that comes back empty is a run that has not flushed yet, never a clean one. Both readings fail the
-same way: a red lint reported as green, pushed.
+Both are `&&` chains, so a failing `oxlint` means `eslint` never runs and every error it would have reported
+stays hidden behind the first one — a chain read as "one error" can be two rounds of them. How a backgrounded
+run's result is read at all, and why the completion notification's exit code is never it, is the
+`running-checks` skill's; an output file that comes back empty is that run not yet flushed, never a clean one.
 
 > `oxfmt` formats markdown too — a table whose cells changed width is realigned by `pnpm format` (or `pnpm exec oxfmt <paths>`
 > for a few files). No prettier binary is installed, so `pnpm exec prettier` fails — and `npx prettier` is not the
