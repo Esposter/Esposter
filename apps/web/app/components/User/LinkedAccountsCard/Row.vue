@@ -22,7 +22,7 @@ const emit = defineEmits<{ link: []; unlink: [] }>();
         size-12
         items-center
         justify-center
-        overflow-hidden
+        of-hidden
         :style="{ backgroundColor: style?.backgroundColor }"
       >
         <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />

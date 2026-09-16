@@ -5,7 +5,7 @@ const isCollapsed = useLocalStorage(LocalStorageKey.MessageSidebarDirectMessages
 </script>
 
 <template>
-  <MessageModelRoomDirectMessageList :is-collapsed overflow-y-auto>
+  <MessageModelRoomDirectMessageList :is-collapsed of-y-auto>
     <template #prepend>
       <MessageLeftSideBarCollapsibleHeader v-model:collapsed="isCollapsed" title="Direct Messages">
         <template #append>

@@ -34,7 +34,7 @@ if (typeof linkError === "string") {
 <template>
   <StyledCard p-2>
     <v-card-title>
-      <div font-bold>Providers</div>
+      <div fw-bold>Providers</div>
       <v-divider mt-2 />
     </v-card-title>
     <!-- Keyed on the accounts rather than a pending flag: until they land every provider would read "Not linked"

@@ -20,7 +20,7 @@ await readMemberRoles({ roomId, userIds: [member.id] });
   <div flex flex-col gap-4>
     <div flex gap-x-3 items-center>
       <StyledAvatar :image="member.image" :name="member.name" />
-      <div font-bold text-title-medium>{{ member.name }}</div>
+      <div fw-bold text-title-medium>{{ member.name }}</div>
     </div>
     <div v-if="allRoles.length === 0" op-medium-emphasis>No roles available.</div>
     <v-list v-else density="compact" rd>

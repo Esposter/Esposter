@@ -21,8 +21,8 @@ const { emoji } = defineProps<Props>();
 <template>
   <div h="[var(--app-bar-height)]" px-3 bg-background flex gap-3 items-center>
     <template v-if="emoji">
-      <span leading-none text-headline-small><StyledEmoji :emoji :skin-tone /></span>
-      <span font-semibold truncate text-body-medium>{{ getEmojiShortcode(emoji.slug) }}</span>
+      <span lh-none text-headline-small><StyledEmoji :emoji :skin-tone /></span>
+      <span fw-semibold truncate text-body-medium>{{ getEmojiShortcode(emoji.slug) }}</span>
     </template>
     <template v-else>
       <slot />

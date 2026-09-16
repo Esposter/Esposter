@@ -9,13 +9,13 @@ const { createFilter } = searchMessageStore;
 </script>
 
 <template>
-  <v-card-title font-extrabold text-title-medium>Search Options</v-card-title>
+  <v-card-title fw-extrabold text-title-medium>Search Options</v-card-title>
   <v-list py-0 density="compact">
     <v-hover v-for="filterType in FilterTypes" :key="filterType" #default="{ isHovering, props }">
       <v-list-item :="props" @click="createFilter(filterType)">
-        <v-list-item-title font-bold>
+        <v-list-item-title fw-bold>
           {{ getFilterKeyword(filterType) }}
-          <span font-semibold op-medium-emphasis>{{ FilterTypePlaceholderMap[filterType] }}</span>
+          <span fw-semibold op-medium-emphasis>{{ FilterTypePlaceholderMap[filterType] }}</span>
         </v-list-item-title>
         <template #append>
           <MessageRightSideBarSearchAddIcon :is-hovering />

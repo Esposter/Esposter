@@ -31,7 +31,7 @@ const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProp
           <v-btn :text="emoji" icon tile m-0 size-10 :="props" @click="selectEmoji(emoji)" />
         </template>
         <div text-center flex flex-col>
-          <div font-bold>{{ getEmojiDescription(emoji) }}</div>
+          <div fw-bold>{{ getEmojiDescription(emoji) }}</div>
           <div>Click to react</div>
         </div>
       </v-tooltip>

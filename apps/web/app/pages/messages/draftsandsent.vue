@@ -16,11 +16,11 @@ await readDraftsAndSent();
     </template>
     <v-sheet flex flex-col h-full>
       <div px-6 pt-5 flex flex-col gap-y-4>
-        <h1 font-bold text-headline-small>Drafts & sent</h1>
+        <h1 fw-bold text-headline-small>Drafts & sent</h1>
         <MessageDraftsAndSentTabs v-model="tab" />
       </div>
       <v-divider />
-      <div p-6 flex-1 min-h-0 overflow-y-auto>
+      <div p-6 flex-1 min-h-0 of-y-auto>
         <v-window v-model="tab">
           <v-window-item :value="DraftsAndSentTab.Drafts">
             <MessageDraftsAndSentDraftList />

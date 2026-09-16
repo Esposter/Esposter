@@ -38,7 +38,7 @@ const progressPercentage = computed(() => uploadFileUrl.progress * 100);
           </template>
         </v-progress-linear>
       </v-card>
-      <v-card-text px-4 min-w-0 whitespace-normal break-all text-body-medium>
+      <v-card-text px-4 min-w-0 ws-normal break-all text-body-medium>
         {{ file.filename }}
       </v-card-text>
     </StyledCard>

@@ -36,11 +36,11 @@ const items = computed(
   <div flex flex-col h-full>
     <MessageLeftSideBarHeader />
     <v-divider />
-    <div flex-1 overflow-y-auto>
+    <div flex-1 of-y-auto>
       <v-list-item
         v-for="{ badges, icon, title, value } of items"
         :key="value"
-        font-bold
+        fw-bold
         :active="currentRoute.path === value"
         :prepend-icon="icon"
         :title

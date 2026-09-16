@@ -1,5 +1,5 @@
 <template>
-  <div bg-background flex flex-col size-full overflow-hidden>
+  <div bg-background flex flex-col size-full of-hidden>
     <MessageContentCallStage is-dense />
     <MessageContentCallPictureInPictureControlBar />
   </div>

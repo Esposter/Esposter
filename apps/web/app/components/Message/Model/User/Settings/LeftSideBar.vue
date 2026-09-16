@@ -40,7 +40,7 @@ const scrollToSection = async (section: SettingsSection) => {
             <template #prepend>
               <v-icon :icon="UserSettingsListItemMap[settingsType].icon" />
             </template>
-            <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
+            <v-list-item-title fw-bold>{{ settingsType }}</v-list-item-title>
           </v-list-item>
         </template>
         <v-list-item
@@ -51,7 +51,7 @@ const scrollToSection = async (section: SettingsSection) => {
           density="compact"
           @click="scrollToSection(section)"
         >
-          <v-list-item-title :class="visibleSectionIds.includes(section) ? 'font-bold' : 'op-medium-emphasis'">{{
+          <v-list-item-title :class="visibleSectionIds.includes(section) ? 'fw-bold' : 'op-medium-emphasis'">{{
             section
           }}</v-list-item-title>
         </v-list-item>

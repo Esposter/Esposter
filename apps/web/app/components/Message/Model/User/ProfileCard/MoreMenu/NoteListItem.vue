@@ -15,7 +15,7 @@ const actorName = computed(() => getMemberName(note.actorUserId));
 
 <template>
   <v-list-item>
-    <div whitespace-pre-wrap break-words>{{ note.note }}</div>
+    <div ws-pre-wrap break-words>{{ note.note }}</div>
     <v-list-item-subtitle>{{ actorName }} · <NuxtTime :datetime="note.createdAt" relative /></v-list-item-subtitle>
   </v-list-item>
 </template>

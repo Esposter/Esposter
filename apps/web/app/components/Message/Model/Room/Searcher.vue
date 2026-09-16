@@ -16,7 +16,7 @@ const isOpen = ref(false);
     <template #activator="{ updateIsOpen }">
       <v-btn text="Find or start a conversation" variant="outlined" @click="updateIsOpen(true)" />
     </template>
-    <v-card-text overflow-y-auto>
+    <v-card-text of-y-auto>
       <MessageModelRoomListSearched @update:room="isOpen = false" />
     </v-card-text>
   </StyledSearchDialog>

@@ -37,7 +37,7 @@ const applyLink = () => {
         </template>
       </v-tooltip>
     </template>
-    <v-sheet pa-2 flex gap-x-2 items-center>
+    <v-sheet p-2 flex gap-x-2 items-center>
       <v-text-field
         v-model="linkUrl"
         min-width="16rem"

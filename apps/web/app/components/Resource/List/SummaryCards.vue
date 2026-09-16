@@ -16,7 +16,7 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
 </script>
 
 <template>
-  <div p-4 flex-1 overflow-y-auto>
+  <div p-4 flex-1 of-y-auto>
     <StyledSkeleton v-if="isPending" type="card@3" />
     <StyledErrorState v-else-if="error" :error @retry="emit('retry')" />
     <!-- The grouped count only returns types the filter actually matched, so an empty summary means an empty list -->

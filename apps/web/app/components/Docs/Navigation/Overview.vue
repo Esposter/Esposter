@@ -20,7 +20,7 @@ const categories = computed(() =>
 </script>
 
 <template>
-  <v-list color="primary" nav overflow-y-auto>
+  <v-list color="primary" nav of-y-auto>
     <template v-for="{ category, categorySections } of categories" :key="category">
       <v-list-subheader>{{ category }}</v-list-subheader>
       <v-list-item

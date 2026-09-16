@@ -4,12 +4,12 @@ import { SITE_NAME } from "@esposter/shared";
 </script>
 
 <template>
-  <div font-bold mb-8 text-headline-large>Why {{ SITE_NAME }}?</div>
+  <div fw-bold mb-8 text-headline-large>Why {{ SITE_NAME }}?</div>
   <div text-title-large>
     {{ SITE_NAME }} is an independent, community-driven lifetime project. It was created by
     <NuxtInvisibleLink
       text-primary
-      font-bold
+      fw-bold
       transition-colors
       duration="[--transition-duration]"
       hover:text-primary-darken-1

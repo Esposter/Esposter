@@ -12,7 +12,7 @@ const { cancelKnock } = knockerStore;
         <v-progress-circular color="white" indeterminate size="2.25rem" />
       </div>
       <div text-center flex flex-col gap-y-2 items-center>
-        <h2 font-medium text-headline-small>Waiting to be admitted</h2>
+        <h2 fw-medium text-headline-small>Waiting to be admitted</h2>
         <span op-medium-emphasis text-body-medium
           >Keep this window open. Someone in the call will let you in soon.</span
         >

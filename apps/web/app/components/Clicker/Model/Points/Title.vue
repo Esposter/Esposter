@@ -14,8 +14,8 @@ const displayAllBuildingPower = computed(() => formatNumberLong(allBuildingPower
 </script>
 
 <template>
-  <div font-bold text-center select-none text-display-medium>
+  <div fw-bold text-center select-none text-display-medium>
     <span v-html="displayPointCountHtml" /> {{ clickerItemProperties.pluralName }}
   </div>
-  <div font-bold text-center select-none text-headline-small>per second: {{ displayAllBuildingPower }}</div>
+  <div fw-bold text-center select-none text-headline-small>per second: {{ displayAllBuildingPower }}</div>
 </template>

@@ -20,7 +20,7 @@ const isCurrentUser = computed(() => session.value?.user.id === userId);
 <template>
   <div text-center flex flex-col gap-y-3 items-center>
     <StyledAvatar :image="user.image" :name="user.name" :avatar-props="{ size: '6rem' }" />
-    <div font-bold text-headline-small>{{ user.name }}</div>
+    <div fw-bold text-headline-small>{{ user.name }}</div>
     <div v-if="user.biography" op-medium-emphasis text-body-large>{{ user.biography }}</div>
     <StyledButton
       v-if="isCurrentUser"

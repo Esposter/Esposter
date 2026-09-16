@@ -90,7 +90,7 @@ defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
 <style scoped>
 /* Only show scrollbar for part of the drawer that actually has
    content greater than screen size rather than the entire drawer.
-   Make sure to apply attribute overflow-y-auto for the container
+   Make sure to apply attribute of-y-auto for the container
    that you want to show the scrollbar on in the drawer */
 :deep(.v-navigation-drawer__content) {
   display: flex;

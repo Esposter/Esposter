@@ -73,7 +73,7 @@ useEventListener(container, "wheel", (event) => {
       py-2
       flex
       justify-center
-      :class="[panzoom ? 'overflow-hidden' : 'overflow-x-auto', isFullscreen ? 'h-full items-center' : undefined]"
+      :class="[panzoom ? 'of-hidden' : 'of-x-auto', isFullscreen ? 'h-full items-center' : undefined]"
     >
       <pre>{{ code }}</pre>
     </div>

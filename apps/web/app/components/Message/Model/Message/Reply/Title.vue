@@ -16,7 +16,7 @@ const { creator, message } = defineProps<Props>();
   <v-list-item-title>
     <MessageModelMessageReply v-if="message.replyRowKey" :row-key="message.replyRowKey" />
     <div flex gap-x-2 items-center>
-      <span font-bold>
+      <span fw-bold>
         {{ creator.name }}
       </span>
       <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" />

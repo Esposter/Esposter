@@ -44,13 +44,13 @@ useFocusWhenActive(input, () => isFocused);
     inline-flex
     gap-1.5
     items-center
-    overflow-hidden
+    of-hidden
   >
     <!-- The label segment bleeds to the chip edge, so each segment owns its padding rather than
       the root padding it and the label clawing it back with a negative margin -->
     <span
       :class="isError ? 'text-error' : ''"
-      font-bold
+      fw-bold
       py-1
       pl-2
       pr-1
@@ -67,7 +67,7 @@ useFocusWhenActive(input, () => isFocused);
     <input
       ref="input"
       v-model="modelValue"
-      color-inherit
+      text-inherit
       pr-2
       outline-none
       b-none

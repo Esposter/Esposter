@@ -18,7 +18,7 @@ const cardProps = computed(() => ({ title: `Confirm Deletion of ${originalItem?.
     </template>
     <div>
       To confirm the delete action please enter the name of the
-      <span font-bold>{{ originalItem.type }}</span> exactly as it occurs.
+      <span fw-bold>{{ originalItem.type }}</span> exactly as it occurs.
     </div>
   </StyledDeleteFormDialog>
 </template>

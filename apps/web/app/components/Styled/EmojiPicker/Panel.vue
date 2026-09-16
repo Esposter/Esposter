@@ -52,7 +52,7 @@ const emojis = computed(() =>
 </script>
 
 <template>
-  <v-card flex flex-col overflow-hidden :class="smAndDown ? 'w-full' : 'w-96'">
+  <v-card flex flex-col of-hidden :class="smAndDown ? 'w-full' : 'w-96'">
     <v-text-field
       v-model="searchQuery"
       density="compact"
@@ -60,7 +60,7 @@ const emojis = computed(() =>
       prepend-inner-icon="mdi-magnify"
       :autofocus="!smAndDown"
       clearable
-      ma-2
+      m-2
     />
     <v-divider />
     <!-- The row owns the height so the rail and the grid share it, rather than the taller one growing the card.

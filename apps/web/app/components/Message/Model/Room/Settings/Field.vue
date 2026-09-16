@@ -10,7 +10,7 @@ const { hint = "", title } = defineProps<Props>();
 
 <template>
   <div flex flex-col gap-2>
-    <div font-semibold>{{ title }}</div>
+    <div fw-semibold>{{ title }}</div>
     <slot />
     <span v-if="hint" text-hint>{{ hint }}</span>
   </div>

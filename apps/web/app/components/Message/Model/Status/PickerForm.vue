@@ -60,7 +60,7 @@ const save = async () => {
 
 <template>
   <StyledCard p-3 flex flex-col gap-2>
-    <div font-bold text-title-small>Set Status</div>
+    <div fw-bold text-title-small>Set Status</div>
     <v-list density="compact" py-0>
       <v-list-item
         v-for="{ label, status: selectableStatus, subtitle } in SelectableStatusDefinitionList"

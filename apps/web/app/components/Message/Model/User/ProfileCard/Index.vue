@@ -38,7 +38,7 @@ const { data: mutualRooms } = useQuery(() => $trpc.room.readMutualRooms.query({ 
     </MessageModelUserProfileCardHeader>
     <v-card-text pt-2 flex flex-col gap-y-3>
       <div>
-        <div font-bold>{{ displayName }}</div>
+        <div fw-bold>{{ displayName }}</div>
         <div op-medium-emphasis text-body-medium>{{ getStatusMessage(user.id) || getUserStatus(user.id) }}</div>
       </div>
       <template v-if="!isSelf">

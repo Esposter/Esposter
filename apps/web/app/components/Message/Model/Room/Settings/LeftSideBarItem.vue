@@ -20,6 +20,6 @@ const emit = defineEmits<{ click: [settingsType: SettingsType] }>();
     <template #prepend>
       <v-icon :icon />
     </template>
-    <v-list-item-title font-bold>{{ title ?? settingsType }}</v-list-item-title>
+    <v-list-item-title fw-bold>{{ title ?? settingsType }}</v-list-item-title>
   </v-list-item>
 </template>

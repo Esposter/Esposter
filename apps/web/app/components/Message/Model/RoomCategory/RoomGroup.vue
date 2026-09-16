@@ -20,7 +20,7 @@ const isCollapsed = useLocalStorage(LocalStorageKey.MessageCategoryCollapsed(cat
       v-if="category"
       :class="ROOM_CATEGORY_DRAG_HANDLE_CLASS"
       density="compact"
-      font-bold
+      fw-bold
       uppercase
       text-label-medium
       @click="isCollapsed = !isCollapsed"

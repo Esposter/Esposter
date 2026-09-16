@@ -10,7 +10,7 @@ const { buttonProps } = defineProps<Props>();
 </script>
 
 <template>
-  <v-btn bg="[image:--midnight-bloom]" color-white :="buttonProps">
+  <v-btn bg="[image:--midnight-bloom]" text-white :="buttonProps">
     <template v-for="(_slot, name) of slots" #[name]>
       <slot :name />
     </template>

@@ -15,7 +15,7 @@ const skinToneEmoji = getEmojiIndex().slugEmojiMap.get(SKIN_TONE_PREVIEW_EMOJI_S
   <v-menu v-if="skinToneEmoji" location="top">
     <template #activator="{ props }">
       <v-btn aria-label="Skin tone" :="props" size="small" variant="text" icon>
-        <span leading-none text-title-medium>{{ applySkinTone(skinToneEmoji, modelValue) }}</span>
+        <span lh-none text-title-medium>{{ applySkinTone(skinToneEmoji, modelValue) }}</span>
         <v-tooltip activator="parent" location="top" text="Skin tone" />
       </v-btn>
     </template>
@@ -26,7 +26,7 @@ const skinToneEmoji = getEmojiIndex().slugEmojiMap.get(SKIN_TONE_PREVIEW_EMOJI_S
         :active="skinTone === modelValue"
         @click.stop="modelValue = skinTone"
       >
-        <span leading-none text-title-medium>{{ applySkinTone(skinToneEmoji, skinTone) }}</span>
+        <span lh-none text-title-medium>{{ applySkinTone(skinToneEmoji, skinTone) }}</span>
       </v-list-item>
     </v-list>
   </v-menu>

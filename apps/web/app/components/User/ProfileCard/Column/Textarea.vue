@@ -16,7 +16,7 @@ const valueRules = computed(() => [rules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)]);
 </script>
 
 <template>
-  <v-col font-bold whitespace-pre-wrap self-center cols="6">
+  <v-col fw-bold ws-pre-wrap self-center cols="6">
     <v-textarea v-if="editMode" v-model="modelValue" :rules="valueRules" rows="3" auto-grow />
     <template v-else>
       {{ value }}

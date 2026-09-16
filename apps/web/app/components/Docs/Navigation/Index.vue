@@ -23,7 +23,7 @@ const sectionsWithGroups = computed(() =>
 </script>
 
 <template>
-  <v-list v-model:opened="opened" color="primary" nav overflow-y-auto>
+  <v-list v-model:opened="opened" color="primary" nav of-y-auto>
     <v-list-group v-for="{ groups, section } of sectionsWithGroups" :key="section.path" :value="section.path">
       <template #activator="{ props: activatorProps }">
         <v-list-item

@@ -25,7 +25,7 @@ const editor = useEditor({
     <StyledCard flex flex-col size-full>
       <ResourceNoteEditorMenuBar :editor />
       <v-divider thickness="2" />
-      <EditorContent flex-1 overflow-y-auto :editor />
+      <EditorContent flex-1 of-y-auto :editor />
     </StyledCard>
   </v-container>
 </template>

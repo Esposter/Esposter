@@ -12,7 +12,7 @@ const { title } = defineProps<Props>();
 
 <template>
   <section :id="title" flex flex-col gap-y-4>
-    <div font-bold text-title-medium>{{ title }}</div>
+    <div fw-bold text-title-medium>{{ title }}</div>
     <slot />
   </section>
 </template>

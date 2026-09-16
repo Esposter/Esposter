@@ -13,6 +13,6 @@ const creator = useCreator(() => message);
 
 <template>
   <MessageModelMessageInputHeader v-if="creator" :is-top-attached @close="emit('close')">
-    Replying to <span font-bold>{{ creator.name }}</span>
+    Replying to <span fw-bold>{{ creator.name }}</span>
   </MessageModelMessageInputHeader>
 </template>

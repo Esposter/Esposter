@@ -34,7 +34,7 @@ const { isVoting, vote } = await useVotePoll(
     <template #prepend>
       <v-icon icon="mdi-poll" size="small" />
     </template>
-    <span font-bold>{{ creator.name }}</span>
+    <span fw-bold>{{ creator.name }}</span>
     <span op-medium-emphasis> created a poll </span>
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     <v-card variant="outlined" mt-2 w-full>

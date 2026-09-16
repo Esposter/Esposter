@@ -27,10 +27,10 @@ const displayName = computed(() => prettify(userAchievement.achievement.name));
     <div flex gap-x-3 items-center>
       <v-icon :icon="userAchievement.achievement.icon" size="large" />
       <div>
-        <div font-bold text-title-large>Achievement Unlocked!</div>
+        <div fw-bold text-title-large>Achievement Unlocked!</div>
         <div text-body-large>{{ displayName }}</div>
         <div text-body-small>{{ userAchievement.achievement.description }}</div>
-        <div text-orange font-bold text-body-small>+{{ userAchievement.achievement.points }} points</div>
+        <div text-orange fw-bold text-body-small>+{{ userAchievement.achievement.points }} points</div>
       </div>
     </div>
     <!-- Unlocking one is the moment someone first wants the rest of them, and the toast is the only thing on

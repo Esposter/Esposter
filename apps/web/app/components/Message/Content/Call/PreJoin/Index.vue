@@ -27,7 +27,7 @@ const buttonProps = computed<VBtn["$props"]>(() => ({
 </script>
 
 <template>
-  <div p-6 bg-background flex flex-col gap-4 size-full overflow-y-auto lg:flex-row>
+  <div p-6 bg-background flex flex-col gap-4 size-full of-y-auto lg:flex-row>
     <div flex flex-1 flex-col gap-y-4 min-h-0 min-w-0>
       <MessageContentCallPreJoinCameraPreview flex-1 :is-camera-enabled :stream="cameraStream" />
       <MessageContentCallPreJoinMediaControls
@@ -41,7 +41,7 @@ const buttonProps = computed<VBtn["$props"]>(() => ({
     <div flex shrink-0 flex-col gap-y-4>
       <StyledCard p-6 text-center flex flex-1 flex-col gap-y-6 justify-center>
         <div flex flex-col gap-y-2>
-          <h2 font-medium text-headline-small>Ready to join?</h2>
+          <h2 fw-medium text-headline-small>Ready to join?</h2>
           <span op-medium-emphasis text-body-medium>
             {{
               isCreator

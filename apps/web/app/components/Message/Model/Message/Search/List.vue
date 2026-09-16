@@ -11,7 +11,7 @@ const { messages } = defineProps<Props>();
 
 <template>
   <template v-if="messages.length > 0">
-    <div flex-1 overflow-y-auto>
+    <div flex-1 of-y-auto>
       <v-list>
         <MessageModelMessageSearchListItem v-for="message in messages" :key="message.rowKey" :message />
       </v-list>

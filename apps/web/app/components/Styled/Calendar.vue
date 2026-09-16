@@ -27,12 +27,12 @@ const options = computed<CalendarOptions>(() => ({
     <template #eventContent="{ event, timeText }">
       <v-tooltip>
         <template #activator="{ props }">
-          <div flex gap-1 w-full items-center overflow-hidden :="props">
+          <div flex gap-1 w-full items-center of-hidden :="props">
             <div>{{ timeText }}</div>
             <div truncate>{{ event.title }}</div>
           </div>
         </template>
-        <div font-bold text-center>
+        <div fw-bold text-center>
           {{ event.title }}
         </div>
         <div

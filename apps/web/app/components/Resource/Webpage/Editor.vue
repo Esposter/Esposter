@@ -32,7 +32,7 @@ useSurveyInviteBlocks(editor, publishedSurveys, createWebpageSurveyInviteBlocks)
 </script>
 
 <template>
-  <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" h-full overflow-hidden />
+  <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" h-full of-hidden />
 </template>
 
 <style scoped>

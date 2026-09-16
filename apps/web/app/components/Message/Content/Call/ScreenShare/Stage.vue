@@ -25,7 +25,7 @@ const updateAspectRatio = () => {
       max-h-full
       max-w-full
       relative
-      overflow-hidden
+      of-hidden
       :class="isInteractive ? 'cursor-pointer' : undefined"
       @click="isInteractive && emit('fullscreen')"
     >
@@ -54,7 +54,7 @@ const updateAspectRatio = () => {
           shadow="[inset_0_0_0_0.125rem_rgb(var(--v-theme-primary))]"
         />
         <StyledCard m-4 px-3 py-2 rd op-0 transition-opacity bottom-0 left-0 absolute group-hover:op-100>
-          <span font-medium text-body-small>{{ presenterName }}'s screen</span>
+          <span fw-medium text-body-small>{{ presenterName }}'s screen</span>
         </StyledCard>
       </template>
     </div>

@@ -34,7 +34,7 @@ const error = computed(
             @click="createParameter(name)"
           >
             <template #title>
-              <span font-bold>{{ name }}</span>
+              <span fw-bold>{{ name }}</span>
             </template>
             <template #append>
               <span ml-4 op-medium-emphasis text-body-medium>Your {{ name }}</span>
@@ -45,12 +45,12 @@ const error = computed(
     </StyledCard>
     <MessageModelMessageInputHeader @close="clearPendingSlashCommand()">
       <template v-if="focusedParameter">
-        <span font-bold>{{ focusedParameter.name }}</span>
+        <span fw-bold>{{ focusedParameter.name }}</span>
         <span v-if="error" text-error>{{ error }}</span>
         <span v-else op-medium-emphasis>Your {{ focusedParameter.name }}</span>
       </template>
       <template v-else>
-        <span font-bold>/{{ pendingSlashCommand.title }}</span>
+        <span fw-bold>/{{ pendingSlashCommand.title }}</span>
         <span op-medium-emphasis>{{ pendingSlashCommand.description }}</span>
       </template>
     </MessageModelMessageInputHeader>

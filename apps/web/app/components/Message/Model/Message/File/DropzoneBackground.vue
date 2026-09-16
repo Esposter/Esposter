@@ -37,7 +37,7 @@ const { isOverDropZone } = useDropZone(defaultDocument, {
 <template>
   <v-dialog v-model="isOverDropZone" width="auto">
     <StyledCard p-8 text-center>
-      <v-card-title font-bold pb-0 text-title-large>
+      <v-card-title fw-bold pb-0 text-title-large>
         Upload to {{ dropTarget.threadRootRowKey ? "thread" : roomName }}
       </v-card-title>
       <v-card-subtitle>You can add comments before uploading.</v-card-subtitle>

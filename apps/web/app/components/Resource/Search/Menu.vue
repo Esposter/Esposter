@@ -78,7 +78,7 @@ onClickOutside(root, () => {
       :class="isInline ? ['absolute', 'left-0', 'right-0', 'top-full', 'z-1'] : []"
       mt-2
       max-h-100
-      overflow-y-auto
+      of-y-auto
     >
       <v-progress-linear v-if="isPending" indeterminate />
       <ResourceSearchResultList :items :search-query :see-all-to :selected-index @select="select()" />

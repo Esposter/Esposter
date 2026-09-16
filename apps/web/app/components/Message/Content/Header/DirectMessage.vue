@@ -16,7 +16,7 @@ const participants = computed(() =>
     <StyledAvatar :name="directMessageName" :avatar-props="{ size: 'x-small' }" />
     <div pl-2 flex flex-col min-w-0>
       <span truncate>{{ directMessageName }}</span>
-      <div flex gap-x-1 overflow-x-auto>
+      <div flex gap-x-1 of-x-auto>
         <v-chip
           v-for="{ id, image, name } of participants"
           :key="id"

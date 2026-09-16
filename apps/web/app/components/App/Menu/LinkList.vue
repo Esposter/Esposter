@@ -20,7 +20,7 @@ const emit = defineEmits<{ select: [] }>();
                 <v-icon :icon="item.icon" />
               </v-avatar>
             </template>
-            <v-list-item-title font-bold>{{ item.title }}</v-list-item-title>
+            <v-list-item-title fw-bold>{{ item.title }}</v-list-item-title>
           </v-list-item>
         </template>
         <AppMenuLinkListItem v-for="child of item.children" :key="child.title" :item="child" @select="emit('select')" />

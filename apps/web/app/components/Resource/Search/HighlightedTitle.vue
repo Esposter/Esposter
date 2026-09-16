@@ -12,7 +12,7 @@ const highlightParts = computed(() => getHighlightParts(text, searchQuery));
 
 <template>
   <span v-if="highlightParts"
-    >{{ highlightParts.prefix }}<span font-bold>{{ highlightParts.match }}</span
+    >{{ highlightParts.prefix }}<span fw-bold>{{ highlightParts.match }}</span
     >{{ highlightParts.suffix }}</span
   >
   <span v-else>{{ text }}</span>

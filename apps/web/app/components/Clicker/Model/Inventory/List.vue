@@ -9,7 +9,7 @@ const inventoryUpgrades = computed(() =>
 </script>
 
 <template>
-  <v-list overflow-y-auto>
+  <v-list of-y-auto>
     <ClickerModelUpgradeListGroup :upgrades="inventoryUpgrades" is-bought />
   </v-list>
 </template>

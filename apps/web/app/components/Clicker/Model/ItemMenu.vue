@@ -47,14 +47,14 @@ const upgradeIcon = computed(() => UpgradeIconMap[id]);
           </div>
         </v-list-item-subtitle>
         <template v-if="amount" #append>
-          <span font-bold>
+          <span fw-bold>
             {{ amount }}
           </span>
         </template>
       </v-list-item>
     </template>
     <StyledCard>
-      <v-card-title font-bold flex>
+      <v-card-title fw-bold flex>
         <div>
           <NuxtImg size-8 object-contain :src="type === Target.Building ? MenuIconMap[id] : upgradeIcon" :alt="id" />
         </div>

@@ -9,7 +9,7 @@ const { title } = defineProps<Props>();
 
 <template>
   <section flex flex-col gap-y-3>
-    <div font-bold>{{ title }}</div>
+    <div fw-bold>{{ title }}</div>
     <v-list b-1 b-border rd-lg b-solid>
       <slot />
     </v-list>

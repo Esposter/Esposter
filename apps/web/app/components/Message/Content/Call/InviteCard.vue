@@ -15,7 +15,7 @@ onMounted(() => {
   <StyledCard v-if="isOpen && !callRoomId" m-4 p-4 max-w-80 bottom-16 left-0 absolute>
     <div flex flex-col gap-y-3>
       <div flex items-center justify-between>
-        <span font-medium text-body-medium>Your call's ready</span>
+        <span fw-medium text-body-medium>Your call's ready</span>
         <StyledTooltipIconButton
           :button-props="{ size: 'small', variant: 'plain' }"
           icon="mdi-close"

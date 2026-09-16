@@ -8,7 +8,7 @@ const { memberCount } = storeToRefs(memberStore);
 <template>
   <v-container fluid>
     <v-row items-center>
-      <v-col font-bold>Members—{{ memberCount }}</v-col>
+      <v-col fw-bold>Members—{{ memberCount }}</v-col>
     </v-row>
   </v-container>
 </template>

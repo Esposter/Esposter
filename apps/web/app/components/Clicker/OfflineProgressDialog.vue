@@ -32,7 +32,7 @@ const displayOfflineCap = formatDuration(OFFLINE_CAP_MS);
   >
     <!-- The award stops accruing at the cap, so absences past it say so instead of implying the full time paid out -->
     While you were away for {{ displayElapsedDuration }}, your buildings produced
-    <span font-bold>{{ displayAwardedPoints }}</span>
+    <span fw-bold>{{ displayAwardedPoints }}</span>
     {{ clickerItemProperties.pluralName
     }}<template v-if="elapsedMs > OFFLINE_CAP_MS"> (production is capped at {{ displayOfflineCap }})</template>.
   </StyledDialog>

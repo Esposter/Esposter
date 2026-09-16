@@ -11,7 +11,7 @@ const next = computed(() => surround[1]);
 </script>
 
 <template>
-  <div v-if="previous || next" mt-12 gap-4 grid grid-cols-1 md:grid-cols-2>
+  <div v-if="previous || next" mt-12 gap-4 grid cols-1 md:cols-2>
     <v-card v-if="previous" :to="previous.path" variant="outlined" hover>
       <v-card-item>
         <p mb-1 flex gap-x-1 items-center text-hint>

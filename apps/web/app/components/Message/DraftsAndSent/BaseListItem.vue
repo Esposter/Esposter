@@ -19,7 +19,7 @@ const { focused: isFocusWithin } = useFocusWithin(listItem);
       <template #prepend>
         <slot name="prepend" />
       </template>
-      <v-list-item-title font-bold>{{ title }}</v-list-item-title>
+      <v-list-item-title fw-bold>{{ title }}</v-list-item-title>
       <v-list-item-subtitle>
         <span v-html="subtitle" />
       </v-list-item-subtitle>

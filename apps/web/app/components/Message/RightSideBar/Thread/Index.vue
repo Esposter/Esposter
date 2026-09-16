@@ -20,7 +20,7 @@ const displayThreadMessages = computed(() =>
 <template>
   <div :[THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE]="true" contents>
     <div px-4 py-3 flex items-center justify-between>
-      <span font-semibold>Thread</span>
+      <span fw-semibold>Thread</span>
       <div flex items-center>
         <StyledOverflowMenu v-if="activeRootRowKey" :items="actionItems" text="More" />
         <StyledTooltipIconButton
@@ -32,8 +32,8 @@ const displayThreadMessages = computed(() =>
       </div>
     </div>
     <v-divider />
-    <div v-if="isReadThreadPending" flex-1 overflow-y-auto>
-      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" pa-4 />
+    <div v-if="isReadThreadPending" flex-1 of-y-auto>
+      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" p-4 />
     </div>
     <MessageModelMessageSearchList v-else :messages="displayThreadMessages">
       <template #no-data>

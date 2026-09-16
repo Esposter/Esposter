@@ -76,7 +76,7 @@ const submit = async () => {
 
 <template>
   <v-container>
-    <v-card max-width="40rem" mx-auto>
+    <v-card max-width="40rem" mx-a>
       <v-card-text>
         <v-form v-model="isValid" @submit.prevent="submit()">
           <v-text-field v-model="name" autofocus :counter="RESOURCE_NAME_MAX_LENGTH" label="Name" :rules="nameRules" />

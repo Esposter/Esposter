@@ -8,7 +8,7 @@ useResourceKeyboardShortcuts();
     <Head>
       <Title>Resource Explorer</Title>
     </Head>
-    <v-sheet flex-1 overflow-y-auto>
+    <v-sheet flex-1 of-y-auto>
       <v-container>
         <div py-4 flex flex-col gap-8>
           <div py-4 flex justify-center>

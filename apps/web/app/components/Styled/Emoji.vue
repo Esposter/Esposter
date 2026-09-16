@@ -24,5 +24,5 @@ const { emoji, skinTone } = defineProps<Props>();
     inline-block
     object-contain
   />
-  <span v-else leading-none>{{ applySkinTone(emoji, skinTone) }}</span>
+  <span v-else lh-none>{{ applySkinTone(emoji, skinTone) }}</span>
 </template>

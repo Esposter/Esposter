@@ -38,7 +38,7 @@ const getMemberCountSuffix = (roleId: string) => {
     </template>
     <template v-else-if="currentRoom">
       <template v-for="{ members: groupMembers, role } of memberGroups" :key="role?.id ?? ''">
-        <v-list-subheader font-bold uppercase text-body-small>
+        <v-list-subheader fw-bold uppercase text-body-small>
           {{ role?.name ?? "Members" }}{{ getMemberCountSuffix(role?.id ?? "") }}
         </v-list-subheader>
         <MessageModelMemberListItem v-for="member of groupMembers" :key="member.id" :member :room="currentRoom" />

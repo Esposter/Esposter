@@ -15,7 +15,7 @@ useQuery(() => (currentRoomId.value ? refetchFollowedThreads(currentRoomId.value
 
 <template>
   <div px-4 py-3 flex items-center justify-between>
-    <span font-semibold>Followed Threads</span>
+    <span fw-semibold>Followed Threads</span>
     <StyledTooltipIconButton
       :button-props="{ size: 'small', variant: 'text' }"
       icon="mdi-close"
@@ -24,7 +24,7 @@ useQuery(() => (currentRoomId.value ? refetchFollowedThreads(currentRoomId.value
     />
   </div>
   <v-divider />
-  <div v-if="followedThreads.length > 0" flex-1 overflow-y-auto>
+  <div v-if="followedThreads.length > 0" flex-1 of-y-auto>
     <v-list>
       <MessageRightSideBarThreadsListItem v-for="thread of followedThreads" :key="thread.rowKey" :thread />
     </v-list>
