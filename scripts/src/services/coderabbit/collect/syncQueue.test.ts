@@ -17,6 +17,7 @@ import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFi
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { getResult } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
@@ -334,6 +335,31 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha));
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
     expect(readSha("HEAD")).toBe(queueSha);
+  });
+
+  // The session is handed a repackaging, never the cherry-pick this step runs itself, so what it leaves open is
+  // Any operation at all — and a restore refuses over one, which would cost the attempt the record that caps it
+  test("fails the run and counts the attempt when the reshaping leaves a merge open", async () => {
+    expect.hasAssertions();
+
+    const { developSha, oversizedSha, queueSha } = setupOversized();
+    runDrain.mockImplementation(() => {
+      const baseSha = readSha("HEAD");
+      const theirsSha = commitFile(filePath, "theirs");
+      switchTo(baseSha);
+      commitFile(filePath, "ours");
+      getResult(() => runGit(["merge", theirsSha], getCwd())).unwrapOr("");
+      return Promise.resolve({ isDrained: true });
+    });
+
+    await expect(
+      syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the reshaper left an operation in progress (attempt 1 of 3 on e1b1241d5399c7d8234f33a42c525fc449150d8c)]`,
+    );
+    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha));
+    expect(readSha("HEAD")).toBe(queueSha);
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
   });
 
   test("leaves a commit past the reshape attempt cap to the port and a person", async () => {

@@ -1,6 +1,7 @@
 import type { ReshapeInput } from "#src/models/coderabbit/collect/ReshapeInput";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
+import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { DRAIN_ATTEMPT_CAP, RESHAPE_FAILED_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
@@ -69,12 +70,16 @@ export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: Re
       ));
   if (failure !== undefined || !isReplayed) {
     const reason = failure ?? `left a tree the commits after ${sha} no longer apply to`;
-    getResult(() => runGit(["cherry-pick", "--abort"], cwd)).unwrapOr("");
-    runGit(["switch", "--detach", tipSha], cwd);
+    // A session handed the repackaging can leave any operation open, not only the cherry-pick this step runs, and
+    // A restore refuses over any of them. So what git holds is cleared by the command that owns it, and the
+    // Attempt is counted before the tree is put back: the count is what hands the commit to a person, and a
+    // Restore that threw would leave the reshaper spending a session on it every run forever.
+    abortSequencing(cwd);
     postCommitComment(
       sha,
       `${marker}\nReshape attempt ${attempts + 1} of this commit failed — the session ${reason}. See the collector run.`,
     );
+    runGit(["switch", "--detach", tipSha], cwd);
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
