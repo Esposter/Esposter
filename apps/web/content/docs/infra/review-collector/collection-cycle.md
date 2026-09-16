@@ -5,7 +5,7 @@ description: The one pass the review collector runs on every trigger: read, repl
 
 # Collection Cycle
 
-One script, `pnpm ai:coderabbit:collect`, run by the [runner](/docs/infra/review-collector/runner) on every trigger and by hand with `--dry-run` to see what it would do. It reads the whole situation from the remote, clears the gates, and does the most it safely can in one pass, ordered so that every irreversible effect is either the single push or a predicate-guarded write a later run can finish. Which ref each writer owns is the [two writers](/docs/infra/review-collector/two-writers) page.
+One script, `pnpm ai:coderabbit:collect`, run by the [runner](/docs/infra/review-collector/runner) on every trigger and by hand with `--dry-run` to see what it would do. It reads the whole situation from the remote, clears the gates, and does the most it safely can in one pass, ordered so that every irreversible effect is either the single push or a predicate-guarded write a later run can finish. Which ref each writer owns is the [two writers](/docs/infra/review-collector/two-writers) page. A live run ends at its one push; a dry run ends at none of them, so it reports what every stage would do — the express cut, the reshaping, the window — in a single pass, which is how a change to any of them is read against the live refs before it is pushed.
 
 ## What it reads
 
@@ -87,7 +87,7 @@ flowchart TD
 
 ## Sync
 
-Before the port reads the queue, the collector rewrites it onto the tree the window is built on — `ai/review-fixes` while it owes `develop` commits, `develop` otherwise — reshapes the first owed commit that alone exceeds the cap, and pushes it back under a lease on the sha it read. The commits the queue still owes are replayed in order as one `cherry-pick` sequence — `--empty=drop`, so a copy the tree already holds falls away, and `-x`, so every copy names the original it came from and a resolution that drifted its patch id still reads as carried; a queue already sitting on that tree with nothing to reshape is left alone, which is every run but the one after a window.
+Before the port reads the queue, the collector rewrites it onto the tree the window is built on — `ai/review-fixes` while it owes `develop` commits, `develop` otherwise — reshapes the first owed commit that alone exceeds the cap, and pushes it back under a lease on the sha it read. The cap does not measure a commit carrying `Express:` — that one is the lane's at any size, and reshaping it would pay a session per run to repackage what no window will ever carry. The commits the queue still owes are replayed in order as one `cherry-pick` sequence — `--empty=drop`, so a copy the tree already holds falls away, and `-x`, so every copy names the original it came from and a resolution that drifted its patch id still reads as carried; a queue already sitting on that tree with nothing to reshape is left alone, which is every run but the one after a window.
 
 ```mermaid
 flowchart TD

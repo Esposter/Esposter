@@ -2,13 +2,14 @@ import type { ReshapeInput } from "#src/models/coderabbit/collect/ReshapeInput";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
-import { DRAIN_ATTEMPT_CAP, RESHAPE_FAILED_MARKER } from "#src/services/coderabbit/collect/constants";
+import { DRAIN_ATTEMPT_CAP, EXPRESS_TRAILER, RESHAPE_FAILED_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getReshapeFailure } from "#src/services/coderabbit/collect/getReshapeFailure";
 import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePrompt";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { readTrailerValues } from "#src/services/coderabbit/collect/readTrailerValues";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
@@ -24,7 +25,10 @@ import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 // It, and the held notice says so (docs: infra/review-collector/collection-cycle, "Sync").
 export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: ReshapeInput): Promise<boolean> => {
   const owedShas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${targetSha}..HEAD`], cwd));
+  // A commit claiming no review is the express lane's at any size, so the cap is not its measure: reshaping one
+  // Would pay a session per run to repackage what no window will ever carry
   const oversized = owedShas
+    .filter((sha) => readTrailerValues(sha, EXPRESS_TRAILER, cwd).length === 0)
     .map((sha) => ({ fileCount: getFileCount(`${sha}^..${sha}`, cwd), sha }))
     .find(({ fileCount }) => fileCount > REVIEW_FILE_CAP);
   if (!oversized) return false;

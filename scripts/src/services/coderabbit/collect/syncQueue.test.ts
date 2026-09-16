@@ -300,6 +300,21 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
 
+  test("leaves an over-cap commit claiming no review to the express lane", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, "HEAD");
+    commitFiles(overflowPaths, "");
+    runGit(
+      ["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${EXPRESS_TRAILER}: ${TEST_FILENAME}`],
+      getCwd(),
+    );
+    const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, ""));
+
+    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
+    expect(runDrain).not.toHaveBeenCalled();
+  });
+
   test("fails the run and counts the attempt when the reshaping leaves a reviewable part over the cap", async () => {
     expect.hasAssertions();
 

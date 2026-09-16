@@ -48,9 +48,12 @@ export const runExpressLane = ({
   if (targetSha === undefined) return undefined;
 
   console.info(`express: ${shas.length} commits claim nothing in them to review`);
-  if (isDryRun)
-    return { kind: CycleOutcomeKind.Expressed, reason: `would verify and push to ${MAIN_BRANCH}`, targetSha };
-  else if (
+  // A dry run reports the cut and carries on rather than ending here: nothing it does is irreversible, so the one
+  // Pass is worth every stage's decision — the cut, the reshaping, the window — instead of only the first
+  if (isDryRun) {
+    console.info(`express: would verify and push ${targetSha} to ${MAIN_BRANCH}`);
+    return undefined;
+  } else if (
     !EXPRESS_VERIFY_COMMANDS.every((args) => {
       console.info(`verify: pnpm ${args.join(" ")}`);
       return spawnPnpm(args, { cwd, stdio: "inherit" }).status === 0;
