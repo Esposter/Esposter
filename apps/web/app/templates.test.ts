@@ -1,4 +1,4 @@
-import type { ElementNode, RootNode, TemplateChildNode } from "@vue/compiler-core";
+import type { AttributeNode, DirectiveNode, ElementNode, RootNode, TemplateChildNode } from "@vue/compiler-core";
 
 import unoConfig from "@@/uno.config";
 import vuetifyConfig from "@@/vuetify.config";
@@ -34,6 +34,16 @@ const toPascalCase = (tag: string) =>
   tag.replaceAll(/(?:^|-)(?<letter>[a-z])/gu, (_match, letter: string) => letter.toUpperCase());
 const toCamelCase = (name: string) =>
   name.replaceAll(/-(?<letter>[a-z])/gu, (_match, letter: string) => letter.toUpperCase());
+// A `v-bind` names a prop only where its argument is static: `:[name]` parses to the same expression node with
+// `isStatic` false, whose content is the variable's name rather than the attribute the element ends up carrying,
+// So reading it as a prop name reports a finding against whatever that variable happens to be called
+const getStaticBind = (prop: AttributeNode | DirectiveNode) =>
+  prop.type === NodeTypes.DIRECTIVE &&
+  prop.name === "bind" &&
+  prop.arg?.type === NodeTypes.SIMPLE_EXPRESSION &&
+  prop.arg.isStatic
+    ? { expression: prop.exp?.type === NodeTypes.SIMPLE_EXPRESSION ? prop.exp.content : "", name: prop.arg.content }
+    : undefined;
 
 // An attributify attribute that matches no rule is silent: nothing is generated, nothing warns, and the page
 // Renders without the style it was meant to carry. The generator itself answers whether a token is a utility —
@@ -124,14 +134,10 @@ describe("attributify", () => {
       if (!ast) continue;
       const boundNames = new Set<string>();
       walkElements(ast, ({ props }) => {
-        for (const prop of props)
-          if (
-            prop.type === NodeTypes.DIRECTIVE &&
-            prop.name === "bind" &&
-            prop.arg?.type === NodeTypes.SIMPLE_EXPRESSION &&
-            EMPTY_BRANCH_REGEX.test(prop.exp?.type === NodeTypes.SIMPLE_EXPRESSION ? prop.exp.content : "")
-          )
-            boundNames.add(prop.arg.content);
+        for (const prop of props) {
+          const bind = getStaticBind(prop);
+          if (bind && EMPTY_BRANCH_REGEX.test(bind.expression)) boundNames.add(bind.name);
+        }
       });
       for (const boundName of boundNames) {
         const { matched } = await uno.generate(boundName, { preflights: false });
@@ -194,20 +200,14 @@ describe("vuetify lengths", () => {
       walkElements(ast, ({ props, tag }) => {
         if (!tag.startsWith("v-")) return;
         for (const prop of props)
-          if (
-            prop.type === NodeTypes.ATTRIBUTE &&
-            LENGTH_PROPS.has(prop.name) &&
-            NUMBER_REGEX.test(prop.value?.content ?? "")
-          )
-            bareLengths.push(`${templatePath}: <${tag} ${prop.name}="${prop.value?.content}">`);
-          else if (
-            prop.type === NodeTypes.DIRECTIVE &&
-            prop.name === "bind" &&
-            prop.arg?.type === NodeTypes.SIMPLE_EXPRESSION &&
-            LENGTH_PROPS.has(prop.arg.content) &&
-            NUMBER_REGEX.test(prop.exp?.type === NodeTypes.SIMPLE_EXPRESSION ? prop.exp.content : "")
-          )
-            bareLengths.push(`${templatePath}: <${tag} :${prop.arg.content}>`);
+          if (prop.type === NodeTypes.ATTRIBUTE) {
+            if (LENGTH_PROPS.has(prop.name) && NUMBER_REGEX.test(prop.value?.content ?? ""))
+              bareLengths.push(`${templatePath}: <${tag} ${prop.name}="${prop.value?.content}">`);
+          } else {
+            const bind = getStaticBind(prop);
+            if (bind && LENGTH_PROPS.has(bind.name) && NUMBER_REGEX.test(bind.expression))
+              bareLengths.push(`${templatePath}: <${tag} :${bind.name}>`);
+          }
       });
     }
 
@@ -236,15 +236,12 @@ describe("vuetify defaults", () => {
             const defaultValue = componentDefaults[toCamelCase(prop.name)];
             if (defaultValue === (prop.value?.content ?? true))
               restatements.push(`${templatePath}: <${tag} ${prop.name}>`);
-          } else if (
-            prop.type === NodeTypes.DIRECTIVE &&
-            prop.name === "bind" &&
-            prop.arg?.type === NodeTypes.SIMPLE_EXPRESSION &&
-            prop.exp?.type === NodeTypes.SIMPLE_EXPRESSION
-          ) {
-            const defaultValue = componentDefaults[toCamelCase(prop.arg.content)];
-            if (defaultValue !== undefined && JSON.stringify(defaultValue) === prop.exp.content.replaceAll("'", '"'))
-              restatements.push(`${templatePath}: <${tag} :${prop.arg.content}>`);
+          } else {
+            const bind = getStaticBind(prop);
+            if (!bind) continue;
+            const defaultValue = componentDefaults[toCamelCase(bind.name)];
+            if (defaultValue !== undefined && JSON.stringify(defaultValue) === bind.expression.replaceAll("'", '"'))
+              restatements.push(`${templatePath}: <${tag} :${bind.name}>`);
           }
       });
     }
