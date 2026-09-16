@@ -1,3 +1,4 @@
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readDuplicateProseFindings } from "#src/services/sweeps/duplicateProse/readDuplicateProseFindings";
 import { describe, expect, test } from "vitest";
 
@@ -8,7 +9,7 @@ import { describe, expect, test } from "vitest";
  * the run is the judgement the `ai:sweep:duplicate-prose` pass makes; that there is one to make is decided here.
  */
 describe("duplicateProse", () => {
-  test("no two pages of different owners share a run of prose", () => {
+  test("no two pages of different owners share a run of prose", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     expect(

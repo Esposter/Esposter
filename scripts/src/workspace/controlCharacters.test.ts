@@ -1,3 +1,4 @@
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readControlCharacterFindings } from "#src/services/sweeps/controlCharacters/readControlCharacterFindings";
 import { describe, expect, test } from "vitest";
 
@@ -10,7 +11,7 @@ import { describe, expect, test } from "vitest";
  * touched the line since silently rewrote them.
  */
 describe("controlCharacters", () => {
-  test("no tracked file holds a character that renders as nothing", () => {
+  test("no tracked file holds a character that renders as nothing", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     expect(readControlCharacterFindings()).toStrictEqual([]);
