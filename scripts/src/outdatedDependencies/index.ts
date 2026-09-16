@@ -15,6 +15,7 @@ import { printOutdatedDependencies } from "#src/services/outdatedDependencies/pr
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
 import { printUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/print/printUncatalogedManifestDependencies";
 import { getRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/getRegistryOutdatedDependencies";
+import { getFollowedTagEntries } from "#src/services/outdatedDependencies/renovate/getFollowedTagEntries";
 import { getRenovateRules } from "#src/services/outdatedDependencies/renovate/getRenovateRules";
 import { partitionHeldDependencies } from "#src/services/outdatedDependencies/renovate/partitionHeldDependencies";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
@@ -50,14 +51,21 @@ const mismatches = [
 printUncatalogedManifestDependencies(uncatalogedManifestDependencies, color);
 printMismatches(mismatches, color);
 
+const renovateRules = getRenovateRules(renovateJson);
+// `pnpm outdated` compares against `latest`, which is not what Renovate proposes for a package a rule follows a
+// Dist-tag for, so those catalog entries are asked of the registry under their tag instead.
+const followedTagEntries = getFollowedTagEntries(catalogEntries, renovateRules);
+const followedPackages = new Set(followedTagEntries.map(({ pkg }) => pkg));
 const [regularChecks, registryChecks] = await Promise.all([
   getRegularOutdatedDependencies(REPOSITORY_ROOT),
-  getRegistryOutdatedDependencies([...configDependencyEntries, ...engineEntries]),
+  getRegistryOutdatedDependencies([...configDependencyEntries, ...engineEntries, ...followedTagEntries]),
 ]);
-const renovateRules = getRenovateRules(renovateJson);
 // A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.
 const { held, outdated } = partitionHeldDependencies(
-  [...regularChecks.outdatedDependencies, ...registryChecks.outdatedDependencies],
+  [
+    ...regularChecks.outdatedDependencies.filter(({ pkg }) => !followedPackages.has(pkg)),
+    ...registryChecks.outdatedDependencies,
+  ],
   renovateRules,
 );
 const errors = [...regularChecks.errors, ...registryChecks.errors];

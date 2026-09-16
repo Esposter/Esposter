@@ -49,8 +49,9 @@
       "matchPackageNames": ["drizzle-kit", "drizzle-orm"]
     },
     {
-      "description": "`engines.node`, `devEngines.runtime` and `@types/node` are one version by definition, so they move in one branch.",
+      "description": "`engines.node`, `devEngines.runtime` and `@types/node` are one version by definition, so they move in one branch. Renovate's `node` versioning calls a major stable only once its LTS date has passed and an odd major never, so under the default unstable filter the pin could reach no major past its own; the repo tracks the Current line, which is what `pnpm update:node` writes too, so unstable is not ignored here. A major still opens a PR for a person.",
       "groupName": "node",
+      "ignoreUnstable": false,
       "matchPackageNames": ["node", "@types/node"]
     },
     {

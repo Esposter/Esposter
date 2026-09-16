@@ -40,4 +40,27 @@ describe(getRegistryOutdatedDependencies, () => {
       },
     ]);
   });
+
+  test("asks the registry for a followed tag and labels the row with it", async () => {
+    expect.hasAssertions();
+
+    const entries: DependencyEntry[] = [
+      { followTag: "rc", group: DependencyGroup.Catalog, pkg: "a", specifier: "1.0.0-rc.0" },
+    ];
+    vi.mocked(getLatestVersion).mockResolvedValue("1.0.0-rc.1");
+
+    const { outdatedDependencies } = await getRegistryOutdatedDependencies(entries);
+
+    expect(getLatestVersion).toHaveBeenCalledWith("a", "rc");
+    expect(outdatedDependencies).toStrictEqual([
+      {
+        current: "1.0.0-rc.0",
+        dependencyType: "rc",
+        dependents: ["catalog"],
+        latest: "1.0.0-rc.1",
+        pkg: "a",
+        specifier: "1.0.0-rc.0",
+      },
+    ]);
+  });
 });

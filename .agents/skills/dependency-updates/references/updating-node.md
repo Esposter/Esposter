@@ -2,7 +2,7 @@
 
 Read when the node version moves. This page holds the whole procedure; `SKILL.md` keeps the one line that node moves as one group and is never hand-edited.
 
-Two things write the node version, and both write all three values at once. Renovate's `node` group bumps `engines.node`, `devEngines.runtime` and the `@types/node` catalog entry in one branch (`references/renovate.md`), which merges on green like any minor; after pulling it, run `pnpm update:node` with no argument so the machine catches up — steps 3 to 5 below, since package.json already carries the version. Ahead of the bot, `pnpm update:node [version]` from the repo root is the same write by hand. With no argument it targets the latest stable node from the npm registry. In one call it:
+Two things write the node version, and both write all three values at once. Renovate's `node` group bumps `engines.node`, `devEngines.runtime` and the `@types/node` catalog entry in one branch (`references/renovate.md`), which merges on green like any minor; after pulling it, run `pnpm update:node` with no argument so the machine catches up — steps 3 to 5 below, since package.json already carries the version. Ahead of the bot, `pnpm update:node [version]` from the repo root is the same write by hand. With no argument it targets npm's `latest` for `node`, the Current line rather than LTS, which is the line Renovate's `node` rule tracks too (`references/renovate.md`). In one call it:
 
 1. Bumps both node pins in root `package.json` together — `devEngines.runtime` (what `pnpm/setup` installs on the runners) and `engines.node` (what every other tool reads). They are the same number by definition; never write one alone
 2. Bumps the `@types/node` catalog entry to the highest release matching the new node major
