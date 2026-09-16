@@ -17,6 +17,7 @@ export const createHookRegistry = <THook extends AnyHook>(): HookRegistry<THook>
       // Called twice would tear down whichever blade registered most recently
       return () => {
         const index = hooks.indexOf(hook);
+        // eslint-disable-next-line no-restricted-syntax -- the registry hands `hooks` out as the array every holder reads, so an unregister has to remove from that array rather than produce a second one
         if (index !== -1) hooks.splice(index, 1);
       };
     },
