@@ -31,6 +31,6 @@ Nuxt's `compatibilityDate` opts into the framework behaviour as of a given date.
 
 The shared writing rules are the `docs` skill's. Three are specific to this file:
 
-- **The scores are exact, their evidence is a magnitude.** A score is the artifact rather than a reading of the tree, so it stays precise; the counts cited to justify one are wrong within weeks, and a stale count discredits the score it was cited for.
+- **The scores are exact, their evidence is a magnitude.** A score is the artifact rather than a reading of the tree, so it stays precise; the counts cited to justify one are wrong within weeks, and a stale count discredits the score it was cited for. Held by `apps/web/content/docs/getPreciseCounts.test.ts`, which fails on a precise count of anything the repo can count — an enumeration is its own count.
 - **Accepted trade-offs are first-class.** A score below maximum must say what the trade-off is and why it was accepted, not just what's missing. An area at maximum with a known compromise (e.g. `skipLibCheck`) still records it.
 - **No aspiration.** SCORE.md describes the repo as it is, never as it will be. Planned work belongs in the relevant `docs/<area>/roadmap.md`.
