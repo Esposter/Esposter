@@ -1,5 +1,5 @@
+import type { MapValue } from "#src/util/types/MapValue";
 import type { ServiceBusMessage, ServiceBusMessageBatch, ServiceBusSender } from "@azure/service-bus";
-import type { MapValue } from "@esposter/shared";
 
 import { MockServiceBusDatabase } from "#src/store/MockServiceBusDatabase";
 import { getOrCreate } from "@esposter/shared";

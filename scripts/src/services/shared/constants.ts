@@ -31,12 +31,25 @@ export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
 // (`oxlint` skill, `references/lint-configuration.md`), which is why a scan that must skip them reads it too.
 export const FORMATTER_CONFIGURATION_FILE = ".oxfmtrc.json";
 
+// Renovate's config, at the repository root. Its `packageRules` is the repo's one statement of which dependency
+// Is held where and why (`dependency-updates` skill), which is why the outdated report reads it too.
+export const RENOVATE_CONFIGURATION_FILE = "renovate.json";
+
 // ASCII control characters as the record and field separators of a `git log` output a script splits — the
 // Collector's answered commits, the ledger coverage's trailers — since a subject and a body are free text.
 // Written as escapes because a tool rewriting the line would silently drop the characters themselves.
-export const RECORD_SEPARATOR = "";
+export const RECORD_SEPARATOR = "\u001E";
 
-export const FIELD_SEPARATOR = "";
+export const FIELD_SEPARATOR = "\u001F";
 
-// On Windows `pnpm` is a `.cmd` shim, which only a shell resolves
-export const IS_PNPM_SHELL: boolean = process.platform === "win32";
+// `pnpm run` names the executable it is in `npm_execpath` — the native binary, or the `pnpm.cjs` corepack ships
+// That node runs — so a script spawns that file with its args and never a shell: the `pnpm` on a Windows PATH is
+// A `.cmd` shim only a shell resolves, and an args array under `shell` is what Node deprecates (DEP0190). Bare
+// `pnpm` only outside `pnpm run`, which no script in this package is invoked from.
+const pnpmExecPath = process.env.npm_execpath ?? "pnpm";
+
+const isPnpmScript = /\.[cm]?js$/u.test(pnpmExecPath);
+
+export const PNPM_FILE: string = isPnpmScript ? process.execPath : pnpmExecPath;
+
+export const PNPM_ARGS: readonly string[] = isPnpmScript ? [pnpmExecPath] : [];

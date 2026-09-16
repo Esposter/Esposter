@@ -17,7 +17,9 @@
   ],
   "jsPlugins": [
     "./scripts/src/oxlint/errorAlert.ts",
+    "./scripts/src/oxlint/errorHandling.ts",
     "./scripts/src/oxlint/literalUnion.ts",
+    "./scripts/src/oxlint/naming.ts",
     "./scripts/src/oxlint/passThroughHelper.ts",
     "./scripts/src/oxlint/persistThenNotify.ts",
     "./scripts/src/oxlint/propsInterface.ts",
@@ -116,7 +118,18 @@
     {
       "files": ["**/*.bench.ts", "**/*.test.ts"],
       "rules": {
+        "error-handling/no-bare-error": "off",
         "pass-through-helper/no-forwarding-wrapper": "off"
+      }
+    },
+    {
+      "files": [
+        "packages/azure-mock/**",
+        "packages/configuration/**",
+        "packages/shared/src/services/error/toAppError.ts"
+      ],
+      "rules": {
+        "error-handling/no-bare-error": "off"
       }
     },
     {
@@ -171,7 +184,9 @@
     "complexity": "off",
     "curly": ["error", "multi"],
     "error-alert/no-raw-error-alert": "error",
+    "error-handling/no-bare-error": "error",
     "literal-union/no-string-literal-union": "error",
+    "naming/no-call-named-binding": "error",
     "func-names": "off",
     "id-denylist": ["error", "acc", "curr", "dir", "idx"],
     "id-length": "off",
@@ -359,7 +374,10 @@
     "sort-imports": "off",
     "sort-keys": "off",
     "typescript/ban-types": "off",
-    "typescript/consistent-type-imports": "off",
+    "typescript/consistent-type-imports": [
+      "error",
+      { "disallowTypeAnnotations": false, "fixStyle": "separate-type-imports" }
+    ],
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-member-accessibility": [
       "error",

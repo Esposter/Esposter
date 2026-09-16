@@ -4,13 +4,14 @@ import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
 import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
-import { checkIsUuidV4, Operation, RoutePath, takeOne } from "@esposter/shared";
+import { Operation, RoutePath, takeOne } from "@esposter/shared";
 
 export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();

@@ -16,9 +16,3 @@ Store shape and the rules around a mutation: `storeToRefs`, store-to-store dot-a
 
 - Cursor-pagination mechanics — the `pagination` skill's question, over the same files. It has no ledger yet; until it does, a paging finding is raised rather than swept here.
 - `provide`/`inject` sites that should be stores are a `vue-components` finding, not one here; this ledger reads stores that already exist.
-
-## Next enforceable
-
-- Destructuring a ref off a store without `storeToRefs` is syntactic and already half-covered by the component dot-access ban — extend that plugin rather than sweeping for it.
-- A `useMutation` call with no `key` is decidable from the call site.
-- Optimistic rollback correctness needs the whole write path in mind; it stays with the sweep.

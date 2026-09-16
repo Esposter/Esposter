@@ -1,5 +1,5 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 
 describe("errorAlert", () => {
   const RULE = "error-alert/no-raw-error-alert";
@@ -28,21 +28,9 @@ describe("errorAlert", () => {
     // A different callee reading `.message` is not the alert store.
     { name: "logsErrorMessage", source: `console.error(error.message);`, violations: 0 },
   ];
-  const { getCodes, getViolations } = setupPluginSuite({
+  setupPluginSuite({
     fixtures: FIXTURES,
     plugin: "errorAlert",
     rules: [RULE],
-  });
-
-  test.each(FIXTURES)("reports $violations violation(s) for $name", ({ name, violations }) => {
-    expect.hasAssertions();
-
-    expect(getViolations(name)).toBe(violations);
-  });
-
-  test("reports nothing but this rule", () => {
-    expect.hasAssertions();
-
-    expect([...new Set(getCodes())]).toStrictEqual(["error-alert(no-raw-error-alert)"]);
   });
 });

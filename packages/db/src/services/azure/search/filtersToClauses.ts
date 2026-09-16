@@ -4,6 +4,7 @@ import type { Clause, SerializableValue } from "@esposter/azure";
 import type { Filter, MessageEntity } from "@esposter/db-schema";
 
 import { ContentTypes } from "#src/services/azure/search/ContentTypes";
+import { getStartOfDay } from "#src/util/date/getStartOfDay";
 import {
   BinaryOperator,
   CompositeKeyPropertyNames,
@@ -19,7 +20,7 @@ import {
   MimeCategory,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import { getEndOfDay, getStartOfDay, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { getEndOfDay, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 
 // The one categorisation of a mimetype, so a category the uploader recognises is a category search can filter by
 const MimeCategoryContentTypesMap = Object.groupBy([...ContentTypes], getMimeCategory);

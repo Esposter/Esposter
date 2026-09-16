@@ -1,5 +1,5 @@
+import type { ClassifiedMentions } from "#src/models/message/ClassifiedMentions";
 import type { MentionConditionBuilder } from "#src/models/message/mention/MentionConditionBuilder";
-import type { ClassifiedMentions } from "@esposter/shared";
 import type { SQL } from "drizzle-orm";
 
 import { getBroadcastMentionConditions } from "#src/services/message/mention/getBroadcastMentionConditions";

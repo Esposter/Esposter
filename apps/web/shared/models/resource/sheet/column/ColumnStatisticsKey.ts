@@ -1,7 +1,7 @@
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
+import type { z } from "zod";
 
 import { columnStatisticsSchema } from "#shared/models/resource/sheet/column/ColumnStatistics";
-import { z } from "zod";
 
 export type ColumnStatisticsKey = Exclude<keyof ColumnStatistics, "columnName" | "columnType" | "topFrequencies">;
 

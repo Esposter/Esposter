@@ -1,10 +1,9 @@
 import type { Tilemaps } from "phaser";
 
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
-import { ObjectgroupNames } from "#shared/generated/tiled/layers/ObjectgroupName";
-import { BaseTilesetKeys } from "#shared/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { addTilesetImage } from "@/services/dungeons/tilemap/addTilesetImage";
+import { BaseTilesetKeys, ObjectgroupNames } from "@/services/dungeons/tilemap/constants";
 import { createLayer } from "@/services/dungeons/tilemap/createLayer";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 

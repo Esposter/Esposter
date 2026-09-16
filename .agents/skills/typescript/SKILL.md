@@ -5,6 +5,10 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 
 # TypeScript Conventions
 
+## Settled — do not re-propose
+
+- **Turning `typescript/consistent-type-imports` on for `.vue`** — oxlint skips the rule there, since it cannot tell from the script block whether the template uses an import as a value, and nothing in the ESLint config reaches it; the `.ts` half is on (`disallowTypeAnnotations` off, because `vi.mock(import(…))` is the sanctioned Vitest idiom), so a class used only in type position takes `import type` by lint, and a `.vue` file keeps it by reading.
+
 ## Deep dives
 
 - `references/enums.md` — when declaring an enum, its Zod schema, its values array, or a ref that holds one.
@@ -37,7 +41,7 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 - **Boolean casting** — never `!!`; always `Boolean(value)`.
 - **Interpolation coerces** — `${x}`, never `${x.toString()}`; `no-restricted-syntax` enforces it (a radix `toString(16)` stays). `String(x)` inside a template is only for the types `restrict-template-expressions` rejects (`unknown`, `symbol`).
 - **Regex** — literals for static patterns, `new RegExp(template, flags)` only when the pattern interpolates, and always the `u` flag; all three are lint errors otherwise (`prefer-regex-literals`, `require-unicode-regexp`). Naming (`_REGEX`) is the `naming` skill's rule.
-- **A non-printing character is written as its `\uXXXX` escape, never the raw byte** — `RECORD_SEPARATOR = "\u001E"`. Settled, and the raw byte loses: it renders as nothing, so no reader can tell it from an empty string, from its neighbour, or from having been dropped by a tool that rewrote the line (`references/absent-values.md`).
+- **A non-printing character is written as its `\uXXXX` escape, never the raw byte** — `RECORD_SEPARATOR = "\u001E"`. Settled, and the raw byte loses: it renders as nothing, so no reader can tell it from an empty string, from its neighbour, or from having been dropped by a tool that rewrote the line (`references/absent-values.md`). Enforced over every tracked file by `scripts/src/workspace/controlCharacters.test.ts`, because nothing else can see it: the character is invisible in an editor, in a diff and in a review alike.
 - **Prefer the shortened assignment forms** — compound (`x += y`, `x ??= y`) over `x = x + y`, chained (`a.value = b.value = value`) over repeating the right-hand side. `restrict-plus-operands` and `no-multi-assign` are off for exactly this reason: a cast to silence a lint rule is strictly worse than the operator it replaces.
 - **`as unknown as T` is `any` with extra steps** — it launders a value past every check, isn't lint-enforceable, and needs a stated reason the type cannot be modelled; the default answer is that it never was. Prefer a single `as T` where TS accepts it, and comment what the compiler cannot see — never "this is safe".
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
@@ -48,7 +52,7 @@ description: Apply when writing any TypeScript in this project. Esposter TypeScr
 ## Functions
 
 - **Always arrow functions** — `const fn = () => { ... }`. The `function` keyword is only for cases where `this` binding is required: class methods, object methods referencing `this`, generators (`function*`). Everything else (module-level, composables, callbacks, helpers) must be an arrow function.
-- **Never pass a function reference as a callback** — wrap it: `array.map((item) => fn(item))`, `onUnmounted(() => { reset(); })`. A bare reference forwards every argument the caller supplies (`.map` passes the index) and loses `this` binding on a method. Applies to array methods, lifecycle hooks and event listeners alike.
+- **Never pass a function reference as a callback** — wrap it: `array.map((item) => fn(item))`, `onUnmounted(() => { reset(); })`. A bare reference forwards every argument the caller supplies (`.map` passes the index) and loses `this` binding on a method. Applies to array methods, lifecycle hooks and event listeners alike — except for the native coercion functions, where `unicorn/prefer-native-coercion-functions` demands the bare reference and is right to: `Number`, `String` and `Boolean` each read one argument and ignore the index, so the wrapper only hides which of the three is being called.
 - **Prefer inferred return types** — annotate only when (a) the inferred type is too broad and you want a narrower contract (e.g. `ComputedRef<ValidationRule>` instead of `ComputedRef<(value: string) => string | true>`), or (b) the function is a public API boundary. Never annotate for documentation, service functions included.
 - **Don't extract helpers that add no value** — if a helper just wraps an inline object literal or single expression without reuse or meaningful abstraction, use the value directly. Three lines of inline code beats a named wrapper used once.
 

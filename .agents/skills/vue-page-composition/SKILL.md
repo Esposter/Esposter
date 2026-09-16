@@ -7,6 +7,10 @@ description: Apply when decomposing a page, building a list/table of repeated it
 
 How pages and lists are assembled from components. How an individual component is _written_ — shell primitives, generics, slots, props, emits, naming — is the `vue-component-patterns` skill's.
 
+## Settled — do not re-propose
+
+- **A rule counting `<v-btn>`/`<StyledButton>` per SFC** — the allowed groupings are a roster, and a page may hold route-derived state and `<Head>` values, so neither the button count nor a `ref` under `pages/**` decides anything without reading what the value feeds.
+
 ## Deep dives
 
 - `references/singleton-dialogs.md` — when a list item needs a dialog, menu or other overlay opened from a row, or when a dialog carries per-open local state.
@@ -86,4 +90,4 @@ A permission-gated settings tab is hidden by a tab-definition map (`FooPermissio
 
 ## Singleton Dialogs — Store-Driven Target, Never Per-Item
 
-**Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded `v-dialog`/menu creates N full component trees that all mount, hydrate, and re-render together — which is how a list page ends up with a seconds-long INP. One instance is mounted at list level and driven by a target ref in a per-service dialog store; the three-part wiring is in `references/singleton-dialogs.md`, and the rationale in `apps/web/content/docs/architecture/singleton-dialogs.md` (keep that page updated when this pattern evolves).
+**Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded `v-dialog`/menu creates N component trees that mount, hydrate and re-render as one — which is how a list page ends up with a seconds-long INP. One instance is mounted at list level and driven by a target ref in a per-service dialog store; the three-part wiring is in `references/singleton-dialogs.md`, and the rationale in `apps/web/content/docs/architecture/singleton-dialogs.md` (keep that page updated when this pattern evolves).

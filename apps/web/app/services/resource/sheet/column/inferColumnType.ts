@@ -1,9 +1,10 @@
 import type { DatasetColumnType } from "#shared/models/dataset/DatasetColumnType";
+import type { BooleanValue } from "@/models/resource/sheet/column/BooleanValue";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
 import { parseDate } from "#shared/util/date/parseDate";
-import { BooleanValue, BooleanValues } from "@/models/resource/sheet/column/BooleanValue";
+import { BooleanValues } from "@/models/resource/sheet/column/BooleanValue";
 import { normalizeString } from "@esposter/shared";
 
 export const inferColumnType = (values: string[]): DatasetColumnType => {

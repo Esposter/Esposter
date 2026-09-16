@@ -51,7 +51,7 @@ const getClass = (cardId: number): string => {
   // In the initial state, set the last card as inactive.
   else if ((inactiveCardId.value === undefined && cardId === maxShownCards) || cardId === inactiveCardId.value)
     return "inactive-card";
-  else if (offset > maxShownCards - 2) return "overflow-card";
+  else if (offset > maxShownCards - 2) return "of-card";
   else return `normal-card-${offset}`;
 };
 // Main timer driving card movement.
@@ -140,7 +140,7 @@ watch(
 </script>
 
 <template>
-  <div flex-1 grid grid-cols-2>
+  <div flex-1 grid cols-2>
     <div
       v-for="(card, index) of cards"
       :key="index"
@@ -207,7 +207,7 @@ watch(
   }
 }
 
-.overflow-card {
+.of-card {
   // Could be optimised by not rendering these, but that's more than a display:none
   // since we'd need to handle the top card becoming normal.
   display: none;

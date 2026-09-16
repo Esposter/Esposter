@@ -10,14 +10,6 @@ on:
         description: Push fixes parked with no queue commit behind them
         type: boolean
         default: false
-    # @TODO: remove once the release carrying the trigger's `secrets: inherit` has merged to `main`. Until then
-    # `main`'s trigger still hands these two by name, and a named secret the callee does not declare refuses the
-    # call at startup on every `status` and `issue_comment` event.
-    secrets:
-      CLAUDE_CODE_OAUTH_TOKEN:
-        required: true
-      REVIEW_COLLECTOR_TOKEN:
-        required: true
 
 jobs:
   collect:

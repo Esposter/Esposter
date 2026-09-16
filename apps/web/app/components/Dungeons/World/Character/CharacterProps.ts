@@ -3,9 +3,7 @@ import type { MovementStopped } from "@/models/dungeons/gridEngine/MovementStopp
 import type { PositionChangeFinished } from "@/models/dungeons/gridEngine/PositionChangeFinished";
 import type { PositionChangeStarted } from "@/models/dungeons/gridEngine/PositionChangeStarted";
 import type { Character } from "@/models/dungeons/scene/world/Character";
-import type { SceneWithPlugins } from "vue-phaserjs";
-
-import { Sprite } from "vue-phaserjs";
+import type { SceneWithPlugins, Sprite } from "vue-phaserjs";
 
 export interface CharacterProps {
   id: Character["id"];

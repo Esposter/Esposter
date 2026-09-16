@@ -5,6 +5,7 @@ import { THEME_KEY } from "@/services/survey/constants";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { Model } from "survey-core";
+import { DefaultDark, DefaultLight } from "survey-core/themes";
 import { SurveyComponent } from "survey-vue3-ui";
 
 interface Props {
@@ -33,7 +34,13 @@ const { closedMessage, isAcceptingResponses, responseMode } = content.settings;
 const isParticipantTokenRequired = responseMode === SurveyResponseMode.Identified && !participantToken;
 const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(content.model);
 const model = new Model(surveyModel);
+const isDark = useIsDark();
+// An author's theme is the survey's look everywhere; without one the survey follows the app's palette
 if (theme) model.applyTheme(theme);
+else
+  watchImmediate(isDark, (newIsDark) => {
+    model.applyTheme(newIsDark ? DefaultDark : DefaultLight);
+  });
 model.onValueChanged.add(saveSurveyResponse);
 model.onCurrentPageChanged.add(saveSurveyResponse);
 model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSaveSuccess }) => {

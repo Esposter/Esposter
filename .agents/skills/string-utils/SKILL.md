@@ -48,7 +48,7 @@ The default trim in app code — reach for it over a bare `.trim()`:
 
 ## When NOT to use `normalizeString`
 
-- **Never anywhere in Vue** — not in `@update:model-value`, not in submit handlers. The tRPC Zod boundary already normalizes; in `@update:model-value` it actively harms (trims mid-typing, swallows spaces). See the `vue` skill (`normalizeString` Never in Vue) — it owns this rule.
+- **Never anywhere in Vue.** The tRPC Zod boundary already normalizes, and in a template handler it actively harms. See the `vue` skill (`normalizeString` Never in Vue) — it owns this rule.
 - **User-facing transformation actions** — e.g. `computeStringTransformation.ts` `Trim` case; keep `value.trim()`, it's implementing a named user operation.
 - **The `normalizeString` function itself** — obviously.
 - **Standalone published packages** (`virrun`, `xml2js`) — `.trim()` is live there and correct: it trims process stdout or implements xml2js's own `trim` option, none of which is user input crossing a Zod boundary.

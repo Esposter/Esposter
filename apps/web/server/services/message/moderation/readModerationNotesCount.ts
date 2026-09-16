@@ -1,11 +1,11 @@
 import type { Clause } from "@esposter/azure";
-import type { RoomInMessage, User } from "@esposter/db-schema";
+import type { ModerationNoteEntity, RoomInMessage, User } from "@esposter/db-schema";
 
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
 import { readEntitiesCount } from "@esposter/db";
-import { AzureTable, ModerationNoteEntity, ModerationNoteEntityPropertyNames } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
+import { AzureTable, ModerationNoteEntityPropertyNames } from "@esposter/db-schema";
 
 // The paginated read only returns the loaded page, so the notes badge needs a true total. A target's
 // Notes live in one room partition and are inherently few, so the keys-only walk is a single page.

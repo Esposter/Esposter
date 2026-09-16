@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 
 // The subset of a source object that a form schema declares, so vjsf is handed the fields it renders and
 // Nothing else. Deliberately a projection rather than a parse: the source is a column the app already built,

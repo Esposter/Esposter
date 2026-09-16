@@ -5,7 +5,6 @@ import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   DRAIN_ATTEMPT_CAP,
   DRAIN_FAILED_MARKER,
-  DRAIN_LIMITED_MARKER,
   DRAIN_VERDICT_PREFIX,
   INSTALL_COMMAND,
   QUARANTINED_MARKER,
@@ -16,16 +15,16 @@ import {
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
+import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
-import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdtempSync } from "node:fs";
+import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -35,7 +34,7 @@ import { join } from "node:path";
 // Own session limit is the one non-zero exit that is not this review's failure: its deadline goes into a marker
 // Comment every run reads until it lifts.
 export const drainFindings = async ({
-  developSha,
+  baseSha,
   issueComments,
   newestReviewId,
   reviewFixesSha,
@@ -59,56 +58,60 @@ export const drainFindings = async ({
     return { isLimited: false, reviewFixesSha };
   }
 
-  const baseSha =
-    reviewFixesSha !== undefined && readCherryShas(developSha, reviewFixesSha).length > 0 ? reviewFixesSha : developSha;
   runGit(["switch", "--force-create", REVIEW_FIXES_BRANCH, baseSha]);
   // The tree the drain's own checks run against is this base, not the one the event checked out (`INSTALL_COMMAND`)
   if (spawnPnpm(INSTALL_COMMAND, { cwd: REPOSITORY_ROOT, stdio: "inherit" }).status !== 0)
     throw new InvalidOperationError(Operation.Update, "coderabbit", `the install for ${baseSha} failed`);
-  // Outside the checkout, so the drain's "leave the working tree clean" and its verdicts never contend
+  // Outside the checkout, so the drain's "leave the working tree clean" and its verdicts never contend, and
+  // Removed with the drain that made it — every run mints its own, and none of them is read again
   const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
-  const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
-  const verdictPath = join(verdictDirectory, VERDICT_FILE);
-  const promptInput = { ...drainInput, rejectionsPath, verdictPath };
-  const { isDrained, limitResetAtMs } = await runDrain(getDrainPrompt(promptInput), REPOSITORY_ROOT);
-  if (limitResetAtMs !== undefined) {
-    const resetAt = new Date(limitResetAtMs).toISOString();
-    postComment(
-      pullRequest,
-      `<!-- ${DRAIN_LIMITED_MARKER} until ${resetAt} -->\nThe drain could not start — the account is out of session until ${resetAt}. No attempt is counted, and the next event after that drains the same open set.`,
-    );
-    console.info(`the drain is limited until ${resetAt} — nothing drained, nothing counted`);
-    return { isLimited: true, reviewFixesSha };
-  }
-  // A zero exit says the session ended, never that it finished: a drain that stopped mid-fix leaves the rest in
-  // The working tree, and reading `HEAD` there would push half a finding as though it were whole
-  const dirtyPaths = readDirtyPaths();
-  if (!isDrained || dirtyPaths.length > 0) {
-    postComment(
-      pullRequest,
-      `${failedMarker}\nDrain attempt ${attempts + 1} of review ${newestReviewId} failed — see the collector run.`,
-    );
-    throw new InvalidOperationError(
-      Operation.Update,
-      "coderabbit",
-      isDrained ? `the drain left the working tree dirty:\n${dirtyPaths.join("\n")}` : "the drain step exited non-zero",
-    );
-  }
+  const result = await withFinalizerAsync(
+    async () => {
+      const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
+      const verdictPath = join(verdictDirectory, VERDICT_FILE);
+      const promptInput = { ...drainInput, rejectionsPath, verdictPath };
+      const { isDrained, limitResetAtMs } = await runDrain(getDrainPrompt(promptInput), REPOSITORY_ROOT);
+      if (limitResetAtMs !== undefined) {
+        postDrainLimited(pullRequest, limitResetAtMs);
+        return { isLimited: true, reviewFixesSha };
+      }
+      // A zero exit says the session ended, never that it finished: a drain that stopped mid-fix leaves the rest in
+      // The working tree, and reading `HEAD` there would push half a finding as though it were whole
+      const dirtyPaths = readDirtyPaths();
+      if (!isDrained || dirtyPaths.length > 0) {
+        postComment(
+          pullRequest,
+          `${failedMarker}\nDrain attempt ${attempts + 1} of review ${newestReviewId} failed — see the collector run.`,
+        );
+        throw new InvalidOperationError(
+          Operation.Update,
+          "coderabbit",
+          isDrained
+            ? `the drain left the working tree dirty:\n${dirtyPaths.join("\n")}`
+            : "the drain step exited non-zero",
+        );
+      }
 
-  postDrainVerdicts(promptInput);
+      postDrainVerdicts(promptInput);
 
-  const headSha = readHeadSha();
-  if (headSha === baseSha) {
-    console.info("the drain produced no commit — every finding was rejected or already answered");
-    return { isLimited: false, reviewFixesSha };
-  }
-  // An empty expected sha leases on the branch not existing, which is the first drain's case
-  runGit([
-    "push",
-    `--force-with-lease=refs/heads/${REVIEW_FIXES_BRANCH}:${reviewFixesSha ?? ""}`,
-    "origin",
-    `${headSha}:refs/heads/${REVIEW_FIXES_BRANCH}`,
-  ]);
-  console.info(`pushed ${REVIEW_FIXES_BRANCH} at ${headSha}`);
-  return { isLimited: false, reviewFixesSha: headSha };
+      const headSha = readHeadSha();
+      if (headSha === baseSha) {
+        console.info("the drain produced no commit — every finding was rejected or already answered");
+        return { isLimited: false, reviewFixesSha };
+      }
+      // An empty expected sha leases on the branch not existing, which is the first drain's case
+      runGit([
+        "push",
+        `--force-with-lease=refs/heads/${REVIEW_FIXES_BRANCH}:${reviewFixesSha ?? ""}`,
+        "origin",
+        `${headSha}:refs/heads/${REVIEW_FIXES_BRANCH}`,
+      ]);
+      console.info(`pushed ${REVIEW_FIXES_BRANCH} at ${headSha}`);
+      return { isLimited: false, reviewFixesSha: headSha };
+    },
+    () => {
+      rmSync(verdictDirectory, { force: true, recursive: true });
+    },
+  );
+  return result;
 };

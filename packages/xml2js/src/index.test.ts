@@ -9,7 +9,7 @@ describe("@esposter/xml2js", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 10.51 KB (10766 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 10.51 KB (10763 bytes)"`);
   });
 
   test("types size", () => {

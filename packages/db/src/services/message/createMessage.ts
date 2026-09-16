@@ -1,4 +1,5 @@
 import type {
+  AzureTable,
   AzureTableEntityMap,
   CreateMessageInput,
   CustomTableClient,
@@ -7,7 +8,7 @@ import type {
 
 import { createEntity } from "#src/services/azure/table/createEntity";
 import { addMessageMetadata } from "#src/services/message/addMessageMetadata";
-import { AzureTable, createMessageEntity, getReverseTickedTimestamp } from "@esposter/db-schema";
+import { createMessageEntity, getReverseTickedTimestamp } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const createMessage = async <T extends CreateMessageInput>(

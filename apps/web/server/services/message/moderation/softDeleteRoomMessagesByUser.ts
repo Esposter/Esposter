@@ -1,5 +1,6 @@
 import type { Clause } from "@esposter/azure";
 
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
@@ -17,7 +18,7 @@ import {
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames, noop } from "@esposter/shared";
+import { noop } from "@esposter/shared";
 
 // Soft-deletes every message a user still has visible in a room, one Table batch at a time. Each batch notifies
 // As soon as it commits, so a purge that stops partway still hides everything it managed to write.

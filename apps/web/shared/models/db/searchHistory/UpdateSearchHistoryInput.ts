@@ -1,5 +1,6 @@
+import type { z } from "zod";
+
 import { selectSearchHistoryInMessageSchema } from "@esposter/db-schema";
-import { z } from "zod";
 
 export const updateSearchHistoryInputSchema = selectSearchHistoryInMessageSchema.pick({
   id: true,

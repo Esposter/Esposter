@@ -16,7 +16,7 @@
 | `shared/models/resource` — `survey`, `program`, `blueprint`, `todoList`, `note` | 2026-09-07 |                                                                                                                           |
 | `shared/models` — the cross-cutting trees                                       | 2026-09-07 | `auth`, `content`, `entity`, `environment`, `file`, `notification`, `room`, `storage`, `trpc`                             |
 | `shared/services` — the cross-cutting trees                                     | 2026-09-07 | `app`, `intl`, `notification`, `room`, `storage`, `superjson`, `survey`, `trpc`, `zod`                                    |
-| `shared/util`                                                                   | 2026-09-07 |                                                                                                                           |
+| `shared/util`                                                                   | 2026-09-15 |                                                                                                                           |
 | `shared/services/dungeons` + `shared/assets`                                    | 2026-09-07 | the definition data both halves read; `shared/generated` is generator output                                              |
 | `shared/models/dungeons`                                                        | 2026-09-14 | `Direction`'s SCREAMING_SNAKE members and `Position`'s shape are grid-engine's, so they stay                              |
 | `shared/models/clicker`                                                         | 2026-09-07 |                                                                                                                           |
@@ -31,7 +31,7 @@
 | the small shared roots                                                          | 2026-09-07 |                                                                                                                           |
 | `packages/shared` — `src/models`, `src/test`                                    | 2026-09-07 |                                                                                                                           |
 | `packages/shared` — `src/services`                                              | 2026-09-07 |                                                                                                                           |
-| `packages/shared` — `src/util/types`                                            | 2026-09-06 | the near-duplicate `DeepOmit` type tests are the `testing` ledger's                                                       |
+| `packages/shared` — `src/util/types`                                            | 2026-09-15 | the near-duplicate `DeepOmit` type tests are the `testing` ledger's                                                       |
 | `packages/shared` — the rest of `src/util`                                      | 2026-09-06 |                                                                                                                           |
 | `packages/shared-node`                                                          | 2026-09-07 |                                                                                                                           |
 

@@ -1,7 +1,8 @@
 import type { Emoji } from "@/models/message/emoji/Emoji";
+import type { EmojiGroup } from "@/models/message/emoji/EmojiGroup";
 import type { EmojiIndex } from "@/models/message/emoji/EmojiIndex";
 
-import { EmojiGroup, EmojiGroups } from "@/models/message/emoji/EmojiGroup";
+import { EmojiGroups } from "@/models/message/emoji/EmojiGroup";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { getEmojiCharacterKey } from "@/services/message/emoji/getEmojiCharacterKey";
 import characterEmojiRecordMap from "unicode-emoji-json/data-by-emoji.json";

@@ -1,4 +1,4 @@
-import * as azure_native from "@pulumi/azure-native";
+import type * as azure_native from "@pulumi/azure-native";
 
 // The Logic Apps service IP ranges for australiaeast. They belong to the region rather than to any one
 // Workflow, so every workflow in both stacks declares the same block.

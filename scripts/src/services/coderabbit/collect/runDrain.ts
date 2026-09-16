@@ -3,7 +3,7 @@ import type { DrainRun } from "#src/models/coderabbit/collect/DrainRun";
 import { CLAUDE_CODE_PACKAGE, DRAIN_MODEL } from "#src/services/coderabbit/collect/constants";
 import { getDrainEventLine } from "#src/services/coderabbit/collect/getDrainEventLine";
 import { getDrainLimitResetMs } from "#src/services/coderabbit/collect/getDrainLimitResetMs";
-import { IS_PNPM_SHELL } from "#src/services/shared/constants";
+import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { createInterface } from "node:readline";
@@ -27,8 +27,9 @@ export const runDrain = async (prompt: string, cwd: string): Promise<DrainRun> =
       .map((key) => [key, process.env[key]]),
   );
   const child = spawn(
-    "pnpm",
+    PNPM_FILE,
     [
+      ...PNPM_ARGS,
       "dlx",
       CLAUDE_CODE_PACKAGE,
       "-p",
@@ -39,7 +40,7 @@ export const runDrain = async (prompt: string, cwd: string): Promise<DrainRun> =
       "stream-json",
       "--verbose",
     ],
-    { cwd, env: environment, shell: IS_PNPM_SHELL, stdio: ["pipe", "pipe", "inherit"] },
+    { cwd, env: environment, stdio: ["pipe", "pipe", "inherit"] },
   );
   // Registered before the read loop: `close` fires on the tick after stdout ends, before the loop resumes
   const closed = once(child, "close");

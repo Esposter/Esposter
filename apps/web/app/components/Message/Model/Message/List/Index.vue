@@ -53,14 +53,14 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
   <MessageModelMessageReactionsDialog />
   <v-list
     ref="messageContainer"
-    :class="{ 'overflow-anchor-none': isPinnedToBottom }"
+    :class="{ 'of-anchor-none': isPinnedToBottom }"
     pb-0
     flex
     flex-1
     basis-full
     flex-col-reverse
-    overflow-x-hidden
-    overflow-y-auto
+    of-x-hidden
+    of-y-auto
     lines="two"
   >
     <div ref="bottomSentinel" />

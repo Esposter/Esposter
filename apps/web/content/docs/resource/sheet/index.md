@@ -20,8 +20,8 @@ The editor is mature. Open work: [roadmap](/docs/resource/sheet/roadmap). New id
 
 ## Shipped log
 
-- **Editing** — inline cell editing, add/edit/delete rows and columns, bulk select + delete, undo/redo, row drag-reorder, keyboard cell navigation, Excel-style range copy/paste ([clipboard](/docs/resource/sheet/clipboard)) that materializes computed-column values on copy ([copy computed values](/docs/resource/sheet/copy-computed-values)).
-- **Columns** — reorder, visibility toggle, descriptions, type recast on change, format options (number/boolean/date) applied to every rendered cell ([cell formatting](/docs/resource/sheet/cell-formatting)), configurable footer aggregate; computed columns (Math via mathjs, ConvertTo, DatePart, RegexMatch, String, StringSplit, StringPattern, chained) and aggregation columns (average/count/min/max/rank/percent-of-total/running-sum) ([computed columns](/docs/resource/sheet/computed-columns)).
+- **Editing** — inline editing, bulk row and column operations, and Excel-style range copy/paste, every one of them a command on the single history stack ([clipboard](/docs/resource/sheet/clipboard), [copy computed values](/docs/resource/sheet/copy-computed-values)).
+- **Columns** — reordering, visibility, type recasting and per-type formatting ([cell formatting](/docs/resource/sheet/cell-formatting)), plus the computed and aggregation families, which a dispatch map extends one entry at a time ([computed columns](/docs/resource/sheet/computed-columns)).
 - **Data quality** — null/empty strategy, duplicate-row detection, trim/normalize strings, global find & replace.
 - **Import** — CSV/TSV/JSON/XLSX, import preview, paste tabular data from Excel/Sheets.
 - **Export** — filtered rows, column subset, JSON array, selected-rows, copy-to-clipboard (TSV).

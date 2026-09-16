@@ -1,4 +1,5 @@
 import type { PagedAsyncIterableIterator } from "#src/models/shared/PagedAsyncIterableIterator";
+import type { MapValue } from "#src/util/types/MapValue";
 import type {
   CreateTableEntityResponse,
   GetAccessPolicyResponse,
@@ -14,7 +15,6 @@ import type {
   TableTransactionResponse,
   UpdateMode,
 } from "@azure/data-tables";
-import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { MOCK_TABLE_BASE_URL } from "#src/constants";

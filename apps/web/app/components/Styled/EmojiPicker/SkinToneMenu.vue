@@ -16,7 +16,7 @@ const skinToneEmoji = getEmojiIndex().slugEmojiMap.get(SKIN_TONE_PREVIEW_EMOJI_S
     <template #activator="{ props }">
       <v-btn aria-label="Skin tone" :="props" size="small" variant="text" icon>
         <span lh-none text-title-medium>{{ applySkinTone(skinToneEmoji, modelValue) }}</span>
-        <v-tooltip activator="parent" location="top" text="Skin tone" />
+        <v-tooltip activator="parent" text="Skin tone" />
       </v-btn>
     </template>
     <v-list density="compact">

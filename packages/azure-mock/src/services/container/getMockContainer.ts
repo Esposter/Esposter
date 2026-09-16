@@ -1,4 +1,4 @@
-import type { MapValue } from "@esposter/shared";
+import type { MapValue } from "#src/util/types/MapValue";
 
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { getOrCreate } from "@esposter/shared";

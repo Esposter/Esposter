@@ -1,5 +1,5 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 
 describe("literalUnion", () => {
   const RULE = "literal-union/no-string-literal-union";
@@ -26,17 +26,5 @@ describe("literalUnion", () => {
     { name: "genericArgument", source: `export const value = ref<"a" | "b">("a");`, violations: 0 },
     { name: "parenthesizedKeys", source: `export type Flags = Record<("a" | "b"), boolean>;`, violations: 0 },
   ];
-  const { getCodes, getViolations } = setupPluginSuite({ fixtures: FIXTURES, plugin: "literalUnion", rules: [RULE] });
-
-  test.each(FIXTURES)("reports $violations violation(s) for $name", ({ name, violations }) => {
-    expect.hasAssertions();
-
-    expect(getViolations(name)).toBe(violations);
-  });
-
-  test("reports nothing but this rule", () => {
-    expect.hasAssertions();
-
-    expect([...new Set(getCodes())]).toStrictEqual(["literal-union(no-string-literal-union)"]);
-  });
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "literalUnion", rules: [RULE] });
 });

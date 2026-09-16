@@ -21,7 +21,7 @@ Setting that out explicitly matters because the two halves fail differently. A c
 | `vp build`, `vp dev`            | **Does not apply to the app.** Nuxt owns the build, the dev server and the module graph                                                                                                                                                            |
 | `vp pack`                       | Applies to the libraries, which are already tsdown packages                                                                                                                                                                                        |
 
-The config-file consequence of that last row is the seam described in [configuration](/docs/proposals/refactors/vite-plus/configuration): Vite+ needs a root `vite.config.ts` to recognise a workspace, Nuxt wraps Vite and discourages a standalone one, and the request to let `nuxt.config.ts` be the authoritative source was raised upstream and closed without an implementation ([issue 912](https://github.com/voidzero-dev/vite-plus/issues/912)). The resulting warning is a warning rather than a defect — a separate config works ([Nuxt discussion](https://github.com/nuxt/nuxt/discussions/34857)) — but the arrangement is two config trees where one would do.
+The config-file consequence of that last row is the seam described in [configuration](/docs/proposals/refactors/vite-plus/configuration): Vite+ needs a root `vite.config.ts` to recognise a workspace, Nuxt wraps Vite and discourages a standalone one, and upstream declined to let `nuxt.config.ts` stand in (that page holds the issue). The resulting warning is a warning rather than a defect — a separate config works ([Nuxt discussion](https://github.com/nuxt/nuxt/discussions/34857)) — but the arrangement is two config trees where one would do.
 
 ### The two test blockers
 
@@ -30,7 +30,7 @@ Neither is speculative and both are measurable before anything is changed.
 - **The Nuxt Vitest environment.** Well over a hundred test files opt into it with a `@vitest-environment nuxt` pragma, and that environment is supplied by Nuxt's own test utilities rather than by Vitest. Whether it still registers under a `vp test` invocation is the question, and a large share of the suite depends on the answer.
 - **The sharded blob pipeline.** The suite runs as one root Vitest `projects` config so it shares one run, one coverage report and one `--shard` axis, and CI fans it across shards with `--reporter=blob` and recombines with `--merge-reports`. A wrapper that does not forward those flags cleanly does not merely run slower — it silently stops being one coverage report, and the aggregate gate that means "every shard passed" is exactly the check this repository has already had go green while a shard did not.
 
-Until both are answered, the suite keeps invoking Vitest directly and only its _wrapper_ becomes a task. That is not a compromise; running a tool through a cached task runner is where the value is, and rewriting how the tool is imported buys nothing on top of it.
+Until both are answered, the suite stays as [task runner](/docs/proposals/refactors/vite-plus/task-runner) leaves it — Vitest invoked directly, its wrapper the task. That is not a compromise; running a tool through a cached task runner is where the value is, and rewriting how the tool is imported buys nothing on top of it.
 
 ## `vp migrate` cannot be used here
 
@@ -62,4 +62,4 @@ The ladder's shape is the argument against `vp migrate` restated as a plan: the 
 
 Oxlint reading a `.vue` file's script and not its template is the reason ESLint does not leave, and it is worth being precise about the consequence: `vp lint` replaces the oxlint invocation, not the ESLint one, and the two continue side by side.
 
-That is also why this proposal does not accelerate the [ESLint to oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration). Vite+ changes who invokes the linter; it does not change what the linter can parse. Treating adoption as progress on that migration would retire ESLint rules that nothing has replaced, over templates that nothing is reading.
+That is also why this proposal leaves the rule migration where [configuration](/docs/proposals/refactors/vite-plus/configuration) leaves it: Vite+ changes who invokes the linter; it does not change what the linter can parse. Treating adoption as progress on that migration would retire ESLint rules that nothing has replaced, over templates that nothing is reading.

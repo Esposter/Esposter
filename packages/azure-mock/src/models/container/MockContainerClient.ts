@@ -1,5 +1,7 @@
 import type { BlobHierarchyItem } from "#src/models/container/BlobHierarchyItem";
 import type { PagedAsyncIterableIterator } from "#src/models/shared/PagedAsyncIterableIterator";
+import type { MockContainerDatabase } from "#src/store/MockContainerDatabase";
+import type { MapValue } from "#src/util/types/MapValue";
 import type {
   AppendBlobClient,
   BlobBatchClient,
@@ -28,7 +30,6 @@ import type {
   HttpRequestBody,
   PageBlobClient,
 } from "@azure/storage-blob";
-import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { BLOB_NOT_FOUND_MESSAGE, MOCK_BLOB_BASE_URL } from "#src/constants";
@@ -45,7 +46,6 @@ import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { readMockBlobMetadata } from "#src/services/container/readMockBlobMetadata";
 import { createMockResponse } from "#src/services/shared/createMockResponse";
 import { getMockSasUrl } from "#src/services/shared/getMockSasUrl";
-import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 /**
  * An in-memory mock of the Azure ContainerClient — no emulator and no network.

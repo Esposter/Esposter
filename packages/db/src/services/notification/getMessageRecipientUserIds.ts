@@ -1,10 +1,10 @@
 import type { Database, MessageEntity } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
+import { classifyMentions } from "#src/services/message/mention/classifyMentions";
 import { getMentionNotificationConditions } from "#src/services/message/mention/getMentionNotificationConditions";
 import { getThreadFollowerUserIds } from "#src/services/notification/getThreadFollowerUserIds";
 import { NotificationType, userStatusesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
-import { classifyMentions } from "@esposter/shared";
 import { and, eq, ne, or } from "drizzle-orm";
 
 // Everyone one message notifies, thread reply included. A reply widens this set with the thread's followers

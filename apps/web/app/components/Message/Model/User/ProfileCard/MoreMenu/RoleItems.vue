@@ -15,7 +15,6 @@ const { roomId, user } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { checkHasMyPermission, getRoles, readMemberRoles } = roleStore;
 const roles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
-const hasManageRoles = computed(() => checkHasMyPermission(roomId, RoomPermission.ManageRoles));
 // The card is a popout that appears on hover, so the member's own roles load behind it rather than blocking it.
 // Nothing awaits the read and nobody asked for it, so it reports its own failure — the group renders empty,
 // Which is also what a member with no roles looks like
@@ -27,7 +26,7 @@ getSynchronizedFunction(() =>
 <!-- Discord assigns a role from the member themselves rather than only from a settings list, which is where the
      want happens: reading who someone is is the moment you notice what they should be able to do -->
 <template>
-  <v-list-group v-if="hasManageRoles && roles.length > 0" value="Roles">
+  <v-list-group v-if="checkHasMyPermission(roomId, RoomPermission.ManageRoles) && roles.length > 0" value="Roles">
     <template #activator="{ props: activatorProps }">
       <v-list-item :="activatorProps" prepend-icon="mdi-shield-key-outline" title="Roles" />
     </template>

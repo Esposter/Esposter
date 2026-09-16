@@ -33,8 +33,7 @@ export default {
       // Already the plural — so a relation key or a local spelled `bansInMessages` has pluralised the schema, and
       // Reads as bans across messages. The suffix is dropped from a variable (`const ban`) or kept whole as the
       // Table's name (`r.many.bansInMessage`); nothing spells it plural. Unanchored, because a through-relation
-      // Key carries the table's name mid-word (`roomsInMessageViaInvitesInMessage`) — anchoring to the end read
-      // Three such keys as clean, which is how they shipped.
+      // Key carries the table's name mid-word (`roomsInMessageViaInvitesInMessage`), which an end anchor passes
       message:
         "`InMessage` is a schema suffix, not a noun — the table's own name is the plural, so drop the `s`. See the naming skill and the drizzle relations reference.",
       selector:
@@ -80,12 +79,29 @@ export default {
     },
     {
       // A call that answers with a boolean is `check*`; `get*` reads as a derivation, so the family grows
-      // Unnoticed. The name is all the selector sees, and it is enough: every `getIs*`/`getHas*` the naming
-      // Sweeps found returned a boolean, and a getter that builds something says what — `getIsLoadedRef` is a
-      // Destructuring rename off `useDataMap`, which is a pattern rather than an identifier and stays outside
+      // Unnoticed. The name is all the selector sees, and it is enough: a `getIs*`/`getHas*` answers with a
+      // Boolean, and a getter that builds something says what — `getIsLoadedRef` is a destructuring rename off
+      // `useDataMap`, which is a pattern rather than an identifier and stays outside
       message:
         "Name a boolean-returning function `check*` — `getIs*`/`getHas*` reads as a derivation. See the naming skill.",
       selector: "VariableDeclarator[id.name=/^get(Is|Has)[A-Z]/]",
+    },
+    {
+      // The other half of the same family: `is*`/`has*` is a stored boolean, so a function under that name
+      // Reads as a value at every call site. The annotation is what makes it decidable without types — a
+      // Function whose declared return is `boolean` or a type predicate answers with one and is `check*`.
+      message:
+        "Name a boolean-returning function `check*` — `is*`/`has*` is a stored boolean, never a call. See the naming skill.",
+      selector:
+        "VariableDeclarator[id.name=/^(is|has)[A-Z]/][init.type=/^(Arrow)?FunctionExpression$/] > :matches(ArrowFunctionExpression, FunctionExpression) > TSTypeAnnotation.returnType > :matches(TSBooleanKeyword, TSTypePredicate)",
+    },
+    {
+      // A where-fragment helper builds a clause, so it is a `get*`: the bare noun (`roomWhere = (id) => …`)
+      // Reads as the clause itself rather than the call that builds it. See the trpc skill.
+      message:
+        "Name a where-fragment builder `get*Where` — the bare `*Where` noun is the clause, not the call that builds it.",
+      selector:
+        "VariableDeclarator[id.name=/(?<!By)Where$/][id.name!=/^get/][init.type=/^(Arrow)?FunctionExpression$/]",
     },
     {
       message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",

@@ -55,7 +55,7 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 the absence the query already returned.
 
 **"Not loaded yet" is `isPending`, not a third value.** The one place the rule looks like it needs an exception is a
-consumer that must tell "still loading" from "loaded, and there is no row", since `useQuery` seeds `data` as
+consumer that must tell "still loading" from "loaded, no row", since `useQuery` seeds `data` as
 `undefined`. `useQuery` returns `isPending` beside `data` for exactly this, and it is true on the first render
 because the read claims its key synchronously during setup — so the consumer gates on the flag and the read keeps
 answering `undefined`:

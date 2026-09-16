@@ -1,7 +1,8 @@
+import type { ResourceType } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
 import { MAX_BLUEPRINT_KEY_LENGTH } from "#shared/services/resource/blueprint/constants";
-import { createNameSchema, ResourceType, resourceTypeSchema, selectResourceSchema } from "@esposter/db-schema";
+import { createNameSchema, resourceTypeSchema, selectResourceSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 // One resource-to-be: `key` is the local alias (unique within the manifest), `name` becomes the created

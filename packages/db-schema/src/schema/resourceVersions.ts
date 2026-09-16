@@ -7,11 +7,10 @@ import { bigint, check, integer, pgEnum, primaryKey, text, uuid } from "drizzle-
 
 export const snapshotChannelEnum = pgEnum("snapshotChannel", SnapshotChannel);
 export const snapshotReasonEnum = pgEnum("snapshotReason", SnapshotReason);
-// One retained version of a resource's content, keyed by the resource, the channel and the version number —
-// The three things a version's blob path used to spell out. The bytes live in the content-addressed object the
-// Hash names; the row is what makes a version visible, so a write that fails between the object and the row
-// Leaves no version, and an object no row names is adopted by the next write of the same content rather than
-// Swept. See /docs/resource/resource-version-store
+// One retained version of a resource's content, keyed by the resource, the channel and the version number. The
+// Bytes live in the content-addressed object the hash names; the row is what makes a version visible, so a
+// Write that fails between the object and the row leaves no version, and an object no row names is adopted by
+// The next write of the same content rather than swept. See /docs/resource/resource-version-store
 export const resourceVersions = pgTable(
   "resourceVersions",
   {
@@ -30,8 +29,8 @@ export const resourceVersions = pgTable(
       .notNull()
       .references(() => resources.id, { onDelete: "cascade" }),
     // The bytes the object cost to store, which is what the ledger charged — zero for a version whose content
-    // The store already held. Never derivable from the plaintext size, and conflating the two is how the
-    // Storage meter came to say something an owner could not account for
+    // The store already held. Never derivable from the plaintext size — conflating the two makes the storage
+    // Meter say something an owner cannot account for
     storedBytes: bigint({ mode: "number" }).notNull(),
     summary: text().notNull().default(""),
     version: integer().notNull(),

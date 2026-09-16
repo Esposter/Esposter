@@ -5,6 +5,12 @@ description: Apply when writing Zod schemas. Esposter Zod schema conventions —
 
 # Zod Conventions
 
+## Settled — do not re-propose
+
+- **A lint rule for the inherited-key rule** — `.safeExtend` legitimately adds new fields as well as layering over existing ones, so nothing syntactic separates the key that must match from the key that must not; `references/field-key-checks.md` carries the measured table of which positions check a key.
+- **A ban on `.extend()`** — Tiptap's `.extend` and Zod's share one method name and no syntactic rule tells them apart.
+- **A ban on `export type X = z.infer<…>`** — allowed in the narrow composed-schema case, which needs the judgement.
+
 ## Deep Dives
 
 - `references/boundary-payloads.md` — when parsing runtime data that crosses a trust boundary: EventGrid data, a queue message, a webhook body, subprocess stdout, a committed config file.
@@ -17,7 +23,7 @@ description: Apply when writing Zod schemas. Esposter Zod schema conventions —
 ## Imports and Inferred Types
 
 - Always the `z` namespace export: `z.ZodType`, `z.ZodError`. Never named imports like `import type { ZodType }`.
-- Interface-first (`satisfies z.ZodType<T>`) is the default — see `~/.claude/rules/zod.md`. `z.infer` is for schemas with no hand-written interface (tRPC input schemas), not for models. **Every schema takes it, `z.enum(SomeEnum)` included** — the one-liners are where it goes missing, and there it is what catches a schema pointed at the wrong enum: `rg 'z\.enum\([A-Z]\w+\)\s*(;|$)' | rg -v satisfies` finds them.
+- Interface-first (`satisfies z.ZodType<T>`) is the default — see `~/.claude/rules/zod.md`. `z.infer` is for schemas with no hand-written interface (tRPC input schemas), not for models. **Every schema takes it, `z.enum(SomeEnum)` included** — the one-liners are where it goes missing, and there it is what catches a schema pointed at the wrong enum: `rg 'z\.enum\([A-Z]\w+\)\s*(;|$)' | rg -v satisfies` finds them. A `z.discriminatedUnion(…)` declarator without it is a `no-restricted-syntax` error in source, since there a variant drifting from its interface is still a valid schema.
 - **When you do need infer, always `export type X = z.infer<typeof xSchema>`** — never `interface X extends z.infer<typeof xSchema> {}`. The extends form trips oxlint `import/namespace` (`"infer" not found in imported namespace`), because the `z` namespace can't be resolved in `extends` position.
 - **Declare the `type` directly beneath its schema and reference it by name** — the alias lives next to the `const xSchema = z.object({...})` it derives from, and use sites refer to `X`. Don't inline `z.infer<typeof xSchema>` at the use site.
 
@@ -50,7 +56,7 @@ Runtime data crossing any trust boundary (EventGrid `event.data`, queue messages
 
 ## Persisted Data — Latest Shape Only
 
-Schemas for persisted client-authoritative data (save blobs, localStorage state) and Azure Table entities model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no migration code, no read-side inference of a field a pre-change row lacks. Data that fails to parse resets to a fresh default; the reset is the migration, and the old shape is deleted in the same commit. Standard: `apps/web/content/docs/architecture/persisted-data-latest-shape-only.md`.
+Schemas for persisted client-authoritative data (save blobs, localStorage state) and Azure Table entities model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no migration code, no read-side inference of a field a pre-change row lacks. A parse failure resets the data to a fresh default; the reset is the migration, and the old shape is deleted in the same commit. Standard: `apps/web/content/docs/architecture/persisted-data-latest-shape-only.md`.
 
 ## Tightest Possible Constraints — `references/numeric-constraints.md`
 

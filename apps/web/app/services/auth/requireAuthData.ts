@@ -9,6 +9,7 @@ import type { AuthResponse } from "@/models/auth/AuthResponse";
 // And an entity name that would bury it
 export const requireAuthData = async <TData>(authResponse: Promise<AuthResponse<TData>>): Promise<null | TData> => {
   const { data, error } = await authResponse;
+  // oxlint-disable-next-line error-handling/no-bare-error -- the one exception, for the reason above
   if (error) throw new Error(error.message ?? error.statusText);
   else return data;
 };

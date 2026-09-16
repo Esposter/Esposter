@@ -1,6 +1,7 @@
 import type { PathRename } from "#src/models/citations/PathRename";
 
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { getOrCreate } from "@esposter/shared";
 
 const RENAME_LINE_REGEX = /^R\d*\t(?<from>[^\t]+)\t(?<to>[^\t]+)$/u;
 
@@ -24,10 +25,9 @@ export const getRenamePrefixes = (nameStatus: string): PathRename[] => {
       from.pop();
       to.pop();
     }
-    const prefix = prefixes.get(from.join("/")) ?? { destinations: new Set<string>(), paths: [] };
+    const prefix = getOrCreate(prefixes, from.join("/"), () => ({ destinations: new Set<string>(), paths: [] }));
     prefix.destinations.add(to.join("/"));
     prefix.paths.push(path);
-    prefixes.set(from.join("/"), prefix);
   }
   return Array.from(prefixes, ([from, { destinations, paths }]) => {
     const [to] = destinations;

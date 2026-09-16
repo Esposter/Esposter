@@ -15,6 +15,7 @@ const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
 const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => resource.value?.id ?? "");
 const { publishedSurveys } = useReadPublishedSurveys();
 const { editor } = await useGrapesJsEditor(
+  ResourceType.Webpage,
   {
     load: () => readWebpageEditor(),
     store: (data, storeEditor) => saveWebpageEditor(data, { css: storeEditor.getCss(), html: storeEditor.getHtml() }),

@@ -9,7 +9,7 @@ What the bot does, and what that makes true for every session. The session's own
 
 ## Settled — do not re-propose
 
-- **Replacing the bot** — a paid tier, or a Claude review of every push in CI. The drain pays only where a finding exists, and both alternatives pay per push; the case is `apps/web/content/docs/infra/review-collector/index.md`.
+- **Replacing the bot** with a paid tier or a per-push review. The drain pays only where a finding exists, and both alternatives pay per push; the case is `apps/web/content/docs/infra/review-collector/index.md`.
 - **A `schedule` trigger in place of the collector's delayed retrigger.** No polling is the standing rule (`apps/web/content/docs/architecture/no-polling.md`), and the one deadline a clock would wake for is one the bot states (`apps/web/content/docs/infra/review-collector/runner.md`).
 - **Adding `develop` to the "reviews.auto_review.base_branches" list** so develop-base PRs review themselves. It turns every intermediate PR into a spent slot; a develop-base PR is triggered by hand with `@coderabbitai review` ("What Triggers a Review").
 - **Grepping the review body for the word "nitpick"** to collect them. The buckets are not a fixed set — duplicates, refactor suggestions and an additional-comments block appear once a review carries many — so a grep silently drops whichever bucket it did not name (`references/review-feedback.md`).
@@ -46,7 +46,7 @@ Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit)
 
 ## The File Cap
 
-The cap is one constant, `REVIEW_FILE_CAP` in `scripts/src/services/coderabbit/shared/constants.ts` — the Open Source tier's limit is popularity-scaled and can move, so the bot's skip comment states the current one and the constant is where it is written, never a page: a test fails on a number written into this skill, the `review-queue` skill or the collector's docs. Past the cap CodeRabbit skips the review outright rather than trimming it, which is why the collector measures the window on the tree it is about to push and holds the first commit that would cross it. There is no floor to go with the cap: the port takes everything the queue owes, so a window comes out small only when that is all there was, and holding it back would only leave the queue unsynced for longer.
+The cap is one constant, `REVIEW_FILE_CAP` in `scripts/src/services/coderabbit/shared/constants.ts` — the Open Source tier's limit is popularity-scaled and can move, so the bot's skip comment states the current one and the constant is where it is written, never a page: a test fails on a number written into this skill, the `review-queue` skill or the collector's docs. Past the cap CodeRabbit skips the review outright rather than trimming it, which is why the collector measures the window on the tree it is about to push and stops before the first commit that would cross it — and repackages a commit that crosses it alone, rather than holding on it. There is no floor to go with the cap: the port takes everything the queue owes, so a window comes out small only when that is all there was, and holding it back would only leave the queue unsynced for longer.
 
 ## Reading and Answering Findings
 

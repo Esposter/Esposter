@@ -1,10 +1,11 @@
 import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { ResourceActivityType } from "#src/models/resource/ResourceActivityType";
 import type { User } from "#src/schema/users";
 import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
 import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
-import { ResourceActivityType, resourceActivityTypeSchema } from "#src/models/resource/ResourceActivityType";
+import { resourceActivityTypeSchema } from "#src/models/resource/ResourceActivityType";
 import { selectResourceSchema } from "#src/schema/resources";
 import { selectUserSchema } from "#src/schema/users";
 import { getPropertyNames } from "@esposter/shared";

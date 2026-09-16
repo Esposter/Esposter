@@ -37,9 +37,3 @@ by a flag no longer returns the site.
 - Store _shape_ — `storeToRefs`, dot-access, CRUD verbs, keyed state — is the `pinia` ledger. A store appears here only for what it does around an `await`.
 - `useAutoSearch`'s `AbortController` is a sanctioned exception, not a hand-rolled guard: `executeQuery` orders calls but does not cancel the request in flight, which is the whole point of the search input. The `pagination` skill owns it.
 - Whether a composable should exist at all (pass-through, module-scope ref) is in scope here; whether the _page_ should have decomposed differently is `vue-components`.
-
-## Next enforceable
-
-- A `useMutation` call with no `key` is decidable from the call site — the `pinia` ledger already names it.
-- `createSharedComposable` and a module-scope `ref` in a composable file are both greppable and could be lint rules rather than sweep rows.
-- A count that is incremented and decremented on the same ref inside one composable is close to decidable, but only where the pair **brackets one asynchronous operation** — incremented where it starts and decremented where it settles. Monotonicity is not the test: a domain total (members in a room, items in a cart) moves both ways too, and a rule keyed on that alone classifies one as async bookkeeping. What separates them is whether the two writes name the same operation.

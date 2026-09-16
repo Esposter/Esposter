@@ -58,7 +58,7 @@ Three procedure builders sit on top: `standardRateLimitedProcedure` (public, sta
 
 ## Key files
 
-Paths relative to `apps/web` unless noted.
+Paths relative to `apps/web`; `packages/` ones to the repo root.
 
 | File                                                      | Role                                                      |
 | --------------------------------------------------------- | --------------------------------------------------------- |

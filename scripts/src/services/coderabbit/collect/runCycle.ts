@@ -16,13 +16,16 @@ import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getMergeRisk } from "#src/services/coderabbit/collect/getMergeRisk";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
+import { judgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeReleasePullRequest";
 import { openReleasePullRequest } from "#src/services/coderabbit/collect/openReleasePullRequest";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
+import { postHeldNotice } from "#src/services/coderabbit/collect/postHeldNotice";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
 import { readCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
+import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readReleasePullRequest } from "#src/services/coderabbit/collect/readReleasePullRequest";
 import { readReleaseState } from "#src/services/coderabbit/collect/readReleaseState";
 import { readViewerLogin } from "#src/services/coderabbit/collect/readViewerLogin";
@@ -61,9 +64,10 @@ export const runCycle = async ({
   // The return stroke first: a release that merged moves `develop` before anything is measured against it
   const returned = runReturnStroke({ cwd, developSha, isDryRun, mainSha });
   if (returned) return returned;
-  // The express lane, before the pull request is even looked up: a mechanical commit reaches `main` directly and
-  // The return stroke carries it to `develop` on the next run
-  const expressed = runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha });
+  const viewerLogin = readViewerLogin();
+  // The express lane, before the pull request is even looked up: a commit claiming no review reaches `main`
+  // Directly and the fold carries it to `develop` with the next window
+  const expressed = runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
   if (expressed) return expressed;
   // No release pull request: the last one merged and the next window is still filling from the merge base
   const releasePullRequest = namedPullRequest === undefined ? readReleasePullRequest() : undefined;
@@ -82,7 +86,6 @@ export const runCycle = async ({
     mainSha,
     pullRequest,
   });
-  const viewerLogin = readViewerLogin();
   console.info(
     `pull request ${pullRequest === undefined ? "none" : `#${pullRequest}`} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`,
   );
@@ -120,29 +123,33 @@ export const runCycle = async ({
     if (drain.outcome) return drain.outcome;
     reviewFixesSha = drain.reviewFixesSha;
     // A review that ends at the head and left nothing open is a release: the bot's own risk verdict on that head
-    // Is the last word, and any level but the least is a person's to weigh
+    // Is the last word when it is the least, and a reading of its rationale against the tree otherwise
     const mergeRisk = getMergeRisk(issueComments);
-    if (
-      gate.kind === GateDecisionKind.Proceed &&
-      drain.isClean &&
-      mergeRisk?.level === MERGEABLE_RISK_LEVEL &&
-      mergeRisk.coveredSha === developSha
-    )
-      return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
+    if (gate.kind === GateDecisionKind.Proceed && drain.isClean && mergeRisk?.coveredSha === developSha) {
+      if (mergeRisk.level === MERGEABLE_RISK_LEVEL)
+        return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
+      const judged = await judgeRelease({
+        cwd,
+        developSha,
+        isDryRun,
+        issueComments,
+        level: mergeRisk.level,
+        pullRequest,
+        reviews,
+        viewerLogin,
+      });
+      if (judged) return judged;
+    }
   }
+  // What the fixes branch still owes develop, settled once the drain has finished moving it: the sync replays the
+  // Queue onto that tree and the port builds the window on top of the same commits, so both read one answer
+  const fixShas = reviewFixesSha === undefined ? [] : readCherryShas(developSha, reviewFixesSha, cwd);
+  const owingFixesSha = fixShas.length > 0 ? reviewFixesSha : undefined;
   // The queue is rebuilt on the tree the window is built on before the port reads it, so a conflict is met here
   // Once rather than held on every run
-  const syncedQueueSha = await syncQueue({
-    cwd,
-    developSha,
-    isDryRun,
-    issueComments,
-    pullRequest,
-    queueSha,
-    reviewFixesSha,
-    viewerLogin,
-  });
-  const port = portWindow({ cwd, developSha, frontierSha: frontier, queueSha: syncedQueueSha, reviewFixesSha });
+  const syncedQueueSha = await syncQueue({ cwd, developSha, isDryRun, owingFixesSha, queueSha, viewerLogin });
+  if (syncedQueueSha === undefined) return getMovedOutcome(QUEUE_BRANCH);
+  const port = portWindow({ cwd, developSha, fixShas, frontierSha: frontier, queueSha: syncedQueueSha });
   // With no pull request open, what `develop` already carries above the merge base is the first review's window
   const pendingCommitCount =
     pullRequest === undefined ? Number(runGit(["rev-list", "--count", `${frontier}..${developSha}`], cwd).trim()) : 0;
@@ -165,15 +172,20 @@ export const runCycle = async ({
       retriggerDelaySeconds = settlement.retriggerDelaySeconds;
       if (settlement.outcome) return settlement.outcome;
     }
-    // A held first commit is a person's act, not an under-filled queue: it overflows the cap alone, or its
-    // Conflict is one the sync could not resolve, and no event clears either. The run fails red so someone is
-    // Told — once the review a limit refused has been asked for, since that answer is still owed first.
+    // A held first commit is the residual person's case: the reshaper or the resolver failed on it past the
+    // Attempt cap, and no event clears that. The commit is told first, then the run fails red so someone is —
+    // Once the review a limit refused has been asked for, since that answer is still owed first and a throw here
+    // Would lose the retrigger the job output carries.
     if (port.queueShas.length === 0 && port.heldSha) {
+      // A dry run reshapes and resolves nothing, so its hold says nothing about a live run's
+      if (isDryRun)
+        return getOutcome(CycleOutcomeKind.Idle, `held at ${port.heldSha} — a dry run reshapes and resolves nothing`);
+      postHeldNotice(port.heldSha, isDryRun, viewerLogin);
       if (isRateLimited) return getOutcome(CycleOutcomeKind.Idle, "held — the review the limit refused is owed first");
       throw new InvalidOperationError(
         Operation.Update,
         "coderabbit",
-        `held at ${port.heldSha} — the first owed commit overflows the cap alone or its conflict was not resolved, so split it or rebase ${QUEUE_BRANCH} (the log above says which)`,
+        `held at ${port.heldSha} — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ${QUEUE_BRANCH} (its commit comments say which)`,
       );
     } else if (parkedFixCount > 0) return getOutcome(CycleOutcomeKind.Idle, "parked — fixes wait for the queue");
     return getOutcome(CycleOutcomeKind.Idle, `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`);
@@ -187,13 +199,14 @@ export const runCycle = async ({
       `would fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}${pullRequest === undefined ? ", then open the release pull request" : ""}`,
     );
 
-  const targetSha = foldCandidate({
+  const targetSha = await foldCandidate({
     cwd,
     developSha,
     fixCount: port.fixCount,
     frontierSha: frontier,
     queueSha: syncedQueueSha,
     queueShas: port.queueShas,
+    viewerLogin,
   });
   // The push's compare-and-swap covers the ref, not the slot: a review a person started meanwhile is read afresh
   if (pullRequest !== undefined && !checkIsSlotFree(readCheckStatus(pullRequest)))

@@ -3,7 +3,7 @@
 // True })` is the both-flags form), so the option is only ever an alias that was not reached for. The callee is
 // Pinned to `watch` so those alias calls keep their own option objects.
 // Spread into both the `**/*.ts` and `**/*.vue` overrides: a `watch` lives in a store or a composable as often
-// As in a component, and it was a store that carried the site this rule was written for.
+// As in a component.
 // The aliases are VueUse via Nuxt auto-imports, so `packages/vue-phaserjs` — the other consumer of the Vue
 // Config — cannot reach them without taking VueUse on as a published dependency, and disables that one site.
 export default [

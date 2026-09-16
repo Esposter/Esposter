@@ -7,7 +7,6 @@ import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { takeOne } from "@esposter/shared";
 
 const { command, items, query } = defineProps<Pick<SuggestionProps<SlashCommand>, "command" | "items" | "query">>();
-const title = computed(() => getSuggestionListTitle(SuggestionTrigger.SlashCommand, query));
 // The required/optional split drives three template positions per row, so it is partitioned once per item
 // Rather than re-filtered inside the v-for on every keystroke that refilters the list
 const commandItems = computed(() =>
@@ -41,7 +40,12 @@ defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <MessageModelMessageSuggestionList max-w-100 :is-visible="items.length > 0" :selected-index :title>
+  <MessageModelMessageSuggestionList
+    max-w-100
+    :is-visible="items.length > 0"
+    :selected-index
+    :title="getSuggestionListTitle(SuggestionTrigger.SlashCommand, query)"
+  >
     <v-list-item
       v-for="(
         { description, icon, optionalParameterCount, requiredParameters, title: commandTitle, type }, index
@@ -54,7 +58,7 @@ defineExpose({ onKeyDown });
       <template #prepend>
         <v-icon :icon size="small" mr-2 />
       </template>
-      <v-list-item-title font-semibold flex gap-1 items-center>
+      <v-list-item-title fw-semibold flex gap-1 items-center>
         {{ commandTitle }}
         <v-chip v-for="{ name } of requiredParameters" :key="name" size="x-small" label>
           {{ name }}

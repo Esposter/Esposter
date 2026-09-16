@@ -31,10 +31,10 @@ export const runDrainStep = async ({
   // Carried still lists every commit against develop, and so does a queue the session has not rebased, and a
   // Trailer read off either would keep a release from merging on a finding develop already answers.
   const newestReview = reviews.findLast(({ body }) => body);
-  const unportedShas = [
-    ...(reviewFixesSha ? readCherryShas(developSha, reviewFixesSha, cwd) : []),
-    ...readCherryShas(developSha, queueSha, cwd),
-  ];
+  const owedFixShas = reviewFixesSha === undefined ? [] : readCherryShas(developSha, reviewFixesSha, cwd);
+  // A fixes branch owing nothing is one a window has carried whole: the next drain starts from develop again
+  const owingFixesSha = owedFixShas.length > 0 ? reviewFixesSha : undefined;
+  const unportedShas = [...owedFixShas, ...readCherryShas(developSha, queueSha, cwd)];
   const unportedCommits = unportedShas.length === 0 ? [] : readAnsweredCommits(["--no-walk", ...unportedShas], cwd);
   // The window's own commits count too: a fix develop carries is answered whether or not its reply landed
   const answeringCommits = [...unportedCommits, ...frontierCommits];
@@ -68,7 +68,7 @@ export const runDrainStep = async ({
     };
 
   const drain = await drainFindings({
-    developSha,
+    baseSha: owingFixesSha ?? developSha,
     feedback: getFeedbackReport({ issueComments, review: newestReview, threads }),
     issueComments,
     newestReviewId: newestReview.id,

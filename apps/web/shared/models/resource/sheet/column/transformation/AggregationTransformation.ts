@@ -1,10 +1,8 @@
+import type { AggregationTransformationType } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationType";
 import type { SourceColumnId } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
 import type { ItemEntityType } from "@esposter/shared";
 
-import {
-  AggregationTransformationType,
-  aggregationTransformationTypeSchema,
-} from "#shared/models/resource/sheet/column/transformation/AggregationTransformationType";
+import { aggregationTransformationTypeSchema } from "#shared/models/resource/sheet/column/transformation/AggregationTransformationType";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
 import { createItemEntityTypeSchema } from "@esposter/shared";

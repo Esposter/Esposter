@@ -28,11 +28,10 @@ const emit = defineEmits<{
   "update:edit-form-dialog": [value: false];
 }>();
 const errorIcon = useTemplateRef("errorIcon");
-const title = computed(() => `Configuration - ${prettify(editedItem.type)}`);
 </script>
 
 <template>
-  <v-toolbar flex-none :title>
+  <v-toolbar flex-none :title="`Configuration - ${prettify(editedItem.type)}`">
     <v-spacer />
     <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid :schema :edited-value="editedItem" />
     <slot name="prepend-actions" />

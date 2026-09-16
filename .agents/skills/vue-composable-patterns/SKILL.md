@@ -1,9 +1,13 @@
 ---
 name: vue-composable-patterns
-description: Apply when writing or reviewing a composable, a form dialog, browser-aware reactive code, or any state that spans an await, a tick or a mount. Esposter Vue 3 composable patterns — the table of primitives that already own a job (useMutation, useCachedRead, useSave, useWorkerInterval, usePanZoom, getOrCreate) and the ban on hand-rolling them, a hand-kept count of in-flight anything as the tell, no pass-through composables, createSharedComposable and module-scope refs banned, MaybeRefOrGetter only for what the composable watches, the three validation-rule layers, toRawDeep over toRaw, and no persistence call for an unchanged payload.
+description: Apply when writing or reviewing a composable, a form dialog, browser-aware reactive code, or any state that spans an await, a tick or a mount. Esposter Vue 3 composable patterns — the table of primitives that already own a job (useMutation, useCachedRead, useSave, useWorkerInterval, usePanZoom, getOrCreate, useAdoptResourceContent) and the ban on hand-rolling them, a hand-kept count of in-flight anything as the tell, no pass-through composables, createSharedComposable and module-scope refs banned, MaybeRefOrGetter only for what the composable watches, the three validation-rule layers, toRawDeep over toRaw, and no persistence call for an unchanged payload.
 ---
 
 # Vue Composable & Form Patterns
+
+## Settled — do not re-propose
+
+- **A rule for a hand-kept in-flight count** — decidable only where the pair brackets one asynchronous operation, incremented where it starts and decremented where it settles; monotonicity is not the test, since a domain total moves both ways too, and whether two writes name the same operation is a question about what they mean.
 
 ## Reach for the primitive — hand-rolling BANNED
 
@@ -11,15 +15,16 @@ Most of what a composable is tempted to write by hand already exists here, and t
 duplicated — it is the copy that drifts, forgets its teardown, or silently loses a write. **Before writing state
 that spans an `await`, a tick or a mount, find the row.**
 
-| Wanting to…                                         | Use                                                               | Never                                                                                          |
-| :-------------------------------------------------- | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
-| order overlapping reads or writes                   | `useMutation` (`executeQuery`/`executeMutation`), keyed by target | a promise chain, an in-flight promise map, a generation counter, a call id, an `isSaving` flag |
-| let a pushed value beat a read already in flight    | `useCachedRead(...).supersede(key)`                               | a pair of counters beside a `ref`                                                              |
-| skip a save when nothing changed                    | `useSave` (`{ save, setState }`)                                  | a hand-rolled snapshot, or a `set*` wrapper in a store                                         |
-| know a save is still coming                         | the mutation's own `isPending`                                    | a counter of armed debounces, or an `isPending` you assign yourself                            |
-| run something on an interval for a component's life | `useWorkerInterval`                                               | `setInterval` in `onMounted` + `clearInterval` in `onUnmounted`                                |
-| pan and zoom a surface                              | `usePanZoom`                                                      | scale/offset refs and pointer handlers                                                         |
-| read or insert into a `Map`                         | `getOrCreate` (`@esposter/shared`)                                | `let x = map.get(k); if (!x) …`                                                                |
+| Wanting to…                                           | Use                                                               | Never                                                                                          |
+| :---------------------------------------------------- | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| order overlapping reads or writes                     | `useMutation` (`executeQuery`/`executeMutation`), keyed by target | a promise chain, an in-flight promise map, a generation counter, a call id, an `isSaving` flag |
+| let a pushed value beat a read already in flight      | `useCachedRead(...).supersede(key)`                               | a pair of counters beside a `ref`                                                              |
+| skip a save when nothing changed                      | `useSave` (`{ save, setState }`)                                  | a hand-rolled snapshot, or a `set*` wrapper in a store                                         |
+| know a save is still coming                           | the mutation's own `isPending`                                    | a counter of armed debounces, or an `isPending` you assign yourself                            |
+| run something on an interval for a component's life   | `useWorkerInterval`                                               | `setInterval` in `onMounted` + `clearInterval` in `onUnmounted`                                |
+| pan and zoom a surface                                | `usePanZoom`                                                      | scale/offset refs and pointer handlers                                                         |
+| read or insert into a `Map`                           | `getOrCreate` (`@esposter/shared`)                                | `let x = map.get(k); if (!x) …`                                                                |
+| let a restore reach an editor that holds the document | `useAdoptResourceContent` (Tiptap, SurveyJS, GrapesJS)            | a `:key` remount, or trusting the store's ref to reach a library that parsed it once           |
 
 **A counter is the tell.** Every entry above was written by hand somewhere first, and each time the shape was the
 same: the problem looked complex enough that bookkeeping felt earned. It is the opposite signal. A count of
@@ -39,8 +44,8 @@ single operation resolves is a bug wearing rigour.
 
 - **A composable that only re-exposes something is not a composable — delete it.** `useFoo()` whose body is `storeToRefs(useFooStore())`, a single `computed` over one store ref, or a rename of one import buys nothing and costs a layer: the consumer can no longer see where the state lives, the store's own methods are invisible from the call site, and every new field has to be threaded through the wrapper. Use the store directly (`pinia` skill's ordering rules apply). A composable earns its file only when it **composes**: it owns local reactive state, sequences async work, wires a lifecycle hook, or joins two or more sources into something neither provides.
 - **Minimal public surface** — return only the composed operations callers actually use; bookkeeping helpers stay internal. If every caller would pair two returned functions the same way (e.g. assign + a snapshot reset), return the composed function (`setState`) instead of the parts.
-- **Never use `createSharedComposable`** — VueUse's `createSharedComposable` creates global singletons that bypass Pinia devtools, HMR, and reactive reset. All shared reactive state must live in a Pinia store (`defineStore`). Existing usages should be replaced by a store, or made thin wrappers delegating to the store.
-- **A bare `ref` at module scope is the same singleton without the name** — a `ref` declared outside the composable's body is process-wide state every caller shares, so it carries every cost `createSharedComposable` is banned for and announces none of them. It belongs in a Pinia store. Before writing one, check whether a store already owns that surface: a module-scope notification `ref` is almost always `useAlertStore` re-implemented, and the re-implementation is how a display surface ends up mounted nowhere while its producer keeps writing to it. Module scope is for constants and `markRaw`ed class instances, never reactive state.
+- **Never use `createSharedComposable`** (a `no-restricted-syntax` error) — VueUse's `createSharedComposable` creates global singletons that bypass Pinia devtools, HMR, and reactive reset. All shared reactive state must live in a Pinia store (`defineStore`). Existing usages should be replaced by a store, or made thin wrappers delegating to the store.
+- **A bare `ref` at module scope is the same singleton without the name** (a `no-restricted-syntax` error in any `.ts` file) — a `ref` declared outside the composable's body is process-wide state every caller shares, so it carries every cost `createSharedComposable` is banned for and announces none of them. It belongs in a Pinia store. Before writing one, check whether a store already owns that surface: a module-scope notification `ref` is almost always `useAlertStore` re-implemented, and the re-implementation is how a display surface ends up mounted nowhere while its producer keeps writing to it. Module scope is for constants and `markRaw`ed class instances, never reactive state.
 - **Single-function composables return the function directly** — `return async (...) => { ... }`. Callers use `const fn = useX()` not `const { fn } = useX()`.
 - **`Promise.resolve(value)` for sync-to-async** — when a sync expression must satisfy a `Promise<T>` return type, never `async () => value`.
 - **Don't annotate composable return types** — let TypeScript infer. Only annotate if inference fails or a contract must be enforced.

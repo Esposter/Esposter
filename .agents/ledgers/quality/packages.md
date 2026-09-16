@@ -34,3 +34,4 @@ Grouped so each row is one review-sized commit.
 | `apps/infra/src/azure/resources` — `Microsoft.EventGrid`, `Microsoft.Web`, `Microsoft.Storage`, `Microsoft.Logic`                                                                                       | 2026-09-12 |       |
 | `apps/infra/src/azure/resources` — `Microsoft.ServiceBus`, `Microsoft.Insights`, `Microsoft.Consumption`, `Microsoft.SignalRService`, `Microsoft.Search`, `Microsoft.Resources`                         | 2026-09-12 |       |
 | `packages/configuration`                                                                                                                                                                                | 2026-09-11 |       |
+| `packages/keyframe-store`                                                                                                                                                                               | 2026-09-15 |       |

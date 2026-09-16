@@ -5,7 +5,7 @@ import { APP_RELATIVE_PREFIXES } from "@esposter/configuration";
 const APP_DIRECTORY = "apps/web/";
 const CITATION_REGEX = /`(?<citation>[^`\s]+)`/gu;
 
-const getAppRelative = (path: string): string | undefined => {
+const getAppRelative = (path: string) => {
   if (!path.startsWith(APP_DIRECTORY)) return undefined;
   const relative = path.slice(APP_DIRECTORY.length);
   return APP_RELATIVE_PREFIXES.some((prefix) => relative.startsWith(prefix)) ? relative : undefined;

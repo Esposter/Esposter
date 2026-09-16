@@ -2,7 +2,8 @@ import type { NuxtConfig } from "nuxt/schema";
 
 import { BASE_URL } from "../app/services/desmos/constants";
 import { FONTS_BASE_URL } from "../app/services/google/constants";
-import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE, MEDIAPIPE_TASKS_VISION_URL } from "../shared/services/app/constants";
+import { MEDIAPIPE_TASKS_VISION_URL } from "../app/services/message/room/liveKit/constants";
+import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/app/constants";
 import { ImageSourceWhitelist } from "../shared/services/app/ImageSourceWhitelist";
 import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../shared/services/grapesjs/constants";
 

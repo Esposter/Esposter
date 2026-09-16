@@ -1,3 +1,4 @@
+import type { MapValue } from "#src/util/types/MapValue";
 import type {
   AppendBlobClient,
   BlobAbortCopyFromURLResponse,
@@ -26,7 +27,6 @@ import type {
   PollerLikeWithCancellation,
   PollOperationState,
 } from "@azure/storage-blob";
-import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { BLOB_NOT_FOUND_MESSAGE } from "#src/constants";

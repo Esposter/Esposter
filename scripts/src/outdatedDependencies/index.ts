@@ -9,14 +9,18 @@ import { getUncatalogedManifestDependencies } from "#src/services/outdatedDepend
 import { getRegularOutdatedDependencies } from "#src/services/outdatedDependencies/pnpm/getRegularOutdatedDependencies";
 import { createColor } from "#src/services/outdatedDependencies/print/createColor";
 import { printExecutionTime } from "#src/services/outdatedDependencies/print/printExecutionTime";
+import { printHeldDependencies } from "#src/services/outdatedDependencies/print/printHeldDependencies";
 import { printMismatches } from "#src/services/outdatedDependencies/print/printMismatches";
 import { printOutdatedDependencies } from "#src/services/outdatedDependencies/print/printOutdatedDependencies";
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
 import { printUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/print/printUncatalogedManifestDependencies";
 import { getRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/getRegistryOutdatedDependencies";
+import { getFollowedTagEntries } from "#src/services/outdatedDependencies/renovate/getFollowedTagEntries";
+import { getRenovateRules } from "#src/services/outdatedDependencies/renovate/getRenovateRules";
+import { partitionHeldDependencies } from "#src/services/outdatedDependencies/renovate/partitionHeldDependencies";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
-import { LOCKFILE_PATH, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { LOCKFILE_PATH, RENOVATE_CONFIGURATION_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -25,6 +29,7 @@ const color = createColor(!process.env.NO_COLOR);
 
 const workspaceYaml = readFileSync(resolve(REPOSITORY_ROOT, "pnpm-workspace.yaml"), "utf8");
 const lockYaml = readFileSync(LOCKFILE_PATH, "utf8");
+const renovateJson = readFileSync(resolve(REPOSITORY_ROOT, RENOVATE_CONFIGURATION_FILE), "utf8");
 
 const catalogEntries = parseWorkspaceEntries(
   DependencyGroup.Catalog,
@@ -46,14 +51,27 @@ const mismatches = [
 printUncatalogedManifestDependencies(uncatalogedManifestDependencies, color);
 printMismatches(mismatches, color);
 
+const renovateRules = getRenovateRules(renovateJson);
+// `pnpm outdated` compares against `latest`, which is not what Renovate proposes for a package a rule follows a
+// Dist-tag for, so those catalog entries are asked of the registry under their tag instead.
+const followedTagEntries = getFollowedTagEntries(catalogEntries, renovateRules);
+const followedPackages = new Set(followedTagEntries.map(({ pkg }) => pkg));
 const [regularChecks, registryChecks] = await Promise.all([
   getRegularOutdatedDependencies(REPOSITORY_ROOT),
-  getRegistryOutdatedDependencies([...configDependencyEntries, ...engineEntries]),
+  getRegistryOutdatedDependencies([...configDependencyEntries, ...engineEntries, ...followedTagEntries]),
 ]);
-const outdatedDependencies = [...regularChecks.outdatedDependencies, ...registryChecks.outdatedDependencies];
+// A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.
+const { held, outdated } = partitionHeldDependencies(
+  [
+    ...regularChecks.outdatedDependencies.filter(({ pkg }) => !followedPackages.has(pkg)),
+    ...registryChecks.outdatedDependencies,
+  ],
+  renovateRules,
+);
 const errors = [...regularChecks.errors, ...registryChecks.errors];
 const hasBlockingIssues = uncatalogedManifestDependencies.length > 0 || errors.length > 0;
-printOutdatedDependencies(outdatedDependencies, color);
+printOutdatedDependencies(outdated, color);
+printHeldDependencies(held, color);
 printRegistryErrors(errors, color);
 printExecutionTime(startedAt);
 if (hasBlockingIssues) process.exitCode = 1;

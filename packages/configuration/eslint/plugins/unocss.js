@@ -7,6 +7,7 @@ export default defineConfig({
   ...configuration,
   rules: {
     ...configuration.rules,
+    "unocss/blocklist": "error",
     "unocss/order": "error",
     "unocss/order-attributify": "error",
   },

@@ -5,6 +5,12 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
 
+## Settled — do not re-propose
+
+- **A check for an attribute on a component that generates no rule** — it is as likely one of the component's props as a misspelt utility, and telling the two apart needs the component's prop list no template extraction has; a native element is `apps/web/app/templates.test.ts`, and every inert family met so far is the blocklist (`unocss` skill).
+- **A rule for theme primitive vs bespoke colour** — needs the palette in mind and a judgement about intent.
+- **A rule for a fixed dimension on a layout region** — what a region is, is the judgement.
+
 ## Deep Dives
 
 - `references/layout.md` — when laying out a page, panel, sidebar or column split, sizing a region, drawing a border or finding one you did not ask for, or building a row that reads as one sentence.
@@ -33,7 +39,7 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
 Only when technically required:
 
 - **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`)
-- **Dynamic bindings** — `:class="..."` always stays as-is, and a **valueless** utility switched on a condition belongs there rather than in a bound attribute. `:py="isCompact ? 0.5 : 1"` is fine: the extractor reads the literals and emits `[py~="0.5"]` and `[py~="1"]`. `:op-loading="isLoading ? '' : undefined"` is not — an empty string is no value, so nothing is emitted and the attribute lands on a rule only when some unrelated file happens to write that utility bare. It fails silently and comes back the day that file changes. `:class="isLoading ? 'op-loading' : undefined"` emits the class and depends on nothing
+- **Dynamic bindings** — `:class="..."` always stays as-is, and a **valueless** utility switched on a condition belongs there rather than in a bound attribute. `:py="isCompact ? 0.5 : 1"` is fine: the extractor reads the literals and emits `[py~="0.5"]` and `[py~="1"]`. `:op-loading="isLoading ? '' : undefined"` is not — an empty string is no value, so nothing is emitted and the attribute lands on a rule only when some unrelated file happens to write that utility bare. It fails silently and comes back the day that file changes, so `apps/web/app/templates.test.ts` refuses the shape — the generator is what tells a utility from a prop the empty string is a real value for, which no selector can ask. `:class="isLoading ? 'op-loading' : undefined"` emits the class and depends on nothing
 - **Third-party component classes** — e.g. `vue-flow__panel`, `v-window__controls`, `fc-event-title`, Vuetify internal `v-`-prefixed classes (e.g. `v-theme--light`)
 - **SVG classes** — e.g. `fclass1`, `a`, `b`
 - **`group`** — UnoCSS group variant token; must stay in `class` so descendant `group-hover:` variants work
@@ -76,7 +82,7 @@ Three reliable signals that a margin is in the wrong place:
 - **A negative margin** (`ml--2`, `my--1`) — the parent's padding and the child's margin are fighting; one of them is wrong.
 - **The same margin in sibling files** (`<v-icon mr-2 />` repeated across rows) — that's one gap the row should own, not N margins.
 
-Margin stays correct for a few things: pushing an element within an already-`gap`-ed row (`ma-auto`, `mt-auto`), and off-scale nudges that aren't sibling rhythm at all — though reach for absolute positioning first. When converting a child margin to a parent `gap`, check the trailing edge: a `mb-*` on every child also pads _below the last one_, which `gap-y-*` deliberately does not. If that trailing space was load-bearing (scroll breathing room), move it to the container's `padding`, don't reintroduce the margin.
+Margin stays correct for a few things: pushing an element within an already-`gap`-ed row (`m-a`, `mt-a`), and off-scale nudges that aren't sibling rhythm at all — though reach for absolute positioning first. When converting a child margin to a parent `gap`, check the trailing edge: a `mb-*` on every child also pads _below the last one_, which `gap-y-*` deliberately does not. If that trailing space was load-bearing (scroll breathing room), move it to the container's `padding`, don't reintroduce the margin.
 
 ## Absolute Positioning Within a Container
 

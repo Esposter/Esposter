@@ -23,30 +23,3 @@ the same way it reads any other identifier. The prefix-and-fold question over th
 `vue-components`'s: one tree, two questions, which is what keeps both ledgers whole. Nothing is excluded here on
 the grounds that a rename is expensive — that is the argument
 [no compatibility debt](/docs/architecture/no-compatibility-debt) already refuses, migrations included.
-
-## Next enforceable
-
-- Filename-is-the-export is decidable from the AST plus the path; a custom oxlint plugin could take it whole.
-- `is*`/`has*`/`show*` on a boolean-typed declaration needs types, which `typeAware: true` already provides.
-  The **function** half of that needs no types at all: a declarator named `^(is|has)[A-Z]` whose initialiser is
-  an arrow or function expression with an explicit `: boolean` return annotation is decidable from the AST, and
-  every one found so far writes that annotation. A `no-restricted-syntax` selector can hold it over the swept
-  paths and widen as the six remaining `exec` ones drain.
-- Abbreviation bans need a word list, not a rule — leave with the sweep.
-- A `<script setup>` constant's casing is not decidable by selector: whether a top-level array or object
-  literal is fixed or captures a ref needs scope analysis no `no-restricted-syntax` pattern can do, and the
-  narrow branch that is decidable (`Object.values`/`entries`/`keys` at program scope) catches a fraction of
-  the sites. Leave with the sweep.
-- A where-fragment helper is decidable from the AST alone: a declarator named `*Where` whose initialiser is a
-  function must start with `get`. Four routers had written the bare noun, so the rule is now in the `trpc` skill
-  and a `no-restricted-syntax` selector can hold it over the swept paths.
-- A redundant alias is decidable from the AST alone: a declarator whose initialiser is a bare identifier declared
-  in the same scope binds a second name to a value that already has one. Every instance so far is a
-  `Promise.withResolvers` destructured under one name and immediately re-bound under another, and the fix is
-  always to destructure to the name the test actually reads.
-- A `const` bound to the call it names — `const readPost = await caller.readPost(…)` — is decidable from the AST alone
-  (declarator name equal to the callee's last property), and it is the finding this ledger has now written in five
-  files. The fix is always the same: drop the verb prefix, since the binding is the value rather than the fetch.
-- A bare `_` binding cannot go to `id-denylist`: xml2js spells an element's text as the `_` key, so
-  `packages/parse-tmx` and `packages/xml2js` destructure and declare it by that name throughout, and the ban
-  would buy a disable per site. The sweep keeps the rule — `_value`, `_title`, `_match`, never bare — by hand.

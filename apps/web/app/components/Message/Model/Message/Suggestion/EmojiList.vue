@@ -11,7 +11,6 @@ import { takeOne } from "@esposter/shared";
 const { command, items, query } = defineProps<Pick<SuggestionProps<PickableEmoji>, "command" | "items" | "query">>();
 const emojiPickerStore = useEmojiPickerStore();
 const { skinTone } = storeToRefs(emojiPickerStore);
-const title = computed(() => getSuggestionListTitle(SuggestionTrigger.Emoji, query));
 const selectItem = (index: number) => {
   const emoji = takeOne(items, index);
   command(emoji);
@@ -22,7 +21,12 @@ defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <MessageModelMessageSuggestionList max-w-80 :is-visible="items.length > 0" :selected-index :title>
+  <MessageModelMessageSuggestionList
+    max-w-80
+    :is-visible="items.length > 0"
+    :selected-index
+    :title="getSuggestionListTitle(SuggestionTrigger.Emoji, query)"
+  >
     <v-list-item
       v-for="(emoji, index) of items"
       :key="emoji.slug"
@@ -31,9 +35,9 @@ defineExpose({ onKeyDown });
       @click="selectItem(index)"
     >
       <template #prepend>
-        <span leading-none mr-2 text-title-large><StyledEmoji :emoji :skin-tone /></span>
+        <span lh-none mr-2 text-title-large><StyledEmoji :emoji :skin-tone /></span>
       </template>
-      <v-list-item-title font-semibold>{{ getEmojiShortcode(emoji.slug) }}</v-list-item-title>
+      <v-list-item-title fw-semibold>{{ getEmojiShortcode(emoji.slug) }}</v-list-item-title>
     </v-list-item>
   </MessageModelMessageSuggestionList>
 </template>

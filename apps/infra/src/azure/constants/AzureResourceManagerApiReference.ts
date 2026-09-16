@@ -1,6 +1,7 @@
+import type * as azure_native from "@pulumi/azure-native";
+
 import AzureManagedApiType from "#src/azure/constants/AzureManagedApiType";
 import AzureResourceManagerManagedApiId from "#src/azure/constants/AzureResourceManagerManagedApiId";
-import * as azure_native from "@pulumi/azure-native";
 
 const AzureResourceManagerApiReference: azure_native.types.input.web.ApiReferenceArgs = {
   brandColor: "",

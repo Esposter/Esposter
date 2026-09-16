@@ -1,7 +1,6 @@
 export interface ExpressInput {
   cwd: string;
-  // The lane runs only where this equals `mainSha`: an unreviewed window sitting on develop would merge back
-  // Into a `main` the express commits have already moved under it
+  // A queue commit a window already carries is owed to neither branch, so it is never cut again
   developSha: string;
   mainSha: string;
   queueSha: string;

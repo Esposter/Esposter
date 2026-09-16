@@ -1,12 +1,12 @@
 name: Get Build Cache Keys
-description: Compute the content hashes that key the package-builds and app-build caches, and the path list the package-builds entry is saved and restored with, shared by the workflows that save one and every workflow that restores one
+description: Compute the content-hash keys of the package-builds and app-build caches, and the path list the package-builds entry is saved and restored with, shared by the workflows that save one and every workflow that restores one
 outputs:
-  app-build-hash:
-    description: sha256 over every tracked file `pnpm -C apps/web build` could read — the package-builds inputs plus `apps/web`
-    value: ${{ steps.keys.outputs.app-build-hash }}
-  package-builds-hash:
-    description: sha256 over every tracked file `pnpm build:packages` could read
-    value: ${{ steps.keys.outputs.package-builds-hash }}
+  app-build-key:
+    description: The app-build cache key — a sha256 over every tracked file `pnpm -C apps/web build` could read, the package-builds inputs plus `apps/web`
+    value: ${{ steps.keys.outputs.app-build-key }}
+  package-builds-key:
+    description: The package-builds cache key — a sha256 over every tracked file `pnpm build:packages` could read
+    value: ${{ steps.keys.outputs.package-builds-key }}
   package-builds-paths:
     # `*/dist` is the build output and `*/src/**/index.ts` the ctix-generated barrels (gitignored). Libraries
     # only — an app's `dist` is deploy payload nothing imports — and their common ancestor `packages` is where
@@ -42,6 +42,6 @@ runs:
           git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
         )"
         {
-          echo "package-builds-hash=$(echo "$packageInputs" | sha256sum | cut -d' ' -f1)"
-          echo "app-build-hash=$({ echo "$packageInputs"; readTrackedInputs apps/web; } | sha256sum | cut -d' ' -f1)"
+          echo "package-builds-key=package-builds-$(echo "$packageInputs" | sha256sum | cut -d' ' -f1)"
+          echo "app-build-key=app-build-$({ echo "$packageInputs"; readTrackedInputs apps/web; } | sha256sum | cut -d' ' -f1)"
         } >> "$GITHUB_OUTPUT"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/azure";
 
-import { getPlainDate } from "@esposter/shared";
+import { getPlainDate } from "@/util/date/getPlainDate";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
 const { toJsDate } = useVDate();

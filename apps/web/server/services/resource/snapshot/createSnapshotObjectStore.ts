@@ -25,9 +25,9 @@ export const createSnapshotObjectStore = async (resourceId: Resource["id"]): Pro
         AzureContainer.ResourceAssets,
         keys.map((key) => getSnapshotObjectBlobName(resourceId, key)),
       ).match(noop, console.error),
-    read: async (key, byteCount) => {
+    read: async (key) => {
       const readableStreamBody = await getResultAsync(() =>
-        containerClient.getBlockBlobClient(getSnapshotObjectBlobName(resourceId, key)).download(0, byteCount),
+        containerClient.getBlockBlobClient(getSnapshotObjectBlobName(resourceId, key)).download(),
       ).match(
         (response) => response.readableStreamBody,
         (error) => {

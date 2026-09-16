@@ -1,8 +1,6 @@
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 import type { SurveyResponseRecord } from "#shared/models/resource/survey/SurveyResponseRecord";
 
-// Each row carries its own key, so identity can never drift from data — matching two independently
-// Read lists by index breaks the moment a response is submitted or deleted between the reads
 export interface SurveyResponseRecords {
   columns: DatasetColumn[];
   rows: SurveyResponseRecord[];

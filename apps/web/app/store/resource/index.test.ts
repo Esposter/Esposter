@@ -5,10 +5,12 @@ import type { Resource, ResourcePublication, ResourceTags } from "@esposter/db-s
 import { EMPTY_NOTE_DOC, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { createResourceListItem } from "@/services/resource/list/createResourceListItem.test";
+import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
 import { setupMswTrpc, trpcMsw } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -473,5 +475,27 @@ describe(useResourceStore, () => {
     expect(readResourceQuery).not.toHaveBeenCalled();
     expect(resource.value).toBeUndefined();
     expect(isPending.value).toBe(false);
+  });
+
+  // A third-party editor adopts the content the store's re-read landed, so the two stages run in order rather
+  // Than together — the reload hook resolves a microtask late, which a single stage would let the adopt beat
+  test("reloads the content before the editors adopt it", async () => {
+    expect.hasAssertions();
+
+    const stages: string[] = [];
+    const resourceStore = useResourceStore();
+    const unregisterReload = ResourceContentHookMap.Reload.register(async () => {
+      await Promise.resolve();
+      stages.push("reload");
+    });
+    const unregisterAdopt = ResourceContentHookMap.Adopt.register(() => {
+      stages.push("adopt");
+    });
+    await withFinalizerAsync(resourceStore.reloadResourceContent, () => {
+      unregisterReload();
+      unregisterAdopt();
+    });
+
+    expect(stages).toStrictEqual(["reload", "adopt"]);
   });
 });

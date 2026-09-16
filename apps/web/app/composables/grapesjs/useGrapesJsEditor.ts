@@ -1,3 +1,4 @@
+import type { ResourceType } from "@esposter/db-schema";
 import type { Editor, EditorConfig, ProjectData } from "grapesjs";
 
 import { authClient } from "@/services/auth/authClient";
@@ -17,15 +18,27 @@ interface UseGrapesJsEditorStorage {
 }
 
 export const useGrapesJsEditor = async (
+  type: ResourceType,
   storage: UseGrapesJsEditorStorage,
   configuration?: EditorConfig,
   assets?: UseGrapesJsEditorAssets,
 ) => {
   // https://antfu.me/posts/async-with-composition-api
   const currentInstance = getCurrentInstance();
+  const editor = shallowRef<Editor>();
+  // Before the await, for the same reason the instance is captured there: this composable is a plain async
+  // Function, so nothing past the first await still has the caller's scope to hang a teardown on — and an
+  // Adopter that outlives its blade holds a destroyed editor.
+  // GrapesJS owns the live project once it has loaded, so a restore has to be handed to it: left holding the
+  // Pre-restore project its next storage tick writes that project back at the restore's own fresh
+  // ContentVersion. `load()` re-runs the storage adapter below, which is also the content store's re-read, so
+  // These types register nothing on the Reload stage. Cleared, because the undo stack and the dirty counter it
+  // Carries describe a document that is gone
+  useAdoptResourceContent(type, async () => {
+    await editor.value?.load(undefined, { clear: true });
+  });
   const { data: session } = await authClient.useSession(useFetch);
   const validateFile = useValidateFile();
-  const editor = shallowRef<Editor>();
   // The document stores branch between the authenticated document path and local storage,
   // So a single storage adapter suffices; re-initialize on session change to reload from the right source
   const { stop, trigger } = watchTriggerable(session, () => {

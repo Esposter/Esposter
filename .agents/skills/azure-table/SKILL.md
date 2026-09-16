@@ -41,7 +41,7 @@ Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`,
 
 ## Read-Modify-Write Is Conditional
 
-**A server-side read-modify-write over an entity reads through `getEntityWithEtag` and writes conditionally.** Azure Table stores an entity as one blob, so a write that echoes back a field the caller computed from what it read carries the whole version it read. Two of them running at once both compute from the same version, and the later write silently erases the earlier change — no error, no log, and the caller whose write landed first is told it succeeded. This applies to any procedure whose write depends on what it just read.
+**A server-side read-modify-write over an entity reads through `getEntityWithEtag` and writes conditionally.** An entity is one blob, so an unconditional write-back carries the whole version the caller read and silently erases whatever landed in between — the hazard, and why it surfaces to nobody, is `apps/web/content/docs/architecture/conditional-writes.md`. This applies to any procedure whose write depends on what it just read.
 
 `getEntity` is the wrong reader here — it exists to **drop** the etag for callers that don't need it. `getEntityWithEtag` returns `{ entity, etag }`, and `updateEntity` forwards its extra arguments to the SDK, so the conditional write is `updateEntity(client, entity, "Merge", { etag })`. Where a shared procedure performs the read (as `getMessageProcedure` does), the etag belongs on the procedure context beside the entity — the round trip is already paid, and every procedure built on it then gets the option.
 

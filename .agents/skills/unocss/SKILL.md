@@ -1,6 +1,6 @@
 ---
 name: unocss
-description: Apply when editing uno.config.ts or adding new colors/utilities. Esposter UnoCSS configuration conventions — theme colors registration, safelist rules for dynamic Vuetify color props, cssLayerName mapping, named shortcuts for recurring utility pairs, and the resolved-config snapshots that catch what a dependency bump changes.
+description: Apply when editing uno.config.ts, adding new colors/utilities, or choosing between two spellings of one utility. Esposter UnoCSS configuration conventions — theme colors registration, safelist rules for dynamic Vuetify color props, cssLayerName mapping, named shortcuts for recurring utility pairs, one canonical spelling per utility family held in the blocklist and reported by unocss/blocklist, and the resolved-config snapshots that catch what a dependency bump changes.
 ---
 
 # UnoCSS Configuration
@@ -37,6 +37,11 @@ safelist: [...allColorKeys.flatMap((key) => [`bg-${key}`, `text-${key}`])];
 
 Palette colors are resolved by Vuetify's color pack CSS — no UnoCSS safelisting needed.
 
+Every safelisted utility comes back in `matched` from **any** `uno.generate(token)`, whatever the token was, so a
+caller asking whether a token is a utility looks the token up in `matched` rather than counting the set —
+`matched.size` is never zero against this config, and a check written on the count passes on every input.
+`apps/web/app/templates.test.ts` is the caller that asks.
+
 ## CSS layer name mapping
 
 ```ts
@@ -53,6 +58,23 @@ Layer declaration order is in `app/assets/css/layers.css`. All `uno-*` layers ap
 ## Shortcuts for recurring utility pairs
 
 When the same attributify utility combination recurs across components (e.g. `op-medium-emphasis text-body-small` for hint text), define a named shortcut in `uno.config.ts` (`"text-hint": "op-medium-emphasis text-body-small"`) and use it everywhere instead of the raw pair. Update the snapshot below after adding one.
+
+## One spelling per utility — the blocklist
+
+`presetWind4` accepts an alias for most of what it generates — `pa-4` beside `p-4`, `border-2` beside `b-2`,
+`rounded-lg` beside `rd-lg`, `fw-bold` beside `font-bold`, `color-white` beside `text-white` — so the same style
+can be written several ways across the tree. **`BLOCKED_SPELLINGS` in `uno.config.ts` is the single source of
+truth for which spelling is canonical**: each entry refuses one alias family and names what to write instead.
+The generator honours it by emitting nothing for a blocked token, and `unocss/blocklist` (on in the shared ESLint
+config) reports the attribute or `class` literal that wrote one, with the message. A new alias found in the tree
+joins the list rather than the prose; a bare `rounded` or `border` stays off it because on a Vuetify component
+each is that component's own prop, and the rule reads every valueless attribute.
+
+**Blocking a spelling is a render change, so it owes `pnpm test app/App.test.ts -u --run`.** The attribute
+survives into the rendered markup, and the committed HTML under `apps/web/app/__snapshots__/` is the only place
+that still holds the old one — no linter reads a snapshot, so the rewrite of the components passes every check
+and the suite goes red on a file the change never touched. It has landed that way twice, once per blocked
+family, which is why it is a step here rather than a thing to notice.
 
 ## The resolved-config snapshots
 

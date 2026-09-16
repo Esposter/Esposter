@@ -8,36 +8,36 @@
 | `apps/web` — the rest of `app/composables`             | 2026-09-15 | the pagination binder and readiness rules, per call site                                            |
 | `apps/web` — `app/models`, `app/types`                 | 2026-09-15 | the dungeons tree's legacy prose                                                                    |
 | `apps/web` — `app/store`                               | 2026-09-15 | the rollback rationale, restated per call site                                                      |
-| `apps/web` — `app/pages`, `layouts`, the rest          | 2026-09-05 | plus `middleware`, `plugins`, `assets`                                                              |
+| `apps/web` — `app/pages`, `layouts`, the rest          | 2026-09-15 | plus `middleware`, `plugins`, `assets`                                                              |
 | `apps/web` — `server/trpc/routers`                     | 2026-09-15 | the per-type router suites                                                                          |
 | `apps/web` — `server/trpc/routers` subtrees            | 2026-09-15 | `message`, `room`, `call`                                                                           |
 | `apps/web` — the rest of `server/trpc`                 | 2026-09-15 | `guards`, `middleware`, `procedure`, `plugins`, root                                                |
 | `apps/web` — `server/services/resource`                | 2026-09-15 |                                                                                                     |
 | `apps/web` — `server/services/message`                 | 2026-09-15 |                                                                                                     |
 | `apps/web` — `server/services` — the dense rest        | 2026-09-15 | `blueprint`, `azure`, `storage`, `survey`, `program`                                                |
-| `apps/web` — the rest of `server/services`             | 2026-09-05 |                                                                                                     |
+| `apps/web` — the rest of `server/services`             | 2026-09-15 |                                                                                                     |
 | `apps/web` — the rest of `server`                      | 2026-09-15 | `models`, `composables`, `api`, `plugins`, `db`, root                                               |
-| `apps/web` — `shared/models/resource`                  | 2026-09-05 |                                                                                                     |
+| `apps/web` — `shared/models/resource`                  | 2026-09-15 |                                                                                                     |
 | `apps/web` — `shared/models/db`                        | 2026-09-15 |                                                                                                     |
 | `apps/web` — the rest of `shared/models`               | 2026-09-15 |                                                                                                     |
 | `apps/web` — `shared/services`                         | 2026-09-15 |                                                                                                     |
 | `apps/web` — the rest of `shared`                      | 2026-09-15 | `util`, `types`, `assets`, `test`                                                                   |
-| `apps/web` — `configuration`, `content`                | 2026-09-05 | CSP labels, Nuxt config prose                                                                       |
+| `apps/web` — `configuration`, `content`                | 2026-09-15 | CSP labels, Nuxt config prose                                                                       |
 | `apps/functions` — `handlers`                          | 2026-09-15 | the densest prose in the package                                                                    |
 | `apps/functions` — `services`, the rest                | 2026-09-15 | plus `functions`, `hooks`, `models`, `index.test.ts`                                                |
 | `packages/azure-mock`                                  | 2026-09-15 | filter/search/container mocks                                                                       |
-| `packages/configuration`                               | 2026-09-05 | external lists, `global.d.ts`                                                                       |
-| `packages/db-mock`                                     | 2026-09-05 |                                                                                                     |
-| `packages/db` — `services/azure`                       | 2026-09-05 | table, container and event-grid helpers                                                             |
-| `packages/db` — `services/message`                     | 2026-09-05 | moderation, threads, mentions                                                                       |
-| `packages/db` — the rest of `services`, `models`       | 2026-09-05 | notification, resource, room, storage                                                               |
+| `packages/configuration`                               | 2026-09-15 | external lists, `global.d.ts`                                                                       |
+| `packages/db-mock`                                     | 2026-09-15 |                                                                                                     |
+| `packages/db` — `services/azure`                       | 2026-09-15 | table, container and event-grid helpers                                                             |
+| `packages/db` — `services/message`                     | 2026-09-15 | moderation, threads, mentions                                                                       |
+| `packages/db` — the rest of `services`, `models`       | 2026-09-15 | notification, resource, room, storage                                                               |
 | `packages/db-schema` — `models`                        | 2026-09-15 | entity classes, Azure payloads                                                                      |
-| `packages/db-schema` — `schema`, `relations`           | 2026-09-05 | tables and their v2 relations                                                                       |
+| `packages/db-schema` — `schema`, `relations`           | 2026-09-15 | tables and their v2 relations                                                                       |
 | `packages/db-schema` — `services`, package root        | 2026-09-15 | `schema.test.ts`, `pgTable.ts`                                                                      |
 | `packages/keyframe-store`                              | 2026-09-15 | the stored-object and delta prose                                                                   |
-| `apps/infra`                                           | 2026-09-05 | event subscriptions, GitHub rulesets                                                                |
-| `packages/parse-tmx`                                   | 2026-09-05 | `TMXNode.ts`                                                                                        |
-| `packages/shared`, `packages/shared-node`              | 2026-09-05 | `takeOne`                                                                                           |
+| `apps/infra`                                           | 2026-09-15 | event subscriptions, GitHub rulesets                                                                |
+| `packages/parse-tmx`                                   | 2026-09-15 | `TMXNode.ts`                                                                                        |
+| `packages/shared`, `packages/shared-node`              | 2026-09-15 | `takeOne`                                                                                           |
 | `packages/virrun` — `models`, package root             | 2026-09-15 |                                                                                                     |
 | `packages/virrun` — `services/cli`, `configuration`    | 2026-09-15 | plus `source`, `vfs`, `virrun`                                                                      |
 | `packages/virrun` — `services/exec/wsl`                | 2026-09-15 | the mirror prose is the bulk of the package                                                         |

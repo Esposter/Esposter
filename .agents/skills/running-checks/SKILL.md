@@ -7,8 +7,8 @@ description: Apply when about to run pnpm typecheck, lint, lint:fix, test, forma
 
 **Every check is a background task, and the session keeps working while it runs.** This skill exists because the
 rule is broken by default: a check looks like a step to wait on, and the tell is a turn that ran a three-minute
-typecheck, waited, ran a three-minute lint, waited, and produced no edits in between. Which command to run and
-from where is the `package-scripts` skill; this page is only _when_ a check runs and _how_ the session waits.
+typecheck, waited, ran a three-minute lint, waited, and produced no edits in between. The command and its
+directory are the `package-scripts` skill's; this page is only _when_ a check runs and _how_ the session waits.
 
 ## Every check goes out with `run_in_background: true`
 
@@ -53,9 +53,10 @@ startup cost twice (`AGENTS.md`, "Finishing a change").
 
 ## Reading the result
 
-**The verdict is the exit code, never a grep of the output.** The root lint script is three commands chained with
-`&&`, each printing its own summary, and the two that pass print `Found 0 warnings and 0 errors` above the one that
-failed (`oxlint` skill). Read the appended exit line first, then the log for what failed.
+**The verdict is the exit code, never a grep of the output.** The root lint script aggregates one leaf per tool
+and every leaf runs, so a passing one prints `Found 0 warnings and 0 errors` above the one that failed and the
+tail of the log belongs to whichever finished last (`oxlint` skill). Read the appended exit line first, then the
+log for what failed — all of it, since the point of the aggregate is that there may be more than one.
 
 **The exit code is the one in the log, never the one the completion notification carries.** The shape this page
 asks for — `(cmd > log 2>&1; echo "exit $?" >> log)` — makes the subshell's status the `echo`'s, so the

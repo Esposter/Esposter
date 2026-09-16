@@ -40,10 +40,12 @@ pnpm ai:sweep:shared-export-consumers
 ```
 
 It excludes the export's own **package**, not merely its own file: `packages/shared` naming its own export is the
-library using itself, and counting that would let one real consumer clear a threshold that asks for two. So a
-`0` names an export nothing outside `packages/shared` references — dead code and a helper the package uses
-internally produce the same result, and the pass tells them apart by opening the file. A `1` is the rule's own
-finding: one consumer does not earn a place in a shared package.
+library using itself, and counting that would let one real consumer clear a threshold that asks for two. An
+export the package's other files read is a piece of one that does clear it and is not reported. What is reported
+says what the pass does: `move to <package>` for an export one package alone names — it goes beside that consumer,
+its colocated test with it, and the alias import replaces the barrel one — and `dead` for an export nothing names.
+A clean pass prints nothing, and `scripts/src/workspace/sharedExportConsumers.test.ts` fails on anything it
+prints, so the rule is enforced rather than swept.
 
 ## Exclusions
 
@@ -52,28 +54,3 @@ finding: one consumer does not earn a place in a shared package.
 - Two exports sharing module-private state through closure — a pending set, a cached promise, a code set, a
   dispatch map. One-export-per-file cannot reach them without making that state a module global, which trades a
   file boundary for a wider one.
-
-## Open findings
-
-- The keybinds settings page lists three shortcuts (`KEYBIND_SHORTCUTS`) that `KeyboardShortcutList` states in
-  other words and other keys, and one of them (`↑` to edit the last message) appears nowhere else. Rendering the
-  model on the page changes what the page shows, so it is a decision rather than a pass: either the page renders
-  `KeyboardShortcutList` and the three-row list goes, or the three rows are the intended subset and the model
-  gains the missing key.
-- `apps/infra/src/azure/constants/` keeps one PascalCase file per constant, each a default export, and two hundred
-  import sites read them that way. No rule names default exports either way — the file-organization skill only
-  bans `export { }` — so converting the tree to `export const` is a convention to settle first, not a pass: the
-  tree is internally consistent and the swap is sixty files of pure churn.
-
-## Next enforceable
-
-- One export per file and the models rule both fail the `oxlint` skill's roster gate — each one's exceptions are a
-  list of filenames and shapes (`constants.ts`, a schema beside its type, an enum beside its values array, a
-  composable's own options) that grows with the repo — so both stay with the sweep; the `oxlint` skill's Settled
-  list carries the models-rule plugin.
-- A `util/` file importing a third-party package belongs in `services/`, and that is a specifier test: a
-  `no-restricted-imports` override on `**/util/**` whose `group` is `["*", "!node:*", "!#src/*", "!@esposter/*"]` decides
-  it, if oxlint honours a negated group and an `allowTypeImports` escape for the pure type utilities under
-  `util/types`. Both are unverified — the pass that builds it proves the rule can fail first (`sweeps` skill).
-- Alias imports are already enforced by the `@/**`-under-`packages/*/src/**` ban.
-- Duplicate constants and the sole-consumer rule need the whole repo in mind; they stay with the sweep.

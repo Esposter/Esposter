@@ -10,5 +10,3 @@ export enum BaseTilesetKey {
   HouseInterior = "HouseInterior",
   Teleport = "Teleport",
 }
-
-export const BaseTilesetKeys = Object.values(BaseTilesetKey);

@@ -3,6 +3,13 @@ packages:
   - packages/*
   - scripts
 
+# A recursive run reports every project's result rather than stopping at the first failure and killing the rest,
+# Because almost every one here is a check: a check reads the tree and produces nothing, so a bailed run hides
+# However many failures sat behind the first, and each one hidden is another full round of fix-and-rerun. The run
+# Still exits non-zero, so nothing is swallowed. `build:packages` is the exception and passes `--bail` itself,
+# Since a later build consumes what an earlier one produced and the failures after it would be that one restated.
+bail: false
+
 allowBuilds:
   "@parcel/watcher": true
   better-sqlite3: true
@@ -88,6 +95,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/node": ^26.6.1
+  "@types/semver": ^7.8.0
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
   "@types/three": ^0.186.0
@@ -104,6 +112,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^4.3.0
+  "@vue/compiler-core": ^3.5.42
   "@vue/language-core": ^3.3.11
   "@vue/test-utils": ^2.5.0
   "@vuepic/vue-datepicker": ^14.0.0
@@ -180,6 +189,7 @@ catalog:
   msw-trpc: ^2.0.1
   neverthrow: ^8.2.0
   node-html-parser: ^9.0.4
+  npm-run-all2: ^9.0.3
   nuxt: ^4.5.2
   nuxt-security: ^2.6.0
   oxfmt: ^0.68.0
@@ -199,6 +209,7 @@ catalog:
   sanitize-html: ^2.17.7
   sass-embedded: ^1.104.1
   sax: ^1.6.1
+  semver: ^7.8.5
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6

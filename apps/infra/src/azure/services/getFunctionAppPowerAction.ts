@@ -1,10 +1,10 @@
 import type { ApiConnectionAction } from "#src/azure/models/ApiConnectionAction";
 import type { FunctionAppPowerAction } from "#src/azure/models/FunctionAppPowerAction";
+import type * as azure_native from "@pulumi/azure-native";
 
 import { HttpMethod } from "#src/azure/models/HttpMethod";
 import { getApiConnectionAction } from "#src/azure/services/getApiConnectionAction";
 import { getWorkflowResourceGroupPath } from "#src/azure/services/getWorkflowResourceGroupPath";
-import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
 export const getFunctionAppPowerAction = (

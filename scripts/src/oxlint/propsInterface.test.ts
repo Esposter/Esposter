@@ -1,5 +1,5 @@
 import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 
 describe("propsInterface", () => {
   const EXPORTED_TYPE_RULE = "props-interface/no-exported-type";
@@ -65,26 +65,11 @@ describe("propsInterface", () => {
     { name: "exportedConst", source: `export const FOO = 1;`, violations: 0 },
     { name: "localInterface", source: `interface Props { a: string }`, violations: 0 },
   ];
-  const { getCodes, getViolations } = setupPluginSuite({
+  setupPluginSuite({
     extension: ".vue",
     fixtures: FIXTURES,
     plugin: "propsInterface",
     rules: [EXPORTED_TYPE_RULE, PROPS_NAME_RULE],
     wrapSource: (source) => `<script setup lang="ts">\n${source}\n</script>`,
-  });
-
-  test.each(FIXTURES)("reports $violations violation(s) for $name", ({ name, violations }) => {
-    expect.hasAssertions();
-
-    expect(getViolations(name)).toBe(violations);
-  });
-
-  test("reports nothing but these two rules", () => {
-    expect.hasAssertions();
-
-    expect([...new Set(getCodes())].toSorted()).toStrictEqual([
-      "props-interface(no-exported-type)",
-      "props-interface(require-props-name)",
-    ]);
   });
 });

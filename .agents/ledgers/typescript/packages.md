@@ -10,3 +10,4 @@ Every workspace package outside `apps/web` and `packages/shared`.
 | `packages/virrun` — the rest                                                   | 2026-09-09 |       |
 | `apps/infra`, `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-09-09 |       |
 | `packages/configuration`, `scripts`                                            | 2026-09-09 |       |
+| `packages/keyframe-store`                                                      | 2026-09-15 |       |

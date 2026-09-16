@@ -55,7 +55,8 @@ export default defineWebSocketHandler({
     if (!peer.wsAdapter) return;
     peer.wsAdapter.readyState = peer.wsAdapter.CLOSED;
     peer.wsAdapter.emit("close", event.code, event.reason);
-    await runAsPeer(peer, getRequest(peer), (caller) => caller.disconnect(), "WS connection closed");
+    const request = getRequest(peer);
+    await runAsPeer(peer, request, (caller) => caller.disconnect(), "WS connection closed");
   },
 
   error: (peer, error) => {

@@ -9,6 +9,7 @@ import { getSnapshotSummary } from "@@/server/services/resource/snapshot/getSnap
 import { lockSnapshotObjects } from "@@/server/services/resource/snapshot/lockSnapshotObjects";
 import { readSnapshotAnchor } from "@@/server/services/resource/snapshot/readSnapshotAnchor";
 import { resourceVersions } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 
 // The one way a version is taken, whichever channel it lands in: the content goes into the store against the
 // Channel's current anchor, and the row that makes it visible follows. The object is durable before the row
@@ -27,19 +28,19 @@ export const writeSnapshotVersion = async (
   const { id } = resource;
   const keyframeStore = await createSnapshotKeyframeStore(id);
   const summary = getSnapshotSummary(resource.type, serializedContent);
-  return db.transaction(async (tx) => {
+  const { previousVersion, writtenVersion } = await db.transaction(async (tx) => {
     await lockSnapshotObjects(tx, id);
     const anchor = await readSnapshotAnchor(tx, id, channel);
-    const writtenVersion = await keyframeStore.write(Buffer.from(serializedContent), anchor).match(
+    const storeWrite = await keyframeStore.write(Buffer.from(serializedContent), anchor).match(
       (value) => value,
       (error) => {
         throw error;
       },
     );
-    const { baseHash, hash, plaintextBytes, storedBytes } = writtenVersion;
+    const { baseHash, hash, plaintextBytes, storedBytes } = storeWrite;
     // The one rewrite of a version: a publish repairing its own snapshot at the version it already claimed.
-    // The row moves to the new object, and the one it named is collected if nothing else still does
-    const previousVersion = await tx.query.resourceVersions.findFirst({
+    // The row moves to the new object, and the one it named is collected below once the move has committed
+    const replacedVersion = await tx.query.resourceVersions.findFirst({
       columns: { baseHash: true, hash: true },
       where: { channel: { eq: channel }, resourceId: { eq: id }, version: { eq: version } },
     });
@@ -50,7 +51,12 @@ export const writeSnapshotVersion = async (
         set: { baseHash, hash, plaintextBytes, storedBytes, summary },
         target: [resourceVersions.resourceId, resourceVersions.channel, resourceVersions.version],
       });
-    if (previousVersion && previousVersion.hash !== hash) await collectSnapshotObjects(tx, id, [previousVersion]);
-    return writtenVersion;
+    return { previousVersion: replacedVersion, writtenVersion: storeWrite };
   });
+  // After the transaction, never inside: collection publishes the deletion the moment it decides, and a commit
+  // That failed after that would leave the row naming an object already gone. Best-effort like every other
+  // Collection — a failed one leaves the object stored and charged until purge, never the version unwritten
+  if (previousVersion && previousVersion.hash !== writtenVersion.hash)
+    await getResultAsync(() => collectSnapshotObjects(db, id, [previousVersion])).match(noop, console.error);
+  return writtenVersion;
 };

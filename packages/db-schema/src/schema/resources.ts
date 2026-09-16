@@ -31,10 +31,10 @@ export const resources = pgTable(
     // Answer it: `updatedAt` moves on every autosave, so a continuously edited resource never looks idle and
     // Leaves no recovery points at all. Null until the first revision lands. See /docs/resource/resource-snapshots
     revisionTakenAt: timestamp(),
-    // The revision channel's counter, and the only thing about a revision that is not in its own blob — its
-    // Reason and summary ride as blob metadata, so there is no revisions table. Never derived from the blob
-    // Listing: the listing answers which revisions exist, this answers what the next one is numbered, and a
-    // Ring-buffer eviction makes the two disagree by design. See /docs/resource/resource-snapshots
+    // The revision channel's counter: what the next revision is numbered. Never derived from the version rows,
+    // Which answer which revisions exist — a number is claimed before its write, so a failed write leaves a
+    // Number with no row, and the ring-buffer eviction makes the two disagree by design.
+    // See /docs/resource/resource-snapshots
     revisionVersion: integer().notNull().default(0),
     tags: jsonb().notNull().default({}).$type<ResourceTags>(),
     type: resourceTypeEnum().notNull(),

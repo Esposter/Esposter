@@ -1,6 +1,6 @@
+import type { ExecFileError } from "#src/models/exec/util/ExecFileError";
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { ExecFileError } from "#src/models/exec/util/ExecFileError";
 import { execFileHidden } from "#src/services/exec/util/execFileHidden";
 import { getResult, noop } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";

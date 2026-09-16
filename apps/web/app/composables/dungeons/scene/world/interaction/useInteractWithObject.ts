@@ -1,8 +1,8 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { ObjectgroupNames } from "#shared/generated/tiled/layers/ObjectgroupName";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { ObjectInteractionEffectMap } from "@/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap";
+import { ObjectgroupNames } from "@/services/dungeons/tilemap/constants";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export const useInteractWithObject = async (scene: SceneWithPlugins): Promise<boolean> => {

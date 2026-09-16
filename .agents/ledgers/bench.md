@@ -32,11 +32,10 @@ the two ways a bench quietly stops measuring what it names.
 git ls-files "*.bench.ts"
 ```
 
-Enumeration is the whole recipe, and deliberately: **none of these rules is decidable by a grep or a lint rule**,
-which is why they are a ledger rather than a plugin. Whether a fixture is fresh all the way down, whether a group
-holds one scale, whether the thing benched is the unit or its wrapper — each is a question about what the code
-means, and the population is small enough (a dozen files) that reading all of them costs less than a scan that
-would have to be believed. So a pass reads every file its unit names; there is no "the scan came back clean".
+Enumeration is the whole recipe, and deliberately: none of these rules is decidable by a grep or a lint rule (the
+`bench` skill's Settled list says why), and the population is small enough that reading every file costs less than
+a scan that would have to be believed. So a pass reads every file its unit names; there is no "the scan came back
+clean".
 
 ## Judging a match
 
@@ -71,10 +70,3 @@ would have to be believed. So a pass reads every file its unit names; there is n
 - The numbers themselves are never a finding. A bench is a diff over time on one host, and absolute means drift
   between sittings by more than most regressions are worth; a pass that reads a table and calls it slow is
   reading noise.
-
-## Next enforceable
-
-- "Committed artifact exists and names the groups the file registers" is the one rule here a program could hold,
-  and it wants a test rather than a lint rule: the pair of files is discoverable from `git ls-files`, and the
-  group titles are the reporter's own projection of the test names. It is worth writing the day a third bench
-  file lands without its artifact; twice is coincidence.

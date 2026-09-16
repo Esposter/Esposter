@@ -1,7 +1,7 @@
 import type { Item } from "@/models/entity/Item";
 import type { ItemCategoryDefinition } from "@/models/resource/ItemCategoryDefinition";
 
-import { ItemEntityTypePropertyNames } from "@esposter/shared";
+import { ItemEntityTypePropertyNames } from "@/models/resource/ItemEntityTypePropertyNames";
 
 const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition = {
   icon: "mdi-help",

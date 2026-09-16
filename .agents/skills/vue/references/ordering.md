@@ -32,7 +32,7 @@ Never leave a framework value composable stranded at the bottom below custom sto
 
 1. **`v-model`** (or **`v-for`** + **`:key`**) — binding/iteration directives first
 2. **`class`** — static class string
-3. **UnoCSS attributify props** — shorthand utilities as props (`ma-2`, `flex`, `flex-col`)
+3. **UnoCSS attributify props** — shorthand utilities as props (`m-2`, `flex`, `flex-col`)
 4. **Component props with values** — `:prop="value"` / `prop="string"` (alphabetical)
 5. **Shorthand boolean props** — bare names defaulting to `true` (`clearable`, `autofocus`)
 6. **Event handlers** — `@event="..."` last
@@ -40,7 +40,7 @@ Never leave a framework value composable stranded at the bottom below custom sto
 ```vue
 <v-text-field
   v-model="search"
-  ma-2
+  m-2
   density="compact"
   label="Search"
   autofocus

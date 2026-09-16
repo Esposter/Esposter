@@ -13,6 +13,11 @@ export const ANSWERS_TRAILER = "Answers";
 
 export const DRAINS_TRAILER = "Drains";
 
+// The claim a commit needs no review — written by the reshaper on the parts it judged so, or by a session on its
+// Own commit — which the express lane admits and the checks verify. A claim, never a proof: nothing reads it as
+// True, only as asked (docs: infra/review-collector/express-lane)
+export const EXPRESS_TRAILER = "Express";
+
 export const CHECK_NAME = "CodeRabbit";
 
 export const PENDING_BUCKET = "pending";
@@ -30,9 +35,19 @@ export const INSTALL_COMMAND: string[] = ["i", "--frozen-lockfile"];
 // Anything it pushes — a window is verified by develop's own CI, since a red queue commit inside it would hold
 // Every window behind a repair that sits commits later. Check-only: a repair the collector wrote would be a
 // Commit nobody reviewed. Each is a root script's own passes minus its `virrun` wrapper — the root `tsc` and
-// The recursive typecheck, oxlint and the two ESLint passes. The app build alone is left out: it is CI's longest
-// Job (`apps/web/content/docs/architecture/monorepo-tooling.md`), and `main`'s own CI runs it on the push. The
+// The recursive typecheck, oxlint and the two ESLint passes — plus the two app bundles the suite asserts against,
+// Since `@esposter/functions` and `@esposter/infra` each snapshot a `dist` no source tree holds, and a run
+// Without them fails on files no commit touched. The web app's build alone is left out: it is CI's longest job
+// (`apps/web/content/docs/architecture/monorepo-tooling.md`), and `main`'s own CI runs it on the push. The
 // Tests are here because a relocation is exactly what a path-coupled test fails on.
+export const EXPRESS_BUILD_APPS_COMMAND: string[] = [
+  "--filter",
+  "@esposter/functions",
+  "--filter",
+  "@esposter/infra",
+  "build",
+];
+
 export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   INSTALL_COMMAND,
   ["format:check"],
@@ -42,6 +57,7 @@ export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   ["exec", "oxlint", "--format=default", "--disable-nested-config"],
   ["exec", "eslint", "."],
   ["-r", "--parallel", "run", "lint"],
+  EXPRESS_BUILD_APPS_COMMAND,
   ["exec", "vitest", "run"],
 ];
 
@@ -49,6 +65,8 @@ export const EXPRESS_VERIFY_COMMANDS: string[][] = [
 // Git to emit them. `%B` rather than
 // `%(trailers:key=…)`, which reads only the last contiguous trailer block.
 export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
+
+export const COMMIT_BODY_FORMAT = "%H%x1F%B%x1E";
 
 // A review whose drain has failed this many times is quarantined: its findings stay open for a person and the
 // Collector ports without them rather than stalling every window behind one finding nobody sees
@@ -66,8 +84,31 @@ export const DRAINS_MARKER = "review-collector drains";
 export const QUARANTINED_MARKER = "review-collector quarantined";
 
 // A queue commit whose conflict with the tree the fixes built the sync could not resolve, counted against the
-// Same cap: past it the commit is a person's, and the port holds on it as it always did
+// Same cap in a comment on the commit itself, since the sync runs with no pull request open as often as with one:
+// Past it the commit is a person's, and the port holds on it as it always did
 export const SYNC_FAILED_MARKER = "review-collector sync-failed";
+
+// The queue's first owed commit that no window can take — the reshaper and the resolver both past their attempt
+// Caps — noted once on the commit itself, since under a rate limit the run exits idle rather than red
+export const HELD_MARKER = "review-collector held";
+
+// The verdict on a clean review the bot rates above the least risk, recorded once per head on the pull request:
+// The verb follows the marker on its line, so a later run re-applies it rather than judging again
+export const VERDICT_MARKER = "review-collector merge-verdict";
+
+// A commit alone over the cap whose reshaping failed, counted on the commit itself like the sync's marker
+export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
+
+// A fold of `main` whose conflict the resolver failed on, counted on `main`'s head
+export const FOLD_FAILED_MARKER = "review-collector fold-failed";
+
+// A commit claiming no review whose cut failed the checks, noted once on the commit: the port never carries it,
+// So a person drops the claim or repairs it, and nothing behind it waits
+export const EXPRESS_FAILED_MARKER = "review-collector express-failed";
+
+// How many times the rewrite's push carries what the session pushed under it and tries its lease again: each
+// Carry is seconds, so past this the session is pushing faster than any lease can be read
+export const SYNC_PUSH_ATTEMPT_CAP = 3;
 
 export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 

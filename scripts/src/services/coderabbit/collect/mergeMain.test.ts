@@ -1,53 +1,121 @@
+import type { runDrain as baseRunDrain } from "#src/services/coderabbit/collect/runDrain";
+import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
+
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
-import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { DRAIN_ATTEMPT_CAP, FOLD_FAILED_MARKER, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { describe, expect, test } from "vitest";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
+const { runDrain, runGh } = vi.hoisted(() => ({
+  runDrain: vi.fn<typeof baseRunDrain>(),
+  runGh: vi.fn<typeof baseRunGh>(),
+}));
+
+// The resolver is the session the drain spawns, and its attempt marker goes out through `gh`; git runs for real
+vi.mock(import("#src/services/coderabbit/collect/runDrain"), () => ({
+  runDrain: runDrain as unknown as typeof baseRunDrain,
+}));
+
+vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 // The lockfile conflict — thrown away and rebuilt with `pnpm i` — is the one branch not proved here: it installs
 // Against a real workspace, which no fixture repository holds
 describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, deleteFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
+  const viewerLogin = "viewerLogin";
   const filePath = `${TEST_FILENAME}.ts`;
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
+  beforeEach(() => {
+    runGh.mockReturnValue("[[]]");
+  });
+  const getInput = () => ({ cwd: getCwd(), viewerLogin });
+  // A conflict nothing mechanical decides: main edited the file the candidate deleted
+  const setupConflict = (): { candidateSha: string; mainSha: string } => {
+    const baseSha = commitFile(filePath, "");
+    const mainSha = publish(MAIN_BRANCH, commitFile(filePath, " "));
+    switchTo(baseSha);
+    return { candidateSha: deleteFile(filePath), mainSha };
+  };
 
-  test(`${MergeMainOutcome.AlreadyMerged}: main is an ancestor of the candidate`, () => {
+  test(`${MergeMainOutcome.AlreadyMerged}: main is an ancestor of the candidate`, async () => {
     expect.hasAssertions();
 
     const headSha = commitFile(filePath, "");
 
-    expect(mergeMain(getCwd())).toBe(MergeMainOutcome.AlreadyMerged);
+    await expect(mergeMain(getInput())).resolves.toBe(MergeMainOutcome.AlreadyMerged);
     expect(readSha("HEAD")).toBe(headSha);
   });
 
-  test(`${MergeMainOutcome.Merged}: main's own commits join the candidate as a merge`, () => {
+  test(`${MergeMainOutcome.Merged}: main's own commits join the candidate as a merge`, async () => {
     expect.hasAssertions();
 
     const rootSha = readSha("HEAD");
     const mainSha = publish(MAIN_BRANCH, commitFile(nestedPath, ""));
     switchTo(rootSha);
     const candidateSha = commitFile(filePath, "");
-    const outcome = mergeMain(getCwd());
 
-    expect(outcome).toBe(MergeMainOutcome.Merged);
+    await expect(mergeMain(getInput())).resolves.toBe(MergeMainOutcome.Merged);
+    expect(runGit(["rev-list", "--parents", "--max-count=1", "HEAD"], getCwd()).trim()).toBe(
+      `${readSha("HEAD")} ${candidateSha} ${mainSha}`,
+    );
+    expect(runDrain).not.toHaveBeenCalled();
+  });
+
+  test(`${MergeMainOutcome.Merged}: a conflict outside the lockfile is the resolver's`, async () => {
+    expect.hasAssertions();
+
+    const { candidateSha, mainSha } = setupConflict();
+    runDrain.mockImplementation(() => {
+      writeFileSync(join(getCwd(), filePath), " ");
+      runGit(["add", filePath], getCwd());
+      runGit(["commit", "--quiet", "--no-edit"], getCwd());
+      return Promise.resolve({ isDrained: true });
+    });
+
+    await expect(mergeMain(getInput())).resolves.toBe(MergeMainOutcome.Merged);
+    expect(runDrain.mock.calls[0]?.[0]).toContain(`\`${MAIN_BRANCH}\` at ${mainSha} is being folded`);
     expect(runGit(["rev-list", "--parents", "--max-count=1", "HEAD"], getCwd()).trim()).toBe(
       `${readSha("HEAD")} ${candidateSha} ${mainSha}`,
     );
   });
 
-  test(`${MergeMainOutcome.Conflicted}: a conflict outside the lockfile aborts and leaves the candidate as it was`, () => {
+  test("fails the run and counts the attempt on main's head when the resolver leaves the merge open", async () => {
     expect.hasAssertions();
 
-    const baseSha = commitFile(filePath, "");
-    publish(MAIN_BRANCH, commitFile(filePath, " "));
-    switchTo(baseSha);
-    const candidateSha = deleteFile(filePath);
-    const outcome = mergeMain(getCwd());
+    const { mainSha } = setupConflict();
+    runDrain.mockResolvedValue({ isDrained: true });
 
-    expect(outcome).toBe(MergeMainOutcome.Conflicted);
+    await expect(mergeMain(getInput())).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the resolver left the fold of 646cf33bb0af71bf79f4ac95d887c6d6a4bd7450 unresolved (attempt 1 of 3)]`,
+    );
+    expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${mainSha}/comments`);
+    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(FOLD_FAILED_MARKER, mainSha));
+  });
+
+  test(`${MergeMainOutcome.Conflicted}: past the attempt cap the fold is abandoned without a session`, async () => {
+    expect.hasAssertions();
+
+    const { candidateSha, mainSha } = setupConflict();
+    runGh.mockReturnValue(
+      JSON.stringify([
+        Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
+          body: getMarker(FOLD_FAILED_MARKER, mainSha),
+          id,
+          updated_at: "",
+          user: { login: viewerLogin },
+        })),
+      ]),
+    );
+
+    await expect(mergeMain(getInput())).resolves.toBe(MergeMainOutcome.Conflicted);
     expect(readSha("HEAD")).toBe(candidateSha);
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
+    expect(runDrain).not.toHaveBeenCalled();
   });
 });

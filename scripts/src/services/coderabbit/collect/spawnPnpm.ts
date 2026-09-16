@@ -1,6 +1,6 @@
 import type { SpawnSyncOptions, SpawnSyncReturns } from "node:child_process";
 
-import { IS_PNPM_SHELL } from "#src/services/shared/constants";
+import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { spawnSync } from "node:child_process";
 
 // Every `pnpm` the collector waits on — the checks and the installs — is spawned the same way. The exit status is
@@ -9,4 +9,4 @@ import { spawnSync } from "node:child_process";
 export const spawnPnpm = (
   args: string[],
   options: Pick<SpawnSyncOptions, "cwd" | "env" | "input" | "stdio">,
-): SpawnSyncReturns<string> => spawnSync("pnpm", args, { ...options, encoding: "utf8", shell: IS_PNPM_SHELL });
+): SpawnSyncReturns<string> => spawnSync(PNPM_FILE, [...PNPM_ARGS, ...args], { ...options, encoding: "utf8" });

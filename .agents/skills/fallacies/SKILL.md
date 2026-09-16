@@ -5,7 +5,7 @@ description: Apply when a session is about to propose, widen, add or "fix" somet
 
 # Fallacies
 
-The one list of the arguments that lead a session to chase a change the repository does not need. `over-engineering` catalogues the **shapes** such a change takes once it is made — the wrapper, the flag, the map; this page catalogues the **reasoning** that made it look necessary, one step earlier, where the cheaper correction is to stop. Each entry lives in the skill or page named beside it, stated there in full; this is the index a review walks before it argues a finding, and nothing is stated here that another owner holds. The rules with no other owner are marked **owned here**.
+The one list of the arguments that lead a session to chase a change the repository does not need. `over-engineering` catalogues the **shapes** such a change takes once it is made — the wrapper, the flag, the map; this page catalogues the **reasoning** that made it look necessary, one step earlier, where the cheaper correction is to stop. Each entry lives in the skill or page named beside it, stated there in full; this is the index a review walks before it argues a finding, and nothing is stated here that another owner holds; the two rules with no other owner carry **owned here** in their heading.
 
 ## A gap in a check nothing decides on is not a defect — owned here
 
@@ -19,11 +19,11 @@ A check exists to be read. Before a trigger grows a path, a gate job, a second c
 
 | Fallacy                                                                                          | The rule and its owner                                                                                                                                                      |
 | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Arguing against a decision the docs, a skill, a ledger or a beside-the-line comment already made | `code-review` — the written record wins; a finding again only when the code contradicts the record or ships behaviour it does not cover                                     |
+| Arguing against a decision the docs, a skill, a ledger or a beside-the-line comment already made | `code-review` — the written record wins, and only a contradiction between code and record reopens it                                                                        |
 | An argument that merely sounds right from the diff, the security-flavoured one most of all       | `code-review` — refuted or confirmed against the code and the record before it is reported; plausibility is not a fact                                                      |
 | Judging a CI change by when its slowest job ends                                                 | `apps/web/content/docs/architecture/monorepo-tooling.md` — correctness first, then **total** consumption; wall-clock returns only as the no-job-becomes-the-wait constraint |
-| A cache keyed on what the commit changes                                                         | `apps/web/content/docs/architecture/monorepo-tooling.md` — a cache that hits only when it was not needed; the `.nuxt` cache and its two larger versions                     |
-| Fewer steps bought with implicit behaviour                                                       | `over-engineering` — two explicit steps say what each does; a default that happens to select everything asks the reader to know the equivalence                             |
+| A cache keyed on what the commit changes                                                         | `apps/web/content/docs/architecture/monorepo-tooling.md` — a cache whose hits land where nothing needed one; the `.nuxt` cache and its two larger versions                  |
+| Fewer steps bought with implicit behaviour                                                       | `over-engineering` — the implicit default makes the reader carry an equivalence two explicit steps would have spelled out                                                   |
 | A skill's size or prose volume raised as a finding                                               | `skill-authoring` — a to-do with one known fix, the split, run in the same change and reported as nothing                                                                   |
 | Excluding files, force-pushing or trimming a window to fit a review cap                          | `review-queue` — the collector holds the overflow for the next window; `coderabbit` for the force-push that desynchronises the bot's checkpoint                             |
 | A schedule, a poll or a retry loop where a signal exists                                         | `apps/web/content/docs/architecture/no-polling.md` — every state change but a rate limit lifting is a webhook or an awaited promise                                         |
@@ -32,5 +32,5 @@ A check exists to be read. Before a trigger grows a path, a gate job, a second c
 ## Reading a finding against this list
 
 - A finding or a proposal that rests on an entry here cites the owning rule and stops, never re-argues it.
-- An argument that recurs without an owner is a missing row **and** a missing rule: add the rule to the most specific skill or page, then the row here — never the rule here alone, because an index nobody loads for the file at hand is where a rule goes to be forgotten.
+- An argument that recurs without an owner is maintained the way `over-engineering` maintains a shape: the rule goes to its most specific owner first and the row here second, never the row alone.
 - When the argument survives — the check is required, the measurement was taken, the record says nothing — the change is real, and `over-engineering` is the next list it is read against.

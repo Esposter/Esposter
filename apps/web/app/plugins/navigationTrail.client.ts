@@ -1,4 +1,6 @@
-import { NavigationTrailPage, NavigationTrailPages } from "@/models/shared/NavigationTrailPage";
+import type { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
+
+import { NavigationTrailPages } from "@/models/shared/NavigationTrailPage";
 import { getNextNavigationTrail } from "@/services/shared/getNextNavigationTrail";
 import { useNavigationTrailStore } from "@/store/navigationTrail";
 

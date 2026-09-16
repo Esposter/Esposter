@@ -88,21 +88,21 @@ describe("webhookRouter", () => {
     expect.hasAssertions();
 
     const newWebhook = await webhookCaller.createWebhook({ name, roomId });
-    const readWebhooks = await webhookCaller.readWebhooks({ roomId });
-    const readWebhook = takeOne(readWebhooks);
+    const webhooks = await webhookCaller.readWebhooks({ roomId });
+    const webhook = takeOne(webhooks);
 
-    expect(readWebhooks).toHaveLength(1);
-    expect(readWebhook.id).toBe(newWebhook.id);
-    expect(readWebhook.roomId).toBe(roomId);
-    expect(readWebhook.userId).toBe(newWebhook.userId);
+    expect(webhooks).toHaveLength(1);
+    expect(webhook.id).toBe(newWebhook.id);
+    expect(webhook.roomId).toBe(roomId);
+    expect(webhook.userId).toBe(newWebhook.userId);
   });
 
   test("reads empty webhooks", async () => {
     expect.hasAssertions();
 
-    const readWebhooks = await webhookCaller.readWebhooks({ roomId });
+    const webhooks = await webhookCaller.readWebhooks({ roomId });
 
-    expect(readWebhooks).toStrictEqual([]);
+    expect(webhooks).toStrictEqual([]);
   });
 
   test("updates", async () => {
@@ -156,12 +156,12 @@ describe("webhookRouter", () => {
 
     const newWebhook = await webhookCaller.createWebhook({ name, roomId });
     const deletedWebhook = await webhookCaller.deleteWebhook({ id: newWebhook.id, roomId });
-    const readWebhooks = await webhookCaller.readWebhooks({ roomId });
+    const webhooks = await webhookCaller.readWebhooks({ roomId });
     const appUser = await mockContext.db.query.appUsersInMessage.findFirst();
 
     expect(appUser).toBeUndefined();
     expect(deletedWebhook.id).toBe(newWebhook.id);
-    expect(readWebhooks).toStrictEqual([]);
+    expect(webhooks).toStrictEqual([]);
   });
 
   test(`fails delete for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {

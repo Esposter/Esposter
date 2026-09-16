@@ -38,7 +38,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .app-build-marker
-          key: app-build-${{ steps.keys.outputs.app-build-hash }}
+          key: ${{ steps.keys.outputs.app-build-key }}
       # Gated on the marker file rather than `cache-hit`: a hit whose `path` drifted extracts nothing and still
       # reports success. A literal path, so the leading dot is the ordinary character it is.
       - name: 🔧 Setup Project Dependencies
@@ -49,15 +49,15 @@ jobs:
         if: ${{ hashFiles('.app-build-marker') == '' }}
         uses: ./.github/actions/setup-packages
         with:
-          install-filter: "@esposter/web..."
+          filter: "@esposter/web..."
       # The marker is written only after the build returns, so a failed build leaves the post-run save nothing
       - name: 🏗️ Build app
         if: ${{ hashFiles('.app-build-marker') == '' }}
         env:
-          APP_BUILD_HASH: ${{ steps.keys.outputs.app-build-hash }}
+          APP_BUILD_KEY: ${{ steps.keys.outputs.app-build-key }}
         run: |
           pnpm -C apps/web build
-          echo "$APP_BUILD_HASH" > .app-build-marker
+          echo "$APP_BUILD_KEY" > .app-build-marker
 
   # @TODO: Commented out, not deleted: TypeDoc cannot run against the `typescript-native-bridge` alias. Its
   # `attachUnionComments` walks the syntax tree through `declaration.type.getChildAt`, which the bridge's nodes

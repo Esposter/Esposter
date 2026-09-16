@@ -70,7 +70,7 @@ export default [
   },
   {
     // The bare API is the one that has to answer "which environment is this" at every call site, and answers it
-    // Differently each time — which is how a debounced draft save came to throw `window is not defined` in a
+    // Differently each time — which is how a debounced draft save throws `window is not defined` in a
     // Node-environment test. VueUse's ref reads the default off-browser instead. One-shot I/O that genuinely
     // Cannot be a ref belongs in a client-only phase and disables this rule there with that reason. Tests are
     // Unaffected: they address the global bare, which this selector does not match.
@@ -90,5 +90,31 @@ export default [
     // `localStorage` is excluded rather than left to match both: the ban above names the replacement for it, and
     // A module-scope `window.localStorage` matching both selectors reports the same node twice
     selector: "MemberExpression[object.name='window'][property.name!='localStorage']:not(:function *)",
+  },
+  {
+    // A failure downgraded to a warning is a failure nobody reads: `console.warn` handed to a Result's error
+    // Side, an `onError`, or any other callback slot is the swallow the error-handling skill bans. A call to
+    // `console.warn(…)` with a sentence of its own is a notice that no chain produced, and stays.
+    message:
+      "Don't hand `console.warn` to an error handler — a failure downgraded to a warning is one nobody reads. Use `console.error` (`.orTee(console.error)`, `.match(noop, console.error)`). See the error-handling skill.",
+    selector:
+      ":matches(CallExpression > MemberExpression.arguments, Property > MemberExpression.value)[object.name='console'][property.name='warn']",
+  },
+  {
+    // Node concatenates an args array unescaped under `shell` and deprecates the pair (DEP0190). Two shapes stay:
+    // A file spawned directly with its args — `pnpm` through `PNPM_FILE`/`PNPM_ARGS` in `scripts`, since the
+    // `pnpm` on a Windows PATH is a `.cmd` shim only a shell resolves — and one command string under `shell`,
+    // Which is what `crossOS` runs.
+    message:
+      "An args array under `shell` is deprecated (DEP0190) — spawn the file directly (`PNPM_FILE`/`PNPM_ARGS` for pnpm) or pass one command string.",
+    selector:
+      "CallExpression:matches([callee.name=/^(execFile|execFileSync|spawn|spawnSync)$/], [callee.property.name=/^(execFile|execFileSync|spawn|spawnSync)$/])[arguments.length>=3] > ObjectExpression.arguments > Property[key.name='shell']:not([value.value=false])",
+  },
+  {
+    // A singleton with a name: it bypasses Pinia devtools, HMR and reactive reset, so shared reactive state is a
+    // Pinia store instead (vue-composable-patterns).
+    message:
+      "`createSharedComposable` is banned — shared reactive state lives in a Pinia store. See the vue-composable-patterns skill.",
+    selector: "CallExpression[callee.name='createSharedComposable']",
   },
 ];

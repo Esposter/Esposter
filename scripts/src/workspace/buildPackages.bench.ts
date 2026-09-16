@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { execFileSync } from "node:child_process";
@@ -23,41 +23,30 @@ const IS_CI = Boolean(process.env.CI);
 // This package, commit the artifact, flip it back.
 const IS_ENABLED = false;
 const isBenchable = IS_ENABLED && !IS_CI;
-// `pnpm` is a `.cmd` shim on Windows, which Node cannot spawn without one — but `shell` cuts both ways. With
-// It the whole command line goes to `cmd.exe`, which splits on whitespace, so an argument holding any has to
-// Arrive already quoted; without it every argument reaches pnpm verbatim and those same quotes become part of
-// The value. A `--filter` of `"./packages/*"` — quotes included — matches no package at all, and pnpm exits
-// 0 having done nothing, which reads exactly like a workspace with nothing to build. So the quoting is applied
-// On the platform that needs it and nowhere else.
-const IS_SHELL = process.platform === "win32";
-const quoteArgument = (argument: string): string => (IS_SHELL ? `"${argument}"` : argument);
 // The cwd is pinned to the repository root rather than inherited: this file's project root is `scripts/`, and a
 // `--filter` of `./packages/*` is resolved against the cwd — so an inherited one looks for `scripts/packages/`,
 // Matches nothing, and pnpm exits 0 having done nothing. That reads as a workspace with nothing to build, which
 // Is indistinguishable here from a workspace whose packages were all found, and the emptiness only surfaces one
 // Layer up as `bench.compare() requires at least 2 benchmarks, received 0`.
 const runPnpm = (args: string[]): string =>
-  execFileSync("pnpm", args, { cwd: REPOSITORY_ROOT, encoding: "utf8", shell: IS_SHELL });
+  execFileSync(PNPM_FILE, [...PNPM_ARGS, ...args], { cwd: REPOSITORY_ROOT, encoding: "utf8" });
 // `pnpm` orders a recursive run topologically, and `--workspace-concurrency=1` is what makes that order observable:
 // Each package prints while it is the only one running. Asking pnpm rather than deriving the order from the
 // Manifests keeps one definition of what depends on what — the same one the real build uses. The directory comes
 // Back in the same pass because a package's name does not have to match the folder holding it.
 //
-// The pair comes back as JSON rather than on a separator, because the separator would have to survive being
-// Written as a TypeScript escape, read back as a `cmd.exe` command line and then split against a Windows path:
-// A tab does not — `cmd` treats it as an argument delimiter — and every character that does is a guess about
-// What a path cannot contain. `JSON.stringify` escapes the backslashes on the way out and `JSON.parse` gives
-// Them back, so the quoting question never arises.
+// The pair comes back as JSON rather than on a separator, because a separator is a guess about what a Windows
+// Path cannot contain. `JSON.stringify` escapes the backslashes on the way out and `JSON.parse` gives them back.
 const readBuildOrder = (): { directory: string; packageName: string }[] =>
   runPnpm([
     "-r",
     "--workspace-concurrency=1",
     "--filter",
-    quoteArgument("./packages/*"),
+    "./packages/*",
     "exec",
     "node",
     "-e",
-    quoteArgument("console.log(JSON.stringify([require('./package.json').name, process.cwd()]))"),
+    "console.log(JSON.stringify([require('./package.json').name, process.cwd()]))",
   ])
     .split("\n")
     .flatMap((line) => {
@@ -85,7 +74,7 @@ test.skipIf(!isBenchable)("build - packages", async ({ bench }) => {
         // A package that ever turned `clean` off would otherwise be measured incrementally without the report
         // Saying so. The removal is milliseconds against a build of seconds.
         rmSync(join(directory, "dist"), { force: true, recursive: true });
-        runPnpm(["--filter", quoteArgument(packageName), "run", "build"]);
+        runPnpm(["--filter", packageName, "run", "build"]);
       }),
     ),
     // A build is seconds, so the shared ten iterations would put this bench in the tens of minutes. Three is what

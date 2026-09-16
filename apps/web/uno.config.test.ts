@@ -54,7 +54,7 @@ describe("unoConfig", () => {
             },
           ],
           [
-            "overflow-anchor-none",
+            "of-anchor-none",
             {
               "overflow-anchor": "none",
             },

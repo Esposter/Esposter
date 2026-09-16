@@ -60,6 +60,8 @@
     "@hpcc-js/wasm-graphviz": "catalog:",
     "@oxlint/plugins": "catalog:",
     "@types/node": "catalog:",
+    "@types/semver": "catalog:",
+    "semver": "catalog:",
     "tsx": "catalog:",
     "vitest": "catalog:"
   }

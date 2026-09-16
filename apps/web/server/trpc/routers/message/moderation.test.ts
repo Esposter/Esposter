@@ -1,5 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -16,7 +17,6 @@ import {
   bansInMessage,
   DatabaseEntityType,
   RoomPermission,
-  StandardMessageEntity,
   users,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";

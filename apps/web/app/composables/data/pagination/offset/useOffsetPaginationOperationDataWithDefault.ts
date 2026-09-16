@@ -1,4 +1,5 @@
-import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
+import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
+
 import { withFinalizerAsync } from "@esposter/shared";
 
 export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems: Ref<TItem[]>) => {

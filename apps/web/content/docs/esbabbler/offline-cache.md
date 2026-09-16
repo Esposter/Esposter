@@ -41,7 +41,7 @@ Every object store is partitioned; `readIndexedDb` / `writeIndexedDb` always tak
 
 ### Readiness is the store's, not the cache's
 
-A partitioned cache asks one question, on every switch and on every mount: **are the rows currently loaded this partition's own?** The list cannot answer it — an empty list is either "not loaded yet" or "loaded and genuinely empty" — so the answer is a per-partition `isLoaded` flag **recorded by the store that performed the load**, set the moment a read or a hydration lands and therefore set for a partition the server says is empty too. The pagination data map keys it exactly like the slice it describes, and the cache takes it as an option.
+A partitioned cache asks one question, on every switch and on every mount: **are the rows currently loaded this partition's own?** The list cannot answer it — emptiness says nothing about whether a load happened — so the answer is a per-partition `isLoaded` flag **recorded by the store that performed the load**, set the moment a read or a hydration lands and therefore set for a partition the server says is empty too. The pagination data map keys it exactly like the slice it describes, and the cache takes it as an option.
 
 Both halves of the cache read that one flag, and neither keeps a copy:
 
@@ -54,7 +54,7 @@ That flag only means anything while **the store's list cannot outlive its partit
 
 A store whose partition key can change while it is alive therefore uses `useCursorPaginationDataMap(() => currentKey)` / `useOffsetPaginationDataMap` — messages and members both key on `currentRoomId`. The unkeyed `useCursorPaginationData` is correct only where the key cannot change under the store: the room list partitions on the signed-in user, and signing out reloads the page, so that list is recreated with its partition rather than outliving it.
 
-**Every field describing that partition is keyed, not only the rows.** A cursor is the clearest case: the message list pages in both directions, and a deep link into an older message opens the room around it and leaves a _newer_ cursor to page forward from. Held in a plain `ref` beside a room-keyed list, that cursor and its `hasMoreNewer` flag survive the room switch the rows do not — the next room renders a "load newer" waypoint it never earned, then pages in a window cut from the previous room's timestamps. Anything that answers for one room goes through `useDataMap(() => currentRoomId, …)` like the rows do.
+**Every field describing that partition is keyed, not only the rows.** A cursor is the clearest case: the message list pages in both directions, and a deep link opens the room around an older message and leaves a _newer_ cursor to page forward from. Held in a plain `ref` beside a room-keyed list, that cursor and its `hasMoreNewer` flag survive the room switch the rows do not — the next room renders a "load newer" waypoint it never earned, then pages in a window cut from the previous room's timestamps. Anything that answers for one room goes through `useDataMap(() => currentRoomId, …)` like the rows do.
 
 ## Patterns
 

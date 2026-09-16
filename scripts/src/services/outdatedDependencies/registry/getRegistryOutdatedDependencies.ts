@@ -29,16 +29,17 @@ export const getRegistryOutdatedDependencies = async (entries: DependencyEntry[]
       if (!entry) return;
       nextIndex += 1;
 
-      const { group, pkg, specifier } = entry;
-      await getResultAsync(() => getLatestVersion(pkg)).match(
+      const { followTag, group, pkg, specifier } = entry;
+      await getResultAsync(() => getLatestVersion(pkg, followTag)).match(
         (latest) => {
           const current = getSpecifierBase(specifier);
-          const metadata = GroupMetadataMap[group];
+          const { dependencyType, dependent } = GroupMetadataMap[group];
           if (checkIsVersionOutdated(current, latest))
             outdatedDependencyMap.set(entry, {
               current,
-              dependencyType: metadata?.dependencyType ?? "",
-              dependents: metadata ? [metadata.dependent] : [],
+              // A followed tag is what the Latest column then holds, so the tag is the label
+              dependencyType: followTag ?? dependencyType,
+              dependents: [dependent],
               latest,
               pkg,
               specifier,

@@ -1,6 +1,6 @@
 import { AzureContainer } from "#src/models/azure/container/AzureContainer";
 import { getBlobSubjectPrefix } from "#src/services/azure/container/getBlobSubjectPrefix";
-import { ID_SEPARATOR, UUID_LENGTH } from "@esposter/shared";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 export const DEAD_LETTER_ARCHIVED_PREFIX = "archived/";
 export const DEAD_LETTER_BLOB_SUBJECT_PREFIX = getBlobSubjectPrefix(AzureContainer.DeadLetter);
@@ -10,6 +10,8 @@ export const DEAD_LETTER_QUARANTINE_PREFIX = "quarantine/";
 // Carrying a separator or a dot segment steers the write or the delete out of the prefix the caller was authorized for.
 export const BLOB_SEGMENT_REGEX = /^(?!\.{1,2}$)[^/\\]+$/u;
 export const FILENAME_MAX_LENGTH = 1000;
+// Characters in the canonical string form `crypto.randomUUID` returns.
+export const UUID_LENGTH = 36;
 // A `{uuid}|{filename}` blob segment at its longest, for the inputs that carry one whole. Derived rather than
 // Restated, so a filename the upload accepts can never be one the delete rejects.
 export const BLOB_SEGMENT_MAX_LENGTH = UUID_LENGTH + ID_SEPARATOR.length + FILENAME_MAX_LENGTH;

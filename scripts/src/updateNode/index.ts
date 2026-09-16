@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getLatestVersion } from "#src/services/shared/getLatestVersion";
 import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { getEnginesNode } from "#src/services/updateNode/getEnginesNode";
@@ -30,20 +30,23 @@ const oldVersion = getEnginesNode(packageJson);
 const isNewVersion = oldVersion !== version;
 if (isNewVersion) {
   console.info(`Updating node ${oldVersion} → ${version}\n`);
-  writeFileSync(packageJsonPath, setDevEnginesRuntime(setEnginesNode(packageJson, version), version));
+  const packageJsonWithEnginesNode = setEnginesNode(packageJson, version);
+  const packageJsonWithNodePins = setDevEnginesRuntime(packageJsonWithEnginesNode, version);
+  writeFileSync(packageJsonPath, packageJsonWithNodePins);
   console.info(`✔ package.json devEngines.runtime + engines.node → ^${version}`);
   // 3. Bump the @types/node catalog entry to the highest release matching the new node major.
   const typesVersion = await getRegistryLatestVersionForPrefix("@types/node", String(major));
   const workspacePath = resolve(REPOSITORY_ROOT, "pnpm-workspace.yaml");
-  writeFileSync(workspacePath, setCatalogTypesNode(readFileSync(workspacePath, "utf8"), typesVersion));
+  const workspace = readFileSync(workspacePath, "utf8");
+  const workspaceWithTypesNode = setCatalogTypesNode(workspace, typesVersion);
+  writeFileSync(workspacePath, workspaceWithTypesNode);
   console.info(`✔ pnpm-workspace.yaml @types/node → ^${typesVersion}`);
 } else console.info(`node is already ${version} in package.json — ensuring fnm has it installed and defaulted.\n`);
 // 4. Hand off install / default / cleanup of the old version to the native (per-OS) script via crossOS.
 // When the version is unchanged, `old === new`, so the native script's guard skips the removal step.
 console.info("Installing and defaulting via fnm…");
-const result = spawnSync(`pnpm crossOS update:node ${version} ${oldVersion}`, {
+const result = spawnSync(PNPM_FILE, [...PNPM_ARGS, "crossOS", "update:node", version, oldVersion], {
   cwd: REPOSITORY_ROOT,
-  shell: true,
   stdio: "inherit",
 });
 if (result.status !== 0) throw new InvalidOperationError(Operation.Update, "update:node", "fnm install/switch failed");

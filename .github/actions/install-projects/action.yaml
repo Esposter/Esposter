@@ -1,0 +1,27 @@
+name: Install Projects
+description: Install the selected workspace projects plus the root closure that declares the toolchain — the one install invocation every job that runs pnpm scripts takes
+inputs:
+  filter:
+    description: >
+      A pnpm selector naming the projects this job reads — `@esposter/web...` for a job that only builds the app,
+      `./packages/*` for the library build, left at its default for the repo-wide checks that run every project's
+      own script. Narrowing it skips the excluded projects' dependency trees and their postinstalls, which is the
+      whole cost of a project a job never touches.
+    required: false
+    # Every project — the same set a bare `pnpm i` lays down, spelled as a selector so one install step serves
+    # the narrowed jobs and the repo-wide ones alike
+    default: "*"
+runs:
+  using: composite
+  steps:
+    # The root closure `{.}...` rides along with any selector, because the toolchain (`virrun`, `vitest`,
+    # `oxlint`, `tsx`, the `typescript` alias) is declared at the root and `virrun` is a workspace project whose
+    # own dependency a filtered install would otherwise skip —
+    # `apps/web/content/docs/architecture/monorepo-tooling.md` → `## CI job shape` has the failure each half
+    # prevents and why `includeWorkspaceRoot` is refused.
+    # `--fail-if-no-match` so a selector matching nothing fails here rather than as a missing module later.
+    - name: 📦 Install the selected projects
+      shell: bash
+      env:
+        FILTER: ${{ inputs.filter }}
+      run: pnpm --filter "$FILTER" --filter "{.}..." --fail-if-no-match i

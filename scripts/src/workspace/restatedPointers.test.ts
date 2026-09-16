@@ -1,5 +1,6 @@
 import { readCitingPages } from "#src/services/citations/readCitingPages";
 import { getRestatedPointerFindings } from "#src/services/sweeps/duplicateProse/getRestatedPointerFindings";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { describe, expect, test } from "vitest";
 
 /**
@@ -11,13 +12,17 @@ import { describe, expect, test } from "vitest";
  * `references/settled-lists.md` refuses. That is what this decides and the sweep leaves to a reading pass.
  */
 describe("restatedPointers", () => {
-  test("every settled line and catalogue row shares a run only with the page it points at", () => {
-    expect.hasAssertions();
+  test(
+    "every settled line and catalogue row shares a run only with the page it points at",
+    { timeout: TREE_READ_TIMEOUT_MS },
+    () => {
+      expect.hasAssertions();
 
-    expect(
-      getRestatedPointerFindings(readCitingPages()).map(
-        ({ line, otherPath, path }) => `${path} → ${otherPath}: ${line}`,
-      ),
-    ).toStrictEqual([]);
-  });
+      expect(
+        getRestatedPointerFindings(readCitingPages()).map(
+          ({ line, otherPath, path }) => `${path} → ${otherPath}: ${line}`,
+        ),
+      ).toStrictEqual([]);
+    },
+  );
 });

@@ -7,7 +7,7 @@ description: Ideas the sheet editor decided against — one page per idea with t
 
 Ideas we decided against. One page per idea with the rationale — check here before proposing an idea; never re-argue a decided one. The recurring theme: the editor serves a casual platform, and anything pushing toward full Excel territory is out.
 
-- [URL import](/docs/resource/sheet/rejected/url-import) — fetch a remote CSV/JSON URL instead of uploading.
+- [URL import](/docs/resource/sheet/rejected/url-import) — importing from a remote URL rather than an upload.
 - [Multi-sheet XLSX](/docs/resource/sheet/rejected/multi-sheet-xlsx) — import and merge multiple workbook sheets.
 - [Markdown export](/docs/resource/sheet/rejected/markdown-export) — expose the internal markdown serializer as an export format.
 - [Saved filter presets](/docs/resource/sheet/rejected/saved-filter-presets) — name and persist active filter sets.

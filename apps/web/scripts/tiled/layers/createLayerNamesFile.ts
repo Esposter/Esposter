@@ -1,6 +1,6 @@
 import type { LayerType } from "@@/scripts/tiled/models/LayerType";
 
-import { outputFile } from "@@/scripts/tiled/util/outputFile";
+import { outputFile } from "@@/scripts/tiled/services/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";
 import { capitalize } from "@esposter/shared";
 

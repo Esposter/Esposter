@@ -5,6 +5,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
+import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
@@ -12,7 +13,7 @@ import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookM
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { checkIsUuidV4, RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -124,10 +125,16 @@ export const useResourceStore = defineStore("resource", () => {
   // This resource's content was replaced underneath whatever blade is open — a restore is the one write that
   // Does that. The row is re-read here and the content stores re-read themselves through the hook registry,
   // Rather than the blade being keyed on a counter something bumps: which store holds the content is the
-  // Type's business, and a blade left holding the pre-restore draft has its own next save rejected as stale
+  // Type's business, and a blade left holding the pre-restore draft has its own next save rejected as stale.
+  // The two stages are sequential because the second reads what the first landed: a registry runs its own
+  // Hooks together, so a third-party editor adopting the store's content cannot be a peer of the re-read
+  // That fills it (/docs/architecture/third-party-document-adapters)
   const reloadResourceContent = async () => {
     await readResource();
-    if (resource.value) await ResourceContentHookMap.Reload.run(resource.value.type);
+    if (!resource.value) return;
+
+    await ResourceContentHookMap.Reload.run(resource.value.type);
+    await ResourceContentHookMap.Adopt.run(resource.value.type);
   };
   // The blob is written on first save, so a freshly created resource returns undefined content.
   // The dispatch reads the loaded row's own type, so the procedure resolves to the union of every type's

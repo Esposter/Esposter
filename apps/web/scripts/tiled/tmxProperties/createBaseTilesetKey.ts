@@ -4,7 +4,7 @@ import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import { getFilename } from "@/util/file/getFilename";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
-import { outputFile } from "@@/scripts/tiled/util/outputFile";
+import { outputFile } from "@@/scripts/tiled/services/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";
 
 export const createBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[]) => {

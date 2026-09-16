@@ -6,5 +6,3 @@ export enum ObjectgroupName {
   "Npc/Smith" = "Npc/Smith",
   Sign = "Sign",
 }
-
-export const ObjectgroupNames = Object.values(ObjectgroupName);

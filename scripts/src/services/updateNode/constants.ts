@@ -1,4 +1,4 @@
-/* oxlint-disable typescript/no-inferrable-types */
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation these three regex literals would otherwise infer */
 // Anchored on the `runtime` object rather than on `devEngines`, because `devEngines` may also hold a
 // `packageManager` object with a `version` of its own. Scanning from `devEngines` reaches whichever sibling is
 // Declared first, which silently rewrites pnpm's version and leaves node's alone; `[^}]*` cannot cross the `}`

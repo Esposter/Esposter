@@ -1,6 +1,6 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "@/models/resource/sheet/commands/CommandType";
 import { getRecordDifferenceDescription } from "@/services/resource/sheet/commands/getRecordDifferenceDescription";

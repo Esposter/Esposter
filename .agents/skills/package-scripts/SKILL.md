@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Apply when running or recommending any pnpm script. Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), a Settled list (no root build:<app> per app, the release as one local script, a renamed export never a major), nuxt typecheck and the root lint as the only checks matching CI, the wrapper exit code a backgrounded run reports, oxfmt formatting markdown tables, the scriptsComments key, the check suite once per chunk with tests scoped to the paths touched, and the pnpm traps (a --filter matching nothing exits 0, pnpm <script> -- <args> drops the args, a workflow runs the script not the binary, a script invoked bare) — plus deep dives on the root scripts, each pnpm trap, running a .ts script under node or tsx, and the ai:sweep:* / ai:coderabbit:* / ai:citations:* catalogue an agent runs.
+description: Apply when running or recommending any pnpm script. Esposter pnpm script reference — apps/web scripts (lint, typecheck, test, format, dev, build), a Settled list (no root build:<app> per app, the release as one local script, a renamed export never a major), nuxt typecheck and the root lint as the only checks matching CI, a root check aggregating named leaves with run-s rather than chaining with &&, oxfmt formatting markdown tables, the scriptsComments key, the check suite once per chunk with tests scoped to the paths touched, and the pnpm traps (a --filter matching nothing exits 0, pnpm <script> -- <args> drops the args, a workflow runs the script not the binary, a script invoked bare) — plus deep dives on the root scripts, each pnpm trap, running a .ts script under node or tsx, and the ai:sweep:* / ai:coderabbit:* / ai:citations:* catalogue an agent runs.
 ---
 
 # Package Scripts
@@ -9,7 +9,7 @@ description: Apply when running or recommending any pnpm script. Esposter pnpm s
 
 ## Settled — do not re-propose
 
-- **A root `build:<app>` script per app.** One app is `pnpm -C apps/<app> run build` at the call site, and a root script that only delegates there is a second definition of the same line; a root script earns its line only when it adds a selector, a chain or a `virrun --` (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Recursive script orchestration").
+- **A root `build:<app>` script per app.** A root script that only delegates to a package is a second definition of the line at the call site; what earns a root script its line is `apps/web/content/docs/architecture/monorepo-tooling.md`, "Recursive script orchestration".
 - **Majoring the published packages because an export was renamed.** `lerna.json` is `conventionalCommits: true` in fixed mode, so a `BREAKING CHANGE:` footer moves all seven public packages to the next whole number; a rename ships as the `refactor` it is (`apps/web/content/docs/architecture/no-compatibility-debt.md`).
 - **Splitting the release into a local `lerna version` and a CI publish** through npm's trusted publishing. It buys an attestation nobody here asks for, at the price of a release path in two places and a per-package registration that fails closed on every new package; one script run locally is the whole release (`apps/web/content/docs/architecture/monorepo-tooling.md`, "Lerna Lite").
 
@@ -33,8 +33,16 @@ strictly less than CI does and reports success while CI fails: the app's real pr
 `.nuxt` tsconfig rather than the one in the package, and a package's `lint` is ESLint alone. Which rules only
 the root pass carries, and when a targeted `oxlint` is still worth running, is the `oxlint` skill's.
 
-A backgrounded run of either reports the _wrapper's_ exit code, which is `0` even when the run inside it
-failed. Read the output for `exited 1` or a `problem`/`error` line rather than trusting the status.
+**A root check is an aggregate over named leaves, never a `&&` chain.** `lint`, `lint:fix`, `lint:packages`,
+`lint:fix:packages` and `typecheck` each run `run-s --continue-on-error` over one script per tool, so every
+tool reports and the aggregate still exits non-zero — where `&&` stopped at the first, and every failure behind
+it cost another full round of fix-and-rerun. `&&` is for a step that needs the one before it to have
+_succeeded_, which is a build consuming what an earlier build produced; ordering alone is not that reason, and
+`lint:fix` is ordered only because its three fixers write the same files. Across workspace projects the same
+rule is `bail: false` in `pnpm-workspace.yaml`, with `build:packages` passing `--bail` back for exactly the
+build case. How a backgrounded run's result is read at all, and why the completion notification's exit code is
+never it, is the `running-checks` skill's; an output file that comes back empty is that run not yet flushed,
+never a clean one.
 
 > `oxfmt` formats markdown too — a table whose cells changed width is realigned by `pnpm format` (or `pnpm exec oxfmt <paths>`
 > for a few files). No prettier binary is installed, so `pnpm exec prettier` fails — and `npx prettier` is not the
