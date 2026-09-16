@@ -329,6 +329,9 @@ catalogs:
     '@types/sax':
       specifier: ^1.2.7
       version: 1.2.7
+    '@types/semver':
+      specifier: ^7.8.0
+      version: 7.8.0
     '@types/three':
       specifier: ^0.186.0
       version: 0.186.0
@@ -653,6 +656,9 @@ catalogs:
     sax:
       specifier: ^1.6.1
       version: 1.6.1
+    semver:
+      specifier: ^7.8.5
+      version: 7.8.5
     show-open-file-picker:
       specifier: ^0.4.0
       version: 0.4.0
@@ -2048,6 +2054,12 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.1
+      '@types/semver':
+        specifier: 'catalog:'
+        version: 7.8.0
+      semver:
+        specifier: 'catalog:'
+        version: 7.8.5
       tsx:
         specifier: 'catalog:'
         version: 4.23.13

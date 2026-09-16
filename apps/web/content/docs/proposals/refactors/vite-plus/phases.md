@@ -71,9 +71,9 @@ The gate at the top is the one that matters. Everything below it rests on a sing
 
 **Does:** moves runtime provisioning to `vp env` and the install surface to `vp install`.
 
-**Blocked by:** the double-pin question. The root manifest pins the runtime twice on purpose — one field the CI setup action reads, one every other tool reads — plus a matching catalog entry, with `update:node` the sole writer of all three. `vp env` owns the runtime half and knows nothing about the other two.
+**Blocked by:** the double-pin question. The root manifest pins the runtime twice on purpose — one field the CI setup action reads, one every other tool reads — plus a matching catalog entry, with `update:node` and Renovate's `node` group the only writers of all three. `vp env` owns the runtime half and knows nothing about the other two.
 
-**Ends when:** there is exactly one writer for all three values — by either of the two outcomes [commands](/docs/proposals/refactors/vite-plus/commands) names for `update:node`.
+**Ends when:** every writer of the three values writes all of them — by either of the two outcomes [commands](/docs/proposals/refactors/vite-plus/commands) names for `update:node`.
 
 **Killed by:** nothing, but it is the phase most likely to be judged not worth doing. Assuming `vp env` covers the pins is how one of them goes stale in silence, and the symptom is CI provisioning the wrong runtime.
 

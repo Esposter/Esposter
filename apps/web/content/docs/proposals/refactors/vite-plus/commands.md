@@ -39,7 +39,7 @@ The ordering constraint inside that chain also survives: the format check is the
 | `outdated:dependencies`  | `vp outdated`              | only if the bespoke script's output is not doing something `vp outdated` does not          |
 | `update:node`            | `vp env`, partly           | see below — this one does not fully transfer                                               |
 
-`update:node` is the interesting failure. It is not merely "install a Node version": it writes the two node pins and the matching type-definitions catalog entry together — which two, and why neither may be edited alone, is [monorepo tooling](/docs/architecture/monorepo-tooling) — and a run of that script is the only thing permitted to write any of them.
+`update:node` is the interesting failure. It is not merely "install a Node version": it writes the two node pins and the matching type-definitions catalog entry together — which two, and why neither may be edited alone, is [monorepo tooling](/docs/architecture/monorepo-tooling) — and the only other writer of them is Renovate's `node` group, which writes the same three.
 
 `vp env` owns the runtime half. It does not know about this repository's second pin or its catalog entry, so either the script survives in reduced form — writing the pins and delegating the install — or the pins are proven redundant, which is a separate investigation with its own answer. Assuming `vp env` covers it is how one of the two pins silently goes stale, and the failure surfaces as CI provisioning the wrong runtime.
 

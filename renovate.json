@@ -1,11 +1,25 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "configMigration": true,
+  "customManagers": [
+    {
+      "customType": "jsonata",
+      "datasourceTemplate": "node-version",
+      "description": "`devEngines.runtime` is the node pin `pnpm/setup` installs on the runners and `pnpm` itself reads; Renovate's npm manager extracts `engines` but not it, so this reads the one field and the `node` group below carries both pins together.",
+      "fileFormat": "json",
+      "managerFilePatterns": ["/^package\\.json$/"],
+      "matchStrings": ["{ \"depName\": devEngines.runtime.name, \"currentValue\": devEngines.runtime.version }"],
+      "versioningTemplate": "node"
+    }
+  ],
+  "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
   "extends": ["config:recommended", ":semanticCommitTypeAll(chore)", "helpers:pinGitHubActionDigests"],
   "ignorePresets": [":prHourlyLimit2"],
   "lockFileMaintenance": {
     "automerge": true,
     "enabled": true
   },
+  "osvVulnerabilityAlerts": true,
   "packageRules": [
     {
       "automerge": true,
@@ -13,15 +27,41 @@
       "matchUpdateTypes": ["minor", "patch"]
     },
     {
-      "description": "The `packageManager` field is an exact version by definition \u2014 corepack reads one \u2014 so it is skipped as `is-pinned` for the same reason as the image tags below, and keyed on the field rather than on `pnpm` because the reason is the field.",
-      "matchDepTypes": ["packageManager"],
-      "updatePinnedDependencies": true
+      "allowedVersions": "<2",
+      "description": "`h3` 2.x has no `H3` export where Nitro imports one, so the tree is held at 1.x; the catalog caret already blocks a re-resolve across the major, so this rule alone is the cap.",
+      "matchPackageNames": ["h3"]
     },
     {
-      "description": "An image tag is a single version by definition, so the repo-wide `updatePinnedDependencies: false` \u2014 which exists for the exact-pinned npm deps that owe a dedicated pass \u2014 would otherwise skip every one as `is-pinned`. `pinDigests` is what reaches a tag that never moves, where the digest behind it is the only thing left to update. Both are read during the lookup, so this rule carries no `matchUpdateTypes`: an update type exists only once the lookup has produced an update.",
+      "allowedVersions": "<66.10",
+      "description": "The minor after 66.9 rewrote `@unocss/inspector` onto `devframe`, which depends on `h3` 2.x — under the `h3` cap it resolves against a major with no `H3` export and `nuxt build` dies at the Nitro stage. `@unocss/vite` imports the inspector at the top of its entry, so no UnoCSS setting avoids it. The catalog tilde is the same cap for a re-resolve; both widen back together when `h3` 2.x becomes takeable.",
+      "matchPackageNames": ["unocss", "@unocss/nuxt", "@unocss/eslint-config"]
+    },
+    {
+      "description": "`typescript` is aliased to `typescript-native-bridge` under `overrides:`, so a bump moves the bridge, the TypeScript behind it and `typescript-eslint` at once — a dedicated pass, never a routine update. A rule matches the resolved package name, so the alias target is named beside the alias.",
+      "enabled": false,
+      "matchPackageNames": ["typescript", "typescript-native-bridge"]
+    },
+    {
+      "automerge": false,
+      "description": "The pair is pinned to one exact RC and moves as one, following the `rc` dist-tag: drizzle publishes a per-commit build (`1.0.0-rc.5-ab785fc`) under a tag per branch, and without the tag every one of those is a proposal. A release candidate can change what `db:gen` emits, so the grouped bump is read rather than merged on green. Drop `followTag` once 1.0.0 reaches `latest`.",
+      "followTag": "rc",
+      "groupName": "drizzle",
+      "matchPackageNames": ["drizzle-kit", "drizzle-orm"]
+    },
+    {
+      "description": "`engines.node`, `devEngines.runtime` and `@types/node` are one version by definition, so they move in one branch.",
+      "groupName": "node",
+      "matchPackageNames": ["node", "@types/node"]
+    },
+    {
+      "description": "The collector calls its own reusable workflow at `@ai/queue`; a branch ref is not a version to bump, and a tag here would freeze the collector on one release.",
+      "enabled": false,
+      "matchPackageNames": ["Esposter/Esposter"]
+    },
+    {
+      "description": "A tag that carries no version (a distro codename, `latest`) gives Renovate nothing to compare, yet its publisher can repoint it at any time. `pinDigests` rewrites the line to `<tag>@sha256:…` once and then keeps the digest current, which turns an invisible upstream rebuild into a reviewable diff. It is read during the lookup, so this rule carries no `matchUpdateTypes`: an update type exists only once the lookup has produced an update.",
       "matchDatasources": ["docker"],
-      "pinDigests": true,
-      "updatePinnedDependencies": true
+      "pinDigests": true
     },
     {
       "automerge": true,
@@ -31,6 +71,6 @@
       "matchUpdateTypes": ["digest", "pinDigest"]
     }
   ],
-  "rangeStrategy": "bump",
-  "updatePinnedDependencies": false
+  "postUpdateOptions": ["pnpmDedupe"],
+  "rangeStrategy": "bump"
 }

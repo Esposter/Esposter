@@ -31,6 +31,10 @@ export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
 // (`oxlint` skill, `references/lint-configuration.md`), which is why a scan that must skip them reads it too.
 export const FORMATTER_CONFIGURATION_FILE = ".oxfmtrc.json";
 
+// Renovate's config, at the repository root. Its `packageRules` is the repo's one statement of which dependency
+// Is held where and why (`dependency-updates` skill), which is why the outdated report reads it too.
+export const RENOVATE_CONFIGURATION_FILE = "renovate.json";
+
 // ASCII control characters as the record and field separators of a `git log` output a script splits — the
 // Collector's answered commits, the ledger coverage's trailers — since a subject and a body are free text.
 // Written as escapes because a tool rewriting the line would silently drop the characters themselves.
