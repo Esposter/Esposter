@@ -4,7 +4,7 @@ import type { readMessages } from "@@/server/services/message/readMessages";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { BlobDeletionEventGridData, MessageEntity, MessageNotificationData } from "@esposter/db-schema";
-import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
+import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { MockInstance } from "vitest";
 
 import { MimeType } from "#shared/models/file/MimeType";
@@ -42,6 +42,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase, MockSearchDatabase, MockTableClient } from "azure-mock";
+import { isTrackedEnvelope } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -523,9 +524,9 @@ describe("messageRouter", () => {
       () => messageCaller.createMessage({ message, roomId }),
     );
 
-    expect(trackedData).toHaveLength(3);
+    assert(isTrackedEnvelope<MessageEntity[]>(trackedData));
 
-    const [id, data] = trackedData as unknown as TrackedEnvelope<MessageEntity[]>;
+    const [id, data] = trackedData;
 
     expect(id).toBe(takeOne(data).rowKey);
     expect(data).toHaveLength(1);
@@ -549,10 +550,9 @@ describe("messageRouter", () => {
     );
 
     assert(!trackedData.done);
+    assert(isTrackedEnvelope<MessageEntity[]>(trackedData.value));
 
-    expect(trackedData.value).toHaveLength(3);
-
-    const [id, data] = trackedData.value as unknown as TrackedEnvelope<MessageEntity[]>;
+    const [id, data] = trackedData.value;
 
     expect(id).toBe(thirdMessage.rowKey);
     expect(data).toHaveLength(2);
@@ -592,8 +592,9 @@ describe("messageRouter", () => {
     );
 
     assert(!trackedData.done);
+    assert(isTrackedEnvelope<MessageEntity[]>(trackedData.value));
 
-    const [, data] = trackedData.value as unknown as TrackedEnvelope<MessageEntity[]>;
+    const [, data] = trackedData.value;
 
     expect(data).toHaveLength(1);
   });
@@ -1100,7 +1101,9 @@ describe("messageRouter", () => {
         }),
     );
 
-    const [, data] = trackedData as unknown as TrackedEnvelope<MessageEntity[]>;
+    assert(isTrackedEnvelope<MessageEntity[]>(trackedData));
+
+    const [, data] = trackedData;
 
     expect(data).toHaveLength(1);
     await expect(
