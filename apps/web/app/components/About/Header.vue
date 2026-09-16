@@ -8,13 +8,7 @@ const isDark = useIsDark();
 
 <template>
   <div text-center flex flex-col items-center>
-    <div
-      :class="isDark ? ACCENT_CLASSES : []"
-      font="[Inter]"
-      leading-tight
-      font-black
-      :text="smAndDown ? '5xl' : '7xl'"
-    >
+    <div :class="isDark ? ACCENT_CLASSES : []" font="[Inter]" fw-black lh-tight :text="smAndDown ? '5xl' : '7xl'">
       The
       <span :class="!isDark ? ACCENT_CLASSES : []">Progressive</span>
       <br />

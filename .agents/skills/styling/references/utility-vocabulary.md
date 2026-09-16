@@ -8,7 +8,7 @@ A utility containing `/` (`top-1/2`, `translate-y-1/2`) **cannot** be a bare att
 
 ## Abbreviated Utilities
 
-Always use the UnoCSS abbreviated shorthand forms — they are first-class utilities, and when in doubt the shorter form is canonical here.
+Always use the UnoCSS abbreviated shorthand forms — they are first-class utilities, and the shortest spelling of a family is canonical here. **`BLOCKED_SPELLINGS` in `apps/web/uno.config.ts` is the one list of which spellings are refused** (`pa-` for `p-`, `overflow-` for `of-`, `font-bold` for `fw-bold`, `leading-` for `lh-`, `whitespace-` for `ws-`, `grid-cols-` for `cols-`, `-auto` for `-a`, and the rest), the generator emits nothing for a blocked token, and `unocss/blocklist` reports the attribute that wrote one — so a spelling question below is settled by that list, and a new alias met in the tree joins it rather than this prose (`unocss` skill).
 
 **Opacity (`op-` prefix):**
 
@@ -35,9 +35,9 @@ Always use the UnoCSS abbreviated shorthand forms — they are first-class utili
 
 Prefer UnoCSS **named** utilities over numeric equivalents whenever a name exists:
 
-- Font weight: `font-medium` / `font-semibold` / `font-bold` — never `font-500` / `font-600` / `font-700`.
+- Font weight: `fw-medium` / `fw-semibold` / `fw-bold` — never `fw-500` / `fw-600` / `fw-700`, and never the longer `font-*` spelling the blocklist refuses.
 - Transition duration: `duration-[--transition-duration]` (the global variable from `globals.scss`) — never a raw `duration-200`.
-- Vuetify helper classes (`font-weight-medium`, `font-weight-bold`, …) are **not** UnoCSS utilities — as attributify attributes they generate nothing. Only the shortcuts registered in `uno.config.ts` work (MD3 typography, theme/palette colours, semantic opacity). Use the UnoCSS named form (`font-medium`) instead.
+- Vuetify helper classes (`font-weight-medium`, `font-weight-bold`, …) are **not** UnoCSS utilities — as attributify attributes they generate nothing. Only the shortcuts registered in `uno.config.ts` work (MD3 typography, theme/palette colours, semantic opacity). Use the UnoCSS named form (`fw-medium`) instead.
 
 ## Gap Directionality
 
