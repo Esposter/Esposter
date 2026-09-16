@@ -8,9 +8,9 @@ import { resolve } from "node:path";
 // Source anyone reads. The heuristic is `git diff`'s own, and it is what lets this scan cover every tracked file
 // Rather than a list of extensions that goes stale the first time the repo gains one.
 const BINARY_BYTE = 0;
-// pdf.js ships its CMap tables as `.bcmap`, a compiled binary format that happens to hold no NUL — the one thing
-// In the tree the heuristic above cannot see through. Excluded as a pathspec rather than filtered afterwards, so
-// Git never reads the 169 of them at all.
+// The CMap tables `pdf.js` ships are `.bcmap`, a compiled binary format that happens to hold no NUL — the one
+// Thing in the tree the heuristic above cannot see through. Excluded as a pathspec rather than filtered
+// Afterwards, so git never reads the 169 of them at all.
 const VENDORED_BINARY_PATHSPEC = ":(exclude)apps/web/public/cmaps";
 
 // Every tracked file in the repository, scanned, one `path:line: U+XXXX` per character that renders as nothing.
