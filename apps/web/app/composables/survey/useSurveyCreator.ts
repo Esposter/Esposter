@@ -10,6 +10,7 @@ import { useSurveyStore } from "@/store/survey";
 import { ResourceType } from "@esposter/db-schema";
 import { getPropertyNames, getResultAsync, noop, takeOne } from "@esposter/shared";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
+import { DefaultDark, DefaultLight } from "survey-core/themes";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 
 export const useSurveyCreator = () => {
@@ -107,8 +108,15 @@ export const useSurveyCreator = () => {
     if (creator.value) setCreatorModel(creator.value);
   });
 
+  // PreferredColorPalette is a plain field the preview reads only when it rebuilds its survey, so it alone
+  // Leaves the creator chrome untouched — the creator theme is the observable one the renderer binds. The
+  // Survey themes double as creator themes (they carry the toolbox and property grid tokens); the
+  // Survey-creator-core/themes entry its README names is in the exports map but not in the shipped package
   watchImmediate([creator, isDark], ([newCreator, newIsDark]) => {
-    if (newCreator) newCreator.preferredColorPalette = newIsDark ? "dark" : "light";
+    if (!newCreator) return;
+
+    newCreator.preferredColorPalette = newIsDark ? "dark" : "light";
+    newCreator.applyCreatorTheme(newIsDark ? DefaultDark : DefaultLight);
   });
 
   return { creator };
