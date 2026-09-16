@@ -11,8 +11,8 @@ left when this ledger was written.
 | `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`  | —          | the two that read the ledgers and the skill tree                                              |
 | `scripts/src/services/outdatedDependencies`                    | —          |                                                                                               |
 | `scripts/src/services/oxlint`                                  | —          |                                                                                               |
-| `scripts/src/services/citations`                               | —          |                                                                                               |
-| `scripts/src/services/shared`, `dependencyGraph`, `updateNode` | —          |                                                                                               |
+| `scripts/src/services/citations`                               | 2026-09-16 |                                                                                               |
+| `scripts/src/services/shared`, `dependencyGraph`, `updateNode` | 2026-09-16 |                                                                                               |
 | `scripts/src/models`                                           | —          | one type per file, no logic                                                                   |
 | `scripts/src/workspace`                                        | —          | the enforcers, not the tooling they hold                                                      |
 | `scripts/src` — the entrypoints                                | —          | `citations`, `coderabbit`, `crossOS`, `dependencyGraph`, `refreshLockfile`, `sweeps`          |

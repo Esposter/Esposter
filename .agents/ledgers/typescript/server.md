@@ -4,7 +4,7 @@
 
 | Unit                                                                                            | Swept      | Notes                                   |
 | ----------------------------------------------------------------------------------------------- | ---------- | --------------------------------------- |
-| `server/trpc/routers/message`, `server/trpc/routers/room`                                       | 2026-09-07 | the widest branch sets in the app       |
+| `server/trpc/routers/message`, `server/trpc/routers/room`                                       | 2026-09-16 | the widest branch sets in the app       |
 | `server/trpc/routers` — the resource family                                                     | 2026-09-07 |                                         |
 | `server/trpc/routers` — the rest                                                                | 2026-09-07 |                                         |
 | `server/services/message`                                                                       | 2026-09-07 |                                         |
