@@ -120,6 +120,7 @@ The port builds the window as a local branch, one cherry-pick at a time, and mea
 flowchart TD
   C[candidate = origin/develop] --> FX[Cherry-pick every ai/review-fixes commit<br/>fixes always lead and never split]
   FX --> Q{Next unported queue commit}
+  Q -->|claims no review| Q
   Q -->|none| RD
   Q -->|conflict| H[Stop before it — the sync could not resolve it]
   Q -->|applies| M{Window files within the cap}
@@ -138,7 +139,7 @@ flowchart TD
 
 - **Fixes always ride, whole.** A fix split from the finding it answers is a reply that lies. Fixes alone over the cap fail the run — a drain that touched far more than its findings, for a person to see.
 - **Only what the queue authored is owed.** A merge of `main` into `ai/queue` brings `main`'s commits and the merge itself, none of it the queue's. The porter takes the queue's commits that are neither on `develop` by patch id nor reachable from `main` nor named by a copy on either, and a cut with a skipped merge among its ancestors is ported rather than fast-forwarded.
-- **Queue order, never reordered.** The first commit that would overflow the cap or conflicts is where the window ends; the count includes every fix. A hold is the residual case — a reshaping or a resolution past its attempt cap, or a dry run that resolves nothing.
+- **Queue order, never reordered, and never a claimed commit.** A commit carrying `Express:` is the lane's and is skipped as if it were not there — what follows it ports; the first remaining commit that would overflow the cap or conflicts is where the window ends, and the count includes every fix. A hold is the residual case — a reshaping or a resolution past its attempt cap, or a dry run that resolves nothing.
 - **The window is counted from the frontier, on the pull request's own side of `main`.** A review covers everything since the one that last wrote a body, so a window pushed on top of an unreviewed one is read as a single range; measuring from the head lets the pair overflow the cap, past which CodeRabbit skips the review outright. The files a fold of `main` brings are excluded: the bot's file cap is the pull request's diff against its base, which a merged-in base never enters. That is an assumption about the bot, stated here because the code cannot verify it — a wrong guess surfaces as a review skipped for too many files, which the gate reads as an unrecognised check state and fails red, never silently.
 - **The fold always lands.** What reached `main` unread — an express cut, a dependency bump — is merged into the candidate so `develop` never diverges from `main` into the release merge: the lockfile conflict is rebuilt from the installed tree (`git` skill), any other is the resolver's, counted on `main`'s head, and only past its attempts is the fold abandoned for the release merge to meet.
 - **The window is pushed unverified.** `develop` runs its own CI after the push, and a red there is one more commit in the next window.

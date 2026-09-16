@@ -89,6 +89,10 @@ export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
 // A fold of `main` whose conflict the resolver failed on, counted on `main`'s head
 export const FOLD_FAILED_MARKER = "review-collector fold-failed";
 
+// A commit claiming no review whose cut failed the checks, noted once on the commit: the port never carries it,
+// So a person drops the claim or repairs it, and nothing behind it waits
+export const EXPRESS_FAILED_MARKER = "review-collector express-failed";
+
 // How many times the rewrite's push carries what the session pushed under it and tries its lease again: each
 // Carry is seconds, so past this the session is pushing faster than any lease can be read
 export const SYNC_PUSH_ATTEMPT_CAP = 3;

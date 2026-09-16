@@ -2,10 +2,12 @@ import type { PortInput } from "#src/models/coderabbit/collect/PortInput";
 import type { PortResult } from "#src/models/coderabbit/collect/PortResult";
 
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
+import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { getWindowFileCount } from "#src/services/coderabbit/collect/getWindowFileCount";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { readTrailerValues } from "#src/services/coderabbit/collect/readTrailerValues";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -35,6 +37,9 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
   const queueShas: string[] = [];
   let heldSha: string | undefined;
   for (const sha of readCherryShas(fixesHeadSha, queueSha, cwd)) {
+    // A commit claiming no review is the express lane's, never a window's: the lane cuts it onto `main` when it
+    // Applies and passes the checks, and a red one is told on the commit — either way nothing behind it waits
+    if (readTrailerValues(sha, EXPRESS_TRAILER, cwd).length > 0) continue;
     const outcome = pickCommit(sha, cwd);
     if (outcome === PickOutcome.Conflict) {
       heldSha = sha;

@@ -21,7 +21,7 @@ What the session does on its side — pushing `ai/queue`, rebasing, answering a 
 
 ## Principles
 
-- **Non-blocking.** A person is told, never waited on. Two cases remain theirs, both posted where they are read: a conflict or a reshaping that failed past its attempt cap, and a release the verdict held.
+- **Non-blocking.** A person is told, never waited on. Three cases remain theirs, each posted where it is read: a conflict or a reshaping that failed past its attempt cap, a release the verdict held, and a claimed commit whose cut the checks refuse — and only the first holds anything behind it.
 - **Zero-trust commit content.** A session commits anything, in any shape; nothing reads a message as a signal of what a diff is. The collector classifies diffs and rewrites packaging — a commit no window can carry is repackaged, never sent back. A trailer is a claim the checks verify, never a proof.
 - **Judgement is the only thing Claude is paid for.** Five bounded entry points ([runner](/docs/infra/review-collector/runner)): each runs only where a reading no rule can make is owed, and each is proved by the tree or the remote afterwards, never by the session's word.
 - **One irreversible act per run, compare-and-swapped** — below.

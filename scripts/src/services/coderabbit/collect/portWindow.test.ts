@@ -1,3 +1,4 @@
+import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
@@ -31,6 +32,22 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runGit(["log", "--format=%s", `${developSha}..HEAD`], getCwd())).toBe(
       `${nestedPath}\n${nestedPath}\n${filePath}\n`,
     );
+  });
+
+  // A commit claiming no review is the express lane's; the window carries what follows it as if it were not there
+  test("skips a queue commit claiming no review and ports what follows it", () => {
+    expect.hasAssertions();
+
+    const developSha = readSha("HEAD");
+    commitFiles(overflowPaths, "");
+    runGit(
+      ["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${EXPRESS_TRAILER}: ${TEST_FILENAME}`],
+      getCwd(),
+    );
+    const queueSha = commitFile(filePath, "");
+    const port = portWindow({ cwd: getCwd(), developSha, frontierSha: developSha, queueSha });
+
+    expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha: undefined, queueShas: [queueSha] });
   });
 
   test("holds the first queue commit that conflicts with develop", () => {

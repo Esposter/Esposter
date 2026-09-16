@@ -63,9 +63,10 @@ export const runCycle = async ({
   // The return stroke first: a release that merged moves `develop` before anything is measured against it
   const returned = runReturnStroke({ cwd, developSha, isDryRun, mainSha });
   if (returned) return returned;
-  // The express lane, before the pull request is even looked up: a mechanical commit reaches `main` directly and
-  // The return stroke carries it to `develop` on the next run
-  const expressed = runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha });
+  const viewerLogin = readViewerLogin();
+  // The express lane, before the pull request is even looked up: a commit claiming no review reaches `main`
+  // Directly and the fold carries it to `develop` with the next window
+  const expressed = runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
   if (expressed) return expressed;
   // No release pull request: the last one merged and the next window is still filling from the merge base
   const releasePullRequest = namedPullRequest === undefined ? readReleasePullRequest() : undefined;
@@ -84,7 +85,6 @@ export const runCycle = async ({
     mainSha,
     pullRequest,
   });
-  const viewerLogin = readViewerLogin();
   console.info(
     `pull request ${pullRequest === undefined ? "none" : `#${pullRequest}`} as ${viewerLogin}${isDryRun ? " (dry run)" : ""}`,
   );
