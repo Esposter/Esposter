@@ -59,6 +59,30 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(targetSha).not.toBe(queueSha);
   });
 
+  // The port never picks a commit claiming no review, so a fast-forward to the queue's own sha would carry it to
+  // Develop anyway — into the very review its claim exempted it from, over a cap counted without its files
+  test("names the replayed head when the port skipped a commit the queue's sha carries", async () => {
+    expect.hasAssertions();
+
+    const developSha = readSha("HEAD");
+    commitFile(nestedPath, "");
+    const queueSha = commitFile(filePath, "");
+    switchTo(developSha);
+    pickCommit(queueSha, getCwd());
+    const targetSha = await foldCandidate({
+      cwd: getCwd(),
+      developSha,
+      fixCount: 0,
+      frontierSha: developSha,
+      queueSha,
+      queueShas: [queueSha],
+      viewerLogin,
+    });
+
+    expect(targetSha).toBe(readSha("HEAD"));
+    expect(targetSha).not.toBe(queueSha);
+  });
+
   test("folds a main that advanced on its own into the window", async () => {
     expect.hasAssertions();
 

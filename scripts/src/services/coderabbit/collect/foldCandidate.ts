@@ -23,13 +23,16 @@ export const foldCandidate = async ({
   const mergeOutcome = await mergeMain({ cwd, viewerLogin });
   const isMainMerged = mergeOutcome === MergeMainOutcome.Merged;
   // A fast-forward moves develop to the queue's own sha, so it must carry exactly what was measured: no fixes
-  // Ahead, the queue sitting on develop, no merge among the cut's ancestors, and no fold of `main` on top
+  // Ahead, the queue sitting on develop, no fold of `main` on top, and nothing between develop and the cut the
+  // Port did not pick. That last one is the whole of it — a commit the port skipped is one no count ever saw,
+  // And a commit claiming no review smuggled onto develop this way is read by the review the claim exempted it
+  // From, over a cap measured without it. A merge among the ancestors fails the same count
   const cutSha = queueShas.at(-1);
   const mergeBase = runGit(["merge-base", developSha, queueSha], cwd).trim();
-  const isMergeFree =
+  const isCutExact =
     cutSha === undefined ||
-    getNonEmptyLines(runGit(["rev-list", "--merges", `${developSha}..${cutSha}`], cwd)).length === 0;
-  const isFastForward = fixCount === 0 && mergeBase === developSha && isMergeFree && !isMainMerged;
+    getNonEmptyLines(runGit(["rev-list", `${developSha}..${cutSha}`], cwd)).length === queueShas.length;
+  const isFastForward = fixCount === 0 && mergeBase === developSha && isCutExact && !isMainMerged;
   const targetSha = isFastForward ? (cutSha ?? developSha) : readHeadSha(cwd);
   console.info(
     `cut: ${queueShas.length} queue commits = ${getWindowFileCount(frontierSha, cwd)} files${isMainMerged ? ", main folded in" : ""}${mergeOutcome === MergeMainOutcome.Conflicted ? ", main conflicts past the resolver's attempts — the release merge is a person's" : ""}${isFastForward ? ", fast-forward" : ""}`,

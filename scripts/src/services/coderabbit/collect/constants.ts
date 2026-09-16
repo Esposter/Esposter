@@ -35,8 +35,10 @@ export const INSTALL_COMMAND: string[] = ["i", "--frozen-lockfile"];
 // Anything it pushes — a window is verified by develop's own CI, since a red queue commit inside it would hold
 // Every window behind a repair that sits commits later. Check-only: a repair the collector wrote would be a
 // Commit nobody reviewed. Each is a root script's own passes minus its `virrun` wrapper — the root `tsc` and
-// The recursive typecheck, oxlint and the two ESLint passes. The app build alone is left out: it is CI's longest
-// Job (`apps/web/content/docs/architecture/monorepo-tooling.md`), and `main`'s own CI runs it on the push. The
+// The recursive typecheck, oxlint and the two ESLint passes — plus the two app bundles the suite asserts against,
+// Since `@esposter/functions` and `@esposter/infra` each snapshot a `dist` no source tree holds, and a run
+// Without them fails on files no commit touched. The web app's build alone is left out: it is CI's longest job
+// (`apps/web/content/docs/architecture/monorepo-tooling.md`), and `main`'s own CI runs it on the push. The
 // Tests are here because a relocation is exactly what a path-coupled test fails on.
 export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   INSTALL_COMMAND,
@@ -47,6 +49,7 @@ export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   ["exec", "oxlint", "--format=default", "--disable-nested-config"],
   ["exec", "eslint", "."],
   ["-r", "--parallel", "run", "lint"],
+  ["--filter", "@esposter/functions", "--filter", "@esposter/infra", "build"],
   ["exec", "vitest", "run"],
 ];
 
