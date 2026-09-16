@@ -25,6 +25,8 @@ describe("getPreciseCounts", () => {
     "tests",
     "workflows",
   ];
+  // The words stop below a hundred, where the page is stating a magnitude rather than a count; a hyphenated
+  // Compound ("twenty-one packages") is reached through its unit word.
   const NUMBER_WORDS = [
     "one",
     "two",
@@ -38,6 +40,21 @@ describe("getPreciseCounts", () => {
     "ten",
     "eleven",
     "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+    "twenty",
+    "thirty",
+    "forty",
+    "fifty",
+    "sixty",
+    "seventy",
+    "eighty",
+    "ninety",
   ];
   // The adjectives between the number and its noun are what the page reached for the last time it drifted — it
   // Claimed "three pre-release packages" over a table naming two — so a count is read through them rather than
@@ -69,6 +86,8 @@ describe("getPreciseCounts", () => {
     ["a word count", "Ten workflows run on every push.", "Ten workflows"],
     ["a count mid-sentence", "Split across three routers today.", "three routers"],
     ["a count reached through its adjectives", "Three pre-release packages left.", "Three pre-release packages"],
+    ["a count above twelve", "Thirteen packages ship from the workspace.", "Thirteen packages"],
+    ["a count in tens", "Forty tables in the schema today.", "Forty tables"],
   ])("flags %s", (_label, markdown, count) => {
     expect.hasAssertions();
 
