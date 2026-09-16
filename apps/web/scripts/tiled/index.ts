@@ -1,14 +1,9 @@
 import { createPropertyTypes } from "@@/scripts/tiled/propertyTypes/createPropertyTypes";
 import { remove } from "@@/scripts/tiled/services/remove";
-import { spawn } from "node:child_process";
-/**
- * Order here is important!
- * We must create property types first which include important metadata enums
- * e.g. TilemapKey which must exist before we create other tilemap specific metadata.
- * This causes a small issue if you try to run the create scripts in parallel as the typechecking
- * will complain about the not-yet existent created typescript enum files from createPropertyTypes
- */
+
+// Order here matters: the property types carry the metadata enums (`TilemapKey`) the tmx properties are generated
+// From, so their module is imported only once those enum files exist on disk again
 await remove();
 await createPropertyTypes();
-const proc = spawn("tsx", ["scripts/tiled/createTmxProperties.ts"], { shell: true, stdio: "inherit" });
-proc.on("exit", (code) => process.exit(code));
+const { createTmxProperties } = await import("@@/scripts/tiled/tmxProperties/createTmxProperties");
+await createTmxProperties();
