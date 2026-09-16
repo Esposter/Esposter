@@ -67,4 +67,4 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 - Purge keeps the type-the-name guard. It is the only destroy that is now real. The bin reads through the same [`useReadResourcesPage`](/docs/resource/list-filters-and-views) as `/all`, so paging quickly or refreshing mid-read can never leave the table showing an earlier page's rows — a purge fired from a stale row is unrecoverable in a way a stale list elsewhere is not.
 - Dataset references to a soft-deleted source fail exactly as they did under hard delete ([dangling dataset references](/docs/resource/deferred/dangling-dataset-references)); restore heals them.
 - Names are not unique, so a restore can never conflict.
-- The [activity log](/docs/resource/activity-log) partition survives the bin window — history outlives the delete, and restore appends `Restored` to it. The sweep runs at purge time, before the row goes.
+- The [activity log](/docs/resource/activity-log) partition survives the bin window, and its sweep runs at purge time — that page says how.

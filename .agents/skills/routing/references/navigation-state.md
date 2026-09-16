@@ -19,8 +19,8 @@ Decide by what the value **is**, not by what is reachable:
   value. Hand the entry a plain snapshot, and make that the returned contract of the pure function above rather
   than a spread at the call site.
 
-- **What the visitor prefers** (a collapsed rail, a theme) → **`localStorage`** through the `LocalStorageKey` registry — it outlives the tab and belongs to the person.
+- **A preference of the visitor's** (a collapsed rail, a theme) → **`localStorage`** through the `LocalStorageKey` registry — it outlives the tab and belongs to the person.
 
-The middle case is the one that gets mis-filed. Putting "how I got here" in the URL mints a second address for one page (worse for sharing, bookmarks and analytics, and editable by anyone who types); putting it in storage makes it outlive the journey, so a tab restored later claims a path nobody walked.
+The middle case is the one that gets mis-filed, and why its two neighbours are wrong for it is argued in `apps/web/content/docs/architecture/navigation.md`.
 
-**Write that state in one place — a `router.afterEach` hook in a client plugin — never at each link.** A value appended by hand at N call sites is one the N+1th link silently drops, and the page that lost it is indistinguishable from a page that never had it. Keep the rules as a pure function so they are testable without a browser, and validate anything read back off an entry (it may predate the release). Worked example: `apps/web/content/docs/resource/breadcrumb-trail.md`.
+**Write that state in one place — a `router.afterEach` hook in a client plugin — never at each link**, since a link that forgets it leaves a page indistinguishable from one that never had it. Keep the rules as a pure function so they are testable without a browser, and validate anything read back off an entry (it may predate the release). Worked example: `apps/web/content/docs/resource/breadcrumb-trail.md`.

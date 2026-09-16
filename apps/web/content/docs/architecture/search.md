@@ -46,7 +46,7 @@ const { isPending } = useAutoSearch(searchQuery, {
 
 ### `useCursorSearcher` — cursor-paginated results
 
-`app/composables/useCursorSearcher.ts` composes `useAutoSearch` with `useCursorPaginationData` for searches whose results paginate (room pickers, forward-to dialogs). The query callback receives `(searchQuery, cursor, opts)` and must forward `opts` — it carries the abort signal. It returns `{ hasMore, items, readSearchedItems, readMoreSearchedItems, searchQuery }`, so the list renders with the standard `StyledWaypoint` infinite-scroll pattern.
+`app/composables/useCursorSearcher.ts` composes `useAutoSearch` with `useCursorPaginationData` for searches whose results paginate (room pickers, forward-to dialogs); its callback contract is `.agents/skills/pagination/references/search-as-you-type.md`. It returns `{ hasMore, items, readSearchedItems, readMoreSearchedItems, searchQuery }`, so the list renders with the standard `StyledWaypoint` infinite-scroll pattern.
 
 ```ts
 export const useRoomSearchStore = defineStore("message/room/search", () => {
@@ -98,7 +98,7 @@ Three search shapes legitimately sit outside `useAutoSearch`, because there is n
 | Exception              | Why it is out of scope                                                                                                | Example                                          |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | `v-data-table-server`  | The table owns fetch orchestration — its `search` prop triggers `@update:options`; feed it a `refDebounced` query ref | `Resource/List/View.vue` + `useReadResources`    |
-| Explicit-submit search | Enter-triggered with filters and search history; nothing fires per keystroke                                          | [Message search](/docs/esbabbler/message-search) |
+| Explicit-submit search | Enter submits, with filters and history; nothing fires per keystroke                                                  | [Message search](/docs/esbabbler/message-search) |
 | Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state (see above)                        | Docs search, the emoji picker (both MiniSearch)  |
 
 Portal chord shortcuts (`useResourceKeyboardShortcuts` G-chords) are likewise a separate concern from the palette `hotkey` prop — chords are sequences, not single hotkeys.

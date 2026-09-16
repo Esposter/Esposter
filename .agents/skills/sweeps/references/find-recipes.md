@@ -9,8 +9,8 @@ with control flow — a bracket matcher, a tokenizer, a two-pass scan over a cor
 need a fix. The ledger's Find recipe is then that one line plus why the scan is not a grep.
 
 What a **sweep** recipe adds to that rule is the reason it cannot be waived: an unrunnable scan reports nothing,
-which is the shape of a swept tree, so a rotted recipe does not fail — it ticks. Two of this repo's ledgers
-carried `python3` blocks that on a Windows checkout print a Microsoft Store notice and **exit 0**.
+which is the shape of a swept tree, so a rotted recipe does not fail — it ticks. `.agents/skills/skill-authoring/references/embedded-recipes.md`
+has the two ledgers that ticked that way.
 
 **The colocated test is the point, not the packaging.** "Prove the scan can fail before believing it passed" is
 this skill's rule and it has no way to stay proved while the scan is a code block — each pass either re-does it

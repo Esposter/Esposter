@@ -19,14 +19,14 @@ The account surface: signing in at `/login` (Google, GitHub, or Facebook — see
 
 ## Procedures
 
-| Procedure                            | Auth                  | Input                | Purpose                       |
-| ------------------------------------ | --------------------- | -------------------- | ----------------------------- |
-| `user.readUser`                      | public (rate-limited) | user id              | public identity for a profile |
-| `user.updateUser`                    | authed                | name/biography/image | update own profile            |
-| `user.generateProfileImageUploadUrl` | authed                | —                    | SAS URL for the profile image |
-| `session.readSessions`               | authed                | —                    | own sessions, current marked  |
-| `session.deleteSession`              | authed                | session id           | revoke one session            |
-| `session.deleteOtherSessions`        | authed                | —                    | revoke all but the current    |
+| Procedure                            | Auth                 | Input                | Purpose                       |
+| ------------------------------------ | -------------------- | -------------------- | ----------------------------- |
+| `user.readUser`                      | anyone, rate-limited | a user id            | the profile header's identity |
+| `user.updateUser`                    | authed               | name/biography/image | update own profile            |
+| `user.generateProfileImageUploadUrl` | authed               | —                    | SAS URL for the profile image |
+| `session.readSessions`               | authed               | —                    | own sessions, current marked  |
+| `session.deleteSession`              | authed               | session id           | revoke one session            |
+| `session.deleteOtherSessions`        | authed               | —                    | revoke all but the current    |
 
 ## Key files
 

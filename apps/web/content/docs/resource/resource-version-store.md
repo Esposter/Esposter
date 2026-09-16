@@ -84,8 +84,8 @@ Eviction hands the deletion path the exact set of objects nothing references, ra
 | `apps/web/server/services/resource/snapshot/readSnapshotVersionContent.ts` | reconstruct and parse one version                                       |
 | `apps/web/server/services/resource/snapshot/collectSnapshotObjects.ts`     | what an eviction or unpublish may delete                                |
 | `apps/web/server/services/resource/snapshot/lockSnapshotObjects.ts`        | the per-resource lock a write and a collection both hold                |
-| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`       | the revision take, its ring buffer and its eviction                     |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | the publish take, the public read, and the unpublish                    |
+| `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`       | where a revision is taken and the oldest evicted                        |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | where publishing, the public read and unpublishing are wired            |
 
 ## Notes
 

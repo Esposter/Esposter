@@ -19,7 +19,7 @@ The dialog is opened by the gear in `MessageLeftSideBarStatusBar` and mirrors th
 
 Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings mutation is **optimistic** (apply to the store immediately, mutate in the background, roll back + surface the error on failure — [`useMutation`](/docs/architecture/client-data)); and the sidebar section rail is `StyledSlideIndicator` stretched across **all** visible sections, pinned to the target while a click-scroll runs.
 
-They also share the responsive shell: the sidebar drawer (`MessageModelSettingsLeftSideBar`) is `permanent` only on desktop and becomes a `temporary` overlay on `smAndDown`, opened by a `mdi-menu` hamburger the content header renders on mobile and closed on selection. The user dialog holds that open flag as `isDrawerOpen` on its dialog store; the room dialog threads it through its `Dialog`. See [room settings](/docs/esbabbler/room-settings) for the diagram.
+They also share the responsive shell — the sidebar drawer that is permanent on desktop and a hamburger-opened overlay on mobile, closed on selection — which [room settings](/docs/esbabbler/room-settings) describes with its diagram. The user dialog holds that open flag as `isDrawerOpen` on its dialog store; the room dialog threads it through its `Dialog`.
 
 **Sync by default, per-device by exception**: preferences live in the DB and sync across devices; only hardware device IDs (mic/speaker/camera — a device chosen on one machine must not apply on another) and UI collapsibles stay `localStorage`.
 
@@ -64,7 +64,7 @@ The dialog uses a Discord-style two-level nav: a `v-list-group` per `UserSetting
 | :-------------------------------------------------------- | :--------------------------------------------------------- |
 | `packages/db-schema/src/schema/userSettingsInMessage.ts`  | table + enums + range constants                            |
 | `apps/web/server/trpc/routers/user.ts`                    | `readUserSettings` + `updateUserSettings`                  |
-| `apps/web/app/models/message/user/UserSettingsType.ts`    | panel enum (values double as titles)                       |
+| `apps/web/app/models/message/user/UserSettingsType.ts`    | the panel enum; a value is its own title                   |
 | `apps/web/app/services/message/user/settings/`            | list-item / content / section maps                         |
 | `apps/web/app/store/message/user/settings/index.ts`       | DB-backed store (optimistic + revert)                      |
 | `apps/web/app/store/message/user/settings/voiceDevice.ts` | device-local store (`localStorage` device IDs)             |

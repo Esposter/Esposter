@@ -9,5 +9,5 @@ Azure-portal parity program for the Resource Explorer: every product is already 
 
 ## Later
 
-- [ ] [Content-addressed assets](/docs/proposals/resource/content-addressed-assets) — address resource assets by content so a publish references them instead of cloning them, with reference rows written from a scan of each version's content and a count-but-never-collect period before anything is deleted
+- [ ] [Content-addressed assets](/docs/proposals/resource/content-addressed-assets) — a publish references assets by content instead of cloning them, with reference rows written from a scan of each version's content and a count-but-never-collect period before anything is deleted
 - [ ] [Paid storage tiers](/docs/proposals/resource/paid-storage-tiers) — sell a larger allowance through a merchant-of-record checkout, with the tier column staying the one input to the quota gate. Blocked on wanting to take money at all, and on shipping account deletion + data export alongside it

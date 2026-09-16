@@ -63,7 +63,7 @@ One hook on `createResourceProcedures` supports publishing needs:
 
   Running before the transaction also means the hook's writes are not rolled back with it: **a publish that fails after the clone leaves that attempt's asset directory orphaned**, and because the directory is per-attempt a retry never overwrites it — a user retrying a failing publish pays for one copy of their assets per attempt. Accepted: unpublish and delete both wipe the whole `{id}/published` prefix, so nothing leaks past the resource's own lifetime, and the alternative is either a version-keyed directory (which two concurrent publishes race) or a compensating delete on a path that already failed.
 
-The read half of the same boundary is not a hook here at all: `ResourceLiveContentMap` declares which parts of a type's content are live rather than frozen, and `reapplyLiveResourceContent` applies it on every path that reconstitutes a snapshot — the public read, the owner's version preview, and the restore ([resource snapshots](/docs/resource/resource-snapshots)). Only Survey declares anything, merging its live collection settings over the immutable snapshot. Asset urls need no read-time rewriting — content embeds stable app urls that never expire, served through `/api/resource-assets`.
+The read half of the same boundary is not a hook here at all: a type declares what stays live inside a frozen snapshot, and one shared reconstitution reapplies it on every path that reads one back ([resource snapshots](/docs/resource/resource-snapshots)). Only Survey declares anything, merging its live collection settings over the immutable snapshot. Asset urls need no read-time rewriting — content embeds stable app urls that never expire, served through `/api/resource-assets`.
 
 ## Route
 

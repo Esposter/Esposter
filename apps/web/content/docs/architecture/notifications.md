@@ -49,7 +49,7 @@ Two properties fall out of the shape rather than out of discipline:
 | `TodoReminder`      | ✓    | ✓    | [todolist due reminders](/docs/resource/todolist-due-reminders) |
 | `ResourceOperation` | ✓    | ✓    | the operation happened on one device and is news on the others  |
 
-Feedback about the tab's own action — a mutation error, a save conflict, an export that finished here — is **not** a member. Nothing on another device could act on it and nothing needs it after the reload, so it never leaves the tab and never becomes a row. That half of the bell is [notifications bell](/docs/resource/notifications).
+Feedback about the tab's own action is **not** a member: it never leaves the tab and never becomes a row. That half of the bell, and why it is never written down, is [notifications bell](/docs/resource/notifications).
 
 ## The bell row
 
