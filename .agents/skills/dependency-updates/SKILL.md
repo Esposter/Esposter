@@ -44,8 +44,8 @@ A hold is a `packageRules` entry naming the packages exactly (`matchPackageNames
 
 The reason lives in the rule's `description` and nowhere else — the report prints it, and this list says only which catalog range pairs with each kind of rule:
 
-- **A cap at a major needs only the rule** — the caret already stops a re-resolve. `h3` is `^1.15.11` in the catalog and `overrides:` with `allowedVersions: "<2"`; only minor/patch within the major.
-- **A cap inside a major needs the rule and a tilde** — a caret would float `pnpm refresh:lockfile` straight into it. `unocss`, `@unocss/nuxt`, `@unocss/eslint-config` are `~66.9.2` with `allowedVersions: "<66.10"`, one rule because every `@unocss/*` pins its siblings to its own exact version; the rule and the tilde widen back together.
+- **A cap at a major needs only the rule** — the caret already stops a re-resolve. `h3` keeps its caret in the catalog and `overrides:`, and its rule's `allowedVersions` names the next major as the ceiling; only minor/patch within the major.
+- **A cap inside a major needs the rule and a tilde** — a caret would float `pnpm refresh:lockfile` straight into it. `unocss`, `@unocss/nuxt`, `@unocss/eslint-config` carry a tilde and their rule's `allowedVersions` names the next minor, one rule because every `@unocss/*` pins its siblings to its own exact version; the rule and the tilde widen back together.
 - **A dedicated pass is `enabled: false`** — `typescript` is exact-pinned in the catalog and aliased under `overrides:` to the bridge that runs `tsc`/`vue-tsc` on the Go compiler (`apps/web/content/docs/architecture/monorepo-tooling.md`); the rule names the alias target beside the alias because a rule matches the resolved package.
 - **An exact pin on a prerelease line is `followTag`** — `drizzle-kit`, `drizzle-orm` are pinned to one RC with no `^`, since a caret would float them across the per-commit builds drizzle publishes under a dist-tag per branch. The report follows the same tag: `pnpm outdated:dependencies` asks the registry for it rather than `latest` for a followed package.
 
