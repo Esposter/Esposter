@@ -40,6 +40,14 @@ export const INSTALL_COMMAND: string[] = ["i", "--frozen-lockfile"];
 // Without them fails on files no commit touched. The web app's build alone is left out: it is CI's longest job
 // (`apps/web/content/docs/architecture/monorepo-tooling.md`), and `main`'s own CI runs it on the push. The
 // Tests are here because a relocation is exactly what a path-coupled test fails on.
+export const EXPRESS_BUILD_APPS_COMMAND: string[] = [
+  "--filter",
+  "@esposter/functions",
+  "--filter",
+  "@esposter/infra",
+  "build",
+];
+
 export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   INSTALL_COMMAND,
   ["format:check"],
@@ -49,7 +57,7 @@ export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   ["exec", "oxlint", "--format=default", "--disable-nested-config"],
   ["exec", "eslint", "."],
   ["-r", "--parallel", "run", "lint"],
-  ["--filter", "@esposter/functions", "--filter", "@esposter/infra", "build"],
+  EXPRESS_BUILD_APPS_COMMAND,
   ["exec", "vitest", "run"],
 ];
 

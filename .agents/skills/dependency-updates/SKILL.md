@@ -7,7 +7,7 @@ description: Apply when updating package versions, bumping a GitHub Action or th
 
 All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at the repo root. Individual `package.json` files reference them with `catalog:` — never edit version numbers there.
 
-**Renovate writes versions; people write policy.** Every version the repo declares is reached by Renovate — the catalog and `overrides:`, `engines.node` and `devEngines.runtime`, `packageManager`, every action under `.github/`, every `FROM` — and a minor or patch merges on green without a person in the loop, a major waits for one. What a person owns is `renovate.json`'s `packageRules`: a dependency held below a version, disabled, grouped or read before merging is one rule there with a `description` that is the reason, and **`pnpm outdated:dependencies` reads the same rules**, so a version the bot would not propose is listed as held rather than as a bump to take. Policy written anywhere else — a range trick in the catalog, a note in this skill alone — is policy the bot cannot read, which is how the unocss tilde churned a branch every run. Which rules exist and what each manager reaches is `references/renovate.md`.
+**Renovate writes versions; people write policy.** Every version the repo declares is reached by Renovate — the catalog and `overrides:`, `engines.node` and `devEngines.runtime`, `packageManager`, every action under `.github/`, every `FROM` — and a minor or patch merges on green without a person in the loop, a major waits for one. What a person owns is `renovate.json`'s `packageRules`: every cap, disable, group and read-before-merge is one rule there with a `description` that is the reason, and **`pnpm outdated:dependencies` reads the same rules**, so a version the bot would not propose is listed as held rather than as a bump to take. Policy written anywhere else — a range trick in the catalog, a note in this skill alone — is policy the bot cannot read, which is how the unocss tilde churned a branch every run. Which rules exist and what each manager reaches is `references/renovate.md`.
 
 ## Bumping by hand
 
@@ -61,7 +61,7 @@ What that trades is real and accepted: a just-published bad version installs imm
 
 ## Limits (`:prHourlyLimit2` ignored, `:prConcurrentLimit10` kept)
 
-The hourly limit only delays a bump the bot has already decided to make, so it is ignored. The concurrent limit stays, and `branchConcurrentLimit` inherits it: every automerge branch is a CI run, and ten in flight bounds what one Renovate run can start against the shared runners. A branch merges on green within the hour, so the cap costs a busy day at most one run's delay. Don't propose lifting it, and don't propose a lower one.
+The hourly limit only delays a bump the bot has already decided to make, so it is ignored. The concurrent limit stays, and "branchConcurrentLimit" inherits it: every automerge branch is a CI run, and ten in flight bounds what one Renovate run can start against the shared runners. A branch merges on green within the hour, so the cap costs a busy day at most one run's delay. Don't propose lifting it, and don't propose a lower one.
 
 ## Tracked issues (update normally, but watch these)
 

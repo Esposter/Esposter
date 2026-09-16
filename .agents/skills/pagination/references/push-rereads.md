@@ -1,6 +1,6 @@
 # Re-reading a List After a Push
 
-Read when a store re-reads a list because a push said something arrived, and has to work out which rows are new. This page holds the whole rule; `SKILL.md` keeps the one line that the re-read is the store's.
+Read when a store re-reads a list because a push said something arrived, and has to work out which rows are new. The whole rule is here; `SKILL.md` keeps only the line that the re-read is the store's.
 
 A delivered push says "something arrived", never what: the tab re-reads the first page and works out which rows
 are new. Three rules make that reliable, and the first two come from the list being shared rather than owned by

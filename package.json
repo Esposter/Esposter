@@ -69,6 +69,7 @@
     "lint:packages": "run-s --continue-on-error lint:packages:oxlint lint:packages:workspace",
     "lint:packages:oxlint": "virrun -- oxlint --format=default --disable-nested-config packages",
     "lint:packages:workspace": "virrun -- pnpm -r --filter \"./packages/*\" --parallel run lint",
+    "lint:workspace": "virrun -- pnpm -r --parallel run lint",
     "outdated:dependencies": "pnpm -C scripts run outdated:dependencies",
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
