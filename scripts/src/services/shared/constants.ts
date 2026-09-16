@@ -38,5 +38,14 @@ export const RECORD_SEPARATOR = "";
 
 export const FIELD_SEPARATOR = "";
 
-// On Windows `pnpm` is a `.cmd` shim, which only a shell resolves
-export const IS_PNPM_SHELL: boolean = process.platform === "win32";
+// `pnpm run` names the executable it is in `npm_execpath` — the native binary, or the `pnpm.cjs` corepack ships
+// That node runs — so a script spawns that file with its args and never a shell: the `pnpm` on a Windows PATH is
+// A `.cmd` shim only a shell resolves, and an args array under `shell` is what Node deprecates (DEP0190). Bare
+// `pnpm` only outside `pnpm run`, which no script in this package is invoked from.
+const pnpmExecPath = process.env.npm_execpath ?? "pnpm";
+
+const isPnpmScript = /\.[cm]?js$/u.test(pnpmExecPath);
+
+export const PNPM_FILE: string = isPnpmScript ? process.execPath : pnpmExecPath;
+
+export const PNPM_ARGS: readonly string[] = isPnpmScript ? [pnpmExecPath] : [];

@@ -5,7 +5,7 @@ import {
   PNPM_OUTDATED_COMMAND,
   PNPM_OUTDATED_TIMEOUT_MS,
 } from "#src/services/outdatedDependencies/pnpm/constants";
-import { IS_PNPM_SHELL } from "#src/services/shared/constants";
+import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { spawn } from "node:child_process";
 
 // Asynchronous rather than the collector's `spawnPnpm`, because the registry checks run beside it and a
@@ -14,9 +14,8 @@ import { spawn } from "node:child_process";
 // `close` needs no guard.
 export const runPnpmOutdated = (root: string): Promise<PnpmOutdatedRun> =>
   new Promise((resolvePromise) => {
-    const child = spawn("pnpm", PNPM_OUTDATED_ARGS, {
+    const child = spawn(PNPM_FILE, [...PNPM_ARGS, ...PNPM_OUTDATED_ARGS], {
       cwd: root,
-      shell: IS_PNPM_SHELL,
       timeout: PNPM_OUTDATED_TIMEOUT_MS,
     });
     let stdout = "";

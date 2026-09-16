@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getLatestVersion } from "#src/services/shared/getLatestVersion";
 import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { getEnginesNode } from "#src/services/updateNode/getEnginesNode";
@@ -45,9 +45,8 @@ if (isNewVersion) {
 // 4. Hand off install / default / cleanup of the old version to the native (per-OS) script via crossOS.
 // When the version is unchanged, `old === new`, so the native script's guard skips the removal step.
 console.info("Installing and defaulting via fnm…");
-const result = spawnSync(`pnpm crossOS update:node ${version} ${oldVersion}`, {
+const result = spawnSync(PNPM_FILE, [...PNPM_ARGS, "crossOS", "update:node", version, oldVersion], {
   cwd: REPOSITORY_ROOT,
-  shell: true,
   stdio: "inherit",
 });
 if (result.status !== 0) throw new InvalidOperationError(Operation.Update, "update:node", "fnm install/switch failed");

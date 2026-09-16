@@ -29,6 +29,15 @@ that does.
 `db:run` runs `drizzle-kit`'s CJS bin directly under `node` — the file is not TypeScript, so there was never a
 loader to choose.
 
+## A script spawns `pnpm` as the file `pnpm run` names, never through a shell
+
+The `pnpm` on a Windows PATH is a `.cmd` shim only a shell resolves, and an args array under `shell` is the pair
+Node deprecates (DEP0190) — `no-restricted-syntax` in `packages/configuration/eslint/restrictedSyntaxes.js`
+rejects it. `pnpm run` puts the executable it is in `npm_execpath`, so `scripts` spawns `PNPM_FILE` with
+`PNPM_ARGS` ahead of its own (`scripts/src/services/shared/constants.ts`) and every argument reaches pnpm
+verbatim, with no quoting for a shell that is not there. A whole command line under `shell` — `crossOS`
+running a manifest's per-platform string — stays a single string.
+
 ## A check that has to run before an install is CI's own shell
 
 CI's package-build gate asks its question on a cache hit designed to need no install, so nothing under

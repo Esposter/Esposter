@@ -101,6 +101,16 @@ export default [
       ":matches(CallExpression > MemberExpression.arguments, Property > MemberExpression.value)[object.name='console'][property.name='warn']",
   },
   {
+    // Node concatenates an args array unescaped under `shell` and deprecates the pair (DEP0190). Two shapes stay:
+    // A file spawned directly with its args — `pnpm` through `PNPM_FILE`/`PNPM_ARGS` in `scripts`, since the
+    // `pnpm` on a Windows PATH is a `.cmd` shim only a shell resolves — and one command string under `shell`,
+    // Which is what `crossOS` runs.
+    message:
+      "An args array under `shell` is deprecated (DEP0190) — spawn the file directly (`PNPM_FILE`/`PNPM_ARGS` for pnpm) or pass one command string.",
+    selector:
+      "CallExpression:matches([callee.name=/^(execFile|execFileSync|spawn|spawnSync)$/], [callee.property.name=/^(execFile|execFileSync|spawn|spawnSync)$/])[arguments.length>=3] > ObjectExpression.arguments > Property[key.name='shell']:not([value.value=false])",
+  },
+  {
     // A singleton with a name: it bypasses Pinia devtools, HMR and reactive reset, so shared reactive state is a
     // Pinia store instead (vue-composable-patterns).
     message:
