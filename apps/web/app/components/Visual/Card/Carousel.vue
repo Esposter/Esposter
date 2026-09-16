@@ -207,7 +207,7 @@ watch(
   }
 }
 
-.overflow-card {
+.of-card {
   // Could be optimised by not rendering these, but that's more than a display:none
   // since we'd need to handle the top card becoming normal.
   display: none;
