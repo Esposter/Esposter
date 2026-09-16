@@ -1,5 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "automergeType": "branch",
   "configMigration": true,
   "customManagers": [
     {
@@ -23,7 +24,6 @@
   "packageRules": [
     {
       "automerge": true,
-      "automergeType": "branch",
       "matchUpdateTypes": ["minor", "patch"]
     },
     {
@@ -66,7 +66,6 @@
     },
     {
       "automerge": true,
-      "automergeType": "branch",
       "description": "A digest bump has no version to read, so it lands on the same branch automerge the minor/patch rule above gives everything else.",
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["digest", "pinDigest"]
