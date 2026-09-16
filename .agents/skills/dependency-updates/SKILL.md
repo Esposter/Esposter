@@ -39,9 +39,9 @@ Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them pe
 - **`drizzle-kit`, `drizzle-orm`** — pinned to an exact RC (no `^`). Leave the caret off: a caret would float them across RC builds. Bump both together, deliberately, to the same version.
 - **`typescript`** — exact-pinned in the catalog and aliased to `npm:typescript-native-bridge@…` under `overrides:`, so Renovate cannot propose it (`renovate.json` sets `updatePinnedDependencies: false`) and a caret would float it across bridge builds. The alias is what runs `tsc`/`vue-tsc` on the Go compiler (`apps/web/content/docs/architecture/monorepo-tooling.md`); a bump moves the bridge, the TypeScript version behind it and `typescript-eslint` at once, so it is a deliberate, dedicated pass and never part of a routine update.
 
-## Docker base images — `references/renovate-docker.md`
+## Renovate's pinned exemptions — `references/renovate-pinned-exemptions.md`
 
-A `packageRules` entry keyed on `matchDatasources: ["docker"]` exempts every image tag from the repo-wide `updatePinnedDependencies: false` and pins digests, so a mutable tag with no comparable version is still tracked. **Editing `renovate.json`, adding a `FROM`, or running Renovate's local dry run to see what a rule reaches** is that page.
+The repo-wide `updatePinnedDependencies: false` skips every exact version, so two `packageRules` entries hand it back where the pin is the format rather than a choice: `matchDatasources: ["docker"]` for image tags (with digests pinned, so a mutable tag with no comparable version is still tracked) and `matchDepTypes: ["packageManager"]` for the pnpm version corepack reads. **Editing `renovate.json`, adding a `FROM`, or running Renovate's local dry run to see what a rule reaches** is that page.
 
 ## Version-capped packages (keep the caret, cap the range)
 

@@ -13,7 +13,12 @@
       "matchUpdateTypes": ["minor", "patch"]
     },
     {
-      "description": "An image tag is a single version by definition, so the repo-wide `updatePinnedDependencies: false` — which exists for the exact-pinned npm deps that owe a dedicated pass — would otherwise skip every one as `is-pinned`. `pinDigests` is what reaches a tag that never moves, where the digest behind it is the only thing left to update. Both are read during the lookup, so this rule carries no `matchUpdateTypes`: an update type exists only once the lookup has produced an update.",
+      "description": "The `packageManager` field is an exact version by definition \u2014 corepack reads one \u2014 so it is skipped as `is-pinned` for the same reason as the image tags below, and keyed on the field rather than on `pnpm` because the reason is the field.",
+      "matchDepTypes": ["packageManager"],
+      "updatePinnedDependencies": true
+    },
+    {
+      "description": "An image tag is a single version by definition, so the repo-wide `updatePinnedDependencies: false` \u2014 which exists for the exact-pinned npm deps that owe a dedicated pass \u2014 would otherwise skip every one as `is-pinned`. `pinDigests` is what reaches a tag that never moves, where the digest behind it is the only thing left to update. Both are read during the lookup, so this rule carries no `matchUpdateTypes`: an update type exists only once the lookup has produced an update.",
       "matchDatasources": ["docker"],
       "pinDigests": true,
       "updatePinnedDependencies": true
