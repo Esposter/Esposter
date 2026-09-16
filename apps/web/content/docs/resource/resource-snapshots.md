@@ -153,7 +153,7 @@ Version history is a **panel over whichever blade is open**, not a nav blade: ro
 
 A restore never re-points the publication — it produces a draft to review and re-publish, mirroring the [recycle bin](/docs/resource/recycle-bin) rule — and it lands through `saveResourceContent` like any other content write, so after-save hooks re-derive what the restored content declares and the [activity](/docs/resource/activity-log) trail records a `Restored` entry.
 
-Because it replaces content underneath an already-open blade, the content stores re-read themselves through `ResourceContentHookMap.Reload` rather than the blade being keyed on a counter something bumps. The editor-owned types (GrapesJS, SurveyJS) register nothing — their editor owns the live document once loaded, so a tab open on one keeps the pre-restore draft until it reloads.
+Because it replaces content underneath an already-open blade, the content stores re-read themselves through `ResourceContentHookMap.Reload` rather than the blade being keyed on a counter something bumps, and the editors that hold the live document themselves are then handed it through a second stage ([third-party document adapters](/docs/architecture/third-party-document-adapters)).
 
 ## Why not Azure Blob versioning
 

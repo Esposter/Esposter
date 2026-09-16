@@ -1,6 +1,6 @@
 ---
 name: vue-composable-patterns
-description: Apply when writing or reviewing a composable, a form dialog, browser-aware reactive code, or any state that spans an await, a tick or a mount. Esposter Vue 3 composable patterns — the table of primitives that already own a job (useMutation, useCachedRead, useSave, useWorkerInterval, usePanZoom, getOrCreate) and the ban on hand-rolling them, a hand-kept count of in-flight anything as the tell, no pass-through composables, createSharedComposable and module-scope refs banned, MaybeRefOrGetter only for what the composable watches, the three validation-rule layers, toRawDeep over toRaw, and no persistence call for an unchanged payload.
+description: Apply when writing or reviewing a composable, a form dialog, browser-aware reactive code, or any state that spans an await, a tick or a mount. Esposter Vue 3 composable patterns — the table of primitives that already own a job (useMutation, useCachedRead, useSave, useWorkerInterval, usePanZoom, getOrCreate, useAdoptResourceContent) and the ban on hand-rolling them, a hand-kept count of in-flight anything as the tell, no pass-through composables, createSharedComposable and module-scope refs banned, MaybeRefOrGetter only for what the composable watches, the three validation-rule layers, toRawDeep over toRaw, and no persistence call for an unchanged payload.
 ---
 
 # Vue Composable & Form Patterns
@@ -15,15 +15,16 @@ Most of what a composable is tempted to write by hand already exists here, and t
 duplicated — it is the copy that drifts, forgets its teardown, or silently loses a write. **Before writing state
 that spans an `await`, a tick or a mount, find the row.**
 
-| Wanting to…                                         | Use                                                               | Never                                                                                          |
-| :-------------------------------------------------- | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
-| order overlapping reads or writes                   | `useMutation` (`executeQuery`/`executeMutation`), keyed by target | a promise chain, an in-flight promise map, a generation counter, a call id, an `isSaving` flag |
-| let a pushed value beat a read already in flight    | `useCachedRead(...).supersede(key)`                               | a pair of counters beside a `ref`                                                              |
-| skip a save when nothing changed                    | `useSave` (`{ save, setState }`)                                  | a hand-rolled snapshot, or a `set*` wrapper in a store                                         |
-| know a save is still coming                         | the mutation's own `isPending`                                    | a counter of armed debounces, or an `isPending` you assign yourself                            |
-| run something on an interval for a component's life | `useWorkerInterval`                                               | `setInterval` in `onMounted` + `clearInterval` in `onUnmounted`                                |
-| pan and zoom a surface                              | `usePanZoom`                                                      | scale/offset refs and pointer handlers                                                         |
-| read or insert into a `Map`                         | `getOrCreate` (`@esposter/shared`)                                | `let x = map.get(k); if (!x) …`                                                                |
+| Wanting to…                                           | Use                                                               | Never                                                                                          |
+| :---------------------------------------------------- | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| order overlapping reads or writes                     | `useMutation` (`executeQuery`/`executeMutation`), keyed by target | a promise chain, an in-flight promise map, a generation counter, a call id, an `isSaving` flag |
+| let a pushed value beat a read already in flight      | `useCachedRead(...).supersede(key)`                               | a pair of counters beside a `ref`                                                              |
+| skip a save when nothing changed                      | `useSave` (`{ save, setState }`)                                  | a hand-rolled snapshot, or a `set*` wrapper in a store                                         |
+| know a save is still coming                           | the mutation's own `isPending`                                    | a counter of armed debounces, or an `isPending` you assign yourself                            |
+| run something on an interval for a component's life   | `useWorkerInterval`                                               | `setInterval` in `onMounted` + `clearInterval` in `onUnmounted`                                |
+| pan and zoom a surface                                | `usePanZoom`                                                      | scale/offset refs and pointer handlers                                                         |
+| read or insert into a `Map`                           | `getOrCreate` (`@esposter/shared`)                                | `let x = map.get(k); if (!x) …`                                                                |
+| let a restore reach an editor that holds the document | `useAdoptResourceContent` (Tiptap, SurveyJS, GrapesJS)            | a `:key` remount, or trusting the store's ref to reach a library that parsed it once           |
 
 **A counter is the tell.** Every entry above was written by hand somewhere first, and each time the shape was the
 same: the problem looked complex enough that bookkeeping felt earned. It is the opposite signal. A count of

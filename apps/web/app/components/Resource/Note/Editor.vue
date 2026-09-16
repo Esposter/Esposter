@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getNoteExtensions } from "@/services/resource/note/getNoteExtensions";
 import { useNoteStore } from "@/store/resource/note";
+import { ResourceType } from "@esposter/db-schema";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 const noteStore = useNoteStore();
@@ -17,6 +18,12 @@ const editor = useEditor({
     note.value.doc = updatedEditor.getJSON();
     debouncedSave();
   },
+});
+// Tiptap owns the live document from construction on, so the store's re-read alone leaves it holding the
+// Pre-restore doc — and its next keystroke would write that doc back. Silently, because an update emitted
+// Here is the restore echoing back out as an edit
+useAdoptResourceContent(ResourceType.Note, () => {
+  editor.value?.commands.setContent(note.value.doc, { emitUpdate: false });
 });
 </script>
 

@@ -125,10 +125,16 @@ export const useResourceStore = defineStore("resource", () => {
   // This resource's content was replaced underneath whatever blade is open — a restore is the one write that
   // Does that. The row is re-read here and the content stores re-read themselves through the hook registry,
   // Rather than the blade being keyed on a counter something bumps: which store holds the content is the
-  // Type's business, and a blade left holding the pre-restore draft has its own next save rejected as stale
+  // Type's business, and a blade left holding the pre-restore draft has its own next save rejected as stale.
+  // The two stages are sequential because the second reads what the first landed: a registry runs its own
+  // Hooks together, so a third-party editor adopting the store's content cannot be a peer of the re-read
+  // That fills it (/docs/architecture/third-party-document-adapters)
   const reloadResourceContent = async () => {
     await readResource();
-    if (resource.value) await ResourceContentHookMap.Reload.run(resource.value.type);
+    if (!resource.value) return;
+
+    await ResourceContentHookMap.Reload.run(resource.value.type);
+    await ResourceContentHookMap.Adopt.run(resource.value.type);
   };
   // The blob is written on first save, so a freshly created resource returns undefined content.
   // The dispatch reads the loaded row's own type, so the procedure resolves to the union of every type's

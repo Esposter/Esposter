@@ -33,6 +33,13 @@ export const useSurveyCreator = () => {
   const creator = shallowRef<SurveyCreatorModel>();
   // Captured at setup so unmount can undo the global prototype patch — remounting would otherwise stack wrappers
   const removeLogoImage = LogoImageViewModel.prototype.remove;
+  // The store holds the model as the one JSON string the blob carries, with the theme folded into it under
+  // THEME_KEY — so construction and a restore both split it the same way rather than the split living twice
+  const setCreatorModel = (targetCreator: SurveyCreatorModel) => {
+    const { [THEME_KEY]: theme, ...model } = parseSurveyModel(surveyStore.model);
+    targetCreator.JSON = model;
+    if (theme) targetCreator.theme = theme;
+  };
 
   onMounted(async () => {
     await loadContent();
@@ -44,9 +51,7 @@ export const useSurveyCreator = () => {
       newCreator.footerToolbar.actions.push(action);
     }
 
-    const { [THEME_KEY]: theme, ...model } = parseSurveyModel(surveyStore.model);
-    newCreator.JSON = model;
-    if (theme) newCreator.theme = theme;
+    setCreatorModel(newCreator);
     // The creator autosaves on every editor change; the store's own dirty check is what drops the ones that
     // Changed nothing, so this reports whatever the shared save path answers rather than pre-filtering
     const save = async (saveNo: number, callback: (saveNo: number, isSuccessful: boolean) => void) => {
@@ -95,6 +100,11 @@ export const useSurveyCreator = () => {
 
   onUnmounted(() => {
     LogoImageViewModel.prototype.remove = removeLogoImage;
+  });
+  // The creator owns the live survey once it has loaded, so a restore has to be handed to it — left holding
+  // The pre-restore model its next autosave writes that model back at the restore's own fresh contentVersion
+  useAdoptResourceContent(ResourceType.Survey, () => {
+    if (creator.value) setCreatorModel(creator.value);
   });
 
   watchImmediate([creator, isDark], ([newCreator, newIsDark]) => {

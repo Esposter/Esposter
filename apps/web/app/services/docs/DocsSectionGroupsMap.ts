@@ -28,6 +28,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "module-boundaries",
       "browser-execution",
       "singleton-dialogs",
+      "third-party-document-adapters",
       "navigation",
       "search",
     ],

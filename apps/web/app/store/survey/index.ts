@@ -1,9 +1,10 @@
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { SurveySettings } from "#shared/models/resource/survey/SurveySettings";
-import type { ResourceType } from "@esposter/db-schema";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
+import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { useResourceStore } from "@/store/resource";
+import { ResourceType } from "@esposter/db-schema";
 
 export const useSurveyStore = defineStore("survey", () => {
   const resourceStore = useResourceStore();
@@ -13,8 +14,7 @@ export const useSurveyStore = defineStore("survey", () => {
   // Collection settings share the survey's single content blob, so the Overview toggle and the editor
   // Save through the same path and the same contentVersion
   const settings = ref<SurveySettings>(surveySettingsSchema.parse({}));
-  const loadContent = async () => {
-    await readResource();
+  const readSurvey = async () => {
     const data = await readContent<ResourceType.Survey>();
     model.value = data?.model ?? "";
     settings.value = data?.settings ?? surveySettingsSchema.parse({});
@@ -22,6 +22,17 @@ export const useSurveyStore = defineStore("survey", () => {
     // The content actually differs — the same seed every other content store does after hydrating
     setPersistedContent({ model: model.value, settings: settings.value });
   };
+  const loadContent = async () => {
+    await readResource();
+    await readSurvey();
+  };
+  // A restore replaces the working copy underneath whatever blade is open, so the store re-reads its own
+  // Content instead of the blade being remounted. The row itself is re-read by the caller that runs this.
+  // The Collection card renders `settings` and is finished here; the creator holds the model itself and takes
+  // It in a second stage (`useSurveyCreator`)
+  ResourceContentHookMap.Reload.register(async (reloadedType) => {
+    if (reloadedType === ResourceType.Survey) await readSurvey();
+  });
   const saveModel = async (newModel: string) => {
     const isSuccessful = await saveContent({ model: newModel, settings: settings.value } satisfies SurveyResource);
     if (isSuccessful) model.value = newModel;
