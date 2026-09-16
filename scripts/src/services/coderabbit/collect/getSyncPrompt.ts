@@ -5,9 +5,10 @@ import { QUEUE_BRANCH, SESSION_DENIALS } from "#src/services/coderabbit/collect/
 // The resolver is the drain's session pointed at a conflict instead of a finding: the same checkout, the same
 // Denials (no push, no branch switch, no GitHub), and the sequencer it must run to the end. The judgment it is
 // Asked for is the review-queue skill's — both sides survive, and a commit is skipped only once the target
-// Already carries its whole change. It owes no finishing checks: what proves a resolution is the sequence run to
-// Its end over a clean tree, a repair to any other queue commit is the session's and the queue's own CI names it,
-// And every minute the session spends is a minute the working session can push into and cost the rewrite its lease.
+// Already carries its whole change. It owes no finishing checks: what proves a resolution is a sequence run to
+// Its end over a clean tree that carries every commit the queue owed (`syncQueue`), a repair to any other queue
+// Commit is the session's and the queue's own CI names it, and every minute the session spends is a minute the
+// Working session can push into and cost the rewrite its lease.
 export const getSyncPrompt = ({ conflictedPaths, conflictSha, targetBranch }: SyncPromptInput): string =>
   [
     `You are the review collector's sync step. This checkout is mid-\`git cherry-pick\`: the commits \`${QUEUE_BRANCH}\` still owes \`${targetBranch}\` are being replayed onto its tree in order, and the sequence stopped on ${conflictSha} at these paths:`,

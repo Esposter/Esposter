@@ -35,13 +35,23 @@ const checkIsPicking = (cwd: string): boolean =>
   existsSync(resolve(cwd, runGit(["rev-parse", "--git-path", "sequencer"], cwd).trim()));
 
 // One sequence rather than a pick per commit: a stop is resumed by `--continue`, and a copy the tree already
-// Holds drops on its own. Whether the sequence ran to its end — a stop leaves it open for the resolver.
+// Holds drops on its own. Whether the sequence ran to its end — a stop leaves it open for the resolver. `-x`
+// Names the original in every copy it lands, which is the one record a resolution that drifted the copy's patch
+// Id cannot lose (`readCherryShas`), and so the one thing `checkIsCarried` can read the replay against.
 const checkIsPicked = (shas: string[], cwd: string): boolean =>
   shas.length === 0 ||
-  getResult(() => runGit(["cherry-pick", "--empty=drop", ...shas], cwd)).match(
+  getResult(() => runGit(["cherry-pick", "-x", "--empty=drop", ...shas], cwd)).match(
     () => true,
     () => false,
   );
+
+// Whether the replay carries every commit the queue owed — by patch id, or by a copy naming it as its original.
+// A closed sequencer over a clean tree says only that nothing is mid-flight: `git cherry-pick --abort` leaves
+// Exactly that, with the replay reset to the target and every owed commit about to be force-pushed away, as does
+// A `--skip` of a commit the target does not carry. This is the test that reads the work rather than the state
+// It was left in.
+const checkIsCarried = (queueSha: string, cwd: string): boolean =>
+  readCherryShas(readHeadSha(cwd), queueSha, cwd).length === 0;
 
 // The rewrite's compare-and-swap, retried rather than redone: the lease names the sha the run read, and a session
 // Push in between fast-forwards that sha by a commit or two — carried onto the rewrite by the same replay and
@@ -123,9 +133,10 @@ export const syncQueue = async ({
       cwd,
     );
     if (limitResetAtMs !== undefined) return abort("the resolver could not start, and no attempt is counted");
-    // A clean exit says the session ended; what proves the resolution is a sequence run to its end over a clean
-    // Tree. Anything else fails the run as a drain does, with the attempt counted on the commit
-    else if (!isDrained || checkIsPicking(cwd) || readDirtyPaths(cwd).length > 0) {
+    // A clean exit says the session ended, never how it ended; what proves the resolution is a sequence run to
+    // Its end over a clean tree, carrying every commit the queue owed. Anything else fails the run as a drain
+    // Does, with the attempt counted on the commit
+    else if (!isDrained || checkIsPicking(cwd) || readDirtyPaths(cwd).length > 0 || !checkIsCarried(queueSha, cwd)) {
       postCommitComment(
         conflictSha,
         `${marker}\nResolution attempt ${attempts + 1} of the conflict this commit brings to ${targetBranch} failed — see the collector run.`,

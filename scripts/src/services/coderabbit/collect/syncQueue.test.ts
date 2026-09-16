@@ -78,7 +78,9 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(syncedSha).not.toBe(queueSha);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([nestedPath]);
-    expect(runGit(["show", "--format=%b", "--no-patch", syncedSha], getCwd()).trim()).toBe("");
+    expect(runGit(["show", "--format=%b", "--no-patch", syncedSha], getCwd()).trim()).toBe(
+      `(cherry picked from commit ${owedSha})`,
+    );
     expect(runGit(["show", "--format=", syncedSha], getCwd())).toBe(runGit(["show", "--format=", owedSha], getCwd()));
     expect(runDrain).not.toHaveBeenCalled();
   });
@@ -195,6 +197,25 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath]);
     expect(runGit(["show", "--format=", syncedSha, "--", filePath], getCwd())).toContain("+fix queue");
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+  });
+
+  // `--abort` is denied the resolver, and a session that ran it anyway exits clean over a clean tree with no
+  // Sequencer open — the replay reset to the target, and the rewrite about to force-push every owed commit away
+  test("fails the run when the resolver ends the sequence without the commits the queue owed", async () => {
+    expect.hasAssertions();
+
+    const { developSha, queueSha } = setupConflict();
+    runDrain.mockImplementation(() => {
+      runGit(["cherry-pick", "--abort"], getCwd());
+      return Promise.resolve({ isDrained: true });
+    });
+
+    await expect(
+      syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the resolver left afc657d5e91e3511c65c73f432615a705c835c36 unresolved (attempt 1 of 3)]`,
+    );
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
   });
 
   test("fails the run and counts the attempt when the resolver leaves the sequence open", async () => {
