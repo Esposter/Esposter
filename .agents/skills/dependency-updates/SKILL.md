@@ -7,7 +7,7 @@ description: Apply when updating package versions, bumping a GitHub Action or th
 
 All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at the repo root. Individual `package.json` files reference them with `catalog:` — never edit version numbers there.
 
-**Renovate writes versions; people write policy.** Every version the repo declares is reached by Renovate — the catalog and `overrides:`, `engines.node` and `devEngines.runtime`, `packageManager`, every action under `.github/`, every `FROM` — and a minor or patch merges on green without a person in the loop, a major waits for one. What a person owns is `renovate.json`'s `packageRules`: every cap, disable, group and read-before-merge is one rule there with a `description` that is the reason, and **`pnpm outdated:dependencies` reads the same rules**, so a version the bot would not propose is listed as held rather than as a bump to take. Policy written anywhere else — a range trick in the catalog, a note in this skill alone — is policy the bot cannot read, which is how the unocss tilde churned a branch every run. Which rules exist and what each manager reaches is `references/renovate.md`.
+**Renovate writes versions; people write policy.** Every version the repo declares is reached by Renovate — the catalog and `overrides:`, `engines.node` and `devEngines.runtime`, `packageManager`, every action under `.github/`, every `FROM` — and a minor or patch merges on green without a person in the loop, a major waits for one. The one version outside the bot is the Functions host's node major in `apps/infra`, capped by what the runtime supports and moved by hand (`pulumi-infra`). What a person owns is `renovate.json`'s `packageRules`: every cap, disable, group and read-before-merge is one rule there with a `description` that is the reason, and **`pnpm outdated:dependencies` reads the same rules**, so a version the bot would not propose is listed as held rather than as a bump to take. Policy written anywhere else — a range trick in the catalog, a note in this skill alone — is policy the bot cannot read, which is how the unocss tilde churned a branch every run. Which rules exist and what each manager reaches is `references/renovate.md`.
 
 ## Bumping by hand
 
@@ -26,7 +26,7 @@ If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prep
 
 ### Node moves as one group — `references/updating-node.md`
 
-`engines.node`, `devEngines.runtime` and `@types/node` are one version, so Renovate's `node` group moves the three in one branch, and `pnpm update:node [version]` from the repo root is the same write by hand plus the machine's side — installing and defaulting the version with fnm and enabling corepack — which is why it is also the command to run after pulling a merged node bump. Neither pin is ever hand-edited. **Moving the node version**, and the corepack failure a Windows sandbox shows afterwards, is that page.
+`engines.node` and `devEngines.runtime` are one version, and `@types/node` follows their major, so Renovate's `node` group moves the three in one branch, and `pnpm update:node [version]` from the repo root is the same write by hand plus the machine's side — installing and defaulting the version with fnm and enabling corepack — which is why it is also the command to run after pulling a merged node bump. Neither pin is ever hand-edited. **Moving the node version**, and the corepack failure a Windows sandbox shows afterwards, is that page.
 
 ## What a bump owes beyond the version
 

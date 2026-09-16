@@ -49,7 +49,7 @@
       "matchPackageNames": ["drizzle-kit", "drizzle-orm"]
     },
     {
-      "description": "`engines.node`, `devEngines.runtime` and `@types/node` are one version by definition, so they move in one branch. Renovate's `node` versioning calls a major stable only once its LTS date has passed and an odd major never, so under the default unstable filter the pin could reach no major past its own; the repo tracks the Current line, which is what `pnpm update:node` writes too, so unstable is not ignored here. A major still opens a PR for a person.",
+      "description": "`engines.node` and `devEngines.runtime` are one version by definition, and `@types/node` follows their major with its own minors lagging node's, so the three move in one branch. Renovate's `node` versioning calls a major stable only once its LTS date has passed and an odd major never, so under the default unstable filter the pin could reach no major past its own; the repo tracks the Current line, which is what `pnpm update:node` writes too, so unstable is not ignored here. A major still opens a PR for a person.",
       "groupName": "node",
       "ignoreUnstable": false,
       "matchPackageNames": ["node", "@types/node"]
@@ -66,7 +66,7 @@
     },
     {
       "automerge": true,
-      "description": "A Docker digest bump has no version to read, so it lands on the same branch automerge the minor/patch rule above gives everything else. An action's digest is left out on purpose: its tag carries a version, so a digest that moves under the same version is a re-pointed tag — the shape a SHA pin exists to catch — and it opens a PR for a person.",
+      "description": "A Docker digest moving under its tag is the publisher's routine rebuild — a patched base image republished under the same tag, versioned or not — so it lands on the same branch automerge the minor/patch rule above gives everything else. An action's digest is left out on purpose: an action ships a fix as a new tag, so a digest that moves under the same version is a re-pointed tag — the shape a SHA pin exists to catch — and it opens a PR for a person.",
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["digest", "pinDigest"]
     }
