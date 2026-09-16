@@ -99,4 +99,4 @@ None of these is scheduled, and none blocks anything above. They are recorded so
 | Early cutoff on the app build | independent of this migration in both directions ([task runner](/docs/proposals/refactors/vite-plus/task-runner)) |
 | Retiring ESLint               | oxlint parses `.vue` templates. Governed by its own migration, and not accelerated by this one                    |
 
-The two test triggers are stated as a conjunction deliberately. Either one alone is not enough, and the second is the dangerous one: a wrapper that drops the shard flags does not fail, it quietly stops producing one coverage report, and the aggregate gate (every shard passed) has already gone green here while a shard did not.
+The two test triggers are stated as a conjunction deliberately. Either one alone is not enough, and the second is the dangerous one: a wrapper that drops the shard flags does not fail, it quietly stops producing one coverage report, and the aggregate gate — every shard passed — has already gone green here over the report that was never written.
