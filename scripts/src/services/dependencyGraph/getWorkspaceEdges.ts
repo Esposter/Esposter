@@ -11,9 +11,10 @@ const getEdgeKey = ({ from, to }: WorkspaceEdge): string => `${from}/${to}`;
 // Else's machine.
 const getSortedEdges = (workspaceEdges: Map<string, WorkspaceEdge>): WorkspaceEdge[] =>
   workspaceEdges
-    .values()
+    .entries()
     .toArray()
-    .toSorted((left, right) => (getEdgeKey(left) < getEdgeKey(right) ? -1 : 1));
+    .toSorted(([leftKey], [rightKey]) => (leftKey < rightKey ? -1 : 1))
+    .map(([, workspaceEdge]) => workspaceEdge);
 
 export const getWorkspaceEdges = (workspacePackages: WorkspacePackage[]): WorkspaceEdges => {
   const nameDirectoryMap = new Map(
@@ -31,11 +32,15 @@ export const getWorkspaceEdges = (workspacePackages: WorkspacePackage[]): Worksp
 
   for (const { directory, manifest } of workspacePackages) {
     for (const field of RUNTIME_DEPENDENCY_FIELDS)
-      for (const to of getDependencyDirectories(manifest[field]))
-        runtime.set(getEdgeKey({ from: directory, to }), { from: directory, to });
+      for (const to of getDependencyDirectories(manifest[field])) {
+        const workspaceEdge = { from: directory, to };
+        runtime.set(getEdgeKey(workspaceEdge), workspaceEdge);
+      }
 
-    for (const to of getDependencyDirectories(manifest[DependencyField.DevDependencies]))
-      development.set(getEdgeKey({ from: directory, to }), { from: directory, to });
+    for (const to of getDependencyDirectories(manifest[DependencyField.DevDependencies])) {
+      const workspaceEdge = { from: directory, to };
+      development.set(getEdgeKey(workspaceEdge), workspaceEdge);
+    }
   }
   // A sibling declared in both fields is one runtime edge that a test also happens to import, so the
   // Development copy is dropped rather than drawn twice between the same pair.
