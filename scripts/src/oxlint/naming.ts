@@ -9,9 +9,10 @@ import { definePlugin } from "@oxlint/plugins";
 // Fix was the same each time: drop the verb, since the binding is the value rather than the operation.
 //
 // It is purely syntactic — a declarator whose name equals the last identifier of the call it is initialised
-// With, through an `await`, where that name opens with one of the naming skill's own function prefixes. The
-// Prefix list is the convention's own vocabulary rather than a roster of the repo's helpers: a call named for
-// What it returns (`file.text()`, `scene.add.sprite(…)`) has no verb to drop and is left alone.
+// With, through an `await` and through an optional call, where that name opens with one of the naming skill's own
+// Function prefixes. The prefix list is the convention's own vocabulary rather than a roster of the repo's
+// Helpers: a call named for what it returns (`file.text()`, `scene.add.sprite(…)`) has no verb to drop and is
+// Left alone.
 const plugin: Plugin = definePlugin({
   meta: { name: "naming" },
   rules: { "no-call-named-binding": noCallNamedBinding },

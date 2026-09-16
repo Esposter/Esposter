@@ -6,6 +6,13 @@ describe("naming", () => {
   const FIXTURES = [
     { name: "namesBindingAfterMemberCall", source: `export const readA = b.readA();`, violations: 1 },
     { name: "namesBindingAfterAwaitedMemberCall", source: `export const readA = await b.readA();`, violations: 1 },
+    // An optional call is a `ChainExpression` around the call, so the initialiser has one more node to unwrap.
+    { name: "namesBindingAfterOptionalMemberCall", source: `export const readA = b?.readA();`, violations: 1 },
+    {
+      name: "namesBindingAfterAwaitedOptionalMemberCall",
+      source: `export const readA = await b?.readA();`,
+      violations: 1,
+    },
     { name: "namesBindingAfterBareCall", source: `export const getA = getA();`, violations: 1 },
     // A call named for what it returns has no verb to drop: `file.text()`, `scene.add.sprite(…)`, `Date.now()`.
     { name: "namesBindingAfterNounCall", source: `export const text = await file.text();`, violations: 0 },
