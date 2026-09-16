@@ -34,9 +34,9 @@ export const FORMATTER_CONFIGURATION_FILE = ".oxfmtrc.json";
 // ASCII control characters as the record and field separators of a `git log` output a script splits — the
 // Collector's answered commits, the ledger coverage's trailers — since a subject and a body are free text.
 // Written as escapes because a tool rewriting the line would silently drop the characters themselves.
-export const RECORD_SEPARATOR = "";
+export const RECORD_SEPARATOR = "\u001E";
 
-export const FIELD_SEPARATOR = "";
+export const FIELD_SEPARATOR = "\u001F";
 
 // `pnpm run` names the executable it is in `npm_execpath` — the native binary, or the `pnpm.cjs` corepack ships
 // That node runs — so a script spawns that file with its args and never a shell: the `pnpm` on a Windows PATH is
