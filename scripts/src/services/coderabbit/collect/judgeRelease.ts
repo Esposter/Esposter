@@ -23,7 +23,8 @@ import { getMarkedBlock } from "#src/services/coderabbit/feedback/getMarkedBlock
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { existsSync, mkdtempSync, readFileSync } from "node:fs";
+import { withFinalizerAsync } from "@esposter/shared";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -76,34 +77,47 @@ export const judgeRelease = async ({
   const feedback = newestReview
     ? getFeedbackReport({ issueComments, review: newestReview, threads: readUnresolvedThreads(pullRequest) })
     : "No review on this pull request ever wrote a body.";
-  const verdictPath = join(mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX)), VERDICT_FILE);
-  const prompt = getVerdictPrompt({
-    developSha,
-    feedback,
-    level,
-    riskBlock,
-    verdictComments: issueComments.filter(({ user }) => user.login === viewerLogin).map(({ body }) => body),
-    verdictPath,
-  });
-  // Read-only judgement over the head the verdict covers: no install, no checks
-  runGit(["switch", "--detach", developSha], cwd);
-  const { isDrained, limitResetAtMs } = await runDrain(prompt, cwd);
-  if (limitResetAtMs !== undefined) {
-    postDrainLimited(pullRequest, limitResetAtMs);
-    return undefined;
-  }
+  // The verdict outlives the session that wrote it only as far as the read below: the directory goes with the
+  // Judgement, or every head judged leaves one behind
+  const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
+  const outcome = await withFinalizerAsync(
+    async () => {
+      const verdictPath = join(verdictDirectory, VERDICT_FILE);
+      const prompt = getVerdictPrompt({
+        developSha,
+        feedback,
+        level,
+        riskBlock,
+        verdictComments: issueComments.filter(({ user }) => user.login === viewerLogin).map(({ body }) => body),
+        verdictPath,
+      });
+      // Read-only judgement over the head the verdict covers: no install, no checks
+      runGit(["switch", "--detach", developSha], cwd);
+      const { isDrained, limitResetAtMs } = await runDrain(prompt, cwd);
+      if (limitResetAtMs !== undefined) {
+        postDrainLimited(pullRequest, limitResetAtMs);
+        return undefined;
+      }
 
-  const { reason, verdict } = getReleaseVerdict(
-    isDrained && existsSync(verdictPath) ? readFileSync(verdictPath, "utf8") : "",
+      const { reason, verdict } = getReleaseVerdict(
+        isDrained && existsSync(verdictPath) ? readFileSync(verdictPath, "utf8") : "",
+      );
+      console.info(`release verdict at ${developSha}: ${verdict} — ${reason}`);
+      postComment(
+        pullRequest,
+        `${marker} ${verdict} — ${reason}\nThe review at ${developSha} left nothing open and the bot rates the merge risk _${level}_, above _${MERGEABLE_RISK_LEVEL}_. ${
+          verdict === ReleaseVerdict.Merge
+            ? "Nothing real is left, so the collector merges the release."
+            : "Something real is left, so the release is a person's: merge this pull request, or close it to pause. The collector keeps porting meanwhile, and the next head is judged afresh."
+        }`,
+      );
+      return verdict === ReleaseVerdict.Merge
+        ? mergeReleasePullRequest({ developSha, isDryRun, pullRequest })
+        : undefined;
+    },
+    () => {
+      rmSync(verdictDirectory, { force: true, recursive: true });
+    },
   );
-  console.info(`release verdict at ${developSha}: ${verdict} — ${reason}`);
-  postComment(
-    pullRequest,
-    `${marker} ${verdict} — ${reason}\nThe review at ${developSha} left nothing open and the bot rates the merge risk _${level}_, above _${MERGEABLE_RISK_LEVEL}_. ${
-      verdict === ReleaseVerdict.Merge
-        ? "Nothing real is left, so the collector merges the release."
-        : "Something real is left, so the release is a person's: merge this pull request, or close it to pause. The collector keeps porting meanwhile, and the next head is judged afresh."
-    }`,
-  );
-  return verdict === ReleaseVerdict.Merge ? mergeReleasePullRequest({ developSha, isDryRun, pullRequest }) : undefined;
+  return outcome;
 };

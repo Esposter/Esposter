@@ -12,8 +12,9 @@ import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { judgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
-import { writeFileSync } from "node:fs";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { existsSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
+import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { readUnresolvedThreads, runDrain, runGh } = vi.hoisted(() => ({
   readUnresolvedThreads: vi.fn<typeof baseReadUnresolvedThreads>(),
@@ -32,9 +33,6 @@ vi.mock(import("#src/services/coderabbit/feedback/readUnresolvedThreads"), () =>
 
 vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
-// The one line the session writes, at the path the prompt names
-const VERDICT_PATH_REGEX = /Write exactly one line to `(?<path>[^`]+)`/u;
-
 const getComment = (login: string, body: string): GitHubEntry => ({ body, id: 0, updated_at: "", user: { login } });
 
 describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
@@ -52,6 +50,8 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   };
   const getMergeCalls = () => runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === "merge");
   const getCommentCalls = () => runGh.mock.calls.filter(([args]) => args[0] === "pr" && args[1] === "comment");
+  // The one line the session writes, at the path the prompt names
+  const VERDICT_PATH_REGEX = /Write exactly one line to `(?<path>[^`]+)`/u;
   const answerWith = (line: string | undefined) => {
     runDrain.mockImplementation((prompt) => {
       const path = VERDICT_PATH_REGEX.exec(prompt)?.groups?.path;
@@ -144,6 +144,20 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runDrain).not.toHaveBeenCalled();
     expect(getCommentCalls()).toHaveLength(0);
     expect(getMergeCalls()).toHaveLength(mergeCallCount);
+  });
+
+  // The session holds no credential, so its verdict leaves as a file — and a directory per head judged is a
+  // Directory per head left behind
+  test("removes the directory it gave the session to write the verdict to", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerWith(`${ReleaseVerdict.Hold} the bench rewrites a tracked ledger`);
+    await judgeRelease(getInput(developSha));
+
+    const verdictPath = VERDICT_PATH_REGEX.exec(runDrain.mock.calls[0]?.[0] ?? "")?.groups?.path;
+    assert.exists(verdictPath);
+    expect(existsSync(dirname(verdictPath))).toBe(false);
   });
 
   test("runs no session on a dry run", async () => {
