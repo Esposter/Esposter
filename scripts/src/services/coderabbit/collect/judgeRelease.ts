@@ -1,0 +1,109 @@
+import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
+import type { ReleaseVerdictInput } from "#src/models/coderabbit/collect/ReleaseVerdictInput";
+
+import { ReleaseVerdict } from "#src/models/coderabbit/collect/ReleaseVerdict";
+import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
+import {
+  DRAIN_VERDICT_PREFIX,
+  MERGEABLE_RISK_LEVEL,
+  VERDICT_FILE,
+  VERDICT_MARKER,
+} from "#src/services/coderabbit/collect/constants";
+import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { getReleaseVerdict } from "#src/services/coderabbit/collect/getReleaseVerdict";
+import { getVerdictPrompt } from "#src/services/coderabbit/collect/getVerdictPrompt";
+import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeReleasePullRequest";
+import { postComment } from "#src/services/coderabbit/collect/postComment";
+import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
+import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
+import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { WALKTHROUGH_MARKERS } from "#src/services/coderabbit/feedback/constants";
+import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
+import { getMarkedBlock } from "#src/services/coderabbit/feedback/getMarkedBlock";
+import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
+import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
+import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { existsSync, mkdtempSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+// A clean review the bot rates above the least risk is judged, once per head: the level is the bot's impression
+// Across every round and does not reset when its concerns are answered, so whether anything real is left is a
+// Reading of the rationale against the tree — the one thing here only a session can do. The verdict is recorded
+// On the pull request with the verb beside the marker, and a later run re-applies it rather than judging again:
+// A `merge` whose `gh pr merge` failed merges now, a `hold` ports on. No outcome means the window ports as usual.
+export const judgeRelease = async ({
+  cwd,
+  developSha,
+  isDryRun,
+  issueComments,
+  level,
+  pullRequest,
+  reviews,
+  viewerLogin,
+}: ReleaseVerdictInput): Promise<CycleOutcome | undefined> => {
+  const marker = getMarker(VERDICT_MARKER, developSha);
+  const recorded = issueComments.findLast((comment) => checkIsMarked(comment, viewerLogin, marker));
+  if (recorded) {
+    const { reason, verdict } = getReleaseVerdict(recorded.body.slice(recorded.body.indexOf(marker) + marker.length));
+    console.info(`release verdict at ${developSha} recorded: ${verdict} — ${reason}`);
+    return verdict === ReleaseVerdict.Merge
+      ? mergeReleasePullRequest({ developSha, isDryRun, pullRequest })
+      : undefined;
+  }
+
+  // A limit the drain hit is the account's, not this head's: the window ports on and the next run judges
+  const limitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
+  if (limitResetMs !== undefined && limitResetMs > Date.now()) {
+    console.info(
+      `release verdict at ${developSha} waits — the session is limited until ${new Date(limitResetMs).toISOString()}`,
+    );
+    return undefined;
+  } else if (isDryRun) {
+    console.info(
+      `would judge the release at ${developSha} — the bot rates the merge risk ${level}, a dry run runs no session`,
+    );
+    return undefined;
+  }
+
+  const [riskMarker = ""] = WALKTHROUGH_MARKERS;
+  const riskBlock =
+    issueComments
+      .filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)
+      .map(({ body }) => getMarkedBlock(body, riskMarker))
+      .findLast(Boolean) ?? "";
+  const newestReview = reviews.findLast(({ body }) => body);
+  const feedback = newestReview
+    ? getFeedbackReport({ issueComments, review: newestReview, threads: readUnresolvedThreads(pullRequest) })
+    : "No review on this pull request ever wrote a body.";
+  const verdictPath = join(mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX)), VERDICT_FILE);
+  const prompt = getVerdictPrompt({
+    developSha,
+    feedback,
+    level,
+    riskBlock,
+    verdictComments: issueComments.filter(({ user }) => user.login === viewerLogin).map(({ body }) => body),
+    verdictPath,
+  });
+  // Read-only judgement over the head the verdict covers: no install, no checks
+  runGit(["switch", "--detach", developSha], cwd);
+  const { isDrained, limitResetAtMs } = await runDrain(prompt, cwd);
+  if (limitResetAtMs !== undefined) {
+    postDrainLimited(pullRequest, limitResetAtMs);
+    return undefined;
+  }
+
+  const { reason, verdict } = getReleaseVerdict(
+    isDrained && existsSync(verdictPath) ? readFileSync(verdictPath, "utf8") : "",
+  );
+  console.info(`release verdict at ${developSha}: ${verdict} — ${reason}`);
+  postComment(
+    pullRequest,
+    `${marker} ${verdict} — ${reason}\nThe review at ${developSha} left nothing open and the bot rates the merge risk _${level}_, above _${MERGEABLE_RISK_LEVEL}_. ${
+      verdict === ReleaseVerdict.Merge
+        ? "Nothing real is left, so the collector merges the release."
+        : "Something real is left, so the release is a person's: merge this pull request, or close it to pause. The collector keeps porting meanwhile, and the next head is judged afresh."
+    }`,
+  );
+  return verdict === ReleaseVerdict.Merge ? mergeReleasePullRequest({ developSha, isDryRun, pullRequest }) : undefined;
+};

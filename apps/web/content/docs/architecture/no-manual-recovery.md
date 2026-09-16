@@ -28,6 +28,8 @@ The attempt counter travels **with the payload itself**, not in the handler's me
 
 Cap **per unit of work, not per batch**. A sink usually lands whatever failed together, and judging the whole batch by its worst member lets one poison payload strand every transient failure beside it — so partition the batch, quarantine only what is over the cap, and retry the rest.
 
+**An input the pipeline cannot take as it is gets reshaped, never parked.** A poison payload is one that can never succeed; a payload that merely does not fit — a queue commit changing more files than a review window carries — is the handler's to repackage into pieces that do, under the same attempt cap, before anyone is told. The [review collector's reshaper](/docs/infra/review-collector/collection-cycle) is the reference: a person is told of the residue, never asked to re-commit.
+
 Manual operations scripts are still legitimate for work that is inherently a human decision — a one-off backfill, a data migration — but never as the recovery path for a failure the system can see happening. Such a script also belongs in the package whose environment it uses, not hoisted into a shared package.
 
 The reference implementation is [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter).

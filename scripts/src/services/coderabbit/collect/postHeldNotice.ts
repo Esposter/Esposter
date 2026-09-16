@@ -7,17 +7,17 @@ import { postCommitComment } from "#src/services/coderabbit/collect/postCommitCo
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { getResult, noop } from "@esposter/shared";
 
-// A held first commit is a person's, and the run that finds it goes red only once the gate reads `Proceed` —
-// Under a rate limit it exits idle so the review the limit refused is still asked for — so the fact is written
-// Where it is read whatever the gate said: once, on the commit itself, like the sync's attempt marker. Every slot
-// Until then is spent on the fixes alone, which is the small window nobody meant. Best-effort: a notice lost is
-// Re-posted by the next run that holds on the same commit.
+// A held first commit is the residual person's case — the reshaper or the resolver past its attempts — and the
+// Run that finds it goes red only once the gate reads `Proceed`: under a rate limit it exits idle so the review
+// The limit refused is still asked for. So the fact is written where it is read whatever the gate said: once, on
+// The commit itself, beside the attempt markers. Best-effort: a notice lost is re-posted by the next run that
+// Holds on the same commit.
 export const postHeldNotice = (heldSha: string, isDryRun: boolean, viewerLogin: string): void => {
   const marker = getMarker(HELD_MARKER, heldSha);
   const comments = readEntries<GitHubEntry>(`commits/${heldSha}/comments`);
   if (comments.some((comment) => checkIsMarked(comment, viewerLogin, marker))) return;
 
-  const body = `${marker}\nHeld: this is the first commit \`${QUEUE_BRANCH}\` owes \`${DEVELOP_BRANCH}\`, and no window can take it — it overflows the file cap alone or conflicts with the tree the fixes built (the collector run's log says which). Nothing behind it ports until it is split or rebased (\`.agents/skills/review-queue/SKILL.md\`).`;
+  const body = `${marker}\nHeld: this is the first commit \`${QUEUE_BRANCH}\` owes \`${DEVELOP_BRANCH}\`, and no window can take it — its reshaping under the file cap or its conflict with the tree the fixes built failed past the attempt cap (the comments above say which). Nothing behind it ports until a person splits or rebases it (\`.agents/skills/review-queue/SKILL.md\`).`;
   console.info(`held notice on ${heldSha}`);
   if (!isDryRun) getResult(() => postCommitComment(heldSha, body)).match(noop, console.error);
 };

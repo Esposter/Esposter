@@ -13,6 +13,11 @@ export const ANSWERS_TRAILER = "Answers";
 
 export const DRAINS_TRAILER = "Drains";
 
+// The claim a commit needs no review — written by the reshaper on the parts it judged so, or by a session on its
+// Own commit — which the express lane admits and the checks verify. A claim, never a proof: nothing reads it as
+// True, only as asked (docs: infra/review-collector/express-lane)
+export const EXPRESS_TRAILER = "Express";
+
 export const CHECK_NAME = "CodeRabbit";
 
 export const PENDING_BUCKET = "pending";
@@ -70,13 +75,19 @@ export const QUARANTINED_MARKER = "review-collector quarantined";
 // Past it the commit is a person's, and the port holds on it as it always did
 export const SYNC_FAILED_MARKER = "review-collector sync-failed";
 
-// The queue's first owed commit that no window can take — over the cap alone, or in a conflict past the
-// Resolver's cap — noted once on the commit itself, since under a rate limit the run exits idle rather than red
+// The queue's first owed commit that no window can take — the reshaper and the resolver both past their attempt
+// Caps — noted once on the commit itself, since under a rate limit the run exits idle rather than red
 export const HELD_MARKER = "review-collector held";
 
-// A clean review the bot rates above the least risk: the release is a person's, noted once per head on the pull
-// Request so a green run that merged nothing is not read as a stall
-export const RISK_MARKER = "review-collector merge-risk";
+// The verdict on a clean review the bot rates above the least risk, recorded once per head on the pull request:
+// The verb follows the marker on its line, so a later run re-applies it rather than judging again
+export const VERDICT_MARKER = "review-collector merge-verdict";
+
+// A commit alone over the cap whose reshaping failed, counted on the commit itself like the sync's marker
+export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
+
+// A fold of `main` whose conflict the resolver failed on, counted on `main`'s head
+export const FOLD_FAILED_MARKER = "review-collector fold-failed";
 
 // How many times the rewrite's push carries what the session pushed under it and tries its lease again: each
 // Carry is seconds, so past this the session is pushing faster than any lease can be read

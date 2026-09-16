@@ -1,53 +1,80 @@
-import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { EXPRESS_TRAILER, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { portExpress } from "#src/services/coderabbit/collect/portExpress";
+import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { describe, expect, test } from "vitest";
 
 describe(portExpress, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
-  const { commitFile, getCwd, moveFile, publish, readSha, switchTo } = setupFixtureRepository();
+  const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
   const filePath = `${TEST_FILENAME}.ts`;
-  const movedPath = `${TEST_FILENAME}/${TEST_FILENAME}/${filePath}`;
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
+  // The claim, as the reshaper or a session writes it
+  const claimExpress = (): string => {
+    runGit(
+      ["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${EXPRESS_TRAILER}: ${TEST_FILENAME}`],
+      getCwd(),
+    );
+    return readSha("HEAD");
+  };
 
-  test("takes the mechanical commits out of queue order and leaves the rest", () => {
+  test("takes the commits that claim no review out of queue order and leaves the rest", () => {
     expect.hasAssertions();
 
-    // Rename detection needs bytes to match on — an empty file is never paired
-    const mainSha = publish(MAIN_BRANCH, commitFile(filePath, " "));
+    const mainSha = publish(MAIN_BRANCH, "HEAD");
     commitFile(nestedPath, "");
-    const moveSha = moveFile(filePath, movedPath);
+    commitFile(filePath, "");
+    const expressSha = claimExpress();
     const queueSha = commitFile(nestedPath, " ");
     const express = portExpress({ cwd: getCwd(), developSha: mainSha, mainSha, queueSha });
 
-    expect(express).toStrictEqual({ shas: [moveSha], targetSha: readSha("HEAD") });
-    expect(runGit(["diff", "--name-status", "-M", `${mainSha}..HEAD`], getCwd())).toBe(
-      `R100\t${filePath}\t${movedPath}\n`,
+    expect(express).toStrictEqual({ shas: [expressSha], targetSha: readSha("HEAD") });
+    expect(runGit(["diff", "--name-only", `${mainSha}..HEAD`], getCwd())).toBe(`${filePath}\n`);
+  });
+
+  // The lane is open while a window is in flight: `main` moves under `develop`, and the fold brings it across
+  test("cuts onto main while develop carries a window main lacks", () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(MAIN_BRANCH, "HEAD");
+    const developSha = commitFile(nestedPath, "");
+    commitFile(filePath, "");
+    const queueSha = claimExpress();
+    const express = portExpress({ cwd: getCwd(), developSha, mainSha, queueSha });
+
+    expect(express).toStrictEqual({ shas: [queueSha], targetSha: readSha("HEAD") });
+    expect(runGit(["rev-list", "--parents", "--max-count=1", "HEAD"], getCwd()).trim()).toBe(
+      `${readSha("HEAD")} ${mainSha}`,
     );
   });
 
-  test("is closed while develop carries a window main lacks", () => {
+  // The copy names its original, so the original is owed to neither branch afterwards — a window never re-ports it
+  test("a cut commit is no longer owed to develop", () => {
     expect.hasAssertions();
 
-    const mainSha = publish(MAIN_BRANCH, commitFile(filePath, " "));
-    const developSha = commitFile(nestedPath, "");
-    const queueSha = moveFile(filePath, movedPath);
+    const mainSha = publish(MAIN_BRANCH, "HEAD");
+    commitFile(filePath, "");
+    const queueSha = claimExpress();
+    const { targetSha } = portExpress({ cwd: getCwd(), developSha: mainSha, mainSha, queueSha });
+    publish(MAIN_BRANCH, targetSha ?? "");
 
-    expect(portExpress({ cwd: getCwd(), developSha, mainSha, queueSha })).toStrictEqual({ shas: [] });
+    expect(readCherryShas(mainSha, queueSha, getCwd())).toStrictEqual([]);
   });
 
-  // Two moves that undo each other are each mechanical alone and nothing as a cut — a range with no diff proves
-  // Nothing, so the lane refuses it and puts the tree back
-  test("refuses a cut whose commits leave nothing behind and restores main", () => {
+  test("cuts nothing a window already carries, and nothing without the claim", () => {
     expect.hasAssertions();
 
-    const mainSha = publish(MAIN_BRANCH, commitFile(filePath, " "));
-    moveFile(filePath, movedPath);
-    const queueSha = moveFile(movedPath, filePath);
+    const mainSha = publish(MAIN_BRANCH, "HEAD");
+    commitFile(filePath, "");
+    const carriedSha = claimExpress();
     switchTo(mainSha);
+    runGit(["cherry-pick", "-x", "--quiet", carriedSha], getCwd());
+    const developSha = readSha("HEAD");
+    switchTo(carriedSha);
+    const queueSha = commitFile(nestedPath, "");
 
-    expect(portExpress({ cwd: getCwd(), developSha: mainSha, mainSha, queueSha })).toStrictEqual({ shas: [] });
-    expect(readSha("HEAD")).toBe(mainSha);
+    expect(portExpress({ cwd: getCwd(), developSha, mainSha, queueSha })).toStrictEqual({ shas: [] });
+    expect(readSha("HEAD")).toBe(queueSha);
   });
 });

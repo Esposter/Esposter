@@ -16,11 +16,11 @@ import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getMergeRisk } from "#src/services/coderabbit/collect/getMergeRisk";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
+import { judgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeReleasePullRequest";
 import { openReleasePullRequest } from "#src/services/coderabbit/collect/openReleasePullRequest";
 import { portWindow } from "#src/services/coderabbit/collect/portWindow";
 import { postHeldNotice } from "#src/services/coderabbit/collect/postHeldNotice";
-import { postRiskNotice } from "#src/services/coderabbit/collect/postRiskNotice";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readAnsweredCommits } from "#src/services/coderabbit/collect/readAnsweredCommits";
 import { readBranchShas } from "#src/services/coderabbit/collect/readBranchShas";
@@ -122,13 +122,22 @@ export const runCycle = async ({
     if (drain.outcome) return drain.outcome;
     reviewFixesSha = drain.reviewFixesSha;
     // A review that ends at the head and left nothing open is a release: the bot's own risk verdict on that head
-    // Is the last word, and any level but the least is a person's to weigh — said once on the pull request, since
-    // The run otherwise ports on and exits green over a release nobody made
+    // Is the last word when it is the least, and a reading of its rationale against the tree otherwise
     const mergeRisk = getMergeRisk(issueComments);
     if (gate.kind === GateDecisionKind.Proceed && drain.isClean && mergeRisk?.coveredSha === developSha) {
       if (mergeRisk.level === MERGEABLE_RISK_LEVEL)
         return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
-      postRiskNotice({ developSha, isDryRun, issueComments, level: mergeRisk.level, pullRequest, viewerLogin });
+      const judged = await judgeRelease({
+        cwd,
+        developSha,
+        isDryRun,
+        issueComments,
+        level: mergeRisk.level,
+        pullRequest,
+        reviews,
+        viewerLogin,
+      });
+      if (judged) return judged;
     }
   }
   // The queue is rebuilt on the tree the window is built on before the port reads it, so a conflict is met here
@@ -158,17 +167,20 @@ export const runCycle = async ({
       retriggerDelaySeconds = settlement.retriggerDelaySeconds;
       if (settlement.outcome) return settlement.outcome;
     }
-    // A held first commit is a person's act, not an under-filled queue: it overflows the cap alone, or its
-    // Conflict is one the sync could not resolve, and no event clears either. The commit is told first, then the
-    // Run fails red so someone is — once the review a limit refused has been asked for, since that answer is
-    // Still owed first and a throw here would lose the retrigger the job output carries.
+    // A held first commit is the residual person's case: the reshaper or the resolver failed on it past the
+    // Attempt cap, and no event clears that. The commit is told first, then the run fails red so someone is —
+    // Once the review a limit refused has been asked for, since that answer is still owed first and a throw here
+    // Would lose the retrigger the job output carries.
     if (port.queueShas.length === 0 && port.heldSha) {
+      // A dry run reshapes and resolves nothing, so its hold says nothing about a live run's
+      if (isDryRun)
+        return getOutcome(CycleOutcomeKind.Idle, `held at ${port.heldSha} — a dry run reshapes and resolves nothing`);
       postHeldNotice(port.heldSha, isDryRun, viewerLogin);
       if (isRateLimited) return getOutcome(CycleOutcomeKind.Idle, "held — the review the limit refused is owed first");
       throw new InvalidOperationError(
         Operation.Update,
         "coderabbit",
-        `held at ${port.heldSha} — the first owed commit overflows the cap alone or its conflict was not resolved, so split it or rebase ${QUEUE_BRANCH} (the log above says which)`,
+        `held at ${port.heldSha} — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ${QUEUE_BRANCH} (its commit comments say which)`,
       );
     } else if (parkedFixCount > 0) return getOutcome(CycleOutcomeKind.Idle, "parked — fixes wait for the queue");
     return getOutcome(CycleOutcomeKind.Idle, `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`);
@@ -182,13 +194,14 @@ export const runCycle = async ({
       `would fold ${MAIN_BRANCH} in and push the window to ${DEVELOP_BRANCH}${pullRequest === undefined ? ", then open the release pull request" : ""}`,
     );
 
-  const targetSha = foldCandidate({
+  const targetSha = await foldCandidate({
     cwd,
     developSha,
     fixCount: port.fixCount,
     frontierSha: frontier,
     queueSha: syncedQueueSha,
     queueShas: port.queueShas,
+    viewerLogin,
   });
   // The push's compare-and-swap covers the ref, not the slot: a review a person started meanwhile is read afresh
   if (pullRequest !== undefined && !checkIsSlotFree(readCheckStatus(pullRequest)))

@@ -2,7 +2,7 @@ import type { PortInput } from "#src/models/coderabbit/collect/PortInput";
 import type { PortResult } from "#src/models/coderabbit/collect/PortResult";
 
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
-import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
+import { getWindowFileCount } from "#src/services/coderabbit/collect/getWindowFileCount";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
@@ -12,7 +12,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Build the window as a branch, one cherry-pick at a time, and measure after each from the tree that will be
 // Pushed. Every count is taken from the frontier, never from the develop head: a review covers everything since
-// The one that last wrote a body, so a window pushed on top of an unreviewed one is read as a single range.
+// The one that last wrote a body, so a window pushed on top of an unreviewed one is read as a single range. A
+// Commit alone over the cap never reaches here unheld — the sync reshapes it first — so a hold is the residual
+// Case: a reshaping or a resolution past its attempt cap.
 export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixesSha }: PortInput): PortResult => {
   runGit(["switch", "--detach", developSha], cwd);
 
@@ -21,7 +23,7 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
     if (pickCommit(sha, cwd) === PickOutcome.Conflict)
       throw new InvalidOperationError(Operation.Update, "coderabbit", `fix ${sha} conflicts with develop`);
   // Fixes ride whole or the run fails: a drain that touched more files than its findings is for a person to see
-  if (fixShas.length > 0 && getFileCount(`${frontierSha}..HEAD`, cwd) > REVIEW_FILE_CAP)
+  if (fixShas.length > 0 && getWindowFileCount(frontierSha, cwd) > REVIEW_FILE_CAP)
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
@@ -39,7 +41,7 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
       break;
     } else if (outcome === PickOutcome.Empty) continue;
 
-    if (getFileCount(`${frontierSha}..HEAD`, cwd) > REVIEW_FILE_CAP) {
+    if (getWindowFileCount(frontierSha, cwd) > REVIEW_FILE_CAP) {
       runGit(["reset", "--hard", "HEAD~1"], cwd);
       heldSha = sha;
       break;
@@ -47,5 +49,5 @@ export const portWindow = ({ cwd, developSha, frontierSha, queueSha, reviewFixes
     queueShas.push(sha);
   }
 
-  return { fileCount: getFileCount(`${frontierSha}..HEAD`, cwd), fixCount: fixShas.length, heldSha, queueShas };
+  return { fileCount: getWindowFileCount(frontierSha, cwd), fixCount: fixShas.length, heldSha, queueShas };
 };

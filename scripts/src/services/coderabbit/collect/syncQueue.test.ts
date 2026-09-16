@@ -4,14 +4,18 @@ import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
 import {
   DEVELOP_BRANCH,
   DRAIN_ATTEMPT_CAP,
+  EXPRESS_TRAILER,
   QUEUE_BRANCH,
+  RESHAPE_FAILED_MARKER,
   REVIEW_FIXES_BRANCH,
   SYNC_FAILED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { readTrailerValues } from "#src/services/coderabbit/collect/readTrailerValues";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
+import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -31,7 +35,8 @@ vi.mock(import("#src/services/coderabbit/collect/runDrain"), () => ({
 vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
-  const { commitFile, getCwd, installPreReceiveHook, publish, readSha, switchTo } = setupFixtureRepository();
+  const { commitFile, commitFiles, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
+    setupFixtureRepository();
   const viewerLogin = "viewerLogin";
   const baseInput = { isDryRun: false, viewerLogin };
   // The attempts are read off the conflicting commit's own comments, one `gh` page of none unless a test says otherwise
@@ -250,5 +255,98 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runGh.mock.calls[0]?.[0]).toContain(`repos/{owner}/{repo}/commits/${queueSha}/comments?per_page=100`);
     expect(runDrain).not.toHaveBeenCalled();
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
+  });
+
+  // A commit alone over the cap can never ride a window, so the sync hands it to the reshaper before the port
+  // Reads it: the parts that need no review claim the express lane, the rest fit the cap, and the tree is the same
+  const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
+  const setupOversized = (): { developSha: string; oversizedSha: string; queueSha: string } => {
+    const developSha = publish(DEVELOP_BRANCH, "HEAD");
+    const oversizedSha = commitFiles(overflowPaths, "");
+    const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, ""));
+    return { developSha, oversizedSha, queueSha };
+  };
+  // What the reshaper does by hand: one trailered part carrying the first files, one reviewable part with the rest
+  const reshape = (oversizedSha: string, splitAt: number): void => {
+    if (splitAt > 0) {
+      runGit(["checkout", oversizedSha, "--", ...overflowPaths.slice(0, splitAt)], getCwd());
+      runGit(
+        ["commit", "--quiet", "--message", "moves", "--trailer", `${EXPRESS_TRAILER}: ${TEST_FILENAME}`],
+        getCwd(),
+      );
+    }
+    runGit(["checkout", oversizedSha, "--", ...overflowPaths.slice(splitAt)], getCwd());
+    runGit(["commit", "--quiet", "--message", "rule"], getCwd());
+  };
+
+  test("reshapes the first commit alone over the cap and replays what followed it", async () => {
+    expect.hasAssertions();
+
+    const { developSha, oversizedSha, queueSha } = setupOversized();
+    runDrain.mockImplementation(() => {
+      reshape(oversizedSha, REVIEW_FILE_CAP);
+      return Promise.resolve({ isDrained: true });
+    });
+    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+
+    assert.exists(syncedSha);
+    expect(runDrain).toHaveBeenCalledTimes(1);
+    expect(runDrain.mock.calls[0]?.[0]).toContain(
+      `parent of ${oversizedSha}, a commit on \`ai/queue\` that changes ${REVIEW_FILE_CAP + 1} files`,
+    );
+    expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, "rule", "moves"]);
+    expect(readTrailerValues(`${syncedSha}~2`, EXPRESS_TRAILER, getCwd())).toStrictEqual([TEST_FILENAME]);
+    expect(runGit(["diff", queueSha, syncedSha], getCwd())).toBe("");
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+  });
+
+  test("fails the run and counts the attempt when the reshaping leaves a reviewable part over the cap", async () => {
+    expect.hasAssertions();
+
+    const { developSha, oversizedSha, queueSha } = setupOversized();
+    runDrain.mockImplementation(() => {
+      reshape(oversizedSha, 0);
+      return Promise.resolve({ isDrained: true });
+    });
+
+    await expect(
+      syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the reshaper left 790c344961556abb76524da297401750f776af92 over the cap without an Express trailer (attempt 1 of 3 on e1b1241d5399c7d8234f33a42c525fc449150d8c)]`,
+    );
+    expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${oversizedSha}/comments`);
+    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha));
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
+    expect(readSha("HEAD")).toBe(queueSha);
+  });
+
+  test("leaves a commit past the reshape attempt cap to the port and a person", async () => {
+    expect.hasAssertions();
+
+    const { developSha, oversizedSha, queueSha } = setupOversized();
+    runGh.mockReturnValue(
+      JSON.stringify([
+        Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
+          body: getMarker(RESHAPE_FAILED_MARKER, oversizedSha),
+          id,
+          updated_at: "",
+          user: { login: viewerLogin },
+        })),
+      ]),
+    );
+
+    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
+    expect(runDrain).not.toHaveBeenCalled();
+  });
+
+  test("reports the reshaping it would do on a dry run", async () => {
+    expect.hasAssertions();
+
+    const { developSha, queueSha } = setupOversized();
+
+    await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, isDryRun: true, queueSha })).resolves.toBe(
+      queueSha,
+    );
+    expect(runDrain).not.toHaveBeenCalled();
   });
 });

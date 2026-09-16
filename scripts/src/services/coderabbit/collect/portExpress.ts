@@ -2,32 +2,26 @@ import type { ExpressInput } from "#src/models/coderabbit/collect/ExpressInput";
 import type { ExpressResult } from "#src/models/coderabbit/collect/ExpressResult";
 
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
+import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
-import { checkIsMechanicalCommit } from "#src/services/coderabbit/exclusions/checkIsMechanicalCommit";
-import { checkIsMechanicalRange } from "#src/services/coderabbit/exclusions/checkIsMechanicalRange";
+import { readTrailerValues } from "#src/services/coderabbit/collect/readTrailerValues";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 
-// The express lane: a commit that is all files and no findings — a sweep's moves and the imports that follow them —
-// Goes straight to `main`, out of queue order, and the return stroke carries it to `develop`. A commit whose patch
-// Needs an unported one cannot apply, which is how dependency is enforced — never an ancestry check. The lane is closed
-// Unless `develop` and `main` agree: a rename landing on one side of the merge an unreviewed window still owes is how a
-// File arrives twice.
+// The express lane: a commit that claims it needs no review — the trailer the reshaper writes on the parts it
+// Judged so, or a session on its own commit — goes straight to `main`, out of queue order, once the checks pass;
+// The fold carries `main` into the next window and the sync drops the original from the queue by the copy that
+// Names it. Owed to both `main` and `develop`: a copy a window already carries is not cut again. A commit whose
+// Patch needs an unported one cannot apply, which is how dependency is enforced — never an ancestry check.
 export const portExpress = ({ cwd, developSha, mainSha, queueSha }: ExpressInput): ExpressResult => {
-  if (developSha !== mainSha) return { shas: [] };
-
-  const mechanicalShas = readCherryShas(developSha, queueSha, cwd).filter((sha) => checkIsMechanicalCommit(sha, cwd));
-  if (mechanicalShas.length === 0) return { shas: [] };
-
-  runGit(["switch", "--detach", mainSha], cwd);
-  const shas = mechanicalShas.filter((sha) => pickCommit(sha, cwd) === PickOutcome.Applied);
-  if (shas.length === 0) return { shas };
-  // Asked again of the cut: what ships is each patch replayed onto `main` and stacked with siblings taken out of
-  // Order, which is not the diff the per-commit proof saw. A cut that fails takes the review lane instead.
-  if (checkIsMechanicalRange([mainSha, "HEAD"], cwd)) return { shas, targetSha: readHeadSha(cwd) };
+  const owedToDevelop = new Set(readCherryShas(developSha, queueSha, cwd));
+  const expressShas = readCherryShas(mainSha, queueSha, cwd).filter(
+    (sha) => owedToDevelop.has(sha) && readTrailerValues(sha, EXPRESS_TRAILER, cwd).length > 0,
+  );
+  if (expressShas.length === 0) return { shas: [] };
 
   runGit(["switch", "--detach", mainSha], cwd);
-  console.info("express: the cut is not mechanical as it lands — it takes the review lane instead");
-  return { shas: [] };
+  const shas = expressShas.filter((sha) => pickCommit(sha, cwd) === PickOutcome.Applied);
+  return shas.length === 0 ? { shas } : { shas, targetSha: readHeadSha(cwd) };
 };

@@ -5,7 +5,6 @@ import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   DRAIN_ATTEMPT_CAP,
   DRAIN_FAILED_MARKER,
-  DRAIN_LIMITED_MARKER,
   DRAIN_VERDICT_PREFIX,
   INSTALL_COMMAND,
   QUARANTINED_MARKER,
@@ -16,6 +15,7 @@ import {
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
+import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
@@ -72,12 +72,7 @@ export const drainFindings = async ({
   const promptInput = { ...drainInput, rejectionsPath, verdictPath };
   const { isDrained, limitResetAtMs } = await runDrain(getDrainPrompt(promptInput), REPOSITORY_ROOT);
   if (limitResetAtMs !== undefined) {
-    const resetAt = new Date(limitResetAtMs).toISOString();
-    postComment(
-      pullRequest,
-      `<!-- ${DRAIN_LIMITED_MARKER} until ${resetAt} -->\nThe drain could not start — the account is out of session until ${resetAt}. No attempt is counted, and the next event after that drains the same open set.`,
-    );
-    console.info(`the drain is limited until ${resetAt} — nothing drained, nothing counted`);
+    postDrainLimited(pullRequest, limitResetAtMs);
     return { isLimited: true, reviewFixesSha };
   }
   // A zero exit says the session ended, never that it finished: a drain that stopped mid-fix leaves the rest in
