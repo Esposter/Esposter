@@ -99,7 +99,7 @@ flowchart TD
   CL -->|anything but a complete sequence over a clean tree| F[Fail red, attempt counted on the commit]
   CL -->|complete| RS
   R -->|completes| RS
-  A -->|yes| RS{An owed commit alone<br/>over the cap}
+  A -->|yes| RS{An owed commit claiming no review<br/>alone over the cap}
   RS -->|none| P[Push ai/queue under a lease if rewritten<br/>the port reads the head]
   RS -->|the first, under its attempt cap| SH[Claude repackages it at its parent:<br/>Express-trailered parts, the rest under the cap]
   SH -->|same tree, every untrailered part fits| RP[Replay what followed it] --> P
@@ -166,17 +166,17 @@ With no pull request open, the push is followed by opening one — the same read
 
 ## Why a re-run is a no-op
 
-| Step  | Precondition read from the remote                                             | Effect                       | Second run against unchanged state                                                 |
-| :---- | :---------------------------------------------------------------------------- | :--------------------------- | :--------------------------------------------------------------------------------- |
-| reply | a trailer's thread lacks a reply citing that sha                              | posts the reply              | every thread has one — nothing                                                     |
-| gate  | the newest stated range's end, check bucket                                   | a scheduled retrigger        | same verdict, same deadline — the ask is posted once per block                     |
-| drain | a finding is open by the predicate                                            | commits on `ai/review-fixes` | every finding carries a trailer or a reply — nothing                               |
-| judge | clean at the head, a level above the least, no verdict marker                 | records a verdict            | the marker is re-applied — no session                                              |
-| sync  | the queue does not sit on the target, or an owed commit is alone over the cap | rewrites `ai/queue`          | it sits on it and every commit fits — nothing                                      |
-| merge | the range at the head, nothing open, least risk or a merge verdict            | merges the pull request      | none is open — the next window fills from the merge base                           |
-| port  | `git cherry` lists unported commits, readiness                                | a local branch               | same branch, discarded with the runner                                             |
-| push  | `origin/develop` unchanged since the read                                     | fast-forwards `develop`      | the last push moved the head, so the body no longer ends at it — exits at the gate |
-| open  | no release pull request, `develop` at the target                              | opens the pull request       | one is open — the ordinary cycle, with its reviews as the frontier                 |
+| Step  | Precondition read from the remote                                                             | Effect                       | Second run against unchanged state                                                 |
+| :---- | :-------------------------------------------------------------------------------------------- | :--------------------------- | :--------------------------------------------------------------------------------- |
+| reply | a trailer's thread lacks a reply citing that sha                                              | posts the reply              | every thread has one — nothing                                                     |
+| gate  | the newest stated range's end, check bucket                                                   | a scheduled retrigger        | same verdict, same deadline — the ask is posted once per block                     |
+| drain | a finding is open by the predicate                                                            | commits on `ai/review-fixes` | every finding carries a trailer or a reply — nothing                               |
+| judge | clean at the head, a level above the least, no verdict marker                                 | records a verdict            | the marker is re-applied — no session                                              |
+| sync  | the queue does not sit on the target, or an owed commit claiming review is alone over the cap | rewrites `ai/queue`          | it sits on it and every commit fits — nothing                                      |
+| merge | the range at the head, nothing open, least risk or a merge verdict                            | merges the pull request      | none is open — the next window fills from the merge base                           |
+| port  | `git cherry` lists unported commits, readiness                                                | a local branch               | same branch, discarded with the runner                                             |
+| push  | `origin/develop` unchanged since the read                                                     | fast-forwards `develop`      | the last push moved the head, so the body no longer ends at it — exits at the gate |
+| open  | no release pull request, `develop` at the target                                              | opens the pull request       | one is open — the ordinary cycle, with its reviews as the frontier                 |
 
 ## Notes
 
