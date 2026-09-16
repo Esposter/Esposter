@@ -7,6 +7,7 @@ import type { ControlCharacter } from "#src/models/sweeps/controlCharacters/Cont
 //
 // Matched rather than walked byte by byte: on a tree whose answer is almost always none, the pass that finds
 // Nothing is the one worth making fast, and a hand-rolled loop over every byte loses badly to one native scan.
+// oxlint-disable-next-line no-control-regex -- matching them is the whole scan
 const CONTROL_CHARACTER_REGEX = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/gu;
 
 export const getControlCharacters = (text: string): ControlCharacter[] =>

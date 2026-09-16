@@ -34,7 +34,9 @@ strictly less than CI does and reports success while CI fails: the app's real pr
 the root pass carries, and when a targeted `oxlint` is still worth running, is the `oxlint` skill's.
 
 A backgrounded run of either reports the _wrapper's_ exit code, which is `0` even when the run inside it
-failed. Read the output for `exited 1` or a `problem`/`error` line rather than trusting the status.
+failed. Read the output for `exited 1` or a `problem`/`error` line rather than trusting the status — and an
+output file that comes back empty is a run that has not flushed yet, never a clean one. Both readings fail the
+same way: a red lint reported as green, pushed.
 
 > `oxfmt` formats markdown too — a table whose cells changed width is realigned by `pnpm format` (or `pnpm exec oxfmt <paths>`
 > for a few files). No prettier binary is installed, so `pnpm exec prettier` fails — and `npx prettier` is not the
