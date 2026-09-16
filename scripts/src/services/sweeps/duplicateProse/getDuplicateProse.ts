@@ -10,26 +10,44 @@ const SKILL_OWNER_REGEX = /^\.agents\/skills\/(?<skill>[^/]+)\//u;
 // Opens on — so a skill is one owner, and every other page is its own
 const getOwner = (path: string): string => SKILL_OWNER_REGEX.exec(path)?.groups?.skill ?? path;
 
-// Every run of words two pages of different owners share, longest first. A run is found through its shingles —
-// Every window of `SHINGLE_SIZE` words, keyed by its text — and a shingle on three or more pages is a template
-// (an area index's standing intro, a Key Files heading) rather than a copy, so only a shingle exactly two pages
-// Hold counts. Adjacent shingles of one pair merge into the run they came from, positioned by the first page —
-// Adjacent on both, since a shingle the second page repeats is kept at its first position there, which can sit
-// Anywhere while its neighbour on the first page follows on.
-export const getDuplicateProse = (pages: CitingPage[]): DuplicateProseFinding[] => {
+// The pages each window of `size` words appears on, with the position it first appears at on each
+const getShinglePages = (pageWords: Map<string, string[]>, size: number): Map<string, Map<string, number>> => {
   const shinglePages = new Map<string, Map<string, number>>();
-  const pageWords = new Map(pages.map(({ path, text }) => [path, getProseWords(text)]));
   for (const [path, words] of pageWords)
-    for (let index = 0; index + SHINGLE_SIZE <= words.length; index++) {
-      const shingle = words.slice(index, index + SHINGLE_SIZE).join(" ");
+    for (let index = 0; index + size <= words.length; index++) {
+      const shingle = words.slice(index, index + size).join(" ");
       const positions = shinglePages.get(shingle) ?? new Map<string, number>();
       if (!positions.has(path)) positions.set(path, index);
       shinglePages.set(shingle, positions);
     }
+  return shinglePages;
+};
+
+// Every run of words two pages of different owners share, longest first. A run is found through its shingles —
+// Every window of `SHINGLE_SIZE` words, keyed by its text — and a shingle on three or more pages is a template
+// (an area index's standing intro, a Key Files heading) rather than a copy, so only a shingle exactly two pages
+// Hold counts — and not one that is a template plus a word, since a standing intro followed by each page's own
+// First word is shared by whichever two pages happen to start the same way. Adjacent shingles of one pair merge
+// Into the run they came from, positioned by the first page — adjacent on both, since a shingle the second page
+// Repeats is kept at its first position there, which can sit anywhere while its neighbour on the first page
+// Follows on.
+export const getDuplicateProse = (pages: CitingPage[]): DuplicateProseFinding[] => {
+  const pageWords = new Map(pages.map(({ path, text }) => [path, getProseWords(text)]));
+  const shinglePages = getShinglePages(pageWords, SHINGLE_SIZE);
+  const templateShingles = new Set(
+    getShinglePages(pageWords, SHINGLE_SIZE - 1)
+      .entries()
+      .filter(([, positions]) => positions.size > 2)
+      .map(([shingle]) => shingle),
+  );
+  const checkIsTemplateEdge = (shingle: string): boolean => {
+    const words = shingle.split(" ");
+    return templateShingles.has(words.slice(1).join(" ")) || templateShingles.has(words.slice(0, -1).join(" "));
+  };
 
   const pairRuns = new Map<string, { ends: [number, number]; paths: [string, string]; start: number }[]>();
-  for (const positions of shinglePages.values()) {
-    if (positions.size !== 2) continue;
+  for (const [shingle, positions] of shinglePages) {
+    if (positions.size !== 2 || checkIsTemplateEdge(shingle)) continue;
 
     const entries = [...positions];
     const [firstPath, firstIndex] = takeOne(entries, 0);

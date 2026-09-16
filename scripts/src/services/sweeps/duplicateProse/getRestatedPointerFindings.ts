@@ -5,7 +5,7 @@ import { getBacktickedTokens } from "#src/services/citations/getBacktickedTokens
 import { checkIsPathRun } from "#src/services/sweeps/duplicateProse/checkIsPathRun";
 import { getDuplicateProse } from "#src/services/sweeps/duplicateProse/getDuplicateProse";
 import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords";
-import { getRepositoryPathTexts } from "#src/services/sweeps/duplicateProse/getRepositoryPathTexts";
+import { readRepositoryPathShingles } from "#src/services/sweeps/duplicateProse/readRepositoryPathShingles";
 import { CATALOGUE_HEADING, SETTLED_HEADING } from "#src/services/sweeps/skillDocs/constants";
 import { AGENT_DIRECTORY } from "@esposter/configuration";
 
@@ -39,9 +39,9 @@ const checkIsPointedAt = (line: string, path: string): boolean =>
 // `references/settled-lists.md`).
 export const getRestatedPointerFindings = (pages: CitingPage[]): RestatedPointerFinding[] => {
   const pathPointerLinesMap = new Map(pages.map(({ path, text }) => [path, getPointerLines(text)]));
-  const pathTexts = getRepositoryPathTexts();
+  const pathShingles = readRepositoryPathShingles();
   return getDuplicateProse(pages).flatMap(({ paths: [firstPath, secondPath], words }) => {
-    if (checkIsPathRun(words, pathTexts)) return [];
+    if (checkIsPathRun(words, pathShingles)) return [];
 
     const runText = words.join(" ");
     return [
