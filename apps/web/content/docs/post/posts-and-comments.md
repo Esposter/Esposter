@@ -64,7 +64,7 @@ flowchart TD
 
 ## Key files
 
-Paths relative to `apps/web`.
+Paths relative to `apps/web`; `packages/` ones to the repo root.
 
 | File                                                   | Role                                   |
 | ------------------------------------------------------ | -------------------------------------- |
