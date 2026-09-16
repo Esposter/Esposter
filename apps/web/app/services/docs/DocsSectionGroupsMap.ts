@@ -10,6 +10,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "dataset",
       "publishing",
       "serialization",
+      "compression",
       "client-data",
       "async-operations",
       "caching",

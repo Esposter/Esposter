@@ -18,6 +18,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Environment](/docs/architecture/environment)                                             | Environment detection across the three Nuxt runtime contexts                                       |
 | [File uploads](/docs/architecture/file-uploads)                                           | The two-step Azure Blob SAS upload pattern and upload procedure inventory                          |
 | [Serialization](/docs/architecture/serialization)                                         | How class instances survive the three transport paths (Azure Table, Nuxt payload, tRPC)            |
+| [Compression](/docs/architecture/compression)                                             | zstd for every format we own — a foreign format keeps its counterparty's codec                     |
 | [Client data access](/docs/architecture/client-data)                                      | The useQuery + useMutation primitives — non-blocking fetch, optimistic apply, staleness            |
 | [Async operations](/docs/architecture/async-operations)                                   | Concurrency by declaration — reads are latest-wins, writes queue, nothing drops silently           |
 | [Caching](/docs/architecture/caching)                                                     | One cached-read primitive, invalidated by tag when a write says what it changed                    |
