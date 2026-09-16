@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-08-17 · Nuxt `compatibilityDate`: `2026-08-17` · Overall: **94 / 100**
+> Last reviewed: 2026-09-16 · Nuxt `compatibilityDate`: `2026-09-16` · Overall: **95 / 100**
 
 | Area                 | Score   | Notes                                                                        |
 | -------------------- | ------- | ---------------------------------------------------------------------------- |
@@ -12,7 +12,7 @@
 | Dependencies         | 9 / 10  | Pre-release production dependencies left (Drizzle RC, Vuetify module RC)     |
 | Styling              | 9 / 10  | Attributify enforced; Vuetify token bridge; no visual regression tests       |
 | CI / CD              | 10 / 10 | Cached reusable build; SHA-pinned actions; least-privilege; Pulumi preview   |
-| Bundle & Performance | 8 / 10  | Vite auto-splits; ~65 MB known footprint; no automated budget                |
+| Bundle & Performance | 9 / 10  | Vite auto-splits; per-package size snapshots; app bundle ungated             |
 
 A TypeScript-strict monorepo with strong architectural discipline and comprehensive linting, deliberately delegating heavy lifting to well-maintained libraries (Vite, nuxt-security, Drizzle) over custom solutions. Primary remaining drag is the set of pre-release production dependencies, now down to the ORM and the Vuetify module.
 
@@ -50,7 +50,7 @@ Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with D
 
 ## Dependencies — 9 / 10
 
-Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift; every version lives in the catalog, so the lockfile is the only place a number is worth reading. Nuxt, Vue, Vuetify, Phaser, TypeScript, `rolldown` and `unplugin-dts` are all on stable lines. `h3` is held at v1 via a pnpm override, below its v2 line.
+Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents drift; every version lives in the catalog, so the lockfile is the only place a number is worth reading. Nuxt, Vue, Vuetify, Phaser, TypeScript, `rolldown` and `unplugin-dts` are all on stable lines. `h3` is held at v1 via a pnpm override, below its v2 line, and `typescript` is overridden to the tsgo-backed native bridge that `typecheck` runs.
 
 The Survey packages are on stable `3.x`, leaving these **pre-release packages in production paths**:
 
@@ -73,8 +73,8 @@ CI builds every non-app package once via the reusable `build-packages` workflow,
 
 Security hardening throughout: every third-party action is SHA-pinned, `persist-credentials: false` on all checkouts, and explicit least-privilege `permissions:`.
 
-## Bundle & Performance — 8 / 10
+## Bundle & Performance — 9 / 10
 
-`assetsInlineLimit: 0` prevents Phaser data URI breakage. Server-only transpilation for `@vue-pdf-viewer` and `pdfjs-dist`. `nuxt analyze` available. Code splitting is handled automatically by Vite.
+`assetsInlineLimit: 0` prevents Phaser data URI breakage. Server-only transpilation for `@vue-pdf-viewer` and `pdfjs-dist`. `nuxt analyze` available. Code splitting is handled automatically by Vite. Every workspace package pins its built bundle and its type output to an inline size snapshot through `getFileSizeReport`, so a dependency bump or a barrel change that moves bytes fails that package's own suite instead of landing unread.
 
-**Accepted trade-off:** large dependency footprint (Phaser, GrapesJS, Survey, Three.js, FullCalendar, pdf-viewer) totalling ~65 MB, reasonable for the feature surface. Nuxt build output surfaces size on every build, so regressions stay observable without an enforced budget.
+**Accepted trade-off:** the app bundle has no equivalent gate. Its dependency footprint (Phaser, GrapesJS, Survey, Three.js, FullCalendar, pdf-viewer) totals ~65 MB, reasonable for the feature surface, and Nuxt surfaces the size on every build — but nothing fails on a regression.
