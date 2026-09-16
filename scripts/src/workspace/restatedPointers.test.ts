@@ -1,6 +1,6 @@
-import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readCitingPages } from "#src/services/citations/readCitingPages";
 import { getRestatedPointerFindings } from "#src/services/sweeps/duplicateProse/getRestatedPointerFindings";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { describe, expect, test } from "vitest";
 
 /**

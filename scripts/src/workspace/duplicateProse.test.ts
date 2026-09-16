@@ -1,5 +1,5 @@
-import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readDuplicateProseFindings } from "#src/services/sweeps/duplicateProse/readDuplicateProseFindings";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { describe, expect, test } from "vitest";
 
 /**

@@ -1,5 +1,5 @@
-import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readControlCharacterFindings } from "#src/services/sweeps/controlCharacters/readControlCharacterFindings";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { describe, expect, test } from "vitest";
 
 /**
