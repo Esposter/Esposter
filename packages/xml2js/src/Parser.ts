@@ -8,7 +8,7 @@ import { defineProperty } from "#src/defineProperty";
 import { processItem } from "#src/processItem";
 import { stripBOM } from "#src/stripBOM";
 import { takeOne } from "@esposter/shared";
-import { parser } from "sax";
+import sax from "sax";
 
 const BLANK_REGEX = /^\s*$/u;
 const WHITESPACE_RUN_REGEX = /\s{2,}/gu;
@@ -31,7 +31,7 @@ export class Parser {
       this.#options.tagNameProcessors.unshift((tagName) => tagName.toLowerCase());
     }
 
-    this.#saxParser = parser(this.#options.strict, { normalize: false, trim: false, xmlns: this.#options.xmlns });
+    this.#saxParser = sax.parser(this.#options.strict, { normalize: false, trim: false, xmlns: this.#options.xmlns });
     this.#saxParser.onerror = () => {
       this.#saxParser.resume();
     };
