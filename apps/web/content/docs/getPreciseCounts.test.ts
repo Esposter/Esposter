@@ -39,8 +39,11 @@ describe("getPreciseCounts", () => {
     "eleven",
     "twelve",
   ];
+  // The adjectives between the number and its noun are what the page reached for the last time it drifted — it
+  // Claimed "three pre-release packages" over a table naming two — so a count is read through them rather than
+  // Only where the two sit adjacent.
   const PRECISE_COUNT_REGEX = new RegExp(
-    String.raw`(?<count>\b(?:\d+|${NUMBER_WORDS.join("|")}) (?:${COUNTABLE_NOUNS.join("|")})\b)`,
+    String.raw`(?<count>\b(?:\d+|${NUMBER_WORDS.join("|")})(?: [a-z][\w-]*){0,2} (?:${COUNTABLE_NOUNS.join("|")})\b)`,
     "giu",
   );
   // Every `<path>:<line> → <text>` where the page measures instead of stating a magnitude.
@@ -65,6 +68,7 @@ describe("getPreciseCounts", () => {
     ["a digit count", "The repo has 17 packages.", "17 packages"],
     ["a word count", "Ten workflows run on every push.", "Ten workflows"],
     ["a count mid-sentence", "Split across three routers today.", "three routers"],
+    ["a count reached through its adjectives", "Three pre-release packages left.", "Three pre-release packages"],
   ])("flags %s", (_label, markdown, count) => {
     expect.hasAssertions();
 
