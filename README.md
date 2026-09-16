@@ -307,9 +307,9 @@ Locally preview production build:
 pnpm preview
 ```
 
-### Architecture
+## <a name="architecture">🧱 Architecture</a>
 
-Esposter is a pnpm workspaces monorepo. See [monorepo tooling](./apps/web/content/docs/architecture/monorepo-tooling.md) for workspace script orchestration and publishing boundaries.
+Esposter is a pnpm workspaces monorepo. See [monorepo tooling](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/architecture/monorepo-tooling.md) for workspace script orchestration and publishing boundaries.
 Packages are used directly by the nuxt application via `workspace:*`.
 
 ### Workspace Graph
@@ -324,30 +324,30 @@ Regenerate it from the repo root with:
 pnpm graph:gen
 ```
 
-### Review Engine
+### Review Collector
 
 Three branches, each written by exactly one actor, turn a stream of AI-authored commits into reviewed releases
 without anyone waiting on anyone. Sessions push to `ai/queue` as fast as they commit. The review collector — a
 GitHub Actions workflow fired by every `ai/queue` push and every CodeRabbit review — drains the open findings,
-ports the largest green window under CodeRabbit's file cap onto `develop`, and replies on each thread with the
-pushed sha. `develop` merges to `main` once a window comes back clean, and the push to `main` runs the same
+ports the largest window under CodeRabbit's file cap onto `develop`, and replies on each thread with the pushed
+sha. A review that comes back clean merges `develop` to `main` itself, and the push to `main` runs the same
 collector, which fast-forwards `develop` back onto it. A window is budgeted in **files** and spent on
-**findings**, so the collector proves which commits have nothing in them to comment on — every file a 100%
-rename or an import specifier following one — and sends those straight to `main` rather than letting a folder
-sweep occupy a window it will return nothing from. The design and its fine print live in
+**findings**, so a commit that claims nothing in it needs a reviewer carries that claim as a trailer, and the
+collector cuts it straight to `main` once the checks pass on it — rather than letting a folder sweep occupy a
+window it will return nothing from. The design and its fine print live in
 [the review collector docs](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/infra/review-collector).
 
 ```mermaid
 flowchart LR
   S[AI sessions<br/>commit continuously] -->|git push| Q[(ai/queue)]
   Q -->|push event| C{{Review collector<br/>gates, drains, ports}}
-  C -->|largest green window<br/>under the cap| D[(develop)]
-  C -->|express: provably<br/>nothing to review| M
+  C -->|largest window<br/>under the cap| D[(develop)]
+  C -->|express: claims no review,<br/>checks agree| M
   D -->|pull request synchronized| R[CodeRabbit review<br/>one slot per hour]
   R -->|review submitted| C
   C -->|fixes parked| F[(ai/review-fixes)]
   F -->|lead the next window| D
-  D -->|zero findings| M[(main)]
+  D -->|review clean at the head| M[(main)]
   M -->|push event| C
   C -->|fast-forward after the merge<br/>fold a bump into the next window| D
 ```

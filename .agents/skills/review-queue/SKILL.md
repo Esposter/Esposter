@@ -5,7 +5,7 @@ description: Apply when about to git commit or git push, when deciding what bran
 
 # Review Queue
 
-The session works on **one permanent branch, `ai/queue`**, and pushes it after every commit. The review collector — `pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow on every queue push and every CodeRabbit event — drains open findings onto `ai/review-fixes`, **rewrites `ai/queue` onto the next window's base** (a conflict resolved by its own Claude session), cuts the largest window under the cap from the queue, fast-forwards `develop` by it, opens the `develop` → `main` pull request over whatever it then carries unreviewed, replies on every thread with the pushed sha, and merges the pull request once a review at the head leaves nothing open with the least merge risk. The mechanism is `apps/web/content/docs/infra/review-collector/`; this skill is what the session does.
+The session works on **one permanent branch, `ai/queue`**, and pushes it after every commit. The review collector — `pnpm ai:coderabbit:collect`, run by the `ReviewCollector` workflow on every queue push and every CodeRabbit event — drains open findings onto `ai/review-fixes`, **rewrites `ai/queue` onto the next window's base** (a conflict resolved by its own Claude session), cuts the largest window under the cap from the queue, fast-forwards `develop` by it, opens the `develop` → `main` pull request over whatever it then carries unreviewed, replies on every thread with the pushed sha, and merges the pull request once a review at the head leaves nothing open (Settled, last bullet). The mechanism is `apps/web/content/docs/infra/review-collector/`; this skill is what the session does.
 
 ## Settled — do not re-propose
 
