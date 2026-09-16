@@ -30,11 +30,24 @@ const toCamelCase = (name: string) =>
   name.replaceAll(/-(?<letter>[a-z])/gu, (_match, letter: string) => letter.toUpperCase());
 
 // An attributify attribute that matches no rule is silent: nothing is generated, nothing warns, and the page
-// Renders without the style it was meant to carry. The generator itself answers whether a token is a utility.
-// Only a native element is asked, because on a component an attribute is as likely to be a prop as a utility,
-// And only a valueless one, because a valued attribute on a native element is HTML's own
+// Renders without the style it was meant to carry. The generator itself answers whether a token is a utility —
+// The token has to be looked for in `matched` rather than counted there, because `uno.config.ts` safelists a
+// Set of utilities the generator returns for every input. Only a native element is asked, because on a
+// Component an attribute is as likely to be a prop as a utility, and only a valueless one, because a valued
+// Attribute on a native element is HTML's own
 describe("attributify", () => {
-  const VUE_ELEMENTS = new Set(["component", "keep-alive", "slot", "suspense", "teleport", "template", "transition"]);
+  // Built-in elements that are spelt like a native tag but resolve to a component, so an attribute on one is
+  // That component's prop — vue's own, plus TresJS's `primitive`, whose `dispose` is a prop
+  const NON_NATIVE_ELEMENTS = new Set([
+    "component",
+    "keep-alive",
+    "primitive",
+    "slot",
+    "suspense",
+    "teleport",
+    "template",
+    "transition",
+  ]);
   // https://html.spec.whatwg.org/multipage/indices.html#attributes-3 — the boolean attributes, which are the one
   // Valueless form HTML itself defines; `hidden` is both and generates the same thing either way
   const HTML_BOOLEAN_ATTRIBUTES = new Set([
@@ -64,6 +77,9 @@ describe("attributify", () => {
     "selected",
   ]);
 
+  // The two shapes that give an attribute the empty string: `cond ? '' : undefined` and its mirror
+  const EMPTY_BRANCH_REGEX = /\?\s*(?:(?:''|"")\s*:\s*undefined|undefined\s*:\s*(?:''|""))\s*$/u;
+
   test("generates a rule for every valueless attribute on a native element", async () => {
     expect.hasAssertions();
 
@@ -73,18 +89,51 @@ describe("attributify", () => {
       if (!ast) continue;
       const tokens = new Set<string>();
       walkElements(ast, ({ props, tag }) => {
-        if (!/^[a-z][a-z0-9]*$/u.test(tag) || VUE_ELEMENTS.has(tag)) return;
+        if (!/^[a-z][a-z0-9]*$/u.test(tag) || NON_NATIVE_ELEMENTS.has(tag)) return;
         for (const prop of props)
           if (prop.type === ATTRIBUTE_NODE_TYPE && !prop.value && !HTML_BOOLEAN_ATTRIBUTES.has(prop.name))
             tokens.add(prop.name);
       });
       for (const token of tokens) {
         const { matched } = await uno.generate(token, { preflights: false });
-        if (matched.size === 0) inertAttributes.push(`${templatePath}: ${token}`);
+        if (!matched.has(token)) inertAttributes.push(`${templatePath}: ${token}`);
       }
     }
 
     expect(inertAttributes).toStrictEqual([]);
+  });
+
+  // A utility switched on a condition through its own attribute emits nothing: an empty string is no value, so
+  // The attribute lands on a rule only when some unrelated file happens to write that utility bare, and goes
+  // Silent again the day that file changes. `:class="isLoading ? 'op-loading' : undefined"` emits the class and
+  // Depends on nothing. The generator is again what tells a utility from a prop, and here a component is asked
+  // Too: the test above reports a name it matches nothing for, which every component prop is, while this one
+  // Reports only a name it does match, which a prop almost never is
+  test("switches a utility through :class rather than an empty attribute value", async () => {
+    expect.hasAssertions();
+
+    const uno = await createGenerator(unoConfig);
+    const emptyUtilities: string[] = [];
+    for (const { ast, templatePath } of templates) {
+      if (!ast) continue;
+      const boundNames = new Set<string>();
+      walkElements(ast, ({ props }) => {
+        for (const prop of props)
+          if (
+            prop.type === DIRECTIVE_NODE_TYPE &&
+            prop.name === "bind" &&
+            prop.arg?.type === 4 &&
+            EMPTY_BRANCH_REGEX.test(prop.exp?.type === 4 ? prop.exp.content : "")
+          )
+            boundNames.add(prop.arg.content);
+      });
+      for (const boundName of boundNames) {
+        const { matched } = await uno.generate(boundName, { preflights: false });
+        if (matched.has(boundName)) emptyUtilities.push(`${templatePath}: :${boundName}`);
+      }
+    }
+
+    expect(emptyUtilities).toStrictEqual([]);
   });
 
   // UnoCSS extracts a bare bracket attribute as a class token, so the rule it emits is a `.class` the element
@@ -128,7 +177,7 @@ describe("attributify", () => {
 // Element or a third-party wrapper the unit is the library's
 describe("vuetify lengths", () => {
   const LENGTH_PROPS = new Set(["height", "max-height", "max-width", "min-height", "min-width", "size", "width"]);
-  const NUMBER_REGEX = /^\d+$/u;
+  const NUMBER_REGEX = /^\d*\.?\d+$/u;
 
   test("gives no Vuetify length a bare number", () => {
     expect.hasAssertions();

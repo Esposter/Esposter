@@ -37,6 +37,11 @@ safelist: [...allColorKeys.flatMap((key) => [`bg-${key}`, `text-${key}`])];
 
 Palette colors are resolved by Vuetify's color pack CSS — no UnoCSS safelisting needed.
 
+Every safelisted utility comes back in `matched` from **any** `uno.generate(token)`, whatever the token was, so a
+caller asking whether a token is a utility looks the token up in `matched` rather than counting the set —
+`matched.size` is never zero against this config, and a check written on the count passes on every input.
+`apps/web/app/templates.test.ts` is the caller that asks.
+
 ## CSS layer name mapping
 
 ```ts

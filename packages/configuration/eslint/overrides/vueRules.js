@@ -112,15 +112,6 @@ export default {
         'Don\'t bind `:hide-details`. `vuetify.config.ts` declares `hideDetails` as "auto" for every input, which already hides the details row exactly when there is no message to show.',
       selector: `VElement[rawName=${VUETIFY_INPUT_ELEMENT_REGEX}] > VStartTag > VAttribute[directive=true][key.name.name='bind'][key.argument.name='hide-details']`,
     },
-    {
-      // A valueless utility switched on a condition: an empty string is no value, so the attribute emits
-      // Nothing and lands on a rule only when some unrelated file writes the same utility bare (`styling`
-      // Skill). `:class` emits the class and depends on nothing.
-      message:
-        "Don't bind a utility to `'' : undefined` — an empty attribute value generates no rule. Switch the utility with `:class=\"condition ? 'utility' : undefined\"` instead.",
-      selector:
-        "VAttribute[directive=true][key.name.name='bind'] > VExpressionContainer > ConditionalExpression:matches([consequent.type='Literal'][consequent.value=''][alternate.name='undefined'], [alternate.type='Literal'][alternate.value=''][consequent.name='undefined'])",
-    },
     ...restrictedDateSyntaxes,
     ...restrictedStoreSyntaxes,
   ],

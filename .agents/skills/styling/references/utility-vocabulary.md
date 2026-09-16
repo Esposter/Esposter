@@ -14,7 +14,7 @@ Always use the UnoCSS abbreviated shorthand forms — they are first-class utili
 
 - `op-0`/`op-50`/`op-100` not `opacity-*`; works with variants (`group-hover:op-100`, `hover:op-80`, `disabled:op-30`).
 - Prefer semantic utilities for non-obvious values: `op-medium-emphasis` → `var(--v-medium-emphasis-opacity)`, `op-high-emphasis` → `var(--v-high-emphasis-opacity)` (defining/safelisting new ones — see the `unocss` skill).
-- Conditional semantic opacity utilities take boolean bindings: `:op-high-emphasis="!isLoading ? '' : undefined"`.
+- Switch a semantic opacity utility with `:class="!isLoading ? 'op-high-emphasis' : undefined"` — bound to its own attribute it would carry the empty string, which generates nothing (`SKILL.md`).
 - Reserve raw numeric opacity for obvious visibility states (`0`, `0!`, `op-0`, `op-100`, `group-hover:op-100`). Avoid raw non-obvious values (`op-40`, `op-50`, `:op="80"`) in app UI; use semantic utilities or CSS variables.
 
 **Spacing/position scale values:**

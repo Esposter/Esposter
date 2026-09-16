@@ -59,10 +59,11 @@ grep -rn 'class="' --include=*.vue apps/web/app/components
 
 What a program decides here it now decides: a second spelling of a utility family and every Vuetify helper
 class written as an attribute are `BLOCKED_SPELLINGS` in `apps/web/uno.config.ts`, which the generator refuses and
-`unocss/blocklist` reports; a valueless attribute on a **native** element that generates no rule, a bare bracket attribute, the
+`unocss/blocklist` reports; a valueless attribute on a **native** element that generates no rule, a utility bound
+to `'' : undefined`, a bare bracket attribute, the
 `text-hint` pair written out, a Vuetify global default restated on an instance, a Vuetify length given a bare
 number, a `px` length outside the three vendored files and a bare custom property inside a colour function are
-`apps/web/app/templates.test.ts`; a utility bound to `'' : undefined` is `vue/no-restricted-syntax`. What is left stays a reading pass, for these reasons:
+`apps/web/app/templates.test.ts`. What is left stays a reading pass, for these reasons:
 
 - An attribute on a **component** that generates nothing is as likely to be one of that component's props as a
   misspelt utility, and telling the two apart needs the component's prop list, which no extraction of the
