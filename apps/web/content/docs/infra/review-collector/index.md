@@ -42,7 +42,7 @@ flowchart TD
   O -->|no| CL{Review clean at the head,<br/>least merge risk stated for it}
   CL -->|yes| MG[Merge the release PR<br/>the push to main returns develop, exit]
   CL -->|not clean| P
-  CL -->|clean, risk above the least| RN[Note the level on the PR once<br/>a person merges] --> P
+  CL -->|clean, risk above the least| RN[Note the level on the PR once per head<br/>the merge stays a person's] --> P
   DR --> SY[Rewrite ai/queue onto the tree<br/>the window is built on — Claude resolves a conflict]
   SY --> P{Fixes parked with any queue commit,<br/>anything the queue still owes,<br/>or the window held}
   P -->|none| PK[Wait — slot stays free]
