@@ -70,6 +70,12 @@ config) reports the attribute or `class` literal that wrote one, with the messag
 joins the list rather than the prose; a bare `rounded` or `border` stays off it because on a Vuetify component
 each is that component's own prop, and the rule reads every valueless attribute.
 
+**Blocking a spelling is a render change, so it owes `pnpm test app/App.test.ts -u --run`.** The attribute
+survives into the rendered markup, and the committed HTML under `apps/web/app/__snapshots__/` is the only place
+that still holds the old one — no linter reads a snapshot, so the rewrite of the components passes every check
+and the suite goes red on a file the change never touched. It has landed that way twice, once per blocked
+family, which is why it is a step here rather than a thing to notice.
+
 ## The resolved-config snapshots
 
 `apps/web/uno.config.test.ts` snapshots `rules`, `safelist`, `shortcuts` and `theme`;
