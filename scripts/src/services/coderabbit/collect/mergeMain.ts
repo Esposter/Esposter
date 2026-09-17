@@ -2,6 +2,7 @@ import type { MergeMainInput } from "#src/models/coderabbit/collect/MergeMainInp
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
+import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
@@ -56,11 +57,15 @@ export const mergeMain = async ({ cwd, viewerLogin }: MergeMainInput): Promise<M
   ).length;
   if (attempts >= DRAIN_ATTEMPT_CAP) return abort(`its conflicts failed the resolver ${attempts} times`);
 
-  const { isDrained, limitResetAtMs } = await runDrain(getFoldPrompt({ conflictedPaths, mainSha }), cwd);
-  if (limitResetAtMs !== undefined) return abort("the resolver could not start, and no attempt is counted");
+  const { isDrained, isStarted } = await runDrain(getFoldPrompt({ conflictedPaths, mainSha }), cwd);
+  if (!isStarted) return abort("the resolver could not start, and no attempt is counted");
   // What proves the fold is the merge committed over a clean tree with `main` now an ancestor; the session's
   // Word proves nothing. Anything else counts the attempt on `main`'s head and fails the run.
   if (!isDrained || checkIsSequencing(cwd) || readDirtyPaths(cwd).length > 0 || !checkIsAncestor(main, "HEAD", cwd)) {
+    // The merge the resolver left open is cleared before the attempt is written: the run fails either way, and a
+    // Checkout over an unresolved index refuses — which would leave the runner the tree it resolves its own
+    // Actions from half-merged (`reshapeQueue` clears its own for the same reason)
+    abortSequencing(cwd);
     postCommitComment(
       mainSha,
       `${marker}\nFold attempt ${attempts + 1} of this main head into the window failed — see the collector run.`,

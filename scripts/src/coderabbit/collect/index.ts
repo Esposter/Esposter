@@ -48,8 +48,10 @@ if (isDryRun) {
   const startRef = getResult(() => runGit(["symbolic-ref", "--short", "--quiet", "HEAD"]).trim()).unwrapOr(
     readHeadSha(),
   );
+  // Forced: a pass that failed mid-sequence leaves what it was holding, and a plain checkout refuses over it —
+  // Which would strand the runner on a tree its post step reads
   process.on("exit", () => {
-    getResult(() => runGit(["checkout", startRef])).match(noop, console.error);
+    getResult(() => runGit(["checkout", "--force", startRef])).match(noop, console.error);
   });
 }
 

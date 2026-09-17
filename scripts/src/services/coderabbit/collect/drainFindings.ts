@@ -45,7 +45,7 @@ export const drainFindings = async ({
   const quarantinedMarker = getMarker(QUARANTINED_MARKER, newestReviewId);
   if (issueComments.some((comment) => checkIsMarked(comment, viewerLogin, quarantinedMarker))) {
     console.info(`review ${newestReviewId} is quarantined — porting without its fixes`);
-    return { isLimited: false, reviewFixesSha };
+    return { isStarted: true, reviewFixesSha };
   }
 
   const failedMarker = getMarker(DRAIN_FAILED_MARKER, newestReviewId);
@@ -55,7 +55,7 @@ export const drainFindings = async ({
       pullRequest,
       `${quarantinedMarker}\nThe drain of review ${newestReviewId} failed ${attempts} times. Its findings stay open for a person, and the collector ports without them.`,
     );
-    return { isLimited: false, reviewFixesSha };
+    return { isStarted: true, reviewFixesSha };
   }
 
   runGit(["switch", "--force-create", REVIEW_FIXES_BRANCH, baseSha]);
@@ -70,10 +70,10 @@ export const drainFindings = async ({
       const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
       const verdictPath = join(verdictDirectory, VERDICT_FILE);
       const promptInput = { ...drainInput, rejectionsPath, verdictPath };
-      const { isDrained, limitResetAtMs } = await runDrain(getDrainPrompt(promptInput), REPOSITORY_ROOT);
-      if (limitResetAtMs !== undefined) {
-        postDrainLimited(pullRequest, limitResetAtMs);
-        return { isLimited: true, reviewFixesSha };
+      const { isDrained, isStarted, limitResetAtMs } = await runDrain(getDrainPrompt(promptInput), REPOSITORY_ROOT);
+      if (!isStarted) {
+        if (limitResetAtMs !== undefined) postDrainLimited(pullRequest, limitResetAtMs);
+        return { isStarted: false, reviewFixesSha };
       }
       // A zero exit says the session ended, never that it finished: a drain that stopped mid-fix leaves the rest in
       // The working tree, and reading `HEAD` there would push half a finding as though it were whole
@@ -97,7 +97,7 @@ export const drainFindings = async ({
       const headSha = readHeadSha();
       if (headSha === baseSha) {
         console.info("the drain produced no commit — every finding was rejected or already answered");
-        return { isLimited: false, reviewFixesSha };
+        return { isStarted: true, reviewFixesSha };
       }
       // An empty expected sha leases on the branch not existing, which is the first drain's case
       runGit([
@@ -107,7 +107,7 @@ export const drainFindings = async ({
         `${headSha}:refs/heads/${REVIEW_FIXES_BRANCH}`,
       ]);
       console.info(`pushed ${REVIEW_FIXES_BRANCH} at ${headSha}`);
-      return { isLimited: false, reviewFixesSha: headSha };
+      return { isStarted: true, reviewFixesSha: headSha };
     },
     () => {
       rmSync(verdictDirectory, { force: true, recursive: true });

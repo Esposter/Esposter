@@ -12,7 +12,9 @@ export const repository: github.Repository = new github.Repository(
     allowForking: true,
     allowMergeCommit: true,
     allowRebaseMerge: false,
-    allowSquashMerge: false,
+    // Squash is for an external contributor's pull request against ai/queue, which enters the queue as one
+    // Commit carrying the pull request's title and body; develop and main pin the merge commit in their ruleset
+    allowSquashMerge: true,
     allowUpdateBranch: true,
     // Native auto-delete bypasses rulesets and would nuke develop on a develop -> main
     // Merge. Disabled here; the Delete Merged Branch workflow cleans up head branches
@@ -27,6 +29,10 @@ export const repository: github.Repository = new github.Repository(
     mergeCommitMessage: "PR_BODY",
     mergeCommitTitle: "PR_TITLE",
     name: "Esposter",
+    // Secret scanning and push protection are what a public repository is given for free, and both are on. The
+    // Three surfaces beside them — non-provider patterns, AI detection, validity checks — are GitHub Secret
+    // Protection, which this repository is not licensed for: the API accepts a PATCH enabling any of them,
+    // Returns 200 and leaves the status `disabled`, so declaring one here is a diff that never closes.
     securityAndAnalysis: {
       secretScanning: {
         status: "enabled",
@@ -35,6 +41,8 @@ export const repository: github.Repository = new github.Repository(
         status: "enabled",
       },
     },
+    squashMergeCommitMessage: "PR_BODY",
+    squashMergeCommitTitle: "PR_TITLE",
     topics: packageJson.keywords,
     visibility: "public",
   },

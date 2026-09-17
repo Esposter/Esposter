@@ -50,7 +50,7 @@ The session pushes **`ai/queue` after every commit**, plain, behind a `git pull 
 
 ## Branch Hygiene
 
-**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review collector cuts windows from it onto `develop` and opens the one long-lived `develop` → `main` PR (`review-queue` skill). `develop` and `ai/review-fixes` have one writer, the collector; `main` takes releases the collector merges once a review is clean (a person merges one the bot rates riskier), plus the collector's express lane. Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
+**The session's checked-out branch is `ai/queue`; there are no per-chunk feature branches.** The review collector cuts windows from it onto `develop` and opens the one long-lived `develop` → `main` PR (`review-queue` skill). `develop` and `ai/review-fixes` have one writer, the collector; `main` takes releases the collector merges once a review is clean (a person merges one the bot rates riskier), plus the collector's express lane. A branch's name says whose it is and the rulesets hold it to that — `ai/` the pipeline's, `renovate/` the bot's, `external/` the one prefix a collaborator may create, anything else the maintainer's — and a collaborator's work enters as a pull request against `ai/queue` squash-merged by a maintainer, never one against `main` (`apps/web/content/docs/infra/branch-namespaces.md`). Cut a branch only when the work genuinely cannot land incrementally (a spike, or an edit to `main` itself — use `git worktree` for that rather than checking it out over work in progress), and delete it after merging.
 
 ## Merging `main` and the Lockfile
 
@@ -58,7 +58,10 @@ The session pushes **`ai/queue` after every commit**, plain, behind a `git pull 
 
 `pnpm-workspace.yaml` is authored and usually auto-merges — read the merged catalog anyway, since a clean
 auto-merge proves only that the two sides touched different lines, never that the surviving version is the
-higher one.
+higher one. When it does conflict, resolve it before running anything: `pnpm` parses that file at the start of
+every command, so while the markers are in it **no `pnpm` in this checkout runs at all** — not the `pnpm i`
+below, not a check, not the `pnpm dlx` a collector session launches (`× load configuration … simple key
+expected ':'`). `pnpm --ignore-workspace` is the way past it for a command that needs nothing from the file.
 
 ### `pnpm-lock.yaml` Conflicts — Always Regenerate, Never Hand-Resolve
 

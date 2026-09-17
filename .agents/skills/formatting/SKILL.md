@@ -91,7 +91,7 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 
 ## Line Endings
 
-- Enforced by `.gitattributes` (`text eol=lf` for `.ts`/`.vue`/`.js`/`.json`/`.md`/`.yaml`/`.sh`; `.bat`/`.cmd`/`.ps1` are deliberately `crlf`) and settled by `oxfmt` (`pnpm format`). Never hand-convert line endings.
+- Enforced by `.gitattributes` (`* text=auto eol=lf` — every text file checks out LF whatever "core.autocrlf" says on the machine; `.bat`/`.cmd`/`.ps1` are deliberately `crlf`) and settled by `oxfmt` (`pnpm format`). Never hand-convert line endings.
 
 ## Deep Dives
 

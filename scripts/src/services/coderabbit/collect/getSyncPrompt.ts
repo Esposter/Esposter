@@ -1,6 +1,7 @@
 import type { SyncPromptInput } from "#src/models/coderabbit/collect/SyncPromptInput";
 
 import { QUEUE_BRANCH, SESSION_DENIALS } from "#src/services/coderabbit/collect/constants";
+import { LOCKFILE, WORKSPACE_FILE } from "#src/services/shared/constants";
 
 // The resolver is the drain's session pointed at a conflict instead of a finding: the same checkout, the same
 // Denials (no push, no branch switch, no GitHub), and the sequencer it must run to the end. The judgment it is
@@ -15,7 +16,7 @@ export const getSyncPrompt = ({ conflictedPaths, conflictSha, targetBranch }: Sy
     "",
     ...conflictedPaths.map((path) => `- ${path}`),
     "",
-    `\`${targetBranch}\` carries the windows already reviewed and the reviewer's fixes; the stopped commit is the queue's later work on the same lines. Resolve every conflict so that both survive: the upstream change stays, and this commit's intent lands on top of it. Read \`git show ${conflictSha}\` for the intent and \`git log -p ${targetBranch} -- <path>\` for what the upstream change was made for. Then \`git add\` the paths and run \`GIT_EDITOR=true git cherry-pick --continue\`; repeat for every further commit the sequence stops on until it completes. \`git cherry-pick --skip\` is allowed only when \`${targetBranch}\` already carries the stopped commit's whole change — a repaired copy of it, not a namesake — and never \`--abort\` or \`--quit\`.`,
+    `\`${targetBranch}\` carries the windows already reviewed and the reviewer's fixes; the stopped commit is the queue's later work on the same lines. Resolve every conflict so that both survive: the upstream change stays, and this commit's intent lands on top of it. Read \`git show ${conflictSha}\` for the intent and \`git log -p ${targetBranch} -- <path>\` for what the upstream change was made for. Resolve \`${WORKSPACE_FILE}\` first if it is among them — every \`pnpm\` in this checkout fails to parse it while its markers are there — and rebuild \`${LOCKFILE}\` with \`pnpm i\` rather than editing it. Then \`git add\` the paths and run \`GIT_EDITOR=true git cherry-pick --continue\`; repeat for every further commit the sequence stops on until it completes. \`git cherry-pick --skip\` is allowed only when \`${targetBranch}\` already carries the stopped commit's whole change — a repaired copy of it, not a namesake — and never \`--abort\` or \`--quit\`.`,
     "",
     "Resolve the conflicts and nothing else: run no finishing checks and repair nothing in any other commit, however red the tree reads — the queue's own CI reports that to the session that owns the commit, and this checkout is a replay of every commit the queue owes, not a change of yours.",
     "",

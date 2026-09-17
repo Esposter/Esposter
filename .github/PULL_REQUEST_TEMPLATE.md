@@ -15,6 +15,7 @@ Fixes # <!-- issue number, if applicable -->
 
 ## Checklist
 
+- [ ] Base branch is `ai/queue` (see `CONTRIBUTING.md` → Pull Requests)
 - [ ] `pnpm typecheck` passes
 - [ ] `pnpm lint` passes
 - [ ] Tests added or updated where applicable

@@ -90,17 +90,33 @@ Scope monorepo commits where helpful: `feat(db-schema): add createdAt to posts`.
 
 ## Pull Requests
 
-`develop` is the integration branch and `main` takes releases from it, so contributions target `develop` — a PR against `main` would bypass integration and sit alongside the long-lived release PR.
+A contribution is a pull request from an `external/*` branch against `ai/queue`. A branch's name says whose it
+is — `external/` is the one prefix a collaborator may create, everything else is a maintainer's, the review
+pipeline's or Renovate's — and `ai/queue` is the pipeline's intake: never `main`, whose only pull request is the
+release, since CodeRabbit reviews every pull request against `main` on arrival and each one spends the hourly
+slot the release lives on. Why the names are the rule, and how the pipeline reviews your work once it is on the
+queue: [branch namespaces](https://github.com/Esposter/Esposter/blob/main/apps/web/content/docs/infra/branch-namespaces.md).
 
-1. Create a branch from `develop`: `git checkout -b my-feature develop`
+```mermaid
+flowchart LR
+  E[external/my-feature<br/>off develop] -->|pull request| Q[(ai/queue)]
+  Q -->|squash merge by a maintainer<br/>title and body become the commit| C{{Review collector}}
+  C -->|a capped window| D[(develop)]
+  D -->|release pull request<br/>reviewed by CodeRabbit| M[(main)]
+```
+
+1. Create a branch from `develop` under `external/` — `git checkout -b external/my-feature develop` — in the
+   repository if you have write access, else in your fork. `develop` is always an ancestor of `ai/queue`, so the
+   pull request shows your commits alone.
 2. Make your changes and ensure all checks pass:
    ```bash
    pnpm lint:fix && pnpm typecheck && pnpm test <paths your change touched>
    ```
    Name the paths — a bare `pnpm test` runs every project in the workspace, which is CI's job and takes tens of
    minutes locally.
-3. Push and open a PR against `develop`.
-4. PR description should explain **what** changed and **why**.
+3. Push and open a PR against `ai/queue`. No review runs on the pull request itself, so push as often as you like.
+4. PR description should explain **what** changed and **why** — a maintainer's squash merge makes the title and
+   body the commit message.
 
 Pre-commit hooks run the formatter automatically via [nano-staged](https://github.com/usmanyunusov/nano-staged), so committed code is always formatted.
 

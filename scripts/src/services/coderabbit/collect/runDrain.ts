@@ -30,6 +30,10 @@ export const runDrain = async (prompt: string, cwd: string): Promise<DrainRun> =
     PNPM_FILE,
     [
       ...PNPM_ARGS,
+      // The checkout is handed to the resolver mid-conflict, and a conflicted `pnpm-workspace.yaml` is one
+      // `pnpm` refuses to parse — so the launch meant to resolve it would fail on it. `dlx` installs outside the
+      // Workspace anyway, and the session runs its own `pnpm` for whatever it needs the file for
+      "--ignore-workspace",
       "dlx",
       CLAUDE_CODE_PACKAGE,
       "-p",
@@ -48,7 +52,9 @@ export const runDrain = async (prompt: string, cwd: string): Promise<DrainRun> =
   child.stdin.on("error", console.error);
   child.stdin.end(prompt);
   const ownLines: string[] = [];
+  let hasOutput = false;
   for await (const line of createInterface({ input: child.stdout })) {
+    hasOutput = true;
     const logLine = getDrainEventLine(line);
     if (logLine === undefined) continue;
 
@@ -59,8 +65,8 @@ export const runDrain = async (prompt: string, cwd: string): Promise<DrainRun> =
   // A limit is a refusal to start, read only off a non-zero exit: the refusal's own result frame states `success`,
   // And reading a clean exit's output for the sentence would discard work over text the drain merely echoed
   const isDrained = child.exitCode === 0;
-  return {
-    isDrained,
-    limitResetAtMs: isDrained ? undefined : getDrainLimitResetMs(ownLines.join("\n"), Date.now()),
-  };
+  const limitResetAtMs = isDrained ? undefined : getDrainLimitResetMs(ownLines.join("\n"), Date.now());
+  // A session that wrote nothing to its stream never ran — `pnpm` refusing to launch one writes to stderr alone,
+  // While the sentence Claude Code prints for itself is a line here, as every event of a session that did run is
+  return { isDrained, isStarted: hasOutput && limitResetAtMs === undefined, limitResetAtMs };
 };
