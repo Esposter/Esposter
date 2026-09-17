@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map width="2" height="2">
+ <tileset firstgid="0" name="" tilewidth="0" tileheight="0" tilecount="0" columns="0">
+  <image source="" width="0" height="0"/>
+  <tile id="0">
+   <animation>
+    <frame tileid="0" duration="0"/>
+   </animation>
+  </tile>
+ </tileset>
+</map>

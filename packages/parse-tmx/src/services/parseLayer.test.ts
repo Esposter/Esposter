@@ -23,7 +23,14 @@ describe(parseLayer, () => {
     const layer = parseLayer(assertNode<TMXLayerNode>(baseNode));
 
     expect(layer.type).toBe(TMXNodeType.Objectgroup);
-    expect(layer.visible).toBe(1);
+  });
+
+  test("keeps a hidden layer hidden", () => {
+    expect.hasAssertions();
+
+    const layer = parseLayer(assertNode<TMXLayerNode>({ ...baseNode, $: { ...createLayerShared(), visible: 0 } }));
+
+    expect(layer.visible).toBe(0);
   });
 
   test("parses objects", () => {

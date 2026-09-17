@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map width="2" height="2">
+ <layer id="0" name="" width="2" height="2" visible="0">
+  <data encoding="csv">
+0,1,
+2,3
+</data>
+ </layer>
+ <objectgroup id="0" name="" visible="0"/>
+</map>
