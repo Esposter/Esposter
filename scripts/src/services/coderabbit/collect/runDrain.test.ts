@@ -51,7 +51,11 @@ describe(runDrain, () => {
       getResultLine("success", REFUSAL_LINE),
     ]);
 
-    await expect(runDrain("prompt", "")).resolves.toStrictEqual({ isDrained: true, limitResetAtMs: undefined });
+    await expect(runDrain("prompt", "")).resolves.toStrictEqual({
+      isDrained: true,
+      isStarted: true,
+      limitResetAtMs: undefined,
+    });
   });
 
   // The model's turns are narration; only what Claude Code says for itself reaches the limit parser, which is
@@ -61,7 +65,11 @@ describe(runDrain, () => {
 
     mockSession(1, [getAssistantLine(REFUSAL_LINE), getResultLine("error_during_execution", "the commit failed")]);
 
-    await expect(runDrain("prompt", "")).resolves.toStrictEqual({ isDrained: false, limitResetAtMs: undefined });
+    await expect(runDrain("prompt", "")).resolves.toStrictEqual({
+      isDrained: false,
+      isStarted: true,
+      limitResetAtMs: undefined,
+    });
   });
 
   // The refusal states `success` in the frame it exits non-zero with, so the subtype is no evidence the session
@@ -74,6 +82,7 @@ describe(runDrain, () => {
 
     await expect(runDrain("prompt", "")).resolves.toStrictEqual({
       isDrained: false,
+      isStarted: false,
       limitResetAtMs: LIMIT_RESET_AT_MS,
     });
   });
@@ -87,7 +96,23 @@ describe(runDrain, () => {
 
     await expect(runDrain("prompt", "")).resolves.toStrictEqual({
       isDrained: false,
+      isStarted: false,
       limitResetAtMs: LIMIT_RESET_AT_MS,
+    });
+  });
+
+  // `pnpm` refusing to launch the session — a conflicted `pnpm-workspace.yaml` is one such refusal, and it is
+  // Exactly the tree the resolver is handed — writes to stderr and leaves the stream empty. Counted as an
+  // Attempt, three of those hand a conflict nobody resolved to a person
+  test("reads a session that wrote nothing as one that never started", async () => {
+    expect.hasAssertions();
+
+    mockSession(1, []);
+
+    await expect(runDrain("prompt", "")).resolves.toStrictEqual({
+      isDrained: false,
+      isStarted: false,
+      limitResetAtMs: undefined,
     });
   });
 

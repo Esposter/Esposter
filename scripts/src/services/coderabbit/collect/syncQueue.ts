@@ -121,11 +121,11 @@ export const syncQueue = async ({
       ).length;
       if (attempts >= DRAIN_ATTEMPT_CAP) return abort(`its resolution failed ${attempts} times, so it is a person's`);
 
-      const { isDrained, limitResetAtMs } = await runDrain(
+      const { isDrained, isStarted } = await runDrain(
         getSyncPrompt({ conflictedPaths, conflictSha, targetBranch }),
         cwd,
       );
-      if (limitResetAtMs !== undefined) return abort("the resolver could not start, and no attempt is counted");
+      if (!isStarted) return abort("the resolver could not start, and no attempt is counted");
       // A clean exit says the session ended, never how it ended; what proves the resolution is a sequence run to
       // Its end over a clean tree, carrying every commit the queue owed. Anything else fails the run as a drain
       // Does, with the attempt counted on the commit

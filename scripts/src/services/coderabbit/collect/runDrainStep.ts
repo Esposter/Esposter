@@ -78,7 +78,7 @@ export const runDrainStep = async ({
     reviewId: openBodyReviewId,
     viewerLogin,
   });
-  if (drain.isLimited)
+  if (!drain.isStarted)
     return {
       isClean: false,
       outcome: { kind: CycleOutcomeKind.Idle, reason: "the drain could not start — the findings stay open" },

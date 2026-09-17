@@ -1,7 +1,7 @@
 import type { FoldPromptInput } from "#src/models/coderabbit/collect/FoldPromptInput";
 
 import { DEVELOP_BRANCH, MAIN_BRANCH, SESSION_DENIALS } from "#src/services/coderabbit/collect/constants";
-import { LOCKFILE } from "#src/services/shared/constants";
+import { LOCKFILE, WORKSPACE_FILE } from "#src/services/shared/constants";
 
 // The resolver pointed at a merge instead of a cherry-pick: `main` moved under a window — an express cut, a
 // Bump — and the window's own commits touched the same lines. Both sides survive, the merge is committed, and
@@ -12,7 +12,7 @@ export const getFoldPrompt = ({ conflictedPaths, mainSha }: FoldPromptInput): st
     "",
     ...conflictedPaths.map((path) => `- ${path}`),
     "",
-    `\`${MAIN_BRANCH}\` carries what reached it unread — an express cut, a dependency bump — and the window carries the queue's reviewed-to-be work on the same lines. Resolve every conflict so that both survive: \`main\`'s change stays, and the window's intent lands on top of it. Read \`git log -p ${mainSha} -- <path>\` for what \`main\` changed and \`git log -p HEAD -- <path>\` for the window's side. If \`${LOCKFILE}\` is among them, delete it and run \`pnpm i\` rather than editing it. Then \`git add\` the paths and run \`GIT_EDITOR=true git merge --continue\`.`,
+    `\`${MAIN_BRANCH}\` carries what reached it unread — an express cut, a dependency bump — and the window carries the queue's reviewed-to-be work on the same lines. Resolve every conflict so that both survive: \`main\`'s change stays, and the window's intent lands on top of it. Read \`git log -p ${mainSha} -- <path>\` for what \`main\` changed and \`git log -p HEAD -- <path>\` for the window's side. Resolve \`${WORKSPACE_FILE}\` first if it is among them — every \`pnpm\` in this checkout fails to parse it while its markers are there. If \`${LOCKFILE}\` is among them, delete it and run \`pnpm i\` rather than editing it. Then \`git add\` the paths and run \`GIT_EDITOR=true git merge --continue\`.`,
     "",
     "Resolve the conflicts and nothing else: run no finishing checks and repair nothing beyond them — the branch's own CI reports the rest.",
     "",

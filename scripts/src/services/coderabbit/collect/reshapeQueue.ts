@@ -52,8 +52,8 @@ export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: Re
   const restShas = owedShas.slice(owedShas.indexOf(sha) + 1);
   console.info(`reshape: ${sha} changes ${fileCount} files alone against the cap of ${REVIEW_FILE_CAP}`);
   runGit(["switch", "--detach", `${sha}^`], cwd);
-  const { isDrained, limitResetAtMs } = await runDrain(getReshapePrompt({ fileCount, sha }), cwd);
-  if (limitResetAtMs !== undefined) {
+  const { isDrained, isStarted } = await runDrain(getReshapePrompt({ fileCount, sha }), cwd);
+  if (!isStarted) {
     runGit(["switch", "--detach", tipSha], cwd);
     console.info("reshape: the session could not start — no attempt is counted");
     return false;

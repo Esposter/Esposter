@@ -56,7 +56,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runDrain.mockImplementation((prompt) => {
       const path = VERDICT_PATH_REGEX.exec(prompt)?.groups?.path;
       if (line !== undefined && path) writeFileSync(path, line);
-      return Promise.resolve({ isDrained: true });
+      return Promise.resolve({ isDrained: true, isStarted: true });
     });
   };
   beforeEach(() => {

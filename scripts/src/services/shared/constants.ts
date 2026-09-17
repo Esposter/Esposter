@@ -27,6 +27,11 @@ export const LOCKFILE = "pnpm-lock.yaml";
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
 
+// `pnpm`'s workspace manifest, at the repository root. `pnpm` parses it at the start of every command, so a
+// Resolver handed a checkout where it still holds conflict markers is told to resolve it before anything else
+// (`git` skill)
+export const WORKSPACE_FILE = "pnpm-workspace.yaml";
+
 // The formatter's config, at the repository root. Its `ignorePatterns` is the repo's one list of generated files
 // (`oxlint` skill, `references/lint-configuration.md`), which is why a scan that must skip them reads it too.
 export const FORMATTER_CONFIGURATION_FILE = ".oxfmtrc.json";

@@ -93,9 +93,9 @@ export const judgeRelease = async ({
       });
       // Read-only judgement over the head the verdict covers: no install, no checks
       runGit(["switch", "--detach", developSha], cwd);
-      const { isDrained, limitResetAtMs } = await runDrain(prompt, cwd);
-      if (limitResetAtMs !== undefined) {
-        postDrainLimited(pullRequest, limitResetAtMs);
+      const { isDrained, isStarted, limitResetAtMs } = await runDrain(prompt, cwd);
+      if (!isStarted) {
+        if (limitResetAtMs !== undefined) postDrainLimited(pullRequest, limitResetAtMs);
         return undefined;
       }
 

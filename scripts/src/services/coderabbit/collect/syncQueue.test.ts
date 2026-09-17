@@ -193,7 +193,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     vi.stubEnv("GIT_EDITOR", "true");
     runDrain.mockImplementation(() => {
       resolveConflict();
-      return Promise.resolve({ isDrained: true });
+      return Promise.resolve({ isDrained: true, isStarted: true });
     });
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
 
@@ -213,7 +213,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, queueSha } = setupConflict();
     runDrain.mockImplementation(() => {
       runGit(["cherry-pick", "--abort"], getCwd());
-      return Promise.resolve({ isDrained: true });
+      return Promise.resolve({ isDrained: true, isStarted: true });
     });
 
     await expect(
@@ -228,7 +228,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { developSha, queueSha } = setupConflict();
-    runDrain.mockResolvedValue({ isDrained: true });
+    runDrain.mockResolvedValue({ isDrained: true, isStarted: true });
 
     await expect(
       syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
@@ -286,7 +286,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, oversizedSha, queueSha } = setupOversized();
     runDrain.mockImplementation(() => {
       reshape(oversizedSha, REVIEW_FILE_CAP);
-      return Promise.resolve({ isDrained: true });
+      return Promise.resolve({ isDrained: true, isStarted: true });
     });
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
 
@@ -323,7 +323,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, oversizedSha, queueSha } = setupOversized();
     runDrain.mockImplementation(() => {
       reshape(oversizedSha, 0);
-      return Promise.resolve({ isDrained: true });
+      return Promise.resolve({ isDrained: true, isStarted: true });
     });
 
     await expect(
@@ -349,7 +349,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       switchTo(baseSha);
       commitFile(filePath, "ours");
       getResult(() => runGit(["merge", theirsSha], getCwd())).unwrapOr("");
-      return Promise.resolve({ isDrained: true });
+      return Promise.resolve({ isDrained: true, isStarted: true });
     });
 
     await expect(

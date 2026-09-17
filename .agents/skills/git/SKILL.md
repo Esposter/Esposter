@@ -58,7 +58,10 @@ The session pushes **`ai/queue` after every commit**, plain, behind a `git pull 
 
 `pnpm-workspace.yaml` is authored and usually auto-merges — read the merged catalog anyway, since a clean
 auto-merge proves only that the two sides touched different lines, never that the surviving version is the
-higher one.
+higher one. When it does conflict, resolve it before running anything: `pnpm` parses that file at the start of
+every command, so while the markers are in it **no `pnpm` in this checkout runs at all** — not the `pnpm i`
+below, not a check, not the `pnpm dlx` a collector session launches (`× load configuration … simple key
+expected ':'`). `pnpm --ignore-workspace` is the way past it for a command that needs nothing from the file.
 
 ### `pnpm-lock.yaml` Conflicts — Always Regenerate, Never Hand-Resolve
 
