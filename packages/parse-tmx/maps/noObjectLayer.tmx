@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="0" tiledversion="" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="2" height="2" tilewidth="0" tileheight="0" infinite="0" nextlayerid="0" nextobjectid="0">
+ <properties>
+  <property name="name" value=""/>
+ </properties>
+ <tileset firstgid="0" source=""/>
+ <layer id="0" name="" width="2" height="2">
+  <data encoding="csv">
+0,1,
+2,3
+</data>
+ </layer>
+</map>
