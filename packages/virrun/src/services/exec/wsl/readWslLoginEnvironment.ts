@@ -75,7 +75,7 @@ export const readWslLoginEnvironment: () => WslLoginEnvironment = createProbeCac
         // ComputeEnvironmentKey refuses to key on, while the version would mint a plausible key for an absent node.
         return nodeVersion && !WINDOWS_DRIVE_MOUNT_REGEX.test(nodeDirectory)
           ? { nodeDirectory, nodeVersion, path }
-          : { ...EMPTY_LOGIN_ENVIRONMENT, path };
+          : { nodeDirectory: "", nodeVersion: "", path };
       })
       .unwrapOr(EMPTY_LOGIN_ENVIRONMENT),
   readPersistedCache: readWslLoginEnvironmentCache,
