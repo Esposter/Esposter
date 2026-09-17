@@ -114,7 +114,7 @@ catalog:
   "@vue-pdf-viewer/viewer": ^4.3.0
   "@vue/compiler-core": ^3.5.42
   "@vue/language-core": ^3.3.11
-  "@vue/test-utils": ^2.5.0
+  "@vue/test-utils": ^2.5.1
   "@vuepic/vue-datepicker": ^14.0.0
   "@vueuse/core": ^14.4.0
   "@vueuse/nuxt": ^14.4.0
