@@ -255,8 +255,8 @@ catalogs:
       specifier: ^6.15.0
       version: 6.15.0
     '@pulumi/pulumi':
-      specifier: ^3.262.0
-      version: 3.262.0
+      specifier: ^3.263.0
+      version: 3.263.0
     '@takumi-rs/core':
       specifier: ^2.14.0
       version: 2.14.0
@@ -920,7 +920,7 @@ importers:
         version: 6.15.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
       '@pulumi/pulumi':
         specifier: 'catalog:'
-        version: 3.262.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
+        version: 3.263.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -5823,8 +5823,8 @@ packages:
   '@pulumi/github@6.15.0':
     resolution: {integrity: sha512-U8ZxPQQcOrcTn8y8EZsWmXzMtbw0JnwWCVGmqxBZ/i2SpUlEGMYT9B+EFC/qTALZXkDf7cMiq6fZ3Gy1G23nyQ==}
 
-  '@pulumi/pulumi@3.262.0':
-    resolution: {integrity: sha512-fsYlQ5sr0g5DCxW25LTLwBsSkgkTMxXDfKdZGGvb880zXEQZd509uUSgUTX608fca9FAxjfflPNGYKgB9ps3ow==}
+  '@pulumi/pulumi@3.263.0':
+    resolution: {integrity: sha512-ZIWdlwKCSRFkUxRmISu3FT7db7Ac+Hfjh1ta3cyau+QupneuzZ+OFzezM6Var9PeNRaHNyWtSPg7Qjq8CHNzww==}
     engines: {node: '>=22'}
     peerDependencies:
       ts-node: '>= 7.0.1 < 12'
@@ -19710,7 +19710,7 @@ snapshots:
 
   '@pulumi/azure-native@3.28.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)':
     dependencies:
-      '@pulumi/pulumi': 3.262.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
+      '@pulumi/pulumi': 3.263.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
     transitivePeerDependencies:
       - supports-color
       - ts-node
@@ -19718,13 +19718,13 @@ snapshots:
 
   '@pulumi/github@6.15.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)':
     dependencies:
-      '@pulumi/pulumi': 3.262.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
+      '@pulumi/pulumi': 3.263.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
     transitivePeerDependencies:
       - supports-color
       - ts-node
       - typescript
 
-  '@pulumi/pulumi@3.262.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)':
+  '@pulumi/pulumi@3.263.0(supports-color@10.2.2)(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)':
     dependencies:
       '@grpc/grpc-js': 1.14.4
       '@logdna/tail-file': 2.2.0
