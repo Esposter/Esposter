@@ -30,8 +30,8 @@ catalog:
   "@azure/core-rest-pipeline": ^1.25.0
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
-  "@azure/functions": ^4.16.4
-  "@azure/identity": ^4.13.2
+  "@azure/functions": ^4.16.5
+  "@azure/identity": ^4.13.3
   "@azure/search-documents": ^13.0.0
   "@azure/service-bus": ^7.9.5
   "@azure/storage-blob": ^12.33.0
@@ -72,7 +72,7 @@ catalog:
   "@platformatic/vfs": ^0.4.0
   "@pulumi/azure-native": ^3.28.0
   "@pulumi/github": ^6.15.0
-  "@pulumi/pulumi": ^3.262.0
+  "@pulumi/pulumi": ^3.263.0
   "@takumi-rs/core": ^2.14.0
   "@tiptap/core": ^3.31.3
   "@tiptap/extension-code-block-lowlight": ^3.31.3
@@ -87,8 +87,8 @@ catalog:
   "@tresjs/cientos": ^5.9.0
   "@tresjs/core": ^5.9.0
   "@tresjs/nuxt": ^5.7.0
-  "@trpc/client": ^11.18.0
-  "@trpc/server": ^11.18.0
+  "@trpc/client": ^11.19.0
+  "@trpc/server": ^11.19.0
   "@types/data-urls": ^3.0.5
   "@types/fs-extra": ^11.0.4
   "@types/howler": ^2.2.13
@@ -114,7 +114,7 @@ catalog:
   "@vue-pdf-viewer/viewer": ^4.3.0
   "@vue/compiler-core": ^3.5.42
   "@vue/language-core": ^3.3.11
-  "@vue/test-utils": ^2.5.0
+  "@vue/test-utils": ^2.5.1
   "@vuepic/vue-datepicker": ^14.0.0
   "@vueuse/core": ^14.4.0
   "@vueuse/nuxt": ^14.4.0
@@ -147,7 +147,7 @@ catalog:
   eslint-plugin-vuejs-accessibility: ^2.6.0
   eventemitter3: ^5.0.4
   fake-indexeddb: ^6.2.5
-  fast-check: ^4.10.0
+  fast-check: ^4.10.1
   fast-deep-equal: ^3.1.3
   fflate: ^0.8.3
   fs-extra: ^11.4.0
