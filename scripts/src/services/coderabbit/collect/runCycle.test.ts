@@ -224,8 +224,9 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ]);
   });
 
-  // Past its repairs a red main is a person's: said once on the head, and the claimed commit waits unsaid
-  test("holds the claimed commits on a red main past its repairs without a session", async () => {
+  // Past its repairs a red main is a person's, said once on the head — and their repair arrives as a claimed
+  // Commit, so the lane cuts as usual rather than holding on the red it answers
+  test("cuts the claimed commits on a red main past its repairs, without a session", async () => {
     expect.hasAssertions();
 
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -241,6 +242,28 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       })),
       [redRun],
     );
+    spawnPnpm.mockReturnValue(greenSpawn);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Expressed,
+      reason: `1 express commits reached ${MAIN_BRANCH}`,
+      targetSha: readSha(`origin/${MAIN_BRANCH}`),
+    });
+    expect(runDrain).not.toHaveBeenCalled();
+    expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
+  });
+
+  // The claimed commit waits while a repair is still to be tried — here, one the session could not start
+  test("holds the claimed commits while a red main is under repair", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    commitFile(TEST_FILENAME, "");
+    publish(QUEUE_BRANCH, claimExpress());
+    answerGh([], [], [], [], [redRun]);
+    spawnPnpm.mockReturnValue(greenSpawn);
+    runDrain.mockResolvedValue({ isDrained: false, isStarted: false });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
@@ -249,8 +272,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       retriggerDelaySeconds: undefined,
       targetSha: undefined,
     });
-    expect(runDrain).not.toHaveBeenCalled();
-    expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
+    expect(runGh.mock.calls.filter(([args]) => args[2] === "-f")).toHaveLength(0);
   });
 
   // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there

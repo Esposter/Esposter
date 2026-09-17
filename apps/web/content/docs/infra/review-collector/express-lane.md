@@ -14,15 +14,15 @@ The claim is one trailer line, `Express: <one sentence on why nothing in it need
 - **The reshaper**, on the parts of an over-cap commit it judged need no review — the commit's author is asked for nothing ([sync](/docs/infra/review-collector/collection-cycle)).
 - **A session**, on a commit it knows to be a sweep's moves or a format pass, which skips the reshaper's session outright.
 
-A claim is never a proof. Nothing reads it as true, only as asked: what admits the commit to `main` is the checks — install, format, the package builds, typecheck, both linters and the tests (`EXPRESS_VERIFY_COMMANDS`) — run on the cut as it would land. A red cut takes no window either: it is noted on the commits it carried and tried again every run. The app build alone is left to `main`'s own CI: it is the longest job there, and nothing a cut ships waits on it. The checks run on `main`'s tree, so a red `main` would refuse every cut for a red none of them made — which is why a red `main` is [repaired](/docs/infra/review-collector/repair) first, as a cut of the lane's own, and the claimed commits wait unsaid until it is green.
+A claim is never a proof. Nothing reads it as true, only as asked: what admits the commit to `main` is the checks — install, format, the package builds, typecheck, both linters and the tests (`EXPRESS_VERIFY_COMMANDS`) — run on the cut as it would land. A red cut takes no window either: it is noted on the commits it carried and tried again every run. The app build alone is left to `main`'s own CI: it is the longest job there, and nothing a cut ships waits on it. The checks run on `main`'s tree, so a red `main` would refuse every cut for a red none of them made — which is why a red `main` is [repaired](/docs/infra/review-collector/repair) first, as a cut of the lane's own, and the claimed commits wait unsaid while a repair is still to be tried — past its repairs the lane is open again, since a person's repair arrives as a claimed commit.
 
 ```mermaid
 flowchart TD
   C[A commit the queue owes main and develop] --> T{Carries an Express trailer}
   T -->|no| RV[Review lane]
-  T -->|yes| MR{main green on CI}
-  MR -->|no| W[Wait, unsaid — the repair goes first]
-  MR -->|yes| EX[Cherry-pick onto main, in queue order<br/>a patch that does not apply is skipped]
+  T -->|yes| MR{main under repair}
+  MR -->|yes| W[Wait, unsaid — the repair goes first]
+  MR -->|no| EX[Cherry-pick onto main, in queue order<br/>a patch that does not apply is skipped]
   EX --> V{The cut passes the checks}
   V -->|no| RD[Note it once on each commit<br/>tried again next run — the port skips it]
   V -->|yes| PU[Push main — exit, the push re-fires the cycle]

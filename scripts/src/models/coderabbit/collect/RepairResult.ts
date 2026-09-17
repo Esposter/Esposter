@@ -1,7 +1,7 @@
-// What the repairer found and left: whether `main`'s head is red at all, and the head the session committed
-// The repair at — absent when `main` is green, the streak is a person's, the session could not start, or on a
-// Dry run
+// What the repairer found and left: whether `main`'s head is red with repairs still to try — past them the lane
+// Cuts as usual, since a person's own repair arrives as a claimed commit — and the head the session committed
+// The repair at, absent when the session could not start or on a dry run
 export interface RepairResult {
-  isRed: boolean;
+  isUnderRepair: boolean;
   targetSha?: string;
 }

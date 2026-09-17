@@ -6,6 +6,7 @@ import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   CI_FAILURE_CONCLUSION,
   DRAIN_ATTEMPT_CAP,
+  EXPRESS_TRAILER,
   INSTALL_COMMAND,
   MAIN_BRANCH,
   REPAIR_EXHAUSTED_MARKER,
@@ -34,10 +35,12 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Them made. The drain's session is pointed at CI's own verdict on the head and commits the repair, which the
 // Lane verifies with every check and pushes as a cut of its own; the claimed commits go on the run that push
 // Fires. Bounded per streak: the attempts noted on the head plus the repairs already stacked at it, since a
-// Repair that landed red would otherwise start a fresh count on the head it made.
+// Repair that landed red would otherwise start a fresh count on the head it made. Past the streak the head is a
+// Person's and the lane is open again: their repair arrives as a claimed commit, and holding the lane on the red
+// It answers would keep it out.
 export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: RepairInput): Promise<RepairResult> => {
   const check = readMainCheck(mainSha);
-  if (check?.conclusion !== CI_FAILURE_CONCLUSION) return { isRed: false };
+  if (check?.conclusion !== CI_FAILURE_CONCLUSION) return { isUnderRepair: false };
 
   const failedMarker = getMarker(REPAIR_FAILED_MARKER, mainSha);
   const comments = readEntries<GitHubEntry>(`commits/${mainSha}/comments`);
@@ -50,9 +53,9 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
     if (!isDryRun && !comments.some((comment) => checkIsMarked(comment, viewerLogin, exhaustedMarker)))
       postCommitComment(
         mainSha,
-        `${exhaustedMarker}\n\`${MAIN_BRANCH}\` is red on ${check.url} past ${attempts} repairs, so the next is a person's: the express lane holds every claimed commit until this head is green.`,
+        `${exhaustedMarker}\n\`${MAIN_BRANCH}\` is red on ${check.url} past ${attempts} repairs, so the next is a person's — a commit carrying the \`${EXPRESS_TRAILER}\` trailer, which the lane cuts as usual.`,
       );
-    return { isRed: true };
+    return { isUnderRepair: false };
   }
 
   console.info(
@@ -60,7 +63,7 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
   );
   if (isDryRun) {
     console.info("would repair — a dry run runs no Claude session");
-    return { isRed: true };
+    return { isUnderRepair: true };
   }
 
   runGit(["switch", "--detach", mainSha], cwd);
@@ -71,7 +74,7 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
   const { isDrained, isStarted } = await runDrain(prompt, cwd);
   if (!isStarted) {
     console.info("the repairer could not start, and no attempt is counted");
-    return { isRed: true };
+    return { isUnderRepair: true };
   }
   // What proves a repair is a clean exit over a clean tree that moved, every commit of the move carrying the
   // Trailer that names this head; the session's word proves nothing. Anything else counts the attempt on the
@@ -95,5 +98,5 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
       `the repairer left ${mainSha} unrepaired (attempt ${attempts + 1} of ${DRAIN_ATTEMPT_CAP})`,
     );
   }
-  return { isRed: true, targetSha: headSha };
+  return { isUnderRepair: true, targetSha: headSha };
 };

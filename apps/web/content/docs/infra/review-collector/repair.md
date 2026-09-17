@@ -13,11 +13,11 @@ Nothing a rule can decide answers a red: which substitution a lint rule wants, w
 flowchart TD
   R[Read CI's newest run for main's head] -->|green, or not concluded| L[The express lane, as usual]
   R -->|red| S{Streak under the cap<br/>attempts noted on the head plus repairs stacked at it}
-  S -->|no| P[Note it once on the head — a person's<br/>the claimed commits wait, unsaid] --> L2[The rest of the pass]
+  S -->|no| P[Note it once on the head — a person's<br/>the lane is open again for their repair] --> L
   S -->|yes| C[Claude, detached at the head, with the failing jobs' log tails<br/>one commit carrying Repairs: head]
   C -->|anything but a trailered commit over a clean tree| F[Count the attempt on the head, fail red]
   C -->|committed| V{The cut passes every check}
-  V -->|no| N[Count the attempt on the head<br/>the claimed commits wait] --> L2
+  V -->|no| N[Count the attempt on the head<br/>the claimed commits wait] --> L2[The rest of the pass]
   V -->|yes| PU[Push main — exit<br/>the push fires the cycle that cuts the claimed commits]
 ```
 
@@ -36,6 +36,8 @@ flowchart TD
 The same headless Claude the drain runs, the same denials — no push, no branch switch, no GitHub — detached at `main`'s head with the tree installed, handed the run's URL and the log tails, and told what a red asks for: a lint rule its substitution in the repo's own convention, a size snapshot a rebuild and the narrowed `-u` run, a failing test whichever of the code or the assertion the test proves wrong. It runs each failed check locally as CI runs it, commits once with `Repairs: <head>`, and leaves the tree clean. The body is the only review the repair gets, so it says what each red was and what answered it.
 
 What proves the repair is read off the tree, never the session's word: a clean exit, a clean tree, a head that moved, and every commit of the move carrying the trailer that names this head. Anything else counts the attempt on the head and fails the run, as the fold's resolver does. A session that could not start — Claude Code's own limit, a launch that never happened — is nobody's attempt.
+
+Past the streak the head is a person's, said once on it — and the lane is open again, because their repair arrives the only way a session's commit reaches `main` unread: a queue commit carrying `Express:`, which the lane cuts and verifies as usual. Holding the lane on the red it answers would keep it out.
 
 ## The cut
 

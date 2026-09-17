@@ -49,7 +49,8 @@ const checkIsGreen = (cwd: string): boolean =>
 // Claiming no review gets, so the cut earns every one CI would fail it on; a red one is told on its commits and
 // Tried again next run. A push is the run's one irreversible act, so a lane that pushed ends the run. A red
 // `main` goes first and alone: every cut is verified on its tree, so until it is repaired no claimed commit can
-// Pass for a red none of them made, and the push of the repair fires the run that cuts them.
+// Pass for a red none of them made, and the push of the repair fires the run that cuts them. Past its repairs
+// The lane is open again — a person's repair arrives as a claimed commit.
 export const runExpressLane = async ({
   cwd,
   isDryRun,
@@ -77,7 +78,7 @@ export const runExpressLane = async ({
         targetSha: repair.targetSha,
       },
     };
-  } else if (repair.isRed) {
+  } else if (repair.isUnderRepair) {
     if (claimedShas.length > 0)
       console.info(`express: ${claimedShas.length} claimed commits wait on the red ${MAIN_BRANCH}`);
     return { heldShas: claimedShas };
