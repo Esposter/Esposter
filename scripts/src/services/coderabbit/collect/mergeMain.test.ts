@@ -33,6 +33,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
   beforeEach(() => {
     runGh.mockReturnValue("[[]]");
+    runDrain.mockReset();
   });
   const getInput = () => ({ cwd: getCwd(), viewerLogin });
   // A conflict nothing mechanical decides: main edited the file the candidate deleted

@@ -43,6 +43,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // The attempts are read off the conflicting commit's own comments, one `gh` page of none unless a test says otherwise
   beforeEach(() => {
     runGh.mockReturnValue("[[]]");
+    runDrain.mockReset();
   });
   const filePath = `${TEST_FILENAME}.ts`;
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
