@@ -29,6 +29,10 @@ export const repository: github.Repository = new github.Repository(
     mergeCommitMessage: "PR_BODY",
     mergeCommitTitle: "PR_TITLE",
     name: "Esposter",
+    // Secret scanning and push protection are what a public repository is given for free, and both are on. The
+    // Three surfaces beside them — non-provider patterns, AI detection, validity checks — are GitHub Secret
+    // Protection, which this repository is not licensed for: the API accepts a PATCH enabling any of them,
+    // Returns 200 and leaves the status `disabled`, so declaring one here is a diff that never closes.
     securityAndAnalysis: {
       secretScanning: {
         status: "enabled",
