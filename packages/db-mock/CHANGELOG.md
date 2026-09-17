@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
+
+### Features
+
+* **resource:** store versions as content-addressed keyframes and deltas ([1a01271](https://github.com/Esposter/Esposter/commit/1a012716c89d09b6746eabe6264427f90c1279ec))
+
 # [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
 
 ### Features

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
+
+### Bug Fixes
+
+* **ci:** the key files table names only commands that exist, and two size snapshots read their built bytes ([f1464d8](https://github.com/Esposter/Esposter/commit/f1464d881fc5d47bb247d8da838781d487bae004))
+* **shared:** the metadata mixin follows its type's rename ([f0c8a34](https://github.com/Esposter/Esposter/commit/f0c8a34c12e2407eed20bad0e94df89bc92d42d2))
+* snapshots ([23fe39b](https://github.com/Esposter/Esposter/commit/23fe39b5ea8f2076d4261736acd106eb50518dc7))
+
+### Features
+
+* **styling:** every rule a program can decide about a template is a test, a blocklist entry or a selector ([53875e5](https://github.com/Esposter/Esposter/commit/53875e570ba5c59af48c876b6767acf8a8798dcb))
+* **sweeps:** the ≥2-consumers rule is enforced — every single-consumer export of packages/shared moves beside its consumer ([5455ae8](https://github.com/Esposter/Esposter/commit/5455ae858d0c1fdad6457e771feab47e2442d61a))
+
 # [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
 
 ### Bug Fixes

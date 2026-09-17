@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
+
+### Bug Fixes
+
+* **ci:** the two breakages the branch head ships — a widened array literal and an import out of order ([632b9a1](https://github.com/Esposter/Esposter/commit/632b9a12eb83341f124b72ce41ba25f9d9b5d92f))
+* **comments:** the generated-JSON note reads as a sentence again ([4f037fe](https://github.com/Esposter/Esposter/commit/4f037fe42b2c46744141d7d53b9716795d6875fa))
+* **lint:** the type-import split keeps its import groups sorted, and two selectors stop over-matching ([3ed5095](https://github.com/Esposter/Esposter/commit/3ed50959bcda5f5469d77ccba8429fddce702eb0))
+* **scripts:** pnpm is spawned as the file pnpm run names, never an args array under a shell ([f71d582](https://github.com/Esposter/Esposter/commit/f71d5820997eafede715d0bc1ba96c886da9df2c))
+* **styling:** the empty-utility ban moves to the enforcer that can ask what a utility is ([ad321dd](https://github.com/Esposter/Esposter/commit/ad321ddfe5616acc1b2a9d477854888512b5576c))
+* the bundle size snapshots move with the .toString() drop and the zod bump ([dc56e7d](https://github.com/Esposter/Esposter/commit/dc56e7d21c8a7580aec32978d3cf67bd258f05c7))
+
+### Features
+
+* **lint:** a getIs or getHas declarator is a no-restricted-syntax error ([c9f8ad3](https://github.com/Esposter/Esposter/commit/c9f8ad3c717bb89c16e1f37795ce38dfa8bd3805))
+* **lint:** a name ending InMessages is an error ([b74484a](https://github.com/Esposter/Esposter/commit/b74484a0453559d52ecaf40e2ddbb510035b457a))
+* **lint:** the selector lists a rule's scope decides — module scope, source only, util imports ([4a4b569](https://github.com/Esposter/Esposter/commit/4a4b569b9069136509fd3b56dd8f36d8c398de65))
+* **naming:** the three decidable naming rules become lint, and the tree follows ([04d5214](https://github.com/Esposter/Esposter/commit/04d52140f64003db73705ca025a16f1aa5a65ade))
+* **styling:** every rule a program can decide about a template is a test, a blocklist entry or a selector ([53875e5](https://github.com/Esposter/Esposter/commit/53875e570ba5c59af48c876b6767acf8a8798dcb))
+* **unocss:** one spelling per utility family, held in the blocklist and refused by lint (2/2) ([f80ac51](https://github.com/Esposter/Esposter/commit/f80ac51a8b216dcfbd7a5b1822246e93428a0fdb))
+
+### Performance Improvements
+
+* **lint:** vitest file snapshots join the generated JSON the jsonc plugin skips ([e08d2d2](https://github.com/Esposter/Esposter/commit/e08d2d2c18f462425e67bbffed4326aa20135180))
+
 # [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
 
 ### Bug Fixes

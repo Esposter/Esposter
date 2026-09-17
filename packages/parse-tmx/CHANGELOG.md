@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
+
+### Bug Fixes
+
+* main's checks pass again — the map-spread lint in virrun and the size snapshots a fresh build moves ([4175608](https://github.com/Esposter/Esposter/commit/417560886d6fa35d73d9f9db3242a419e694b429))
+* **parse-tmx:** a layer's visibility is the file's, not the parser's ([c11939f](https://github.com/Esposter/Esposter/commit/c11939f5a931a43c1c244ccffad5e6fc6a4d2017))
+
 # [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
 
 ### Bug Fixes

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.2.0) (2026-09-17)
+
+### Bug Fixes
+
+* **azure:** the rename into shared/ carries the import order with it ([2cc42a0](https://github.com/Esposter/Esposter/commit/2cc42a062960a06673f1426914078d69574d1bc1))
+* **lint:** the type-import split keeps its import groups sorted, and two selectors stop over-matching ([3ed5095](https://github.com/Esposter/Esposter/commit/3ed50959bcda5f5469d77ccba8429fddce702eb0))
+* snapshots ([23fe39b](https://github.com/Esposter/Esposter/commit/23fe39b5ea8f2076d4261736acd106eb50518dc7))
+
+### Features
+
+* **lint:** consistent-type-imports is on for .ts ([3a425e3](https://github.com/Esposter/Esposter/commit/3a425e330adbd87ae137d5c0ea3502e0d1425b04))
+* **styling:** every rule a program can decide about a template is a test, a blocklist entry or a selector ([53875e5](https://github.com/Esposter/Esposter/commit/53875e570ba5c59af48c876b6767acf8a8798dcb))
+* **sweeps:** the ≥2-consumers rule is enforced — every single-consumer export of packages/shared moves beside its consumer ([5455ae8](https://github.com/Esposter/Esposter/commit/5455ae858d0c1fdad6457e771feab47e2442d61a))
+
+### Performance Improvements
+
+* **sweeps:** the template stems ride the one shingling pass, and the moved bytes land in their size snapshots ([8f20352](https://github.com/Esposter/Esposter/commit/8f203529372fbaec2e57e60c48873a8ef48c763b))
+
 # [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
 
 ### Bug Fixes

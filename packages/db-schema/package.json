@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db-schema",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "private": true,
   "description": "A library of database schemas and utilities using Drizzle ORM (PostgreSQL) that is available in both browser and server environments.",
   "keywords": [
