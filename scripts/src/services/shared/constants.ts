@@ -47,6 +47,12 @@ export const RECORD_SEPARATOR = "\u001E";
 
 export const FIELD_SEPARATOR = "\u001F";
 
+// An ANSI SGR sequence — the colours a check prints to a terminal — as an escape for the same reason. Stripped
+// Wherever a script measures or quotes such output: the outdated report's column widths, the collector's log
+// Excerpt.
+// oxlint-disable-next-line no-control-regex, typescript/no-inferrable-types -- the escape is the sequence's opener; `isolatedDeclarations` demands the annotation
+export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;
+
 // `pnpm run` names the executable it is in `npm_execpath` — the native binary, or the `pnpm.cjs` corepack ships
 // That node runs — so a script spawns that file with its args and never a shell: the `pnpm` on a Windows PATH is
 // A `.cmd` shim only a shell resolves, and an args array under `shell` is what Node deprecates (DEP0190). Bare

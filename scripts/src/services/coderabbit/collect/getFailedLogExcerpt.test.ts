@@ -11,7 +11,7 @@ describe(getFailedLogExcerpt, () => {
     expect.hasAssertions();
 
     const lines = Array.from({ length: FAILED_LOG_TAIL_LINES + 1 }, (_value, index) => getLine("a", index.toString()));
-    const log = [...lines, getLine("b", "[31m×[0m")].join("\n");
+    const log = [...lines, getLine("b", "\u001B[31m×\u001B[0m")].join("\n");
     const excerpt = getFailedLogExcerpt(log);
 
     expect(excerpt.startsWith("### a\n\n1\n")).toBe(true);
