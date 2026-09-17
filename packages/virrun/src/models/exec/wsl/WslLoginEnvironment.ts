@@ -7,7 +7,7 @@ import { z } from "zod";
 // Than treating as fatal.
 //
 // `nodeDirectory` is stored rather than re-derived from `path` because it is what makes a persisted capture
-// *checkable*: the cache key is the host fingerprint, which cannot see a node manager switching version, so the only
+// *Checkable*: the cache key is the host fingerprint, which cannot see a node manager switching version, so the only
 // Thing standing between a capture taken before an upgrade and a sandbox pinned to a node that no longer exists is a
 // Later process asking whether this directory is still there (checkHasSandboxNode). Deriving it at that point would
 // Put the capture script's "lead PATH with the dereferenced install directory" convention in a second file, where a
