@@ -2,7 +2,8 @@ name: 🔎 CodeQL
 # Advanced setup rather than GitHub's one-click default, which analyses every pull request against `main` — here
 # That is the release and every renovate bump, and a full analysis per bump finds nothing a scan of the same tree
 # On `main` does not. So `main` is what is scanned, plus a weekly run, because a query pack published after the
-# Last release finds what the release's own scan could not have.
+# Last release finds what the release's own scan could not have. An open alert on `main` is a red run here, which
+# The review collector answers as it answers a red CI (docs: infra/review-collector/repair).
 
 on:
   push:
@@ -53,3 +54,31 @@ jobs:
 
       - name: 🔎 Analyse
         uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
+
+  # `analyze` uploads its findings and exits 0 whatever they are, so an alert is a fact on the Security tab and
+  # Nothing else. This gate reads them back for the ref just scanned and fails on any still open — a dismissed one
+  # Is a person's decision and stays green — so that an alert is a red run the collector's repairer answers, and the
+  # Failing step's log is the list it is handed. `analyze` waits for the upload's processing by default, so the
+  # Alerts are current by the time this job starts.
+  alerts:
+    name: 🚦 Alerts
+    needs: analyze
+    if: ${{ !cancelled() }}
+    permissions:
+      security-events: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚦 Gate on the analyses
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
+
+      - name: 🚦 Gate on the open alerts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          REF: ${{ github.ref }}
+        run: |
+          gh api --paginate "repos/$REPOSITORY/code-scanning/alerts?ref=$REF&state=open&per_page=100" \
+            --jq '.[] | "\(.most_recent_instance.location.path):\(.most_recent_instance.location.start_line) \(.rule.id) — \(.most_recent_instance.message.text)"' \
+            | tee alerts.txt
+          test ! -s alerts.txt

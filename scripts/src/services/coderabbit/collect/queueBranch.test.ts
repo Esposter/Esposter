@@ -1,7 +1,7 @@
 import {
   CI_FAILURE_CONCLUSION,
-  CI_WORKFLOW_FILE,
   MAIN_BRANCH,
+  MAIN_CHECK_WORKFLOW_FILES,
   QUEUE_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -37,12 +37,12 @@ describe("queueBranch", () => {
     expect(readWorkflowLines(name)).toContain(line);
   });
 
-  // The repairer reads CI's verdict on `main`'s head by the workflow file, and the trigger that fires it names
+  // The repairer reads a verdict on `main`'s head by the workflow file, and the trigger that fires it names
   // The same workflow by its display name: the one is the other's first line
-  test("the repair trigger names the workflow the cycle reads", () => {
+  test.each(MAIN_CHECK_WORKFLOW_FILES)("the repair trigger names %s, which the cycle reads", (workflowFile) => {
     expect.hasAssertions();
 
-    const [nameLine = ""] = readWorkflowLines(CI_WORKFLOW_FILE);
+    const [nameLine = ""] = readWorkflowLines(workflowFile);
 
     expect(readWorkflowLines("ReviewCollector.yaml")).toContain(`      - ${nameLine.replace("name: ", "")}`);
     expect(readWorkflowLines("run-review-collector.yaml")).toContain(

@@ -23,8 +23,9 @@ export const EXPRESS_TRAILER = "Express";
 // (docs: infra/review-collector/repair)
 export const REPAIRS_TRAILER = "Repairs";
 
-// The workflow whose conclusion on `main`'s head says the branch is red — the one the repairer answers
-export const CI_WORKFLOW_FILE = "CI.yaml";
+// The workflows whose conclusion on `main`'s head says the branch is red — the ones the repairer answers: CI's
+// Checks, and the code-scanning alerts CodeQL's own gate turns into a red
+export const MAIN_CHECK_WORKFLOW_FILES: string[] = ["CI.yaml", "CodeQL.yaml"];
 
 export const CI_FAILURE_CONCLUSION = "failure";
 

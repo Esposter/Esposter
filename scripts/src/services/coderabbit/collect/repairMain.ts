@@ -4,7 +4,6 @@ import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
-  CI_FAILURE_CONCLUSION,
   DRAIN_ATTEMPT_CAP,
   EXPRESS_TRAILER,
   INSTALL_COMMAND,
@@ -19,7 +18,7 @@ import { postCommitComment } from "#src/services/coderabbit/collect/postCommitCo
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readFailedLog } from "#src/services/coderabbit/collect/readFailedLog";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
-import { readMainCheck } from "#src/services/coderabbit/collect/readMainCheck";
+import { readRedMainCheck } from "#src/services/coderabbit/collect/readRedMainCheck";
 import { readStackedRepairs } from "#src/services/coderabbit/collect/readStackedRepairs";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
@@ -39,8 +38,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Person's and the lane is open again: their repair arrives as a claimed commit, and holding the lane on the red
 // It answers would keep it out.
 export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: RepairInput): Promise<RepairResult> => {
-  const check = readMainCheck(mainSha);
-  if (check?.conclusion !== CI_FAILURE_CONCLUSION) return { isUnderRepair: false };
+  const check = readRedMainCheck(mainSha);
+  if (!check) return { isUnderRepair: false };
 
   const failedMarker = getMarker(REPAIR_FAILED_MARKER, mainSha);
   const comments = readEntries<GitHubEntry>(`commits/${mainSha}/comments`);
