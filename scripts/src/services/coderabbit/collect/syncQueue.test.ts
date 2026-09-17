@@ -12,7 +12,7 @@ import {
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
-import { readExpressShas } from "#src/services/coderabbit/collect/readExpressShas";
+import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
@@ -298,7 +298,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, "rule", "moves"]);
     const claimedSha = readSha(`${syncedSha}~2`);
-    expect(readExpressShas([claimedSha], getCwd())).toStrictEqual(new Set([claimedSha]));
+    expect(readTrailedShas([claimedSha], EXPRESS_TRAILER, getCwd())).toStrictEqual(new Set([claimedSha]));
     expect(runGit(["diff", queueSha, syncedSha], getCwd())).toBe("");
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });

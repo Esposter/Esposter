@@ -2,11 +2,12 @@ import type { PortInput } from "#src/models/coderabbit/collect/PortInput";
 import type { PortResult } from "#src/models/coderabbit/collect/PortResult";
 
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
+import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { getWindowFileCount } from "#src/services/coderabbit/collect/getWindowFileCount";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
-import { readExpressShas } from "#src/services/coderabbit/collect/readExpressShas";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -33,7 +34,7 @@ export const portWindow = ({ cwd, developSha, fixShas, frontierSha, queueSha }: 
   // Commits as ancestors, and against develop they would be re-picked onto a tree that already holds them
   const fixesHeadSha = readHeadSha(cwd);
   const owedShas = readCherryShas(fixesHeadSha, queueSha, cwd);
-  const claimedShas = readExpressShas(owedShas, cwd);
+  const claimedShas = readTrailedShas(owedShas, EXPRESS_TRAILER, cwd);
   const queueShas: string[] = [];
   let heldSha: string | undefined;
   for (const sha of owedShas) {

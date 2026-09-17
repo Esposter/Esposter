@@ -1,8 +1,6 @@
 export enum CycleOutcomeKind {
   // Mechanical commits reached `main` directly — no review slot spent
   Expressed = "Expressed",
-  // `develop` followed a merged `main` by fast-forward — no review slot spent, no pull request open
-  FastForwarded = "FastForwarded",
   // Nothing was done: a gate closed, nothing was owed, or the remote moved under the run
   Idle = "Idle",
   // The release pull request merged itself on a clean review — the push to `main` runs the return stroke
@@ -11,4 +9,6 @@ export enum CycleOutcomeKind {
   Opened = "Opened",
   // A window reached `develop`
   Pushed = "Pushed",
+  // A repair of a red `main` reached it — no review slot spent, and the claimed commits behind it go next run
+  Repaired = "Repaired",
 }

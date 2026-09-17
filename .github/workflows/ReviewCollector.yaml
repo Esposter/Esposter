@@ -21,6 +21,14 @@ on:
     types:
       - created
       - edited
+  # A red `main`: the release merges on the review alone, so what CI held lands on `main`, and the repairer answers
+  # CI's verdict on the head. `workflow_run` fires only from the default branch's copy of this file, so the
+  # trigger waits for a release; the cycle reads the same verdict on every event meanwhile.
+  workflow_run:
+    workflows:
+      - 🏗️ CI
+    types:
+      - completed
   workflow_dispatch:
     inputs:
       force:

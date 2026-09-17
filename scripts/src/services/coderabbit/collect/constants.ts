@@ -18,6 +18,20 @@ export const DRAINS_TRAILER = "Drains";
 // True, only as asked (docs: infra/review-collector/express-lane)
 export const EXPRESS_TRAILER = "Express";
 
+// The record a repair commit carries of the red `main` head it repaired — the repairer's own claim, which the
+// Checks verify like any other; consecutive ones at `main`'s head are the streak the attempt cap bounds
+// (docs: infra/review-collector/repair)
+export const REPAIRS_TRAILER = "Repairs";
+
+// The workflow whose conclusion on `main`'s head says the branch is red — the one the repairer answers
+export const CI_WORKFLOW_FILE = "CI.yaml";
+
+export const CI_FAILURE_CONCLUSION = "failure";
+
+// How much of each failing job's log the repairer is handed: the summary a check prints sits at its end, and a
+// Job's whole log is every test it ran
+export const FAILED_LOG_TAIL_LINES = 80;
+
 export const CHECK_NAME = "CodeRabbit";
 
 export const PENDING_BUCKET = "pending";
@@ -105,6 +119,13 @@ export const FOLD_FAILED_MARKER = "review-collector fold-failed";
 // A commit claiming no review whose cut failed the checks, noted once on the commit: the port never carries it,
 // So a person drops the claim or repairs it, and nothing behind it waits
 export const EXPRESS_FAILED_MARKER = "review-collector express-failed";
+
+// A red `main` head whose repair the session failed on, counted on the head; with the repairs already stacked at
+// The head, the streak the cap bounds
+export const REPAIR_FAILED_MARKER = "review-collector repair-failed";
+
+// A red `main` past its repairs, noted once on the head: nothing waits on it, and a person reads it there
+export const REPAIR_EXHAUSTED_MARKER = "review-collector repair-exhausted";
 
 // How many times the rewrite's push carries what the session pushed under it and tries its lease again: each
 // Carry is seconds, so past this the session is pushing faster than any lease can be read

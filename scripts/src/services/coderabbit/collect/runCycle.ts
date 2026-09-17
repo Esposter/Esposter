@@ -58,17 +58,19 @@ export const runCycle = async ({
   });
 
   const branchShas = readBranchShas(cwd);
-  const { developSha, mainSha, queueSha } = branchShas;
+  const { mainSha, queueSha } = branchShas;
   // The drain may create or advance the fixes branch mid-pass, so this one is carried rather than re-read
   let reviewFixesSha = branchShas.reviewFixesSha;
   // The return stroke first: a release that merged moves `develop` before anything is measured against it
-  const returned = runReturnStroke({ cwd, developSha, isDryRun, mainSha });
-  if (returned) return returned;
+  const returned = runReturnStroke({ cwd, developSha: branchShas.developSha, isDryRun, mainSha });
+  if (returned.outcome) return returned.outcome;
+  const { developSha } = returned;
   const viewerLogin = readViewerLogin();
   // The express lane, before the pull request is even looked up: a commit claiming no review reaches `main`
-  // Directly and the fold carries it to `develop` with the next window
-  const expressed = runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
-  if (expressed) return expressed;
+  // Directly and the fold carries it to `develop` with the next window — and a red `main` its cut cannot pass is
+  // Repaired by the lane's own cut
+  const expressed = await runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
+  if (expressed.outcome) return expressed.outcome;
   // No release pull request: the last one merged and the next window is still filling from the merge base
   const releasePullRequest = namedPullRequest === undefined ? readReleasePullRequest() : undefined;
   // Closed without merging is a person's pause: opening another over it would spend the slot they were withholding
@@ -188,6 +190,13 @@ export const runCycle = async ({
         `held at ${port.heldSha} — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ${QUEUE_BRANCH} (its commit comments say which)`,
       );
     } else if (parkedFixCount > 0) return getOutcome(CycleOutcomeKind.Idle, "parked — fixes wait for the queue");
+    // A claimed commit no cut carried is owed to `main` still, and the port never counts it: said here, or an
+    // Idle run reads as a synced queue over a commit its own comment says is red
+    else if (expressed.heldShas.length > 0)
+      return getOutcome(
+        CycleOutcomeKind.Idle,
+        `${expressed.heldShas.length} claimed commits wait on the express lane — a red cut, a patch that does not apply yet, or a red ${MAIN_BRANCH} under repair`,
+      );
     return getOutcome(CycleOutcomeKind.Idle, `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`);
   }
   // Ready with nothing to add: develop already carries the window, and only the pull request is owed

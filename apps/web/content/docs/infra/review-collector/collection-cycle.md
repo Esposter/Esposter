@@ -1,6 +1,6 @@
 ---
 title: Collection cycle
-description: The one pass the review collector runs on every trigger: read, reply, gate, drain, judge, sync, port, push, reply, each step re-derived from the remote so a re-run is a no-op.
+description: The one pass the review collector runs on every trigger: return, repair, express, read, reply, gate, drain, judge, sync, port, push, reply, each step re-derived from the remote so a re-run is a no-op.
 ---
 
 # Collection Cycle
@@ -25,27 +25,32 @@ Nothing is remembered between runs, so every input is a remote fact with a singl
 | the ported set                | the `(cherry picked from commit …)` line every port and every express cut writes (`cherry-pick -x`), read off the upstream and off `main` since the histories parted — the record a drifted patch id cannot lose |
 | which thread a commit answers | an `Answers: <comment id>` trailer on the commit, `Drains: <review id>` for a body-only finding                                                                                                                  |
 | what claims no review         | an `Express: <why>` trailer on a queue commit — the reshaper's, or a session's own                                                                                                                               |
+| `main` is red                 | CI's newest run for `main`'s head, concluded `failure` — the [repair](/docs/infra/review-collector/repair)'s one input, with the failing jobs' log tails                                                         |
 
 The trailers are the collector's memory: a fix commit says which finding it answers in its own message, so the reply step can name it after the push, a later run can tell an answered finding from an open one, and a session fixing a finding by hand leaves the same record by writing the same trailer. The ported line is the same kind of memory for the port itself: a fix landing inside a ported hunk's context lines changes the copy's patch id, after which `git cherry` reads the original as still owed and re-picking it is the conflict nobody authored — so the copy names its original, and the owed set subtracts every original a copy names, on `develop` or on `main`.
 
-## The return stroke and the express lane
+## The return stroke, the repair and the express lane
 
-Before the pull request is looked up, the cycle compares `develop` with `main`. When `develop` is an ancestor of `main` and the two differ, `main` holds commits and `develop` holds nothing of its own: `develop` is fast-forwarded to `main` with a plain push — no pull request is open, so it spends nothing — and the run exits on it. What put those commits on `main` is not asked: a release that merged, an express cut and a dependency bump pushed straight at it all already sit on the branch a window is diffed against, so no window could carry them to a review.
+Before the pull request is looked up, the cycle compares `develop` with `main`. When `develop` is an ancestor of `main` and the two differ, `main` holds commits and `develop` holds nothing of its own: `develop` is fast-forwarded to `main` with a plain push — no pull request is open, so it spends nothing — and the pass goes on measuring against the head it made. What put those commits on `main` is not asked: a release that merged, an express cut and a dependency bump pushed straight at it all already sit on the branch a window is diffed against, so no window could carry them to a review. The stroke ends nothing because nothing would follow it: a push to `develop` fires no run, so a pass that exited here would leave the queue waiting on the next session push for the window it could have cut — which is how the first releases under the self-merge sat idle after merging.
 
-With no return stroke to make, the cycle cuts every queue commit that claims it needs no review onto `main` — the [express lane](/docs/infra/review-collector/express-lane), open whether or not a window is in flight. That push is the run's one irreversible act too; the fold below carries `main` into the next window, and only then is a window measured.
+Then the cycle cuts every queue commit that claims it needs no review onto `main` — the [express lane](/docs/infra/review-collector/express-lane), open whether or not a window is in flight. That push is the run's one irreversible act too; the fold below carries `main` into the next window, and only then is a window measured. A red cut, or nothing to cut, asks whether `main` itself is red on its own CI: a red head is the [repair](/docs/infra/review-collector/repair)'s, answered as a cut of the lane's own — verified with every check, pushed alone, the run ending on the push — and while a repair is still to be tried a red cut is told on no claimed commit, since the red was never theirs.
 
 ## Gates
 
 ```mermaid
 flowchart TD
   S[Read state] --> RS{develop an ancestor of main}
-  RS -->|yes| FF[Fast-forward develop to main] --> X5[Exit — one push per run]
+  RS -->|yes| FF[Fast-forward develop to main<br/>the pass measures against it] --> EL
   RS -->|no| EL{A queued commit claims no review}
-  EL -->|yes| CP[Cherry-pick onto main, check, push] --> X3[Exit — the push re-fires the cycle]
-  EL -->|no| PR{Release PR open}
+  EL -->|yes| CP[Cherry-pick onto main, check]
+  CP -->|green| X3[Push, exit — the push re-fires the cycle]
+  CP -->|red| MR
+  EL -->|no| MR{main red on CI}
+  MR -->|yes| RP[Claude repairs it — cut, check, push] --> X6[Exit — the push re-fires the cycle]
+  MR -->|no| PR{Release PR open}
   PR -->|no| MB[Frontier is the merge base<br/>nothing running] -->|nothing to drain| D
-  PR -->|yes| RP[Reply for pushed fixes<br/>trailers on frontier..develop without a reply]
-  RP --> B{Newest stated range<br/>ends at the develop head}
+  PR -->|yes| RE[Reply for pushed fixes<br/>trailers on frontier..develop without a reply]
+  RE --> B{Newest stated range<br/>ends at the develop head}
   B -->|yes| OK[Slot free]
   B -->|no| ST{Check bucket}
   ST -->|pending| X1[Exit — review running]
@@ -129,7 +134,7 @@ flowchart TD
   U --> RD
   H --> RD{Ready}
   RD -->|fixes parked with no queue commit behind them| W[Wait — nothing pushed, fixes stay parked]
-  RD -->|nothing owed at all| N[Exit — ai/queue is synced with develop]
+  RD -->|nothing owed at all| N[Exit — ai/queue is synced with develop<br/>or its claimed commits wait on the lane]
   RD -->|nothing taken under a rate limit| AK[Ask for the review the limit refused<br/>at the deadline the bot stated]
   RD -->|no fixes and the first queue commit is held| F[Note it on the commit once, then fail red —<br/>idle under a rate limit, the ask first]
   RD -->|nothing to add, develop already carries the window, no PR open| OP[Open the release PR]
@@ -166,17 +171,19 @@ With no pull request open, the push is followed by opening one — the same read
 
 ## Why a re-run is a no-op
 
-| Step  | Precondition read from the remote                                                             | Effect                       | Second run against unchanged state                                                 |
-| :---- | :-------------------------------------------------------------------------------------------- | :--------------------------- | :--------------------------------------------------------------------------------- |
-| reply | a trailer's thread lacks a reply citing that sha                                              | posts the reply              | every thread has one — nothing                                                     |
-| gate  | the newest stated range's end, check bucket                                                   | a scheduled retrigger        | same verdict, same deadline — the ask is posted once per block                     |
-| drain | a finding is open by the predicate                                                            | commits on `ai/review-fixes` | every finding carries a trailer or a reply — nothing                               |
-| judge | clean at the head, a level above the least, no verdict marker                                 | records a verdict            | the marker is re-applied — no session                                              |
-| sync  | the queue does not sit on the target, or an owed commit claiming review is alone over the cap | rewrites `ai/queue`          | it sits on it and every commit fits — nothing                                      |
-| merge | the range at the head, nothing open, least risk or a merge verdict                            | merges the pull request      | none is open — the next window fills from the merge base                           |
-| port  | `git cherry` lists unported commits, readiness                                                | a local branch               | same branch, discarded with the runner                                             |
-| push  | `origin/develop` unchanged since the read                                                     | fast-forwards `develop`      | the last push moved the head, so the body no longer ends at it — exits at the gate |
-| open  | no release pull request, `develop` at the target                                              | opens the pull request       | one is open — the ordinary cycle, with its reviews as the frontier                 |
+| Step   | Precondition read from the remote                                                             | Effect                       | Second run against unchanged state                                                 |
+| :----- | :-------------------------------------------------------------------------------------------- | :--------------------------- | :--------------------------------------------------------------------------------- |
+| return | `develop` an ancestor of `main`, the two apart                                                | fast-forwards `develop`      | they agree — nothing, and the pass goes on either way                              |
+| repair | CI red on `main`'s head, the streak under the cap                                             | a session, a cut, a push     | the push made a new head CI has not concluded on — nothing                         |
+| reply  | a trailer's thread lacks a reply citing that sha                                              | posts the reply              | every thread has one — nothing                                                     |
+| gate   | the newest stated range's end, check bucket                                                   | a scheduled retrigger        | same verdict, same deadline — the ask is posted once per block                     |
+| drain  | a finding is open by the predicate                                                            | commits on `ai/review-fixes` | every finding carries a trailer or a reply — nothing                               |
+| judge  | clean at the head, a level above the least, no verdict marker                                 | records a verdict            | the marker is re-applied — no session                                              |
+| sync   | the queue does not sit on the target, or an owed commit claiming review is alone over the cap | rewrites `ai/queue`          | it sits on it and every commit fits — nothing                                      |
+| merge  | the range at the head, nothing open, least risk or a merge verdict                            | merges the pull request      | none is open — the next window fills from the merge base                           |
+| port   | `git cherry` lists unported commits, readiness                                                | a local branch               | same branch, discarded with the runner                                             |
+| push   | `origin/develop` unchanged since the read                                                     | fast-forwards `develop`      | the last push moved the head, so the body no longer ends at it — exits at the gate |
+| open   | no release pull request, `develop` at the target                                              | opens the pull request       | one is open — the ordinary cycle, with its reviews as the frontier                 |
 
 ## Notes
 

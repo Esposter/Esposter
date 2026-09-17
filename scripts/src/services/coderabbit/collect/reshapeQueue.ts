@@ -3,14 +3,14 @@ import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
-import { DRAIN_ATTEMPT_CAP, RESHAPE_FAILED_MARKER } from "#src/services/coderabbit/collect/constants";
+import { DRAIN_ATTEMPT_CAP, EXPRESS_TRAILER, RESHAPE_FAILED_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getReshapeFailure } from "#src/services/coderabbit/collect/getReshapeFailure";
 import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePrompt";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
-import { readExpressShas } from "#src/services/coderabbit/collect/readExpressShas";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { runDrain } from "#src/services/coderabbit/collect/runDrain";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
@@ -28,7 +28,7 @@ export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: Re
   const owedShas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${targetSha}..HEAD`], cwd));
   // A commit claiming no review is the express lane's at any size, so the cap is not its measure: reshaping one
   // Would pay a session per run to repackage what no window will ever carry
-  const claimedShas = readExpressShas(owedShas, cwd);
+  const claimedShas = readTrailedShas(owedShas, EXPRESS_TRAILER, cwd);
   const sha = owedShas.find(
     (owedSha) => !claimedShas.has(owedSha) && getFileCount(`${owedSha}^..${owedSha}`, cwd) > REVIEW_FILE_CAP,
   );

@@ -1,0 +1,26 @@
+import { FAILED_LOG_TAIL_LINES } from "#src/services/coderabbit/collect/constants";
+import { TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
+import { getFailedLogExcerpt } from "#src/services/coderabbit/collect/getFailedLogExcerpt";
+import { describe, expect, test } from "vitest";
+
+describe(getFailedLogExcerpt, () => {
+  const timestamp = new Date(0).toISOString();
+  const getLine = (job: string, text: string) => `${job}\t${TEST_FILENAME}\t${timestamp} ${text}`;
+
+  test("keeps the tail of every failing job, one section per job, without the terminal colours", () => {
+    expect.hasAssertions();
+
+    const lines = Array.from({ length: FAILED_LOG_TAIL_LINES + 1 }, (_value, index) => getLine("a", index.toString()));
+    const log = [...lines, getLine("b", "[31m×[0m")].join("\n");
+    const excerpt = getFailedLogExcerpt(log);
+
+    expect(excerpt.startsWith("### a\n\n1\n")).toBe(true);
+    expect(excerpt.endsWith(`${FAILED_LOG_TAIL_LINES}\n\n### b\n\n×`)).toBe(true);
+  });
+
+  test("reads nothing off a line that is not the runner's", () => {
+    expect.hasAssertions();
+
+    expect(getFailedLogExcerpt(TEST_FILENAME)).toBe("");
+  });
+});
