@@ -774,8 +774,8 @@ catalogs:
       specifier: ^21.1.0
       version: 21.1.0
     unplugin-vue:
-      specifier: ^7.2.0
-      version: 7.2.0
+      specifier: ^8.0.0
+      version: 8.0.0
     vitest:
       specifier: ^5.0.1
       version: 5.0.1
@@ -1674,7 +1674,7 @@ importers:
         version: 21.1.0(@nuxt/kit@4.5.2(magic-string@1.4.1)(oxc-parser@0.149.0)(rolldown@1.2.9)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.9)(rollup@4.63.3)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1))(webpack@5.111.0(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.1))(svgo@4.1.0)(uglify-js@3.19.3))))(@vueuse/core@15.0.0(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)))(esbuild@0.28.2)(oxc-parser@0.149.0)(rolldown@1.2.9)(rollup@4.63.3)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1))(webpack@5.111.0(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.1))(svgo@4.1.0)(uglify-js@3.19.3))
       unplugin-vue:
         specifier: 'catalog:'
-        version: 7.2.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(rolldown@1.2.9)(rollup@4.63.3)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.13)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(webpack@5.111.0(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.1))(svgo@4.1.0)(uglify-js@3.19.3))(yaml@2.9.1)
+        version: 8.0.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(rolldown@1.2.9)(rollup@4.63.3)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.13)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(webpack@5.111.0(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.1))(svgo@4.1.0)(uglify-js@3.19.3))(yaml@2.9.1)
       vite:
         specifier: ^8.3.0
         version: 8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1)
@@ -14390,9 +14390,9 @@ packages:
       '@nuxt/kit':
         optional: true
 
-  unplugin-vue@7.2.0:
-    resolution: {integrity: sha512-6JHWcRbLO3bySOsipQSW9n2VRoPqsx9GLSWBfp7QLPCvpUr/edeAXR7pSl44EEJ+FIp9bG8Zm+xm5dnM/yir4Q==}
-    engines: {node: '>=20.19.0'}
+  unplugin-vue@8.0.0:
+    resolution: {integrity: sha512-D6TI8IhakUduwNb31+yLfqRAkEYb3yhlwy6DODzO4BLAxvGeefQ070oy1RQ6zmuoZwH4CnqW1jLOXzu3Zjajig==}
+    engines: {node: ^22.18.0 || ^24.11.0 || >=26.0.0}
     peerDependencies:
       vue: ^3.2.25
 
@@ -29715,12 +29715,12 @@ snapshots:
       - vite
       - webpack
 
-  unplugin-vue@7.2.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(rolldown@1.2.9)(rollup@4.63.3)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.13)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(webpack@5.111.0(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.1))(svgo@4.1.0)(uglify-js@3.19.3))(yaml@2.9.1):
+  unplugin-vue@8.0.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(rolldown@1.2.9)(rollup@4.63.3)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.13)(vue@3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2))(webpack@5.111.0(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.1))(svgo@4.1.0)(uglify-js@3.19.3))(yaml@2.9.1):
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
       '@vue/reactivity': 3.5.42
-      obug: 2.2.1
+      obug: 3.0.0
       unplugin: 3.4.0(esbuild@0.28.2)(rolldown@1.2.9)(rollup@4.63.3)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1))(webpack@5.111.0(cssnano@8.0.10(postcss@8.5.28))(csso@5.0.5)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(sharp@0.35.4(@types/node@26.6.1))(svgo@4.1.0)(uglify-js@3.19.3))
       vite: 8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1)
       vue: 3.5.42(typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2)
