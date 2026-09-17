@@ -14,13 +14,15 @@ The claim is one trailer line, `Express: <one sentence on why nothing in it need
 - **The reshaper**, on the parts of an over-cap commit it judged need no review — the commit's author is asked for nothing ([sync](/docs/infra/review-collector/collection-cycle)).
 - **A session**, on a commit it knows to be a sweep's moves or a format pass, which skips the reshaper's session outright.
 
-A claim is never a proof. Nothing reads it as true, only as asked: what admits the commit to `main` is the checks — install, format, the package builds, typecheck, both linters and the tests (`EXPRESS_VERIFY_COMMANDS`) — run on the cut as it would land. A red cut takes no window either: it is noted on the commits it carried and tried again every run. The app build alone is left to `main`'s own CI: it is the longest job there, and nothing a cut ships waits on it.
+A claim is never a proof. Nothing reads it as true, only as asked: what admits the commit to `main` is the checks — install, format, the package builds, typecheck, both linters and the tests (`EXPRESS_VERIFY_COMMANDS`) — run on the cut as it would land. A red cut takes no window either: it is noted on the commits it carried and tried again every run. The app build alone is left to `main`'s own CI: it is the longest job there, and nothing a cut ships waits on it. The checks run on `main`'s tree, so a red `main` would refuse every cut for a red none of them made — which is why a red `main` is [repaired](/docs/infra/review-collector/repair) first, as a cut of the lane's own, and the claimed commits wait unsaid until it is green.
 
 ```mermaid
 flowchart TD
   C[A commit the queue owes main and develop] --> T{Carries an Express trailer}
   T -->|no| RV[Review lane]
-  T -->|yes| EX[Cherry-pick onto main, in queue order<br/>a patch that does not apply is skipped]
+  T -->|yes| MR{main green on CI}
+  MR -->|no| W[Wait, unsaid — the repair goes first]
+  MR -->|yes| EX[Cherry-pick onto main, in queue order<br/>a patch that does not apply is skipped]
   EX --> V{The cut passes the checks}
   V -->|no| RD[Note it once on each commit<br/>tried again next run — the port skips it]
   V -->|yes| PU[Push main — exit, the push re-fires the cycle]
@@ -32,15 +34,16 @@ flowchart TD
 - **It does not preserve queue order.** A trailered commit stuck behind unported work is the one worth taking early; a commit whose patch needs an unported one cannot apply, so the cherry-pick refuses it and the lane moves on. Dependency is enforced by whether the patch lands, not by an ancestry check the cherry-pick never makes.
 - **It does not close while a window is in flight.** `main` moving under `develop` is the fold's case, and the fold always lands — the lockfile rebuilt, any other conflict the resolver's. A copy a window already carries is owed to neither branch, so it is never cut a second time.
 - **It does not push twice in a run.** The push fires the cycle again; whatever else the run would have done waits for that event.
-- **It does not hand a claimed commit to a window.** The port skips every trailered commit, so nothing behind one waits on it. A cut the checks refuse is noted once on each commit it carried and tried again every run — a later commit reaching `main` may be what it needed — and the person drops the trailer to have it reviewed, or repairs it. The third and last residual case.
+- **It does not hand a claimed commit to a window.** The port skips every trailered commit, so nothing behind one waits on it. A cut the checks refuse is noted once on each commit it carried and tried again every run — a later commit reaching `main` may be what it needed — and the person drops the trailer to have it reviewed, or repairs it. The third residual case; a red `main` past its [repairs](/docs/infra/review-collector/repair) is the fourth.
 
 ## Key files
 
-| File                                                         | Role                                                           |
-| :----------------------------------------------------------- | :------------------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect/runExpressLane.ts`  | the lane as one step of the cycle — build, verify, push        |
-| `scripts/src/services/coderabbit/collect/portExpress.ts`     | which owed commits claim the lane, and the candidate on `main` |
-| `scripts/src/services/coderabbit/collect/readExpressShas.ts` | which of an owed set claim the lane, in one read               |
+| File                                                         | Role                                                            |
+| :----------------------------------------------------------- | :-------------------------------------------------------------- |
+| `scripts/src/services/coderabbit/collect/runExpressLane.ts`  | the lane as one step of the cycle — repair, build, verify, push |
+| `scripts/src/services/coderabbit/collect/readClaimedShas.ts` | which owed commits claim the lane                               |
+| `scripts/src/services/coderabbit/collect/portExpress.ts`     | the candidate on `main`                                         |
+| `scripts/src/services/coderabbit/collect/readTrailedShas.ts` | which of a set carry a trailer, in one read                     |
 
 ## Notes
 

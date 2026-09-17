@@ -20,14 +20,18 @@ jobs:
     # branch as well as the context: the bot writes that status on every pull request it is asked about,
     # renovate's included, and a cycle woken by one only reaches the gates and exits, having paid for a runner,
     # an install and a clone to do it. A status payload lists every branch carrying its sha, not just the ones
-    # heading it, so a status on a sha `develop` has already moved past still names it.
+    # heading it, so a status on a sha `develop` has already moved past still names it. A CI run's completion
+    # runs a cycle only when it is `main`'s and red — the one conclusion the repairer answers; every other branch's
+    # CI, and a green `main`, would pay for a runner to reach the gates and exit.
     if: >-
       (github.event_name != 'pull_request_review' ||
       (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.ref == 'develop')) &&
       (github.event_name != 'status' ||
       (github.event.context == 'CodeRabbit' && contains(github.event.branches.*.name, 'develop'))) &&
       (github.event_name != 'issue_comment' ||
-      (github.event.comment.user.login == 'coderabbitai[bot]' && github.event.issue.pull_request))
+      (github.event.comment.user.login == 'coderabbitai[bot]' && github.event.issue.pull_request)) &&
+      (github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion == 'failure'))
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:

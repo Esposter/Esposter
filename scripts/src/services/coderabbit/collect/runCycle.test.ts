@@ -1,20 +1,26 @@
 import type { CheckStatus } from "#src/models/coderabbit/collect/CheckStatus";
 import type { DrainStepResult } from "#src/models/coderabbit/collect/DrainStepResult";
+import type { MainCheck } from "#src/models/coderabbit/collect/MainCheck";
 import type { ReleasePullRequest } from "#src/models/coderabbit/collect/ReleasePullRequest";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 import type { judgeRelease as baseJudgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import type { readCheckStatus as baseReadCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
+import type { runDrain as baseRunDrain } from "#src/services/coderabbit/collect/runDrain";
 import type { runDrainStep as baseRunDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
+import type { spawnPnpm as baseSpawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
+import type { SpawnSyncReturns } from "node:child_process";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
 import {
   CHECK_NAME,
+  CI_FAILURE_CONCLUSION,
   COMPLETED_DESCRIPTION,
   DEVELOP_BRANCH,
   DRAIN_ATTEMPT_CAP,
+  EXPRESS_TRAILER,
   HELD_MARKER,
   MAIN_BRANCH,
   MERGEABLE_RISK_LEVEL,
@@ -22,6 +28,8 @@ import {
   PENDING_BUCKET,
   QUEUE_BRANCH,
   RECENT_REVIEW_MARKER,
+  REPAIR_FAILED_MARKER,
+  REPAIRS_TRAILER,
   RESHAPE_FAILED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
@@ -30,18 +38,29 @@ import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { judgeRelease, readCheckStatus, runDrainStep, runGh } = vi.hoisted(() => ({
+const { judgeRelease, readCheckStatus, runDrain, runDrainStep, runGh, spawnPnpm } = vi.hoisted(() => ({
   judgeRelease: vi.fn<typeof baseJudgeRelease>(),
   readCheckStatus: vi.fn<typeof baseReadCheckStatus>(),
+  runDrain: vi.fn<typeof baseRunDrain>(),
   runDrainStep: vi.fn<typeof baseRunDrainStep>(),
   runGh: vi.fn<typeof baseRunGh>(),
+  spawnPnpm: vi.fn<typeof baseSpawnPnpm>(),
 }));
 
-// The four seams the pass cannot reach from a fixture repository: `gh`, the check status it reads through
-// `gh pr checks`, and the two steps that spawn Claude — the drain and the release verdict. Git runs for real.
+// The seams the pass cannot reach from a fixture repository: `gh`, the check status it reads through
+// `gh pr checks`, the steps that spawn Claude — the drain, the release verdict and the repairer's session — and
+// The `pnpm` the express lane verifies a cut with. Git runs for real.
 vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
+
+vi.mock(import("#src/services/coderabbit/collect/runDrain"), () => ({
+  runDrain: runDrain as unknown as typeof baseRunDrain,
+}));
+
+vi.mock(import("#src/services/coderabbit/collect/spawnPnpm"), () => ({
+  spawnPnpm: spawnPnpm as unknown as typeof baseSpawnPnpm,
+}));
 
 vi.mock(import("#src/services/coderabbit/collect/judgeRelease"), () => ({
   judgeRelease: judgeRelease as unknown as typeof baseJudgeRelease,
@@ -69,20 +88,31 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     setupFixtureRepository();
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
+  // The fixture's shas are deterministic, so a post one test made to main's head would read as another's
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
   const completedCheck: CheckStatus = { bucket: PASS_BUCKET, description: COMPLETED_DESCRIPTION, name: CHECK_NAME };
   const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
+  // CI's verdict on main's head, red when a test says so, and what every `pnpm` the lane spawns answers
+  const redRun: MainCheck = { conclusion: CI_FAILURE_CONCLUSION, databaseId: 0, status: "completed", url: "" };
+  const greenSpawn: SpawnSyncReturns<string> = { output: [], pid: 0, signal: null, status: 0, stderr: "", stdout: "" };
   // What `gh` answers: the login, the release pull request list, the reviews, the issue comments, every commit's
-  // Comments, and `[[]]` for every other paginated list — the one page of nothing a `--slurp` returns
+  // Comments, CI's runs for main's head, a red run's log, and `[[]]` for every other paginated list — the one
+  // Page of nothing a `--slurp` returns
   const baseInput = { isDryRun: false, isForced: false };
   const answerGh = (
     releasePullRequests: ReleasePullRequest[],
     reviews: GitHubReview[] = [],
     issueComments: GitHubEntry[] = [],
     commitComments: GitHubEntry[] = [],
+    mainChecks: MainCheck[] = [],
   ) => {
     runGh.mockImplementation((args) => {
       if (args[1] === "user") return viewerLogin;
       else if (args[0] === "pr" && args[1] === "list") return JSON.stringify(releasePullRequests);
+      else if (args[0] === "run" && args[1] === "list") return JSON.stringify(mainChecks);
+      else if (args[0] === "run" && args[1] === "view") return "";
       else if (args[1]?.startsWith(`repos/{owner}/{repo}/pulls/${pullRequest}/reviews`))
         return JSON.stringify([reviews]);
       else if (args[1]?.startsWith(`repos/{owner}/{repo}/issues/${pullRequest}/comments`))
@@ -104,21 +134,123 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     user: { login: viewerLogin },
   });
 
-  test("fast-forwards develop onto a merged main before measuring anything", async () => {
+  // The stroke spends nothing, so the pass goes on against the develop it made: a push to develop fires no run,
+  // And the queue the release left behind is synced onto it here rather than on the next session push
+  test("fast-forwards develop onto a merged main and measures the rest of the pass against it", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
     publish(QUEUE_BRANCH, developSha);
     const mainSha = publish(MAIN_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh([]);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.FastForwarded,
-      reason: `${DEVELOP_BRANCH} followed ${MAIN_BRANCH} — the next event measures against it`,
-      targetSha: mainSha,
+      kind: CycleOutcomeKind.Idle,
+      reason: `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`,
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(mainSha);
-    expect(runGh).not.toHaveBeenCalled();
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(mainSha);
+  });
+
+  // The claim, as the reshaper or a session writes it
+  const claimExpress = (): string => {
+    runGit(
+      ["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${EXPRESS_TRAILER}: ${TEST_FILENAME}`],
+      getCwd(),
+    );
+    return readSha("HEAD");
+  };
+
+  // A red main is repaired first and alone: every cut is verified on its tree, so the claimed commit waits for
+  // The run the repair's push fires, and is told nothing — the red was never its
+  test("repairs a red main ahead of the express cut and ends the run on its push", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    commitFile(TEST_FILENAME, "");
+    const claimedSha = publish(QUEUE_BRANCH, claimExpress());
+    answerGh([], [], [], [], [redRun]);
+    spawnPnpm.mockReturnValue(greenSpawn);
+    runDrain.mockImplementation(() => {
+      commitFile(`${TEST_FILENAME}.ts`, "");
+      runGit(["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${REPAIRS_TRAILER}: ${mainSha}`], getCwd());
+      return Promise.resolve({ isDrained: true, isStarted: true });
+    });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+    const repairSha = readSha(`origin/${MAIN_BRANCH}`);
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Repaired,
+      reason: `${MAIN_BRANCH} repaired — the push runs the cycle again, which cuts the 1 claimed commits behind it`,
+      targetSha: repairSha,
+    });
+    expect(runGit(["rev-list", "--parents", "--max-count=1", repairSha], getCwd()).trim()).toBe(
+      `${repairSha} ${mainSha}`,
+    );
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(claimedSha);
+    expect(getCommitCommentPosts(claimedSha)).toHaveLength(0);
+  });
+
+  // The session's word proves nothing: a repair that is not a trailered commit over a clean tree counts the
+  // Attempt on main's head and fails the run, as the fold does
+  test("counts a repair that left no trailered commit on main's head and fails the run", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    spawnPnpm.mockReturnValue(greenSpawn);
+    runDrain.mockImplementation(() => {
+      commitFile(TEST_FILENAME, "");
+      return Promise.resolve({ isDrained: true, isStarted: true });
+    });
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrow(
+      `the repairer left ${mainSha} unrepaired (attempt 1 of ${DRAIN_ATTEMPT_CAP})`,
+    );
+    expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
+    expect(getCommitCommentPosts(mainSha)).toStrictEqual([
+      [
+        [
+          "api",
+          `repos/{owner}/{repo}/commits/${mainSha}/comments`,
+          "-f",
+          `body=${getMarker(REPAIR_FAILED_MARKER, mainSha)}\nRepair attempt 1 of this red ${MAIN_BRANCH} head failed — see the collector run.`,
+        ],
+      ],
+    ]);
+  });
+
+  // Past its repairs a red main is a person's: said once on the head, and the claimed commit waits unsaid
+  test("holds the claimed commits on a red main past its repairs without a session", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    commitFile(TEST_FILENAME, "");
+    publish(QUEUE_BRANCH, claimExpress());
+    answerGh(
+      [],
+      [],
+      [],
+      Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
+        ...getMarked(getMarker(REPAIR_FAILED_MARKER, mainSha)),
+        id,
+      })),
+      [redRun],
+    );
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `1 claimed commits wait on the express lane — a red cut, a patch that does not apply yet, or a red ${MAIN_BRANCH} under repair`,
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
+    });
+    expect(runDrain).not.toHaveBeenCalled();
+    expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
   });
 
   // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there

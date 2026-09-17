@@ -1,4 +1,9 @@
-import { QUEUE_BRANCH } from "#src/services/coderabbit/collect/constants";
+import {
+  CI_FAILURE_CONCLUSION,
+  CI_WORKFLOW_FILE,
+  MAIN_BRANCH,
+  QUEUE_BRANCH,
+} from "#src/services/coderabbit/collect/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -30,5 +35,18 @@ describe("queueBranch", () => {
     expect.hasAssertions();
 
     expect(readWorkflowLines(name)).toContain(line);
+  });
+
+  // The repairer reads CI's verdict on `main`'s head by the workflow file, and the trigger that fires it names
+  // The same workflow by its display name: the one is the other's first line
+  test("the repair trigger names the workflow the cycle reads", () => {
+    expect.hasAssertions();
+
+    const [nameLine = ""] = readWorkflowLines(CI_WORKFLOW_FILE);
+
+    expect(readWorkflowLines("ReviewCollector.yaml")).toContain(`      - ${nameLine.replace("name: ", "")}`);
+    expect(readWorkflowLines("run-review-collector.yaml")).toContain(
+      `      (github.event.workflow_run.head_branch == '${MAIN_BRANCH}' && github.event.workflow_run.conclusion == '${CI_FAILURE_CONCLUSION}'))`,
+    );
   });
 });

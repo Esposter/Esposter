@@ -2,7 +2,7 @@ import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSeque
 import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
-import { readExpressShas } from "#src/services/coderabbit/collect/readExpressShas";
+import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
@@ -22,7 +22,7 @@ export const getReshapeFailure = (originalSha: string, cwd?: string): string | u
   if (!isSameTree) return `left a tree that differs from ${originalSha}`;
   const shas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${originalSha}^..HEAD`], cwd));
   if (shas.length === 0) return "produced no commit";
-  const claimedShas = readExpressShas(shas, cwd);
+  const claimedShas = readTrailedShas(shas, EXPRESS_TRAILER, cwd);
   const oversized = shas.find((sha) => !claimedShas.has(sha) && getFileCount(`${sha}^..${sha}`, cwd) > REVIEW_FILE_CAP);
   return oversized === undefined ? undefined : `left ${oversized} over the cap without an ${EXPRESS_TRAILER} trailer`;
 };

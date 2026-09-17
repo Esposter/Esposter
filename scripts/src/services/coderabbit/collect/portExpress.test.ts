@@ -2,6 +2,7 @@ import { EXPRESS_TRAILER, MAIN_BRANCH } from "#src/services/coderabbit/collect/c
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { portExpress } from "#src/services/coderabbit/collect/portExpress";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { readClaimedShas } from "#src/services/coderabbit/collect/readClaimedShas";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { describe, expect, test } from "vitest";
@@ -19,6 +20,9 @@ describe(portExpress, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     return readSha("HEAD");
   };
 
+  const cut = (developSha: string, mainSha: string, queueSha: string) =>
+    portExpress({ cwd: getCwd(), mainSha, shas: readClaimedShas({ cwd: getCwd(), developSha, mainSha, queueSha }) });
+
   test("takes the commits that claim no review out of queue order and leaves the rest", () => {
     expect.hasAssertions();
 
@@ -27,7 +31,7 @@ describe(portExpress, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     commitFile(filePath, "");
     const expressSha = claimExpress();
     const queueSha = commitFile(nestedPath, " ");
-    const express = portExpress({ cwd: getCwd(), developSha: mainSha, mainSha, queueSha });
+    const express = cut(mainSha, mainSha, queueSha);
 
     expect(express).toStrictEqual({ shas: [expressSha], targetSha: readSha("HEAD") });
     expect(runGit(["diff", "--name-only", `${mainSha}..HEAD`], getCwd())).toBe(`${filePath}\n`);
@@ -41,7 +45,7 @@ describe(portExpress, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const developSha = commitFile(nestedPath, "");
     commitFile(filePath, "");
     const queueSha = claimExpress();
-    const express = portExpress({ cwd: getCwd(), developSha, mainSha, queueSha });
+    const express = cut(developSha, mainSha, queueSha);
 
     expect(express).toStrictEqual({ shas: [queueSha], targetSha: readSha("HEAD") });
     expect(runGit(["rev-list", "--parents", "--max-count=1", "HEAD"], getCwd()).trim()).toBe(
@@ -56,7 +60,7 @@ describe(portExpress, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const mainSha = publish(MAIN_BRANCH, "HEAD");
     commitFile(filePath, "");
     const queueSha = claimExpress();
-    const { targetSha } = portExpress({ cwd: getCwd(), developSha: mainSha, mainSha, queueSha });
+    const { targetSha } = cut(mainSha, mainSha, queueSha);
     publish(MAIN_BRANCH, targetSha ?? "");
 
     expect(readCherryShas(mainSha, queueSha, getCwd())).toStrictEqual([]);
@@ -74,7 +78,8 @@ describe(portExpress, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(carriedSha);
     const queueSha = commitFile(nestedPath, "");
 
-    expect(portExpress({ cwd: getCwd(), developSha, mainSha, queueSha })).toStrictEqual({ shas: [] });
+    expect(readClaimedShas({ cwd: getCwd(), developSha, mainSha, queueSha })).toStrictEqual([]);
+    expect(cut(developSha, mainSha, queueSha)).toStrictEqual({ shas: [] });
     expect(readSha("HEAD")).toBe(queueSha);
   });
 });
