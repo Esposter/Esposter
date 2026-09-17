@@ -67,7 +67,8 @@ const loadMap = async () => {
         id: 1,
         name: "layer name",
         type: "layer",
-        visible: 1,
+        // Only written when the layer is hidden in Tiled
+        visible: 0,
         data: [0, 1, 1, 10, 10, 10, 1, 1, 0, 0, 0, 0, …],
         // When the translateFlips parameter is enabled
         flips: [
@@ -87,7 +88,6 @@ const loadMap = async () => {
         id: 2,
         name: "objects",
         type: "objectgroup",
-        visible: 1,
         objects: [{…}, {…}, {…}],
         properties: [
            {name: 'property1', value: 'value'},

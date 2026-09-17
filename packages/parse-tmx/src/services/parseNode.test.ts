@@ -45,7 +45,7 @@ describe(parseNode, () => {
       false,
     );
 
-    expect(group.layers).toStrictEqual([{ ...createLayerShared(), type: TMXNodeType.Objectgroup, visible: 1 }]);
+    expect(group.layers).toStrictEqual([{ ...createLayerShared(), type: TMXNodeType.Objectgroup }]);
   });
 
   test("fails to parse an unsupported node", () => {
