@@ -24,6 +24,10 @@ GitHub's repository `deleteBranchOnMerge` is a system action that **bypasses rul
 
 A bypass actor is exempt from every rule in its ruleset and from nothing outside it, so a ref that needs one actor exempt from one rule and held to another is covered by two rulesets, each with its own bypass list; which ruleset holds which ref, and why, is `apps/web/content/docs/infra/branch-namespaces.md`. A ruleset also cannot name an individual user: the session and the collector are the Admin repository role, and Renovate is the app's global id.
 
+## A ruleset parameter the provider does not carry
+
+GitHub adds parameters to a rule after the provider ships. `pull_request` gained `require_extra_approval_for_unattributed_changes`, which `@pulumi/github` 6.15.0 cannot set and a `pulumi up` therefore leaves at GitHub's default of on — read the live ruleset with `gh api repos/Esposter/Esposter/rulesets/<id>` before trusting the source for what a rule enforces. What that one does, and what keeps it satisfied, is `apps/web/content/docs/infra/branch-namespaces.md`.
+
 ## Why a provider package is imported as a namespace
 
 The rule — `import * as azure_native from "@pulumi/azure-native"`, the one exception to named imports from libraries — is in `SKILL.md`; this is what breaks when it is "fixed".
