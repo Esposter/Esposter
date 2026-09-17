@@ -1,0 +1,52 @@
+name: 🔎 CodeQL
+# Advanced setup rather than GitHub's one-click default, which analyses every pull request against `main` — here
+# That is the release and every renovate bump, and a full analysis per bump finds nothing a scan of the same tree
+# On `main` does not. So `main` is what is scanned, plus a weekly run, because a query pack published after the
+# Last release finds what the release's own scan could not have.
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: 0 18 * * 0
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: CodeQL
+    # `security-events: write` is the upload of the results to the Security tab, and the only write here
+    permissions:
+      contents: read
+      security-events: write
+    runs-on: ubuntu-latest
+    strategy:
+      # `actions` reads the workflows and `javascript-typescript` the app; one language failing still reports the
+      # Other, since neither analysis tells the other anything
+      fail-fast: false
+      matrix:
+        language:
+          - actions
+          - javascript-typescript
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # `build-mode: none` keeps CodeQL off autobuild: neither language needs a build to be analysed, and the
+      # Build this repository has is minutes of Nuxt for a scan that reads sources
+      - name: 🔎 Initialise CodeQL
+        uses: github/codeql-action/init@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
+        with:
+          build-mode: none
+          languages: ${{ matrix.language }}
+
+      - name: 🔎 Analyse
+        uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
