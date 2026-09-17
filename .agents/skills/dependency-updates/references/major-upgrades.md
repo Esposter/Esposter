@@ -1,6 +1,6 @@
 # Taking a major
 
-Read when a red row appears in `pnpm outdated:dependencies`, or when Renovate opens a major PR. A minor or patch is a version write and nothing else; a major is a version write plus an **audit** — every breaking bullet answered against this repo, and every new capability weighed against what the repo hand-rolled in its absence. `SKILL.md` keeps the one line that a major waits for a person; this page is what that person does.
+Read when a red row appears in `pnpm outdated:dependencies`, or when Renovate opens a major PR. A minor or patch is a version write plus `SKILL.md`'s "what a bump owes beyond the version"; a major is both plus an **audit** — every breaking bullet answered against this repo, and every new capability weighed against what the repo hand-rolled in its absence. `SKILL.md` keeps the one line that a major waits for a person; this page is what that person does.
 
 The output of the audit is the commit body, and it is the only record: nothing else remembers that a breaking change was read and found not to apply, so a bullet answered nowhere is a bullet the next session re-reads from scratch.
 

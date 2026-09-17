@@ -25,7 +25,7 @@ If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prep
 
 ### A major is a version write plus an audit — `references/major-upgrades.md`
 
-A minor or patch is steps 1–4 and nothing more. A **major** — a red row in `pnpm outdated:dependencies`, or the PR Renovate opens because it never automerges one — additionally owes an audit whose record is the commit body: the release notes read from the tag with `gh release view` rather than from a summary of them, every breaking bullet answered by a grep that excludes the generated trees, every release in between read when more than one major is crossed, and the **features** list weighed against what this repo hand-rolled in its absence — a major is when that debt is cheapest to shed, so the migration lands in the same commit as the bump and a rejected one is rejected in writing. Doing all of that is that page.
+A minor or patch is steps 1–4 plus what a bump owes beyond the version, below. A **major** — a red row in `pnpm outdated:dependencies`, or the PR Renovate opens because it never automerges one — additionally owes an audit whose record is the commit body: the release notes read from the tag with `gh release view` rather than from a summary of them, every breaking bullet answered by a grep that excludes the generated trees, every release in between read when more than one major is crossed, and the **features** list weighed against what this repo hand-rolled in its absence — a major is when that debt is cheapest to shed, so the migration lands in the same commit as the bump and a rejected one is rejected in writing. Doing all of that is that page.
 
 ### GitHub Actions are pinned to a dereferenced commit SHA — `references/github-actions.md`
 
