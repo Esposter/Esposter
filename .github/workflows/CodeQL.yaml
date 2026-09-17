@@ -9,7 +9,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: 0 18 * * 0
+    - cron: "37 18 * * 0"
 
 permissions:
   contents: read
@@ -27,8 +27,11 @@ jobs:
       security-events: write
     runs-on: ubuntu-latest
     strategy:
-      # `actions` reads the workflows and `javascript-typescript` the app; one language failing still reports the
-      # Other, since neither analysis tells the other anything
+      # The two languages CodeQL has for this tree, and between them the whole of it: `javascript-typescript`
+      # Extracts `.vue`, `.html`, `.json` and `.yaml` alongside `.ts` and `.js`, and `actions` reads the workflows.
+      # The rest of what the repository is written in — SQL, SCSS, shell, markdown — has no CodeQL extractor at
+      # All, so there is no third entry to add. One language failing still reports the other, since neither
+      # Analysis tells the other anything.
       fail-fast: false
       matrix:
         language:

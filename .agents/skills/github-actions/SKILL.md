@@ -1,6 +1,6 @@
 ---
 name: github-actions
-description: Apply when writing or editing any workflow, composite action, job, or step — and read the owner pointers before adding a rule, since caching, job shape, permissions, action pinning and which pnpm script a job runs each belong elsewhere. Esposter GitHub Actions authoring conventions for `.github/workflows` and `.github/actions` — the runner's own affordance over a shell reimplementation, template data reaching the shell only through `env:`, `secrets: inherit` on a reusable workflow, a skipped job satisfying its required check, `always()` paired with a guard, and a comment keeping only what the owning page does not say.
+description: Apply when writing or editing any workflow, composite action, job, or step — and read the owner pointers before adding a rule, since caching, job shape, permissions, action pinning and which pnpm script a job runs each belong elsewhere. Esposter GitHub Actions authoring conventions for `.github/workflows` and `.github/actions` — the runner's own affordance over a shell reimplementation, template data reaching the shell only through `env:`, `secrets: inherit` on a reusable workflow, a skipped job satisfying its required check, `always()` paired with a guard, a schedule quoted in UTC on a minute no other workflow took, and a comment keeping only what the owning page does not say.
 ---
 
 # GitHub Actions Authoring
@@ -51,6 +51,20 @@ An aggregate gate therefore takes `if: ${{ !cancelled() }}` — not `always()`, 
 ## `always()` is paired with a guard on what the step consumes
 
 A cleanup step that must run on failure (`always()`) runs on _every_ failure — including one that happened before the value it cleans up was ever produced. Unguarded, it replaces the real error with its own argument-parsing one. Gate it on the value, not just on the outcome: `if: ${{ always() && steps.<id>.outputs.<name> != '' }}`.
+
+## A schedule is a quoted UTC string on a minute nobody else took
+
+GitHub's scheduler is shared, and its own documentation says a run is delayed under load, "high load times include
+the start of every hour". So a cron here never fires on minute `0`, and never on a round `30` either — it takes a
+minute no other workflow in `.github/workflows` has, which `grep -rn "cron:" .github/workflows` answers before the
+one being written is chosen. Two schedules on one minute queue behind each other for no reason, and the delay is
+the scheduler's to hand out.
+
+The expression is quoted, because an unquoted one is a YAML scalar whose leading `0` and `*`s read as luck rather
+than as a decision, and it is UTC — the only zone GitHub reads. A comment gives the cadence and why that cadence,
+never the local time it lands at, which daylight saving invalidates twice a year. An Azure Functions timer is the
+other dialect and not this one: NCRONTAB leads with a seconds field, so a five-field GitHub expression pasted into
+a `schedule:` there shifts every unit by one.
 
 ## Don't swallow an exit code to make a step idempotent
 
