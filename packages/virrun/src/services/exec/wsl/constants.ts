@@ -91,3 +91,15 @@ export const WSL_REMOVE_LIST_SCRIPT: string = `xargs -0r sh -c '${WSL_REMOVE_SCR
 // The staged list `removeSnapshotDirectoriesDetached` writes into the cache root for the script above to consume,
 // Tagged with the host pid like every other virrun temp so a stray one is attributable.
 export const VIRRUN_REMOVE_LIST_TEMP_PREFIX = "remove.";
+// PATH's separator inside the distro. Spelled out rather than taken from `node:path`, whose `delimiter` is the HOST
+// Process's — `;` on the win32 host that composes every sandbox PATH, which would join the entries into one.
+export const WSL_PATH_DELIMITER = ":";
+// A PATH entry under a Windows drive mount. WSL's Windows-interop appends the launching process's entire Windows PATH
+// To every login shell, and none of it can serve a Linux sandbox: each entry holds win32 binaries (a bare `tsc` would
+// Resolve one and crash needing its `-linux-x64` sibling) or an `sh` shim that execs a Windows node, which is what
+// Turns a missing Linux toolchain into a cryptic `exec: node: not found` instead of a plain command-not-found. Dropping
+// Them also makes the capture independent of its launcher — the same distro answers the same PATH whether virrun was
+// Started from a pnpm script (which puts the repo's own bin on the Windows PATH) or a bare terminal.
+export const WINDOWS_DRIVE_MOUNT_REGEX: RegExp = /^\/mnt\/[a-z](?:\/|$)/iu;
+// The executable a captured `nodeDirectory` must still hold for that capture to be replayable (checkHasSandboxNode).
+export const NODE_EXECUTABLE = "node";

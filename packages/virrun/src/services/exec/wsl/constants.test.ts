@@ -7,6 +7,7 @@ import {
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "#src/services/exec/util/constants";
+import { TEST_DIR } from "#src/services/exec/util/constants.test";
 import { describe } from "vitest";
 
 // The one login capture every suite that mocks `readWslLoginEnvironment` hands back. Non-empty by construction:
@@ -15,9 +16,12 @@ import { describe } from "vitest";
 // Never mutated: two suites return this object itself from their mock factory, so emptying the path in place would
 // Empty it for every later test in that file. A suite that needs the failed-capture path mocks its own holder and
 // Empties that instead, exactly as the guard's own test does.
+// The PATH is the one entry the node directory is, as the capture script leads the real PATH with that directory —
+// The parse that derives `nodeDirectory` from a marked capture of this fixture must land on this same object.
 export const TEST_WSL_LOGIN_ENVIRONMENT: WslLoginEnvironment = {
-  nodeVersion: "v26.5.0",
-  path: "/usr/local/bin:/usr/bin",
+  nodeDirectory: TEST_DIR,
+  nodeVersion: "nodeVersion",
+  path: TEST_DIR,
 };
 
 export const TEST_REPO_ROOT_WIN: string = String.raw`C:\a`;

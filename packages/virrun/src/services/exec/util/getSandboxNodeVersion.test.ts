@@ -1,23 +1,27 @@
 import { setupPlatformStub } from "#src/services/exec/test/setupPlatformStub.test";
 import { getSandboxNodeVersion } from "#src/services/exec/util/getSandboxNodeVersion";
+import { TEST_WSL_LOGIN_ENVIRONMENT } from "#src/services/exec/wsl/constants.test";
 import { readWslLoginEnvironment } from "#src/services/exec/wsl/readWslLoginEnvironment";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/exec/wsl/readWslLoginEnvironment"), () => ({
-  readWslLoginEnvironment: vi.fn<typeof readWslLoginEnvironment>(() => ({ nodeVersion: "", path: "" })),
+  readWslLoginEnvironment: vi.fn<typeof readWslLoginEnvironment>(() => ({
+    nodeDirectory: "",
+    nodeVersion: "",
+    path: "",
+  })),
 }));
 
 describe(getSandboxNodeVersion, () => {
-  const nodeVersion = "v26.5.0";
   const stubPlatform = setupPlatformStub();
 
   test("reports the WSL guest's node on win32 — the sandbox runs that one, not this process's", () => {
     expect.hasAssertions();
 
     stubPlatform("win32");
-    vi.mocked(readWslLoginEnvironment).mockReturnValueOnce({ nodeVersion, path: "/usr/bin" });
+    vi.mocked(readWslLoginEnvironment).mockReturnValueOnce(TEST_WSL_LOGIN_ENVIRONMENT);
 
-    expect(getSandboxNodeVersion()).toBe(nodeVersion);
+    expect(getSandboxNodeVersion()).toBe(TEST_WSL_LOGIN_ENVIRONMENT.nodeVersion);
   });
 
   // Crossing the capture guard with the cache key: createOsExecOptions refuses to run at all without an injected
@@ -28,7 +32,7 @@ describe(getSandboxNodeVersion, () => {
     expect.hasAssertions();
 
     stubPlatform("win32");
-    vi.mocked(readWslLoginEnvironment).mockReturnValueOnce({ nodeVersion: "v27.0.0", path: "" });
+    vi.mocked(readWslLoginEnvironment).mockReturnValueOnce({ ...TEST_WSL_LOGIN_ENVIRONMENT, path: "" });
 
     expect(getSandboxNodeVersion()).toBe("");
   });
@@ -37,7 +41,11 @@ describe(getSandboxNodeVersion, () => {
     expect.hasAssertions();
 
     stubPlatform("win32");
-    vi.mocked(readWslLoginEnvironment).mockReturnValueOnce({ nodeVersion: "", path: "/usr/bin" });
+    vi.mocked(readWslLoginEnvironment).mockReturnValueOnce({
+      ...TEST_WSL_LOGIN_ENVIRONMENT,
+      nodeDirectory: "",
+      nodeVersion: "",
+    });
 
     expect(getSandboxNodeVersion()).toBe("");
   });
