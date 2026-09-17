@@ -12,6 +12,14 @@ This is the one risk of _this_ page's kind — collateral damage a green targete
 
 Heavy seeded tests can blow the default timeout purely from full-suite parallel load. Rerun the file in isolation first: if it passes comfortably there and CI is green, leave it alone — **never** bump `testTimeout` or add a per-test `{ timeout }` to paper over machine load.
 
+The inflation is not marginal, so a duration read off the full run says nothing about the test that produced it. A run spawns a worker per file and the repository has far more files than the machine has cores, so every heavy file — a PGlite-seeded suite, a snapshot over a parsed corpus, a compression suite — costs the better part of an order of magnitude more there than alone, and a test that takes a fraction of a second on its own can fail the default timeout. Nothing about such a test is slow; it is starved. The two settings that exist for this — the shared `hookTimeout` and the one per-test `{ timeout }` in `db-mock` — are the bound a PGlite boot needs while the rest of the suite competes for cores, and they are the exception the rule above names, not licence for a third.
+
+## Settled — the runner settings, and the one that was measured and rejected
+
+`fsModuleCache` stays on: transforming the module graph is the largest share of a run and it persists to `node_modules/.vitest-cache` across reruns and processes.
+
+**`isolate: false` does not go on, per project or globally.** Vitest's own hint advertises it on every run and the whole-`packages` saving looks decisive. It is not: measured project by project, the packages that survive it come out level — the entire apparent gain belongs to `virrun` and `vue-phaserjs`, the two that **fail** under it, and fail for the reason isolation exists. virrun's suites read module-scope memo caches (`readWslPath`, the WSL environment and capability caches) that a reused worker carries between files, and `vue-phaserjs` boots one Phaser game per process. Buying the setting back would mean a reset hook per cache — custom scaffolding in exchange for nothing measurable. Re-propose it only with a per-project measurement showing a win.
+
 ## Environment
 
 Tests run on Windows: `configuration/modules.ts` allowlists a minimal set of Nuxt modules under `process.env.VITEST`, so a test needing an excluded module adds it to that branch.
