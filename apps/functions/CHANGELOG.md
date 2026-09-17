@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
+
+### Bug Fixes
+
+* **ci:** the functions bundle follows msal-node 6, and three restated runs of prose become pointers ([d90a40c](https://github.com/Esposter/Esposter/commit/d90a40ce8446b365a13bc2db9ed899cbf77ee3a1))
+* **ci:** the key files table names only commands that exist, and two size snapshots read their built bytes ([f1464d8](https://github.com/Esposter/Esposter/commit/f1464d881fc5d47bb247d8da838781d487bae004))
+* **functions:** the bundle snapshot takes its built bytes ([70cf882](https://github.com/Esposter/Esposter/commit/70cf8821f83aa3a7cdfb8e6365731fac4d414990))
+* **readme:** the two app READMEs link the docs site root, since typedoc builds no page for an app ([1139d79](https://github.com/Esposter/Esposter/commit/1139d79fa423315211b97918e2aa0a0f93e01a90))
+* the bundle size snapshots move with the .toString() drop and the zod bump ([dc56e7d](https://github.com/Esposter/Esposter/commit/dc56e7d21c8a7580aec32978d3cf67bd258f05c7))
+
+### Features
+
+* **resource:** store versions as content-addressed keyframes and deltas ([1a01271](https://github.com/Esposter/Esposter/commit/1a012716c89d09b6746eabe6264427f90c1279ec))
+
 # [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
 
 ### Bug Fixes

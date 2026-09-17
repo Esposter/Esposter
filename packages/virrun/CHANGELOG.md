@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
+
+### Bug Fixes
+
+* **infra, virrun, xml2js:** answer the first review window ([5544143](https://github.com/Esposter/Esposter/commit/554414358a61ee467868246ebfa739afc69dcf47))
+* lint ([4290d00](https://github.com/Esposter/Esposter/commit/4290d00d242b0b7a6d0b7c963f8be56035ede17f))
+* lint ([43cacfe](https://github.com/Esposter/Esposter/commit/43cacfe5b3e3a83012d60503066d61ac844030c5))
+* **lint:** the last type-import splits sort their groups, and a boolean helper in a virrun test is a check* ([ed1b523](https://github.com/Esposter/Esposter/commit/ed1b523bedecadb51d08140fbb6d3fd6234af788))
+* **lint:** the type-import split's sort reaches the files the rule change left unsorted ([3f6663f](https://github.com/Esposter/Esposter/commit/3f6663fe2375f654a8c5adfec0cb88fa3f418617))
+* main's checks pass again — the map-spread lint in virrun and the size snapshots a fresh build moves ([4175608](https://github.com/Esposter/Esposter/commit/417560886d6fa35d73d9f9db3242a419e694b429))
+* **virrun:** the sandbox PATH is stated, and a persisted login capture is checked before reuse ([e244c26](https://github.com/Esposter/Esposter/commit/e244c2614a067a307f4b1ea1383252efe163d2ae))
+* **virrun:** the zod bump lands in the inlined record and the types size snapshot ([9ac08bf](https://github.com/Esposter/Esposter/commit/9ac08bf035f86033355ad30ec7590d091eb19cd9))
+
+### Features
+
+* **lint:** consistent-type-imports is on for .ts ([3a425e3](https://github.com/Esposter/Esposter/commit/3a425e330adbd87ae137d5c0ea3502e0d1425b04))
+
 # [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
 
 * refactor(virrun)!: spell Directory in every identifier that said Dir ([dd2c3a1](https://github.com/Esposter/Esposter/commit/dd2c3a1e7bf3b515102a55e1d305ec1c179e7e3b))
