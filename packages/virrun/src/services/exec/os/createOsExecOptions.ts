@@ -11,8 +11,9 @@ import {
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "#src/services/exec/util/constants";
 import { resolveCwd } from "#src/services/exec/util/resolveCwd";
-import { getWslSourceMirrorPath } from "#src/services/exec/wsl/getWslSourceMirrorPath";
+import { WSL_PATH_DELIMITER } from "#src/services/exec/wsl/constants";
 import { readWslLoginEnvironment } from "#src/services/exec/wsl/readWslLoginEnvironment";
+import { readWslPath } from "#src/services/exec/wsl/readWslPath";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -28,12 +29,16 @@ import { join } from "node:path";
 // And dying with EROFS. Pointing COREPACK_HOME at a bound, host-persisted directory makes that bootstrap writable once
 // And reused by every later run.
 //
-// That login PATH also carries the host's `/mnt/c/<repo>/node_modules/.bin` (WSL Windows-interop appends the Windows
-// PATH), whose binaries are the *win32* build. But the sandbox chdir's into the ext4 source mirror, not /mnt/c, so
-// That entry is the raw host tree, not the overlaid one — a bare `tsc`/`eslint`/`oxlint` would resolve the win32
-// Binary and crash needing its `-linux-x64` sibling. Prepend the mirror's own node_modules/.bin (overlaid from the
-// Snapshot lower = current platform) so the Linux binary wins. Only on win32 (wslLoginPath is non-empty): native Linux
-// Overlays at cwd, so its PATH already resolves the correct binary and needs no prepend.
+// The captured login PATH holds only the distro's own directories — getSandboxLoginPath drops the Windows drive
+// Mounts WSL interop appends to every login shell — so nothing on it can resolve the repo's own binaries (`oxlint`,
+// `vue-tsc`, any node_modules/.bin entry point). Name that directory outright, ahead of the login PATH. Only on win32
+// (wslLoginPath is non-empty): native Linux overlays at cwd, so its inherited PATH already resolves the right binary.
+//
+// By the repo's LOGICAL path, never the ext4 mirror's. The mirror is the overlay's read-only lower and deliberately
+// Excludes node_modules (resolveMirrorExcludes — the deps come from the snapshot instead), so
+// `<mirror>/node_modules/.bin` is a directory that never exists, and a PATH led by it resolves nothing. The sandbox
+// Mounts the assembled overlay at — and chdir's into — the repo's own /mnt/<drive> path (createWslBwrapArgs), which is
+// The one place node_modules is on disk while the command runs.
 export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions => {
   const osCacheRoot = getOsCacheRoot(cwd);
   const sharedPackageStoreOptions = createSharedPackageStoreOptions(cwd, osCacheRoot);
@@ -53,7 +58,7 @@ export const createOsExecOptions = (cwd: string, stdio: ExecStdio): ExecOptions 
       "WSL login-shell environment capture returned empty (likely a cold-WSL timeout or a blocking shell profile); start WSL with `wsl.exe -- true` and rerun — a warm distro captures immediately",
     );
   const path = wslLoginPath
-    ? `${getWslSourceMirrorPath(resolveCwd(cwd))}/${NODE_MODULES_BIN_DIRECTORY}:${wslLoginPath}`
+    ? `${readWslPath(resolveCwd(cwd))}/${NODE_MODULES_BIN_DIRECTORY}${WSL_PATH_DELIMITER}${wslLoginPath}`
     : "";
   return {
     ...sharedPackageStoreOptions,

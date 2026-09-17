@@ -2,6 +2,7 @@ import type { execFileSync as baseExecFileSync } from "node:child_process";
 
 import { setupTemporaryCacheHome } from "#src/services/exec/test/setupTemporaryCacheHome.test";
 import { WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME } from "#src/services/exec/util/constants";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { getHostFingerprint } from "#src/services/exec/util/getHostFingerprint";
 import {
   VIRRUN_LOGIN_NODE_BEGIN_MARKER,
@@ -16,9 +17,18 @@ import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
+const { execFileSync, hasSandboxNode } = vi.hoisted(() => ({
+  execFileSync: vi.fn<typeof baseExecFileSync>(),
+  hasSandboxNode: { value: true },
+}));
 
 vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
+// The persisted tier's validity check reads the distro over a UNC, which no test host can answer for a fixture path —
+// And off win32 resolving that UNC would spawn wsl.exe through the very execFileSync mock above. Drive the verdict
+// Instead, so each case states whether the captured node install is still there.
+vi.mock(import("#src/services/exec/wsl/checkHasSandboxNode"), () => ({
+  checkHasSandboxNode: () => hasSandboxNode.value,
+}));
 
 describe("readWslLoginEnvironment", () => {
   // The shared cache-home fixture isolates the persisted cross-process cache per test.
@@ -32,6 +42,7 @@ describe("readWslLoginEnvironment", () => {
     // Reset the module so its memoized capture does not leak between cases, and seed the default capture output.
     vi.resetModules();
     execFileSync.mockReset();
+    hasSandboxNode.value = true;
     execFileSync.mockReturnValue(
       `noise\n${VIRRUN_LOGIN_PATH_BEGIN_MARKER}${path}${VIRRUN_LOGIN_PATH_END_MARKER}${VIRRUN_LOGIN_NODE_BEGIN_MARKER}${nodeVersion}${VIRRUN_LOGIN_NODE_END_MARKER}`,
     );
@@ -84,7 +95,7 @@ describe("readWslLoginEnvironment", () => {
       JSON.stringify({
         key: getHostFingerprint(),
         storedAtMs: 0,
-        value: { nodeVersion: "v26.4.0", path: "/stale/bin" },
+        value: environment,
       }),
     );
     const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
@@ -93,13 +104,42 @@ describe("readWslLoginEnvironment", () => {
     expect(execFileSync).toHaveBeenCalledTimes(1);
   });
 
+  test("re-probes when the node install the persisted capture names is gone", async () => {
+    expect.hasAssertions();
+
+    // The hole the age bound only narrows: a capture minutes old, under this very host key, naming the node install a
+    // Version switch just deleted. Believing it injects a PATH whose leading entries are dead, and resolution walks on
+    // Into whatever answers next — the interop pnpm shim, which execs a node that is not there.
+    writeWslEnvironmentCache(WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME, { key: getHostFingerprint(), value: environment });
+    hasSandboxNode.value = false;
+    const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
+
+    expect(readWslLoginEnvironment()).toStrictEqual(environment);
+    expect(execFileSync).toHaveBeenCalledTimes(1);
+  });
+
+  test("reports no node when the login shell resolved one under a Windows drive mount", async () => {
+    expect.hasAssertions();
+
+    // Interop can put the HOST's node on the login PATH, which no Linux sandbox can execute. Reporting its version
+    // Would key the caches on a node no run has, so the capture answers with no node at all — and the Windows entry
+    // Itself never reaches the sandbox PATH.
+    const windowsNodeDirectory = `/mnt/${TEST_FILENAME}`;
+    execFileSync.mockReturnValue(
+      `${VIRRUN_LOGIN_PATH_BEGIN_MARKER}${windowsNodeDirectory}:${path}${VIRRUN_LOGIN_PATH_END_MARKER}${VIRRUN_LOGIN_NODE_BEGIN_MARKER}${nodeVersion}${VIRRUN_LOGIN_NODE_END_MARKER}`,
+    );
+    const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
+
+    expect(readWslLoginEnvironment()).toStrictEqual({ nodeDirectory: "", nodeVersion: "", path });
+  });
+
   test("degrades to an empty environment when the marked output is absent", async () => {
     expect.hasAssertions();
 
     execFileSync.mockReturnValue("");
     const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
-    expect(readWslLoginEnvironment()).toStrictEqual({ nodeVersion: "", path: "" });
+    expect(readWslLoginEnvironment()).toStrictEqual({ nodeDirectory: "", nodeVersion: "", path: "" });
   });
 
   test("degrades to an empty environment when WSL is unavailable", async () => {
@@ -110,7 +150,7 @@ describe("readWslLoginEnvironment", () => {
     });
     const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
-    expect(readWslLoginEnvironment()).toStrictEqual({ nodeVersion: "", path: "" });
+    expect(readWslLoginEnvironment()).toStrictEqual({ nodeDirectory: "", nodeVersion: "", path: "" });
   });
 
   test("does not persist a failed capture", async () => {
@@ -131,7 +171,7 @@ describe("readWslLoginEnvironment", () => {
     );
     const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
-    expect(readWslLoginEnvironment()).toStrictEqual({ nodeVersion: "", path });
+    expect(readWslLoginEnvironment()).toStrictEqual({ nodeDirectory: "", nodeVersion: "", path });
     // Persisting it would pin every later process to a version computeEnvironmentKey refuses to key on, for the
     // Cache's whole age bound, with no run able to recover on its own.
     expect(existsSync(join(getCacheHome(), WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME))).toBe(false);

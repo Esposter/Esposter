@@ -17,6 +17,7 @@ whether the value means something. A canonical value means nothing, and says so.
 - **A semantic name for a value the code never reads** — `"room-1"`, `"test-id"`, `"logo.png"`, `"helper.cjs"`, `"nested"`. It reads as meaning something, and the next reader has to check whether it does ("Every string literal passes one of three checks").
 - **Prose as a body, title or note** — an invented sentence a human would type. The code matches a substring or stores a blob; the sentence is decoration and is what gets copied into the next suite as if it mattered.
 - **A per-file copy of a value production owns** — a sentinel, marker, prefix, filename or sizing formula restated in the suite. It stays green while asserting the wrong thing after the source moves ("Import what production owns").
+- **A realistic corpus of exported artifacts** — a folder of real maps, captured payloads or documents, one fixture per production case. Realism is not coverage: such a corpus carries a handful of distinguishable shapes between all its files, so nearly every one of them re-parses the branches an earlier one already reached, and the corpus and its committed snapshots cost orders of magnitude more repository and runtime than the shapes do ("Fixture corpora").
 - **Loosening the assertion because the output is not minimal** — parsing a rendered block to read three attributes out of it, or a `toContain` over a markup string. A static output is `toStrictEqual`ed whole, like a snapshot; when that expectation reads as data someone chose — an anchor carrying padding, a font and a radius the case never reads — the producer is what is over-specified, and it is trimmed to what the behaviour owes (the href, the label, the one colour a constant names) until the whole output is the least value.
 
 ## The goal: the least value that still distinguishes
@@ -38,6 +39,21 @@ that rule applied per kind; "Dates and times" is it applied to the one kind with
 - **Entity fields** use the field name as the value: `const name = "name"`.
 - **Filesystem names**: `TEST_FILENAME = "a"` and `TEST_DIR = "/a"` from the nearest `constants.test.ts`, for every path a test writes. Extension only where the code under test reads it (`` `${TEST_FILENAME}.cjs` ``); a second coexisting path is the same name nested (`` `${TEST_FILENAME}/${TEST_FILENAME}.ts` ``), and a flat file beside that directory carries an extension because a bare `a` and a directory `a` collide. A real on-disk name production owns (`pnpm-lock.yaml`, `dist/index.js`) stays its real name. A package with no filesystem tests declares neither constant.
 - **Descriptions interpolate enum values** — `` `${FooType.Bar}: <plain-English outcome>` ``, never the literal. Idempotency is always `"[functionName] is idempotent"`.
+
+## Fixture corpora
+
+A corpus of files — maps, payloads, documents — is the same rule applied to a folder: **one file per shape the code
+under test can tell apart**, and each file the least content that carries its shape. The shape is what the parser
+branches on and what the assertion reads (an element, an attribute, a value it switches on, the _absence_ of one);
+everything else is another copy of a case already there. Name each file after the shape it carries
+(`emptyObjectLayer.tmx`), not after where it came from, so a reader knows what deleting it would lose, and
+canonicalize the values inside it like any other literal — a name the code never reads is `""`, a number it never
+reads is `0`, and only what the code branches on keeps a real value.
+
+Prove it rather than eyeballing it: take the union of (parent element, element, attribute, branched-on value) over
+the old corpus and over the new one, and keep the trim only when nothing is lost and nothing is invented. The parent
+is in the record because a relationship is a branch too — a node the code reaches only by recursing into its
+container is a different shape from the same node at the top level — and a flat vocabulary reads the two as one.
 
 ## Dates and times
 

@@ -26,7 +26,11 @@ describe(parseTmx, () => {
     expect(tmxParsed.map.properties).toStrictEqual([{ name, value }]);
   });
 
-  test("snapshots", { timeout: Temporal.Duration.from({ seconds: 60 }).total("milliseconds") }, async () => {
+  // The corpus is one map per distinguishable shape: every element, attribute and structural value the maps
+  // Reach between them, plus a map with no object layer and one whose object layer holds no object. A map
+  // Repeating a shape already here re-parses the same branches for megabytes of committed snapshot, so it
+  // Does not join — coverage is what earns a map a place, never realism
+  test("snapshots", async () => {
     expect.hasAssertions();
 
     const filenames = await readdir(MAP_DIRECTORY, { recursive: true });

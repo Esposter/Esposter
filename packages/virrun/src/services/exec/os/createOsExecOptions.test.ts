@@ -9,7 +9,6 @@ import {
   TEST_WSL_PREFIX,
 } from "#src/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
-import { getWslSourceMirrorPath } from "#src/services/exec/wsl/getWslSourceMirrorPath";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { loginEnvironmentPath, osCacheRoot } = vi.hoisted(() => ({
@@ -31,16 +30,13 @@ vi.mock(import("#src/services/exec/wsl/readWslPath"), () => ({
 }));
 
 vi.mock(import("#src/services/exec/wsl/readWslLoginEnvironment"), () => ({
-  readWslLoginEnvironment: () => ({
-    nodeVersion: TEST_WSL_LOGIN_ENVIRONMENT.nodeVersion,
-    path: loginEnvironmentPath.value,
-  }),
+  readWslLoginEnvironment: () => ({ ...TEST_WSL_LOGIN_ENVIRONMENT, path: loginEnvironmentPath.value }),
 }));
 
 describe(createOsExecOptions, () => {
-  // Inert store options (no fs writes) and the shared wsl mocks so getWslSourceMirrorPath resolves a canonical mirror
-  // Path from TEST_REPO_ROOT_WIN — the same transform createWslSourceMirrorSync.test / sourceMirrorPaths.test use. The
-  // Cache root is a real temp directory per test, since the corepack home under it is materialized, not merely named.
+  // Inert store options (no fs writes) and the shared wsl mocks, so the injected PATH is composed from the same
+  // ReadWslPath transform the sandbox's own chdir uses. The cache root is a real temp directory per test, since the
+  // Corepack home under it is materialized, not merely named.
   const loginPath = TEST_WSL_LOGIN_ENVIRONMENT.path;
 
   const { cleanup, create } = createTemporaryDirectoryTracker();
@@ -55,16 +51,16 @@ describe(createOsExecOptions, () => {
     cleanup();
   });
 
-  test("win32 prepends the mirror's node_modules/.bin ahead of the leaked host bin so the overlaid binary wins", () => {
+  test("win32 leads the PATH with the repo bin at the logical path the overlay is mounted at", () => {
     expect.hasAssertions();
 
     stubPlatform("win32");
-    // The regression this guards: without the prepend, a bare command resolves the /mnt/c host bin (win32 build)
-    // Baked into the WSL login PATH and crashes needing its -linux-x64 sibling. The mirror bin must come first.
-    const mirror = getWslSourceMirrorPath(TEST_REPO_ROOT_WIN);
-
+    // The regression this guards: naming the ext4 mirror instead. The mirror excludes node_modules by construction
+    // (resolveMirrorExcludes), so that directory never exists and the PATH resolves the repo's binaries only when the
+    // Launching shell happens to leak its own bin through interop. The logical path is where the overlay — deps lower
+    // Included — is actually mounted, so it is the one spelling that holds node_modules while the command runs.
     expect(createOsExecOptions(TEST_REPO_ROOT_WIN, "pipe").env?.PATH).toBe(
-      `${mirror}/${NODE_MODULES_BIN_DIRECTORY}:${loginPath}`,
+      `${TEST_WSL_PREFIX}${TEST_REPO_ROOT_WIN}/${NODE_MODULES_BIN_DIRECTORY}:${loginPath}`,
     );
   });
 
