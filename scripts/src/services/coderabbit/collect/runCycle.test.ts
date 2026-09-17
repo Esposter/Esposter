@@ -231,8 +231,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       return Promise.resolve({ isDrained: true, isStarted: true });
     });
 
-    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowError(
-      `the repairer left ${mainSha} unrepaired (attempt 1 of ${DRAIN_ATTEMPT_CAP})`,
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the repairer left 9107053724b5b317eae7437b5b6c689aa46d050c unrepaired (attempt 1 of 3)]`,
     );
     expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
     expect(getCommitCommentPosts(mainSha)).toStrictEqual([
@@ -294,6 +294,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
     expect(getCommitCommentPosts(claimedSha)).toHaveLength(1);
   });
+
   // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there
   // Is nothing a size floor could wait for. The queue sits on develop's head, so the window is a fast-forward to
   // The queue's own sha.
