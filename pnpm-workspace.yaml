@@ -111,7 +111,7 @@ catalog:
   "@vue-flow/core": ^1.48.2
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
-  "@vue-pdf-viewer/viewer": ^4.3.0
+  "@vue-pdf-viewer/viewer": ^4.4.0
   "@vue/compiler-core": ^3.5.42
   "@vue/language-core": ^3.3.11
   "@vue/test-utils": ^2.5.1
