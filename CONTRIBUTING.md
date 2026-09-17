@@ -101,7 +101,8 @@ queue: [branch namespaces](https://github.com/Esposter/Esposter/blob/main/apps/w
 flowchart LR
   E[external/my-feature<br/>off develop] -->|pull request| Q[(ai/queue)]
   Q -->|squash merge by a maintainer<br/>title and body become the commit| C{{Review collector}}
-  C -->|a capped window, reviewed by CodeRabbit| M[(main)]
+  C -->|a capped window| D[(develop)]
+  D -->|release pull request<br/>reviewed by CodeRabbit| M[(main)]
 ```
 
 1. Create a branch from `develop` under `external/` — `git checkout -b external/my-feature develop` — in the

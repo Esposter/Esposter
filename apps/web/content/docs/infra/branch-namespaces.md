@@ -16,7 +16,7 @@ A branch's name says who may create it, who may push it, and how it reaches a re
 | `external/*`  | any collaborator | any collaborator                                                                             | a pull request against `ai/queue`, squash-merged there by a maintainer, then cut like any commit |
 | anything else | a maintainer     | a maintainer                                                                                 | merged into the maintainer's own `ai/queue` and pushed                                           |
 
-The one review slot CodeRabbit grants an hour is spent only on the release pull request, and the rest of the table exists to keep it that way: every pull request against the default branch is reviewed on arrival, so `main` takes no pull request but the release, and everyone else's work reaches the bot inside a window the collector measured under its file cap ([review collector](/docs/infra/review-collector)).
+The one review slot CodeRabbit grants an hour belongs to the release pull request, and the rest of the table exists to keep it that way: every pull request against the default branch is reviewed on arrival, so `main` takes no pull request but the release, and everyone else's work reaches the bot inside a window the collector measured under its file cap ([review collector](/docs/infra/review-collector)).
 
 ## The contributor's path
 
@@ -61,3 +61,4 @@ Renovate bypasses the second so its branch automerge can push `main` and, since 
 - **A ruleset refuses the merge, never the opening.** A pull request a collaborator opens against `main` is unmergeable but still reviewed on arrival, and the slot is spent; the pull request template's checkbox and this page are the guard against opening one.
 - **Rejected: a contributor pull request against `develop`.** It is a second writer on the collector's ref, its merge is a range no window measured — over the file cap it costs the release its review, and the collector cannot undo a merge — and no bot reviews a pull request whose base is not the default branch.
 - **Rejected: an approving-review requirement on `main`.** Nobody but a bypass actor can update it, so the rule would gate only the actors it exempts.
+- **Rejected: a ruleset pinning the queue's merge to a squash.** A merge method is a sub-option of the pull request rule, and bypass is per ruleset: inside `one-writer refs` the Admin bypass makes the rule inert, and in a ruleset of its own without that bypass it requires a pull request for every update to `ai/queue` — the session pushes it plain and the collector rewrites it under a lease, and neither goes through one. The squash is the maintainer's to choose from the merge button, and nothing enforces it.

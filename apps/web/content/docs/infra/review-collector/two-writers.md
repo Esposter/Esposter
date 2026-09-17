@@ -39,7 +39,7 @@ A queue push spends nothing: it starts no review, only a collector run that meas
 
 ## Enforced by rulesets
 
-The writers above are one GitHub account acting as the Admin repository role, and the rulesets let no other account update `develop`, `main` or `ai/**` — which ref each namespace's name grants to whom, and how a collaborator's work enters the queue, is [branch namespaces](/docs/infra/branch-namespaces).
+The writers above are one GitHub account acting as the Admin repository role, and the rulesets let no other account update `ai/**`; on `develop` and `main` the Renovate GitHub App bypasses as well, so its branch automerge can land a bump — which ref each namespace's name grants to whom, and how a collaborator's work enters the queue, is [branch namespaces](/docs/infra/branch-namespaces).
 
 ## Parallel work
 
