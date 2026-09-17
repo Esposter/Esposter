@@ -20,6 +20,10 @@ Azure rotates that metadata on its own — `iconUri` moves to a new CDN host and
 
 GitHub's repository `deleteBranchOnMerge` is a system action that **bypasses ruleset deletion rules**, so it deletes a long-lived branch on merge even when the ruleset protects that ref from deletion. Keep `deleteBranchOnMerge: false` on the `Repository` resource and clean merged head branches up via the `Delete Merged Branch` GH Actions workflow (`.github/workflows/DeleteMergedBranch.yaml`), which excludes `main`/`develop` explicitly. Don't rely on rulesets to protect long-lived branches from native auto-delete.
 
+## GitHub ruleset bypass is per ruleset
+
+A bypass actor is exempt from every rule in its ruleset and from nothing outside it, so a ref that needs one actor exempt from one rule and held to another is covered by two rulesets, each with its own bypass list; which ruleset holds which ref, and why, is `apps/web/content/docs/infra/branch-namespaces.md`. A ruleset also cannot name an individual user: the session and the collector are the Admin repository role, and Renovate is the app's global id.
+
 ## Why a provider package is imported as a namespace
 
 The rule — `import * as azure_native from "@pulumi/azure-native"`, the one exception to named imports from libraries — is in `SKILL.md`; this is what breaks when it is "fixed".

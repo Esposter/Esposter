@@ -19,7 +19,7 @@ What the bot does, and what that makes true for every session. The session's own
 
 CodeRabbit auto-reviews **only PRs targeting the default branch (`main`)** — on creation and on every push. Develop-base PRs are skipped ("Auto reviews are disabled on base/target branches other than the default branch") and are triggered by commenting `@coderabbitai review`, which keeps control of _when_ a review starts and stops every intermediate push spending a slot. `.coderabbit.yaml` is read from the PR's **base branch**, so a config change takes effect only once it is there — `references/config-editing.md`.
 
-A review slot is about an hour, and a PR against `main` spends one on arrival: the release PR is the collector's to open, and any other PR against `main` is asked for every time, with its commit range settled before `gh pr create` because the moment after it is already an in-flight review. Corrections found after opening are a later push's commits; the body may be edited freely.
+A review slot is about an hour, and a PR against `main` spends one on arrival: the release PR is the collector's to open, and any other PR against `main` is asked for every time, with its commit range settled before `gh pr create` because the moment after it is already an in-flight review. Corrections found after opening are a later push's commits; the body may be edited freely. A collaborator's PR never targets `main` for the same reason — it is opened from an `external/*` branch against `ai/queue` and squash-merged there (`apps/web/content/docs/infra/branch-namespaces.md`).
 
 ## Never Push Into an In-Flight Review
 

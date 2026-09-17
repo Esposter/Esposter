@@ -334,7 +334,10 @@ sha. A review that comes back clean merges `develop` to `main` itself, and the p
 collector, which fast-forwards `develop` back onto it. A window is budgeted in **files** and spent on
 **findings**, so a commit that claims nothing in it needs a reviewer carries that claim as a trailer, and the
 collector cuts it straight to `main` once the checks pass on it — rather than letting a folder sweep occupy a
-window it will return nothing from. The design and its fine print live in
+window it will return nothing from. An external contributor's pull request enters at the same door: opened
+against `ai/queue` — never `main`, whose only pull request is the release, since any other spends the slot on
+arrival — and squash-merged onto the queue by a maintainer, where the collector cuts it like any session commit.
+The design and its fine print live in
 [the review collector docs](https://github.com/Esposter/Esposter/tree/main/apps/web/content/docs/infra/review-collector).
 
 ```mermaid
@@ -348,8 +351,9 @@ flowchart LR
   C -->|fixes parked| F[(ai/review-fixes)]
   F -->|lead the next window| D
   D -->|review clean at the head| M[(main)]
+  P[External contributor<br/>external/* branch, PR squash-merged] -->|one commit| Q
   M -->|push event| C
-  C -->|fast-forward after the merge<br/>fold a bump into the next window| D
+  C -->|fast-forward after the merge<br/>fold what landed there into the next window| D
 ```
 
 ## <a name="packages">📦 Packages</a>

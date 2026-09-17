@@ -12,7 +12,9 @@ export const repository: github.Repository = new github.Repository(
     allowForking: true,
     allowMergeCommit: true,
     allowRebaseMerge: false,
-    allowSquashMerge: false,
+    // Squash is for an external contributor's pull request against ai/queue, which enters the queue as one
+    // Commit carrying the pull request's title and body; develop and main pin the merge commit in their ruleset
+    allowSquashMerge: true,
     allowUpdateBranch: true,
     // Native auto-delete bypasses rulesets and would nuke develop on a develop -> main
     // Merge. Disabled here; the Delete Merged Branch workflow cleans up head branches
@@ -27,6 +29,8 @@ export const repository: github.Repository = new github.Repository(
     mergeCommitMessage: "PR_BODY",
     mergeCommitTitle: "PR_TITLE",
     name: "Esposter",
+    squashMergeCommitMessage: "PR_BODY",
+    squashMergeCommitTitle: "PR_TITLE",
     securityAndAnalysis: {
       secretScanning: {
         status: "enabled",

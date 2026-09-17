@@ -8,6 +8,7 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 `apps/infra` manages Esposter's cloud footprint as Pulumi TypeScript. A single `prod` stack owns both the development and production Azure resource groups plus the GitHub repository settings (labels, environments, secrets, branch rulesets). Everything runs on free or near-free SKUs, and the whole estate is cost-guarded: `$0.01` budgets trigger Logic App automation that stops Function Apps and deletes Event Grid subscriptions the moment anything exits the free tier.
 
 - [Azure Pulumi layout](/docs/infra/azure-pulumi-layout) — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
+- [Branch namespaces](/docs/infra/branch-namespaces) — whose a branch is, read off its name alone, and the rulesets that make the name the rule.
 - [Cost & Security Posture](/docs/infra/cost-and-security-posture) — the budget guard cycle and why each hardening step is deliberately deferred.
 - [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) — failed deliveries land in a blob container whose writes push-trigger an automatic, attempt-capped replay.
 - [Observability](/docs/infra/observability) — why App Insights and Log Analytics are deliberately not provisioned, and what the estate relies on instead.
@@ -35,3 +36,4 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (naming
 - **Observability removal** — deleted App Insights, Log Analytics, smart-detector rules, and scheduled-query alerts (dev + prod) to stay in the free tier; the `$0.01` budget guard is the cost ceiling. → [Observability](/docs/infra/observability)
 - **Pulumi source of truth** — adopted the Function Apps' runtime app settings into Pulumi; secrets flow from ESC. → [Pulumi source of truth](/docs/infra/pulumi-source-of-truth)
 - **Review collector** — the review pipeline moved off a person entirely: no step of it waits on one, and the only Azure-side cost was the collector token as a Pulumi-managed repository secret. → [Review collector](/docs/infra/review-collector)
+- **Branch namespaces** — the ref ownership the collector assumes became rulesets, and a branch's name became the whole convention for who may create and push it; the only cost was one prefix, `external/`, left open. → [Branch namespaces](/docs/infra/branch-namespaces)

@@ -37,6 +37,10 @@ sequenceDiagram
 
 A queue push spends nothing: it starts no review, only a collector run that measures. The collector holds the standing authorisation for `develop` and clears the gates from the remote on every run; the session's side of the loop — a unit committed by pathspec, `git pull --rebase` only over a clean tree, the plain push after every pull, a finding answered by hand with the same trailer — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
+## Enforced by rulesets
+
+The writers above are one GitHub account acting as the Admin repository role, and the rulesets let no other account update `develop`, `main` or `ai/**` — which ref each namespace's name grants to whom, and how a collaborator's work enters the queue, is [branch namespaces](/docs/infra/branch-namespaces).
+
 ## Parallel work
 
 Worktree agents executing specs commit on their own branches and hand the result to the main session, which merges it into its local `ai/queue` and publishes it. There is one writer of `ai/queue` per machine, and the lease handles two machines. A worktree agent never pushes `ai/queue` itself.
