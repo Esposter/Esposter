@@ -67,8 +67,8 @@ export const runCycle = async ({
   const { developSha } = returned;
   const viewerLogin = readViewerLogin();
   // The express lane, before the pull request is even looked up: a commit claiming no review reaches `main`
-  // Directly and the fold carries it to `develop` with the next window — after a red `main` is repaired, since
-  // Every cut is verified on its tree
+  // Directly and the fold carries it to `develop` with the next window — and a red `main` its cut cannot pass is
+  // Repaired by the lane's own cut
   const expressed = await runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
   if (expressed.outcome) return expressed.outcome;
   // No release pull request: the last one merged and the next window is still filling from the merge base

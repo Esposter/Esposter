@@ -22,6 +22,7 @@ import {
   DRAIN_ATTEMPT_CAP,
   EXPRESS_TRAILER,
   HELD_MARKER,
+  INSTALL_COMMAND,
   MAIN_BRANCH,
   MERGEABLE_RISK_LEVEL,
   PASS_BUCKET,
@@ -163,15 +164,20 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     return readSha("HEAD");
   };
+  // Every check red, the install alone green — a repair needs the tree installed before the session runs
+  const answerRedChecks = () => {
+    spawnPnpm.mockImplementation((args) =>
+      args.join(" ") === INSTALL_COMMAND.join(" ") ? greenSpawn : { ...greenSpawn, status: 1 },
+    );
+  };
 
-  // A red main is repaired first and alone: every cut is verified on its tree, so the claimed commit waits for
-  // The run the repair's push fires, and is told nothing — the red was never its
-  test("repairs a red main ahead of the express cut and ends the run on its push", async () => {
+  // A red main with nothing claimed is the repairer's: the session commits at the head, the cut is verified and
+  // Pushed, and the run ends on the push
+  test("repairs a red main and ends the run on its push", async () => {
     expect.hasAssertions();
 
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    commitFile(TEST_FILENAME, "");
-    const claimedSha = publish(QUEUE_BRANCH, claimExpress());
+    publish(QUEUE_BRANCH, mainSha);
     answerGh([], [], [], [], [redRun]);
     spawnPnpm.mockReturnValue(greenSpawn);
     runDrain.mockImplementation(() => {
@@ -184,14 +190,31 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Repaired,
-      reason: `${MAIN_BRANCH} repaired — the push runs the cycle again, which cuts the 1 claimed commits behind it`,
+      reason: `${MAIN_BRANCH} repaired — the push runs the cycle again, which cuts the 0 claimed commits behind it`,
       targetSha: repairSha,
     });
     expect(runGit(["rev-list", "--parents", "--max-count=1", repairSha], getCwd()).trim()).toBe(
       `${repairSha} ${mainSha}`,
     );
-    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(claimedSha);
-    expect(getCommitCommentPosts(claimedSha)).toHaveLength(0);
+  });
+
+  // The cut goes first even over a red main: a claimed commit may be the repair, and it reaches main this way alone
+  test("cuts a claimed commit whose cut is green over a red main, without a session", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    commitFile(TEST_FILENAME, "");
+    publish(QUEUE_BRANCH, claimExpress());
+    answerGh([], [], [], [], [redRun]);
+    spawnPnpm.mockReturnValue(greenSpawn);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Expressed,
+      reason: `1 express commits reached ${MAIN_BRANCH}`,
+      targetSha: readSha(`origin/${MAIN_BRANCH}`),
+    });
+    expect(runDrain).not.toHaveBeenCalled();
   });
 
   // The session's word proves nothing: a repair that is not a trailered commit over a clean tree counts the
@@ -208,7 +231,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       return Promise.resolve({ isDrained: true, isStarted: true });
     });
 
-    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrow(
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowError(
       `the repairer left ${mainSha} unrepaired (attempt 1 of ${DRAIN_ATTEMPT_CAP})`,
     );
     expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
@@ -224,45 +247,16 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ]);
   });
 
-  // Past its repairs a red main is a person's, said once on the head — and their repair arrives as a claimed
-  // Commit, so the lane cuts as usual rather than holding on the red it answers
-  test("cuts the claimed commits on a red main past its repairs, without a session", async () => {
-    expect.hasAssertions();
-
-    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    commitFile(TEST_FILENAME, "");
-    publish(QUEUE_BRANCH, claimExpress());
-    answerGh(
-      [],
-      [],
-      [],
-      Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
-        ...getMarked(getMarker(REPAIR_FAILED_MARKER, mainSha)),
-        id,
-      })),
-      [redRun],
-    );
-    spawnPnpm.mockReturnValue(greenSpawn);
-    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
-
-    expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Expressed,
-      reason: `1 express commits reached ${MAIN_BRANCH}`,
-      targetSha: readSha(`origin/${MAIN_BRANCH}`),
-    });
-    expect(runDrain).not.toHaveBeenCalled();
-    expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
-  });
-
-  // The claimed commit waits while a repair is still to be tried — here, one the session could not start
-  test("holds the claimed commits while a red main is under repair", async () => {
+  // A red cut over a red main under repair is the red of neither: the claimed commit waits, told nothing — here
+  // Behind a repairer that could not start
+  test("holds a claimed commit whose cut is red while a red main is under repair, unsaid", async () => {
     expect.hasAssertions();
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
     commitFile(TEST_FILENAME, "");
     publish(QUEUE_BRANCH, claimExpress());
     answerGh([], [], [], [], [redRun]);
-    spawnPnpm.mockReturnValue(greenSpawn);
+    answerRedChecks();
     runDrain.mockResolvedValue({ isDrained: false, isStarted: false });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
@@ -275,6 +269,31 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runGh.mock.calls.filter(([args]) => args[2] === "-f")).toHaveLength(0);
   });
 
+  // Past its repairs a red main is a person's, said once on the head, and a red cut is the claimed commit's own
+  test("tells a claimed commit its cut is red once a red main is past its repairs", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    commitFile(TEST_FILENAME, "");
+    const claimedSha = publish(QUEUE_BRANCH, claimExpress());
+    answerGh(
+      [],
+      [],
+      [],
+      Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
+        ...getMarked(getMarker(REPAIR_FAILED_MARKER, mainSha)),
+        id,
+      })),
+      [redRun],
+    );
+    answerRedChecks();
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome.kind).toBe(CycleOutcomeKind.Idle);
+    expect(runDrain).not.toHaveBeenCalled();
+    expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
+    expect(getCommitCommentPosts(claimedSha)).toHaveLength(1);
+  });
   // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there
   // Is nothing a size floor could wait for. The queue sits on develop's head, so the window is a fast-forward to
   // The queue's own sha.

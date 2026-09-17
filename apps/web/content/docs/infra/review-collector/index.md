@@ -43,12 +43,14 @@ flowchart TD
   C[Collector run<br/>serialized by concurrency group] --> R[Read remote state<br/>frontier, status, threads, refs]
   R --> RS{develop an ancestor of main}
   RS -->|yes| FF[Fast-forward develop to main<br/>no slot spent, the pass goes on against it]
-  RS -->|no| MR
-  FF --> MR{main red on CI}
+  RS -->|no| E
+  FF --> E{Any owed commit claims<br/>nothing to review}
+  E -->|yes| EX[Cherry-pick onto main, check]
+  EX -->|green| EP[Push, exit — no window spent]
+  EX -->|red| MR
+  E -->|no| MR{main red on CI}
   MR -->|yes| RP[Claude repairs it — cut, check<br/>push, exit — no window spent]
-  MR -->|no| E{Any owed commit claims<br/>nothing to review}
-  E -->|yes| EX[Cherry-pick onto main, check<br/>push, exit — no window spent]
-  E -->|no| G{Slot free and<br/>previous window reviewed}
+  MR -->|no| G{Slot free and<br/>previous window reviewed}
   G -->|no| X[Exit — nothing to do]
   G -->|yes| O{Open findings}
   O -->|yes| DR[Drain into ai/review-fixes<br/>Claude fixes or rejects each]

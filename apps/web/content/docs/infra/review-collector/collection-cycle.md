@@ -33,21 +33,21 @@ The trailers are the collector's memory: a fix commit says which finding it answ
 
 Before the pull request is looked up, the cycle compares `develop` with `main`. When `develop` is an ancestor of `main` and the two differ, `main` holds commits and `develop` holds nothing of its own: `develop` is fast-forwarded to `main` with a plain push — no pull request is open, so it spends nothing — and the pass goes on measuring against the head it made. What put those commits on `main` is not asked: a release that merged, an express cut and a dependency bump pushed straight at it all already sit on the branch a window is diffed against, so no window could carry them to a review. The stroke ends nothing because nothing would follow it: a push to `develop` fires no run, so a pass that exited here would leave the queue waiting on the next session push for the window it could have cut — which is how the first releases under the self-merge sat idle after merging.
 
-Then `main`'s own CI is read. A red head is the [repair](/docs/infra/review-collector/repair)'s, answered as a cut of the express lane's own — verified with every check, pushed alone, the run ending on the push — and while a repair is still to be tried every claimed commit waits, unsaid, since the lane would refuse each for a red none of them made; past its repairs the lane is open again, for the person's own.
-
-With `main` green, the cycle cuts every queue commit that claims it needs no review onto `main` — the [express lane](/docs/infra/review-collector/express-lane), open whether or not a window is in flight. That push is the run's one irreversible act too; the fold below carries `main` into the next window, and only then is a window measured.
+Then the cycle cuts every queue commit that claims it needs no review onto `main` — the [express lane](/docs/infra/review-collector/express-lane), open whether or not a window is in flight. That push is the run's one irreversible act too; the fold below carries `main` into the next window, and only then is a window measured. A red cut, or nothing to cut, asks whether `main` itself is red on its own CI: a red head is the [repair](/docs/infra/review-collector/repair)'s, answered as a cut of the lane's own — verified with every check, pushed alone, the run ending on the push — and while a repair is still to be tried a red cut is told on no claimed commit, since the red was never theirs.
 
 ## Gates
 
 ```mermaid
 flowchart TD
   S[Read state] --> RS{develop an ancestor of main}
-  RS -->|yes| FF[Fast-forward develop to main<br/>the pass measures against it] --> MR
-  RS -->|no| MR{main red on CI}
+  RS -->|yes| FF[Fast-forward develop to main<br/>the pass measures against it] --> EL
+  RS -->|no| EL{A queued commit claims no review}
+  EL -->|yes| CP[Cherry-pick onto main, check]
+  CP -->|green| X3[Push, exit — the push re-fires the cycle]
+  CP -->|red| MR
+  EL -->|no| MR{main red on CI}
   MR -->|yes| RP[Claude repairs it — cut, check, push] --> X6[Exit — the push re-fires the cycle]
-  MR -->|no| EL{A queued commit claims no review}
-  EL -->|yes| CP[Cherry-pick onto main, check, push] --> X3[Exit — the push re-fires the cycle]
-  EL -->|no| PR{Release PR open}
+  MR -->|no| PR{Release PR open}
   PR -->|no| MB[Frontier is the merge base<br/>nothing running] -->|nothing to drain| D
   PR -->|yes| RP[Reply for pushed fixes<br/>trailers on frontier..develop without a reply]
   RP --> B{Newest stated range<br/>ends at the develop head}

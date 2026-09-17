@@ -47,10 +47,10 @@ const checkIsGreen = (cwd: string): boolean =>
 
 // Build the cut, verify it, push it to `main`. `main` is production and the checks are the only gate a commit
 // Claiming no review gets, so the cut earns every one CI would fail it on; a red one is told on its commits and
-// Tried again next run. A push is the run's one irreversible act, so a lane that pushed ends the run. A red
-// `main` goes first and alone: every cut is verified on its tree, so until it is repaired no claimed commit can
-// Pass for a red none of them made, and the push of the repair fires the run that cuts them. Past its repairs
-// The lane is open again — a person's repair arrives as a claimed commit.
+// Tried again next run. A push is the run's one irreversible act, so a lane that pushed ends the run. The cut
+// Goes first even over a red `main`: a claimed commit may be the repair — a session's own, or a person's past
+// The repairer's attempts — and it reaches `main` this way alone. Only a red cut, or no cut, asks whether `main`
+// Itself is red, and a red under repair is answered by the repairer's cut before any claimed commit is blamed.
 export const runExpressLane = async ({
   cwd,
   isDryRun,
@@ -59,6 +59,29 @@ export const runExpressLane = async ({
 }: ExpressLaneInput): Promise<ExpressLaneResult> => {
   const { mainSha } = expressInput;
   const claimedShas = readClaimedShas({ cwd, ...expressInput });
+  const cut = claimedShas.length === 0 ? undefined : portExpress({ cwd, mainSha, shas: claimedShas });
+  if (cut?.targetSha !== undefined) {
+    console.info(`express: ${cut.shas.length} commits claim nothing in them to review`);
+    // A dry run reports the cut and carries on rather than ending here: nothing it does is irreversible, so the
+    // One pass is worth every stage's decision — the cut, the reshaping, the window — instead of only the first
+    if (isDryRun) {
+      console.info(`express: would verify and push ${cut.targetSha} to ${MAIN_BRANCH}`);
+      return { heldShas: [] };
+    } else if (checkIsGreen(cwd)) {
+      if (!pushBranch({ branch: MAIN_BRANCH, cwd, expectedSha: mainSha, isDryRun, sha: cut.targetSha }))
+        return { heldShas: claimedShas, outcome: getMovedOutcome(MAIN_BRANCH) };
+      return {
+        heldShas: [],
+        outcome: {
+          kind: CycleOutcomeKind.Expressed,
+          reason: `${cut.shas.length} express commits reached ${MAIN_BRANCH}`,
+          targetSha: cut.targetSha,
+        },
+      };
+    }
+    console.info("the express cut is red");
+  }
+
   const repair = await repairMain({ cwd, isDryRun, mainSha, viewerLogin });
   if (repair.targetSha !== undefined) {
     if (!checkIsGreen(cwd)) {
@@ -79,33 +102,15 @@ export const runExpressLane = async ({
       },
     };
   } else if (repair.isUnderRepair) {
+    // A red cut over a red `main` under repair is the red of neither claimed commit, and is not told on them
     if (claimedShas.length > 0)
       console.info(`express: ${claimedShas.length} claimed commits wait on the red ${MAIN_BRANCH}`);
     return { heldShas: claimedShas };
-  } else if (claimedShas.length === 0) return { heldShas: [] };
-
-  console.info(`express: ${claimedShas.length} commits claim nothing in them to review`);
-  const { shas, targetSha } = portExpress({ cwd, mainSha, shas: claimedShas });
+  } else if (cut?.targetSha !== undefined) {
+    console.info("the express cut is red — told on its commits, tried again next run");
+    postRedCut(cut.shas, viewerLogin);
+  }
   // A claimed commit whose patch did not apply waits on the unported work it needs, and is not told: the next
   // Window may carry that work
-  if (targetSha === undefined) return { heldShas: claimedShas };
-  // A dry run reports the cut and carries on rather than ending here: nothing it does is irreversible, so the one
-  // Pass is worth every stage's decision — the cut, the reshaping, the window — instead of only the first
-  if (isDryRun) {
-    console.info(`express: would verify and push ${targetSha} to ${MAIN_BRANCH}`);
-    return { heldShas: [] };
-  } else if (!checkIsGreen(cwd)) {
-    console.info("the express cut is red — told on its commits, tried again next run");
-    postRedCut(shas, viewerLogin);
-    return { heldShas: claimedShas };
-  } else if (!pushBranch({ branch: MAIN_BRANCH, cwd, expectedSha: mainSha, isDryRun, sha: targetSha }))
-    return { heldShas: claimedShas, outcome: getMovedOutcome(MAIN_BRANCH) };
-  return {
-    heldShas: [],
-    outcome: {
-      kind: CycleOutcomeKind.Expressed,
-      reason: `${shas.length} express commits reached ${MAIN_BRANCH}`,
-      targetSha,
-    },
-  };
+  return { heldShas: claimedShas };
 };

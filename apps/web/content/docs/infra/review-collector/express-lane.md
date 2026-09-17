@@ -14,17 +14,17 @@ The claim is one trailer line, `Express: <one sentence on why nothing in it need
 - **The reshaper**, on the parts of an over-cap commit it judged need no review — the commit's author is asked for nothing ([sync](/docs/infra/review-collector/collection-cycle)).
 - **A session**, on a commit it knows to be a sweep's moves or a format pass, which skips the reshaper's session outright.
 
-A claim is never a proof. Nothing reads it as true, only as asked: what admits the commit to `main` is the checks — install, format, the package builds, typecheck, both linters and the tests (`EXPRESS_VERIFY_COMMANDS`) — run on the cut as it would land. A red cut takes no window either: it is noted on the commits it carried and tried again every run. The app build alone is left to `main`'s own CI: it is the longest job there, and nothing a cut ships waits on it. The checks run on `main`'s tree, so a red `main` would refuse every cut for a red none of them made — which is why a red `main` is [repaired](/docs/infra/review-collector/repair) first, as a cut of the lane's own, and the claimed commits wait unsaid while a repair is still to be tried — past its repairs the lane is open again, since a person's repair arrives as a claimed commit.
+A claim is never a proof. Nothing reads it as true, only as asked: what admits the commit to `main` is the checks — install, format, the package builds, typecheck, both linters and the tests (`EXPRESS_VERIFY_COMMANDS`) — run on the cut as it would land. A red cut takes no window either: it is noted on the commits it carried and tried again every run. The app build alone is left to `main`'s own CI: it is the longest job there, and nothing a cut ships waits on it. The checks run on `main`'s tree, so a red `main` refuses every cut for a red none of them made — which is why a red cut asks whether `main` itself is red before any commit is told: a red head under [repair](/docs/infra/review-collector/repair) is the collector's, the claimed commits wait unsaid, and the repair goes out as a cut of the lane's own. The cut still goes first, because a claimed commit may be the repair — a session's own, or a person's past the repairer's attempts — and it reaches `main` this way alone.
 
 ```mermaid
 flowchart TD
   C[A commit the queue owes main and develop] --> T{Carries an Express trailer}
   T -->|no| RV[Review lane]
-  T -->|yes| MR{main under repair}
-  MR -->|yes| W[Wait, unsaid — the repair goes first]
-  MR -->|no| EX[Cherry-pick onto main, in queue order<br/>a patch that does not apply is skipped]
+  T -->|yes| EX[Cherry-pick onto main, in queue order<br/>a patch that does not apply is skipped]
   EX --> V{The cut passes the checks}
-  V -->|no| RD[Note it once on each commit<br/>tried again next run — the port skips it]
+  V -->|no| MR{main red on CI, under repair}
+  MR -->|yes| W[Wait, unsaid — the repair's cut goes out instead]
+  MR -->|no| RD[Note it once on each commit<br/>tried again next run — the port skips it]
   V -->|yes| PU[Push main — exit, the push re-fires the cycle]
   PU --> FO[Next window: the fold merges main in<br/>the sync drops the original by its copy]
 ```

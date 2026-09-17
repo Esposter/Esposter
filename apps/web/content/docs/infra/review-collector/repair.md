@@ -11,13 +11,14 @@ Nothing a rule can decide answers a red: which substitution a lint rule wants, w
 
 ```mermaid
 flowchart TD
-  R[Read CI's newest run for main's head] -->|green, or not concluded| L[The express lane, as usual]
+  E[The express cut is red, or there was none] --> R[Read CI's newest run for main's head]
+  R -->|green, or not concluded| L[A red cut is the claimed commits' own — told on them]
   R -->|red| S{Streak under the cap<br/>attempts noted on the head plus repairs stacked at it}
-  S -->|no| P[Note it once on the head — a person's<br/>the lane is open again for their repair] --> L
+  S -->|no| P[Note it once on the head — a person's<br/>their repair is a claimed commit the lane cuts] --> L
   S -->|yes| C[Claude, detached at the head, with the failing jobs' log tails<br/>one commit carrying Repairs: head]
   C -->|anything but a trailered commit over a clean tree| F[Count the attempt on the head, fail red]
   C -->|committed| V{The cut passes every check}
-  V -->|no| N[Count the attempt on the head<br/>the claimed commits wait] --> L2[The rest of the pass]
+  V -->|no| N[Count the attempt on the head<br/>the claimed commits wait, unsaid] --> L2[The rest of the pass]
   V -->|yes| PU[Push main — exit<br/>the push fires the cycle that cuts the claimed commits]
 ```
 
@@ -37,11 +38,13 @@ The same headless Claude the drain runs, the same denials — no push, no branch
 
 What proves the repair is read off the tree, never the session's word: a clean exit, a clean tree, a head that moved, and every commit of the move carrying the trailer that names this head. Anything else counts the attempt on the head and fails the run, as the fold's resolver does. A session that could not start — Claude Code's own limit, a launch that never happened — is nobody's attempt.
 
-Past the streak the head is a person's, said once on it — and the lane is open again, because their repair arrives the only way a session's commit reaches `main` unread: a queue commit carrying `Express:`, which the lane cuts and verifies as usual. Holding the lane on the red it answers would keep it out.
+Past the streak the head is a person's, said once on it — and their repair arrives the only way a session's commit reaches `main` unread: a queue commit carrying `Express:`, which the lane cuts and verifies as it does any other.
 
 ## The cut
 
-A repair is the express lane's own cut, alone: the claimed commits the queue holds are not picked on top of it, because the verify is one verdict for the whole cut and a claimed commit that is itself red would spend the streak's attempts on a red the repair answered. The cut earns every check a claimed commit does (`EXPRESS_VERIFY_COMMANDS`); red, the attempt is counted on the head and the claimed commits wait; green, it is pushed to `main` under the same lease every push carries, the run ends on it, and the push fires the cycle that cuts what waited — or fast-forwards `develop` onto it, when nothing of its own sat there.
+The express lane's own cut goes first, even over a red `main`: a claimed commit may be the repair — a session that fixed the red itself, a person's past the repairer's attempts — and a green cut is `main` green again with no session spent. Only a red cut, or nothing to cut, asks whether `main` is red; a red head under repair is the collector's, and the red cut is told on no claimed commit, since the red was never theirs. The verify a red cut spends over a red `main` is the price of that order — runner minutes, not a session.
+
+A repair is then a cut of its own, alone: the claimed commits are not picked on top of it, because the verify is one verdict for the whole cut and a claimed commit that is itself red would spend the streak's attempts on a red the repair answered. It earns every check a claimed commit does (`EXPRESS_VERIFY_COMMANDS`); red, the attempt is counted on the head and the claimed commits wait; green, it is pushed to `main` under the same lease every push carries, the run ends on it, and the push fires the cycle that cuts what waited — or fast-forwards `develop` onto it, when nothing of its own sat there.
 
 ## What it does not do
 
@@ -51,17 +54,18 @@ A repair is the express lane's own cut, alone: the claimed commits the queue hol
 
 ## Key files
 
-| File                                                             | Role                                                                     |
-| :--------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect/repairMain.ts`          | the step — CI's verdict, the streak, the session, the proof              |
-| `scripts/src/services/coderabbit/collect/runExpressLane.ts`      | the repair as the lane's own cut, verified and pushed ahead of any claim |
-| `scripts/src/services/coderabbit/collect/readMainCheck.ts`       | CI's newest run for `main`'s head                                        |
-| `scripts/src/services/coderabbit/collect/getFailedLogExcerpt.ts` | the tail of every failing job, one section per job                       |
-| `scripts/src/services/coderabbit/collect/readStackedRepairs.ts`  | the repairs consecutive at the head                                      |
-| `scripts/src/services/coderabbit/collect/getRepairPrompt.ts`     | what the session is told                                                 |
+| File                                                             | Role                                                        |
+| :--------------------------------------------------------------- | :---------------------------------------------------------- |
+| `scripts/src/services/coderabbit/collect/repairMain.ts`          | the step — CI's verdict, the streak, the session, the proof |
+| `scripts/src/services/coderabbit/collect/runExpressLane.ts`      | the repair as the lane's own cut, behind a red cut or none  |
+| `scripts/src/services/coderabbit/collect/readMainCheck.ts`       | CI's newest run for `main`'s head                           |
+| `scripts/src/services/coderabbit/collect/getFailedLogExcerpt.ts` | the tail of every failing job, one section per job          |
+| `scripts/src/services/coderabbit/collect/readStackedRepairs.ts`  | the repairs consecutive at the head                         |
+| `scripts/src/services/coderabbit/collect/getRepairPrompt.ts`     | what the session is told                                    |
 
 ## Notes
 
 - **Rejected: a repair through the review lane, on `ai/review-fixes`.** Fixes park until the queue owes something and ride the next window, so `main` stayed red across a release with nothing to push — and the release then merged the same red back. The express lane's verify is the review a repair gets.
-- **Rejected: repairing on the express cut's own red, by re-running the failed check on bare `main`.** It repaired only when a claimed commit happened to be waiting, and it ran a second check to learn what CI had already said.
+- **Rejected: learning `main` is red from the express cut's own red, by re-running the failed check on bare `main`.** It repaired only when a claimed commit happened to be waiting, and it ran a second check to learn what CI had already said.
+- **Rejected: the repair ahead of the cut.** It held every claimed commit while `main` was red, which kept out the one commit that answers a red past the repairer's attempts, and spent a session on a red a claimed commit already fixed.
 - **Rejected: a hosted autofix.** GitHub's answers code-scanning alerts, not a red check; the repair here is a session the collector already knows how to run, prove and bound.
