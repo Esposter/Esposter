@@ -80,6 +80,6 @@
     "vue": "catalog:"
   },
   "inlinedDependencies": {
-    "type-fest": "5.9.0"
+    "type-fest": "5.10.0"
   }
 }
