@@ -76,16 +76,18 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
     console.info("the repairer could not start, and no attempt is counted");
     return { isUnderRepair: true };
   }
-  // What proves a repair is a clean exit over a clean tree that moved, every commit of the move carrying the
-  // Trailer that names this head; the session's word proves nothing. Anything else counts the attempt on the
-  // Head and fails the run, as the fold does.
+  // What proves a repair is a clean exit over a clean tree that moved by the one commit the session was told to
+  // Leave, carrying the trailer that names this head; the session's word proves nothing. Anything else counts
+  // The attempt on the head and fails the run, as the fold does. One commit exactly, because the streak reads a
+  // Repair off the head as a commit: a session that left three would spend every attempt of the streak on
+  // Itself, and the head it made would be a person's however answerable its red still is.
   const headSha = readHeadSha(cwd);
   const repairShas = getNonEmptyLines(runGit(["rev-list", `${mainSha}..${headSha}`], cwd));
   const trailedShas = readTrailedShas(repairShas, REPAIRS_TRAILER, cwd);
   if (
     !isDrained ||
     readDirtyPaths(cwd).length > 0 ||
-    repairShas.length === 0 ||
+    repairShas.length !== 1 ||
     !repairShas.every((sha) => trailedShas.has(sha))
   ) {
     postCommitComment(

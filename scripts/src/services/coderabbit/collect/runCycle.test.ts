@@ -247,6 +247,30 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ]);
   });
 
+  // One commit exactly, because the streak reads a repair off the head as a commit: a session that left two
+  // Would stack two attempts on the head it made, and a third would hand an answerable red to a person
+  test("counts a repair that left more than one commit on main's head and fails the run", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    spawnPnpm.mockReturnValue(greenSpawn);
+    runDrain.mockImplementation(() => {
+      for (const name of [`${TEST_FILENAME}.ts`, `${TEST_FILENAME}/${TEST_FILENAME}.ts`]) {
+        commitFile(name, "");
+        runGit(["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${REPAIRS_TRAILER}: ${mainSha}`], getCwd());
+      }
+      return Promise.resolve({ isDrained: true, isStarted: true });
+    });
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the repairer left 9107053724b5b317eae7437b5b6c689aa46d050c unrepaired (attempt 1 of 3)]`,
+    );
+    expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
+    expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
+  });
+
   // A red cut over a red main under repair is the red of neither: the claimed commit waits, told nothing — here
   // Behind a repairer that could not start
   test("holds a claimed commit whose cut is red while a red main is under repair, unsaid", async () => {
