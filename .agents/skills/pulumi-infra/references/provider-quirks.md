@@ -22,7 +22,7 @@ GitHub's repository `deleteBranchOnMerge` is a system action that **bypasses rul
 
 ## GitHub ruleset bypass is per ruleset
 
-A bypass actor is exempt from every rule in its ruleset and from nothing outside it, so a ref that needs one actor exempt from one rule and held to another is covered by two rulesets, each with its own bypass list; which ruleset holds which ref, and why, is `apps/web/content/docs/infra/branch-namespaces.md`. A ruleset also cannot name an individual user: the session and the collector are the Admin repository role, and Renovate is the app's global id.
+A bypass actor is exempt from every rule in its ruleset and from nothing outside it — one ref, two kinds of exemption, two rulesets, each with its own bypass list; which ruleset holds which ref, and why, is `apps/web/content/docs/infra/branch-namespaces.md`. A ruleset also cannot name an individual user: the session and the collector are the Admin repository role, and Renovate is the app's global id.
 
 ## GitHub settings the provider has no field for
 

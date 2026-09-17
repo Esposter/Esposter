@@ -106,7 +106,7 @@ flowchart LR
 ```
 
 1. Create a branch from `develop` under `external/` — `git checkout -b external/my-feature develop` — in the
-   repository if you have write access, else in your fork. `develop` is always an ancestor of `ai/queue`, so the
+   repository if you have write access, else in your fork. `develop` never runs ahead of `ai/queue`, so the
    pull request shows your commits alone.
 2. Make your changes and ensure all checks pass:
    ```bash
