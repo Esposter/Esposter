@@ -29,8 +29,6 @@ export const repository: github.Repository = new github.Repository(
     mergeCommitMessage: "PR_BODY",
     mergeCommitTitle: "PR_TITLE",
     name: "Esposter",
-    squashMergeCommitMessage: "PR_BODY",
-    squashMergeCommitTitle: "PR_TITLE",
     securityAndAnalysis: {
       secretScanning: {
         status: "enabled",
@@ -39,6 +37,8 @@ export const repository: github.Repository = new github.Repository(
         status: "enabled",
       },
     },
+    squashMergeCommitMessage: "PR_BODY",
+    squashMergeCommitTitle: "PR_TITLE",
     topics: packageJson.keywords,
     visibility: "public",
   },
