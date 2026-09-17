@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
+
+### Bug Fixes
+
+* **infra, virrun, xml2js:** answer the first review window ([5544143](https://github.com/Esposter/Esposter/commit/554414358a61ee467868246ebfa739afc69dcf47))
+* snapshots ([23fe39b](https://github.com/Esposter/Esposter/commit/23fe39b5ea8f2076d4261736acd106eb50518dc7))
+* **xml2js:** sax is imported by default, the one form Node's CommonJS lexer resolves ([6a51439](https://github.com/Esposter/Esposter/commit/6a5143959c5b777c4cb525c07d33a05be92e03c0))
+
 # [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
 
 **Note:** Version bump only for package @esposter/xml2js

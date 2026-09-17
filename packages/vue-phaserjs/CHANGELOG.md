@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
+
+### Bug Fixes
+
+* **lint:** the type-import split's sort reaches the files the rule change left unsorted ([3f6663f](https://github.com/Esposter/Esposter/commit/3f6663fe2375f654a8c5adfec0cb88fa3f418617))
+* snapshots ([23fe39b](https://github.com/Esposter/Esposter/commit/23fe39b5ea8f2076d4261736acd106eb50518dc7))
+* **vue-phaserjs:** preserve state on partial setter updates ([ee61986](https://github.com/Esposter/Esposter/commit/ee6198698491058862ecc76377308957afdf6637))
+* **vue-phaserjs:** the animation setter removes only the listener it owns ([ae8f796](https://github.com/Esposter/Esposter/commit/ae8f79609f91740c094846d7d594ab6c61341680))
+
+### Features
+
+* **lint:** consistent-type-imports is on for .ts ([3a425e3](https://github.com/Esposter/Esposter/commit/3a425e330adbd87ae137d5c0ea3502e0d1425b04))
+
 # [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
 
 **Note:** Version bump only for package vue-phaserjs

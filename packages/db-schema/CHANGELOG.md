@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
+
+### Bug Fixes
+
+* **lint:** the type-import split's sort reaches the files the rule change left unsorted ([3f6663f](https://github.com/Esposter/Esposter/commit/3f6663fe2375f654a8c5adfec0cb88fa3f418617))
+
+### Features
+
+* **lint:** consistent-type-imports is on for .ts ([3a425e3](https://github.com/Esposter/Esposter/commit/3a425e330adbd87ae137d5c0ea3502e0d1425b04))
+* **resource:** store versions as content-addressed keyframes and deltas ([1a01271](https://github.com/Esposter/Esposter/commit/1a012716c89d09b6746eabe6264427f90c1279ec))
+* **sweeps:** the ≥2-consumers rule is enforced — every single-consumer export of packages/shared moves beside its consumer ([5455ae8](https://github.com/Esposter/Esposter/commit/5455ae858d0c1fdad6457e771feab47e2442d61a))
+
+### Performance Improvements
+
+* **sweeps:** the template stems ride the one shingling pass, and the moved bytes land in their size snapshots ([8f20352](https://github.com/Esposter/Esposter/commit/8f203529372fbaec2e57e60c48873a8ef48c763b))
+
 # [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
 
 ### Bug Fixes

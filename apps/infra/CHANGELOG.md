@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/Esposter/Esposter/compare/v3.0.0...v3.1.0) (2026-09-17)
+
+### Bug Fixes
+
+* **infra, virrun, xml2js:** answer the first review window ([5544143](https://github.com/Esposter/Esposter/commit/554414358a61ee467868246ebfa739afc69dcf47))
+* **lint:** the type-import split's sort reaches the files the rule change left unsorted ([3f6663f](https://github.com/Esposter/Esposter/commit/3f6663fe2375f654a8c5adfec0cb88fa3f418617))
+* **readme:** the two app READMEs link the docs site root, since typedoc builds no page for an app ([1139d79](https://github.com/Esposter/Esposter/commit/1139d79fa423315211b97918e2aa0a0f93e01a90))
+
+### Features
+
+* **infra:** a branch's name says whose it is, and a collaborator's work enters the queue from external/ ([bd19131](https://github.com/Esposter/Esposter/commit/bd19131394aa86296df7e8a3bebabb827a804d5e))
+* **infra:** private vulnerability reporting on, and the Secret Protection surfaces recorded as refused ([22fa8c8](https://github.com/Esposter/Esposter/commit/22fa8c85be7de572b5e7dd4b409efc08b0d9ffe0))
+* **infra:** the GitHub defaults nobody declared become resources ([fbc84e2](https://github.com/Esposter/Esposter/commit/fbc84e28223e2677d7c9b113f838af3ceac75b20))
+* **lint:** consistent-type-imports is on for .ts ([3a425e3](https://github.com/Esposter/Esposter/commit/3a425e330adbd87ae137d5c0ea3502e0d1425b04))
+* **scripts:** the review collector — an idempotent cycle that drains findings and ports queue windows onto develop ([a25c526](https://github.com/Esposter/Esposter/commit/a25c526a3a20ae448342513df78bfb60024fb291))
+
 # [3.0.0](https://github.com/Esposter/Esposter/compare/v2.40.0...v3.0.0) (2026-09-12)
 
 ### Bug Fixes
