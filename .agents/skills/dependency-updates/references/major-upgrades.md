@@ -49,18 +49,8 @@ Beyond `SKILL.md`'s "what a bump owes beyond the version" — which is the same 
 - A Nuxt-module major (`@vueuse/nuxt`) changes the auto-import manifest, so the typecheck over `apps/web` is the audit's last step — a removed export that the grep in step 2 missed fails here and nowhere else.
 - A major that moves bytes into a `dist/` moves the bundle snapshots, and the config snapshots (`apps/web/uno.config.test.ts`, `apps/web/vuetify.config.test.ts`) are read before they are regenerated — `SKILL.md` owns both.
 
-## 5. One major per commit
+## 5. One commit per pass
 
-Each major is its own commit — the catalog write, the lockfile, and the migration step 3 produced, together — with its own audit in the body. The patches and minors of the same pass are one commit ahead of them all. A commit carrying two majors cannot be reverted for the one that turned out wrong, and its body is two audits a reader has to separate.
+A hand pass is one commit: every version it moved, the lockfile `pnpm refresh:lockfile` installed and verified, and the migrations step 3 produced. The body carries one section per major, each holding that major's audit — the grep per breaking bullet and the migrate-or-reject per feature — so a reader separates them by heading, not by commit.
 
-The lockfile is what forces the shape, because it cannot be split: a commit whose `pnpm-lock.yaml` resolves versions its `pnpm-workspace.yaml` does not declare installs something nobody wrote. But splitting it is cheap, because a commit wants the **resolution**, not an install:
-
-```bash
-# Once, for the whole pass: install what the pass will end on, and verify against it
-pnpm refresh:lockfile
-
-# Then per commit, walking the catalog back to that commit's state — seconds, no reinstall
-pnpm install --lockfile-only
-```
-
-`--lockfile-only` re-resolves against the edited catalog and leaves `node_modules` untouched, so the intermediate commits cost seconds each and nothing of anyone's is killed. Walking the catalog back to the pass's last state reproduces the refreshed lockfile byte for byte, which is the check that the split resolved honestly — `diff` it against a copy of the refreshed one taken before the first walk back, and a difference means a commit's lockfile is not what the pass verified.
+Splitting the pass into one commit per major is **rejected** (`SKILL.md`, Settled). It bought a per-package revert nobody performs here — a bad major is fixed forward, and Renovate reopens it regardless — and it cost a catalog walk-back with `pnpm install --lockfile-only` per commit, whose resolution does not reproduce the refreshed lockfile byte for byte (the peer-suffix keys pnpm writes differ between the two paths), so every split ended in a hand-reconciled lockfile. The only lockfile a commit carries is the one the refresh installed.
