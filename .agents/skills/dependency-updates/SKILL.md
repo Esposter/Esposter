@@ -12,7 +12,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 ## Settled — do not re-propose
 
 - **A confirmation gate before `pnpm refresh:lockfile`** (step 3 below). Its process kill is the precondition the delete needs on Windows, everything it ends is a restartable process of this repo's own, and a pass runs unattended — a gate turns it into one that stops to ask a question whose answer is yes. The trade is written at step 3, and a review finding asking for the gate is answered with this line (`coderabbit`).
-- **One commit per major within a hand pass.** A pass is one commit whose body carries a section per major (`references/major-upgrades.md` §5); the split was tried and dropped because it bought a per-package revert this repo never performs and cost a `--lockfile-only` walk-back per commit that does not reproduce the refreshed lockfile.
+- **Splitting a hand pass into one commit per major.** A pass is one commit whose body carries a section per major; the split bought a per-package revert this repo never performs and cost a hand-reconciled lockfile per commit (`references/major-upgrades.md` §5).
 
 ## Bumping by hand
 
