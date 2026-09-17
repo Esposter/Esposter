@@ -49,8 +49,8 @@ flowchart TD
   MR -->|yes| RP[Claude repairs it — cut, check, push] --> X6[Exit — the push re-fires the cycle]
   MR -->|no| PR{Release PR open}
   PR -->|no| MB[Frontier is the merge base<br/>nothing running] -->|nothing to drain| D
-  PR -->|yes| RP[Reply for pushed fixes<br/>trailers on frontier..develop without a reply]
-  RP --> B{Newest stated range<br/>ends at the develop head}
+  PR -->|yes| RE[Reply for pushed fixes<br/>trailers on frontier..develop without a reply]
+  RE --> B{Newest stated range<br/>ends at the develop head}
   B -->|yes| OK[Slot free]
   B -->|no| ST{Check bucket}
   ST -->|pending| X1[Exit — review running]

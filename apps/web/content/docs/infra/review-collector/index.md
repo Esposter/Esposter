@@ -66,7 +66,7 @@ flowchart TD
   P -->|first commit held alone, past its attempts| FL[Note it on the commit, fail —<br/>a person resolves or splits it]
   P -->|any| W[Port fixes then queue prefix<br/>largest prefix under the cap, main folded in<br/>Claude resolves a fold conflict]
   W --> PU[Compare-and-swap push to develop]
-  PU -->|release PR open| RP[Reply on each answered thread<br/>with the pushed sha]
+  PU -->|release PR open| RE[Reply on each answered thread<br/>with the pushed sha]
   PU -->|none open| OP[Open the release PR<br/>its first review reads the window]
 ```
 
