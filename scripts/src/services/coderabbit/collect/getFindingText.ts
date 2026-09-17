@@ -1,6 +1,8 @@
+import { HTML_COMMENT_REGEX } from "#src/services/coderabbit/shared/constants";
+import { stripToFixedPoint } from "#src/services/shared/stripToFixedPoint";
+
 // The hidden comments carry the bot's fingerprints and site lists, and the static-analysis block is the transcript
 // Of every script it ran — tens of kilobytes per finding, none of it the finding
-const HTML_COMMENT_REGEX = /<!--[\s\S]*?-->/gu;
 const STATIC_ANALYSIS_BLOCK_REGEX =
   /<details>\s*<summary>🔎 Supported by static analysis<\/summary>[\s\S]*?<\/details>/gu;
 const BLANK_RUN_REGEX = /\n{3,}/gu;
@@ -15,7 +17,7 @@ export const getFindingText = (body: string): string =>
   body
     .replaceAll(STATIC_ANALYSIS_BLOCK_REGEX, "")
     .split(FENCED_BLOCK_REGEX)
-    .map((segment, index) => (index % 2 === 0 ? segment.replaceAll(HTML_COMMENT_REGEX, "") : segment))
+    .map((segment, index) => (index % 2 === 0 ? stripToFixedPoint(segment, HTML_COMMENT_REGEX) : segment))
     .join("")
     .replaceAll(BLANK_RUN_REGEX, "\n\n")
     .trim();

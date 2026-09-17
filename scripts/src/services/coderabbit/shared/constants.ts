@@ -4,6 +4,11 @@
 export const CODERABBIT_REST_LOGIN = "coderabbitai[bot]";
 export const CODERABBIT_GRAPHQL_LOGIN = "coderabbitai";
 
+// An HTML comment, which renders as nothing: the bot's fingerprints inside a finding, and the collector's own
+// Markers (`getMarker`) — which is why prose the drain wrote is stripped of them before it is posted
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+export const HTML_COMMENT_REGEX: RegExp = /<!--[\s\S]*?-->/gu;
+
 // The retrigger the cycle posts at a stated deadline
 export const PROBE_COMMENT = "@coderabbitai review";
 

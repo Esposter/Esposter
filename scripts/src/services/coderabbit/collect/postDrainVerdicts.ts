@@ -3,7 +3,9 @@ import type { DrainPromptInput } from "#src/models/coderabbit/collect/DrainPromp
 import { getDrainsVerdictBody } from "#src/services/coderabbit/collect/getDrainsVerdictBody";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { postReply } from "#src/services/coderabbit/collect/postReply";
+import { HTML_COMMENT_REGEX } from "#src/services/coderabbit/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { stripToFixedPoint } from "#src/services/shared/stripToFixedPoint";
 import { getResult, noop } from "@esposter/shared";
 import { existsSync, readFileSync } from "node:fs";
 
@@ -15,7 +17,7 @@ const readLines = (path: string): string[] => (existsSync(path) ? getNonEmptyLin
 
 // These lines are prose the drain wrote about untrusted review text (`runDrain`), posted under the same login
 // `checkIsMarked` keys its trust on — so an HTML comment reaching this far is stripped, not trusted to be prose
-const stripHtmlComments = (text: string): string => text.replaceAll(/<!--[\s\S]*?-->/gu, "");
+const stripHtmlComments = (text: string): string => stripToFixedPoint(text, HTML_COMMENT_REGEX);
 
 export const postDrainVerdicts = ({
   openThreads,

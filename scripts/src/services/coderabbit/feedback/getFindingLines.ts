@@ -1,3 +1,5 @@
+import { stripToFixedPoint } from "#src/services/shared/stripToFixedPoint";
+
 // Sections whose content is machinery rather than findings. The list is what gets suppressed; everything else
 // Prints, so a bucket nobody has seen before shows up by default instead of silently.
 const BOILERPLATE_REGEX =
@@ -16,9 +18,7 @@ const OPENING_HEADING_REGEX = /^(?:#{1,6} |\*\*Actionable comments posted:)/u;
 
 export const getFindingLines = (body: string): string[] => {
   let isBoilerplate = false;
-  return body
-    .replaceAll(FENCED_BLOCK_REGEX, "")
-    .replaceAll(HTML_TAG_REGEX, "")
+  return stripToFixedPoint(body.replaceAll(FENCED_BLOCK_REGEX, ""), HTML_TAG_REGEX)
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean)

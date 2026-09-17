@@ -22,11 +22,16 @@ const IDENTIFIER_REGEX = new RegExp(`[${IDENTIFIER_CONTINUE_CHARACTERS}]`, "u");
 const NAME = "getResult";
 const NEWLINE_REGEX = /\n/gu;
 const PRECEDING_AWAIT_REGEX = /\bawait\s*$/u;
-const PRECEDING_TRIVIA_REGEX = /(?:\s+|\/\*[\s\S]*?\*\/)+$/u;
+// A block comment's body is spelled as what it cannot hold rather than as a lazy anything: `[\s\S]*?` lets one
+// Comment's body swallow the next comment's opener, and the trailing-trivia match that fails after many such
+// Comments retries every split of them — likewise a single `\s` inside the repeated group, where `\s+` retries
+// Every split of a run of spaces (CodeQL `js/redos`)
+const BLOCK_COMMENT_PATTERN = String.raw`\/\*(?:[^*]|\*(?!\/))*\*\/`;
+const PRECEDING_TRIVIA_REGEX = new RegExp(String.raw`(?:\s|${BLOCK_COMMENT_PATTERN})+$`, "u");
 const STATEMENT_START_REGEX = /[;{}]\s*$|^\s*$/u;
 const TERMINATOR_NAMES = "andTee|andThen|mapErr|map|match|orElse|orTee|unwrapOr";
 const TERMINATOR_REGEX = new RegExp(String.raw`^\s*\.(?:${TERMINATOR_NAMES})`, "u");
-const TRIVIA_REGEX = /^(?:\s+|\/\/.*|\/\*[\s\S]*?\*\/)+/u;
+const TRIVIA_REGEX = new RegExp(String.raw`^(?:\s|\/\/.*|${BLOCK_COMMENT_PATTERN})+`, "u");
 const AFTER_LENGTH = 34;
 
 // A terminator is a call, and `scanCode` drops the bracket, so in the code alone `.match(noop)` and
