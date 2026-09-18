@@ -133,7 +133,6 @@ flowchart TD
   M -->|no| U[Undo that pick — it is the first held commit]
   U --> RD
   H --> RD{Ready}
-  RD -->|fixes parked with no queue commit behind them| W[Wait — nothing pushed, fixes stay parked]
   RD -->|nothing owed at all| N[Exit — ai/queue is synced with develop<br/>or its claimed commits wait on the lane]
   RD -->|nothing taken under a rate limit| AK[Ask for the review the limit refused<br/>at the deadline the bot stated]
   RD -->|no fixes and the first queue commit is held| F[Note it on the commit once, then fail red —<br/>idle under a rate limit, the ask first]
@@ -152,16 +151,11 @@ flowchart TD
 
 ### Readiness
 
-Whether the window goes out is `checkIsReady`, a two-by-two over what the port holds:
+The window goes out when the port holds anything at all — a fix, a queue commit that fit, or what `develop` already carries unreviewed — at whatever size it reached; with none of those, nothing is owed, or the run fails red when the first commit is held.
 
-|                  | queue commits fit                       | none fit                                                                                                 |
-| :--------------- | :-------------------------------------- | :------------------------------------------------------------------------------------------------------- |
-| **fixes parked** | push                                    | park — unless the queue's first commit is the held one, then push                                        |
-| **no fixes**     | push, at whatever size the port reached | push what `develop` carries unreviewed, else nothing is owed — or fail red when the first commit is held |
+**There is no lower bound on a window.** The port takes every commit the queue owes and stops only at the cap or on a conflict, so a window that came out small is the whole of what was left — and waiting for it to grow waits on a push nothing has promised while the queue stays unsynced. Fixes alone are the same case: the review they answer is the one the release waits on, and a limit refusing it arrives as an event. The standing goal is `ai/queue` fully drained into `develop`; the cap is the only size the window is measured against, and it is measured on the tree that will be pushed.
 
-**There is no lower bound on a window.** The port takes every commit the queue owes and stops only at the cap or on a conflict, so a window that came out small is the whole of what was left — and waiting for it to grow waits on a push nothing has promised while the queue stays unsynced. The standing goal is `ai/queue` fully drained into `develop`; the cap is the only size the window is measured against, and it is measured on the tree that will be pushed.
-
-A held window cannot grow — the commit that stopped it is past the reshaper's or the resolver's attempts, and only this window landing clears anything. `--force` is only ever the difference on parked fixes, since everywhere else an owed commit already goes out. With no pull request open, the commits `develop` already carries above the merge base count beside the queue's, so a `develop` a dying run left pushed is ready with nothing to add and only the opening is owed. Under a rate limit the review the limit refused is asked for first ([the runner's retrigger](/docs/infra/review-collector/runner)), since its answer is still owed — and a held first commit exits the run idle there rather than red, because a throw would lose the retrigger the job output carries. So the held commit is told on itself, once, whatever the gate said: a marker comment on the commit, posted by the first run that holds on it.
+A held window cannot grow — the commit that stopped it is past the reshaper's or the resolver's attempts, and only this window landing clears anything. With no pull request open, the commits `develop` already carries above the merge base count beside the queue's, so a `develop` a dying run left pushed is ready with nothing to add and only the opening is owed. Under a rate limit the review the limit refused is asked for first ([the runner's retrigger](/docs/infra/review-collector/runner)), since its answer is still owed — and a held first commit exits the run idle there rather than red, because a throw would lose the retrigger the job output carries. So the held commit is told on itself, once, whatever the gate said: a marker comment on the commit, posted by the first run that holds on it.
 
 ## Push, reply, open
 

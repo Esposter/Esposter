@@ -4,7 +4,6 @@ export interface CycleInput {
   // Outcome cannot clean up.
   cwd: string;
   isDryRun: boolean;
-  isForced: boolean;
   // The release pull request, when the caller named one. Otherwise the open develop → main pull request is read
   pullRequest?: number;
 }

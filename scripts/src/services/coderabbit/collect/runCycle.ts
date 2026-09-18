@@ -4,7 +4,6 @@ import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
-import { checkIsReady } from "#src/services/coderabbit/collect/checkIsReady";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import {
   DEVELOP_BRANCH,
@@ -42,12 +41,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The single fast-forward push or guarded by a predicate a later run re-evaluates, so any event may run this
 // And a run against unchanged state does nothing. It returns its verdict rather than exiting, which is what
 // Makes a dry run one mode of the same code path (docs: infra/review-collector).
-export const runCycle = async ({
-  cwd,
-  isDryRun,
-  isForced,
-  pullRequest: namedPullRequest,
-}: CycleInput): Promise<CycleOutcome> => {
+export const runCycle = async ({ cwd, isDryRun, pullRequest: namedPullRequest }: CycleInput): Promise<CycleOutcome> => {
   // Every outcome from the gate down carries whatever retrigger the bot's stated deadline owes
   let retriggerDelaySeconds: number | undefined;
   const getOutcome = (kind: CycleOutcomeKind, reason: string, targetSha?: string): CycleOutcome => ({
@@ -158,15 +152,10 @@ export const runCycle = async ({
   console.info(
     `window: ${port.fixCount} fix commits + ${pendingCommitCount} pending commits + ${port.queueShas.length} queue commits = ${port.fileCount} files${port.heldSha ? `, held from ${port.heldSha}` : ""}`,
   );
-  // Fixes parked with no pull request open answered the one that merged: they ride the window but force nothing
-  const parkedFixCount = pullRequest === undefined ? 0 : port.fixCount;
-  const isReady = checkIsReady({
-    fixCount: parkedFixCount,
-    isForced,
-    isHeld: port.heldSha !== undefined,
-    pendingCommitCount,
-    queueCommitCount: port.queueShas.length,
-  });
+  // Anything owed goes out, at whatever size the port reached: there is no floor under the cap because the port
+  // Already took every commit the queue owes, and fixes alone spend the slot rather than wait on a push nothing
+  // Has promised — a limit refusing the review arrives as an event, and the retrigger asks for it again
+  const isReady = port.fixCount > 0 || pendingCommitCount + port.queueShas.length > 0;
   if (!isReady) {
     // A port that took nothing under a limit is the one moment the review it refused is owed (`settleRateLimit`)
     if (isRateLimited && pullRequest !== undefined && port.queueShas.length === 0) {
@@ -189,7 +178,7 @@ export const runCycle = async ({
         "coderabbit",
         `held at ${port.heldSha} — the first owed commit could not be reshaped under the cap or its conflict was not resolved past the attempt cap, so a person splits it or rebases ${QUEUE_BRANCH} (its commit comments say which)`,
       );
-    } else if (parkedFixCount > 0) return getOutcome(CycleOutcomeKind.Idle, "parked — fixes wait for the queue");
+    }
     // A claimed commit no cut carried is owed to `main` still, and the port never counts it: said here, or an
     // Idle run reads as a synced queue over a commit its own comment says is red
     else if (expressed.heldShas.length > 0)
