@@ -5,11 +5,6 @@ name: ♻️ Run Review Collector
 # whichever event fired; the checkout pins the same ref because `actions/checkout` defaults to the event sha.
 on:
   workflow_call:
-    inputs:
-      force:
-        description: Push fixes parked with no queue commit behind them
-        type: boolean
-        default: false
 
 jobs:
   collect:
@@ -85,7 +80,6 @@ jobs:
       - name: 🤝 Trust the workspace
         uses: ./.github/actions/trust-workspace
 
-      # Expanded by the template: a boolean input yields the literal flag or nothing, never an empty argument
       - name: ♻️ Collect
         id: collect
         env:
@@ -93,7 +87,7 @@ jobs:
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
         run: |
           gh auth setup-git
-          pnpm ai:coderabbit:collect ${{ inputs.force == true && '--force' || '' }}
+          pnpm ai:coderabbit:collect
 
   # The one missing webhook, supplied: a rate limit lifts on CodeRabbit's clock and announces nothing, so this
   # job sleeps out the deadline the bot stated and runs the cycle again — which re-reads the pull request before

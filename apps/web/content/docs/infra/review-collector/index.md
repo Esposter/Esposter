@@ -61,8 +61,8 @@ flowchart TD
   J -->|merge| MG
   J -->|hold — a person merges| SY
   DR --> SY[Rewrite ai/queue onto the tree the window is built on<br/>Claude resolves a conflict, repackages a commit alone over the cap]
-  SY --> P{Fixes parked with any queue commit,<br/>anything the queue still owes,<br/>or the window held}
-  P -->|none| PK[Wait — slot stays free]
+  SY --> P{A fix, anything the queue still owes,<br/>or the window held}
+  P -->|none| PK[Wait — nothing owed]
   P -->|first commit held alone, past its attempts| FL[Note it on the commit, fail —<br/>a person resolves or splits it]
   P -->|any| W[Port fixes then queue prefix<br/>largest prefix under the cap, main folded in<br/>Claude resolves a fold conflict]
   W --> PU[Compare-and-swap push to develop]
@@ -84,7 +84,7 @@ The review budget has one knob, the file cap, in `scripts/src/services/coderabbi
 
 | File                                                  | Role                                                                                                                                                                        |
 | :---------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/src/coderabbit/collect/index.ts`             | the entry point — `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]`                                                                                                   |
+| `scripts/src/coderabbit/collect/index.ts`             | the entry point — `pnpm ai:coderabbit:collect [pr] [--dry-run]`                                                                                                             |
 | `scripts/src/services/coderabbit/collect/runCycle.ts` | the pass itself, which returns its verdict rather than exiting                                                                                                              |
 | `scripts/src/services/coderabbit/collect`             | one service per step — gate, drain, verdict, sync and reshape, port, express, repair, the fold of `main`, reply — the git-touching ones proved against a fixture repository |
 | `scripts/src/models/coderabbit/collect`               | the inputs and outcomes the steps exchange                                                                                                                                  |
@@ -96,7 +96,7 @@ The review budget has one knob, the file cap, in `scripts/src/services/coderabbi
 ## Notes
 
 - **One queue, not numbered bookmarks.** A bookmark per window would make a person decide where a window ends and remember to delete it afterwards; measuring does the first and the second stops existing.
-- **Parking fixes trades finding freshness for a full slot.** A completed review with findings and an empty queue leaves the slot idle rather than spending it on a handful of fix files; the fixes wait on `ai/review-fixes` until the queue has anything at all, then lead that window. A manual dispatch with `force` pushes them alone when that is the wrong trade.
+- **Fixes go out the moment they are drained, alone if need be.** The review they answer is the one the release waits on, and a limit refusing it is an event the retrigger answers. **Rejected: parking fixes until the queue owes a commit**, to save the slot for a fuller window — the only case it changed was the empty queue, where it parked them for good: the release unmergeable over findings already fixed while the slot sat idle, and the `force` dispatch that unparked them a person's job. **Rejected: parking with a deadline** — a timer and a second retrigger reason for a saving the retrigger already makes free.
 - **Claude judges and never decides alone:** whether a finding is real, how a conflict resolves, what in an over-cap commit needs a reviewer, whether a risk rationale names anything left. Every answer is proved by TypeScript afterwards — a clean tree, a complete sequence, an identical tree, a recorded verdict — so the expensive steps are the only ones that can be wrong in an interesting way, and every other step can be dry-run locally against the live pull request.
 - **An event that fires too often is the cheap failure;** the one this design refuses is an event that never fires. The bot's own replies arrive as reviews, several within seconds of a drain; the concurrency group serializes them and every one after the first exits at the gates.
 - **Rejected: replacing the bot — a paid tier, or a Claude review of every push in CI.** The design maximises what the free tier reviews, with the file cap and the hourly slot as its levers; every mechanism here is the price of a review that costs nothing per slot, and a Claude review would spend tokens on every push where the drain spends them only on findings.
