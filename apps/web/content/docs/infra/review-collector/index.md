@@ -36,7 +36,7 @@ Every trigger runs the same cycle. Which event it was is irrelevant, because the
 flowchart TD
   A[ai/queue pushed<br/>by a working session] --> C
   F[Review submitted<br/>by the bot on the release PR] --> C
-  D[Manual dispatch<br/>optional force] --> C
+  D[Manual dispatch] --> C
   MN[main pushed<br/>a release merged or a bump landed] --> C
   CM[Bot comment<br/>answering a retrigger] --> C
   CI[CI red on main<br/>the repair's event] --> C
