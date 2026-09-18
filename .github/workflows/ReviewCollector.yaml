@@ -32,11 +32,6 @@ on:
     types:
       - completed
   workflow_dispatch:
-    inputs:
-      force:
-        description: Push fixes parked with no queue commit behind them
-        type: boolean
-        default: false
 
 # Nothing but the triggers and the call: this is the one file GitHub reads from the event's own ref, so the one
 # copy that cannot be pinned (the reusable workflow says why), and every line here is one that a copy a release
@@ -51,6 +46,4 @@ jobs:
   run:
     name: Run
     uses: Esposter/Esposter/.github/workflows/run-review-collector.yaml@ai/queue
-    with:
-      force: ${{ inputs.force == true }}
     secrets: inherit

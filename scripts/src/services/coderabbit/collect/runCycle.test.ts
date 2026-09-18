@@ -32,6 +32,7 @@ import {
   REPAIR_FAILED_MARKER,
   REPAIRS_TRAILER,
   RESHAPE_FAILED_MARKER,
+  REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
@@ -101,7 +102,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // What `gh` answers: the login, the release pull request list, the reviews, the issue comments, every commit's
   // Comments, CI's runs for main's head, a red run's log, and `[[]]` for every other paginated list — the one
   // Page of nothing a `--slurp` returns
-  const baseInput = { isDryRun: false, isForced: false };
+  const baseInput = { isDryRun: false };
   const answerGh = (
     releasePullRequests: ReleasePullRequest[],
     reviews: GitHubReview[] = [],
@@ -504,6 +505,30 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     });
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(queueSha);
     expect(getPrCalls("merge")).toHaveLength(0);
+  });
+
+  // Fixes never wait for the queue: over one level with develop, the drain's commit is the whole window and
+  // Spends the slot on the review the release waits for
+  test("pushes the drained fixes alone over a queue that owes nothing", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, developSha);
+    const reviewFixesSha = publish(REVIEW_FIXES_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
+    readCheckStatus.mockReturnValue(completedCheck);
+    runDrainStep.mockResolvedValue({ isClean: false, reviewFixesSha } satisfies DrainStepResult);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+    const targetSha = readSha(`origin/${DEVELOP_BRANCH}`);
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Pushed,
+      reason: `0 queue commits and 1 fix commits reached ${DEVELOP_BRANCH}`,
+      retriggerDelaySeconds: undefined,
+      targetSha,
+    });
+    expect(runGit(["log", "--format=%s", `${developSha}..${targetSha}`], getCwd())).toBe(`${TEST_FILENAME}
+`);
   });
 
   // A queue left behind develop is rewritten onto it before the port reads it — the ported commit drops, the owed

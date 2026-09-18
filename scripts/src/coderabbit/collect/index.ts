@@ -12,14 +12,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 
-// `pnpm ai:coderabbit:collect [pr] [--dry-run] [--force]` — the arguments, the tree and the job output, which the
+// `pnpm ai:coderabbit:collect [pr] [--dry-run]` — the arguments, the tree and the job output, which the
 // Pass cannot own itself
 const {
   positionals: [pullRequestArgument],
-  values: { "dry-run": isDryRun, force: isForced },
+  values: { "dry-run": isDryRun },
 } = parseArgs({
   allowPositionals: true,
-  options: { "dry-run": { default: false, type: "boolean" }, force: { default: false, type: "boolean" } },
+  options: { "dry-run": { default: false, type: "boolean" } },
 });
 const pullRequest = pullRequestArgument === undefined ? undefined : Number(pullRequestArgument);
 if (pullRequest !== undefined && !checkIsGitHubNumber(pullRequest))
@@ -49,13 +49,15 @@ if (isDryRun) {
     readHeadSha(),
   );
   // Forced: a pass that failed mid-sequence leaves what it was holding, and a plain checkout refuses over it —
-  // Which would strand the runner on a tree its post step reads
+  // Which would strand the runner on a tree its post step reads. Quiet: a window the port built and did not push is a
+  // Detached commit this checkout leaves behind, and git's warning about it reads as lost work when the next run
+  // Rebuilds it from the same refs.
   process.on("exit", () => {
-    getResult(() => runGit(["checkout", "--force", startRef])).match(noop, console.error);
+    getResult(() => runGit(["checkout", "--force", "--quiet", startRef])).match(noop, console.error);
   });
 }
 
-const { kind, reason, retriggerDelaySeconds, targetSha } = await runCycle({ cwd, isDryRun, isForced, pullRequest });
+const { kind, reason, retriggerDelaySeconds, targetSha } = await runCycle({ cwd, isDryRun, pullRequest });
 console.info(`${kind}: ${reason}${targetSha ? ` — ${targetSha}` : ""}`);
 if (retriggerDelaySeconds !== undefined && !isDryRun)
   writeJobOutput(RETRIGGER_DELAY_OUTPUT, retriggerDelaySeconds.toString());

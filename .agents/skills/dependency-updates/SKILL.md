@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Apply when updating package versions, taking a major, bumping a GitHub Action or the node version, or editing renovate.json. Esposter dependency update process — a Settled list (no confirmation gate before the lockfile refresh), Renovate as the writer of every version and renovate.json packageRules as the one statement of which dependency is held and why, every catalog entry with a caret unless a rule says otherwise, a major owing a release-note audit whose record is the commit body, actions pinned to a dereferenced commit SHA, node moved by the node group or pnpm update:node, minimumReleaseAge kept at 0, and the tracked issues a bump watches.
+description: Apply when updating package versions, taking a major, bumping a GitHub Action or the node version, or editing renovate.json. Esposter dependency update process — a Settled list (no confirmation gate before the lockfile refresh, one commit per hand pass), Renovate as the writer of every version and renovate.json packageRules as the one statement of which dependency is held and why, every catalog entry with a caret unless a rule says otherwise, a major owing a release-note audit whose record is the commit body, actions pinned to a dereferenced commit SHA, node moved by the node group or pnpm update:node, minimumReleaseAge kept at 0, and the tracked issues a bump watches.
 ---
 
 # Dependency Updates
@@ -11,7 +11,8 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Settled — do not re-propose
 
-- **A confirmation gate before `pnpm refresh:lockfile`, at either call site** (step 3 below, `references/major-upgrades.md`'s once-per-pass install). Its process kill is the precondition the delete needs on Windows, everything it ends is a restartable process of this repo's own, and a pass runs unattended — a gate turns it into one that stops to ask a question whose answer is yes. The trade is written at step 3, and a review finding asking for the gate is answered with this line (`coderabbit`).
+- **A confirmation gate before `pnpm refresh:lockfile`** (step 3 below). Its process kill is the precondition the delete needs on Windows, everything it ends is a restartable process of this repo's own, and a pass runs unattended — a gate turns it into one that stops to ask a question whose answer is yes. The trade is written at step 3, and a review finding asking for the gate is answered with this line (`coderabbit`).
+- **Splitting a hand pass into one commit per major.** A pass is one commit whose body carries a section per major; the split bought a per-package revert this repo never performs and cost a hand-reconciled lockfile per commit (`references/major-upgrades.md` §5).
 
 ## Bumping by hand
 
@@ -23,7 +24,7 @@ If the very first `pnpm` command dies inside the app's `postinstall` (`nuxt prep
 2. **Update versions** in `pnpm-workspace.yaml` — every entry keeps its `^` unless a rule below says otherwise.
 3. **Refresh the lockfile**: `pnpm refresh:lockfile`. It deletes `pnpm-lock.yaml` and every `node_modules` in the tree and installs from nothing, which is what it is for and why it costs minutes rather than seconds. Run it directly — on Windows a running process holds open the native `.node` binaries the delete is about to remove, so it terminates node processes first, and the filter is two-sided: only those whose command line names **this workspace** (a neighbouring checkout and the machine's unrelated editors survive, and the path boundary is why the match carries a trailing separator), minus its own ancestry, walking up from its `$PID` so it never kills the run. Anything of this repo's that is mid-run does go without asking — another session's vitest, a dev server, the editor servers rooted here — and every one of them restarts from where it was, so the run asks nobody first (Settled) and the one thing to expect is restarting your own dev server afterwards. Narrowing the kill to the processes actually holding the binaries would mean handle enumeration through the Restart Manager API — the workspace-wide kill is the deliberate trade, not an oversight.
 
-   A version write on its own does not need any of that: `pnpm install --lockfile-only` re-resolves `pnpm-lock.yaml` against the edited catalog in seconds and leaves `node_modules` alone, which is the lockfile a commit wants (`references/major-upgrades.md`). The full refresh is for the state `node_modules` is in, not for the resolution — reach for it when a script dies inside a dependency, and after the pass to install what was resolved.
+   The refresh is what the pass commits: the lockfile it writes is the one `node_modules` was verified against, and `pnpm install --lockfile-only` resolves the same versions under different peer-suffix keys, so it is a probe for what a catalog edit would resolve to and never the lockfile a commit carries.
 
 4. **Verify dependency sync** — re-run `pnpm outdated:dependencies`; fix mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
 
@@ -49,16 +50,9 @@ When `vuetify` or `unocss` changes, `apps/web/uno.config.test.ts` and `apps/web/
 
 Any bump that reaches a `dist/` moves the bundle size snapshots. Refresh them per the `testing` skill's `references/platform-and-bundle-tests.md` — rebuild first, then the narrowed `-u` pair — never by editing a snapshot to the number a failure printed.
 
-## Holding a dependency
+## Holding a dependency — `references/holding-a-dependency.md`
 
-A hold is a `packageRules` entry naming the packages exactly (`matchPackageNames`; the report throws on a glob or regex, because it matches names and nothing else) and carrying the reason as its `description`. The catalog range beside it says what **pnpm** may resolve, and the two are one cap in two dialects:
-
-The reason lives in the rule's `description` and nowhere else — the report prints it, and this list says only which catalog range pairs with each kind of rule:
-
-- **A cap at a major needs only the rule** — the caret already stops a re-resolve. `h3` keeps its caret in the catalog and `overrides:`, and its rule's `allowedVersions` names the next major as the ceiling; only minor/patch within the major.
-- **A cap inside a major needs the rule and a tilde** — a caret would float `pnpm refresh:lockfile` straight into it. `unocss`, `@unocss/nuxt`, `@unocss/eslint-config` carry a tilde and their rule's `allowedVersions` names the next minor, one rule because every `@unocss/*` pins its siblings to its own exact version; the rule and the tilde widen back together.
-- **A dedicated pass is `enabled: false`** — `typescript` is exact-pinned in the catalog and aliased under `overrides:` to the bridge that runs `tsc`/`vue-tsc` on the Go compiler (`apps/web/content/docs/architecture/monorepo-tooling.md`); the rule names the alias target beside the alias because a rule matches the resolved package.
-- **An exact pin on a prerelease line is `followTag`** — `drizzle-kit`, `drizzle-orm` are pinned to one RC with no `^`, since a caret would float them across the per-commit builds drizzle publishes under a dist-tag per branch. The report follows the same tag: `pnpm outdated:dependencies` asks the registry for it rather than `latest` for a followed package.
+A hold is a `packageRules` entry naming the packages exactly with the reason as its `description`, paired with the catalog range that stops the same bump for pnpm — a caret alone at a major, a tilde inside one, `followTag` on a prerelease line, `enabled: false` for a dedicated pass. Which range pairs with which rule is that page.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 

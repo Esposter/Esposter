@@ -134,7 +134,7 @@ catalog:
   debug: ^4.4.3
   dedent: ^1.7.2
   defu: ^6.1.7
-  dotenv: ^17.4.2
+  dotenv: ^18.0.0
   drizzle-kit: 1.0.0-rc.4
   drizzle-orm: 1.0.0-rc.4
   emojilib: ^4.0.3
@@ -261,7 +261,7 @@ overrides:
   crossws: ^0.4.12
   h3: ^1.15.11
   pdfjs-dist: ^6.3.289
-  typescript: npm:typescript-native-bridge@6.0.3-bridge.15.tsgo.7.0.2
+  typescript: npm:typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2
   vite: ^8.3.0
 
 shellEmulator: true
