@@ -1,6 +1,6 @@
 ---
 title: Runner
-description: The GitHub Actions workflow that fires the collection cycle from the queue push, the review event, the CodeRabbit status, the push to main and a red CI or CodeQL run on it, the delayed retrigger that stands in for the one state change no webhook reports, what it authenticates with, and what a failed run leaves behind.
+description: The GitHub Actions workflow that fires the collection cycle from the queue push, review events, the CodeRabbit status, either release-completion event, and a red CI or CodeQL run on main; the delayed retrigger that stands in for the one state change no webhook reports; what it authenticates with; and what a failed run leaves behind.
 ---
 
 # Runner
@@ -26,7 +26,7 @@ sequenceDiagram
   W->>W: cycle — reply, drain, then merge the release or port the next window
 ```
 
-Seven events, and every one runs the identical cycle:
+Every event below runs the identical cycle:
 
 | Event                                       | Filter                                                  | What it is                                                                                                                                                                                                                                                                                                                  |
 | :------------------------------------------ | :------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -34,6 +34,7 @@ Seven events, and every one runs the identical cycle:
 | `pull_request_review` `submitted`           | the bot's login, a pull request whose head is `develop` | the free event — the head filter holds it to the release, and `.coderabbit.yaml` ignores `renovate[bot]`, so no pull request of the bot's is reviewed at all                                                                                                                                                                |
 | `status`                                    | the `CodeRabbit` context, on a sha `develop` carries    | the same free event from its other end; the body and the status flip arrive as separate deliveries, and either is enough. The bot statuses every pull request it is asked about, renovate's included, so the branch is what keeps one of those from paying for a runner, a clone and an install to reach the gates and exit |
 | `push` on `main`                            | —                                                       | the return stroke; the release pull request is closed by then, so no review event carries `develop` forward — and the pass goes on from there, since the fast-forward it makes fires nothing                                                                                                                                |
+| `pull_request` `closed`                     | a merged `develop` → `main` release                     | the release-completion fallback: it covers a missing or delayed `main` push delivery. Both events may arrive, but the concurrency group serializes them and the second pass re-derives the remote state, so it exits harmlessly                                                                                             |
 | `workflow_run` of CI or CodeQL, `completed` | `main`'s head, concluded `failure`                      | the [repair](/docs/infra/review-collector/repair)'s event. It fires from the default branch's copy of the triggers alone, so it reaches `main` a release after it is written; the cycle reads the same verdict on every event, so nothing waits on it                                                                       |
 | `workflow_dispatch`                         | —                                                       | the manual nudge, for a dropped webhook                                                                                                                                                                                                                                                                                     |
 | `issue_comment` `created` or `edited`       | the bot's login, on a pull request                      | the bot's answer to a retrigger — a comment or an edit of its walkthrough, never a review or a status                                                                                                                                                                                                                       |
