@@ -194,7 +194,7 @@ catalog:
   nuxt-security: ^2.6.0
   oxfmt: ^0.68.0
   oxlint: ^1.83.0
-  oxlint-tsgolint: ^7.0.2001
+  oxlint-tsgolint: ^7.0.2002
   p-progress: ^1.0.0
   pdfjs-dist: ^6.3.289
   phaser: ^4.2.1
