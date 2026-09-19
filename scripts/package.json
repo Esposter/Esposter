@@ -41,6 +41,7 @@
     "ai:sweep:shared-export-consumers": "node src/sweeps/sharedExportConsumers/index.ts",
     "ai:sweep:skill-docs": "tsx src/sweeps/skillDocs/index.ts",
     "ai:sweep:unterminated-results": "node src/sweeps/unterminatedResults/index.ts",
+    "ai:triage:label": "tsx src/triage/index.ts",
     "bench": "vitest bench --run",
     "crossOS": "node src/crossOS/index.ts",
     "format": "oxfmt",

@@ -2,7 +2,7 @@ import type { AnsweredCommit } from "#src/models/coderabbit/collect/AnsweredComm
 
 import { ANSWERS_TRAILER, DRAINS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { getTrailerValues } from "#src/services/coderabbit/collect/getTrailerValues";
-import { checkIsGitHubNumber } from "#src/services/coderabbit/shared/checkIsGitHubNumber";
+import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
 import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/shared/constants";
 
 const getIds = (body: string, key: string): number[] =>

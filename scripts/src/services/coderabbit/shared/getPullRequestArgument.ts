@@ -1,4 +1,4 @@
-import { checkIsGitHubNumber } from "#src/services/coderabbit/shared/checkIsGitHubNumber";
+import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const getPullRequestArgument = (): number => {

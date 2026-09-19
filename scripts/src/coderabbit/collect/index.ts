@@ -3,7 +3,7 @@ import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths"
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
-import { checkIsGitHubNumber } from "#src/services/coderabbit/shared/checkIsGitHubNumber";
+import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
