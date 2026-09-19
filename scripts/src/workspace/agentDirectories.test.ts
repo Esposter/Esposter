@@ -1,12 +1,11 @@
 import { FORMATTER_CONFIGURATION_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { readJsonFile } from "#src/workspace/readJsonFile.test";
 import { AGENT_ALIAS_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
-import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const readJson = (fileName: string): Record<string, unknown> =>
-  jsonDateParse<Record<string, unknown>>(readFileSync(resolve(REPOSITORY_ROOT, fileName), "utf8"));
+const readJson = (fileName: string): Record<string, unknown> => readJsonFile(resolve(REPOSITORY_ROOT, fileName));
 const readGitignorePatterns = (): string[] =>
   readFileSync(resolve(REPOSITORY_ROOT, ".gitignore"), "utf8")
     .split("\n")

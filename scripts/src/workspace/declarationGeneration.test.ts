@@ -1,7 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getWorkspacePackageDirectories } from "#src/services/shared/getWorkspacePackageDirectories";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { existsSync, readFileSync } from "node:fs";
+import { readJsonFile } from "#src/workspace/readJsonFile.test";
+import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
 import { dirname, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -12,16 +11,8 @@ import { describe, expect, test } from "vitest";
  * which for a package of inferred types is minutes rather than milliseconds. Nothing fails when a package crosses
  * that line — the build still succeeds, the declarations are still correct, and only the clock knows.
  */
-const readJsonFile = (path: string) => parseMachineJson<Record<string, unknown>>(readFileSync(path, "utf8"));
-
 describe("declarationGeneration", () => {
-  // A package builds with tsdown exactly when it has a tsdown config, so the set is discovered rather than listed:
-  // A listed set silently stops covering the package added after it was written, which is the only way this
-  // Invariant can be broken. Every member the workspace declares, because two of the ones that build sit under
-  // `apps`. (`apps/web` is a Nuxt application, has no tsdown config, and emits nothing.)
-  const PACKAGE_PATHS = getWorkspacePackageDirectories(REPOSITORY_ROOT).filter((packagePath) =>
-    existsSync(resolve(REPOSITORY_ROOT, packagePath, "tsdown.config.ts")),
-  );
+  const PACKAGE_PATHS = readTsdownPackagePaths();
   // The one package the invariant cannot cover: an SFC's types cannot be written out by hand, so its declarations
   // Go through vue-tsc by way of `dts.vue` whatever `isolatedDeclarations` says. Any other package joining it is
   // The regression this test exists to show.

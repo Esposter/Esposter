@@ -2,6 +2,7 @@ import { getBacktickedTokens } from "#src/services/citations/getBacktickedTokens
 import { readCitingPages } from "#src/services/citations/readCitingPages";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
+import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
 import {
   AGENT_DIRECTORY,
   AGENT_WORKTREES_DIRECTORY,
@@ -10,7 +11,6 @@ import {
 } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import { existsSync } from "node:fs";
-import { glob } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -44,10 +44,8 @@ describe("citations", () => {
   // A ledger unit may be a glob (`apps/infra/src/*`) or a module named without its extension so the row covers the
   // File and its test (`server/trpc/routers/resource`), so a lookup that misses falls through to a match
   const checkIsResolved = async (token: string): Promise<boolean> => {
-    for (const cwd of [REPOSITORY_ROOT, appDirectory]) {
-      if (existsSync(join(cwd, token))) return true;
-      for await (const _ of glob([token, `${token}.*`], { cwd })) return true;
-    }
+    for (const cwd of [REPOSITORY_ROOT, appDirectory])
+      if (existsSync(join(cwd, token)) || (await checkHasGlobMatch([token, `${token}.*`], cwd))) return true;
     return false;
   };
   const pages = readCitingPages();

@@ -1,7 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
+import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { glob } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -12,8 +12,7 @@ const checkIsResolved = async (pathspec: string): Promise<boolean> => {
   if (existsSync(resolve(REPOSITORY_ROOT, pathspec))) return true;
 
   const pattern = pathspec.includes("/") ? pathspec : `**/${pathspec}`;
-  for await (const _ of glob(pattern, { cwd: REPOSITORY_ROOT })) return true;
-  return false;
+  return checkHasGlobMatch(pattern, REPOSITORY_ROOT);
 };
 
 /**

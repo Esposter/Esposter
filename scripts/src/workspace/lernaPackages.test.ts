@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { REPOSITORY_ROOT, WORKSPACE_FILE } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { parseWorkspacePackageGlobs } from "#src/services/shared/parseWorkspacePackageGlobs";
 import { readFileSync } from "node:fs";
@@ -15,7 +15,6 @@ import { describe, expect, test } from "vitest";
  */
 describe("lernaPackages", () => {
   const LERNA_FILENAME = "lerna.json";
-  const WORKSPACE_FILENAME = "pnpm-workspace.yaml";
 
   test("declare every workspace glob pnpm does", () => {
     expect.hasAssertions();
@@ -25,7 +24,7 @@ describe("lernaPackages", () => {
     );
 
     expect(packages).toStrictEqual(
-      parseWorkspacePackageGlobs(readFileSync(resolve(REPOSITORY_ROOT, WORKSPACE_FILENAME), "utf8")),
+      parseWorkspacePackageGlobs(readFileSync(resolve(REPOSITORY_ROOT, WORKSPACE_FILE), "utf8")),
     );
   });
 });
