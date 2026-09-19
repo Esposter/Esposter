@@ -1,8 +1,14 @@
+import { KIBIBYTE } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
+
+// What a spawned `git` or `gh` may print: a paginated slurp of a long-lived pull request's comments, a log of
+// Every commit's body, a listing of every tracked file each run to megabytes, and the default buffer throws
+// ENOBUFS rather than truncating — a failure that reads as the tool being broken from the call site.
+export const MAX_BUFFER_BYTES: number = 256 * KIBIBYTE ** 2;
 
 // Every script reads and writes against the repository rather than against `scripts/`. A `..` chain is what this
 // Was, and it is wrong the first time the file counting it moves a directory — which it has done once already,

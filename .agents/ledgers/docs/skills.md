@@ -22,7 +22,7 @@
 | `github-actions`          | 2026-09-15 |       |
 | `grapesjs`                | 2026-09-15 |       |
 | `invariants`              | 2026-09-15 |       |
-| `llm-delegation`          | —          |       |
+| `llm-delegation`          | 2026-09-20 |       |
 | `model-delegation`        | 2026-09-15 |       |
 | `naming`                  | 2026-09-15 |       |
 | `over-engineering`        | 2026-09-15 |       |

@@ -1,5 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { AGENT_DIRECTORY } from "@esposter/configuration";
+import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { glob } from "node:fs/promises";
 import { join, resolve } from "node:path";
@@ -28,7 +28,7 @@ describe("ledgerScopes", () => {
   const LEDGER_ROW_REGEX = /^\| \[(?<ledger>[^\]]+)\]\([^)]+\)\s*\|[^|]*\|[^|]*\|(?<scope>[^|]*)\|$/u;
   const MARKDOWN_EXTENSION_REGEX = /\.md$/u;
   const PATHSPEC_REGEX = /`(?<pathspec>[^`]+)`/gu;
-  const ledgerDirectory = join(REPOSITORY_ROOT, AGENT_DIRECTORY, "ledgers");
+  const ledgerDirectory = join(REPOSITORY_ROOT, LEDGER_DIRECTORY);
   const index = readFileSync(join(ledgerDirectory, "README.md"), "utf8");
   // A ledger is either one file or a promoted folder of area files, so both shapes are a name the index owes a
   // Row to — the folder's own README is its metadata, not a ledger of its own.
