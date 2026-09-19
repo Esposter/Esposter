@@ -23,6 +23,7 @@ import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
+import { readFindingSeverities } from "#src/services/coderabbit/collect/readFindingSeverities";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
@@ -74,7 +75,8 @@ export const drainFindings = async ({
     async () => {
       const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
       const verdictPath = join(verdictDirectory, VERDICT_FILE);
-      const promptInput = { ...drainInput, rejectionsPath, verdictPath };
+      const commentIdSeverityMap = await readFindingSeverities(drainInput.openThreads);
+      const promptInput = { ...drainInput, commentIdSeverityMap, rejectionsPath, verdictPath };
       const prompt = getDrainPrompt(promptInput);
       const { isEnded, isStarted, limitResetAtMs } = await runSession({
         cwd: REPOSITORY_ROOT,

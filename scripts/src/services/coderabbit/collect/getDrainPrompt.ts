@@ -12,6 +12,7 @@ import { getFindingText } from "#src/services/coderabbit/collect/getFindingText"
 // Wrote them (the drain holds no `gh`), the trailers the collector needs, and the three things only the collector
 // May do — push, rewrite history, talk to GitHub. A verdict is a file rather than a post for the same reason.
 export const getDrainPrompt = ({
+  commentIdSeverityMap,
   feedback,
   openThreads,
   pullRequest,
@@ -20,7 +21,16 @@ export const getDrainPrompt = ({
   verdictPath,
 }: DrainPromptInput): string => {
   const pullRequestNumber = pullRequest.toString();
-  const threadSections = openThreads.map(
+  // Most severe first, so a session that ends mid-round has spent itself on the findings that mattered
+  // Most (`readFindingSeverities`)
+  const rankedThreads =
+    commentIdSeverityMap === undefined
+      ? openThreads
+      : openThreads.toSorted(
+          (first, second) =>
+            (commentIdSeverityMap.get(second.commentId) ?? 0) - (commentIdSeverityMap.get(first.commentId) ?? 0),
+        );
+  const threadSections = rankedThreads.map(
     ({ body, commentId, line, path }) =>
       `### comment ${commentId} at ${path}:${line?.toString() ?? "outside the diff"}\n\n${getFindingText(body)}`,
   );

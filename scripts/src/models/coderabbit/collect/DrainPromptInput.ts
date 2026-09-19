@@ -4,6 +4,9 @@ import type { DrainInput } from "#src/models/coderabbit/collect/DrainInput";
 // GitHub credential (`runDrain`), so a verdict it reaches leaves the session as a written line and the
 // Collector posts it — the same split as an accepted finding, whose reply waits for the push.
 export interface DrainPromptInput extends DrainInput {
+  // What each open finding scored, keyed by its comment id, which is the order they are put in. Absent
+  // When the tier that scores them answered nothing, and then the reviewer's own order stands
+  commentIdSeverityMap?: Map<number, number>;
   // One `<comment id> <reason>` line per inline finding the drain rejected
   rejectionsPath: string;
   // The body-only verdict lines, posted under the `Drains` marker when every one of them was rejected

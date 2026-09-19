@@ -6,11 +6,15 @@ import { TypeSafeClient } from "@typesafe-ai/sdk";
 // The constructor reads `TYPESAFE_API_KEY` and throws without it, which is how a checkout holding no key reads:
 // Every gate then answers nothing and its caller escalates, rather than a run failing over a decision the tier
 // Above it can still make. Built once — the client is a configuration holder, and a gate asked per finding would
-// Otherwise re-read the environment for each.
-const client = getResult(() => new TypeSafeClient()).match(
-  (typeSafeClient) => typeSafeClient,
-  () => undefined,
-);
+// Otherwise re-read the environment for each. Never built under Vitest: a machine that does hold a key would
+// Otherwise answer every gate's test from the network, which is a flake that also costs money.
+const client =
+  process.env.VITEST === undefined
+    ? getResult(() => new TypeSafeClient()).match(
+        (typeSafeClient) => typeSafeClient,
+        () => undefined,
+      )
+    : undefined;
 
 // One round trip per state, however many questions are asked of it: the state is sent once and each answer comes
 // back under its own key, so a second call for a second question would be the same state paid for twice.
@@ -21,7 +25,7 @@ export const readAnswers = async <const TQuestions extends Questions>(
   questions: TQuestions,
 ): Promise<SystemOneResult<TQuestions>["answers"] | undefined> => {
   if (client === undefined) {
-    console.info("no TypeSafe key in this environment — the decision escalates");
+    console.info("no typed-decision tier in this environment — the decision escalates");
     return undefined;
   }
 
