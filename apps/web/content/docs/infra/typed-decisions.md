@@ -12,7 +12,7 @@ So the cheapest session is the one never spawned. A judgement whose answer is on
 ```mermaid
 flowchart TD
     Question[A judgement the pipeline needs]
-    Deterministic{Does the tree, git<br/>or the API already state it?}
+    Deterministic{Does the tree, git or the API state it —<br/>or can the repo produce it and verify it?}
     Typed{Is the answer one of a fixed set,<br/>over state already in hand?}
     Confident{Inside the confidence band?}
     Code[Answered in code — free]

@@ -16,7 +16,7 @@ Nothing is remembered between runs, so every input is a remote fact with a singl
 | the release pull request      | the one open pull request with base `main` and head `develop` — none means the last one merged                                                                                                                   |
 | the frontier                  | the last sha named by a `between … and …` range — a review body's, or the walkthrough's recent-review block's, the only record of a review that found nothing — or the merge base when none is open              |
 | the merge risk                | the level and the covered sha the bot states in the walkthrough's merge-risk block                                                                                                                               |
-| the release verdict           | the collector's own `merge-verdict` marker for the head, verb beside it — the session's reading of the risk rationale, recorded once per head                                                                    |
+| the release verdict           | the collector's own `merge-verdict` marker for the head, verb beside it — whichever tier read the risk rationale, recorded once per head                                                                         |
 | the check                     | the CodeRabbit commit status, read by `bucket` first and `description` second                                                                                                                                    |
 | the rate-limit deadline       | the `Next included review available in …` the bot states in the walkthrough it last rewrote                                                                                                                      |
 | open findings                 | unresolved threads whose last comment is the bot's, plus the newest review body's own buckets                                                                                                                    |
@@ -46,7 +46,9 @@ flowchart TD
   CP -->|green| X3[Push, exit — the push re-fires the cycle]
   CP -->|red| MR
   EL -->|no| MR{main red on CI}
-  MR -->|yes| RP[Claude repairs it — cut, check, push] --> X6[Exit — the push re-fires the cycle]
+  MR -->|yes| RG[Run the repo's regenerators, check]
+  RG -->|green| X6[Exit — the push re-fires the cycle]
+  RG -->|red| RP[Claude repairs the restored head — cut, check, push] --> X6
   MR -->|no| PR{Release PR open}
   PR -->|no| MB[Frontier is the merge base<br/>nothing running] -->|nothing to drain| D
   PR -->|yes| RE[Reply for pushed fixes<br/>trailers on frontier..develop without a reply]
@@ -166,19 +168,19 @@ With no pull request open, the push is followed by opening one — the same read
 
 ## Why a re-run is a no-op
 
-| Step   | Precondition read from the remote                                                             | Effect                       | Second run against unchanged state                                                 |
-| :----- | :-------------------------------------------------------------------------------------------- | :--------------------------- | :--------------------------------------------------------------------------------- |
-| return | `develop` an ancestor of `main`, the two apart                                                | fast-forwards `develop`      | they agree — nothing, and the pass goes on either way                              |
-| repair | CI red on `main`'s head, the streak under the cap                                             | a session, a cut, a push     | the push made a new head CI has not concluded on — nothing                         |
-| reply  | a trailer's thread lacks a reply citing that sha                                              | posts the reply              | every thread has one — nothing                                                     |
-| gate   | the newest stated range's end, check bucket                                                   | a scheduled retrigger        | same verdict, same deadline — the ask is posted once per block                     |
-| drain  | a finding is open by the predicate                                                            | commits on `ai/review-fixes` | every finding carries a trailer or a reply — nothing                               |
-| judge  | clean at the head, a level above the least, no verdict marker                                 | records a verdict            | the marker is re-applied — no session                                              |
-| sync   | the queue does not sit on the target, or an owed commit claiming review is alone over the cap | rewrites `ai/queue`          | it sits on it and every commit fits — nothing                                      |
-| merge  | the range at the head, nothing open, least risk or a merge verdict                            | merges the pull request      | none is open — the next window fills from the merge base                           |
-| port   | `git cherry` lists unported commits, readiness                                                | a local branch               | same branch, discarded with the runner                                             |
-| push   | `origin/develop` unchanged since the read                                                     | fast-forwards `develop`      | the last push moved the head, so the body no longer ends at it — exits at the gate |
-| open   | no release pull request, `develop` at the target                                              | opens the pull request       | one is open — the ordinary cycle, with its reviews as the frontier                 |
+| Step   | Precondition read from the remote                                                             | Effect                                         | Second run against unchanged state                                                 |
+| :----- | :-------------------------------------------------------------------------------------------- | :--------------------------------------------- | :--------------------------------------------------------------------------------- |
+| return | `develop` an ancestor of `main`, the two apart                                                | fast-forwards `develop`                        | they agree — nothing, and the pass goes on either way                              |
+| repair | CI red on `main`'s head, the streak under the cap                                             | the regenerators else a session, a cut, a push | the push made a new head CI has not concluded on — nothing                         |
+| reply  | a trailer's thread lacks a reply citing that sha                                              | posts the reply                                | every thread has one — nothing                                                     |
+| gate   | the newest stated range's end, check bucket                                                   | a scheduled retrigger                          | same verdict, same deadline — the ask is posted once per block                     |
+| drain  | a finding is open by the predicate                                                            | commits on `ai/review-fixes`                   | every finding carries a trailer or a reply — nothing                               |
+| judge  | clean at the head, a level above the least, no verdict marker                                 | records a verdict                              | the marker is re-applied — no session                                              |
+| sync   | the queue does not sit on the target, or an owed commit claiming review is alone over the cap | rewrites `ai/queue`                            | it sits on it and every commit fits — nothing                                      |
+| merge  | the range at the head, nothing open, least risk or a merge verdict                            | merges the pull request                        | none is open — the next window fills from the merge base                           |
+| port   | `git cherry` lists unported commits, readiness                                                | a local branch                                 | same branch, discarded with the runner                                             |
+| push   | `origin/develop` unchanged since the read                                                     | fast-forwards `develop`                        | the last push moved the head, so the body no longer ends at it — exits at the gate |
+| open   | no release pull request, `develop` at the target                                              | opens the pull request                         | one is open — the ordinary cycle, with its reviews as the frontier                 |
 
 ## Notes
 
