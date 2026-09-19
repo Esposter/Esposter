@@ -51,7 +51,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
           # The drain runs a permission-skipping Claude session over untrusted review text in this checkout: git is
-          # authenticated through `gh`, whose token the drain's child process is not given (`runDrain`)
+          # authenticated through `gh`, whose token the drain's child process is not given (`runSession`)
           persist-credentials: false
 
       - name: 🔧 Setup Project Dependencies
@@ -87,6 +87,10 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
+          # The gates that answer before a session is spawned. Absent, every one of them escalates and the cycle
+          # Runs as it did before there were any, so a fork and a re-run with the secret unset both still work.
+          # It never reaches a session: the launcher withholds every secret-shaped name from the child.
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
         run: |
           gh auth setup-git
           pnpm ai:coderabbit:collect
