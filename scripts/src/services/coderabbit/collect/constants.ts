@@ -1,3 +1,6 @@
+import { SessionModel } from "#src/models/coderabbit/collect/SessionModel";
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
+
 export const MAIN_BRANCH = "main";
 
 export const DEVELOP_BRANCH = "develop";
@@ -76,6 +79,25 @@ export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   ["exec", "vitest", "run"],
 ];
 
+// What a red `main` is answered with before any session is asked for one, spelled out the way the lane's checks
+// Are — each a root script's own passes minus its `virrun` wrapper. Every one rewrites a tracked artifact from
+// The tree that artifact is derived from: the formatter's own output, a lint rule's own autofix, a ledger's
+// Coverage rows. What they write is by construction what the check that failed on it asked for, so the red is
+// Answered by running them rather than by reading it, and a red none of them touches leaves the tree exactly as
+// It was and is the session's as before (docs: infra/review-collector/repair). Their exit status is nothing to
+// Read: `lint:fix` exits non-zero on the problems it could not fix, which is the case this still tries.
+//
+// A bundle-size snapshot is deliberately absent. Its regenerator is `vitest -u`, which writes down whatever the
+// Run measured and would record a real regression as readily as a moved baseline, so it stays the session's
+// (`getRepairPrompt`).
+export const REPAIR_REGENERATE_COMMANDS: string[][] = [
+  ["format"],
+  ["exec", "oxlint", "--format=default", "--fix", "--disable-nested-config"],
+  ["exec", "eslint", "--fix", "."],
+  ["-r", "--parallel", "run", "lint:fix"],
+  ["ai:sweep:ledger-coverage"],
+];
+
 // The record and field separators (`#src/services/shared/constants`) in git's own spelling, which is what asks
 // Git to emit them. `%B` rather than
 // `%(trailers:key=…)`, which reads only the last contiguous trailer block.
@@ -83,9 +105,10 @@ export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
 
 export const COMMIT_BODY_FORMAT = "%H%x1F%B%x1E";
 
-// A review whose drain has failed this many times is quarantined: its findings stay open for a person and the
-// Collector ports without them rather than stalling every window behind one finding nobody sees
-export const DRAIN_ATTEMPT_CAP = 3;
+// How many times one unit of work may fail its session before it is a person's: a review is quarantined and its
+// Findings stay open, a commit is left for the port to hold on, a red head is left red. The collector ports
+// Without them rather than stalling every window behind one thing nobody sees.
+export const SESSION_ATTEMPT_CAP = 3;
 
 // Hidden markers in pull request comments — the collector's durable memory for what a commit cannot carry
 export const DRAIN_FAILED_MARKER = "review-collector drain-failed";
@@ -143,9 +166,18 @@ export const SESSION_DENIALS =
 export const FINISHING_CHECKS_INSTRUCTION =
   "Run the repo's finishing checks over the paths you touched — `pnpm format` at the root, `pnpm typecheck` in the touched package, `pnpm lint:fix` from the repo root, and the touched test suites — and commit any repairs they produce as their own commit. Run them in the foreground and wait for each to finish: this session is one-shot, so a check started in the background is a check whose result no turn of yours will ever read.";
 
-// The family alias, never a version (`model-delegation`): left unpinned, the drain runs on whatever the
-// Account's default was last set to, which no log line would say
-export const DRAIN_MODEL = "opus";
+// What each role runs on, one entry per role: a total record, so a role added to `SessionRole` does not compile
+// Until it has been priced, and a role moved to another family is this one line. They share a family today —
+// The reconciliation roles are verified by the tree they left rather than trusted, so a cheaper one would be
+// Defensible, and is deliberately not taken (`llm-delegation` skill).
+export const SessionRoleModelMap: Record<SessionRole, SessionModel> = {
+  [SessionRole.Drain]: SessionModel.Opus,
+  [SessionRole.Fold]: SessionModel.Opus,
+  [SessionRole.Repair]: SessionModel.Opus,
+  [SessionRole.Reshape]: SessionModel.Opus,
+  [SessionRole.Sync]: SessionModel.Opus,
+  [SessionRole.Verdict]: SessionModel.Opus,
+};
 
 export const DRY_RUN_WORKTREE_PREFIX = "review-collector-";
 

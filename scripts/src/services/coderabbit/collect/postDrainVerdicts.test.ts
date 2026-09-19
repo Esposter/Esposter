@@ -1,5 +1,5 @@
 import type { ReviewThread } from "#src/models/coderabbit/shared/ReviewThread";
-import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
+import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import { DRAINS_MARKER } from "#src/services/coderabbit/collect/constants";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
@@ -11,12 +11,13 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { runGh } = vi.hoisted(() => ({ runGh: vi.fn<typeof baseRunGh>() }));
 
-vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
+vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 const getOpenThread = (commentId: number): ReviewThread => ({
   body: "a finding",
   commentId,
   lastAuthorLogin: "coderabbitai",
+  lastBody: "",
   path: "scripts/src/services/coderabbit/collect/postDrainVerdicts.ts",
 });
 

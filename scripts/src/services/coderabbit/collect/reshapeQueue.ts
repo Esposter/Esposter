@@ -1,17 +1,24 @@
 import type { ReshapeInput } from "#src/models/coderabbit/collect/ReshapeInput";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
-import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
-import { DRAIN_ATTEMPT_CAP, EXPRESS_TRAILER, RESHAPE_FAILED_MARKER } from "#src/services/coderabbit/collect/constants";
+import {
+  EXPRESS_TRAILER,
+  RESHAPE_FAILED_MARKER,
+  SESSION_ATTEMPT_CAP,
+  SessionRoleModelMap,
+} from "#src/services/coderabbit/collect/constants";
+import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
 import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
+import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getReshapeFailure } from "#src/services/coderabbit/collect/getReshapeFailure";
 import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePrompt";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
-import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
@@ -40,10 +47,9 @@ export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: Re
     return false;
   }
   const marker = getMarker(RESHAPE_FAILED_MARKER, sha);
-  const attempts = readEntries<GitHubEntry>(`commits/${sha}/comments`).filter((comment) =>
-    checkIsMarked(comment, viewerLogin, marker),
-  ).length;
-  if (attempts >= DRAIN_ATTEMPT_CAP) {
+  const comments = readEntries<GitHubEntry>(`commits/${sha}/comments`);
+  const attempts = getMarkedCount(comments, viewerLogin, marker);
+  if (attempts >= SESSION_ATTEMPT_CAP) {
     console.info(`reshape: ${sha} failed ${attempts} times, so it is a person's — the port holds on it`);
     return false;
   }
@@ -52,13 +58,18 @@ export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: Re
   const restShas = owedShas.slice(owedShas.indexOf(sha) + 1);
   console.info(`reshape: ${sha} changes ${fileCount} files alone against the cap of ${REVIEW_FILE_CAP}`);
   runGit(["switch", "--detach", `${sha}^`], cwd);
-  const { isDrained, isStarted } = await runDrain(getReshapePrompt({ fileCount, sha }), cwd);
+  const prompt = getReshapePrompt({ fileCount, sha });
+  const { isEnded, isStarted } = await runSession({
+    cwd,
+    model: SessionRoleModelMap[SessionRole.Reshape],
+    prompt,
+  });
   if (!isStarted) {
     runGit(["switch", "--detach", tipSha], cwd);
     console.info("reshape: the session could not start — no attempt is counted");
     return false;
   }
-  const failure = isDrained ? getReshapeFailure(sha, cwd) : "exited non-zero";
+  const failure = isEnded ? getReshapeFailure(sha, cwd) : "exited non-zero";
   // The final tree equals the original's, so what followed the commit applies as it did — a stop here is a
   // Reshaping that lied about its tree in a way the diff did not show, and counts the same
   const isReplayed =
@@ -75,15 +86,12 @@ export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: Re
     // Attempt is counted before the tree is put back: the count is what hands the commit to a person, and a
     // Restore that threw would leave the reshaper spending a session on it every run forever.
     abortSequencing(cwd);
-    postCommitComment(
-      sha,
-      `${marker}\nReshape attempt ${attempts + 1} of this commit failed — the session ${reason}. See the collector run.`,
-    );
+    postCommitComment(sha, getAttemptFailure({ attempts, detail: reason, marker, task: `reshape ${sha}` }));
     runGit(["switch", "--detach", tipSha], cwd);
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
-      `the reshaper ${reason} (attempt ${attempts + 1} of ${DRAIN_ATTEMPT_CAP} on ${sha})`,
+      `the reshaper ${reason} (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP} on ${sha})`,
     );
   }
   const partCount = getNonEmptyLines(runGit(["rev-list", `${sha}^..HEAD`], cwd)).length - restShas.length;

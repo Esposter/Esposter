@@ -2,16 +2,20 @@ import type { RepairInput } from "#src/models/coderabbit/collect/RepairInput";
 import type { RepairResult } from "#src/models/coderabbit/collect/RepairResult";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
-  DRAIN_ATTEMPT_CAP,
   EXPRESS_TRAILER,
   INSTALL_COMMAND,
   MAIN_BRANCH,
   REPAIR_EXHAUSTED_MARKER,
   REPAIR_FAILED_MARKER,
   REPAIRS_TRAILER,
+  SESSION_ATTEMPT_CAP,
+  SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
+import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
+import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPrompt";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
@@ -21,7 +25,8 @@ import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readRedMainCheck } from "#src/services/coderabbit/collect/readRedMainCheck";
 import { readStackedRepairs } from "#src/services/coderabbit/collect/readStackedRepairs";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
-import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { repairMechanically } from "#src/services/coderabbit/collect/repairMechanically";
+import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
@@ -43,10 +48,8 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
 
   const failedMarker = getMarker(REPAIR_FAILED_MARKER, mainSha);
   const comments = readEntries<GitHubEntry>(`commits/${mainSha}/comments`);
-  const attempts =
-    comments.filter((comment) => checkIsMarked(comment, viewerLogin, failedMarker)).length +
-    readStackedRepairs(mainSha, cwd);
-  if (attempts >= DRAIN_ATTEMPT_CAP) {
+  const attempts = getMarkedCount(comments, viewerLogin, failedMarker) + readStackedRepairs(mainSha, cwd);
+  if (attempts >= SESSION_ATTEMPT_CAP) {
     console.info(`${MAIN_BRANCH} is red past ${attempts} repairs — a person's`);
     const exhaustedMarker = getMarker(REPAIR_EXHAUSTED_MARKER, mainSha);
     if (!isDryRun && !comments.some((comment) => checkIsMarked(comment, viewerLogin, exhaustedMarker)))
@@ -58,7 +61,7 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
   }
 
   console.info(
-    `${MAIN_BRANCH} is red on ${check.url} — repairing it (attempt ${attempts + 1} of ${DRAIN_ATTEMPT_CAP})`,
+    `${MAIN_BRANCH} is red on ${check.url} — repairing it (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
   );
   if (isDryRun) {
     console.info("would repair — a dry run runs no Claude session");
@@ -69,8 +72,22 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
   // The tree the repairer's own checks run against is this head, not the one the event checked out (`INSTALL_COMMAND`)
   if (spawnPnpm(INSTALL_COMMAND, { cwd, stdio: "inherit" }).status !== 0)
     throw new InvalidOperationError(Operation.Update, "coderabbit", `the install for ${mainSha} failed`);
+  // Answered without a session where a regenerator answers it: most of what lands on `main` unread is red for a
+  // Reason with one, and the session that reads such a log spends a window of the one account every session here
+  // Draws on to reach a command that needs no reading (`llm-delegation` skill). A red no regenerator touches
+  // Costs the one check suite it takes to find that out, and the tree it falls through with is untouched.
+  const mechanicalSha = repairMechanically({ cwd, mainSha, runUrl: check.url });
+  if (mechanicalSha !== undefined) {
+    console.info(`${MAIN_BRANCH} repaired at ${mechanicalSha} without a session — its regenerators answered the red`);
+    return { isUnderRepair: true, isVerified: true, targetSha: mechanicalSha };
+  }
+
   const prompt = getRepairPrompt({ failedLog: readFailedLog(check.databaseId), mainSha, runUrl: check.url });
-  const { isDrained, isStarted } = await runDrain(prompt, cwd);
+  const { isEnded, isStarted } = await runSession({
+    cwd,
+    model: SessionRoleModelMap[SessionRole.Repair],
+    prompt,
+  });
   if (!isStarted) {
     console.info("the repairer could not start, and no attempt is counted");
     return { isUnderRepair: true };
@@ -84,19 +101,19 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
   const repairShas = getNonEmptyLines(runGit(["rev-list", `${mainSha}..${headSha}`], cwd));
   const trailedShas = readTrailedShas(repairShas, REPAIRS_TRAILER, cwd);
   if (
-    !isDrained ||
+    !isEnded ||
     readDirtyPaths(cwd).length > 0 ||
     repairShas.length !== 1 ||
     !repairShas.every((sha) => trailedShas.has(sha))
   ) {
     postCommitComment(
       mainSha,
-      `${failedMarker}\nRepair attempt ${attempts + 1} of this red ${MAIN_BRANCH} head failed — see the collector run.`,
+      getAttemptFailure({ attempts, marker: failedMarker, task: `repair this red ${MAIN_BRANCH} head` }),
     );
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
-      `the repairer left ${mainSha} unrepaired (attempt ${attempts + 1} of ${DRAIN_ATTEMPT_CAP})`,
+      `the repairer left ${mainSha} unrepaired (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
     );
   }
   return { isUnderRepair: true, targetSha: headSha };

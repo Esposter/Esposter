@@ -7,11 +7,11 @@ import { MERGEABLE_RISK_LEVEL, SESSION_DENIALS } from "#src/services/coderabbit/
 // Request, and it does not reset when the concerns behind it are answered — so the session reads the rationale
 // Against the tree and against the record of what each finding got, and says whether anything real is left.
 export const getVerdictPrompt = ({
+  answers,
   developSha,
   feedback,
   level,
   riskBlock,
-  verdictComments,
   verdictPath,
 }: VerdictPromptInput): string =>
   [
@@ -25,9 +25,9 @@ export const getVerdictPrompt = ({
     "",
     riskBlock,
     "",
-    "## What the collector answered on the pull request",
+    "## What answered the findings on this pull request",
     "",
-    ...(verdictComments.length > 0 ? verdictComments : ["none"]),
+    ...(answers.length > 0 ? answers : ["none"]),
     "",
     "## The `ai:coderabbit:feedback` report",
     "",

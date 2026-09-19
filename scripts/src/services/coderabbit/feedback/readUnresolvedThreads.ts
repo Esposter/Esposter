@@ -3,13 +3,14 @@ import type { ReviewThread } from "#src/models/coderabbit/shared/ReviewThread";
 
 import { CODERABBIT_GRAPHQL_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { getRepository } from "#src/services/coderabbit/shared/getRepository";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { runGh } from "#src/services/shared/runGh";
 
 // `$endCursor` and `pageInfo` are both load-bearing: `gh` follows the cursor only when the query declares one
 // And selects the other, and without them it returns the first page and exits 0. A long-lived pull request
 // Accumulates threads for its whole life, so that drops the newest page exactly when the backlog matters.
-// The first comment is the finding, the last comment's author is whether anyone has answered it since.
+// The first comment is the finding, and the last one is whether anyone has answered it since — its author says
+// Whether the answer came, its body says what the answer was.
 const QUERY = `
 query($owner: String!, $name: String!, $pullRequest: Int!, $endCursor: String) {
   repository(owner: $owner, name: $name) {
@@ -21,7 +22,7 @@ query($owner: String!, $name: String!, $pullRequest: Int!, $endCursor: String) {
           path
           line
           firstComment: comments(first: 1) { nodes { databaseId author { login } body } }
-          lastComment: comments(last: 1) { nodes { author { login } } }
+          lastComment: comments(last: 1) { nodes { author { login } body } }
         }
       }
     }
@@ -49,13 +50,14 @@ export const readUnresolvedThreads = (pullRequest: number): ReviewThread[] => {
     .flatMap(({ data }) => data.repository.pullRequest.reviewThreads.nodes)
     .filter(({ isResolved }) => !isResolved)
     .flatMap(({ firstComment, lastComment, line, path }) => {
-      const lastAuthorLogin = lastComment.nodes.at(-1)?.author?.login ?? "";
+      const lastNode = lastComment.nodes.at(-1);
       return firstComment.nodes
         .filter(({ author }) => author?.login === CODERABBIT_GRAPHQL_LOGIN)
         .map(({ body, databaseId }) => ({
           body,
           commentId: databaseId,
-          lastAuthorLogin,
+          lastAuthorLogin: lastNode?.author?.login ?? "",
+          lastBody: lastNode?.body ?? "",
           line: line ?? undefined,
           path,
         }));

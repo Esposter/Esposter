@@ -1,12 +1,18 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
-import type { runDrain as baseRunDrain } from "#src/services/coderabbit/collect/runDrain";
+import type { readReleaseGate as baseReadReleaseGate } from "#src/services/coderabbit/collect/readReleaseGate";
+import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { readUnresolvedThreads as baseReadUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
-import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
+import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { ReleaseVerdict } from "#src/models/coderabbit/collect/ReleaseVerdict";
-import { DEVELOP_BRANCH, MAIN_BRANCH, VERDICT_MARKER } from "#src/services/coderabbit/collect/constants";
+import {
+  DEVELOP_BRANCH,
+  DRAIN_LIMITED_MARKER,
+  MAIN_BRANCH,
+  VERDICT_MARKER,
+} from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { judgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
@@ -16,28 +22,34 @@ import { existsSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { readUnresolvedThreads, runDrain, runGh } = vi.hoisted(() => ({
+const { readReleaseGate, readUnresolvedThreads, runGh, runSession } = vi.hoisted(() => ({
+  readReleaseGate: vi.fn<typeof baseReadReleaseGate>(),
   readUnresolvedThreads: vi.fn<typeof baseReadUnresolvedThreads>(),
-  runDrain: vi.fn<typeof baseRunDrain>(),
   runGh: vi.fn<typeof baseRunGh>(),
+  runSession: vi.fn<typeof baseRunSession>(),
 }));
 
-// The session, the thread read and `gh` are the three seams; git runs for real against the fixture
-vi.mock(import("#src/services/coderabbit/collect/runDrain"), () => ({
-  runDrain: runDrain as unknown as typeof baseRunDrain,
+// The gate, the session, the thread read and `gh` are the seams; git runs for real against the fixture
+vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
+  runSession: runSession as unknown as typeof baseRunSession,
+}));
+
+vi.mock(import("#src/services/coderabbit/collect/readReleaseGate"), () => ({
+  readReleaseGate: readReleaseGate as unknown as typeof baseReadReleaseGate,
 }));
 
 vi.mock(import("#src/services/coderabbit/feedback/readUnresolvedThreads"), () => ({
   readUnresolvedThreads: readUnresolvedThreads as unknown as typeof baseReadUnresolvedThreads,
 }));
 
-vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
+vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 const getComment = (login: string, body: string): GitHubEntry => ({ body, id: 0, updated_at: "", user: { login } });
 
 describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, getCwd, publish, readSha } = setupFixtureRepository();
   const pullRequest = 0;
+  const ONE_HOUR_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
   const viewerLogin = "viewerLogin";
   const level = TEST_FILENAME;
   const review: GitHubReview = {
@@ -53,14 +65,16 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // The one line the session writes, at the path the prompt names
   const VERDICT_PATH_REGEX = /Write exactly one line to `(?<path>[^`]+)`/u;
   const answerWith = (line: string | undefined) => {
-    runDrain.mockImplementation((prompt) => {
+    runSession.mockImplementation(({ prompt }) => {
       const path = VERDICT_PATH_REGEX.exec(prompt)?.groups?.path;
       if (line !== undefined && path) writeFileSync(path, line);
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
   };
   beforeEach(() => {
     readUnresolvedThreads.mockReturnValue([]);
+    // The band, which is where every test but the gate's own reads the tree through a session
+    readReleaseGate.mockResolvedValue(undefined);
   });
 
   const getInput = (developSha: string, issueComments: GitHubEntry[] = []) => ({
@@ -74,6 +88,75 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     viewerLogin,
   });
 
+  // The common head: the bot's risk level is sticky across rounds, so the rationale usually names only what the
+  // Record already answers — and that reading needs no tree, so it costs no session at all
+  test("merges on the gate's verdict without spawning a session", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    const reason = "the rationale names nothing the pull request has not answered (jev 0.04)";
+    readReleaseGate.mockResolvedValue({ reason, verdict: ReleaseVerdict.Merge });
+    const outcome = await judgeRelease(getInput(developSha));
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Merged,
+      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
+    });
+    expect(runSession).not.toHaveBeenCalled();
+    expect(getCommentCalls()[0]?.[0]?.[4]).toContain(
+      `${getMarker(VERDICT_MARKER, developSha)} ${ReleaseVerdict.Merge} — ${reason}`,
+    );
+  });
+
+  // A hold the gate reached is a hold a person meets, recorded exactly as the session's is: the next head is
+  // Judged afresh either way, so nothing here is owed a session to confirm it
+  test("holds on the gate's verdict without spawning a session", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    const reason = "the rationale names a concern the pull request never answered (jev 0.96)";
+    readReleaseGate.mockResolvedValue({ reason, verdict: ReleaseVerdict.Hold });
+    const outcome = await judgeRelease(getInput(developSha));
+
+    expect(outcome).toBeUndefined();
+    expect(runSession).not.toHaveBeenCalled();
+    expect(getMergeCalls()).toStrictEqual([]);
+    expect(getCommentCalls()[0]?.[0]?.[4]).toContain(
+      `${getMarker(VERDICT_MARKER, developSha)} ${ReleaseVerdict.Hold} — ${reason}`,
+    );
+  });
+
+  // The account's limit holds every session, and the gate spends none of it — so a release the record already
+  // Settles is not parked behind an outage that has nothing to do with it
+  test("merges on the gate's verdict while the account is out of session", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    const resetAt = new Date(Date.now() + ONE_HOUR_MS).toISOString();
+    const limited = getComment(viewerLogin, `<!-- ${DRAIN_LIMITED_MARKER} until ${resetAt} -->`);
+    readReleaseGate.mockResolvedValue({ reason: "nothing is left", verdict: ReleaseVerdict.Merge });
+    const outcome = await judgeRelease(getInput(developSha, [limited]));
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Merged,
+      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
+    });
+    expect(runSession).not.toHaveBeenCalled();
+  });
+
+  // What the limit does still hold: the reading only a session can make
+  test("waits out the account's limit when the gate cannot decide", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    const resetAt = new Date(Date.now() + ONE_HOUR_MS).toISOString();
+    const limited = getComment(viewerLogin, `<!-- ${DRAIN_LIMITED_MARKER} until ${resetAt} -->`);
+
+    await expect(judgeRelease(getInput(developSha, [limited]))).resolves.toBeUndefined();
+    expect(runSession).not.toHaveBeenCalled();
+    expect(getCommentCalls()).toStrictEqual([]);
+  });
+
   test("merges on a merge verdict and records it on the pull request", async () => {
     expect.hasAssertions();
 
@@ -85,8 +168,8 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       kind: CycleOutcomeKind.Merged,
       reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
     });
-    expect(runDrain).toHaveBeenCalledTimes(1);
-    expect(runDrain.mock.calls[0]?.[0]).toContain(`\`${DEVELOP_BRANCH}\` at ${developSha}`);
+    expect(runSession).toHaveBeenCalledTimes(1);
+    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`\`${DEVELOP_BRANCH}\` at ${developSha}`);
     expect(readSha("HEAD")).toBe(developSha);
     expect(getCommentCalls()).toStrictEqual([
       [
@@ -141,7 +224,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     await judgeRelease(getInput(developSha, [recorded]));
 
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
     expect(getCommentCalls()).toHaveLength(0);
     expect(getMergeCalls()).toHaveLength(mergeCallCount);
   });
@@ -155,7 +238,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerWith(`${ReleaseVerdict.Hold} the bench rewrites a tracked ledger`);
     await judgeRelease(getInput(developSha));
 
-    const verdictPath = VERDICT_PATH_REGEX.exec(runDrain.mock.calls[0]?.[0] ?? "")?.groups?.path;
+    const verdictPath = VERDICT_PATH_REGEX.exec(runSession.mock.calls[0]?.[0].prompt ?? "")?.groups?.path;
     assert.exists(verdictPath);
     expect(existsSync(dirname(verdictPath))).toBe(false);
   });
@@ -166,7 +249,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
 
     await expect(judgeRelease({ ...getInput(developSha), isDryRun: true })).resolves.toBeUndefined();
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
     expect(runGh).not.toHaveBeenCalled();
   });
 });

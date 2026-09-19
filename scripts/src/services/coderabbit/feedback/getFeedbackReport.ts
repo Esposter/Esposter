@@ -10,7 +10,7 @@ import { getSortedByUpdatedAt } from "#src/services/coderabbit/shared/getSortedB
 // Every finding of a run in the shape the skill teaches reading it: the newest body's buckets, each unresolved
 // Thread by id, the stated counts reconciled against the threads in hand, and the two walkthrough blocks that
 // Live nowhere else. One string, so the CLI prints it and the drain is handed it.
-export const getFeedbackReport = ({ issueComments, review, threads }: FeedbackReportInput): string => {
+export const getFeedbackReport = ({ issueComments, isThreadListed, review, threads }: FeedbackReportInput): string => {
   const counts = getStatedCounts(review.body);
   const lines = [
     `##### review of ${review.commit_id} submitted ${review.submitted_at}`,
@@ -19,12 +19,13 @@ export const getFeedbackReport = ({ issueComments, review, threads }: FeedbackRe
     `##### ${threads.length} unresolved threads`,
   ];
   // Every finding opens with its severity tag; the bold line after it is the one that says what the finding is
-  for (const { body, commentId, line, path } of threads)
-    lines.push(
-      `${commentId} ${path}:${line?.toString() ?? "outside the diff"}`,
-      body.split("\n").find((entry) => entry.startsWith("**")) ?? "",
-      "",
-    );
+  if (isThreadListed)
+    for (const { body, commentId, line, path } of threads)
+      lines.push(
+        `${commentId} ${path}:${line?.toString() ?? "outside the diff"}`,
+        body.split("\n").find((entry) => entry.startsWith("**")) ?? "",
+        "",
+      );
   // Inline comments can fail to post outright, and the review says so in a caution block nobody reads. The
   // Stated count against the threads in hand says the same thing as a number, every run.
   lines.push(

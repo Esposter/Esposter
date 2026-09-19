@@ -1,25 +1,30 @@
 import type { DrainFindingsInput } from "#src/models/coderabbit/collect/DrainFindingsInput";
 import type { DrainFindingsResult } from "#src/models/coderabbit/collect/DrainFindingsResult";
 
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
-  DRAIN_ATTEMPT_CAP,
   DRAIN_FAILED_MARKER,
   DRAIN_VERDICT_PREFIX,
   INSTALL_COMMAND,
   QUARANTINED_MARKER,
   REJECTIONS_FILE,
   REVIEW_FIXES_BRANCH,
+  SESSION_ATTEMPT_CAP,
+  SessionRoleModelMap,
   VERDICT_FILE,
 } from "#src/services/coderabbit/collect/constants";
+import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
 import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt";
+import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
 import { postDrainVerdicts } from "#src/services/coderabbit/collect/postDrainVerdicts";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
+import { readFindingSeverities } from "#src/services/coderabbit/collect/readFindingSeverities";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
-import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
@@ -49,8 +54,8 @@ export const drainFindings = async ({
   }
 
   const failedMarker = getMarker(DRAIN_FAILED_MARKER, newestReviewId);
-  const attempts = issueComments.filter((comment) => checkIsMarked(comment, viewerLogin, failedMarker)).length;
-  if (attempts >= DRAIN_ATTEMPT_CAP) {
+  const attempts = getMarkedCount(issueComments, viewerLogin, failedMarker);
+  if (attempts >= SESSION_ATTEMPT_CAP) {
     postComment(
       pullRequest,
       `${quarantinedMarker}\nThe drain of review ${newestReviewId} failed ${attempts} times. Its findings stay open for a person, and the collector ports without them.`,
@@ -69,8 +74,14 @@ export const drainFindings = async ({
     async () => {
       const rejectionsPath = join(verdictDirectory, REJECTIONS_FILE);
       const verdictPath = join(verdictDirectory, VERDICT_FILE);
-      const promptInput = { ...drainInput, rejectionsPath, verdictPath };
-      const { isDrained, isStarted, limitResetAtMs } = await runDrain(getDrainPrompt(promptInput), REPOSITORY_ROOT);
+      const commentIdSeverityMap = await readFindingSeverities(drainInput.openThreads);
+      const promptInput = { ...drainInput, commentIdSeverityMap, rejectionsPath, verdictPath };
+      const prompt = getDrainPrompt(promptInput);
+      const { isEnded, isStarted, limitResetAtMs } = await runSession({
+        cwd: REPOSITORY_ROOT,
+        model: SessionRoleModelMap[SessionRole.Drain],
+        prompt,
+      });
       if (!isStarted) {
         if (limitResetAtMs !== undefined) postDrainLimited(pullRequest, limitResetAtMs);
         return { isStarted: false, reviewFixesSha };
@@ -78,15 +89,15 @@ export const drainFindings = async ({
       // A zero exit says the session ended, never that it finished: a drain that stopped mid-fix leaves the rest in
       // The working tree, and reading `HEAD` there would push half a finding as though it were whole
       const dirtyPaths = readDirtyPaths();
-      if (!isDrained || dirtyPaths.length > 0) {
+      if (!isEnded || dirtyPaths.length > 0) {
         postComment(
           pullRequest,
-          `${failedMarker}\nDrain attempt ${attempts + 1} of review ${newestReviewId} failed — see the collector run.`,
+          getAttemptFailure({ attempts, marker: failedMarker, task: `drain review ${newestReviewId}` }),
         );
         throw new InvalidOperationError(
           Operation.Update,
           "coderabbit",
-          isDrained
+          isEnded
             ? `the drain left the working tree dirty:\n${dirtyPaths.join("\n")}`
             : "the drain step exited non-zero",
         );

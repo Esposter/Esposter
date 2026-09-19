@@ -16,6 +16,7 @@ if (!review)
 console.info(
   getFeedbackReport({
     issueComments: readEntries<GitHubEntry>(`issues/${pullRequest}/comments`),
+    isThreadListed: true,
     review,
     threads: readUnresolvedThreads(pullRequest),
   }),

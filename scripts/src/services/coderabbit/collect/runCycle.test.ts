@@ -6,10 +6,10 @@ import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 import type { judgeRelease as baseJudgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import type { readCheckStatus as baseReadCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
-import type { runDrain as baseRunDrain } from "#src/services/coderabbit/collect/runDrain";
 import type { runDrainStep as baseRunDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
+import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { spawnPnpm as baseSpawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
-import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
+import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 import type { SpawnSyncReturns } from "node:child_process";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
@@ -19,7 +19,6 @@ import {
   CI_FAILURE_CONCLUSION,
   COMPLETED_DESCRIPTION,
   DEVELOP_BRANCH,
-  DRAIN_ATTEMPT_CAP,
   EXPRESS_TRAILER,
   HELD_MARKER,
   INSTALL_COMMAND,
@@ -30,9 +29,11 @@ import {
   QUEUE_BRANCH,
   RECENT_REVIEW_MARKER,
   REPAIR_FAILED_MARKER,
+  REPAIR_REGENERATE_COMMANDS,
   REPAIRS_TRAILER,
   RESHAPE_FAILED_MARKER,
   REVIEW_FIXES_BRANCH,
+  SESSION_ATTEMPT_CAP,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
@@ -40,24 +41,26 @@ import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { judgeRelease, readCheckStatus, runDrain, runDrainStep, runGh, spawnPnpm } = vi.hoisted(() => ({
+const { judgeRelease, readCheckStatus, runDrainStep, runGh, runSession, spawnPnpm } = vi.hoisted(() => ({
   judgeRelease: vi.fn<typeof baseJudgeRelease>(),
   readCheckStatus: vi.fn<typeof baseReadCheckStatus>(),
-  runDrain: vi.fn<typeof baseRunDrain>(),
   runDrainStep: vi.fn<typeof baseRunDrainStep>(),
   runGh: vi.fn<typeof baseRunGh>(),
+  runSession: vi.fn<typeof baseRunSession>(),
   spawnPnpm: vi.fn<typeof baseSpawnPnpm>(),
 }));
 
 // The seams the pass cannot reach from a fixture repository: `gh`, the check status it reads through
 // `gh pr checks`, the steps that spawn Claude — the drain, the release verdict and the repairer's session — and
 // The `pnpm` the express lane verifies a cut with. Git runs for real.
-vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
+vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
-vi.mock(import("#src/services/coderabbit/collect/runDrain"), () => ({
-  runDrain: runDrain as unknown as typeof baseRunDrain,
+vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
+  runSession: runSession as unknown as typeof baseRunSession,
 }));
 
 vi.mock(import("#src/services/coderabbit/collect/spawnPnpm"), () => ({
@@ -172,6 +175,63 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
   };
 
+  // What a regenerator does to the tree, in the one test that needs it: the first of them rewrites a tracked
+  // File and every other `pnpm` answers as the test's own mock says
+  const answerRegenerated = (getRest: (args: string[]) => SpawnSyncReturns<string>) => {
+    const [regenerateCommand = []] = REPAIR_REGENERATE_COMMANDS;
+    spawnPnpm.mockImplementation((args) => {
+      if (args.join(" ") !== regenerateCommand.join(" ")) return getRest(args);
+
+      writeFileSync(join(getCwd(), `${TEST_FILENAME}.regenerated`), "");
+      return greenSpawn;
+    });
+  };
+
+  // Most of what lands on main unread is red for a reason the repo's own regenerators answer, and they answer it
+  // Without a session: one moves the tree, the checks pass on what it left, and the repair is pushed with the
+  // Shared window untouched
+  test("repairs a red main with its own regenerators, spawning no session", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    answerRegenerated(() => greenSpawn);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+    const repairSha = readSha(`origin/${MAIN_BRANCH}`);
+
+    expect(runSession).not.toHaveBeenCalled();
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Repaired,
+      reason: `${MAIN_BRANCH} repaired — the push runs the cycle again, which cuts the 0 claimed commits behind it`,
+      targetSha: repairSha,
+    });
+    expect(runGit(["rev-list", "--parents", "--max-count=1", repairSha], getCwd()).trim()).toBe(
+      `${repairSha} ${mainSha}`,
+    );
+  });
+
+  // The invariant the regenerating repair rests on: a regeneration that did not answer the red hands the session
+  // Exactly the tree it would have found, or the cheap path has made the expensive one harder
+  test("restores the head when its regenerators move the tree without making it green", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, readSha(`origin/${MAIN_BRANCH}`));
+    answerGh([], [], [], [], [redRun]);
+    answerRegenerated((args) =>
+      args.join(" ") === INSTALL_COMMAND.join(" ") ? greenSpawn : { ...greenSpawn, status: 1 },
+    );
+    let dirtyAtSession = "unread";
+    runSession.mockImplementation(() => {
+      dirtyAtSession = runGit(["status", "--porcelain", "-uall"], getCwd());
+      return Promise.resolve({ isEnded: false, isStarted: false });
+    });
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(dirtyAtSession).toBe("");
+  });
+
   // A red main with nothing claimed is the repairer's: the session commits at the head, the cut is verified and
   // Pushed, and the run ends on the push
   test("repairs a red main and ends the run on its push", async () => {
@@ -181,10 +241,10 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(QUEUE_BRANCH, mainSha);
     answerGh([], [], [], [], [redRun]);
     spawnPnpm.mockReturnValue(greenSpawn);
-    runDrain.mockImplementation(() => {
+    runSession.mockImplementation(() => {
       commitFile(`${TEST_FILENAME}.ts`, "");
       runGit(["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${REPAIRS_TRAILER}: ${mainSha}`], getCwd());
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
     const repairSha = readSha(`origin/${MAIN_BRANCH}`);
@@ -215,7 +275,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       reason: `1 express commits reached ${MAIN_BRANCH}`,
       targetSha: readSha(`origin/${MAIN_BRANCH}`),
     });
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
   });
 
   // The session's word proves nothing: a repair that is not a trailered commit over a clean tree counts the
@@ -227,9 +287,9 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(QUEUE_BRANCH, mainSha);
     answerGh([], [], [], [], [redRun]);
     spawnPnpm.mockReturnValue(greenSpawn);
-    runDrain.mockImplementation(() => {
+    runSession.mockImplementation(() => {
       commitFile(TEST_FILENAME, "");
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -242,7 +302,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
           "api",
           `repos/{owner}/{repo}/commits/${mainSha}/comments`,
           "-f",
-          `body=${getMarker(REPAIR_FAILED_MARKER, mainSha)}\nRepair attempt 1 of this red ${MAIN_BRANCH} head failed — see the collector run.`,
+          `body=${getMarker(REPAIR_FAILED_MARKER, mainSha)}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to repair this red ${MAIN_BRANCH} head failed. See the collector run.`,
         ],
       ],
     ]);
@@ -257,12 +317,12 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(QUEUE_BRANCH, mainSha);
     answerGh([], [], [], [], [redRun]);
     spawnPnpm.mockReturnValue(greenSpawn);
-    runDrain.mockImplementation(() => {
+    runSession.mockImplementation(() => {
       for (const name of [`${TEST_FILENAME}.ts`, `${TEST_FILENAME}/${TEST_FILENAME}.ts`]) {
         commitFile(name, "");
         runGit(["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${REPAIRS_TRAILER}: ${mainSha}`], getCwd());
       }
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
 
     await expect(runCycle({ ...baseInput, cwd: getCwd() })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -282,7 +342,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     publish(QUEUE_BRANCH, claimExpress());
     answerGh([], [], [], [], [redRun]);
     answerRedChecks();
-    runDrain.mockResolvedValue({ isDrained: false, isStarted: false });
+    runSession.mockResolvedValue({ isEnded: false, isStarted: false });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
@@ -305,7 +365,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       [],
       [],
       [],
-      Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
+      Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
         ...getMarked(getMarker(REPAIR_FAILED_MARKER, mainSha)),
         id,
       })),
@@ -315,7 +375,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome.kind).toBe(CycleOutcomeKind.Idle);
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
     expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
     expect(getCommitCommentPosts(claimedSha)).toHaveLength(1);
   });
@@ -379,7 +439,10 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // A first commit over the cap is the reshaper's; past its attempts it can never fit and no event clears it, so
   // The commit is told once and the run fails red for a person
   const getExhaustedReshapes = (sha: string): GitHubEntry[] =>
-    Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({ ...getMarked(getMarker(RESHAPE_FAILED_MARKER, sha)), id }));
+    Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
+      ...getMarked(getMarker(RESHAPE_FAILED_MARKER, sha)),
+      id,
+    }));
 
   test("notes the queue's first commit on itself and fails the run when it overflows the cap past reshaping", async () => {
     expect.hasAssertions();

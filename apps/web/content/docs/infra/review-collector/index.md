@@ -14,7 +14,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one pull request without racing.
 5. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window, because they claim nothing in them needs review and the checks agree.
-6. [Repair](/docs/infra/review-collector/repair) — a red `main` answered by the same session, from CI's own verdict, as a cut of the lane's own.
+6. [Repair](/docs/infra/review-collector/repair) — a red `main` answered from CI's own verdict by the repo's own regenerators where they answer it and by the same session where they do not, either way as a cut of the lane's own.
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
@@ -49,7 +49,9 @@ flowchart TD
   EX -->|green| EP[Push, exit — no window spent]
   EX -->|red| MR
   E -->|no| MR{main red on CI}
-  MR -->|yes| RP[Claude repairs it — cut, check<br/>push, exit — no window spent]
+  MR -->|yes| RG[Run the repo's regenerators, check]
+  RG -->|green| RP[Push, exit — no window and no session spent]
+  RG -->|red| RC[Claude repairs the restored head — cut, check<br/>push, exit — no window spent]
   MR -->|no| G{Slot free and<br/>previous window reviewed}
   G -->|no| X[Exit — nothing to do]
   G -->|yes| O{Open findings}

@@ -90,7 +90,7 @@ describe(runDrainStep, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       user: { login: CODERABBIT_REST_LOGIN },
     };
     readUnresolvedThreads.mockReturnValue([
-      { body: "", commentId, lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN, path: TEST_FILENAME },
+      { body: "", commentId, lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN, lastBody: "", path: TEST_FILENAME },
     ]);
     const developSha = publish(DEVELOP_BRANCH, "HEAD");
     const result = await runDrainStep({

@@ -3,11 +3,11 @@ import type { ExpressLaneResult } from "#src/models/coderabbit/collect/ExpressLa
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
+import { checkIsGreen } from "#src/services/coderabbit/collect/checkIsGreen";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   EXPRESS_FAILED_MARKER,
   EXPRESS_TRAILER,
-  EXPRESS_VERIFY_COMMANDS,
   MAIN_BRANCH,
   REPAIR_FAILED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
@@ -18,7 +18,6 @@ import { postCommitComment } from "#src/services/coderabbit/collect/postCommitCo
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readClaimedShas } from "#src/services/coderabbit/collect/readClaimedShas";
 import { repairMain } from "#src/services/coderabbit/collect/repairMain";
-import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 
 // A red cut is told once on each commit it carried: the port never carries a commit claiming no review, so a
@@ -37,13 +36,6 @@ const postRedCut = (shas: string[], viewerLogin: string): void => {
     );
   }
 };
-
-// The checks a cut earns before it reaches `main` unread, run on the checkout as it stands
-const checkIsGreen = (cwd: string): boolean =>
-  EXPRESS_VERIFY_COMMANDS.every((args) => {
-    console.info(`verify: pnpm ${args.join(" ")}`);
-    return spawnPnpm(args, { cwd, stdio: "inherit" }).status === 0;
-  });
 
 // Build the cut, verify it, push it to `main`. `main` is production and the checks are the only gate a commit
 // Claiming no review gets, so the cut earns every one CI would fail it on; a red one is told on its commits and
@@ -84,7 +76,8 @@ export const runExpressLane = async ({
 
   const repair = await repairMain({ cwd, isDryRun, mainSha, viewerLogin });
   if (repair.targetSha !== undefined) {
-    if (!checkIsGreen(cwd)) {
+    // A repair that proved itself green before committing is not put through the same suite again
+    if (!repair.isVerified && !checkIsGreen(cwd)) {
       console.info(`the repair is red — counted on ${MAIN_BRANCH}'s head, tried again next run`);
       postCommitComment(
         mainSha,

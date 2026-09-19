@@ -1,8 +1,8 @@
 import type { ReleasePullRequest } from "#src/models/coderabbit/collect/ReleasePullRequest";
 
 import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { runGh } from "#src/services/shared/runGh";
 
 // The newest release pull request in any state, because the state is what the cycle turns on: open is the one
 // It works, merged or none means the next window is filling and the cycle opens one once it has
