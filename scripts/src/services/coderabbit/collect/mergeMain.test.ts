@@ -2,7 +2,7 @@ import type { runSession as baseRunSession } from "#src/services/coderabbit/coll
 import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
-import { SESSION_ATTEMPT_CAP, FOLD_FAILED_MARKER, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { FOLD_FAILED_MARKER, MAIN_BRANCH, SESSION_ATTEMPT_CAP } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
@@ -12,9 +12,9 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { runSession, runGh } = vi.hoisted(() => ({
-  runSession: vi.fn<typeof baseRunSession>(),
+const { runGh, runSession } = vi.hoisted(() => ({
   runGh: vi.fn<typeof baseRunGh>(),
+  runSession: vi.fn<typeof baseRunSession>(),
 }));
 
 // The resolver is the session the drain spawns, and its attempt marker goes out through `gh`; git runs for real

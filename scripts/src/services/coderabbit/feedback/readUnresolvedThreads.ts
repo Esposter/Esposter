@@ -3,8 +3,8 @@ import type { ReviewThread } from "#src/models/coderabbit/shared/ReviewThread";
 
 import { CODERABBIT_GRAPHQL_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { getRepository } from "#src/services/coderabbit/shared/getRepository";
-import { runGh } from "#src/services/shared/runGh";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { runGh } from "#src/services/shared/runGh";
 
 // `$endCursor` and `pageInfo` are both load-bearing: `gh` follows the cursor only when the query declares one
 // And selects the other, and without them it returns the first page and exits 0. A long-lived pull request

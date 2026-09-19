@@ -2,7 +2,6 @@ import type { ReshapeInput } from "#src/models/coderabbit/collect/ReshapeInput";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
-
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import {
   EXPRESS_TRAILER,
@@ -10,8 +9,8 @@ import {
   SESSION_ATTEMPT_CAP,
   SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
-import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
+import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getReshapeFailure } from "#src/services/coderabbit/collect/getReshapeFailure";

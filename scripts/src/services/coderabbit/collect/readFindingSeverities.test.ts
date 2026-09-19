@@ -11,14 +11,14 @@ vi.mock(import("#src/services/jev/readAnswers"), () => ({
   readAnswers: readAnswers as unknown as typeof baseReadAnswers,
 }));
 
-describe(readFindingSeverities, () => {
-  const getThread = (commentId: number): ReviewThread => ({
-    body: "body",
-    commentId,
-    lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN,
-    path: "path",
-  });
+const getThread = (commentId: number): ReviewThread => ({
+  body: "body",
+  commentId,
+  lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN,
+  path: "path",
+});
 
+describe(readFindingSeverities, () => {
   test("scores every finding in one call", async () => {
     expect.hasAssertions();
 

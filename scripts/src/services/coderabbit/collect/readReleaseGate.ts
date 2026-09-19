@@ -7,11 +7,11 @@ import { readAnswers } from "#src/services/jev/readAnswers";
 import { noul } from "@typesafe-ai/sdk";
 
 // The question the verdict session is spawned to answer, asked first of the tier that answers from the text
-// alone. The bot's risk level is its impression across every round and does not reset when the concerns behind
-// it are answered, so the common head is one where the rationale names nothing the pull request has not already
-// answered — and that reading is in the rationale, the fixes and the rejections, all of which are in hand here.
+// Alone. The bot's risk level is its impression across every round and does not reset when the concerns behind
+// It are answered, so the common head is one where the rationale names nothing the pull request has not already
+// Answered — and that reading is in the rationale, the fixes and the rejections, all of which are in hand here.
 // What is not in hand is the tree, so a rationale that turns on what the code actually does lands in the band
-// and the session reads it there.
+// And the session reads it there.
 export const readReleaseGate = async ({
   feedback,
   riskBlock,
@@ -32,8 +32,8 @@ export const readReleaseGate = async ({
   if (answers === undefined) return undefined;
 
   // A merge and a hold are both written to the pull request, so both sit at the high-stakes bar and the band
-  // between them is the session's. The probability goes in the reason: a person reading the verdict later can
-  // see which tier decided it and how close it was.
+  // Between them is the session's. The probability goes in the reason: a person reading the verdict later can
+  // See which tier decided it and how close it was.
   const openProbability = answers.isOpen.noul;
   const stated = openProbability.toFixed(2);
   if (openProbability <= 1 - HIGH_STAKES_CONFIDENCE)

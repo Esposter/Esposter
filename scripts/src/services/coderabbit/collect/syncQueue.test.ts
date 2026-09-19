@@ -3,11 +3,11 @@ import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import {
   DEVELOP_BRANCH,
-  SESSION_ATTEMPT_CAP,
   EXPRESS_TRAILER,
   QUEUE_BRANCH,
   RESHAPE_FAILED_MARKER,
   REVIEW_FIXES_BRANCH,
+  SESSION_ATTEMPT_CAP,
   SYNC_FAILED_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
@@ -22,9 +22,9 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { runSession, runGh } = vi.hoisted(() => ({
-  runSession: vi.fn<typeof baseRunSession>(),
+const { runGh, runSession } = vi.hoisted(() => ({
   runGh: vi.fn<typeof baseRunGh>(),
+  runSession: vi.fn<typeof baseRunSession>(),
 }));
 
 // The resolver is the Claude session the drain spawns, and the marker it leaves goes out through `gh`; git runs

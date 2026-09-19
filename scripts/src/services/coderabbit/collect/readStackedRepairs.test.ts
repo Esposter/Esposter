@@ -1,4 +1,4 @@
-import { SESSION_ATTEMPT_CAP, MAIN_BRANCH, REPAIRS_TRAILER } from "#src/services/coderabbit/collect/constants";
+import { MAIN_BRANCH, REPAIRS_TRAILER, SESSION_ATTEMPT_CAP } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { readStackedRepairs } from "#src/services/coderabbit/collect/readStackedRepairs";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";

@@ -1,5 +1,5 @@
 // What a headless session was launched to do. Every role is tiered in `SessionRoleModelMap`, which is a total
-// record over this enum — so a role added here does not compile until it has been priced.
+// Record over this enum — so a role added here does not compile until it has been priced.
 export enum SessionRole {
   // Answering a review's findings — authoring, under the reviewer's judgement
   Drain = "drain",

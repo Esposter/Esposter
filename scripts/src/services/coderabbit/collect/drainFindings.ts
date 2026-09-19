@@ -2,16 +2,15 @@ import type { DrainFindingsInput } from "#src/models/coderabbit/collect/DrainFin
 import type { DrainFindingsResult } from "#src/models/coderabbit/collect/DrainFindingsResult";
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
-
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
-  SESSION_ATTEMPT_CAP,
   DRAIN_FAILED_MARKER,
   DRAIN_VERDICT_PREFIX,
   INSTALL_COMMAND,
   QUARANTINED_MARKER,
   REJECTIONS_FILE,
   REVIEW_FIXES_BRANCH,
+  SESSION_ATTEMPT_CAP,
   SessionRoleModelMap,
   VERDICT_FILE,
 } from "#src/services/coderabbit/collect/constants";

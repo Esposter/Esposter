@@ -16,10 +16,10 @@ const SEVERITY_CRITERIA = [
 const getQuestionName = (commentId: number): string => `finding${commentId}`;
 
 // The order the drain meets its findings in. A session is one-shot and may end mid-round — on the limit, on a
-// check it could not get green — so which finding it reaches first is the one thing about the prompt that
-// survives a round that did not finish. Nothing here acts on an answer and nothing is dropped: every finding
-// still reaches the session, so the confidence floor that gates an action does not apply, and a wrong order
-// costs the ordering alone. One finding cannot be out of order, so it is not asked about.
+// Check it could not get green — so which finding it reaches first is the one thing about the prompt that
+// Survives a round that did not finish. Nothing here acts on an answer and nothing is dropped: every finding
+// Still reaches the session, so the confidence floor that gates an action does not apply, and a wrong order
+// Costs the ordering alone. One finding cannot be out of order, so it is not asked about.
 export const readFindingSeverities = async (openThreads: ReviewThread[]): Promise<Map<number, number> | undefined> => {
   if (openThreads.length < 2) return undefined;
 

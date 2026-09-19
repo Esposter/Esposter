@@ -4,13 +4,17 @@ import { getDrainPrompt } from "#src/services/coderabbit/collect/getDrainPrompt"
 import { CODERABBIT_GRAPHQL_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { describe, expect, test } from "vitest";
 
+const getThread = (commentId: number): ReviewThread => ({
+  body: `finding ${commentId}`,
+  commentId,
+  lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN,
+  path: "path",
+});
+
+const getCommentOrder = (prompt: string) =>
+  Array.from(prompt.matchAll(/### comment (?<commentId>\d+)/gu), ({ groups }) => Number(groups?.commentId));
+
 describe(getDrainPrompt, () => {
-  const getThread = (commentId: number): ReviewThread => ({
-    body: `finding ${commentId}`,
-    commentId,
-    lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN,
-    path: "path",
-  });
   const input = {
     feedback: "feedback",
     openThreads: [getThread(1), getThread(2), getThread(3)],
@@ -18,8 +22,6 @@ describe(getDrainPrompt, () => {
     rejectionsPath: "rejections",
     verdictPath: "verdict",
   };
-  const getCommentOrder = (prompt: string) =>
-    Array.from(prompt.matchAll(/### comment (?<commentId>\d+)/gu), ({ groups }) => Number(groups?.commentId));
 
   // A session is one-shot and may end mid-round, so the severest finding is the one it must meet first
   test("puts the severest finding first", () => {

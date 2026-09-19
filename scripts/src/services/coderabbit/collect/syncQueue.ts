@@ -2,14 +2,13 @@ import type { SyncQueueInput } from "#src/models/coderabbit/collect/SyncQueueInp
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
-
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import {
   DEVELOP_BRANCH,
-  SESSION_ATTEMPT_CAP,
   QUEUE_BRANCH,
   REVIEW_FIXES_BRANCH,
+  SESSION_ATTEMPT_CAP,
   SessionRoleModelMap,
   SYNC_FAILED_MARKER,
   SYNC_PUSH_ATTEMPT_CAP,
@@ -25,8 +24,8 @@ import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths"
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
-import { resolveLockfileConflicts } from "#src/services/coderabbit/collect/resolveLockfileConflicts";
 import { reshapeQueue } from "#src/services/coderabbit/collect/reshapeQueue";
+import { resolveLockfileConflicts } from "#src/services/coderabbit/collect/resolveLockfileConflicts";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";

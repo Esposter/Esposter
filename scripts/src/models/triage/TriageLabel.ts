@@ -1,5 +1,6 @@
 // The tracker's five triage labels, whose strings are the role names the skills speak in. The prose that owns
-// them is `.agents/triage-labels.md`, and `constants.test.ts` holds this enum to that table.
+// Them is `.agents/triage-labels.md`, and the colocated test holds this enum to that table and to the labels
+// The repository actually declares.
 export enum TriageLabel {
   NeedsInfo = "needs-info",
   NeedsTriage = "needs-triage",

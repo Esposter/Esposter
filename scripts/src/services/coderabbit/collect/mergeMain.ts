@@ -19,16 +19,12 @@ import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount"
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
-import { rebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
+import { rebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
-import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
-import { LOCKFILE } from "#src/services/shared/constants";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
-import { rmSync } from "node:fs";
-import { join } from "node:path";
 
 // What landed on `main` unread — an express cut, a dependency bump — rides the window about to be pushed rather
 // Than waiting for the release to bring the two together. The lockfile conflict that merge always brings is

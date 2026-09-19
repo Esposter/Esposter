@@ -1,4 +1,4 @@
-import { SESSION_ATTEMPT_CAP, REPAIRS_TRAILER } from "#src/services/coderabbit/collect/constants";
+import { REPAIRS_TRAILER, SESSION_ATTEMPT_CAP } from "#src/services/coderabbit/collect/constants";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";

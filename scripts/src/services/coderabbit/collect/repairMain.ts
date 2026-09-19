@@ -3,16 +3,15 @@ import type { RepairResult } from "#src/models/coderabbit/collect/RepairResult";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
-
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
-  SESSION_ATTEMPT_CAP,
   EXPRESS_TRAILER,
   INSTALL_COMMAND,
   MAIN_BRANCH,
   REPAIR_EXHAUSTED_MARKER,
   REPAIR_FAILED_MARKER,
   REPAIRS_TRAILER,
+  SESSION_ATTEMPT_CAP,
   SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
 import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";

@@ -1,5 +1,5 @@
 // What a headless session did, as opposed to what its exit status says. A refusal to start and a run that failed
-// both exit non-zero, and only one of them is the caller's fault.
+// Both exit non-zero, and only one of them is the caller's fault.
 export interface SessionRun {
   // Whether the session exited zero, which says it ended and never that it finished — what proves the work is
   // The tree it left, read by the caller that knows what to expect of it

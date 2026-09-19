@@ -12,7 +12,9 @@ import { describe, expect, test } from "vitest";
  * the infrastructure never declares is one `gh issue edit --add-label` rejects at the tracker, halfway through a
  * triage run. Both are held here.
  */
-describe("TriageLabel", () => {
+const compareStrings = (first: string, second: string): number => first.localeCompare(second);
+
+describe("triageLabel", () => {
   // The label column of the tracker's own table
   const LABEL_ROW_REGEX = /^\| `(?<label>[\w-]+)`/gmu;
   // What an `IssueLabel` resource calls the label it declares
@@ -22,22 +24,24 @@ describe("TriageLabel", () => {
     expect.hasAssertions();
 
     const table = readFileSync(join(REPOSITORY_ROOT, TRIAGE_LABELS_PATH), "utf8");
-    const tabledLabels = Array.from(table.matchAll(LABEL_ROW_REGEX), ({ groups }) => groups?.label);
+    const tabledLabels = Array.from(table.matchAll(LABEL_ROW_REGEX), ({ groups }) => groups?.label ?? "");
 
-    expect(Object.values(TriageLabel).toSorted()).toStrictEqual(tabledLabels.toSorted());
+    expect(Object.values(TriageLabel).toSorted(compareStrings)).toStrictEqual(tabledLabels.toSorted(compareStrings));
   });
 
   test("names only labels the repository declares", () => {
     expect.hasAssertions();
 
     const labelsDirectory = join(REPOSITORY_ROOT, GITHUB_LABELS_DIRECTORY);
-    const declared = readdirSync(labelsDirectory).flatMap((fileName) =>
-      Array.from(
-        readFileSync(join(labelsDirectory, fileName), "utf8").matchAll(LABEL_NAME_REGEX),
-        ({ groups }) => groups?.name,
+    const declared = new Set(
+      readdirSync(labelsDirectory).flatMap((fileName) =>
+        Array.from(
+          readFileSync(join(labelsDirectory, fileName), "utf8").matchAll(LABEL_NAME_REGEX),
+          ({ groups }) => groups?.name,
+        ),
       ),
     );
 
-    expect(Object.values(TriageLabel).filter((label) => !declared.includes(label))).toStrictEqual([]);
+    expect(Object.values(TriageLabel).filter((label) => !declared.has(label))).toStrictEqual([]);
   });
 });

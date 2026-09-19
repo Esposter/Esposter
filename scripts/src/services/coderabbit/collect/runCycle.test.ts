@@ -6,8 +6,8 @@ import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 import type { judgeRelease as baseJudgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import type { readCheckStatus as baseReadCheckStatus } from "#src/services/coderabbit/collect/readCheckStatus";
-import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { runDrainStep as baseRunDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
+import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { spawnPnpm as baseSpawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 import type { SpawnSyncReturns } from "node:child_process";
@@ -19,7 +19,6 @@ import {
   CI_FAILURE_CONCLUSION,
   COMPLETED_DESCRIPTION,
   DEVELOP_BRANCH,
-  SESSION_ATTEMPT_CAP,
   EXPRESS_TRAILER,
   HELD_MARKER,
   INSTALL_COMMAND,
@@ -33,6 +32,7 @@ import {
   REPAIRS_TRAILER,
   RESHAPE_FAILED_MARKER,
   REVIEW_FIXES_BRANCH,
+  SESSION_ATTEMPT_CAP,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
@@ -42,12 +42,12 @@ import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP } from "#src/services/coderabbit
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { judgeRelease, readCheckStatus, runSession, runDrainStep, runGh, spawnPnpm } = vi.hoisted(() => ({
+const { judgeRelease, readCheckStatus, runDrainStep, runGh, runSession, spawnPnpm } = vi.hoisted(() => ({
   judgeRelease: vi.fn<typeof baseJudgeRelease>(),
   readCheckStatus: vi.fn<typeof baseReadCheckStatus>(),
-  runSession: vi.fn<typeof baseRunSession>(),
   runDrainStep: vi.fn<typeof baseRunDrainStep>(),
   runGh: vi.fn<typeof baseRunGh>(),
+  runSession: vi.fn<typeof baseRunSession>(),
   spawnPnpm: vi.fn<typeof baseSpawnPnpm>(),
 }));
 

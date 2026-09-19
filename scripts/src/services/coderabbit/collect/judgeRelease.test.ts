@@ -22,11 +22,11 @@ import { existsSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { readReleaseGate, readUnresolvedThreads, runSession, runGh } = vi.hoisted(() => ({
+const { readReleaseGate, readUnresolvedThreads, runGh, runSession } = vi.hoisted(() => ({
   readReleaseGate: vi.fn<typeof baseReadReleaseGate>(),
   readUnresolvedThreads: vi.fn<typeof baseReadUnresolvedThreads>(),
-  runSession: vi.fn<typeof baseRunSession>(),
   runGh: vi.fn<typeof baseRunGh>(),
+  runSession: vi.fn<typeof baseRunSession>(),
 }));
 
 // The gate, the session, the thread read and `gh` are the seams; git runs for real against the fixture

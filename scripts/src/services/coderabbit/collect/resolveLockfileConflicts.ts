@@ -6,13 +6,13 @@ import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getResult, noop } from "@esposter/shared";
 
 // A replay of a queue onto a moved base stops on the lockfile once per commit that touched a manifest, and every
-// one of those stops has the same answer — so the sequence is run out here rather than handed to a session per
-// commit. Whether it completed is the answer; a stop on anything else leaves the sequencer exactly where the
-// resolver expects to find it, mid-pick with that commit's own conflict open.
+// One of those stops has the same answer — so the sequence is run out here rather than handed to a session per
+// Commit. Whether it completed is the answer; a stop on anything else leaves the sequencer exactly where the
+// Resolver expects to find it, mid-pick with that commit's own conflict open.
 //
 // `--continue` exits non-zero on the next stop as readily as on a failure, so its status says nothing and is not
-// read: the loop asks the sequencer itself. What bounds it is the replay's own length, since every turn either
-// lands a commit or stops the sequence on a path this cannot answer.
+// Read: the loop asks the sequencer itself. What bounds it is the replay's own length, since every turn either
+// Lands a commit or stops the sequence on a path this cannot answer.
 export const resolveLockfileConflicts = (cwd: string, replayedCount: number): boolean => {
   for (let turn = 0; turn < replayedCount; turn++) {
     if (!checkIsSequencing(cwd)) return true;

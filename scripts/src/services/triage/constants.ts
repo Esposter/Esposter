@@ -1,8 +1,8 @@
 import { TriageLabel } from "#src/models/triage/TriageLabel";
 
 // What each label means to the person reading the tracker, written for a reader that has the issue in front of
-// it and nothing else — no repository, no history. `needs-triage` is also where an undecided issue lands, so its
-// description says what leaves it there rather than what puts it there.
+// It and nothing else — no repository, no history. `needs-triage` is also where an undecided issue lands, so its
+// Description says what leaves it there rather than what puts it there.
 export const TriageLabelCriteriaMap: Record<TriageLabel, string> = {
   [TriageLabel.NeedsInfo]:
     "Something is missing that only the reporter can supply: a repro, a version, a log, which of two things they meant.",
@@ -17,7 +17,7 @@ export const TriageLabelCriteriaMap: Record<TriageLabel, string> = {
 };
 
 // The table `TriageLabel` copies, and the resources that decide whether those labels exist on the tracker at
-// all — both read by the test that holds the enum to them
+// All — both read by the test that holds the enum to them
 export const TRIAGE_LABELS_PATH = ".agents/triage-labels.md";
 
 export const GITHUB_LABELS_DIRECTORY = "apps/infra/src/github/labels";
