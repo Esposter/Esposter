@@ -1,5 +1,6 @@
 import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import type { ReleaseVerdictInput } from "#src/models/coderabbit/collect/ReleaseVerdictInput";
+import type { ReleaseVerdictLine } from "#src/models/coderabbit/collect/ReleaseVerdictLine";
 
 import { ReleaseVerdict } from "#src/models/coderabbit/collect/ReleaseVerdict";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
@@ -18,6 +19,7 @@ import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeR
 import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
 import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
+import { readReleaseGate } from "#src/services/coderabbit/collect/readReleaseGate";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { WALKTHROUGH_MARKERS } from "#src/services/coderabbit/feedback/constants";
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
@@ -79,20 +81,34 @@ export const judgeRelease = async ({
   const feedback = newestReview
     ? getFeedbackReport({ issueComments, review: newestReview, threads: readUnresolvedThreads(pullRequest) })
     : "No review on this pull request ever wrote a body.";
+  const verdictComments = issueComments.filter(({ user }) => user.login === viewerLogin).map(({ body }) => body);
+  // Recorded the same way whichever tier decided, so the verb beside the marker is what a later run
+  // Re-applies and a person reads one shape either way
+  const recordVerdict = ({ reason, verdict }: ReleaseVerdictLine): CycleOutcome | undefined => {
+    console.info(`release verdict at ${developSha}: ${verdict} — ${reason}`);
+    postComment(
+      pullRequest,
+      `${marker} ${verdict} — ${reason}\nThe review at ${developSha} left nothing open and the bot rates the merge risk _${level}_, above _${MERGEABLE_RISK_LEVEL}_. ${
+        verdict === ReleaseVerdict.Merge
+          ? "Nothing real is left, so the collector merges the release."
+          : "Something real is left, so the release is a person's: merge this pull request, or close it to pause. The collector keeps porting meanwhile, and the next head is judged afresh."
+      }`,
+    );
+    return verdict === ReleaseVerdict.Merge
+      ? mergeReleasePullRequest({ developSha, isDryRun, pullRequest })
+      : undefined;
+  };
+  // The same question, asked first of the text alone: a rationale the record already settles needs no
+  // Session, and most heads are that one (`llm-delegation` skill)
+  const gatedVerdict = await readReleaseGate({ feedback, riskBlock, verdictComments });
+  if (gatedVerdict) return recordVerdict(gatedVerdict);
   // The verdict outlives the session that wrote it only as far as the read below: the directory goes with the
   // Judgement, or every head judged leaves one behind
   const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
   const outcome = await withFinalizerAsync(
     async () => {
       const verdictPath = join(verdictDirectory, VERDICT_FILE);
-      const prompt = getVerdictPrompt({
-        developSha,
-        feedback,
-        level,
-        riskBlock,
-        verdictComments: issueComments.filter(({ user }) => user.login === viewerLogin).map(({ body }) => body),
-        verdictPath,
-      });
+      const prompt = getVerdictPrompt({ developSha, feedback, level, riskBlock, verdictComments, verdictPath });
       // Read-only judgement over the head the verdict covers: no install, no checks
       runGit(["switch", "--detach", developSha], cwd);
       const { isEnded, isStarted, limitResetAtMs } = await runSession({
@@ -105,21 +121,10 @@ export const judgeRelease = async ({
         return undefined;
       }
 
-      const { reason, verdict } = getReleaseVerdict(
+      const verdictLine = getReleaseVerdict(
         isEnded && existsSync(verdictPath) ? readFileSync(verdictPath, "utf8") : "",
       );
-      console.info(`release verdict at ${developSha}: ${verdict} — ${reason}`);
-      postComment(
-        pullRequest,
-        `${marker} ${verdict} — ${reason}\nThe review at ${developSha} left nothing open and the bot rates the merge risk _${level}_, above _${MERGEABLE_RISK_LEVEL}_. ${
-          verdict === ReleaseVerdict.Merge
-            ? "Nothing real is left, so the collector merges the release."
-            : "Something real is left, so the release is a person's: merge this pull request, or close it to pause. The collector keeps porting meanwhile, and the next head is judged afresh."
-        }`,
-      );
-      return verdict === ReleaseVerdict.Merge
-        ? mergeReleasePullRequest({ developSha, isDryRun, pullRequest })
-        : undefined;
+      return recordVerdict(verdictLine);
     },
     () => {
       rmSync(verdictDirectory, { force: true, recursive: true });

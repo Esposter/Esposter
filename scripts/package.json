@@ -61,6 +61,7 @@
     "@oxlint/plugins": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
+    "@typesafe-ai/sdk": "catalog:",
     "semver": "catalog:",
     "tsx": "catalog:",
     "vitest": "catalog:"

@@ -1,5 +1,6 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
+import type { readReleaseGate as baseReadReleaseGate } from "#src/services/coderabbit/collect/readReleaseGate";
 import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { readUnresolvedThreads as baseReadUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
@@ -16,15 +17,20 @@ import { existsSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { readUnresolvedThreads, runSession, runGh } = vi.hoisted(() => ({
+const { readReleaseGate, readUnresolvedThreads, runSession, runGh } = vi.hoisted(() => ({
+  readReleaseGate: vi.fn<typeof baseReadReleaseGate>(),
   readUnresolvedThreads: vi.fn<typeof baseReadUnresolvedThreads>(),
   runSession: vi.fn<typeof baseRunSession>(),
   runGh: vi.fn<typeof baseRunGh>(),
 }));
 
-// The session, the thread read and `gh` are the three seams; git runs for real against the fixture
+// The gate, the session, the thread read and `gh` are the seams; git runs for real against the fixture
 vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
   runSession: runSession as unknown as typeof baseRunSession,
+}));
+
+vi.mock(import("#src/services/coderabbit/collect/readReleaseGate"), () => ({
+  readReleaseGate: readReleaseGate as unknown as typeof baseReadReleaseGate,
 }));
 
 vi.mock(import("#src/services/coderabbit/feedback/readUnresolvedThreads"), () => ({
@@ -61,6 +67,8 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   };
   beforeEach(() => {
     readUnresolvedThreads.mockReturnValue([]);
+    // The band, which is where every test but the gate's own reads the tree through a session
+    readReleaseGate.mockResolvedValue(undefined);
   });
 
   const getInput = (developSha: string, issueComments: GitHubEntry[] = []) => ({
@@ -72,6 +80,44 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     pullRequest,
     reviews: [review],
     viewerLogin,
+  });
+
+  // The common head: the bot's risk level is sticky across rounds, so the rationale usually names only what the
+  // Record already answers — and that reading needs no tree, so it costs no session at all
+  test("merges on the gate's verdict without spawning a session", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    const reason = "the rationale names nothing the pull request has not answered (jev 0.04)";
+    readReleaseGate.mockResolvedValue({ reason, verdict: ReleaseVerdict.Merge });
+    const outcome = await judgeRelease(getInput(developSha));
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Merged,
+      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
+    });
+    expect(runSession).not.toHaveBeenCalled();
+    expect(getCommentCalls()[0]?.[0]?.[4]).toContain(
+      `${getMarker(VERDICT_MARKER, developSha)} ${ReleaseVerdict.Merge} — ${reason}`,
+    );
+  });
+
+  // A hold the gate reached is a hold a person meets, recorded exactly as the session's is: the next head is
+  // Judged afresh either way, so nothing here is owed a session to confirm it
+  test("holds on the gate's verdict without spawning a session", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    const reason = "the rationale names a concern the pull request never answered (jev 0.96)";
+    readReleaseGate.mockResolvedValue({ reason, verdict: ReleaseVerdict.Hold });
+    const outcome = await judgeRelease(getInput(developSha));
+
+    expect(outcome).toBeUndefined();
+    expect(runSession).not.toHaveBeenCalled();
+    expect(getMergeCalls()).toStrictEqual([]);
+    expect(getCommentCalls()[0]?.[0]?.[4]).toContain(
+      `${getMarker(VERDICT_MARKER, developSha)} ${ReleaseVerdict.Hold} — ${reason}`,
+    );
   });
 
   test("merges on a merge verdict and records it on the pull request", async () => {
