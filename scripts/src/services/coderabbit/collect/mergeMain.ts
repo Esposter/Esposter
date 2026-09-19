@@ -5,6 +5,7 @@ import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcom
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { checkIsLockfileOnly } from "#src/services/coderabbit/collect/checkIsLockfileOnly";
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import {
   FOLD_FAILED_MARKER,
@@ -18,6 +19,7 @@ import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount"
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
+import { rebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
@@ -43,11 +45,8 @@ export const mergeMain = async ({ cwd, viewerLogin }: MergeMainInput): Promise<M
   if (isMerged) return MergeMainOutcome.Merged;
 
   const conflictedPaths = readUnmergedPaths(cwd);
-  if (conflictedPaths.length === 1 && conflictedPaths[0] === LOCKFILE) {
-    rmSync(join(cwd, LOCKFILE));
-    if (spawnPnpm(["i"], { cwd, stdio: "inherit" }).status !== 0)
-      throw new InvalidOperationError(Operation.Update, "coderabbit", "the lockfile could not be rebuilt");
-    runGit(["add", LOCKFILE], cwd);
+  if (checkIsLockfileOnly(conflictedPaths)) {
+    rebuildLockfile(cwd);
     runGit(["commit", "--no-edit"], cwd);
     return MergeMainOutcome.Merged;
   }

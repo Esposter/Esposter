@@ -25,6 +25,7 @@ import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths"
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
+import { resolveLockfileConflicts } from "#src/services/coderabbit/collect/resolveLockfileConflicts";
 import { reshapeQueue } from "#src/services/coderabbit/collect/reshapeQueue";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
@@ -109,42 +110,56 @@ export const syncQueue = async ({
     );
     runGit(["switch", "--detach", targetSha], cwd);
     if (!checkIsPicked(owedShas, cwd)) {
-      const conflictSha = readSha("CHERRY_PICK_HEAD", cwd) ?? "";
-      const conflictedPaths = readUnmergedPaths(cwd);
-      const abort = (reason: string): string => {
+      const abort = (stoppedSha: string, reason: string): string => {
         runGit(["cherry-pick", "--abort"], cwd);
-        console.info(`sync: ${conflictSha} conflicts with ${targetBranch} — ${reason}`);
+        console.info(`sync: ${stoppedSha} conflicts with ${targetBranch} — ${reason}`);
         return queueSha;
       };
-      if (isDryRun) return abort("a dry run resolves nothing");
-      // The attempts are counted on the commit itself: the queue is synced with no pull request open as often as
-      // With one, and a count kept on the pull request would leave the resolver uncapped in between
-      const marker = getMarker(SYNC_FAILED_MARKER, conflictSha);
-      const comments = readEntries<GitHubEntry>(`commits/${conflictSha}/comments`);
-      const attempts = getMarkedCount(comments, viewerLogin, marker);
-      if (attempts >= SESSION_ATTEMPT_CAP) return abort(`its resolution failed ${attempts} times, so it is a person's`);
+      if (isDryRun) return abort(readSha("CHERRY_PICK_HEAD", cwd) ?? "", "a dry run resolves nothing");
+      // The lockfile is the one conflict a replay of this queue almost always brings, and it is rebuilt rather
+      // Than resolved (`git` skill) — so the sequence is run out over as many commits as stop on that path
+      // Alone, and only a stop on another path is worth a session (`llm-delegation` skill)
+      if (!resolveLockfileConflicts(cwd, owedShas.length)) {
+        const conflictSha = readSha("CHERRY_PICK_HEAD", cwd) ?? "";
+        const conflictedPaths = readUnmergedPaths(cwd);
+        // The attempts are counted on the commit itself: the queue is synced with no pull request open as often
+        // As with one, and a count kept on the pull request would leave the resolver uncapped in between
+        const marker = getMarker(SYNC_FAILED_MARKER, conflictSha);
+        const comments = readEntries<GitHubEntry>(`commits/${conflictSha}/comments`);
+        const attempts = getMarkedCount(comments, viewerLogin, marker);
+        if (attempts >= SESSION_ATTEMPT_CAP)
+          return abort(conflictSha, `its resolution failed ${attempts} times, so it is a person's`);
 
-      const prompt = getSyncPrompt({ conflictedPaths, conflictSha, targetBranch });
-      const { isEnded, isStarted } = await runSession({
-        cwd,
-        model: SessionRoleModelMap[SessionRole.Sync],
-        prompt,
-      });
-      if (!isStarted) return abort("the resolver could not start, and no attempt is counted");
-      // A clean exit says the session ended, never how it ended; what proves the resolution is a sequence run to
-      // Its end over a clean tree, carrying every commit the queue owed. Anything else fails the run as a drain
-      // Does, with the attempt counted on the commit
-      else if (!isEnded || checkIsSequencing(cwd) || readDirtyPaths(cwd).length > 0 || !checkIsCarried(queueSha, cwd)) {
-        postCommitComment(
-          conflictSha,
-          `${marker}
-Resolution attempt ${attempts + 1} of the conflict this commit brings to ${targetBranch} failed — see the collector run.`,
-        );
-        throw new InvalidOperationError(
-          Operation.Update,
-          "coderabbit",
-          `the resolver left ${conflictSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
-        );
+        const prompt = getSyncPrompt({ conflictedPaths, conflictSha, targetBranch });
+        const { isEnded, isStarted } = await runSession({
+          cwd,
+          model: SessionRoleModelMap[SessionRole.Sync],
+          prompt,
+        });
+        if (!isStarted) return abort(conflictSha, "the resolver could not start, and no attempt is counted");
+        // A clean exit says the session ended, never how it ended; what proves the resolution is a sequence run
+        // To its end over a clean tree, carrying every commit the queue owed. Anything else fails the run as a
+        // Drain does, with the attempt counted on the commit
+        else if (
+          !isEnded ||
+          checkIsSequencing(cwd) ||
+          readDirtyPaths(cwd).length > 0 ||
+          !checkIsCarried(queueSha, cwd)
+        ) {
+          postCommitComment(
+            conflictSha,
+            getAttemptFailure({
+              attempts,
+              marker,
+              task: `resolve the conflict ${conflictSha} brings to ${targetBranch}`,
+            }),
+          );
+          throw new InvalidOperationError(
+            Operation.Update,
+            "coderabbit",
+            `the resolver left ${conflictSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
+          );
+        }
       }
     }
   }
