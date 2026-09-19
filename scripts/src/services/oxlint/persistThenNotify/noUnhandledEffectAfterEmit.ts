@@ -1,6 +1,6 @@
 import type { FunctionBinding } from "#src/models/oxlint/persistThenNotify/FunctionBinding";
 import type { FunctionFrame } from "#src/models/oxlint/persistThenNotify/FunctionFrame";
-import type { Context, ESTree, Rule } from "@oxlint/plugins";
+import type { ESTree, Rule } from "@oxlint/plugins";
 
 import { checkIsCertainPromiseExpression } from "#src/services/oxlint/persistThenNotify/checkIsCertainPromiseExpression";
 import { checkIsEmitCall } from "#src/services/oxlint/persistThenNotify/checkIsEmitCall";
@@ -10,7 +10,7 @@ import { getBoundFunctionName } from "#src/services/oxlint/persistThenNotify/get
 import { defineRule } from "@oxlint/plugins";
 
 export const noUnhandledEffectAfterEmit: Rule = defineRule({
-  create(context: Context) {
+  create(context) {
     const functionStack: FunctionFrame[] = [];
     // A name on its own is not a function: a sibling function's own `notify`, or one shadowing an outer
     // Notifying `notify`, is a different binding, and arming its caller reports every await that follows it — a

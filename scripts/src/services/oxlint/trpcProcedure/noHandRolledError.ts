@@ -31,8 +31,7 @@ export const noHandRolledError: Rule = defineRule({
         const lastSpreadIndex = argument.properties.findLastIndex((property) => property.type === "SpreadElement");
         const decidableProperties = argument.properties.slice(lastSpreadIndex + 1);
         const hasMessage = decidableProperties.some((property) => getPropertyValue(property, "message") !== undefined);
-        if (hasMessage) return;
-        else if (lastSpreadIndex !== -1) return;
+        if (hasMessage || lastSpreadIndex !== -1) return;
         // A bare BAD_REQUEST is the other half of the same convention: the code without the message the skill
         // Requires beside it
         if (argument.properties.some((property) => checkIsBadRequestCode(property)))
