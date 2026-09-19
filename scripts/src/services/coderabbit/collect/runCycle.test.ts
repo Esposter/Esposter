@@ -9,7 +9,7 @@ import type { readCheckStatus as baseReadCheckStatus } from "#src/services/coder
 import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { runDrainStep as baseRunDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
 import type { spawnPnpm as baseSpawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
-import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
+import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 import type { SpawnSyncReturns } from "node:child_process";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
@@ -54,7 +54,7 @@ const { judgeRelease, readCheckStatus, runSession, runDrainStep, runGh, spawnPnp
 // The seams the pass cannot reach from a fixture repository: `gh`, the check status it reads through
 // `gh pr checks`, the steps that spawn Claude — the drain, the release verdict and the repairer's session — and
 // The `pnpm` the express lane verifies a cut with. Git runs for real.
-vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
+vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
   runSession: runSession as unknown as typeof baseRunSession,

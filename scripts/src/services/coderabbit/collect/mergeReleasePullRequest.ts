@@ -3,7 +3,7 @@ import type { MergeReleaseInput } from "#src/models/coderabbit/collect/MergeRele
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
+import { runGh } from "#src/services/shared/runGh";
 
 // A release whose review is clean merges itself, and the push to `main` runs the return stroke. `--admin`
 // Because the branch rules hold every check `develop` runs and the release does not wait on them: the review

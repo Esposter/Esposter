@@ -5,7 +5,7 @@ import {
   MAIN_BRANCH,
   MAIN_CHECK_WORKFLOW_FILES,
 } from "#src/services/coderabbit/collect/constants";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
+import { runGh } from "#src/services/shared/runGh";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 
 const readMainCheck = (workflowFile: string, mainSha: string): MainCheck | undefined =>

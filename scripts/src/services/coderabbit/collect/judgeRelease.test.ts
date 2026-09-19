@@ -3,7 +3,7 @@ import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
 import type { readReleaseGate as baseReadReleaseGate } from "#src/services/coderabbit/collect/readReleaseGate";
 import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { readUnresolvedThreads as baseReadUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
-import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
+import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { ReleaseVerdict } from "#src/models/coderabbit/collect/ReleaseVerdict";
@@ -37,7 +37,7 @@ vi.mock(import("#src/services/coderabbit/feedback/readUnresolvedThreads"), () =>
   readUnresolvedThreads: readUnresolvedThreads as unknown as typeof baseReadUnresolvedThreads,
 }));
 
-vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
+vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 const getComment = (login: string, body: string): GitHubEntry => ({ body, id: 0, updated_at: "", user: { login } });
 

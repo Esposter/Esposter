@@ -1,5 +1,5 @@
 import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
-import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
+import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
 import { SESSION_ATTEMPT_CAP, FOLD_FAILED_MARKER, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
@@ -22,7 +22,7 @@ vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
   runSession: runSession as unknown as typeof baseRunSession,
 }));
 
-vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
+vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 // The lockfile conflict — thrown away and rebuilt with `pnpm i` — is the one branch not proved here: it installs
 // Against a real workspace, which no fixture repository holds

@@ -3,7 +3,7 @@ import type { OpenReleaseInput } from "#src/models/coderabbit/collect/OpenReleas
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
-import { runGh } from "#src/services/coderabbit/shared/runGh";
+import { runGh } from "#src/services/shared/runGh";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 
 // Opened once `develop` carries anything a review has not read — the same readiness a push clears, since opening
