@@ -25,9 +25,10 @@ import { readReleaseGate } from "#src/services/coderabbit/collect/readReleaseGat
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { WALKTHROUGH_MARKERS } from "#src/services/coderabbit/feedback/constants";
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
-import { getMarkedBlock } from "#src/services/coderabbit/feedback/getMarkedBlock";
+import { getLatestMarkedBlock } from "#src/services/coderabbit/feedback/getLatestMarkedBlock";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
+import { getSortedByUpdatedAt } from "#src/services/coderabbit/shared/getSortedByUpdatedAt";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { withFinalizerAsync } from "@esposter/shared";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
@@ -65,11 +66,14 @@ export const judgeRelease = async ({
   }
 
   const [riskMarker = ""] = WALKTHROUGH_MARKERS;
-  const riskBlock =
-    issueComments
-      .filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)
-      .map(({ body }) => getMarkedBlock(body, riskMarker))
-      .findLast(Boolean) ?? "";
+  // Read the way the feedback report reads the same block: oldest first by `updated_at`, because the walkthrough
+  // Carrying it is edited in place across reviews and its position among the comments never moves with it
+  // (`getSortedByUpdatedAt`), and through the reader that already knows the block is not always in the newest
+  // Comment. Two readers of one block that disagree on which comment holds it is one of them being wrong.
+  const botBodies = getSortedByUpdatedAt(issueComments.filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)).map(
+    ({ body }) => body,
+  );
+  const riskBlock = getLatestMarkedBlock(botBodies, riskMarker) ?? "";
   const newestReview = reviews.findLast(({ body }) => body);
   const threads = readUnresolvedThreads(pullRequest);
   const feedback = newestReview
