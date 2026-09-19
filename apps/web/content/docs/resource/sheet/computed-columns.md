@@ -17,7 +17,7 @@ All reads go through one resolver, `computeValue(rows, row, columns, column, row
 - `findSource(sourceColumnId)` — looks up the source `Column` definition (used when the computer needs column metadata, e.g. a date column's format).
 - `rows` and `rowIndex` — the full filtered dataset and the current row's position, consumed only by aggregation transformations.
 
-The read sites are: the row store's table headers (each header's `value` function calls `computeValue`, so Vuetify sorting and global search operate on computed values), the cell renderer (`ResourceSheetRowField`), export (`filterDataSourceColumns` materializes computed values into plain row data before the serializers run, so exported CSV/JSON includes them), and statistics (`computeColumnStatisticsForColumn`, plus the outlier store reading the same values back per cell).
+The read sites are: the row store's table headers (each header's `value` function calls `computeValue`, so Vuetify sorting and global search operate on computed values), the cell renderer (`ResourceSheetRowField`), export and range copy (`filterDataSourceColumns` materializes computed values into plain row data before the serializers or the clipboard run, so exported CSV/JSON and a copied range include them — [copy computed values](/docs/resource/sheet/copy-computed-values)), and statistics (`computeColumnStatisticsForColumn`, plus the outlier store reading the same values back per cell).
 
 ```mermaid
 flowchart TD
@@ -30,7 +30,7 @@ flowchart TD
   CV -->|"type = Computed"| map["ColumnTransformationComputeMap[transformation.type]"]
   map -->|"computeSource(sourceColumnId)<br/>recurse for chained computed sources"| CV
   map -->|"Aggregation"| agg["computeAggregationValue<br/>→ AggregationTransformationComputeMap"]
-  map --> computer["the transformation type's own computer<br/>— one per type, in the key files below"]
+  map --> computer["the type's own computer<br/>one per transformation type"]
 ```
 
 Computed columns are created and edited through the same vjsf-driven column dialog as every other column type — `computedColumnFormSchema` renders the transformation as a form, with per-transformation Zod validation surfacing errors before save.
@@ -106,4 +106,3 @@ Paths relative to `apps/web`.
 
 - Values are recomputed on every read — there is no cache. Row data are plain objects with no dirty-tracking, so a cache would need an invalidation story spanning every mutation path ([computed-value cache](/docs/resource/sheet/deferred/computed-value-cache)).
 - Cycle handling is deliberately inline (the `visited` set) rather than a separate pre-validation pass; a cycle renders as empty cells instead of an error.
-- Range copy ([clipboard](/docs/resource/sheet/clipboard)) and export both materialize computed values through `filterDataSourceColumns`, so a computed column copies its displayed value ([copy computed values](/docs/resource/sheet/copy-computed-values)).
