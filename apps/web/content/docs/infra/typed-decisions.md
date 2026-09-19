@@ -41,6 +41,8 @@ A question only ever moves **up** this diagram. Nothing the code can answer is a
 
 The conflict resolvers are deliberately absent. A conflict has to be _edited_, and a typed decision returns a decision, never an artefact — so the only thing worth asking about a conflict is whether it needs a session at all, and for the one conflict where the answer is no (the lockfile, rebuilt rather than merged) the code already knows without asking.
 
+The release verdict is asked ahead of the account’s own limit, because it spends none of it: a release the record already settles merges through an outage that holds every session behind it.
+
 ## Confidence is an escalation gate, not a quality bar
 
 Nothing acts on an answer below `0.6`; a decision that writes outside the checkout — a merge, a label on someone's issue — needs `0.85`. What falls short is not an error. It is the case that goes up a tier: to the session that reads the tree, or to `needs-triage`, which is what a maintainer weighing an issue already means.

@@ -7,7 +7,12 @@ import type { runGh as baseRunGh } from "#src/services/shared/runGh";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { ReleaseVerdict } from "#src/models/coderabbit/collect/ReleaseVerdict";
-import { DEVELOP_BRANCH, MAIN_BRANCH, VERDICT_MARKER } from "#src/services/coderabbit/collect/constants";
+import {
+  DEVELOP_BRANCH,
+  DRAIN_LIMITED_MARKER,
+  MAIN_BRANCH,
+  VERDICT_MARKER,
+} from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { judgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
@@ -44,6 +49,7 @@ const getComment = (login: string, body: string): GitHubEntry => ({ body, id: 0,
 describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, getCwd, publish, readSha } = setupFixtureRepository();
   const pullRequest = 0;
+  const ONE_HOUR_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
   const viewerLogin = "viewerLogin";
   const level = TEST_FILENAME;
   const review: GitHubReview = {
@@ -118,6 +124,37 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(getCommentCalls()[0]?.[0]?.[4]).toContain(
       `${getMarker(VERDICT_MARKER, developSha)} ${ReleaseVerdict.Hold} — ${reason}`,
     );
+  });
+
+  // The account's limit holds every session, and the gate spends none of it — so a release the record already
+  // Settles is not parked behind an outage that has nothing to do with it
+  test("merges on the gate's verdict while the account is out of session", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    const resetAt = new Date(Date.now() + ONE_HOUR_MS).toISOString();
+    const limited = getComment(viewerLogin, `<!-- ${DRAIN_LIMITED_MARKER} until ${resetAt} -->`);
+    readReleaseGate.mockResolvedValue({ reason: "nothing is left", verdict: ReleaseVerdict.Merge });
+    const outcome = await judgeRelease(getInput(developSha, [limited]));
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Merged,
+      reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
+    });
+    expect(runSession).not.toHaveBeenCalled();
+  });
+
+  // What the limit does still hold: the reading only a session can make
+  test("waits out the account's limit when the gate cannot decide", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    const resetAt = new Date(Date.now() + ONE_HOUR_MS).toISOString();
+    const limited = getComment(viewerLogin, `<!-- ${DRAIN_LIMITED_MARKER} until ${resetAt} -->`);
+
+    await expect(judgeRelease(getInput(developSha, [limited]))).resolves.toBeUndefined();
+    expect(runSession).not.toHaveBeenCalled();
+    expect(getCommentCalls()).toStrictEqual([]);
   });
 
   test("merges on a merge verdict and records it on the pull request", async () => {

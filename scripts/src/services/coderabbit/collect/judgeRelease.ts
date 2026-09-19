@@ -57,17 +57,8 @@ export const judgeRelease = async ({
       : undefined;
   }
 
-  // A limit the drain hit is the account's, not this head's: the window ports on and the next run judges
-  const limitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
-  if (limitResetMs !== undefined && limitResetMs > Date.now()) {
-    console.info(
-      `release verdict at ${developSha} waits — the session is limited until ${new Date(limitResetMs).toISOString()}`,
-    );
-    return undefined;
-  } else if (isDryRun) {
-    console.info(
-      `would judge the release at ${developSha} — the bot rates the merge risk ${level}, a dry run runs no session`,
-    );
+  if (isDryRun) {
+    console.info(`would judge the release at ${developSha} — the bot rates the merge risk ${level}`);
     return undefined;
   }
 
@@ -99,9 +90,20 @@ export const judgeRelease = async ({
       : undefined;
   };
   // The same question, asked first of the text alone: a rationale the record already settles needs no
-  // Session, and most heads are that one (`llm-delegation` skill)
+  // Session, and most heads are that one (`llm-delegation` skill). Asked ahead of the account's own limit
+  // Because it spends none of it — a release the record settles merges through an outage that would hold
+  // Every session behind it.
   const gatedVerdict = await readReleaseGate({ feedback, riskBlock, verdictComments });
   if (gatedVerdict) return recordVerdict(gatedVerdict);
+
+  // A limit the drain hit is the account's, not this head's: the window ports on and the next run judges
+  const limitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
+  if (limitResetMs !== undefined && limitResetMs > Date.now()) {
+    console.info(
+      `release verdict at ${developSha} waits — the session is limited until ${new Date(limitResetMs).toISOString()}`,
+    );
+    return undefined;
+  }
   // The verdict outlives the session that wrote it only as far as the read below: the directory goes with the
   // Judgement, or every head judged leaves one behind
   const verdictDirectory = mkdtempSync(join(tmpdir(), DRAIN_VERDICT_PREFIX));
