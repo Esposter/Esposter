@@ -12,7 +12,7 @@ vi.mock(import("#src/services/jev/readAnswers"), () => ({
 }));
 
 describe(readReleaseGate, () => {
-  const input = { feedback: "feedback", riskBlock: "riskBlock", verdictComments: [] };
+  const input = { answers: [], feedback: "feedback", riskBlock: "riskBlock" };
   const answerWith = (probability: number) => {
     readAnswers.mockResolvedValue({ isOpen: { noul: probability, type: "noul" } } as never);
   };

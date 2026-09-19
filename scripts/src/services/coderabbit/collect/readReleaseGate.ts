@@ -13,12 +13,12 @@ import { noul } from "@typesafe-ai/sdk";
 // What is not in hand is the tree, so a rationale that turns on what the code actually does lands in the band
 // And the session reads it there.
 export const readReleaseGate = async ({
+  answers,
   feedback,
   riskBlock,
-  verdictComments,
-}: Pick<VerdictPromptInput, "feedback" | "riskBlock" | "verdictComments">): Promise<ReleaseVerdictLine | undefined> => {
-  const answers = await readAnswers(
-    { answered: verdictComments, feedback, riskBlock },
+}: Pick<VerdictPromptInput, "answers" | "feedback" | "riskBlock">): Promise<ReleaseVerdictLine | undefined> => {
+  const decisions = await readAnswers(
+    { answers, feedback, riskBlock },
     {
       isOpen: noul(
         "Does the merge-risk rationale name a concern that no fix or rejection recorded on this pull request answered?",
@@ -29,12 +29,12 @@ export const readReleaseGate = async ({
       ),
     },
   );
-  if (answers === undefined) return undefined;
+  if (decisions === undefined) return undefined;
 
   // A merge and a hold are both written to the pull request, so both sit at the high-stakes bar and the band
   // Between them is the session's. The probability goes in the reason: a person reading the verdict later can
   // See which tier decided it and how close it was.
-  const openProbability = answers.isOpen.noul;
+  const openProbability = decisions.isOpen.noul;
   const stated = openProbability.toFixed(2);
   if (openProbability <= 1 - HIGH_STAKES_CONFIDENCE)
     return {

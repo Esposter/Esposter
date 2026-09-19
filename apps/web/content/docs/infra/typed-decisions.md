@@ -31,6 +31,8 @@ flowchart TD
 
 A question only ever moves **up** this diagram. Nothing the code can answer is asked of a model, and nothing a typed decision settles reaches a session.
 
+The first box reaches further than it looks. Where the repository already holds a verifier for a mechanical answer, the deterministic tier does not have to know in advance whether that answer fits — it can produce it and let the verifier judge. That is how a red `main` is repaired without a session ([repair](/docs/infra/review-collector/repair)): the regenerators run, the check suite decides, and only what they cannot fix is read by anything.
+
 ## Where it decides
 
 | Judgement                                                                  | What it saves                                                                                                                                                             |
@@ -42,6 +44,8 @@ A question only ever moves **up** this diagram. Nothing the code can answer is a
 The conflict resolvers are deliberately absent. A conflict has to be _edited_, and a typed decision returns a decision, never an artefact — so the only thing worth asking about a conflict is whether it needs a session at all, and for the one conflict where the answer is no (the lockfile, rebuilt rather than merged) the code already knows without asking.
 
 The release verdict is asked ahead of the account’s own limit, because it spends none of it: a release the record already settles merges through an outage that holds every session behind it.
+
+What it is asked about is the record the pull request actually holds. An inline rejection is posted as a reply on its own thread and never as a comment, so a gate reading only the pull request's comments would see a release whose findings were every one of them answered as a release where none were, and hand up each case to the session it exists to spare. The collector's own bookkeeping comments are left out for the opposite reason: a drain that failed, a limit that has not lifted, an older head's verdict say nothing about whether a concern stands.
 
 ## Confidence is an escalation gate, not a quality bar
 

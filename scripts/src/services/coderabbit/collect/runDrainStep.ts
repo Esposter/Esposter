@@ -69,7 +69,7 @@ export const runDrainStep = async ({
 
   const drain = await drainFindings({
     baseSha: owingFixesSha ?? developSha,
-    feedback: getFeedbackReport({ issueComments, review: newestReview, threads }),
+    feedback: getFeedbackReport({ issueComments, isThreadListed: false, review: newestReview, threads }),
     issueComments,
     newestReviewId: newestReview.id,
     openThreads,

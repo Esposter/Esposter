@@ -8,6 +8,7 @@ const getThread = (commentId: number): ReviewThread => ({
   body: `finding ${commentId}`,
   commentId,
   lastAuthorLogin: CODERABBIT_GRAPHQL_LOGIN,
+  lastBody: "",
   path: "path",
 });
 

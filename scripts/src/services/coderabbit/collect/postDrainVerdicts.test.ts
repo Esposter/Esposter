@@ -17,6 +17,7 @@ const getOpenThread = (commentId: number): ReviewThread => ({
   body: "a finding",
   commentId,
   lastAuthorLogin: "coderabbitai",
+  lastBody: "",
   path: "scripts/src/services/coderabbit/collect/postDrainVerdicts.ts",
 });
 

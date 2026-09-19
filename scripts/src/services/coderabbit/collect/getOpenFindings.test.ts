@@ -8,6 +8,7 @@ const getThread = (commentId: number, lastAuthorLogin: string): ReviewThread => 
   body: "**A finding**",
   commentId,
   lastAuthorLogin,
+  lastBody: "",
   path: "apps/web/app.vue",
 });
 

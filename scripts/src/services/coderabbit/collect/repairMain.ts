@@ -25,6 +25,7 @@ import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readRedMainCheck } from "#src/services/coderabbit/collect/readRedMainCheck";
 import { readStackedRepairs } from "#src/services/coderabbit/collect/readStackedRepairs";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
+import { repairMechanically } from "#src/services/coderabbit/collect/repairMechanically";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
@@ -71,6 +72,16 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
   // The tree the repairer's own checks run against is this head, not the one the event checked out (`INSTALL_COMMAND`)
   if (spawnPnpm(INSTALL_COMMAND, { cwd, stdio: "inherit" }).status !== 0)
     throw new InvalidOperationError(Operation.Update, "coderabbit", `the install for ${mainSha} failed`);
+  // Answered without a session where a regenerator answers it: most of what lands on `main` unread is red for a
+  // Reason with one, and the session that reads such a log spends a window of the one account every session here
+  // Draws on to reach a command that needs no reading (`llm-delegation` skill). A red no regenerator touches
+  // Costs the one check suite it takes to find that out, and the tree it falls through with is untouched.
+  const mechanicalSha = repairMechanically({ cwd, mainSha, runUrl: check.url });
+  if (mechanicalSha !== undefined) {
+    console.info(`${MAIN_BRANCH} repaired at ${mechanicalSha} without a session — its regenerators answered the red`);
+    return { isUnderRepair: true, isVerified: true, targetSha: mechanicalSha };
+  }
+
   const prompt = getRepairPrompt({ failedLog: readFailedLog(check.databaseId), mainSha, runUrl: check.url });
   const { isEnded, isStarted } = await runSession({
     cwd,

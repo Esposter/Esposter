@@ -30,6 +30,12 @@ Ask the lowest tier first, and let it hand up what it cannot answer. A tier that
 - A judgement over prose or over a diff — is this concern real, how severe is this finding, which label does this issue take — is Jev's, when its answer is one of a fixed set and the state fits in the request.
 - Only what must open files it cannot be handed, or must write, is a session.
 
+## A deterministic tier does not have to know whether it applies
+
+The usual reason a mechanical answer is skipped is that nothing can tell in advance whether it fits, so the question goes up to be classified and the tier above spends its whole turn deciding which command to run. Where the repository already holds a verifier for the result, invert it: produce the mechanical answer, then ask the verifier. The classification never happens, and the roster of cases it would have needed is never written and never drifts.
+
+Two conditions. The verifier has to be cheap against the tier above it — a check suite against a slice of the window is the trade the collector's repair makes (`apps/web/content/docs/infra/review-collector/repair.md`). And a failed attempt has to restore exactly the state the tier above would have found, or the cheap path has made the expensive one harder instead.
+
 ## Jev — the typed decision tier
 
 `@typesafe-ai/sdk`, authenticated by `TYPESAFE_API_KEY`, one call per state: `client.systemOne({ state, questions })`. Three primitives — `choice` picks one of a defined set, `noul` returns the probability that a yes/no question is yes, `score` places the state on ordered `criteria` levels and returns the distribution with it.

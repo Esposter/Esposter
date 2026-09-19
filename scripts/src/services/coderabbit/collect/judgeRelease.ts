@@ -7,11 +7,13 @@ import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   DRAIN_VERDICT_PREFIX,
+  DRAINS_MARKER,
   MERGEABLE_RISK_LEVEL,
   SessionRoleModelMap,
   VERDICT_FILE,
   VERDICT_MARKER,
 } from "#src/services/coderabbit/collect/constants";
+import { getAnsweredFindingLines } from "#src/services/coderabbit/collect/getAnsweredFindingLines";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getReleaseVerdict } from "#src/services/coderabbit/collect/getReleaseVerdict";
 import { getVerdictPrompt } from "#src/services/coderabbit/collect/getVerdictPrompt";
@@ -69,10 +71,18 @@ export const judgeRelease = async ({
       .map(({ body }) => getMarkedBlock(body, riskMarker))
       .findLast(Boolean) ?? "";
   const newestReview = reviews.findLast(({ body }) => body);
+  const threads = readUnresolvedThreads(pullRequest);
   const feedback = newestReview
-    ? getFeedbackReport({ issueComments, review: newestReview, threads: readUnresolvedThreads(pullRequest) })
+    ? getFeedbackReport({ issueComments, isThreadListed: true, review: newestReview, threads })
     : "No review on this pull request ever wrote a body.";
-  const verdictComments = issueComments.filter(({ user }) => user.login === viewerLogin).map(({ body }) => body);
+  // Both halves of what the pull request answered, which is the whole of what the question turns on: an inline
+  // Rejection is a reply on its own thread, a body-only one a comment under the drains marker. Every other
+  // Comment the collector wrote here is bookkeeping and is left out — feeding a gate the record of a drain that
+  // Hit a limit is asking it to weigh a fact about the account against a concern about the code.
+  const answers = [
+    ...getAnsweredFindingLines(threads),
+    ...issueComments.filter((comment) => checkIsMarked(comment, viewerLogin, DRAINS_MARKER)).map(({ body }) => body),
+  ];
   // Recorded the same way whichever tier decided, so the verb beside the marker is what a later run
   // Re-applies and a person reads one shape either way
   const recordVerdict = ({ reason, verdict }: ReleaseVerdictLine): CycleOutcome | undefined => {
@@ -93,7 +103,7 @@ export const judgeRelease = async ({
   // Session, and most heads are that one (`llm-delegation` skill). Asked ahead of the account's own limit
   // Because it spends none of it — a release the record settles merges through an outage that would hold
   // Every session behind it.
-  const gatedVerdict = await readReleaseGate({ feedback, riskBlock, verdictComments });
+  const gatedVerdict = await readReleaseGate({ answers, feedback, riskBlock });
   if (gatedVerdict) return recordVerdict(gatedVerdict);
 
   // A limit the drain hit is the account's, not this head's: the window ports on and the next run judges
@@ -110,7 +120,7 @@ export const judgeRelease = async ({
   const outcome = await withFinalizerAsync(
     async () => {
       const verdictPath = join(verdictDirectory, VERDICT_FILE);
-      const prompt = getVerdictPrompt({ developSha, feedback, level, riskBlock, verdictComments, verdictPath });
+      const prompt = getVerdictPrompt({ answers, developSha, feedback, level, riskBlock, verdictPath });
       // Read-only judgement over the head the verdict covers: no install, no checks
       runGit(["switch", "--detach", developSha], cwd);
       const { isEnded, isStarted, limitResetAtMs } = await runSession({

@@ -79,6 +79,25 @@ export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   ["exec", "vitest", "run"],
 ];
 
+// What a red `main` is answered with before any session is asked for one, spelled out the way the lane's checks
+// Are — each a root script's own passes minus its `virrun` wrapper. Every one rewrites a tracked artifact from
+// The tree that artifact is derived from: the formatter's own output, a lint rule's own autofix, a ledger's
+// Coverage rows. What they write is by construction what the check that failed on it asked for, so the red is
+// Answered by running them rather than by reading it, and a red none of them touches leaves the tree exactly as
+// It was and is the session's as before (docs: infra/review-collector/repair). Their exit status is nothing to
+// Read: `lint:fix` exits non-zero on the problems it could not fix, which is the case this still tries.
+//
+// A bundle-size snapshot is deliberately absent. Its regenerator is `vitest -u`, which writes down whatever the
+// Run measured and would record a real regression as readily as a moved baseline, so it stays the session's
+// (`getRepairPrompt`).
+export const REPAIR_REGENERATE_COMMANDS: string[][] = [
+  ["format"],
+  ["exec", "oxlint", "--format=default", "--fix", "--disable-nested-config"],
+  ["exec", "eslint", "--fix", "."],
+  ["-r", "--parallel", "run", "lint:fix"],
+  ["ai:sweep:ledger-coverage"],
+];
+
 // The record and field separators (`#src/services/shared/constants`) in git's own spelling, which is what asks
 // Git to emit them. `%B` rather than
 // `%(trailers:key=…)`, which reads only the last contiguous trailer block.

@@ -29,6 +29,7 @@ import {
   QUEUE_BRANCH,
   RECENT_REVIEW_MARKER,
   REPAIR_FAILED_MARKER,
+  REPAIR_REGENERATE_COMMANDS,
   REPAIRS_TRAILER,
   RESHAPE_FAILED_MARKER,
   REVIEW_FIXES_BRANCH,
@@ -40,6 +41,8 @@ import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { judgeRelease, readCheckStatus, runDrainStep, runGh, runSession, spawnPnpm } = vi.hoisted(() => ({
@@ -171,6 +174,63 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       args.join(" ") === INSTALL_COMMAND.join(" ") ? greenSpawn : { ...greenSpawn, status: 1 },
     );
   };
+
+  // What a regenerator does to the tree, in the one test that needs it: the first of them rewrites a tracked
+  // File and every other `pnpm` answers as the test's own mock says
+  const answerRegenerated = (getRest: (args: string[]) => SpawnSyncReturns<string>) => {
+    const [regenerateCommand = []] = REPAIR_REGENERATE_COMMANDS;
+    spawnPnpm.mockImplementation((args) => {
+      if (args.join(" ") !== regenerateCommand.join(" ")) return getRest(args);
+
+      writeFileSync(join(getCwd(), `${TEST_FILENAME}.regenerated`), "");
+      return greenSpawn;
+    });
+  };
+
+  // Most of what lands on main unread is red for a reason the repo's own regenerators answer, and they answer it
+  // Without a session: one moves the tree, the checks pass on what it left, and the repair is pushed with the
+  // Shared window untouched
+  test("repairs a red main with its own regenerators, spawning no session", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, mainSha);
+    answerGh([], [], [], [], [redRun]);
+    answerRegenerated(() => greenSpawn);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+    const repairSha = readSha(`origin/${MAIN_BRANCH}`);
+
+    expect(runSession).not.toHaveBeenCalled();
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Repaired,
+      reason: `${MAIN_BRANCH} repaired — the push runs the cycle again, which cuts the 0 claimed commits behind it`,
+      targetSha: repairSha,
+    });
+    expect(runGit(["rev-list", "--parents", "--max-count=1", repairSha], getCwd()).trim()).toBe(
+      `${repairSha} ${mainSha}`,
+    );
+  });
+
+  // The invariant the regenerating repair rests on: a regeneration that did not answer the red hands the session
+  // Exactly the tree it would have found, or the cheap path has made the expensive one harder
+  test("restores the head when its regenerators move the tree without making it green", async () => {
+    expect.hasAssertions();
+
+    publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, readSha(`origin/${MAIN_BRANCH}`));
+    answerGh([], [], [], [], [redRun]);
+    answerRegenerated((args) =>
+      args.join(" ") === INSTALL_COMMAND.join(" ") ? greenSpawn : { ...greenSpawn, status: 1 },
+    );
+    let dirtyAtSession = "unread";
+    runSession.mockImplementation(() => {
+      dirtyAtSession = runGit(["status", "--porcelain", "-uall"], getCwd());
+      return Promise.resolve({ isEnded: false, isStarted: false });
+    });
+    await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(dirtyAtSession).toBe("");
+  });
 
   // A red main with nothing claimed is the repairer's: the session commits at the head, the cut is verified and
   // Pushed, and the run ends on the push
