@@ -5,7 +5,11 @@ description: Open infrastructure work — every item links its proposal.
 
 # Roadmap
 
-Open work, each item linking its proposal — nothing is in progress right now. Ideas parked behind a revisit trigger live in [deferred](/docs/infra/deferred) instead. Rationale lives in [Cost & Security Posture](/docs/infra/cost-and-security-posture) and `apps/infra/docs/`.
+Open work, each item linking its proposal. Ideas parked behind a revisit trigger live in [deferred](/docs/infra/deferred) instead. Rationale lives in [Cost & Security Posture](/docs/infra/cost-and-security-posture) and `apps/infra/docs/`.
+
+## Next
+
+- [ ] [Claude interface](/docs/proposals/infra/claude-interface) — the persona plugin that replaces caveman now; spoken replies, a character voice and a companion window each behind a named gate
 
 ## Blocked (app-side migration off key-based auth first)
 
