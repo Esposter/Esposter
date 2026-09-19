@@ -2,10 +2,12 @@ import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import type { ReleaseVerdictInput } from "#src/models/coderabbit/collect/ReleaseVerdictInput";
 
 import { ReleaseVerdict } from "#src/models/coderabbit/collect/ReleaseVerdict";
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   DRAIN_VERDICT_PREFIX,
   MERGEABLE_RISK_LEVEL,
+  SessionRoleModelMap,
   VERDICT_FILE,
   VERDICT_MARKER,
 } from "#src/services/coderabbit/collect/constants";
@@ -16,7 +18,7 @@ import { mergeReleasePullRequest } from "#src/services/coderabbit/collect/mergeR
 import { postComment } from "#src/services/coderabbit/collect/postComment";
 import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimited";
 import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
-import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { WALKTHROUGH_MARKERS } from "#src/services/coderabbit/feedback/constants";
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
 import { getMarkedBlock } from "#src/services/coderabbit/feedback/getMarkedBlock";
@@ -93,14 +95,18 @@ export const judgeRelease = async ({
       });
       // Read-only judgement over the head the verdict covers: no install, no checks
       runGit(["switch", "--detach", developSha], cwd);
-      const { isDrained, isStarted, limitResetAtMs } = await runDrain(prompt, cwd);
+      const { isEnded, isStarted, limitResetAtMs } = await runSession({
+        cwd,
+        model: SessionRoleModelMap[SessionRole.Verdict],
+        prompt,
+      });
       if (!isStarted) {
         if (limitResetAtMs !== undefined) postDrainLimited(pullRequest, limitResetAtMs);
         return undefined;
       }
 
       const { reason, verdict } = getReleaseVerdict(
-        isDrained && existsSync(verdictPath) ? readFileSync(verdictPath, "utf8") : "",
+        isEnded && existsSync(verdictPath) ? readFileSync(verdictPath, "utf8") : "",
       );
       console.info(`release verdict at ${developSha}: ${verdict} — ${reason}`);
       postComment(

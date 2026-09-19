@@ -2,17 +2,24 @@ import type { MergeMainInput } from "#src/models/coderabbit/collect/MergeMainInp
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
-import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
-import { DRAIN_ATTEMPT_CAP, FOLD_FAILED_MARKER, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
+import {
+  FOLD_FAILED_MARKER,
+  MAIN_BRANCH,
+  SESSION_ATTEMPT_CAP,
+  SessionRoleModelMap,
+} from "#src/services/coderabbit/collect/constants";
+import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
 import { getFoldPrompt } from "#src/services/coderabbit/collect/getFoldPrompt";
+import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
-import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
@@ -52,28 +59,32 @@ export const mergeMain = async ({ cwd, viewerLogin }: MergeMainInput): Promise<M
     return MergeMainOutcome.Conflicted;
   };
   const marker = getMarker(FOLD_FAILED_MARKER, mainSha);
-  const attempts = readEntries<GitHubEntry>(`commits/${mainSha}/comments`).filter((comment) =>
-    checkIsMarked(comment, viewerLogin, marker),
-  ).length;
-  if (attempts >= DRAIN_ATTEMPT_CAP) return abort(`its conflicts failed the resolver ${attempts} times`);
+  const comments = readEntries<GitHubEntry>(`commits/${mainSha}/comments`);
+  const attempts = getMarkedCount(comments, viewerLogin, marker);
+  if (attempts >= SESSION_ATTEMPT_CAP) return abort(`its conflicts failed the resolver ${attempts} times`);
 
-  const { isDrained, isStarted } = await runDrain(getFoldPrompt({ conflictedPaths, mainSha }), cwd);
+  const prompt = getFoldPrompt({ conflictedPaths, mainSha });
+  const { isEnded, isStarted } = await runSession({
+    cwd,
+    model: SessionRoleModelMap[SessionRole.Fold],
+    prompt,
+  });
   if (!isStarted) return abort("the resolver could not start, and no attempt is counted");
   // What proves the fold is the merge committed over a clean tree with `main` now an ancestor; the session's
   // Word proves nothing. Anything else counts the attempt on `main`'s head and fails the run.
-  if (!isDrained || checkIsSequencing(cwd) || readDirtyPaths(cwd).length > 0 || !checkIsAncestor(main, "HEAD", cwd)) {
+  if (!isEnded || checkIsSequencing(cwd) || readDirtyPaths(cwd).length > 0 || !checkIsAncestor(main, "HEAD", cwd)) {
     // The merge the resolver left open is cleared before the attempt is written: the run fails either way, and a
     // Checkout over an unresolved index refuses — which would leave the runner the tree it resolves its own
     // Actions from half-merged (`reshapeQueue` clears its own for the same reason)
     abortSequencing(cwd);
     postCommitComment(
       mainSha,
-      `${marker}\nFold attempt ${attempts + 1} of this main head into the window failed — see the collector run.`,
+      getAttemptFailure({ attempts, marker, task: `fold this ${MAIN_BRANCH} head into the window` }),
     );
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
-      `the resolver left the fold of ${mainSha} unresolved (attempt ${attempts + 1} of ${DRAIN_ATTEMPT_CAP})`,
+      `the resolver left the fold of ${mainSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
     );
   }
   return MergeMainOutcome.Merged;

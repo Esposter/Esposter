@@ -1,6 +1,7 @@
 import type { spawn as baseSpawn, ChildProcessWithoutNullStreams } from "node:child_process";
 
-import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { SessionModel } from "#src/models/coderabbit/collect/SessionModel";
+import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { EventEmitter } from "node:events";
 import { PassThrough, Readable } from "node:stream";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -11,7 +12,7 @@ vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof
 
 // A session as Claude Code prints it: one JSON event per line, with whatever it says for itself on its way out
 // Printed as plain text. `close` is emitted once stdout ends, which is the order the real child fires them in —
-// `runDrain` registers its listener before the read loop precisely because that order is this tight.
+// `runSession` registers its listener before the read loop precisely because that order is this tight.
 const mockSession = (exitCode: number, lines: string[]): void => {
   const stdout = Readable.from(lines.map((line) => `${line}\n`));
   const child = Object.assign(new EventEmitter(), { exitCode, stdin: new PassThrough(), stdout });
@@ -27,7 +28,7 @@ const getAssistantLine = (text: string): string =>
 const getResultLine = (subtype: string, result: string): string =>
   JSON.stringify({ duration_ms: 1, num_turns: 1, result, subtype, total_cost_usd: 0, type: "result" });
 
-describe(runDrain, () => {
+describe(runSession, () => {
   const REFUSAL_LINE = "You've hit your session limit · resets 3:10am (UTC)";
   // The deadline is read relative to now, so the clock is pinned to the epoch and the reset is an exact
   // Instant rather than merely a present one. Only `Date` is faked: the session is read off a real stream
@@ -51,8 +52,8 @@ describe(runDrain, () => {
       getResultLine("success", REFUSAL_LINE),
     ]);
 
-    await expect(runDrain("prompt", "")).resolves.toStrictEqual({
-      isDrained: true,
+    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
+      isEnded: true,
       isStarted: true,
       limitResetAtMs: undefined,
     });
@@ -65,8 +66,8 @@ describe(runDrain, () => {
 
     mockSession(1, [getAssistantLine(REFUSAL_LINE), getResultLine("error_during_execution", "the commit failed")]);
 
-    await expect(runDrain("prompt", "")).resolves.toStrictEqual({
-      isDrained: false,
+    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
+      isEnded: false,
       isStarted: true,
       limitResetAtMs: undefined,
     });
@@ -80,8 +81,8 @@ describe(runDrain, () => {
 
     mockSession(1, [getResultLine("success", REFUSAL_LINE)]);
 
-    await expect(runDrain("prompt", "")).resolves.toStrictEqual({
-      isDrained: false,
+    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
+      isEnded: false,
       isStarted: false,
       limitResetAtMs: LIMIT_RESET_AT_MS,
     });
@@ -94,8 +95,8 @@ describe(runDrain, () => {
 
     mockSession(1, [REFUSAL_LINE]);
 
-    await expect(runDrain("prompt", "")).resolves.toStrictEqual({
-      isDrained: false,
+    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
+      isEnded: false,
       isStarted: false,
       limitResetAtMs: LIMIT_RESET_AT_MS,
     });
@@ -109,8 +110,8 @@ describe(runDrain, () => {
 
     mockSession(1, []);
 
-    await expect(runDrain("prompt", "")).resolves.toStrictEqual({
-      isDrained: false,
+    await expect(runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" })).resolves.toStrictEqual({
+      isEnded: false,
       isStarted: false,
       limitResetAtMs: undefined,
     });
@@ -130,7 +131,7 @@ describe(runDrain, () => {
     vi.stubEnv("CLAUDE_CODE_OAUTH_TOKEN", "claude-token");
     mockSession(0, [getResultLine("success", "done")]);
 
-    await runDrain("prompt", "");
+    await runSession({ cwd: "", model: SessionModel.Opus, prompt: "prompt" });
 
     const passedEnvironment = spawn.mock.calls[0]?.[2]?.env;
     expect(passedEnvironment?.CLAUDE_CODE_OAUTH_TOKEN).toBe("claude-token");

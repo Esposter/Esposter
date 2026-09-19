@@ -1,17 +1,21 @@
 import type { SyncQueueInput } from "#src/models/coderabbit/collect/SyncQueueInput";
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
+import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
+
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
-import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import {
   DEVELOP_BRANCH,
-  DRAIN_ATTEMPT_CAP,
+  SESSION_ATTEMPT_CAP,
   QUEUE_BRANCH,
   REVIEW_FIXES_BRANCH,
+  SessionRoleModelMap,
   SYNC_FAILED_MARKER,
   SYNC_PUSH_ATTEMPT_CAP,
 } from "#src/services/coderabbit/collect/constants";
+import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
+import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
@@ -22,7 +26,7 @@ import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { reshapeQueue } from "#src/services/coderabbit/collect/reshapeQueue";
-import { runDrain } from "#src/services/coderabbit/collect/runDrain";
+import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
@@ -116,25 +120,21 @@ export const syncQueue = async ({
       // The attempts are counted on the commit itself: the queue is synced with no pull request open as often as
       // With one, and a count kept on the pull request would leave the resolver uncapped in between
       const marker = getMarker(SYNC_FAILED_MARKER, conflictSha);
-      const attempts = readEntries<GitHubEntry>(`commits/${conflictSha}/comments`).filter((comment) =>
-        checkIsMarked(comment, viewerLogin, marker),
-      ).length;
-      if (attempts >= DRAIN_ATTEMPT_CAP) return abort(`its resolution failed ${attempts} times, so it is a person's`);
+      const comments = readEntries<GitHubEntry>(`commits/${conflictSha}/comments`);
+      const attempts = getMarkedCount(comments, viewerLogin, marker);
+      if (attempts >= SESSION_ATTEMPT_CAP) return abort(`its resolution failed ${attempts} times, so it is a person's`);
 
-      const { isDrained, isStarted } = await runDrain(
-        getSyncPrompt({ conflictedPaths, conflictSha, targetBranch }),
+      const prompt = getSyncPrompt({ conflictedPaths, conflictSha, targetBranch });
+      const { isEnded, isStarted } = await runSession({
         cwd,
-      );
+        model: SessionRoleModelMap[SessionRole.Sync],
+        prompt,
+      });
       if (!isStarted) return abort("the resolver could not start, and no attempt is counted");
       // A clean exit says the session ended, never how it ended; what proves the resolution is a sequence run to
       // Its end over a clean tree, carrying every commit the queue owed. Anything else fails the run as a drain
       // Does, with the attempt counted on the commit
-      else if (
-        !isDrained ||
-        checkIsSequencing(cwd) ||
-        readDirtyPaths(cwd).length > 0 ||
-        !checkIsCarried(queueSha, cwd)
-      ) {
+      else if (!isEnded || checkIsSequencing(cwd) || readDirtyPaths(cwd).length > 0 || !checkIsCarried(queueSha, cwd)) {
         postCommitComment(
           conflictSha,
           `${marker}
@@ -143,7 +143,7 @@ Resolution attempt ${attempts + 1} of the conflict this commit brings to ${targe
         throw new InvalidOperationError(
           Operation.Update,
           "coderabbit",
-          `the resolver left ${conflictSha} unresolved (attempt ${attempts + 1} of ${DRAIN_ATTEMPT_CAP})`,
+          `the resolver left ${conflictSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
         );
       }
     }

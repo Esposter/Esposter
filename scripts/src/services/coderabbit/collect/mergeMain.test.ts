@@ -1,8 +1,8 @@
-import type { runDrain as baseRunDrain } from "#src/services/coderabbit/collect/runDrain";
+import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
 
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
-import { DRAIN_ATTEMPT_CAP, FOLD_FAILED_MARKER, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
+import { SESSION_ATTEMPT_CAP, FOLD_FAILED_MARKER, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
@@ -12,14 +12,14 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { runDrain, runGh } = vi.hoisted(() => ({
-  runDrain: vi.fn<typeof baseRunDrain>(),
+const { runSession, runGh } = vi.hoisted(() => ({
+  runSession: vi.fn<typeof baseRunSession>(),
   runGh: vi.fn<typeof baseRunGh>(),
 }));
 
 // The resolver is the session the drain spawns, and its attempt marker goes out through `gh`; git runs for real
-vi.mock(import("#src/services/coderabbit/collect/runDrain"), () => ({
-  runDrain: runDrain as unknown as typeof baseRunDrain,
+vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
+  runSession: runSession as unknown as typeof baseRunSession,
 }));
 
 vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
@@ -33,7 +33,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
   beforeEach(() => {
     runGh.mockReturnValue("[[]]");
-    runDrain.mockReset();
+    runSession.mockReset();
   });
   const getInput = () => ({ cwd: getCwd(), viewerLogin });
   // A conflict nothing mechanical decides: main edited the file the candidate deleted
@@ -65,22 +65,22 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runGit(["rev-list", "--parents", "--max-count=1", "HEAD"], getCwd()).trim()).toBe(
       `${readSha("HEAD")} ${candidateSha} ${mainSha}`,
     );
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
   });
 
   test(`${MergeMainOutcome.Merged}: a conflict outside the lockfile is the resolver's`, async () => {
     expect.hasAssertions();
 
     const { candidateSha, mainSha } = setupConflict();
-    runDrain.mockImplementation(() => {
+    runSession.mockImplementation(() => {
       writeFileSync(join(getCwd(), filePath), " ");
       runGit(["add", filePath], getCwd());
       runGit(["commit", "--quiet", "--no-edit"], getCwd());
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
 
     await expect(mergeMain(getInput())).resolves.toBe(MergeMainOutcome.Merged);
-    expect(runDrain.mock.calls[0]?.[0]).toContain(`\`${MAIN_BRANCH}\` at ${mainSha} is being folded`);
+    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`\`${MAIN_BRANCH}\` at ${mainSha} is being folded`);
     expect(runGit(["rev-list", "--parents", "--max-count=1", "HEAD"], getCwd()).trim()).toBe(
       `${readSha("HEAD")} ${candidateSha} ${mainSha}`,
     );
@@ -90,7 +90,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { mainSha } = setupConflict();
-    runDrain.mockResolvedValue({ isDrained: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
 
     await expect(mergeMain(getInput())).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the resolver left the fold of 646cf33bb0af71bf79f4ac95d887c6d6a4bd7450 unresolved (attempt 1 of 3)]`,
@@ -106,7 +106,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     setupConflict();
-    runDrain.mockResolvedValue({ isDrained: false, isStarted: false });
+    runSession.mockResolvedValue({ isEnded: false, isStarted: false });
 
     await expect(mergeMain(getInput())).resolves.toBe(MergeMainOutcome.Conflicted);
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
@@ -119,7 +119,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { candidateSha, mainSha } = setupConflict();
     runGh.mockReturnValue(
       JSON.stringify([
-        Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
+        Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
           body: getMarker(FOLD_FAILED_MARKER, mainSha),
           id,
           updated_at: "",
@@ -131,6 +131,6 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     await expect(mergeMain(getInput())).resolves.toBe(MergeMainOutcome.Conflicted);
     expect(readSha("HEAD")).toBe(candidateSha);
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
   });
 });

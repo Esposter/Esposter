@@ -55,7 +55,7 @@ Once Claude exits, the script — the only process with a credential — posts a
 | `scripts/src/services/coderabbit/collect/runDrainStep.ts`       | the open set it reads, and what stops it — nothing open, dry run, the Claude limit |
 | `scripts/src/services/coderabbit/collect/drainFindings.ts`      | quarantine, the branch, the install, the session, the verdicts, the push           |
 | `scripts/src/services/coderabbit/collect/getDrainPrompt.ts`     | what Claude is told                                                                |
-| `scripts/src/services/coderabbit/collect/runDrain.ts`           | the headless session, its scrubbed environment and its streamed log                |
+| `scripts/src/services/coderabbit/collect/runSession.ts`         | the headless session, its scrubbed environment and its streamed log                |
 | `scripts/src/services/coderabbit/collect/postDrainVerdicts.ts`  | the rejections, posted by the one process holding a credential                     |
 | `scripts/src/services/coderabbit/feedback/getFeedbackReport.ts` | the report the CLI prints and the drain is handed                                  |
 | `.agents/skills/code-review/references/fixing-findings.md`      | the order of work the prompt points the session at                                 |

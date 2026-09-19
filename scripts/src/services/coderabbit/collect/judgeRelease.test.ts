@@ -1,6 +1,6 @@
 import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 import type { GitHubReview } from "#src/models/coderabbit/shared/GitHubReview";
-import type { runDrain as baseRunDrain } from "#src/services/coderabbit/collect/runDrain";
+import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { readUnresolvedThreads as baseReadUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
 import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
 
@@ -16,15 +16,15 @@ import { existsSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { readUnresolvedThreads, runDrain, runGh } = vi.hoisted(() => ({
+const { readUnresolvedThreads, runSession, runGh } = vi.hoisted(() => ({
   readUnresolvedThreads: vi.fn<typeof baseReadUnresolvedThreads>(),
-  runDrain: vi.fn<typeof baseRunDrain>(),
+  runSession: vi.fn<typeof baseRunSession>(),
   runGh: vi.fn<typeof baseRunGh>(),
 }));
 
 // The session, the thread read and `gh` are the three seams; git runs for real against the fixture
-vi.mock(import("#src/services/coderabbit/collect/runDrain"), () => ({
-  runDrain: runDrain as unknown as typeof baseRunDrain,
+vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
+  runSession: runSession as unknown as typeof baseRunSession,
 }));
 
 vi.mock(import("#src/services/coderabbit/feedback/readUnresolvedThreads"), () => ({
@@ -53,10 +53,10 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // The one line the session writes, at the path the prompt names
   const VERDICT_PATH_REGEX = /Write exactly one line to `(?<path>[^`]+)`/u;
   const answerWith = (line: string | undefined) => {
-    runDrain.mockImplementation((prompt) => {
+    runSession.mockImplementation(({ prompt }) => {
       const path = VERDICT_PATH_REGEX.exec(prompt)?.groups?.path;
       if (line !== undefined && path) writeFileSync(path, line);
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
   };
   beforeEach(() => {
@@ -85,8 +85,8 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       kind: CycleOutcomeKind.Merged,
       reason: `pull request #${pullRequest} merged — the push to ${MAIN_BRANCH} runs the return stroke`,
     });
-    expect(runDrain).toHaveBeenCalledTimes(1);
-    expect(runDrain.mock.calls[0]?.[0]).toContain(`\`${DEVELOP_BRANCH}\` at ${developSha}`);
+    expect(runSession).toHaveBeenCalledTimes(1);
+    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`\`${DEVELOP_BRANCH}\` at ${developSha}`);
     expect(readSha("HEAD")).toBe(developSha);
     expect(getCommentCalls()).toStrictEqual([
       [
@@ -141,7 +141,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     await judgeRelease(getInput(developSha, [recorded]));
 
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
     expect(getCommentCalls()).toHaveLength(0);
     expect(getMergeCalls()).toHaveLength(mergeCallCount);
   });
@@ -155,7 +155,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     answerWith(`${ReleaseVerdict.Hold} the bench rewrites a tracked ledger`);
     await judgeRelease(getInput(developSha));
 
-    const verdictPath = VERDICT_PATH_REGEX.exec(runDrain.mock.calls[0]?.[0] ?? "")?.groups?.path;
+    const verdictPath = VERDICT_PATH_REGEX.exec(runSession.mock.calls[0]?.[0].prompt ?? "")?.groups?.path;
     assert.exists(verdictPath);
     expect(existsSync(dirname(verdictPath))).toBe(false);
   });
@@ -166,7 +166,7 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
 
     await expect(judgeRelease({ ...getInput(developSha), isDryRun: true })).resolves.toBeUndefined();
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
     expect(runGh).not.toHaveBeenCalled();
   });
 });

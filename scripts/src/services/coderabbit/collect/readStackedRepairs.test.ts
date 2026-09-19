@@ -1,4 +1,4 @@
-import { DRAIN_ATTEMPT_CAP, MAIN_BRANCH, REPAIRS_TRAILER } from "#src/services/coderabbit/collect/constants";
+import { SESSION_ATTEMPT_CAP, MAIN_BRANCH, REPAIRS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { readStackedRepairs } from "#src/services/coderabbit/collect/readStackedRepairs";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
@@ -37,8 +37,8 @@ describe(readStackedRepairs, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("stops walking at the attempt cap", () => {
     expect.hasAssertions();
 
-    for (let index = 0; index <= DRAIN_ATTEMPT_CAP; index += 1) commitRepair();
+    for (let index = 0; index <= SESSION_ATTEMPT_CAP; index += 1) commitRepair();
 
-    expect(readStackedRepairs(readSha("HEAD"), getCwd())).toBe(DRAIN_ATTEMPT_CAP);
+    expect(readStackedRepairs(readSha("HEAD"), getCwd())).toBe(SESSION_ATTEMPT_CAP);
   });
 });

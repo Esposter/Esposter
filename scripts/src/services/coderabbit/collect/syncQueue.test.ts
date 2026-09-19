@@ -1,9 +1,9 @@
-import type { runDrain as baseRunDrain } from "#src/services/coderabbit/collect/runDrain";
+import type { runSession as baseRunSession } from "#src/services/coderabbit/collect/runSession";
 import type { runGh as baseRunGh } from "#src/services/coderabbit/shared/runGh";
 
 import {
   DEVELOP_BRANCH,
-  DRAIN_ATTEMPT_CAP,
+  SESSION_ATTEMPT_CAP,
   EXPRESS_TRAILER,
   QUEUE_BRANCH,
   RESHAPE_FAILED_MARKER,
@@ -22,15 +22,15 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { runDrain, runGh } = vi.hoisted(() => ({
-  runDrain: vi.fn<typeof baseRunDrain>(),
+const { runSession, runGh } = vi.hoisted(() => ({
+  runSession: vi.fn<typeof baseRunSession>(),
   runGh: vi.fn<typeof baseRunGh>(),
 }));
 
 // The resolver is the Claude session the drain spawns, and the marker it leaves goes out through `gh`; git runs
 // For real against the fixture
-vi.mock(import("#src/services/coderabbit/collect/runDrain"), () => ({
-  runDrain: runDrain as unknown as typeof baseRunDrain,
+vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
+  runSession: runSession as unknown as typeof baseRunSession,
 }));
 
 vi.mock(import("#src/services/coderabbit/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
@@ -43,7 +43,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // The attempts are read off the conflicting commit's own comments, one `gh` page of none unless a test says otherwise
   beforeEach(() => {
     runGh.mockReturnValue("[[]]");
-    runDrain.mockReset();
+    runSession.mockReset();
   });
   const filePath = `${TEST_FILENAME}.ts`;
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
@@ -89,7 +89,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       `(cherry picked from commit ${owedSha})`,
     );
     expect(runGit(["show", "--format=", syncedSha], getCwd())).toBe(runGit(["show", "--format=", owedSha], getCwd()));
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
   });
 
   test("rebuilds the queue on the fixes branch while it still owes develop commits", async () => {
@@ -184,7 +184,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
   });
 
   test("hands a conflict to the resolver and pushes the queue it ran to the end", async () => {
@@ -192,15 +192,15 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     const { developSha, queueSha } = setupConflict();
     vi.stubEnv("GIT_EDITOR", "true");
-    runDrain.mockImplementation(() => {
+    runSession.mockImplementation(() => {
       resolveConflict();
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
 
     assert.exists(syncedSha);
-    expect(runDrain).toHaveBeenCalledTimes(1);
-    expect(runDrain.mock.calls[0]?.[0]).toContain(`stopped on ${queueSha} at these paths:\n\n- ${filePath}`);
+    expect(runSession).toHaveBeenCalledTimes(1);
+    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`stopped on ${queueSha} at these paths:\n\n- ${filePath}`);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath]);
     expect(runGit(["show", "--format=", syncedSha, "--", filePath], getCwd())).toContain("+fix queue");
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
@@ -212,9 +212,9 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { developSha, queueSha } = setupConflict();
-    runDrain.mockImplementation(() => {
+    runSession.mockImplementation(() => {
       runGit(["cherry-pick", "--abort"], getCwd());
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
 
     await expect(
@@ -229,7 +229,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { developSha, queueSha } = setupConflict();
-    runDrain.mockResolvedValue({ isDrained: true, isStarted: true });
+    runSession.mockResolvedValue({ isEnded: true, isStarted: true });
 
     await expect(
       syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
@@ -245,7 +245,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { developSha, queueSha } = setupConflict();
-    const commitComments = Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
+    const commitComments = Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
       body: getMarker(SYNC_FAILED_MARKER, queueSha),
       id,
       updated_at: "",
@@ -255,7 +255,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
     expect(runGh.mock.calls[0]?.[0]).toContain(`repos/{owner}/{repo}/commits/${queueSha}/comments?per_page=100`);
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
   });
 
@@ -285,15 +285,15 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { developSha, oversizedSha, queueSha } = setupOversized();
-    runDrain.mockImplementation(() => {
+    runSession.mockImplementation(() => {
       reshape(oversizedSha, REVIEW_FILE_CAP);
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
     const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
 
     assert.exists(syncedSha);
-    expect(runDrain).toHaveBeenCalledTimes(1);
-    expect(runDrain.mock.calls[0]?.[0]).toContain(
+    expect(runSession).toHaveBeenCalledTimes(1);
+    expect(runSession.mock.calls[0]?.[0].prompt).toContain(
       `parent of ${oversizedSha}, a commit on \`ai/queue\` that changes ${REVIEW_FILE_CAP + 1} files`,
     );
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, "rule", "moves"]);
@@ -315,16 +315,16 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, ""));
 
     await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
   });
 
   test("fails the run and counts the attempt when the reshaping leaves a reviewable part over the cap", async () => {
     expect.hasAssertions();
 
     const { developSha, oversizedSha, queueSha } = setupOversized();
-    runDrain.mockImplementation(() => {
+    runSession.mockImplementation(() => {
       reshape(oversizedSha, 0);
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
 
     await expect(
@@ -344,13 +344,13 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { developSha, oversizedSha, queueSha } = setupOversized();
-    runDrain.mockImplementation(() => {
+    runSession.mockImplementation(() => {
       const baseSha = readSha("HEAD");
       const theirsSha = commitFile(filePath, "theirs");
       switchTo(baseSha);
       commitFile(filePath, "ours");
       getResult(() => runGit(["merge", theirsSha], getCwd())).unwrapOr("");
-      return Promise.resolve({ isDrained: true, isStarted: true });
+      return Promise.resolve({ isEnded: true, isStarted: true });
     });
 
     await expect(
@@ -369,7 +369,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, oversizedSha, queueSha } = setupOversized();
     runGh.mockReturnValue(
       JSON.stringify([
-        Array.from({ length: DRAIN_ATTEMPT_CAP }, (_, id) => ({
+        Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
           body: getMarker(RESHAPE_FAILED_MARKER, oversizedSha),
           id,
           updated_at: "",
@@ -379,7 +379,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
 
     await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBe(queueSha);
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
   });
 
   test("reports the reshaping it would do on a dry run", async () => {
@@ -390,6 +390,6 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, isDryRun: true, queueSha })).resolves.toBe(
       queueSha,
     );
-    expect(runDrain).not.toHaveBeenCalled();
+    expect(runSession).not.toHaveBeenCalled();
   });
 });
