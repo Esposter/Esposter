@@ -14,6 +14,7 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 - [Observability](/docs/infra/observability) — why App Insights and Log Analytics are deliberately not provisioned, and what the estate relies on instead.
 - [Pulumi source of truth](/docs/infra/pulumi-source-of-truth) — Function App runtime settings managed in Pulumi.
 - [Review collector](/docs/infra/review-collector) — the event-triggered collector that drains CodeRabbit findings, cuts windows from `ai/queue` onto `develop`, sends what claims no review straight to `main`, and merges the release on a clean verdict — never waiting on a person.
+- [Typed decisions](/docs/infra/typed-decisions) — which tier answers a gate, a verdict or a triage, and why the cheapest session is the one never spawned.
 - [Roadmap](/docs/infra/roadmap) — open items (key-auth-gated hardening); every item links its proposal.
 - [Deferred](/docs/infra/deferred) — ideas waiting on a trigger.
 
@@ -36,5 +37,6 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (naming
 - **Observability removal** — deleted App Insights, Log Analytics, smart-detector rules, and scheduled-query alerts (dev + prod) to stay in the free tier; the `$0.01` budget guard is the cost ceiling. → [Observability](/docs/infra/observability)
 - **Pulumi source of truth** — adopted the Function Apps' runtime app settings into Pulumi; secrets flow from ESC. → [Pulumi source of truth](/docs/infra/pulumi-source-of-truth)
 - **Review collector** — the review pipeline moved off a person entirely: no step of it waits on one, and the only Azure-side cost was the collector token as a Pulumi-managed repository secret. → [Review collector](/docs/infra/review-collector)
+- **Typed decisions** — the release verdict, the drain’s finding order and issue triage moved off a Claude Code session onto a typed-decision model, and the lockfile conflict a replay brings moved off one onto the code that already knew the answer. → [Typed decisions](/docs/infra/typed-decisions)
 - **Branch namespaces** — the ref ownership the collector assumes became rulesets, and a branch's name became the whole convention for who may create and push it; the only cost was one prefix, `external/`, left open. → [Branch namespaces](/docs/infra/branch-namespaces)
 - **Every GitHub default declared** — the workflow token's default permission dropped to read, Dependabot's automatic pull requests pinned off, and the stale action pattern dropped from the allowlist, so the only GitHub state a preview cannot prove is the one rule parameter the provider has no field for. Private vulnerability reporting came on with them, and CodeQL scans `main` and the week rather than every pull request, an open alert being a red `main` the [review collector](/docs/infra/review-collector/repair) repairs. → [Azure Pulumi layout](/docs/infra/azure-pulumi-layout)

@@ -42,6 +42,8 @@ Once Claude exits, the script — the only process with a credential — posts a
 
 **A zero exit says the session ended, never that it finished.** A drain that stopped mid-fix leaves the rest of a finding in the working tree, so a dirty tree is a failed attempt like a non-zero exit.
 
+**The findings are put severest first.** A session is one-shot and may end mid-round, so the order it meets them in is the one thing about the prompt that survives a round that did not finish. Each open finding is scored in a single [typed decision](/docs/infra/typed-decisions) and the prompt is built in that order. Nothing is dropped and nothing acts on a score, so a wrong order costs the ordering alone, and with no tier configured the reviewer's own order stands.
+
 ## When it cannot
 
 **A finding the drain cannot close is quarantined, not retried forever.** Each failed drain of a review leaves a hidden marker in a pull request comment; past the attempt cap the collector posts that it has stopped and ports without fixes. The findings stay open for a person — the cost of the alternative is a pipeline stalled on one finding nobody sees. This is the [no manual recovery](/docs/architecture/no-manual-recovery) shape: land the failure durably, cap the attempts, quarantine visibly.
@@ -50,12 +52,13 @@ Once Claude exits, the script — the only process with a credential — posts a
 
 ## Key files
 
-| File                                                            | Role                                                                               |
-| :-------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect/runDrainStep.ts`       | the open set it reads, and what stops it — nothing open, dry run, the Claude limit |
-| `scripts/src/services/coderabbit/collect/drainFindings.ts`      | quarantine, the branch, the install, the session, the verdicts, the push           |
-| `scripts/src/services/coderabbit/collect/getDrainPrompt.ts`     | what Claude is told                                                                |
-| `scripts/src/services/coderabbit/collect/runSession.ts`         | the headless session, its scrubbed environment and its streamed log                |
-| `scripts/src/services/coderabbit/collect/postDrainVerdicts.ts`  | the rejections, posted by the one process holding a credential                     |
-| `scripts/src/services/coderabbit/feedback/getFeedbackReport.ts` | the report the CLI prints and the drain is handed                                  |
-| `.agents/skills/code-review/references/fixing-findings.md`      | the order of work the prompt points the session at                                 |
+| File                                                               | Role                                                                               |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `scripts/src/services/coderabbit/collect/runDrainStep.ts`          | the open set it reads, and what stops it — nothing open, dry run, the Claude limit |
+| `scripts/src/services/coderabbit/collect/drainFindings.ts`         | quarantine, the branch, the install, the session, the verdicts, the push           |
+| `scripts/src/services/coderabbit/collect/getDrainPrompt.ts`        | what Claude is told, in the order it is told                                       |
+| `scripts/src/services/coderabbit/collect/readFindingSeverities.ts` | the score each finding is ordered by                                               |
+| `scripts/src/services/coderabbit/collect/runSession.ts`            | the headless session, its scrubbed environment and its streamed log                |
+| `scripts/src/services/coderabbit/collect/postDrainVerdicts.ts`     | the rejections, posted by the one process holding a credential                     |
+| `scripts/src/services/coderabbit/feedback/getFeedbackReport.ts`    | the report the CLI prints and the drain is handed                                  |
+| `.agents/skills/code-review/references/fixing-findings.md`         | the order of work the prompt points the session at                                 |

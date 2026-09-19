@@ -5,12 +5,6 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// The label column of the tracker's own table
-const LABEL_ROW_REGEX = /^\| `(?<label>[\w-]+)`/gmu;
-
-// What an `IssueLabel` resource calls the label it declares
-const LABEL_NAME_REGEX = /name: "(?<name>[^"]+)"/gu;
-
 /**
  * The enum copies a table the agent tree owns (`.agents/triage-labels.md`), because a label string is what `gh`
  * is handed and prose cannot be typed against. Two copies drift silently and neither failure is visible where it
@@ -19,6 +13,11 @@ const LABEL_NAME_REGEX = /name: "(?<name>[^"]+)"/gu;
  * triage run. Both are held here.
  */
 describe("TriageLabel", () => {
+  // The label column of the tracker's own table
+  const LABEL_ROW_REGEX = /^\| `(?<label>[\w-]+)`/gmu;
+  // What an `IssueLabel` resource calls the label it declares
+  const LABEL_NAME_REGEX = /name: "(?<name>[^"]+)"/gu;
+
   test("names every label the tracker's table does", () => {
     expect.hasAssertions();
 

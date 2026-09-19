@@ -9,6 +9,8 @@ Token budgets are the constraint: the main session's context is where design qua
 
 The split is by **role, not by model**. Whatever model the session happens to run (`~/.claude/settings.json` sets it), the main session is the thinker and subagents are the implementers — the rule holds when the config changes, and the same model may well sit on both sides.
 
+Which tier answers one judgement — deterministic code, a typed decision, a cheap headless session, a full one — is the `llm-delegation` skill's; this skill splits the roles, that one prices the question.
+
 **Never name a model version anywhere in this repo** — not in skills, docs, workflow scripts, or delegation prompts. Model families ship new versions every few weeks and this project always wants the latest, so write the unversioned family alias only. A version-pinned id (`claude-<family>-<version>`) or a prose family-plus-number is stale the moment it's written and silently keeps work on an old model.
 
 ## Division of labor
