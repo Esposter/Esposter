@@ -495,8 +495,8 @@ catalogs:
       specifier: ^6.1.7
       version: 6.1.7
     dotenv:
-      specifier: ^18.0.0
-      version: 18.0.0
+      specifier: ^18.0.1
+      version: 18.0.1
     drizzle-kit:
       specifier: 1.0.0-rc.4
       version: 1.0.0-rc.4
@@ -856,7 +856,7 @@ importers:
         version: 5.0.1(vitest@5.0.1)
       dotenv:
         specifier: 'catalog:'
-        version: 18.0.0
+        version: 18.0.1
       eslint:
         specifier: 'catalog:'
         version: 10.10.0(jiti@2.7.0)(supports-color@10.2.2)
@@ -1471,7 +1471,7 @@ importers:
         version: 0.4.12(srvx@0.11.22)
       dotenv:
         specifier: 'catalog:'
-        version: 18.0.0
+        version: 18.0.1
       fake-indexeddb:
         specifier: 'catalog:'
         version: 6.2.5
@@ -9316,8 +9316,8 @@ packages:
     resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
     engines: {node: '>=12'}
 
-  dotenv@18.0.0:
-    resolution: {integrity: sha512-16YSUvsKtKbwrTbESvtTSZzzJUug6jdFdqiBFg9Q6Bk1JY9r0hAtrtTiWxdI9YrsgOTmkjZRdgU0n3LnwGpECw==}
+  dotenv@18.0.1:
+    resolution: {integrity: sha512-0eR4m4D/jH5eaI3evo2ZqqMii5mrTCR12v12VChdie6O1gPHs7XAjzTep0CWc1Bd+oNx3vVfbi734dK4zghigw==}
     engines: {node: '>=12'}
     hasBin: true
 
@@ -23427,7 +23427,7 @@ snapshots:
 
   dotenv@17.4.2: {}
 
-  dotenv@18.0.0: {}
+  dotenv@18.0.1: {}
 
   draco3d@1.5.7: {}
 
