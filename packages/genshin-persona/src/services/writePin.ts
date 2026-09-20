@@ -1,6 +1,8 @@
-import { PIN_PATH } from "#src/services/constants";
+import type { Nameplate } from "#src/models/Nameplate";
+
+import { PIN_PATH, STATE_FIELD_SEPARATOR } from "#src/services/constants";
 import { writeStateFile } from "#src/services/writeStateFile";
 
-export const writePin = (name: string): void => {
-  writeStateFile(PIN_PATH, name);
+export const writePin = ({ element, name }: Nameplate): void => {
+  writeStateFile(PIN_PATH, [name, element].join(STATE_FIELD_SEPARATOR));
 };

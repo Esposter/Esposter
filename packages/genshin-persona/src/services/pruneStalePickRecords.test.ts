@@ -7,6 +7,7 @@ import { describe, expect, test } from "vitest";
 const getIsoDate = (daysAfterEpoch: number) =>
   new Date(daysAfterEpoch * DAY_IN_MILLISECONDS).toISOString().slice(0, 10);
 const createRecord = (daysAfterEpoch: number): PickRecord => ({
+  element: "",
   isoDate: getIsoDate(daysAfterEpoch),
   name: "",
   sessionId: "",

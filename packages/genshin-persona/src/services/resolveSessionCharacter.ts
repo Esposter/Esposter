@@ -17,7 +17,7 @@ export const resolveSessionCharacter = (
 ): Character | undefined => {
   const pickRecords = pruneStalePickRecords(readPickRecords(), today.isoDate);
   const pin = readPin();
-  const pinnedCharacter = findCharacterByName(roster, pin);
+  const pinnedCharacter = findCharacterByName(roster, pin?.name ?? "");
   if (pinnedCharacter) {
     writePickRecords(pickRecords);
     return pinnedCharacter;
@@ -34,6 +34,9 @@ export const resolveSessionCharacter = (
   if (!pickedCharacter) return undefined;
 
   const otherRecords = pickRecords.filter((record) => record.sessionId !== sessionId);
-  writePickRecords([...otherRecords, { isoDate: today.isoDate, name: pickedCharacter.name, sessionId }]);
+  writePickRecords([
+    ...otherRecords,
+    { element: pickedCharacter.element, isoDate: today.isoDate, name: pickedCharacter.name, sessionId },
+  ]);
   return pickedCharacter;
 };

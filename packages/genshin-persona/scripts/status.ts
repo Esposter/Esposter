@@ -1,16 +1,22 @@
-import { NAMEPLATE_PREFIX } from "#src/services/constants";
+import { formatNameplate } from "#src/services/formatNameplate";
+import { getToday } from "#src/services/getToday";
 import { parseHookInput } from "#src/services/parseHookInput";
 import { readPickRecords } from "#src/services/readPickRecords";
 import { readPin } from "#src/services/readPin";
 import { readStdin } from "#src/services/readStdin";
 import { registerFailureFallback } from "#src/services/registerFailureFallback";
 
-// The status line redraws often, so this reads the two state files and never the game data: the name the
-// Session-start hook recorded is the whole answer
+// The status line redraws often, so this reads the two state files and never the game data: the pin, else the name
+// The session-start hook recorded. The tool also runs it once at session start, beside the hook that is still
+// Recording, so a fresh session's own record may not exist yet — every session started on one day meets the same
+// Character, so any record of today's stands in until it does
 registerFailureFallback(() => {});
+const today = getToday();
 const input = await readStdin();
 const { session_id: sessionId = "" } = parseHookInput(input);
-const pin = readPin();
-const sessionRecord = readPickRecords().find((record) => record.sessionId === sessionId);
-const name = pin || sessionRecord?.name || "";
-if (name) console.log(`${NAMEPLATE_PREFIX}${name}`);
+const pickRecords = readPickRecords();
+const nameplate =
+  readPin() ??
+  pickRecords.find((record) => record.sessionId === sessionId) ??
+  pickRecords.findLast((record) => record.isoDate === today.isoDate);
+if (nameplate) console.log(formatNameplate(nameplate));
