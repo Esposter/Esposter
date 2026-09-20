@@ -1,6 +1,6 @@
 ---
 name: today
-description: The card of the pinned character, else of a fresh pick. Reports a pin that names nobody in the roster; that pin is ignored.
+description: The card of this session's character; from a shell, of the pinned character, else of a fresh pick. Reports a pin that names nobody in the roster; that pin is ignored.
 disable-model-invocation: true
 ---
 

@@ -2,13 +2,11 @@ import type { Spinner } from "#src/models/Spinner";
 import type { UserSettings } from "#src/models/UserSettings";
 
 import { SpinnerVerbsMode } from "#src/models/SpinnerVerbsMode";
-import { TIPS_PATH } from "#src/services/constants";
 import { getSettingsWithSpinner } from "#src/services/getSettingsWithSpinner";
-import { toForwardSlashes } from "#src/util/toForwardSlashes";
 import { describe, expect, test } from "vitest";
 
 describe(getSettingsWithSpinner, () => {
-  const spinner: Spinner = { label: "label", tips: [], verbs: ["verb"] };
+  const spinner: Spinner = { label: "label", tips: [{ id: "id", text: "text" }], verbs: ["verb"] };
 
   test("replaces both spinner keys with the plugin's and keeps every other key", () => {
     expect.hasAssertions();
@@ -20,7 +18,7 @@ describe(getSettingsWithSpinner, () => {
 
     expect(getSettingsWithSpinner(settings, spinner)).toStrictEqual({
       model: "model",
-      spinnerTipsOverride: { excludeDefault: true, label: spinner.label, tipsFile: toForwardSlashes(TIPS_PATH) },
+      spinnerTipsOverride: { excludeDefault: true, label: spinner.label, tips: spinner.tips },
       spinnerVerbs: { mode: SpinnerVerbsMode.Replace, verbs: spinner.verbs },
     });
   });

@@ -1,6 +1,6 @@
 ---
 name: genshin
-description: Apply when the user asks who the session's Genshin character is, wants the roster, wants a character pinned or unpinned, wants spoken replies muted, unmuted, louder or softer, or wants the status line and spinner set up or removed. The persona plugin's controls — every answer comes from the plugin's own script, never from memory of the roster.
+description: Apply when the user asks who the session's Genshin character is, wants the roster, wants a character for this session or pinned for every session, wants a pin removed, wants spoken replies muted, unmuted, louder or softer, or wants the status line and spinner set up or removed. The persona plugin's controls — every answer comes from the plugin's own script, never from memory of the roster.
 user-invocable: false
 ---
 
@@ -16,6 +16,7 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" <verb> [name]
 | :--------------------------------------------------------------------- | :------------------ |
 | Who the character is, the card                                         | `today`             |
 | Every character there is                                               | `roster`            |
+| One character for this session alone                                   | `use <name>`        |
 | One character for every session                                        | `pin <name>`        |
 | The pick back                                                          | `unpin`             |
 | Replies silent, or speaking again                                      | `mute`, `unmute`    |
@@ -26,6 +27,6 @@ Each verb's skill, `skills/<verb>/SKILL.md`, states what it does; the script's o
 
 The authoring verbs — `uncarded`, `untipped` and `lines <name>` — are the `genshin-author` skill's.
 
-This skill never rewrites the card in context: a new pick or pin meets the conversation at the next session start.
+A card a verb prints is the session's card from the reply that relays it: `use`, `pin` and `unpin` switch the voice in the same reply, and only the spinner waits for the next session. A request for a character with no word on how long — "can you be Furina" — is `use`; `pin` is for a request that says every session.
 
 Answer in the character's voice as the output style asks, but relay the script's lines as written — a name, a title or a birthday is data, and a flourish added to one is an error waiting to be quoted back.

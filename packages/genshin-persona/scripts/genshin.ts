@@ -7,6 +7,7 @@ import { checkIsSpeechVolume } from "#src/services/checkIsSpeechVolume";
 import {
   CARD_DETAIL_SEPARATOR,
   MAX_SPEECH_VOLUME,
+  SESSION_ID_ENVIRONMENT_VARIABLE,
   SPEECH_ENDPOINT_ENVIRONMENT_VARIABLE,
   SPEECH_KEY_ENVIRONMENT_VARIABLE,
   SPEECH_VOLUME_LEVELS,
@@ -27,8 +28,11 @@ import { readRoster } from "#src/services/readRoster";
 import { readSpeechVoiceDefinitions } from "#src/services/readSpeechVoiceDefinitions";
 import { readUserSettings } from "#src/services/readUserSettings";
 import { readVoiceLines } from "#src/services/readVoiceLines";
+import { recordSessionCharacter } from "#src/services/recordSessionCharacter";
+import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
 import { setIsMuted } from "#src/services/setIsMuted";
 import { writePin } from "#src/services/writePin";
+import { writeSessionSpinner } from "#src/services/writeSessionSpinner";
 import { writeSpinner } from "#src/services/writeSpinner";
 import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
 import { writeUserSettings } from "#src/services/writeUserSettings";
@@ -42,18 +46,28 @@ const getRosterLine = ({ birthday, element, name: characterName, region, title, 
   [characterName, title, element, region, birthday, `v${version}`].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
 const compareVersionsDescending = (a: Character, b: Character) =>
   b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name);
+// Set in every Bash tool subprocess, so a verb the model runs knows the session it runs in; empty from a shell
+const sessionId = process.env[SESSION_ID_ENVIRONMENT_VARIABLE] ?? "";
 const printCard = async (character: Character) => {
   const card = getCard(character, today, await readPersonaCard(character.name));
   console.log(formatCard(card));
 };
-// The pin, else a fresh pick: what a session starting now would be given, short of a record it already holds — and
-// Under the lore pick a fresh ask may answer differently, which is the point of it
-const getCurrentCharacter = async () => {
+// This session's character when run inside one, else the pin, else a fresh pick: the resolution the start hook runs,
+// So `today` answers who is speaking now. Under the lore pick a fresh ask may answer differently, which is the point
+// Of it
+const getCurrentCharacter = () => {
   const pin = readPin();
-  const pinnedCharacter = findCharacterByName(roster, pin?.name ?? "");
-  if (pin && !pinnedCharacter) console.log(`The pin "${pin.name}" names no character in the roster and is ignored.`);
+  if (pin && !findCharacterByName(roster, pin.name))
+    console.log(`The pin "${pin.name}" names no character in the roster and is ignored.`);
 
-  return pinnedCharacter ?? (await pickCurrentCharacter(roster, today));
+  return resolveSessionCharacter(roster, sessionId, today);
+};
+// The session speaks as the character from the reply that relays the card: its record is rewritten so every later
+// Start, the status line and the speech hook agree, and the spinner follows where `setup` opted it in
+const switchSessionCharacter = async (character: Character) => {
+  recordSessionCharacter(character, sessionId, today.toString());
+  writeSessionSpinner(character, await readPersonaCard(character.name));
+  await printCard(character);
 };
 
 switch (verb) {
@@ -89,8 +103,16 @@ switch (verb) {
     }
 
     writePin(pinnedCharacter);
+    if (sessionId) {
+      await switchSessionCharacter(pinnedCharacter);
+      console.log(
+        "Pinned for every session from the next start, and for this one from this reply; the spinner follows at the next session.",
+      );
+      break;
+    }
+
     await printCard(pinnedCharacter);
-    console.log("Pinned for every session from the next start; the status line follows at once.");
+    console.log("Pinned for every session from the next start.");
     break;
   }
   case GenshinVerb.Roster:
@@ -110,7 +132,7 @@ switch (verb) {
     console.log(
       checkIsPluginStatusLine(settings.statusLine)
         ? "Status line and spinner written to user settings; both show from the next session."
-        : "Spinner written to user settings; the status line already there is not ours and was left alone.",
+        : "Spinner written to user settings, shown from the next session; the status line already there is not ours and was left alone.",
     );
     break;
   }
@@ -138,16 +160,46 @@ switch (verb) {
     setIsMuted(false);
     console.log("Spoken replies unmuted.");
     break;
-  case GenshinVerb.Unpin:
+  case GenshinVerb.Unpin: {
     deletePin();
-    console.log("Pin removed; the pick decides again from the next session.");
+    const character = sessionId ? await pickCurrentCharacter(roster, today) : undefined;
+    if (!character) {
+      console.log("Pin removed; the pick decides again from the next session.");
+      break;
+    }
+
+    await switchSessionCharacter(character);
+    console.log(
+      "Pin removed; the pick decides again from the next session, and for this one from this reply; the spinner follows at the next session.",
+    );
     break;
+  }
   case GenshinVerb.Untipped: {
     const cardedRoster = await readCardedRoster(roster);
     for (const { character } of cardedRoster
       .filter(({ personaCard }) => personaCard && (personaCard.tips.length === 0 || personaCard.verbs.length === 0))
       .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
       console.log(getRosterLine(character));
+    break;
+  }
+  case GenshinVerb.Use: {
+    const character = findCharacterByName(roster, name);
+    if (!character) {
+      console.error(`No character named "${name}" is in the roster.`);
+      process.exitCode = 1;
+      break;
+    }
+
+    if (!sessionId) {
+      console.error("No session to use a character in: this runs from inside a Claude Code session.");
+      process.exitCode = 1;
+      break;
+    }
+
+    await switchSessionCharacter(character);
+    console.log(
+      "Speaking as this character from this reply, in this session alone; the spinner follows at the next session.",
+    );
     break;
   }
   case GenshinVerb.Voices: {

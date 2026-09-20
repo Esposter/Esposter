@@ -1,9 +1,9 @@
 import type { StatusLine } from "#src/models/StatusLine";
 
 import { STATUS_LAUNCHER_PATH } from "#src/services/constants";
+import { toForwardSlashes } from "#src/util/toForwardSlashes";
 
-// Forward slashes so the command reads the same in every shell the status line may be run through
 export const getPluginStatusLine = (): StatusLine => ({
-  command: `node "${STATUS_LAUNCHER_PATH.replaceAll("\\", "/")}"`,
+  command: `node "${toForwardSlashes(STATUS_LAUNCHER_PATH)}"`,
   type: "command",
 });

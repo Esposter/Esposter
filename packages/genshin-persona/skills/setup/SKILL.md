@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Writes the status line and the spinner into user settings, the spinner under the current character's name.
+description: Writes the status line and the spinner into user settings, the spinner under this session's character's name.
 disable-model-invocation: true
 ---
 

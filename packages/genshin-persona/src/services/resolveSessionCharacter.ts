@@ -2,44 +2,26 @@ import type { Character } from "#src/models/Character";
 
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
-import { pruneStalePickRecords } from "#src/services/pruneStalePickRecords";
 import { readPickRecords } from "#src/services/readPickRecords";
 import { readPin } from "#src/services/readPin";
-import { writePickRecords } from "#src/services/writePickRecords";
+import { recordSessionCharacter } from "#src/services/recordSessionCharacter";
 
-// A pin wins outright, then the pick already recorded for this session, then a fresh pick — recorded against the
-// Session id so a clear, compact or resume after midnight keeps the character the conversation started with
+// The character this session already has wins outright — recorded against the session id so a clear, compact or
+// Resume after midnight keeps the character the conversation started with, and so a `use` or `pin` made inside it
+// Holds — then the pin decides what a new session is given, then a fresh pick; whichever it is, the session records
+// It. No session id means no session: what a session starting now would be given, recorded nowhere
 export const resolveSessionCharacter = async (
   roster: Character[],
   sessionId: string,
   today: Temporal.PlainDate,
 ): Promise<Character | undefined> => {
-  const pickRecords = pruneStalePickRecords(readPickRecords(), today.toString());
+  const sessionRecord = sessionId ? readPickRecords().find((record) => record.sessionId === sessionId) : undefined;
+  const knownCharacter = findCharacterByName(roster, sessionRecord?.name ?? "");
+  if (knownCharacter) return knownCharacter;
+
   const pin = readPin();
   const pinnedCharacter = findCharacterByName(roster, pin?.name ?? "");
-  if (pinnedCharacter) {
-    writePickRecords(pickRecords);
-    return pinnedCharacter;
-  }
-
-  const sessionRecord = pickRecords.find((record) => record.sessionId === sessionId);
-  const knownCharacter = findCharacterByName(roster, sessionRecord?.name ?? "");
-  if (knownCharacter) {
-    writePickRecords(pickRecords);
-    return knownCharacter;
-  }
-
-  const pickedCharacter = await pickCurrentCharacter(roster, today);
-  if (!pickedCharacter) return undefined;
-
-  // Read the file again rather than writing the snapshot above back over it: the pick waits on the network for as
-  // Long as the lore ceiling, and a session that started alongside this one records its own character in between
-  const otherRecords = pruneStalePickRecords(readPickRecords(), today.toString()).filter(
-    (record) => record.sessionId !== sessionId,
-  );
-  writePickRecords([
-    ...otherRecords,
-    { element: pickedCharacter.element, isoDate: today.toString(), name: pickedCharacter.name, sessionId },
-  ]);
-  return pickedCharacter;
+  const character = pinnedCharacter ?? (await pickCurrentCharacter(roster, today));
+  if (character && sessionId) recordSessionCharacter(character, sessionId, today.toString());
+  return character;
 };

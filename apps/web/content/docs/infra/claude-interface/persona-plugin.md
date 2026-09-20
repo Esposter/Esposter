@@ -69,8 +69,8 @@ With a [typed-decision](/docs/infra/typed-decisions) key in the plugin's options
 ```mermaid
 flowchart TD
     Start[Session start]
+    Known{Character already recorded<br/>for this session id?}
     Pinned{Pin file names<br/>a roster character?}
-    Known{Pick already recorded<br/>for this session id?}
     Key{Typed-decision key set?}
     Lore[One choice over the roster:<br/>the date, the moment, every character]
     Answered{Answered with<br/>a roster name?}
@@ -81,11 +81,11 @@ flowchart TD
     Record[Record the pick against the session id]
     Print[Print the card]
 
-    Start --> Pinned
-    Pinned -- yes --> Print
-    Pinned -- no --> Known
+    Start --> Known
     Known -- yes --> Print
-    Known -- no --> Key
+    Known -- no --> Pinned
+    Pinned -- yes --> Record
+    Pinned -- no --> Key
     Key -- yes --> Lore
     Key -- no --> Nearest
     Lore --> Answered
@@ -102,20 +102,44 @@ flowchart TD
 The edge cases, each decided and each covered by the pick's tests:
 
 - **Several share the nearest birthday.** The upcoming one wins over the one just passed, because anticipation reads better than aftermath. Among what is left the choice is seeded by the date through a small string hash, so it feels random day to day and is identical for every session started that day.
-- **The session crosses midnight.** The pick is recorded against the session id at startup and reused on every later start event — clear, compact, resume — so a compaction after midnight never swaps the character mid-conversation. Records older than a week are pruned on each start.
+- **The session crosses midnight.** Whatever the session is given — the pin's character or a pick — is recorded against the session id at startup and reused on every later start event — clear, compact, resume — so a compaction after midnight never swaps the character mid-conversation, and a pin set after the session started leaves it alone. Records older than a week are pruned whenever one is written.
 - **Year wrap and leap day.** Every month and day is measured as a day of one leap year, so late December and early January are neighbours and a 29 February is a day like any other.
 - **A character with no birthday** — the Traveler — is never picked by distance, and is the fallback card when the data cannot be read, because the one character who is the player is the right one to have when the data is gone.
 - **A pin names a character the roster does not hold.** The pin is ignored and the pick stands; the `today` command reports the stale pin.
-- **The tier cannot be reached, or answers a name that is not in the roster.** The birthday pick stands in for that session, and the next start asks again. The `today` command asks the same way, so under the lore pick it shows one answer the next session may not repeat.
+- **The tier cannot be reached, or answers a name that is not in the roster.** The birthday pick stands in for that session, and the next start asks again. The `today` command run from a shell asks the same way, so under the lore pick it shows one answer the next session may not repeat; run inside a session it shows that session's own record.
 - **The workspace is not installed** — a fresh clone before the first install — or **anything else fails.** A process-level handler registered before any work prints the Traveler card and exits zero. A session start is never blocked by its own decoration.
 
 The hook reads one package and one state directory under the user's Claude home: the pick records as tab-separated lines, a shape that cannot fail to parse, plus a pin file, a mute flag, a volume and the roster cached against the installed data package's version. Every write into that directory lands on a temp sibling and is renamed over its target, so a session killed part-way through leaves the previous file rather than half of this one. The cache is the file that needs it: the others are read a line and a field at a time and survive losing either, while half-written JSON would throw in every later session instead of being rebuilt. The one network call it may make is the lore pick's, and only with a key set.
 
 **Why a hook picks and not the model.** A skill the model chooses from would spend a decision every session on a question with a fixed answer. That is the [typed decisions](/docs/infra/typed-decisions) rule applied to the terminal: a nearest-birthday lookup is the cheapest tier there is, code, and where a judgement is wanted it goes to the typed-decision tier at each start, never to the session's own model.
 
+## Switching inside a session
+
+The session's record is the one source every reader trusts — the start hook on a clear, compact or resume, the status line, the speech hook — so changing a session's character is rewriting that record, and the tool makes the record reachable from inside the session: every Bash tool subprocess carries the session id in `CLAUDE_CODE_SESSION_ID`, the same id the hook input names. `use <name>` rewrites this session's record and nothing else; `pin <name>` writes the pin for every later session and rewrites this one's record too; `unpin` deletes the pin and gives this session a fresh pick. Each prints the card, and the card printed in the conversation is the one the model answers as from that reply on — the output style's standing rule. The status line and the voice follow on their next run; only the spinner waits for the next session, the tool's limit rather than the plugin's. A session that started before the pin keeps its own record, because its conversation started with that character.
+
+```mermaid
+flowchart LR
+    Verb["use, pin, unpin<br/>run by the model in the session"]
+    Env["CLAUDE_CODE_SESSION_ID"]
+    Record["This session's record<br/>in picks.tsv"]
+    Reply["The card in the reply<br/>the model answers as it"]
+    Line["Status line<br/>next redraw"]
+    Speech["Speech hook<br/>next reply"]
+    Spinner["Spinner<br/>the next session"]
+    Restart["Clear, compact, resume<br/>the start hook reads the record"]
+
+    Env --> Verb
+    Verb -->|rewrites| Record
+    Verb -->|prints| Reply
+    Record --> Line
+    Record --> Speech
+    Record --> Restart
+    Verb -->|rewrites where setup opted in| Spinner
+```
+
 ## The card is small, and authored last
 
-The card the hook prints is a name, title, element and region, the birthday note, and — when the character has one — the authored persona card: three speech habits, a greeting and a sign-off, about fifty tokens. A card is a typed module at `src/cards/<slug>.ts`, so its shape is checked where it is written: a card matched by string prefixes fails silently in every direction, and a key spelled one letter wrong reaches the model as a speech habit rather than as an error. It is printed as the hook's JSON form, so the whole card reaches the model as context while the terminal shows the person a welcome of three lines — and no token is spent twice.
+The card the hook prints is a name, title, element and region, the birthday note, and — when the character has one — the authored persona card: three speech habits, a greeting and a sign-off, about fifty tokens. A card is a typed module at `src/cards/<slug>.ts`, so its shape is checked where it is written: a card matched by string prefixes fails silently in every direction, and a key spelled one letter wrong reaches the model as a speech habit rather than as an error. It is printed as the hook's JSON form, so the whole card reaches the model as context while the terminal shows the person a welcome of three lines — and no token is spent twice. A card printed later in the conversation, by `use`, `pin` or `unpin`, replaces it from the reply that relays it, which is the output style's standing rule and the whole cost of switching mid-session.
 
 ```text
 ✦ Clorinde — Candlebearer, Shadowhunter · Electro · Fontaine
@@ -157,13 +181,13 @@ The card is the per-character half of the persona and the output style is the in
 
 ## The commands
 
-Every control is its own slash command — `/genshin-persona:today`, `roster`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup` and `teardown`, namespaced by the plugin's name — because a verb hidden inside one command's argument is invisible in the menu and a bare invocation of that command has no meaning. Each is a skill of a command and a relay rule that the user alone can invoke, so its description is read by a person browsing the menu and never loaded into the session. One more skill, `genshin`, is the model's and hidden from the menu: it carries the table of verbs, so a request put in words — who is this, louder, pin Furina — reaches the right one. Every command runs the plugin's own script and relays its lines, because the roster is game data nothing but the script has read, and the script's last line says when the change lands.
+Every control is its own slash command — `/genshin-persona:today`, `roster`, `use`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup` and `teardown`, namespaced by the plugin's name — because a verb hidden inside one command's argument is invisible in the menu and a bare invocation of that command has no meaning. Each is a skill of a command and a relay rule that the user alone can invoke, so its description is read by a person browsing the menu and never loaded into the session. One more skill, `genshin`, is the model's and hidden from the menu: it carries the table of verbs, so a request put in words — who is this, louder, be Furina — reaches the right one, and a request that says nothing about how long is `use`, never `pin`. Every command runs the plugin's own script and relays its lines, because the roster is game data nothing but the script has read, and the script's last line says when the change lands.
 
 ## The settings a plugin cannot ship
 
 A plugin's own settings file may set two keys, both about subagents, so the status line, the spinner verbs and the spinner tips are user settings. The `setup` command writes them and `teardown` removes exactly what `setup` wrote. The spinner keys are taken over outright — the built-in verbs and tips are replaced, not joined — while a status line that is not the plugin's is left alone, because replacing it would lose something the person wrote.
 
-The spinner follows the character. Its content has two layers of the same shape: the base Teyvat verbs and tips in `baseSpinnerContent.ts`, which every character shows, and the character's own `verbs` and `tips` on their card — read by a person, never by the model, so the card's fifty-token ceiling is untouched. The session-start hook resolves the character, computes the spinner, and rewrites the two settings keys and the tips file only when they would change, so on most days it writes nothing. Settings load before hooks run, so a change lands at the next session start, which is the same lag the pick itself carries and matters only on the first session of a day the character changed.
+The spinner follows the character. Its content has two layers of the same shape: the base Teyvat verbs and tips in `baseSpinnerContent.ts`, which every character shows, and the character's own `verbs` and `tips` on their card — read by a person, never by the model, so the card's fifty-token ceiling is untouched. The session-start hook resolves the character, computes the spinner, and rewrites the two settings keys only when they would change, so on most days it writes nothing; `use`, `pin` and `unpin` rewrite them the same way. The tool reads both spinner keys once per process — a settings file is watched and most edits reach the running session, but these two do not, checked by eye after a rewrite — so the spinner is the one surface a switch reaches at the next session rather than in the reply. The tips are inline in the setting rather than in a tips file because the file bought nothing: read once per process too, and one more state path to keep readable from every shell. The spinner is also one user setting shared by every running session, so two sessions speaking as different characters take turns owning it, last writer wins.
 
 The status line has one more problem to solve: an install lands under a directory named after its version, so a setting pointing straight at the plugin's script breaks on every update. The setting points instead at a launcher in the plugin's state directory, one import line, and the hook re-aims that launcher at the running install whenever it differs. An update is followed on the next session, with nothing for the person to repeat.
 
@@ -175,7 +199,6 @@ flowchart LR
     Hook["Session-start hook<br/>the session's character"]
     Content["baseSpinnerContent + the card<br/>verbs and tips, two layers"]
     Settings["User settings<br/>statusLine, spinnerVerbs, spinnerTipsOverride"]
-    Tips["State directory<br/>tips.json"]
     Launcher["State directory<br/>status.mjs, one import"]
     Install["The running install<br/>a directory per version"]
     Records["State directory<br/>picks.tsv, pin: name and element"]
@@ -187,16 +210,15 @@ flowchart LR
     Hook -->|re-aims every start| Launcher
     Content --> Hook
     Hook -->|rewrites when the character changed| Settings
-    Hook -->|rewrites when the character changed| Tips
+    Verb["use, pin, unpin"] -->|rewrites| Settings
     Launcher -->|imports| Install
     Settings -->|runs the launcher| Line
     Hook -->|records the session's pick| Records
-    Records -->|pin, the session's record, else the latest of today's| Line
-    Settings -->|names the file and the label| Spinner
-    Tips --> Spinner
+    Records -->|the session's record, the pin, else the latest of today's| Line
+    Settings -->|read once per process: the verbs, the tips and the label| Spinner
 ```
 
-The revisit trigger is the tool letting a plugin ship these keys, or choose a spinner per session: the base content then moves into the plugin's settings file, and the launcher, `setup` and `teardown` are deleted.
+The revisit trigger is the tool letting a plugin ship these keys, or choose a spinner per session: the base content then moves into the plugin's settings file, the launcher, `setup` and `teardown` are deleted, and two sessions stop sharing one spinner.
 
 ## Key files
 
@@ -209,15 +231,17 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 | `packages/genshin-persona/output-styles/traveler.md`               | The standing voice rules, forced on while the plugin is enabled                                        |
 | `packages/genshin-persona/scripts/pick.ts`                         | The session-start entrypoint: resolve the character, print the card, never fail                        |
 | `packages/genshin-persona/scripts/genshin.ts`                      | The commands' script: roster, today, pin, unpin, mute, unmute, volume, setup, teardown, and the queues |
-| `packages/genshin-persona/scripts/status.ts`                       | The status line: the pin, the session's record, else the latest of today's, from the state files       |
+| `packages/genshin-persona/scripts/status.ts`                       | The status line: the session's record, the pin, else the latest of today's, from the state files       |
 | `packages/genshin-persona/src/services/formatNameplate.ts`         | The name in its element's colour, plain where the element has none                                     |
 | `packages/genshin-persona/src/services/writeStatusLauncher.ts`     | The launcher the status line runs, re-aimed at the running install on every session start              |
 | `packages/genshin-persona/src/models/PersonaCard.ts`               | The card's shape, split by reader: habits for the model, verbs, tips and voice for the person          |
 | `packages/genshin-persona/src/services/getSpinner.ts`              | The base content with the character's own behind it, under the character's name                        |
-| `packages/genshin-persona/src/services/writeSpinner.ts`            | The two spinner settings and the tips file, written only when they would change                        |
+| `packages/genshin-persona/src/services/writeSpinner.ts`            | The two spinner settings, written only when they would change; the tool's watch does the rest          |
+| `packages/genshin-persona/src/services/writeSessionSpinner.ts`     | The spinner for a character, written only where `setup` opted the settings in                          |
 | `packages/genshin-persona/src/services/baseSpinnerContent.ts`      | The base Teyvat verbs and tips every character's spinner shows first                                   |
 | `packages/genshin-persona/src/services/pickCharacter.ts`           | The nearest-birthday pick and its two tie-breaks                                                       |
-| `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | Pin, then the session's record, then a fresh pick                                                      |
+| `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | The session's record, then the pin, then a fresh pick; whichever it is, the session records it         |
+| `packages/genshin-persona/src/services/recordSessionCharacter.ts`  | The one writer of a session's record, for the start hook and for `use`, `pin` and `unpin`              |
 | `packages/genshin-persona/src/services/pickCurrentCharacter.ts`    | The lore pick with a key, asked afresh each start, else the birthday pick                              |
 | `packages/genshin-persona/src/services/getLorePickRequest.ts`      | The one choice over the roster and the state it is asked over                                          |
 | `packages/genshin-persona/src/services/getSsml.ts`                 | The utterance as the speech service reads it, the volume wrapped in only when one was set              |
@@ -232,3 +256,4 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 - Markdown files, a few scripts of a few dozen lines, and Renovate-owned dependencies in a workspace that already has hundreds; that is the whole maintenance surface.
 - `mute` and `unmute` decide whether the Stop hook calls the speech service at all, and `volume` shapes the voice through the speech markup's own levels, from `silent` to `x-loud` or a number of its scale, at no change to the call.
 - The status line reads the pick records and the pin, never the game data, so it stays cheap to redraw; the element rides on those records so the colour costs no lookup.
+- `use` is the session-scoped switch and `pin` the global one; both take effect in the reply that runs them, and the spinner is the one surface that waits for the next session — read once per process, and one setting for every running session.

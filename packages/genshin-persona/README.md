@@ -49,7 +49,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | :----------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `hooks/hooks.json`                   | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply.                       |
 | `output-styles/traveler.md`          | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                                                 |
-| `skills/<verb>/SKILL.md`             | One slash command per verb — `/genshin-persona:today`, `roster`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.                        |
+| `skills/<verb>/SKILL.md`             | One slash command per verb — `/genshin-persona:today`, `roster`, `use`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.                 |
 | `skills/genshin/SKILL.md`            | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                             |
 | `skills/genshin-author/SKILL.md`     | How a persona card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                                           |
 | `src/cards/`                         | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, the voice that reads them, and their spinner verbs and tips for you. |
@@ -67,11 +67,21 @@ node "<plugin root>/scripts/genshin.ts" teardown
 
 The status line prints the session's character in their element's colour, from the plugin's state files alone, and shows from the first frame of every session but the first of a day. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat.
 
-The spinner replaces the built-in verbs and tips with Teyvat's — the base list in `baseSpinnerContent.ts` — and, behind them, the session's character's own verbs and tips from their card, labelled with the character's name. The session-start hook rewrites the two settings and the tips file whenever the character changes, so the spinner follows the calendar like everything else. A status line that is not the plugin's is left alone.
+The spinner replaces the built-in verbs and tips with Teyvat's — the base list in `baseSpinnerContent.ts` — and, behind them, the session's character's own verbs and tips from their card, labelled with the character's name. The session-start hook rewrites the two settings whenever the character changes, and so do `use`, `pin` and `unpin`; Claude Code reads the spinner keys once per process, so a rewrite shows from the next session. A status line that is not the plugin's is left alone.
 
 ### How the character is picked
 
 Every playable character comes from the game-data dependency — no generated roster, so a new patch is one dependency bump. Loading that dependency is the whole cost of a start, so the roster is cached against its installed version and a bump invalidates the cache by itself. Without a TypeSafe key the character is whoever's birthday is nearest to today by circular distance over the year; a tie goes to the upcoming birthday, then to a choice seeded by the date, so every session started that day agrees. With one, a single typed decision picks from the whole roster at every session start — cheap enough to ask each time, and a little variety between sessions is the point — one attempt with a short ceiling, and anything short of an answer falls back to the birthday pick. The pick is recorded against the session id, so a clear, compact or resume after midnight keeps the character the conversation started with. The Traveler, who has no birthday, is never picked by distance and is the card printed when the data cannot be read.
+
+### Switching mid-session
+
+`use <name>` makes this session speak as one character from that reply on, and nothing else changes; `pin <name>` fixes one for every session from the next start and this one at once; `unpin` hands both back to the pick:
+
+```bash
+node "<plugin root>/scripts/genshin.ts" use furina      # or: /genshin-persona:use furina
+```
+
+The command reads the session id Claude Code sets in every Bash subprocess and rewrites that session's record, which the status line, the speech hook and every later clear, compact or resume read; the card it prints is the one the model answers as from that reply. The spinner alone waits for the next session, because Claude Code reads its keys once per process. A session that started before a pin keeps its own character.
 
 ### Spoken replies
 

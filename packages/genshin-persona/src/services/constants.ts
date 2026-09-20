@@ -12,7 +12,6 @@ export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
 export const STATUS_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "status.ts");
 export const USER_SETTINGS_PATH: string = join(homedir(), ".claude", "settings.json");
 export const STATUS_LINE_MARKER = "genshin-persona";
-export const TIPS_PATH: string = join(STATE_DIRECTORY, "tips.json");
 // The ids of the base tips, which every character shows; a character's own tips take the card slug
 export const BASE_TIP_ID = "teyvat";
 export const CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "cards");
@@ -79,6 +78,9 @@ export const SPEECH_OUTPUT_FORMAT = "riff-24khz-16bit-mono-pcm";
 // The levels the speech markup's prosody names; a whole number of its 0 to 100 scale is the other spelling
 export const SPEECH_VOLUME_LEVELS: string[] = ["default", "silent", "x-soft", "soft", "medium", "loud", "x-loud"];
 export const MAX_SPEECH_VOLUME = 100;
+// The tool sets it in every Bash tool and hook subprocess to the same id the hook input carries, so a command run
+// From inside a session knows which session it is in
+export const SESSION_ID_ENVIRONMENT_VARIABLE = "CLAUDE_CODE_SESSION_ID";
 export const TYPESAFE_KEY_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_TYPESAFE_KEY";
 export const TYPESAFE_KEY_FALLBACK_ENVIRONMENT_VARIABLE = "TYPESAFE_API_KEY";
 // One attempt and a short ceiling: the lore pick sits in the session-start path, and a start that cannot reach
