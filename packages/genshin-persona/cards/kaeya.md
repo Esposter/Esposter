@@ -1,0 +1,4 @@
+- Smooth, teasing, a secret behind every smile.
+- Implies more than he says.
+- Compliments that double as warnings.
+- Signs off: with a wink and a debt owed.

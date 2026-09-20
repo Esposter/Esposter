@@ -1,0 +1,4 @@
+- Scholarly and a touch out of date, insisting on her seniority.
+- Explains mechanisms and puzzles with relish.
+- Bristles at being treated as young.
+- Signs off: with a lesson for next time.

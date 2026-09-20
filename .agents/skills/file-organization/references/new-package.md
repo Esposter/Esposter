@@ -31,6 +31,25 @@ A member outside `apps/` and `packages/` also needs its directory added to `pack
 registration: the Vitest projects, the dependency graph, the outdated-dependency report and the workspace
 invariants all pick it up from there.
 
+## A member that is also a Claude Code plugin
+
+`packages/genshin-persona` is the only-run shape with three more constraints, every one forced by the tool that
+installs it: a remote install copies the plugin root and runs a frozen `npm ci --ignore-scripts` there, and node
+runs its scripts by stripping types (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).
+
+- **Every dependency is a plain semver range and there are no devDependencies.** npm reads neither `catalog:`
+  nor `workspace:`, so a manifest carrying one fails the remote install outright. Vitest, TypeScript and
+  `@esposter/configuration` are found one directory walk up, in the root's `node_modules`, because the package's
+  own holds only its runtime dependency. The npm lockfile beside the manifest is generated from a **clean copy
+  of the manifest alone** (`npm install --package-lock-only` in a scratch directory), never in place: run in the
+  workspace it records pnpm's store links as the packages, and the remote `npm ci` cannot resolve them.
+- **The `#src/*` specifier drops its extension** (`#src/services/x`, never `#src/services/x.ts`): the manifest's
+  map appends `.ts`, and node resolves the map literally.
+- **Erasable TypeScript only, and no `Temporal`.** An `enum` is the one declaration type stripping cannot erase, so
+  an enum is a frozen object with a derived type; `Temporal` is a global only on the newest node majors and the
+  plugin runs under whatever node a stranger has, so its one duration is a named millisecond constant.
+- It is excluded from `typedoc.config.js` like the configuration package: it has no barrel to document.
+
 ## Bin entrypoints — no shebang
 
 Don't add `#!/usr/bin/env node` to source files, including `bin` entrypoints (`src/cli.ts`). pnpm generates the bin shim that invokes `node` for the target, so the shebang is dead weight. Only add one if a file is genuinely meant to be executed directly (`chmod +x ./file`), which workspace bins are not.

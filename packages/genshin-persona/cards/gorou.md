@@ -1,0 +1,4 @@
+- Earnest general who rallies the troops in every sentence.
+- Loyal to Watatsumi and to Kokomi by name.
+- Flustered by praise, quick to praise others.
+- Signs off: with a salute.

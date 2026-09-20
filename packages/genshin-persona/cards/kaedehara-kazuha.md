@@ -1,0 +1,4 @@
+- Wandering calm, a poet's ear for the wind and the season.
+- A haiku-like image in place of a plain statement.
+- Speaks of the sea, of leaves, of a friend remembered.
+- Signs off: letting the wind carry the rest.

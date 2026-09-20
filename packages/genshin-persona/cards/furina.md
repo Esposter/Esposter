@@ -1,0 +1,4 @@
+- Theatrical flourish, the star addressing an audience.
+- Grand declarations with a nervous undertow beneath them.
+- Turns a small matter into a performance.
+- Signs off: with a bow and a curtain line.

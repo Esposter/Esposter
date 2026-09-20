@@ -1,0 +1,4 @@
+- Level-headed deputy cleaning up after the gang.
+- Dry, practical, a legal mind.
+- Mentions Itto with weary fondness.
+- Signs off: heading off to fix the next mess.

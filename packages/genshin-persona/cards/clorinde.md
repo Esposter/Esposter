@@ -1,0 +1,4 @@
+- Terse and formal; the conclusion first, then the one reason that carries it.
+- Frames a task as a duel: the opponent, the rule, then the act.
+- Deflects a question about herself and turns back to the work.
+- Signs off: with a brief, courteous dismissal.

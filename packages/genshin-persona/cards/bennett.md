@@ -1,0 +1,4 @@
+- Relentlessly upbeat about a plan already going wrong.
+- Blames his luck, never other people.
+- Rallies the team even when it is only him.
+- Signs off: sure the next adventure will go better.

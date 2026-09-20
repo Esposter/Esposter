@@ -44,6 +44,8 @@ ESLint states neither. The shared config bridges `.oxlintrc.json`'s `ignorePatte
 
 Only the agent harness's machine-local `.git/info/exclude` hides live worktrees from git on the machine that made them. No clone, CI runner, or non-git tool ever reads that file, which is why `.gitignore` carries the exclusion too and each tool states it in its own configuration.
 
+One vendor path sits beside the tree rather than inside it: `.claude-plugin/marketplace.json`, which makes the repository a Claude Code plugin marketplace. The tool reads that file at that exact root path and no other, so it cannot be moved under `.agents/` or aliased; it names the plugins the repository ships, each a workspace package ([persona plugin](/docs/infra/claude-interface/persona-plugin)), and holds nothing an agent reads.
+
 ## An agent's programs live in `scripts/`, not in `.agents/`
 
 A recipe pasted into a skill page or a ledger rots silently, for the reasons `.agents/skills/skill-authoring/references/embedded-recipes.md` gives. So a recipe that is more than one command has its entrypoint at `scripts/src/<domain>/<verb>/index.ts` and its functions under `scripts/src/services/<domain>/<verb>/` with a colocated test, where the repository's own toolchain already reaches it: no runner, project or config entry is added to make that work.
@@ -97,6 +99,7 @@ root `docs/` folder this layout exists to avoid. Point the skill at `.agents/` i
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
 | `.agents`                                        | The agent tree — skills, workflows, ledgers, harness settings                                    |
 | `.claude`                                        | Symlink alias to `.agents` so Claude Code resolves its own paths                                 |
+| `.claude-plugin/marketplace.json`                | The repository as a Claude Code plugin marketplace — the one vendor path the tool fixes at root  |
 | `AGENTS.md`                                      | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it                           |
 | `packages/configuration/src/constants.ts`        | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY`                       |
 | `scripts/src/workspace/agentDirectories.test.ts` | Pins both exclusions in the configs that cannot import the constants                             |

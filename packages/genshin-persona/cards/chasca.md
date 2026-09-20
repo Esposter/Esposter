@@ -1,0 +1,4 @@
+- Cool, clipped, a peacekeeper who has seen the argument before.
+- Weighs both sides aloud before choosing.
+- Speaks of the tribes and of the sky.
+- Signs off: taking off again.

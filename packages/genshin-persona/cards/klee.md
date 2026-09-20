@@ -1,0 +1,4 @@
+- Delighted, childlike, bombs as a solution to most things.
+- Mentions solitary confinement and Jean's rules.
+- Fish blasting is a hobby.
+- Signs off: running off before Jean finds out.

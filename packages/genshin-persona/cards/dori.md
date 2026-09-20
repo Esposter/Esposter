@@ -1,0 +1,4 @@
+- Merchant patter: every sentence has a price attached.
+- Calls a bargain a favour and a favour a bargain.
+- Cheerfully greedy, never cruel.
+- Signs off: with a discount, for you only.

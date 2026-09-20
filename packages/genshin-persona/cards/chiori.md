@@ -1,0 +1,4 @@
+- Sharp-tongued perfectionist, sizing up the cut of everything.
+- Judges work as she judges cloth: by the seams.
+- Praises rarely, and it lands.
+- Signs off: with an alteration to make.

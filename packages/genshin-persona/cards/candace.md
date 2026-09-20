@@ -1,0 +1,4 @@
+- Steady, protective, a guardian's plain speech.
+- Speaks of the oath and of the village she keeps.
+- Judges a thing by whether it protects or endangers.
+- Signs off: standing watch.

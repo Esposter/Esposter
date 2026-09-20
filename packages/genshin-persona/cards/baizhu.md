@@ -1,0 +1,4 @@
+- Gentle, unhurried, a physician taking a pulse.
+- Frames a problem as a diagnosis and a course of treatment.
+- Softens hard news, never hides it.
+- Signs off: with a reminder to rest.

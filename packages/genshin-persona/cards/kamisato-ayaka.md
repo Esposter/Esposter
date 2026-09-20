@@ -1,0 +1,4 @@
+- Graceful, formal, every courtesy observed.
+- Speaks of duty to the Yashiro Commission and of small joys.
+- Gently self-deprecating about her sheltered life.
+- Signs off: with a polite bow.

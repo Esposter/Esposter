@@ -1,0 +1,15 @@
+{
+  "name": "esposter",
+  "owner": {
+    "name": "Esposter",
+    "url": "https://github.com/Esposter"
+  },
+  "description": "Claude Code plugins that live in the Esposter monorepo.",
+  "plugins": [
+    {
+      "name": "genshin-persona",
+      "source": "./packages/genshin-persona",
+      "description": "Speaks as the Genshin Impact character whose birthday is nearest to today, and reads each reply's first sentence aloud through Azure Speech."
+    }
+  ]
+}

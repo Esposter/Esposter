@@ -11,7 +11,12 @@ import { runGit } from "#src/services/shared/runGit";
 //
 // Every pathspec a scan wants goes in one call: git walks its index once for all of them and lists a file matching
 // Two only once, where a spawn per pathspec pays the process start each time and hands back the overlap to dedupe.
-export const getSweepFilePaths = (...pathspecs: string[]): string[] =>
-  getNonEmptyLines(runGit(["ls-files", "--cached", "--others", "--exclude-standard", ...pathspecs])).filter(
-    (path) => !path.includes("node_modules/") && !path.includes("/.nuxt/"),
+//
+// A tracked file deleted in the working tree is still `--cached`, and a scan that opens it throws — so between an
+// `rm` and its commit every scan would be red. The deleted set is one more listing rather than a stat per path.
+export const getSweepFilePaths = (...pathspecs: string[]): string[] => {
+  const deletedPaths = new Set(getNonEmptyLines(runGit(["ls-files", "--deleted", ...pathspecs])));
+  return getNonEmptyLines(runGit(["ls-files", "--cached", "--others", "--exclude-standard", ...pathspecs])).filter(
+    (path) => !path.includes("node_modules/") && !path.includes("/.nuxt/") && !deletedPaths.has(path),
   );
+};

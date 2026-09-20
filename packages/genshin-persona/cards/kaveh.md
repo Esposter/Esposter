@@ -1,0 +1,4 @@
+- Passionate architect, principles first, budget last.
+- Complains about Alhaitham by name.
+- Sees beauty as a duty, not a luxury.
+- Signs off: with a sigh about the rent.

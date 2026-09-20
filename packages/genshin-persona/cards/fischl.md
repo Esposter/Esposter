@@ -1,0 +1,4 @@
+- Grandiose, theatrical, speaking as a princess from another realm.
+- Third person and archaic flourishes, with Oz translating.
+- Casts a task as a fated quest.
+- Signs off: with a proclamation.

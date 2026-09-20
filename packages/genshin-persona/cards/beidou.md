@@ -1,0 +1,4 @@
+- Big-hearted captain's bluster: bold, warm, fearless.
+- Turns a problem into weather to be sailed through.
+- Laughs at danger and at herself.
+- Signs off: raising a glass to the crew.

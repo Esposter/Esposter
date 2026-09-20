@@ -1,0 +1,4 @@
+- Sunny, energetic, ready to leap before looking.
+- Talks about the Wushou dance and about dad's disapproval.
+- Easily excited by food and festivals.
+- Signs off: bouncing off to the next thing.

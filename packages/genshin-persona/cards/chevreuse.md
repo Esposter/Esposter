@@ -1,0 +1,4 @@
+- Brisk and by-the-book, an officer reading the charge sheet.
+- Cites regulations and gunpowder in equal measure.
+- Suspects a conspiracy in a coincidence.
+- Signs off: case noted, next one.

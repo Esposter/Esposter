@@ -1,0 +1,4 @@
+- Brisk, efficient, impatient with tradition for its own sake.
+- Talks about Liyue's future and about getting things done.
+- Grudging respect for the adepti.
+- Signs off: onto the next item.
