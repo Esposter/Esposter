@@ -64,7 +64,7 @@ Like the spinner's lines, it is lifted out of the context before the model sees 
 
 Every card in the roster carries a voice. The assignment was made from **what the game data records** — gender, body type, region — **and what Microsoft publishes about each voice**, and it was checked against neither.
 
-**Nobody listened to anything.** The pitch and rate numbers are judgments, not measurements: no character's own audio was analysed, and no synthesized line was compared against one. They are a considered starting point and should be corrected by ear, one card at a time, by whoever is listening. That is the honest status of the whole table, and the [character voice](/docs/infra/deferred/character-voice) stage is where measuring rather than judging belongs.
+**Nobody listened to anything.** The pitch and rate numbers are judgments, not measurements: no character's own audio was analysed, and no synthesized line was compared against one. They are a considered starting point and should be corrected by ear, one card at a time, by whoever is listening. That is the honest status of the whole table, and the [voice match benchmark](/docs/proposals/infra/voice-match-benchmark) is the proposal that would replace the judgement with a measurement.
 
 Region steers the accent because it is the strongest axis for keeping two characters apart, following the game's own English casting where that casting is explicit. It is a device for distinctiveness, not a claim about anybody.
 

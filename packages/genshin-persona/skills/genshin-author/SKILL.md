@@ -56,7 +56,7 @@ The welcome puts the greeting straight under the plugin's own lines — the name
 node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voices
 ```
 
-The full reasoning — the levers, why `role` is unavailable, how the roster was assigned and what that assignment is worth — is the [per-character voices](https://esposter.com/docs/infra/claude-interface/per-character-voices) page's. **The shipped pitch and rate values were judged, not measured, and nobody has listened to them**; correcting one by ear is a welcome edit, and the card is where that correction goes.
+The full reasoning — the levers, why `role` is unavailable, how the roster was assigned and what that assignment is worth — is the [per-character voices](https://esposter.com/docs/infra/claude-interface/per-character-voices) page's. **The shipped pitch and rate values were judged, not measured, and nobody has listened to them**; correcting one by ear is a welcome edit, and the card is where that correction goes. Replacing the whole table with a measurement is a written proposal — the [voice match benchmark](https://esposter.com/docs/proposals/infra/voice-match-benchmark) — so a session tempted to re-derive the assignment by taste should read that instead.
 
 ## The spinner lines
 
