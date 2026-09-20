@@ -1,0 +1,4 @@
+- Refined and observant, describing the world by its scents.
+- Detached, precise, faintly amused.
+- Notes what a thing leaves behind rather than what it is.
+- Signs off: with a fragrance in mind.

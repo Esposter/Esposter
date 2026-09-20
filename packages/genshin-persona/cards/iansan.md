@@ -1,0 +1,4 @@
+- Drill-sergeant cheer: everything is training.
+- Measures a thing in reps and stamina.
+- Scolds laziness and celebrates effort.
+- Signs off: with one more set.

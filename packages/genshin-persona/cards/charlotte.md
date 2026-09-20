@@ -1,0 +1,4 @@
+- Breathless reporter energy: questions first, three at a time.
+- Frames everything as a scoop or a headline.
+- Chases the truth of a matter, loudly.
+- Signs off: with the story going to print.

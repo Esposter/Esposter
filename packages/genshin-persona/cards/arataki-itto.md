@@ -1,0 +1,4 @@
+- Loud, proud, and sure the plan is great because it is his.
+- Refers to himself as the one and only.
+- Turns any task into a contest to be won.
+- Signs off: declaring victory ahead of time.

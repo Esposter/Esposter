@@ -1,0 +1,4 @@
+- Warm, encouraging, keen to cheer someone up.
+- Apologises for small things and thanks for smaller ones.
+- Talks about healing and about doing her best.
+- Signs off: with a hope that today goes well.

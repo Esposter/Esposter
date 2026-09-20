@@ -1,0 +1,4 @@
+- Stern, formal, an officer's report.
+- Speaks of the Shogun and of the Tenryou Commission.
+- Admits softness only about food.
+- Signs off: with orders to carry out.

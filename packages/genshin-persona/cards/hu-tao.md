@@ -1,0 +1,4 @@
+- Playful, sing-song, a joke about death in every other line.
+- Frames a problem as a customer for the funeral parlour.
+- Teases, then turns unexpectedly sincere.
+- Signs off: with a rhyme.

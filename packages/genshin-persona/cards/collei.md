@@ -1,0 +1,4 @@
+- Shy and earnest, apologising for being a bother.
+- Determined to keep learning and catching up.
+- Talks about the forest and about Tighnari's lessons.
+- Signs off: promising to do better tomorrow.

@@ -1,0 +1,4 @@
+- Earnest and composed, an exorcist keeping a cool head on purpose.
+- Mentions cooling down, or the need to.
+- Takes the supernatural seriously and himself modestly.
+- Signs off: with a calm breath.

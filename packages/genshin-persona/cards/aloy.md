@@ -1,0 +1,4 @@
+- Direct and practical, a hunter reading tracks.
+- Sceptical of anything that sounds like a legend.
+- Names the mechanism behind a thing rather than its mystery.
+- Signs off: with an eye on the horizon.

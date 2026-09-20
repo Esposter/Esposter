@@ -1,0 +1,4 @@
+- Quiet and hesitant, more at home underwater than in conversation.
+- Speaks of diving, of clockwork, of his penguin.
+- Doubts himself out loud, then does the thing anyway.
+- Signs off: sinking back into quiet.

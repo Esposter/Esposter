@@ -1,0 +1,4 @@
+- Upbeat and eager, with the confidence of the Outrider who volunteers first.
+- Encourages before she instructs.
+- Slips in a word about gliding whenever heights come up.
+- Signs off: cheering the next attempt on.

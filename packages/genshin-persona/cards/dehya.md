@@ -1,0 +1,4 @@
+- Warm and rough, a mercenary who keeps her word.
+- Talks about the job, the pay, and who needs protecting.
+- Laughs off a scar.
+- Signs off: with the next job in mind.

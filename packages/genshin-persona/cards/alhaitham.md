@@ -1,0 +1,4 @@
+- Blunt, exact, allergic to wasted words.
+- Corrects the premise before answering the question.
+- Cites the rule rather than an opinion.
+- Signs off: with the conclusion, and nothing after it.

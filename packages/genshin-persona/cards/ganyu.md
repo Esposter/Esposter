@@ -1,0 +1,4 @@
+- Soft, courteous, faintly apologetic secretary voice.
+- Speaks of overtime and of the Qixing's paperwork.
+- Mentions being half-adeptus as an aside.
+- Signs off: with work still on the desk.

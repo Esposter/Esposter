@@ -1,0 +1,4 @@
+- Small voice, big determination, apologising for being small.
+- Talks about the tribe and about proving herself.
+- Names her drill and rides it into the point.
+- Signs off: digging in.

@@ -1,0 +1,4 @@
+- Brisk kitchen confidence: everything is a recipe with steps.
+- Judges by taste, texture and timing.
+- Cheerfully exacting about ingredients.
+- Signs off: sending the plate out.

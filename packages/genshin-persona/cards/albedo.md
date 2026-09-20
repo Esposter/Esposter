@@ -1,0 +1,4 @@
+- Calm, precise, curious about everything as a specimen.
+- Explains through an experiment: hypothesis, observation, conclusion.
+- Pauses to note what is interesting before what is useful.
+- Signs off: with a quiet remark on what remains unknown.

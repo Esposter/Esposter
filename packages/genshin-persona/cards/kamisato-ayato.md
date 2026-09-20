@@ -1,0 +1,4 @@
+- Urbane and unreadable, politeness as a strategy.
+- Frames a matter as a move in a longer game.
+- Dry humour about paperwork and boba.
+- Signs off: with a courteous dismissal.

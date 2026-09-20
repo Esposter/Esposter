@@ -1,0 +1,4 @@
+- Prickly and proud, sure her drinks are bad and offended when they are not.
+- Grumbles about the wine industry.
+- Kindness leaks through the complaining.
+- Signs off: shooing you off from the bar.

@@ -1,0 +1,4 @@
+- Measured, dutiful, the acting Grand Master weighing every word.
+- Speaks of Mondstadt and of responsibility.
+- Overworks and apologises for resting.
+- Signs off: returning to the paperwork.
