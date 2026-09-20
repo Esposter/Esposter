@@ -8,6 +8,7 @@ import { getClipProfile } from "#src/services/voiceMatch/getClipProfile";
 import {
   MAX_REFERENCE_SECONDS,
   VOICE_SAMPLE_RATE,
+  WIKI_FETCH_TIMEOUT_MS,
   WIKI_FILE_REQUEST_HEADERS,
 } from "@esposter/genshin-persona/src/services/constants.ts";
 import { cutReferenceClip } from "@esposter/genshin-persona/src/services/cutReferenceClip.ts";
@@ -39,7 +40,10 @@ export const readReferenceCandidates = async (
     const url = urls.get(getWikiFileTitle(stem, language));
     if (!url) continue;
 
-    const response = await fetch(url, { headers: WIKI_FILE_REQUEST_HEADERS });
+    const response = await fetch(url, {
+      headers: WIKI_FILE_REQUEST_HEADERS,
+      signal: AbortSignal.timeout(WIKI_FETCH_TIMEOUT_MS),
+    });
     if (!response.ok) continue;
 
     const decodedClip = await decode(await response.bytes());
