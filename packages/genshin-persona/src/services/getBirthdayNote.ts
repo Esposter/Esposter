@@ -18,5 +18,5 @@ export const getBirthdayNote = (birthday: string, today: MonthDay): string => {
 
   const daysAhead = getDaysUntil(today, birthdayMonthDay);
   const daysBehind = getDaysUntil(birthdayMonthDay, today);
-  return `[birthday ${formatMonthDay(birthdayMonthDay)}, ${getDistance(daysAhead, daysBehind)}]`;
+  return `[Birthday: ${formatMonthDay(birthdayMonthDay)}, ${getDistance(daysAhead, daysBehind)}]`;
 };

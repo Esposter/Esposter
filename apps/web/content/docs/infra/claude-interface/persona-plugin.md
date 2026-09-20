@@ -57,7 +57,7 @@ A character with no card is fully usable — the data alone is a persona — whi
 
 ## How a session gets its character
 
-The pick is **whoever's birthday is nearest to today**, so the character changes with the calendar rather than by a counter, and the card can say why — a bracketed note under the name, "[birthday 20 September, today]" or "[birthday 23 September, in 3 days]" — a line of context that is true today and false next week.
+The pick is **whoever's birthday is nearest to today**, so the character changes with the calendar rather than by a counter, and the card can say why — a bracketed note under the name, "[Birthday: 20 September, today]" or "[Birthday: 23 September, in 3 days]" — a line of context that is true today and false next week.
 
 ```mermaid
 flowchart TD
@@ -103,7 +103,7 @@ The card the hook prints is a name, title, element and region, the birthday note
 
 ```text
 ✦ Clorinde — Candlebearer, Shadowhunter · Electro · Fontaine
-[birthday 20 September, today]
+[Birthday: 20 September, today]
 State your dispute. Spare the details.
 ```
 
