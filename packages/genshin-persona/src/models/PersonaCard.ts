@@ -1,9 +1,8 @@
-import type { SpinnerContent } from "#src/models/SpinnerContent";
-
 // An authored card, split by who reads it. The habits, the greeting and the sign-off are the model's, and their
-// Ceiling is about fifty tokens; the tips, the verbs and the reference are read by a person only and never reach
-// The model, so they cost no context at all
-export interface PersonaCard extends SpinnerContent {
+// Ceiling is about fifty tokens; the verbs and the reference are read by a person only and never reach the
+// Model, so they cost no context at all. The card holds no lines: the spinner reads the character's own off the
+// Game data
+export interface PersonaCard {
   // The one line a card performs rather than describes: hello, as the character would say it to the person
   greeting: string;
   // Three sentence fragments a model can apply to its own wording — a register, a recurring device, a verbal tic
@@ -15,4 +14,6 @@ export interface PersonaCard extends SpinnerContent {
   reference?: string;
   // The closing turn of phrase
   signOff: string;
+  // Gerunds the spinner shows behind the base Teyvat ones while a turn runs
+  verbs: string[];
 }

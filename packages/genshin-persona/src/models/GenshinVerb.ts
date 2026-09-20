@@ -11,7 +11,7 @@ export const GenshinVerb = {
   Uncarded: "uncarded",
   Unmute: "unmute",
   Unpin: "unpin",
-  Untipped: "untipped",
+  Unverbed: "unverbed",
   Use: "use",
   Voice: "voice",
   Volume: "volume",

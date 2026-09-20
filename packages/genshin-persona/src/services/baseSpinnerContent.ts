@@ -1,7 +1,7 @@
 import type { SpinnerContent } from "#src/models/SpinnerContent";
 
 // The base the spinner shows for every character: the verbs ahead of the character's own, the tips only for a
-// Character whose card has none. A tip here is nobody's line, shown under the tool's own "Tip" prefix rather than
+// Character with no lines yet. A tip here is nobody's line, shown under the tool's own "Tip" prefix rather than
 // A character's name
 export const BASE_SPINNER_CONTENT: SpinnerContent = {
   tips: [

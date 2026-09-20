@@ -26,7 +26,7 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" <verb> [name]
 
 Each verb's skill, `skills/<verb>/SKILL.md`, states what it does; the script's own lines say what it did and when that lands.
 
-The authoring verbs — `uncarded`, `untipped` and `lines <name>` — are the `genshin-author` skill's.
+The authoring verbs — `uncarded`, `unverbed` and `lines <name>` — are the `genshin-author` skill's.
 
 A card a verb prints is the session's card from the reply that relays it: `use`, `pin` and `unpin` switch the voice in the same reply, and only the spinner waits for the next session. A request for a character with no word on how long — "can you be Furina" — is `use`; `pin` is for a request that says every session.
 

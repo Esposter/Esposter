@@ -8,28 +8,17 @@ import { describe, expect, test } from "vitest";
 describe(getSpinner, () => {
   const name = "Hu Tao";
   const base: SpinnerContent = { tips: ["baseTip"], verbs: ["baseVerb"] };
-  const content: SpinnerContent = { tips: ["tip"], verbs: ["verb"] };
+  const verbs = ["verb"];
   const lines: VoiceLine[] = [{ text: "line", title: "title" }];
 
-  test("puts the base verbs ahead of the character's and the card's tips ahead of their lines under their name", () => {
+  test("puts the base verbs ahead of the character's and their lines under their name", () => {
     expect.hasAssertions();
 
-    expect(getSpinner(base, name, content, lines)).toStrictEqual({
+    expect(getSpinner(base, name, verbs, lines)).toStrictEqual({
       label: name,
-      tips: [
-        { id: "genshin-persona.huTao-1", text: "tip" },
-        { id: "genshin-persona.huTao-2", text: "line" },
-      ],
+      tips: [{ id: "genshin-persona.huTao-1", text: "line" }],
       verbs: ["baseVerb", "verb"],
     });
-  });
-
-  test("shows a line a card tip quotes once", () => {
-    expect.hasAssertions();
-
-    expect(getSpinner(base, name, content, [{ text: "tip", title: "title" }]).tips).toStrictEqual([
-      { id: "genshin-persona.huTao-1", text: "tip" },
-    ]);
   });
 
   test("cuts a line to the sentences that fit and drops one none of fits", () => {
@@ -40,7 +29,7 @@ describe(getSpinner, () => {
       { text: "b".repeat(MAX_SPINNER_TIP_LENGTH + 1), title: "title" },
     ];
 
-    expect(getSpinner(base, name, undefined, longLines).tips).toStrictEqual([
+    expect(getSpinner(base, name, verbs, longLines).tips).toStrictEqual([
       { id: "genshin-persona.huTao-1", text: "line." },
     ]);
   });
@@ -53,33 +42,23 @@ describe(getSpinner, () => {
       title: "title",
     }));
 
-    expect(getSpinner(base, name, undefined, manyLines).tips).toHaveLength(MAX_SPINNER_TIP_COUNT);
+    expect(getSpinner(base, name, verbs, manyLines).tips).toHaveLength(MAX_SPINNER_TIP_COUNT);
   });
 
-  test("shows the lines alone under the name for a card without tips", () => {
+  test("shows the base tips under no name for a character with no lines", () => {
     expect.hasAssertions();
 
-    expect(getSpinner(base, name, { ...content, tips: [] }, lines)).toStrictEqual({
-      label: name,
-      tips: [{ id: "genshin-persona.huTao-1", text: "line" }],
-      verbs: ["baseVerb", "verb"],
-    });
-  });
-
-  test("shows the base tips under no name for a character with neither tips nor lines", () => {
-    expect.hasAssertions();
-
-    expect(getSpinner(base, name, { ...content, tips: [] }, [])).toStrictEqual({
+    expect(getSpinner(base, name, verbs, [])).toStrictEqual({
       label: "",
       tips: [{ id: "genshin-persona.teyvat-1", text: "baseTip" }],
       verbs: ["baseVerb", "verb"],
     });
   });
 
-  test("shows the base content alone for a character nobody has written a card for or lines of", () => {
+  test("shows the base content alone for a character with neither a card nor lines", () => {
     expect.hasAssertions();
 
-    expect(getSpinner(base, name, undefined, [])).toStrictEqual({
+    expect(getSpinner(base, name, [], [])).toStrictEqual({
       label: "",
       tips: [{ id: "genshin-persona.teyvat-1", text: "baseTip" }],
       verbs: ["baseVerb"],

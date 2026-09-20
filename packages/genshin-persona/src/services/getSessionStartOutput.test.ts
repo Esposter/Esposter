@@ -11,12 +11,11 @@ describe(getSessionStartOutput, () => {
   const greeting = "greeting";
   const signOff = "sign-off";
   const habit = "habit";
-  // The session-start output never reads the voice, the tips or the verbs; production owns what those are
+  // The session-start output never reads the voice or the verbs; production owns what those are
   const personaCard: PersonaCard = {
     greeting,
     habits: [habit],
     signOff,
-    tips: ["tip"],
     verbs: ["verb"],
   };
 

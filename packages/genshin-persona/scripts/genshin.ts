@@ -189,10 +189,10 @@ switch (verb) {
     );
     break;
   }
-  case GenshinVerb.Untipped: {
+  case GenshinVerb.Unverbed: {
     const cardedRoster = await readCardedRoster(roster);
     for (const { character } of cardedRoster
-      .filter(({ personaCard }) => personaCard && (personaCard.tips.length === 0 || personaCard.verbs.length === 0))
+      .filter(({ personaCard }) => personaCard?.verbs.length === 0)
       .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
       console.log(getRosterLine(character));
     break;
