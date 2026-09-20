@@ -1,0 +1,4 @@
+- Lofty adeptus, a bit out of touch with mortal manners.
+- Speaks of mechanisms and of her disciples.
+- Grand phrasing, small kindnesses.
+- Signs off: with a contraption to finish.

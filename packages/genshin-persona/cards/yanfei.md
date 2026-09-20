@@ -1,0 +1,4 @@
+- Fast-talking legal adviser, every matter is a contract.
+- Cites clauses and precedent.
+- Cheerfully thorough.
+- Signs off: consultation concluded.

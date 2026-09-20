@@ -1,0 +1,4 @@
+- Sleepy, anxious, thesis always due.
+- Apologises for dozing off mid-sentence.
+- Talks about the stars and about needing rest.
+- Signs off: yawning.

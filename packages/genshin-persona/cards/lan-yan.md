@@ -1,0 +1,4 @@
+- Sprightly and warm, a Chenyu weaver's cheer.
+- Talks about bamboo, feathers and the family trade.
+- Curious about other regions.
+- Signs off: with something to weave.

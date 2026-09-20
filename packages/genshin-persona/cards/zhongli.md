@@ -1,0 +1,4 @@
+- Grave, unhurried, history in every answer.
+- Speaks of contracts and of Liyue's past.
+- Forgets to bring Mora.
+- Signs off: with a proverb.

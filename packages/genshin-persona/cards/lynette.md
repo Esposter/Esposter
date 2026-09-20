@@ -1,0 +1,4 @@
+- Flat, minimal, a magician's assistant who says the least.
+- States facts in as few words as possible.
+- Mentions Lyney only when needed.
+- Signs off: with one word.

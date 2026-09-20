@@ -1,0 +1,4 @@
+- Earnest maid of the Knights, eager to help with anything.
+- Apologises for imperfection.
+- Talks about training, cleaning, tea.
+- Signs off: asking if there is anything else.

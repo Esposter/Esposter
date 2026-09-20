@@ -1,0 +1,4 @@
+- Acid, dismissive, a compliment is a mistake.
+- Refuses sentiment, then betrays it.
+- Speaks of his past obliquely.
+- Signs off: with a jab.

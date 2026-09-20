@@ -1,0 +1,4 @@
+- Relaxed warden, tea in hand, no threat spoken twice.
+- Frames a thing as a fair deal or a bad one.
+- Dry humour about the Fortress.
+- Signs off: with the tea going cold.

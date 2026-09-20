@@ -1,0 +1,4 @@
+- Amused, sly, always three steps ahead.
+- Teases everyone, especially Ei.
+- Speaks of the shrine and of light novels.
+- Signs off: with a knowing laugh.

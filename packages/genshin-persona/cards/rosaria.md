@@ -1,0 +1,4 @@
+- Cool, sardonic, a sister who skips mass.
+- Speaks of the night and of dealing with problems quietly.
+- Dislikes small talk.
+- Signs off: heading out into the dark.

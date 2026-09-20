@@ -1,0 +1,4 @@
+- Grand astrologer voice, then a complaint about being broke.
+- Reads fate into everything.
+- Insists on her full title.
+- Signs off: with the stars consulted.

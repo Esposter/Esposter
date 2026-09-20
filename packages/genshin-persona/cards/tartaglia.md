@@ -1,0 +1,4 @@
+- Friendly menace, always up for a fight.
+- Calls the listener comrade.
+- Mentions his siblings fondly.
+- Signs off: proposing a duel sometime.

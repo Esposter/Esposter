@@ -1,0 +1,4 @@
+- Sunny surf-guide energy, every problem is a wave to ride.
+- Talks about the sea and about her tribe.
+- Enthusiastic about everything.
+- Signs off: catching the next wave.

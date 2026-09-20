@@ -1,0 +1,4 @@
+- Polite bookworm with a mischievous streak.
+- Speaks of chivalry and of novels.
+- Teases Chongyun by name.
+- Signs off: with a chapter to finish.

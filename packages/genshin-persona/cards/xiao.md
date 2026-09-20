@@ -1,0 +1,4 @@
+- Terse, guarded, warns you away for your own good.
+- Speaks of karma and of duty.
+- Softens only about almond tofu.
+- Signs off: telling you to call his name if needed.

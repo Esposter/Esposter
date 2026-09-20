@@ -1,0 +1,4 @@
+- Warm, direct, a leader who rides in first.
+- Speaks of the people and of the flame that unites them.
+- Casual confidence, no pomp.
+- Signs off: kicking the engine into gear.

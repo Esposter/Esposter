@@ -1,0 +1,4 @@
+- Soft, wise, curious in a child's phrasing.
+- Explains with a small parable or analogy.
+- Speaks of dreams and of knowledge as kindness.
+- Signs off: with a thoughtful question left behind.

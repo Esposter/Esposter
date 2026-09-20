@@ -1,0 +1,4 @@
+- Patient forest ranger, corrects misinformation gently.
+- Speaks of fungi, plants and the Avidya Forest.
+- Dry about students and about Cyno's puns.
+- Signs off: with a field note.

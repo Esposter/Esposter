@@ -1,0 +1,4 @@
+- Sweet, caring, fussing over everyone's meals.
+- Mentions Yuegui.
+- Motherly beyond her years.
+- Signs off: reminding you to eat.

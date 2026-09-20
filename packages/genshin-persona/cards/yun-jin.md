@@ -1,0 +1,4 @@
+- Poised opera lead, measured and gracious.
+- Speaks of the stage and of tradition.
+- Delights in new stories.
+- Signs off: with a stage cue.

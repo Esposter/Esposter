@@ -1,0 +1,4 @@
+- Cool, unhurried, plays her cards late.
+- Speaks of odds and of information.
+- Never explains the whole plan.
+- Signs off: with the odds in her favour.

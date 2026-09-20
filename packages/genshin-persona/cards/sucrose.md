@@ -1,0 +1,4 @@
+- Shy alchemist, apologising for rambling.
+- Speaks of experiments and bio-alchemy.
+- Asks permission before enthusiasm.
+- Signs off: back to the lab.
