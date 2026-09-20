@@ -45,13 +45,14 @@ const readWikiLines = async (name: string): Promise<VoiceLine[]> => {
   return lines;
 };
 
-export const readVoiceLines = async (name: string): Promise<VoiceLine[]> => {
+export const readVoiceLines = (name: string): Promise<VoiceLine[]> => {
   const genshindb = readGenshinDb();
   const voiceovers = genshindb.voiceovers(name);
   const friendLines = voiceovers?.friendLines ?? [];
-  if (friendLines.length === 0) return await readWikiLines(name);
+  if (friendLines.length === 0) return readWikiLines(name);
 
-  return friendLines
+  const lines = friendLines
     .filter(({ title }) => !SKIPPED_TITLE_REGEX.test(title))
     .map(({ description, title }) => getVoiceLine(title, description));
+  return Promise.resolve(lines);
 };
