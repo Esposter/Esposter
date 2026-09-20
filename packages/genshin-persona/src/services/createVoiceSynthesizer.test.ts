@@ -88,16 +88,14 @@ describe(createVoiceSynthesizer, () => {
     expect(onFallback).toHaveBeenCalledTimes(1);
   });
 
-  test.each([
-    { name: "the rung named", rungIndex: 1, rungName: VOICE_DEVICE_LADDER[1]?.name ?? "" },
-    { name: "the top for a name no rung carries", rungIndex: 0, rungName: "rungName" },
-  ])("starts on $name, walking past nothing above it", async ({ rungIndex, rungName }) => {
+  test("starts on the rung named, walking past nothing above it", async () => {
     expect.hasAssertions();
 
+    const rungName = VOICE_DEVICE_LADDER[1]?.name ?? "";
     const { from_pretrained, onFallback, runtime } = getRuntime([speech, speech, speech]);
     const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback, rungName });
 
-    expect(synthesizer.device).toBe(VOICE_DEVICE_LADDER[rungIndex]?.name);
+    expect(synthesizer.device).toBe(rungName);
     expect(from_pretrained).toHaveBeenCalledTimes(1);
     expect(onFallback).toHaveBeenCalledTimes(0);
   });

@@ -61,7 +61,7 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voice ja   # set up, or switch t
 node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voice      # report what is installed
 ```
 
-The plugin ships code and cards. The engine's runtime is a few hundred megabytes of native binaries and the weights a gigabyte and a half, and the plugin install runs a frozen `npm ci` under a one-minute ceiling — so none of it is a dependency of the plugin, and all of it is installed by the verb into the directory the plugin already owns for its state, the way a project's dependencies are installed beside it rather than shipped with it. Run with a dub, it does four things in order, each skipped when already done:
+The plugin ships code and cards. The engine's runtime is a few hundred megabytes of native binaries and the weights a gigabyte and a half, and the plugin install runs a frozen `npm ci` under a one-minute ceiling — so none of it is a dependency of the plugin, and all of it is installed by the verb into the directory the plugin already owns for its state, the way a project's dependencies are installed beside it rather than shipped with it. Run with a dub, it first stops any synthesizer running and clears the rung on file — the proof below walks the device ladder from the top, and a running engine holds the runtime it may be about to replace — then does four things in order, each skipped when already done:
 
 1. **The runtime.** The plugin carries a second, tiny manifest — `runtime/package.json` with its own npm lockfile — naming the one package the engine needs. The verb copies both into the state directory and runs `npm ci` there with lifecycle scripts off, since the ONNX runtime's binaries ship in the package and its only script fetches a CUDA build on Linux. Renovate moves the manifest's version like every other, and a bumped lockfile is picked up by the next `voice` run. The synthesizer resolves the package from that manifest and loads it by path; the plugin's own manifest never names it.
 2. **The weights.** The runtime's own loader fetches what it is asked to load into a cache directory the verb points at the state directory, so downloading the weights is loading the engine once — in the verb's own process, which can print progress, where the detached synthesizer cannot. Exactly the variants the plugin declares are fetched and no other, and the device that loaded is reported.
@@ -82,6 +82,7 @@ The plugin ships code and cards. The engine's runtime is a few hundred megabytes
 ```mermaid
 flowchart TD
     Verb["voice ja"]
+    Clear["stop a running synthesizer,<br/>clear the rung on file"]
     Runtime{"runtime/ installed<br/>from this lockfile?"}
     Install["copy the manifest and lockfile, npm ci"]
     Load["load the engine once → weights cached,<br/>device reported"]
@@ -90,7 +91,7 @@ flowchart TD
     Language["write language"]
     Off["voice stays off"]
 
-    Verb --> Runtime
+    Verb --> Clear --> Runtime
     Runtime -- no --> Install --> Load
     Runtime -- yes --> Load
     Load --> Proof --> Spoke
