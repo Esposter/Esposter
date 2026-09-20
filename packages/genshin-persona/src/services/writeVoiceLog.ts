@@ -4,5 +4,6 @@ import { appendFileSync, mkdirSync } from "node:fs";
 // Why the synthesizer refused, with a diagnosis on disk where a hook's silence gives none
 export const writeVoiceLog = (message: string): void => {
   mkdirSync(STATE_DIRECTORY, { recursive: true });
-  appendFileSync(VOICE_LOG_PATH, `${String(Temporal.Now.instant())} ${message}\n`);
+  const time = String(Temporal.Now.instant());
+  appendFileSync(VOICE_LOG_PATH, `${time} ${message}\n`);
 };

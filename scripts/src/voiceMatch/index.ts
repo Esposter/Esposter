@@ -79,7 +79,7 @@ const checkReferences = async () => {
 };
 
 const flags = new Set([CHECK_FLAG, WRITE_FLAG]);
-const [language = VoiceLanguage.English] = process.argv.slice(2).filter((argument) => !flags.has(argument));
+const language = process.argv.slice(2).find((argument) => !flags.has(argument)) ?? VoiceLanguage.English;
 if (!checkIsVoiceLanguage(language))
   throw new InvalidOperationError(
     Operation.Read,

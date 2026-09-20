@@ -32,7 +32,7 @@ const exit = (message: string) => {
   process.exit(1);
 };
 process.on("uncaughtException", (error) => {
-  exit(`${error}`);
+  exit(error.message);
 });
 process.on("unhandledRejection", (reason) => {
   exit(String(reason));
@@ -85,19 +85,19 @@ const queue = createLatestWinsQueue(async (request: SpeechRequest) => {
   const [outcome] = await Promise.allSettled([speak(request)]);
   if (outcome?.status === "fulfilled") return outcome.value;
 
-  writeVoiceLog(`${request.type} failed: ${outcome?.reason}`);
+  writeVoiceLog(`${request.type} failed: ${String(outcome?.reason)}`);
   return VoiceStatus.Error;
 });
-const handleLine = (line: string) => {
+const handleLine = (line: string): Promise<VoiceStatus> => {
   const request = parseVoiceRequest(line);
-  if (!request) return VoiceStatus.Error;
+  if (!request) return Promise.resolve(VoiceStatus.Error);
 
   idleTimer.refresh();
   if (request.type === VoiceRequestType.Stop) {
     setImmediate(() => {
       process.exit(0);
     });
-    return VoiceStatus.Ok;
+    return Promise.resolve(VoiceStatus.Ok);
   }
 
   return queue(request);
@@ -132,4 +132,4 @@ server.on("connection", (socket) => {
 });
 
 const [load] = await Promise.allSettled([synthesizerLoad]);
-if (load?.status === "rejected") exit(`load failed: ${load.reason}`);
+if (load?.status === "rejected") exit(`load failed: ${String(load.reason)}`);
