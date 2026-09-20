@@ -76,6 +76,7 @@ The runner reads the plugin's source — its wiki reading, its decoder, its engi
 | `scripts/src/services/voiceMatch/constants.ts`                    | Every floor, the carrier and the model id                       |
 | `packages/genshin-persona/src/services/parseWikiStoryLines.ts`    | The story template's titles, texts and file stems               |
 | `packages/genshin-persona/src/services/parseWikiTravelerLines.ts` | A twin's half of the Traveler's dialogues, by file and by word  |
+| `packages/genshin-persona/src/services/readWikiFile.ts`           | Each clip off the file host, as the plugin reads its reference  |
 | `packages/genshin-persona/src/services/cutReferenceClip.ts`       | The cut a twin's clip takes, in the runner as in the plugin     |
 | `packages/genshin-persona/src/generated/PersonaReferenceMap.ts`   | The output: stem and likeness per measured character            |
 

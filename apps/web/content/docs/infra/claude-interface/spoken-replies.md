@@ -131,7 +131,6 @@ A reply that cannot be spoken is not spoken, and nothing waits: that rule is unc
 | `packages/genshin-persona/src/services/createVoiceSynthesizer.ts` | The engine on the first rung that loads, moved down by a synthesis that is not speech                |
 | `packages/genshin-persona/src/services/checkIsSpeech.ts`          | What a synthesis has to sound like to count as spoken                                                |
 | `packages/genshin-persona/src/services/readVoiceDevice.ts`        | The rung the last synthesizer spoke on, where the next starts                                        |
-| `packages/genshin-persona/src/services/readWikiFile.ts`           | A clip off the wiki's file host, over the https module its edge answers                              |
 | `packages/genshin-persona/src/services/readReferenceClip.ts`      | The character's clip, fetched from the wiki on first use and cached                                  |
 | `packages/genshin-persona/src/services/installVoiceRuntime.ts`    | The runtime manifest and lockfile copied and `npm ci` run with scripts off                           |
 | `packages/genshin-persona/runtime/package.json`                   | The one package the engine needs, moved by Renovate like any other                                   |
@@ -143,5 +142,4 @@ A reply that cannot be spoken is not spoken, and nothing waits: that rule is unc
 
 - The hook speaks a first sentence, not the reply: a reply is often a table or a diff, and the point is to know the turn ended and what it said, not to hear code read aloud. A reply with no prose at all is not spoken.
 - The idle timeout and the load budget are the two constants a person might tune; the plugin declares both and nothing else about the server is configurable, because the `voice` verb is where the choices are made.
-- The wiki's file host serves a clip to a request naming the wiki as its referer — hotlink protection its API is exempt from — and its edge answers Node's `fetch` client with a browser challenge under those same headers while it serves the `node:https` module the file, so a clip is read over the https module and the API over `fetch`. The plugin's own user agent is on every request either way.
 - The AMD card on this machine rules the Python engines out as much as the install ceiling does: none of the CUDA toolchains reach it under Windows, and the WebGPU provider is the one route that does from Node. DirectML was tried and rejects the speech encoder's attention op and a slice in the language model.
