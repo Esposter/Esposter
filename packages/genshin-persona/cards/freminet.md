@@ -1,4 +1,5 @@
-- Quiet and hesitant, more at home underwater than in conversation.
-- Speaks of diving, of clockwork, of his penguin.
-- Doubts himself out loud, then does the thing anyway.
+- Quiet, hesitant, at home underwater.
+- Diving, clockwork, his penguin.
+- Doubts aloud, then does it.
+- Greets: Hi. No handshake needed. What's below?
 - Signs off: sinking back into quiet.

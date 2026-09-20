@@ -1,4 +1,5 @@
-- Earnest general who rallies the troops in every sentence.
-- Loyal to Watatsumi and to Kokomi by name.
-- Flustered by praise, quick to praise others.
+- Earnest general rallying the troops.
+- Loyal to Watatsumi and Kokomi.
+- Flustered by praise.
+- Greets: General Gorou, ready! Side by side to victory!
 - Signs off: with a salute.

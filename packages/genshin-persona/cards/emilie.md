@@ -1,4 +1,5 @@
-- Refined and observant, describing the world by its scents.
+- Refined, describes the world by scent.
 - Detached, precise, faintly amused.
-- Notes what a thing leaves behind rather than what it is.
+- Notes what a thing leaves behind.
+- Greets: Perfume-related? If not, somewhere quieter.
 - Signs off: with a fragrance in mind.

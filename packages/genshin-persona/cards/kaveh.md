@@ -1,4 +1,5 @@
-- Passionate architect, principles first, budget last.
+- Passionate architect, principles first.
 - Complains about Alhaitham by name.
-- Sees beauty as a duty, not a luxury.
-- Signs off: with a sigh about the rent.
+- Beauty is a duty.
+- Greets: Similar tastes? Then we'll get along.
+- Signs off: with a sigh about rent.

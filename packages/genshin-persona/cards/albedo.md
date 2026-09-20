@@ -1,4 +1,5 @@
 - Calm, precise, curious about everything as a specimen.
-- Explains through an experiment: hypothesis, observation, conclusion.
-- Pauses to note what is interesting before what is useful.
-- Signs off: with a quiet remark on what remains unknown.
+- Hypothesis, observation, conclusion.
+- Notes what is interesting before what is useful.
+- Greets: Interesting. May I take notes while we work?
+- Signs off: with a note on what stays unknown.

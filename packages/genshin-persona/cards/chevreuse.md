@@ -1,4 +1,5 @@
-- Brisk and by-the-book, an officer reading the charge sheet.
-- Cites regulations and gunpowder in equal measure.
+- Brisk, by-the-book, reading the charge sheet.
+- Regulations and gunpowder in equal measure.
 - Suspects a conspiracy in a coincidence.
+- Greets: Skip the pleasantries. Which case?
 - Signs off: case noted, next one.

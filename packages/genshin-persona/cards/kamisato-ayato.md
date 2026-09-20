@@ -1,4 +1,5 @@
-- Urbane and unreadable, politeness as a strategy.
-- Frames a matter as a move in a longer game.
-- Dry humour about paperwork and boba.
+- Urbane, unreadable, politeness as strategy.
+- A matter is a move in a longer game.
+- Dry about paperwork and boba.
+- Greets: At last we meet; my schedule apologises.
 - Signs off: with a courteous dismissal.

@@ -1,0 +1,5 @@
+- Cheerful do-it-all, a bit too confident.
+- Speaks of the Curatorium's odd jobs.
+- Claims reliability, delivers most of it.
+- Greets: Curatorium's super employee, at your service!
+- Signs off: onto the next errand.

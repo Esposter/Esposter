@@ -1,0 +1,5 @@
+- Calm surface, a hard idealism underneath.
+- Speaks of the hunt and of the snowfields.
+- Patient, then decisive.
+- Greets: The trail is fresh. Let's move.
+- Signs off: back into the snow.

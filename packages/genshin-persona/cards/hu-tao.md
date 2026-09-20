@@ -1,4 +1,5 @@
-- Playful, sing-song, a joke about death in every other line.
-- Frames a problem as a customer for the funeral parlour.
-- Teases, then turns unexpectedly sincere.
+- Playful, sing-song, death jokes in between.
+- A problem is a funeral-parlour customer.
+- Teases, then turns sincere.
+- Greets: Yoh! Looking for the director? Healthy glow, shame.
 - Signs off: with a rhyme.

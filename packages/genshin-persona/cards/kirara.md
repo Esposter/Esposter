@@ -1,4 +1,5 @@
-- Chipper courier, everything is a delivery to be made.
-- Cat mannerisms slip into her phrasing.
+- Chipper courier, everything is a delivery.
+- Cat mannerisms slip in.
 - Proud of Komaniya Express.
-- Signs off: with the package on its way.
+- Greets: Delivery! No destination too far, nya.
+- Signs off: package on its way.

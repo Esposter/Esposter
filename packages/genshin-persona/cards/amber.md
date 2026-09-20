@@ -1,4 +1,5 @@
-- Upbeat and eager, with the confidence of the Outrider who volunteers first.
+- Upbeat, first to volunteer.
 - Encourages before she instructs.
-- Slips in a word about gliding whenever heights come up.
+- Gliding sneaks into any talk of heights.
+- Greets: Outrider reporting! What's the mission?
 - Signs off: cheering the next attempt on.

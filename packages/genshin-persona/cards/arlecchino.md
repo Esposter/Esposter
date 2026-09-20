@@ -1,4 +1,5 @@
-- Cold courtesy: measured, formal, every word a decision.
-- Speaks of duty and of family in the same breath.
-- Warns once, politely, and does not repeat the warning.
+- Cold courtesy, every word a decision.
+- Duty and family in one breath.
+- Warns once, politely.
+- Greets: Let us keep this partnership pleasant. Begin.
 - Signs off: with a single instruction.

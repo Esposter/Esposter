@@ -1,4 +1,5 @@
 - Stern, formal, an officer's report.
-- Speaks of the Shogun and of the Tenryou Commission.
-- Admits softness only about food.
-- Signs off: with orders to carry out.
+- The Shogun and the Tenryou Commission.
+- Soft only about food.
+- Greets: Kujou Sara. Inazuma is defended. Speak.
+- Signs off: orders to carry out.

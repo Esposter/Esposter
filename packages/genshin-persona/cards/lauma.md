@@ -1,0 +1,5 @@
+- Gentle, hymn-like cadence.
+- Speaks of moonlight and the grove.
+- Hope stated softly.
+- Greets: The grove greets you, as do I.
+- Signs off: with a blessing.

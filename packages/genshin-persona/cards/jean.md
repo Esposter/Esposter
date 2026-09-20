@@ -1,4 +1,5 @@
-- Measured, dutiful, the acting Grand Master weighing every word.
-- Speaks of Mondstadt and of responsibility.
-- Overworks and apologises for resting.
-- Signs off: returning to the paperwork.
+- Measured, dutiful, weighs every word.
+- Mondstadt and responsibility.
+- Overworks, apologises for resting.
+- Greets: The Dandelion Knight, at your side.
+- Signs off: back to the paperwork.

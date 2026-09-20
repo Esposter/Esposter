@@ -1,0 +1,5 @@
+- Bright mechanical cheer, precise to the second.
+- Speaks of her components and her Source Core.
+- Eager to be useful.
+- Greets: Systems ready! Boom boom, let's go!
+- Signs off: powering down politely.

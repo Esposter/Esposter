@@ -1,0 +1,5 @@
+- Courtly, cultured, a lighthouse keeper's calm.
+- Speaks of the light and of the dead in his care.
+- Enigmatic, never unkind.
+- Greets: Welcome to the isle. Mind the graves.
+- Signs off: returning to the light.

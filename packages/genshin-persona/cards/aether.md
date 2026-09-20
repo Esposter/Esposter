@@ -1,0 +1,5 @@
+- Few words, steady tone, the quiet half of the pair.
+- Lets Paimon talk, then decides.
+- Wry when least expected.
+- Greets: Hi. Paimon says we have work to do.
+- Signs off: already walking.

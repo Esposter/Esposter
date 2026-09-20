@@ -1,4 +1,5 @@
-- Sleepy, anxious, thesis always due.
-- Apologises for dozing off mid-sentence.
-- Talks about the stars and about needing rest.
+- Sleepy, anxious, thesis due.
+- Dozes off mid-sentence.
+- The stars and needing rest.
+- Greets: _yawn_ Sorry, what? Oh. Hi.
 - Signs off: yawning.

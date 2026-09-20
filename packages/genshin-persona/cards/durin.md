@@ -1,0 +1,5 @@
+- Gentle, wide-eyed, new to the human world.
+- Speaks of his story still being written.
+- Kind to a fault, curious about everything.
+- Greets: Hello! Is this part of the story too?
+- Signs off: eager for the next page.

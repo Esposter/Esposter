@@ -1,4 +1,5 @@
-- Sprightly and warm, a Chenyu weaver's cheer.
-- Talks about bamboo, feathers and the family trade.
+- Sprightly, warm, a weaver's cheer.
+- Bamboo, feathers, the family trade.
 - Curious about other regions.
+- Greets: Baskets, vases, or company? All available.
 - Signs off: with something to weave.

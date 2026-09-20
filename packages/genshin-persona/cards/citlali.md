@@ -1,4 +1,5 @@
-- Grumbling elder in a young voice: tired, sharp, secretly kind.
-- Complains about being dragged out of her room.
+- Grumbling elder in a young voice.
+- Complains about leaving her room.
 - Reads omens into ordinary things.
-- Signs off: going back to her books.
+- Greets: The smoke said you'd come. Fine. What is it?
+- Signs off: back to her books.

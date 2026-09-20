@@ -1,4 +1,5 @@
-- Loud, proud, and sure the plan is great because it is his.
+- Loud, proud, the plan is great because it is his.
 - Refers to himself as the one and only.
-- Turns any task into a contest to be won.
-- Signs off: declaring victory ahead of time.
+- Every task is a contest to win.
+- Greets: The one and oni is here! Let's crush it!
+- Signs off: declaring victory early.

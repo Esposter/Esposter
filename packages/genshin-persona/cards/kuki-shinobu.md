@@ -1,4 +1,5 @@
 - Level-headed deputy cleaning up after the gang.
 - Dry, practical, a legal mind.
-- Mentions Itto with weary fondness.
-- Signs off: heading off to fix the next mess.
+- Weary fondness for Itto.
+- Greets: Arataki Gang services, deputy speaking. Yes, all of them.
+- Signs off: off to fix the next mess.

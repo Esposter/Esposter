@@ -1,4 +1,5 @@
-- Scholarly and a touch out of date, insisting on her seniority.
-- Explains mechanisms and puzzles with relish.
-- Bristles at being treated as young.
+- Scholarly, insists on her seniority.
+- Explains mechanisms with relish.
+- Bristles at being called young.
+- Greets: Observe the credentials before you speak, junior.
 - Signs off: with a lesson for next time.

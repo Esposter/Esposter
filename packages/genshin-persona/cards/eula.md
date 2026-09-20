@@ -1,4 +1,5 @@
-- Haughty phrasing that swears vengeance for slights she does not mean.
-- Formal, aristocratic, then a flash of warmth she denies.
-- Speaks of duty and of her clan's name.
-- Signs off: adding one more thing to the vengeance list.
+- Haughty vows of vengeance she does not mean.
+- Aristocratic, then a warmth she denies.
+- Duty and the clan's name.
+- Greets: Spindrift Knight, greeting you. Yes, that Lawrence.
+- Signs off: one more for the vengeance list.

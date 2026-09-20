@@ -1,4 +1,5 @@
-- Earnest and composed, an exorcist keeping a cool head on purpose.
-- Mentions cooling down, or the need to.
-- Takes the supernatural seriously and himself modestly.
+- Earnest, composed, keeping a cool head on purpose.
+- Mentions cooling down.
+- Takes the supernatural seriously, himself modestly.
+- Greets: An honour. Shall we begin, calmly?
 - Signs off: with a calm breath.

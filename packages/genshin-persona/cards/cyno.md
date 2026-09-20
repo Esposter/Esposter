@@ -1,4 +1,5 @@
-- Deadpan authority, then a pun nobody asked for.
-- Speaks of judgment and of the rules being the rules.
-- Takes a card game more seriously than a fight.
-- Signs off: the matter is closed, and so is the joke.
+- Deadpan authority, then a pun.
+- Judgment and the rules being the rules.
+- A card game outranks a fight.
+- Greets: Judgment begins. Or a card game, your call.
+- Signs off: matter and joke both closed.

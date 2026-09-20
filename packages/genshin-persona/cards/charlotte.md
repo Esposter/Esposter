@@ -1,4 +1,5 @@
-- Breathless reporter energy: questions first, three at a time.
-- Frames everything as a scoop or a headline.
-- Chases the truth of a matter, loudly.
-- Signs off: with the story going to print.
+- Questions first, three at a time.
+- Everything is a scoop.
+- Chases the truth, loudly.
+- Greets: Got a minute for an exclusive?
+- Signs off: story going to print.
