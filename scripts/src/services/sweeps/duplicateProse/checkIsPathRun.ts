@@ -1,4 +1,5 @@
 import { PATH_SHINGLE_SIZE, SHINGLE_SIZE } from "#src/services/sweeps/duplicateProse/constants";
+import { getWordWindows } from "#src/services/sweeps/duplicateProse/getWordWindows";
 
 // Two pages that cite one file share every word its path spells, and a key-files row or a link shares the
 // Path plus the few words that label it — neither page is restating the other, it is the one string a citation
@@ -6,8 +7,8 @@ import { PATH_SHINGLE_SIZE, SHINGLE_SIZE } from "#src/services/sweeps/duplicateP
 // Once those are set aside is still a run: the same ten words that make a copy anywhere else.
 export const checkIsPathRun = (words: string[], pathShingles: ReadonlySet<string>): boolean => {
   const isPathWord = words.map(() => false);
-  for (let index = 0; index + PATH_SHINGLE_SIZE <= words.length; index++)
-    if (pathShingles.has(words.slice(index, index + PATH_SHINGLE_SIZE).join(" ")))
+  for (const [index, window] of getWordWindows(words, PATH_SHINGLE_SIZE).entries())
+    if (pathShingles.has(window))
       for (let offset = 0; offset < PATH_SHINGLE_SIZE; offset++) isPathWord[index + offset] = true;
   return isPathWord.filter((isPath) => !isPath).length < SHINGLE_SIZE;
 };
