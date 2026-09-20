@@ -24,6 +24,7 @@ import {
 import { createVoiceProgressPrinter } from "#src/services/createVoiceProgressPrinter";
 import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
 import { deletePin } from "#src/services/deletePin";
+import { deleteVoiceDevice } from "#src/services/deleteVoiceDevice";
 import { deleteVoiceState } from "#src/services/deleteVoiceState";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { formatCard } from "#src/services/formatCard";
@@ -41,6 +42,7 @@ import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
 import { readSpinner } from "#src/services/readSpinner";
 import { readUserSettings } from "#src/services/readUserSettings";
+import { readVoiceDevice } from "#src/services/readVoiceDevice";
 import { readVoiceLines } from "#src/services/readVoiceLines";
 import { readVoiceRuntime } from "#src/services/readVoiceRuntime";
 import { recordSessionCharacter } from "#src/services/recordSessionCharacter";
@@ -220,9 +222,10 @@ switch (verb) {
   case GenshinVerb.Voice: {
     if (!name) {
       const language = readLanguage();
+      const device = readVoiceDevice();
       console.log(
         language
-          ? `Runtime ${checkIsRuntimeInstalled() ? "installed" : "not installed"}; ${language} dub; the log is ${VOICE_LOG_PATH}.`
+          ? `Runtime ${checkIsRuntimeInstalled() ? "installed" : "not installed"}; ${language} dub; the engine ${device ? `speaks on ${device}` : "has not spoken yet"}; the log is ${VOICE_LOG_PATH}.`
           : "No voice set up: run this with a dub to install the engine and choose one.",
       );
       break;
@@ -234,11 +237,14 @@ switch (verb) {
       break;
     }
 
+    // The proof walks the device ladder from the top, so a rung this machine once demoted is tried again here and
+    // Nowhere else: the rung on file is cleared, and a synthesizer still running — on that rung, or on the runtime
+    // Being replaced — is stopped, so the one the warm spawns loads afresh
+    deleteVoiceDevice();
+    await connectVoiceServer({ type: VoiceRequestType.Stop });
     if (checkIsRuntimeInstalled()) console.log("Runtime installed.");
     else {
       console.log("Installing the engine's runtime into the state directory...");
-      // A synthesizer still running on the runtime being replaced is stopped, so the next hook loads the new one
-      await connectVoiceServer({ type: VoiceRequestType.Stop });
       if (!installVoiceRuntime()) {
         console.error("npm could not install the runtime; the voice stays off.");
         process.exitCode = 1;
@@ -250,12 +256,10 @@ switch (verb) {
     // Downloaded by loading the engine once here — with progress, which the detached synthesizer cannot print —
     // And the synthesizer then loads them from the cache inside a hook's budget
     const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
-    const synthesizer = await createVoiceSynthesizer(
-      runtime,
-      MODELS_DIRECTORY,
-      createVoiceProgressPrinter(),
-      console.log,
-    );
+    const synthesizer = await createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
+      onFallback: console.log,
+      onProgress: createVoiceProgressPrinter(),
+    });
     console.log(
       synthesizer.device === VOICE_CPU_DEVICE
         ? "Weights present; the engine loads on the CPU — no GPU adapter was found, so a reply is synthesized several times slower than real time."
@@ -288,7 +292,9 @@ switch (verb) {
 
     writeLanguage(name);
     await sendVoiceRequest(await getSpeechRequest(VoiceRequestType.Speak, character.name, name, VOICE_PROOF_TEXT));
-    console.log(`${character.name} spoke through the synthesizer on ${device}; every reply is read from the next one.`);
+    console.log(
+      `${character.name} spoke through the synthesizer on ${device}, where it starts from now; every reply is read from the next one.`,
+    );
     break;
   }
   case GenshinVerb.Volume:

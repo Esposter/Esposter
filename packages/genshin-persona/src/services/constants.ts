@@ -12,9 +12,11 @@ export const PIN_PATH: string = join(STATE_DIRECTORY, "pin");
 export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
 export const VOLUME_PATH: string = join(STATE_DIRECTORY, "volume");
 // The voice half of the state directory, written by the `voice` verb and removed by `teardown`: the dub's code, the
-// Engine's runtime npm-installed from the manifest the plugin carries, the weights in the runtime's own cache
-// Layout, one reference clip per character fetched so far under its dub, and why the synthesizer last refused
+// Rung of the device ladder the synthesizer settled on, the engine's runtime npm-installed from the manifest the
+// Plugin carries, the weights in the runtime's own cache layout, one reference clip per character fetched so far
+// Under its dub, and why the synthesizer last refused
 export const LANGUAGE_PATH: string = join(STATE_DIRECTORY, "language");
+export const VOICE_DEVICE_PATH: string = join(STATE_DIRECTORY, "device");
 export const RUNTIME_DIRECTORY: string = join(STATE_DIRECTORY, "runtime");
 export const RUNTIME_MANIFEST_PATH: string = join(RUNTIME_DIRECTORY, "package.json");
 export const RUNTIME_LOCKFILE_PATH: string = join(RUNTIME_DIRECTORY, "package-lock.json");
@@ -26,6 +28,7 @@ export const VOICE_LOG_PATH: string = join(STATE_DIRECTORY, "voice.log");
 // Persona's rather than the voice's
 export const VOICE_STATE_PATHS: string[] = [
   LANGUAGE_PATH,
+  VOICE_DEVICE_PATH,
   RUNTIME_DIRECTORY,
   MODELS_DIRECTORY,
   REFERENCES_DIRECTORY,
@@ -155,7 +158,9 @@ const getVoiceDeviceMap = (languageModelDevice: string, vocoderDevice: string): 
 // A graph can still run it wrong — this machine's WebGPU provider returns a constant near-silence from the full
 // Precision vocoder on most runs and throws nothing — so a synthesis that is not speech moves the engine down one
 // Rung and runs again, a load that rejects moves it the same way, and the last rung failing is an error the log
-// Sees. A rung is named for what runs on the GPU, since the CPU vocoder still speaks ahead of real time
+// Sees. The rung that spoke is kept in the state directory, so the next synthesizer starts there rather than
+// Walking the rungs above it again, and the `voice` verb clears it so its proof walks the ladder from the top. A
+// Rung is named for what runs on the GPU, since the CPU vocoder still speaks ahead of real time
 export const VOICE_DEVICE_LADDER: [VoiceDeviceRung, ...VoiceDeviceRung[]] = [
   { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_GPU_DEVICE), name: VOICE_GPU_DEVICE },
   { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_CPU_DEVICE), name: `${VOICE_GPU_DEVICE}-language-model` },

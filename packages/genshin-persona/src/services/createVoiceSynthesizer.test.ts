@@ -62,7 +62,7 @@ describe(createVoiceSynthesizer, () => {
     expect.hasAssertions();
 
     const { from_pretrained, models, onFallback, runtime } = getRuntime([silence, speech, speech]);
-    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, undefined, onFallback);
+    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
 
     await expect(synthesizer.synthesize(text, speaker)).resolves.toStrictEqual({
       sampleRate: VOICE_SAMPLE_RATE,
@@ -82,17 +82,31 @@ describe(createVoiceSynthesizer, () => {
     expect.hasAssertions();
 
     const { onFallback, runtime } = getRuntime([undefined, speech, speech]);
-    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, undefined, onFallback);
+    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
 
     expect(synthesizer.device).toBe(VOICE_DEVICE_LADDER[1]?.name);
     expect(onFallback).toHaveBeenCalledTimes(1);
+  });
+
+  test.each([
+    { name: "the rung named", rungIndex: 1, rungName: VOICE_DEVICE_LADDER[1]?.name ?? "" },
+    { name: "the top for a name no rung carries", rungIndex: 0, rungName: "rungName" },
+  ])("starts on $name, walking past nothing above it", async ({ rungIndex, rungName }) => {
+    expect.hasAssertions();
+
+    const { from_pretrained, onFallback, runtime } = getRuntime([speech, speech, speech]);
+    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback, rungName });
+
+    expect(synthesizer.device).toBe(VOICE_DEVICE_LADDER[rungIndex]?.name);
+    expect(from_pretrained).toHaveBeenCalledTimes(1);
+    expect(onFallback).toHaveBeenCalledTimes(0);
   });
 
   test("synthesizes nothing when the last rung returns silence too", async () => {
     expect.hasAssertions();
 
     const { onFallback, runtime } = getRuntime(VOICE_DEVICE_LADDER.map(() => silence));
-    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, undefined, onFallback);
+    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
 
     await expect(synthesizer.synthesize(text, speaker)).resolves.toBeUndefined();
     expect(onFallback).toHaveBeenCalledTimes(VOICE_DEVICE_LADDER.length);

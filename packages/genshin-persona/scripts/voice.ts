@@ -19,7 +19,9 @@ import { listenVoiceSocket } from "#src/services/listenVoiceSocket";
 import { parseVoiceRequest } from "#src/services/parseVoiceRequest";
 import { playAudio } from "#src/services/playAudio";
 import { readReferenceClip } from "#src/services/readReferenceClip";
+import { readVoiceDevice } from "#src/services/readVoiceDevice";
 import { readVoiceRuntime } from "#src/services/readVoiceRuntime";
+import { writeVoiceDevice } from "#src/services/writeVoiceDevice";
 import { writeVoiceLog } from "#src/services/writeVoiceLog";
 import { createServer } from "node:net";
 
@@ -46,7 +48,13 @@ const idleTimer = setTimeout(() => {
 }, VOICE_IDLE_TIMEOUT_MS);
 const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
 const decoder = await createClipDecoder();
-const synthesizerLoad = createVoiceSynthesizer(runtime, MODELS_DIRECTORY, undefined, writeVoiceLog);
+// The engine starts on the rung the last synthesizer settled on, and the rung this one speaks on is kept for the
+// Next — written once it has spoken there, since a load alone proves nothing about the sound
+let settledDevice = readVoiceDevice();
+const synthesizerLoad = createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
+  onFallback: writeVoiceLog,
+  rungName: settledDevice,
+});
 const speakers = new Map<string, SpeakerTensors>();
 // The reference is fetched, decoded and encoded once per character, dub and line per process
 const readSpeaker = async ({ language, name, stem }: SpeechRequest) => {
@@ -73,6 +81,11 @@ const speak = async (request: SpeechRequest) => {
   const text = request.type === VoiceRequestType.Warm ? WARM_TEXT : request.text;
   const clip = await synthesizer.synthesize(text, speaker);
   if (!clip) return VoiceStatus.Error;
+
+  if (synthesizer.device !== settledDevice) {
+    settledDevice = synthesizer.device;
+    writeVoiceDevice(settledDevice);
+  }
 
   const { sampleRate, samples } = clip;
   if (request.type === VoiceRequestType.Speak) {

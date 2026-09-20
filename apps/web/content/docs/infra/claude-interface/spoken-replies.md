@@ -25,12 +25,12 @@ sequenceDiagram
     participant Player as Stock player
 
     Start->>Server: warm — this session's character (detached, nothing waited)
-    Server->>Server: bind the socket, load the engine
+    Server->>Server: bind the socket, load the engine on the rung on file, else the top
     Server->>Wiki: the reference clip, once, cached under the state directory
     Server->>Server: encode the reference, one short synthesis
     Stop->>Server: speak — character, stem, dub, first sentence, volume
     Server->>Server: synthesize the newest pending request
-    Server->>Server: not speech — one rung down the device ladder, again
+    Server->>Server: not speech — one rung down the device ladder, again, the rung kept on file
     Server->>Server: apply the gain
     Server->>Player: WAV, deleted after playback, window hidden
     Note over Server: idle for half an hour — exit, freeing the GPU
@@ -52,7 +52,7 @@ Where each component runs is a **device ladder**, fastest rung first, and the ru
 | `webgpu-language-model` | GPU            | CPU     |
 | `cpu`                   | CPU            | CPU     |
 
-The rung the engine speaks on is the status line's second word and the `voice` verb's report, and every move down is a line in `voice.log`. On this machine the engine loads from disk in about ten seconds, encodes a ten-second reference in under a second, and reads a sentence ahead of real time on the middle rung — the CPU vocoder costs about half as long again as the GPU one — and roughly twice that on a process's first call, which the warm request pays. The bottom rung is several times slower than real time.
+The rung the engine speaks on is the status line's second word and the `voice` verb's report, and every move down is a line in `voice.log`. It is also **kept**: the rung a synthesizer has spoken on is written to the state directory, and the next synthesizer starts there rather than walking the rungs above it again — on this machine that was a ten-second load and one silent synthesis at every warm, for an answer the machine had already given. A demotion rewrites the file, so it only ever moves down on its own; the one place a rung this machine once demoted is tried again is the `voice` verb, which clears the file and stops any running synthesizer before its proof, so a driver that has since started vocoding is found by setting the voice up again and by nothing that runs on a reply's path. On this machine the engine loads from disk in about ten seconds, encodes a ten-second reference in under a second, and reads a sentence ahead of real time on the middle rung — the CPU vocoder costs about half as long again as the GPU one — and roughly twice that on a process's first call, which the warm request pays. The bottom rung is several times slower than real time.
 
 ## Setting it up
 
@@ -72,6 +72,7 @@ The plugin ships code and cards. The engine's runtime is a few hundred megabytes
 ~/.claude/genshin-persona/
   picks.tsv · pin · muted · volume     ← as before
   language                             ← the dub's code, and the gate
+  device                               ← the rung the synthesizer last spoke on, where the next one starts
   runtime/                             ← the engine's package, npm-installed here
   models/                              ← the weights, the runtime's own cache layout
   references/<dub>/<stem>.ogg          ← one clip per line fetched so far
@@ -97,7 +98,7 @@ flowchart TD
     Spoke -- no --> Off
 ```
 
-`teardown` removes the runtime, the weights, the references, the dub and the log — stopping a running synthesizer first, since the weights it holds open cannot be deleted under it — and leaves the pick records and the pin, which are the persona's rather than the voice's.
+`teardown` removes the runtime, the weights, the references, the dub, the rung and the log — stopping a running synthesizer first, since the weights it holds open cannot be deleted under it — and leaves the pick records and the pin, which are the persona's rather than the voice's.
 
 ## Failure semantics
 
@@ -105,7 +106,8 @@ A reply that cannot be spoken is not spoken, and nothing waits: that rule is unc
 
 - **The server cannot load** — no runtime, a corrupt weight, a provider that rejects the graph: it writes the reason to `voice.log` and exits. Every hook then finds no server, spawns one, watches it die, and stays silent.
 - **A synthesis throws** mid-request: the request is dropped, the reason logged, and the server keeps serving. A sentence the model rejects does not cost a reload for the next.
-- **A synthesis is not speech** — a provider ran the graph wrong: the engine moves one rung down the device ladder, the move is logged, and the sentence is synthesized again. Only the bottom rung failing drops the request, and its reason is logged like any other.
+- **A synthesis is not speech** — a provider ran the graph wrong: the engine moves one rung down the device ladder, the move is logged, the rung on file follows once the engine has spoken there, and the sentence is synthesized again. Only the bottom rung failing drops the request, and its reason is logged like any other.
+- **The player does not play** — not installed, or refusing the file: the reason is logged, and the request still answers `ok`, since the sentence was synthesized. A stock player that is silent leaves that one line where a hook's silence gives none.
 - **The wiki has no file under the reference's name**: the request fails, the reason is logged, and the [reference selection](/docs/infra/claude-interface/reference-selection)'s `--check` is what says so for the whole roster at once.
 - **A stale socket file** — a server killed without cleanup — is removed before binding when nothing answers on it. A named pipe leaves no file behind.
 
@@ -127,6 +129,7 @@ A reply that cannot be spoken is not spoken, and nothing waits: that rule is unc
 | `packages/genshin-persona/src/services/createLatestWinsQueue.ts`  | One pending request, replaced by whatever arrives after it                                           |
 | `packages/genshin-persona/src/services/createVoiceSynthesizer.ts` | The engine on the first rung that loads, moved down by a synthesis that is not speech                |
 | `packages/genshin-persona/src/services/checkIsSpeech.ts`          | What a synthesis has to sound like to count as spoken                                                |
+| `packages/genshin-persona/src/services/readVoiceDevice.ts`        | The rung the last synthesizer spoke on, where the next starts                                        |
 | `packages/genshin-persona/src/services/readWikiFile.ts`           | A clip off the wiki's file host, over the https module its edge answers                              |
 | `packages/genshin-persona/src/services/readReferenceClip.ts`      | The character's clip, fetched from the wiki on first use and cached                                  |
 | `packages/genshin-persona/src/services/installVoiceRuntime.ts`    | The runtime manifest and lockfile copied and `npm ci` run with scripts off                           |
