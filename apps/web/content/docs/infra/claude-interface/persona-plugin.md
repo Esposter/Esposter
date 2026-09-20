@@ -57,7 +57,7 @@ A character with no card is fully usable — the data alone is a persona — whi
 
 ## How a session gets its character
 
-The pick is **whoever's birthday is nearest to today**, so the character changes with the calendar rather than by a counter, and the card can say why — "Today is Clorinde's birthday" or "Furina's birthday is in three days" — a line of context that is true today and false next week.
+The pick is **whoever's birthday is nearest to today**, so the character changes with the calendar rather than by a counter, and the card can say why — a bracketed note under the name, "[birthday 20 September, today]" or "[birthday 23 September, in 3 days]" — a line of context that is true today and false next week.
 
 ```mermaid
 flowchart TD
@@ -99,7 +99,41 @@ The hook reads one package and one state directory under the user's Claude home,
 
 ## The card is small, and authored last
 
-The card the hook prints is a name, title, element and region, the birthday line, and — when the character has one — the authored voice card: three speech habits, a greeting and a sign-off, about fifty tokens. It is printed as the hook's JSON form, so the whole card reaches the model as context while the terminal shows the person a welcome made of the name line, the character's own greeting and the birthday line — and no token is spent twice. Personalisation goes wherever it costs the model nothing: the greeting, the status line and the spoken voice are all read by a person, never by the model, and the context budget stays at the card. The output style, forced on while the plugin is enabled with coding instructions kept, carries the standing rules: in character in prose, never in code, commits, commands or error text, with every fact a neutral reply would carry still carried. The published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not.
+The card the hook prints is a name, title, element and region, the birthday note, and — when the character has one — the authored voice card: three speech habits, a greeting and a sign-off, about fifty tokens. It is printed as the hook's JSON form, so the whole card reaches the model as context while the terminal shows the person a welcome of three lines — and no token is spent twice.
+
+```text
+✦ Clorinde — Candlebearer, Shadowhunter · Electro · Fontaine
+[birthday 20 September, today]
+State your dispute. Spare the details.
+```
+
+The welcome keeps two voices apart by shape. The nameplate and the bracketed note are the plugin's: who is speaking, and the date and its distance from today, written as a caption because a character does not announce their own birthday. The bare line is the character's, said to the person in the first person or addressed to them, and it is the one line of a card that is performed rather than described. The same split is a standing rule for the model: the note is never announced, and when the person asks about the character — the birthday, the home region, the title — the answer comes in voice, in the first person, with the date and the distance taken from the note as written rather than recomputed.
+
+```mermaid
+flowchart LR
+    Data["Game data"]
+    VoiceCard["Voice card<br/>habits, greeting, sign-off"]
+    Headline["Nameplate<br/>name, title, element, region"]
+    Note["Bracketed note<br/>birthday and its distance from today"]
+    Greeting["Greeting<br/>the one line the card performs"]
+    Terminal["Terminal welcome"]
+    Context["Model context"]
+    Asked{Asked about<br/>the character?}
+    Answer["First person, in voice,<br/>the date as the note has it"]
+    Silent["Never announced"]
+
+    Data --> Headline --> Terminal
+    Data --> Note --> Terminal
+    VoiceCard --> Greeting --> Terminal
+    Headline --> Context
+    Note --> Context
+    VoiceCard --> Context
+    Context --> Asked
+    Asked -- yes --> Answer
+    Asked -- no --> Silent
+```
+
+Personalisation goes wherever it costs the model nothing: the greeting, the status line and the spoken voice are all read by a person, never by the model, and the context budget stays at the card. The output style, forced on while the plugin is enabled with coding instructions kept, carries the standing rules: in character in prose, never in code, commits, commands or error text, with every fact a neutral reply would carry still carried. The published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not.
 
 The plugin's authoring skill keeps the hand-written half honest: the card shape and its ceiling, the sources a habit may be drawn from (the character's own in-game lines and story, described in our words, never quoted), and the rule that a card describes how the character speaks and never what the assistant should do. Its one command lists the characters that have no card yet, most recently released first, so authoring is a queue drained when someone feels like it and never a gate on a patch.
 
@@ -109,21 +143,22 @@ The plugin's authoring skill keeps the hand-written half honest: the card shape 
 
 ## Key files
 
-| File                                                               | Role                                                                                      |
-| :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `.claude-plugin/marketplace.json`                                  | The repository as the `esposter` marketplace, with this package as its one plugin         |
-| `packages/genshin-persona/.claude-plugin/plugin.json`              | The plugin manifest: discovery metadata and the three user-configuration options          |
-| `packages/genshin-persona/package.json`                            | The one dependency as a plain range; no devDependencies, so the npm lockfile stays honest |
-| `packages/genshin-persona/hooks/hooks.json`                        | The session-start hook and the asynchronous Stop hook                                     |
-| `packages/genshin-persona/output-styles/traveler.md`               | The standing voice rules, forced on while the plugin is enabled                           |
-| `packages/genshin-persona/scripts/pick.ts`                         | The session-start entrypoint: resolve the character, print the card, never fail           |
-| `packages/genshin-persona/scripts/genshin.ts`                      | The skill's command: roster, today, pin, unpin, mute, unmute, and the uncarded queue      |
-| `packages/genshin-persona/scripts/status.ts`                       | The status line: the pin or the session's recorded name, from the state files alone       |
-| `packages/genshin-persona/src/services/pickCharacter.ts`           | The nearest-birthday pick and its two tie-breaks                                          |
-| `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | Pin, then the session's record, then today's pick                                         |
-| `packages/genshin-persona/skills/genshin/SKILL.md`                 | The user-facing verbs                                                                     |
-| `packages/genshin-persona/skills/genshin-author/SKILL.md`          | How a voice card is written                                                               |
-| `packages/genshin-persona/cards/`                                  | Authored voice cards, one per character that has one                                      |
+| File                                                               | Role                                                                                                 |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| `.claude-plugin/marketplace.json`                                  | The repository as the `esposter` marketplace, with this package as its one plugin                    |
+| `packages/genshin-persona/.claude-plugin/plugin.json`              | The plugin manifest: discovery metadata and the three user-configuration options                     |
+| `packages/genshin-persona/package.json`                            | The one dependency as a plain range; no devDependencies, so the npm lockfile stays honest            |
+| `packages/genshin-persona/hooks/hooks.json`                        | The session-start hook and the asynchronous Stop hook                                                |
+| `packages/genshin-persona/output-styles/traveler.md`               | The standing voice rules, forced on while the plugin is enabled                                      |
+| `packages/genshin-persona/scripts/pick.ts`                         | The session-start entrypoint: resolve the character, print the card, never fail                      |
+| `packages/genshin-persona/scripts/genshin.ts`                      | The skill's command: roster, today, pin, unpin, mute, unmute, and the uncarded queue                 |
+| `packages/genshin-persona/scripts/status.ts`                       | The status line: the pin or the session's recorded name, from the state files alone                  |
+| `packages/genshin-persona/src/services/pickCharacter.ts`           | The nearest-birthday pick and its two tie-breaks                                                     |
+| `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | Pin, then the session's record, then today's pick                                                    |
+| `packages/genshin-persona/src/services/getSessionStartOutput.ts`   | The two readers' subsets: the whole card as context, the nameplate, note and greeting as the welcome |
+| `packages/genshin-persona/skills/genshin/SKILL.md`                 | The user-facing verbs                                                                                |
+| `packages/genshin-persona/skills/genshin-author/SKILL.md`          | How a voice card is written                                                                          |
+| `packages/genshin-persona/cards/`                                  | Authored voice cards, one per character that has one                                                 |
 
 ## Notes
 

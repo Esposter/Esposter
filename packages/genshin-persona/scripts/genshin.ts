@@ -4,6 +4,7 @@ import { GenshinVerb } from "#src/models/GenshinVerb";
 import { CARD_DETAIL_SEPARATOR } from "#src/services/constants";
 import { deletePin } from "#src/services/deletePin";
 import { findCharacterByName } from "#src/services/findCharacterByName";
+import { formatCard } from "#src/services/formatCard";
 import { getCard } from "#src/services/getCard";
 import { getToday } from "#src/services/getToday";
 import { pickCharacter } from "#src/services/pickCharacter";
@@ -24,7 +25,8 @@ const getRosterLine = (character: Character) =>
 const compareVersionsDescending = (a: Character, b: Character) =>
   b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name);
 const printCard = (character: Character) => {
-  console.log(getCard(character, today.monthDay, readVoiceCard(character.name)));
+  const card = getCard(character, today.monthDay, readVoiceCard(character.name));
+  console.log(formatCard(card));
 };
 
 switch (verb) {

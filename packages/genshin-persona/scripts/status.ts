@@ -1,3 +1,4 @@
+import { NAMEPLATE_PREFIX } from "#src/services/constants";
 import { parseHookInput } from "#src/services/parseHookInput";
 import { readPickRecords } from "#src/services/readPickRecords";
 import { readPin } from "#src/services/readPin";
@@ -12,4 +13,4 @@ const { session_id: sessionId = "" } = parseHookInput(input);
 const pin = readPin();
 const sessionRecord = readPickRecords().find((record) => record.sessionId === sessionId);
 const name = pin || sessionRecord?.name || "";
-if (name) console.log(`✦ ${name}`);
+if (name) console.log(`${NAMEPLATE_PREFIX}${name}`);

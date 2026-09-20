@@ -10,8 +10,10 @@ export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
 export const CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "..", "cards");
 export const CARD_EXTENSION = ".md";
 export const CARD_DETAIL_SEPARATOR = " · ";
-export const CARD_LINE_PREFIX = "- ";
-export const GREETING_PREFIX: string = `${CARD_LINE_PREFIX}Greets: `;
+export const GREETING_PREFIX = "- Greets: ";
+// What the model reads the headline under, and what the person reads it under
+export const CONTEXT_HEADLINE_PREFIX = "Persona: ";
+export const NAMEPLATE_PREFIX = "✦ ";
 export const PICK_RECORD_SEPARATOR = "\t";
 export const PICK_RETENTION_DAYS = 7;
 // Written out rather than totalled from a `Temporal.Duration`: the plugin runs under whatever node a stranger has,
@@ -20,6 +22,7 @@ export const DAY_IN_MILLISECONDS = 86_400_000;
 // Every month and day is measured inside one leap year, so 29 February is a day like any other and the year wraps
 export const LEAP_YEAR = 2000;
 export const DAYS_IN_LEAP_YEAR = 366;
+export const DATE_LOCALE = "en-AU";
 export const TRAVELER: Character = { birthday: "", element: "", name: "Traveler", region: "", title: "", version: "" };
 export const SPEECH_ENDPOINT_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH_ENDPOINT";
 export const SPEECH_KEY_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH_KEY";
