@@ -128,8 +128,9 @@ export const MAX_VOLUME = 100;
 // The engine: Chatterbox Turbo through the ONNX runtime, with a dtype per component, each measured against the
 // Character's own voice before it was chosen: the speech encoder's half-precision weights cost no likeness; the
 // Language model is the 4-bit variant, which cost none either and speaks twice as fast; the vocoder stays full
-// Precision, because its half-precision variant is the one that moved the likeness, by a fifth. The language
-// Model's session is keyed `model` and its file `language_model`, so both spellings carry its dtype
+// Precision, because its half-precision variant is the one that moved the likeness, by a tenth to a fifth — on the
+// GPU rung, which it alone passes the sound check on. The language model's session is keyed `model` and its file
+// `language_model`, so both spellings carry its dtype
 export const VOICE_MODEL_ID = "ResembleAI/chatterbox-turbo-ONNX";
 export const VOICE_MODEL_ARCHITECTURE = "ChatterboxModel";
 export const VOICE_MODEL_DTYPE: Record<string, string> = {
