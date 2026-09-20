@@ -7,6 +7,7 @@ import { readRoster } from "#src/services/readRoster";
 import { readStdin } from "#src/services/readStdin";
 import { registerFailureFallback } from "#src/services/registerFailureFallback";
 import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
+import { spawnWarm } from "#src/services/spawnWarm";
 import { writeSessionSpinner } from "#src/services/writeSessionSpinner";
 import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
 
@@ -21,4 +22,5 @@ const character = (await resolveSessionCharacter(roster, sessionId, today)) ?? T
 const card = getCard(character, today, await readPersonaCard(character.name));
 writeStatusLauncher();
 writeSessionSpinner(character, card.personaCard);
+spawnWarm(character.name);
 console.log(getSessionStartOutput(card));

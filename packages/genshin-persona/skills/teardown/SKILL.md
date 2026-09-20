@@ -1,6 +1,6 @@
 ---
 name: teardown
-description: Removes exactly what setup wrote and nothing else.
+description: Removes exactly what setup and voice wrote and nothing else — the status line and spinner settings, and the voice's runtime, weights, references and language.
 disable-model-invocation: true
 ---
 

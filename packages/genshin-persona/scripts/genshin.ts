@@ -1,37 +1,53 @@
 import type { Character } from "#src/models/Character";
 
 import { GenshinVerb } from "#src/models/GenshinVerb";
+import { VoiceLanguage } from "#src/models/VoiceLanguage";
+import { VoiceRequestType } from "#src/models/VoiceRequestType";
+import { VoiceStatus } from "#src/models/VoiceStatus";
 import { BASE_SPINNER_CONTENT } from "#src/services/baseSpinnerContent";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
-import { checkIsSpeechVolume } from "#src/services/checkIsSpeechVolume";
+import { checkIsRuntimeInstalled } from "#src/services/checkIsRuntimeInstalled";
+import { checkIsVoiceLanguage } from "#src/services/checkIsVoiceLanguage";
+import { checkIsVolume } from "#src/services/checkIsVolume";
+import { connectVoiceServer } from "#src/services/connectVoiceServer";
 import {
   CARD_DETAIL_SEPARATOR,
-  MAX_SPEECH_VOLUME,
+  MAX_VOLUME,
+  MODELS_DIRECTORY,
+  RUNTIME_MANIFEST_PATH,
   SESSION_ID_ENVIRONMENT_VARIABLE,
-  SPEECH_ENDPOINT_ENVIRONMENT_VARIABLE,
-  SPEECH_KEY_ENVIRONMENT_VARIABLE,
-  SPEECH_VOLUME_LEVELS,
+  VOICE_CPU_DEVICE,
+  VOICE_LOG_PATH,
+  VOICE_PROOF_TEXT,
+  VOICE_STATUS_SEPARATOR,
 } from "#src/services/constants";
+import { createVoiceProgressPrinter } from "#src/services/createVoiceProgressPrinter";
+import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
 import { deletePin } from "#src/services/deletePin";
+import { deleteVoiceState } from "#src/services/deleteVoiceState";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { formatCard } from "#src/services/formatCard";
 import { getCard } from "#src/services/getCard";
 import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
 import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLine";
-import { getSpeechVoiceFinding } from "#src/services/getSpeechVoiceFinding";
+import { getSpeechRequest } from "#src/services/getSpeechRequest";
 import { getSpinner } from "#src/services/getSpinner";
+import { installVoiceRuntime } from "#src/services/installVoiceRuntime";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
 import { readCardedRoster } from "#src/services/readCardedRoster";
-import { readCharacterVoice } from "#src/services/readCharacterVoice";
+import { readCharacterReference } from "#src/services/readCharacterReference";
+import { readLanguage } from "#src/services/readLanguage";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
-import { readSpeechVoiceDefinitions } from "#src/services/readSpeechVoiceDefinitions";
 import { readUserSettings } from "#src/services/readUserSettings";
 import { readVoiceLines } from "#src/services/readVoiceLines";
+import { readVoiceRuntime } from "#src/services/readVoiceRuntime";
 import { recordSessionCharacter } from "#src/services/recordSessionCharacter";
 import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
+import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
 import { setMuted } from "#src/services/setMuted";
+import { writeLanguage } from "#src/services/writeLanguage";
 import { writePin } from "#src/services/writePin";
 import { writeSessionSpinner } from "#src/services/writeSessionSpinner";
 import { writeSpinner } from "#src/services/writeSpinner";
@@ -141,7 +157,10 @@ switch (verb) {
     const userSettings = readUserSettings();
     const settings = getSettingsWithoutPluginEntries(userSettings);
     writeUserSettings(settings);
-    console.log("Status line and spinner removed from user settings; both go at the next session.");
+    await deleteVoiceState();
+    console.log(
+      "Status line and spinner removed from user settings; both go at the next session. The voice's runtime, weights, references and language are removed; the pick records and the pin stay.",
+    );
     break;
   }
   case GenshinVerb.Today: {
@@ -203,45 +222,75 @@ switch (verb) {
     );
     break;
   }
-  case GenshinVerb.Voices: {
-    const endpoint = process.env[SPEECH_ENDPOINT_ENVIRONMENT_VARIABLE] ?? "";
-    const key = process.env[SPEECH_KEY_ENVIRONMENT_VARIABLE] ?? "";
-    if (!endpoint || !key) {
-      console.error("No speech endpoint and key are set, so there is no catalogue to check the cards against.");
+  case GenshinVerb.Voice: {
+    if (!name) {
+      const language = readLanguage();
+      console.log(
+        language
+          ? `Runtime ${checkIsRuntimeInstalled() ? "installed" : "not installed"}; ${language} dub; the log is ${VOICE_LOG_PATH}.`
+          : "No voice set up: run this with a dub to install the engine and choose one.",
+      );
+      break;
+    }
+
+    if (!checkIsVoiceLanguage(name)) {
+      console.error(`The dub must be one of ${Object.values(VoiceLanguage).join(", ")}.`);
       process.exitCode = 1;
       break;
     }
 
-    const definitions = await readSpeechVoiceDefinitions(endpoint, key);
-    if (!definitions) {
-      console.error("The speech resource declined to list its voices.");
-      process.exitCode = 1;
-      break;
+    if (checkIsRuntimeInstalled()) console.log("Runtime installed.");
+    else {
+      console.log("Installing the engine's runtime into the state directory...");
+      // A synthesizer still running on the runtime being replaced is stopped, so the next hook loads the new one
+      await connectVoiceServer({ type: VoiceRequestType.Stop });
+      if (!installVoiceRuntime()) {
+        console.error("npm could not install the runtime; the voice stays off.");
+        process.exitCode = 1;
+        break;
+      }
     }
 
-    const cardedRoster = await readCardedRoster(roster);
-    const characterVoices = await Promise.all(
-      cardedRoster.map(async ({ character, personaCard }) => ({
-        character,
-        voice: await readCharacterVoice(character.name, personaCard),
-      })),
-    );
-    const voicedCharacters = characterVoices.flatMap(({ character, voice }) => (voice ? [{ character, voice }] : []));
-    for (const { character, voice } of voicedCharacters) {
-      const finding = getSpeechVoiceFinding(voice, definitions);
-      if (finding) console.log(`${character.name} ${finding}`);
-    }
-
+    // The runtime's own loader fetches what it is asked to load into the models directory, so the weights are
+    // Downloaded by loading the engine once here — with progress, which the detached synthesizer cannot print —
+    // And the synthesizer then loads them from the cache inside a hook's budget
+    const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
+    const synthesizer = await createVoiceSynthesizer(runtime, MODELS_DIRECTORY, createVoiceProgressPrinter());
     console.log(
-      `${voicedCharacters.length} of ${roster.length} characters name a voice, checked against the ${definitions.length} this resource speaks with.`,
+      synthesizer.device === VOICE_CPU_DEVICE
+        ? "Weights present; the engine loads on the CPU — no GPU adapter was found, so a reply is synthesized several times slower than real time."
+        : `Weights present; the engine loads on ${synthesizer.device}.`,
     );
+    writeLanguage(name);
+    const character = await getCurrentCharacter();
+    if (!character) {
+      console.log(`Dub ${name} written; no character to prove the voice with from here.`);
+      break;
+    }
+
+    const reference = readCharacterReference(character.name, await readPersonaCard(character.name));
+    if (!reference)
+      console.log(
+        `${character.name} has no measured reference, so the longest story line the wiki lists reads for them.`,
+      );
+
+    const warmed = await sendVoiceRequest(await getSpeechRequest(VoiceRequestType.Warm, character.name, name, ""));
+    const [status, device] = warmed.split(VOICE_STATUS_SEPARATOR);
+    if (status !== VoiceStatus.Ok) {
+      console.error(
+        `The synthesizer did not answer the warm request (${status || "unreachable"}); see ${VOICE_LOG_PATH}.`,
+      );
+      process.exitCode = 1;
+      break;
+    }
+
+    await sendVoiceRequest(await getSpeechRequest(VoiceRequestType.Speak, character.name, name, VOICE_PROOF_TEXT));
+    console.log(`${character.name} spoke through the synthesizer on ${device}; every reply is read from the next one.`);
     break;
   }
   case GenshinVerb.Volume:
-    if (!checkIsSpeechVolume(name)) {
-      console.error(
-        `Volume must be one of ${SPEECH_VOLUME_LEVELS.join(", ")}, or a whole number from 0 to ${MAX_SPEECH_VOLUME}.`,
-      );
+    if (!checkIsVolume(name)) {
+      console.error(`Volume must be a whole number from 0 to ${MAX_VOLUME}.`);
       process.exitCode = 1;
       break;
     }

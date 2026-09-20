@@ -1,6 +1,6 @@
 ---
 name: genshin
-description: Apply when the user asks who the session's Genshin character is, wants the roster, wants a character for this session or pinned for every session, wants a pin removed, wants spoken replies muted, unmuted, louder or softer, or wants the status line and spinner set up or removed. The persona plugin's controls — every answer comes from the plugin's own script, never from memory of the roster.
+description: Apply when the user asks who the session's Genshin character is, wants the roster, wants a character for this session or pinned for every session, wants a pin removed, wants spoken replies muted, unmuted, louder or softer, wants the voice set up or its dub switched, or wants the status line and spinner set up or removed. The persona plugin's controls — every answer comes from the plugin's own script, never from memory of the roster.
 user-invocable: false
 ---
 
@@ -20,7 +20,8 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" <verb> [name]
 | One character for every session                                        | `pin <name>`        |
 | The pick back                                                          | `unpin`             |
 | Replies silent, or speaking again                                      | `mute`, `unmute`    |
-| Replies louder or softer, by a speech level or a number to 100         | `volume <level>`    |
+| Replies louder or softer, by a number to 100                           | `volume <number>`   |
+| The voice set up, or read in another dub                               | `voice <dub>`       |
 | The status line and the spinner written into user settings, or removed | `setup`, `teardown` |
 
 Each verb's skill, `skills/<verb>/SKILL.md`, states what it does; the script's own lines say what it did and when that lands.

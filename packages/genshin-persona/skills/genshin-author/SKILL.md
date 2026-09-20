@@ -33,7 +33,7 @@ const clorinde: PersonaCard = {
   signOff: "with a courteous dismissal.",
   tips: ["A duelist who hesitates has already put the sword away."],
   verbs: ["Duelling", "Judging", "Patrolling", "Hunting"],
-  voice: { name: "en-GB-SoniaNeural", pitch: -4, rate: -4 },
+  reference: "Clorinde More About Clorinde - 03",
 };
 
 export default clorinde;
@@ -49,25 +49,21 @@ The const carries the file's name and is exported as the default, because the lo
 
 The welcome puts the greeting straight under the plugin's own lines — the nameplate and the bracketed birthday note — so the two kinds must not blur. The greeting is **speech, in the first person or addressed to the person at the keyboard, in the present**: "At your service" is a greeting, "Greets warmly" is a description, and "Clorinde is here" is a caption. It also holds nothing the character could not know from where they stand: no date, no birthday, no session or plugin. The birthday is the note's to say, and the character answers about it only when asked, so a greeting that mentions one is wrong on a birthday and wrong every other day.
 
-## The voice
+## The reference
 
-**`voice` is the speech service's and never reaches the model** — a character is not told the name of the voice reading them. It is also **optional, and the ear's alone**: every character's measured voice is a generated module under `src/generated/personaVoices/`, written by the repository's voice match benchmark and never edited by hand, and a card names a voice only when someone listened and chose one over it. The plugin reads the card's over the generated one, so deleting the card's restores the measurement.
+**`reference` is the synthesizer's and never reaches the model** — a character is not told which line their voice is cloned from. It is also **optional, and the ear's alone**: every character's measured reference is one entry of the generated `src/generated/PersonaReferenceMap.ts`, written by the repository's reference selection and never edited by hand, and a card names a line only when someone listened and chose one over it. The plugin reads the card's over the generated one, so deleting the card's restores the measurement.
 
 ```ts
-voice: { name: "en-GB-SoniaNeural", pitch: -4, rate: -4, style: "sad", styleDegree: 0.8 },
+reference: "Clorinde More About Clorinde - 03",
 ```
 
-- **`name`** carries the locale it is spoken under, and is the largest part of how one character is told from another. It is deliberately **not** checked against a union of known voices: the service gains and retires voices on Microsoft's schedule, and a copy of that catalogue in the repository would be wrong by the next patch, so the `voices` command below asks the live list instead.
-- **`style` and `styleDegree`** only apply to a voice that declares that style — the service silently drops the whole expression to neutral otherwise — so a style is only ever written against a voice known to have it.
-- **`pitch` and `rate`** are signed percentages **as numbers**, and the markup builder writes the sign. The service clamps them: pitch within half to one and a half times the voice's own, rate within half to twice. An omitted field is an adjustment the card did not make, so the voice keeps its own.
-
-**A wrong voice name or an undeclared style is silent at synthesis time**, so a card that gains or changes one is checked:
+The value is the line's file stem on the community wiki — the title after `VO_` and the dub prefix, before `.ogg` — which is the same in every dub, so one stem serves whichever dub the person set up. The stems a character has are the ones `lines <name>` prints titles for, spelled as the wiki's voice-over page files them; a stem the wiki holds no file under leaves the character silent and the reason in the synthesizer's log, so a card that gains or changes one is checked:
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voices
+pnpm ai:voice-match --check
 ```
 
-The full reasoning — the levers, why `role` is unavailable, how the roster was assigned and what that assignment is worth — is the [per-character voices](https://esposter.com/docs/infra/claude-interface/per-character-voices) page's. **The generated values are measured, not heard**; correcting one by ear is a welcome edit, and the card is where that correction goes — never the generated module, which the next run overwrites. The measurement is the [voice match benchmark](https://esposter.com/docs/infra/claude-interface/voice-match-benchmark) — three repo scripts that read the characters' own Japanese audio and generate the fits — so a session tempted to re-derive the assignment by taste runs that instead. Its page holds the two traps that cost a session each: the codebook variant that decodes to silence without erroring, and the other language tracks, which are a different voice actor and are never read.
+The full reasoning — how a reference is chosen and what its likeness number is worth — is the [reference selection](https://esposter.com/docs/infra/claude-interface/reference-selection) page's. **The generated values are measured, not heard**; correcting one by ear is a welcome edit, and the card is where that correction goes — never the generated map, which the next run overwrites. A session tempted to re-derive a reference by taste runs the measurement instead.
 
 ## The spinner lines
 

@@ -1,0 +1,30 @@
+import { parseWikiStoryLines } from "#src/services/parseWikiStoryLines";
+import { describe, expect, test } from "vitest";
+
+describe(parseWikiStoryLines, () => {
+  test("composes each line's stem and title through the template's placeholders", () => {
+    expect.hasAssertions();
+
+    const wikitext = `{{VO/Story
+|character = Hu Tao
+|vo_01_01_title = About {character}: Work
+|vo_01_01_file = VO_{language}{character} About {character} - Work.ogg
+|vo_01_01_tx = A [[Wangsheng Funeral Parlor|parlor]] {{Ref}} &mdash; '''open'''
+}}
+{{VO/Combat
+|vo_02_01_title = Elemental Skill
+|vo_02_01_file = VO_{language}{character} Elemental Skill.ogg
+|vo_02_01_tx = Boo!
+}}`;
+
+    expect(parseWikiStoryLines(wikitext)).toStrictEqual([
+      { stem: "Hu Tao About Hu Tao - Work", text: "A parlor — open", title: "About Hu Tao: Work" },
+    ]);
+  });
+
+  test("lists nothing for a page without the story template", () => {
+    expect.hasAssertions();
+
+    expect(parseWikiStoryLines("")).toStrictEqual([]);
+  });
+});

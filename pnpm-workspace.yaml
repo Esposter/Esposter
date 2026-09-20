@@ -251,7 +251,6 @@ catalog:
   worker-timers: ^8.0.34
   write-excel-file: ^4.1.1
   ws: ^8.21.3
-  ww2ogg-ts: ^0.2.0
   xmlbuilder2: ^4.0.3
   zod: ^4.6.5
 

@@ -13,7 +13,7 @@ export const GenshinVerb = {
   Unpin: "unpin",
   Untipped: "untipped",
   Use: "use",
-  Voices: "voices",
+  Voice: "voice",
   Volume: "volume",
 } as const;
 

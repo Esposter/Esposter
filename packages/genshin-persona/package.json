@@ -2,16 +2,16 @@
   "name": "@esposter/genshin-persona",
   "version": "3.2.0",
   "private": true,
-  "description": "A Claude Code plugin that speaks as the Genshin Impact character whose birthday is nearest, and reads each reply's first sentence aloud through Azure Speech.",
+  "description": "A Claude Code plugin that speaks as the Genshin Impact character whose birthday is nearest, and reads each reply's first sentence aloud in the character's own cloned voice.",
   "keywords": [
-    "azure-speech",
     "claude-code",
     "claude-code-plugin",
     "genshin",
     "genshin-impact",
     "output-style",
     "persona",
-    "text-to-speech"
+    "text-to-speech",
+    "voice-cloning"
   ],
   "homepage": "https://esposter.com/docs/infra/claude-interface/persona-plugin",
   "bugs": {
@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@typesafe-ai/sdk": "^0.6.0",
+    "@wasm-audio-decoders/ogg-vorbis": "^0.1.20",
     "genshin-db": "^5.2.13"
   },
   "engines": {
