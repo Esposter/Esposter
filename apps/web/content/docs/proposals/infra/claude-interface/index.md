@@ -1,13 +1,13 @@
 ---
 title: Claude interface
-description: Proposal — a Genshin persona plugin replaces caveman now, spoken replies come from the Azure Speech free tier already under Pulumi, and a character voice and a desktop companion wait behind named gates, with the terminal the driver throughout because it is the one surface with zero maintenance.
+description: Proposal — a Genshin persona plugin replaces caveman now, spoken replies come from an Azure Speech free-tier account stage 2 adds to Pulumi, and a character voice and a desktop companion wait behind named gates, with the terminal the driver throughout because it is the one surface with zero maintenance.
 ---
 
 # Claude interface
 
 The wish list is personality (a Genshin character rather than caveman, changing with the calendar), a spoken voice in that character, and eventually a companion on the desktop rather than a terminal. The constraint is maintenance: nothing that has to be re-implemented when the tool moves under it. Those two pull against each other, and the survey below says where they meet — **the terminal already exposes every hook the wish list needs, so the plan is a small plugin now, one free Azure resource next, and a gate in front of everything else**, with each gate naming the thing outside our control that has to move first.
 
-The two stages that are built have their own specs: the [persona plugin](/docs/proposals/infra/claude-interface/persona-plugin) and [spoken replies](/docs/proposals/infra/claude-interface/spoken-replies). This page holds the decision, the survey it rests on, and the gated stages behind them.
+The two stages taken first have their own specs: the [persona plugin](/docs/proposals/infra/claude-interface/persona-plugin) and [spoken replies](/docs/proposals/infra/claude-interface/spoken-replies). This page holds the decision, the survey it rests on, and the gated stages behind them.
 
 ## What the terminal already offers
 
@@ -51,7 +51,7 @@ flowchart TD
     Gate4 -- no --> Voice
 ```
 
-Stages 1 and 2 are built together, because stage 2 is one Pulumi file and one hook. Every later stage opens only when the gate before it answers yes, and the answer is a fact about use or about the platform, never a wish. What sits behind a closed gate is not built early because it looks fun.
+Stages 1 and 2 are taken together, because stage 2 is one Pulumi file and one hook. Every later stage opens only when the gate before it answers yes, and the answer is a fact about use or about the platform, never a wish. What sits behind a closed gate is not built early because it looks fun.
 
 ## Stage 3 — the character voice
 
