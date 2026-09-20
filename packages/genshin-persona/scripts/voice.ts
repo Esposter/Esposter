@@ -77,7 +77,8 @@ const speak = async (request: SpeechRequest) => {
   const { sampleRate, samples } = clip;
   if (request.type === VoiceRequestType.Speak) {
     const gain = request.volume / MAX_VOLUME;
-    playAudio(getWavBytes({ sampleRate, samples: samples.map((sample) => sample * gain) }));
+    const playerFailure = playAudio(getWavBytes({ sampleRate, samples: samples.map((sample) => sample * gain) }));
+    if (playerFailure) writeVoiceLog(`the player did not play: ${playerFailure}`);
   }
 
   return VoiceStatus.Ok;

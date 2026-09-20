@@ -43,7 +43,7 @@
 | `packages/shared`, `packages/shared-node`                        | 2026-09-14 | the primitives themselves, and the bench reporter that rethrows through them          |
 | `packages/keyframe-store`                                        | 2026-09-14 | the store hands back a `ResultAsync` its caller terminates                            |
 | `packages/configuration`                                         | 2026-09-14 | builds before `@esposter/shared`, so its throws are bare `Error`s by necessity        |
-| `packages/genshin-persona`                                       | —          | opened 2026-09-20; the scripts' process-level fallback is the pattern to judge        |
+| `packages/genshin-persona`                                       | —          | no `@esposter/shared` to import: the process boundary terminates, and records first   |
 
 The mechanical half — no `try`/`catch`, no `.isOk`/`.isErr`, no bare `new Error` outside the sites the
 `error-handling` skill exempts, no `console.warn` handed to a handler — is lint (`error-handling/no-bare-error`

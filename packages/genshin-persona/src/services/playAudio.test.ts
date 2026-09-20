@@ -14,10 +14,22 @@ describe(playAudio, () => {
   test("runs the player with its window hidden, and deletes the WAV after", () => {
     expect.hasAssertions();
 
-    playAudio(new Uint8Array());
+    spawnSync.mockReturnValueOnce({ status: 0 } as ReturnType<typeof baseSpawnSync>);
 
+    expect(playAudio(new Uint8Array())).toBe("");
     expect(spawnSync).toHaveBeenCalledTimes(1);
     expect(spawnSync.mock.calls[0]?.[2]).toStrictEqual({ windowsHide: true });
     expect(existsSync(join(tmpdir(), `genshin-persona-${process.pid}.wav`))).toBe(false);
+  });
+
+  test.each([
+    { expected: "playAudio", name: "a player that could not be spawned", outcome: { error: new Error("playAudio") } },
+    { expected: "the player exited 1", name: "a player that refused the file", outcome: { status: 1 } },
+  ])("answers $name with why", ({ expected, outcome }) => {
+    expect.hasAssertions();
+
+    spawnSync.mockReturnValueOnce(outcome as ReturnType<typeof baseSpawnSync>);
+
+    expect(playAudio(new Uint8Array())).toBe(expected);
   });
 });
