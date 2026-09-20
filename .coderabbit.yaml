@@ -68,6 +68,10 @@ reviews:
     - "!packages/*/src/index.test.ts"
     # generated pglite snapshot (binary)
     - "!packages/db-mock/src/snapshot.tar.gz"
+    # persona cards: authored prose in a character's voice, one module per character across the whole roster,
+    # So a pass over the cards is a hundred files of wording no code review can judge — the typed shape they fill
+    # Is reviewed where it is declared
+    - "!packages/genshin-persona/src/personaCards/**"
     - "!pnpm-lock.yaml"
 
   auto_review:
