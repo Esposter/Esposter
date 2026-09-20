@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-A Claude Code plugin that speaks as a Genshin Impact character picked for the day — by lore through a typed decision when you give it a TypeSafe key, by the nearest birthday otherwise — in prose only, never in code, commits or error text, and reads the first sentence of each reply aloud through Azure Speech.
+A Claude Code plugin that speaks as a Genshin Impact character picked at session start — by lore through a typed decision when you give it a TypeSafe key, by the nearest birthday otherwise — in prose only, never in code, commits or error text, and reads the first sentence of each reply aloud through Azure Speech.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ claude plugin marketplace add Esposter/Esposter
 claude plugin install genshin-persona@esposter
 ```
 
-The install copies the plugin into the plugin cache and installs its two dependencies, the game-data package and the TypeSafe SDK, from the npm lockfile beside this manifest. From the next session the character is picked and its card is in context; nothing else is needed.
+The install copies the plugin into the plugin cache and installs its dependencies from the npm lockfile beside this manifest. From the next session the character is picked and its card is in context; nothing else is needed.
 
 Spoken replies stay off until the plugin knows an Azure Speech resource — a free-tier one covers thousands of replies a month. Pass the options at install time, or later through `/plugin configure genshin-persona@esposter`:
 
@@ -31,9 +31,9 @@ claude plugin install genshin-persona@esposter \
   --config speech_key=<key>
 ```
 
-The key is marked sensitive, so it lands in the credential store rather than a settings file. A third option, the voice, picks the neural voice by its Azure short name and defaults to an Australian English one.
+The key is marked sensitive, so it lands in the credential store rather than a settings file. Another option, the voice, picks the neural voice by its Azure short name and defaults to an Australian English one.
 
-A fourth option turns the pick over to lore. With a [TypeSafe](https://typesafe.ai) API key the day's character is chosen by one typed decision over the whole roster — weighing the date, a birthday near it, the season's festivals and anniversaries, and your moment: the weekday, the hour, the time zone and the locale — instead of by the nearest birthday alone. The key is sensitive too, and the variable the SDK itself reads, `TYPESAFE_API_KEY`, is honoured when the option is empty:
+A TypeSafe key, given as an option, turns the pick over to lore. With a [TypeSafe](https://typesafe.ai) API key the session's character is chosen by one typed decision over the whole roster — weighing the date, a birthday near it, the season's festivals and anniversaries, and your moment: the weekday, the hour, the time zone and the locale — instead of by the nearest birthday alone. The key is sensitive too, and the variable the SDK itself reads, `TYPESAFE_API_KEY`, is honoured when the option is empty:
 
 ```bash
 claude plugin install genshin-persona@esposter --config typesafe_key=<key>
@@ -49,7 +49,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | :------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `hooks/hooks.json`               | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply. |
 | `output-styles/traveler.md`      | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                           |
-| `skills/genshin/SKILL.md`        | `/genshin-persona:genshin` — the roster, the day's pick, pin and unpin, mute, unmute and volume, setup and teardown.                                         |
+| `skills/genshin/SKILL.md`        | `/genshin-persona:genshin` — the roster, the current pick, pin and unpin, mute, unmute and volume, setup and teardown.                                       |
 | `skills/genshin-author/SKILL.md` | How a voice card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                       |
 | `cards/`                         | Authored voice cards, one per character, in our words: how the character speaks for the model, and their spinner verbs and tips for you.                     |
 | `spinner.md`                     | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                             |
@@ -70,7 +70,7 @@ The spinner replaces the built-in verbs and tips with Teyvat's — the base list
 
 ### How the character is picked
 
-Every playable character comes from the game-data dependency at session start — no generated roster, so a new patch is one dependency bump. The pick is the day's: the first session of a day settles it in a state file and every later session that day reads it back. Without a TypeSafe key the day's character is whoever's birthday is nearest to today by circular distance over the year; a tie goes to the upcoming birthday, then to a choice seeded by the date. With one, a single typed decision picks from the whole roster, one attempt with a short ceiling, and anything short of an answer falls back to the birthday pick. The pick is also recorded against the session id, so a clear, compact or resume after midnight keeps the character the conversation started with. The Traveler, who has no birthday, is never picked by distance and is the card printed when the data cannot be read.
+Every playable character comes from the game-data dependency at session start — no generated roster, so a new patch is one dependency bump. Without a TypeSafe key the character is whoever's birthday is nearest to today by circular distance over the year; a tie goes to the upcoming birthday, then to a choice seeded by the date, so every session started that day agrees. With one, a single typed decision picks from the whole roster at every session start — cheap enough to ask each time, and a little variety between sessions is the point — one attempt with a short ceiling, and anything short of an answer falls back to the birthday pick. The pick is recorded against the session id, so a clear, compact or resume after midnight keeps the character the conversation started with. The Traveler, who has no birthday, is never picked by distance and is the card printed when the data cannot be read.
 
 ### Spoken replies
 

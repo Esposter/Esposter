@@ -1,6 +1,6 @@
 ---
 title: Persona plugin
-description: Stage 1 of the Claude interface — a workspace package that is also a Claude Code plugin, reading every playable character from a game-data dependency Renovate keeps current, settling one for the day — by lore through a typed decision when a key is set, by the nearest birthday otherwise — forcing an output style that keeps the voice out of code, and carrying the authoring skill for the optional voice card a character earns.
+description: Stage 1 of the Claude interface — a workspace package that is also a Claude Code plugin, reading every playable character from a game-data dependency Renovate keeps current, picking one for the session — by lore through a typed decision when a key is set, by the nearest birthday otherwise — forcing an output style that keeps the voice out of code, and carrying the authoring skill for the optional voice card a character earns.
 ---
 
 # Persona plugin
@@ -34,7 +34,7 @@ flowchart LR
 Two consequences shape the package, both forced by the remote install running a frozen `npm ci` in the copied plugin:
 
 - **The dependencies are plain semver ranges, not catalog entries.** npm cannot read the workspace catalog protocol, so this is the one manifest in the repository whose dependencies state their own ranges; Renovate moves them, and the npm lockfile beside them, exactly as it moves everything else.
-- **The package declares no devDependencies.** A `workspace:` range would fail the same `npm ci`, so its tooling — Vitest, TypeScript, the shared configuration — resolves from the repository root's own installs, which is where node's lookup lands after the package's empty `node_modules`. Two lockfiles describe the same two dependencies: the workspace lockfile serves the install here, the npm lockfile every cached install elsewhere, and neither is edited by hand.
+- **The package declares no devDependencies.** A `workspace:` range would fail the same `npm ci`, so its tooling — Vitest, TypeScript, the shared configuration — resolves from the repository root's own installs, which is where node's lookup lands after the package's empty `node_modules`. Two lockfiles describe the same dependencies: the workspace lockfile serves the install here, the npm lockfile every cached install elsewhere, and neither is edited by hand.
 
 On this machine the checkout is added as a local marketplace and the plugin installed from it. A plugin whose source is a relative path inside a directory marketplace is **loaded in place**: the CLI records a cache entry keyed by the checkout's commit, but reads the files from the checkout, so a pull that changes the plugin takes effect at the next session start with no step to repeat. Elsewhere the release is a merge to `main`, which the [review collector](/docs/infra/review-collector) performs; an installed copy follows the marketplace on the tool's next plugin update.
 
@@ -57,16 +57,15 @@ A character with no card is fully usable — the data alone is a persona — whi
 
 ## How a session gets its character
 
-The pick is the day's: the first session started on a day settles it and every later session that day reads it back from a state file, so a pick that asks a model still answers the same all day. By default the day's character is **whoever's birthday is nearest to today**, so the character changes with the calendar rather than by a counter, and the card can say why — a bracketed note under the name, "[Birthday: 20 September, today]" or "[Birthday: 23 September, in 3 days]" — a line of context that is true today and false next week.
+By default the pick is **whoever's birthday is nearest to today**, so the character changes with the calendar rather than by a counter, and the card can say why — a bracketed note under the name, "[Birthday: 20 September, today]" or "[Birthday: 23 September, in 3 days]" — a line of context that is true today and false next week. Every session started on one day gets the same answer, because the pick is a function of the date alone.
 
-With a [typed-decision](/docs/infra/typed-decisions) key in the plugin's options, the day's character is **picked by lore** instead: one choice question over the whole roster, each character an option described by the game's own line about them, with the state code knows for certain — every character's facts and their birthday measured from today, and the person's moment: the date, the weekday, the hour, the time zone and the locale, which is all the machine knows without asking. The answer is taken however spread its probabilities, because a confidence floor guards an action and a pick is a preference. The call is one attempt with a short ceiling, made once a day — a round trip of about a second over a prompt of some fifteen thousand tokens — and anything short of an answer — no key, a timeout, a name the roster does not hold — falls back to the birthday pick, never to the failure card.
+With a [typed-decision](/docs/infra/typed-decisions) key in the plugin's options, the session's character is **picked by lore** instead: one choice question over the whole roster, each character an option described by the game's own line about them, with the state code knows for certain — every character's facts and their birthday measured from today, and the person's moment: the date, the weekday, the hour, the time zone and the locale, which is all the machine knows without asking. The answer is taken however spread its probabilities, because a confidence floor guards an action and a pick is a preference. The tier is asked afresh at every session start rather than once a day: a round trip of about a second over a prompt of some fifteen thousand tokens is cheap enough to spend each time, and a little variety between the day's sessions is what the lore pick is for. The call is one attempt with a short ceiling, and anything short of an answer — no key, a timeout, a name the roster does not hold — falls back to the birthday pick, never to the failure card.
 
 ```mermaid
 flowchart TD
     Start[Session start]
     Pinned{Pin file names<br/>a roster character?}
     Known{Pick already recorded<br/>for this session id?}
-    Day{Day file holds<br/>today's pick?}
     Key{Typed-decision key set?}
     Lore[One choice over the roster:<br/>the date, the moment, every character]
     Answered{Answered with<br/>a roster name?}
@@ -74,7 +73,6 @@ flowchart TD
     Tie{More than one<br/>at that distance?}
     Upcoming[Prefer the upcoming one<br/>over the one just passed]
     Seeded[Then one of the remainder,<br/>seeded by the date]
-    Settle[Write the day file]
     Record[Record the pick against the session id]
     Print[Print the card]
 
@@ -82,20 +80,17 @@ flowchart TD
     Pinned -- yes --> Print
     Pinned -- no --> Known
     Known -- yes --> Print
-    Known -- no --> Day
-    Day -- yes --> Record
-    Day -- no --> Key
+    Known -- no --> Key
     Key -- yes --> Lore
     Key -- no --> Nearest
     Lore --> Answered
-    Answered -- yes --> Settle
+    Answered -- yes --> Record
     Answered -- no --> Nearest
     Nearest --> Tie
-    Tie -- no --> Settle
+    Tie -- no --> Record
     Tie -- yes --> Upcoming
     Upcoming --> Seeded
-    Seeded --> Settle
-    Settle --> Record
+    Seeded --> Record
     Record --> Print
 ```
 
@@ -105,13 +100,13 @@ The edge cases, each decided and each covered by the pick's tests:
 - **The session crosses midnight.** The pick is recorded against the session id at startup and reused on every later start event — clear, compact, resume — so a compaction after midnight never swaps the character mid-conversation. Records older than a week are pruned on each start.
 - **Year wrap and leap day.** Every month and day is measured as a day of one leap year, so late December and early January are neighbours and a 29 February is a day like any other.
 - **A character with no birthday** — the Traveler — is never picked by distance, and is the fallback card when the data cannot be read, because the one character who is the player is the right one to have when the data is gone.
-- **A pin names a character the roster does not hold.** The pin is ignored and the day's pick stands; the skill's `today` verb reports the stale pin.
-- **The tier cannot be reached, or answers a name that is not in the roster.** The birthday pick stands in for the day, and the next day asks again. The skill's `today` verb settles a day no session has started yet, so what it prints is what the sessions get.
+- **A pin names a character the roster does not hold.** The pin is ignored and the pick stands; the skill's `today` verb reports the stale pin.
+- **The tier cannot be reached, or answers a name that is not in the roster.** The birthday pick stands in for that session, and the next start asks again. The skill's `today` verb asks the same way, so under the lore pick it shows one answer the next session may not repeat.
 - **The workspace is not installed** — a fresh clone before the first install — or **anything else fails.** A process-level handler registered before any work prints the Traveler card and exits zero. A session start is never blocked by its own decoration.
 
-The hook reads one package and one state directory under the user's Claude home: the pick records and the day file as tab-separated lines, a shape that cannot fail to parse, plus a pin file, a mute flag and a volume. The one network call it may make is the lore pick's, and only on the first start of a day with a key set.
+The hook reads one package and one state directory under the user's Claude home: the pick records as tab-separated lines, a shape that cannot fail to parse, plus a pin file, a mute flag and a volume. The one network call it may make is the lore pick's, and only with a key set.
 
-**Why a hook picks and not the model.** A skill the model chooses from would spend a decision every session on a question with a fixed answer. That is the [typed decisions](/docs/infra/typed-decisions) rule applied to the terminal: a nearest-birthday lookup is the cheapest tier there is, code, and where a judgement is wanted it goes to the typed-decision tier once a day, never to the session's own model.
+**Why a hook picks and not the model.** A skill the model chooses from would spend a decision every session on a question with a fixed answer. That is the [typed decisions](/docs/infra/typed-decisions) rule applied to the terminal: a nearest-birthday lookup is the cheapest tier there is, code, and where a judgement is wanted it goes to the typed-decision tier at each start, never to the session's own model.
 
 ## The card is small, and authored last
 
@@ -157,7 +152,7 @@ The card is the per-character half of the persona and the output style is the in
 
 ## The skill
 
-`/genshin-persona:genshin` — plugin skills are namespaced by the plugin's name — runs the plugin's own script and relays its lines: the roster, today's pick, `pin` and `unpin`, `mute` and `unmute`, `setup` and `teardown`. Every answer comes from the script, because the roster is game data nothing but the script has read.
+`/genshin-persona:genshin` — plugin skills are namespaced by the plugin's name — runs the plugin's own script and relays its lines: the roster, the current pick, `pin` and `unpin`, `mute`, `unmute` and `volume`, `setup` and `teardown`. Every answer comes from the script, because the roster is game data nothing but the script has read.
 
 ## The settings a plugin cannot ship
 
@@ -167,7 +162,7 @@ The spinner follows the character. Its content has two layers in one syntax: the
 
 The status line has one more problem to solve: an install lands under a directory named after its version, so a setting pointing straight at the plugin's script breaks on every update. The setting points instead at a launcher in the plugin's state directory, one import line, and the hook re-aims that launcher at the running install whenever it differs. An update is followed on the next session, with nothing for the person to repeat.
 
-The line itself is the name in the element's colour, a 24-bit ANSI foreground the terminal paints, so a Pyro day reads red and an Electro day violet at a glance. It is redrawn on every assistant message and must stay cheap, so it never opens the game data, which costs the better part of a second to load: the state files carry the element beside the name, on each pick record and on the pin. The tool also runs it once when a session starts, in the same instant the hook is still writing that session's record, so the record it looks for may not be there yet. Every session started on one day resolves to the same character, so the day file stands in, and the line shows from the first frame on every start but the first of a day.
+The line itself is the name in the element's colour, a 24-bit ANSI foreground the terminal paints, so a Pyro day reads red and an Electro day violet at a glance. It is redrawn on every assistant message and must stay cheap, so it never opens the game data, which costs the better part of a second to load: the state files carry the element beside the name, on each pick record and on the pin. The tool also runs it once when a session starts, in the same instant the hook is still writing that session's record, so the record it looks for may not be there yet. The latest pick of the day stands in — the same name under the birthday pick, the last one seen under the lore pick — so the line shows from the first frame on every start but the first of a day.
 
 ```mermaid
 flowchart LR
@@ -178,7 +173,7 @@ flowchart LR
     Tips["State directory<br/>tips.json"]
     Launcher["State directory<br/>status.mjs, one import"]
     Install["The running install<br/>a directory per version"]
-    Records["State directory<br/>picks.tsv, day, pin: name and element"]
+    Records["State directory<br/>picks.tsv, pin: name and element"]
     Spinner["Spinner<br/>verbs, tips under the character's name"]
     Line["Status line<br/>the name in the element's colour"]
 
@@ -191,7 +186,7 @@ flowchart LR
     Launcher -->|imports| Install
     Settings -->|runs the launcher| Line
     Hook -->|records the session's pick| Records
-    Records -->|pin, the session's record, else the day's| Line
+    Records -->|pin, the session's record, else the latest of today's| Line
     Settings -->|names the file and the label| Spinner
     Tips --> Spinner
 ```
@@ -203,13 +198,13 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 | File                                                               | Role                                                                                                  |
 | :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
 | `.claude-plugin/marketplace.json`                                  | The repository as the `esposter` marketplace, with this package as its one plugin                     |
-| `packages/genshin-persona/.claude-plugin/plugin.json`              | The plugin manifest: discovery metadata and the four user-configuration options                       |
-| `packages/genshin-persona/package.json`                            | The two dependencies as plain ranges; no devDependencies, so the npm lockfile stays honest            |
+| `packages/genshin-persona/.claude-plugin/plugin.json`              | The plugin manifest: discovery metadata and the user-configuration options                            |
+| `packages/genshin-persona/package.json`                            | Every dependency as a plain range; no devDependencies, so the npm lockfile stays honest               |
 | `packages/genshin-persona/hooks/hooks.json`                        | The session-start hook and the asynchronous Stop hook                                                 |
 | `packages/genshin-persona/output-styles/traveler.md`               | The standing voice rules, forced on while the plugin is enabled                                       |
 | `packages/genshin-persona/scripts/pick.ts`                         | The session-start entrypoint: resolve the character, print the card, never fail                       |
 | `packages/genshin-persona/scripts/genshin.ts`                      | The skill's command: roster, today, pin, unpin, mute, unmute, setup, teardown, and the uncarded queue |
-| `packages/genshin-persona/scripts/status.ts`                       | The status line: the pin, the session's record, else the day's, from the state files alone            |
+| `packages/genshin-persona/scripts/status.ts`                       | The status line: the pin, the session's record, else the latest of today's, from the state files      |
 | `packages/genshin-persona/src/services/formatNameplate.ts`         | The name in its element's colour, plain where the element has none                                    |
 | `packages/genshin-persona/src/services/writeStatusLauncher.ts`     | The launcher the status line runs, re-aimed at the running install on every session start             |
 | `packages/genshin-persona/src/services/parseVoiceCard.ts`          | The card split by reader: the context for the model, the greeting, verbs and tips for the person      |
@@ -217,8 +212,8 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 | `packages/genshin-persona/src/services/writeSpinner.ts`            | The two spinner settings and the tips file, written only when they would change                       |
 | `packages/genshin-persona/spinner.md`                              | The base Teyvat verbs and tips, in the card syntax                                                    |
 | `packages/genshin-persona/src/services/pickCharacter.ts`           | The nearest-birthday pick and its two tie-breaks                                                      |
-| `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | Pin, then the session's record, then the day's pick                                                   |
-| `packages/genshin-persona/src/services/resolveDayCharacter.ts`     | The day file, else the lore pick with a key, else the birthday pick; settled once a day               |
+| `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | Pin, then the session's record, then a fresh pick                                                     |
+| `packages/genshin-persona/src/services/pickCurrentCharacter.ts`    | The lore pick with a key, asked afresh each start, else the birthday pick                             |
 | `packages/genshin-persona/src/services/getLorePickRequest.ts`      | The one choice over the roster and the state it is asked over                                         |
 | `packages/genshin-persona/src/services/getSsml.ts`                 | The utterance as the speech service reads it, the volume wrapped in only when one was set             |
 | `packages/genshin-persona/src/services/getSessionStartOutput.ts`   | The two readers' subsets: the whole card as context, the nameplate, note and greeting as the welcome  |
@@ -228,6 +223,6 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 
 ## Notes
 
-- Markdown files, a few scripts of a few dozen lines, and two Renovate-owned dependencies in a workspace that already has hundreds; that is the whole maintenance surface.
-- Spoken replies have two controls: `mute` and `unmute` decide whether the Stop hook calls the speech service at all, and `volume` shapes the voice through the speech markup's own levels, from `silent` to `x-loud` or a number of its scale, at no change to the call.
+- Markdown files, a few scripts of a few dozen lines, and Renovate-owned dependencies in a workspace that already has hundreds; that is the whole maintenance surface.
+- `mute` and `unmute` decide whether the Stop hook calls the speech service at all, and `volume` shapes the voice through the speech markup's own levels, from `silent` to `x-loud` or a number of its scale, at no change to the call.
 - The status line reads the pick records and the pin, never the game data, so it stays cheap to redraw; the element rides on those records so the colour costs no lookup.

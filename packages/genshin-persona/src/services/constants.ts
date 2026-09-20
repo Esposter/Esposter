@@ -6,7 +6,6 @@ import { join } from "node:path";
 export const STATE_DIRECTORY: string = join(homedir(), ".claude", "genshin-persona");
 export const PICK_RECORDS_PATH: string = join(STATE_DIRECTORY, "picks.tsv");
 export const PIN_PATH: string = join(STATE_DIRECTORY, "pin");
-export const DAY_PICK_PATH: string = join(STATE_DIRECTORY, "day");
 export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
 export const VOLUME_PATH: string = join(STATE_DIRECTORY, "volume");
 export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");

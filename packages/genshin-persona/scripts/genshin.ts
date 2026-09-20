@@ -13,13 +13,13 @@ import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLi
 import { getSpinner } from "#src/services/getSpinner";
 import { getToday } from "#src/services/getToday";
 import { parseVoiceCard } from "#src/services/parseVoiceCard";
+import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
 import { readSpinnerContent } from "#src/services/readSpinnerContent";
 import { readUserSettings } from "#src/services/readUserSettings";
 import { readVoiceCard } from "#src/services/readVoiceCard";
 import { readVoiceLines } from "#src/services/readVoiceLines";
-import { resolveDayCharacter } from "#src/services/resolveDayCharacter";
 import { setIsMuted } from "#src/services/setIsMuted";
 import { writePin } from "#src/services/writePin";
 import { writeSpinner } from "#src/services/writeSpinner";
@@ -41,14 +41,14 @@ const printCard = (character: Character) => {
   const card = getCard(character, today.monthDay, readVoiceCard(character.name));
   console.log(formatCard(card));
 };
-// The pin, else the day's pick: what the next session start will resolve to, short of a record it already holds.
-// Asking settles the day's pick where no session has yet, so the answer given here is the one the sessions get
+// The pin, else a fresh pick: what a session starting now would be given, short of a record it already holds — and
+// Under the lore pick a fresh ask may answer differently, which is the point of it
 const getCurrentCharacter = async () => {
   const pin = readPin();
   const pinnedCharacter = findCharacterByName(roster, pin?.name ?? "");
   if (pin && !pinnedCharacter) console.log(`The pin "${pin.name}" names no character in the roster and is ignored.`);
 
-  return pinnedCharacter ?? (await resolveDayCharacter(roster, today));
+  return pinnedCharacter ?? (await pickCurrentCharacter(roster, today));
 };
 
 switch (verb) {
@@ -126,7 +126,7 @@ switch (verb) {
     break;
   case GenshinVerb.Unpin:
     deletePin();
-    console.log("Pin removed; the day's pick stands again.");
+    console.log("Pin removed; the pick decides again from the next session.");
     break;
   case GenshinVerb.Untipped:
     for (const character of roster

@@ -1,23 +1,22 @@
 import { formatNameplate } from "#src/services/formatNameplate";
 import { getToday } from "#src/services/getToday";
 import { parseHookInput } from "#src/services/parseHookInput";
-import { readDayPick } from "#src/services/readDayPick";
 import { readPickRecords } from "#src/services/readPickRecords";
 import { readPin } from "#src/services/readPin";
 import { readStdin } from "#src/services/readStdin";
 import { registerFailureFallback } from "#src/services/registerFailureFallback";
 
-// The status line redraws often, so this reads the state files and never the game data: the pin, else the name
+// The status line redraws often, so this reads the two state files and never the game data: the pin, else the name
 // The session-start hook recorded. The tool also runs it once at session start, beside the hook that is still
-// Recording, so a fresh session's own record may not exist yet — the day's pick, which every session that day
-// Shares, stands in until it does
+// Recording, so a fresh session's own record may not exist yet — the latest pick of the day stands in until it
+// Does, which is the right name under the birthday pick and the last one seen under the lore pick
 registerFailureFallback(() => {});
 const today = getToday();
 const input = await readStdin();
 const { session_id: sessionId = "" } = parseHookInput(input);
-const dayPick = readDayPick();
+const pickRecords = readPickRecords();
 const nameplate =
   readPin() ??
-  readPickRecords().find((record) => record.sessionId === sessionId) ??
-  (dayPick?.isoDate === today.isoDate ? dayPick : undefined);
+  pickRecords.find((record) => record.sessionId === sessionId) ??
+  pickRecords.findLast((record) => record.isoDate === today.isoDate);
 if (nameplate) console.log(formatNameplate(nameplate));
