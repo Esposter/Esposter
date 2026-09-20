@@ -80,4 +80,5 @@ The number beside each stem is a validation, not a ranking: the cosine between t
 ## Notes
 
 - The reference is trimmed to the engine's ten-second conditioning window, so a minute-long story line is read from its opening; the measurement embeds the same opening seconds, so what it chose is what the engine hears.
+- The player character is the one voice the plugin cannot clone: the wiki files the Traveler's lines under one shared page whose story template is empty — their friendship lines are their companion's — so Aether and Lumine have no reference, no longest line to fall back to, and stay unspoken, with the reason in the log.
 - The volume the `volume` verb sets is a gain on the samples, not a lever of the voice: the named levels the speech markup once took are gone, and the file on disk is unchanged for anyone who wrote a number.
