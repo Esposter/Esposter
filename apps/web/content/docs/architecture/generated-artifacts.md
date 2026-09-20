@@ -46,6 +46,10 @@ The plugin reads a character's voice through one function: the card's voice wher
 
 A generated `.ts` is source and is formatted as source — the generator emits the formatter's own shape so that `pnpm format` leaves it alone, and a generator whose output the formatter rewrites is fixed at the generator. A generated `.json` holding numeric arrays is on the formatter's ignore list, since one number per line would turn a few hundred profiles into hundreds of thousands of lines for nothing a reader gains.
 
+## Review
+
+A regenerated folder is the emptiest thing a reviewer can read: hundreds of files carrying numbers a script derived, with the one thing worth judging — the generator — in the same window or an earlier one. So `generated/**` is on CodeRabbit's path filters beside the test snapshots and the migrations, and the commit that carries a regeneration claims the [express lane](/docs/infra/review-collector/express-lane) with an `Express:` trailer, reaching `main` on the checks alone instead of spending a window's file budget. The generator's own change is a separate commit that is reviewed in full.
+
 ## Key files
 
 | File                                                          | Role                                           |
@@ -57,3 +61,4 @@ A generated `.ts` is source and is formatted as source — the generator emits t
 | `packages/genshin-persona/src/services/readPersonaModule.ts`  | Loads one character's card or voice by path    |
 | `packages/genshin-persona/src/services/readCharacterVoice.ts` | The authored voice over the generated one      |
 | `.oxfmtrc.json`                                               | The formatter's ignore list                    |
+| `.coderabbit.yaml`                                            | The review's ignore list                       |
