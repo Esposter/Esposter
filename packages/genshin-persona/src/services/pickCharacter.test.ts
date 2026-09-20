@@ -4,13 +4,16 @@ import { pickCharacter } from "#src/services/pickCharacter";
 import { describe, expect, test } from "vitest";
 
 const createCharacter = (birthday: string): Character => ({
+  affiliation: "",
   birthday,
+  constellation: "",
   description: "",
   element: "",
   name: birthday,
   region: "",
   title: "",
   version: "",
+  weapon: "",
 });
 
 describe(pickCharacter, () => {

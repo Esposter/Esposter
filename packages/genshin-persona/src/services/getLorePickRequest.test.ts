@@ -9,13 +9,16 @@ describe(getLorePickRequest, () => {
   const today = Temporal.PlainDate.from({ day: 20, month: 9, year: LEAP_YEAR });
   const moment: Moment = { hour: 13, locale: "en-AU", timeZone: "Australia/Sydney", weekday: "Wednesday" };
   const described: Character = {
+    affiliation: "affiliation",
     birthday: "9/21",
+    constellation: "constellation",
     description: "description",
     element: "Electro",
     name: "described",
     region: "region",
     title: "title",
     version: "1.0",
+    weapon: "weapon",
   };
   const untitled: Character = { ...described, birthday: "", description: "", name: "untitled", title: "" };
 

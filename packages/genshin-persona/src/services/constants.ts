@@ -44,17 +44,23 @@ export const ElementColorMap: Record<string, string> = {
 // Between the fields of a pick record and of the pin
 export const STATE_FIELD_SEPARATOR = "\t";
 export const PICK_RETENTION_DAYS = 7;
+// The roster cache's file name is the prefix and the installed data package's version, so a bump writes a new one
+export const ROSTER_CACHE_PREFIX = "roster-";
+export const ROSTER_CACHE_EXTENSION = ".json";
 // Every month and day is measured inside one leap year, so 29 February is a day like any other and the year wraps
 export const LEAP_YEAR = 2000;
 export const DATE_LOCALE = "en-AU";
 export const TRAVELER: Character = {
+  affiliation: "",
   birthday: "",
+  constellation: "",
   description: "",
   element: "",
   name: "Traveler",
   region: "",
   title: "",
   version: "",
+  weapon: "",
 };
 // The community wiki's parse API, the source of a character's lines before the game-data package carries them
 export const WIKI_VOICE_OVERS_URL =
