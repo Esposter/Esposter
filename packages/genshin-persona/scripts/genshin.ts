@@ -79,6 +79,7 @@ switch (verb) {
 
     writePin(pinnedCharacter);
     printCard(pinnedCharacter);
+    console.log("Pinned for every session from the next start; the status line follows at once.");
     break;
   }
   case GenshinVerb.Roster:
@@ -106,7 +107,7 @@ switch (verb) {
     const userSettings = readUserSettings();
     const settings = getSettingsWithoutPluginEntries(userSettings);
     writeUserSettings(settings);
-    console.log("Status line and spinner removed from user settings.");
+    console.log("Status line and spinner removed from user settings; both go at the next session.");
     break;
   }
   case GenshinVerb.Today: {

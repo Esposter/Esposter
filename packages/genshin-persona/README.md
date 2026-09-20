@@ -49,18 +49,19 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | :------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `hooks/hooks.json`               | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply. |
 | `output-styles/traveler.md`      | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                           |
-| `skills/genshin/SKILL.md`        | `/genshin-persona:genshin` — the roster, the current pick, pin and unpin, mute, unmute and volume, setup and teardown.                                       |
+| `skills/<verb>/SKILL.md`         | One slash command per verb — `/genshin-persona:today`, `roster`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.  |
+| `skills/genshin/SKILL.md`        | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                       |
 | `skills/genshin-author/SKILL.md` | How a voice card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                       |
 | `cards/`                         | Authored voice cards, one per character, in our words: how the character speaks for the model, and their spinner verbs and tips for you.                     |
 | `spinner.md`                     | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                             |
-| `scripts/`                       | The hook entrypoints, the skill's command and the status-line script, TypeScript run directly by node.                                                       |
+| `scripts/`                       | The hook entrypoints, the commands' script and the status-line script, TypeScript run directly by node.                                                      |
 
 ### Status line and spinner
 
 A plugin cannot ship a status line, spinner verbs or spinner tips, so one command writes them into your user settings, and its twin removes them:
 
 ```bash
-node "<plugin root>/scripts/genshin.ts" setup      # or ask: /genshin-persona:genshin setup
+node "<plugin root>/scripts/genshin.ts" setup      # or: /genshin-persona:setup
 node "<plugin root>/scripts/genshin.ts" teardown
 ```
 
@@ -77,7 +78,7 @@ Every playable character comes from the game-data dependency at session start �
 `mute` and `unmute` decide whether the Stop hook calls the speech service at all. `volume <level>` shapes the voice through the speech markup's own levels — `silent`, `x-soft`, `soft`, `medium`, `loud`, `x-loud`, `default` — or a whole number from 0 to 100, from the next reply on:
 
 ```bash
-node "<plugin root>/scripts/genshin.ts" volume loud     # or ask: /genshin-persona:genshin volume loud
+node "<plugin root>/scripts/genshin.ts" volume loud     # or: /genshin-persona:volume loud
 ```
 
 ### Commands

@@ -100,8 +100,8 @@ The edge cases, each decided and each covered by the pick's tests:
 - **The session crosses midnight.** The pick is recorded against the session id at startup and reused on every later start event — clear, compact, resume — so a compaction after midnight never swaps the character mid-conversation. Records older than a week are pruned on each start.
 - **Year wrap and leap day.** Every month and day is measured as a day of one leap year, so late December and early January are neighbours and a 29 February is a day like any other.
 - **A character with no birthday** — the Traveler — is never picked by distance, and is the fallback card when the data cannot be read, because the one character who is the player is the right one to have when the data is gone.
-- **A pin names a character the roster does not hold.** The pin is ignored and the pick stands; the skill's `today` verb reports the stale pin.
-- **The tier cannot be reached, or answers a name that is not in the roster.** The birthday pick stands in for that session, and the next start asks again. The skill's `today` verb asks the same way, so under the lore pick it shows one answer the next session may not repeat.
+- **A pin names a character the roster does not hold.** The pin is ignored and the pick stands; the `today` command reports the stale pin.
+- **The tier cannot be reached, or answers a name that is not in the roster.** The birthday pick stands in for that session, and the next start asks again. The `today` command asks the same way, so under the lore pick it shows one answer the next session may not repeat.
 - **The workspace is not installed** — a fresh clone before the first install — or **anything else fails.** A process-level handler registered before any work prints the Traveler card and exits zero. A session start is never blocked by its own decoration.
 
 The hook reads one package and one state directory under the user's Claude home: the pick records as tab-separated lines, a shape that cannot fail to parse, plus a pin file, a mute flag and a volume. The one network call it may make is the lore pick's, and only with a key set.
@@ -150,13 +150,13 @@ The plugin's authoring skill keeps the hand-written half honest: the card shape 
 
 The card is the per-character half of the persona and the output style is the invariant half, on purpose: a style per character would be the same lines in a file the tool cannot switch per session, and the card already reaches the model as context at every start. Beside the voice the model also gets the game's one-line description of the character, the lore it answers from when asked who it is.
 
-## The skill
+## The commands
 
-`/genshin-persona:genshin` — plugin skills are namespaced by the plugin's name — runs the plugin's own script and relays its lines: the roster, the current pick, `pin` and `unpin`, `mute`, `unmute` and `volume`, `setup` and `teardown`. Every answer comes from the script, because the roster is game data nothing but the script has read.
+Every control is its own slash command — `/genshin-persona:today`, `roster`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup` and `teardown`, namespaced by the plugin's name — because a verb hidden inside one command's argument is invisible in the menu and a bare invocation of that command has no meaning. Each is a skill of a command and a relay rule that the user alone can invoke, so its description is read by a person browsing the menu and never loaded into the session. One more skill, `genshin`, is the model's and hidden from the menu: it carries the table of verbs, so a request put in words — who is this, louder, pin Furina — reaches the right one. Every command runs the plugin's own script and relays its lines, because the roster is game data nothing but the script has read, and the script's last line says when the change lands.
 
 ## The settings a plugin cannot ship
 
-A plugin's own settings file may set two keys, both about subagents, so the status line, the spinner verbs and the spinner tips are user settings. The skill's `setup` verb writes them and `teardown` removes exactly what `setup` wrote. The spinner keys are taken over outright — the built-in verbs and tips are replaced, not joined — while a status line that is not the plugin's is left alone, because replacing it would lose something the person wrote.
+A plugin's own settings file may set two keys, both about subagents, so the status line, the spinner verbs and the spinner tips are user settings. The `setup` command writes them and `teardown` removes exactly what `setup` wrote. The spinner keys are taken over outright — the built-in verbs and tips are replaced, not joined — while a status line that is not the plugin's is left alone, because replacing it would lose something the person wrote.
 
 The spinner follows the character. Its content has two layers in one syntax: the base Teyvat verbs and tips in `spinner.md`, which every character shows, and the character's own `Verbs:` and `Tip:` lines on their card, which the hook lifts out of the model's context — they are read by a person, never by the model, so the card's fifty-token ceiling is untouched. The session-start hook resolves the character, computes the spinner, and rewrites the two settings keys and the tips file only when they would change, so on most days it writes nothing. Settings load before hooks run, so a change lands at the next session start, which is the same lag the pick itself carries and matters only on the first session of a day the character changed.
 
@@ -195,31 +195,32 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 
 ## Key files
 
-| File                                                               | Role                                                                                                  |
-| :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| `.claude-plugin/marketplace.json`                                  | The repository as the `esposter` marketplace, with this package as its one plugin                     |
-| `packages/genshin-persona/.claude-plugin/plugin.json`              | The plugin manifest: discovery metadata and the user-configuration options                            |
-| `packages/genshin-persona/package.json`                            | Every dependency as a plain range; no devDependencies, so the npm lockfile stays honest               |
-| `packages/genshin-persona/hooks/hooks.json`                        | The session-start hook and the asynchronous Stop hook                                                 |
-| `packages/genshin-persona/output-styles/traveler.md`               | The standing voice rules, forced on while the plugin is enabled                                       |
-| `packages/genshin-persona/scripts/pick.ts`                         | The session-start entrypoint: resolve the character, print the card, never fail                       |
-| `packages/genshin-persona/scripts/genshin.ts`                      | The skill's command: roster, today, pin, unpin, mute, unmute, setup, teardown, and the uncarded queue |
-| `packages/genshin-persona/scripts/status.ts`                       | The status line: the pin, the session's record, else the latest of today's, from the state files      |
-| `packages/genshin-persona/src/services/formatNameplate.ts`         | The name in its element's colour, plain where the element has none                                    |
-| `packages/genshin-persona/src/services/writeStatusLauncher.ts`     | The launcher the status line runs, re-aimed at the running install on every session start             |
-| `packages/genshin-persona/src/services/parseVoiceCard.ts`          | The card split by reader: the context for the model, the greeting, verbs and tips for the person      |
-| `packages/genshin-persona/src/services/getSpinner.ts`              | The base content with the character's own behind it, under the character's name                       |
-| `packages/genshin-persona/src/services/writeSpinner.ts`            | The two spinner settings and the tips file, written only when they would change                       |
-| `packages/genshin-persona/spinner.md`                              | The base Teyvat verbs and tips, in the card syntax                                                    |
-| `packages/genshin-persona/src/services/pickCharacter.ts`           | The nearest-birthday pick and its two tie-breaks                                                      |
-| `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | Pin, then the session's record, then a fresh pick                                                     |
-| `packages/genshin-persona/src/services/pickCurrentCharacter.ts`    | The lore pick with a key, asked afresh each start, else the birthday pick                             |
-| `packages/genshin-persona/src/services/getLorePickRequest.ts`      | The one choice over the roster and the state it is asked over                                         |
-| `packages/genshin-persona/src/services/getSsml.ts`                 | The utterance as the speech service reads it, the volume wrapped in only when one was set             |
-| `packages/genshin-persona/src/services/getSessionStartOutput.ts`   | The two readers' subsets: the whole card as context, the nameplate, note and greeting as the welcome  |
-| `packages/genshin-persona/skills/genshin/SKILL.md`                 | The user-facing verbs                                                                                 |
-| `packages/genshin-persona/skills/genshin-author/SKILL.md`          | How a voice card is written                                                                           |
-| `packages/genshin-persona/cards/`                                  | Authored voice cards, one per character that has one                                                  |
+| File                                                               | Role                                                                                                   |
+| :----------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `.claude-plugin/marketplace.json`                                  | The repository as the `esposter` marketplace, with this package as its one plugin                      |
+| `packages/genshin-persona/.claude-plugin/plugin.json`              | The plugin manifest: discovery metadata and the user-configuration options                             |
+| `packages/genshin-persona/package.json`                            | Every dependency as a plain range; no devDependencies, so the npm lockfile stays honest                |
+| `packages/genshin-persona/hooks/hooks.json`                        | The session-start hook and the asynchronous Stop hook                                                  |
+| `packages/genshin-persona/output-styles/traveler.md`               | The standing voice rules, forced on while the plugin is enabled                                        |
+| `packages/genshin-persona/scripts/pick.ts`                         | The session-start entrypoint: resolve the character, print the card, never fail                        |
+| `packages/genshin-persona/scripts/genshin.ts`                      | The commands' script: roster, today, pin, unpin, mute, unmute, volume, setup, teardown, and the queues |
+| `packages/genshin-persona/scripts/status.ts`                       | The status line: the pin, the session's record, else the latest of today's, from the state files       |
+| `packages/genshin-persona/src/services/formatNameplate.ts`         | The name in its element's colour, plain where the element has none                                     |
+| `packages/genshin-persona/src/services/writeStatusLauncher.ts`     | The launcher the status line runs, re-aimed at the running install on every session start              |
+| `packages/genshin-persona/src/services/parseVoiceCard.ts`          | The card split by reader: the context for the model, the greeting, verbs and tips for the person       |
+| `packages/genshin-persona/src/services/getSpinner.ts`              | The base content with the character's own behind it, under the character's name                        |
+| `packages/genshin-persona/src/services/writeSpinner.ts`            | The two spinner settings and the tips file, written only when they would change                        |
+| `packages/genshin-persona/spinner.md`                              | The base Teyvat verbs and tips, in the card syntax                                                     |
+| `packages/genshin-persona/src/services/pickCharacter.ts`           | The nearest-birthday pick and its two tie-breaks                                                       |
+| `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | Pin, then the session's record, then a fresh pick                                                      |
+| `packages/genshin-persona/src/services/pickCurrentCharacter.ts`    | The lore pick with a key, asked afresh each start, else the birthday pick                              |
+| `packages/genshin-persona/src/services/getLorePickRequest.ts`      | The one choice over the roster and the state it is asked over                                          |
+| `packages/genshin-persona/src/services/getSsml.ts`                 | The utterance as the speech service reads it, the volume wrapped in only when one was set              |
+| `packages/genshin-persona/src/services/getSessionStartOutput.ts`   | The two readers' subsets: the whole card as context, the nameplate, note and greeting as the welcome   |
+| `packages/genshin-persona/skills/<verb>/SKILL.md`                  | One slash command per verb, invocable by the user alone                                                |
+| `packages/genshin-persona/skills/genshin/SKILL.md`                 | The model's router from a request in words to a verb, hidden from the menu                             |
+| `packages/genshin-persona/skills/genshin-author/SKILL.md`          | How a voice card is written                                                                            |
+| `packages/genshin-persona/cards/`                                  | Authored voice cards, one per character that has one                                                   |
 
 ## Notes
 
