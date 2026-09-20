@@ -1,15 +1,31 @@
-import type { WikiParseResponse } from "#src/models/WikiParseResponse";
 import type { WikiStoryLine } from "#src/models/WikiStoryLine";
 
-import { WIKI_FETCH_TIMEOUT_MS, WIKI_USER_AGENT, WIKI_VOICE_OVERS_URL } from "#src/services/constants";
+import { TRAVELER, TravelerTwinMap } from "#src/services/constants";
 import { parseWikiStoryLines } from "#src/services/parseWikiStoryLines";
+import { parseWikiTravelerLines } from "#src/services/parseWikiTravelerLines";
+import { readWikiPageText } from "#src/services/readWikiPageText";
 
-// The community wiki's voice-over page for one character, parsed on request
+const VOICE_OVERS_SUBPAGE = "/Voice-Overs";
+// The Traveler's index lists its story pages as one relative link per region
+const STORY_PAGE_LINK_REGEX = /^\* \[\[\/(?<page>[^\]|]+)/gmu;
+
+// The community wiki's voice-over page for one character, parsed on request. A player twin has no page of their
+// Own: their lines are the Traveler's, one story page per region, read as the twin's half of each dialogue
 export const readWikiStoryLines = async (name: string): Promise<WikiStoryLine[]> => {
-  const response = await fetch(`${WIKI_VOICE_OVERS_URL}${encodeURIComponent(`${name}/Voice-Overs`)}`, {
-    headers: { "user-agent": WIKI_USER_AGENT },
-    signal: AbortSignal.timeout(WIKI_FETCH_TIMEOUT_MS),
-  });
-  const { parse } = (await response.json()) as WikiParseResponse;
-  return parseWikiStoryLines(parse?.wikitext?.["*"] ?? "");
+  const twin = TravelerTwinMap[name];
+  if (!twin) {
+    const wikitext = await readWikiPageText(`${name}${VOICE_OVERS_SUBPAGE}`);
+    return parseWikiStoryLines(wikitext);
+  }
+
+  const travelerPage = `${TRAVELER.name}${VOICE_OVERS_SUBPAGE}`;
+  const index = await readWikiPageText(travelerPage);
+  const pages = Array.from(index.matchAll(STORY_PAGE_LINK_REGEX), (match) => match.groups?.page ?? "");
+  const lines = await Promise.all(
+    pages.map(async (page) => {
+      const wikitext = await readWikiPageText(`${travelerPage}/${page}`);
+      return parseWikiTravelerLines(wikitext, name, twin);
+    }),
+  );
+  return lines.flat();
 };

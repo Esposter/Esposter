@@ -8,8 +8,9 @@ description: One repo script that, for every roster character, fetches their sto
 A zero-shot clone is only as good as its reference, and a character has tens of lines to choose from — one-second interjections and minute-long stories, in registers from a whisper to a shout. Which one represents the voice is a measurement, not a guess, and this is the tooling that makes it: one `scripts` command, with nothing outside npm.
 
 ```bash
-pnpm ai:voice-match [en | ja | ko | zh] [--write]   # measure the roster in one dub; --write generates the map
-pnpm ai:voice-match --check                          # every character's reference, asked of the wiki in every dub
+pnpm ai:voice-match [en | ja | ko | zh] [--write]          # measure the roster in one dub; --write generates the map
+pnpm ai:voice-match en Aether Lumine --write                # the characters named alone, written into the map
+pnpm ai:voice-match --check                                 # every character's reference, asked of the wiki in every dub
 ```
 
 It measures over the wiki's files because the wiki is where the plugin fetches a reference from, and a measurement over the same file the plugin will use is the only one that measures the right thing. The game install, which the benchmark before it read through a Wwise decoder, is not needed by anything any more.
@@ -18,17 +19,17 @@ It measures over the wiki's files because the wiki is where the plugin fetches a
 
 For every character on the roster, in one dub:
 
-1. **Their lines.** The story template of the character's voice-over page lists every line with the file its clip is kept under; the combat template after it is left out, since a reply is spoken in the story register. Each file's URL is asked of the wiki's API in one batched call, and each clip is fetched and decoded with the plugin's own Vorbis decoder — in memory, measured and dropped.
+1. **Their lines.** The story template of the character's voice-over page lists every line with the file its clip is kept under; the combat template after it is left out, since a reply is spoken in the story register. Each file's URL is asked of the wiki's API in one batched call, and each clip is fetched and decoded with the plugin's own Vorbis decoder — in memory, measured and dropped. A player twin's lines are the Traveler's dialogues with Paimon, and each clip is cut to the twin's opening turn before anything is read off it — the plugin's own cut, so the measurement and the reference are the same audio ([per-character voices](/docs/infra/claude-interface/per-character-voices)).
 2. **The profile.** One unit embedding per clip through the speaker-verification encoder, over the clip's opening seconds, averaged and renormed — the centre of the character's voice. A character with fewer than a handful of usable clips is reported rather than profiled.
 3. **The reference.** The clip nearest that centre by cosine, among those with at least a few seconds of speech at or above a signal-to-noise floor: the clip that is most typically the character, which is what a clone should be conditioned on.
 4. **The likeness.** The reference trimmed to the engine's ten-second window, encoded into speaker tensors, one fixed carrier sentence synthesized from them through the same engine the plugin speaks with, and the output's embedding against the profile. Same encoder, carrier and trim for every character, so the numbers compare across the roster.
 
-The profile is a working value and is not written anywhere. Every run measures the roster whole; there is no memory of past runs to keep, because the clips are a few hundred kilobytes each and the engine reads a carrier in seconds.
+The profile is a working value and is not written anywhere. A run measures the roster whole, or only the characters named after the dub — for a page the wiki changed, or a character the last run could not reach — and a named run writes its entries into the map and keeps the rest.
 
 ```mermaid
 flowchart LR
     Page["Wiki voice-over page<br/>the story template's files"]
-    Files["Wiki file host<br/>one Vorbis clip per line"]
+    Files["Wiki file host<br/>one Vorbis clip per line,<br/>a twin's cut to their opening turn"]
     Profile["Profile<br/>mean embedding"]
     Pick["Reference<br/>nearest the profile, long and clean"]
     Clone["Engine<br/>carrier sentence from the reference"]
@@ -47,7 +48,7 @@ flowchart LR
 
 One generated map, `packages/genshin-persona/src/generated/PersonaReferenceMap.ts`, read by the plugin and by nobody else: per character, the line's **stem** — its file name on the wiki without the dub prefix and extension, the same in every dub — and the **likeness** its clone scored. One map rather than a module per character, which is the exception the [generated artifacts](/docs/architecture/generated-artifacts) page states and gives the reason for. Precedence against a card's `reference` is resolved in code, never by copying ([per-character voices](/docs/infra/claude-interface/per-character-voices)).
 
-The run prints one line per character — the stem, the likeness, how many clips the profile pooled and the reference's speech seconds and signal to noise — then the count measured and the characters it could not. `--write` generates the map at the end; a run without it is a dry measurement.
+The run prints one line per character — the stem, the likeness, how many clips the profile pooled and the reference's speech seconds and signal to noise — then the count measured and the characters it could not. `--write` generates the map at the end; a run without it is a dry measurement. Across the roster in English the likeness reads about 0.7 on average, from about 0.35 to about 0.9; a character the wiki has no voice-over page for yet is reported and left out of the map.
 
 ## The check
 
@@ -74,6 +75,8 @@ The runner reads the plugin's source — its wiki reading, its decoder, its engi
 | `scripts/src/services/voiceMatch/getPersonaReferenceMapSource.ts` | The map's source in the formatter's own shape                   |
 | `scripts/src/services/voiceMatch/constants.ts`                    | Every floor, the carrier and the model id                       |
 | `packages/genshin-persona/src/services/parseWikiStoryLines.ts`    | The story template's titles, texts and file stems               |
+| `packages/genshin-persona/src/services/parseWikiTravelerLines.ts` | A twin's half of the Traveler's dialogues, by file and by word  |
+| `packages/genshin-persona/src/services/cutReferenceClip.ts`       | The cut a twin's clip takes, in the runner as in the plugin     |
 | `packages/genshin-persona/src/generated/PersonaReferenceMap.ts`   | The output: stem and likeness per measured character            |
 
 ## Notes

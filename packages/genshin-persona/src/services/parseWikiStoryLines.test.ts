@@ -22,6 +22,21 @@ describe(parseWikiStoryLines, () => {
     ]);
   });
 
+  test("reads a page that leaves the dub to the template the same way", () => {
+    expect.hasAssertions();
+
+    const wikitext = `{{VO/Story
+|character = Sayu
+|vo_01_01_title = Hello
+|vo_01_01_file = VO_{character} Hello.ogg
+|vo_01_01_tx = Sayu, at your disposal!
+}}`;
+
+    expect(parseWikiStoryLines(wikitext)).toStrictEqual([
+      { stem: "Sayu Hello", text: "Sayu, at your disposal!", title: "Hello" },
+    ]);
+  });
+
   test("lists nothing for a page without the story template", () => {
     expect.hasAssertions();
 

@@ -10,6 +10,7 @@ import { createSpeakerEmbedder } from "#src/services/voiceMatch/createSpeakerEmb
 import { getPersonaReferenceMapSource } from "#src/services/voiceMatch/getPersonaReferenceMapSource";
 import { measureCharacterReference } from "#src/services/voiceMatch/measureCharacterReference";
 import { readMissingReferences } from "#src/services/voiceMatch/readMissingReferences";
+import { PersonaReferenceMap } from "@esposter/genshin-persona/src/generated/PersonaReferenceMap.ts";
 import { VoiceLanguage } from "@esposter/genshin-persona/src/models/VoiceLanguage.ts";
 import { checkIsVoiceLanguage } from "@esposter/genshin-persona/src/services/checkIsVoiceLanguage.ts";
 import { createClipDecoder } from "@esposter/genshin-persona/src/services/createClipDecoder.ts";
@@ -21,17 +22,23 @@ import { readVoiceRuntime } from "@esposter/genshin-persona/src/services/readVoi
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 
-// The reference selection: for every roster character, in one dub, the story line that best represents their
-// Voice and the likeness of the clone made from it, printed per character and — with `--write` — generated into the
-// Plugin as one map. Every run measures the roster whole; nothing under the wiki's files is written anywhere
-const measureRoster = async (language: VoiceLanguage, isWriting: boolean) => {
+// The reference selection: for every roster character — or the ones named — in one dub, the story line that best
+// Represents their voice and the likeness of the clone made from it, printed per character and — with `--write` —
+// Generated into the plugin as one map. A run over the whole roster writes the map whole; one over named characters
+// Writes their entries into it and keeps the rest. Nothing under the wiki's files is written anywhere
+const measureRoster = async (language: VoiceLanguage, names: string[], isWriting: boolean) => {
+  const wholeRoster = readRoster();
+  const unknownNames = names.filter((name) => !wholeRoster.some((character) => character.name === name));
+  if (unknownNames.length > 0)
+    throw new InvalidOperationError(Operation.Read, "voice-match", `not on the roster: ${unknownNames.join(", ")}`);
+
   const embed = await createSpeakerEmbedder();
   const decoder = await createClipDecoder();
   const runtime = readVoiceRuntime(import.meta.url);
   const synthesizer = await createVoiceSynthesizer(runtime, MODELS_DIRECTORY);
   console.info(`engine on ${synthesizer.device}`);
-  const roster = readRoster();
-  const references = new Map<string, PersonaReference>();
+  const roster = names.length > 0 ? wholeRoster.filter(({ name }) => names.includes(name)) : wholeRoster;
+  const references = new Map<string, PersonaReference>(names.length > 0 ? Object.entries(PersonaReferenceMap) : []);
   const unmeasured: string[] = [];
   for (const { name } of roster) {
     const measurement = await measureCharacterReference(name, language, decoder, embed, synthesizer);
@@ -48,7 +55,7 @@ const measureRoster = async (language: VoiceLanguage, isWriting: boolean) => {
   }
 
   decoder.free();
-  console.info(`${references.size} of ${roster.length} characters measured in ${language}`);
+  console.info(`${roster.length - unmeasured.length} of ${roster.length} characters measured in ${language}`);
   if (unmeasured.length > 0) console.info(`too few usable clips: ${unmeasured.join(", ")}`);
   if (isWriting) {
     writeFileSync(PERSONA_REFERENCE_MAP_PATH, getPersonaReferenceMapSource(references));
@@ -78,8 +85,9 @@ const checkReferences = async () => {
   process.exitCode = missing.length > 0 ? 1 : 0;
 };
 
+// The dub first, then any characters to measure alone; the flags anywhere
 const flags = new Set([CHECK_FLAG, WRITE_FLAG]);
-const language = process.argv.slice(2).find((argument) => !flags.has(argument)) ?? VoiceLanguage.English;
+const [language = VoiceLanguage.English, ...names] = process.argv.slice(2).filter((argument) => !flags.has(argument));
 if (!checkIsVoiceLanguage(language))
   throw new InvalidOperationError(
     Operation.Read,
@@ -88,4 +96,4 @@ if (!checkIsVoiceLanguage(language))
   );
 
 if (process.argv.includes(CHECK_FLAG)) await checkReferences();
-else await measureRoster(language, process.argv.includes(WRITE_FLAG));
+else await measureRoster(language, names, process.argv.includes(WRITE_FLAG));

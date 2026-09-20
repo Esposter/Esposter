@@ -3,9 +3,9 @@ import type { SpeakerEmbedder } from "#src/models/voiceMatch/SpeakerEmbedder";
 import type { PcmClip } from "@esposter/genshin-persona/src/models/PcmClip.ts";
 
 import { MAX_EMBEDDED_SECONDS, MODEL_SAMPLE_RATE } from "#src/services/voiceMatch/constants";
-import { getFrameEnergiesDb } from "#src/services/voiceMatch/getFrameEnergiesDb";
 import { getSignalToNoiseDb } from "#src/services/voiceMatch/getSignalToNoiseDb";
 import { getSpeechSeconds } from "#src/services/voiceMatch/getSpeechSeconds";
+import { getFrameEnergiesDb } from "@esposter/genshin-persona/src/services/getFrameEnergiesDb.ts";
 
 // Everything one clip contributes, read once off the same frames. The clip is already at the model's sample rate;
 // The energies are read over all of it and the embedding over its opening seconds

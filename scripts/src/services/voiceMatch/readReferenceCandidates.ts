@@ -10,14 +10,15 @@ import {
   VOICE_SAMPLE_RATE,
   WIKI_FILE_REQUEST_HEADERS,
 } from "@esposter/genshin-persona/src/services/constants.ts";
+import { cutReferenceClip } from "@esposter/genshin-persona/src/services/cutReferenceClip.ts";
 import { getWikiFileTitle } from "@esposter/genshin-persona/src/services/getWikiFileTitle.ts";
 import { readWikiFileUrls } from "@esposter/genshin-persona/src/services/readWikiFileUrls.ts";
 import { readWikiStoryLines } from "@esposter/genshin-persona/src/services/readWikiStoryLines.ts";
 import { resampleClip } from "@esposter/genshin-persona/src/services/resampleClip.ts";
 
 // Every story line of one character in one dub, fetched from the wiki — the same files the plugin fetches a
-// Reference from — decoded, measured and dropped. A line the wiki has no file for, or that decodes to nothing or
-// To less than a second, is skipped
+// Reference from — decoded, cut to the character's own voice as the plugin cuts it, measured and dropped. A line
+// The wiki has no file for, or that decodes to nothing or to less than a second, is skipped
 export const readReferenceCandidates = async (
   name: string,
   language: VoiceLanguage,
@@ -41,9 +42,10 @@ export const readReferenceCandidates = async (
     const response = await fetch(url, { headers: WIKI_FILE_REQUEST_HEADERS });
     if (!response.ok) continue;
 
-    const clip = await decode(await response.bytes());
-    if (!clip) continue;
+    const decodedClip = await decode(await response.bytes());
+    if (!decodedClip) continue;
 
+    const clip = cutReferenceClip(name, decodedClip);
     const modelClip = resampleClip(clip, MODEL_SAMPLE_RATE);
     if (modelClip.samples.length < MODEL_SAMPLE_RATE * MIN_CLIP_SECONDS) continue;
 

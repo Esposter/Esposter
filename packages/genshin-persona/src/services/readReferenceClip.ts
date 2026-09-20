@@ -8,6 +8,7 @@ import {
   WIKI_FETCH_TIMEOUT_MS,
   WIKI_FILE_REQUEST_HEADERS,
 } from "#src/services/constants";
+import { cutReferenceClip } from "#src/services/cutReferenceClip";
 import { getReferencePath } from "#src/services/getReferencePath";
 import { getWikiFileTitle } from "#src/services/getWikiFileTitle";
 import { readWikiFileUrls } from "#src/services/readWikiFileUrls";
@@ -25,8 +26,8 @@ const readLongestStoryStem = async (name: string) => {
 };
 
 // One character's reference in one dub, fetched from the wiki the first time it is needed and cached in the state
-// Directory after — never committed — then decoded, brought to the engine's rate and trimmed to what it conditions
-// On. Nothing for a line the wiki no longer holds under that name
+// Directory after — never committed — then decoded, cut to the character's own voice, brought to the engine's rate
+// And trimmed to what it conditions on. Nothing for a line the wiki no longer holds under that name
 export const readReferenceClip = async (
   name: string,
   stem: string,
@@ -57,6 +58,7 @@ export const readReferenceClip = async (
   const clip = await decode(readFileSync(referencePath));
   if (!clip) return undefined;
 
-  const { samples } = resampleClip(clip, VOICE_SAMPLE_RATE);
+  const ownClip = cutReferenceClip(name, clip);
+  const { samples } = resampleClip(ownClip, VOICE_SAMPLE_RATE);
   return { sampleRate: VOICE_SAMPLE_RATE, samples: samples.subarray(0, VOICE_SAMPLE_RATE * MAX_REFERENCE_SECONDS) };
 };

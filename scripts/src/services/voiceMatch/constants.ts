@@ -20,11 +20,6 @@ export const MODELS_DIRECTORY: string =
 // What the speaker encoder expects
 export const MODEL_SAMPLE_RATE = 16_000;
 export const SPEAKER_MODEL_ID = "Xenova/wavlm-base-plus-sv";
-// The frame an energy is read over, and the step between frames
-export const FRAME_SECONDS = 0.04;
-export const HOP_SECONDS = 0.01;
-// Below the clip's loudest frame, what still counts as speech
-export const SPEECH_FLOOR_DB = 35;
 // The energy percentiles read as the speech level and the noise floor
 export const SIGNAL_PERCENTILE = 0.9;
 export const NOISE_PERCENTILE = 0.1;

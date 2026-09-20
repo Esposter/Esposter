@@ -102,7 +102,6 @@ export const WIKI_IMAGE_INFO_URL: string = `${WIKI_ORIGIN}/api.php?action=query&
 export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
 // The player twins have no page of their own: the Traveler's index links one story page per region, and every
 // Line on those is a dialogue with Paimon filed under a file per twin, with a gendered word choice in the text
-export const WIKI_TRAVELER_PAGE = "Traveler/Voice-Overs";
 export const TravelerTwinMap: Record<string, TravelerTwin> = {
   Aether: { gender: TravelerGender.Male, namePlaceholder: "{character1}" },
   Lumine: { gender: TravelerGender.Female, namePlaceholder: "{character2}" },

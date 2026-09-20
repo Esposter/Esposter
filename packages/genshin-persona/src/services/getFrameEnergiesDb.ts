@@ -1,6 +1,6 @@
-import type { PcmClip } from "@esposter/genshin-persona/src/models/PcmClip.ts";
+import type { PcmClip } from "#src/models/PcmClip";
 
-import { FRAME_SECONDS, HOP_SECONDS } from "#src/services/voiceMatch/constants";
+import { FRAME_SECONDS, HOP_SECONDS } from "#src/services/constants";
 
 const DECIBELS_PER_DECADE = 10;
 // Keeps a silent frame finite; far below anything a voiced frame measures

@@ -34,7 +34,7 @@ flowchart TD
     Title["File title: VO_ + dub prefix + stem + .ogg"]
     Cache{"Cached under<br/>references/dub/stem?"}
     Fetch["One imageinfo call, one fetch,<br/>written to the cache"]
-    Clone["Decoded, trimmed to ten seconds,<br/>encoded once per process, spoken"]
+    Clone["Decoded, cut to the character's own turn for a twin,<br/>trimmed to ten seconds, encoded once per process, spoken"]
 
     Reply --> Who --> Card
     Card -- yes --> CardStem --> Title
@@ -73,12 +73,14 @@ The number beside each stem is a validation, not a ranking: the cosine between t
 | `packages/genshin-persona/src/services/readCharacterReference.ts`   | The card's stem over the generated one, "" for neither          |
 | `packages/genshin-persona/src/services/getWikiFileTitle.ts`         | The file title from the stem and the dub                        |
 | `packages/genshin-persona/src/services/readWikiFileUrls.ts`         | The wiki's URL for each title, in one call                      |
-| `packages/genshin-persona/src/services/readReferenceClip.ts`        | Fetch on first use, cache by dub and stem, decode, trim         |
+| `packages/genshin-persona/src/services/readReferenceClip.ts`        | Fetch on first use, cache by dub and stem, decode, cut, trim    |
+| `packages/genshin-persona/src/services/cutOpeningTurn.ts`           | A dialogue's first turn, cut at the first pause long enough     |
+| `packages/genshin-persona/src/services/readWikiStoryLines.ts`       | A character's lines off their page, a twin's off the Traveler's |
 | `packages/genshin-persona/src/services/readSessionCharacterName.ts` | Who the session speaks as, without picking again                |
 | `packages/genshin-persona/src/models/PersonaReference.ts`           | The map entry's shape                                           |
 
 ## Notes
 
 - The reference is trimmed to the engine's ten-second conditioning window, so a minute-long story line is read from its opening; the measurement embeds the same opening seconds, so what it chose is what the engine hears.
-- The player character is the one voice the plugin cannot clone: the wiki files the Traveler's lines under one shared page whose story template is empty — their friendship lines are their companion's — so Aether and Lumine have no reference, no longest line to fall back to, and stay unspoken, with the reason in the log.
+- The player twins are the one exception in how a reference is read. The wiki keeps no page for Aether or Lumine: their lines are the Traveler's, one story page per region linked from the Traveler's index, every line a dialogue with Paimon filed under one file per twin, with a word the twins say differently written as a choice. The plugin reads a twin's lines as the ones they open, with their own word choice, and cuts the clip at the first pause long enough to be Paimon's cue — the same cut the measurement makes before it profiles them — so a twin's reference is their opening turn and nothing of their companion's voice. A line Paimon opens is not theirs to be read from.
 - The volume the `volume` verb sets is a gain on the samples, not a lever of the voice: the named levels the speech markup once took are gone, and the file on disk is unchanged for anyone who wrote a number.
