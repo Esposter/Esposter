@@ -46,7 +46,7 @@ const idleTimer = setTimeout(() => {
 }, VOICE_IDLE_TIMEOUT_MS);
 const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
 const decoder = await createClipDecoder();
-const synthesizerLoad = createVoiceSynthesizer(runtime, MODELS_DIRECTORY);
+const synthesizerLoad = createVoiceSynthesizer(runtime, MODELS_DIRECTORY, undefined, writeVoiceLog);
 const speakers = new Map<string, SpeakerTensors>();
 // The reference is fetched, decoded and encoded once per character, dub and line per process
 const readSpeaker = async ({ language, name, stem }: SpeechRequest) => {
@@ -71,7 +71,10 @@ const speak = async (request: SpeechRequest) => {
   }
 
   const text = request.type === VoiceRequestType.Warm ? WARM_TEXT : request.text;
-  const { sampleRate, samples } = await synthesizer.synthesize(text, speaker);
+  const clip = await synthesizer.synthesize(text, speaker);
+  if (!clip) return VoiceStatus.Error;
+
+  const { sampleRate, samples } = clip;
   if (request.type === VoiceRequestType.Speak) {
     const gain = request.volume / MAX_VOLUME;
     playAudio(getWavBytes({ sampleRate, samples: samples.map((sample) => sample * gain) }));

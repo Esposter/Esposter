@@ -17,6 +17,7 @@ import { getCosineSimilarity } from "#src/services/voiceMatch/getCosineSimilarit
 import { getMeanEmbedding } from "#src/services/voiceMatch/getMeanEmbedding";
 import { readReferenceCandidates } from "#src/services/voiceMatch/readReferenceCandidates";
 import { resampleClip } from "@esposter/genshin-persona/src/services/resampleClip.ts";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One character's reference and its likeness. The profile is the centre of their lines' embeddings; the reference
 // Is the line nearest it among those long and clean enough to condition a clone on — the most typically them —
@@ -43,6 +44,9 @@ export const measureCharacterReference = async (
 
   const speaker = await synthesizer.encodeReference(reference.clip);
   const carrier = await synthesizer.synthesize(CARRIER_TEXT, speaker);
+  // A run that scores silence scores nothing, so an engine with no rung left that speaks ends it
+  if (!carrier) throw new InvalidOperationError(Operation.Read, "voice-match", `${name}: silence on every device rung`);
+
   const carrierEmbedding = await embed(
     resampleClip(carrier, MODEL_SAMPLE_RATE).samples.subarray(0, MODEL_SAMPLE_RATE * MAX_EMBEDDED_SECONDS),
   );

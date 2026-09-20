@@ -1,4 +1,5 @@
 import type { TravelerTwin } from "#src/models/TravelerTwin";
+import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
 
 import { TravelerGender } from "#src/models/TravelerGender";
 import { VoiceLanguage } from "#src/models/VoiceLanguage";
@@ -115,13 +116,11 @@ export const LanguageDubPrefixMap: Record<VoiceLanguage, string> = {
 // The volume is a whole number of this scale, applied as a gain on the samples; the top of the scale is the
 // Engine's own level
 export const MAX_VOLUME = 100;
-// The engine: Chatterbox Turbo through the ONNX runtime, with a dtype and a device per component, each measured
-// Against the character's own voice before it was chosen. The speech encoder runs once per character and on the
-// CPU, since the WebGPU provider is where it fails, and its half-precision weights cost no likeness; the language
-// Model is the 4-bit variant, which cost none either and speaks twice as fast; the vocoder stays full precision,
-// Because its half-precision variant is the one that moved the likeness, by a fifth. The language model and the
-// Vocoder run on the GPU, and on the CPU when no adapter is found. The language model's session is keyed `model`
-// And its file `language_model`, so both spellings carry its dtype
+// The engine: Chatterbox Turbo through the ONNX runtime, with a dtype per component, each measured against the
+// Character's own voice before it was chosen: the speech encoder's half-precision weights cost no likeness; the
+// Language model is the 4-bit variant, which cost none either and speaks twice as fast; the vocoder stays full
+// Precision, because its half-precision variant is the one that moved the likeness, by a fifth. The language
+// Model's session is keyed `model` and its file `language_model`, so both spellings carry its dtype
 export const VOICE_MODEL_ID = "ResembleAI/chatterbox-turbo-ONNX";
 export const VOICE_MODEL_ARCHITECTURE = "ChatterboxModel";
 export const VOICE_MODEL_DTYPE: Record<string, string> = {
@@ -133,7 +132,29 @@ export const VOICE_MODEL_DTYPE: Record<string, string> = {
 };
 export const VOICE_CPU_DEVICE = "cpu";
 export const VOICE_GPU_DEVICE = "webgpu";
-export const VOICE_ENCODER_COMPONENT = "speech_encoder";
+// The language model's three sessions share a device, the vocoder has its own, and the speech encoder runs once
+// Per character on the CPU, where the WebGPU provider rejects its graph
+const getVoiceDeviceMap = (languageModelDevice: string, vocoderDevice: string): Record<string, string> => ({
+  conditional_decoder: vocoderDevice,
+  embed_tokens: languageModelDevice,
+  language_model: languageModelDevice,
+  model: languageModelDevice,
+  speech_encoder: VOICE_CPU_DEVICE,
+});
+// Where the engine runs, fastest first, and verified by the sound rather than by the load: a provider that loads
+// A graph can still run it wrong — this machine's WebGPU provider returns a constant near-silence from the full
+// Precision vocoder on most runs and throws nothing — so a synthesis that is not speech moves the engine down one
+// Rung and runs again, a load that rejects moves it the same way, and the last rung failing is an error the log
+// Sees. A rung is named for what runs on the GPU, since the CPU vocoder still speaks ahead of real time
+export const VOICE_DEVICE_LADDER: [VoiceDeviceRung, ...VoiceDeviceRung[]] = [
+  { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_GPU_DEVICE), name: VOICE_GPU_DEVICE },
+  { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_CPU_DEVICE), name: `${VOICE_GPU_DEVICE}-language-model` },
+  { devices: getVoiceDeviceMap(VOICE_CPU_DEVICE, VOICE_CPU_DEVICE), name: VOICE_CPU_DEVICE },
+];
+// What a synthesis has to be to count as spoken: a loudest frame at least this loud, since the engine masters
+// Its output near full scale and a vocoder run wrong lands tens of decibels under it, and a quietest frame the
+// Speech floor below the loudest, since a sentence has pauses where noise has none
+export const MIN_SPEECH_PEAK_DB = -40;
 // The rate the engine reads a reference at and writes a waveform at
 export const VOICE_SAMPLE_RATE = 24_000;
 // The engine conditions on this much of a reference, so a longer clip is trimmed rather than encoded whole

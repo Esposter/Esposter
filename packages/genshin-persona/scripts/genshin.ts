@@ -249,11 +249,16 @@ switch (verb) {
     // Downloaded by loading the engine once here — with progress, which the detached synthesizer cannot print —
     // And the synthesizer then loads them from the cache inside a hook's budget
     const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
-    const synthesizer = await createVoiceSynthesizer(runtime, MODELS_DIRECTORY, createVoiceProgressPrinter());
+    const synthesizer = await createVoiceSynthesizer(
+      runtime,
+      MODELS_DIRECTORY,
+      createVoiceProgressPrinter(),
+      console.log,
+    );
     console.log(
       synthesizer.device === VOICE_CPU_DEVICE
         ? "Weights present; the engine loads on the CPU — no GPU adapter was found, so a reply is synthesized several times slower than real time."
-        : `Weights present; the engine loads on ${synthesizer.device}.`,
+        : `Weights present; the engine loads on ${synthesizer.device}, and moves down to the CPU by itself if what it synthesizes there is not speech.`,
     );
     // The dub on disk is the gate every spoken reply passes, so it is written only where this run proved the
     // Voice — a setup that failed after it leaves the replies silent rather than broken in the hooks' silence
