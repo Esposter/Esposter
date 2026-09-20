@@ -35,6 +35,9 @@ const transcribe = await createTranscriber();
 const candidates: CandidateVoice[] = [];
 const declined: string[] = [];
 mkdirSync(WORK_DIRECTORY, { recursive: true });
+// Emptied before the first voice is measured: a run every voice declines writes nothing below, and a bank left
+// From an earlier run would then be ranked as if this one had produced it
+writeFileSync(BANK_PATH, JSON.stringify(candidates, undefined, JSON_INDENT));
 for (const definition of definitions) {
   const candidate = await readCandidateVoice(definition, endpoint, key, embed, transcribe);
   if (!candidate) {
