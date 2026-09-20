@@ -359,26 +359,26 @@ flowchart LR
 
 ## <a name="packages">📦 Packages</a>
 
-| Package                                                                                               | Description                                                                                  | Published |
-| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | :-------: |
-| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                     | Serverless Azure Functions backend — push notifications, webhooks, EventGrid                 |     —     |
-| [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                             | Pulumi infrastructure code and migration tools for Azure resources                           |     —     |
-| [`apps/web`](https://github.com/Esposter/Esposter/tree/main/apps/web)                                 | Main Nuxt web application — frontend, server routes, tRPC API                                |     —     |
-| [`packages/azure`](https://github.com/Esposter/Esposter/tree/main/packages/azure)                     | Azure wire conventions — OData filter clauses, entity key casing, service limits             |     ✓     |
-| [`packages/azure-mock`](https://github.com/Esposter/Esposter/tree/main/packages/azure-mock)           | Mock Azure service classes for local dev and testing                                         |     ✓     |
-| [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration)     | Shared ESLint, TSConfig, and tsdown build configurations                                     |     —     |
-| [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                           | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub              |     —     |
-| [`packages/db-mock`](https://github.com/Esposter/Esposter/tree/main/packages/db-mock)                 | In-memory PGlite database factory for unit and integration tests                             |     —     |
-| [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)             | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                              |     —     |
-| [`packages/genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) | Claude Code plugin — a Genshin character picked by birthday, spoken replies via Azure Speech |     —     |
-| [`packages/keyframe-store`](https://github.com/Esposter/Esposter/tree/main/packages/keyframe-store)   | Content-addressed version store — zstd keyframes and deltas over any backend                 |     ✓     |
-| [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)             | Parser for Tiled Map Editor `.tmx` files                                                     |     ✓     |
-| [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                   | Shared TypeScript types, utilities, and error classes                                        |     ✓     |
-| [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)         | Node-only shared tooling — benchmark reporting for vitest bench runs                         |     —     |
-| [`packages/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/virrun)                   | Ephemeral, in-memory virtual runner — runs a repo's real toolchain isolated                  |     ✓     |
-| [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)       | Phaser game engine integration for Vue                                                       |     ✓     |
-| [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)                   | TypeScript rewrite of xml2js — XML ↔ JSON conversion                                         |     ✓     |
-| [`scripts`](https://github.com/Esposter/Esposter/tree/main/scripts)                                   | The repository's own tooling — workspace graph, dependency report, sweep scans               |     —     |
+| Package                                                                                               | Description                                                                                         | Published |
+| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | :-------: |
+| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                     | Serverless Azure Functions backend — push notifications, webhooks, EventGrid                        |     —     |
+| [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                             | Pulumi infrastructure code and migration tools for Azure resources                                  |     —     |
+| [`apps/web`](https://github.com/Esposter/Esposter/tree/main/apps/web)                                 | Main Nuxt web application — frontend, server routes, tRPC API                                       |     —     |
+| [`packages/azure`](https://github.com/Esposter/Esposter/tree/main/packages/azure)                     | Azure wire conventions — OData filter clauses, entity key casing, service limits                    |     ✓     |
+| [`packages/azure-mock`](https://github.com/Esposter/Esposter/tree/main/packages/azure-mock)           | Mock Azure service classes for local dev and testing                                                |     ✓     |
+| [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration)     | Shared ESLint, TSConfig, and tsdown build configurations                                            |     —     |
+| [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                           | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub                     |     —     |
+| [`packages/db-mock`](https://github.com/Esposter/Esposter/tree/main/packages/db-mock)                 | In-memory PGlite database factory for unit and integration tests                                    |     —     |
+| [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)             | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                                     |     —     |
+| [`packages/genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) | Claude Code plugin — a Genshin character picked by birthday, replies spoken in its own cloned voice |     —     |
+| [`packages/keyframe-store`](https://github.com/Esposter/Esposter/tree/main/packages/keyframe-store)   | Content-addressed version store — zstd keyframes and deltas over any backend                        |     ✓     |
+| [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)             | Parser for Tiled Map Editor `.tmx` files                                                            |     ✓     |
+| [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                   | Shared TypeScript types, utilities, and error classes                                               |     ✓     |
+| [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)         | Node-only shared tooling — benchmark reporting for vitest bench runs                                |     —     |
+| [`packages/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/virrun)                   | Ephemeral, in-memory virtual runner — runs a repo's real toolchain isolated                         |     ✓     |
+| [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)       | Phaser game engine integration for Vue                                                              |     ✓     |
+| [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)                   | TypeScript rewrite of xml2js — XML ↔ JSON conversion                                                |     ✓     |
+| [`scripts`](https://github.com/Esposter/Esposter/tree/main/scripts)                                   | The repository's own tooling — workspace graph, dependency report, sweep scans                      |     —     |
 
 ## <a name="claude-code-plugins">🔌 Claude Code Plugins</a>
 
@@ -389,9 +389,9 @@ claude plugin marketplace add Esposter/Esposter
 claude plugin install genshin-persona@esposter
 ```
 
-| Plugin                                                                                       | What it does                                                                                                                                                |
-| :------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) | Speaks as the Genshin Impact character whose birthday is nearest to today, in prose only, and reads each reply's first sentence aloud through Azure Speech. |
+| Plugin                                                                                       | What it does                                                                                                                                                               |
+| :------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) | Speaks as the Genshin Impact character whose birthday is nearest to today, in prose only, and reads each reply's first sentence aloud in the character's own cloned voice. |
 
 A plugin here is an ordinary workspace package, so it is formatted, linted, tested and dependency-bumped with everything else, and a merge to `main` is its release: an installed copy follows the marketplace on the next plugin update. How that is built, and what it deliberately does not do, is on the [Claude interface](https://esposter.com/docs/infra/claude-interface) page.
 

@@ -1,102 +1,83 @@
 ---
 title: Per-character voices
-description: Every persona card names the catalogue voice that reads it, with a style, a pitch and a rate — so each character sounds like a different person on the free tier, without a cloned voice or a second service.
+description: Every character is read in a clone of their own voice, conditioned on one line of their own performance fetched from the community wiki — the line the reference selection measured as most typically them, or the one a card names where an ear overruled it — in whichever dub the person set up, with no clip ever committed.
 ---
 
 # Per-character voices
 
-[Spoken replies](/docs/infra/claude-interface/spoken-replies) shipped with one voice for the whole roster: whoever the session picked, the same Australian English narrator read them. The persona changed and the voice did not, which is the one thing a spoken persona cannot afford.
+[Spoken replies](/docs/infra/claude-interface/spoken-replies) first shipped with one catalogue narrator for the whole roster, then with a catalogue voice per character bent by pitch and rate. The persona changed and the voice only approximated it, which is the one thing a spoken persona cannot afford.
 
-**A character's voice is now their own.** It costs no new service, no new resource and nothing beyond the free tier the stage already sits on, because it spends the expressiveness the speech markup was always carrying. The voice comes from two files kept apart on purpose: the module the [voice match benchmark](/docs/infra/claude-interface/voice-match-benchmark) generates for the character from their own audio, and the card, where a person who listened writes the correction that overrules it ([generated artifacts](/docs/architecture/generated-artifacts)).
+**A character's voice is now their own.** The engine is a zero-shot cloner: handed a few seconds of a speaker, it reads any sentence in that speaker's voice. So what a character needs is one reference clip of their own performance, and that is exactly what the community wiki the plugin already reads cards from hosts — every voice line, as plain Ogg Vorbis, one file per line per dub.
 
-## The four levers
+## What a character's voice is
 
-Everything here is one SSML element or attribute, and every one of them is free.
+The voice comes from two sources kept apart on purpose, resolved in code and never by copying ([generated artifacts](/docs/architecture/generated-artifacts)):
 
-| Lever                                        | What it changes                                                                                                                                                                     |
-| :------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The voice itself                             | Register and accent. The largest effect by far; the voice is chosen from the catalogue's English voices, the language of every reply and of the performance it is measured against. |
-| `mstts:express-as` `style` and `styledegree` | Temperament — cheerful, whispering, newscast — at an intensity from a hundredth to twice the voice's own definition. Only the voices that declare a style have one.                 |
-| `prosody` `pitch`                            | Baseline pitch, within half to one and a half times the voice's own.                                                                                                                |
-| `prosody` `rate`                             | Speaking pace, within half to twice the voice's own.                                                                                                                                |
+- **The generated map**, `src/generated/PersonaReferenceMap.ts` — one entry per character holding the **stem** of the line the [reference selection](/docs/infra/claude-interface/reference-selection) measured as the most typically them, and the **likeness** its clone scored. Written by the measurement, never by hand.
+- **The card's `reference`** — the ear's correction, and only that: a stem someone listened to and chose over the measurement. Deleting it restores the measurement; regenerating the map never touches a card.
 
-**`role` is not among them.** The markup's fifth lever recasts the speaker as a girl, a boy or an older adult, and only the Chinese voices declare it. Replies are spoken in English, so it is unavailable here rather than unused.
+A character neither has reached is spoken from the longest story line the wiki lists — spoken, never silent — and the `voice` verb says so when it is that character it proves the voice with.
 
-## Where a voice comes from
+## The stem, and the dub
 
-The card wins, the generated measurement stands behind it, the user's configured voice stands in for a character neither has reached, and the plugin's own default stands behind all three — so setting the option overrides the characters nobody has voiced, never the ones somebody has.
+A line's file on the wiki is `VO_`, a dub prefix, the character's name and the line's title: `VO_Clorinde More About Clorinde - 03.ogg` in English, `VO_JA_Clorinde More About Clorinde - 03.ogg` in Japanese. The **stem** is the part every dub shares — `Clorinde More About Clorinde - 03` — and it is what the map and a card hold. The plugin composes the file title from the stem and the dub the `voice` verb wrote, asks the wiki's API for that file's URL in one call, fetches it, and caches it under the state directory by dub and stem. Switching the dub needs no new measurement: the same line is fetched in the other performance.
 
 ```mermaid
 flowchart TD
-    Reply[Stop hook — the reply's first sentence]
-    Who[Who is this session speaking as?<br/>the pin, else the recorded pick]
-    Card{Does their card<br/>name a voice?}
-    Generated{Did the benchmark<br/>generate one?}
-    Option{Is a voice<br/>configured?}
-    CardVoice[The ear's voice, style, pitch and rate]
-    GeneratedVoice[The measured voice, pitch and rate]
-    OptionVoice[The configured voice]
-    Default[The plugin's default voice]
-    Ssml[SSML — express-as around prosody around the text]
+    Reply["Stop hook — the reply's first sentence"]
+    Who["Who is this session speaking as?<br/>the pin, else the recorded pick"]
+    Card{"Does their card<br/>name a reference?"}
+    Map{"Did the measurement<br/>generate one?"}
+    CardStem["The ear's stem"]
+    MapStem["The measured stem"]
+    Longest["The longest story line<br/>the wiki lists"]
+    Title["File title: VO_ + dub prefix + stem + .ogg"]
+    Cache{"Cached under<br/>references/dub/stem?"}
+    Fetch["One imageinfo call, one fetch,<br/>written to the cache"]
+    Clone["Decoded, trimmed to ten seconds,<br/>encoded once per process, spoken"]
 
-    Reply --> Who
-    Who --> Card
-    Card -- yes --> CardVoice
-    Card -- no --> Generated
-    Generated -- yes --> GeneratedVoice
-    Generated -- no --> Option
-    Option -- yes --> OptionVoice
-    Option -- no --> Default
-    CardVoice --> Ssml
-    GeneratedVoice --> Ssml
-    OptionVoice --> Ssml
-    Default --> Ssml
+    Reply --> Who --> Card
+    Card -- yes --> CardStem --> Title
+    Card -- no --> Map
+    Map -- yes --> MapStem --> Title
+    Map -- no --> Longest --> Title
+    Title --> Cache
+    Cache -- no --> Fetch --> Clone
+    Cache -- yes --> Clone
 ```
-
-The hook reads who the session is speaking as from what the session start already recorded, never by picking again: it runs after every reply, and the [lore pick](/docs/infra/claude-interface/persona-plugin) can reach the network.
 
 ## The field a card carries
 
-Optional, and the ear's alone: a card names a voice only when someone listened and chose it over the measurement. The voice name, then any of the adjustments the markup takes. Pitch and rate are signed percentages **as numbers**, and the markup builder writes the sign:
+Optional, and the ear's alone:
 
 ```ts
-voice: { name: "en-GB-SoniaNeural", pitch: -4, rate: -4, style: "sad" },
+reference: "Clorinde More About Clorinde - 03",
 ```
 
-Like the spinner's lines, it never reaches the model — a character is never told the name of the voice reading them. An omitted adjustment is one the card did not make, so the voice keeps its own. The name is deliberately not checked against a union of known voices: the service gains and retires voices on Microsoft's schedule, so a copy of that catalogue in the repository would be wrong by the next patch, and the `voices` command asks the live list instead.
+Like the spinner's lines, it never reaches the model — a character is not told which line their voice is cloned from. It is not checked against a union of known stems: the wiki's pages move on the community's schedule, so the check is a command that asks the wiki, run over every character's effective reference in every dub ([reference selection](/docs/infra/claude-interface/reference-selection)).
 
-## How the roster is assigned, and what that is worth
+## What the character's voice is, and where it lives
 
-Every generated voice is a **measurement**: the [voice match benchmark](/docs/infra/claude-interface/voice-match-benchmark) reads the character's own English performance, measures every catalogue voice once, and writes the closest voice with the pitch and rate that take it the rest of the way. The first table shipped was judged from the game's metadata and the catalogue's descriptions, with nothing listened to; it was deleted when the measurement replaced it, because a judged value in an authored file reads as a person's choice.
+The voice is the actor's, and the game's publisher requires written consent from both the company and the artist for any generative use of it. What makes this defensible is unchanged from the day it was first proposed: the reference audio is fetched to this machine and stays here, the plugin ships nothing lifted from the game, and what is committed per character is a line's **title** and a number. The wiki hosting the clip is its exposure; a public Apache-2.0 package committing the same clip would be ours, copied into every installer's plugin cache — so the clip is not committed, however convenient that would be, and the cache is the person's to delete.
 
-**The first listen already moved the benchmark.** Fitted from the Japanese track against the whole catalogue by the numbers alone, the roster sounded worse than the judged table, and fitted against the Japanese voices it sounded accented; the benchmark's page settles the match at English against English — the English track's performance, the catalogue's English voices — and why gender is not a cut on top. What the ear still owes is the ranking inside that pool: three candidates confirmed per sampled character, never a hundred auditioned, and the card is where that confirmation goes.
+## What the likeness is worth
 
-The roster lands on a fraction of the English voices, the cast's high voices all closest to the catalogue's few high ones, so one voice reads for many characters, told apart by pitch and rate. Only one character speaks per session, so a shared voice is invisible in use.
-
-## Checking the cards against the catalogue
-
-Both ways a voice line can be wrong are silent — an unknown voice returns no audio at all, and a style the voice does not declare is dropped back to neutral — so there is a command that says so out loud:
-
-```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voices
-```
-
-It lists the resource's voices live and reports every character whose voice — the card's, else the generated one — names one the resource does not have, or a style the voice does not declare. Nothing about the catalogue is kept in this repository: it gains and retires voices on Microsoft's schedule, and a copy would be wrong by the next patch. The command needs the endpoint and key in the environment, which is where a hook already finds them.
+The number beside each stem is a validation, not a ranking: the cosine between the clone of one carrier sentence and the character's own profile, on the same speaker encoder that scored the catalogue voices before. The clone reads about 0.79 where a character's own clip reads about 0.98 and the best catalogue voice read 0.91 — the engine trades similarity for speed, and a second reference or a smaller language model moved it by nothing. **The ear keeps the last word**: a character whose clone scores low is a character whose reference the ear should look at, and the card is where the ear's answer goes.
 
 ## Key files
 
-| File                                                                  | Role                                                    |
-| :-------------------------------------------------------------------- | :------------------------------------------------------ |
-| `packages/genshin-persona/src/personaCards/*.ts`                      | The optional `voice` field, the ear's                   |
-| `packages/genshin-persona/src/generated/personaVoices/`               | The measured voice, one generated module per character  |
-| `packages/genshin-persona/src/services/readCharacterVoice.ts`         | The card's voice over the generated one                 |
-| `packages/genshin-persona/src/models/SpeechVoice.ts`                  | The field's shape                                       |
-| `packages/genshin-persona/src/services/getSsml.ts`                    | Style around prosody around the text, and the namespace |
-| `packages/genshin-persona/src/services/readSessionCharacterName.ts`   | Who the session speaks as, without picking again        |
-| `packages/genshin-persona/src/services/readSpeechVoiceDefinitions.ts` | The catalogue, read live                                |
-| `packages/genshin-persona/src/services/getSpeechVoiceFinding.ts`      | What is wrong with one card's voice                     |
+| File                                                                | Role                                                            |
+| :------------------------------------------------------------------ | :-------------------------------------------------------------- |
+| `packages/genshin-persona/src/generated/PersonaReferenceMap.ts`     | The measured stem and likeness per character, one generated map |
+| `packages/genshin-persona/src/personaCards/*.ts`                    | The optional `reference` field, the ear's                       |
+| `packages/genshin-persona/src/services/readCharacterReference.ts`   | The card's stem over the generated one, "" for neither          |
+| `packages/genshin-persona/src/services/getWikiFileTitle.ts`         | The file title from the stem and the dub                        |
+| `packages/genshin-persona/src/services/readWikiFileUrls.ts`         | The wiki's URL for each title, in one call                      |
+| `packages/genshin-persona/src/services/readReferenceClip.ts`        | Fetch on first use, cache by dub and stem, decode, trim         |
+| `packages/genshin-persona/src/services/readSessionCharacterName.ts` | Who the session speaks as, without picking again                |
+| `packages/genshin-persona/src/models/PersonaReference.ts`           | The map entry's shape                                           |
 
 ## Notes
 
-- The volume the `volume` verb sets joins the pitch and the rate in the same `prosody`, so a card's adjustments and the person's loudness no longer nest two elements deep.
-- The style namespace is declared on the markup only when a card named a style, so the common case is the same document it always was.
+- The reference is trimmed to the engine's ten-second conditioning window, so a minute-long story line is read from its opening; the measurement embeds the same opening seconds, so what it chose is what the engine hears.
+- The volume the `volume` verb sets is a gain on the samples, not a lever of the voice: the named levels the speech markup once took are gone, and the file on disk is unchanged for anyone who wrote a number.

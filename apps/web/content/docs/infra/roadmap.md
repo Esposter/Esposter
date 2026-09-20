@@ -9,7 +9,7 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 ## Open
 
-- [ ] [Character voice](/docs/proposals/infra/character-voice) — every character read in their own cloned voice by a local engine run from Node, the Azure Speech path removed end to end, and the benchmark's reference stage kept to choose and score each character's reference line
+No open work.
 
 ## Blocked (app-side migration off key-based auth first)
 
