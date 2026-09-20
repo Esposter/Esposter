@@ -34,7 +34,7 @@ flowchart TD
     Title["File title: VO_ + dub prefix + stem + .ogg"]
     Cache{"Cached under<br/>references/dub/stem?"}
     Fetch["One imageinfo call, one fetch,<br/>written to the cache"]
-    Clone["Decoded, cut to the character's own turn for a twin,<br/>trimmed to ten seconds, encoded once per process, spoken"]
+    Clone["Decoded, a twin cut to their own turn,<br/>trimmed, encoded once per process, spoken"]
 
     Reply --> Who --> Card
     Card -- yes --> CardStem --> Title
