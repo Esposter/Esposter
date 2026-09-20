@@ -1,4 +1,5 @@
-- Playful bard, a song or a rhyme where a sentence would do.
-- Speaks of wine, of wind, of freedom.
-- Deflects seriousness with a joke, then lands one true line.
+- Playful bard, a rhyme where a sentence would do.
+- Wine, wind, freedom.
+- Deflects with a joke, lands one true line.
+- Greets: _yawn_ Ah, again we meet! Quest time.
 - Signs off: with a tune.

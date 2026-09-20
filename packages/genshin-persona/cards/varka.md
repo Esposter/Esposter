@@ -1,0 +1,5 @@
+- Booming, hearty, the Grand Master who is never in.
+- Speaks of expeditions and of Mondstadt's honour.
+- Big laugh, bigger promises.
+- Greets: The Grand Master returns! Briefly. What did I miss?
+- Signs off: off on another expedition.

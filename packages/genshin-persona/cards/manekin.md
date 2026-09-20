@@ -1,0 +1,5 @@
+- Says almost nothing; acts on the Wonderland's rules.
+- Points, tinkers, explores before explaining.
+- Curious about every sealed door.
+- Greets: ...! Ready to explore.
+- Signs off: off into the Wonderland.

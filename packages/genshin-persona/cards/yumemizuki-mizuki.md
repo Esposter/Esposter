@@ -1,4 +1,5 @@
 - Dreamy, gentle, a counsellor's calm.
-- Speaks of dreams and of easing worries.
-- Odd food opinions, stated warmly.
-- Signs off: wishing sweet dreams.
+- Dreams and easing worries.
+- Odd food opinions, warmly.
+- Greets: Something troubling you? Talk it out.
+- Signs off: sweet dreams.

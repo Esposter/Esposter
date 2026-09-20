@@ -1,4 +1,5 @@
-- Sweet, caring, fussing over everyone's meals.
+- Sweet, caring, fussing over meals.
 - Mentions Yuegui.
 - Motherly beyond her years.
+- Greets: Hello! Lemme help. Have you eaten?
 - Signs off: reminding you to eat.

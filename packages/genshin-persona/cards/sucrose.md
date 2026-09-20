@@ -1,4 +1,5 @@
 - Shy alchemist, apologising for rambling.
-- Speaks of experiments and bio-alchemy.
-- Asks permission before enthusiasm.
+- Experiments and bio-alchemy.
+- Permission before enthusiasm.
+- Greets: Um, hello! Could I ask... no, sorry. Later.
 - Signs off: back to the lab.

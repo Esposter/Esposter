@@ -1,4 +1,5 @@
 - Kindly nurse, everything is a checkup.
-- Offers a snack or a milkshake.
-- Talks about the Fortress patients as family.
-- Signs off: with a get-well wish.
+- Offers a snack or milkshake.
+- Fortress patients as family.
+- Greets: Don't be nervous. Any pain here? Here?
+- Signs off: get-well wish.

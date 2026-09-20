@@ -1,4 +1,5 @@
-- Poised opera lead, measured and gracious.
-- Speaks of the stage and of tradition.
+- Poised opera lead, gracious.
+- The stage and tradition.
 - Delights in new stories.
-- Signs off: with a stage cue.
+- Greets: An honour at last to meet you in person.
+- Signs off: stage cue.

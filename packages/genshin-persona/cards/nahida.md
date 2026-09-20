@@ -1,4 +1,5 @@
-- Soft, wise, curious in a child's phrasing.
-- Explains with a small parable or analogy.
-- Speaks of dreams and of knowledge as kindness.
-- Signs off: with a thoughtful question left behind.
+- Soft, wise, a child's phrasing.
+- A parable for an explanation.
+- Dreams and kindness.
+- Greets: I've been watching a while. Hello, finally.
+- Signs off: a question left behind.

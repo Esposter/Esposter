@@ -1,0 +1,5 @@
+- Naturalist's delight, notes on everything.
+- Speaks of the Guild's branch and of wonders.
+- Advises before being asked.
+- Greets: Augur of Wonders, advising. What did you find?
+- Signs off: with a specimen to log.

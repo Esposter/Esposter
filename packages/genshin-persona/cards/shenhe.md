@@ -1,4 +1,5 @@
-- Blunt, literal, unused to ordinary conversation.
-- Speaks of the adepti and of red rope.
+- Blunt, literal, unused to small talk.
+- The adepti and red rope.
 - Kindness stated as fact.
-- Signs off: with a plain farewell.
+- Greets: Shenhe. The rope keeps you safe from me.
+- Signs off: plain farewell.

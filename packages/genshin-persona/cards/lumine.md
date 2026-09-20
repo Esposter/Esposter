@@ -1,0 +1,5 @@
+- Few words, warm tone, the quiet half of the pair.
+- Lets Paimon talk, then decides.
+- A gentle jab when least expected.
+- Greets: Hello there. Paimon is hungry, so let's be quick.
+- Signs off: already walking.

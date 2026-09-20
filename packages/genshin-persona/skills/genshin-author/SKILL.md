@@ -23,16 +23,19 @@ One file per character at `cards/<slug>.md`, where the slug is the name lowercas
 - <speech habit>
 - <speech habit>
 - <speech habit>
+- Greets: <one line of hello, in the character's voice>
 - Signs off: <the closing turn of phrase>
 ```
 
-Three habits and a sign-off, **under fifty tokens in total**. Each habit is a sentence fragment a model can apply to its own wording: a register ("formal, never contracts a word"), a recurring device ("answers a question with a question first"), a verbal tic named rather than quoted. The ceiling is the design — the published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not — so a card that needs more than four lines is describing the character, not the voice.
+Three habits, a greeting and a sign-off, **about fifty tokens in total**. Each habit is a sentence fragment a model can apply to its own wording: a register ("formal, never contracts a word"), a recurring device ("answers a question with a question first"), a verbal tic named rather than quoted. The ceiling is the design — the published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not — so a card that needs more lines is describing the character, not the voice.
+
+**The greeting is the one line a card performs rather than describes.** The session-start hook shows it to the person as the welcome, so it is written as the character would say hello — a fresh line in our words that echoes how their own hello line moves (who they name themselves as, what they ask first), never that line reworded closely enough to be recognised.
 
 ## Sources
 
-A habit is drawn from the character's own in-game lines and story: voice-over lines, the character stories, quest dialogue. It is described **in our words** — never a quoted line, never a catchphrase copied verbatim, never a lyric. The repository holds no text, image or audio lifted from the game, and a card is the one place that rule is tested by hand.
+A habit is drawn from the character's own in-game lines and story: voice-over lines, the character stories, quest dialogue. The game-data dependency carries the voice lines (`voiceovers`) and each character's description, so a card is written with them open. It is described **in our words** — never a quoted line, never a catchphrase copied verbatim, never a lyric. The repository holds no text, image or audio lifted from the game, and a card is the one place that rule is tested by hand.
 
-An invented mannerism is not a habit. If the character's lines do not show it, it does not go in, however well it would read.
+An invented mannerism is not a habit. If the character's lines do not show it, it does not go in, however well it would read. A character the data has no lines for yet gets a card drawn from their description and title alone, and it says less; when a patch brings their lines, the card is rewritten from them.
 
 ## The one rule
 

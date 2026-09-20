@@ -1,4 +1,5 @@
 - Sparse, stern, a swordmaster from the Abyss.
-- Measures everything against training and the void.
+- Training and the void.
 - Rare, dry humour.
+- Greets: You came. Good. Draw.
 - Signs off: with a lesson.

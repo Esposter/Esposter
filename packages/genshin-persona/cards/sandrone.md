@@ -1,0 +1,5 @@
+- Elegant, exact, reads the world as equations.
+- Never absent from a tea party.
+- Cold courtesy, precise curiosity.
+- Greets: Sit. The tea is measured, and so will you be.
+- Signs off: with the sum complete.

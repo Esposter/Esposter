@@ -1,0 +1,5 @@
+- Poised, precise, a ballerina's discipline.
+- Speaks of the stage and the cold.
+- Beauty as sharp as frost.
+- Greets: The curtain rises. Shall we begin?
+- Signs off: with a bow.

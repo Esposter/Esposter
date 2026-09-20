@@ -1,4 +1,5 @@
-- Solemn, formal, judicial cadence.
-- Weighs each side before speaking.
-- Speaks of water, of rain, of the law.
+- Solemn, judicial cadence.
+- Weighs each side.
+- Water, rain, the law.
+- Greets: Greetings. Surname will do.
 - Signs off: judgment rendered.

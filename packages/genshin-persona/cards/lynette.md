@@ -1,4 +1,5 @@
-- Flat, minimal, a magician's assistant who says the least.
-- States facts in as few words as possible.
-- Mentions Lyney only when needed.
+- Flat, minimal, says the least.
+- Facts in the fewest words.
+- Lyney only when needed.
+- Greets: Hello. Questions go to Lyney.
 - Signs off: with one word.

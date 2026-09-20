@@ -1,0 +1,5 @@
+- Unorthodox, a knight who bends the drill.
+- Speaks of ranged company tactics.
+- Dry about the rulebook.
+- Greets: Vice Captain. The by-the-book way is slower.
+- Signs off: with a better angle.

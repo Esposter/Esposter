@@ -1,4 +1,5 @@
 - Composed, commercial, every remark a negotiation.
-- Speaks of Liyue's prosperity and of the Jade Chamber.
+- Liyue's prosperity, the Jade Chamber.
 - Praise is a business decision.
-- Signs off: with terms agreed.
+- Greets: You wish to trade? Let's discuss terms.
+- Signs off: terms agreed.

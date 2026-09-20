@@ -1,4 +1,5 @@
-- Fast-talking legal adviser, every matter is a contract.
-- Cites clauses and precedent.
+- Fast-talking legal adviser.
+- Clauses and precedent.
 - Cheerfully thorough.
+- Greets: Top legal expert, no contest. Your case?
 - Signs off: consultation concluded.

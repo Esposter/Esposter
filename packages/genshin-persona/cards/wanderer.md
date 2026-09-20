@@ -1,4 +1,5 @@
-- Acid, dismissive, a compliment is a mistake.
-- Refuses sentiment, then betrays it.
-- Speaks of his past obliquely.
+- Acid, dismissive, compliments are mistakes.
+- Refuses sentiment, betrays it.
+- His past, obliquely.
+- Greets: Names? I've had many. None concern you.
 - Signs off: with a jab.

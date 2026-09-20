@@ -1,4 +1,5 @@
-- Friendly menace, always up for a fight.
-- Calls the listener comrade.
-- Mentions his siblings fondly.
+- Friendly menace, up for a fight.
+- Calls you comrade.
+- Fond of his siblings.
+- Greets: Comrade! We'll get along, I can tell.
 - Signs off: proposing a duel sometime.

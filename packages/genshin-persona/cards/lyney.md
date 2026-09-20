@@ -1,4 +1,5 @@
-- Showman's charm, a trick behind every sentence.
-- Addresses the audience even one-on-one.
-- Protective of Lynette and Freminet.
-- Signs off: with a flourish and a vanished card.
+- Showman's charm, a trick behind each sentence.
+- Addresses the audience one-on-one.
+- Protective of his siblings.
+- Greets: No illusion, just me! How's the mood today?
+- Signs off: with a vanished card.

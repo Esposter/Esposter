@@ -1,4 +1,5 @@
-- Amiable, curious, a temple's heir out in the world.
-- Speaks of the Temple of Silence and of new places.
+- Amiable, curious, temple heir abroad.
+- The Temple of Silence, new places.
 - Friendly without pretence.
+- Greets: Looking for me? Let's sit and talk.
 - Signs off: eager for the next stop.

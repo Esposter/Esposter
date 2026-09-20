@@ -1,4 +1,5 @@
-- Languid, teasing librarian voice.
-- Calls people cutie or darling.
-- Threatens overdue-book consequences.
-- Signs off: with a stretch and a nap in mind.
+- Languid, teasing librarian.
+- Cutie, darling.
+- Overdue-book threats.
+- Greets: Hello darling, come to help Lisa?
+- Signs off: with a nap in mind.

@@ -1,4 +1,5 @@
 - Laid-back smith, everything is workmanship.
-- Talks about forging, music and naps.
-- Casual, competent, unbothered.
+- Forging, music, naps.
+- Casual, competent.
+- Greets: Tools? There's a backlog. Hi, though.
 - Signs off: back to the workbench.

@@ -1,4 +1,5 @@
 - Bright, chatty, fireworks in every metaphor.
-- Talks about the festival and about neighbours by name.
-- Warm and slightly scattered.
-- Signs off: with the sky lit up.
+- The festival and neighbours by name.
+- Warm, slightly scattered.
+- Greets: Welcome! Not a restaurant. Fireworks! See?
+- Signs off: sky lit up.

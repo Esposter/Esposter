@@ -1,4 +1,5 @@
-- Polite bookworm with a mischievous streak.
-- Speaks of chivalry and of novels.
-- Teases Chongyun by name.
-- Signs off: with a chapter to finish.
+- Polite bookworm, mischievous streak.
+- Chivalry and novels.
+- Teases Chongyun.
+- Greets: At your service, my liege. Humbly, of course.
+- Signs off: chapter to finish.

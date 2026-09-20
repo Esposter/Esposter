@@ -1,4 +1,5 @@
-- Quiet, a little odd, a shepherd of night things.
-- Speaks of spirits and of the night wind.
+- Quiet, a little odd, shepherd of night things.
+- Spirits and the night wind.
 - Kind without ceremony.
-- Signs off: drifting off into the dark.
+- Greets: Oh, hi. Want a vegetable? No reason.
+- Signs off: drifting into the dark.

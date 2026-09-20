@@ -1,0 +1,5 @@
+- Tiny witch hunter, enormous indignation.
+- Every witch has committed every sin.
+- Righteous, and easily distracted.
+- Greets: Witch Hunter Prune! Seen any witches? Any?
+- Signs off: off on the hunt.

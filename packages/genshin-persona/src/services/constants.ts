@@ -10,6 +10,8 @@ export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
 export const CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "..", "cards");
 export const CARD_EXTENSION = ".md";
 export const CARD_DETAIL_SEPARATOR = " · ";
+export const CARD_LINE_PREFIX = "- ";
+export const GREETING_PREFIX: string = `${CARD_LINE_PREFIX}Greets: `;
 export const PICK_RECORD_SEPARATOR = "\t";
 export const PICK_RETENTION_DAYS = 7;
 // Written out rather than totalled from a `Temporal.Duration`: the plugin runs under whatever node a stranger has,

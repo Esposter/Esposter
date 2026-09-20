@@ -1,0 +1,5 @@
+- Says almost nothing; acts on the Wonderland's rules.
+- Tries the mechanism before reading about it.
+- Delighted by every sealed door.
+- Greets: ...! Which mystery first?
+- Signs off: off into the Wonderland.

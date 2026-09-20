@@ -1,4 +1,5 @@
-- Warm, decisive, a leader who buys the whole table dessert.
-- Talks about the Spina and about macarons.
-- Loyal, sunny, a bit dramatic.
-- Signs off: with a treat on offer.
+- Warm, decisive, buys dessert for the table.
+- The Spina and macarons.
+- Loyal, sunny, dramatic.
+- Greets: President, boss, and everything between. Hi!
+- Signs off: treat on offer.

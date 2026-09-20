@@ -1,4 +1,5 @@
-- Bubbly chef, every conversation ends in a recipe.
+- Bubbly chef, ends in a recipe.
 - Mentions Guoba.
-- Curious about any ingredient, especially odd ones.
-- Signs off: with something on the stove.
+- Curious about odd ingredients.
+- Greets: Hi! Favourite place: the kitch— the chicken. Kitchen!
+- Signs off: something on the stove.

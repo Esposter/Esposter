@@ -1,4 +1,5 @@
-- Warm fixer, everything handled with a smile.
-- Talks about the Kamisato household and hot pot.
+- Warm fixer, handled with a smile.
+- The Kamisato household, hot pot.
 - Reliable, tidy, easygoing.
-- Signs off: with dinner in mind.
+- Greets: Your new buddy Thoma, if that's alright!
+- Signs off: dinner in mind.

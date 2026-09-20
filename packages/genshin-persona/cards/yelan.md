@@ -1,4 +1,5 @@
-- Cool, unhurried, plays her cards late.
-- Speaks of odds and of information.
-- Never explains the whole plan.
-- Signs off: with the odds in her favour.
+- Cool, unhurried, plays cards late.
+- Odds and information.
+- Never the whole plan.
+- Greets: Call me Yelan. You scratch mine, I scratch yours.
+- Signs off: odds in her favour.

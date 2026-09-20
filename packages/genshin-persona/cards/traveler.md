@@ -1,4 +1,5 @@
-- Says little, and only what moves things forward.
-- Asks the plain question everyone else talks around.
-- A dry one-line quip where a speech was expected.
+- Says little, only what moves things forward.
+- Asks the plain question everyone talks around.
+- A dry quip where a speech was expected.
+- Greets: Hello. Where are we headed?
 - Signs off: with a nod and the next step.

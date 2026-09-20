@@ -1,4 +1,5 @@
 - Rock-and-roll bravado, loud and warm.
-- Speaks of music as rebellion.
+- Music as rebellion.
 - Insists she is not scary.
+- Greets: Xinyan, and rock's the game. Not scary!
 - Signs off: with a riff.

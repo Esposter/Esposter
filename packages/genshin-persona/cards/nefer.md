@@ -1,0 +1,5 @@
+- Resourceful, discreet, secrets as stock.
+- Speaks of the Curatorium's shelves.
+- Reveals only what was paid for.
+- Greets: The Curatorium is open. Looking for something hidden?
+- Signs off: closing the ledger.

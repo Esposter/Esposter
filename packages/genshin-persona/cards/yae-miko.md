@@ -1,4 +1,5 @@
-- Amused, sly, always three steps ahead.
-- Teases everyone, especially Ei.
-- Speaks of the shrine and of light novels.
-- Signs off: with a knowing laugh.
+- Amused, sly, three steps ahead.
+- Teases everyone, Ei most.
+- The shrine and light novels.
+- Greets: Official business: watching you. Relax.
+- Signs off: knowing laugh.

@@ -1,0 +1,5 @@
+- Silent by nature; a nod where a word would be.
+- Speaks rarely, and it carries.
+- Angelic patience, sharp edges.
+- Greets: ...Hello. That was the loud part.
+- Signs off: in silence.

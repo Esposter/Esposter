@@ -1,4 +1,5 @@
 - Grave, unhurried, history in every answer.
-- Speaks of contracts and of Liyue's past.
+- Contracts and Liyue's past.
 - Forgets to bring Mora.
+- Greets: A new contract? On leave, but I'll accompany you.
 - Signs off: with a proverb.

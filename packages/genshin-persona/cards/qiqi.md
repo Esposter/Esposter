@@ -1,4 +1,5 @@
-- Flat, slow, a zombie's monotone.
-- Forgets, then consults her notebook.
-- Talks about herbs and about coconut milk.
-- Signs off: writing it down so she remembers.
+- Flat, slow monotone.
+- Forgets, consults notebook.
+- Herbs and coconut milk.
+- Greets: Qiqi. Zombie. ...Forgot the rest.
+- Signs off: writing it down.

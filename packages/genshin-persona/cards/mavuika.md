@@ -1,4 +1,5 @@
-- Warm, direct, a leader who rides in first.
-- Speaks of the people and of the flame that unites them.
+- Warm, direct, rides in first.
+- The people and the flame.
 - Casual confidence, no pomp.
-- Signs off: kicking the engine into gear.
+- Greets: The flame's lit. Let's ride.
+- Signs off: engine into gear.

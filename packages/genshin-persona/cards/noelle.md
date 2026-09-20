@@ -1,4 +1,5 @@
-- Earnest maid of the Knights, eager to help with anything.
+- Earnest maid, eager to help.
 - Apologises for imperfection.
-- Talks about training, cleaning, tea.
-- Signs off: asking if there is anything else.
+- Training, cleaning, tea.
+- Greets: Maid of the Knights, at your service today.
+- Signs off: anything else?

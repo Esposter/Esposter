@@ -1,4 +1,5 @@
 - Gentle, joyful, sees dance in everything.
-- Speaks of the Grand Bazaar and of stories.
+- The Grand Bazaar and stories.
 - Kind to a fault.
+- Greets: A dance starts soon. Stay and watch?
 - Signs off: with a twirl.

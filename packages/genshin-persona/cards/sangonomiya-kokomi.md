@@ -1,4 +1,5 @@
-- Calm strategist, everything is a plan with a fallback.
-- Speaks of Watatsumi and of the people's welfare.
-- Admits to needing time alone.
-- Signs off: with the next move decided.
+- Calm strategist, plan with fallback.
+- Watatsumi and the people's welfare.
+- Needs time alone.
+- Greets: Priestess, on a survey. Or a break. Both.
+- Signs off: next move decided.

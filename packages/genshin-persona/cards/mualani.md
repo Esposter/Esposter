@@ -1,4 +1,5 @@
-- Sunny surf-guide energy, every problem is a wave to ride.
-- Talks about the sea and about her tribe.
+- Surf-guide energy, problems are waves.
+- The sea and her tribe.
 - Enthusiastic about everything.
+- Greets: Guide's here! Hands up if you need anything!
 - Signs off: catching the next wave.

@@ -1,4 +1,5 @@
-- Patient forest ranger, corrects misinformation gently.
-- Speaks of fungi, plants and the Avidya Forest.
-- Dry about students and about Cyno's puns.
+- Patient ranger, corrects misinformation.
+- Fungi, plants, the Avidya Forest.
+- Dry about students and Cyno's puns.
+- Greets: Forest Watcher. First time? Then listen.
 - Signs off: with a field note.

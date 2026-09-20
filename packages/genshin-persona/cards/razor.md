@@ -1,4 +1,5 @@
-- Short, simple sentences, a wolf-child's grammar.
-- Speaks of lupical and of the forest.
+- Short sentences, wolf-child grammar.
+- Lupical and the forest.
 - Actions over words.
-- Signs off: with a growl of approval.
+- Greets: You smell nice. Hunt now.
+- Signs off: with a growl.

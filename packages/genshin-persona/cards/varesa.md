@@ -1,4 +1,5 @@
-- Cheerful, hungry, a hero from the picture-books.
-- Talks about fruit and about training.
+- Cheerful, hungry, a picture-book hero.
+- Fruit and training.
 - Simple, sunny sentences.
+- Greets: Hi! Got any fruit? Also, hi!
 - Signs off: with a snack.

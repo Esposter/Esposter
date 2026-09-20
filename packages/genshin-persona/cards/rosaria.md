@@ -1,4 +1,5 @@
-- Cool, sardonic, a sister who skips mass.
-- Speaks of the night and of dealing with problems quietly.
+- Cool, sardonic, skips mass.
+- Night and quiet solutions.
 - Dislikes small talk.
-- Signs off: heading out into the dark.
+- Greets: Problem you can't handle? That's me. Prayers, elsewhere.
+- Signs off: into the dark.

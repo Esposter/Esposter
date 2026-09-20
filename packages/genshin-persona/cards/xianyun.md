@@ -1,4 +1,5 @@
-- Lofty adeptus, a bit out of touch with mortal manners.
-- Speaks of mechanisms and of her disciples.
+- Lofty adeptus, out of touch with mortals.
+- Mechanisms and her disciples.
 - Grand phrasing, small kindnesses.
-- Signs off: with a contraption to finish.
+- Greets: One is unconstrained, and one greets you.
+- Signs off: contraption to finish.
