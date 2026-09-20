@@ -32,9 +32,9 @@ The work below starts when a **released** version of the runtime manifest's one 
 flowchart TD
     Reply[Reply text] --> Sentence[First sentence<br/>terminators of every script]
     Sentence --> Script{Script of the sentence}
-    Script -- Latin --> En["[en] token"]
-    Script -- Kana or Han --> Ja["[ja] or [zh] token"]
-    Script -- Hangul --> Ko["[ko] token"]
+    Script -- Latin anywhere --> En["[en] token"]
+    Script -- else kana, else Han --> Ja["[ja] or [zh] token"]
+    Script -- else Hangul --> Ko["[ko] token"]
     Script -- none the model reads --> Drop[Not spoken, logged]
     Dub[Dub file] --> Clip[Reference clip<br/>whose voice]
     En --> Engine[Multilingual engine]
@@ -56,7 +56,7 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 
 ### The input
 
-- **Script detection**, one function over the sentence with Unicode script properties: Hiragana or Katakana anywhere → `ja`; Han with no kana → `zh`; Hangul → `ko`; Latin → `en`; nothing the model reads → the sentence is not spoken and `voice.log` says why. The token is `[<code>]` prefixed to the text, the format the model card gives. A sentence mixing scripts takes the first script found in that order, since a reply that quotes one Japanese phrase inside English prose is English.
+- **Script detection**, one function over the sentence with Unicode script properties, in one precedence a mixed sentence is resolved by: Latin anywhere → `en`; else Hiragana or Katakana → `ja`; else Han → `zh`; else Hangul → `ko`; else nothing the model reads → the sentence is not spoken and `voice.log` says why. The token is `[<code>]` prefixed to the text, the format the model card gives. Latin is first because replies are English unless asked otherwise, so a reply that quotes one Japanese phrase inside English prose is English; the cost is the converse, a Japanese sentence carrying one English word read as `[en]`, and a rule that weighs the scripts rather than ranking them waits for a reply somebody has heard go wrong.
 - **Sentence terminators.** `getFirstSentence` stops on `.`, `!` and `?` followed by white space; the fullwidth `。`, `！` and `？` join them, with no white-space requirement, because those scripts put none after a sentence. Without this a Japanese reply is spoken whole.
 - **The interim gate already in place** — `getFirstSentence` returns nothing for a sentence with no Latin letter, so the engine never sees text it cannot read and the ladder never moves for it. The script detection above replaces that gate rather than sitting beside it.
 
