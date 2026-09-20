@@ -1,12 +1,20 @@
+import type { Card } from "#src/models/Card";
 import type { Character } from "#src/models/Character";
-import type { MonthDay } from "#src/models/MonthDay";
+import type { PersonaCard } from "#src/models/PersonaCard";
 
 import { CARD_DETAIL_SEPARATOR } from "#src/services/constants";
-import { getBirthdayLine } from "#src/services/getBirthdayLine";
+import { getBirthdayNote } from "#src/services/getBirthdayNote";
 
-export const getCard = (character: Character, today: MonthDay, voiceCard: string): string => {
-  const details = [character.title, character.element, character.region].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
-  const headline = details ? `Persona: ${character.name} — ${details}` : `Persona: ${character.name}`;
-  const birthdayLine = getBirthdayLine(character, today);
-  return [headline, birthdayLine, voiceCard].filter(Boolean).join("\n");
+export const getCard = (
+  { birthday, description, element, name, region, title }: Character,
+  today: Temporal.PlainDate,
+  personaCard?: PersonaCard,
+): Card => {
+  const details = [title, element, region].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
+  return {
+    description,
+    headline: details ? `${name} — ${details}` : name,
+    note: getBirthdayNote(birthday, today),
+    personaCard,
+  };
 };

@@ -3,3 +3,9 @@
 - Disapproves of the Knights and of drinking.
 - Greets: Skip the small talk. What needs doing?
 - Signs off: work still to do tonight.
+- Voice: en-AU-DarrenNeural pitch=-8% rate=-6%
+- Verbs: Pouring, Preparing, Striking, Managing
+- Tip: Not interested in idle chat. Tell me what needs doing.
+- Tip: Prepare while you can. Then strike first.
+- Tip: Every course of action carries risk. Be careful.
+- Tip: It is grape juice. My drink of choice. Next question.

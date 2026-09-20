@@ -47,6 +47,7 @@
     "ai:sweep:skill-docs": "pnpm -C scripts run ai:sweep:skill-docs",
     "ai:sweep:unterminated-results": "pnpm -C scripts run ai:sweep:unterminated-results",
     "ai:triage:label": "pnpm -C scripts run ai:triage:label",
+    "ai:voice-match": "pnpm -C scripts run ai:voice-match",
     "bench": "pnpm -r --workspace-concurrency=1 --if-present run bench",
     "bench:ci": "vitest bench --run",
     "build": "pnpm --filter \"@esposter/web...\" run build",

@@ -8,26 +8,26 @@ This file is an **index and a process**, never a reference. Anything explaining 
 
 **Esposter** — a social platform monorepo, TypeScript in strict mode across a pnpm workspace. Nuxt + Vue on the front, tRPC and Nitro server routes behind it, Drizzle over PostgreSQL alongside Azure Table and Blob Storage, Azure Functions for async work, Pinia for state, UnoCSS attributify + Vuetify for styling, Vitest for tests, oxlint + ESLint for lint, Pulumi for infrastructure. Versions live in the manifests; node in `engines.node`, pnpm in `packageManager`.
 
-| Package Path               | npm name                    | Description                                                                                  |
-| :------------------------- | :-------------------------- | :------------------------------------------------------------------------------------------- |
-| `apps/functions`           | `@esposter/functions`       | Serverless backend (EventGrid, Service Bus, Timers)                                          |
-| `apps/infra`               | `@esposter/infra`           | Pulumi infrastructure code and migration tools for Azure                                     |
-| `apps/web`                 | `@esposter/web`             | Main Nuxt web application (frontend, server routes, tRPC)                                    |
-| `packages/azure`           | `@esposter/azure`           | Azure wire conventions shared by the real clients and the mocks                              |
-| `packages/azure-mock`      | `azure-mock`                | Mock Azure service classes for local dev and testing                                         |
-| `packages/configuration`   | `@esposter/configuration`   | Shared ESLint, TSConfig, and tsdown build configs                                            |
-| `packages/db`              | `@esposter/db`              | DB connection utilities (Drizzle ORM, Azure Table, Blob, WebPubSub)                          |
-| `packages/db-mock`         | `@esposter/db-mock`         | In-memory PGlite database factory for unit/integration tests                                 |
-| `packages/db-schema`       | `@esposter/db-schema`       | **Source of truth** for DB: Drizzle ORM schemas, migrations                                  |
-| `packages/genshin-persona` | `@esposter/genshin-persona` | Claude Code plugin — a Genshin character picked by birthday, spoken replies via Azure Speech |
-| `packages/keyframe-store`  | `keyframe-store`            | Content-addressed version store — zstd keyframes and deltas over any backend                 |
-| `packages/parse-tmx`       | `parse-tmx`                 | Parser for Tiled Map Editor `.tmx` files                                                     |
-| `packages/shared`          | `@esposter/shared`          | Shared TypeScript types, utilities, and error classes                                        |
-| `packages/shared-node`     | `@esposter/shared-node`     | Benchmark reporting/running for vitest bench (no barrel entrypoint)                          |
-| `packages/virrun`          | `virrun`                    | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated                   |
-| `packages/vue-phaserjs`    | `vue-phaserjs`              | Phaser game engine integration for Vue                                                       |
-| `packages/xml2js`          | `@esposter/xml2js`          | TypeScript rewrite of xml2js — XML ↔ JSON conversion                                         |
-| `scripts`                  | `@esposter/scripts`         | The repo's own tooling: workspace graph, dependency report, sweeps, plugins                  |
+| Package Path               | npm name                    | Description                                                                                         |
+| :------------------------- | :-------------------------- | :-------------------------------------------------------------------------------------------------- |
+| `apps/functions`           | `@esposter/functions`       | Serverless backend (EventGrid, Service Bus, Timers)                                                 |
+| `apps/infra`               | `@esposter/infra`           | Pulumi infrastructure code and migration tools for Azure                                            |
+| `apps/web`                 | `@esposter/web`             | Main Nuxt web application (frontend, server routes, tRPC)                                           |
+| `packages/azure`           | `@esposter/azure`           | Azure wire conventions shared by the real clients and the mocks                                     |
+| `packages/azure-mock`      | `azure-mock`                | Mock Azure service classes for local dev and testing                                                |
+| `packages/configuration`   | `@esposter/configuration`   | Shared ESLint, TSConfig, and tsdown build configs                                                   |
+| `packages/db`              | `@esposter/db`              | DB connection utilities (Drizzle ORM, Azure Table, Blob, WebPubSub)                                 |
+| `packages/db-mock`         | `@esposter/db-mock`         | In-memory PGlite database factory for unit/integration tests                                        |
+| `packages/db-schema`       | `@esposter/db-schema`       | **Source of truth** for DB: Drizzle ORM schemas, migrations                                         |
+| `packages/genshin-persona` | `@esposter/genshin-persona` | Claude Code plugin — a Genshin character picked by birthday, replies spoken in its own cloned voice |
+| `packages/keyframe-store`  | `keyframe-store`            | Content-addressed version store — zstd keyframes and deltas over any backend                        |
+| `packages/parse-tmx`       | `parse-tmx`                 | Parser for Tiled Map Editor `.tmx` files                                                            |
+| `packages/shared`          | `@esposter/shared`          | Shared TypeScript types, utilities, and error classes                                               |
+| `packages/shared-node`     | `@esposter/shared-node`     | Benchmark reporting/running for vitest bench (no barrel entrypoint)                                 |
+| `packages/virrun`          | `virrun`                    | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated                          |
+| `packages/vue-phaserjs`    | `vue-phaserjs`              | Phaser game engine integration for Vue                                                              |
+| `packages/xml2js`          | `@esposter/xml2js`          | TypeScript rewrite of xml2js — XML ↔ JSON conversion                                                |
+| `scripts`                  | `@esposter/scripts`         | The repo's own tooling: workspace graph, dependency report, sweeps, plugins                         |
 
 ## Commands
 
@@ -50,7 +50,7 @@ On Windows, Vitest runs only because `apps/web/configuration/modules.ts` keeps a
 
 ## Finishing a change
 
-Working is not finished. Once the change does what it should — a feature, a fix, a refactor, a docs pass, anything — run this before saying it is done:
+Working is not finished. Once the change does what it should — a feature, a fix, a refactor, a docs pass, anything — run this before saying it is done. Steps 1–3 are an audit with a table of its own, which the `finishing` skill owns and `/finishing` runs at any point in the work, asked or not:
 
 1. **`/code-review` over what you changed.** Both lanes, unprompted, every time: quality (reuse, simplification, efficiency, altitude) and correctness (defects, broken conventions). A first draft of anything non-trivial leaves duplicated copy, a constant restated in two files, a twin of an existing helper, or a special case that belonged in the shared mechanism — that gets found here, not by a reviewer. The `code-review` skill owns the lanes, which rules a window loads, the trigger rule a finding must carry, and the stop rule.
 2. **Ground the result in tests — only where a test earns its line.** This step deletes at least as often as it adds. Add the regression test for what the review exposed; add nothing another enforcer already owns (typecheck, a Zod constraint, an existing test), because such a test cannot fail honestly and only pins today's implementation; and trim the tests the change made redundant. The full criterion is the `testing` skill's "What to Test".

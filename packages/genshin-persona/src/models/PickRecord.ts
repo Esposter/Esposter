@@ -1,5 +1,6 @@
-export interface PickRecord {
+import type { Nameplate } from "#src/models/Nameplate";
+
+export interface PickRecord extends Nameplate {
   isoDate: string;
-  name: string;
   sessionId: string;
 }

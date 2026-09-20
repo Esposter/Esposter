@@ -1,16 +1,15 @@
 import type { BirthdayCandidate } from "#src/models/BirthdayCandidate";
 import type { Character } from "#src/models/Character";
-import type { MonthDay } from "#src/models/MonthDay";
 
 import { getDaysUntil } from "#src/services/getDaysUntil";
-import { parseMonthDay } from "#src/services/parseMonthDay";
+import { parseBirthday } from "#src/services/parseBirthday";
 import { hashString } from "#src/util/hashString";
 
 // Whoever's birthday is nearest to today. A tie goes to the birthday still ahead over the one just passed, and
-// What is left after that is one candidate per seed, so every session started on one day meets the same character
-export const pickCharacter = (roster: Character[], today: MonthDay, seed: string): Character | undefined => {
+// What is left after that is one candidate per date, so every session started on one day meets the same character
+export const pickCharacter = (roster: Character[], today: Temporal.PlainDate): Character | undefined => {
   const candidates = roster.flatMap<BirthdayCandidate>((character) => {
-    const birthday = parseMonthDay(character.birthday);
+    const birthday = parseBirthday(character.birthday);
     if (!birthday) return [];
 
     const daysAhead = getDaysUntil(today, birthday);
@@ -25,6 +24,6 @@ export const pickCharacter = (roster: Character[], today: MonthDay, seed: string
   const finalCandidates = (upcomingCandidates.length > 0 ? upcomingCandidates : nearestCandidates).toSorted((a, b) =>
     a.character.name.localeCompare(b.character.name),
   );
-  const seededIndex = hashString(seed) % finalCandidates.length;
+  const seededIndex = hashString(today.toString()) % finalCandidates.length;
   return finalCandidates[seededIndex]?.character;
 };

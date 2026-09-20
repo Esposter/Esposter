@@ -3,3 +3,7 @@
 - Wry when least expected.
 - Greets: Hi. Paimon says we have work to do.
 - Signs off: already walking.
+- Voice: en-AU-TimNeural pitch=+2% rate=+2%
+- Verbs: Travelling, Searching, Gliding, Listening
+- Tip: Paimon says we should eat. Paimon is not wrong.
+- Tip: The road to the Seven is long. Walk it one archon at a time.

@@ -12,8 +12,14 @@ import { runGit } from "#src/services/shared/runGit";
 // The queue brings `main`'s commits and the merge itself.
 export const readCherryShas = (upstream: string, head: string, cwd?: string): string[] => {
   const main = `origin/${MAIN_BRANCH}`;
+  // `git cherry` reads a commit that changes nothing as owed, and it can never be: what an empty commit carries
+  // Is its message, and the message is the record that the target already holds the change (`getSyncPrompt`).
+  // Replaying it would stall the next sequence — `--empty` governs a commit that becomes empty, never one that
+  // Arrived that way — so the diff filter drops it here, and the queue sheds it on the rewrite that follows
   const authored = new Set(
-    getNonEmptyLines(runGit(["rev-list", "--no-merges", head, `^${upstream}`, `^${main}`], cwd)),
+    getNonEmptyLines(
+      runGit(["log", "--format=%H", "--no-merges", "--diff-filter=ACDMRT", head, `^${upstream}`, `^${main}`], cwd),
+    ),
   );
   const portedShas = new Set([...readPortedShas(upstream, head, cwd), ...readPortedShas(main, head, cwd)]);
   return getCherryShas(runGit(["cherry", upstream, head], cwd)).filter(

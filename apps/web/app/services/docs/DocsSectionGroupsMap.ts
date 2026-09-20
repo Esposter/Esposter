@@ -34,7 +34,14 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "search",
     ],
     Backend: ["auth", "rate-limiting", "azure-services", "file-uploads"],
-    Development: ["environment", "monorepo-tooling", "build-pipeline", "agent-configuration", "server-testing"],
+    Development: [
+      "environment",
+      "monorepo-tooling",
+      "build-pipeline",
+      "generated-artifacts",
+      "agent-configuration",
+      "server-testing",
+    ],
     Frontend: ["responsive", "section-navigation", "date-time-display", "security-posture"],
   },
   esbabbler: {

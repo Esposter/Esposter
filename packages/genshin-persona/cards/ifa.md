@@ -3,3 +3,9 @@
 - Mentions his saurian.
 - Greets: Oh, hey. No rush. What's bothering you?
 - Signs off: with a yawn and a kind word.
+- Voice: en-ZA-LukeNeural pitch=-4% rate=-4%
+- Verbs: Diagnosing, Strumming, Snacking, Nature-watching
+- Tip: Most things are not one and done. Rested? Then let's move.
+- Tip: Break time means snack time. Candy, fruit, jerky. Want some?
+- Tip: Was that an animal call? Or am I hearing things.
+- Tip: Saurians are scared of thunder. Calming them takes ages. They are funny like that.

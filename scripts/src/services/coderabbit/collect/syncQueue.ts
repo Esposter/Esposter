@@ -36,9 +36,11 @@ import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 // Holds drops on its own. Whether the sequence ran to its end — a stop leaves it open for the resolver. `-x`
 // Names the original in every copy it lands, which is the one record a resolution that drifted the copy's patch
 // Id cannot lose (`readCherryShas`), and so the one thing `checkIsCarried` can read the replay against.
+// `--empty=drop` answers for a commit that empties as it applies; `--allow-empty` for one that arrives empty,
+// Which is a resolution's own record of a change the target already held and stalls the sequence without it
 const checkIsPicked = (shas: string[], cwd: string): boolean =>
   shas.length === 0 ||
-  getResult(() => runGit(["cherry-pick", "-x", "--empty=drop", ...shas], cwd)).match(
+  getResult(() => runGit(["cherry-pick", "-x", "--allow-empty", "--empty=drop", ...shas], cwd)).match(
     () => true,
     () => false,
   );
@@ -46,8 +48,10 @@ const checkIsPicked = (shas: string[], cwd: string): boolean =>
 // Whether the replay carries every commit the queue owed — by patch id, or by a copy naming it as its original.
 // A closed sequencer over a clean tree says only that nothing is mid-flight: `git cherry-pick --abort` leaves
 // Exactly that, with the replay reset to the target and every owed commit about to be force-pushed away, as does
-// A `--skip` of a commit the target does not carry. This is the test that reads the work rather than the state
-// It was left in.
+// A `--skip`. This is the test that reads the work rather than the state it was left in — and the reason the
+// Resolver is denied `--skip` outright: a resolution the target absorbs whole lands as an empty copy naming its
+// Original, because no test over content can tell that drop from an abandoned one, while the copy says which it
+// Was (`getSyncPrompt`).
 const checkIsCarried = (queueSha: string, cwd: string): boolean =>
   readCherryShas(readHeadSha(cwd), queueSha, cwd).length === 0;
 

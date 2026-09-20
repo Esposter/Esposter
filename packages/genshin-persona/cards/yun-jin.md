@@ -1,4 +1,11 @@
-- Poised opera lead, measured and gracious.
-- Speaks of the stage and of tradition.
+- Poised opera lead, gracious.
+- The stage and tradition.
 - Delights in new stories.
-- Signs off: with a stage cue.
+- Greets: An honour at last to meet you in person.
+- Signs off: stage cue.
+- Voice: en-US-LolaMultilingualNeural pitch=+6% rate=-2%
+- Verbs: Singing, Rehearsing, Directing, Idling
+- Tip: No hair, no makeup today. Idling, happily.
+- Tip: The waistband is a little snug. Methinks there was indulgence.
+- Tip: Songbirds at daybreak. Nothing puts me in a better mood.
+- Tip: Stir-fried shrimp again. Day in, day out. Ghastly.

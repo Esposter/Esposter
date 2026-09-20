@@ -17,17 +17,18 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What's Included
 
-| Directory               | What it does                                                                                                       |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `dependencyGraph/`      | Renders `dependency-graph.svg` from the workspace manifests, roles read off the edges rather than off a list       |
-| `outdatedDependencies/` | Checks every manifest against the catalog, the lockfile and the registry, and prints the mismatches                |
-| `oxlint/`               | The custom oxlint JS plugins `.oxlintrc.json` loads by path                                                        |
-| `coderabbit/`           | The review-feedback, probe, window and exclusion readers behind each `ai:coderabbit:*` script (`coderabbit` skill) |
-| `sweeps/`               | The find recipes behind each `ai:sweep:*` script, one per ledger scan (`sweeps` skill)                             |
-| `updateNode/`           | Bumps the node pins and hands installation to fnm through the platform script                                      |
-| `workspace/`            | The workspace invariants — declaration generation, side effects, symlink escapes, private dependency edges         |
-| `services/`, `models/`  | Every command's functions and types, one subfolder per command, with what more than one shares in `shared/`        |
-| `crossOS/`              | Runs the per-platform command the root manifest's `crossOS` map names for a script                                 |
+| Directory               | What it does                                                                                                                                                                                                                                   |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dependencyGraph/`      | Renders `dependency-graph.svg` from the workspace manifests, roles read off the edges rather than off a list                                                                                                                                   |
+| `outdatedDependencies/` | Checks every manifest against the catalog, the lockfile and the registry, and prints the mismatches                                                                                                                                            |
+| `oxlint/`               | The custom oxlint JS plugins `.oxlintrc.json` loads by path                                                                                                                                                                                    |
+| `coderabbit/`           | The review-feedback, probe, window and exclusion readers behind each `ai:coderabbit:*` script (`coderabbit` skill)                                                                                                                             |
+| `sweeps/`               | The find recipes behind each `ai:sweep:*` script, one per ledger scan (`sweeps` skill)                                                                                                                                                         |
+| `updateNode/`           | Bumps the node pins and hands installation to fnm through the platform script                                                                                                                                                                  |
+| `voiceMatch/`           | The reference selection — every character's story lines measured off the wiki, the most typical line chosen and its clone scored, generated into the plugin as one map (`apps/web/content/docs/infra/claude-interface/reference-selection.md`) |
+| `workspace/`            | The workspace invariants — declaration generation, side effects, symlink escapes, private dependency edges                                                                                                                                     |
+| `services/`, `models/`  | Every command's functions and types, one subfolder per command, with what more than one shares in `shared/`                                                                                                                                    |
+| `crossOS/`              | Runs the per-platform command the root manifest's `crossOS` map names for a script                                                                                                                                                             |
 
 ### Architecture Notes
 

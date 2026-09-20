@@ -17,6 +17,7 @@
 | `esbabbler-call`          | 2026-09-15 |       |
 | `fallacies`               | 2026-09-15 |       |
 | `file-organization`       | 2026-09-15 |       |
+| `finishing`               | —          |       |
 | `formatting`              | 2026-09-15 |       |
 | `git`                     | 2026-09-15 |       |
 | `github-actions`          | 2026-09-15 |       |

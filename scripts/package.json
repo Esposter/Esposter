@@ -42,6 +42,7 @@
     "ai:sweep:skill-docs": "tsx src/sweeps/skillDocs/index.ts",
     "ai:sweep:unterminated-results": "node src/sweeps/unterminatedResults/index.ts",
     "ai:triage:label": "tsx src/triage/index.ts",
+    "ai:voice-match": "node src/voiceMatch/index.ts",
     "bench": "vitest bench --run",
     "crossOS": "node src/crossOS/index.ts",
     "format": "oxfmt",
@@ -56,15 +57,19 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
+    "@esposter/genshin-persona": "workspace:*",
     "@esposter/shared": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@hpcc-js/wasm-graphviz": "catalog:",
+    "@huggingface/transformers": "catalog:",
     "@oxlint/plugins": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "@typesafe-ai/sdk": "catalog:",
+    "@wasm-audio-decoders/ogg-vorbis": "catalog:",
     "semver": "catalog:",
     "tsx": "catalog:",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   }
 }

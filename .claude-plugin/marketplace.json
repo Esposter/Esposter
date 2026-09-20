@@ -9,7 +9,7 @@
     {
       "name": "genshin-persona",
       "source": "./packages/genshin-persona",
-      "description": "Speaks as the Genshin Impact character whose birthday is nearest to today, and reads each reply's first sentence aloud through Azure Speech."
+      "description": "Speaks as the Genshin Impact character whose birthday is nearest to today, and reads each reply's first sentence aloud in the character's own cloned voice."
     }
   ]
 }

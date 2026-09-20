@@ -1,14 +1,17 @@
+import type { Card } from "#src/models/Card";
 import type { SessionStartOutput } from "#src/models/SessionStartOutput";
 
-const GREETING_LINE_COUNT = 2;
+import { NAMEPLATE_PREFIX } from "#src/services/constants";
+import { formatCard } from "#src/services/formatCard";
 
-// The whole card is context for the model; the person sees its headline and birthday line, so the greeting costs
-// No tokens twice
-export const getSessionStartOutput = (card: string): string => {
-  const greeting = card.split("\n").slice(0, GREETING_LINE_COUNT).join("\n").replace("Persona: ", "✦ ");
+// The whole card is context for the model; the person sees the nameplate, the note and the character's own greeting
+// When the card has one, so the welcome is in voice and costs no tokens twice
+export const getSessionStartOutput = (card: Card): string => {
   const output: SessionStartOutput = {
-    hookSpecificOutput: { additionalContext: card, hookEventName: "SessionStart" },
-    systemMessage: greeting,
+    hookSpecificOutput: { additionalContext: formatCard(card), hookEventName: "SessionStart" },
+    systemMessage: [`${NAMEPLATE_PREFIX}${card.headline}`, card.note, card.personaCard?.greeting ?? ""]
+      .filter(Boolean)
+      .join("\n"),
   };
   return JSON.stringify(output);
 };

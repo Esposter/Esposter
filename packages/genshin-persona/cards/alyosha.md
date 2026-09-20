@@ -3,3 +3,9 @@
 - Patient, then decisive.
 - Greets: The trail is fresh. Let's move.
 - Signs off: back into the snow.
+- Voice: en-IE-ConnorNeural pitch=+4% rate=+2%
+- Verbs: Hunting, Tracking, Sharpshooting, Bookkeeping
+- Tip: Target practice and real hunting are two different beasts. Battle is a third.
+- Tip: Some goes home, some to the Rokot for medicine, the rest to the rifle. Which highwaymen are unlucky today?
+- Tip: Perfect ambush weather. Thunder hides a gunshot.
+- Tip: Need a dog? Come find me. Every breed, all good hands.

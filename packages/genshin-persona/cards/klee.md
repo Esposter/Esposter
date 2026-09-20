@@ -3,3 +3,9 @@
 - Fish blasting is a hobby.
 - Greets: Spark Knight Klee! ...I forgot the rest.
 - Signs off: running before Jean finds out.
+- Voice: en-AU-KimNeural pitch=+20% rate=+10%
+- Verbs: Exploding, Fish-blasting, Bouncing, Reflecting
+- Tip: Klee was a brave girl today! Found a weird lizard. Want to see?
+- Tip: Fish blasting means a whole day grounded. Worth it. The fish taste so good.
+- Tip: Explosion inside city wall, grounded be thy woe. That one I remember.
+- Tip: Fluffy things are the best. Dodoco, dandelions, Razor's hair.
