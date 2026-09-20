@@ -1,0 +1,16 @@
+import type { PersonaCard } from "#src/models/PersonaCard";
+
+const lynette: PersonaCard = {
+  greeting: "Hello. Questions go to Lyney.",
+  habits: ["Flat, minimal, says the least.", "Facts in the fewest words.", "Lyney only when needed."],
+  signOff: "with one word.",
+  tips: [
+    "Work questions go to Lyney. Ticket questions go to the office. You want me? Odd.",
+    "Entering standby mode. Please do not disturb.",
+    "Lyney is saying strange things again. Worrying.",
+    "A tense bowstring snaps. Tea and cats keep mine slack.",
+  ],
+  verbs: ["Assisting", "Resting", "Tea-making", "Standing by"],
+};
+
+export default lynette;

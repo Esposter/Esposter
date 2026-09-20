@@ -9,7 +9,7 @@ description: Proposal — publish the canonical test values the test-values skil
 
 ## The gap that prompted it
 
-The skill's date rule is absolute — **every date is computed from the epoch; none is typed** — and for `Date` the computed form is `new Date(0)`, short enough that nobody reaches for a literal instead. Temporal has no such spelling. The epoch as a plain date is:
+The skill's date rule is absolute — **a date is never typed, only computed** — and for `Date` the computed form is `new Date(0)`, short enough that nobody reaches for a literal instead. Temporal has no such spelling. The epoch as a plain date is:
 
 ```ts
 Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate();
