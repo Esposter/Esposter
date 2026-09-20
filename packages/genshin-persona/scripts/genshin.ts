@@ -261,9 +261,11 @@ switch (verb) {
         ? "Weights present; the engine loads on the CPU — no GPU adapter was found, so a reply is synthesized several times slower than real time."
         : `Weights present; the engine loads on ${synthesizer.device}.`,
     );
-    writeLanguage(name);
+    // The dub on disk is the gate every spoken reply passes, so it is written only where this run proved the
+    // Voice — a setup that failed after it leaves the replies silent rather than broken in the hooks' silence
     const character = await getCurrentCharacter();
     if (!character) {
+      writeLanguage(name);
       console.log(`Dub ${name} written; no character to prove the voice with from here.`);
       break;
     }
@@ -284,6 +286,7 @@ switch (verb) {
       break;
     }
 
+    writeLanguage(name);
     await sendVoiceRequest(await getSpeechRequest(VoiceRequestType.Speak, character.name, name, VOICE_PROOF_TEXT));
     console.log(`${character.name} spoke through the synthesizer on ${device}; every reply is read from the next one.`);
     break;
