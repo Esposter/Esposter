@@ -6,12 +6,12 @@ import { parseHookInput } from "#src/services/parseHookInput";
 import { readLanguage } from "#src/services/readLanguage";
 import { readSessionCharacterName } from "#src/services/readSessionCharacterName";
 import { readStdin } from "#src/services/readStdin";
-import { registerFailureFallback } from "#src/services/registerFailureFallback";
+import { registerQuietExit } from "#src/services/registerQuietExit";
 import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
 
 // A reply that cannot be spoken is a reply that is not spoken: nothing to print, nothing to block. The gate is the
 // Dub the `voice` verb wrote, since a machine without one has no engine to speak with, then the mute flag
-registerFailureFallback(() => {});
+registerQuietExit();
 const language = readLanguage();
 if (language && !checkIsMuted()) {
   const input = await readStdin();

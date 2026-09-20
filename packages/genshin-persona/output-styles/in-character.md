@@ -1,5 +1,5 @@
 ---
-name: traveler
+name: in-character
 description: Answers in the voice of the session's Genshin Impact character, in prose only, and codes exactly as before
 keep-coding-instructions: true
 force-for-plugin: true

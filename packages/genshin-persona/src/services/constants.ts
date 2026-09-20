@@ -1,4 +1,3 @@
-import type { Character } from "#src/models/Character";
 import type { TravelerTwin } from "#src/models/TravelerTwin";
 
 import { TravelerGender } from "#src/models/TravelerGender";
@@ -79,20 +78,6 @@ export const ROSTER_CACHE_EXTENSION = ".json";
 // Every month and day is measured inside one leap year, so 29 February is a day like any other and the year wraps
 export const LEAP_YEAR = 2000;
 export const DATE_LOCALE = "en-AU";
-// The player, for when the data that would name anyone else cannot be read: one of the twins, with nothing filled
-// In that the data would have, and a voice like any other character's
-export const FALLBACK_CHARACTER: Character = {
-  affiliation: "",
-  birthday: "",
-  constellation: "",
-  description: "",
-  element: "",
-  name: "Lumine",
-  region: "",
-  title: "",
-  version: "",
-  weapon: "",
-};
 // The community wiki: the source of a character's lines before the game-data package carries them, and of the
 // Clip a character's voice is cloned from
 export const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
