@@ -74,6 +74,4 @@ All paths relative to `apps/web/app`.
 
 ## Notes
 
-- Copy materializes computed values through the same `filterDataSourceColumns` path export uses, so [computed columns](/docs/resource/sheet/computed-columns) copy their displayed value ([copy computed values](/docs/resource/sheet/copy-computed-values)).
-- Paste target columns are pre-indexed by name to avoid repeated linear scans over wide tables.
 - Copying is keyboard-only — the toolbar carries no copy button, just the `copyIncludesHeaders` toggle deciding whether a copied range leads with its header row.

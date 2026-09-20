@@ -3,6 +3,7 @@ import type { UnterminatedResult } from "#src/models/sweeps/unterminatedResults/
 
 import { scanCode } from "#src/services/sweeps/scanCode";
 
+const NAME = "getResult";
 const ASYNC_NAME = "getResultAsync";
 // The annotation is skipped rather than parsed, and the two characters that would carry the match out of the
 // Declaration are the two a type may still spell: `=>` writes a function type, and a `;` separates an object
@@ -16,11 +17,11 @@ const BINDING_REGEX = new RegExp(
   String.raw`\b(?:const|let|var)\s+(?<binding>${IDENTIFIER_PATTERN})\s*${ANNOTATION_PATTERN}=\s*$`,
   "u",
 );
-const CALL_REGEX = /getResult/gu;
+const CALL_REGEX = new RegExp(NAME, "gu");
 const DOLLAR_REGEX = /\$/gu;
 const IDENTIFIER_REGEX = new RegExp(`[${IDENTIFIER_CONTINUE_CHARACTERS}]`, "u");
-const NAME = "getResult";
 const NEWLINE_REGEX = /\n/gu;
+const WHITESPACE_RUN_REGEX = /\s+/gu;
 const PRECEDING_AWAIT_REGEX = /\bawait\s*$/u;
 // A block comment's body is spelled as what it cannot hold rather than as a lazy anything: `[\s\S]*?` lets one
 // Comment's body swallow the next comment's opener, and the trailing-trivia match that fails after many such
@@ -86,7 +87,7 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] => {
       else if (token[1] === start[1]) afterTokens.push(token);
     }
     const afterCode = afterTokens.map(([character]) => character).join("");
-    const after = afterCode.replaceAll(/\s+/gu, " ").trim().slice(0, AFTER_LENGTH);
+    const after = afterCode.replaceAll(WHITESPACE_RUN_REGEX, " ").trim().slice(0, AFTER_LENGTH);
     const terminator = TERMINATOR_REGEX.exec(afterCode);
     if (terminator && checkIsCalled(text, afterTokens, terminator[0].length)) continue;
     // Where no terminator follows the call, whatever the call's value reaches owns it instead — so the code

@@ -86,3 +86,7 @@ once every row is swept, since an unswept area still holds instances that would 
 allowlist for the counts that may be exact (package count, configured limits) first. The label-line-break checks
 reach the skill tree too, since the diagram list it runs over already spans both; the rest do not, and
 `content/docs/index.test.ts` reads nothing else under `.agents/`.
+
+Prose that went stale against code which kept every one of its names is the gap none of these close, and it is
+not closeable from the tree: the `sweeps` skill's Settled list carries the measurement that settled it. What
+carries such a change is the author's own `Reopens:` trailer.

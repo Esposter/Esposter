@@ -2,6 +2,7 @@ import type { SkillDocsFile } from "#src/models/sweeps/skillDocs/SkillDocsFile";
 import type { SkillDocsFinding } from "#src/models/sweeps/skillDocs/SkillDocsFinding";
 
 import { SkillDocsFindingType } from "#src/models/sweeps/skillDocs/SkillDocsFindingType";
+import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 
 const CITATION_REGEX = /`references\/(?<target>[\w.-]+\.md)`/gu;
@@ -21,7 +22,7 @@ export const getUnresolvedFindings = (files: SkillDocsFile[], paths: Set<string>
       );
       const owners = [skill, ...cited.filter((name) => name !== skill && skillNames.has(name))];
       return [...new Set(Array.from(line.matchAll(CITATION_REGEX), (match) => match.groups?.target ?? ""))]
-        .filter((target) => !owners.some((owner) => paths.has(`.agents/skills/${owner}/references/${target}`)))
+        .filter((target) => !owners.some((owner) => paths.has(`${SKILLS_DIRECTORY}/${owner}/references/${target}`)))
         .map((target) => ({ detail: `-> ${target}`, path, type: SkillDocsFindingType.Unresolved }));
     });
   });

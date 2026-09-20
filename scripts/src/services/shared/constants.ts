@@ -1,15 +1,26 @@
+import { KIBIBYTE } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
 
+// What a spawned `git` or `gh` may print: a paginated slurp of a long-lived pull request's comments, a log of
+// Every commit's body, a listing of every tracked file each run to megabytes, and the default buffer throws
+// ENOBUFS rather than truncating — a failure that reads as the tool being broken from the call site.
+export const MAX_BUFFER_BYTES: number = 256 * KIBIBYTE ** 2;
+
+// `pnpm`'s workspace manifest, at the repository root. `pnpm` parses it at the start of every command, so a
+// Resolver handed a checkout where it still holds conflict markers is told to resolve it before anything else
+// (`git` skill)
+export const WORKSPACE_FILE = "pnpm-workspace.yaml";
+
 // Every script reads and writes against the repository rather than against `scripts/`. A `..` chain is what this
 // Was, and it is wrong the first time the file counting it moves a directory — which it has done once already,
 // One folder deeper, silently rooting every script at `scripts/`. The workspace manifest only ever sits at the
 // Root, so walking up to it is an answer that survives the next move.
 const findRepositoryRoot = (directory: string): string => {
-  if (existsSync(join(directory, "pnpm-workspace.yaml"))) return directory;
+  if (existsSync(join(directory, WORKSPACE_FILE))) return directory;
   const parent = dirname(directory);
   if (parent === directory)
     throw new InvalidOperationError(Operation.Read, "scripts", "no pnpm-workspace.yaml above this file");
@@ -26,11 +37,6 @@ export const REGISTRY_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ second
 export const LOCKFILE = "pnpm-lock.yaml";
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
-
-// `pnpm`'s workspace manifest, at the repository root. `pnpm` parses it at the start of every command, so a
-// Resolver handed a checkout where it still holds conflict markers is told to resolve it before anything else
-// (`git` skill)
-export const WORKSPACE_FILE = "pnpm-workspace.yaml";
 
 // The formatter's config, at the repository root. Its `ignorePatterns` is the repo's one list of generated files
 // (`oxlint` skill, `references/lint-configuration.md`), which is why a scan that must skip them reads it too.

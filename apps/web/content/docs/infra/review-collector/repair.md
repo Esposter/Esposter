@@ -41,7 +41,7 @@ flowchart TD
 
 ## The regenerating repair
 
-Before any session is asked for one, the collector runs every root script that rewrites a tracked artifact rather than reading one (`REPAIR_REGENERATE_COMMANDS`): the formatter, the three lint passes in their `--fix` form, and the ledger-coverage sweep. Each writes derived output, so what it produces is by construction what a check failing on that output asked for.
+Before any session is asked for one, the collector runs every root script that rewrites a tracked artifact rather than reading one (`REPAIR_REGENERATE_COMMANDS`): the formatter, the lint passes in their `--fix` form, and the ledger-coverage sweep. Each writes derived output, so what it produces is by construction what a check failing on that output asked for.
 
 **Nothing here classifies the red.** There is no reading of the log, no roster of failure strings, no judgement about which regenerator applies — the regenerators run, and the same check suite an express cut earns is what says whether they answered it. Three outcomes, and the head is left in exactly one state by each:
 

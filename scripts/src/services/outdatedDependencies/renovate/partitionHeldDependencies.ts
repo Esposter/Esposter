@@ -1,4 +1,5 @@
 import type { HeldDependency } from "#src/models/outdatedDependencies/HeldDependency";
+import type { HeldPartition } from "#src/models/outdatedDependencies/HeldPartition";
 import type { OutdatedDependency } from "#src/models/outdatedDependencies/OutdatedDependency";
 import type { RenovateRule } from "#src/models/outdatedDependencies/RenovateRule";
 
@@ -7,7 +8,7 @@ import { getHoldingRule } from "#src/services/outdatedDependencies/renovate/getH
 export const partitionHeldDependencies = (
   outdatedDependencies: OutdatedDependency[],
   rules: RenovateRule[],
-): { held: HeldDependency[]; outdated: OutdatedDependency[] } => {
+): HeldPartition => {
   const held: HeldDependency[] = [];
   const outdated: OutdatedDependency[] = [];
   for (const dependency of outdatedDependencies) {

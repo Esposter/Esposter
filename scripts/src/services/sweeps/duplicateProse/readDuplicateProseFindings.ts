@@ -1,6 +1,7 @@
 import type { DuplicateProseFinding } from "#src/models/sweeps/duplicateProse/DuplicateProseFinding";
 
 import { readCitingPages } from "#src/services/citations/readCitingPages";
+import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
 import { checkIsPathRun } from "#src/services/sweeps/duplicateProse/checkIsPathRun";
 import { getDuplicateProse } from "#src/services/sweeps/duplicateProse/getDuplicateProse";
 import { readRepositoryPathShingles } from "#src/services/sweeps/duplicateProse/readRepositoryPathShingles";
@@ -11,7 +12,7 @@ import { readRepositoryPathShingles } from "#src/services/sweeps/duplicateProse/
 export const readDuplicateProseFindings = (): DuplicateProseFinding[] => {
   const pathShingles = readRepositoryPathShingles();
   const pages = readCitingPages().filter(
-    ({ path }) => !path.endsWith("README.md") && !path.startsWith(".agents/ledgers/"),
+    ({ path }) => !path.endsWith("README.md") && !path.startsWith(`${LEDGER_DIRECTORY}/`),
   );
   return getDuplicateProse(pages).filter(({ words }) => !checkIsPathRun(words, pathShingles));
 };

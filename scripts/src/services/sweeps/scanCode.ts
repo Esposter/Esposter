@@ -8,6 +8,8 @@ const REGEX_OPENER_REGEX = /(?:^|[=(,:[!&|?{};+\-*%<>~^]|\breturn|\btypeof|\bcas
 // Enough of the tail to hold the longest opener keyword and the whitespace after it
 const CODE_TAIL_LENGTH = 8;
 
+const REGEX_FLAG_REGEX = /[a-z]/u;
+
 // Every character of `text` that is real code, paired with its bracket depth and its index in `text`. Strings,
 // Regex literals, template substitutions and both comment forms are skipped, so a `;` at depth 0 genuinely ends
 // A declaration and a `;` inside a string or a `${…}` does not — a plain bracket count reads both the same and
@@ -71,7 +73,7 @@ export const scanCode = function* (text: string): Generator<CodeToken> {
           else if (patternCharacter === "/" && !isInClass) break;
         }
       }
-      while (index < text.length && /[a-z]/u.test(text[index] ?? "")) index += 1;
+      while (index < text.length && REGEX_FLAG_REGEX.test(text[index] ?? "")) index += 1;
       code = `${code}/`.slice(-CODE_TAIL_LENGTH);
       continue;
     } else if (text.startsWith("//", index)) {

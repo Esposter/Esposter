@@ -73,7 +73,7 @@ Hand-rolling either is the single most repeated finding in this area — the cha
 
 ## A Dialog Born Open Waits for Its Mount
 
-`StyledDialog` gates its own model on `useMounted()`, so consumers pass their open state straight through. A **raw `v-dialog` rendered open on its first render** — one a page's async setup decides, or one that _is_ the page — owes the same gate: `:model-value="isMounted"`. Vuetify's block scroll strategy reads the overlay's root element on a timeout after it activates, and a navigation renders the incoming page inside a suspense that has not mounted one yet, so the strategy dereferences `undefined` and the whole page render goes with it (still unguarded upstream at the version the catalog pins).
+`StyledDialog` gates its own model on `useMounted()`, so consumers pass their open state straight through. A **raw `v-dialog` rendered open on its first render** — one a page's async setup decides, or one that _is_ the page — owes the same gate: `:model-value="isMounted"`. Vuetify's block scroll strategy reads the overlay's root element on a timeout after it activates, and a navigation renders the incoming page inside a suspense that has not mounted one yet, so the strategy dereferences `undefined` and the whole page render goes with it (still unguarded upstream at the version the lockfile resolves).
 
 ## HTML Footprint
 

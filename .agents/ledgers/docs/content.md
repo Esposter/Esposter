@@ -6,7 +6,7 @@
 | `resource/*.md`                                                | 2026-09-15 | every area index carries a `Shipped log`, one line per program of work             |
 | `esbabbler/*.md`, `esbabbler/calls/`                           | 2026-09-15 | the widest area by some margin                                                     |
 | `virrun/*.md`                                                  | 2026-09-15 | bench figures belong to the artifacts that hold them, never to prose               |
-| `resource/sheet/`, `infra/`                                    | —          | `eventgrid-dead-letter` keeps two diagrams: a delivery path and an event lifecycle |
+| `resource/sheet/`, `infra/`                                    | 2026-09-20 | `eventgrid-dead-letter` keeps two diagrams: a delivery path and an event lifecycle |
 | `clicker/`, `dungeons/`, `post/`                               | 2026-09-15 | split from `user/` to fit a review window                                          |
 | `user/`                                                        | 2026-09-15 |                                                                                    |
 | `vue-phaserjs/`, `achievement/`, `fluid-simulator/`, `anime/`  | 2026-09-15 |                                                                                    |

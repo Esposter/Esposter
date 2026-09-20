@@ -12,6 +12,8 @@ export const AllowedRoots: ReadonlySet<string> = new Set(["getResult", "getResul
 export const RethrowingCallees: ReadonlySet<string> = new Set(["logAndRethrow"]);
 
 export const PromiseCombinators: ReadonlySet<string> = new Set(["all", "any", "race"]);
+// The methods whose call is a promise on sight, whatever it chains off
+export const PromiseChainMethods: ReadonlySet<string> = new Set(["catch", "finally", "then"]);
 // Expressions whose value is written out in place, so nothing already-started can be hiding behind them.
 export const LiteralNodeTypes: ReadonlySet<string> = new Set([
   "ArrayExpression",

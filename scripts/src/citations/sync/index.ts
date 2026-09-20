@@ -2,8 +2,7 @@ import { readCitingPaths } from "#src/services/citations/readCitingPaths";
 import { getRenamePrefixes } from "#src/services/citations/sync/getRenamePrefixes";
 import { rewriteCitations } from "#src/services/citations/sync/rewriteCitations";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getGitEnv } from "#src/services/shared/getGitEnv";
-import { execFileSync } from "node:child_process";
+import { runGit } from "#src/services/shared/runGit";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -11,13 +10,7 @@ import { resolve } from "node:path";
 // Move already committed on its own, which is how a sweep commits its moves apart from their repairs
 const base = process.argv[2] ?? "HEAD";
 
-const renames = getRenamePrefixes(
-  execFileSync("git", ["diff", "--name-status", "-M", base], {
-    cwd: REPOSITORY_ROOT,
-    encoding: "utf8",
-    env: getGitEnv(),
-  }),
-);
+const renames = getRenamePrefixes(runGit(["diff", "--name-status", "-M", base]));
 // Nothing to rewrite means no page to read: the pages are only opened once there is a rename to apply to them
 if (renames.length === 0) console.info(`no renames since ${base}`);
 else

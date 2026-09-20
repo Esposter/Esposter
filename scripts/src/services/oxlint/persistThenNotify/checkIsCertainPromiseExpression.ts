@@ -1,5 +1,8 @@
 import type { ESTree } from "@oxlint/plugins";
 
+import { PromiseChainMethods } from "#src/services/oxlint/persistThenNotify/constants";
+import { getPromiseMemberName } from "#src/services/oxlint/persistThenNotify/getPromiseMemberName";
+
 // A returned expression is only read as an effect when its promise-ness is certain from syntax alone: a `.then`
 // Chain, or a `Promise.*` call. A plugin sees no types, so `return mapRoom(row)` and `return persist(row)` are the
 // Same shape — and reporting the first would leave wrapping a pure transform in a best-effort handler as the only
@@ -8,6 +11,5 @@ import type { ESTree } from "@oxlint/plugins";
 export const checkIsCertainPromiseExpression = (expression: ESTree.Expression): boolean =>
   expression.type === "CallExpression" &&
   expression.callee.type === "MemberExpression" &&
-  expression.callee.property.type === "Identifier" &&
-  (["catch", "finally", "then"].includes(expression.callee.property.name) ||
-    (expression.callee.object.type === "Identifier" && expression.callee.object.name === "Promise"));
+  ((expression.callee.property.type === "Identifier" && PromiseChainMethods.has(expression.callee.property.name)) ||
+    getPromiseMemberName(expression.callee) !== undefined);

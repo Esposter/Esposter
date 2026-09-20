@@ -4,6 +4,7 @@ import { checkHasAbsorbingMatchTerminal } from "#src/services/oxlint/persistThen
 import { checkHasRethrowingTerminal } from "#src/services/oxlint/persistThenNotify/checkHasRethrowingTerminal";
 import { AllowedRoots, LiteralNodeTypes, PromiseCombinators } from "#src/services/oxlint/persistThenNotify/constants";
 import { getBlockEffects } from "#src/services/oxlint/persistThenNotify/getBlockEffects";
+import { getPromiseMemberName } from "#src/services/oxlint/persistThenNotify/getPromiseMemberName";
 import { getRootCalleeName } from "#src/services/oxlint/persistThenNotify/getRootCalleeName";
 
 // Never rejects: an absorbing `.match` terminal, an allowed wrapper whose terminal absorbs the error,
@@ -19,24 +20,19 @@ export const checkIsSafeAwait = (argument: ESTree.Expression): boolean => {
   if (checkHasAbsorbingMatchTerminal(argument)) return true;
   const rootName = getRootCalleeName(argument);
   if (rootName !== undefined && AllowedRoots.has(rootName)) return !checkHasRethrowingTerminal(argument);
-  if (
-    argument.type === "CallExpression" &&
-    argument.callee.type === "MemberExpression" &&
-    argument.callee.object.type === "Identifier" &&
-    argument.callee.object.name === "Promise" &&
-    argument.callee.property.type === "Identifier"
-  ) {
+  const promiseMemberName = argument.type === "CallExpression" ? getPromiseMemberName(argument.callee) : undefined;
+  if (argument.type === "CallExpression" && promiseMemberName !== undefined) {
     // `Promise.allSettled` resolves an array of outcomes and never rejects regardless of its elements
-    if (argument.callee.property.name === "allSettled") return true;
+    if (promiseMemberName === "allSettled") return true;
     // `Promise.resolve` adopts what it is handed, so it rejects whenever that value is a rejecting promise. Only a
     // Literal is safe on sight: an identifier or member expression is the ordinary way to hold an already-started
     // Promise (`const deletion = client.deleteBlob(name); … await Promise.resolve(deletion)`), so blessing those
     // Would hand the rule's own defect a syntax that walks straight past it
-    if (argument.callee.property.name === "resolve") {
+    if (promiseMemberName === "resolve") {
       const [value] = argument.arguments;
       return value === undefined || LiteralNodeTypes.has(value.type);
     }
-    if (!PromiseCombinators.has(argument.callee.property.name)) return false;
+    if (!PromiseCombinators.has(promiseMemberName)) return false;
     const [collection] = argument.arguments;
     if (collection?.type === "ArrayExpression")
       return collection.elements.every(

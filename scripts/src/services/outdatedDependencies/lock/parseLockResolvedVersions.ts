@@ -1,3 +1,5 @@
+import { takeOne } from "@esposter/shared";
+
 export const parseLockResolvedVersions = (sectionText: string, pkgIndent: number): Map<string, string> => {
   const childIndent = pkgIndent + 2;
   const pattern = new RegExp(
@@ -11,7 +13,7 @@ export const parseLockResolvedVersions = (sectionText: string, pkgIndent: number
     const version = groups?.version;
     if (!pkg || !version) continue;
 
-    versions.set(pkg.trim(), version.trim().split("(")[0]?.trim() ?? "");
+    versions.set(pkg.trim(), takeOne(version.trim().split("(")).trim());
   }
 
   return versions;
