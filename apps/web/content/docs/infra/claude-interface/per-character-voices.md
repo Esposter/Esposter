@@ -13,12 +13,12 @@ description: Every persona card names the catalogue voice that reads it, with a 
 
 Everything here is one SSML element or attribute, and every one of them is free.
 
-| Lever                                        | What it changes                                                                                                                                                     |
-| :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| The voice itself                             | Register and accent. The largest effect by far, and the catalogue carries enough English voices to give most of the roster its own.                                 |
-| `mstts:express-as` `style` and `styledegree` | Temperament — cheerful, whispering, newscast — at an intensity from a hundredth to twice the voice's own definition. Only the voices that declare a style have one. |
-| `prosody` `pitch`                            | Baseline pitch, within half to one and a half times the voice's own.                                                                                                |
-| `prosody` `rate`                             | Speaking pace, within half to twice the voice's own.                                                                                                                |
+| Lever                                        | What it changes                                                                                                                                                                     |
+| :------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The voice itself                             | Register and accent. The largest effect by far; the voice is chosen from the catalogue's English voices, the language of every reply and of the performance it is measured against. |
+| `mstts:express-as` `style` and `styledegree` | Temperament — cheerful, whispering, newscast — at an intensity from a hundredth to twice the voice's own definition. Only the voices that declare a style have one.                 |
+| `prosody` `pitch`                            | Baseline pitch, within half to one and a half times the voice's own.                                                                                                                |
+| `prosody` `rate`                             | Speaking pace, within half to twice the voice's own.                                                                                                                                |
 
 **`role` is not among them.** The markup's fifth lever recasts the speaker as a girl, a boy or an older adult, and only the Chinese voices declare it. Replies are spoken in English, so it is unavailable here rather than unused.
 
@@ -67,11 +67,11 @@ Like the spinner's lines, it never reaches the model — a character is never to
 
 ## How the roster is assigned, and what that is worth
 
-Every generated voice is a **measurement**: the [voice match benchmark](/docs/infra/claude-interface/voice-match-benchmark) reads the character's own Japanese performance, measures every catalogue voice once, and writes the closest voice with the pitch and rate that take it the rest of the way. The first table shipped was judged from the game's metadata and the catalogue's descriptions, with nothing listened to; it was deleted when the measurement replaced it, because a judged value in an authored file reads as a person's choice.
+Every generated voice is a **measurement**: the [voice match benchmark](/docs/infra/claude-interface/voice-match-benchmark) reads the character's own English performance, measures every catalogue voice once, and writes the closest voice with the pitch and rate that take it the rest of the way. The first table shipped was judged from the game's metadata and the catalogue's descriptions, with nothing listened to; it was deleted when the measurement replaced it, because a judged value in an authored file reads as a person's choice.
 
-**Nobody has listened yet.** A measured fit is a better starting point than a judged one and still not a heard one: the benchmark's page says what the ear owes it — three candidates confirmed per sampled character, never a hundred auditioned — and the card is where that confirmation goes.
+**The first listen already moved the benchmark.** Fitted from the Japanese track against the whole catalogue by the numbers alone, the roster sounded worse than the judged table, and fitted against the Japanese voices it sounded accented; the benchmark's page settles the match at English against English — the English track's performance, the catalogue's English voices — and why gender is not a cut on top. What the ear still owes is the ranking inside that pool: three candidates confirmed per sampled character, never a hundred auditioned, and the card is where that confirmation goes.
 
-The catalogue has fewer English voices than the roster has characters, so some voices read for more than one character, told apart by pitch and rate. Only one character speaks per session, so a shared voice is invisible in use.
+The roster lands on a fraction of the English voices, the cast's high voices all closest to the catalogue's few high ones, so one voice reads for many characters, told apart by pitch and rate. Only one character speaks per session, so a shared voice is invisible in use.
 
 ## Checking the cards against the catalogue
 

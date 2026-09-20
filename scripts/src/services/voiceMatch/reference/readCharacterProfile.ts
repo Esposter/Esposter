@@ -12,18 +12,19 @@ import { readFileRange } from "#src/services/voiceMatch/reference/readFileRange"
 import { readReferenceVoicefiles } from "#src/services/voiceMatch/reference/readReferenceVoicefiles";
 import { resampleClip } from "#src/services/voiceMatch/resampleClip";
 
-// One character's reference, from every clip of theirs the track holds: located by the hash of its recorded stem,
-// Decoded, measured and dropped. A clip too short to carry a voice is skipped, and a character with too few left is
-// Reported rather than profiled from a handful
+// One character's reference, from every clip of theirs one track holds: located by the hash of its recorded stem
+// Under the track's folder, decoded, measured and dropped. A clip too short to carry a voice is skipped, and a
+// Character with too few left is reported rather than profiled from a handful
 export const readCharacterProfile = async (
   name: string,
+  track: string,
   clipLocationMap: Map<bigint, ClipLocation>,
   { decode }: ClipDecoder,
   embed: SpeakerEmbedder,
 ): Promise<undefined | VoiceProfile> => {
   const clipProfiles: ClipProfile[] = [];
   for (const voicefile of readReferenceVoicefiles(name)) {
-    const clipLocation = clipLocationMap.get(getExternalId(voicefile));
+    const clipLocation = clipLocationMap.get(getExternalId(voicefile, track));
     if (!clipLocation) continue;
 
     const bytes = readFileRange(clipLocation.path, clipLocation.entry.offset, clipLocation.entry.size);

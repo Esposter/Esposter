@@ -1,6 +1,6 @@
 ---
 title: Voice match benchmark
-description: Three repo scripts that measure every character's own Japanese performance, measure every catalogue voice once, and solve each character's voice, pitch and rate from the numbers into a generated module beside their card — so the per-character voice table is measured rather than judged. The clips are found by the hash of their own names, never committed, and the ear keeps the last word.
+description: Three repo scripts that measure every character's own performance in the language the plugin speaks, measure every catalogue voice once, and solve each character's voice, pitch and rate from the numbers — inside the catalogue's voices of that language — into a generated module beside their card — so the per-character voice table is measured rather than judged. The clips are found by the hash of their own names, never committed, and the ear keeps the last word.
 ---
 
 # Voice match benchmark
@@ -8,16 +8,18 @@ description: Three repo scripts that measure every character's own Japanese perf
 [Per-character voices](/docs/infra/claude-interface/per-character-voices) gives every card a catalogue voice, a pitch and a rate. The question those values answer — which of a hundred-odd voices is closest to this character, and by how much to bend it — has an objective form in speech research, and this is the tooling that computes it: three `scripts` commands, run in order, with nothing outside npm.
 
 ```bash
-pnpm ai:voice-match:reference "<game folder>/GenshinImpact_Data/StreamingAssets/AudioAssets/Japanese"
+pnpm ai:voice-match:reference "<game folder>/GenshinImpact_Data/StreamingAssets/AudioAssets/English(US)"
 pnpm ai:voice-match:bank        # needs the plugin's speech endpoint and key in the environment
 pnpm ai:voice-match:rank        # --write generates one voice module per character
 ```
 
+The first two stages **keep what they measured**: a character already profiled, or a voice already banked, is carried into the new run as it was, and only what the source gained is measured — the characters a patch added, the voices the catalogue gained — while what the source merely _says_ about a kept entity, a voice's listed styles, is taken fresh because that costs nothing. So a run after a patch is minutes, not the better part of an hour, and the whole roster is measured again only under `--fresh`, which a changed carrier sentence, encoder or recogniser calls for since every kept number was taken with the old one.
+
 ## A clip is found by the hash of its own name
 
-The game data records, for every voiced line, the stem of the audio file it was authored as ("vo_clorinde_character_idle_03" under its folders). The Japanese track stores its clips in Wwise packages keyed by a 64-bit id, and **that id is the FNV-1 hash of the clip's path as the engine spells it** — the language folder, backslashes, the lowercased stem and the `.wem` extension. Every voiced line in the data resolves to exactly one clip this way, several thousand of them across about a hundred characters, so the reference set is labelled by construction: no clustering, no transcription, and no guessing whose voice a clip is. The language is inside the hashed string, which is also why no id is shared between the language tracks.
+The game data records, for every voiced line, the stem of the audio file it was authored as ("vo_clorinde_character_idle_03" under its folders). Each language track stores its clips in Wwise packages under its own folder, keyed by a 64-bit id, and **that id is the FNV-1 hash of the clip's path as the engine spells it** — the track's folder lowercased, backslashes, the lowercased stem and the `.wem` extension. Every voiced line in the data resolves to exactly one clip this way, several thousand of them across about a hundred characters, so the reference set is labelled by construction: no clustering, no transcription, and no guessing whose voice a clip is. The stem is the same in every language's data, the track is inside the hashed string, and so the same line resolves in every track under a different id — which is also why no id is shared between them.
 
-The one line the data mislabels is the scene: the Traveler's friendship lines transcribe their companion's dialogue and carry a speaker label, so any line whose text names its speakers is left out. What remains of the Traveler is their own combat lines.
+The one line the data mislabels is the scene: the Traveler's friendship lines transcribe their companion's dialogue, and a few characters' lines carry their familiar's, each speaker named at the start of their line with a colon after the name. Any line whose text opens that way is left out — the name is one word in every language's text, which keeps a colon inside a sentence from reading as a speaker. What remains of the Traveler is their own combat lines.
 
 ## What is measured
 
@@ -33,7 +35,7 @@ Both corpora go through the same code, so whatever the estimators get wrong they
 
 Two constraints from the field's own critique of speaker-similarity scores are built in rather than noted. **Duration moves the score on its own**, so the embedding reads at most the opening seconds of every reference clip, which holds it near the carrier's length. **Rhythm is invisible to the embedding**, so the ranking is never the cosine alone.
 
-**The rate is compared relative to each corpus's median, never as a raw ratio.** Japanese runs more syllables a second than English; a raw ratio would slow every candidate by that gap. A character who speaks faster than the Japanese cast gets a voice sped up relative to the English catalogue by the same fraction.
+**The rate is compared relative to each corpus's median, never as a raw ratio.** A cast's lines and a synthetic voice's carrier sentence run at different syllable rates, so a raw ratio would move every candidate by that gap. A character who speaks faster than the cast gets a voice sped up relative to the pool by the same fraction.
 
 ## The pipeline
 
@@ -43,11 +45,11 @@ flowchart TD
     Hash["FNV-1 64 of the Wwise path"]
     Package["AKPK externals table<br/>offset and size"]
     Decode["ww2ogg-ts + ogg-vorbis wasm<br/>decoded, measured, dropped"]
-    Reference["reference.json<br/>one profile per character"]
+    Reference["generated/voiceMatch/reference/&lt;language&gt;/<br/>one profile per character"]
     Catalogue["Speech voice list"]
     Carrier["One carrier sentence per voice<br/>through the plugin's own markup"]
-    Gate{"Transcribes back<br/>under the word error rate?"}
-    Bank["bank.json<br/>one profile per voice"]
+    Bank["generated/voiceMatch/bank/<br/>one profile per voice"]
+    Pool{"The pool's language,<br/>under the word error rate?"}
     Solve["Pitch and rate from<br/>the ratio of medians"]
     Clamp{"Inside the service's clamps?"}
     Rank["Rank by the composite"]
@@ -55,17 +57,18 @@ flowchart TD
     Out["The wrong voice, dropped"]
 
     Lines --> Hash --> Package --> Decode --> Reference
-    Catalogue --> Carrier --> Gate
-    Gate -- yes --> Bank
-    Gate -- no --> Out
+    Catalogue --> Carrier --> Bank --> Pool
+    Pool -- yes --> Solve
+    Pool -- no --> Out
     Reference --> Solve
-    Bank --> Solve
     Solve --> Clamp
     Clamp -- yes --> Rank --> Voices
     Clamp -- no --> Out
 ```
 
-**The bank is what makes it affordable.** Every voice reads one carrier sentence at its own settings, once, and that measurement serves every character. The whole catalogue is synthesized — a Japanese-locale voice reading English is unintelligible while a multilingual one carries talent that speaks it properly, and the names do not say which is which — so eligibility is **measured**: the carrier is transcribed back by a speech recogniser and a voice over the word-error-rate ceiling is out for every character.
+**The bank is what makes it affordable.** Every voice reads one carrier sentence at its own settings, once, and that measurement serves every character. The whole catalogue is banked, so the pool below can move without another synthesis run, and the record keeps how much of the carrier a speech recogniser got back.
+
+**The pool is narrower than the bank**, and it is cut before anything is scored: the voices of the language the plugin speaks, English, which is also the track the reference was measured from, that read the carrier back under the word-error-rate ceiling. The settled section below is why the first cut exists; the second is measured rather than read off a locale because a voice's name does not say whether it can read English.
 
 **Solving replaces searching.** The pitch shift is the ratio of the two median pitches as a signed percentage; the rate shift, the ratio of the two relative rates. A shift the service would clamp — pitch beyond half to one and a half times, rate beyond half to twice — marks the wrong voice and drops it, rather than a voice to correct.
 
@@ -73,7 +76,7 @@ flowchart TD
 
 ## What comes back, and what never does
 
-The decoded clips exist only in memory: located, decoded, measured and dropped, with no cache. The published plugin states it carries no game audio, and that holds for a temporary folder exactly as for a commit. What the stages write is numbers, and every output is a [generated artifact](/docs/architecture/generated-artifacts): the profiles go to `scripts/src/generated/voiceMatch/`, one JSON file per character and per voice, and `--write` puts the fits into `packages/genshin-persona/src/generated/personaVoices/`, one typed module per character in the shape of their card. Each folder is its generator's whole output, cleared and rewritten on every run. Only the models the encoder and recogniser download stay outside the repository ("VOICE_MATCH_MODELS_DIRECTORY", else the system temp folder), because a model is a dependency rather than an output.
+The decoded clips exist only in memory: located, decoded, measured and dropped, with no cache. The published plugin states it carries no game audio, and that holds for a temporary folder exactly as for a commit. What the stages write is numbers, and every output is a [generated artifact](/docs/architecture/generated-artifacts): the profiles go to `scripts/src/generated/voiceMatch/`, one JSON file per character under each track's language and one per voice, and `--write` puts the fits into `packages/genshin-persona/src/generated/personaVoices/`, one typed module per character in the shape of their card. Each folder is its generator's whole output, cleared and rewritten on every run. Only the models the encoder and recogniser download stay outside the repository ("VOICE_MATCH_MODELS_DIRECTORY", else the system temp folder), because a model is a dependency rather than an output.
 
 A generated voice carries only what was measured — a name, and the two shifts where they are not zero. It never touches a card: the card's own `voice` is the ear's, written only when someone listened and chose, and the plugin reads the card's over the generated one.
 
@@ -86,7 +89,17 @@ A generated voice carries only what was measured — a name, and the two shifts 
 ## The two traps
 
 - **The codebook variant fails silently.** The packages use the aoTuV codebooks; the converter's default set produces an Ogg stream that throws nothing and decodes to zero samples. The variant is a constant to assert, not a setting to tune, and the chain was checked against a reference decoder — the same clip through vgmstream and through the npm chain agree to the 16-bit quantisation floor — which is also how the chain is revalidated after a dependency bump.
-- **Only the Japanese track enters, at any stage.** Each localisation is a different actor, so another track's audio is evidence about a different person's voice and corrupts the reference rather than diluting it. Nothing joins across tracks anyway: the language is inside every id.
+- **One track per reference, and one reference per match.** Each localisation is a different actor, so another track's audio is evidence about a different person's voice and corrupts a reference rather than diluting it; each track's profiles sit in their own folder, and the match reads the one of its language. Nothing joins across tracks anyway: the track is inside every id.
+
+## Settled — the reference and the pool speak the plugin's language
+
+Three rosters were heard before this settled. The first fitted the Japanese track against the whole intelligible catalogue, about two thirds of it, by the numbers alone, and sounded worse than the judged table it replaced: **the embedding hears the language before the speaker** — a character's timbre read closer to the Chinese, Japanese and Korean voices than to the English ones by about a tenth of a cosine, the language-and-accent bias the field reports for speaker embeddings across languages — so the roster leaned onto voices of a third locale reading English. The second kept the Japanese track and cut the pool to the Japanese voices, which removes the bias from the ranking, and was declined by ear too: seven voices for a hundred characters, and every reply spoken with an accent, because the plugin speaks English and a voice reading a language not its own carries its own into it.
+
+So the match is **English against English**: the reference is measured from the English track — the same characters, a different cast, and the performance a listener of the plugin would compare the voice to — and the pool is the catalogue's English voices. One language on both sides of the embedding, and the language of every reply. It is one constant; the bank holds the whole catalogue and the reference folder holds every track profiled, so moving it costs nothing but a reference run for a track not yet measured.
+
+**Gender is not a cut — considered and declined.** Inside one language the young men of the cast land on women's voices pitched down by a quarter or more, because they are voiced in a high tenor the catalogue's male voices sit far below. That is also how the game casts them: a boy's role goes to a woman's voice in a lower register as often as to a man's. A same-gender rule would overrule the closest fit by a rule the source material itself does not follow, so the closest fit stands, and the ear test below is where a wrong casting is caught.
+
+The pool is larger than the roster, yet the roster lands on a fraction of it: the cast's high voices all read closest to the catalogue's few high ones, so one voice reads for many characters and they are told apart by pitch and rate. The ear test below ranks the candidates inside the pool.
 
 ## Settled — it lives in `scripts`, not in the plugin
 

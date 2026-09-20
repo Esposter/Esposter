@@ -5,8 +5,8 @@ import { getFloorDb } from "#src/services/voiceMatch/getFloorDb";
 
 // Syllable nuclei counted the way the field's rate scripts count them: a voiced energy peak, loud enough to be
 // Speech, with a dip of a few decibels since the last nucleus so that one long vowel is one syllable. Text-free, so
-// The same count is read off a Japanese line and an English carrier — the language's own syllable rate is then
-// Divided out by the corpus median before the two are compared
+// The same count is read off a cast's line in any track and a synthetic voice's carrier — each corpus's own rate is
+// Then divided out by its median before the two are compared
 export const getSyllableCount = ({ energiesDb, f0sHz }: FrameAnalysis): number => {
   const speechFloorDb = getFloorDb(energiesDb, SPEECH_FLOOR_DB);
   let count = 0;

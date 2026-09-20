@@ -5,9 +5,11 @@ import type { VoiceFit } from "#src/models/voiceMatch/VoiceFit";
 import {
   BANK_DIRECTORY,
   FIT_FLOOR,
+  LOCALE_SEPARATOR,
+  MATCH_LANGUAGE,
   MAX_WORD_ERROR_RATE,
   MEDIAN,
-  REFERENCE_DIRECTORY,
+  REFERENCES_DIRECTORY,
   WRITE_FLAG,
 } from "#src/services/voiceMatch/constants";
 import { getPercentile } from "#src/services/voiceMatch/getPercentile";
@@ -26,13 +28,16 @@ const SCORE_DECIMALS = 3;
 
 // Stage 3 to 6 of the voice match benchmark: every eligible voice fitted to every profiled character, the best one
 // Per character reported with its runner-up, the three numbers a run is judged by beside the table — and, with
-// `--write`, the fits at or above the floor generated into the plugin, one voice module per character
+// `--write`, the fits at or above the floor generated into the plugin, one voice module per character. The reference
+// Is the track of the match language, and the pool the voices of it
 const isWriting = process.argv.includes(WRITE_FLAG);
-const references = readGeneratedJson<CharacterReference>(REFERENCE_DIRECTORY);
+const references = readGeneratedJson<CharacterReference>(join(REFERENCES_DIRECTORY, MATCH_LANGUAGE));
 const bank = readGeneratedJson<CandidateVoice>(BANK_DIRECTORY);
-// The intelligibility gate: a voice that cannot read the carrier back is out of the pool for every character,
-// Whatever its locale claims
-const candidates = bank.filter(({ wordErrorRate }) => wordErrorRate <= MAX_WORD_ERROR_RATE);
+// The pool: the voices of the one language, less any that cannot read the carrier back
+const candidates = bank.filter(
+  ({ name, wordErrorRate }) =>
+    name.startsWith(`${MATCH_LANGUAGE}${LOCALE_SEPARATOR}`) && wordErrorRate <= MAX_WORD_ERROR_RATE,
+);
 const referenceRateMedian = getPercentile(
   references.map(({ profile }) => profile.syllablesPerSecond),
   MEDIAN,
@@ -42,7 +47,7 @@ const candidateRateMedian = getPercentile(
   MEDIAN,
 );
 console.info(
-  `${candidates.length} of ${bank.length} voices intelligible; reference ${referenceRateMedian.toFixed(1)} syl/s and candidates ${candidateRateMedian.toFixed(1)} syl/s at the median`,
+  `${candidates.length} of ${bank.length} voices speak ${MATCH_LANGUAGE} and read the carrier back; reference ${referenceRateMedian.toFixed(1)} syl/s and candidates ${candidateRateMedian.toFixed(1)} syl/s at the median`,
 );
 
 const bestFits = new Map<string, VoiceFit>();

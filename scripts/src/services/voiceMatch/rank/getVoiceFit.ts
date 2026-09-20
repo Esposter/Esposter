@@ -16,9 +16,9 @@ import { getCosineSimilarity } from "#src/services/voiceMatch/rank/getCosineSimi
 import { getShiftPercentage } from "#src/services/voiceMatch/rank/getShiftPercentage";
 
 // Stage 3 and the composite for stage 4, for one voice against one character. Pitch is compared in hertz, since a
-// Hertz is a hertz in either language; rate is compared relative to each corpus's own median, since Japanese runs
-// More syllables a second than English does and a raw ratio would slow every voice by that difference. A shift the
-// Service would clamp is the wrong voice, and nothing is returned for it
+// Hertz is a hertz in any corpus; rate is compared relative to each corpus's own median, since a cast's lines and
+// A synthetic carrier run at different syllable rates and a raw ratio would move every voice by that difference. A
+// Shift the service would clamp is the wrong voice, and nothing is returned for it
 export const getVoiceFit = (
   reference: VoiceProfile,
   candidate: CandidateVoice,

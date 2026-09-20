@@ -7,9 +7,15 @@ import { join } from "node:path";
 // A clip is decoded, measured and dropped, cache included, since the rule that no game audio enters the repository
 // Holds for a temporary folder exactly as for a commit
 const GENERATED_DIRECTORY = join(REPOSITORY_ROOT, "scripts", "src", "generated", "voiceMatch");
-export const REFERENCE_DIRECTORY: string = join(GENERATED_DIRECTORY, "reference");
+// One sub-folder per language track profiled, named by the language's tag
+export const REFERENCES_DIRECTORY: string = join(GENERATED_DIRECTORY, "reference");
 export const BANK_DIRECTORY: string = join(GENERATED_DIRECTORY, "bank");
 export const GENERATED_JSON_EXTENSION = ".json";
+// The characters Windows refuses in a file name; a ":" would otherwise make the rest of the name an alternate
+// Data stream on an empty file, silently (the catalogue's "en-au-andrew:DragonHDOmniLatestNeural")
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+export const UNSAFE_FILE_NAME_CHARACTERS_REGEX: RegExp = /[<>:"/\\|?*]/gu;
+export const FILE_NAME_CHARACTER_REPLACEMENT = "-";
 // The encoder and the recogniser download once, outside the repository: a model is a dependency, not an output
 export const MODELS_DIRECTORY: string =
   process.env.VOICE_MATCH_MODELS_DIRECTORY ?? join(tmpdir(), "esposter-voice-match", "models");
@@ -24,10 +30,11 @@ export const AKPK_HEADER_BYTES = 28;
 export const AKPK_EXTERNAL_ENTRY_BYTES = 24;
 export const AKPK_EXTERNAL_ID_BYTES = 8;
 export const PACKAGE_EXTENSION = ".pck";
-// A clip's id is the FNV-1 hash of its path as Wwise spells it: the language folder, backslashes, the
-// Lowercased stem the game data records, and the streamed media extension. The language is inside the hash, which
-// Is why no id is shared across the tracks
-export const EXTERNAL_PATH_LANGUAGE = "japanese";
+// The game's audio tracks, by the folder each is installed under and the tag of the language it speaks. A clip's id is
+// The FNV-1 hash of its path as Wwise spells it: that folder lowercased, backslashes, the lowercased stem the game
+// Data records, and the streamed media extension — the language is inside the hash, which is why no id is shared
+// Across the tracks
+export const AUDIO_TRACK_LANGUAGES: Record<string, string> = { Chinese: "zh", "English(US)": "en", Japanese: "ja" };
 export const EXTERNAL_PATH_SEPARATOR = "\\";
 export const EXTERNAL_PATH_EXTENSION = ".wem";
 export const FNV1_64_OFFSET_BASIS = 0xcb_f2_9c_e4_84_22_23_25n;
@@ -36,9 +43,11 @@ export const UINT64_MASK = 0xff_ff_ff_ff_ff_ff_ff_ffn;
 // The packages carry aoTuV codebooks. The library's default set produces a stream that throws nothing and decodes to
 // Zero samples, so the variant is a constant to assert rather than a setting to tune
 export const CODEBOOKS_VARIANT = "aoTuV_603";
-// A line whose text names its speakers is a scene the game data attached to a character — the Traveler's are all
-// Their companion's voice — and never that character's own line
-export const SPEAKER_LABEL = "：";
+// A line whose text opens with a speaker's name and a colon is a scene the game data attached to a character — the
+// Traveler's companion, a character's familiar — and carries another actor's voice, so it is never that character's
+// Own line. The name is one word in every language's text, which keeps a colon inside a sentence from reading as one
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+export const SPEAKER_LABEL_REGEX: RegExp = /^[^\s:：]{1,20}[:：]/mu;
 // What the speaker encoder and the transcriber both expect
 export const MODEL_SAMPLE_RATE = 16_000;
 export const SPEAKER_MODEL_ID = "Xenova/wavlm-base-plus-sv";
@@ -79,6 +88,14 @@ export const MIN_REFERENCE_CLIPS = 8;
 // Passage the field records speakers with: about five seconds, which is the length of a story line
 export const CARRIER_TEXT = "Please call Stella. Ask her to bring these things with her from the store.";
 export const MAX_WORD_ERROR_RATE = 0.2;
+// The reference track and the pool speak one language, and the plugin speaks English, so it is English on both
+// Sides: the English track's reference, against the voices whose short name opens with the tag. A speaker embedding
+// Is biased towards the language it hears — the first run, the Japanese track against the whole catalogue, chose
+// Voices of a third locale by that bias — and a voice reading a language not its own carries an accent the ear
+// Rejected. The bank holds the whole catalogue and the reference folder holds every track profiled, so the language
+// Moves without a run
+export const MATCH_LANGUAGE = "en";
+export const LOCALE_SEPARATOR = "-";
 // The service's own clamps on the two prosody levers, as signed percentages
 export const MAX_PITCH_SHIFT = 50;
 export const MIN_RATE_SHIFT = -50;
@@ -93,6 +110,12 @@ export const TIMBRE_WEIGHT = 0.6;
 export const PITCH_WEIGHT = 0.15;
 export const RATE_WEIGHT = 0.1;
 export const SPREAD_WEIGHT = 0.15;
-// Below this composite the benchmark could not fit the character, and the card is left to the ear
+// Below this composite the benchmark could not fit the character, and the card is left to the ear. Every best fit in
+// The settled pool clears it by a wide margin; a pool of a handful of voices left a character or two under, whose
+// Pitch sat far from every voice in it. Like the weights, it moves on the ear-validated sample alone
 export const FIT_FLOOR = 0.7;
 export const WRITE_FLAG = "--write";
+// A stage keeps the last run's record for an entity it would otherwise measure again, since a measurement costs
+// Minutes or synthesis characters and the source it was taken from has not moved. The flag measures everything again,
+// Which a changed carrier, encoder or recogniser calls for
+export const FRESH_FLAG = "--fresh";

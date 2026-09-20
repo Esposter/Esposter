@@ -11,12 +11,12 @@ Some files in this repository are written by a script from a source outside it �
 
 **Under a `generated/` folder in the package that consumes it, in a sub-folder named for the generator, one file per entity.** The folder name is the whole marker: no per-file header, no `.generated` suffix, no comment saying who wrote it. A reader who sees `generated/` in the path knows the file is an output, and a reader who does not sees an authored file.
 
-| Generator                                  | Writes                                                                                   | Consumer              |
-| :----------------------------------------- | :--------------------------------------------------------------------------------------- | :-------------------- |
-| `pnpm tiled:gen`                           | `apps/web/shared/generated/tiled/` — enums and typed properties per map                  | the dungeons game     |
-| `pnpm phaser:gen`                          | `apps/web/shared/generated/phaser/` — the asset key enum and manifest                    | the dungeons game     |
-| `pnpm ai:voice-match:reference` and `bank` | `scripts/src/generated/voiceMatch/` — one profile per character and per voice            | `ai:voice-match:rank` |
-| `pnpm ai:voice-match:rank --write`         | `packages/genshin-persona/src/generated/personaVoices/` — one voice module per character | the persona plugin    |
+| Generator                                  | Writes                                                                                                         | Consumer              |
+| :----------------------------------------- | :------------------------------------------------------------------------------------------------------------- | :-------------------- |
+| `pnpm tiled:gen`                           | `apps/web/shared/generated/tiled/` — enums and typed properties per map                                        | the dungeons game     |
+| `pnpm phaser:gen`                          | `apps/web/shared/generated/phaser/` — the asset key enum and manifest                                          | the dungeons game     |
+| `pnpm ai:voice-match:reference` and `bank` | `scripts/src/generated/voiceMatch/` — one profile per character under each track's language, and one per voice | `ai:voice-match:rank` |
+| `pnpm ai:voice-match:rank --write`         | `packages/genshin-persona/src/generated/personaVoices/` — one voice module per character                       | the persona plugin    |
 
 One file per entity because that is how the consumer reads them — a session that needs one character's voice loads one module, exactly as it loads one card — and because a re-run then changes only the entities whose numbers moved, so the diff a review reads is the change itself rather than a rewrite of one table.
 
@@ -24,7 +24,7 @@ One file per entity because that is how the consumer reads them — a session th
 
 ## What one never does
 
-**It is never edited by hand.** A wrong value is a wrong generator or a wrong input, and the fix goes there and is re-run — an edit in the output is overwritten by the next run without a trace. Each generator treats its folder as the run's whole output: it clears the folder and writes it again, so an entity the source no longer holds leaves no stale file behind, and nothing has to know what the previous run wrote.
+**It is never edited by hand.** A wrong value is a wrong generator or a wrong input, and the fix goes there and is re-run — an edit in the output is overwritten by the next run without a trace. Each generator treats its folder as the run's whole output: it clears the folder and writes it again, so an entity the source no longer holds leaves no stale file behind. A generator whose entities cost minutes each to measure may read the previous run's records first and write an unchanged entity's back rather than measure it again — the folder is still cleared and still the run's whole output, and a `--fresh` flag measures everything — but the choice is per entity and by name, never a diff of the folder against itself.
 
 **An authored file never holds a generated value, and a generated file never holds an authored one.** The persona card is the person's — how the character speaks, in our words, and the voice someone listened to and chose; the measured voice the benchmark computes for the same character is a generated module beside it. When both exist the precedence is resolved in code, never by copying one value into the other's file:
 
