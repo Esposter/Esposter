@@ -79,13 +79,15 @@ export const ROSTER_CACHE_EXTENSION = ".json";
 // Every month and day is measured inside one leap year, so 29 February is a day like any other and the year wraps
 export const LEAP_YEAR = 2000;
 export const DATE_LOCALE = "en-AU";
-export const TRAVELER: Character = {
+// The player, for when the data that would name anyone else cannot be read: one of the twins, with nothing filled
+// In that the data would have, and a voice like any other character's
+export const FALLBACK_CHARACTER: Character = {
   affiliation: "",
   birthday: "",
   constellation: "",
   description: "",
   element: "",
-  name: "Traveler",
+  name: "Lumine",
   region: "",
   title: "",
   version: "",

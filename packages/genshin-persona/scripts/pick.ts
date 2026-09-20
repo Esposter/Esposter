@@ -1,4 +1,4 @@
-import { TRAVELER } from "#src/services/constants";
+import { FALLBACK_CHARACTER } from "#src/services/constants";
 import { getCard } from "#src/services/getCard";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
 import { parseHookInput } from "#src/services/parseHookInput";
@@ -13,12 +13,12 @@ import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
 
 const today = Temporal.Now.plainDateISO();
 registerFailureFallback(() => {
-  console.log(getSessionStartOutput(getCard(TRAVELER, today, undefined)));
+  console.log(getSessionStartOutput(getCard(FALLBACK_CHARACTER, today, undefined)));
 });
 const input = await readStdin();
 const { session_id: sessionId = "" } = parseHookInput(input);
 const roster = readRoster();
-const character = (await resolveSessionCharacter(roster, sessionId, today)) ?? TRAVELER;
+const character = (await resolveSessionCharacter(roster, sessionId, today)) ?? FALLBACK_CHARACTER;
 const card = getCard(character, today, await readPersonaCard(character.name));
 writeStatusLauncher();
 writeSessionSpinner(character, card.personaCard);

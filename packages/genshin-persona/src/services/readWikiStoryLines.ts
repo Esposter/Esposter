@@ -1,11 +1,13 @@
 import type { WikiStoryLine } from "#src/models/WikiStoryLine";
 
-import { TRAVELER, TravelerTwinMap } from "#src/services/constants";
+import { TravelerTwinMap } from "#src/services/constants";
 import { parseWikiStoryLines } from "#src/services/parseWikiStoryLines";
 import { parseWikiTravelerLines } from "#src/services/parseWikiTravelerLines";
 import { readWikiPageText } from "#src/services/readWikiPageText";
 
 const VOICE_OVERS_SUBPAGE = "/Voice-Overs";
+// The page the twins share, under the name the wiki gives the pair
+const TRAVELER_PAGE = "Traveler";
 // The Traveler's index lists its story pages as one relative link per region
 const STORY_PAGE_LINK_REGEX = /^\* \[\[\/(?<page>[^\]|]+)/gmu;
 
@@ -18,7 +20,7 @@ export const readWikiStoryLines = async (name: string): Promise<WikiStoryLine[]>
     return parseWikiStoryLines(wikitext);
   }
 
-  const travelerPage = `${TRAVELER.name}${VOICE_OVERS_SUBPAGE}`;
+  const travelerPage = `${TRAVELER_PAGE}${VOICE_OVERS_SUBPAGE}`;
   const index = await readWikiPageText(travelerPage);
   const pages = Array.from(index.matchAll(STORY_PAGE_LINK_REGEX), (match) => match.groups?.page ?? "");
   const lines = await Promise.all(
