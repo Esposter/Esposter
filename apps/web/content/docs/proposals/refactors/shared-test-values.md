@@ -31,7 +31,7 @@ flowchart TD
   Plugin --> Local
 ```
 
-`genshin-persona` declares no devDependencies on purpose: `claude plugin install` copies the plugin directory out of the repository and runs a frozen `npm ci` inside that copy, where there is no workspace and npm does not understand the `workspace:` protocol ([persona plugin](/docs/infra/claude-interface/persona-plugin)). So a shared package reaches every package **except** the one whose Temporal migration surfaced the need, and that package keeps a local copy either way. This is not a reason to abandon the idea — it is a reason not to claim the constants are universal.
+`genshin-persona` declares no devDependencies on purpose: `claude plugin install` copies the plugin directory out of the repository and runs a frozen `npm ci` inside that copy, where there is no workspace and npm does not understand the `workspace:` protocol. The one route round it — the published `@esposter/shared` by a plain range — is declined there for what it costs ([persona plugin](/docs/infra/claude-interface/persona-plugin)). So a shared package reaches every package **except** the one whose Temporal migration surfaced the need, and that package keeps a local copy either way. This is not a reason to abandon the idea — it is a reason not to claim the constants are universal.
 
 ## Which half is enforceable
 
