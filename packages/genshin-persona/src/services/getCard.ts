@@ -6,15 +6,15 @@ import { CARD_DETAIL_SEPARATOR } from "#src/services/constants";
 import { getBirthdayNote } from "#src/services/getBirthdayNote";
 
 export const getCard = (
-  character: Character,
+  { birthday, description, element, name, region, title }: Character,
   today: Temporal.PlainDate,
-  personaCard: PersonaCard | undefined,
+  personaCard?: PersonaCard,
 ): Card => {
-  const details = [character.title, character.element, character.region].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
+  const details = [title, element, region].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
   return {
-    description: character.description,
-    headline: details ? `${character.name} — ${details}` : character.name,
-    note: getBirthdayNote(character.birthday, today),
+    description,
+    headline: details ? `${name} — ${details}` : name,
+    note: getBirthdayNote(birthday, today),
     personaCard,
   };
 };

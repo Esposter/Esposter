@@ -11,7 +11,7 @@ This is the rule the codebase's other absences follow from: there are no `@depre
 
 ## Why the cost argument does not apply here
 
-The usual reason to keep a wrong name is that changing it is expensive. Here it is not, and each of the three places that could have been expensive has already been paid for:
+The usual reason to keep a wrong name is that changing it is expensive. Here it is not, and each of the places that could have been expensive has already been paid for:
 
 - **Names in code** — the compiler finds every reference. A rename that typechecks is complete, and what typecheck cannot see (a path in a docs table, a name in prose) is covered by the docs index test and a grep across `content/docs`, `.agents` and the READMEs.
 - **Deployed identities** — infrastructure is Pulumi code ([infra](/docs/infra)), so renaming an Azure resource, a function, or the identifier a subscription points at is an ordinary edit followed by `pnpm infra:preview`. The plan says exactly what will happen before anything happens. "This would be a risky infra change" is a claim a preview either supports or refutes, and it is not allowed to stand unpreviewed.
@@ -24,6 +24,11 @@ The usual reason to keep a wrong name is that changing it is expensive. Here it 
   cost argument this page refuses everywhere else. So a rename lands as a `refactor` like any other, and no
   commit carries a `BREAKING CHANGE:` footer for one. This is a statement about _these_ packages: it stops
   applying the day one of them is adopted somewhere that is not this repository.
+- **Runtimes and platform APIs** — the version a manifest's `engines.node` asks for is the floor, and a native API
+  available on that floor is used directly rather than reimplemented behind a stand-in for an older one. A
+  hand-rolled substitute for something the runtime now ships is a compatibility shim funded by a population the
+  floor already excludes, and it goes stale in the worst way: it keeps working, so nothing ever fails to prompt its
+  removal. Raising the floor is the ordinary edit, and the manifest is where the number lives.
 - **Persisted shapes** — covered in full by [persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only): app-owned state parses the latest shape or resets, and server-owned relational data evolves through a real Drizzle migration.
 
 A migration is forward-only movement to the correct state. That is the opposite of a compatibility shim, which is a permanent second code path funded by a temporary population.
@@ -60,3 +65,4 @@ A name that is still **accurate** is not churn to be renamed for symmetry with i
 - A schema that accepts the previous shape alongside the current one.
 - Version-suffixed anything (`useFooV2`, `fooNew`) as a way of avoiding the rename.
 - A comment explaining that a name is historical. If it is wrong, change it; the explanation is the cost.
+- Hand-rolling what the runtime already provides so the code keeps running below the floor the manifest declares.

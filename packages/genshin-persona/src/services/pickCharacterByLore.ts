@@ -8,9 +8,9 @@ import { readCardedRoster } from "#src/services/readCardedRoster";
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 
 // The one place the plugin waits on a network, one attempt with a short ceiling: a start that cannot reach the
-// tier has the birthday pick to fall back on, never the failure card, and a settled promise is how a rejection
-// is read without a try. The choice is a preference, so the answer is taken however spread its probabilities:
-// a confidence floor guards an action, and nothing here acts
+// Tier has the birthday pick to fall back on, never the failure card, and a settled promise is how a rejection
+// Is read without a try. The choice is a preference, so the answer is taken however spread its probabilities:
+// A confidence floor guards an action, and nothing here acts
 export const pickCharacterByLore = async (
   roster: Character[],
   today: Temporal.PlainDate,

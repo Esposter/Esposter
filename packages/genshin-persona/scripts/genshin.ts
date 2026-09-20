@@ -38,10 +38,8 @@ const [verb, ...nameParts] = process.argv.slice(2);
 const name = nameParts.join(" ");
 const roster = readRoster();
 const today = Temporal.Now.plainDateISO();
-const getRosterLine = (character: Character) =>
-  [character.name, character.title, character.element, character.region, character.birthday, `v${character.version}`]
-    .filter(Boolean)
-    .join(CARD_DETAIL_SEPARATOR);
+const getRosterLine = ({ birthday, element, name: characterName, region, title, version }: Character) =>
+  [characterName, title, element, region, birthday, `v${version}`].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
 const compareVersionsDescending = (a: Character, b: Character) =>
   b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name);
 const printCard = async (character: Character) => {
@@ -91,7 +89,7 @@ switch (verb) {
     }
 
     writePin(pinnedCharacter);
-    printCard(pinnedCharacter);
+    await printCard(pinnedCharacter);
     console.log("Pinned for every session from the next start; the status line follows at once.");
     break;
   }

@@ -1,11 +1,11 @@
 import type { PickRecord } from "#src/models/PickRecord";
 
 import { PICK_RETENTION_DAYS } from "#src/services/constants";
+import { TEST_EPOCH_DATE } from "#src/services/constants.test";
 import { pruneStalePickRecords } from "#src/services/pruneStalePickRecords";
 import { describe, expect, test } from "vitest";
 
-const EPOCH = Temporal.PlainDate.from({ day: 1, month: 1, year: 1970 });
-const getIsoDate = (daysAfterEpoch: number) => EPOCH.add({ days: daysAfterEpoch }).toString();
+const getIsoDate = (daysAfterEpoch: number) => TEST_EPOCH_DATE.add({ days: daysAfterEpoch }).toString();
 const createRecord = (daysAfterEpoch: number): PickRecord => ({
   element: "",
   isoDate: getIsoDate(daysAfterEpoch),

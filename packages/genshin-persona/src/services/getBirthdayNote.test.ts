@@ -1,9 +1,9 @@
-import { LEAP_YEAR } from "#src/services/constants";
+import { TEST_EPOCH_DATE } from "#src/services/constants.test";
 import { getBirthdayNote } from "#src/services/getBirthdayNote";
 import { describe, expect, test } from "vitest";
 
 describe(getBirthdayNote, () => {
-  const epoch = Temporal.PlainDate.from({ day: 1, month: 1, year: LEAP_YEAR });
+  const epoch = TEST_EPOCH_DATE;
 
   test.each([
     ["1/1", "[Birthday: 1 January, today]"],

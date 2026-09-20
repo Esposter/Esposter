@@ -1,6 +1,6 @@
 ---
 title: Persona plugin
-description: Stage 1 of the Claude interface — a workspace package that is also a Claude Code plugin, reading every playable character from a game-data dependency Renovate keeps current, picking one for the session — by lore through a typed decision when a key is set, by the nearest birthday otherwise — forcing an output style that keeps the voice out of code, and carrying the authoring skill for the optional voice card a character earns.
+description: Stage 1 of the Claude interface — a workspace package that is also a Claude Code plugin, reading every playable character from a game-data dependency Renovate keeps current, picking one for the session — by lore through a typed decision when a key is set, by the nearest birthday otherwise — forcing an output style that keeps the voice out of code, and carrying the authoring skill for the optional persona card a character earns.
 ---
 
 # Persona plugin
@@ -47,11 +47,13 @@ claude plugin marketplace add Esposter/Esposter
 claude plugin install genshin-persona@esposter
 ```
 
-The install copies the plugin into the plugin cache and, because the plugin root holds a package manifest and an npm lockfile, runs a frozen npm install there with lifecycle scripts off and a one-minute ceiling — the game-data package installs in a few seconds. What the public copy must not contain is as fixed as what it must: no image, audio or text lifted from the game. The character data arrives through the dependency, the voice cards are written in our words about how a character speaks, and the voice of the deferred [character voice](/docs/infra/deferred/character-voice) never enters the repository at all.
+The install copies the plugin into the plugin cache and, because the plugin root holds a package manifest and an npm lockfile, runs a frozen npm install there with lifecycle scripts off and a one-minute ceiling — the game-data package installs in a few seconds. What the public copy must not contain is as fixed as what it must: no image, audio or text lifted from the game. The character data arrives through the dependency, the persona cards are written in our words about how a character speaks, and the voice of the deferred [character voice](/docs/infra/deferred/character-voice) never enters the repository at all.
 
 ## The roster is a dependency
 
-The game-data package the community maintains under MIT ships every playable character as bundled JSON — name, title, element, region, birthday and the patch that introduced them — and follows each game patch within days. The hook loads that package from the plugin's own installed dependencies through `require`, rather than a static import, so a missing install fails inside the script where the fallback card is instead of at link time before anything has run. There is no generated roster, no generator, and no test that the two agree. The cost is one JSON read at session start, under a second, far below anything a session notices.
+The game-data package the community maintains under MIT ships every playable character as bundled JSON — name, title, element, region, birthday, affiliation, weapon, constellation and the patch that introduced them — and follows each game patch within days. The hook loads that package from the plugin's own installed dependencies through `require`, rather than a static import, so a missing install fails inside the script where the fallback card is instead of at link time before anything has run. There is no generated roster, no generator, and no test that the two agree.
+
+Loading that package is almost the whole cost of a start — the better part of a second, against milliseconds for the query it then answers — so the roster is read once per installed version and kept in the state directory, which takes a warm start down to a fraction of that. The cache's file name carries the version off the data package's own manifest, so a bump invalidates it by itself and a write prunes every other version's copy: nothing is generated, nothing is checked in, and no step is added to the bump.
 
 A character with no card is fully usable — the data alone is a persona — which is what makes "every playable character" a property of the dependency rather than a backlog.
 
@@ -59,7 +61,7 @@ A character with no card is fully usable — the data alone is a persona — whi
 
 By default the pick is **whoever's birthday is nearest to today**, so the character changes with the calendar rather than by a counter, and the card can say why — a bracketed note under the name, "[Birthday: 20 September, today]" or "[Birthday: 23 September, in 3 days]" — a line of context that is true today and false next week. Every session started on one day gets the same answer, because the pick is a function of the date alone.
 
-With a [typed-decision](/docs/infra/typed-decisions) key in the plugin's options, the session's character is **picked by lore** instead: one choice question over the whole roster, each character an option described by the game's own line about them, with the state code knows for certain — every character's facts and their birthday measured from today, and the person's moment: the date, the weekday, the hour, the time zone and the locale, which is all the machine knows without asking. The answer is taken however spread its probabilities, because a confidence floor guards an action and a pick is a preference. The tier is asked afresh at every session start rather than once a day: a round trip of about a second over a prompt of some fifteen thousand tokens is cheap enough to spend each time, and a little variety between the day's sessions is what the lore pick is for. The call is one attempt with a short ceiling, and anything short of an answer — no key, a timeout, a name the roster does not hold — falls back to the birthday pick, never to the failure card.
+With a [typed-decision](/docs/infra/typed-decisions) key in the plugin's options, the session's character is **picked by lore** instead: one choice question over the whole roster, each character an option described by **the habits their card was written with** — how they actually are to talk to — with the game's own line about them standing in only for a character nobody has carded yet. Alongside it is the state code knows for certain: every character's facts, including the affiliation, weapon and constellation the data always held and nothing used to read, with their birthday measured from today, and the person's moment — the date, the weekday, the hour, the time zone and the locale, which is all the machine knows without asking. The description is deliberately absent from that state, because the habits say the same thing better and saying it twice was the largest thing the request carried for nothing. The answer is taken however spread its probabilities, because a confidence floor guards an action and a pick is a preference. The tier is asked afresh at every session start rather than once a day: a round trip of about a second is cheap enough to spend each time, and a little variety between the day's sessions is what the lore pick is for. The call is one attempt with a short ceiling, and anything short of an answer — no key, a timeout, a name the roster does not hold — falls back to the birthday pick, never to the failure card.
 
 ```mermaid
 flowchart TD
@@ -110,7 +112,7 @@ The hook reads one package and one state directory under the user's Claude home:
 
 ## The card is small, and authored last
 
-The card the hook prints is a name, title, element and region, the birthday note, and — when the character has one — the authored voice card: three speech habits, a greeting and a sign-off, about fifty tokens. It is printed as the hook's JSON form, so the whole card reaches the model as context while the terminal shows the person a welcome of three lines — and no token is spent twice.
+The card the hook prints is a name, title, element and region, the birthday note, and — when the character has one — the authored persona card: three speech habits, a greeting and a sign-off, about fifty tokens. A card is a typed module at `src/cards/<slug>.ts`, so its shape is checked where it is written: a card matched by string prefixes fails silently in every direction, and a key spelled one letter wrong reaches the model as a speech habit rather than as an error. It is printed as the hook's JSON form, so the whole card reaches the model as context while the terminal shows the person a welcome of three lines — and no token is spent twice.
 
 ```text
 ✦ Clorinde — Candlebearer, Shadowhunter · Electro · Fontaine
@@ -123,7 +125,7 @@ The welcome keeps two voices apart by shape. The nameplate and the bracketed not
 ```mermaid
 flowchart LR
     Data["Game data"]
-    VoiceCard["Voice card<br/>habits, greeting, sign-off"]
+    PersonaCard["Persona card<br/>habits, greeting, sign-off"]
     Headline["Nameplate<br/>name, title, element, region"]
     Note["Bracketed note<br/>birthday and its distance from today"]
     Greeting["Greeting<br/>the one line the card performs"]
@@ -135,10 +137,10 @@ flowchart LR
 
     Data --> Headline --> Terminal
     Data --> Note --> Terminal
-    VoiceCard --> Greeting --> Terminal
+    PersonaCard --> Greeting --> Terminal
     Headline --> Context
     Note --> Context
-    VoiceCard --> Context
+    PersonaCard --> Context
     Context --> Asked
     Asked -- yes --> Answer
     Asked -- no --> Silent
@@ -158,7 +160,7 @@ Every control is its own slash command — `/genshin-persona:today`, `roster`, `
 
 A plugin's own settings file may set two keys, both about subagents, so the status line, the spinner verbs and the spinner tips are user settings. The `setup` command writes them and `teardown` removes exactly what `setup` wrote. The spinner keys are taken over outright — the built-in verbs and tips are replaced, not joined — while a status line that is not the plugin's is left alone, because replacing it would lose something the person wrote.
 
-The spinner follows the character. Its content has two layers in one syntax: the base Teyvat verbs and tips in `spinner.md`, which every character shows, and the character's own `Verbs:` and `Tip:` lines on their card, which the hook lifts out of the model's context — they are read by a person, never by the model, so the card's fifty-token ceiling is untouched. The session-start hook resolves the character, computes the spinner, and rewrites the two settings keys and the tips file only when they would change, so on most days it writes nothing. Settings load before hooks run, so a change lands at the next session start, which is the same lag the pick itself carries and matters only on the first session of a day the character changed.
+The spinner follows the character. Its content has two layers of the same shape: the base Teyvat verbs and tips in `baseSpinnerContent.ts`, which every character shows, and the character's own `verbs` and `tips` on their card — read by a person, never by the model, so the card's fifty-token ceiling is untouched. The session-start hook resolves the character, computes the spinner, and rewrites the two settings keys and the tips file only when they would change, so on most days it writes nothing. Settings load before hooks run, so a change lands at the next session start, which is the same lag the pick itself carries and matters only on the first session of a day the character changed.
 
 The status line has one more problem to solve: an install lands under a directory named after its version, so a setting pointing straight at the plugin's script breaks on every update. The setting points instead at a launcher in the plugin's state directory, one import line, and the hook re-aims that launcher at the running install whenever it differs. An update is followed on the next session, with nothing for the person to repeat.
 
@@ -168,7 +170,7 @@ The line itself is the name in the element's colour, a 24-bit ANSI foreground th
 flowchart LR
     Setup["setup verb"]
     Hook["Session-start hook<br/>the session's character"]
-    Content["spinner.md + the card<br/>verbs and tips, two layers"]
+    Content["baseSpinnerContent + the card<br/>verbs and tips, two layers"]
     Settings["User settings<br/>statusLine, spinnerVerbs, spinnerTipsOverride"]
     Tips["State directory<br/>tips.json"]
     Launcher["State directory<br/>status.mjs, one import"]
@@ -207,10 +209,10 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 | `packages/genshin-persona/scripts/status.ts`                       | The status line: the pin, the session's record, else the latest of today's, from the state files       |
 | `packages/genshin-persona/src/services/formatNameplate.ts`         | The name in its element's colour, plain where the element has none                                     |
 | `packages/genshin-persona/src/services/writeStatusLauncher.ts`     | The launcher the status line runs, re-aimed at the running install on every session start              |
-| `packages/genshin-persona/src/services/parseVoiceCard.ts`          | The card split by reader: the context for the model, the greeting, verbs and tips for the person       |
+| `packages/genshin-persona/src/models/PersonaCard.ts`               | The card's shape, split by reader: habits for the model, verbs, tips and voice for the person          |
 | `packages/genshin-persona/src/services/getSpinner.ts`              | The base content with the character's own behind it, under the character's name                        |
 | `packages/genshin-persona/src/services/writeSpinner.ts`            | The two spinner settings and the tips file, written only when they would change                        |
-| `packages/genshin-persona/spinner.md`                              | The base Teyvat verbs and tips, in the card syntax                                                     |
+| `packages/genshin-persona/src/services/baseSpinnerContent.ts`      | The base Teyvat verbs and tips every character's spinner shows first                                   |
 | `packages/genshin-persona/src/services/pickCharacter.ts`           | The nearest-birthday pick and its two tie-breaks                                                       |
 | `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | Pin, then the session's record, then a fresh pick                                                      |
 | `packages/genshin-persona/src/services/pickCurrentCharacter.ts`    | The lore pick with a key, asked afresh each start, else the birthday pick                              |
@@ -219,8 +221,8 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 | `packages/genshin-persona/src/services/getSessionStartOutput.ts`   | The two readers' subsets: the whole card as context, the nameplate, note and greeting as the welcome   |
 | `packages/genshin-persona/skills/<verb>/SKILL.md`                  | One slash command per verb, invocable by the user alone                                                |
 | `packages/genshin-persona/skills/genshin/SKILL.md`                 | The model's router from a request in words to a verb, hidden from the menu                             |
-| `packages/genshin-persona/skills/genshin-author/SKILL.md`          | How a voice card is written                                                                            |
-| `packages/genshin-persona/cards/`                                  | Authored voice cards, one per character that has one                                                   |
+| `packages/genshin-persona/skills/genshin-author/SKILL.md`          | How a persona card is written                                                                          |
+| `packages/genshin-persona/src/cards/`                              | Authored persona cards, one typed module per character that has one                                    |
 
 ## Notes
 

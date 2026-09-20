@@ -1,6 +1,6 @@
 ---
 title: Per-character voices
-description: Every voice card names the catalogue voice that reads it, with a style, a pitch and a rate — so each character sounds like a different person on the free tier, without a cloned voice or a second service.
+description: Every persona card names the catalogue voice that reads it, with a style, a pitch and a rate — so each character sounds like a different person on the free tier, without a cloned voice or a second service.
 ---
 
 # Per-character voices
@@ -50,15 +50,15 @@ flowchart TD
 
 The hook reads who the session is speaking as from what the session start already recorded, never by picking again: it runs after every reply, and the [lore pick](/docs/infra/claude-interface/persona-plugin) can reach the network.
 
-## The line a card carries
+## The field a card carries
 
-The voice name first, then any of the adjustments as `key=value`, in any order, spelled the way the markup spells its own attributes:
+The voice name, then any of the adjustments the markup takes. Pitch and rate are signed percentages **as numbers**, and the markup builder writes the sign:
 
-```markdown
-- Voice: en-GB-SoniaNeural style=sad pitch=-4% rate=-4%
+```ts
+voice: { name: "en-GB-SoniaNeural", pitch: -4, rate: -4, style: "sad" },
 ```
 
-Like the spinner's lines, it is lifted out of the context before the model sees it — a character is never told the name of the voice reading them. A key the parser does not know costs that one adjustment, not the voice.
+Like the spinner's lines, it never reaches the model — a character is never told the name of the voice reading them. An omitted adjustment is one the card did not make, so the voice keeps its own. The name is deliberately not checked against a union of known voices: the service gains and retires voices on Microsoft's schedule, so a copy of that catalogue in the repository would be wrong by the next patch, and the `voices` command asks the live list instead.
 
 ## How the roster was assigned, and what that is worth
 
@@ -84,12 +84,12 @@ It lists the resource's voices live and reports every card that names one the re
 
 | File                                                                  | Role                                                    |
 | :-------------------------------------------------------------------- | :------------------------------------------------------ |
-| `packages/genshin-persona/cards/*.md`                                 | The `- Voice:` line, one per character                  |
-| `packages/genshin-persona/src/services/parseSpeechVoice.ts`           | The line's grammar                                      |
+| `packages/genshin-persona/src/cards/*.ts`                             | The `voice` field, one per character                    |
+| `packages/genshin-persona/src/models/SpeechVoice.ts`                  | The field's shape                                       |
 | `packages/genshin-persona/src/services/getSsml.ts`                    | Style around prosody around the text, and the namespace |
 | `packages/genshin-persona/src/services/readSessionCharacterName.ts`   | Who the session speaks as, without picking again        |
 | `packages/genshin-persona/src/services/readSpeechVoiceDefinitions.ts` | The catalogue, read live                                |
-| `packages/genshin-persona/src/services/getSpeechVoiceFinding.ts`      | What is wrong with one card's line                      |
+| `packages/genshin-persona/src/services/getSpeechVoiceFinding.ts`      | What is wrong with one card's voice                     |
 
 ## Notes
 

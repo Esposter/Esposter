@@ -91,7 +91,7 @@ A Python environment with a speaker encoder, an F0 analyser, and an ASR model fo
 
 | File                                                             | Change                                             |
 | :--------------------------------------------------------------- | :------------------------------------------------- |
-| `packages/genshin-persona/cards/`                                | The `- Voice:` line each run rewrites              |
+| `packages/genshin-persona/src/cards/`                            | The `voice` field each run rewrites                |
 | `packages/genshin-persona/src/services/getSpeechVoiceFinding.ts` | Still the check that a written line is well-formed |
 
 ## Notes

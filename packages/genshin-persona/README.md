@@ -45,16 +45,16 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What it ships
 
-| Component                        | Role                                                                                                                                                                |
-| :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `hooks/hooks.json`               | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply.        |
-| `output-styles/traveler.md`      | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                                  |
-| `skills/<verb>/SKILL.md`         | One slash command per verb — `/genshin-persona:today`, `roster`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.         |
-| `skills/genshin/SKILL.md`        | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                              |
-| `skills/genshin-author/SKILL.md` | How a voice card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                              |
-| `cards/`                         | Authored voice cards, one per character, in our words: how the character speaks for the model, the voice that reads them, and their spinner verbs and tips for you. |
-| `spinner.md`                     | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                                    |
-| `scripts/`                       | The hook entrypoints, the commands' script and the status-line script, TypeScript run directly by node.                                                             |
+| Component                            | Role                                                                                                                                                                               |
+| :----------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hooks/hooks.json`                   | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply.                       |
+| `output-styles/traveler.md`          | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                                                 |
+| `skills/<verb>/SKILL.md`             | One slash command per verb — `/genshin-persona:today`, `roster`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.                        |
+| `skills/genshin/SKILL.md`            | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                             |
+| `skills/genshin-author/SKILL.md`     | How a persona card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                                           |
+| `src/cards/`                         | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, the voice that reads them, and their spinner verbs and tips for you. |
+| `src/services/baseSpinnerContent.ts` | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                                                   |
+| `scripts/`                           | The hook entrypoints, the commands' script and the status-line script, TypeScript run directly by node.                                                                            |
 
 ### Status line and spinner
 
@@ -67,11 +67,11 @@ node "<plugin root>/scripts/genshin.ts" teardown
 
 The status line prints the session's character in their element's colour, from the plugin's state files alone, and shows from the first frame of every session but the first of a day. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat.
 
-The spinner replaces the built-in verbs and tips with Teyvat's — the base list in `spinner.md` — and, behind them, the session's character's own verbs and tips from their card, labelled with the character's name. The session-start hook rewrites the two settings and the tips file whenever the character changes, so the spinner follows the calendar like everything else. A status line that is not the plugin's is left alone.
+The spinner replaces the built-in verbs and tips with Teyvat's — the base list in `baseSpinnerContent.ts` — and, behind them, the session's character's own verbs and tips from their card, labelled with the character's name. The session-start hook rewrites the two settings and the tips file whenever the character changes, so the spinner follows the calendar like everything else. A status line that is not the plugin's is left alone.
 
 ### How the character is picked
 
-Every playable character comes from the game-data dependency at session start — no generated roster, so a new patch is one dependency bump. Without a TypeSafe key the character is whoever's birthday is nearest to today by circular distance over the year; a tie goes to the upcoming birthday, then to a choice seeded by the date, so every session started that day agrees. With one, a single typed decision picks from the whole roster at every session start — cheap enough to ask each time, and a little variety between sessions is the point — one attempt with a short ceiling, and anything short of an answer falls back to the birthday pick. The pick is recorded against the session id, so a clear, compact or resume after midnight keeps the character the conversation started with. The Traveler, who has no birthday, is never picked by distance and is the card printed when the data cannot be read.
+Every playable character comes from the game-data dependency — no generated roster, so a new patch is one dependency bump. Loading that dependency is the whole cost of a start, so the roster is cached against its installed version and a bump invalidates the cache by itself. Without a TypeSafe key the character is whoever's birthday is nearest to today by circular distance over the year; a tie goes to the upcoming birthday, then to a choice seeded by the date, so every session started that day agrees. With one, a single typed decision picks from the whole roster at every session start — cheap enough to ask each time, and a little variety between sessions is the point — one attempt with a short ceiling, and anything short of an answer falls back to the birthday pick. The pick is recorded against the session id, so a clear, compact or resume after midnight keeps the character the conversation started with. The Traveler, who has no birthday, is never picked by distance and is the card printed when the data cannot be read.
 
 ### Spoken replies
 
@@ -91,7 +91,7 @@ pnpm lint:fix     # auto-fix lint
 pnpm typecheck    # type check
 ```
 
-The plugin holds no image, audio or text from the game: the character data arrives through its MIT-licensed dependency, and every voice card is written in our own words.
+The plugin holds no image, audio or text from the game: the character data arrives through its MIT-licensed dependency, and every persona card is written in our own words.
 
 ## <a name="license">⚖️ License</a>
 
