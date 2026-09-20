@@ -33,6 +33,21 @@ describe(readSpeechVoiceDefinitions, () => {
     ]);
   });
 
+  // The list is narrowed to objects and no further, so a field's own type is established here rather than promised
+  // By the entry interface
+  test("drops a voice whose name is not one, and keeps only the styles that are strings", async () => {
+    expect.hasAssertions();
+
+    stubCatalogue([
+      { ShortName: 7, StyleList: ["cheerful"] },
+      { ShortName: "en-AU-CarlyNeural", StyleList: ["cheerful", 7, null] },
+    ]);
+
+    await expect(readSpeechVoiceDefinitions("https://endpoint", "key")).resolves.toStrictEqual([
+      { name: "en-AU-CarlyNeural", styles: ["cheerful"] },
+    ]);
+  });
+
   test("is nothing for a body that is not a list at all", async () => {
     expect.hasAssertions();
 

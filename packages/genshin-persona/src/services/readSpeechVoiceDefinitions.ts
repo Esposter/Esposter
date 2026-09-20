@@ -35,7 +35,18 @@ export const readSpeechVoiceDefinitions = async (
   const entries = result?.status === "fulfilled" ? result.value : undefined;
   if (!entries) return undefined;
 
+  // A field the API promises to be a string and is not is the same nothing as an absent one: a voice with no name
+  // Is dropped the way a listed entry that is not one is, and a style list keeps the styles a card could name
   return entries.flatMap<SpeechVoiceDefinition>(({ ShortName, StyleList }) =>
-    ShortName ? [{ name: ShortName, styles: Array.isArray(StyleList) ? StyleList : [] }] : [],
+    typeof ShortName === "string" && ShortName
+      ? [
+          {
+            name: ShortName,
+            styles: Array.isArray(StyleList)
+              ? StyleList.filter((style): style is string => typeof style === "string")
+              : [],
+          },
+        ]
+      : [],
   );
 };
