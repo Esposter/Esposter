@@ -1,3 +1,11 @@
+import {
+  CATALOG_PACKAGE_INDENT,
+  CATALOGS_SECTION_ENDS,
+  CATALOGS_SECTION_START,
+  IMPORTER_PACKAGE_INDENT,
+  IMPORTERS_SECTION_ENDS,
+  IMPORTERS_SECTION_START,
+} from "#src/services/outdatedDependencies/lock/constants";
 import { parseLockResolvedVersions } from "#src/services/outdatedDependencies/lock/parseLockResolvedVersions";
 import { sliceLockSection } from "#src/services/outdatedDependencies/lock/sliceLockSection";
 import { LOCKFILE_PATH } from "#src/services/shared/constants";
@@ -12,16 +20,16 @@ import { test } from "vitest";
 // Catastrophic backtracking) on a growing lock shows up. Slices are built once at module scope: they are read
 // And never written, so every iteration can share them.
 const lockYaml = readFileSync(LOCKFILE_PATH, "utf8");
-const catalogSection = sliceLockSection(lockYaml, "\ncatalogs:", ["\npackages:", "\nsnapshots:", "\nimporters:"]);
-const importersSection = sliceLockSection(lockYaml, "\nimporters:", ["\npackages:"]);
+const catalogSection = sliceLockSection(lockYaml, CATALOGS_SECTION_START, CATALOGS_SECTION_ENDS);
+const importersSection = sliceLockSection(lockYaml, IMPORTERS_SECTION_START, IMPORTERS_SECTION_ENDS);
 
 test(parseLockResolvedVersions, async ({ bench }) => {
   await bench.compare(
     bench("catalogs section", () => {
-      parseLockResolvedVersions(catalogSection, 4);
+      parseLockResolvedVersions(catalogSection, CATALOG_PACKAGE_INDENT);
     }),
     bench("importers section", () => {
-      parseLockResolvedVersions(importersSection, 6);
+      parseLockResolvedVersions(importersSection, IMPORTER_PACKAGE_INDENT);
     }),
     BENCHMARK_RUN_OPTIONS,
   );

@@ -6,7 +6,8 @@ import { checkIsPnpmOutdatedDependency } from "#src/services/outdatedDependencie
 import { getOutdatedDependents } from "#src/services/outdatedDependencies/pnpm/getOutdatedDependents";
 import { getPnpmOutdatedFailure } from "#src/services/outdatedDependencies/pnpm/getPnpmOutdatedFailure";
 import { runPnpmOutdated } from "#src/services/outdatedDependencies/pnpm/runPnpmOutdated";
-import { getResult, jsonDateParse } from "@esposter/shared";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { getResult } from "@esposter/shared";
 
 const UNEXPECTED_JSON_OUTPUT = "unexpected JSON output";
 
@@ -26,7 +27,7 @@ export const getRegularOutdatedDependencies = async (root: string): Promise<Outd
     return { errors: [], outdatedDependencies: [] };
   }
 
-  return getResult(() => jsonDateParse<unknown>(result.stdout.slice(jsonStart))).match(
+  return getResult(() => parseMachineJson(result.stdout.slice(jsonStart))).match(
     (parsed) => {
       if (!parsed || typeof parsed !== "object") return getPnpmOutdatedFailure(UNEXPECTED_JSON_OUTPUT);
 

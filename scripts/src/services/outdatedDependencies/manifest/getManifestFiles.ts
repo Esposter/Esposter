@@ -2,7 +2,7 @@ import type { ManifestFile } from "#src/models/outdatedDependencies/ManifestFile
 import type { PackageManifest } from "@esposter/configuration";
 
 import { getPackageJsonPaths } from "#src/services/shared/getPackageJsonPaths";
-import { jsonDateParse } from "@esposter/shared";
+import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFileSync } from "node:fs";
 
 // Every manifest in the repo, read once. Two checks walk the same files — the `engines` entries and the
@@ -10,6 +10,6 @@ import { readFileSync } from "node:fs";
 // `PackageManifest` already carries.
 export const getManifestFiles = (root: string): ManifestFile[] =>
   getPackageJsonPaths(root).map((path) => ({
-    manifest: jsonDateParse<PackageManifest>(readFileSync(path, "utf8")),
+    manifest: parseMachineJson<PackageManifest>(readFileSync(path, "utf8")),
     path,
   }));

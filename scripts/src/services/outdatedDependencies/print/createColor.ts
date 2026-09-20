@@ -1,6 +1,7 @@
 import type { ColorPalette } from "#src/models/outdatedDependencies/ColorPalette";
+
 // ANSI SGR escape sequences for terminal color; the reset code returns the foreground to the default.
-const escape = String.fromCodePoint(27);
+const escape = "\u001B";
 const reset = `${escape}[39m`;
 const wrap = (code: number, text: string) => `${escape}[${code}m${text}${reset}`;
 
