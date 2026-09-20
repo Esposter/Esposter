@@ -9,6 +9,7 @@ import { getFirstSentence } from "#src/services/getFirstSentence";
 import { parseHookInput } from "#src/services/parseHookInput";
 import { playAudio } from "#src/services/playAudio";
 import { readStdin } from "#src/services/readStdin";
+import { readVolume } from "#src/services/readVolume";
 import { registerFailureFallback } from "#src/services/registerFailureFallback";
 import { synthesizeSpeech } from "#src/services/synthesizeSpeech";
 
@@ -22,7 +23,7 @@ if (endpoint && key && !checkIsMuted()) {
   const { last_assistant_message: reply = "" } = parseHookInput(input);
   const text = getFirstSentence(reply);
   if (text) {
-    const audio = await synthesizeSpeech({ endpoint, key, text, voice });
+    const audio = await synthesizeSpeech({ endpoint, key, text, voice, volume: readVolume() });
     if (audio) playAudio(audio);
   }
 }

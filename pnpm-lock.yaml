@@ -1831,6 +1831,9 @@ importers:
 
   packages/genshin-persona:
     dependencies:
+      '@typesafe-ai/sdk':
+        specifier: ^0.6.0
+        version: 0.6.0
       genshin-db:
         specifier: ^5.2.13
         version: 5.2.13

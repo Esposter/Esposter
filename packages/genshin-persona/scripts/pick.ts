@@ -22,7 +22,7 @@ registerFailureFallback(() => {
 const input = await readStdin();
 const { session_id: sessionId = "" } = parseHookInput(input);
 const roster = readRoster();
-const character = resolveSessionCharacter(roster, sessionId, today) ?? TRAVELER;
+const character = (await resolveSessionCharacter(roster, sessionId, today)) ?? TRAVELER;
 const card = getCard(character, today.monthDay, readVoiceCard(character.name));
 writeStatusLauncher();
 // The spinner follows the character only where `setup` opted the settings in

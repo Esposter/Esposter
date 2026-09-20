@@ -2,7 +2,8 @@ import type { Character } from "#src/models/Character";
 
 import { GenshinVerb } from "#src/models/GenshinVerb";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
-import { CARD_DETAIL_SEPARATOR } from "#src/services/constants";
+import { checkIsSpeechVolume } from "#src/services/checkIsSpeechVolume";
+import { CARD_DETAIL_SEPARATOR, MAX_SPEECH_VOLUME, SPEECH_VOLUME_LEVELS } from "#src/services/constants";
 import { deletePin } from "#src/services/deletePin";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { formatCard } from "#src/services/formatCard";
@@ -12,18 +13,19 @@ import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLi
 import { getSpinner } from "#src/services/getSpinner";
 import { getToday } from "#src/services/getToday";
 import { parseVoiceCard } from "#src/services/parseVoiceCard";
-import { pickCharacter } from "#src/services/pickCharacter";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
 import { readSpinnerContent } from "#src/services/readSpinnerContent";
 import { readUserSettings } from "#src/services/readUserSettings";
 import { readVoiceCard } from "#src/services/readVoiceCard";
 import { readVoiceLines } from "#src/services/readVoiceLines";
+import { resolveDayCharacter } from "#src/services/resolveDayCharacter";
 import { setIsMuted } from "#src/services/setIsMuted";
 import { writePin } from "#src/services/writePin";
 import { writeSpinner } from "#src/services/writeSpinner";
 import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
 import { writeUserSettings } from "#src/services/writeUserSettings";
+import { writeVolume } from "#src/services/writeVolume";
 
 const [verb, ...nameParts] = process.argv.slice(2);
 const name = nameParts.join(" ");
@@ -39,13 +41,14 @@ const printCard = (character: Character) => {
   const card = getCard(character, today.monthDay, readVoiceCard(character.name));
   console.log(formatCard(card));
 };
-// The pin, else today's pick: what the next session start will resolve to, short of a record it already holds
-const getCurrentCharacter = () => {
+// The pin, else the day's pick: what the next session start will resolve to, short of a record it already holds.
+// Asking settles the day's pick where no session has yet, so the answer given here is the one the sessions get
+const getCurrentCharacter = async () => {
   const pin = readPin();
   const pinnedCharacter = findCharacterByName(roster, pin?.name ?? "");
   if (pin && !pinnedCharacter) console.log(`The pin "${pin.name}" names no character in the roster and is ignored.`);
 
-  return pinnedCharacter ?? pickCharacter(roster, today.monthDay, today.isoDate);
+  return pinnedCharacter ?? (await resolveDayCharacter(roster, today));
 };
 
 switch (verb) {
@@ -86,7 +89,7 @@ switch (verb) {
     const userSettings = readUserSettings();
     const settings = getSettingsWithStatusLine(userSettings);
     writeUserSettings(settings);
-    const character = getCurrentCharacter();
+    const character = await getCurrentCharacter();
     if (character) {
       const voiceCard = parseVoiceCard(readVoiceCard(character.name));
       writeSpinner(getSpinner(readSpinnerContent(), character.name, voiceCard));
@@ -107,7 +110,7 @@ switch (verb) {
     break;
   }
   case GenshinVerb.Today: {
-    const character = getCurrentCharacter();
+    const character = await getCurrentCharacter();
     if (character) printCard(character);
     break;
   }
@@ -123,7 +126,7 @@ switch (verb) {
     break;
   case GenshinVerb.Unpin:
     deletePin();
-    console.log("Pin removed; the nearest birthday picks again.");
+    console.log("Pin removed; the day's pick stands again.");
     break;
   case GenshinVerb.Untipped:
     for (const character of roster
@@ -133,6 +136,18 @@ switch (verb) {
       })
       .toSorted(compareVersionsDescending))
       console.log(getRosterLine(character));
+    break;
+  case GenshinVerb.Volume:
+    if (!checkIsSpeechVolume(name)) {
+      console.error(
+        `Volume must be one of ${SPEECH_VOLUME_LEVELS.join(", ")}, or a whole number from 0 to ${MAX_SPEECH_VOLUME}.`,
+      );
+      process.exitCode = 1;
+      break;
+    }
+
+    writeVolume(name);
+    console.log(`Spoken replies at volume ${name} from the next reply.`);
     break;
   default:
     console.error(`Usage: genshin.ts <${Object.values(GenshinVerb).join(" | ")}> [name]`);

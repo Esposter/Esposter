@@ -6,7 +6,9 @@ import { join } from "node:path";
 export const STATE_DIRECTORY: string = join(homedir(), ".claude", "genshin-persona");
 export const PICK_RECORDS_PATH: string = join(STATE_DIRECTORY, "picks.tsv");
 export const PIN_PATH: string = join(STATE_DIRECTORY, "pin");
+export const DAY_PICK_PATH: string = join(STATE_DIRECTORY, "day");
 export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
+export const VOLUME_PATH: string = join(STATE_DIRECTORY, "volume");
 export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
 export const STATUS_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "status.ts");
 export const USER_SETTINGS_PATH: string = join(homedir(), ".claude", "settings.json");
@@ -67,3 +69,13 @@ export const SPEECH_SYNTHESIS_PATH = "/cognitiveservices/v1";
 export const DEFAULT_SPEECH_VOICE = "en-AU-NatashaNeural";
 // A WAV the stock player of every desktop opens without a codec
 export const SPEECH_OUTPUT_FORMAT = "riff-24khz-16bit-mono-pcm";
+// The levels the speech markup's prosody names; a whole number of its 0 to 100 scale is the other spelling
+export const SPEECH_VOLUME_LEVELS: string[] = ["default", "silent", "x-soft", "soft", "medium", "loud", "x-loud"];
+export const MAX_SPEECH_VOLUME = 100;
+export const TYPESAFE_KEY_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_TYPESAFE_KEY";
+export const TYPESAFE_KEY_FALLBACK_ENVIRONMENT_VARIABLE = "TYPESAFE_API_KEY";
+// One attempt and a short ceiling: the lore pick sits in the session-start path, and a start that cannot reach
+// The tier has the birthday pick to fall back on
+export const LORE_PICK_TIMEOUT_MS = 8000;
+export const LORE_PICK_INSTRUCTIONS =
+  "Which character should keep the person company in today's session? Weigh what the date means in the game: a birthday today or within a few days, a festival or event of a region in this season, a release or story anniversary, the patch that is live. Weigh the person's moment too: the weekday, the hour and the place. Every character is a fair pick; the choice is a preference, not a rule.";

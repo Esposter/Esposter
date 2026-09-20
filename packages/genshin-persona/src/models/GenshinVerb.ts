@@ -12,6 +12,7 @@ export const GenshinVerb = {
   Unmute: "unmute",
   Unpin: "unpin",
   Untipped: "untipped",
+  Volume: "volume",
 } as const;
 
 export type GenshinVerb = (typeof GenshinVerb)[keyof typeof GenshinVerb];

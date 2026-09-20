@@ -36,6 +36,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@typesafe-ai/sdk": "^0.6.0",
     "genshin-db": "^5.2.13"
   }
 }

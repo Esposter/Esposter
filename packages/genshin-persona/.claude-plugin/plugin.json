@@ -27,6 +27,12 @@
       "type": "string",
       "title": "Speech voice",
       "description": "The neural voice that reads replies, by its Azure short name. Leave empty for the plugin's Australian English default."
+    },
+    "typesafe_key": {
+      "type": "string",
+      "title": "TypeSafe key",
+      "description": "A TypeSafe API key. With it, the day's character is picked by lore through one typed decision over the whole roster, weighing the date and your moment; without it, by the nearest birthday. Stored in the credential store, never in a settings file.",
+      "sensitive": true
     }
   }
 }
