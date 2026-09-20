@@ -10,7 +10,7 @@ import { getPercentile } from "#src/services/voiceMatch/getPercentile";
 // Summed, for the same reason
 export const getVoiceProfile = (clipProfiles: ClipProfile[]): VoiceProfile => {
   const [first] = clipProfiles;
-  const embedding = new Array<number>(first?.embedding.length ?? 0).fill(0);
+  const embedding = Array.from<number>({ length: first?.embedding.length ?? 0 }).fill(0);
   for (const { embedding: clipEmbedding } of clipProfiles)
     for (const [index, value] of clipEmbedding.entries()) embedding[index] = (embedding[index] ?? 0) + value;
   const norm = Math.hypot(...embedding) || 1;

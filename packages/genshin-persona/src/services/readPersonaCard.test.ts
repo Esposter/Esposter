@@ -2,8 +2,8 @@ import { PERSONA_CARD_EXTENSION, PERSONA_CARDS_DIRECTORY, TRAVELER } from "#src/
 import { getPersonaCardName } from "#src/services/getPersonaCardName";
 import { readGenshinDb } from "#src/services/readGenshinDb";
 import { readPersonaCard } from "#src/services/readPersonaCard";
-import { extname } from "node:path";
 import { readdirSync } from "node:fs";
+import { extname } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe(readPersonaCard, () => {

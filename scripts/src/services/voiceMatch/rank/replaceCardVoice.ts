@@ -13,7 +13,7 @@ export const replaceCardVoice = (card: string, cardPath: string, voiceText: stri
   const visit = (node: ts.Node) => {
     if (ts.isPropertyAssignment(node) && ts.isIdentifier(node.name) && node.name.text === VOICE_PROPERTY)
       initializer = node.initializer;
-    else ts.forEachChild(node, (child) => visit(child));
+    else ts.forEachChild(node, visit);
   };
   visit(sourceFile);
   if (!initializer) throw new InvalidOperationError(Operation.Update, replaceCardVoice.name, cardPath);

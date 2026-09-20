@@ -57,10 +57,10 @@ for (const { name, profile } of references) {
   );
 }
 
-const scores = [...bestFits.values()].map(({ score }) => score);
+const scores = Array.from(bestFits.values(), ({ score }) => score);
 const meanScore = scores.reduce((sum, score) => sum + score, 0) / (scores.length || 1);
 const belowFloor = [...bestFits].filter(([, { score }]) => score < FIT_FLOOR).map(([name]) => name);
-const chosenVoices = new Set([...bestFits.values()].map(({ voice }) => voice));
+const chosenVoices = new Set(Array.from(bestFits.values(), ({ voice }) => voice));
 console.info(`mean composite ${meanScore.toFixed(SCORE_DECIMALS)} over ${bestFits.size} characters`);
 console.info(
   `${belowFloor.length} below the floor of ${FIT_FLOOR}${belowFloor.length > 0 ? `: ${belowFloor.join(", ")}` : ""}`,

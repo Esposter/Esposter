@@ -20,7 +20,7 @@ export const readCharacterProfile = async (
   clipLocationMap: Map<bigint, ClipLocation>,
   { decode }: ClipDecoder,
   embed: SpeakerEmbedder,
-): Promise<VoiceProfile | undefined> => {
+): Promise<undefined | VoiceProfile> => {
   const clipProfiles: ClipProfile[] = [];
   for (const voicefile of readReferenceVoicefiles(name)) {
     const clipLocation = clipLocationMap.get(getExternalId(voicefile));
