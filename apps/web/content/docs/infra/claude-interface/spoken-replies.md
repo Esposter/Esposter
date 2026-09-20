@@ -5,7 +5,7 @@ description: Stage 2 of the Claude interface — an Azure Speech free-tier accou
 
 # Spoken replies
 
-Stage 2 of the [Claude interface](/docs/infra/claude-interface): a neural voice, through a supported API, on a resource that costs nothing. Which voice reads which character is the [per-character voices](/docs/infra/claude-interface/per-character-voices) page's; this page is the account, the hook and the gate. Its purpose is to learn whether a spoken reply is something that stays switched on, because that is the gate in front of the deferred [character voice](/docs/infra/deferred/character-voice) and nothing else is.
+Stage 2 of the [Claude interface](/docs/infra/claude-interface): a neural voice, through a supported API, on a resource that costs nothing. Which voice reads which character is the [per-character voices](/docs/infra/claude-interface/per-character-voices) page's; this page is the account, the hook and the gate. Its purpose is to learn whether a spoken reply is something that stays switched on, because that is the gate in front of the [character voice](/docs/proposals/infra/character-voice) and nothing else is.
 
 ## How it works
 
@@ -45,7 +45,7 @@ The published voice plugins that cost nothing reach the same Microsoft neural vo
 
 ## What this stage does not do
 
-Every voice it speaks with is one of the catalogue's. Azure's custom and personal voice features are structurally unavailable for a game character — they require the voice talent's recorded consent — so the character voice is the deferred stage, which reuses this hook against a local endpoint and adds nothing to the estate.
+Every voice it speaks with is one of the catalogue's. Azure's custom and personal voice features are structurally unavailable for a game character — they require the voice talent's recorded consent — so the character voice is the proposed stage, which replaces this hook's service with a local engine and removes the account from the estate.
 
 ## Key files
 

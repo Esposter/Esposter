@@ -9,7 +9,7 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 ## Open
 
-- [ ] [Voice match benchmark](/docs/infra/claude-interface/voice-match-benchmark) — the ear's half: rank the top three candidates by ear for a sample of characters, compute the rank correlation against the composite, tune the weights on that sample alone, then the style pass over the chosen voices. The tooling and the measured table are built
+- [ ] [Character voice](/docs/proposals/infra/character-voice) — every character read in their own cloned voice by a local engine run from Node, the Azure Speech path removed end to end, and the benchmark's reference stage kept to choose and score each character's reference line
 
 ## Blocked (app-side migration off key-based auth first)
 

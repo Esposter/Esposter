@@ -5,7 +5,6 @@ description: Infrastructure ideas waiting on a trigger.
 
 # Deferred
 
-- [Character voice](/docs/infra/deferred/character-voice) — the speak hook pointed at a local few-shot model; needs spoken replies to survive two weeks, and a one-command engine install
 - [Companion window](/docs/infra/deferred/companion-window) — a desktop spectator of the hooks; needs the subscription allowed in the SDK, or an official companion surface
 - [Drift detection](/docs/infra/deferred/drift-detection) — scheduled refresh/preview; needs source-of-truth first
 - [Pulumi preview in CI](/docs/infra/deferred/pulumi-preview-ci) — PR plan comments; needs multi-operator infra

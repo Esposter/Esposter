@@ -34,7 +34,7 @@ flowchart TD
     Terminal[Claude Code terminal — the driver at every stage]
     Persona[Stage 1 — persona plugin<br/>output style + a card picked by birthday]
     Speak[Stage 2 — spoken replies<br/>Azure Speech free tier, generic voice]
-    Voice[Stage 3 — character voice<br/>deferred]
+    Voice[Stage 3 — character voice<br/>proposed]
     Companion[Stage 4 — companion window<br/>deferred]
     Gate2{Still switched on after<br/>two weeks of daily use?}
     Gate3{One-command install,<br/>no Python environment?}
@@ -52,7 +52,7 @@ flowchart TD
     Gate4 -- no --> Voice
 ```
 
-Stages 1 and 2 were built together, because stage 2 is one Pulumi file and one hook. Each later stage opens only when the gate before it answers yes, and the answer is a fact about use or about the platform, never a wish: the [character voice](/docs/infra/deferred/character-voice) waits on an inference engine that installs in one command, and the [companion window](/docs/infra/deferred/companion-window) waits on a platform move. A stage that closes its gate goes back one step, not to zero — the arrows are the whole rollback plan, because every stage adds a file and removes none.
+Stages 1 and 2 were built together, because stage 2 is one Pulumi file and one hook. Each later stage opens only when the gate before it answers yes, and the answer is a fact about use or about the platform, never a wish: the [character voice](/docs/proposals/infra/character-voice) waited on an inference engine that installs in one command and is proposed now that one does, and the [companion window](/docs/infra/deferred/companion-window) waits on a platform move. A stage that closes its gate goes back one step, not to zero — the arrows are the whole rollback plan, because every stage adds a file and removes none.
 
 ## Not taken
 
