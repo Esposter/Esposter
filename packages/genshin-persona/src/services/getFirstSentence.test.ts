@@ -12,6 +12,7 @@ describe(getFirstSentence, () => {
     ["a table row before the prose", `| b |\n${sentence}`, sentence],
     ["prose with no terminator", "a", "a"],
     ["nothing but code", "```ts\nb();\n```", ""],
+    ["nothing but an unterminated fenced block", "```ts\nb();", ""],
   ])("%s: keeps the first sentence of the prose", (_case, markdown, expected) => {
     expect.hasAssertions();
 

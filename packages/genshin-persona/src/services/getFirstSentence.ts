@@ -1,4 +1,5 @@
-const FENCED_CODE_REGEX = /```[\s\S]*?```/gu;
+// The closing fence is optional so a reply truncated mid-block drops it too, rather than reading the code aloud
+const FENCED_CODE_REGEX = /```[\s\S]*?(?:```|$)/gu;
 const INLINE_CODE_REGEX = /`(?<code>[^`]*)`/gu;
 const LINK_REGEX = /\[(?<text>[^\]]*)\]\([^)]*\)/gu;
 const LINE_PREFIX_REGEX = /^\s*(?:#{1,6}\s+|[-*+]\s+|\d+\.\s+|>\s*)/u;
