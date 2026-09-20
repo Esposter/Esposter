@@ -1,7 +1,7 @@
 import type { VoiceLine } from "#src/models/VoiceLine";
 import type { WikiParseResponse } from "#src/models/WikiParseResponse";
 
-import { WIKI_USER_AGENT, WIKI_VOICE_OVERS_URL } from "#src/services/constants";
+import { WIKI_FETCH_TIMEOUT_MS, WIKI_USER_AGENT, WIKI_VOICE_OVERS_URL } from "#src/services/constants";
 import { readGenshinDb } from "#src/services/readGenshinDb";
 
 // Lines that carry no voice: how the character feels about others, the daily greetings, the gift and ascension
@@ -25,13 +25,27 @@ const getVoiceLine = (title: string, text: string): VoiceLine => ({
   title: title.trim(),
 });
 
-// A character the data has no lines for yet is usually on the wiki already, which parses its voice-over page on request
-const readWikiLines = async (name: string): Promise<VoiceLine[]> => {
+// A character the data has no lines for yet is usually on the wiki already, which parses its voice-over page on
+// Request — one attempt with a short ceiling, and nothing of the page when it declines
+const readWikiText = async (name: string): Promise<string | undefined> => {
   const response = await fetch(`${WIKI_VOICE_OVERS_URL}${encodeURIComponent(`${name}/Voice-Overs`)}`, {
     headers: { "user-agent": WIKI_USER_AGENT },
+    signal: AbortSignal.timeout(WIKI_FETCH_TIMEOUT_MS),
   });
+  if (!response.ok) return undefined;
+
   const { parse } = (await response.json()) as WikiParseResponse;
-  const wikitext = parse?.wikitext?.["*"] ?? "";
+  return parse?.wikitext?.["*"] ?? "";
+};
+
+// Nothing rather than no lines when the wiki could not be reached, declined or answered with a body that is not
+// The JSON its API promises — a settled promise is how each of those is read without a try — because a page with
+// No lines on it and a page that never arrived print the same nothing otherwise
+const readWikiLines = async (name: string): Promise<undefined | VoiceLine[]> => {
+  const [result] = await Promise.allSettled([readWikiText(name)]);
+  const wikitext = result?.status === "fulfilled" ? result.value : undefined;
+  if (wikitext === undefined) return undefined;
+
   const titles = new Map<string, string>();
   for (const match of wikitext.matchAll(WIKI_TITLE_REGEX))
     titles.set(match.groups?.id ?? "", match.groups?.title ?? "");
@@ -45,7 +59,7 @@ const readWikiLines = async (name: string): Promise<VoiceLine[]> => {
   return lines;
 };
 
-export const readVoiceLines = (name: string): Promise<VoiceLine[]> => {
+export const readVoiceLines = (name: string): Promise<undefined | VoiceLine[]> => {
   const genshindb = readGenshinDb();
   const voiceovers = genshindb.voiceovers(name);
   const friendLines = voiceovers?.friendLines ?? [];

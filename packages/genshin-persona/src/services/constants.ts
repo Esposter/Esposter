@@ -61,10 +61,16 @@ export const TRAVELER: Character = {
 export const WIKI_VOICE_OVERS_URL =
   "https://genshin-impact.fandom.com/api.php?action=parse&prop=wikitext&format=json&page=";
 export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
+// One attempt with a short ceiling, as the lore pick has: a wiki that takes the connection and never finishes
+// The response would otherwise hold the command open for as long as it cared to
+export const WIKI_FETCH_TIMEOUT_MS = 10_000;
 export const SPEECH_ENDPOINT_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH_ENDPOINT";
 export const SPEECH_KEY_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH_KEY";
 export const SPEECH_VOICE_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH_VOICE";
 export const SPEECH_SYNTHESIS_PATH = "/cognitiveservices/v1";
+// The same ceiling on the synthesis: a sentence unspoken costs nothing, and the hook the speaking runs in is one
+// The reply's turn waits behind
+export const SPEECH_TIMEOUT_MS = 10_000;
 export const DEFAULT_SPEECH_VOICE = "en-AU-NatashaNeural";
 // A WAV the stock player of every desktop opens without a codec
 export const SPEECH_OUTPUT_FORMAT = "riff-24khz-16bit-mono-pcm";
