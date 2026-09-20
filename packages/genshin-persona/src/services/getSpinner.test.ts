@@ -1,7 +1,7 @@
 import type { SpinnerContent } from "#src/models/SpinnerContent";
 import type { VoiceLine } from "#src/models/VoiceLine";
 
-import { MAX_SPINNER_TIP_COUNT } from "#src/services/constants";
+import { MAX_SPINNER_TIP_COUNT, MAX_SPINNER_TIP_LENGTH } from "#src/services/constants";
 import { getSpinner } from "#src/services/getSpinner";
 import { describe, expect, test } from "vitest";
 
@@ -29,6 +29,19 @@ describe(getSpinner, () => {
 
     expect(getSpinner(base, name, content, [{ text: "tip", title: "title" }]).tips).toStrictEqual([
       { id: "genshin-persona.huTao-1", text: "tip" },
+    ]);
+  });
+
+  test("cuts a line to the sentences that fit and drops one none of fits", () => {
+    expect.hasAssertions();
+
+    const longLines: VoiceLine[] = [
+      { text: `line. ${"b".repeat(MAX_SPINNER_TIP_LENGTH)}`, title: "title" },
+      { text: "b".repeat(MAX_SPINNER_TIP_LENGTH + 1), title: "title" },
+    ];
+
+    expect(getSpinner(base, name, undefined, longLines).tips).toStrictEqual([
+      { id: "genshin-persona.huTao-1", text: "line." },
     ]);
   });
 

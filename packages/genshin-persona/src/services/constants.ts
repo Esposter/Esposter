@@ -53,8 +53,10 @@ export const TIP_ID_MARKER_SEPARATOR = ".";
 export const BASE_TIP_ID = "teyvat";
 // Between a tip id's prefix and its index
 export const TIP_ID_SEPARATOR = "-";
-// The tool reads this many tips off the override and no more, so a character's list is cut there
+// The tool reads this many tips off the override and no more, so a character's list is cut there, and drops a
+// Tip longer than this, so a line is cut to the sentences that fit
 export const MAX_SPINNER_TIP_COUNT = 200;
+export const MAX_SPINNER_TIP_LENGTH = 500;
 export const PERSONA_CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "personaCards");
 // A card is a typed module, one per character, named for the character
 export const PERSONA_MODULE_EXTENSION = ".ts";
@@ -172,8 +174,9 @@ export const HOP_SECONDS = 0.01;
 export const SPEECH_FLOOR_DB = 35;
 // A twin's line is theirs only until Paimon answers, so their reference is cut at the first silence this long
 export const MIN_TURN_PAUSE_SECONDS = 0.4;
-// A ceiling on a sentence's length in speech tokens, so a runaway generation ends
-export const MAX_SPEECH_TOKENS = 400;
+// A sentence ends at the model's end-of-sequence token and nowhere else; the runtime stops at twenty tokens when
+// This option is left out, so it is passed as no bound rather than dropped
+export const UNBOUNDED_SPEECH_TOKENS: number = Infinity;
 // What a warm request synthesizes and drops, so the graph's first-call cost is paid before the first reply
 export const WARM_TEXT = "Ready.";
 // What the `voice` verb speaks once set up, so the person hears the voice before the first reply does
