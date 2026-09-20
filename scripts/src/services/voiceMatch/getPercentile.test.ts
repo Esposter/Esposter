@@ -1,8 +1,9 @@
-import { MEDIAN } from "#src/services/voiceMatch/constants";
 import { getPercentile } from "#src/services/voiceMatch/getPercentile";
 import { describe, expect, test } from "vitest";
 
 describe(getPercentile, () => {
+  const MEDIAN = 0.5;
+
   test("is not a number for no values", () => {
     expect.hasAssertions();
 

@@ -1,10 +1,7 @@
-// What one clip measures to, before a speaker's clips are pooled: the pooled statistics need every voiced frame
-// Rather than one median per clip, so the frames travel with the clip
+// What one clip measures to: its speaker embedding, and the two numbers that decide whether it can be a reference
 export interface ClipProfile {
   embedding: Float32Array;
   signalToNoiseDb: number;
   // Speech only — the pauses inside the clip and the silence around it are not counted
   speechSeconds: number;
-  syllables: number;
-  voicedF0sHz: number[];
 }
