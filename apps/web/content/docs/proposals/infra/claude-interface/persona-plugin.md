@@ -15,7 +15,9 @@ Inside this monorepo, as a private workspace package that is also a plugin — b
 .claude-plugin/marketplace.json       the repository as a marketplace: one entry, pointing at the package
 packages/genshin-persona/
   .claude-plugin/plugin.json          the manifest; "force-for-plugin" points the output style at itself
-  package.json                        private; one devDependency, the game-data package, on the catalog
+  package.json                        private; one dependency, the game-data package, as a plain range
+  package-lock.json                   npm lockfile for that one dependency — what a remote install reads
+  README.md                           the public face: what it does, the two install commands
   output-styles/traveler.md           the standing voice rules, short, with coding instructions kept
   cards/<name>.md                     optional, authored: the voice card a character has earned
   hooks/hooks.json                    one session-start hook, one stop hook (stage 2)
@@ -27,11 +29,24 @@ packages/genshin-persona/
 
 The root manifest is the one file outside the package, and it is the one path the tool fixes: it must be ".claude-plugin/marketplace.json" at the repository root, so it lives beside the agent tree rather than inside it, and the [agent configuration](/docs/architecture/agent-configuration) page records it when this ships.
 
-On this machine the checkout is added as a **local marketplace**, and a plugin whose source is a relative path inside a local marketplace is loaded in place — not copied — so every pull of the repository is the plugin's update and there is no install step to repeat. The same manifest serves any other machine through the repository's GitHub source.
+On this machine the checkout is added as a **local marketplace**, and a plugin whose source is a relative path inside a local marketplace is loaded in place — not copied — so every pull of the repository is the plugin's update and there is no install step to repeat.
+
+## Installable by anyone
+
+The repository is public, so the marketplace is too: anyone adds it by its GitHub name and installs the plugin by its marketplace name, two commands, no clone of their own. That install copies the plugin into their plugin cache and, because the plugin root holds a package manifest and an npm lockfile, runs a frozen npm install there with lifecycle scripts off and a one-minute ceiling — which the game-data package, pure JSON of a few megabytes compressed, clears easily. Two consequences shape the package:
+
+- **The dependency is a plain semver range, not a catalog entry.** npm cannot read the workspace catalog protocol, so this is the one manifest in the repository whose dependency states its own range; Renovate moves it, and the npm lockfile beside it, exactly as it moves everything else.
+- **Two lockfiles describe one dependency.** The workspace lockfile serves the in-place install on this machine; the npm lockfile serves every cached install elsewhere. Both are Renovate's to keep current, and neither is edited by hand.
+
+The manifest carries the discovery metadata the tool reads — display name, description, author, homepage pointing at the docs page this proposal becomes, repository, license, keywords — and the marketplace manifest names the repository as its owner. The package README follows the repository's README conventions and leads with the two install commands; the root README's package inventory gains its row. Nothing more is needed for someone to find it, and anything beyond that — a listing in a community directory — is a link to this repository, not a copy of anything.
+
+What the public copy must not contain is as fixed as what it must: no image, audio or text lifted from the game. The character data arrives through the dependency, the voice cards are written in our words about how a character speaks, and the voice of stage 3 never enters the repository at all. That keeps the plugin inside what the publisher has always tolerated from fans, and outside what it has sued over.
+
+The cost a remote user pays is the marketplace clone, which is this whole repository once; the plugin itself is one small folder of it.
 
 ## The roster is a dependency
 
-The game-data package the community maintains under MIT ships every playable character as bundled JSON — name, title, element, region, affiliation, constellation, birthday and the patch that introduced them — in its own language folders, loaded lazily, and follows each game patch within days. Because the plugin runs in place from a workspace that has its dependencies installed, the hook reads that package directly: there is no generated roster, no generator, and no test that the two agree. A new patch is a Renovate bump like any other, and the new characters exist the moment it lands and the workspace is installed.
+The game-data package the community maintains under MIT ships every playable character as bundled JSON — name, title, element, region, affiliation, constellation, birthday and the patch that introduced them — in its own language folders, loaded lazily, and follows each game patch within days. The hook reads that package directly from the plugin's own installed dependencies — the workspace install here, the cached install elsewhere — so there is no generated roster, no generator, and no test that the two agree. A new patch is a Renovate bump like any other, and the new characters exist the moment it lands and the install runs.
 
 A character with no card is fully usable — the data alone is a persona — which is what makes "every playable character" a property of the dependency rather than a backlog. The cost of this choice is one JSON read of a few megabytes at session start, well inside the hook's timeout and far below anything a session notices.
 
