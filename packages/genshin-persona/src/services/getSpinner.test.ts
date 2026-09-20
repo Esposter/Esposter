@@ -8,11 +8,10 @@ describe(getSpinner, () => {
   const base: SpinnerContent = { tips: ["baseTip"], verbs: ["baseVerb"] };
   const content: SpinnerContent = { tips: ["tip"], verbs: ["verb"] };
 
-  test("labels the spinner with the nameplate and puts the base content ahead of the character's", () => {
+  test("puts the base content ahead of the character's", () => {
     expect.hasAssertions();
 
     expect(getSpinner(base, name, content)).toStrictEqual({
-      label: `✦ ${name}`,
       tips: [
         { id: "teyvat-1", text: "baseTip" },
         { id: "huTao-1", text: "tip" },
@@ -25,7 +24,6 @@ describe(getSpinner, () => {
     expect.hasAssertions();
 
     expect(getSpinner(base, name, undefined)).toStrictEqual({
-      label: `✦ ${name}`,
       tips: [{ id: "teyvat-1", text: "baseTip" }],
       verbs: ["baseVerb"],
     });

@@ -187,7 +187,7 @@ Every control is its own slash command — `/genshin-persona:today`, `roster`, `
 
 A plugin's own settings file may set two keys, both about subagents, so the status line, the spinner verbs and the spinner tips are user settings. The `setup` command writes them and `teardown` removes exactly what `setup` wrote. The spinner keys are taken over outright — the built-in verbs and tips are replaced, not joined — while a status line that is not the plugin's is left alone, because replacing it would lose something the person wrote.
 
-The spinner follows the character. Its content has two layers of the same shape: the base Teyvat verbs and tips in `baseSpinnerContent.ts`, which every character shows, and the character's own `verbs` and `tips` on their card — read by a person, never by the model, so the card's fifty-token ceiling is untouched. The session-start hook resolves the character, computes the spinner, and rewrites the two settings keys only when they would change, so on most days it writes nothing; `use`, `pin` and `unpin` rewrite them the same way. The tool reads both spinner keys once per process — a settings file is watched and most edits reach the running session, but these two do not, checked by eye after a rewrite — so the spinner is the one surface a switch reaches at the next session rather than in the reply. The tips are inline in the setting rather than in a tips file because the file bought nothing: read once per process too, and one more state path to keep readable from every shell. The spinner is also one user setting shared by every running session, so two sessions speaking as different characters take turns owning it, last writer wins.
+The spinner follows the character. Its content has two layers of the same shape: the base Teyvat verbs and tips in `baseSpinnerContent.ts`, which every character shows, and the character's own `verbs` and `tips` on their card — read by a person, never by the model, so the card's fifty-token ceiling is untouched. The tips run under the tool's own "Tip" prefix rather than the character's name: the base tips are nobody's, and a name in front of them read as an attribution. The session-start hook resolves the character, computes the spinner, and rewrites the two settings keys only when they would change, so on most days it writes nothing; `use`, `pin` and `unpin` rewrite them the same way. The tool reads both spinner keys once per process — a settings file is watched and most edits reach the running session, but these two do not, checked by eye after a rewrite — so the spinner is the one surface a switch reaches at the next session rather than in the reply. The tips are inline in the setting rather than in a tips file because the file bought nothing: read once per process too, and one more state path to keep readable from every shell. The spinner is also one user setting shared by every running session, so two sessions speaking as different characters take turns owning it, last writer wins.
 
 The status line has one more problem to solve: an install lands under a directory named after its version, so a setting pointing straight at the plugin's script breaks on every update. The setting points instead at a launcher in the plugin's state directory, one import line, and the hook re-aims that launcher at the running install whenever it differs. An update is followed on the next session, with nothing for the person to repeat.
 
@@ -202,7 +202,7 @@ flowchart LR
     Launcher["State directory<br/>status.mjs, one import"]
     Install["The running install<br/>a directory per version"]
     Records["State directory<br/>picks.tsv, pin: name and element"]
-    Spinner["Spinner<br/>verbs, tips under the character's name"]
+    Spinner["Spinner<br/>verbs, tips under the tool's Tip prefix"]
     Line["Status line<br/>the name in the element's colour"]
 
     Setup -->|writes once| Settings
@@ -217,7 +217,7 @@ flowchart LR
     Cache["State directory<br/>the roster cache"]
     Records -->|the session's record, else the pin| Line
     Cache -->|else the birthday pick| Line
-    Settings -->|read once per process: the verbs, the tips and the label| Spinner
+    Settings -->|read once per process: the verbs and the tips| Spinner
 ```
 
 The revisit trigger is the tool letting a plugin ship these keys, or choose a spinner per session: the base content then moves into the plugin's settings file, the launcher, `setup` and `teardown` are deleted, and two sessions stop sharing one spinner.
@@ -238,7 +238,7 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 | `packages/genshin-persona/src/services/formatNameplate.ts`         | The name in its element's colour, plain where the element has none                                     |
 | `packages/genshin-persona/src/services/writeStatusLauncher.ts`     | The launcher the status line runs, re-aimed at the running install on every session start              |
 | `packages/genshin-persona/src/models/PersonaCard.ts`               | The card's shape, split by reader: habits for the model, verbs, tips and voice for the person          |
-| `packages/genshin-persona/src/services/getSpinner.ts`              | The base content with the character's own behind it, under the character's name                        |
+| `packages/genshin-persona/src/services/getSpinner.ts`              | The base content with the character's own behind it, ids stable across rewrites                        |
 | `packages/genshin-persona/src/services/writeSpinner.ts`            | The two spinner settings, written only when they would change; the tool's watch does the rest          |
 | `packages/genshin-persona/src/services/writeSessionSpinner.ts`     | The spinner for a character, written only where `setup` opted the settings in                          |
 | `packages/genshin-persona/src/services/baseSpinnerContent.ts`      | The base Teyvat verbs and tips every character's spinner shows first                                   |

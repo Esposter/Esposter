@@ -15,6 +15,8 @@ export const STATUS_LINE_MARKER = "genshin-persona";
 // The ids of the base tips, which every character shows; a character's own tips take the card's name. It is also
 // What a spinner in the user settings is ours by, the way the launcher's path marks the status line as ours
 export const BASE_TIP_ID = "teyvat";
+// Between a tip id's prefix and its index
+export const TIP_ID_SEPARATOR = "-";
 export const PERSONA_CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "personaCards");
 // A card or a voice is a typed module, one per character, named for the character
 export const PERSONA_MODULE_EXTENSION = ".ts";

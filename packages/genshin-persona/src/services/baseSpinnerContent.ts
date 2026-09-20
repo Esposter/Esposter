@@ -1,7 +1,7 @@
 import type { SpinnerContent } from "#src/models/SpinnerContent";
 
 // The base the spinner shows for every character, with the character's own verbs and tips behind it. A tip here
-// Is a line any character could say, because the label in front of it is the current character's name
+// Is nobody's line, shown under the tool's own "Tip" prefix rather than a character's name
 export const BASE_SPINNER_CONTENT: SpinnerContent = {
   tips: [
     "Glide when the cliff is tall and climb when it is not. The stamina is the same either way.",

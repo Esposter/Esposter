@@ -71,11 +71,11 @@ The full reasoning — the levers, why `role` is unavailable, how the roster was
 
 ## The spinner lines
 
-**`verbs` and `tips` are the person's and never reach the model**: the hook writes them to the spinner, under the character's name as the label. They cost no tokens, so their ceiling is taste rather than budget.
+**`verbs` and `tips` are the person's and never reach the model**: the hook writes them to the spinner, under the tool's own "Tip" prefix rather than the character's name, because the base tips share the rotation and are nobody's. They cost no tokens, so their ceiling is taste rather than budget.
 
 - **Verbs** are two to four gerunds in the character's occupation, cased like the built-in ones (`["Duelling", "Judging", "Patrolling"]`). A verb can be hyphenated ("Beetle-fighting") but never a phrase. They are shown behind the base list below, so a card lists what only this character would be doing.
 - **Tips** are two to four lines the character says while the person waits, performed like the greeting: speech, first person or addressed to the person, from their own lines and story. A tip may be a running joke of theirs, a complaint, a preference, a piece of advice in their register. A character with no lines yet gets fewer tips, drawn from the description, never invented.
-- **The base content** is `BASE_SPINNER_CONTENT` in `src/services/baseSpinnerContent.ts`: the Teyvat verbs and tips every character shows before their own. A base tip is a line **any character could say**, because the label in front of it is the current character's name.
+- **The base content** is `BASE_SPINNER_CONTENT` in `src/services/baseSpinnerContent.ts`: the Teyvat verbs and tips every character shows before their own. A base tip is **nobody's line** — Teyvat's rather than a character's — and a card's tip should read as the character's without a name in front of it.
 
 ## Sources
 

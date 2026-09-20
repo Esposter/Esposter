@@ -23,6 +23,7 @@ describe(getSettingsWithoutPluginEntries, () => {
     expect.hasAssertions();
 
     const settings: UserSettings = {
+      spinnerTipsOverride: { excludeDefault: false, tips: [{ id: "id", text: "text" }] },
       spinnerVerbs: { mode: SpinnerVerbsMode.Append, verbs: ["ownVerb"] },
       statusLine: foreignStatusLine,
     };

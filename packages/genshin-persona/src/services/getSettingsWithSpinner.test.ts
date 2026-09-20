@@ -6,7 +6,7 @@ import { getSettingsWithSpinner } from "#src/services/getSettingsWithSpinner";
 import { describe, expect, test } from "vitest";
 
 describe(getSettingsWithSpinner, () => {
-  const spinner: Spinner = { label: "label", tips: [{ id: "id", text: "text" }], verbs: ["verb"] };
+  const spinner: Spinner = { tips: [{ id: "id", text: "text" }], verbs: ["verb"] };
 
   test("replaces both spinner keys with the plugin's and keeps every other key", () => {
     expect.hasAssertions();
@@ -18,7 +18,7 @@ describe(getSettingsWithSpinner, () => {
 
     expect(getSettingsWithSpinner(settings, spinner)).toStrictEqual({
       model: "model",
-      spinnerTipsOverride: { excludeDefault: true, label: spinner.label, tips: spinner.tips },
+      spinnerTipsOverride: { excludeDefault: true, tips: spinner.tips },
       spinnerVerbs: { mode: SpinnerVerbsMode.Replace, verbs: spinner.verbs },
     });
   });
