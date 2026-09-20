@@ -88,6 +88,10 @@ A generated voice carries only what was measured — a name, and the two shifts 
 - **The codebook variant fails silently.** The packages use the aoTuV codebooks; the converter's default set produces an Ogg stream that throws nothing and decodes to zero samples. The variant is a constant to assert, not a setting to tune, and the chain was checked against a reference decoder — the same clip through vgmstream and through the npm chain agree to the 16-bit quantisation floor — which is also how the chain is revalidated after a dependency bump.
 - **Only the Japanese track enters, at any stage.** Each localisation is a different actor, so another track's audio is evidence about a different person's voice and corrupts the reference rather than diluting it. Nothing joins across tracks anyway: the language is inside every id.
 
+## Settled — it lives in `scripts`, not in the plugin
+
+The benchmark reads the plugin's source — its game-data access, its speech client, its card naming — and writes into the plugin's `generated/` folder, so the question of why it is not _inside_ the plugin is asked; the answer is the plugin's install. `claude plugin install` copies the plugin folder out of the repository and runs a frozen `npm ci` in the copy under a one-minute ceiling, which is why the package declares no devDependencies at all ([persona plugin](/docs/infra/claude-interface/persona-plugin)). The benchmark needs an ONNX runtime of a quarter of a gigabyte, an in-process transformer library and two decoders, every one of which would then install on every stranger's machine or break the install outright. So the tooling sits with the repository's own tooling in `scripts`, reaches into the plugin's source the way that package addresses itself, and the plugin receives only what it consumes: one generated voice module per character. A sub-package inside the plugin folder that the install copy excludes is the one other shape, and it is more machinery for the same result.
+
 ## Key files
 
 | File                                                             | Role                                                     |
