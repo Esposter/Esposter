@@ -1,11 +1,12 @@
 import type { CitingPage } from "#src/models/citations/CitingPage";
 import type { DuplicateProseFinding } from "#src/models/sweeps/duplicateProse/DuplicateProseFinding";
 
+import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { SHINGLE_SIZE } from "#src/services/sweeps/duplicateProse/constants";
 import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords";
 import { takeOne } from "@esposter/shared";
 
-const SKILL_OWNER_REGEX = /^\.agents\/skills\/(?<skill>[^/]+)\//u;
+const SKILL_OWNER_REGEX = new RegExp(`^${SKILLS_DIRECTORY.replaceAll(".", String.raw`\.`)}/(?<skill>[^/]+)/`, "u");
 // Two pages of one skill restate each other by design — the index line names the trigger its reference page
 // Opens on — so a skill is one owner, and every other page is its own
 const getOwner = (path: string): string => SKILL_OWNER_REGEX.exec(path)?.groups?.skill ?? path;

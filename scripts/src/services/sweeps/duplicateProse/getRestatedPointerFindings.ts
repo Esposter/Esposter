@@ -6,8 +6,8 @@ import { checkIsPathRun } from "#src/services/sweeps/duplicateProse/checkIsPathR
 import { getDuplicateProse } from "#src/services/sweeps/duplicateProse/getDuplicateProse";
 import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords";
 import { readRepositoryPathShingles } from "#src/services/sweeps/duplicateProse/readRepositoryPathShingles";
+import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { CATALOGUE_HEADING, SETTLED_HEADING } from "#src/services/sweeps/skillDocs/constants";
-import { AGENT_DIRECTORY } from "@esposter/configuration";
 
 const POINTER_HEADINGS = new Set([CATALOGUE_HEADING, SETTLED_HEADING]);
 const SKILL_NAME_REGEX = /^[\w-]+$/u;
@@ -27,8 +27,7 @@ const getPointerLines = (text: string): string[] => {
 // Argument a line points at may sit in the `SKILL.md` or in any of its reference pages
 const checkIsPointedAt = (line: string, path: string): boolean =>
   getBacktickedTokens(line).some(
-    (token) =>
-      token === path || (SKILL_NAME_REGEX.test(token) && path.startsWith(`${AGENT_DIRECTORY}/skills/${token}/`)),
+    (token) => token === path || (SKILL_NAME_REGEX.test(token) && path.startsWith(`${SKILLS_DIRECTORY}/${token}/`)),
   );
 
 // A run two pages share is a copy of one argument wherever it sits, and a pass reads ordinary prose to decide

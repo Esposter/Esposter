@@ -1,14 +1,10 @@
 import { getBacktickedTokens } from "#src/services/citations/getBacktickedTokens";
 import { readCitingPages } from "#src/services/citations/readCitingPages";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
 import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
-import {
-  AGENT_DIRECTORY,
-  AGENT_WORKTREES_DIRECTORY,
-  APP_RELATIVE_PREFIXES,
-  DOCS_API_DIRECTORY,
-} from "@esposter/configuration";
+import { AGENT_WORKTREES_DIRECTORY, APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
@@ -29,7 +25,7 @@ describe("citations", () => {
   const REPOSITORY_PATH_REGEX = /^[\w./[\]*-]+$/u;
   const SKILL_CITATION_REGEX = /`(?<name>[\w-]+)` skill\b/gu;
   const appDirectory = join(REPOSITORY_ROOT, "apps", "web");
-  const skillsDirectory = join(REPOSITORY_ROOT, AGENT_DIRECTORY, "skills");
+  const skillsDirectory = join(REPOSITORY_ROOT, SKILLS_DIRECTORY);
   // A token is a path when its first segment names something git tracks at the repo root or it carries an
   // App-relative prefix — which keeps the identifier tokens in the same prose (`useQuery`, `--no-cache`) and the
   // Install-time paths (`node_modules/.vite`) out of the check.

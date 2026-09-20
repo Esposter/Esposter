@@ -1,3 +1,4 @@
+import type { AppliedLedgerEvents } from "#src/models/sweeps/ledgerCoverage/AppliedLedgerEvents";
 import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent";
 
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
@@ -13,11 +14,7 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/u;
 // A trailer naming a ledger that was since split into a coverage folder is in scope for every area file in it,
 // And its unit is a row in exactly one of them, so which events went unmatched is the caller's to decide once
 // Across the folder rather than this function's to answer per file.
-export const applyLedgerEvents = (
-  text: string,
-  ledger: string,
-  events: LedgerEvent[],
-): { matched: LedgerEvent[]; text: string } => {
+export const applyLedgerEvents = (text: string, ledger: string, events: LedgerEvent[]): AppliedLedgerEvents => {
   const ledgerEvents = events.filter(
     ({ ledger: eventLedger }) => eventLedger === ledger || ledger.startsWith(`${eventLedger}/`),
   );
