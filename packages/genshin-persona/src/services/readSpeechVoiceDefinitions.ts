@@ -13,7 +13,10 @@ const readVoiceListEntries = async (endpoint: string, key: string): Promise<Spee
   });
   if (!response.ok) return undefined;
 
-  return (await response.json()) as SpeechVoiceListEntry[];
+  // A body the API promises to be a list and is not — an error document, `null`, an object — is nothing rather
+  // Than an entry the caller then walks
+  const entries: unknown = await response.json();
+  return Array.isArray(entries) ? (entries as SpeechVoiceListEntry[]) : undefined;
 };
 
 // Every voice the resource can speak with, as the service lists them now. Nothing here is kept in the repository:
