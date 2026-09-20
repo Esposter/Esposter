@@ -6,7 +6,7 @@ import type { VoiceSynthesizer } from "#src/models/VoiceSynthesizer";
 
 import { checkIsSpeech } from "#src/services/checkIsSpeech";
 import {
-  MAX_SPEECH_TOKENS,
+  UNBOUNDED_SPEECH_TOKENS,
   VOICE_DEVICE_LADDER,
   VOICE_MODEL_ARCHITECTURE,
   VOICE_MODEL_DTYPE,
@@ -61,7 +61,11 @@ export const createVoiceSynthesizer = async (
     synthesize: async (text, speaker) => {
       const inputs = await processor(text);
       for (;;) {
-        const waveform = await loaded.model.generate({ ...inputs, ...speaker, max_new_tokens: MAX_SPEECH_TOKENS });
+        const waveform = await loaded.model.generate({
+          ...inputs,
+          ...speaker,
+          max_new_tokens: UNBOUNDED_SPEECH_TOKENS,
+        });
         const clip = { sampleRate: VOICE_SAMPLE_RATE, samples: Float32Array.from(waveform.data) };
         if (checkIsSpeech(clip)) return clip;
 

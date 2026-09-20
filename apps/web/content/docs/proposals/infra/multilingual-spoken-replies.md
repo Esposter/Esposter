@@ -51,7 +51,7 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 
 - `VOICE_MODEL_ID` moves to the multilingual export; Turbo's id goes with it, not kept beside — the rollback is git, as it was for the Azure path.
 - `VOICE_MODEL_DTYPE` starts from Turbo's choices (half-precision speech encoder, 4-bit language model, full-precision vocoder) as hypotheses, and each is re-measured on one character before it stands.
-- Generation gains the two options the checkpoint needs — the guidance scale and "min_p" — as named constants beside `MAX_SPEECH_TOKENS`, at the values the model card's reference loop uses. Guidance runs the language model over a batch of two, so the memory a rung needs doubles; the ladder's mechanism is unchanged, and whether the top rung still fits is a fact the first load reports.
+- Generation gains the two options the checkpoint needs — the guidance scale and "min_p" — as named constants beside `UNBOUNDED_SPEECH_TOKENS`, at the values the model card's reference loop uses. Guidance runs the language model over a batch of two, so the memory a rung needs doubles; the ladder's mechanism is unchanged, and whether the top rung still fits is a fact the first load reports.
 - Chinese needs the Cangjie character mapping the export ships; whether the runtime's processor applies it or the request has to is a question the release answers, and the `[zh]` path is not declared working until a Chinese sentence has been heard.
 
 ### The input

@@ -176,6 +176,7 @@ export const SPEECH_FLOOR_DB = 35;
 export const MIN_TURN_PAUSE_SECONDS = 0.4;
 // A sentence ends at the model's end-of-sequence token and nowhere else; the runtime stops at twenty tokens when
 // This option is left out, so it is passed as no bound rather than dropped
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this identifier would otherwise infer
 export const UNBOUNDED_SPEECH_TOKENS: number = Infinity;
 // What a warm request synthesizes and drops, so the graph's first-call cost is paid before the first reply
 export const WARM_TEXT = "Ready.";
