@@ -33,7 +33,11 @@ export const resolveSessionCharacter = async (
   const pickedCharacter = await pickCurrentCharacter(roster, today);
   if (!pickedCharacter) return undefined;
 
-  const otherRecords = pickRecords.filter((record) => record.sessionId !== sessionId);
+  // Read the file again rather than writing the snapshot above back over it: the pick waits on the network for as
+  // Long as the lore ceiling, and a session that started alongside this one records its own character in between
+  const otherRecords = pruneStalePickRecords(readPickRecords(), today.isoDate).filter(
+    (record) => record.sessionId !== sessionId,
+  );
   writePickRecords([
     ...otherRecords,
     { element: pickedCharacter.element, isoDate: today.isoDate, name: pickedCharacter.name, sessionId },
