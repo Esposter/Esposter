@@ -23,7 +23,7 @@ sequenceDiagram
 
     Claude->>Hook: reply text
     Hook->>Hook: stop if muted or unconfigured, else keep the first sentence
-    Hook->>Azure: SSML with the configured voice
+    Hook->>Azure: SSML in the card's voice, else the configured one
     Azure-->>Hook: a WAV, or an error once the allowance binds
     Hook->>Audio: play, then delete the file
     Note over Claude: already prompting — nothing waited
