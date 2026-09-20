@@ -5,14 +5,10 @@ import type { VoiceLanguage } from "@esposter/genshin-persona/src/models/VoiceLa
 
 import { MAX_WIKI_TITLES_PER_QUERY, MIN_CLIP_SECONDS, MODEL_SAMPLE_RATE } from "#src/services/voiceMatch/constants";
 import { getClipProfile } from "#src/services/voiceMatch/getClipProfile";
-import {
-  MAX_REFERENCE_SECONDS,
-  VOICE_SAMPLE_RATE,
-  WIKI_FETCH_TIMEOUT_MS,
-  WIKI_FILE_REQUEST_HEADERS,
-} from "@esposter/genshin-persona/src/services/constants.ts";
+import { MAX_REFERENCE_SECONDS, VOICE_SAMPLE_RATE } from "@esposter/genshin-persona/src/services/constants.ts";
 import { cutReferenceClip } from "@esposter/genshin-persona/src/services/cutReferenceClip.ts";
 import { getWikiFileTitle } from "@esposter/genshin-persona/src/services/getWikiFileTitle.ts";
+import { readWikiFile } from "@esposter/genshin-persona/src/services/readWikiFile.ts";
 import { readWikiFileUrls } from "@esposter/genshin-persona/src/services/readWikiFileUrls.ts";
 import { readWikiStoryLines } from "@esposter/genshin-persona/src/services/readWikiStoryLines.ts";
 import { resampleClip } from "@esposter/genshin-persona/src/services/resampleClip.ts";
@@ -40,13 +36,10 @@ export const readReferenceCandidates = async (
     const url = urls.get(getWikiFileTitle(stem, language));
     if (!url) continue;
 
-    const response = await fetch(url, {
-      headers: WIKI_FILE_REQUEST_HEADERS,
-      signal: AbortSignal.timeout(WIKI_FETCH_TIMEOUT_MS),
-    });
-    if (!response.ok) continue;
+    const bytes = await readWikiFile(url);
+    if (!bytes) continue;
 
-    const decodedClip = await decode(await response.bytes());
+    const decodedClip = await decode(bytes);
     if (!decodedClip) continue;
 
     const clip = cutReferenceClip(name, decodedClip);

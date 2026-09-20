@@ -2,15 +2,11 @@ import type { ClipDecoder } from "#src/models/ClipDecoder";
 import type { PcmClip } from "#src/models/PcmClip";
 import type { VoiceLanguage } from "#src/models/VoiceLanguage";
 
-import {
-  MAX_REFERENCE_SECONDS,
-  VOICE_SAMPLE_RATE,
-  WIKI_FETCH_TIMEOUT_MS,
-  WIKI_FILE_REQUEST_HEADERS,
-} from "#src/services/constants";
+import { MAX_REFERENCE_SECONDS, VOICE_SAMPLE_RATE } from "#src/services/constants";
 import { cutReferenceClip } from "#src/services/cutReferenceClip";
 import { getReferencePath } from "#src/services/getReferencePath";
 import { getWikiFileTitle } from "#src/services/getWikiFileTitle";
+import { readWikiFile } from "#src/services/readWikiFile";
 import { readWikiFileUrls } from "#src/services/readWikiFileUrls";
 import { readWikiStoryLines } from "#src/services/readWikiStoryLines";
 import { resampleClip } from "#src/services/resampleClip";
@@ -44,13 +40,9 @@ export const readReferenceClip = async (
     const url = urls.get(title);
     if (!url) return undefined;
 
-    const response = await fetch(url, {
-      headers: WIKI_FILE_REQUEST_HEADERS,
-      signal: AbortSignal.timeout(WIKI_FETCH_TIMEOUT_MS),
-    });
-    if (!response.ok) return undefined;
+    const bytes = await readWikiFile(url);
+    if (!bytes) return undefined;
 
-    const bytes = await response.bytes();
     mkdirSync(dirname(referencePath), { recursive: true });
     writeFileSync(referencePath, bytes);
   }

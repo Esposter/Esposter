@@ -106,7 +106,8 @@ export const TravelerTwinMap: Record<string, TravelerTwin> = {
 // Response would otherwise hold the command — or the hook a reply waits behind — open for as long as it cared to
 export const WIKI_FETCH_TIMEOUT_MS = 10_000;
 // The wiki's file host serves a file only to a request that says it came from the wiki — hotlink protection, which
-// The API is exempt from — so a clip is fetched naming the page it was found on, under the plugin's own user agent
+// The API is exempt from — so a clip is fetched naming the page it was found on, under the plugin's own user agent;
+// Its edge also challenges the fetch client's handshake, so a clip is read through `readWikiFile` and never `fetch`
 export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
   referer: `${WIKI_ORIGIN}/`,
   "user-agent": WIKI_USER_AGENT,
