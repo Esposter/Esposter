@@ -30,7 +30,7 @@ import { readUserSettings } from "#src/services/readUserSettings";
 import { readVoiceLines } from "#src/services/readVoiceLines";
 import { recordSessionCharacter } from "#src/services/recordSessionCharacter";
 import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
-import { setIsMuted } from "#src/services/setIsMuted";
+import { setMuted } from "#src/services/setMuted";
 import { writePin } from "#src/services/writePin";
 import { writeSessionSpinner } from "#src/services/writeSessionSpinner";
 import { writeSpinner } from "#src/services/writeSpinner";
@@ -91,7 +91,7 @@ switch (verb) {
     break;
   }
   case GenshinVerb.Mute:
-    setIsMuted(true);
+    setMuted(true);
     console.log("Spoken replies muted.");
     break;
   case GenshinVerb.Pin: {
@@ -157,7 +157,7 @@ switch (verb) {
     break;
   }
   case GenshinVerb.Unmute:
-    setIsMuted(false);
+    setMuted(false);
     console.log("Spoken replies unmuted.");
     break;
   case GenshinVerb.Unpin: {

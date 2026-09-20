@@ -52,7 +52,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `skills/<verb>/SKILL.md`             | One slash command per verb — `/genshin-persona:today`, `roster`, `use`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.                 |
 | `skills/genshin/SKILL.md`            | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                             |
 | `skills/genshin-author/SKILL.md`     | How a persona card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                                           |
-| `src/cards/`                         | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, the voice that reads them, and their spinner verbs and tips for you. |
+| `src/personaCards/`                  | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, the voice that reads them, and their spinner verbs and tips for you. |
 | `src/services/baseSpinnerContent.ts` | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                                                   |
 | `scripts/`                           | The hook entrypoints, the commands' script and the status-line script, TypeScript run directly by node.                                                                            |
 

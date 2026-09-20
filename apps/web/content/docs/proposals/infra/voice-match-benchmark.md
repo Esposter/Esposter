@@ -189,7 +189,7 @@ commit. The clips live outside the repository and only the numbers they produce 
 
 | File                                                             | Change                                             |
 | :--------------------------------------------------------------- | :------------------------------------------------- |
-| `packages/genshin-persona/src/cards/`                            | The `voice` field each run rewrites                |
+| `packages/genshin-persona/src/personaCards/`                     | The `voice` field each run rewrites                |
 | `scripts/src/`                                                   | Where the package reader and decoder belong        |
 | `packages/genshin-persona/src/services/getSpeechVoiceFinding.ts` | Still the check that a written line is well-formed |
 

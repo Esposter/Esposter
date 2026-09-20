@@ -1,6 +1,6 @@
 ---
 name: genshin-author
-description: Apply when writing, reviewing or listing the persona cards under src/cards/ or the base spinner content in src/services/baseSpinnerContent.ts of the genshin-persona plugin — the card's shape and ceiling, the spinner lines a person reads and the model never does, the one command that prints a character's own lines to write from, and the rule that a card says how the character speaks and never what the assistant does.
+description: Apply when writing, reviewing or listing the persona cards under src/personaCards/ or the base spinner content in src/services/baseSpinnerContent.ts of the genshin-persona plugin — the card's shape and ceiling, the spinner lines a person reads and the model never does, the one command that prints a character's own lines to write from, and the rule that a card says how the character speaks and never what the assistant does.
 ---
 
 # Authoring a persona card
@@ -18,7 +18,7 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" untipped   # a card with no verb
 
 ## Shape
 
-One file per character at `src/cards/<slug>.ts`, where the slug is the name lowercased with every run of non-alphanumerics replaced by one hyphen (`Hu Tao` → `hu-tao.ts`, `Kamisato Ayaka` → `kamisato-ayaka.ts`). The card is a typed module, so the shape is checked where it is written rather than guessed at by a parser:
+One file per character at `src/personaCards/<name>.ts`, where the name is the character's in camel case — lowercased, every run of non-alphanumerics dropped and the letter after it capitalised (`Hu Tao` → `huTao.ts`, `Kamisato Ayaka` → `kamisatoAyaka.ts`). The card is a typed module, so the shape is checked where it is written rather than guessed at by a parser:
 
 ```ts
 import type { PersonaCard } from "#src/models/PersonaCard";
@@ -39,7 +39,7 @@ const clorinde: PersonaCard = {
 export default clorinde;
 ```
 
-The const is named for the slug in camel case and exported as the default, because the loader has a path in hand and never a name. A field missing, misspelled or of the wrong type is a typecheck failure, which is the point of the card being a module: a card matched by string prefixes fails silently in every direction, and a key spelled one letter wrong reaches the model as a speech habit rather than as an error.
+The const carries the file's name and is exported as the default, because the loader has a path in hand and never a name. A field missing, misspelled or of the wrong type is a typecheck failure, which is the point of the card being a module: a card matched by string prefixes fails silently in every direction, and a key spelled one letter wrong reaches the model as a speech habit rather than as an error.
 
 **`habits`, `greeting` and `signOff` are the model's**: three habits, a greeting and a sign-off, **about fifty tokens in total**. Each habit is a sentence fragment a model can apply to its own wording: a register ("formal, never contracts a word"), a recurring device ("answers a question with a question first"), a verbal tic named rather than quoted. The ceiling is the design — the published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not — so a card that needs more lines is describing the character, not the voice.
 

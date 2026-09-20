@@ -84,7 +84,7 @@ It lists the resource's voices live and reports every card that names one the re
 
 | File                                                                  | Role                                                    |
 | :-------------------------------------------------------------------- | :------------------------------------------------------ |
-| `packages/genshin-persona/src/cards/*.ts`                             | The `voice` field, one per character                    |
+| `packages/genshin-persona/src/personaCards/*.ts`                      | The `voice` field, one per character                    |
 | `packages/genshin-persona/src/models/SpeechVoice.ts`                  | The field's shape                                       |
 | `packages/genshin-persona/src/services/getSsml.ts`                    | Style around prosody around the text, and the namespace |
 | `packages/genshin-persona/src/services/readSessionCharacterName.ts`   | Who the session speaks as, without picking again        |

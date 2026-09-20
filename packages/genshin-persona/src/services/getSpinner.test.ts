@@ -15,7 +15,7 @@ describe(getSpinner, () => {
       label: `✦ ${name}`,
       tips: [
         { id: "teyvat-1", text: "baseTip" },
-        { id: "hu-tao-1", text: "tip" },
+        { id: "huTao-1", text: "tip" },
       ],
       verbs: ["baseVerb", "verb"],
     });

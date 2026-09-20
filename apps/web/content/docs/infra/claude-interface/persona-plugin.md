@@ -139,7 +139,7 @@ flowchart LR
 
 ## The card is small, and authored last
 
-The card the hook prints is a name, title, element and region, the birthday note, and — when the character has one — the authored persona card: three speech habits, a greeting and a sign-off, about fifty tokens. A card is a typed module at `src/cards/<slug>.ts`, so its shape is checked where it is written: a card matched by string prefixes fails silently in every direction, and a key spelled one letter wrong reaches the model as a speech habit rather than as an error. It is printed as the hook's JSON form, so the whole card reaches the model as context while the terminal shows the person a welcome of three lines — and no token is spent twice. A card printed later in the conversation, by `use`, `pin` or `unpin`, replaces it from the reply that relays it, which is the output style's standing rule and the whole cost of switching mid-session.
+The card the hook prints is a name, title, element and region, the birthday note, and — when the character has one — the authored persona card: three speech habits, a greeting and a sign-off, about fifty tokens. A card is a typed module at `src/personaCards/<name>.ts`, so its shape is checked where it is written: a card matched by string prefixes fails silently in every direction, and a key spelled one letter wrong reaches the model as a speech habit rather than as an error. It is printed as the hook's JSON form, so the whole card reaches the model as context while the terminal shows the person a welcome of three lines — and no token is spent twice. A card printed later in the conversation, by `use`, `pin` or `unpin`, replaces it from the reply that relays it, which is the output style's standing rule and the whole cost of switching mid-session.
 
 ```text
 ✦ Clorinde — Candlebearer, Shadowhunter · Electro · Fontaine
@@ -252,7 +252,7 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 | `packages/genshin-persona/skills/<verb>/SKILL.md`                  | One slash command per verb, invocable by the user alone                                                |
 | `packages/genshin-persona/skills/genshin/SKILL.md`                 | The model's router from a request in words to a verb, hidden from the menu                             |
 | `packages/genshin-persona/skills/genshin-author/SKILL.md`          | How a persona card is written                                                                          |
-| `packages/genshin-persona/src/cards/`                              | Authored persona cards, one typed module per character that has one                                    |
+| `packages/genshin-persona/src/personaCards/`                       | Authored persona cards, one typed module per character that has one                                    |
 
 ## Notes
 

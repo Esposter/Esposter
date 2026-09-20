@@ -57,7 +57,7 @@ The pane is therefore **100 columns by 30 rows**, and the bytes decide the shape
 flowchart LR
     Hook["Session-start hook<br/>prints the welcome"]
     Card["The card<br/>burst: teaser, clip"]
-    Cache["State directory<br/>teasers/&lt;slug&gt;.webp"]
+    Cache["State directory<br/>teasers/&lt;name&gt;.webp"]
     Wiki["Wiki CDN<br/>first meeting only"]
     Player["Player process<br/>detached, one pass"]
     Pane["A pane or window<br/>100 × 30 cells"]

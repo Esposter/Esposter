@@ -12,11 +12,11 @@ export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
 export const STATUS_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "status.ts");
 export const USER_SETTINGS_PATH: string = join(homedir(), ".claude", "settings.json");
 export const STATUS_LINE_MARKER = "genshin-persona";
-// The ids of the base tips, which every character shows; a character's own tips take the card slug. It is also
+// The ids of the base tips, which every character shows; a character's own tips take the card's name. It is also
 // What a spinner in the user settings is ours by, the way the launcher's path marks the status line as ours
 export const BASE_TIP_ID = "teyvat";
-export const CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "cards");
-export const CARD_EXTENSION = ".ts";
+export const PERSONA_CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "personaCards");
+export const PERSONA_CARD_EXTENSION = ".ts";
 // Between a card's habits where the lore pick reads them as one description of the character
 export const HABIT_SEPARATOR = " ";
 export const CARD_DETAIL_SEPARATOR = " · ";

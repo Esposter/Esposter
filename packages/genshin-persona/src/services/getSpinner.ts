@@ -3,7 +3,7 @@ import type { SpinnerContent } from "#src/models/SpinnerContent";
 import type { SpinnerTip } from "#src/models/SpinnerTip";
 
 import { BASE_TIP_ID, NAMEPLATE_PREFIX } from "#src/services/constants";
-import { getCardSlug } from "#src/services/getCardSlug";
+import { getPersonaCardName } from "#src/services/getPersonaCardName";
 
 const getTips = (idPrefix: string, tips: string[]): SpinnerTip[] =>
   tips.map((text, index) => ({ id: `${idPrefix}-${index + 1}`, text }));
@@ -12,6 +12,6 @@ const getTips = (idPrefix: string, tips: string[]): SpinnerTip[] =>
 // Survives the character changing
 export const getSpinner = (base: SpinnerContent, name: string, content: SpinnerContent | undefined): Spinner => ({
   label: `${NAMEPLATE_PREFIX}${name}`,
-  tips: [...getTips(BASE_TIP_ID, base.tips), ...getTips(getCardSlug(name), content?.tips ?? [])],
+  tips: [...getTips(BASE_TIP_ID, base.tips), ...getTips(getPersonaCardName(name), content?.tips ?? [])],
   verbs: [...base.verbs, ...(content?.verbs ?? [])],
 });
