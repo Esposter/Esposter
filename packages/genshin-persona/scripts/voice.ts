@@ -35,7 +35,7 @@ process.on("uncaughtException", (error) => {
   exit(`${error}`);
 });
 process.on("unhandledRejection", (reason) => {
-  exit(`${reason}`);
+  exit(String(reason));
 });
 
 const server = createServer();
@@ -88,7 +88,7 @@ const queue = createLatestWinsQueue(async (request: SpeechRequest) => {
   writeVoiceLog(`${request.type} failed: ${outcome?.reason}`);
   return VoiceStatus.Error;
 });
-const handleLine = async (line: string) => {
+const handleLine = (line: string) => {
   const request = parseVoiceRequest(line);
   if (!request) return VoiceStatus.Error;
 
@@ -106,18 +106,26 @@ const handleLine = async (line: string) => {
 server.on("connection", (socket) => {
   let buffer = "";
   socket.setEncoding("utf8");
-  socket.on("data", async (chunk: string) => {
+  const answer = async (chunk: string) => {
     buffer += chunk;
     if (!buffer.includes("\n")) return;
 
     const [line = ""] = buffer.split("\n");
     buffer = "";
-    const [outcome] = await Promise.allSettled([handleLine(line)]);
+    // A line that is not JSON at all throws out of the parser synchronously, and `Promise.try` is what turns that
+    // Into a rejection this answers with, rather than one nothing on the socket ever hears
+    const [outcome] = await Promise.allSettled([Promise.try(() => handleLine(line))]);
     const status = outcome?.status === "fulfilled" ? outcome.value : VoiceStatus.Error;
     if (outcome?.status === "rejected") writeVoiceLog(`request failed: ${outcome.reason}`);
     const [load] = await Promise.allSettled([synthesizerLoad]);
     const device = load?.status === "fulfilled" ? load.value.device : "";
     socket.end(`${[status, device].filter(Boolean).join(VOICE_STATUS_SEPARATOR)}\n`);
+  };
+  // `socket.on` is a third-party slot that cannot be widened to take a promise, and `getSynchronizedFunction` —
+  // The codebase's one sanctioned fire-and-forget — lives in the web app a shipped plugin cannot import from
+  socket.on("data", (chunk: string) => {
+    // oxlint-disable-next-line typescript/no-floating-promises -- `answer` settles every outcome a request has and ends the socket on each, so the only throw left in it is the log write, which the handler above already exits on
+    answer(chunk);
   });
   // A hook that exited before reading its answer
   socket.on("error", () => {});
