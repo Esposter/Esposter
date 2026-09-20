@@ -3,24 +3,25 @@ import type { Character } from "#src/models/Character";
 import { GenshinVerb } from "#src/models/GenshinVerb";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { CARD_DETAIL_SEPARATOR } from "#src/services/constants";
-import { deleteAddedVerbs } from "#src/services/deleteAddedVerbs";
 import { deletePin } from "#src/services/deletePin";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { formatCard } from "#src/services/formatCard";
-import { getAddedVerbs } from "#src/services/getAddedVerbs";
 import { getCard } from "#src/services/getCard";
 import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
-import { getSettingsWithPluginEntries } from "#src/services/getSettingsWithPluginEntries";
+import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLine";
+import { getSpinner } from "#src/services/getSpinner";
 import { getToday } from "#src/services/getToday";
+import { parseVoiceCard } from "#src/services/parseVoiceCard";
 import { pickCharacter } from "#src/services/pickCharacter";
-import { readAddedVerbs } from "#src/services/readAddedVerbs";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
+import { readSpinnerContent } from "#src/services/readSpinnerContent";
 import { readUserSettings } from "#src/services/readUserSettings";
 import { readVoiceCard } from "#src/services/readVoiceCard";
+import { readVoiceLines } from "#src/services/readVoiceLines";
 import { setIsMuted } from "#src/services/setIsMuted";
-import { writeAddedVerbs } from "#src/services/writeAddedVerbs";
 import { writePin } from "#src/services/writePin";
+import { writeSpinner } from "#src/services/writeSpinner";
 import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
 import { writeUserSettings } from "#src/services/writeUserSettings";
 
@@ -38,8 +39,29 @@ const printCard = (character: Character) => {
   const card = getCard(character, today.monthDay, readVoiceCard(character.name));
   console.log(formatCard(card));
 };
+// The pin, else today's pick: what the next session start will resolve to, short of a record it already holds
+const getCurrentCharacter = () => {
+  const pin = readPin();
+  const pinnedCharacter = findCharacterByName(roster, pin?.name ?? "");
+  if (pin && !pinnedCharacter) console.log(`The pin "${pin.name}" names no character in the roster and is ignored.`);
+
+  return pinnedCharacter ?? pickCharacter(roster, today.monthDay, today.isoDate);
+};
 
 switch (verb) {
+  case GenshinVerb.Lines: {
+    const character = findCharacterByName(roster, name);
+    if (!character) {
+      console.error(`No character named "${name}" is in the roster.`);
+      process.exitCode = 1;
+      break;
+    }
+
+    console.log(`${getRosterLine(character)}\n${character.description}`);
+    const voiceLines = await readVoiceLines(character.name);
+    for (const { text, title } of voiceLines) console.log(`- ${title}: ${text}`);
+    break;
+  }
   case GenshinVerb.Mute:
     setIsMuted(true);
     console.log("Spoken replies muted.");
@@ -52,7 +74,7 @@ switch (verb) {
       break;
     }
 
-    writePin(pinnedCharacter.name);
+    writePin(pinnedCharacter);
     printCard(pinnedCharacter);
     break;
   }
@@ -62,32 +84,30 @@ switch (verb) {
   case GenshinVerb.Setup: {
     writeStatusLauncher();
     const userSettings = readUserSettings();
-    // Recorded before the write and unioned with what an earlier setup added, so a later version's new verbs join
-    // The record rather than replacing it
-    writeAddedVerbs([...new Set([...readAddedVerbs(), ...getAddedVerbs(userSettings)])]);
-    const settings = getSettingsWithPluginEntries(userSettings);
+    const settings = getSettingsWithStatusLine(userSettings);
     writeUserSettings(settings);
+    const character = getCurrentCharacter();
+    if (character) {
+      const voiceCard = parseVoiceCard(readVoiceCard(character.name));
+      writeSpinner(getSpinner(readSpinnerContent(), character.name, voiceCard));
+    }
+
     console.log(
       checkIsPluginStatusLine(settings.statusLine)
-        ? "Status line and spinner verbs written to user settings; both show from the next session."
-        : "Spinner verbs written to user settings; the status line already there is not ours and was left alone.",
+        ? "Status line and spinner written to user settings; both show from the next session."
+        : "Spinner written to user settings; the status line already there is not ours and was left alone.",
     );
     break;
   }
   case GenshinVerb.Teardown: {
     const userSettings = readUserSettings();
-    const settings = getSettingsWithoutPluginEntries(userSettings, readAddedVerbs());
+    const settings = getSettingsWithoutPluginEntries(userSettings);
     writeUserSettings(settings);
-    deleteAddedVerbs();
-    console.log("Status line and spinner verbs removed from user settings.");
+    console.log("Status line and spinner removed from user settings.");
     break;
   }
   case GenshinVerb.Today: {
-    const pin = readPin();
-    const pinnedCharacter = findCharacterByName(roster, pin);
-    if (pin && !pinnedCharacter) console.log(`The pin "${pin}" names no character in the roster and is ignored.`);
-
-    const character = pinnedCharacter ?? pickCharacter(roster, today.monthDay, today.isoDate);
+    const character = getCurrentCharacter();
     if (character) printCard(character);
     break;
   }
@@ -104,6 +124,15 @@ switch (verb) {
   case GenshinVerb.Unpin:
     deletePin();
     console.log("Pin removed; the nearest birthday picks again.");
+    break;
+  case GenshinVerb.Untipped:
+    for (const character of roster
+      .filter((candidate) => {
+        const voiceCard = parseVoiceCard(readVoiceCard(candidate.name));
+        return voiceCard.context && (voiceCard.tips.length === 0 || voiceCard.verbs.length === 0);
+      })
+      .toSorted(compareVersionsDescending))
+      console.log(getRosterLine(character));
     break;
   default:
     console.error(`Usage: genshin.ts <${Object.values(GenshinVerb).join(" | ")}> [name]`);

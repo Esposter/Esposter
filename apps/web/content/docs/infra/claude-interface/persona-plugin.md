@@ -135,66 +135,79 @@ flowchart LR
 
 Personalisation goes wherever it costs the model nothing: the status line and the spoken voice are the person's alone, the greeting is performed to them out of the card the model is already holding, and the context budget stays at the card. The output style, forced on while the plugin is enabled with coding instructions kept, carries the standing rules: in character in prose, never in code, commits, commands or error text, with every fact a neutral reply would carry still carried. The published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not.
 
-The plugin's authoring skill keeps the hand-written half honest: the card shape and its ceiling, the sources a habit may be drawn from (the character's own in-game lines and story, described in our words, never quoted), and the rule that a card describes how the character speaks and never what the assistant should do. Its one command lists the characters that have no card yet, most recently released first, so authoring is a queue drained when someone feels like it and never a gate on a patch.
+The plugin's authoring skill keeps the hand-written half honest: the card shape and its ceiling, the sources a line may be drawn from (the character's own in-game lines and story, described in our words, never quoted), and the rule that a card describes how the character speaks and never what the assistant should do. Its commands are the loop: two queues list the characters with no card and the cards with no spinner lines, newest first, and one prints a character's own lines to write from, off the game data or, before the data carries them, off the community wiki. Authoring is a queue drained when someone feels like it and never a gate on a patch, and a patch refills it on the same cadence as the dependency bump.
+
+The card is the per-character half of the persona and the output style is the invariant half, on purpose: a style per character would be the same lines in a file the tool cannot switch per session, and the card already reaches the model as context at every start. Beside the voice the model also gets the game's one-line description of the character, the lore it answers from when asked who it is.
 
 ## The skill
 
 `/genshin-persona:genshin` — plugin skills are namespaced by the plugin's name — runs the plugin's own script and relays its lines: the roster, today's pick, `pin` and `unpin`, `mute` and `unmute`, `setup` and `teardown`. Every answer comes from the script, because the roster is game data nothing but the script has read.
 
-## The two settings a plugin cannot ship
+## The settings a plugin cannot ship
 
-A plugin's own settings file may set two keys, both about subagents, so the status line and the spinner verbs are user settings. Nothing runs per turn to choose a verb, so a per-character set is out of reach: settings load before hooks run, and a hook rewriting them would land one session late, the mid-conversation swap the pick was built to avoid. What is reachable is one static list of Genshin-flavoured verbs appended to the built-in set, and the status line, both written by the skill's `setup` verb and removed by `teardown`, which touches only what `setup` wrote. That is a record, not a guess: the verbs `setup` appends are the ones the list did not already hold, written to the state directory as it appends them, so a Genshin-flavoured verb the person had chosen first is theirs and survives the teardown — and a status line that is not the plugin's is left alone.
+A plugin's own settings file may set two keys, both about subagents, so the status line, the spinner verbs and the spinner tips are user settings. The skill's `setup` verb writes them and `teardown` removes exactly what `setup` wrote. The spinner keys are taken over outright — the built-in verbs and tips are replaced, not joined — while a status line that is not the plugin's is left alone, because replacing it would lose something the person wrote.
 
-The status line has one more problem to solve: an install lands under a directory named after its version, so a setting pointing straight at the plugin's script breaks on every update. The setting points instead at a launcher in the plugin's state directory, one import line, and the session-start hook re-aims that launcher at the running install whenever it differs. An update is followed on the next session, with nothing for the person to repeat.
+The spinner follows the character. Its content has two layers in one syntax: the base Teyvat verbs and tips in `spinner.md`, which every character shows, and the character's own `Verbs:` and `Tip:` lines on their card, which the hook lifts out of the model's context — they are read by a person, never by the model, so the card's fifty-token ceiling is untouched. The session-start hook resolves the character, computes the spinner, and rewrites the two settings keys and the tips file only when they would change, so on most days it writes nothing. Settings load before hooks run, so a change lands at the next session start, which is the same lag the pick itself carries and matters only on the first session of a day the character changed.
+
+The status line has one more problem to solve: an install lands under a directory named after its version, so a setting pointing straight at the plugin's script breaks on every update. The setting points instead at a launcher in the plugin's state directory, one import line, and the hook re-aims that launcher at the running install whenever it differs. An update is followed on the next session, with nothing for the person to repeat.
+
+The line itself is the name in the element's colour, a 24-bit ANSI foreground the terminal paints, so a Pyro day reads red and an Electro day violet at a glance. It is redrawn on every assistant message and must stay cheap, so it never opens the game data, which costs the better part of a second to load: the state files carry the element beside the name, on each pick record and on the pin. The tool also runs it once when a session starts, in the same instant the hook is still writing that session's record, so the record it looks for may not be there yet. Every session started on one day resolves to the same character, so a record of today's from any session stands in, and the line shows from the first frame on every start but the first of a day.
 
 ```mermaid
 flowchart LR
     Setup["setup verb"]
-    Teardown["teardown verb"]
-    Settings["User settings<br/>statusLine, spinnerVerbs"]
+    Hook["Session-start hook<br/>the session's character"]
+    Content["spinner.md + the card<br/>verbs and tips, two layers"]
+    Settings["User settings<br/>statusLine, spinnerVerbs, spinnerTipsOverride"]
+    Tips["State directory<br/>tips.json"]
     Launcher["State directory<br/>status.mjs, one import"]
-    Record["State directory<br/>the verbs setup appended"]
-    Hook["Session-start hook"]
     Install["The running install<br/>a directory per version"]
-    Spinner["Spinner"]
-    Line["Status line"]
+    Records["State directory<br/>picks.tsv, pin: name and element"]
+    Spinner["Spinner<br/>verbs, tips under the character's name"]
+    Line["Status line<br/>the name in the element's colour"]
 
     Setup -->|writes once| Settings
     Setup -->|writes| Launcher
-    Setup -->|records what it appended| Record
-    Record -->|the only verbs it removes| Teardown
-    Teardown -->|rewrites| Settings
     Hook -->|re-aims every start| Launcher
+    Content --> Hook
+    Hook -->|rewrites when the character changed| Settings
+    Hook -->|rewrites when the character changed| Tips
     Launcher -->|imports| Install
     Settings -->|runs the launcher| Line
-    Settings -->|appends the verbs| Spinner
+    Hook -->|records the session's pick| Records
+    Records -->|pin, the session's record, else any of today's| Line
+    Settings -->|names the file and the label| Spinner
+    Tips --> Spinner
 ```
 
-The revisit trigger is the tool letting a plugin ship these keys: the list then moves into the plugin's settings file, and the launcher, `setup` and `teardown` are deleted.
+The revisit trigger is the tool letting a plugin ship these keys, or choose a spinner per session: the base content then moves into the plugin's settings file, and the launcher, `setup` and `teardown` are deleted.
 
 ## Key files
 
-| File                                                                       | Role                                                                                                  |
-| :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| `.claude-plugin/marketplace.json`                                          | The repository as the `esposter` marketplace, with this package as its one plugin                     |
-| `packages/genshin-persona/.claude-plugin/plugin.json`                      | The plugin manifest: discovery metadata and the three user-configuration options                      |
-| `packages/genshin-persona/package.json`                                    | The one dependency as a plain range; no devDependencies, so the npm lockfile stays honest             |
-| `packages/genshin-persona/hooks/hooks.json`                                | The session-start hook and the asynchronous Stop hook                                                 |
-| `packages/genshin-persona/output-styles/traveler.md`                       | The standing voice rules, forced on while the plugin is enabled                                       |
-| `packages/genshin-persona/scripts/pick.ts`                                 | The session-start entrypoint: resolve the character, print the card, never fail                       |
-| `packages/genshin-persona/scripts/genshin.ts`                              | The skill's command: roster, today, pin, unpin, mute, unmute, setup, teardown, and the uncarded queue |
-| `packages/genshin-persona/scripts/status.ts`                               | The status line: the pin or the session's recorded name, from the state files alone                   |
-| `packages/genshin-persona/src/services/writeStatusLauncher.ts`             | The launcher the status line runs, re-aimed at the running install on every session start             |
-| `packages/genshin-persona/src/services/getSettingsWithPluginEntries.ts`    | What `setup` writes into user settings, and what it leaves alone                                      |
-| `packages/genshin-persona/src/services/getSettingsWithoutPluginEntries.ts` | What `teardown` removes: the verbs the record says `setup` appended, and nothing else                 |
-| `packages/genshin-persona/src/services/pickCharacter.ts`                   | The nearest-birthday pick and its two tie-breaks                                                      |
-| `packages/genshin-persona/src/services/resolveSessionCharacter.ts`         | Pin, then the session's record, then today's pick                                                     |
-| `packages/genshin-persona/src/services/getSessionStartOutput.ts`           | The two readers' subsets: the whole card as context, the nameplate, note and greeting as the welcome  |
-| `packages/genshin-persona/skills/genshin/SKILL.md`                         | The user-facing verbs                                                                                 |
-| `packages/genshin-persona/skills/genshin-author/SKILL.md`                  | How a voice card is written                                                                           |
-| `packages/genshin-persona/cards/`                                          | Authored voice cards, one per character that has one                                                  |
+| File                                                               | Role                                                                                                  |
+| :----------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| `.claude-plugin/marketplace.json`                                  | The repository as the `esposter` marketplace, with this package as its one plugin                     |
+| `packages/genshin-persona/.claude-plugin/plugin.json`              | The plugin manifest: discovery metadata and the three user-configuration options                      |
+| `packages/genshin-persona/package.json`                            | The one dependency as a plain range; no devDependencies, so the npm lockfile stays honest             |
+| `packages/genshin-persona/hooks/hooks.json`                        | The session-start hook and the asynchronous Stop hook                                                 |
+| `packages/genshin-persona/output-styles/traveler.md`               | The standing voice rules, forced on while the plugin is enabled                                       |
+| `packages/genshin-persona/scripts/pick.ts`                         | The session-start entrypoint: resolve the character, print the card, never fail                       |
+| `packages/genshin-persona/scripts/genshin.ts`                      | The skill's command: roster, today, pin, unpin, mute, unmute, setup, teardown, and the uncarded queue |
+| `packages/genshin-persona/scripts/status.ts`                       | The status line: the pin, the session's record, else any of today's, from the state files alone       |
+| `packages/genshin-persona/src/services/formatNameplate.ts`         | The name in its element's colour, plain where the element has none                                    |
+| `packages/genshin-persona/src/services/writeStatusLauncher.ts`     | The launcher the status line runs, re-aimed at the running install on every session start             |
+| `packages/genshin-persona/src/services/parseVoiceCard.ts`          | The card split by reader: the context for the model, the greeting, verbs and tips for the person      |
+| `packages/genshin-persona/src/services/getSpinner.ts`              | The base content with the character's own behind it, under the character's name                       |
+| `packages/genshin-persona/src/services/writeSpinner.ts`            | The two spinner settings and the tips file, written only when they would change                       |
+| `packages/genshin-persona/spinner.md`                              | The base Teyvat verbs and tips, in the card syntax                                                    |
+| `packages/genshin-persona/src/services/pickCharacter.ts`           | The nearest-birthday pick and its two tie-breaks                                                      |
+| `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | Pin, then the session's record, then today's pick                                                     |
+| `packages/genshin-persona/src/services/getSessionStartOutput.ts`   | The two readers' subsets: the whole card as context, the nameplate, note and greeting as the welcome  |
+| `packages/genshin-persona/skills/genshin/SKILL.md`                 | The user-facing verbs                                                                                 |
+| `packages/genshin-persona/skills/genshin-author/SKILL.md`          | How a voice card is written                                                                           |
+| `packages/genshin-persona/cards/`                                  | Authored voice cards, one per character that has one                                                  |
 
 ## Notes
 
 - Markdown files, a few scripts of a few dozen lines, and one Renovate-owned dependency in a workspace that already has hundreds; that is the whole maintenance surface.
-- The status line shows the current name by reading the same per-session record and the pin, never the game data, so it stays cheap to redraw.
+- The status line reads the pick records and the pin, never the game data, so it stays cheap to redraw; the element rides on those records so the colour costs no lookup.

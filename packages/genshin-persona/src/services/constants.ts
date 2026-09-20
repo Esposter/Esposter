@@ -8,34 +8,37 @@ export const PICK_RECORDS_PATH: string = join(STATE_DIRECTORY, "picks.tsv");
 export const PIN_PATH: string = join(STATE_DIRECTORY, "pin");
 export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
 export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
-export const ADDED_VERBS_PATH: string = join(STATE_DIRECTORY, "verbs");
 export const STATUS_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "status.ts");
 export const USER_SETTINGS_PATH: string = join(homedir(), ".claude", "settings.json");
 export const STATUS_LINE_MARKER = "genshin-persona";
-// Gerunds like the built-in verbs, appended to them: the spinner shows one of these while a turn runs
-export const SPINNER_VERBS: string[] = [
-  "Adventuring",
-  "Ascending",
-  "Climbing",
-  "Commissioning",
-  "Cooking",
-  "Exploring",
-  "Fishing",
-  "Foraging",
-  "Forging",
-  "Gliding",
-  "Sprinting",
-  "Teleporting",
-  "Wishing",
-];
+export const TIPS_PATH: string = join(STATE_DIRECTORY, "tips.json");
+// The ids of the base tips, which every character shows; a character's own tips take the card slug
+export const BASE_TIP_ID = "teyvat";
 export const CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "..", "cards");
 export const CARD_EXTENSION = ".md";
+export const SPINNER_CONTENT_PATH: string = join(import.meta.dirname, "..", "..", "spinner.md");
+export const TIP_PREFIX = "- Tip: ";
+export const VERBS_PREFIX = "- Verbs: ";
+export const VERB_SEPARATOR = ", ";
 export const CARD_DETAIL_SEPARATOR = " · ";
 export const GREETING_PREFIX = "- Greets: ";
 // What the model reads the headline under, and what the person reads it under
 export const CONTEXT_HEADLINE_PREFIX = "Persona: ";
 export const NAMEPLATE_PREFIX = "✦ ";
-export const PICK_RECORD_SEPARATOR = "\t";
+export const ANSI_RESET = "\u001B[0m";
+// The status line's colour per element, as the game's interface paints the element's name; an element missing here
+// (the player character's "None") leaves the nameplate in the terminal's own colour
+export const ElementColorMap: Record<string, string> = {
+  Anemo: "#33ccb3",
+  Cryo: "#98c8e8",
+  Dendro: "#7bb42d",
+  Electro: "#d376f0",
+  Geo: "#cfa726",
+  Hydro: "#1c72fd",
+  Pyro: "#e2311d",
+};
+// Between the fields of a pick record and of the pin
+export const STATE_FIELD_SEPARATOR = "\t";
 export const PICK_RETENTION_DAYS = 7;
 // Written out rather than totalled from a `Temporal.Duration`: the plugin runs under whatever node a stranger has,
 // And `Temporal` is a global only on the newest majors
@@ -44,7 +47,19 @@ export const DAY_IN_MILLISECONDS = 86_400_000;
 export const LEAP_YEAR = 2000;
 export const DAYS_IN_LEAP_YEAR = 366;
 export const DATE_LOCALE = "en-AU";
-export const TRAVELER: Character = { birthday: "", element: "", name: "Traveler", region: "", title: "", version: "" };
+export const TRAVELER: Character = {
+  birthday: "",
+  description: "",
+  element: "",
+  name: "Traveler",
+  region: "",
+  title: "",
+  version: "",
+};
+// The community wiki's parse API, the source of a character's lines before the game-data package carries them
+export const WIKI_VOICE_OVERS_URL =
+  "https://genshin-impact.fandom.com/api.php?action=parse&prop=wikitext&format=json&page=";
+export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
 export const SPEECH_ENDPOINT_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH_ENDPOINT";
 export const SPEECH_KEY_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH_KEY";
 export const SPEECH_VOICE_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH_VOICE";

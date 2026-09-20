@@ -44,20 +44,23 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `hooks/hooks.json`               | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply. |
 | `output-styles/traveler.md`      | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                           |
 | `skills/genshin/SKILL.md`        | `/genshin-persona:genshin` — the roster, today's pick, pin and unpin, mute and unmute, setup and teardown.                                                   |
-| `skills/genshin-author/SKILL.md` | How a character's voice card is written, and the command listing the characters that have none yet.                                                          |
-| `cards/`                         | Authored voice cards, one per character that has earned one, in our words about how the character speaks.                                                    |
+| `skills/genshin-author/SKILL.md` | How a voice card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                       |
+| `cards/`                         | Authored voice cards, one per character, in our words: how the character speaks for the model, and their spinner verbs and tips for you.                     |
+| `spinner.md`                     | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                             |
 | `scripts/`                       | The hook entrypoints, the skill's command and the status-line script, TypeScript run directly by node.                                                       |
 
-### Status line and spinner verbs
+### Status line and spinner
 
-A plugin cannot ship a status line or spinner verbs, so one command writes both into your user settings, and its twin removes them:
+A plugin cannot ship a status line, spinner verbs or spinner tips, so one command writes them into your user settings, and its twin removes them:
 
 ```bash
 node "<plugin root>/scripts/genshin.ts" setup      # or ask: /genshin-persona:genshin setup
 node "<plugin root>/scripts/genshin.ts" teardown
 ```
 
-The status line prints the session's character from the plugin's state files alone. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat. The verbs are appended to the built-in set, and `teardown` removes only the ones `setup` recorded itself as having appended, so a verb the person had listed first stays. A status line that is not the plugin's is left alone.
+The status line prints the session's character in their element's colour, from the plugin's state files alone, and shows from the first frame of every session but the first of a day. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat.
+
+The spinner replaces the built-in verbs and tips with Teyvat's — the base list in `spinner.md` — and, behind them, the session's character's own verbs and tips from their card, labelled with the character's name. The session-start hook rewrites the two settings and the tips file whenever the character changes, so the spinner follows the calendar like everything else. A status line that is not the plugin's is left alone.
 
 ### How the character is picked
 

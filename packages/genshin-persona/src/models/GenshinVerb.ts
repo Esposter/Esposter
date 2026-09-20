@@ -1,6 +1,7 @@
 // A frozen object rather than an `enum`: node runs these scripts by stripping types, and an `enum` is the one
 // Declaration it cannot strip
 export const GenshinVerb = {
+  Lines: "lines",
   Mute: "mute",
   Pin: "pin",
   Roster: "roster",
@@ -10,6 +11,7 @@ export const GenshinVerb = {
   Uncarded: "uncarded",
   Unmute: "unmute",
   Unpin: "unpin",
+  Untipped: "untipped",
 } as const;
 
 export type GenshinVerb = (typeof GenshinVerb)[keyof typeof GenshinVerb];

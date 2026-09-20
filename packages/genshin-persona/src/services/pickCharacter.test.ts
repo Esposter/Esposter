@@ -6,6 +6,7 @@ import { describe, expect, test } from "vitest";
 
 const createCharacter = (birthday: string): Character => ({
   birthday,
+  description: "",
   element: "",
   name: birthday,
   region: "",
