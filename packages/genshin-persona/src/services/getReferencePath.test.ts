@@ -17,7 +17,7 @@ describe(getReferencePath, () => {
 
   // `join` only walks a "\" out of the directory on Windows, so the stem is asserted rather than the platform's
   // Reading of it: either separator survives here and the clip lands wherever the socket asked for
-  test.each(["../../target", "..\\..\\target"])("spends the stem %s on one name inside the dub", (stem) => {
+  test.each(["../../target", String.raw`..\..\target`])("spends the stem %s on one name inside the dub", (stem) => {
     expect.hasAssertions();
 
     expect(getReferencePath(stem, VoiceLanguage.English)).toBe(join(languageDirectory, "..-..-target.ogg"));
