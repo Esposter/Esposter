@@ -14,9 +14,12 @@ const readVoiceListEntries = async (endpoint: string, key: string): Promise<Spee
   if (!response.ok) return undefined;
 
   // A body the API promises to be a list and is not — an error document, `null`, an object — is nothing rather
-  // Than an entry the caller then walks
+  // Than an entry the caller then walks, and an element the API promises to be an entry and is not is dropped from
+  // The list it was in rather than destructured
   const entries: unknown = await response.json();
-  return Array.isArray(entries) ? (entries as SpeechVoiceListEntry[]) : undefined;
+  if (!Array.isArray(entries)) return undefined;
+
+  return entries.filter((entry): entry is SpeechVoiceListEntry => typeof entry === "object" && entry !== null);
 };
 
 // Every voice the resource can speak with, as the service lists them now. Nothing here is kept in the repository:
@@ -33,6 +36,6 @@ export const readSpeechVoiceDefinitions = async (
   if (!entries) return undefined;
 
   return entries.flatMap<SpeechVoiceDefinition>(({ ShortName, StyleList }) =>
-    ShortName ? [{ name: ShortName, styles: StyleList ?? [] }] : [],
+    ShortName ? [{ name: ShortName, styles: Array.isArray(StyleList) ? StyleList : [] }] : [],
   );
 };
