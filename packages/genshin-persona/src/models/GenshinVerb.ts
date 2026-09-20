@@ -4,6 +4,8 @@ export const GenshinVerb = {
   Mute: "mute",
   Pin: "pin",
   Roster: "roster",
+  Setup: "setup",
+  Teardown: "teardown",
   Today: "today",
   Uncarded: "uncarded",
   Unmute: "unmute",

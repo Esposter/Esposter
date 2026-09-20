@@ -43,20 +43,21 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | :------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `hooks/hooks.json`               | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply. |
 | `output-styles/traveler.md`      | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                           |
-| `skills/genshin/SKILL.md`        | `/genshin-persona:genshin` — the roster, today's pick, pin and unpin, mute and unmute.                                                                       |
+| `skills/genshin/SKILL.md`        | `/genshin-persona:genshin` — the roster, today's pick, pin and unpin, mute and unmute, setup and teardown.                                                   |
 | `skills/genshin-author/SKILL.md` | How a character's voice card is written, and the command listing the characters that have none yet.                                                          |
 | `cards/`                         | Authored voice cards, one per character that has earned one, in our words about how the character speaks.                                                    |
 | `scripts/`                       | The hook entrypoints, the skill's command and the status-line script, TypeScript run directly by node.                                                       |
 
-### Status line
+### Status line and spinner verbs
 
-A plugin cannot set a status line, so the one-line setting lives in your user settings and points at the plugin's script, which prints the session's character from the state files alone:
+A plugin cannot ship a status line or spinner verbs, so one command writes both into your user settings, and its twin removes them:
 
-```json
-{
-  "statusLine": { "type": "command", "command": "node \"<plugin root>/scripts/status.ts\"" }
-}
+```bash
+node "<plugin root>/scripts/genshin.ts" setup      # or ask: /genshin-persona:genshin setup
+node "<plugin root>/scripts/genshin.ts" teardown
 ```
+
+The status line prints the session's character from the plugin's state files alone. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat. The verbs are appended to the built-in set, and a status line that is not the plugin's is left alone.
 
 ### How the character is picked
 

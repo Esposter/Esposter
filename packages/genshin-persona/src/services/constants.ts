@@ -7,6 +7,26 @@ export const STATE_DIRECTORY: string = join(homedir(), ".claude", "genshin-perso
 export const PICK_RECORDS_PATH: string = join(STATE_DIRECTORY, "picks.tsv");
 export const PIN_PATH: string = join(STATE_DIRECTORY, "pin");
 export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
+export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
+export const STATUS_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "status.ts");
+export const USER_SETTINGS_PATH: string = join(homedir(), ".claude", "settings.json");
+export const STATUS_LINE_MARKER = "genshin-persona";
+// Gerunds like the built-in verbs, appended to them: the spinner shows one of these while a turn runs
+export const SPINNER_VERBS: string[] = [
+  "Adventuring",
+  "Ascending",
+  "Climbing",
+  "Commissioning",
+  "Cooking",
+  "Exploring",
+  "Fishing",
+  "Foraging",
+  "Forging",
+  "Gliding",
+  "Sprinting",
+  "Teleporting",
+  "Wishing",
+];
 export const CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "..", "cards");
 export const CARD_EXTENSION = ".md";
 export const CARD_DETAIL_SEPARATOR = " · ";

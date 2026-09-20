@@ -1,18 +1,24 @@
 import type { Character } from "#src/models/Character";
 
 import { GenshinVerb } from "#src/models/GenshinVerb";
+import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { CARD_DETAIL_SEPARATOR } from "#src/services/constants";
 import { deletePin } from "#src/services/deletePin";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { formatCard } from "#src/services/formatCard";
 import { getCard } from "#src/services/getCard";
+import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
+import { getSettingsWithPluginEntries } from "#src/services/getSettingsWithPluginEntries";
 import { getToday } from "#src/services/getToday";
 import { pickCharacter } from "#src/services/pickCharacter";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
+import { readUserSettings } from "#src/services/readUserSettings";
 import { readVoiceCard } from "#src/services/readVoiceCard";
 import { setIsMuted } from "#src/services/setIsMuted";
 import { writePin } from "#src/services/writePin";
+import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
+import { writeUserSettings } from "#src/services/writeUserSettings";
 
 const [verb, ...nameParts] = process.argv.slice(2);
 const name = nameParts.join(" ");
@@ -49,6 +55,25 @@ switch (verb) {
   case GenshinVerb.Roster:
     for (const character of roster) console.log(getRosterLine(character));
     break;
+  case GenshinVerb.Setup: {
+    writeStatusLauncher();
+    const userSettings = readUserSettings();
+    const settings = getSettingsWithPluginEntries(userSettings);
+    writeUserSettings(settings);
+    console.log(
+      checkIsPluginStatusLine(settings.statusLine)
+        ? "Status line and spinner verbs written to user settings; both show from the next session."
+        : "Spinner verbs written to user settings; the status line already there is not ours and was left alone.",
+    );
+    break;
+  }
+  case GenshinVerb.Teardown: {
+    const userSettings = readUserSettings();
+    const settings = getSettingsWithoutPluginEntries(userSettings);
+    writeUserSettings(settings);
+    console.log("Status line and spinner verbs removed from user settings.");
+    break;
+  }
   case GenshinVerb.Today: {
     const pin = readPin();
     const pinnedCharacter = findCharacterByName(roster, pin);
