@@ -10,6 +10,7 @@
 - 🏠 [Local Development](#local-development)
 - 🧱 [Architecture](#architecture)
 - 📦 [Packages](#packages)
+- 🔌 [Claude Code Plugins](#claude-code-plugins)
 - 🤝 [Community](#community)
 - ⚖️ [License](#license)
 
@@ -378,6 +379,21 @@ flowchart LR
 | [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)       | Phaser game engine integration for Vue                                                       |     ✓     |
 | [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)                   | TypeScript rewrite of xml2js — XML ↔ JSON conversion                                         |     ✓     |
 | [`scripts`](https://github.com/Esposter/Esposter/tree/main/scripts)                                   | The repository's own tooling — workspace graph, dependency report, sweep scans               |     —     |
+
+## <a name="claude-code-plugins">🔌 Claude Code Plugins</a>
+
+This repository is also a Claude Code plugin marketplace named `esposter`, declared in [`.claude-plugin/marketplace.json`](https://github.com/Esposter/Esposter/blob/main/.claude-plugin/marketplace.json). Anyone adds it by the repository's GitHub name and installs a plugin by its marketplace name:
+
+```bash
+claude plugin marketplace add Esposter/Esposter
+claude plugin install genshin-persona@esposter
+```
+
+| Plugin                                                                                       | What it does                                                                                                                                                |
+| :------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) | Speaks as the Genshin Impact character whose birthday is nearest to today, in prose only, and reads each reply's first sentence aloud through Azure Speech. |
+
+A plugin here is an ordinary workspace package, so it is formatted, linted, tested and dependency-bumped with everything else, and a merge to `main` is its release: an installed copy follows the marketplace on the next plugin update. How that is built, and what it deliberately does not do, is on the [Claude interface](https://esposter.com/docs/infra/claude-interface) page.
 
 ## <a name="community">🤝 Community</a>
 

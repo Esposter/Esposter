@@ -46,7 +46,17 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `skills/genshin/SKILL.md`        | `/genshin-persona:genshin` — the roster, today's pick, pin and unpin, mute and unmute.                                  |
 | `skills/genshin-author/SKILL.md` | How a character's voice card is written, and the command listing the characters that have none yet.                     |
 | `cards/`                         | Authored voice cards, one per character that has earned one, in our words about how the character speaks.               |
-| `scripts/`                       | The hook entrypoints and the skill's command, TypeScript run directly by node.                                          |
+| `scripts/`                       | The hook entrypoints, the skill's command and the status-line script, TypeScript run directly by node.                  |
+
+### Status line
+
+A plugin cannot set a status line, so the one-line setting lives in your user settings and points at the plugin's script, which prints the session's character from the state files alone:
+
+```json
+{
+  "statusLine": { "type": "command", "command": "node \"<plugin root>/scripts/status.ts\"" }
+}
+```
 
 ### How the character is picked
 

@@ -18,14 +18,16 @@ flowchart LR
     Marketplace[".claude-plugin/marketplace.json<br/>the repository as a marketplace"]
     Plugin["packages/genshin-persona<br/>manifest, hooks, style, skills, cards"]
     Data["genshin-db<br/>every playable character, MIT"]
+    Main["main<br/>the collector's merge is the release"]
     Remote["A stranger's plugin cache<br/>copied, then npm ci from the lockfile"]
-    Local["This machine's plugin cache<br/>copied from the checkout"]
+    Local["This machine<br/>loaded in place from the checkout"]
     Renovate[Renovate]
 
     Marketplace --> Plugin
     Plugin -->|dependencies| Data
     Renovate -->|bumps both lockfiles| Plugin
-    Plugin -->|claude plugin install| Remote
+    Plugin -->|ai/queue → develop → main| Main
+    Main -->|claude plugin install, then update| Remote
     Plugin -->|local marketplace| Local
 ```
 
@@ -34,7 +36,7 @@ Two consequences shape the package, both forced by the remote install running a 
 - **The dependency is a plain semver range, not a catalog entry.** npm cannot read the workspace catalog protocol, so this is the one manifest in the repository whose dependency states its own range; Renovate moves it, and the npm lockfile beside it, exactly as it moves everything else.
 - **The package declares no devDependencies.** A `workspace:` range would fail the same `npm ci`, so its tooling — Vitest, TypeScript, the shared configuration — resolves from the repository root's own installs, which is where node's lookup lands after the package's empty `node_modules`. Two lockfiles describe one dependency: the workspace lockfile serves the install here, the npm lockfile every cached install elsewhere, and neither is edited by hand.
 
-On this machine the checkout is added as a local marketplace and the plugin installed from it. The CLI copies a plugin into its cache from a directory marketplace as it does from a git-hosted one, keyed by the checkout's commit, so a pull that changes the plugin is picked up by `claude plugin update genshin-persona@esposter` rather than by the next session.
+On this machine the checkout is added as a local marketplace and the plugin installed from it. A plugin whose source is a relative path inside a directory marketplace is **loaded in place**: the CLI records a cache entry keyed by the checkout's commit, but reads the files from the checkout, so a pull that changes the plugin takes effect at the next session start with no step to repeat. Elsewhere the release is a merge to `main`, which the [review collector](/docs/infra/review-collector) performs; an installed copy follows the marketplace on the tool's next plugin update.
 
 ## Installable by anyone
 
@@ -116,6 +118,7 @@ The plugin's authoring skill keeps the hand-written half honest: the card shape 
 | `packages/genshin-persona/output-styles/traveler.md`               | The standing voice rules, forced on while the plugin is enabled                           |
 | `packages/genshin-persona/scripts/pick.ts`                         | The session-start entrypoint: resolve the character, print the card, never fail           |
 | `packages/genshin-persona/scripts/genshin.ts`                      | The skill's command: roster, today, pin, unpin, mute, unmute, and the uncarded queue      |
+| `packages/genshin-persona/scripts/status.ts`                       | The status line: the pin or the session's recorded name, from the state files alone       |
 | `packages/genshin-persona/src/services/pickCharacter.ts`           | The nearest-birthday pick and its two tie-breaks                                          |
 | `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | Pin, then the session's record, then today's pick                                         |
 | `packages/genshin-persona/skills/genshin/SKILL.md`                 | The user-facing verbs                                                                     |
@@ -125,4 +128,4 @@ The plugin's authoring skill keeps the hand-written half honest: the card shape 
 ## Notes
 
 - Markdown files, a few scripts of a few dozen lines, and one Renovate-owned dependency in a workspace that already has hundreds; that is the whole maintenance surface.
-- The status line could show the current name by reading the same per-session record, as a status-line script of a few lines in user settings; none is configured, and a plugin cannot ship one.
+- The status line shows the current name by reading the same per-session record and the pin, never the game data, so it stays cheap to redraw. A plugin cannot ship a status line, so the setting lives in user settings and points at the plugin's own script.
