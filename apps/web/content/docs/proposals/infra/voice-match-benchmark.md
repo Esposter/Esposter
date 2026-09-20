@@ -1,6 +1,6 @@
 ---
 title: Voice match benchmark
-description: Proposal — score every Azure voice against a character's own performance with the speech field's standard similarity metrics, so the per-character voice table is measured rather than judged.
+description: Proposal — score every Azure voice against a character's own Japanese performance with the speech field's standard similarity metrics, so the per-character voice table is measured rather than judged. Reading the game's audio is solved; naming whose voice a clip is, is the open part.
 ---
 
 # Voice Match Benchmark
@@ -37,11 +37,57 @@ The consequences are design constraints, not caveats to note and ignore:
 | Rank on the composite, never on the embedding score alone    | Rhythm is invisible to the embedding                    |
 | Validate the whole metric against the ear before applying it | Below — this is the step that makes the rest legitimate |
 
+## Reading the reference audio — solved
+
+Stage 0 was written as the gate the rest waited on. It is not a gate: the track decodes with two npm packages and
+no external binary, and the facts below are measured rather than expected.
+
+The Japanese voice track ships as standard Audiokinetic packages — an `AKPK` header, one external lookup table of
+64-bit ids, and the clips at block offsets inside the same file. Nothing is encrypted or obfuscated. There are on
+the order of a hundred and seventy packages holding tens of gigabytes, each with several hundred to a couple of
+thousand clips, and the clips are single-channel Wwise Vorbis at 48 kHz.
+
+```mermaid
+flowchart LR
+    Package["AKPK package<br/>externals table, 64-bit ids"]
+    Clip["Wwise Vorbis clip<br/>headers stripped"]
+    Ogg["Ogg Vorbis<br/>ww2ogg-ts"]
+    Pcm["PCM<br/>ogg-vorbis wasm"]
+
+    Package -->|"offset and size"| Clip
+    Clip -->|"rebuild headers"| Ogg
+    Ogg -->|"decode"| Pcm
+```
+
+**The codebook variant is `aoTuV_603`, and choosing wrong fails silently.** Wwise strips the Vorbis codebooks and
+expects the player to supply them. The `standard` set — the library's own default — produces an Ogg stream that
+throws no error, decodes to zero samples and reports its failures only in a count nobody reads. There is no
+exception to catch, so the variant is not a preference to tune but a constant to assert.
+
+**The chain was checked against a reference decoder rather than by ear**, since an agent has no ear to check it
+with: the same clip through vgmstream and through the npm chain agree to 76.3 dB, which is the 16-bit
+quantisation floor of the comparison and nothing else. That measurement is the reason to trust the decoder, and
+re-running it is how anyone revalidates the chain after a dependency bump.
+
+**Sampling is by voiced duration, never by byte size.** Taking the longest clips in a package selects story
+dialogue and excludes the short combat and menu lines, which is the opposite of a representative sample.
+
+## Japanese only — a rule, not a preference
+
+**No other language track enters this pipeline at any stage**, including as a labelling convenience. Each
+localisation is a different voice actor, so English audio is not weaker evidence about a character's voice — it is
+evidence about a different person's, and mixing it in corrupts the reference rather than diluting it.
+
+The shortcut it would have bought is dead anyway, which is worth recording so nobody re-derives it: the language
+tracks share no clip ids at all (none of 862 in the package checked), because the ids are per-language hashes, and
+their entry order correlates at about zero because packages are ordered by hash. There is no index alignment
+between tracks and no id join. The rule costs nothing.
+
 ## The pipeline
 
 ```mermaid
 flowchart TD
-    Extract["Stage 0 — reference clips<br/>Wwise unpack, blocked"]
+    Extract["Stage 0 — reference clips<br/>decoded, solved"]
     Profile["Stage 1 — reference profile<br/>embedding, log-F0, spread, rate"]
     Bank["Stage 2 — candidate bank<br/>one synthesis per voice, reused for the whole roster"]
     Solve["Stage 3 — pitch and rate solved from the ratio of medians<br/>no search"]
@@ -66,6 +112,45 @@ flowchart TD
 
 **Which voices are candidates** is the "every language?" question, and the answer is split. Search for timbre over the whole catalogue, because speaker embeddings are largely language-independent; but the eligible pool is the English voices together with the multilingual ones, since a Japanese-locale voice reading English is unintelligible while a multilingual voice carries non-English voice talent that does speak English properly. Do not trust the naming to enforce that — **gate on measured intelligibility**, transcribing each candidate's carrier synthesis with an ASR model and rejecting on word error rate. That single gate covers every locale the catalogue may add later.
 
+## Whose voice is this? — the part that is actually hard
+
+Scoring is text-independent, so the words in a reference clip never matter. **Which character a clip belongs to
+does**, and the packages do not say. Three routes were tried and two are dead:
+
+| Route                                                                | Verdict                                                                       |
+| :------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| One package is one character                                         | Unsupported — the sampled packages read as scene audio, not a character's set |
+| Label a clip by matching its transcript to the game data's own lines | Too rare to label with, but strong enough to name with                        |
+| Carry labels across from another language track                      | Dead, and banned above                                                        |
+
+The middle row is the useful finding. The game data carries thousands of Japanese voice-over lines across nearly a
+hundred characters, and transcribing a clip and matching it against them **almost always fails**: across eight
+sampled packages, seven produced nothing above chance and one produced a clear, unmistakable hit. A match is real
+when it happens and it happens about once in a dozen clips.
+
+That rules the corpus out as a per-clip labeller and rules it _in_ as something better, because of what the
+embedding already gives for free:
+
+```mermaid
+flowchart TD
+    Clips["Sampled clips<br/>no labels"]
+    Embed["Embed every clip"]
+    Cluster["Cluster by voice<br/>one cluster is one speaker"]
+    Name["Transcribe a few per cluster<br/>until one line matches"]
+    Labelled["A named reference set<br/>per character"]
+    Unnamed["Unnamed cluster<br/>parked, not guessed"]
+
+    Clips --> Embed --> Cluster --> Name
+    Name -->|"a confident match"| Labelled
+    Name -->|"nothing matches"| Unnamed
+```
+
+**Cluster first, then name.** A cluster needs one confident match, not one per clip, so a hit rate of one in a
+dozen is ample rather than fatal. It also holds whatever the packages turn out to be: the clustering never assumes
+a package is a character, so the question that blocked the other two routes stops mattering. A cluster nothing
+matches is parked rather than guessed at — an unnamed voice costs one character's tuning, a misnamed one silently
+writes the wrong voice into a card.
+
 ## What it costs
 
 Stage 2 is a hundred-odd voices against a carrier sentence: tens of thousands of characters, once, ever. Stage 5 is the only per-character synthesis — the roster against its chosen voice's declared styles — on the order of a hundred thousand characters. Both sit inside the monthly allowance the [spoken replies](/docs/infra/claude-interface/spoken-replies) account already has, which is the whole reason this is worth running rather than admiring.
@@ -83,19 +168,33 @@ A naive grid search is what this design exists to avoid: every voice against eve
 
 Non-optional, and standard practice: a metric is only worth its ranking if the ranking agrees with a person. Take a sample of characters, synthesize the top three candidates for each, rank them by ear, and compute the rank correlation against the composite score. Agreement is the licence to apply the benchmark to the rest of the roster. Disagreement means the weights are wrong — and the weights are then tuned **on that sample only**, never on the whole roster, which would be fitting the metric to its own output.
 
-## What this needs that the repo does not have
+## The toolchain, and where it lives
 
-A Python environment with a speaker encoder, an F0 analyser, and an ASR model for the gate, plus the Wwise extractor stage 0 waits on. **None of it becomes a dependency of this repository.** It is an offline one-shot whose entire output is a file of card lines, run on one machine by one person; the extracted audio is never committed, which is the same rule the [character voice](/docs/infra/deferred/character-voice) stage rests on.
+**Node first, and everything proven so far is Node.** The package parsing and the decode are `ww2ogg-ts`
+(BSD-3-Clause, no runtime dependencies, codebooks embedded) and a WebAssembly Ogg Vorbis decoder — both npm, both
+pinned by a lockfile, both reproducible by anyone who clones the repo. The remaining stages have Node answers
+worth trying before anything else: transformers.js runs an ASR model in process, the ONNX runtime has a Node
+binding for a speaker encoder, and F0 is a published pure-JavaScript library or fifty lines of autocorrelation.
+
+A Python environment was started for these and abandoned. It is recorded only so the next session does not repeat
+it: it buys the better-known implementations and costs a second toolchain that nothing else here needs, and on
+Windows a virtual environment created under a deep temporary path fails to install at all on path length.
+
+**What is committed and what is not.** The package reader and the decoder belong in the repository's own tooling
+package, because they are the part that would otherwise be re-derived. The decoded clips never are — they are
+game audio, the published plugin states it carries none, and the rule holds for a cache exactly as it holds for a
+commit. The clips live outside the repository and only the numbers they produce come back in.
 
 ## Key files
 
 | File                                                             | Change                                             |
 | :--------------------------------------------------------------- | :------------------------------------------------- |
 | `packages/genshin-persona/src/cards/`                            | The `voice` field each run rewrites                |
+| `scripts/src/`                                                   | Where the package reader and decoder belong        |
 | `packages/genshin-persona/src/services/getSpeechVoiceFinding.ts` | Still the check that a written line is well-formed |
 
 ## Notes
 
 - The benchmark does not remove the ear from the loop; it changes what the ear is asked to do, from auditioning a hundred-odd voices per character to confirming three.
-- Stage 0 is shared with the deferred character-voice stage, and this proposal is the cheaper half of it: choosing a catalogue voice needs no inference engine, only the reference audio, so it opens on the extraction gate alone.
+- Stage 0 is shared with the deferred character-voice stage, and this proposal is the cheaper half of it: choosing a catalogue voice needs no inference engine, only the reference audio. That audio now decodes, so this proposal is no longer blocked on anything outside itself.
 - An agent can build and run every stage except two: the listening in the validation step, and the judgement of whether a degenerate spread is acceptable. Both are the person's.
