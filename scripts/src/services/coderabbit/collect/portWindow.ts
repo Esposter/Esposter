@@ -9,7 +9,7 @@ import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas"
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Build the window as a branch, one cherry-pick at a time, and measure after each from the tree that will be

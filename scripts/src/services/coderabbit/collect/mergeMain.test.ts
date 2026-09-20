@@ -7,7 +7,7 @@ import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";

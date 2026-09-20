@@ -4,8 +4,8 @@ import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 
 // What proves a reshaping, asked of the tree rather than of the session: the same final tree as the original —

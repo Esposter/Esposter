@@ -1,7 +1,7 @@
 import { REPAIRS_TRAILER, SESSION_ATTEMPT_CAP } from "#src/services/coderabbit/collect/constants";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { runGit } from "#src/services/shared/runGit";
 
 // How many repairs sit consecutively at `main`'s head: a repair that landed and left the branch red is an
 // Attempt the streak counts, or a red no repair can answer would be paid for afresh on every head it makes. The

@@ -1,5 +1,5 @@
 import { getPortedShas } from "#src/services/coderabbit/collect/getPortedShas";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 
 // Every original a copy on `upstream` names since the two histories parted: a commit `head` still carries can
 // Only have been ported after the last point it shared with `upstream`, so the walk stops there

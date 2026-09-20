@@ -1,5 +1,5 @@
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";

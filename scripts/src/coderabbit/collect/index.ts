@@ -3,9 +3,9 @@ import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths"
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";

@@ -7,7 +7,7 @@ import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit
 import { runDrainStep } from "#src/services/coderabbit/collect/runDrainStep";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { CODERABBIT_GRAPHQL_LOGIN, CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { describe, expect, test, vi } from "vitest";
 
 const { drainFindings, readUnresolvedThreads } = vi.hoisted(() => ({

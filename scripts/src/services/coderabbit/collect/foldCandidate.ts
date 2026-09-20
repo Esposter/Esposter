@@ -4,8 +4,8 @@ import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcom
 import { getWindowFileCount } from "#src/services/coderabbit/collect/getWindowFileCount";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { runGit } from "#src/services/shared/runGit";
 
 // Fold `main` into the candidate the port built and name the sha `develop` is pushed to. The fold is never
 // Undone for the cap: the window is counted on the pull request's own side of `main` (`getWindowFileCount`), so

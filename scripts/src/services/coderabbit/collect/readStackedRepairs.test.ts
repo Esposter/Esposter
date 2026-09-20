@@ -2,7 +2,7 @@ import { MAIN_BRANCH, REPAIRS_TRAILER, SESSION_ATTEMPT_CAP } from "#src/services
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { readStackedRepairs } from "#src/services/coderabbit/collect/readStackedRepairs";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { describe, expect, test } from "vitest";
 
 describe(readStackedRepairs, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {

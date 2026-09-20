@@ -28,8 +28,8 @@ import { reshapeQueue } from "#src/services/coderabbit/collect/reshapeQueue";
 import { resolveLockfileConflicts } from "#src/services/coderabbit/collect/resolveLockfileConflicts";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
 // One sequence rather than a pick per commit: a stop is resumed by `--continue`, and a copy the tree already

@@ -16,7 +16,7 @@ import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedSha
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";

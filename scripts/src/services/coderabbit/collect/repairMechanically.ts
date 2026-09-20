@@ -5,8 +5,8 @@ import { MAIN_BRANCH, REPAIR_REGENERATE_COMMANDS, REPAIRS_TRAILER } from "#src/s
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { runGit } from "#src/services/shared/runGit";
 
 // The repair a red `main` gets before a session is asked for one. Most of what lands on `main` unread is red for
 // A reason with a regenerator — the formatter over a file a fix left unformatted, a lint rule a bump enabled and

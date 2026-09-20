@@ -1,4 +1,4 @@
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 
 // `--verify --quiet` makes a missing ref an exit code rather than a message on stdout

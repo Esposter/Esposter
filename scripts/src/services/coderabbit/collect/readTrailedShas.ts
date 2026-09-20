@@ -1,7 +1,7 @@
 import { COMMIT_BODY_FORMAT } from "#src/services/coderabbit/collect/constants";
 import { getTrailerValues } from "#src/services/coderabbit/collect/getTrailerValues";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { FIELD_SEPARATOR, RECORD_SEPARATOR } from "#src/services/shared/constants";
+import { runGit } from "#src/services/shared/runGit";
 
 // Which of these commits carry the trailer — the claim of no review, the record of a repair — in one read. Every
 // Caller asks it of a whole set, and a read per commit is a git spawn per commit — most expensive exactly when

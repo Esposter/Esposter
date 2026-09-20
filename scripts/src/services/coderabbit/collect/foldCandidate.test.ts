@@ -4,7 +4,7 @@ import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

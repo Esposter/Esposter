@@ -1,7 +1,7 @@
 import type { checkIsSequencing as baseCheckIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import type { readUnmergedPaths as baseReadUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import type { rebuildLockfile as baseRebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
-import type { runGit as baseRunGit } from "#src/services/coderabbit/shared/runGit";
+import type { runGit as baseRunGit } from "#src/services/shared/runGit";
 
 import { resolveLockfileConflicts } from "#src/services/coderabbit/collect/resolveLockfileConflicts";
 import { LOCKFILE } from "#src/services/shared/constants";
@@ -26,7 +26,7 @@ vi.mock(import("#src/services/coderabbit/collect/rebuildLockfile"), () => ({
   rebuildLockfile: rebuildLockfile as unknown as typeof baseRebuildLockfile,
 }));
 
-vi.mock(import("#src/services/coderabbit/shared/runGit"), () => ({ runGit: runGit as unknown as typeof baseRunGit }));
+vi.mock(import("#src/services/shared/runGit"), () => ({ runGit: runGit as unknown as typeof baseRunGit }));
 
 describe(resolveLockfileConflicts, () => {
   const cwd = "cwd";

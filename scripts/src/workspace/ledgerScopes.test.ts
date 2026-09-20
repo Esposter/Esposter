@@ -8,8 +8,8 @@ import { describe, expect, test } from "vitest";
 // A git pathspec naming a directory means everything under it, so a plain path that exists resolves whatever
 // Sits inside it; one carrying no separator matches at any depth, which a glob only reads that way once it is
 // Prefixed. Neither is what a bare glob would do with it, hence the two steps rather than one pattern.
-const checkIsResolved = async (pathspec: string): Promise<boolean> => {
-  if (existsSync(resolve(REPOSITORY_ROOT, pathspec))) return true;
+const checkIsResolved = (pathspec: string): Promise<boolean> => {
+  if (existsSync(resolve(REPOSITORY_ROOT, pathspec))) return Promise.resolve(true);
 
   const pattern = pathspec.includes("/") ? pathspec : `**/${pathspec}`;
   return checkHasGlobMatch(pattern, REPOSITORY_ROOT);

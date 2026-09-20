@@ -7,7 +7,7 @@ import {
   REVIEW_FIXES_BRANCH,
 } from "#src/services/coderabbit/collect/constants";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Every ref the pass measures against, read once from the remote. A missing one is named: it is the copy of the

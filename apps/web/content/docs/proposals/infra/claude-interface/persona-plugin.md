@@ -70,7 +70,7 @@ The edge cases, each decided:
 
 The hook reads one JSON file and one state directory, no network, well under the timeout. The status line shows the current name by reading the same per-session record — a status-line script of a few lines in user settings, since none is configured today and a plugin cannot ship one.
 
-**Why a hook picks and not the model.** A skill the model chooses from would spend a decision every session on a question with a fixed answer. That is the [typed decisions](/docs/infra/typed-decisions) rule applied to the terminal: nothing the code can answer is asked of a model, and a nearest-birthday lookup is code.
+**Why a hook picks and not the model.** A skill the model chooses from would spend a decision every session on a question with a fixed answer. That is the [typed decisions](/docs/infra/typed-decisions) rule applied to the terminal, and a nearest-birthday lookup is code.
 
 ## The card is small, and authored last
 
@@ -80,7 +80,7 @@ The authoring skill is what keeps the hand-written half honest. It states the ca
 
 ## Caveman is removed
 
-The plugin is uninstalled and its marketplace entry removed, not just disabled. Nothing of it is carried over: if terseness is wanted, it is one line in the output style, and the reason there is no second plugin pulling on the voice is in the [not-taken list](/docs/proposals/infra/claude-interface#not-taken).
+The plugin is uninstalled and its marketplace entry removed, not just disabled. Nothing of it is carried over: where terseness goes instead, and why no second plugin pulls on the voice, are both in the [not-taken list](/docs/proposals/infra/claude-interface#not-taken).
 
 ## Maintenance
 

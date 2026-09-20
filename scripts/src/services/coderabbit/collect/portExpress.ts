@@ -4,7 +4,7 @@ import type { ExpressResult } from "#src/models/coderabbit/collect/ExpressResult
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 
 // The express lane's cut: a commit that claims it needs no review — the trailer the reshaper writes on the parts
 // It judged so, or a session on its own commit — goes straight to `main`, out of queue order, once the checks

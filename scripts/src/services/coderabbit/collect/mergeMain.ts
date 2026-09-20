@@ -23,7 +23,7 @@ import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmerged
 import { rebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
 // What landed on `main` unread — an express cut, a dependency bump — rides the window about to be pushed rather

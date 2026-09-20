@@ -1,8 +1,8 @@
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
 import { getCherryShas } from "#src/services/coderabbit/collect/getCherryShas";
 import { readPortedShas } from "#src/services/coderabbit/collect/readPortedShas";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { runGit } from "#src/services/shared/runGit";
 
 // What `head` still owes `upstream`: not on it by patch id, and not named as the original of a copy it carries —
 // Or of a copy `main` carries, since the express lane cuts a queue commit onto `main` while a window is still in

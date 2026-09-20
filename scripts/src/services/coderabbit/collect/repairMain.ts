@@ -29,8 +29,8 @@ import { repairMechanically } from "#src/services/coderabbit/collect/repairMecha
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A red `main` is the collector's: the release merges on the review alone, so what CI held — a lint rule a bump

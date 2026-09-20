@@ -26,8 +26,8 @@ import { readFindingSeverities } from "#src/services/coderabbit/collect/readFind
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";

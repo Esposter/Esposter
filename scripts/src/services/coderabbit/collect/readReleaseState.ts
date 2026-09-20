@@ -9,7 +9,7 @@ import { getMarkedBlock } from "#src/services/coderabbit/feedback/getMarkedBlock
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { readBotEntries } from "#src/services/coderabbit/shared/readBotEntries";
 import { readEntries } from "#src/services/coderabbit/shared/readEntries";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 
 // What the release pull request says, and the frontier it names: the last sha a stated range ends at — a review
 // Body's, or the walkthrough's recent-review block's, the only record of a review that found nothing — or the

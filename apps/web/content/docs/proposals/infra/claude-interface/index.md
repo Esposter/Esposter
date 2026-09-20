@@ -72,7 +72,7 @@ The shape that stays cheap is a **spectator**: the terminal keeps driving, and t
 - **Replacing the terminal with a home-built interface** over the Agent SDK: API billing on every turn and a rewrite every time the harness changes shape, against a terminal that costs nothing to keep. The whole plan is built to avoid this.
 - **Third-party graphical front-ends**: every one surveyed solves parallel sessions and diff review, which the desktop app now does, and none carries personality. They are a different answer to a different complaint.
 - **A caveman-style terseness plugin kept alongside**: two forces on the voice at once is how a persona becomes a long prompt. If terseness is wanted, it is one line in the output style.
-- **A published voice plugin for stage 2**: the free ones reach the same Microsoft neural voices through an unofficial endpoint that has changed under them more than once, and each break is somebody else's fix to wait for. The supported API behind a free-tier resource we already know how to provision is the lower-maintenance path, and it is ours to fix in minutes when it is not.
+- **A published voice plugin for stage 2**: the free ones carry an unofficial dependency whose breaks are nobody's to fix here, which [spoken replies](/docs/proposals/infra/claude-interface/spoken-replies#why-azure-and-not-a-published-plugin) weighs in full. The supported API behind a free-tier resource we already know how to provision is the lower-maintenance path, and it is ours to fix in minutes when it is not.
 
 ## Notes
 

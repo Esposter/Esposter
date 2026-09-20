@@ -2,7 +2,7 @@ import { checkIsLockfileOnly } from "#src/services/coderabbit/collect/checkIsLoc
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { rebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { getResult, noop } from "@esposter/shared";
 
 // A replay of a queue onto a moved base stops on the lockfile once per commit that touched a manifest, and every

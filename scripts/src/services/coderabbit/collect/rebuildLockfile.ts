@@ -1,6 +1,6 @@
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { LOCKFILE } from "#src/services/shared/constants";
+import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { join } from "node:path";

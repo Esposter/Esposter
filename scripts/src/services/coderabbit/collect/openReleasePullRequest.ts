@@ -3,8 +3,8 @@ import type { OpenReleaseInput } from "#src/models/coderabbit/collect/OpenReleas
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { DEVELOP_BRANCH, MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { runGh } from "#src/services/shared/runGh";
+import { runGit } from "#src/services/shared/runGit";
 
 // Opened once `develop` carries anything a review has not read — the same readiness a push clears, since opening
 // Is the first review of `main..develop`. Idempotent by predicate: the cycle reaches here only when none is open.

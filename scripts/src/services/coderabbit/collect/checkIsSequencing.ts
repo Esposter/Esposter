@@ -1,5 +1,5 @@
 import { readSha } from "#src/services/coderabbit/collect/readSha";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 

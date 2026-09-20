@@ -1,5 +1,5 @@
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 
 // Every operation that leaves a head or a sequencer behind, in the order a collector step meets them: its own

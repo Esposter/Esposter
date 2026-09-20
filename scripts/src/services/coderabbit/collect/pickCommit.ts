@@ -1,6 +1,6 @@
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { getResult } from "@esposter/shared";
 
 // `-x` names the original in the copy's message, which is how a port survives its patch id drifting

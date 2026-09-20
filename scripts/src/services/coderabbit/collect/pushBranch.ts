@@ -2,7 +2,7 @@ import type { PushBranchInput } from "#src/models/coderabbit/collect/PushBranchI
 
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
 const readRemoteSha = (branch: string, cwd?: string): string | undefined => {

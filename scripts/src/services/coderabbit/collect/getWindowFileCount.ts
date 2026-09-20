@@ -1,6 +1,6 @@
 import { MAIN_BRANCH } from "#src/services/coderabbit/collect/constants";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { runGit } from "#src/services/shared/runGit";
 
 // The files the next review reads: changed since the frontier, and on the pull request's own side of `main`. A
 // Fold of `main` puts `main`'s files into the range from the frontier, but the bot's file cap is the pull

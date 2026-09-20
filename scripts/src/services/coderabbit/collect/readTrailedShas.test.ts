@@ -2,7 +2,7 @@ import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { describe, expect, test } from "vitest";
 
 describe(readTrailedShas, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {

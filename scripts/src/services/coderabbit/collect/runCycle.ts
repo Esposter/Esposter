@@ -34,7 +34,7 @@ import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane"
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
 import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One pass: read, reply, gate, drain, sync, port, push, reply. Every input is a remote fact and every write is either

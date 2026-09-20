@@ -16,6 +16,8 @@ import { describe, expect, test } from "vitest";
 const checkIsSideEffectsDeclaration = (sideEffects: unknown): boolean =>
   typeof sideEffects === "boolean" ||
   (Array.isArray(sideEffects) && sideEffects.every((entry) => typeof entry === "string"));
+const readSideEffects = (packagePath: string): unknown =>
+  readJsonFile(resolve(REPOSITORY_ROOT, packagePath, "package.json")).sideEffects;
 
 describe("sideEffects", () => {
   const PACKAGE_PATHS = readTsdownPackagePaths();
@@ -25,8 +27,6 @@ describe("sideEffects", () => {
   // Whose whole self is a side effect. A package with one such module names that module instead, which is what
   // Keeps a blanket `true` from being the easy answer for a package that is mostly tree-shakeable.
   const SIDE_EFFECTING_PACKAGE_PATH = "apps/functions";
-  const readSideEffects = (packagePath: string): unknown =>
-    readJsonFile(resolve(REPOSITORY_ROOT, packagePath, "package.json")).sideEffects;
 
   test("are declared by every package a bundler resolves", () => {
     expect.hasAssertions();

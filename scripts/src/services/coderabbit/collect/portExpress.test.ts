@@ -4,7 +4,7 @@ import { portExpress } from "#src/services/coderabbit/collect/portExpress";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readClaimedShas } from "#src/services/coderabbit/collect/readClaimedShas";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
-import { runGit } from "#src/services/coderabbit/shared/runGit";
+import { runGit } from "#src/services/shared/runGit";
 import { describe, expect, test } from "vitest";
 
 describe(portExpress, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
