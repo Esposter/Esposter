@@ -34,7 +34,6 @@ describe(getLorePickRequest, () => {
     signOff: "signOff",
     tips: ["tip"],
     verbs: ["verb"],
-    voice: { name: "" },
   };
   const carded: CardedCharacter = { character, personaCard };
   const uncarded: CardedCharacter = { character: { ...character, name: "uncarded" } };

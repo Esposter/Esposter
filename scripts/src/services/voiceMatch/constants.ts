@@ -1,14 +1,20 @@
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-// Everything the stages write — the reference profiles, the candidate bank, the downloaded models — sits outside the
-// Repository: the profiles are numbers read off game audio, and the rule that no clip is committed holds for a
-// Cache exactly as it holds for a commit. The audio itself is never written anywhere, cache included; a clip is
-// Decoded, measured and dropped
-export const WORK_DIRECTORY: string = process.env.VOICE_MATCH_DIRECTORY ?? join(tmpdir(), "esposter-voice-match");
-export const MODELS_DIRECTORY: string = join(WORK_DIRECTORY, "models");
-export const REFERENCE_PATH: string = join(WORK_DIRECTORY, "reference.json");
-export const BANK_PATH: string = join(WORK_DIRECTORY, "bank.json");
+// The two stages' outputs are generated artifacts and are committed as such (/docs/architecture/generated-artifacts),
+// One file per character and per voice: profiles that are numbers, read off audio that is never written anywhere —
+// A clip is decoded, measured and dropped, cache included, since the rule that no game audio enters the repository
+// Holds for a temporary folder exactly as for a commit
+const GENERATED_DIRECTORY = join(REPOSITORY_ROOT, "scripts", "src", "generated", "voiceMatch");
+export const REFERENCE_DIRECTORY: string = join(GENERATED_DIRECTORY, "reference");
+export const BANK_DIRECTORY: string = join(GENERATED_DIRECTORY, "bank");
+export const GENERATED_JSON_EXTENSION = ".json";
+// The encoder and the recogniser download once, outside the repository: a model is a dependency, not an output
+export const MODELS_DIRECTORY: string =
+  process.env.VOICE_MATCH_MODELS_DIRECTORY ?? join(tmpdir(), "esposter-voice-match", "models");
+// Four decimals hold a cosine to a ten-thousandth and keep a committed embedding a third of the size
+export const EMBEDDING_DECIMALS = 4;
 // Pretty-printed, so a run's numbers can be read and diffed by hand
 export const JSON_INDENT = 2;
 export const AKPK_MAGIC = "AKPK";
@@ -61,7 +67,12 @@ export const NOISE_PERCENTILE = 0.1;
 // A syllable nucleus is an energy peak with at least this much of a dip before it
 export const SYLLABLE_DIP_DB = 2;
 export const SEMITONES_PER_OCTAVE = 12;
+export const PERCENT = 100;
 export const MIN_CLIP_SECONDS = 1;
+// The embedding reads at most this much of a clip: a self-attention encoder's cost grows with the square of the
+// Length, so the story lines would be most of the run — and the field's warning is that duration alone moves the
+// Score, so every reference clip is held near the carrier's length rather than measured at its own
+export const MAX_EMBEDDED_SECONDS = 6;
 // A character with fewer usable clips than this is reported rather than profiled
 export const MIN_REFERENCE_CLIPS = 8;
 // Every candidate voice reads the same sentence at its own settings, once. Two sentences of the accent-elicitation

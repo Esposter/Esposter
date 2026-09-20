@@ -1,7 +1,7 @@
 import type { ClipProfile } from "#src/models/voiceMatch/ClipProfile";
 import type { VoiceProfile } from "#src/models/voiceMatch/VoiceProfile";
 
-import { MEDIAN, SEMITONES_PER_OCTAVE } from "#src/services/voiceMatch/constants";
+import { EMBEDDING_DECIMALS, MEDIAN, SEMITONES_PER_OCTAVE } from "#src/services/voiceMatch/constants";
 import { getPercentile } from "#src/services/voiceMatch/getPercentile";
 
 // One speaker from their clips. The embedding is the renormalised mean of the clips' unit vectors, which is what
@@ -21,7 +21,7 @@ export const getVoiceProfile = (clipProfiles: ClipProfile[]): VoiceProfile => {
   const syllables = clipProfiles.reduce((sum, { syllables: clipSyllables }) => sum + clipSyllables, 0);
   return {
     clipCount: clipProfiles.length,
-    embedding: embedding.map((value) => value / norm),
+    embedding: embedding.map((value) => Number((value / norm).toFixed(EMBEDDING_DECIMALS))),
     medianF0Hz: 2 ** getPercentile(logF0s, MEDIAN),
     pitchSpreadSemitones: Math.sqrt(logF0Variance) * SEMITONES_PER_OCTAVE,
     signalToNoiseDb: getPercentile(

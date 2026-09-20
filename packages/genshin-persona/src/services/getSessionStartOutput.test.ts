@@ -18,7 +18,6 @@ describe(getSessionStartOutput, () => {
     signOff,
     tips: ["tip"],
     verbs: ["verb"],
-    voice: { name: "" },
   };
 
   test("shows the person the nameplate, the note and the greeting, and hands the model the lore and the habits", () => {

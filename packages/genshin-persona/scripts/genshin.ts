@@ -22,6 +22,7 @@ import { getSpeechVoiceFinding } from "#src/services/getSpeechVoiceFinding";
 import { getSpinner } from "#src/services/getSpinner";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
 import { readCardedRoster } from "#src/services/readCardedRoster";
+import { readCharacterVoice } from "#src/services/readCharacterVoice";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
@@ -219,9 +220,13 @@ switch (verb) {
     }
 
     const cardedRoster = await readCardedRoster(roster);
-    const voicedCharacters = cardedRoster.flatMap(({ character, personaCard }) =>
-      personaCard ? [{ character, voice: personaCard.voice }] : [],
+    const characterVoices = await Promise.all(
+      cardedRoster.map(async ({ character, personaCard }) => ({
+        character,
+        voice: await readCharacterVoice(character.name, personaCard),
+      })),
     );
+    const voicedCharacters = characterVoices.flatMap(({ character, voice }) => (voice ? [{ character, voice }] : []));
     for (const { character, voice } of voicedCharacters) {
       const finding = getSpeechVoiceFinding(voice, definitions);
       if (finding) console.log(`${character.name} ${finding}`);

@@ -31,7 +31,7 @@ claude plugin install genshin-persona@esposter \
   --config speech_key=<key>
 ```
 
-The key is marked sensitive, so it lands in the credential store rather than a settings file. Each character's card names the voice that reads them, along with a style, a pitch and a rate; the voice option picks what reads the characters whose card names none, by its Azure short name, and defaults to an Australian English one.
+The key is marked sensitive, so it lands in the credential store rather than a settings file. Each character is read by the voice the repository's benchmark measured for them from their own performance — a generated module with a pitch and a rate — or by the one their card names where someone listened and chose; the voice option picks what reads the characters neither has reached, by its Azure short name, and defaults to an Australian English one.
 
 A TypeSafe key, given as an option, turns the pick over to lore. With a [TypeSafe](https://typesafe.ai) API key the session's character is chosen by one typed decision over the whole roster — weighing the date, a birthday near it, the season's festivals and anniversaries, and your moment: the weekday, the hour, the time zone and the locale — instead of by the nearest birthday alone. The key is sensitive too, and the variable the SDK itself reads, `TYPESAFE_API_KEY`, is honoured when the option is empty:
 
@@ -45,16 +45,17 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What it ships
 
-| Component                            | Role                                                                                                                                                                               |
-| :----------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hooks/hooks.json`                   | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply.                       |
-| `output-styles/traveler.md`          | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                                                 |
-| `skills/<verb>/SKILL.md`             | One slash command per verb — `/genshin-persona:today`, `roster`, `use`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.                 |
-| `skills/genshin/SKILL.md`            | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                             |
-| `skills/genshin-author/SKILL.md`     | How a persona card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                                           |
-| `src/personaCards/`                  | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, the voice that reads them, and their spinner verbs and tips for you. |
-| `src/services/baseSpinnerContent.ts` | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                                                   |
-| `scripts/`                           | The hook entrypoints, the commands' script and the status-line script, TypeScript run directly by node.                                                                            |
+| Component                            | Role                                                                                                                                                                                           |
+| :----------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hooks/hooks.json`                   | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply.                                   |
+| `output-styles/traveler.md`          | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                                                             |
+| `skills/<verb>/SKILL.md`             | One slash command per verb — `/genshin-persona:today`, `roster`, `use`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.                             |
+| `skills/genshin/SKILL.md`            | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                                         |
+| `skills/genshin-author/SKILL.md`     | How a persona card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                                                       |
+| `src/personaCards/`                  | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, their spinner verbs and tips for you, and the voice only where an ear chose one. |
+| `src/generated/personaVoices/`       | The measured voice per character, one generated module each, written by the repository's voice match benchmark and never by hand.                                                              |
+| `src/services/baseSpinnerContent.ts` | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                                                               |
+| `scripts/`                           | The hook entrypoints, the commands' script and the status-line script, TypeScript run directly by node.                                                                                        |
 
 ### Status line and spinner
 

@@ -12,5 +12,7 @@ export interface PersonaCard extends SpinnerContent {
   habits: string[];
   // The closing turn of phrase
   signOff: string;
-  voice: SpeechVoice;
+  // The ear's correction, and only that: a voice someone listened to and chose. The measured baseline for every
+  // Character is the generated `PersonaVoiceMap`, and a card names a voice only to overrule it
+  voice?: SpeechVoice;
 }

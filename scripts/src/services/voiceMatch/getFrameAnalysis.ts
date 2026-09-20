@@ -2,6 +2,7 @@ import type { FrameAnalysis } from "#src/models/voiceMatch/FrameAnalysis";
 import type { PcmClip } from "#src/models/voiceMatch/PcmClip";
 
 import { FRAME_SECONDS, HOP_SECONDS, MAX_F0_HZ, MIN_F0_HZ, VOICED_FLOOR_DB } from "#src/services/voiceMatch/constants";
+import { getFloorDb } from "#src/services/voiceMatch/getFloorDb";
 import { getPitchLag } from "#src/services/voiceMatch/getPitchLag";
 
 const DECIBELS_PER_DECADE = 10;
@@ -25,7 +26,7 @@ export const getFrameAnalysis = ({ sampleRate, samples }: PcmClip): FrameAnalysi
     energiesDb.push(DECIBELS_PER_DECADE * Math.log10(power / frameLength + SILENCE_POWER));
   }
 
-  const voicedFloorDb = Math.max(...energiesDb) - VOICED_FLOOR_DB;
+  const voicedFloorDb = getFloorDb(energiesDb, VOICED_FLOOR_DB);
   const f0sHz = frames.map((frame, index) => {
     const energyDb = energiesDb[index] ?? -Infinity;
     if (energyDb < voicedFloorDb) return 0;

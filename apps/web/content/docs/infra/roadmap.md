@@ -9,7 +9,7 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 ## Open
 
-- [ ] [Voice match benchmark](/docs/proposals/infra/voice-match-benchmark) — score every catalogue voice against a character's own performance, so the per-character voice table is measured rather than judged. Reading the game audio is solved; clustering the clips by speaker is the open part
+- [ ] [Voice match benchmark](/docs/infra/claude-interface/voice-match-benchmark) — the ear's half: rank the top three candidates by ear for a sample of characters, compute the rank correlation against the composite, tune the weights on that sample alone, then the style pass over the chosen voices. The tooling and the measured table are built
 
 ## Blocked (app-side migration off key-based auth first)
 

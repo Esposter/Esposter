@@ -1,21 +1,19 @@
-import type { CandidateVoice } from "#src/models/voiceMatch/CandidateVoice";
-
 import { createTranscriber } from "#src/services/voiceMatch/bank/createTranscriber";
 import { readCandidateVoice } from "#src/services/voiceMatch/bank/readCandidateVoice";
-import { BANK_PATH, JSON_INDENT, WORK_DIRECTORY } from "#src/services/voiceMatch/constants";
+import { BANK_DIRECTORY, PERCENT } from "#src/services/voiceMatch/constants";
 import { createSpeakerEmbedder } from "#src/services/voiceMatch/createSpeakerEmbedder";
+import { writeGeneratedJson } from "#src/services/voiceMatch/writeGeneratedJson";
 import {
   SPEECH_ENDPOINT_ENVIRONMENT_VARIABLE,
   SPEECH_KEY_ENVIRONMENT_VARIABLE,
 } from "@esposter/genshin-persona/src/services/constants.ts";
 import { readSpeechVoiceDefinitions } from "@esposter/genshin-persona/src/services/readSpeechVoiceDefinitions.ts";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync, writeFileSync } from "node:fs";
-
-const PERCENT = 100;
+import { rmSync } from "node:fs";
 
 // Stage 2 of the voice match benchmark: the whole catalogue reading one carrier sentence, measured once and reused
-// For every character. The endpoint and key are the plugin's own options, read from where a hook finds them
+// For every character, generated one file per voice. The endpoint and key are the plugin's own options, read from
+// Where a hook finds them
 const endpoint = process.env[SPEECH_ENDPOINT_ENVIRONMENT_VARIABLE] ?? "";
 const key = process.env[SPEECH_KEY_ENVIRONMENT_VARIABLE] ?? "";
 if (!endpoint || !key)
@@ -32,12 +30,10 @@ if (!definitions)
 console.info(`${definitions.length} voices listed`);
 const embed = await createSpeakerEmbedder();
 const transcribe = await createTranscriber();
-const candidates: CandidateVoice[] = [];
+// The folder is the run's whole output, so a voice the catalogue retired leaves no file behind
+rmSync(BANK_DIRECTORY, { force: true, recursive: true });
 const declined: string[] = [];
-mkdirSync(WORK_DIRECTORY, { recursive: true });
-// Emptied before the first voice is measured: a run every voice declines writes nothing below, and a bank left
-// From an earlier run would then be ranked as if this one had produced it
-writeFileSync(BANK_PATH, JSON.stringify(candidates, undefined, JSON_INDENT));
+let banked = 0;
 for (const definition of definitions) {
   const candidate = await readCandidateVoice(definition, endpoint, key, embed, transcribe);
   if (!candidate) {
@@ -45,15 +41,13 @@ for (const definition of definitions) {
     continue;
   }
 
-  candidates.push(candidate);
-  // Written as it goes: the run is the better part of an hour, and a voice the service times out on should not
-  // Cost the ones before it
-  writeFileSync(BANK_PATH, JSON.stringify(candidates, undefined, JSON_INDENT));
+  writeGeneratedJson(BANK_DIRECTORY, candidate.name, candidate);
+  banked += 1;
   const { medianF0Hz, pitchSpreadSemitones, syllablesPerSecond } = candidate.profile;
   console.info(
     `${candidate.name}: ${medianF0Hz.toFixed(0)} Hz ± ${pitchSpreadSemitones.toFixed(1)} st, ${syllablesPerSecond.toFixed(1)} syl/s, ${(candidate.wordErrorRate * PERCENT).toFixed(0)}% WER`,
   );
 }
 
-console.info(`${candidates.length} voices banked to ${BANK_PATH}`);
+console.info(`${banked} voices banked to ${BANK_DIRECTORY}`);
 if (declined.length > 0) console.info(`declined: ${declined.join(", ")}`);

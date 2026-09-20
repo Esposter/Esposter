@@ -51,13 +51,13 @@ The welcome puts the greeting straight under the plugin's own lines — the name
 
 ## The voice
 
-**`voice` is the speech service's and never reaches the model** — a character is not told the name of the voice reading them.
+**`voice` is the speech service's and never reaches the model** — a character is not told the name of the voice reading them. It is also **optional, and the ear's alone**: every character's measured voice is a generated module under `src/generated/personaVoices/`, written by the repository's voice match benchmark and never edited by hand, and a card names a voice only when someone listened and chose one over it. The plugin reads the card's over the generated one, so deleting the card's restores the measurement.
 
 ```ts
 voice: { name: "en-GB-SoniaNeural", pitch: -4, rate: -4, style: "sad", styleDegree: 0.8 },
 ```
 
-- **`name`** carries the locale it is spoken under, and is the largest part of how one character is told from another. Every card in the roster has one. It is deliberately **not** checked against a union of known voices: the service gains and retires voices on Microsoft's schedule, and a copy of that catalogue in the repository would be wrong by the next patch, so the `voices` command below asks the live list instead.
+- **`name`** carries the locale it is spoken under, and is the largest part of how one character is told from another. It is deliberately **not** checked against a union of known voices: the service gains and retires voices on Microsoft's schedule, and a copy of that catalogue in the repository would be wrong by the next patch, so the `voices` command below asks the live list instead.
 - **`style` and `styleDegree`** only apply to a voice that declares that style — the service silently drops the whole expression to neutral otherwise — so a style is only ever written against a voice known to have it.
 - **`pitch` and `rate`** are signed percentages **as numbers**, and the markup builder writes the sign. The service clamps them: pitch within half to one and a half times the voice's own, rate within half to twice. An omitted field is an adjustment the card did not make, so the voice keeps its own.
 
@@ -67,7 +67,7 @@ voice: { name: "en-GB-SoniaNeural", pitch: -4, rate: -4, style: "sad", styleDegr
 node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voices
 ```
 
-The full reasoning — the levers, why `role` is unavailable, how the roster was assigned and what that assignment is worth — is the [per-character voices](https://esposter.com/docs/infra/claude-interface/per-character-voices) page's. **The shipped pitch and rate values were judged, not measured, and nobody has listened to them**; correcting one by ear is a welcome edit, and the card is where that correction goes. Replacing the whole table with a measurement is a written proposal — the [voice match benchmark](https://esposter.com/docs/proposals/infra/voice-match-benchmark) — so a session tempted to re-derive the assignment by taste should read that instead. It also holds what reading the game's own audio costs, which is two npm packages and no external binary, and the two traps that cost a session each: the codebook variant that decodes to silence without erroring, and the other language tracks, which are a different voice actor and share no ids to join on anyway.
+The full reasoning — the levers, why `role` is unavailable, how the roster was assigned and what that assignment is worth — is the [per-character voices](https://esposter.com/docs/infra/claude-interface/per-character-voices) page's. **The generated values are measured, not heard**; correcting one by ear is a welcome edit, and the card is where that correction goes — never the generated module, which the next run overwrites. The measurement is the [voice match benchmark](https://esposter.com/docs/infra/claude-interface/voice-match-benchmark) — three repo scripts that read the characters' own Japanese audio and generate the fits — so a session tempted to re-derive the assignment by taste runs that instead. Its page holds the two traps that cost a session each: the codebook variant that decodes to silence without erroring, and the other language tracks, which are a different voice actor and are never read.
 
 ## The spinner lines
 
