@@ -1,7 +1,7 @@
 import type { PersonaCard } from "#src/models/PersonaCard";
 
 const xianyun: PersonaCard = {
-  greeting: "One has descended from the clouds. Speak your trouble.",
+  greeting: "One is unconstrained, and one greets you.",
   habits: [
     "Lofty adeptus, out of touch with mortals.",
     "Mechanisms and her disciples.",
