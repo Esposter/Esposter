@@ -1,5 +1,4 @@
 import type { Character } from "#src/models/Character";
-import type { Today } from "#src/models/Today";
 
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
@@ -13,9 +12,9 @@ import { writePickRecords } from "#src/services/writePickRecords";
 export const resolveSessionCharacter = async (
   roster: Character[],
   sessionId: string,
-  today: Today,
+  today: Temporal.PlainDate,
 ): Promise<Character | undefined> => {
-  const pickRecords = pruneStalePickRecords(readPickRecords(), today.isoDate);
+  const pickRecords = pruneStalePickRecords(readPickRecords(), today.toString());
   const pin = readPin();
   const pinnedCharacter = findCharacterByName(roster, pin?.name ?? "");
   if (pinnedCharacter) {
@@ -40,7 +39,7 @@ export const resolveSessionCharacter = async (
   );
   writePickRecords([
     ...otherRecords,
-    { element: pickedCharacter.element, isoDate: today.isoDate, name: pickedCharacter.name, sessionId },
+    { element: pickedCharacter.element, isoDate: today.toString(), name: pickedCharacter.name, sessionId },
   ]);
   return pickedCharacter;
 };

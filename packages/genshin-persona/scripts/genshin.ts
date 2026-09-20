@@ -18,7 +18,6 @@ import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithou
 import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLine";
 import { getSpeechVoiceFinding } from "#src/services/getSpeechVoiceFinding";
 import { getSpinner } from "#src/services/getSpinner";
-import { getToday } from "#src/services/getToday";
 import { parseVoiceCard } from "#src/services/parseVoiceCard";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
 import { readPin } from "#src/services/readPin";
@@ -38,7 +37,7 @@ import { writeVolume } from "#src/services/writeVolume";
 const [verb, ...nameParts] = process.argv.slice(2);
 const name = nameParts.join(" ");
 const roster = readRoster();
-const today = getToday();
+const today = Temporal.Now.plainDateISO();
 const getRosterLine = (character: Character) =>
   [character.name, character.title, character.element, character.region, character.birthday, `v${character.version}`]
     .filter(Boolean)
@@ -46,7 +45,7 @@ const getRosterLine = (character: Character) =>
 const compareVersionsDescending = (a: Character, b: Character) =>
   b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name);
 const printCard = (character: Character) => {
-  const card = getCard(character, today.monthDay, readVoiceCard(character.name));
+  const card = getCard(character, today, readVoiceCard(character.name));
   console.log(formatCard(card));
 };
 // The pin, else a fresh pick: what a session starting now would be given, short of a record it already holds — and

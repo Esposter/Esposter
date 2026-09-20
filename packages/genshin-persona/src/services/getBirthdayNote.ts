@@ -1,8 +1,6 @@
-import type { MonthDay } from "#src/models/MonthDay";
-
-import { formatMonthDay } from "#src/services/formatMonthDay";
+import { DATE_LOCALE } from "#src/services/constants";
 import { getDaysUntil } from "#src/services/getDaysUntil";
-import { parseMonthDay } from "#src/services/parseMonthDay";
+import { parseBirthday } from "#src/services/parseBirthday";
 
 const getDistance = (daysAhead: number, daysBehind: number) => {
   if (daysAhead === 0) return "today";
@@ -11,12 +9,13 @@ const getDistance = (daysAhead: number, daysBehind: number) => {
 };
 
 // The plugin's aside, in brackets so it reads as a caption beside the character's own line: the date the person
-// May ask about, and the distance that says why this character was picked
-export const getBirthdayNote = (birthday: string, today: MonthDay): string => {
-  const birthdayMonthDay = parseMonthDay(birthday);
-  if (!birthdayMonthDay) return "";
+// may ask about, and the distance that says why this character was picked
+export const getBirthdayNote = (birthday: string, today: Temporal.PlainDate): string => {
+  const birthdayDate = parseBirthday(birthday);
+  if (!birthdayDate) return "";
 
-  const daysAhead = getDaysUntil(today, birthdayMonthDay);
-  const daysBehind = getDaysUntil(birthdayMonthDay, today);
-  return `[Birthday: ${formatMonthDay(birthdayMonthDay)}, ${getDistance(daysAhead, daysBehind)}]`;
+  const daysAhead = getDaysUntil(today, birthdayDate);
+  const daysBehind = getDaysUntil(birthdayDate, today);
+  const formattedDate = birthdayDate.toLocaleString(DATE_LOCALE, { day: "numeric", month: "long" });
+  return `[Birthday: ${formattedDate}, ${getDistance(daysAhead, daysBehind)}]`;
 };

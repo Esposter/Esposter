@@ -1,5 +1,4 @@
 import { formatNameplate } from "#src/services/formatNameplate";
-import { getToday } from "#src/services/getToday";
 import { parseHookInput } from "#src/services/parseHookInput";
 import { readPickRecords } from "#src/services/readPickRecords";
 import { readPin } from "#src/services/readPin";
@@ -11,12 +10,12 @@ import { registerFailureFallback } from "#src/services/registerFailureFallback";
 // Recording, so a fresh session's own record may not exist yet — the latest pick of the day stands in until it
 // Does, which is the right name under the birthday pick and the last one seen under the lore pick
 registerFailureFallback(() => {});
-const today = getToday();
+const today = Temporal.Now.plainDateISO();
 const input = await readStdin();
 const { session_id: sessionId = "" } = parseHookInput(input);
 const pickRecords = readPickRecords();
 const nameplate =
   readPin() ??
   pickRecords.find((record) => record.sessionId === sessionId) ??
-  pickRecords.findLast((record) => record.isoDate === today.isoDate);
+  pickRecords.findLast((record) => record.isoDate === today.toString());
 if (nameplate) console.log(formatNameplate(nameplate));

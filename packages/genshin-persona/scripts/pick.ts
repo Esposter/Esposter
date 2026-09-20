@@ -3,7 +3,6 @@ import { TRAVELER } from "#src/services/constants";
 import { getCard } from "#src/services/getCard";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
 import { getSpinner } from "#src/services/getSpinner";
-import { getToday } from "#src/services/getToday";
 import { parseHookInput } from "#src/services/parseHookInput";
 import { readRoster } from "#src/services/readRoster";
 import { readSpinnerContent } from "#src/services/readSpinnerContent";
@@ -15,15 +14,15 @@ import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
 import { writeSpinner } from "#src/services/writeSpinner";
 import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
 
-const today = getToday();
+const today = Temporal.Now.plainDateISO();
 registerFailureFallback(() => {
-  console.log(getSessionStartOutput(getCard(TRAVELER, today.monthDay, "")));
+  console.log(getSessionStartOutput(getCard(TRAVELER, today, "")));
 });
 const input = await readStdin();
 const { session_id: sessionId = "" } = parseHookInput(input);
 const roster = readRoster();
 const character = (await resolveSessionCharacter(roster, sessionId, today)) ?? TRAVELER;
-const card = getCard(character, today.monthDay, readVoiceCard(character.name));
+const card = getCard(character, today, readVoiceCard(character.name));
 writeStatusLauncher();
 // The spinner follows the character only where `setup` opted the settings in
 const settings = readUserSettings();

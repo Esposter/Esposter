@@ -1,13 +1,12 @@
 import type { Character } from "#src/models/Character";
 import type { Moment } from "#src/models/Moment";
-import type { Today } from "#src/models/Today";
 
-import { LORE_PICK_INSTRUCTIONS } from "#src/services/constants";
+import { LEAP_YEAR, LORE_PICK_INSTRUCTIONS } from "#src/services/constants";
 import { getLorePickRequest } from "#src/services/getLorePickRequest";
 import { describe, expect, test } from "vitest";
 
 describe(getLorePickRequest, () => {
-  const today: Today = { isoDate: "2000-09-20", monthDay: { day: 20, month: 9 } };
+  const today = Temporal.PlainDate.from({ day: 20, month: 9, year: LEAP_YEAR });
   const moment: Moment = { hour: 13, locale: "en-AU", timeZone: "Australia/Sydney", weekday: "Wednesday" };
   const described: Character = {
     birthday: "9/21",

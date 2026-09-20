@@ -38,5 +38,8 @@
   "dependencies": {
     "@typesafe-ai/sdk": "^0.6.0",
     "genshin-db": "^5.2.13"
+  },
+  "engines": {
+    "node": ">=26.0.0"
   }
 }

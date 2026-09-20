@@ -44,12 +44,8 @@ export const ElementColorMap: Record<string, string> = {
 // Between the fields of a pick record and of the pin
 export const STATE_FIELD_SEPARATOR = "\t";
 export const PICK_RETENTION_DAYS = 7;
-// Written out rather than totalled from a `Temporal.Duration`: the plugin runs under whatever node a stranger has,
-// And `Temporal` is a global only on the newest majors
-export const DAY_IN_MILLISECONDS = 86_400_000;
 // Every month and day is measured inside one leap year, so 29 February is a day like any other and the year wraps
 export const LEAP_YEAR = 2000;
-export const DAYS_IN_LEAP_YEAR = 366;
 export const DATE_LOCALE = "en-AU";
 export const TRAVELER: Character = {
   birthday: "",

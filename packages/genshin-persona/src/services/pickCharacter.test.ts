@@ -1,6 +1,5 @@
 import type { Character } from "#src/models/Character";
-import type { MonthDay } from "#src/models/MonthDay";
-
+import { LEAP_YEAR } from "#src/services/constants";
 import { pickCharacter } from "#src/services/pickCharacter";
 import { describe, expect, test } from "vitest";
 
@@ -15,7 +14,7 @@ const createCharacter = (birthday: string): Character => ({
 });
 
 describe(pickCharacter, () => {
-  const epoch: MonthDay = { day: 1, month: 1 };
+  const epoch = Temporal.PlainDate.from({ day: 1, month: 1, year: LEAP_YEAR });
 
   test("picks the nearest birthday by circular distance, so late December neighbours early January", () => {
     expect.hasAssertions();
@@ -60,7 +59,9 @@ describe(pickCharacter, () => {
 
     const roster = [createCharacter("2/29"), createCharacter("3/3")];
 
-    expect(pickCharacter(roster, { day: 1, month: 3 }, "")).toStrictEqual(createCharacter("2/29"));
+    expect(pickCharacter(roster, Temporal.PlainDate.from({ day: 1, month: 3, year: LEAP_YEAR }), "")).toStrictEqual(
+      createCharacter("2/29"),
+    );
   });
 
   test("never picks a character without a birthday, and picks nobody when none has one", () => {

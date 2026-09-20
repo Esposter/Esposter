@@ -1,6 +1,5 @@
 import type { Character } from "#src/models/Character";
 import type { Moment } from "#src/models/Moment";
-import type { Today } from "#src/models/Today";
 import type { ChoiceCriteria, ChoiceQuestion, SystemOneRequest } from "@typesafe-ai/sdk";
 
 import { LORE_PICK_INSTRUCTIONS } from "#src/services/constants";
@@ -12,7 +11,7 @@ import { choice } from "@typesafe-ai/sdk";
 // The person's moment
 export const getLorePickRequest = (
   roster: Character[],
-  today: Today,
+  today: Temporal.PlainDate,
   moment: Moment,
 ): SystemOneRequest<{ character: ChoiceQuestion }> => {
   const criteria: ChoiceCriteria = Object.fromEntries(
@@ -22,14 +21,14 @@ export const getLorePickRequest = (
     questions: { character: choice(LORE_PICK_INSTRUCTIONS, criteria) },
     state: {
       characters: roster.map(({ birthday, element, name, region, title, version }) => ({
-        birthday: getBirthdayNote(birthday, today.monthDay),
+        birthday: getBirthdayNote(birthday, today),
         element,
         name,
         region,
         title,
         version,
       })),
-      today: { date: today.isoDate, ...moment },
+      today: { date: today.toString(), ...moment },
     },
   };
 };

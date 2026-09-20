@@ -1,5 +1,4 @@
 import type { Character } from "#src/models/Character";
-import type { Today } from "#src/models/Today";
 
 import { LORE_PICK_TIMEOUT_MS } from "#src/services/constants";
 import { findCharacterByName } from "#src/services/findCharacterByName";
@@ -13,7 +12,7 @@ import { TypeSafeClient } from "@typesafe-ai/sdk";
 // A confidence floor guards an action, and nothing here acts
 export const pickCharacterByLore = async (
   roster: Character[],
-  today: Today,
+  today: Temporal.PlainDate,
   key: string,
 ): Promise<Character | undefined> => {
   const client = new TypeSafeClient({ apiKey: key, retry: { maxRetries: 0 }, timeout: LORE_PICK_TIMEOUT_MS });
