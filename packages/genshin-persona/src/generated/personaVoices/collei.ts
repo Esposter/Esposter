@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const collei: SpeechVoice = { name: "zh-CN-XiaoshuangNeural", pitch: 2, rate: 14 };
+const collei: SpeechVoice = { name: "en-US-AnaNeural", pitch: 10, rate: 31 };
 
 export default collei;

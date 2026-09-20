@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const tighnari: SpeechVoice = { name: "zh-CN-shaanxi-XiaoniNeural", pitch: -3, rate: 4 };
+const tighnari: SpeechVoice = { name: "en-US-DustinMultilingualNeural", pitch: 3, rate: 7 };
 
 export default tighnari;

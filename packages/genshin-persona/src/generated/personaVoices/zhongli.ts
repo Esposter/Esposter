@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const zhongli: SpeechVoice = { name: "es-CU-ManuelNeural", pitch: -5, rate: -3 };
+const zhongli: SpeechVoice = { name: "en-US-AdamMultilingualNeural", pitch: -8, rate: 9 };
 
 export default zhongli;

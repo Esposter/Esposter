@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const jean: SpeechVoice = { name: "es-NI-YolandaNeural", rate: 2 };
+const jean: SpeechVoice = { name: "en-US-AshleyNeural", pitch: -1, rate: -7 };
 
 export default jean;

@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const eula: SpeechVoice = { name: "ko-KR-SoonBokNeural", pitch: -2, rate: -7 };
+const eula: SpeechVoice = { name: "en-US-AriaNeural", pitch: 11, rate: -5 };
 
 export default eula;

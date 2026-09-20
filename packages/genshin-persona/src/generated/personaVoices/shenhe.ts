@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const shenhe: SpeechVoice = { name: "zh-CN-XiaoxiaoNeural", pitch: 2, rate: -3 };
+const shenhe: SpeechVoice = { name: "en-CA-ClaraNeural", pitch: -3, rate: -6 };
 
 export default shenhe;

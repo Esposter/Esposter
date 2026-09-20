@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const xinyan: SpeechVoice = { name: "zh-CN-XiaoyouNeural", pitch: 9, rate: 28 };
+const xinyan: SpeechVoice = { name: "en-US-AmberNeural", pitch: 17, rate: 17 };
 
 export default xinyan;

@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const chasca: SpeechVoice = { name: "en-NG-EzinneNeural", pitch: -1, rate: -1 };
+const chasca: SpeechVoice = { name: "en-US-EmmaMultilingualNeural", pitch: 1, rate: -10 };
 
 export default chasca;

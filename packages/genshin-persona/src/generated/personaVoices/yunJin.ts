@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const yunJin: SpeechVoice = { name: "zh-CN-XiaoyouNeural", pitch: 15, rate: 28 };
+const yunJin: SpeechVoice = { name: "en-US-AmberNeural", pitch: 4 };
 
 export default yunJin;

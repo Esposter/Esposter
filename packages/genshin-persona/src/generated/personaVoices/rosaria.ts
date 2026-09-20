@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const rosaria: SpeechVoice = { name: "zh-CN-XiaomoNeural", pitch: -4, rate: 2 };
+const rosaria: SpeechVoice = { name: "en-CA-ClaraNeural", pitch: -10, rate: -6 };
 
 export default rosaria;

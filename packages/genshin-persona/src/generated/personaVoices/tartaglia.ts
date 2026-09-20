@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const tartaglia: SpeechVoice = { name: "zh-CN-sichuan-YunxiNeural", rate: -9 };
+const tartaglia: SpeechVoice = { name: "en-US-DustinMultilingualNeural", pitch: 15, rate: -2 };
 
 export default tartaglia;

@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const kaeya: SpeechVoice = { name: "zh-CN-YunyangNeural", pitch: -3, rate: 3 };
+const kaeya: SpeechVoice = { name: "en-US-EchoTurboMultilingualNeural", pitch: 7, rate: 5 };
 
 export default kaeya;

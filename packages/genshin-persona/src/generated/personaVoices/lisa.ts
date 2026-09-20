@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const lisa: SpeechVoice = { name: "zh-CN-XiaoyouNeural", pitch: 2, rate: 10 };
+const lisa: SpeechVoice = { name: "en-US-AmandaMultilingualNeural", rate: -1 };
 
 export default lisa;

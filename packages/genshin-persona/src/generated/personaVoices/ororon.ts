@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const ororon: SpeechVoice = { name: "es-CU-ManuelNeural", pitch: 4, rate: -3 };
+const ororon: SpeechVoice = { name: "en-US-BrianMultilingualNeural", pitch: -2, rate: -1 };
 
 export default ororon;

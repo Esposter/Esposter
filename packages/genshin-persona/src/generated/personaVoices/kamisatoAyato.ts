@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const kamisatoAyato: SpeechVoice = { name: "km-KH-PisethNeural", pitch: -3, rate: -13 };
+const kamisatoAyato: SpeechVoice = { name: "en-US-ChristopherMultilingualNeural", pitch: 3, rate: -17 };
 
 export default kamisatoAyato;

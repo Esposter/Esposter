@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const sigewinne: SpeechVoice = { name: "ja-JP-NanamiNeural", pitch: 11, rate: -11 };
+const sigewinne: SpeechVoice = { name: "en-US-AnaNeural", pitch: 13, rate: 8 };
 
 export default sigewinne;

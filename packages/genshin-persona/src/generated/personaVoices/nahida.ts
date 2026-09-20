@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const nahida: SpeechVoice = { name: "zh-CN-XiaoshuangNeural", pitch: -2, rate: 19 };
+const nahida: SpeechVoice = { name: "en-US-AnaNeural", pitch: 10, rate: 16 };
 
 export default nahida;

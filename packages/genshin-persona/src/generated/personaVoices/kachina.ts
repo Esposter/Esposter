@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const kachina: SpeechVoice = { name: "ja-JP-AoiNeural", pitch: 14, rate: 3 };
+const kachina: SpeechVoice = { name: "en-US-AnaNeural", pitch: 29, rate: 15 };
 
 export default kachina;

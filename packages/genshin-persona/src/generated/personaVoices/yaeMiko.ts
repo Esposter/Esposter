@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const yaeMiko: SpeechVoice = { name: "zh-CN-XiaoxiaoNeural", pitch: 6, rate: -1 };
+const yaeMiko: SpeechVoice = { name: "en-US-AmberNeural", pitch: -7, rate: 4 };
 
 export default yaeMiko;

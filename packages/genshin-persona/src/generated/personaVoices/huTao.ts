@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const huTao: SpeechVoice = { name: "zh-CN-XiaoshuangNeural", pitch: 2, rate: 6 };
+const huTao: SpeechVoice = { name: "en-US-AnaNeural", pitch: 6, rate: 2 };
 
 export default huTao;

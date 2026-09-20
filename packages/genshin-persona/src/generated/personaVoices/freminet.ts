@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const freminet: SpeechVoice = { name: "hi-IN-AartiNeural", pitch: -1, rate: 1 };
+const freminet: SpeechVoice = { name: "en-US-BrandonNeural", pitch: -22, rate: -27 };
 
 export default freminet;

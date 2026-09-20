@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const beidou: SpeechVoice = { name: "ko-KR-SunHiNeural", pitch: -3, rate: -14 };
+const beidou: SpeechVoice = { name: "en-US-LunaNeural", pitch: -10 };
 
 export default beidou;

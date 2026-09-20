@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const ningguang: SpeechVoice = { name: "zh-CN-XiaoxiaoNeural", pitch: 2, rate: -14 };
+const ningguang: SpeechVoice = { name: "en-US-MonicaNeural", rate: 1 };
 
 export default ningguang;

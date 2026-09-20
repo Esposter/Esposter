@@ -1,5 +1,5 @@
 import type { SpeechVoice } from "#src/models/SpeechVoice";
 
-const clorinde: SpeechVoice = { name: "it-IT-IrmaNeural", pitch: 1 };
+const clorinde: SpeechVoice = { name: "en-IE-EmilyNeural" };
 
 export default clorinde;
