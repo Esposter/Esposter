@@ -17,6 +17,8 @@ export const TIPS_PATH: string = join(STATE_DIRECTORY, "tips.json");
 export const BASE_TIP_ID = "teyvat";
 export const CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "cards");
 export const CARD_EXTENSION = ".ts";
+// Between a card's habits where the lore pick reads them as one description of the character
+export const HABIT_SEPARATOR = " ";
 export const CARD_DETAIL_SEPARATOR = " · ";
 // What the model reads the headline under, and what the person reads it under
 export const CONTEXT_HEADLINE_PREFIX = "Persona: ";
@@ -83,4 +85,4 @@ export const TYPESAFE_KEY_FALLBACK_ENVIRONMENT_VARIABLE = "TYPESAFE_API_KEY";
 // The tier has the birthday pick to fall back on
 export const LORE_PICK_TIMEOUT_MS = 8000;
 export const LORE_PICK_INSTRUCTIONS =
-  "Which character should keep the person company in today's session? Weigh what the date means in the game: a birthday today or within a few days, a festival or event of a region in this season, a release or story anniversary, the patch that is live. Weigh the person's moment too: the weekday, the hour and the place. Every character is a fair pick; the choice is a preference, not a rule.";
+  "Which character should keep the person company in today's session? Each option is described by how that character talks and carries themselves. Weigh what the date means in the game: a birthday today or within a few days, a festival or event of a region in this season, a release or story anniversary, the patch that is live. Weigh the person's moment too: the weekday, the hour and the place. Every character is a fair pick; the choice is a preference, not a rule.";

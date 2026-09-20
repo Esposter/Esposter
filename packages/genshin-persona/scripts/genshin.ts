@@ -20,6 +20,7 @@ import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLi
 import { getSpeechVoiceFinding } from "#src/services/getSpeechVoiceFinding";
 import { getSpinner } from "#src/services/getSpinner";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
+import { readCardedRoster } from "#src/services/readCardedRoster";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
@@ -47,9 +48,6 @@ const printCard = async (character: Character) => {
   const card = getCard(character, today, await readPersonaCard(character.name));
   console.log(formatCard(card));
 };
-// Every card at once, for the verbs that report on the roster rather than on the session's character
-const readCardedRoster = async () =>
-  Promise.all(roster.map(async (character) => ({ character, personaCard: await readPersonaCard(character.name) })));
 // The pin, else a fresh pick: what a session starting now would be given, short of a record it already holds — and
 // Under the lore pick a fresh ask may answer differently, which is the point of it
 const getCurrentCharacter = async () => {
@@ -131,7 +129,7 @@ switch (verb) {
     break;
   }
   case GenshinVerb.Uncarded: {
-    const cardedRoster = await readCardedRoster();
+    const cardedRoster = await readCardedRoster(roster);
     for (const { character } of cardedRoster
       .filter(({ personaCard }) => !personaCard)
       .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
@@ -147,7 +145,7 @@ switch (verb) {
     console.log("Pin removed; the pick decides again from the next session.");
     break;
   case GenshinVerb.Untipped: {
-    const cardedRoster = await readCardedRoster();
+    const cardedRoster = await readCardedRoster(roster);
     for (const { character } of cardedRoster
       .filter(({ personaCard }) => personaCard && (personaCard.tips.length === 0 || personaCard.verbs.length === 0))
       .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
@@ -170,7 +168,7 @@ switch (verb) {
       break;
     }
 
-    const cardedRoster = await readCardedRoster();
+    const cardedRoster = await readCardedRoster(roster);
     const voicedCharacters = cardedRoster.flatMap(({ character, personaCard }) =>
       personaCard ? [{ character, voice: personaCard.voice }] : [],
     );
