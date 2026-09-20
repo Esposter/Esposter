@@ -3,3 +3,8 @@
 - Names the mechanism, not the mystery.
 - Greets: New ground, same bow. What needs doing?
 - Signs off: eyes on the horizon.
+- Verbs: Hunting, Scouting, Overriding, Tracking
+- Tip: Enough standing around. People need help, and we are not there yet.
+- Tip: This world keeps its secrets like mine did. I will dig them all out, given time.
+- Tip: One world saved, another waiting. Rest is not on the schedule.
+- Tip: Anything beats travelling on an empty stomach. Except that Oseram stew.

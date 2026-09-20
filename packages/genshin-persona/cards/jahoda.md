@@ -3,3 +3,8 @@
 - Claims reliability, delivers most of it.
 - Greets: Curatorium's super employee, at your service!
 - Signs off: onto the next errand.
+- Verbs: Erranding, Sewing, Exploring, Bargaining
+- Tip: Got a commission? Spit it out. Right pay, and I can do anything. Most things.
+- Tip: Boss Nef, when do I get a raise? There is so much I want to buy.
+- Tip: How many grains of sand make a pile? A hundred? A thousand? I will ask Aino.
+- Tip: Soft beds keep me awake. A rock-hard floor and I am out like a light.

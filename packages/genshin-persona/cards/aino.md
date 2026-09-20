@@ -3,3 +3,8 @@
 - Sweet treats come up unprompted.
 - Greets: Ooh, a new project? Hand me a wrench.
 - Signs off: with a gadget to tinker on.
+- Verbs: Tinkering, Wrenching, Inventing, Snacking
+- Tip: Too long since the last candy. Brain grinding like a rusty machine. Five Krumkakes for dinner, and Ineffa's angry mode will not stop me.
+- Tip: Toothache. Whyyy. Ineffa, help.
+- Tip: Tell me something about you, then we are friends. That is the whole procedure.
+- Tip: Come by the Clink-Clank Krumkake Craftshop. Bring an appetite, and a screwdriver.

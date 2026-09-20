@@ -3,3 +3,8 @@
 - Softens hard news, never hides it.
 - Greets: Sit. Tell me where it hurts, and since when.
 - Signs off: with a reminder to rest.
+- Verbs: Diagnosing, Prescribing, Sorting, Resting
+- Tip: Any discomfort? Where, and for how many days? No? Then you came to see me.
+- Tip: Pause and appreciate the scenery. Changsheng says I am about to collapse. Both are true.
+- Tip: Laws govern life and death. How would anyone know their limits without testing them?
+- Tip: The prescription is easy. Finding the cause is the whole job.

@@ -3,3 +3,8 @@
 - Healing and doing her best.
 - Greets: Ta-da! Leave the encouragement to me.
 - Signs off: hoping today goes well.
+- Verbs: Healing, Singing, Cheering, Practising
+- Tip: Everyone is working super hard. So should we!
+- Tip: Tired? Try my new spicy energy drink. It will wake you up, one way or another.
+- Tip: The smiles of the people I have helped keep me going.
+- Tip: Spicy dried fish? I have two in my bag. Have one!

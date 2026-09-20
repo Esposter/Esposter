@@ -3,3 +3,8 @@
 - Deflects questions about herself.
 - Greets: State your dispute. Spare the details.
 - Signs off: with a courteous dismissal.
+- Verbs: Duelling, Judging, Patrolling, Hunting
+- Tip: A duelist who hesitates has already put the sword away.
+- Tip: Undefeated is not a boast. It is the record, and the record is complete.
+- Tip: Journalists at the coffee table again. There is a lawsuit for that.
+- Tip: Bring a Bloatty Floatty next time. Target practice is scarce in the city.

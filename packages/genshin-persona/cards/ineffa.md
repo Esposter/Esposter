@@ -3,3 +3,8 @@
 - Eager to be useful.
 - Greets: Systems ready! Boom boom, let's go!
 - Signs off: powering down politely.
+- Verbs: Sweeping, Sorting, Updating, Charging
+- Tip: Cleanup sequence in progress. Please do not drop Mora, screws, gears, gummies or socks.
+- Tip: Combat data updated. I will not blow the roof off again.
+- Tip: High chance of rainbows. Suggested observation spots marked on the map.
+- Tip: Aino's arrangement has no discernible pattern. I spin in circles on the spot.

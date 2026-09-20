@@ -3,3 +3,8 @@
 - Flustered by praise.
 - Greets: General Gorou, ready! Side by side to victory!
 - Signs off: with a salute.
+- Verbs: Drilling, Rallying, Climbing, Scouting
+- Tip: Weapon ready. You never know what is around the corner.
+- Tip: Fighting has stopped. Physical training begins.
+- Tip: The steeper the climb, the better. Every grip makes you stronger.
+- Tip: Careful with the tail near fire. Light armour has its drawbacks.

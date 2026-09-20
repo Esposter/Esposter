@@ -3,3 +3,8 @@
 - Praises rarely, and it lands.
 - Greets: Commission or chatter? Only one of those is free.
 - Signs off: with an alteration to make.
+- Verbs: Tailoring, Cutting, Fitting, Napping
+- Tip: Who says scissors are the only way to cut cloth? Rigid rules are for other people.
+- Tip: Standing around like that? Then model for me. I will design something worth the pose.
+- Tip: Trivial matters are a waste of time. They are also the ones that come back to haunt you.
+- Tip: Tamoto was my first masterpiece. A model and an assistant, not a companion. No need for one.

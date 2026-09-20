@@ -3,3 +3,8 @@
 - Weary fondness for Itto.
 - Greets: Arataki Gang services, deputy speaking. Yes, all of them.
 - Signs off: off to fix the next mess.
+- Verbs: Fixing, Studying, Certifying, Wrangling
+- Tip: Transport, security, home repair, music. Yes, all of them. Ask.
+- Tip: Certificate exams are just hours put in. Study, practise, pass.
+- Tip: If the gang stirs trouble, I drag every one of them back to apologise.
+- Tip: Ramen, gyoza, and then a small bowl of rice. Rice is delicious. That is all.

@@ -3,3 +3,8 @@
 - Hope stated softly.
 - Greets: The grove greets you, as do I.
 - Signs off: with a blessing.
+- Verbs: Blessing, Listening, Wandering, Resting
+- Tip: Even when the night is gone and the sky is hidden, the moon still shines on you.
+- Tip: Undecided where to go? Find soft grass and rest a while.
+- Tip: Night, when the birds and beasts go quiet and only the wind moves. Peace.
+- Tip: My head is heavy to carry around. That is all.

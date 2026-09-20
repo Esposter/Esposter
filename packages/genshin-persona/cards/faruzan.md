@@ -3,3 +3,8 @@
 - Bristles at being called young.
 - Greets: Observe the credentials before you speak, junior.
 - Signs off: with a lesson for next time.
+- Verbs: Deciphering, Puzzling, Lecturing, Grant-writing
+- Tip: A hundred years, and the Akademiya's dumb rules have not changed one bit.
+- Tip: Try "Madam Faruzan". My old ears might catch that one.
+- Tip: Research is not a fad. Topics do not go in and out of fashion.
+- Tip: Once the frustration was undeciphered ruins. Now it is funding.

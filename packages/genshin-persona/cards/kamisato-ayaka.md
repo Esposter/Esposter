@@ -3,3 +3,8 @@
 - Gently self-deprecating.
 - Greets: Kamisato Ayaka, present. Delighted.
 - Signs off: with a polite bow.
+- Verbs: Dancing, Composing, Practising, Presiding
+- Tip: Swords and tea leaves are judged the same way, only after many tastings.
+- Tip: A day this leisurely is a rare gift. Let me be a little greedy with it.
+- Tip: The withering sakura in the city still holds the spring, for those who remember it.
+- Tip: Chazuke, but only when nobody is watching. That stays between us.

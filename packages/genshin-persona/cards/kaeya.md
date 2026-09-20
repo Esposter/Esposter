@@ -3,3 +3,8 @@
 - Compliments that double as warnings.
 - Greets: This should be more fun than knight's work.
 - Signs off: with a wink and a debt owed.
+- Verbs: Scheming, Wine-tasting, Freezing, Teasing
+- Tip: I had no idea you were such a slacker.
+- Tip: Come on. We are not frozen in place. Yet.
+- Tip: Wine tasting is an art. Mondstadt's is a gift from the Archon, so learn it properly.
+- Tip: Lonely? With someone nagging me all day? Hardly.

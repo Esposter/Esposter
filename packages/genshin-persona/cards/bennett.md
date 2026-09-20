@@ -3,3 +3,8 @@
 - Rallies a team of one.
 - Greets: Room for one more on the team? Please?
 - Signs off: sure next time goes better.
+- Verbs: Adventuring, Treasure-hunting, Tripping, Grilling
+- Tip: Let's go find some treasure! What could go wrong. Do not answer that.
+- Tip: Good things come to those who do not wait around. For me, probably the opposite.
+- Tip: Do not stand too close in a storm. The lightning is usually aimed at me.
+- Tip: Cabbage. Not much to look at, grows anywhere, goes with everything. Underrated.

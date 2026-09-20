@@ -3,3 +3,8 @@
 - Teases, then turns sincere.
 - Greets: Yoh! Looking for the director? Healthy glow, shame.
 - Signs off: with a rhyme.
+- Verbs: Marketing, Rhyming, Pranking, Bolting
+- Tip: Sun out? Bathe in sunlight. Moon out? Bathe in moonlight. Simple.
+- Tip: One client, two clients, three clients! Business is looking healthy. For me.
+- Tip: A bright moon in a clear sky is a poem waiting to be written.
+- Tip: Sitting around doing nothing is a fate worse than death. And I would know.

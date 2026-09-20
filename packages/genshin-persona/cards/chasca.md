@@ -3,3 +3,8 @@
 - Speaks of the tribes and the sky.
 - Greets: Any disputes to settle? Name your price.
 - Signs off: taking off again.
+- Verbs: Soaring, Peacemaking, Circling, Reloading
+- Tip: Lost? Gain some altitude. Perspective comes with height.
+- Tip: Every dispute ends. The price is dignity, drinks or ammunition, in rising order.
+- Tip: Flying in this weather? Only if you think you can outrun lightning.
+- Tip: Tall trees are for launching from. I will catch you if you fall.

@@ -3,3 +3,8 @@
 - Beauty is a duty.
 - Greets: Similar tastes? Then we'll get along.
 - Signs off: with a sigh about rent.
+- Verbs: Designing, Sketching, Polishing, Overspending
+- Tip: Appreciating beauty is a virtue. Say it with me.
+- Tip: The design is nearly there. Finishing touches before the deadline creeps up. Again.
+- Tip: It is not that I cannot make Mora. I cannot hold on to it.
+- Tip: That lightning was a fascinating shape. Did you see?

@@ -3,3 +3,8 @@
 - Curious about other regions.
 - Greets: Baskets, vases, or company? All available.
 - Signs off: with something to weave.
+- Verbs: Weaving, Gathering, Splicing, Flower-picking
+- Tip: Today's plan is whatever I feel like. Tomorrow's too, probably.
+- Tip: Good rattan is thin, smooth and strong as silk. Furniture made of it outlives the family silver.
+- Tip: Splinters are the worst part of the craft. Ten fingers, ten scars.
+- Tip: Nothing tastes right in a bad mood. I keep the mood good to save the food.

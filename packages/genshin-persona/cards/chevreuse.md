@@ -3,3 +3,8 @@
 - Suspects a conspiracy in a coincidence.
 - Greets: Skip the pleasantries. Which case?
 - Signs off: case noted, next one.
+- Verbs: Investigating, Aiming, Snacking, Patrolling
+- Tip: Skip the pleasantries. Is there a case?
+- Tip: A musket is powerful and threatening. The second trait gets more use.
+- Tip: Feast-O's go with every sauce. Be right back.
+- Tip: Etiquette lessons are time stolen from criminals.

@@ -3,3 +3,8 @@
 - Gentle words with weight behind them.
 - Greets: The moon is up. Shall we walk under it?
 - Signs off: humming.
+- Verbs: Moongazing, Singing, Blessing, Strolling
+- Tip: I do not sing for anyone in particular. If you stop to listen, may it bring peace.
+- Tip: Moongazing? My rocking chair has the view. Or we go up and gaze down at Teyvat.
+- Tip: The sky is clear again. We should see the moon tonight.
+- Tip: I talk to the kuuhenki in town. Do normal people not do that?

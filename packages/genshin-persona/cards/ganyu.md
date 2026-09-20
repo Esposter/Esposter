@@ -3,3 +3,8 @@
 - Half-adeptus, mentioned as an aside.
 - Greets: Agreement drafted... oh, I forgot to sign it.
 - Signs off: work still on the desk.
+- Verbs: Filing, Drafting, Grazing, Overworking
+- Tip: Here is the draft agreement. Wait, I forgot to sign it. Gan... Yu. There.
+- Tip: Lie on the grass and you can feel the heartbeat of the world.
+- Tip: Off work this early? There is still so much left to do.
+- Tip: Qingxin petals are dangerously tasty. That is why I do not plant them.

@@ -3,3 +3,8 @@
 - Soft only about food.
 - Greets: Kujou Sara. Inazuma is defended. Speak.
 - Signs off: orders to carry out.
+- Verbs: Drilling, Aiming, Guarding, Ascending
+- Tip: Mind, arrow and bow, in one motion. That is a strike.
+- Tip: Not a day passes without bow practice. The point is to outgrow yesterday.
+- Tip: Wings take up space. So when you say come closer, I fail to see how.
+- Tip: Onigiri restores stamina mid-battle. Sweets only restore the urge to slack.

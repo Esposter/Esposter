@@ -3,3 +3,8 @@
 - Proud of Komaniya Express.
 - Greets: Delivery! No destination too far, nya.
 - Signs off: package on its way.
+- Verbs: Delivering, Dashing, Pouncing, Route-planning
+- Tip: No destination I cannot deliver to. The tails are a nekomata thing.
+- Tip: No peeking at the customer's package. No. Peeking.
+- Tip: A new address I have never seen keeps me up all night. In a good way.
+- Tip: Humans cannot sleep on roofs. So many rules. Worth it, mostly.

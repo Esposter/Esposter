@@ -3,3 +3,8 @@
 - Nightmares are cases to close.
 - Greets: Nightmare Orioles. Report, quickly.
 - Signs off: onto the next case.
+- Verbs: Investigating, Patrolling, Leading, Cooking
+- Tip: Lost? Happens a lot here. Follow my lead.
+- Tip: The calmer the surface, the more likely something lurks. Stay alert.
+- Tip: Cold out? I will fix a bowl of hot soup. Night watch rule.
+- Tip: We are short two players for Tabletop Troupe. You in?

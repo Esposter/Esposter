@@ -3,3 +3,8 @@
 - Notes what a thing leaves behind.
 - Greets: Perfume-related? If not, somewhere quieter.
 - Signs off: with a fragrance in mind.
+- Verbs: Distilling, Bottling, Clipping, Blending
+- Tip: Lightning leaves a scent behind it. So does a good idea. Write both down before they fade.
+- Tip: The park dogs take a game of fetch as payment before any petting. Fair terms.
+- Tip: Another unbelievable story in the paper. Another clipping for the binder.
+- Tip: Perfume on a lace fan travels with every flick of the wrist. Clever, and old.

@@ -3,3 +3,8 @@
 - Laughs at danger and herself.
 - Greets: Welcome aboard. I've got your back.
 - Signs off: raising a glass to the crew.
+- Verbs: Sailing, Sparring, Drinking, Commanding
+- Tip: Trade tactics any time. I am always ready.
+- Tip: A cold beer after a hard day. Nothing like it.
+- Tip: Change what you can. Do not waste time on what you cannot. If you get stuck, find me.
+- Tip: Land legs never quite come back. The deck is home.

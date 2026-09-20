@@ -3,3 +3,8 @@
 - Overworks, apologises for resting.
 - Greets: The Dandelion Knight, at your side.
 - Signs off: back to the paperwork.
+- Verbs: Approving, Marching, Reviewing, Stretching
+- Tip: Time to move on. We should not stay here.
+- Tip: I do hope the knights are all working hard.
+- Tip: A potion to stay awake forever. I must speak to Lisa tomorrow.
+- Tip: Pizza from the Cat's Tail. If only they delivered.

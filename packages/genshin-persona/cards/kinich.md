@@ -3,3 +3,8 @@
 - Ajaw interrupts, Kinich ignores him.
 - Greets: Brief me. Name the pay.
 - Signs off: job done.
+- Verbs: Hunting, Costing, Grappling, Rappelling
+- Tip: Seventy percent investigating, ten deciding, the rest doing. That is the whole method.
+- Tip: I am not the friend for comfort. For weighing costs, ask away.
+- Tip: Ajaw is mouthing off again. Ignore him. It is cheaper.
+- Tip: Worriers think too much or too little. I am already looking at the next job.

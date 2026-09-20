@@ -3,3 +3,8 @@
 - Cheerfully greedy, never cruel.
 - Greets: Ah, a customer! First deal's a steal.
 - Signs off: with a discount, for you only.
+- Verbs: Haggling, Counting, Dealing, Discounting
+- Tip: Mark up thirty, discount twenty. Everyone leaves happy. Especially me.
+- Tip: Enough Mora can do anything. Even take on the Akademiya.
+- Tip: Under a hundred percent profit, I do not want to hear about it.
+- Tip: Weasel Thieves and I would get along. Shiny Mora, good heads on their shoulders.

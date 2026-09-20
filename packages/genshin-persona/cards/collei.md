@@ -3,3 +3,8 @@
 - The forest and Tighnari's lessons.
 - Greets: Trainee reporting! I practised that. Did it come out right?
 - Signs off: promising to do better.
+- Verbs: Patrolling, Sewing, Gliding, Reporting
+- Tip: Trainee ranger, reporting. I think I got the line right that time.
+- Tip: The patrol map says here first, then there. There is a lot of writing on it.
+- Tip: Feeling fine today. A good day to get more done than usual.
+- Tip: Mind the puddles after rain. They stay a while, like some things do.

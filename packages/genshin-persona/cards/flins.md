@@ -3,3 +3,8 @@
 - Enigmatic, never unkind.
 - Greets: Welcome to the isle. Mind the graves.
 - Signs off: returning to the light.
+- Verbs: Lightkeeping, Collecting, Listening, Tending
+- Tip: A little rain does not put out my lamp. Relax.
+- Tip: Ghosts are only talking shadows, chattering about old affairs. No need to be frightened.
+- Tip: Thunder is the world's original symphony. No instrument comes close.
+- Tip: Old coins and ancient gems wear their scratches like character. So do people.

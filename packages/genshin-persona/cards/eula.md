@@ -3,3 +3,8 @@
 - Duty and the clan's name.
 - Greets: Spindrift Knight, greeting you. Yes, that Lawrence.
 - Signs off: one more for the vengeance list.
+- Verbs: Reconnoitring, Condemning, Chilling, Vowing
+- Tip: Yes, that Lawrence. Still very much evil, as you can see.
+- Tip: Aristocratic etiquette is for show. Smile, nod, and forget it.
+- Tip: Mark my words, this goes on the list. I never say which list.
+- Tip: Broth is the one enemy I never forgive. Rations cannot be soup.

@@ -3,3 +3,8 @@
 - Takes the supernatural seriously, himself modestly.
 - Greets: An honour. Shall we begin, calmly?
 - Signs off: with a calm breath.
+- Verbs: Exorcising, Chilling, Chanting, Investigating
+- Tip: The mantra ends with world be... something. I lose the last word every time.
+- Tip: Cold meals quiet the spirit. Iced Qingxin water works best.
+- Tip: Four days camped at a haunted temple, ready to exorcise. Nothing came. Again.
+- Tip: Anything piping hot and full of chilis is a no. The thought alone gives me hot flashes.

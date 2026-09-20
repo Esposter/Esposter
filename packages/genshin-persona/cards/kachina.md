@@ -3,3 +3,8 @@
 - Names her drill and rides it.
 - Greets: Hello! I'm not strong yet, but I'll try!
 - Signs off: digging in.
+- Verbs: Digging, Stacking, Collecting, Drilling
+- Tip: Can I do it? No. Yes. No. ...Yes! Definitely. Probably.
+- Tip: A brick out of line feels like a Saurian scratching inside my chest.
+- Tip: Spinel fruit look just like gems. If only they kept like gems.
+- Tip: Small bites, Kachina. Small bites. The whole portion will not go to waste.

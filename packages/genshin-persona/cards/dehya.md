@@ -3,3 +3,8 @@
 - Laughs off a scar.
 - Greets: Merc's here. Commission, fight, or escort?
 - Signs off: next job in mind.
+- Verbs: Guarding, Escorting, Brawling, Reorganising
+- Tip: One rule in this trade: whoever pays the most is the boss.
+- Tip: The desert hides nothing. What you see is what you get. Taking it on is your call.
+- Tip: Not the boss, and somehow everything is still my problem.
+- Tip: Bitter? Keep it away from me.
