@@ -191,7 +191,7 @@ The spinner follows the character. Its content has two layers of the same shape:
 
 The status line has one more problem to solve: an install lands under a directory named after its version, so a setting pointing straight at the plugin's script breaks on every update. The setting points instead at a launcher in the plugin's state directory, one import line, and the hook re-aims that launcher at the running install whenever it differs. An update is followed on the next session, with nothing for the person to repeat.
 
-The line itself is the name in the element's colour, a 24-bit ANSI foreground the terminal paints, so a Pyro day reads red and an Electro day violet at a glance. It is redrawn on every assistant message and must stay cheap, so it never opens the game data, which costs the better part of a second to load: the state files carry the element beside the name, on each pick record and on the pin. The tool also runs it once when a session starts, in the same instant the hook is still writing that session's record, so the record it looks for may not be there yet. The latest pick of the day stands in — the same name under the birthday pick, the last one seen under the lore pick — so the line shows from the first frame on every start but the first of a day.
+The line itself is the name in the element's colour, a 24-bit ANSI foreground the terminal paints, so a Pyro day reads red and an Electro day violet at a glance. It is redrawn on every assistant message and must stay cheap, so it never opens the game data, which costs the better part of a second to load: the state files carry the element beside the name, on each pick record and on the pin. The tool also runs it once when a session starts, in the same instant the hook is still writing that session's record, so the record it looks for may not be there yet, and nothing redraws the line until the first message. What stands in is the hook's own order without the lore pick it cannot wait on: the pin, else the birthday pick over the roster cache, the plugin's own file beside the state. The line is therefore right from the first frame under the birthday pick, and under the lore pick shows the same name the hook falls back to until the tier's answer is recorded. It never stands in another session's record: a `use` is that session's alone.
 
 ```mermaid
 flowchart LR
@@ -214,7 +214,9 @@ flowchart LR
     Launcher -->|imports| Install
     Settings -->|runs the launcher| Line
     Hook -->|records the session's pick| Records
-    Records -->|the session's record, the pin, else the latest of today's| Line
+    Cache["State directory<br/>the roster cache"]
+    Records -->|the session's record, else the pin| Line
+    Cache -->|else the birthday pick| Line
     Settings -->|read once per process: the verbs, the tips and the label| Spinner
 ```
 
@@ -231,7 +233,8 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 | `packages/genshin-persona/output-styles/traveler.md`               | The standing voice rules, forced on while the plugin is enabled                                        |
 | `packages/genshin-persona/scripts/pick.ts`                         | The session-start entrypoint: resolve the character, print the card, never fail                        |
 | `packages/genshin-persona/scripts/genshin.ts`                      | The commands' script: roster, today, pin, unpin, mute, unmute, volume, setup, teardown, and the queues |
-| `packages/genshin-persona/scripts/status.ts`                       | The status line: the session's record, the pin, else the latest of today's, from the state files       |
+| `packages/genshin-persona/scripts/status.ts`                       | The status line: the state files and the roster cache read, the nameplate printed                      |
+| `packages/genshin-persona/src/services/getSessionNameplate.ts`     | The session's record, else the pin, else the birthday pick; never another session's record             |
 | `packages/genshin-persona/src/services/formatNameplate.ts`         | The name in its element's colour, plain where the element has none                                     |
 | `packages/genshin-persona/src/services/writeStatusLauncher.ts`     | The launcher the status line runs, re-aimed at the running install on every session start              |
 | `packages/genshin-persona/src/models/PersonaCard.ts`               | The card's shape, split by reader: habits for the model, verbs, tips and voice for the person          |
@@ -255,5 +258,5 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 
 - Markdown files, a few scripts of a few dozen lines, and Renovate-owned dependencies in a workspace that already has hundreds; that is the whole maintenance surface.
 - `mute` and `unmute` decide whether the Stop hook calls the speech service at all, and `volume` shapes the voice through the speech markup's own levels, from `silent` to `x-loud` or a number of its scale, at no change to the call.
-- The status line reads the pick records and the pin, never the game data, so it stays cheap to redraw; the element rides on those records so the colour costs no lookup.
+- The status line reads the pick records, the pin and the roster cache, never the game data, so it stays cheap to redraw; the element rides on those records so the colour costs no lookup.
 - `use` is the session-scoped switch and `pin` the global one; both take effect in the reply that runs them, and the spinner is the one surface that waits for the next session — read once per process, and one setting for every running session.

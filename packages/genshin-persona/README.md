@@ -65,7 +65,7 @@ node "<plugin root>/scripts/genshin.ts" setup      # or: /genshin-persona:setup
 node "<plugin root>/scripts/genshin.ts" teardown
 ```
 
-The status line prints the session's character in their element's colour, from the plugin's state files alone, and shows from the first frame of every session but the first of a day. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat.
+The status line prints the session's character in their element's colour, from the plugin's state files alone, and shows from the first frame of every session — the birthday pick stands in until the session's record is written, never another session's character. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat.
 
 The spinner replaces the built-in verbs and tips with Teyvat's — the base list in `baseSpinnerContent.ts` — and, behind them, the session's character's own verbs and tips from their card, labelled with the character's name. The session-start hook rewrites the two settings whenever the character changes, and so do `use`, `pin` and `unpin`; Claude Code reads the spinner keys once per process, so a rewrite shows from the next session. A status line that is not the plugin's is left alone.
 

@@ -13,5 +13,5 @@ export const pickCurrentCharacter = async (
 ): Promise<Character | undefined> => {
   const key = readTypeSafeKey();
   const loreCharacter = key ? await pickCharacterByLore(roster, today, key) : undefined;
-  return loreCharacter ?? pickCharacter(roster, today, today.toString());
+  return loreCharacter ?? pickCharacter(roster, today);
 };
