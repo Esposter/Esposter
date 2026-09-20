@@ -20,19 +20,20 @@ Every Azure resource Esposter runs is declared in `apps/infra`, which is the sou
 
 What each provider namespace under `src/azure/resources/` holds:
 
-| Namespace                  | Resources                                                                                                           |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `Microsoft.Resources`      | Dev and prod resource groups                                                                                        |
-| `Microsoft.Storage`        | Storage accounts (blobs, tables, queues)                                                                            |
-| `Microsoft.Web`            | Function Apps, Dynamic Y1 hosting plans, Logic App API connections                                                  |
-| `Microsoft.EventGrid`      | Topics and event subscriptions targeting the Azure Functions                                                        |
-| `Microsoft.ServiceBus`     | Namespaces and queues (scheduled-message jobs)                                                                      |
-| `Microsoft.SignalRService` | Web PubSub (`Free_F1`)                                                                                              |
-| `Microsoft.Search`         | Cognitive Search services (free SKU)                                                                                |
-| `Microsoft.Logic`          | The four guard-cycle workflows per environment (stop/start Function Apps, delete/recreate Event Grid subscriptions) |
-| `Microsoft.Consumption`    | The `$0.01` guard budgets                                                                                           |
-| `Microsoft.Insights`       | Budget-guard action groups (`*AgEsposter001` stop, `*AgEsposter003` delete)                                         |
-| `Microsoft.Authorization`  | Least-privilege role assignments for managed identities, and the subscription policy assignment                     |
+| Namespace                     | Resources                                                                                                              |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `Microsoft.Resources`         | Dev and prod resource groups                                                                                           |
+| `Microsoft.Storage`           | Storage accounts (blobs, tables, queues)                                                                               |
+| `Microsoft.Web`               | Function Apps, Dynamic Y1 hosting plans, Logic App API connections                                                     |
+| `Microsoft.EventGrid`         | Topics and event subscriptions targeting the Azure Functions                                                           |
+| `Microsoft.ServiceBus`        | Namespaces and queues (scheduled-message jobs)                                                                         |
+| `Microsoft.SignalRService`    | Web PubSub (`Free_F1`)                                                                                                 |
+| `Microsoft.Search`            | Cognitive Search services (free SKU)                                                                                   |
+| `Microsoft.CognitiveServices` | The one free-tier Speech account, prod only, serving the [spoken replies](/docs/infra/claude-interface/spoken-replies) |
+| `Microsoft.Logic`             | The four guard-cycle workflows per environment (stop/start Function Apps, delete/recreate Event Grid subscriptions)    |
+| `Microsoft.Consumption`       | The `$0.01` guard budgets                                                                                              |
+| `Microsoft.Insights`          | Budget-guard action groups (`*AgEsposter001` stop, `*AgEsposter003` delete)                                            |
+| `Microsoft.Authorization`     | Least-privilege role assignments for managed identities, and the subscription policy assignment                        |
 
 ## Key files
 
