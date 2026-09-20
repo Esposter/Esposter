@@ -13,5 +13,5 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 ## Blocked (app-side migration off key-based auth first)
 
-- [ ] [Burst animation](/docs/proposals/infra/burst-animation) — the session character's elemental burst played as half-block cells in a pane the start hook opens beside the welcome; the terminal surfaces are measured and the footage found, the per-character crop and one terminal's throughput are open
+- [ ] [Burst animation](/docs/proposals/infra/burst-animation) — the session character's elemental burst in a pane the start hook opens beside the welcome, gathered from the wiki's official teasers and pre-rendered once per machine at the best rung that terminal draws; the per-character label and one terminal's throughput are open
 - [ ] [Keyless auth hardening](/docs/proposals/infra/keyless-auth-hardening) — service-principal credentials in the app, then disable shared-key/local auth + network default-deny
