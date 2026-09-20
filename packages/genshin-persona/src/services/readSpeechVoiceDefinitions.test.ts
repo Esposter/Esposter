@@ -2,7 +2,7 @@ import { readSpeechVoiceDefinitions } from "#src/services/readSpeechVoiceDefinit
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const stubCatalogue = (body: unknown) => {
-  vi.stubGlobal("fetch", () => Promise.resolve(new Response(JSON.stringify(body))));
+  vi.stubGlobal("fetch", () => Promise.resolve(Response.json(body)));
 };
 
 describe(readSpeechVoiceDefinitions, () => {
