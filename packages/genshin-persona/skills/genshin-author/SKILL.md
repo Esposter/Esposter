@@ -26,6 +26,7 @@ One file per character at `cards/<slug>.md`, where the slug is the name lowercas
 - <speech habit>
 - Greets: <one line of hello, said by the character to the person>
 - Signs off: <the closing turn of phrase>
+- Voice: <the voice that reads them, and any adjustment to it>
 - Verbs: <two to four gerunds>
 - Tip: <a line said while the person waits>
 - Tip: <another>
@@ -36,6 +37,26 @@ One file per character at `cards/<slug>.md`, where the slug is the name lowercas
 **The greeting is the one line a card performs rather than describes.** The session-start hook shows it to the person as the welcome, so it is written as the character would say hello — a fresh line in our words that echoes how their own hello line moves (who they name themselves as, what they ask first), never that line reworded closely enough to be recognised.
 
 The welcome puts the greeting straight under the plugin's own lines — the nameplate and the bracketed birthday note — so the two kinds must not blur. The greeting is **speech, in the first person or addressed to the person at the keyboard, in the present**: "At your service" is a greeting, "Greets warmly" is a description, and "Clorinde is here" is a caption. It also holds nothing the character could not know from where they stand: no date, no birthday, no session or plugin. The birthday is the note's to say, and the character answers about it only when asked, so a greeting that mentions one is wrong on a birthday and wrong every other day.
+
+## The voice
+
+**The `Voice:` line is the speech service's and never reaches the model either** — a character is not told the name of the voice reading them. The voice name comes first, then any adjustment as `key=value` in any order, spelled the way the speech markup spells its own attributes:
+
+```markdown
+- Voice: en-GB-SoniaNeural style=sad styledegree=0.8 pitch=-4% rate=-4%
+```
+
+- **The voice name** carries the locale it is spoken under, and is the largest part of how one character is told from another. Every card in the roster has one; a card that omits the line falls back to the configured voice.
+- **`style` and `styledegree`** only apply to a voice that declares that style — the service silently drops the whole expression to neutral otherwise — so a style is only ever written against a voice known to have it.
+- **`pitch` and `rate`** are signed percentages, and the service clamps them: pitch within half to one and a half times the voice's own, rate within half to twice.
+
+**Both ways this line can be wrong are silent**, so a card that gains or changes one is checked:
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voices
+```
+
+The full reasoning — the levers, why `role` is unavailable, how the roster was assigned and what that assignment is worth — is the [per-character voices](https://esposter.com/docs/infra/claude-interface/per-character-voices) page's. **The shipped pitch and rate values were judged, not measured, and nobody has listened to them**; correcting one by ear is a welcome edit, and the card is where that correction goes.
 
 ## The spinner lines
 

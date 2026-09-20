@@ -7,7 +7,7 @@ description: How the terminal is given a personality and a voice without buildin
 
 The wish list was personality (a Genshin character rather than a terseness plugin, changing with the calendar), a spoken voice, and eventually a companion on the desktop. The constraint was maintenance: nothing that has to be re-implemented when the tool moves under it. The two pull against each other, and the survey below is where they met — **the terminal already exposes every hook the wish list needs, so what shipped is one plugin and one free Azure resource, with everything else behind a named gate.**
 
-The two built stages have their own pages: the [persona plugin](/docs/infra/claude-interface/persona-plugin) and [spoken replies](/docs/infra/claude-interface/spoken-replies). This page holds the decision, the survey it rests on, and where the gated stages wait.
+The two built stages have their own pages: the [persona plugin](/docs/infra/claude-interface/persona-plugin) and [spoken replies](/docs/infra/claude-interface/spoken-replies), with [per-character voices](/docs/infra/claude-interface/per-character-voices) covering how the second one tells the roster apart. This page holds the decision, the survey it rests on, and where the gated stages wait.
 
 ## What the terminal offers
 

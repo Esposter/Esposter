@@ -26,7 +26,7 @@
     "speech_voice": {
       "type": "string",
       "title": "Speech voice",
-      "description": "The neural voice that reads replies, by its Azure short name. Leave empty for the plugin's Australian English default."
+      "description": "The neural voice for characters whose card names none, by its Azure short name. A card that names its own voice keeps it. Leave empty for the plugin's Australian English default."
     },
     "typesafe_key": {
       "type": "string",

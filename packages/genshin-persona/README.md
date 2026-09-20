@@ -31,7 +31,7 @@ claude plugin install genshin-persona@esposter \
   --config speech_key=<key>
 ```
 
-The key is marked sensitive, so it lands in the credential store rather than a settings file. Another option, the voice, picks the neural voice by its Azure short name and defaults to an Australian English one.
+The key is marked sensitive, so it lands in the credential store rather than a settings file. Each character's card names the voice that reads them, along with a style, a pitch and a rate; the voice option picks what reads the characters whose card names none, by its Azure short name, and defaults to an Australian English one.
 
 A TypeSafe key, given as an option, turns the pick over to lore. With a [TypeSafe](https://typesafe.ai) API key the session's character is chosen by one typed decision over the whole roster — weighing the date, a birthday near it, the season's festivals and anniversaries, and your moment: the weekday, the hour, the time zone and the locale — instead of by the nearest birthday alone. The key is sensitive too, and the variable the SDK itself reads, `TYPESAFE_API_KEY`, is honoured when the option is empty:
 
@@ -45,16 +45,16 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What it ships
 
-| Component                        | Role                                                                                                                                                         |
-| :------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hooks/hooks.json`               | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply. |
-| `output-styles/traveler.md`      | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                           |
-| `skills/<verb>/SKILL.md`         | One slash command per verb — `/genshin-persona:today`, `roster`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.  |
-| `skills/genshin/SKILL.md`        | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                       |
-| `skills/genshin-author/SKILL.md` | How a voice card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                       |
-| `cards/`                         | Authored voice cards, one per character, in our words: how the character speaks for the model, and their spinner verbs and tips for you.                     |
-| `spinner.md`                     | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                             |
-| `scripts/`                       | The hook entrypoints, the commands' script and the status-line script, TypeScript run directly by node.                                                      |
+| Component                        | Role                                                                                                                                                                |
+| :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `hooks/hooks.json`               | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply.        |
+| `output-styles/traveler.md`      | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                                  |
+| `skills/<verb>/SKILL.md`         | One slash command per verb — `/genshin-persona:today`, `roster`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.         |
+| `skills/genshin/SKILL.md`        | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                              |
+| `skills/genshin-author/SKILL.md` | How a voice card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                              |
+| `cards/`                         | Authored voice cards, one per character, in our words: how the character speaks for the model, the voice that reads them, and their spinner verbs and tips for you. |
+| `spinner.md`                     | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                                    |
+| `scripts/`                       | The hook entrypoints, the commands' script and the status-line script, TypeScript run directly by node.                                                             |
 
 ### Status line and spinner
 

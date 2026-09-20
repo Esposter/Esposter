@@ -23,6 +23,9 @@ export const VERBS_PREFIX = "- Verbs: ";
 export const VERB_SEPARATOR = ", ";
 export const CARD_DETAIL_SEPARATOR = " · ";
 export const GREETING_PREFIX = "- Greets: ";
+export const VOICE_PREFIX = "- Voice: ";
+// Between a voice field's key and its value
+export const VOICE_FIELD_ASSIGNMENT = "=";
 // What the model reads the headline under, and what the person reads it under
 export const CONTEXT_HEADLINE_PREFIX = "Persona: ";
 export const NAMEPLATE_PREFIX = "✦ ";
@@ -68,10 +71,13 @@ export const SPEECH_ENDPOINT_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH
 export const SPEECH_KEY_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH_KEY";
 export const SPEECH_VOICE_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_SPEECH_VOICE";
 export const SPEECH_SYNTHESIS_PATH = "/cognitiveservices/v1";
+export const SPEECH_VOICES_PATH = "/cognitiveservices/voices/list";
 // The same ceiling on the synthesis: a sentence unspoken costs nothing, and the hook the speaking runs in is one
 // The reply's turn waits behind
 export const SPEECH_TIMEOUT_MS = 10_000;
 export const DEFAULT_SPEECH_VOICE = "en-AU-NatashaNeural";
+// The namespace the style element is drawn from, declared only on the markup that carries one
+export const MICROSOFT_SPEECH_NAMESPACE = "https://www.w3.org/2001/mstts";
 // A WAV the stock player of every desktop opens without a codec
 export const SPEECH_OUTPUT_FORMAT = "riff-24khz-16bit-mono-pcm";
 // The levels the speech markup's prosody names; a whole number of its 0 to 100 scale is the other spelling

@@ -1,6 +1,7 @@
 import type { SpeechRequest } from "#src/models/SpeechRequest";
 
 import { SPEECH_OUTPUT_FORMAT, SPEECH_SYNTHESIS_PATH, SPEECH_TIMEOUT_MS } from "#src/services/constants";
+import { getSpeechUrl } from "#src/services/getSpeechUrl";
 import { getSsml } from "#src/services/getSsml";
 
 // The audio for one utterance, or nothing once the service declines — which is what the free tier does when the
@@ -13,7 +14,7 @@ export const synthesizeSpeech = async ({
   voice,
   volume,
 }: SpeechRequest): Promise<Uint8Array | undefined> => {
-  const response = await fetch(`${endpoint.replace(/\/$/u, "")}${SPEECH_SYNTHESIS_PATH}`, {
+  const response = await fetch(getSpeechUrl(endpoint, SPEECH_SYNTHESIS_PATH), {
     body: getSsml({ text, voice, volume }),
     headers: {
       "Content-Type": "application/ssml+xml",

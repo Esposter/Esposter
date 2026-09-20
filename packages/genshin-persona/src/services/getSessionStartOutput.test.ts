@@ -1,9 +1,12 @@
 import type { Card } from "#src/models/Card";
 
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
+import { parseSpeechVoice } from "#src/services/parseSpeechVoice";
 import { describe, expect, test } from "vitest";
 
 describe(getSessionStartOutput, () => {
+  // The session-start output never reads the voice; production owns what an unset one is
+  const voice = parseSpeechVoice("");
   const description = "description";
   const headline = "headline";
   const note = "[note]";
@@ -17,7 +20,7 @@ describe(getSessionStartOutput, () => {
       description,
       headline,
       note,
-      voiceCard: { context, greeting, tips: ["tip"], verbs: ["verb"] },
+      voiceCard: { context, greeting, tips: ["tip"], verbs: ["verb"], voice },
     };
 
     expect(getSessionStartOutput(card)).toBe(
@@ -38,7 +41,7 @@ describe(getSessionStartOutput, () => {
       description: "",
       headline,
       note: "",
-      voiceCard: { context: "", greeting: "", tips: [], verbs: [] },
+      voiceCard: { context: "", greeting: "", tips: [], verbs: [], voice },
     };
 
     expect(getSessionStartOutput(card)).toBe(

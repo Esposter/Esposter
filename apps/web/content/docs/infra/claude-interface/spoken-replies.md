@@ -5,13 +5,13 @@ description: Stage 2 of the Claude interface — an Azure Speech free-tier accou
 
 # Spoken replies
 
-Stage 2 of the [Claude interface](/docs/infra/claude-interface): a generic neural voice, through a supported API, on a resource that costs nothing. Its purpose is to learn whether a spoken reply is something that stays switched on, because that is the gate in front of the deferred [character voice](/docs/infra/deferred/character-voice) and nothing else is.
+Stage 2 of the [Claude interface](/docs/infra/claude-interface): a neural voice, through a supported API, on a resource that costs nothing. Which voice reads which character is the [per-character voices](/docs/infra/claude-interface/per-character-voices) page's; this page is the account, the hook and the gate. Its purpose is to learn whether a spoken reply is something that stays switched on, because that is the gate in front of the deferred [character voice](/docs/infra/deferred/character-voice) and nothing else is.
 
 ## How it works
 
 1. **One Pulumi resource** — a Cognitive Services account of the speech kind on the free tier, in `apps/infra` under the provider namespace it belongs to per the [Pulumi layout](/docs/infra/azure-pulumi-layout), with a parent and no alias like every other new resource. Free-tier speech resources are limited to one per subscription, so it has no dev twin: it is a prod resource serving a personal machine. The free tier gives half a million neural characters a month and never expires; a first sentence is on the order of a hundred characters, so the allowance covers thousands of replies before it binds, and when it binds the service returns an error the hook swallows rather than a bill. It sits inside the estate's cost guard like everything else.
 2. **One stack output** — the account's key, wrapped as a secret, so it is read once off `pulumi stack output prodSpchEsposter001Key --show-secrets` onto the one machine that uses it. It is a personal credential for a personal machine and not a repository secret, so it enters neither ESC nor the GitHub environment.
-3. **One hook in the persona plugin** — a Stop hook, run asynchronously so the prompt never waits on it, that takes the reply text, strips code blocks, tables and markup, keeps the first sentence, posts it as SSML to the speech endpoint with the voice the plugin's user configuration names, and plays the WAV through the desktop's stock player. The endpoint, key and voice are the plugin's three user-configuration options, the key marked sensitive so it lands in the credential store and never in a settings file. With no key or endpoint configured the hook is a no-op, so the plugin works on a machine that never set this stage up.
+3. **One hook in the persona plugin** — a Stop hook, run asynchronously so the prompt never waits on it, that takes the reply text, strips code blocks, tables and markup, keeps the first sentence, posts it as SSML to the speech endpoint in the voice the session's character is read in, and plays the WAV through the desktop's stock player. The endpoint, key and voice are the plugin's three user-configuration options, the key marked sensitive so it lands in the credential store and never in a settings file. With no key or endpoint configured the hook is a no-op, so the plugin works on a machine that never set this stage up.
 4. **Two skill verbs** — `mute` and `unmute` on the plugin's skill write a flag file the hook honours, so the voice is switched off without touching the configuration.
 
 ```mermaid
@@ -45,7 +45,7 @@ The published voice plugins that cost nothing reach the same Microsoft neural vo
 
 ## What this stage does not do
 
-The voice is one of the catalogue voices, chosen once in user configuration. Azure's custom and personal voice features are structurally unavailable for a game character — they require the voice talent's recorded consent — so the character voice is the deferred stage, which reuses this hook against a local endpoint and adds nothing to the estate.
+Every voice it speaks with is one of the catalogue's. Azure's custom and personal voice features are structurally unavailable for a game character — they require the voice talent's recorded consent — so the character voice is the deferred stage, which reuses this hook against a local endpoint and adds nothing to the estate.
 
 ## Key files
 

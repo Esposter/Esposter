@@ -1,12 +1,15 @@
 import type { VoiceCard } from "#src/models/VoiceCard";
 
 import { getSpinner } from "#src/services/getSpinner";
+import { parseSpeechVoice } from "#src/services/parseSpeechVoice";
 import { describe, expect, test } from "vitest";
 
 describe(getSpinner, () => {
   const name = "Hu Tao";
-  const base: VoiceCard = { context: "", greeting: "", tips: ["baseTip"], verbs: ["baseVerb"] };
-  const voiceCard: VoiceCard = { context: "", greeting: "", tips: ["tip"], verbs: ["verb"] };
+  // The spinner never reads the voice; production owns what an unset one is
+  const voice = parseSpeechVoice("");
+  const base: VoiceCard = { context: "", greeting: "", tips: ["baseTip"], verbs: ["baseVerb"], voice };
+  const voiceCard: VoiceCard = { context: "", greeting: "", tips: ["tip"], verbs: ["verb"], voice };
 
   test("labels the spinner with the nameplate and puts the base content ahead of the character's", () => {
     expect.hasAssertions();

@@ -9,6 +9,17 @@ description: Stage 3 of the Claude interface — the persona plugin's speak hook
 
 The character-specific half stays local and unpublished. The publisher of the game requires written consent from both the company and the voice artist for any generative use of a character voice, sued a commercial voice-cloning service over it and won, and asks the community to report unauthorised use. Personal use on one machine, from reference audio never redistributed and a model never committed anywhere, is the only defensible shape: the public plugin ships the adapter, and the voice is a file on this machine.
 
+## The reference audio, and what can be read off it
+
+The game installs its Japanese voice track as Wwise packages under the client's streaming assets — tens of gigabytes, one package per bank, no decoded audio anywhere in it. Turning that into reference clips needs an unpacker and a codec that are nobody's dependency here, and nothing extracted from it is ever committed: the rule above is what makes this stage defensible, and a convenient cache would break it.
+
+Two different things can come off that audio, and only one of them is worth waiting for a toolchain:
+
+- **Timbre** is the stage itself, and it does not transfer across languages. A Japanese performance cannot read English, so what a few-shot engine learns from it is a speaker embedding applied to English text — which is the whole point of this stage and the reason it needs an inference engine at all.
+- **Prosody is measurable now, and already has somewhere to go.** Median fundamental frequency and speaking rate are numbers a script reads off a waveform, and [per-character voices](/docs/infra/claude-interface/per-character-voices) already spends both as `pitch` and `rate` on a catalogue voice. Those numbers are the one part of this stage that pays off before the gates open, and they are what would replace the judged values that table ships with.
+
+**An agent cannot do the listening half of any of this.** Measuring a waveform is code; deciding whether the result sounds like the character is the person at the keyboard, and no amount of tooling moves that across.
+
 **Why deferred.** Two gates, in order:
 
 1. Spoken replies are still switched on after two weeks of daily use. This stage exists to make that voice a character's; if the generic voice is muted within a fortnight, a better voice would be muted too.

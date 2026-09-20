@@ -5,6 +5,7 @@ describe(parseVoiceCard, () => {
   const habit = "- habit";
   const greeting = "greeting";
   const signOff = "- Signs off: sign-off";
+  const silentVoice = { name: "", pitch: "", rate: "", style: "", styleDegree: "" };
 
   test("keeps the habits, the greeting and the sign-off as context and lifts the spinner lines out", () => {
     expect.hasAssertions();
@@ -16,12 +17,31 @@ describe(parseVoiceCard, () => {
       greeting,
       tips: ["tip"],
       verbs: ["a", "b", "c"],
+      voice: silentVoice,
+    });
+  });
+
+  test("lifts the voice out of the context, so the character is never told what reads them", () => {
+    expect.hasAssertions();
+
+    expect(parseVoiceCard([habit, "- Voice: a style=style"].join("\n"))).toStrictEqual({
+      context: habit,
+      greeting: "",
+      tips: [],
+      verbs: [],
+      voice: { ...silentVoice, name: "a", style: "style" },
     });
   });
 
   test("reads an empty card as nothing", () => {
     expect.hasAssertions();
 
-    expect(parseVoiceCard("")).toStrictEqual({ context: "", greeting: "", tips: [], verbs: [] });
+    expect(parseVoiceCard("")).toStrictEqual({
+      context: "",
+      greeting: "",
+      tips: [],
+      verbs: [],
+      voice: silentVoice,
+    });
   });
 });
