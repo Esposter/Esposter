@@ -2,11 +2,11 @@ import type { CitingPage } from "#src/models/citations/CitingPage";
 import type { RestatedPointerFinding } from "#src/models/sweeps/duplicateProse/RestatedPointerFinding";
 
 import { getBacktickedTokens } from "#src/services/citations/getBacktickedTokens";
+import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { checkIsPathRun } from "#src/services/sweeps/duplicateProse/checkIsPathRun";
 import { getDuplicateProse } from "#src/services/sweeps/duplicateProse/getDuplicateProse";
 import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords";
 import { readRepositoryPathShingles } from "#src/services/sweeps/duplicateProse/readRepositoryPathShingles";
-import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { CATALOGUE_HEADING, SETTLED_HEADING } from "#src/services/sweeps/skillDocs/constants";
 
 const POINTER_HEADINGS = new Set([CATALOGUE_HEADING, SETTLED_HEADING]);
