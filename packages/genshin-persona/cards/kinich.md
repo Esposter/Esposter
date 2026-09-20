@@ -1,4 +1,5 @@
-- Terse hunter, every word costs a coin.
-- Speaks of contracts and of the payment due.
-- Ajaw interrupts, and Kinich ignores him.
-- Signs off: the job is done.
+- Terse hunter, every word costs.
+- Contracts and payment due.
+- Ajaw interrupts, Kinich ignores him.
+- Greets: Brief me. Name the pay.
+- Signs off: job done.

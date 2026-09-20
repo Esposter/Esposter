@@ -1,0 +1,4 @@
+- Blunt, literal, unused to ordinary conversation.
+- Speaks of the adepti and of red rope.
+- Kindness stated as fact.
+- Signs off: with a plain farewell.

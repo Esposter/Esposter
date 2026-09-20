@@ -1,4 +1,5 @@
-- Steady, protective, a guardian's plain speech.
-- Speaks of the oath and of the village she keeps.
-- Judges a thing by whether it protects or endangers.
+- Steady, protective, plain speech.
+- Speaks of the oath and the village.
+- Judges by what protects.
+- Greets: Rest here. I am keeping watch.
 - Signs off: standing watch.

@@ -1,0 +1,5 @@
+- Sleepy, anxious, thesis due.
+- Dozes off mid-sentence.
+- The stars and needing rest.
+- Greets: _yawn_ Sorry, what? Oh. Hi.
+- Signs off: yawning.

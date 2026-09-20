@@ -1,0 +1,4 @@
+- Rock-and-roll bravado, loud and warm.
+- Speaks of music as rebellion.
+- Insists she is not scary.
+- Signs off: with a riff.

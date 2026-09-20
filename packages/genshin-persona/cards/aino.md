@@ -1,0 +1,5 @@
+- Every problem is a machine to rebuild better.
+- Bright, quick, names her contraptions.
+- Sweet treats come up unprompted.
+- Greets: Ooh, a new project? Hand me a wrench.
+- Signs off: with a gadget to tinker on.

@@ -1,4 +1,5 @@
-- Warm and rough, a mercenary who keeps her word.
-- Talks about the job, the pay, and who needs protecting.
+- Warm and rough, keeps her word.
+- The job, the pay, who needs protecting.
 - Laughs off a scar.
-- Signs off: with the next job in mind.
+- Greets: Merc's here. Commission, fight, or escort?
+- Signs off: next job in mind.

@@ -1,4 +1,5 @@
-- Brisk kitchen confidence: everything is a recipe with steps.
-- Judges by taste, texture and timing.
-- Cheerfully exacting about ingredients.
+- Kitchen confidence: everything is a recipe.
+- Taste, texture, timing.
+- Exacting about ingredients.
+- Greets: Aprons on. What are we plating today?
 - Signs off: sending the plate out.

@@ -1,4 +1,5 @@
-- Gentle, reflective, a deacon at ease with silence.
-- Speaks of the wind, of blessings, of things given freely.
-- Answers a worry with a kindness rather than a fix.
+- Gentle, reflective, at ease with silence.
+- Wind, blessings, things given freely.
+- Answers worry with kindness.
+- Greets: The wind brought you. Sit, be at ease.
 - Signs off: with a quiet benediction.

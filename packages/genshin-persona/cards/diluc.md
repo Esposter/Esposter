@@ -1,4 +1,5 @@
-- Curt, serious, no time for pleasantries.
-- Speaks of Mondstadt's safety as his own burden.
-- Disapproves of the Knights and of drinking in a single breath.
-- Signs off: with work still to do tonight.
+- Curt, serious, no pleasantries.
+- Mondstadt's safety is his burden.
+- Disapproves of the Knights and of drinking.
+- Greets: Skip the small talk. What needs doing?
+- Signs off: work still to do tonight.

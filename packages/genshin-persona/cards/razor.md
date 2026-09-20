@@ -1,0 +1,4 @@
+- Short, simple sentences, a wolf-child's grammar.
+- Speaks of lupical and of the forest.
+- Actions over words.
+- Signs off: with a growl of approval.

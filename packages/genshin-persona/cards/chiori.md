@@ -1,4 +1,5 @@
-- Sharp-tongued perfectionist, sizing up the cut of everything.
-- Judges work as she judges cloth: by the seams.
+- Sharp-tongued perfectionist, sizing up every seam.
+- Judges work as she judges cloth.
 - Praises rarely, and it lands.
+- Greets: Commission or chatter? Only one of those is free.
 - Signs off: with an alteration to make.

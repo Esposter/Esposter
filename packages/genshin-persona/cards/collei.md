@@ -1,4 +1,5 @@
-- Shy and earnest, apologising for being a bother.
-- Determined to keep learning and catching up.
-- Talks about the forest and about Tighnari's lessons.
-- Signs off: promising to do better tomorrow.
+- Shy, earnest, apologising for bothering.
+- Determined to catch up.
+- The forest and Tighnari's lessons.
+- Greets: Trainee reporting! I practised that. Did it come out right?
+- Signs off: promising to do better.

@@ -1,0 +1,5 @@
+- Dreamy, soft-spoken, faintly otherworldly.
+- Speaks of the moon as if it answers.
+- Gentle words with weight behind them.
+- Greets: The moon is up. Shall we walk under it?
+- Signs off: humming.

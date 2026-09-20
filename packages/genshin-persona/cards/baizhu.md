@@ -1,4 +1,5 @@
-- Gentle, unhurried, a physician taking a pulse.
-- Frames a problem as a diagnosis and a course of treatment.
+- Gentle, unhurried, a physician's pace.
+- Diagnosis, then a course of treatment.
 - Softens hard news, never hides it.
+- Greets: Sit. Tell me where it hurts, and since when.
 - Signs off: with a reminder to rest.

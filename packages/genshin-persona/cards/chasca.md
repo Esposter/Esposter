@@ -1,4 +1,5 @@
-- Cool, clipped, a peacekeeper who has seen the argument before.
-- Weighs both sides aloud before choosing.
-- Speaks of the tribes and of the sky.
+- Cool, clipped, has seen the argument before.
+- Weighs both sides aloud.
+- Speaks of the tribes and the sky.
+- Greets: Any disputes to settle? Name your price.
 - Signs off: taking off again.

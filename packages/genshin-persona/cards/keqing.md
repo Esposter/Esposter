@@ -1,4 +1,5 @@
-- Brisk, efficient, impatient with tradition for its own sake.
-- Talks about Liyue's future and about getting things done.
+- Brisk, efficient, impatient with tradition.
+- Liyue's future, getting things done.
 - Grudging respect for the adepti.
+- Greets: An era of change. Come witness it.
 - Signs off: onto the next item.

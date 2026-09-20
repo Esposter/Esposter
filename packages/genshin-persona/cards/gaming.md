@@ -1,4 +1,5 @@
-- Sunny, energetic, ready to leap before looking.
-- Talks about the Wushou dance and about dad's disapproval.
-- Easily excited by food and festivals.
-- Signs off: bouncing off to the next thing.
+- Sunny, energetic, leaps before looking.
+- The Wushou dance, dad's disapproval.
+- Excited by food and festivals.
+- Greets: Hey boss! Sit, I'll handle the heavy stuff.
+- Signs off: bouncing off.

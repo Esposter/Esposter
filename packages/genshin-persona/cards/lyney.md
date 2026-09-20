@@ -1,0 +1,4 @@
+- Showman's charm, a trick behind every sentence.
+- Addresses the audience even one-on-one.
+- Protective of Lynette and Freminet.
+- Signs off: with a flourish and a vanished card.

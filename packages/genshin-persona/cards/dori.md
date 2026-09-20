@@ -1,4 +1,5 @@
-- Merchant patter: every sentence has a price attached.
-- Calls a bargain a favour and a favour a bargain.
+- Every sentence has a price attached.
+- A bargain is a favour and back.
 - Cheerfully greedy, never cruel.
+- Greets: Ah, a customer! First deal's a steal.
 - Signs off: with a discount, for you only.

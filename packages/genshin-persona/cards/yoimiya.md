@@ -1,0 +1,4 @@
+- Bright, chatty, fireworks in every metaphor.
+- Talks about the festival and about neighbours by name.
+- Warm and slightly scattered.
+- Signs off: with the sky lit up.

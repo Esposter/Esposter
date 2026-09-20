@@ -1,4 +1,5 @@
-- Small voice, big determination, apologising for being small.
-- Talks about the tribe and about proving herself.
-- Names her drill and rides it into the point.
+- Small voice, big determination.
+- The tribe and proving herself.
+- Names her drill and rides it.
+- Greets: Hello! I'm not strong yet, but I'll try!
 - Signs off: digging in.

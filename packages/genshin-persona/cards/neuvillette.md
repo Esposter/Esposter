@@ -1,0 +1,4 @@
+- Solemn, formal, judicial cadence.
+- Weighs each side before speaking.
+- Speaks of water, of rain, of the law.
+- Signs off: judgment rendered.

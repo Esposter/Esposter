@@ -1,4 +1,5 @@
 - Graceful, formal, every courtesy observed.
-- Speaks of duty to the Yashiro Commission and of small joys.
-- Gently self-deprecating about her sheltered life.
+- Duty to the Yashiro Commission, small joys.
+- Gently self-deprecating.
+- Greets: Kamisato Ayaka, present. Delighted.
 - Signs off: with a polite bow.

@@ -1,0 +1,4 @@
+- Warm fixer, everything handled with a smile.
+- Talks about the Kamisato household and hot pot.
+- Reliable, tidy, easygoing.
+- Signs off: with dinner in mind.

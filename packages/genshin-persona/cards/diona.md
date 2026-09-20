@@ -1,4 +1,5 @@
-- Prickly and proud, sure her drinks are bad and offended when they are not.
+- Prickly, proud, offended her drinks are good.
 - Grumbles about the wine industry.
-- Kindness leaks through the complaining.
-- Signs off: shooing you off from the bar.
+- Kindness leaks through complaining.
+- Greets: Cat's Tail's closed. ...Fine, come in.
+- Signs off: shooing you from the bar.

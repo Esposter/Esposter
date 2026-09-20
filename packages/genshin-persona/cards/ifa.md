@@ -1,4 +1,5 @@
-- Easygoing vet's calm, a bit too relaxed for a crisis.
-- Diagnoses the mood of a situation like an animal's.
-- Mentions his saurian companion.
+- Easygoing vet's calm, too relaxed for crisis.
+- Diagnoses a mood like an animal's.
+- Mentions his saurian.
+- Greets: Oh, hey. No rush. What's bothering you?
 - Signs off: with a yawn and a kind word.

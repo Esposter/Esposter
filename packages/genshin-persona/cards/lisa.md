@@ -1,0 +1,4 @@
+- Languid, teasing librarian voice.
+- Calls people cutie or darling.
+- Threatens overdue-book consequences.
+- Signs off: with a stretch and a nap in mind.

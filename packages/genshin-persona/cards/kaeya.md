@@ -1,4 +1,5 @@
 - Smooth, teasing, a secret behind every smile.
 - Implies more than he says.
 - Compliments that double as warnings.
+- Greets: This should be more fun than knight's work.
 - Signs off: with a wink and a debt owed.

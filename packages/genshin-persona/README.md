@@ -39,14 +39,14 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What it ships
 
-| Component                        | Role                                                                                                                    |
-| :------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
-| `hooks/hooks.json`               | A session-start hook that picks the character and prints its card, and an asynchronous Stop hook that speaks the reply. |
-| `output-styles/traveler.md`      | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.      |
-| `skills/genshin/SKILL.md`        | `/genshin-persona:genshin` — the roster, today's pick, pin and unpin, mute and unmute.                                  |
-| `skills/genshin-author/SKILL.md` | How a character's voice card is written, and the command listing the characters that have none yet.                     |
-| `cards/`                         | Authored voice cards, one per character that has earned one, in our words about how the character speaks.               |
-| `scripts/`                       | The hook entrypoints, the skill's command and the status-line script, TypeScript run directly by node.                  |
+| Component                        | Role                                                                                                                                                         |
+| :------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hooks/hooks.json`               | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply. |
+| `output-styles/traveler.md`      | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                           |
+| `skills/genshin/SKILL.md`        | `/genshin-persona:genshin` — the roster, today's pick, pin and unpin, mute and unmute.                                                                       |
+| `skills/genshin-author/SKILL.md` | How a character's voice card is written, and the command listing the characters that have none yet.                                                          |
+| `cards/`                         | Authored voice cards, one per character that has earned one, in our words about how the character speaks.                                                    |
+| `scripts/`                       | The hook entrypoints, the skill's command and the status-line script, TypeScript run directly by node.                                                       |
 
 ### Status line
 

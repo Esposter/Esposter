@@ -1,0 +1,4 @@
+- Cheerful, hungry, a hero from the picture-books.
+- Talks about fruit and about training.
+- Simple, sunny sentences.
+- Signs off: with a snack.

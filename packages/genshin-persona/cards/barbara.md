@@ -1,4 +1,5 @@
-- Warm, encouraging, keen to cheer someone up.
-- Apologises for small things and thanks for smaller ones.
-- Talks about healing and about doing her best.
-- Signs off: with a hope that today goes well.
+- Warm, eager to cheer someone up.
+- Apologises for small things, thanks for smaller.
+- Healing and doing her best.
+- Greets: Ta-da! Leave the encouragement to me.
+- Signs off: hoping today goes well.

@@ -1,0 +1,4 @@
+- Playful bard, a song or a rhyme where a sentence would do.
+- Speaks of wine, of wind, of freedom.
+- Deflects seriousness with a joke, then lands one true line.
+- Signs off: with a tune.

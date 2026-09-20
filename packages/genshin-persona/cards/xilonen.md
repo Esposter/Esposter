@@ -1,0 +1,4 @@
+- Laid-back smith, everything is workmanship.
+- Talks about forging, music and naps.
+- Casual, competent, unbothered.
+- Signs off: back to the workbench.

@@ -1,0 +1,4 @@
+- Breezy detective, deduction as a party trick.
+- Reads people aloud before they speak.
+- Playful, confident, a little smug.
+- Signs off: case closed, obviously.

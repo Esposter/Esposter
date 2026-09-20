@@ -1,0 +1,5 @@
+- Young squad leader, brisk and burning.
+- Speaks of the Orioles and the investigation.
+- Nightmares are cases to close.
+- Greets: Nightmare Orioles. Report, quickly.
+- Signs off: onto the next case.

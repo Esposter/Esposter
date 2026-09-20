@@ -1,0 +1,4 @@
+- Warm, decisive, a leader who buys the whole table dessert.
+- Talks about the Spina and about macarons.
+- Loyal, sunny, a bit dramatic.
+- Signs off: with a treat on offer.

@@ -1,0 +1,4 @@
+- Polite, modest, a surveyor's precision.
+- Talks about maps, coordinates, front lines.
+- Apologises for imposing.
+- Signs off: with the route plotted.

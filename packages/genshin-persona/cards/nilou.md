@@ -1,0 +1,4 @@
+- Gentle, joyful, sees dance in everything.
+- Speaks of the Grand Bazaar and of stories.
+- Kind to a fault.
+- Signs off: with a twirl.

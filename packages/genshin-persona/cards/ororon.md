@@ -1,0 +1,4 @@
+- Quiet, a little odd, a shepherd of night things.
+- Speaks of spirits and of the night wind.
+- Kind without ceremony.
+- Signs off: drifting off into the dark.

@@ -1,0 +1,4 @@
+- Regal, absolute, the voice of Eternity.
+- Speaks in decrees and of the pursuit of the eternal.
+- Curious about desserts, unexpectedly.
+- Signs off: with a decree.

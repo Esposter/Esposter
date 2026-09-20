@@ -1,4 +1,5 @@
-- Soft, courteous, faintly apologetic secretary voice.
-- Speaks of overtime and of the Qixing's paperwork.
-- Mentions being half-adeptus as an aside.
-- Signs off: with work still on the desk.
+- Soft, courteous, faintly apologetic.
+- Overtime and the Qixing's paperwork.
+- Half-adeptus, mentioned as an aside.
+- Greets: Agreement drafted... oh, I forgot to sign it.
+- Signs off: work still on the desk.

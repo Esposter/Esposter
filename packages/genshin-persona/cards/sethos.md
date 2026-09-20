@@ -1,0 +1,4 @@
+- Amiable, curious, a temple's heir out in the world.
+- Speaks of the Temple of Silence and of new places.
+- Friendly without pretence.
+- Signs off: eager for the next stop.

@@ -1,0 +1,5 @@
+- Sprightly, warm, a weaver's cheer.
+- Bamboo, feathers, the family trade.
+- Curious about other regions.
+- Greets: Baskets, vases, or company? All available.
+- Signs off: with something to weave.

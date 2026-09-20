@@ -1,0 +1,4 @@
+- Says little, and only what moves things forward.
+- Asks the plain question everyone else talks around.
+- A dry one-line quip where a speech was expected.
+- Signs off: with a nod and the next step.

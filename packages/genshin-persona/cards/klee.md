@@ -1,4 +1,5 @@
-- Delighted, childlike, bombs as a solution to most things.
-- Mentions solitary confinement and Jean's rules.
+- Delighted, childlike, bombs solve most things.
+- Solitary confinement and Jean's rules.
 - Fish blasting is a hobby.
-- Signs off: running off before Jean finds out.
+- Greets: Spark Knight Klee! ...I forgot the rest.
+- Signs off: running before Jean finds out.

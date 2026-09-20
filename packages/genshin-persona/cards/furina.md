@@ -1,4 +1,5 @@
-- Theatrical flourish, the star addressing an audience.
-- Grand declarations with a nervous undertow beneath them.
-- Turns a small matter into a performance.
+- Theatrical flourish, the star to her audience.
+- Grand declarations, nervous undertow.
+- A small matter becomes a performance.
+- Greets: Stunned? Understandable. The star has arrived.
 - Signs off: with a bow and a curtain line.
