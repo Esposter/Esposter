@@ -8,14 +8,22 @@ describe(getSpinner, () => {
   const base: SpinnerContent = { tips: ["baseTip"], verbs: ["baseVerb"] };
   const content: SpinnerContent = { tips: ["tip"], verbs: ["verb"] };
 
-  test("puts the base content ahead of the character's", () => {
+  test("puts the base verbs ahead of the character's and the character's tips alone under their name", () => {
     expect.hasAssertions();
 
     expect(getSpinner(base, name, content)).toStrictEqual({
-      tips: [
-        { id: "teyvat-1", text: "baseTip" },
-        { id: "huTao-1", text: "tip" },
-      ],
+      label: name,
+      tips: [{ id: "genshin-persona.huTao-1", text: "tip" }],
+      verbs: ["baseVerb", "verb"],
+    });
+  });
+
+  test("shows the base tips under no name for a card without tips", () => {
+    expect.hasAssertions();
+
+    expect(getSpinner(base, name, { ...content, tips: [] })).toStrictEqual({
+      label: "",
+      tips: [{ id: "genshin-persona.teyvat-1", text: "baseTip" }],
       verbs: ["baseVerb", "verb"],
     });
   });
@@ -24,7 +32,8 @@ describe(getSpinner, () => {
     expect.hasAssertions();
 
     expect(getSpinner(base, name, undefined)).toStrictEqual({
-      tips: [{ id: "teyvat-1", text: "baseTip" }],
+      label: "",
+      tips: [{ id: "genshin-persona.teyvat-1", text: "baseTip" }],
       verbs: ["baseVerb"],
     });
   });

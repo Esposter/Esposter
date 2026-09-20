@@ -53,7 +53,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `src/personaCards/`                    | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, their spinner verbs and tips for you, and the reference line only where an ear chose one. |
 | `src/generated/PersonaReferenceMap.ts` | The measured reference line and its likeness per character, one generated map written by the repository's reference selection and never by hand.                                                        |
 | `runtime/`                             | The manifest and lockfile of the speech engine's runtime, which the `voice` verb installs into the state directory rather than the plugin carrying it.                                                  |
-| `src/services/baseSpinnerContent.ts`   | The base Teyvat verbs and tips every character's spinner shows before their own.                                                                                                                        |
+| `src/services/baseSpinnerContent.ts`   | The base Teyvat verbs every spinner shows before the character's own, and the tips a card without its own falls back to.                                                                                |
 | `scripts/`                             | The hook entrypoints, the commands' script, the status-line script and the resident synthesizer, TypeScript run directly by node.                                                                       |
 
 ### Status line and spinner
@@ -67,7 +67,7 @@ node "<plugin root>/scripts/genshin.ts" teardown
 
 The status line prints the session's character in their element's colour, from the plugin's state files alone, and shows from the first frame of every session — the birthday pick stands in until the session's record is written, never another session's character. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat.
 
-The spinner replaces the built-in verbs and tips with Teyvat's — the base list in `baseSpinnerContent.ts` — and, behind them, the session's character's own verbs and tips from their card, under the tool's own "Tip" prefix — a base tip is nobody's line, so no name goes in front of it. The session-start hook rewrites the two settings whenever the character changes, and so do `use`, `pin` and `unpin`; Claude Code reads the spinner keys once per process, so a rewrite shows from the next session. A status line that is not the plugin's is left alone.
+The spinner replaces the built-in verbs and tips with the session's character's: the base Teyvat verbs in `baseSpinnerContent.ts` with the character's own behind them, and the character's tips alone under their name — the tool shows one label over every tip, so the base tips, nobody's line, appear only for a character whose card has none, under the tool's own "Tip". The session-start hook rewrites the two settings whenever the character changes, and so do `use`, `pin` and `unpin`; Claude Code reads the spinner keys once per process, so a rewrite shows from the next session. A status line that is not the plugin's is left alone.
 
 ### How the character is picked
 

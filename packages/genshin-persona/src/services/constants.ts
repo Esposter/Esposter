@@ -43,9 +43,12 @@ export const WARM_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "s
 export const VOICE_SOCKET_PATH: string =
   process.platform === "win32" ? String.raw`\\.\pipe\genshin-persona-voice` : join(STATE_DIRECTORY, "voice.sock");
 export const USER_SETTINGS_PATH: string = join(homedir(), ".claude", "settings.json");
-export const STATUS_LINE_MARKER = "genshin-persona";
-// The ids of the base tips, which every character shows; a character's own tips take the card's name. It is also
-// What a spinner in the user settings is ours by, the way the launcher's path marks the status line as ours
+// What marks a status line command and a tip id as this plugin's, whichever character wrote them; it is what a
+// Spinner in the user settings is ours by, the way the launcher's path marks the status line as ours
+export const PLUGIN_MARKER = "genshin-persona";
+// Between the marker and a tip id's own prefix
+export const TIP_ID_MARKER_SEPARATOR = ".";
+// The prefix of the base tips' ids; a character's own tips take the card's name
 export const BASE_TIP_ID = "teyvat";
 // Between a tip id's prefix and its index
 export const TIP_ID_SEPARATOR = "-";
