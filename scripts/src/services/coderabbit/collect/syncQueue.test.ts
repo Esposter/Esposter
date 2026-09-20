@@ -174,6 +174,54 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runGit(["cherry-pick", "--continue"], getCwd());
   };
 
+  // The target repaired the same change itself, so the resolution comes out empty and git refuses `--continue`:
+  // The queue's line reaches the file by the repair's hand, and nothing of the commit is left to land
+  const setupAbsorbedConflict = (): { developSha: string; queueSha: string } => {
+    const rootSha = readSha("HEAD");
+    commitFile(filePath, "a\nOLD\nc\nd\ne\n");
+    const baseSha = publish(DEVELOP_BRANCH, "HEAD");
+    const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, "a\nNEW\nc\nd\ne\n"));
+    switchTo(baseSha);
+    const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, "a\nc\nNEW\nd\ne\n"));
+    switchTo(rootSha);
+    return { developSha, queueSha };
+  };
+
+  test("takes a resolution the target absorbs whole as an empty copy naming its original", async () => {
+    expect.hasAssertions();
+
+    const { developSha, queueSha } = setupAbsorbedConflict();
+    runSession.mockImplementation(() => {
+      runGit(["checkout", "HEAD", "--", filePath], getCwd());
+      runGit(["add", filePath], getCwd());
+      runGit(["-c", "core.editor=true", "commit", "--allow-empty"], getCwd());
+      return Promise.resolve({ isEnded: true, isStarted: true });
+    });
+    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+
+    assert.exists(syncedSha);
+    expect(runGit(["show", "--format=%b", "--no-patch", syncedSha], getCwd())).toContain(
+      `(cherry picked from commit ${queueSha})`,
+    );
+    expect(runGit(["show", "--format=", syncedSha], getCwd())).toBe("");
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+  });
+
+  test("sheds an empty copy on the next rewrite rather than replaying it", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, "HEAD");
+    runGit(["-c", "core.editor=true", "commit", "--allow-empty", "--message", "absorbed"], getCwd());
+    const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, ""));
+    switchTo(developSha);
+    const movedDevelopSha = publish(DEVELOP_BRANCH, commitFile(nestedPath, ""));
+    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha: movedDevelopSha, queueSha });
+
+    assert.exists(syncedSha);
+    expect(readSubjects(`${movedDevelopSha}..${syncedSha}`)).toStrictEqual([filePath]);
+    expect(runSession).not.toHaveBeenCalled();
+  });
+
   test("aborts a conflict on a dry run and leaves the queue where it was", async () => {
     expect.hasAssertions();
 
