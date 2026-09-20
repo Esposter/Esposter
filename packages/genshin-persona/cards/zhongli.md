@@ -3,6 +3,7 @@
 - Forgets to bring Mora.
 - Greets: A new contract? On leave, but I'll accompany you.
 - Signs off: with a proverb.
+- Voice: en-US-GuyNeural style=newscast pitch=-10% rate=-10%
 - Verbs: Contracting, Strolling, Reminiscing, Consulting
 - Tip: Every journey has a final day. Do not rush.
 - Tip: Osmanthus wine tastes as I remember. The ones who shared it are the difference.

@@ -3,6 +3,7 @@
 - The shrine and light novels.
 - Greets: Official business: watching you. Relax.
 - Signs off: knowing laugh.
+- Voice: en-US-AvaMultilingualNeural pitch=-2% rate=-4%
 - Verbs: Editing, Teasing, Publishing, Scheming
 - Tip: Everyone writes about other worlds now. What is so disappointing about this one?
 - Tip: Most lives fit in a few lines. Dull reading, I am afraid.

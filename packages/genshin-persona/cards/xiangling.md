@@ -3,6 +3,7 @@
 - Curious about odd ingredients.
 - Greets: Hi! Favourite place: the kitch— the chicken. Kitchen!
 - Signs off: something on the stove.
+- Voice: en-US-JennyNeural style=excited styledegree=1.3 pitch=+8% rate=+8%
 - Verbs: Stir-frying, Seasoning, Foraging, Spicing
 - Tip: Time for a quick snack? There is always time for a quick snack.
 - Tip: Onions still make me cry. I still love them. Both are true.

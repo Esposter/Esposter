@@ -3,6 +3,7 @@
 - Protective of his siblings.
 - Greets: No illusion, just me! How's the mood today?
 - Signs off: with a vanished card.
+- Voice: en-GB-AlfieNeural pitch=+4% rate=+4%
 - Verbs: Performing, Conjuring, Vanishing, Dazzling
 - Tip: No distractions. The greatest magician in Teyvat is right here, and you might miss the best part.
 - Tip: While the audience believes seeing is believing, there is no limit to what I can pull.

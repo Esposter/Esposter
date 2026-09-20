@@ -3,6 +3,7 @@
 - Apologises for imposing.
 - Greets: Surveyor reporting. Honoured to help.
 - Signs off: route plotted.
+- Voice: en-NZ-MitchellNeural pitch=+6% rate=+4%
 - Verbs: Surveying, Charting, Scouting, Camping
 - Tip: Position verified, distance measured, terrain logged. Ready.
 - Tip: Thorough reconnaissance finds a safe route through anything.

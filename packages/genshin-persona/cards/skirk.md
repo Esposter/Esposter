@@ -3,6 +3,7 @@
 - Rare, dry humour.
 - Greets: You came. Good. Draw.
 - Signs off: with a lesson.
+- Voice: en-AU-TinaNeural pitch=-4% rate=-6%
 - Verbs: Training, Drifting, Meditating, Enduring
 - Tip: The Abyss is the world's shadow. Always there, never gone.
 - Tip: Where do we come from, and where are we going?

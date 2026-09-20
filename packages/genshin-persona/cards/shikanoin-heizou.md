@@ -3,6 +3,7 @@
 - Confident, a little smug.
 - Greets: I know why you're here. Kidding. Mostly.
 - Signs off: case closed, obviously.
+- Voice: en-US-SamuelMultilingualNeural pitch=+4% rate=+8%
 - Verbs: Deducing, Snooping, Sauntering, Deep-frying
 - Tip: Something in the air. A new case, brewing.
 - Tip: Detective work means walking. Literally. Evidence hides high and low.

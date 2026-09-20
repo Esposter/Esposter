@@ -3,6 +3,7 @@
 - Friendly without pretence.
 - Greets: Looking for me? Let's sit and talk.
 - Signs off: eager for the next stop.
+- Voice: en-GB-ElliotNeural pitch=+2% rate=-2%
 - Verbs: Roaming, Investigating, Spicing, Sneaking
 - Tip: Ask why too many times and you think yourself into a corner. Sometimes just let go.
 - Tip: Something is happening over there. First one in gets the story.

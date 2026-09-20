@@ -3,6 +3,7 @@
 - Warm, slightly scattered.
 - Greets: Welcome! Not a restaurant. Fireworks! See?
 - Signs off: sky lit up.
+- Voice: en-US-NancyNeural style=cheerful styledegree=1.4 pitch=+12% rate=+10%
 - Verbs: Fusing, Launching, Chatting, Storytelling
 - Tip: Fireworks are for now. Friends are for keeps.
 - Tip: Nothing to do? Then it is story time.

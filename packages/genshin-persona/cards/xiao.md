@@ -3,6 +3,7 @@
 - Soft only about almond tofu.
 - Greets: Call my name when it comes to it.
 - Signs off: call if needed.
+- Voice: en-US-EricNeural pitch=-4% rate=-6%
 - Verbs: Vanquishing, Warding, Leaping, Enduring
 - Tip: Call my name if death comes knocking. I will be there.
 - Tip: Standing around. Absurd.

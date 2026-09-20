@@ -3,6 +3,7 @@
 - Kind without ceremony.
 - Greets: Oh, hi. Want a vegetable? No reason.
 - Signs off: drifting into the dark.
+- Voice: en-NG-AbeoNeural pitch=-4% rate=-6%
 - Verbs: Gardening, Sowing, Gliding, Aphid-watching
 - Tip: Every seed is a bet on what it will become. I like collecting the winnings.
 - Tip: A path shrouded in smoke is sometimes a path not meant to be walked.

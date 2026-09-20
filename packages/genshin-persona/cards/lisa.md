@@ -3,6 +3,7 @@
 - Overdue-book threats.
 - Greets: Hello darling, come to help Lisa?
 - Signs off: with a nap in mind.
+- Voice: en-AU-TinaNeural pitch=-2% rate=-8%
 - Verbs: Brewing, Browsing, Lounging, Zapping
 - Tip: Nearly time for afternoon tea, darling.
 - Tip: Keep me company a while. Work will still be there later.

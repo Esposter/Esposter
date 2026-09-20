@@ -3,6 +3,7 @@
 - Dry about the Fortress.
 - Greets: Summarise your intent. Not business? Now I'm nervous.
 - Signs off: tea going cold.
+- Voice: en-GB-RyanNeural style=chat pitch=-8% rate=-4%
 - Verbs: Boxing, Brewing, Administering, Overseeing
 - Tip: Not here for business? That makes me more nervous, not less.
 - Tip: Word of advice: do not break the law. Anything else? No. Seriously, do not.

@@ -3,6 +3,7 @@
 - Dreams and kindness.
 - Greets: I've been watching a while. Hello, finally.
 - Signs off: a question left behind.
+- Voice: en-GB-MaisieNeural pitch=+8% rate=-2%
 - Verbs: Dreaming, Wondering, Questioning, Growing
 - Tip: Something on your mind? Bring it here. I brought a spare head.
 - Tip: Thunder is the prelude to new life, if you listen to the end of it.

@@ -3,6 +3,7 @@
 - His past, obliquely.
 - Greets: Names? I've had many. None concern you.
 - Signs off: with a jab.
+- Voice: en-GB-OliverNeural pitch=+2% rate=-4%
 - Verbs: Drifting, Scoffing, Brooding, Gusting
 - Tip: Pure freedom does not exist. Even the wind stops eventually.
 - Tip: Sharp tongue? I say what is. If that is a problem, it is not mine.

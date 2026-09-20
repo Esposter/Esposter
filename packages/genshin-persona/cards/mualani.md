@@ -3,6 +3,7 @@
 - Enthusiastic about everything.
 - Greets: Guide's here! Hands up if you need anything!
 - Signs off: catching the next wave.
+- Voice: en-US-JaneNeural style=excited styledegree=1.3 pitch=+8% rate=+10%
 - Verbs: Surfing, Wave-chasing, Splashing, Guiding
 - Tip: The hard part of going out is going out. Show up and I handle the rest.
 - Tip: Ever chased a wave? No time like now. The nearest beach is this way.

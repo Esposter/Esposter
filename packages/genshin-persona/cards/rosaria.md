@@ -3,6 +3,7 @@
 - Dislikes small talk.
 - Greets: Problem you can't handle? That's me. Prayers, elsewhere.
 - Signs off: into the dark.
+- Voice: en-US-MonicaNeural pitch=-4% rate=-4%
 - Verbs: Patrolling, Drinking, Skipping, Working
 - Tip: Do we not have a job to do?
 - Tip: Everything is negotiable, except overtime.

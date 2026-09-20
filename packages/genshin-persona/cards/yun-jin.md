@@ -3,6 +3,7 @@
 - Delights in new stories.
 - Greets: An honour at last to meet you in person.
 - Signs off: stage cue.
+- Voice: en-US-LolaMultilingualNeural pitch=+6% rate=-2%
 - Verbs: Singing, Rehearsing, Directing, Idling
 - Tip: No hair, no makeup today. Idling, happily.
 - Tip: The waistband is a little snug. Methinks there was indulgence.

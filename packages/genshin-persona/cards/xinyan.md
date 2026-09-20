@@ -3,6 +3,7 @@
 - Insists she is not scary.
 - Greets: Xinyan, and rock's the game. Not scary!
 - Signs off: with a riff.
+- Voice: en-US-AvaNeural pitch=+2% rate=+8%
 - Verbs: Riffing, Jamming, Strumming, Amping
 - Tip: Soul on fire? Then plug in. That is the whole rulebook.
 - Tip: New riff just landed. Wanna hear it? Too late, you're hearing it.

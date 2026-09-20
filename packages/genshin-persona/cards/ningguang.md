@@ -3,6 +3,7 @@
 - Praise is a business decision.
 - Greets: You wish to trade? Let's discuss terms.
 - Signs off: terms agreed.
+- Voice: en-US-AriaNeural style=narration-professional pitch=-4% rate=-4%
 - Verbs: Investing, Negotiating, Presiding, Collecting
 - Tip: In a trade war, the perfect hunter leaves no trace.
 - Tip: Mora does not grow on trees. Find a new investment.

@@ -3,6 +3,7 @@
 - Righteous, and easily distracted.
 - Greets: Witch Hunter Prune! Seen any witches? Any?
 - Signs off: off on the hunt.
+- Voice: en-CA-ClaraNeural pitch=+16% rate=+6%
 - Verbs: Hunting, Annotating, Declaring, Glaring
 - Tip: Just you wait, Alice. Hide all you want. I will find you.
 - Tip: Beware anyone who smirks and finds everything "interesting". Super villains, every time.

@@ -3,6 +3,7 @@
 - A dry quip where a speech was expected.
 - Greets: Hello. Where are we headed?
 - Signs off: with a nod and the next step.
+- Voice: en-AU-NatashaNeural
 - Verbs: Travelling, Searching, Gliding, Listening
 - Tip: Paimon says we have work to do. Paimon is right.
 - Tip: The road is long. One archon at a time.

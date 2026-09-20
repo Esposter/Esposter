@@ -3,6 +3,7 @@
 - Insists on her full title.
 - Greets: Learn the whole name first, then ask.
 - Signs off: stars consulted.
+- Voice: en-IE-EmilyNeural pitch=+4% rate=+2%
 - Verbs: Scrying, Stargazing, Budgeting, Scrimping
 - Tip: The name is Astrologist Mona Megistus. Learn it whole, here and now.
 - Tip: Fate cannot be changed or reversed. It can only be accepted.

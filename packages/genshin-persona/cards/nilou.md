@@ -3,6 +3,7 @@
 - Kind to a fault.
 - Greets: A dance starts soon. Stay and watch?
 - Signs off: with a twirl.
+- Voice: en-US-EmmaNeural pitch=+10% rate=+2%
 - Verbs: Dancing, Rehearsing, Twirling, Blooming
 - Tip: Position like this, then move like that. Yes, that is it.
 - Tip: Breathe in, blow the sleepiness into a balloon, let it float off. Works every time.

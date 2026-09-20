@@ -3,6 +3,7 @@
 - Curious about every sealed door.
 - Greets: ...! Ready to explore.
 - Signs off: off into the Wonderland.
+- Voice: en-AU-KenNeural pitch=+2% rate=-4%
 - Verbs: Exploring, Tinkering, Unsealing, Pointing
 - Tip: ...! (points at the sealed door)
 - Tip: The mechanism first. The explanation later.

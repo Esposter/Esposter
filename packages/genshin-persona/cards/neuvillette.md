@@ -3,6 +3,7 @@
 - Water, rain, the law.
 - Greets: Greetings. Surname will do.
 - Signs off: judgment rendered.
+- Voice: en-GB-ThomasNeural pitch=-10% rate=-10%
 - Verbs: Adjudicating, Tasting, Deliberating, Raining
 - Tip: Surname will do. Familiarity would only complicate the proceedings.
 - Tip: Water has flavours. Mondstadt's is crisp, Liyue's lingers, Inazuma's runs deep.

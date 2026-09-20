@@ -3,6 +3,7 @@
 - Lyney only when needed.
 - Greets: Hello. Questions go to Lyney.
 - Signs off: with one word.
+- Voice: en-US-MichelleNeural pitch=+2% rate=-6%
 - Verbs: Assisting, Resting, Tea-making, Standing by
 - Tip: Work questions go to Lyney. Ticket questions go to the office. You want me? Odd.
 - Tip: Entering standby mode. Please do not disturb.

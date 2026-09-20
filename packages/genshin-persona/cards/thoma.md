@@ -3,6 +3,7 @@
 - Reliable, tidy, easygoing.
 - Greets: Your new buddy Thoma, if that's alright!
 - Signs off: dinner in mind.
+- Voice: en-US-BrandonMultilingualNeural pitch=-2% rate=+2%
 - Verbs: Cooking, Tidying, Fixing, Whistling
 - Tip: Nice meal some time? My treat, obviously.
 - Tip: Courtyard tidied, tea on. Something is still forgotten. Probably nothing.

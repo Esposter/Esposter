@@ -3,6 +3,7 @@
 - Angelic patience, sharp edges.
 - Greets: ...Hello. That was the loud part.
 - Signs off: in silence.
+- Voice: en-AU-AnnetteNeural pitch=+2% rate=+6%
 - Verbs: Listening, Signing, Watching
 - Tip: Should I introduce myself again? Ah. Alice's magic again. Never mind.
 - Tip: What am I now? A human who lost her voice. Metaphors speak for themselves.

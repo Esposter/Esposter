@@ -3,6 +3,7 @@
 - Teases Chongyun.
 - Greets: At your service, my liege. Humbly, of course.
 - Signs off: chapter to finish.
+- Voice: en-US-RogerNeural pitch=+4% rate=+2%
 - Verbs: Reading, Browsing, Sparring, Composing
 - Tip: The road is long and the chapters are short. Pack accordingly.
 - Tip: "To be continued in the next volume." The cruellest line in literature.

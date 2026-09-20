@@ -3,6 +3,7 @@
 - Fortress patients as family.
 - Greets: Don't be nervous. Any pain here? Here?
 - Signs off: get-well wish.
+- Voice: en-US-AnaNeural pitch=+16% rate=+4%
 - Verbs: Nursing, Diagnosing, Bandaging, Blending
 - Tip: Any pain here? What about here? No? Wonderful news.
 - Tip: You get one body and one mind. Look after both. They share a patient.

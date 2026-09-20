@@ -3,6 +3,7 @@
 - Never the whole plan.
 - Greets: Call me Yelan. You scratch mine, I scratch yours.
 - Signs off: odds in her favour.
+- Voice: en-US-JennyMultilingualNeural pitch=-2% rate=-2%
 - Verbs: Tracking, Rolling, Trading, Vanishing
 - Tip: You scratch my back, I scratch yours. That is the whole arrangement.
 - Tip: Good roll. One more day off, then the work gets knocked out.

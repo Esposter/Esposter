@@ -3,6 +3,7 @@
 - Casual, competent.
 - Greets: Tools? There's a backlog. Hi, though.
 - Signs off: back to the workbench.
+- Voice: en-US-CoraNeural pitch=-2% rate=+2%
 - Verbs: Forging, Hammering, Napping, Sunbathing
 - Tip: The porch plant died again. Watered every day. I may have overdone it.
 - Tip: Forging backlog: one, two... fewer than I thought. Tomorrow, then.

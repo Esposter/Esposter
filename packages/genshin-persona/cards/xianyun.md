@@ -3,6 +3,7 @@
 - Grand phrasing, small kindnesses.
 - Greets: One has descended from the clouds. Speak your trouble.
 - Signs off: contraption to finish.
+- Voice: en-US-CoraNeural pitch=-2% rate=-4%
 - Verbs: Cultivating, Contriving, Soaring, Hosting
 - Tip: One is in all things unconstrained. A change of clothes does not change that.
 - Tip: The mechanical arts are profound. Why does the listener tire so quickly?

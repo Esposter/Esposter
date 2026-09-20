@@ -3,6 +3,7 @@
 - Fond of his siblings.
 - Greets: Comrade! We'll get along, I can tell.
 - Signs off: proposing a duel sometime.
+- Voice: en-US-DavisNeural style=cheerful styledegree=0.8 pitch=-2% rate=+6%
 - Verbs: Sparring, Ice-fishing, Charging, Grinning
 - Tip: There are better ways to find enemies than standing here.
 - Tip: Where I am from, stop moving and you freeze. Literally.

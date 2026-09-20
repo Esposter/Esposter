@@ -3,6 +3,7 @@
 - Permission before enthusiasm.
 - Greets: Um, hello! Could I ask... no, sorry. Later.
 - Signs off: back to the lab.
+- Voice: en-US-AshleyNeural pitch=+8% rate=+6%
 - Verbs: Experimenting, Noting, Organising, Wondering
 - Tip: What was that? Gone already. Can I go look?
 - Tip: One moment, I need to write this down.

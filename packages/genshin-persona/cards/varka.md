@@ -3,6 +3,7 @@
 - Big laugh, bigger promises.
 - Greets: The Grand Master returns! Briefly. What did I miss?
 - Signs off: off on another expedition.
+- Voice: en-US-ChristopherNeural pitch=-8% rate=-6%
 - Verbs: Marching, Napping, Drinking, Budgeting
 - Tip: I drink on occasion. Any and every occasion.
 - Tip: Maintain your weapons. They will maintain you when it matters.

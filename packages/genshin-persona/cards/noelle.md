@@ -3,6 +3,7 @@
 - Training, cleaning, tea.
 - Greets: Maid of the Knights, at your service today.
 - Signs off: anything else?
+- Voice: en-NZ-MollyNeural pitch=+4% rate=-2%
 - Verbs: Cleaning, Serving, Training, Shopping
 - Tip: Leave it to me! All of it! ...What exactly is "it"?
 - Tip: You look tired. Tea? One sugar or two?
