@@ -6,16 +6,16 @@ left when this ledger was written.
 | Unit                                                           | Swept      | Notes                                                                                         |
 | -------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
 | `scripts/src/services/coderabbit/collect`                      | —          | the collector's decision surface                                                              |
-| `scripts/src/services/coderabbit` — `feedback`, `shared`       | —          |                                                                                               |
-| `scripts/src/services/sweeps` — the scans                      | —          | everything but `ledgerCoverage` and `skillDocs`                                               |
-| `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`  | —          | the two that read the ledgers and the skill tree                                              |
-| `scripts/src/services/outdatedDependencies`                    | —          |                                                                                               |
-| `scripts/src/services/oxlint`                                  | —          |                                                                                               |
+| `scripts/src/services/coderabbit` — `feedback`, `shared`       | 2026-09-20 |                                                                                               |
+| `scripts/src/services/sweeps` — the scans                      | 2026-09-20 | everything but `ledgerCoverage` and `skillDocs`                                               |
+| `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`  | 2026-09-20 | the two that read the ledgers and the skill tree                                              |
+| `scripts/src/services/outdatedDependencies`                    | 2026-09-20 |                                                                                               |
+| `scripts/src/services/oxlint`                                  | 2026-09-20 |                                                                                               |
 | `scripts/src/services/citations`                               | 2026-09-16 |                                                                                               |
 | `scripts/src/services/shared`, `dependencyGraph`, `updateNode` | 2026-09-16 |                                                                                               |
-| `scripts/src/models`                                           | —          | one type per file, no logic                                                                   |
-| `scripts/src/workspace`                                        | —          | the enforcers, not the tooling they hold                                                      |
-| `scripts/src` — the entrypoints                                | —          | `citations`, `coderabbit`, `crossOS`, `dependencyGraph`, `refreshLockfile`, `sweeps`          |
+| `scripts/src/models`                                           | 2026-09-20 | one type per file, no logic                                                                   |
+| `scripts/src/workspace`                                        | 2026-09-20 | the enforcers, not the tooling they hold                                                      |
+| `scripts/src` — the entrypoints                                | 2026-09-20 | `citations`, `coderabbit`, `crossOS`, `dependencyGraph`, `refreshLockfile`, `sweeps`          |
 | `scripts/src/outdatedDependencies`                             | 2026-09-15 |                                                                                               |
 | `scripts/src/oxlint`                                           | 2026-09-15 |                                                                                               |
 | `scripts/src/updateNode`                                       | 2026-09-15 |                                                                                               |
