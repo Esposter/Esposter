@@ -1,5 +1,7 @@
 import type { Character } from "#src/models/Character";
+import type { TravelerTwin } from "#src/models/TravelerTwin";
 
+import { TravelerGender } from "#src/models/TravelerGender";
 import { VoiceLanguage } from "#src/models/VoiceLanguage";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -98,6 +100,16 @@ export const WIKI_VOICE_OVERS_URL: string = `${WIKI_ORIGIN}/api.php?action=parse
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
 export const WIKI_IMAGE_INFO_URL: string = `${WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=`;
 export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
+// The player twins have no page of their own: the Traveler's index links one story page per region, and every
+// Line on those is a dialogue with Paimon filed under a file per twin, with a gendered word choice in the text
+export const WIKI_TRAVELER_PAGE = "Traveler/Voice-Overs";
+export const TravelerTwinMap: Record<string, TravelerTwin> = {
+  Aether: { gender: TravelerGender.Male, namePlaceholder: "{character1}" },
+  Lumine: { gender: TravelerGender.Female, namePlaceholder: "{character2}" },
+};
+// One attempt with a short ceiling on every wiki call: a host that takes the connection and never finishes the
+// Response would otherwise hold the command — or the hook a reply waits behind — open for as long as it cared to
+export const WIKI_FETCH_TIMEOUT_MS = 10_000;
 // The wiki's file host serves a file only to a request that says it came from the wiki — hotlink protection, which
 // The API is exempt from — so a clip is fetched naming the page it was found on, under the plugin's own user agent
 export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
@@ -140,6 +152,13 @@ export const VOICE_ENCODER_COMPONENT = "speech_encoder";
 export const VOICE_SAMPLE_RATE = 24_000;
 // The engine conditions on this much of a reference, so a longer clip is trimmed rather than encoded whole
 export const MAX_REFERENCE_SECONDS = 10;
+// A clip's energy is read per frame, this long and this far apart, and a frame this far below the loudest is not
+// Speech: what a clip's speech seconds are counted over, and where a turn of a dialogue ends
+export const FRAME_SECONDS = 0.04;
+export const HOP_SECONDS = 0.01;
+export const SPEECH_FLOOR_DB = 35;
+// A twin's line is theirs only until Paimon answers, so their reference is cut at the first silence this long
+export const MIN_TURN_PAUSE_SECONDS = 0.4;
 // A ceiling on a sentence's length in speech tokens, so a runaway generation ends
 export const MAX_SPEECH_TOKENS = 400;
 // What a warm request synthesizes and drops, so the graph's first-call cost is paid before the first reply

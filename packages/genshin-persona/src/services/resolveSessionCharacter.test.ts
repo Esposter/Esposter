@@ -5,6 +5,7 @@ import type { readPickRecords as baseReadPickRecords } from "#src/services/readP
 import type { readPin as baseReadPin } from "#src/services/readPin";
 import type { writePickRecords as baseWritePickRecords } from "#src/services/writePickRecords";
 
+import { TEST_EPOCH_DATE } from "#src/services/constants.test";
 import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -33,7 +34,6 @@ vi.mock(import("#src/services/pickCurrentCharacter"), () => ({
 
 describe(resolveSessionCharacter, () => {
   const sessionId = "sessionId";
-  const today = Temporal.PlainDate.from("1970-01-01");
   const character: Character = {
     affiliation: "Wangsheng Funeral Parlor",
     birthday: "7/15",
@@ -48,7 +48,7 @@ describe(resolveSessionCharacter, () => {
   };
   const otherRecord: PickRecord = {
     element: "Anemo",
-    isoDate: today.toString(),
+    isoDate: TEST_EPOCH_DATE.toString(),
     name: "Venti",
     sessionId: "otherSessionId",
   };
@@ -72,10 +72,10 @@ describe(resolveSessionCharacter, () => {
       return Promise.resolve(character);
     });
 
-    await expect(resolveSessionCharacter([character], sessionId, today)).resolves.toStrictEqual(character);
+    await expect(resolveSessionCharacter([character], sessionId, TEST_EPOCH_DATE)).resolves.toStrictEqual(character);
     expect(pickRecords).toStrictEqual([
       otherRecord,
-      { element: character.element, isoDate: today.toString(), name: character.name, sessionId },
+      { element: character.element, isoDate: TEST_EPOCH_DATE.toString(), name: character.name, sessionId },
     ]);
   });
 });

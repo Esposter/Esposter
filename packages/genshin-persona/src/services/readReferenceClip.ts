@@ -2,7 +2,12 @@ import type { ClipDecoder } from "#src/models/ClipDecoder";
 import type { PcmClip } from "#src/models/PcmClip";
 import type { VoiceLanguage } from "#src/models/VoiceLanguage";
 
-import { MAX_REFERENCE_SECONDS, VOICE_SAMPLE_RATE, WIKI_FILE_REQUEST_HEADERS } from "#src/services/constants";
+import {
+  MAX_REFERENCE_SECONDS,
+  VOICE_SAMPLE_RATE,
+  WIKI_FETCH_TIMEOUT_MS,
+  WIKI_FILE_REQUEST_HEADERS,
+} from "#src/services/constants";
 import { getReferencePath } from "#src/services/getReferencePath";
 import { getWikiFileTitle } from "#src/services/getWikiFileTitle";
 import { readWikiFileUrls } from "#src/services/readWikiFileUrls";
@@ -38,7 +43,10 @@ export const readReferenceClip = async (
     const url = urls.get(title);
     if (!url) return undefined;
 
-    const response = await fetch(url, { headers: WIKI_FILE_REQUEST_HEADERS });
+    const response = await fetch(url, {
+      headers: WIKI_FILE_REQUEST_HEADERS,
+      signal: AbortSignal.timeout(WIKI_FETCH_TIMEOUT_MS),
+    });
     if (!response.ok) return undefined;
 
     const bytes = await response.bytes();

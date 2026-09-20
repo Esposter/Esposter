@@ -98,12 +98,6 @@ switch (verb) {
 
     console.log(`${getRosterLine(character)}\n${character.description}`);
     const voiceLines = await readVoiceLines(character.name);
-    if (!voiceLines) {
-      console.error(`The game data carries no lines for "${character.name}" yet, and the wiki did not answer.`);
-      process.exitCode = 1;
-      break;
-    }
-
     for (const { text, title } of voiceLines) console.log(`- ${title}: ${text}`);
     break;
   }
