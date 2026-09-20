@@ -40,7 +40,7 @@ On this machine the checkout is added as a local marketplace and the plugin inst
 
 ## Installable by anyone
 
-The repository is public, so the marketplace is too: two commands, no clone of their own.
+The repository is public, so the marketplace is too: two commands, no clone of their own, and no listing in Anthropic's own directory, which was [decided against](/docs/infra/rejected/official-plugin-directory).
 
 ```bash
 claude plugin marketplace add Esposter/Esposter

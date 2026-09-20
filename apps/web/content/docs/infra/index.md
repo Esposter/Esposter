@@ -18,6 +18,7 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 - [Typed decisions](/docs/infra/typed-decisions) — which tier answers a gate, a verdict or a triage, and why the cheapest session is the one never spawned.
 - [Roadmap](/docs/infra/roadmap) — open items (key-auth-gated hardening); every item links its proposal.
 - [Deferred](/docs/infra/deferred) — ideas waiting on a trigger.
+- [Rejected](/docs/infra/rejected) — ideas decided against, one page each.
 
 Deeper operational reference lives beside the code in `apps/infra/docs/` (naming conventions, security constraints, search indexes, stacks), and Pulumi coding conventions live in the `pulumi-infra` skill.
 
