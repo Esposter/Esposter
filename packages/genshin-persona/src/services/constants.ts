@@ -15,17 +15,9 @@ export const STATUS_LINE_MARKER = "genshin-persona";
 export const TIPS_PATH: string = join(STATE_DIRECTORY, "tips.json");
 // The ids of the base tips, which every character shows; a character's own tips take the card slug
 export const BASE_TIP_ID = "teyvat";
-export const CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "..", "cards");
-export const CARD_EXTENSION = ".md";
-export const SPINNER_CONTENT_PATH: string = join(import.meta.dirname, "..", "..", "spinner.md");
-export const TIP_PREFIX = "- Tip: ";
-export const VERBS_PREFIX = "- Verbs: ";
-export const VERB_SEPARATOR = ", ";
+export const CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "cards");
+export const CARD_EXTENSION = ".ts";
 export const CARD_DETAIL_SEPARATOR = " · ";
-export const GREETING_PREFIX = "- Greets: ";
-export const VOICE_PREFIX = "- Voice: ";
-// Between a voice field's key and its value
-export const VOICE_FIELD_ASSIGNMENT = "=";
 // What the model reads the headline under, and what the person reads it under
 export const CONTEXT_HEADLINE_PREFIX = "Persona: ";
 export const NAMEPLATE_PREFIX = "✦ ";

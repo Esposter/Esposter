@@ -9,7 +9,7 @@ import { formatCard } from "#src/services/formatCard";
 export const getSessionStartOutput = (card: Card): string => {
   const output: SessionStartOutput = {
     hookSpecificOutput: { additionalContext: formatCard(card), hookEventName: "SessionStart" },
-    systemMessage: [`${NAMEPLATE_PREFIX}${card.headline}`, card.note, card.voiceCard.greeting]
+    systemMessage: [`${NAMEPLATE_PREFIX}${card.headline}`, card.note, card.personaCard?.greeting ?? ""]
       .filter(Boolean)
       .join("\n"),
   };

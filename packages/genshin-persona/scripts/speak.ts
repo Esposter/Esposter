@@ -7,11 +7,10 @@ import {
 } from "#src/services/constants";
 import { getFirstSentence } from "#src/services/getFirstSentence";
 import { parseHookInput } from "#src/services/parseHookInput";
-import { parseVoiceCard } from "#src/services/parseVoiceCard";
 import { playAudio } from "#src/services/playAudio";
+import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readSessionCharacterName } from "#src/services/readSessionCharacterName";
 import { readStdin } from "#src/services/readStdin";
-import { readVoiceCard } from "#src/services/readVoiceCard";
 import { readVolume } from "#src/services/readVolume";
 import { registerFailureFallback } from "#src/services/registerFailureFallback";
 import { synthesizeSpeech } from "#src/services/synthesizeSpeech";
@@ -27,13 +26,13 @@ if (endpoint && key && !checkIsMuted()) {
   if (text) {
     // The character's own voice when their card names one, and the configured voice for every character whose card
     // Does not — so setting one is how a person overrides the unwritten cards rather than all of them
-    const cardVoice = parseVoiceCard(readVoiceCard(readSessionCharacterName(sessionId))).voice;
-    const name = cardVoice.name || process.env[SPEECH_VOICE_ENVIRONMENT_VARIABLE] || DEFAULT_SPEECH_VOICE;
+    const personaCard = await readPersonaCard(readSessionCharacterName(sessionId));
+    const name = personaCard?.voice.name ?? process.env[SPEECH_VOICE_ENVIRONMENT_VARIABLE] ?? DEFAULT_SPEECH_VOICE;
     const audio = await synthesizeSpeech({
       endpoint,
       key,
       text,
-      voice: { ...cardVoice, name },
+      voice: { ...personaCard?.voice, name },
       volume: readVolume(),
     });
     if (audio) playAudio(audio);

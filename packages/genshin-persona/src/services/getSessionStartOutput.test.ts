@@ -1,32 +1,35 @@
 import type { Card } from "#src/models/Card";
+import type { PersonaCard } from "#src/models/PersonaCard";
 
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
-import { parseSpeechVoice } from "#src/services/parseSpeechVoice";
 import { describe, expect, test } from "vitest";
 
 describe(getSessionStartOutput, () => {
-  // The session-start output never reads the voice; production owns what an unset one is
-  const voice = parseSpeechVoice("");
   const description = "description";
   const headline = "headline";
   const note = "[note]";
   const greeting = "greeting";
-  const context = `- habit\n- Greets: ${greeting}\n- Signs off: sign-off`;
+  const signOff = "sign-off";
+  const habit = "habit";
+  // The session-start output never reads the voice, the tips or the verbs; production owns what those are
+  const personaCard: PersonaCard = {
+    greeting,
+    habits: [habit],
+    signOff,
+    tips: ["tip"],
+    verbs: ["verb"],
+    voice: { name: "" },
+  };
 
-  test("shows the person the nameplate, the note and the greeting, and hands the model the lore and the context", () => {
+  test("shows the person the nameplate, the note and the greeting, and hands the model the lore and the habits", () => {
     expect.hasAssertions();
 
-    const card: Card = {
-      description,
-      headline,
-      note,
-      voiceCard: { context, greeting, tips: ["tip"], verbs: ["verb"], voice },
-    };
+    const card: Card = { description, headline, note, personaCard };
 
     expect(getSessionStartOutput(card)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
-          additionalContext: `Persona: ${headline}\n${description}\n${note}\n${context}`,
+          additionalContext: `Persona: ${headline}\n${description}\n${note}\n- ${habit}\n- Greets: ${greeting}\n- Signs off: ${signOff}`,
           hookEventName: "SessionStart",
         },
         systemMessage: `✦ ${headline}\n${note}\n${greeting}`,
@@ -37,12 +40,7 @@ describe(getSessionStartOutput, () => {
   test("drops every line the character does not have", () => {
     expect.hasAssertions();
 
-    const card: Card = {
-      description: "",
-      headline,
-      note: "",
-      voiceCard: { context: "", greeting: "", tips: [], verbs: [], voice },
-    };
+    const card: Card = { description: "", headline, note: "", personaCard: undefined };
 
     expect(getSessionStartOutput(card)).toBe(
       JSON.stringify({

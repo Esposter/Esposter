@@ -1,6 +1,7 @@
 import type { Character } from "#src/models/Character";
 
 import { GenshinVerb } from "#src/models/GenshinVerb";
+import { BASE_SPINNER_CONTENT } from "#src/services/baseSpinnerContent";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { checkIsSpeechVolume } from "#src/services/checkIsSpeechVolume";
 import {
@@ -18,14 +19,12 @@ import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithou
 import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLine";
 import { getSpeechVoiceFinding } from "#src/services/getSpeechVoiceFinding";
 import { getSpinner } from "#src/services/getSpinner";
-import { parseVoiceCard } from "#src/services/parseVoiceCard";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
+import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
 import { readSpeechVoiceDefinitions } from "#src/services/readSpeechVoiceDefinitions";
-import { readSpinnerContent } from "#src/services/readSpinnerContent";
 import { readUserSettings } from "#src/services/readUserSettings";
-import { readVoiceCard } from "#src/services/readVoiceCard";
 import { readVoiceLines } from "#src/services/readVoiceLines";
 import { setIsMuted } from "#src/services/setIsMuted";
 import { writePin } from "#src/services/writePin";
@@ -44,10 +43,13 @@ const getRosterLine = (character: Character) =>
     .join(CARD_DETAIL_SEPARATOR);
 const compareVersionsDescending = (a: Character, b: Character) =>
   b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name);
-const printCard = (character: Character) => {
-  const card = getCard(character, today, readVoiceCard(character.name));
+const printCard = async (character: Character) => {
+  const card = getCard(character, today, await readPersonaCard(character.name));
   console.log(formatCard(card));
 };
+// Every card at once, for the verbs that report on the roster rather than on the session's character
+const readCardedRoster = async () =>
+  Promise.all(roster.map(async (character) => ({ character, personaCard: await readPersonaCard(character.name) })));
 // The pin, else a fresh pick: what a session starting now would be given, short of a record it already holds — and
 // Under the lore pick a fresh ask may answer differently, which is the point of it
 const getCurrentCharacter = async () => {
@@ -105,8 +107,8 @@ switch (verb) {
     writeUserSettings(settings);
     const character = await getCurrentCharacter();
     if (character) {
-      const voiceCard = parseVoiceCard(readVoiceCard(character.name));
-      writeSpinner(getSpinner(readSpinnerContent(), character.name, voiceCard));
+      const personaCard = await readPersonaCard(character.name);
+      writeSpinner(getSpinner(BASE_SPINNER_CONTENT, character.name, personaCard));
     }
 
     console.log(
@@ -125,15 +127,17 @@ switch (verb) {
   }
   case GenshinVerb.Today: {
     const character = await getCurrentCharacter();
-    if (character) printCard(character);
+    if (character) await printCard(character);
     break;
   }
-  case GenshinVerb.Uncarded:
-    for (const character of roster
-      .filter((candidate) => !readVoiceCard(candidate.name))
-      .toSorted(compareVersionsDescending))
+  case GenshinVerb.Uncarded: {
+    const cardedRoster = await readCardedRoster();
+    for (const { character } of cardedRoster
+      .filter(({ personaCard }) => !personaCard)
+      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
       console.log(getRosterLine(character));
     break;
+  }
   case GenshinVerb.Unmute:
     setIsMuted(false);
     console.log("Spoken replies unmuted.");
@@ -142,15 +146,14 @@ switch (verb) {
     deletePin();
     console.log("Pin removed; the pick decides again from the next session.");
     break;
-  case GenshinVerb.Untipped:
-    for (const character of roster
-      .filter((candidate) => {
-        const voiceCard = parseVoiceCard(readVoiceCard(candidate.name));
-        return voiceCard.context && (voiceCard.tips.length === 0 || voiceCard.verbs.length === 0);
-      })
-      .toSorted(compareVersionsDescending))
+  case GenshinVerb.Untipped: {
+    const cardedRoster = await readCardedRoster();
+    for (const { character } of cardedRoster
+      .filter(({ personaCard }) => personaCard && (personaCard.tips.length === 0 || personaCard.verbs.length === 0))
+      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
       console.log(getRosterLine(character));
     break;
+  }
   case GenshinVerb.Voices: {
     const endpoint = process.env[SPEECH_ENDPOINT_ENVIRONMENT_VARIABLE] ?? "";
     const key = process.env[SPEECH_KEY_ENVIRONMENT_VARIABLE] ?? "";
@@ -167,9 +170,10 @@ switch (verb) {
       break;
     }
 
-    const voicedCharacters = roster
-      .map((character) => ({ character, voice: parseVoiceCard(readVoiceCard(character.name)).voice }))
-      .filter(({ voice }) => voice.name);
+    const cardedRoster = await readCardedRoster();
+    const voicedCharacters = cardedRoster.flatMap(({ character, personaCard }) =>
+      personaCard ? [{ character, voice: personaCard.voice }] : [],
+    );
     for (const { character, voice } of voicedCharacters) {
       const finding = getSpeechVoiceFinding(voice, definitions);
       if (finding) console.log(`${character.name} ${finding}`);
