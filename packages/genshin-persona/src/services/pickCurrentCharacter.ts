@@ -1,4 +1,5 @@
 import type { Character } from "#src/models/Character";
+
 import { pickCharacter } from "#src/services/pickCharacter";
 import { pickCharacterByLore } from "#src/services/pickCharacterByLore";
 import { readTypeSafeKey } from "#src/services/readTypeSafeKey";

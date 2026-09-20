@@ -6,7 +6,7 @@ import { parseBirthday } from "#src/services/parseBirthday";
 import { hashString } from "#src/util/hashString";
 
 // Whoever's birthday is nearest to today. A tie goes to the birthday still ahead over the one just passed, and
-// what is left after that is one candidate per seed, so every session started on one day meets the same character
+// What is left after that is one candidate per seed, so every session started on one day meets the same character
 export const pickCharacter = (roster: Character[], today: Temporal.PlainDate, seed: string): Character | undefined => {
   const candidates = roster.flatMap<BirthdayCandidate>((character) => {
     const birthday = parseBirthday(character.birthday);

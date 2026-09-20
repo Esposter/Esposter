@@ -9,7 +9,7 @@ const getDistance = (daysAhead: number, daysBehind: number) => {
 };
 
 // The plugin's aside, in brackets so it reads as a caption beside the character's own line: the date the person
-// may ask about, and the distance that says why this character was picked
+// May ask about, and the distance that says why this character was picked
 export const getBirthdayNote = (birthday: string, today: Temporal.PlainDate): string => {
   const birthdayDate = parseBirthday(birthday);
   if (!birthdayDate) return "";

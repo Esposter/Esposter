@@ -1,4 +1,5 @@
 import type { Character } from "#src/models/Character";
+
 import { LEAP_YEAR } from "#src/services/constants";
 import { pickCharacter } from "#src/services/pickCharacter";
 import { describe, expect, test } from "vitest";

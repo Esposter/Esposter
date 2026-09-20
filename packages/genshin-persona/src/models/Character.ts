@@ -1,6 +1,6 @@
 export interface Character {
   // What the character belongs to — the Knights of Favonius, the Trial Court, Bubu Pharmacy — and the sharpest
-  // occupation signal the data carries; "" for the player character
+  // Occupation signal the data carries; "" for the player character
   affiliation: string;
   // Month and day as the game data spells them, unpadded ("7/15"); "" for the player character
   birthday: string;

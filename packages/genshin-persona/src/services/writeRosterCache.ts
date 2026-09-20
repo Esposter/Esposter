@@ -7,7 +7,7 @@ import { readdirSync, rmSync } from "node:fs";
 import { basename, join } from "node:path";
 
 // The cache of the version being written replaces every other, so a machine carries one roster rather than one per
-// version it has ever installed
+// Version it has ever installed
 export const writeRosterCache = (version: string, roster: Character[]): void => {
   const cachePath = getRosterCachePath(version);
   writeStateFile(cachePath, JSON.stringify(roster));
