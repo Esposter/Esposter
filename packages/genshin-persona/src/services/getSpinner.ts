@@ -1,8 +1,15 @@
 import type { Spinner } from "#src/models/Spinner";
 import type { SpinnerContent } from "#src/models/SpinnerContent";
 import type { SpinnerTip } from "#src/models/SpinnerTip";
+import type { VoiceLine } from "#src/models/VoiceLine";
 
-import { BASE_TIP_ID, PLUGIN_MARKER, TIP_ID_MARKER_SEPARATOR, TIP_ID_SEPARATOR } from "#src/services/constants";
+import {
+  BASE_TIP_ID,
+  MAX_SPINNER_TIP_COUNT,
+  PLUGIN_MARKER,
+  TIP_ID_MARKER_SEPARATOR,
+  TIP_ID_SEPARATOR,
+} from "#src/services/constants";
 import { getPersonaCardName } from "#src/services/getPersonaCardName";
 
 const getTips = (idPrefix: string, tips: string[]): SpinnerTip[] =>
@@ -12,11 +19,18 @@ const getTips = (idPrefix: string, tips: string[]): SpinnerTip[] =>
   }));
 
 // The verbs are the base content with the character's behind it. The tips are one layer under one label: the
-// Character's own under their name, else the base tips under the tool's own prefix, because a base tip is nobody's
+// Character's own under their name — the card's performed tips first, then every line of theirs, once each, since
+// A card's tip may quote a line — else the base tips under the tool's own prefix, because a base tip is nobody's
 // Line and a name in front of it reads as an attribution. A tip's id is stable across rewrites so its show history
 // Survives the character changing
-export const getSpinner = (base: SpinnerContent, name: string, content: SpinnerContent | undefined): Spinner => {
-  const tips = content?.tips ?? [];
+export const getSpinner = (
+  base: SpinnerContent,
+  name: string,
+  content: SpinnerContent | undefined,
+  lines: VoiceLine[],
+): Spinner => {
+  const ownTips = new Set([...(content?.tips ?? []), ...lines.map(({ text }) => text)]);
+  const tips = [...ownTips].slice(0, MAX_SPINNER_TIP_COUNT);
   const hasOwnTips = tips.length > 0;
   return {
     label: hasOwnTips ? name : "",

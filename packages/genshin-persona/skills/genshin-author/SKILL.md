@@ -5,7 +5,7 @@ description: Apply when writing, reviewing or listing the persona cards under sr
 
 # Authoring a persona card
 
-A character with no card is fully usable: the session-start hook prints the name, title, element, region, the game's one-line description and the bracketed birthday note from the game data alone. A card adds what data cannot — how the character talks, and what the spinner shows while they work — and it is authored when someone feels like it, never as a gate on a new patch. A patch brings new characters, so the queue below refills on the same cadence as the dependency bump.
+A character with no card is fully usable: the session-start hook prints the name, title, element, region, the game's one-line description and the bracketed birthday note from the game data alone, and the spinner shows every line of theirs. A card adds what data cannot — how the character talks, their verbs, and the performed tips the spinner leads with — and it is authored when someone feels like it, never as a gate on a new patch. A patch brings new characters, so the queue below refills on the same cadence as the dependency bump.
 
 ## The queue
 
@@ -67,11 +67,11 @@ The full reasoning — how a reference is chosen and what its likeness number is
 
 ## The spinner lines
 
-**`verbs` and `tips` are the person's and never reach the model**: the hook writes them to the spinner, the tips under the character's name. They cost no tokens, so their ceiling is taste rather than budget.
+**`verbs` and `tips` are the person's and never reach the model**: the hook writes them to the spinner, the tips under the character's name ahead of every line of theirs. They cost no tokens, so their ceiling is taste rather than budget.
 
 - **Verbs** are two to four gerunds in the character's occupation, cased like the built-in ones (`["Duelling", "Judging", "Patrolling"]`). A verb can be hyphenated ("Beetle-fighting") but never a phrase. They are shown behind the base list below, so a card lists what only this character would be doing.
-- **Tips** are two to four lines the character says while the person waits, performed like the greeting: speech, first person or addressed to the person, from their own lines and story. A tip may be a running joke of theirs, a complaint, a preference, a piece of advice in their register. A character with no lines yet gets fewer tips, drawn from the description, never invented.
-- **The base content** is `BASE_SPINNER_CONTENT` in `src/services/baseSpinnerContent.ts`: the Teyvat verbs every character shows before their own, and the tips shown only for a card with none — the tool puts one label over every tip, so a card's tips replace the base tips rather than join them. A base tip is **nobody's line** — Teyvat's rather than a character's — and a card's tip should read as the character's, since their name is what stands in front of it.
+- **Tips** are two to four lines the character says while the person waits, performed like the greeting: speech, first person or addressed to the person, from their own lines and story. A tip may be a running joke of theirs, a complaint, a preference, a piece of advice in their register. The tips lead the spinner's list and the character's own lines follow, every one of them, so a tip earns its place by performing what the lines only state. A character with no lines yet gets fewer tips, drawn from the description, never invented.
+- **The base content** is `BASE_SPINNER_CONTENT` in `src/services/baseSpinnerContent.ts`: the Teyvat verbs every character shows before their own, and the tips shown only for a character with neither a tip nor a line — the tool puts one label over every tip, so a character's own replace the base tips rather than join them. A base tip is **nobody's line** — Teyvat's rather than a character's — and a card's tip should read as the character's, since their name is what stands in front of it.
 
 ## Sources
 

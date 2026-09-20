@@ -8,7 +8,7 @@ import { getSpinner } from "#src/services/getSpinner";
 import { describe, expect, test } from "vitest";
 
 describe(getSettingsWithoutPluginEntries, () => {
-  const spinner = getSpinner({ tips: ["baseTip"], verbs: ["verb"] }, "name", undefined);
+  const spinner = getSpinner({ tips: ["baseTip"], verbs: ["verb"] }, "name", undefined, []);
   const foreignStatusLine = { command: "command", type: "command" } as const;
 
   test("removes exactly what setup wrote and keeps every other key", () => {

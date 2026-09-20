@@ -11,7 +11,7 @@ describe(checkIsPluginSpinner, () => {
   test("reads the spinner setup wrote as ours", () => {
     expect.hasAssertions();
 
-    const settings = getSettingsWithSpinner({}, getSpinner(BASE_SPINNER_CONTENT, "Hu Tao", undefined));
+    const settings = getSettingsWithSpinner({}, getSpinner(BASE_SPINNER_CONTENT, "Hu Tao", undefined, []));
 
     expect(checkIsPluginSpinner(settings)).toBe(true);
   });

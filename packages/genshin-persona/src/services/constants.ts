@@ -38,6 +38,7 @@ export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
 export const STATUS_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "status.ts");
 export const VOICE_SERVER_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "voice.ts");
 export const WARM_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "warm.ts");
+export const SPINNER_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "spinner.ts");
 // One local address per machine that node's `net` serves from either spelling: a named pipe on Windows, a socket
 // File in the state directory elsewhere, and no port to collide on
 export const VOICE_SOCKET_PATH: string =
@@ -52,6 +53,8 @@ export const TIP_ID_MARKER_SEPARATOR = ".";
 export const BASE_TIP_ID = "teyvat";
 // Between a tip id's prefix and its index
 export const TIP_ID_SEPARATOR = "-";
+// The tool reads this many tips off the override and no more, so a character's list is cut there
+export const MAX_SPINNER_TIP_COUNT = 200;
 export const PERSONA_CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "personaCards");
 // A card is a typed module, one per character, named for the character
 export const PERSONA_MODULE_EXTENSION = ".ts";

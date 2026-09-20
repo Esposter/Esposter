@@ -4,7 +4,7 @@ import { GenshinVerb } from "#src/models/GenshinVerb";
 import { VoiceLanguage } from "#src/models/VoiceLanguage";
 import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { VoiceStatus } from "#src/models/VoiceStatus";
-import { BASE_SPINNER_CONTENT } from "#src/services/baseSpinnerContent";
+import { checkIsOwnVoiceLine } from "#src/services/checkIsOwnVoiceLine";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { checkIsRuntimeInstalled } from "#src/services/checkIsRuntimeInstalled";
 import { checkIsVoiceLanguage } from "#src/services/checkIsVoiceLanguage";
@@ -31,7 +31,6 @@ import { getCard } from "#src/services/getCard";
 import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
 import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLine";
 import { getSpeechRequest } from "#src/services/getSpeechRequest";
-import { getSpinner } from "#src/services/getSpinner";
 import { installVoiceRuntime } from "#src/services/installVoiceRuntime";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
 import { readCardedRoster } from "#src/services/readCardedRoster";
@@ -40,6 +39,7 @@ import { readLanguage } from "#src/services/readLanguage";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
+import { readSpinner } from "#src/services/readSpinner";
 import { readUserSettings } from "#src/services/readUserSettings";
 import { readVoiceLines } from "#src/services/readVoiceLines";
 import { readVoiceRuntime } from "#src/services/readVoiceRuntime";
@@ -83,7 +83,7 @@ const getCurrentCharacter = () => {
 // Start, the status line and the speech hook agree, and the spinner follows where `setup` opted it in
 const switchSessionCharacter = async (character: Character) => {
   recordSessionCharacter(character, sessionId, today.toString());
-  writeSessionSpinner(character, await readPersonaCard(character.name));
+  await writeSessionSpinner(character.name, await readPersonaCard(character.name));
   await printCard(character);
 };
 
@@ -98,7 +98,8 @@ switch (verb) {
 
     console.log(`${getRosterLine(character)}\n${character.description}`);
     const voiceLines = await readVoiceLines(character.name);
-    for (const { text, title } of voiceLines) console.log(`- ${title}: ${text}`);
+    for (const { text, title } of voiceLines.filter((line) => checkIsOwnVoiceLine(line)))
+      console.log(`- ${title}: ${text}`);
     break;
   }
   case GenshinVerb.Mute:
@@ -136,8 +137,8 @@ switch (verb) {
     writeUserSettings(settings);
     const character = await getCurrentCharacter();
     if (character) {
-      const personaCard = await readPersonaCard(character.name);
-      writeSpinner(getSpinner(BASE_SPINNER_CONTENT, character.name, personaCard));
+      const spinner = await readSpinner(character.name, await readPersonaCard(character.name));
+      writeSpinner(spinner);
     }
 
     console.log(
