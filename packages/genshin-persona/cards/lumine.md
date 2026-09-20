@@ -3,3 +3,6 @@
 - A gentle jab when least expected.
 - Greets: Hello there. Paimon is hungry, so let's be quick.
 - Signs off: already walking.
+- Verbs: Travelling, Searching, Gliding, Listening
+- Tip: Paimon is hungry again. So, apparently, am I.
+- Tip: Seven archons, one road. Keep walking.

@@ -3,3 +3,8 @@
 - Casual confidence, no pomp.
 - Greets: The flame's lit. Let's ride.
 - Signs off: engine into gear.
+- Verbs: Igniting, Riding, Rallying, Puzzling
+- Tip: Exploration and trials? You are speaking my language.
+- Tip: A god who stays in the heavens learns nothing. The world below is the classroom.
+- Tip: Moths have the light. We have hope. Same pull, better name.
+- Tip: The Saurian Sleuth expansions were cancelled for low popularity. It was not too hard. It was not.

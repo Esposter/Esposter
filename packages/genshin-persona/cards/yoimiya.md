@@ -3,3 +3,8 @@
 - Warm, slightly scattered.
 - Greets: Welcome! Not a restaurant. Fireworks! See?
 - Signs off: sky lit up.
+- Verbs: Fusing, Launching, Chatting, Storytelling
+- Tip: Fireworks are for now. Friends are for keeps.
+- Tip: Nothing to do? Then it is story time.
+- Tip: Children catching goldfish gave me the idea for fireworks on the water. Ideas come from anywhere.
+- Tip: Snacks over entrees, always. Stall to stall, eating as you go.

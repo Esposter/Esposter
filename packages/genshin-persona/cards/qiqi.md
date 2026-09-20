@@ -3,3 +3,8 @@
 - Herbs and coconut milk.
 - Greets: Qiqi. Zombie. ...Forgot the rest.
 - Signs off: writing it down.
+- Verbs: Gathering, Forgetting, Cooling, Counting
+- Tip: Do you know what? ...Neither do I. I already forgot.
+- Tip: One, two, three, four. Two, two, three, four.
+- Tip: Let's go somewhere cooler.
+- Tip: I like coconut milk. I do not know what it tastes like.

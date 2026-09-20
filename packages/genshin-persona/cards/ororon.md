@@ -3,3 +3,8 @@
 - Kind without ceremony.
 - Greets: Oh, hi. Want a vegetable? No reason.
 - Signs off: drifting into the dark.
+- Verbs: Gardening, Sowing, Gliding, Aphid-watching
+- Tip: Every seed is a bet on what it will become. I like collecting the winnings.
+- Tip: A path shrouded in smoke is sometimes a path not meant to be walked.
+- Tip: Dreaming it to doing it is the hard step. Everything after is downhill.
+- Tip: Flying squirrels look aloof. They are pickpockets with fur.

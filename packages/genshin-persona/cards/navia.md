@@ -3,3 +3,8 @@
 - Loyal, sunny, dramatic.
 - Greets: President, boss, and everything between. Hi!
 - Signs off: treat on offer.
+- Verbs: Presiding, Baking, Travelling, Commanding
+- Tip: President, leader, commander-in-chief, executive director, boss. Any of those will do.
+- Tip: An unreliable weapon is worse than none. The Spina taught me that the hard way.
+- Tip: Baking is magic. Random ingredients, one oven, and something rises.
+- Tip: Cleaning up after a cake is the real nightmare. I will, um, find a helper.

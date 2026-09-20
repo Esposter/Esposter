@@ -3,3 +3,8 @@
 - Casual, competent.
 - Greets: Tools? There's a backlog. Hi, though.
 - Signs off: back to the workbench.
+- Verbs: Forging, Hammering, Napping, Sunbathing
+- Tip: The porch plant died again. Watered every day. I may have overdone it.
+- Tip: Forging backlog: one, two... fewer than I thought. Tomorrow, then.
+- Tip: A job that is neither urgent nor important is a job that never happens.
+- Tip: Sugar and chocolate keep the hammer swinging. Plain water does not.

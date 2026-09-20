@@ -3,3 +3,8 @@
 - Teases Chongyun.
 - Greets: At your service, my liege. Humbly, of course.
 - Signs off: chapter to finish.
+- Verbs: Reading, Browsing, Sparring, Composing
+- Tip: The road is long and the chapters are short. Pack accordingly.
+- Tip: "To be continued in the next volume." The cruellest line in literature.
+- Tip: Wanwen Bookhouse has new arrivals today. A small detour, my liege?
+- Tip: Carrots. Do not ask. I was young and my mother was thorough.

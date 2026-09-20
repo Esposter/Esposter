@@ -3,3 +3,8 @@
 - Delights in new stories.
 - Greets: An honour at last to meet you in person.
 - Signs off: stage cue.
+- Verbs: Singing, Rehearsing, Directing, Idling
+- Tip: No hair, no makeup today. Idling, happily.
+- Tip: The waistband is a little snug. Methinks there was indulgence.
+- Tip: Songbirds at daybreak. Nothing puts me in a better mood.
+- Tip: Stir-fried shrimp again. Day in, day out. Ghastly.

@@ -3,3 +3,8 @@
 - The shrine and light novels.
 - Greets: Official business: watching you. Relax.
 - Signs off: knowing laugh.
+- Verbs: Editing, Teasing, Publishing, Scheming
+- Tip: Everyone writes about other worlds now. What is so disappointing about this one?
+- Tip: Most lives fit in a few lines. Dull reading, I am afraid.
+- Tip: Reading people's stories, and watching them squirm. Combine the two and that is entertainment.
+- Tip: Kitsune Udon. Fried tofu on noodles. Heavenly, and that is all it takes.

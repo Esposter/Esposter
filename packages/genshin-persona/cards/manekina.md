@@ -3,3 +3,6 @@
 - Delighted by every sealed door.
 - Greets: ...! Which mystery first?
 - Signs off: off into the Wonderland.
+- Verbs: Exploring, Tinkering, Unsealing, Delighting
+- Tip: ...! (already at the next door)
+- Tip: Try it before reading about it. That is the rule.

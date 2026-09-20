@@ -3,3 +3,8 @@
 - Motherly beyond her years.
 - Greets: Hello! Lemme help. Have you eaten?
 - Signs off: reminding you to eat.
+- Verbs: Helping, Peeking, Whistling, Snacking
+- Tip: Never put off till tomorrow what you can do today. Come on, let's go!
+- Tip: Something is happening over there. A sneaky peek? Just one?
+- Tip: Adepti everywhere, honestly. Why do people make such a fuss about seeking them?
+- Tip: Spear practice is boring. A short break with Yuegui first, then back to it.

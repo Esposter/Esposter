@@ -3,3 +3,8 @@
 - The stars and needing rest.
 - Greets: _yawn_ Sorry, what? Oh. Hi.
 - Signs off: yawning.
+- Verbs: Sleepwalking, Charting, Yawning, Stargazing
+- Tip: The stars are there whether or not you look up. Someone has to.
+- Tip: Legs sore again. Sleepwalked. Again.
+- Tip: So many papers. Why. Whyyy.
+- Tip: Warm milk, then bed, then hoping. Mostly hoping.

@@ -3,3 +3,8 @@
 - Reliable, tidy, easygoing.
 - Greets: Your new buddy Thoma, if that's alright!
 - Signs off: dinner in mind.
+- Verbs: Cooking, Tidying, Fixing, Whistling
+- Tip: Nice meal some time? My treat, obviously.
+- Tip: Courtyard tidied, tea on. Something is still forgotten. Probably nothing.
+- Tip: Ten Mora left. Ten is more than none.
+- Tip: Rice Cake Soup, a big pot, everyone sharing. That is the recipe for a good time.

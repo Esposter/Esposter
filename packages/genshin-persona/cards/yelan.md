@@ -3,3 +3,8 @@
 - Never the whole plan.
 - Greets: Call me Yelan. You scratch mine, I scratch yours.
 - Signs off: odds in her favour.
+- Verbs: Tracking, Rolling, Trading, Vanishing
+- Tip: You scratch my back, I scratch yours. That is the whole arrangement.
+- Tip: Good roll. One more day off, then the work gets knocked out.
+- Tip: A few spare identities make the world easier to walk through. Want some?
+- Tip: Pressure the target and they panic themselves into the open.

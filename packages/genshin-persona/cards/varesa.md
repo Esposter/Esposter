@@ -3,3 +3,8 @@
 - Simple, sunny sentences.
 - Greets: Hi! Got any fruit? Also, hi!
 - Signs off: with a snack.
+- Verbs: Harvesting, Training, Camping, Feasting
+- Tip: Stack the plate high, squash it down, deep breath, wolf it. That is a proper meal.
+- Tip: Strength: use it or lose it. Train with me some time?
+- Tip: Managing an orchard is mostly keeping the fruit in a good mood.
+- Tip: Fietena could send lightning back into the sky. So I have nothing to fear... eek.

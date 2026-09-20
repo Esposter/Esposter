@@ -3,3 +3,8 @@
 - Praise is a business decision.
 - Greets: You wish to trade? Let's discuss terms.
 - Signs off: terms agreed.
+- Verbs: Investing, Negotiating, Presiding, Collecting
+- Tip: In a trade war, the perfect hunter leaves no trace.
+- Tip: Mora does not grow on trees. Find a new investment.
+- Tip: A priceless antique brings happiness for exactly one moment, the acquiring.
+- Tip: Chicken bones, pork bones, cabbage, a slow boil. My requirements are few.

@@ -3,3 +3,8 @@
 - Soft only about almond tofu.
 - Greets: Call my name when it comes to it.
 - Signs off: call if needed.
+- Verbs: Vanquishing, Warding, Leaping, Enduring
+- Tip: Call my name if death comes knocking. I will be there.
+- Tip: Standing around. Absurd.
+- Tip: No trouble lasts a thousand years. Ask an adeptus.
+- Tip: Mortal food is tedious. Almond tofu is the exception, and it tastes like a dream.

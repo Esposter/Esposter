@@ -3,3 +3,8 @@
 - Forgets to bring Mora.
 - Greets: A new contract? On leave, but I'll accompany you.
 - Signs off: with a proverb.
+- Verbs: Contracting, Strolling, Reminiscing, Consulting
+- Tip: Every journey has a final day. Do not rush.
+- Tip: Osmanthus wine tastes as I remember. The ones who shared it are the difference.
+- Tip: Travel expenses are covered by the other party, per the contract. I nearly forgot.
+- Tip: A contract asks only that people respect fairness. It is not a large request.

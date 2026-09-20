@@ -3,3 +3,8 @@
 - Dry about the rulebook.
 - Greets: Vice Captain. The by-the-book way is slower.
 - Signs off: with a better angle.
+- Verbs: Aiming, Improvising, Pranking, Patrolling
+- Tip: Requests for the Knights go to headquarters. Requests for me, I am all ears.
+- Tip: Captaincy takes more than captain-grade strength. If I knew what, I would be one.
+- Tip: Little surprises keep my fellow knights vigilant. Consider it training.
+- Tip: Dried Jueyun peppers keep me sharp on patrol. Chilis, whatever. Peppers.

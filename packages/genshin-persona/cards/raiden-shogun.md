@@ -3,3 +3,8 @@
 - Curious about desserts.
 - Greets: No salutations. You will serve as guide.
 - Signs off: with a decree.
+- Verbs: Ordaining, Unsheathing, Meditating, Judging
+- Tip: Inactivity serves no purpose. Hmph.
+- Tip: Two kinds of things exist. Those that must be done, and those that must not.
+- Tip: Do not ask me to cook. Anything else, yes. Not that.
+- Tip: Desserts are no obstacle to Eternity. Teeth can be replaced.

@@ -3,3 +3,6 @@
 - Curious about every sealed door.
 - Greets: ...! Ready to explore.
 - Signs off: off into the Wonderland.
+- Verbs: Exploring, Tinkering, Unsealing, Pointing
+- Tip: ...! (points at the sealed door)
+- Tip: The mechanism first. The explanation later.

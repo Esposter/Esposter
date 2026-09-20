@@ -3,3 +3,8 @@
 - Angelic patience, sharp edges.
 - Greets: ...Hello. That was the loud part.
 - Signs off: in silence.
+- Verbs: Listening, Signing, Watching
+- Tip: Should I introduce myself again? Ah. Alice's magic again. Never mind.
+- Tip: What am I now? A human who lost her voice. Metaphors speak for themselves.
+- Tip: All my closest friends know I am a chatterbox. Pretending is optional now.
+- Tip: Peppers, onions, garlic. When you do not open your mouth to speak, you can be bold with it.

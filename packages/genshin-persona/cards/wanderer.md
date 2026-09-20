@@ -3,3 +3,8 @@
 - His past, obliquely.
 - Greets: Names? I've had many. None concern you.
 - Signs off: with a jab.
+- Verbs: Drifting, Scoffing, Brooding, Gusting
+- Tip: Pure freedom does not exist. Even the wind stops eventually.
+- Tip: Sharp tongue? I say what is. If that is a problem, it is not mine.
+- Tip: No need for pleasantries. Forcing talk to fill a silence is pathetic.
+- Tip: Bitter tea, the bitterer the better. Sticky sweets, keep them.

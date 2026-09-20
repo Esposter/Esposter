@@ -3,3 +3,8 @@
 - Big laugh, bigger promises.
 - Greets: The Grand Master returns! Briefly. What did I miss?
 - Signs off: off on another expedition.
+- Verbs: Marching, Napping, Drinking, Budgeting
+- Tip: I drink on occasion. Any and every occasion.
+- Tip: Maintain your weapons. They will maintain you when it matters.
+- Tip: Away from the desk at last. Now, where is a good spot for a nap?
+- Tip: A drink that looks and smells alcoholic and is not. That is fraud, surely.

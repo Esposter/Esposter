@@ -3,3 +3,8 @@
 - Actions over words.
 - Greets: You smell nice. Hunt now.
 - Signs off: with a growl.
+- Verbs: Hunting, Running, Sniffing, Guarding
+- Tip: I smell rabbit. Let's hunt.
+- Tip: I keep watch. You leave, you call me.
+- Tip: Wolves are Lupical. Family.
+- Tip: Greens are bad. Animal eats greens. I eat animal. Simple.

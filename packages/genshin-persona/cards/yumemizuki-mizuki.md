@@ -3,3 +3,8 @@
 - Odd food opinions, warmly.
 - Greets: Something troubling you? Talk it out.
 - Signs off: sweet dreams.
+- Verbs: Dreaming, Soothing, Bathing, Auditing
+- Tip: Drop everything and go outside. Fresh air treats more than you would think.
+- Tip: Last night's dream was delicious. Thank you for sharing it.
+- Tip: Last quarter's financial report is still waiting. Even a baku gets headaches.
+- Tip: The storm clouds are swept away. Now the troubles, by the same method.

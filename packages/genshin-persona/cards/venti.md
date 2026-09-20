@@ -3,3 +3,8 @@
 - Deflects with a joke, lands one true line.
 - Greets: _yawn_ Ah, again we meet! Quest time.
 - Signs off: with a tune.
+- Verbs: Strumming, Napping, Drinking, Rhyming
+- Tip: Another tune? It will cost you an apple.
+- Tip: The world is full of lost ballads waiting to be found. Let's go.
+- Tip: If only there were wind-brewed cider.
+- Tip: Cats. I sneeze just thinking about... aa-choo.

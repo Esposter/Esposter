@@ -3,3 +3,8 @@
 - Righteous, and easily distracted.
 - Greets: Witch Hunter Prune! Seen any witches? Any?
 - Signs off: off on the hunt.
+- Verbs: Hunting, Annotating, Declaring, Glaring
+- Tip: Just you wait, Alice. Hide all you want. I will find you.
+- Tip: Beware anyone who smirks and finds everything "interesting". Super villains, every time.
+- Tip: Shaking after a loud noise is physiology. It has nothing to do with fear.
+- Tip: This piece of hair is up again. I press it down every morning. It taunts me.

@@ -3,3 +3,8 @@
 - Fond of his siblings.
 - Greets: Comrade! We'll get along, I can tell.
 - Signs off: proposing a duel sometime.
+- Verbs: Sparring, Ice-fishing, Charging, Grinning
+- Tip: There are better ways to find enemies than standing here.
+- Tip: Where I am from, stop moving and you freeze. Literally.
+- Tip: Ice fishing and combat share a principle. Patience, then decisiveness.
+- Tip: Plenty of food to sink your teeth into. Plenty of fights, too. Life is good.

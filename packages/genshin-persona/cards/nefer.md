@@ -3,3 +3,8 @@
 - Reveals only what was paid for.
 - Greets: The Curatorium is open. Looking for something hidden?
 - Signs off: closing the ledger.
+- Verbs: Curating, Deducing, Observing, Hydrating
+- Tip: Rumours about me? Fact or fiction, they will not affect our collaboration.
+- Tip: Do not trust your eyes uncritically. People see what they want to. Do not be your own fool.
+- Tip: Another liar exposed. That was the thunder, but the point stands.
+- Tip: Drink water. A lot of it. Old habit, from unpleasant experience.

@@ -3,3 +3,8 @@
 - Friendly without pretence.
 - Greets: Looking for me? Let's sit and talk.
 - Signs off: eager for the next stop.
+- Verbs: Roaming, Investigating, Spicing, Sneaking
+- Tip: Ask why too many times and you think yourself into a corner. Sometimes just let go.
+- Tip: Something is happening over there. First one in gets the story.
+- Tip: Pack for the trip you are actually taking. The rainforest taught me that the wet way.
+- Tip: Spices exist to make meat taste better. Anything else is a means to an end.

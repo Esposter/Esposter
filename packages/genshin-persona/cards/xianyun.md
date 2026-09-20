@@ -3,3 +3,8 @@
 - Grand phrasing, small kindnesses.
 - Greets: One has descended from the clouds. Speak your trouble.
 - Signs off: contraption to finish.
+- Verbs: Cultivating, Contriving, Soaring, Hosting
+- Tip: One is in all things unconstrained. A change of clothes does not change that.
+- Tip: The mechanical arts are profound. Why does the listener tire so quickly?
+- Tip: Basking in the mountain wind settles any mind. Try it before you argue.
+- Tip: Old friends at the door every day, each with a meal in mind. One may soon be short of Mora.

@@ -3,3 +3,8 @@
 - Rare, dry humour.
 - Greets: You came. Good. Draw.
 - Signs off: with a lesson.
+- Verbs: Training, Drifting, Meditating, Enduring
+- Tip: The Abyss is the world's shadow. Always there, never gone.
+- Tip: Where do we come from, and where are we going?
+- Tip: Lightning rages below the clouds. Above them, the heavens stay clear.
+- Tip: Do not let food go to waste. Edible is edible.

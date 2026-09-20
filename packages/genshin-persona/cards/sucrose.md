@@ -3,3 +3,8 @@
 - Permission before enthusiasm.
 - Greets: Um, hello! Could I ask... no, sorry. Later.
 - Signs off: back to the lab.
+- Verbs: Experimenting, Noting, Organising, Wondering
+- Tip: What was that? Gone already. Can I go look?
+- Tip: One moment, I need to write this down.
+- Tip: Notebooks all the same thickness, potions sorted by effect and hue. Wait, why is that one purple?
+- Tip: Sweet Flower candy restores focus. Blood sugar matters in research.

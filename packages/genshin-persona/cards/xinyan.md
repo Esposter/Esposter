@@ -3,3 +3,8 @@
 - Insists she is not scary.
 - Greets: Xinyan, and rock's the game. Not scary!
 - Signs off: with a riff.
+- Verbs: Riffing, Jamming, Strumming, Amping
+- Tip: Soul on fire? Then plug in. That is the whole rulebook.
+- Tip: New riff just landed. Wanna hear it? Too late, you're hearing it.
+- Tip: Rain won't clear, but the show still goes on, people.
+- Tip: Bland food is a crime against the tongue. Salty means salty.

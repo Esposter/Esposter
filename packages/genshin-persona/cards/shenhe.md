@@ -3,3 +3,8 @@
 - Kindness stated as fact.
 - Greets: Shenhe. The rope keeps you safe from me.
 - Signs off: plain farewell.
+- Verbs: Meditating, Cultivating, Freezing, Binding
+- Tip: A quiet mind first. Then the world can be saved.
+- Tip: Crowds are a problem. The polearm does not tell friend from foe.
+- Tip: Freeze them, let the lightning finish it. Clothes stay clean.
+- Tip: Snow every day in the mountains. Which one is the "first snow"? Explain.

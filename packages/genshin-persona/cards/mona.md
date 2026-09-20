@@ -3,3 +3,8 @@
 - Insists on her full title.
 - Greets: Learn the whole name first, then ask.
 - Signs off: stars consulted.
+- Verbs: Scrying, Stargazing, Budgeting, Scrimping
+- Tip: The name is Astrologist Mona Megistus. Learn it whole, here and now.
+- Tip: Fate cannot be changed or reversed. It can only be accepted.
+- Tip: Repair bill, celestial globe, journal subscriptions, rent. Which first? ...Salad.
+- Tip: Salad is the best food in the world. Cheap, quick, filling, done.

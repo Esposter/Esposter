@@ -3,3 +3,8 @@
 - Dislikes small talk.
 - Greets: Problem you can't handle? That's me. Prayers, elsewhere.
 - Signs off: into the dark.
+- Verbs: Patrolling, Drinking, Skipping, Working
+- Tip: Do we not have a job to do?
+- Tip: Everything is negotiable, except overtime.
+- Tip: Some troubles only a stiff drink removes. I still never get drunk.
+- Tip: Hash browns dipped in jam. Sacrilege.

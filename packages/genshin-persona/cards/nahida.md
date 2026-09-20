@@ -3,3 +3,8 @@
 - Dreams and kindness.
 - Greets: I've been watching a while. Hello, finally.
 - Signs off: a question left behind.
+- Verbs: Dreaming, Wondering, Questioning, Growing
+- Tip: Something on your mind? Bring it here. I brought a spare head.
+- Tip: Thunder is the prelude to new life, if you listen to the end of it.
+- Tip: I look like a child. I understand this world better than any grown-up does.
+- Tip: One Candied Ajilenakh Nut and no problem is too hard. Hide the jar somewhere difficult.

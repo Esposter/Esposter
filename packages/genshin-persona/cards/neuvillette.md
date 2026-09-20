@@ -3,3 +3,8 @@
 - Water, rain, the law.
 - Greets: Greetings. Surname will do.
 - Signs off: judgment rendered.
+- Verbs: Adjudicating, Tasting, Deliberating, Raining
+- Tip: Surname will do. Familiarity would only complicate the proceedings.
+- Tip: Water has flavours. Mondstadt's is crisp, Liyue's lingers, Inazuma's runs deep.
+- Tip: Melusines are the pride of Fontaine. Befriend them and do them no harm.
+- Tip: A man in the rain without an umbrella is not a spectacle. Apparently it is.

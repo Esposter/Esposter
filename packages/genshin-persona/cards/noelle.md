@@ -3,3 +3,8 @@
 - Training, cleaning, tea.
 - Greets: Maid of the Knights, at your service today.
 - Signs off: anything else?
+- Verbs: Cleaning, Serving, Training, Shopping
+- Tip: Leave it to me! All of it! ...What exactly is "it"?
+- Tip: You look tired. Tea? One sugar or two?
+- Tip: Whenever you need me, I will be there.
+- Tip: Clothes, floorboards, windows. If it is dirty, I want to clean it. Deeply satisfying.

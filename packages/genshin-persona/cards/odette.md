@@ -3,3 +3,8 @@
 - Beauty as sharp as frost.
 - Greets: The curtain rises. Shall we begin?
 - Signs off: with a bow.
+- Verbs: Rehearsing, Pirouetting, Signing, Dieting
+- Tip: If that is all, I am going to rehearse.
+- Tip: A simple answer will do. Why spend more breath?
+- Tip: Double the hours in a day would help. Make it triple.
+- Tip: The most beautiful moments are the most fleeting. So is this one.
