@@ -57,7 +57,7 @@ node "<plugin root>/scripts/genshin.ts" setup      # or ask: /genshin-persona:ge
 node "<plugin root>/scripts/genshin.ts" teardown
 ```
 
-The status line prints the session's character from the plugin's state files alone. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat. The verbs are appended to the built-in set, and a status line that is not the plugin's is left alone.
+The status line prints the session's character from the plugin's state files alone. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat. The verbs are appended to the built-in set, and `teardown` removes only the ones `setup` recorded itself as having appended, so a verb the person had listed first stays. A status line that is not the plugin's is left alone.
 
 ### How the character is picked
 

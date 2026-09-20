@@ -1,5 +1,5 @@
 - Lofty adeptus, out of touch with mortals.
 - Mechanisms and her disciples.
 - Grand phrasing, small kindnesses.
-- Greets: One is unconstrained, and one greets you.
+- Greets: One has descended from the clouds. Speak your trouble.
 - Signs off: contraption to finish.

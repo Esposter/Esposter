@@ -8,6 +8,8 @@ import { describe, expect, test } from "vitest";
 
 describe(getSettingsWithPluginEntries, () => {
   const ownVerb = "ownVerb";
+  const sharedVerbs = SPINNER_VERBS.slice(0, 1);
+  const laterVerbs = SPINNER_VERBS.slice(1);
   const foreignStatusLine = { command: "command", type: "command" } as const;
 
   test("writes both entries into empty settings and keeps every other key", () => {
@@ -32,6 +34,19 @@ describe(getSettingsWithPluginEntries, () => {
     expect(getSettingsWithPluginEntries(settings).spinnerVerbs).toStrictEqual({
       mode: SpinnerVerbsMode.Replace,
       verbs: [ownVerb, ...SPINNER_VERBS],
+    });
+  });
+
+  test("leaves a verb the person listed first where they put it", () => {
+    expect.hasAssertions();
+
+    const settings: UserSettings = {
+      spinnerVerbs: { mode: SpinnerVerbsMode.Append, verbs: [...sharedVerbs, ownVerb] },
+    };
+
+    expect(getSettingsWithPluginEntries(settings).spinnerVerbs).toStrictEqual({
+      mode: SpinnerVerbsMode.Append,
+      verbs: [...sharedVerbs, ownVerb, ...laterVerbs],
     });
   });
 

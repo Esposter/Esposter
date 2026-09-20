@@ -3,19 +3,23 @@ import type { Character } from "#src/models/Character";
 import { GenshinVerb } from "#src/models/GenshinVerb";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { CARD_DETAIL_SEPARATOR } from "#src/services/constants";
+import { deleteAddedVerbs } from "#src/services/deleteAddedVerbs";
 import { deletePin } from "#src/services/deletePin";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { formatCard } from "#src/services/formatCard";
+import { getAddedVerbs } from "#src/services/getAddedVerbs";
 import { getCard } from "#src/services/getCard";
 import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
 import { getSettingsWithPluginEntries } from "#src/services/getSettingsWithPluginEntries";
 import { getToday } from "#src/services/getToday";
 import { pickCharacter } from "#src/services/pickCharacter";
+import { readAddedVerbs } from "#src/services/readAddedVerbs";
 import { readPin } from "#src/services/readPin";
 import { readRoster } from "#src/services/readRoster";
 import { readUserSettings } from "#src/services/readUserSettings";
 import { readVoiceCard } from "#src/services/readVoiceCard";
 import { setIsMuted } from "#src/services/setIsMuted";
+import { writeAddedVerbs } from "#src/services/writeAddedVerbs";
 import { writePin } from "#src/services/writePin";
 import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
 import { writeUserSettings } from "#src/services/writeUserSettings";
@@ -58,6 +62,9 @@ switch (verb) {
   case GenshinVerb.Setup: {
     writeStatusLauncher();
     const userSettings = readUserSettings();
+    // Recorded before the write and unioned with what an earlier setup added, so a later version's new verbs join
+    // The record rather than replacing it
+    writeAddedVerbs([...new Set([...readAddedVerbs(), ...getAddedVerbs(userSettings)])]);
     const settings = getSettingsWithPluginEntries(userSettings);
     writeUserSettings(settings);
     console.log(
@@ -69,8 +76,9 @@ switch (verb) {
   }
   case GenshinVerb.Teardown: {
     const userSettings = readUserSettings();
-    const settings = getSettingsWithoutPluginEntries(userSettings);
+    const settings = getSettingsWithoutPluginEntries(userSettings, readAddedVerbs());
     writeUserSettings(settings);
+    deleteAddedVerbs();
     console.log("Status line and spinner verbs removed from user settings.");
     break;
   }

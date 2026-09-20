@@ -8,6 +8,7 @@ export const PICK_RECORDS_PATH: string = join(STATE_DIRECTORY, "picks.tsv");
 export const PIN_PATH: string = join(STATE_DIRECTORY, "pin");
 export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
 export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
+export const ADDED_VERBS_PATH: string = join(STATE_DIRECTORY, "verbs");
 export const STATUS_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "status.ts");
 export const USER_SETTINGS_PATH: string = join(homedir(), ".claude", "settings.json");
 export const STATUS_LINE_MARKER = "genshin-persona";

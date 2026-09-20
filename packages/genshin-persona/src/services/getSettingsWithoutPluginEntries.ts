@@ -1,15 +1,15 @@
 import type { UserSettings } from "#src/models/UserSettings";
 
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
-import { SPINNER_VERBS } from "#src/services/constants";
 
-// The inverse of setup: only what we wrote is removed, and a key left with nothing in it is dropped
-export const getSettingsWithoutPluginEntries = (settings: UserSettings): UserSettings => {
+// The inverse of setup: only the verbs `setup` recorded itself as having added are removed, so a verb the person
+// Listed before the plugin arrived survives its teardown, and a key left with nothing in it is dropped
+export const getSettingsWithoutPluginEntries = (settings: UserSettings, addedVerbs: string[]): UserSettings => {
   const { spinnerVerbs, statusLine, ...rest } = settings;
-  const ownVerbs = spinnerVerbs?.verbs.filter((verb) => !SPINNER_VERBS.includes(verb)) ?? [];
+  const keptVerbs = spinnerVerbs?.verbs.filter((verb) => !addedVerbs.includes(verb)) ?? [];
   return {
     ...rest,
-    ...(spinnerVerbs && ownVerbs.length > 0 ? { spinnerVerbs: { mode: spinnerVerbs.mode, verbs: ownVerbs } } : {}),
+    ...(spinnerVerbs && keptVerbs.length > 0 ? { spinnerVerbs: { mode: spinnerVerbs.mode, verbs: keptVerbs } } : {}),
     ...(statusLine && !checkIsPluginStatusLine(statusLine) ? { statusLine } : {}),
   };
 };
