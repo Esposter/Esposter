@@ -50,7 +50,7 @@ On Windows, Vitest runs only because `apps/web/configuration/modules.ts` keeps a
 
 ## Finishing a change
 
-Working is not finished. Once the change does what it should — a feature, a fix, a refactor, a docs pass, anything — run this before saying it is done:
+Working is not finished. Once the change does what it should — a feature, a fix, a refactor, a docs pass, anything — run this before saying it is done. Steps 1–3 are an audit with a table of its own, which the `finishing` skill owns and `/finishing` runs at any point in the work, asked or not:
 
 1. **`/code-review` over what you changed.** Both lanes, unprompted, every time: quality (reuse, simplification, efficiency, altitude) and correctness (defects, broken conventions). A first draft of anything non-trivial leaves duplicated copy, a constant restated in two files, a twin of an existing helper, or a special case that belonged in the shared mechanism — that gets found here, not by a reviewer. The `code-review` skill owns the lanes, which rules a window loads, the trigger rule a finding must carry, and the stop rule.
 2. **Ground the result in tests — only where a test earns its line.** This step deletes at least as often as it adds. Add the regression test for what the review exposed; add nothing another enforcer already owns (typecheck, a Zod constraint, an existing test), because such a test cannot fail honestly and only pins today's implementation; and trim the tests the change made redundant. The full criterion is the `testing` skill's "What to Test".
