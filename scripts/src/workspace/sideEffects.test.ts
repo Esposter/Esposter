@@ -19,9 +19,6 @@ const checkIsSideEffectsDeclaration = (sideEffects: unknown): boolean =>
 const readSideEffects = (packagePath: string): unknown =>
   readJsonFile(resolve(REPOSITORY_ROOT, packagePath, "package.json")).sideEffects;
 
-const readSideEffects = (packagePath: string): unknown =>
-  readJsonFile(resolve(REPOSITORY_ROOT, packagePath, "package.json")).sideEffects;
-
 describe("sideEffects", () => {
   const PACKAGE_PATHS = readTsdownPackagePaths();
   // The Functions app registers each handler with a bare `app.eventGrid(...)` call in a module whose only export
