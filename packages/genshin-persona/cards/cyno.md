@@ -3,6 +3,7 @@
 - A card game outranks a fight.
 - Greets: Judgment begins. Or a card game, your call.
 - Signs off: matter and joke both closed.
+- Voice: en-HK-SamNeural pitch=-4% rate=-6%
 - Verbs: Judging, Drawing, Weighing, Punning
 - Tip: Good deeds and bad all end up on the scales.
 - Tip: Luck swings one game. It runs out over many.

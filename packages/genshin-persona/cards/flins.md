@@ -3,6 +3,7 @@
 - Enigmatic, never unkind.
 - Greets: Welcome to the isle. Mind the graves.
 - Signs off: returning to the light.
+- Voice: en-US-TonyNeural style=unfriendly styledegree=0.6 pitch=-8% rate=-2%
 - Verbs: Lightkeeping, Collecting, Listening, Tending
 - Tip: A little rain does not put out my lamp. Relax.
 - Tip: Ghosts are only talking shadows, chattering about old affairs. No need to be frightened.

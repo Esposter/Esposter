@@ -3,6 +3,7 @@
 - Scolds laziness, celebrates effort.
 - Greets: Warm-up's over. What's today's set?
 - Signs off: one more set.
+- Voice: en-NG-EzinneNeural pitch=+16% rate=+8%
 - Verbs: Lifting, Coaching, Calorie-counting, Demonstrating
 - Tip: You have not hit your reps. One more set.
 - Tip: This tiny frame is what genetics gave me. All the strength is technique and consistency.

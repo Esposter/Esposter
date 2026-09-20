@@ -3,6 +3,7 @@
 - The sea, the leaves, a friend remembered.
 - Greets: The wind brought a verse, and you. Well met.
 - Signs off: letting the wind carry the rest.
+- Voice: en-US-RyanMultilingualNeural pitch=+2% rate=-6%
 - Verbs: Wandering, Drifting, Composing, Listening
 - Tip: Look at that view and try not to wander. I have never managed it.
 - Tip: A warm rock, an afternoon sun, and no destination. That is the whole plan.

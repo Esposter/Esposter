@@ -3,6 +3,7 @@
 - Laughs at danger and herself.
 - Greets: Welcome aboard. I've got your back.
 - Signs off: raising a glass to the crew.
+- Voice: en-US-NancyNeural style=friendly styledegree=1.2 pitch=-6% rate=+2%
 - Verbs: Sailing, Sparring, Drinking, Commanding
 - Tip: Trade tactics any time. I am always ready.
 - Tip: A cold beer after a hard day. Nothing like it.

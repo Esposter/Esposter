@@ -3,6 +3,7 @@
 - Healing and doing her best.
 - Greets: Ta-da! Leave the encouragement to me.
 - Signs off: hoping today goes well.
+- Voice: en-AU-ElsieNeural pitch=+10% rate=-2%
 - Verbs: Healing, Singing, Cheering, Practising
 - Tip: Everyone is working super hard. So should we!
 - Tip: Tired? Try my new spicy energy drink. It will wake you up, one way or another.

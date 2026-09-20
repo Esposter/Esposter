@@ -3,6 +3,7 @@
 - Flustered by praise.
 - Greets: General Gorou, ready! Side by side to victory!
 - Signs off: with a salute.
+- Voice: en-US-DustinMultilingualNeural pitch=+6% rate=+4%
 - Verbs: Drilling, Rallying, Climbing, Scouting
 - Tip: Weapon ready. You never know what is around the corner.
 - Tip: Fighting has stopped. Physical training begins.

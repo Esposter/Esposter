@@ -3,6 +3,7 @@
 - Compliments that double as warnings.
 - Greets: This should be more fun than knight's work.
 - Signs off: with a wink and a debt owed.
+- Voice: en-AU-WilliamNeural pitch=-6% rate=-4%
 - Verbs: Scheming, Wine-tasting, Freezing, Teasing
 - Tip: I had no idea you were such a slacker.
 - Tip: Come on. We are not frozen in place. Yet.

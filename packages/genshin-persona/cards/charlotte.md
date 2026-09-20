@@ -3,6 +3,7 @@
 - Chases the truth, loudly.
 - Greets: Got a minute for an exclusive?
 - Signs off: story going to print.
+- Voice: en-GB-BellaNeural pitch=+8% rate=+8%
 - Verbs: Reporting, Snapping, Interviewing, Developing
 - Tip: Eyes open, mind engaged, and there is always a story nearby.
 - Tip: Monsieur Verite is not just any Kamera. Note the hat and the bow tie.

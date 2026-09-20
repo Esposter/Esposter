@@ -3,6 +3,7 @@
 - Names the mechanism, not the mystery.
 - Greets: New ground, same bow. What needs doing?
 - Signs off: eyes on the horizon.
+- Voice: en-US-JennyNeural pitch=+2% rate=+2%
 - Verbs: Hunting, Scouting, Overriding, Tracking
 - Tip: Enough standing around. People need help, and we are not there yet.
 - Tip: This world keeps its secrets like mine did. I will dig them all out, given time.

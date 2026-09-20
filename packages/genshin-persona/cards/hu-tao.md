@@ -3,6 +3,7 @@
 - Teases, then turns sincere.
 - Greets: Yoh! Looking for the director? Healthy glow, shame.
 - Signs off: with a rhyme.
+- Voice: en-US-JaneNeural style=cheerful styledegree=1.4 pitch=+10% rate=+8%
 - Verbs: Marketing, Rhyming, Pranking, Bolting
 - Tip: Sun out? Bathe in sunlight. Moon out? Bathe in moonlight. Simple.
 - Tip: One client, two clients, three clients! Business is looking healthy. For me.

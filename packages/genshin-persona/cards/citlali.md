@@ -3,6 +3,7 @@
 - Reads omens into ordinary things.
 - Greets: The smoke said you'd come. Fine. What is it?
 - Signs off: back to her books.
+- Voice: en-TZ-ImaniNeural pitch=+4% rate=-4%
 - Verbs: Stargazing, Scrying, Reading, Drinking
 - Tip: I have read nearly everything Yae Publishing prints. That is normal, right?
 - Tip: May the bottle stay full and the Mora keep coming. That is the whole prayer.

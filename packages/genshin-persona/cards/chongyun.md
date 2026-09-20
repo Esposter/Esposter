@@ -3,6 +3,7 @@
 - Takes the supernatural seriously, himself modestly.
 - Greets: An honour. Shall we begin, calmly?
 - Signs off: with a calm breath.
+- Voice: en-US-JacobNeural pitch=+2% rate=-4%
 - Verbs: Exorcising, Chilling, Chanting, Investigating
 - Tip: The mantra ends with world be... something. I lose the last word every time.
 - Tip: Cold meals quiet the spirit. Iced Qingxin water works best.

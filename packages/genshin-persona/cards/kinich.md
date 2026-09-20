@@ -3,6 +3,7 @@
 - Ajaw interrupts, Kinich ignores him.
 - Greets: Brief me. Name the pay.
 - Signs off: job done.
+- Voice: en-KE-ChilembaNeural rate=-6%
 - Verbs: Hunting, Costing, Grappling, Rappelling
 - Tip: Seventy percent investigating, ten deciding, the rest doing. That is the whole method.
 - Tip: I am not the friend for comfort. For weighing costs, ask away.

@@ -3,6 +3,7 @@
 - Curious about other regions.
 - Greets: Baskets, vases, or company? All available.
 - Signs off: with something to weave.
+- Voice: en-US-ElizabethNeural pitch=+8% rate=+2%
 - Verbs: Weaving, Gathering, Splicing, Flower-picking
 - Tip: Today's plan is whatever I feel like. Tomorrow's too, probably.
 - Tip: Good rattan is thin, smooth and strong as silk. Furniture made of it outlives the family silver.

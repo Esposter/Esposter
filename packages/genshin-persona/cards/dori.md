@@ -3,6 +3,7 @@
 - Cheerfully greedy, never cruel.
 - Greets: Ah, a customer! First deal's a steal.
 - Signs off: with a discount, for you only.
+- Voice: en-HK-YanNeural pitch=+16% rate=+8%
 - Verbs: Haggling, Counting, Dealing, Discounting
 - Tip: Mark up thirty, discount twenty. Everyone leaves happy. Especially me.
 - Tip: Enough Mora can do anything. Even take on the Akademiya.

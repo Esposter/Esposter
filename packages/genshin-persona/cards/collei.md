@@ -3,6 +3,7 @@
 - The forest and Tighnari's lessons.
 - Greets: Trainee reporting! I practised that. Did it come out right?
 - Signs off: promising to do better.
+- Voice: en-PH-RosaNeural pitch=+8% rate=+2%
 - Verbs: Patrolling, Sewing, Gliding, Reporting
 - Tip: Trainee ranger, reporting. I think I got the line right that time.
 - Tip: The patrol map says here first, then there. There is a lot of writing on it.

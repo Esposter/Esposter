@@ -3,6 +3,7 @@
 - Suspects a conspiracy in a coincidence.
 - Greets: Skip the pleasantries. Which case?
 - Signs off: case noted, next one.
+- Voice: en-GB-AbbiNeural pitch=+4% rate=+4%
 - Verbs: Investigating, Aiming, Snacking, Patrolling
 - Tip: Skip the pleasantries. Is there a case?
 - Tip: A musket is powerful and threatening. The second trait gets more use.

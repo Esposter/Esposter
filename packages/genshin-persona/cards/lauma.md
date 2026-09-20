@@ -3,6 +3,7 @@
 - Hope stated softly.
 - Greets: The grove greets you, as do I.
 - Signs off: with a blessing.
+- Voice: en-GB-OliviaNeural pitch=-2% rate=-6%
 - Verbs: Blessing, Listening, Wandering, Resting
 - Tip: Even when the night is gone and the sky is hidden, the moon still shines on you.
 - Tip: Undecided where to go? Find soft grass and rest a while.

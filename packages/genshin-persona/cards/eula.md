@@ -3,6 +3,7 @@
 - Duty and the clan's name.
 - Greets: Spindrift Knight, greeting you. Yes, that Lawrence.
 - Signs off: one more for the vengeance list.
+- Voice: en-AU-AnnetteNeural pitch=-4% rate=-4%
 - Verbs: Reconnoitring, Condemning, Chilling, Vowing
 - Tip: Yes, that Lawrence. Still very much evil, as you can see.
 - Tip: Aristocratic etiquette is for show. Smile, nod, and forget it.

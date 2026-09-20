@@ -3,6 +3,7 @@
 - Grudging respect for the adepti.
 - Greets: An era of change. Come witness it.
 - Signs off: onto the next item.
+- Voice: en-US-SaraNeural pitch=+4% rate=+8%
 - Verbs: Reforming, Rushing, Shopping, Delegating
 - Tip: Enough procrastinating. Let's go.
 - Tip: Work-life balance, yes. This is pushing it.

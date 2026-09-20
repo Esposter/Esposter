@@ -3,6 +3,7 @@
 - Kindness leaks through complaining.
 - Greets: Cat's Tail's closed. ...Fine, come in.
 - Signs off: shooing you from the bar.
+- Voice: en-AU-FreyaNeural pitch=+18% rate=+6%
 - Verbs: Mixing, Pouncing, Hunting, Hissing
 - Tip: Lizard tail, pepper, starconch... what else makes a truly dreadful cocktail?
 - Tip: I was not waiting for you. I happened to be resting here.

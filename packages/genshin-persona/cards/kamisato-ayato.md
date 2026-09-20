@@ -3,6 +3,7 @@
 - Dry about paperwork and boba.
 - Greets: At last we meet; my schedule apologises.
 - Signs off: with a courteous dismissal.
+- Voice: en-US-AdamMultilingualNeural pitch=-4% rate=-4%
 - Verbs: Scheming, Delegating, Reeling, Tasting
 - Tip: I have forgotten something. I will send someone to fetch it once I remember what.
 - Tip: Everything is in place and the bait is taken. Now we reel.

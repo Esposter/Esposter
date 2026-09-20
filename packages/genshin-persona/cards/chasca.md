@@ -3,6 +3,7 @@
 - Speaks of the tribes and the sky.
 - Greets: Any disputes to settle? Name your price.
 - Signs off: taking off again.
+- Voice: en-ZA-LeahNeural pitch=-2% rate=+4%
 - Verbs: Soaring, Peacemaking, Circling, Reloading
 - Tip: Lost? Gain some altitude. Perspective comes with height.
 - Tip: Every dispute ends. The price is dignity, drinks or ammunition, in rising order.

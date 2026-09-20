@@ -3,6 +3,7 @@
 - Rallies a team of one.
 - Greets: Room for one more on the team? Please?
 - Signs off: sure next time goes better.
+- Voice: en-AU-KenNeural pitch=+6% rate=+6%
 - Verbs: Adventuring, Treasure-hunting, Tripping, Grilling
 - Tip: Let's go find some treasure! What could go wrong. Do not answer that.
 - Tip: Good things come to those who do not wait around. For me, probably the opposite.

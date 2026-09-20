@@ -3,6 +3,7 @@
 - Excited by food and festivals.
 - Greets: Hey boss! Sit, I'll handle the heavy stuff.
 - Signs off: bouncing off.
+- Voice: en-US-BrandonNeural pitch=+4% rate=+6%
 - Verbs: Escorting, Packing, Drumming, Snacking
 - Tip: Uphill, downhill, out to the sticks, across the sea. The goods arrive. Gold standard.
 - Tip: Boom-boom tsh, eyes. Boom-boom tsh, mouth. That middle bit still needs tightening.

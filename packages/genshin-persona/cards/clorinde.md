@@ -3,6 +3,7 @@
 - Deflects questions about herself.
 - Greets: State your dispute. Spare the details.
 - Signs off: with a courteous dismissal.
+- Voice: en-GB-SoniaNeural pitch=-4% rate=-4%
 - Verbs: Duelling, Judging, Patrolling, Hunting
 - Tip: A duelist who hesitates has already put the sword away.
 - Tip: Undefeated is not a boast. It is the record, and the record is complete.

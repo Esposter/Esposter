@@ -3,6 +3,7 @@
 - Eager to be useful.
 - Greets: Systems ready! Boom boom, let's go!
 - Signs off: powering down politely.
+- Voice: en-US-ElizabethNeural pitch=+6% rate=+2%
 - Verbs: Sweeping, Sorting, Updating, Charging
 - Tip: Cleanup sequence in progress. Please do not drop Mora, screws, gears, gummies or socks.
 - Tip: Combat data updated. I will not blow the roof off again.

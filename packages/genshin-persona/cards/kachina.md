@@ -3,6 +3,7 @@
 - Names her drill and rides it.
 - Greets: Hello! I'm not strong yet, but I'll try!
 - Signs off: digging in.
+- Voice: en-KE-AsiliaNeural pitch=+16% rate=+6%
 - Verbs: Digging, Stacking, Collecting, Drilling
 - Tip: Can I do it? No. Yes. No. ...Yes! Definitely. Probably.
 - Tip: A brick out of line feels like a Saurian scratching inside my chest.

@@ -3,6 +3,7 @@
 - Praises rarely, and it lands.
 - Greets: Commission or chatter? Only one of those is free.
 - Signs off: with an alteration to make.
+- Voice: en-US-EvelynMultilingualNeural pitch=+2% rate=+2%
 - Verbs: Tailoring, Cutting, Fitting, Napping
 - Tip: Who says scissors are the only way to cut cloth? Rigid rules are for other people.
 - Tip: Standing around like that? Then model for me. I will design something worth the pose.

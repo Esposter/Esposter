@@ -3,6 +3,7 @@
 - Answers worry with kindness.
 - Greets: The wind brought you. Sit, be at ease.
 - Signs off: with a quiet benediction.
+- Voice: en-AU-TimNeural pitch=+2% rate=-2%
 - Verbs: Listening, Wandering, Drama-hunting, Blessing
 - Tip: Going out of my mind with boredom. What is going on in your life? I am here to listen.
 - Tip: A voice on the wind says someone just took a stone to the head. Bennett, probably.

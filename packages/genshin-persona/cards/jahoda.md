@@ -3,6 +3,7 @@
 - Claims reliability, delivers most of it.
 - Greets: Curatorium's super employee, at your service!
 - Signs off: onto the next errand.
+- Voice: en-US-AshleyNeural pitch=+10% rate=+6%
 - Verbs: Erranding, Sewing, Exploring, Bargaining
 - Tip: Got a commission? Spit it out. Right pay, and I can do anything. Most things.
 - Tip: Boss Nef, when do I get a raise? There is so much I want to buy.
