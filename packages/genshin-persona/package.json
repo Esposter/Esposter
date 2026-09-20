@@ -1,0 +1,41 @@
+{
+  "name": "@esposter/genshin-persona",
+  "version": "3.2.0",
+  "private": true,
+  "description": "A Claude Code plugin that speaks as the Genshin Impact character whose birthday is nearest, and reads each reply's first sentence aloud through Azure Speech.",
+  "keywords": [
+    "azure-speech",
+    "claude-code",
+    "claude-code-plugin",
+    "genshin",
+    "genshin-impact",
+    "output-style",
+    "persona",
+    "text-to-speech"
+  ],
+  "homepage": "https://esposter.com/docs/infra/claude-interface/persona-plugin",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "scripts": {
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "genshin-db": "^5.2.13"
+  }
+}

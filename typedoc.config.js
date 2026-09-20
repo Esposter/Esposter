@@ -6,7 +6,7 @@ config({ path: "apps/web/.env" });
 const typedocConfiguration = {
   entryPoints: ["packages/*"],
   entryPointStrategy: "packages",
-  exclude: ["packages/configuration"],
+  exclude: ["packages/configuration", "packages/genshin-persona"],
   name: "Esposter",
   out: `apps/web/public/${DOCS_API_DIRECTORY}`,
   packageOptions: {

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "genshin-persona",
+  "displayName": "Genshin Persona",
+  "description": "Speaks as the Genshin Impact character whose birthday is nearest to today, in prose only, and reads each reply's first sentence aloud through Azure Speech.",
+  "author": {
+    "name": "Esposter",
+    "url": "https://github.com/Esposter"
+  },
+  "homepage": "https://esposter.com/docs/infra/claude-interface/persona-plugin",
+  "repository": "https://github.com/Esposter/Esposter",
+  "license": "Apache-2.0",
+  "keywords": ["azure-speech", "genshin", "genshin-impact", "output-style", "persona", "text-to-speech"],
+  "userConfig": {
+    "speech_endpoint": {
+      "type": "string",
+      "title": "Speech endpoint",
+      "description": "The text-to-speech host of an Azure Speech resource, such as https://australiaeast.tts.speech.microsoft.com. Leave empty to keep replies silent."
+    },
+    "speech_key": {
+      "type": "string",
+      "title": "Speech key",
+      "description": "A key of that Azure Speech resource. Stored in the credential store, never in a settings file.",
+      "sensitive": true
+    },
+    "speech_voice": {
+      "type": "string",
+      "title": "Speech voice",
+      "description": "The neural voice that reads replies, by its Azure short name. Leave empty for the plugin's Australian English default."
+    }
+  }
+}
