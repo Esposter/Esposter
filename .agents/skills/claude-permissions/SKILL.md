@@ -9,6 +9,8 @@ Generic harness semantics — rule format, `deny`/`ask`/`allow` evaluation order
 
 The repo's `settings.local.json` is **allow-only**: it has no `deny` or `ask` list. Keep it that way unless the user asks otherwise.
 
+Permissions are all it holds. The sibling `.agents/settings.json` is the checked-in half — the marketplace the checkout declares for itself and the plugin it enables (`apps/web/content/docs/architecture/agent-configuration.md`) — so a plugin or harness setting meant for everyone goes there, never here.
+
 ## The one non-obvious rule: use `command *`, and give colon sub-scripts their own rule
 
 **The shipped `settings.local.json` is the standard — copy its shape.** A command that takes arguments is the trailing `space + *` form (`Bash(pnpm lint *)`, `Bash(az resource show *)`); a command run as one fixed string is its exact text (`Bash(pnpm i)`, `Bash(pnpm export:gen)`), and that file is known to work. Match it rather than reaching for `:*` or a no-space `*`; those forms are not used anywhere in this repo and are not known to work here.

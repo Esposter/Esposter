@@ -39,11 +39,11 @@ Two consequences shape the package, both forced by the remote install running a 
 
 The same install rules out two shortcuts that get suggested: `pnpm-lock.yaml` is not a lockfile the installer reads (only bun's and npm's are), and no setting switches it to another package manager — "CLAUDE_PACKAGE_MANAGER" belongs to a third-party plugin's own scripts, not to the tool. `engines.node` is also not the root manifest's pin restated: the root states the version this repository runs on and `update:node` rewrites it, the plugin states the feature floor (Temporal) that travels with the copy, and a stranger's `npm ci` warns on it before a hook crashes.
 
-On this machine the checkout is added as a local marketplace and the plugin installed from it. A plugin whose source is a relative path inside a directory marketplace is **loaded in place**: the CLI records a cache entry keyed by the checkout's commit, but reads the files from the checkout, so a pull that changes the plugin takes effect at the next session start with no step to repeat. Elsewhere the release is a merge to `main`, which the [review collector](/docs/infra/review-collector) performs; an installed copy follows the marketplace on the tool's next plugin update.
+A checkout declares itself: `.agents/settings.json` names the marketplace `esposter` with the relative source `.` and enables `genshin-persona@esposter`, so a clone opened in Claude Code installs the plugin at project scope once the person trusts the repository, on any machine and with no path anyone types. A plugin whose source is a relative path inside a directory marketplace is **loaded in place**: the CLI records a cache entry keyed by the checkout's commit, but reads the files from the checkout, so a pull that changes the plugin takes effect at the next session start with no step to repeat. Elsewhere the release is a merge to `main`, which the [review collector](/docs/infra/review-collector) performs; an installed copy follows the marketplace on the tool's next plugin update.
 
 ## Installable by anyone
 
-The repository is public, so the marketplace is too: two commands, no clone of their own, and no listing in Anthropic's own directory, which was [decided against](/docs/infra/rejected/official-plugin-directory).
+The repository is public, so the marketplace is too: two commands for someone who wants the plugin without a checkout of their own — a clone needs neither, since its own settings declare both — and no listing in Anthropic's own directory, which was [decided against](/docs/infra/rejected/official-plugin-directory).
 
 ```bash
 claude plugin marketplace add Esposter/Esposter

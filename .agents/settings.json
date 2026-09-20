@@ -1,0 +1,13 @@
+{
+  "enabledPlugins": {
+    "genshin-persona@esposter": true
+  },
+  "extraKnownMarketplaces": {
+    "esposter": {
+      "source": {
+        "path": ".",
+        "source": "directory"
+      }
+    }
+  }
+}

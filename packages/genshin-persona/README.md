@@ -23,6 +23,8 @@ claude plugin install genshin-persona@esposter
 
 The install copies the plugin into the plugin cache and installs its dependencies from the npm lockfile beside this manifest. From the next session the character is picked and its card is in context; nothing else is needed.
 
+A clone of this repository needs neither command: `.agents/settings.json` declares the marketplace with the relative source `.` and enables the plugin, so opening the checkout in Claude Code installs it at project scope once you trust the repository, and the plugin is read from the checkout itself.
+
 Spoken replies stay off until the `voice` verb has set the engine up, once, with the dub the reference lines are taken from — `en`, `ja`, `ko` or `zh`:
 
 ```bash
