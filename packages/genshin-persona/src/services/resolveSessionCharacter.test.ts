@@ -1,6 +1,5 @@
 import type { Character } from "#src/models/Character";
 import type { PickRecord } from "#src/models/PickRecord";
-import type { Today } from "#src/models/Today";
 import type { pickCurrentCharacter as basePickCurrentCharacter } from "#src/services/pickCurrentCharacter";
 import type { readPickRecords as baseReadPickRecords } from "#src/services/readPickRecords";
 import type { readPin as baseReadPin } from "#src/services/readPin";
@@ -34,19 +33,22 @@ vi.mock(import("#src/services/pickCurrentCharacter"), () => ({
 
 describe(resolveSessionCharacter, () => {
   const sessionId = "sessionId";
-  const today: Today = { isoDate: "1970-01-01", monthDay: { day: 1, month: 1 } };
+  const today = Temporal.PlainDate.from("1970-01-01");
   const character: Character = {
+    affiliation: "Wangsheng Funeral Parlor",
     birthday: "7/15",
+    constellation: "",
     description: "",
     element: "Pyro",
     name: "Hu Tao",
     region: "",
     title: "",
     version: "",
+    weapon: "",
   };
   const otherRecord: PickRecord = {
     element: "Anemo",
-    isoDate: today.isoDate,
+    isoDate: today.toString(),
     name: "Venti",
     sessionId: "otherSessionId",
   };
@@ -73,7 +75,7 @@ describe(resolveSessionCharacter, () => {
     await expect(resolveSessionCharacter([character], sessionId, today)).resolves.toStrictEqual(character);
     expect(pickRecords).toStrictEqual([
       otherRecord,
-      { element: character.element, isoDate: today.isoDate, name: character.name, sessionId },
+      { element: character.element, isoDate: today.toString(), name: character.name, sessionId },
     ]);
   });
 });

@@ -34,7 +34,7 @@ export const resolveSessionCharacter = async (
 
   // Read the file again rather than writing the snapshot above back over it: the pick waits on the network for as
   // Long as the lore ceiling, and a session that started alongside this one records its own character in between
-  const otherRecords = pruneStalePickRecords(readPickRecords(), today.isoDate).filter(
+  const otherRecords = pruneStalePickRecords(readPickRecords(), today.toString()).filter(
     (record) => record.sessionId !== sessionId,
   );
   writePickRecords([
