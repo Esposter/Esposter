@@ -9,13 +9,14 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 
 - [Azure Pulumi layout](/docs/infra/azure-pulumi-layout) — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
 - [Branch namespaces](/docs/infra/branch-namespaces) — whose a branch is, read off its name alone, and the rulesets that make the name the rule.
+- [Claude interface](/docs/infra/claude-interface) — the terminal given a personality and a voice without building an interface: a Genshin persona plugin picked by the calendar, and spoken replies through the one free-tier Speech account.
 - [Cost & Security Posture](/docs/infra/cost-and-security-posture) — the budget guard cycle and why each hardening step is deliberately deferred.
 - [Event Grid dead-letter](/docs/infra/eventgrid-dead-letter) — failed deliveries land in a blob container whose writes push-trigger an automatic, attempt-capped replay.
 - [Observability](/docs/infra/observability) — why App Insights and Log Analytics are deliberately not provisioned, and what the estate relies on instead.
 - [Pulumi source of truth](/docs/infra/pulumi-source-of-truth) — Function App runtime settings managed in Pulumi.
 - [Review collector](/docs/infra/review-collector) — the event-triggered collector that drains CodeRabbit findings, cuts windows from `ai/queue` onto `develop`, sends what claims no review straight to `main`, and merges the release on a clean verdict — never waiting on a person.
 - [Typed decisions](/docs/infra/typed-decisions) — which tier answers a gate, a verdict or a triage, and why the cheapest session is the one never spawned.
-- [Roadmap](/docs/infra/roadmap) — open items (the Claude interface stages, key-auth-gated hardening); every item links its proposal.
+- [Roadmap](/docs/infra/roadmap) — open items (key-auth-gated hardening); every item links its proposal.
 - [Deferred](/docs/infra/deferred) — ideas waiting on a trigger.
 
 Deeper operational reference lives beside the code in `apps/infra/docs/` (naming conventions, security constraints, search indexes, stacks), and Pulumi coding conventions live in the `pulumi-infra` skill.
@@ -40,3 +41,4 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (naming
 - **Typed decisions** — the release verdict, the drain’s finding order and issue triage moved off a Claude Code session onto a typed-decision model, and the lockfile conflict a replay brings moved off one onto the code that already knew the answer. → [Typed decisions](/docs/infra/typed-decisions)
 - **Branch namespaces** — the ref ownership the collector assumes became rulesets, and a branch's name became the whole convention for who may create and push it; the only cost was one prefix, `external/`, left open. → [Branch namespaces](/docs/infra/branch-namespaces)
 - **Every GitHub default declared** — the repository's Actions surface moved into the provider beside its refs, so the only GitHub state a preview cannot prove is the one rule parameter the provider has no field for; CodeQL came with it, scanning `main` alone so an open alert is a red the [review collector](/docs/infra/review-collector/repair) repairs. → [Azure Pulumi layout](/docs/infra/azure-pulumi-layout)
+- **Claude interface** — the terminal got a personality and a voice for one workspace package and one free-tier Speech account, with the character voice and the companion window left behind named gates rather than built early; nothing was added that a rewrite of the terminal would ever have to carry. → [Claude interface](/docs/infra/claude-interface)
