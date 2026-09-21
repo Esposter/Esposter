@@ -36,11 +36,11 @@ export const VOICE_STATE_PATHS: string[] = [
   REFERENCES_DIRECTORY,
   VOICE_LOG_PATH,
 ];
+export const SOURCE_DIRECTORY: string = join(import.meta.dirname, "..");
+const PLUGIN_DIRECTORY = join(SOURCE_DIRECTORY, "..");
+const SCRIPTS_DIRECTORY = join(PLUGIN_DIRECTORY, "scripts");
 // Copied into the runtime directory before `npm ci`; the plugin's own manifest never names the package, since the
 // Install copies the plugin whole and runs a frozen install under a ceiling
-export const SOURCE_DIRECTORY: string = join(import.meta.dirname, "..");
-export const PLUGIN_DIRECTORY: string = join(SOURCE_DIRECTORY, "..");
-export const SCRIPTS_DIRECTORY: string = join(PLUGIN_DIRECTORY, "scripts");
 export const RUNTIME_SOURCE_DIRECTORY: string = join(PLUGIN_DIRECTORY, "runtime");
 // The two user settings that name a script point at a launcher in the state directory, re-aimed at the running
 // Install on every session start, since an install lands under a directory named after its version
@@ -129,7 +129,7 @@ export const LanguageLocaleMap: Record<string, string> = {
 };
 
 // The source of a character's lines before the game-data package carries them, and of the clip a voice is cloned from
-export const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
+const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
 export const WIKI_VOICE_OVERS_URL: string = `${WIKI_ORIGIN}/api.php?action=parse&prop=wikitext&format=json&page=`;
 // The imageinfo query, which answers a file title with the file's URL in one call
@@ -155,7 +155,7 @@ export const TravelerTwinMap: Record<string, TravelerTwin> = {
   Lumine: { gender: TravelerGender.Female, namePlaceholder: "{character2}" },
 };
 // A host that takes the connection and never finishes would otherwise hold the hook a reply waits behind open
-export const WIKI_FETCH_TIMEOUT_MS = 10_000;
+export const WIKI_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
 // The file host serves a clip only to a request naming the wiki as its referer, and its edge answers `fetch` with a
 // Browser challenge under the same headers, so a clip is read through `readWikiFile`
 export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
@@ -254,6 +254,6 @@ export const SESSION_ID_ENVIRONMENT_VARIABLE = "CLAUDE_CODE_SESSION_ID";
 export const TYPESAFE_KEY_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_TYPESAFE_KEY";
 export const TYPESAFE_KEY_FALLBACK_ENVIRONMENT_VARIABLE = "TYPESAFE_API_KEY";
 // One attempt and a short ceiling: the lore pick sits in the session-start path and has the birthday pick behind it
-export const LORE_PICK_TIMEOUT_MS = 8000;
+export const LORE_PICK_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 8 }).total("milliseconds");
 export const LORE_PICK_INSTRUCTIONS =
   "Which character should keep the person company in today's session? Each option is described by how that character talks and carries themselves. Weigh what the date means in the game: a birthday today or within a few days, a festival or event of a region in this season, a release or story anniversary, the patch that is live. Weigh the person's moment too: the weekday, the hour and the place. Every character is a fair pick; the choice is a preference, not a rule.";
