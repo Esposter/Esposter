@@ -19,13 +19,13 @@ left when this ledger was written.
 | `scripts/src/outdatedDependencies`                             | 2026-09-15 |                                                                                               |
 | `scripts/src/oxlint`                                           | 2026-09-15 |                                                                                               |
 | `scripts/src/updateNode`                                       | 2026-09-15 |                                                                                               |
-| the repository root — config and Markdown                      | 2026-09-06 | the composite actions already carry what the workflows share                                  |
+| the repository root — config and Markdown                      | 2026-09-21 | the composite actions already carry what the workflows share                                  |
 | `apps/web/configuration`                                       | 2026-09-15 | the relative imports are the pre-alias config exception; the splash table is generator output |
 | the app's root config files                                    | 2026-09-21 |                                                                                               |
 | `content/docs` — the two suites                                | 2026-09-15 | the enforcers, not the pages                                                                  |
-| `content/docs` — `resource`                                    | 2026-09-06 |                                                                                               |
-| `content/docs` — `esbabbler`                                   | 2026-09-06 |                                                                                               |
-| `content/docs` — `architecture`                                | 2026-09-06 |                                                                                               |
-| `content/docs` — `virrun`                                      | 2026-09-06 | `wsl.exe` in prose is the command, not a constant the code should have carried                |
-| `content/docs` — the product areas                             | 2026-09-06 |                                                                                               |
-| `content/docs` — the rest                                      | 2026-09-06 | `proposals`, `infra`, `users`, `achievements`, the root index                                 |
+| `content/docs` — `resource`                                    | 2026-09-21 |                                                                                               |
+| `content/docs` — `esbabbler`                                   | 2026-09-21 |                                                                                               |
+| `content/docs` — `architecture`                                | 2026-09-21 |                                                                                               |
+| `content/docs` — `virrun`                                      | 2026-09-21 | `wsl.exe` in prose is the command, not a constant the code should have carried                |
+| `content/docs` — the product areas                             | 2026-09-21 |                                                                                               |
+| `content/docs` — the rest                                      | 2026-09-21 | `proposals`, `infra`, `users`, `achievements`, the root index                                 |

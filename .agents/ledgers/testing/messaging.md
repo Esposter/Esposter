@@ -5,8 +5,8 @@ Esbabbler — the room, its message list, and everything only they read. The ser
 
 | Unit                                                                                         | Swept      | Notes                             |
 | -------------------------------------------------------------------------------------------- | ---------- | --------------------------------- |
-| `store/message`                                                                              | 2026-09-15 | the widest keyed state in the app |
-| `services/message`                                                                           | 2026-09-15 |                                   |
-| `composables/message`                                                                        | 2026-09-15 |                                   |
-| `components/Message`                                                                         | 2026-09-15 | splits at `Model/` on contact     |
-| `services/{room,user}`, `composables/user`, `store/user`, `components/{User,RichTextEditor}` | 2026-09-15 |                                   |
+| `store/message`                                                                              | 2026-09-21 | the widest keyed state in the app |
+| `services/message`                                                                           | 2026-09-21 |                                   |
+| `composables/message`                                                                        | 2026-09-21 |                                   |
+| `components/Message`                                                                         | 2026-09-21 | splits at `Model/` on contact     |
+| `services/{room,user}`, `composables/user`, `store/user`, `components/{User,RichTextEditor}` | 2026-09-21 |                                   |

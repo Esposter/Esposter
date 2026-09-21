@@ -4,12 +4,12 @@
 
 | Unit                                                                                                                                 | Swept      | Notes                         |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ----------------------------- |
-| `trpc/routers/message` — `emoji`, `index`, `moderation`, `scheduledMessageJob`                                                       | 2026-09-15 | the widest suite in the tree  |
-| `trpc/routers/room` — `category`, `createDirectMessageWithFriend`, `directMessage`, `emoji`, `filter`, `index`                       | 2026-09-15 |                               |
-| `trpc/routers` — `call`, `role`, `searchHistory`, `userToRoom`, `webhook`                                                            | 2026-09-15 | the caller fixtures live here |
-| `trpc/routers` — `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                                           | 2026-09-15 |                               |
-| `trpc/routers` — `dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `post`, `like`, `block`, `friend`, `friendRequest`, `user` | 2026-09-15 |                               |
-| `trpc/routers` — `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`               | 2026-09-15 |                               |
-| `trpc/{guards,procedure,plugins,middleware}` and `context.test.ts`                                                                   | 2026-09-15 |                               |
-| `services/pagination`, `services/{resource,blueprint}`                                                                               | 2026-09-15 |                               |
-| `services` — the rest, `composables`, `api`, `routes`                                                                                | 2026-09-15 |                               |
+| `trpc/routers/message` — `emoji`, `index`, `moderation`, `scheduledMessageJob`                                                       | 2026-09-21 | the widest suite in the tree  |
+| `trpc/routers/room` — `category`, `createDirectMessageWithFriend`, `directMessage`, `emoji`, `filter`, `index`                       | 2026-09-21 |                               |
+| `trpc/routers` — `call`, `role`, `searchHistory`, `userToRoom`, `webhook`                                                            | 2026-09-21 | the caller fixtures live here |
+| `trpc/routers` — `resource`, `blueprint`, `note`, `program`, `sheet`, `todoList`, `survey`                                           | 2026-09-21 |                               |
+| `trpc/routers` — `dashboard`, `dataset`, `email`, `flowchart`, `webpage`, `post`, `like`, `block`, `friend`, `friendRequest`, `user` | 2026-09-21 |                               |
+| `trpc/routers` — `achievement`, `app`, `clicker`, `dungeons`, `notification`, `pushSubscription`, `session`, `storage`               | 2026-09-21 |                               |
+| `trpc/{guards,procedure,plugins,middleware}` and `context.test.ts`                                                                   | 2026-09-21 |                               |
+| `services/pagination`, `services/{resource,blueprint}`                                                                               | 2026-09-21 |                               |
+| `services` — the rest, `composables`, `api`, `routes`                                                                                | 2026-09-21 |                               |
