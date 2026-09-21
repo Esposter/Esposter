@@ -6,8 +6,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // The player's window stays hidden: the synthesizer runs detached with no console of its own, and a console
-// Program spawned from one is given a new window otherwise. Its streams go nowhere, since nothing reads them now
-// That the call is awaited rather than blocking, and a pipe nobody drains is one more way for a player to wedge
+// Program spawned from one is given a new window otherwise. Its streams go nowhere, since the call awaits the
+// Player rather than reading it, and a pipe nobody drains is one more way for a player to wedge
 const PLAYER_OPTIONS: SpawnOptions = { stdio: "ignore", windowsHide: true };
 
 const spawnPlayer = (audioPath: string) => {
