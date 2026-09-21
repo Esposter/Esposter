@@ -35,10 +35,7 @@ The order of the ritual, and the commit and push that close it, are `CLAUDE.md`'
 | **An open ledger row over the files touched**                          | whether a sweep still lists this unit unswept, which is a commit ahead of the change                 | `sweeps`                                        |
 | **An enforcer instead of a repeated finding**                          | whether the same finding has now been written twice                                                  | `oxlint`                                        |
 
-Two rows have no name to grep and are missed for it:
-
-- **A behaviour change owes the docs sweep in reverse.** Nothing fails on a sentence that was true last week, so the lookup runs from the code: the pages whose `Key files` table names a source this change touched, read against what it now does. The rule is `CLAUDE.md` step 3; this row is only the reminder to run it.
-- **A diagram is prose that cannot be grepped.** A flow diagram outlives the sentence beside it because no sweep reads its edge labels. Every diagram on a page the change touched is read, not just the paragraphs.
+Two rows have no name to grep and are missed for it: a behaviour change, whose stale sentence fails nothing and is found from the code instead (`CLAUDE.md`, "Finishing a change", step 3), and a diagram, whose edge labels no sweep reads (`docs`, `references/diagrams.md`). Both rows are only the reminder to run their owner's lookup.
 
 ## Report every row, including the empty ones
 
