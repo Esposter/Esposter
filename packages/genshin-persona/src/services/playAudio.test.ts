@@ -1,40 +1,61 @@
-import type { spawnSync as baseSpawnSync } from "node:child_process";
+import type { spawn as baseSpawn } from "node:child_process";
 
 import { playAudio } from "#src/services/playAudio";
-import { existsSync } from "node:fs";
+import { EventEmitter } from "node:events";
+import { readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
-const { spawnSync } = vi.hoisted(() => ({ spawnSync: vi.fn<typeof baseSpawnSync>() }));
+const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
 
-vi.mock(import("node:child_process"), () => ({ spawnSync: spawnSync as unknown as typeof baseSpawnSync }));
+vi.mock(import("node:child_process"), () => ({ spawn }));
 
 describe(playAudio, () => {
-  test("runs the player with its window hidden, and deletes the WAV after", () => {
+  // The player as it answers once the call is already awaiting it, which is the only order a spawned process can
+  // Answer a caller in
+  const getPlayer = (answer: (player: EventEmitter) => void) => {
+    const player = new EventEmitter();
+    setImmediate(() => {
+      answer(player);
+    });
+    return player as ReturnType<typeof baseSpawn>;
+  };
+  const checkHasLeftovers = () =>
+    readdirSync(tmpdir()).some((name) => name.startsWith(`genshin-persona-${process.pid}-`));
+
+  test("runs the player with its window hidden, and deletes the WAV after", async () => {
     expect.hasAssertions();
 
-    spawnSync.mockReturnValueOnce({ status: 0 } as ReturnType<typeof baseSpawnSync>);
+    spawn.mockReturnValueOnce(getPlayer((player) => player.emit("close", 0)));
 
-    expect(playAudio(new Uint8Array())).toBe("");
-    expect(spawnSync).toHaveBeenCalledTimes(1);
-    expect(spawnSync.mock.calls[0]?.[2]).toStrictEqual({ windowsHide: true });
-    expect(existsSync(join(tmpdir(), `genshin-persona-${process.pid}.wav`))).toBe(false);
+    await expect(playAudio(new Uint8Array())).resolves.toBe("");
+    expect(spawn).toHaveBeenCalledTimes(1);
+    expect(spawn.mock.calls[0]?.[2]).toStrictEqual({ stdio: "ignore", windowsHide: true });
+    expect(checkHasLeftovers()).toBe(false);
   });
 
   test.each([
-    { expected: "playAudio", name: "a player that could not be spawned", outcome: { error: new Error("playAudio") } },
-    { expected: "the player exited 1", name: "a player that refused the file", outcome: { status: 1 } },
     {
-      expected: "the player was stopped by SIGKILL",
-      name: "a player the OS stopped",
-      outcome: { signal: "SIGKILL", status: null },
+      answer: (player: EventEmitter) => player.emit("error", new Error("playAudio")),
+      expected: "playAudio",
+      name: "a player that could not be spawned",
     },
-  ])("answers $name with why", ({ expected, outcome }) => {
+    {
+      answer: (player: EventEmitter) => player.emit("close", 1),
+      expected: "the player exited 1",
+      name: "a player that refused the file",
+    },
+    {
+      answer: (player: EventEmitter) => player.emit("close", null, "SIGKILL"),
+      expected: "the player was stopped by SIGKILL",
+      name: "a player the OS stopped, which closes with a signal and no exit status",
+    },
+  ])("answers $name with why", async ({ answer, expected }) => {
     expect.hasAssertions();
 
-    spawnSync.mockReturnValueOnce(outcome as ReturnType<typeof baseSpawnSync>);
+    spawn.mockReturnValueOnce(getPlayer(answer));
 
-    expect(playAudio(new Uint8Array())).toBe(expected);
+    await expect(playAudio(new Uint8Array())).resolves.toBe(expected);
+    expect(checkHasLeftovers()).toBe(false);
   });
 });

@@ -3,13 +3,16 @@ import { createLatestWinsQueue } from "#src/services/createLatestWinsQueue";
 import { describe, expect, test, vi } from "vitest";
 
 describe(createLatestWinsQueue, () => {
+  const getRun = (firstRun: Promise<VoiceStatus>) =>
+    vi.fn<(item: number, checkIsSuperseded: () => boolean) => Promise<VoiceStatus>>((item) =>
+      item === 0 ? firstRun : Promise.resolve(VoiceStatus.Ok),
+    );
+
   test("runs the newest pending item once the running one ends, and supersedes the rest", async () => {
     expect.hasAssertions();
 
     const { promise: firstRun, resolve: endFirstRun } = Promise.withResolvers<VoiceStatus>();
-    const run = vi.fn<(item: number) => Promise<VoiceStatus>>((item) =>
-      item === 0 ? firstRun : Promise.resolve(VoiceStatus.Ok),
-    );
+    const run = getRun(firstRun);
     const push = createLatestWinsQueue(run);
     const first = push(0);
     const second = push(1);
@@ -22,6 +25,27 @@ describe(createLatestWinsQueue, () => {
     await expect(first).resolves.toBe(VoiceStatus.Ok);
     await expect(third).resolves.toBe(VoiceStatus.Ok);
     expect(run).toHaveBeenCalledTimes(2);
-    expect(run).toHaveBeenNthCalledWith(2, 2);
+    expect(run).toHaveBeenNthCalledWith(2, 2, expect.any(Function));
+  });
+
+  test("tells the item already running that a newer one is waiting on it", async () => {
+    expect.hasAssertions();
+
+    const { promise: firstRun, resolve: endFirstRun } = Promise.withResolvers<VoiceStatus>();
+    const run = getRun(firstRun);
+    const push = createLatestWinsQueue(run);
+    const first = push(0);
+    const checkIsSuperseded = run.mock.calls[0]?.[1];
+
+    expect(checkIsSuperseded?.()).toBe(false);
+
+    const second = push(1);
+
+    expect(checkIsSuperseded?.()).toBe(true);
+
+    endFirstRun(VoiceStatus.Superseded);
+
+    await expect(first).resolves.toBe(VoiceStatus.Superseded);
+    await expect(second).resolves.toBe(VoiceStatus.Ok);
   });
 });

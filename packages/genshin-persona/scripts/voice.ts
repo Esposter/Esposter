@@ -1,3 +1,4 @@
+import type { PcmClip } from "#src/models/PcmClip";
 import type { SpeakerTensors } from "#src/models/SpeakerTensors";
 import type { SpeechRequest } from "#src/models/SpeechRequest";
 
@@ -21,6 +22,7 @@ import { playAudio } from "#src/services/playAudio";
 import { readReferenceClip } from "#src/services/readReferenceClip";
 import { readVoiceDevice } from "#src/services/readVoiceDevice";
 import { readVoiceRuntime } from "#src/services/readVoiceRuntime";
+import { splitSentences } from "#src/services/splitSentences";
 import { writeVoiceDevice } from "#src/services/writeVoiceDevice";
 import { writeVoiceLog } from "#src/services/writeVoiceLog";
 import { createServer } from "node:net";
@@ -70,7 +72,10 @@ const readSpeaker = async ({ language, name, stem }: SpeechRequest) => {
   speakers.set(key, encoded);
   return encoded;
 };
-const speak = async (request: SpeechRequest) => {
+// The reading is streamed: every sentence is synthesized while the sentence before it plays, so the person hears
+// The opening of a reply instead of waiting on the whole of it, and a reply the next prompt has already replaced
+// Stops at the sentence boundary it had reached rather than reading itself out over its replacement
+const speak = async (request: SpeechRequest, checkIsSuperseded: () => boolean) => {
   const synthesizer = await synthesizerLoad;
   const speaker = await readSpeaker(request);
   if (!speaker) {
@@ -78,28 +83,45 @@ const speak = async (request: SpeechRequest) => {
     return VoiceStatus.Error;
   }
 
-  const text = request.type === VoiceRequestType.Warm ? WARM_TEXT : request.text;
-  const clip = await synthesizer.synthesize(text, speaker);
-  if (!clip) return VoiceStatus.Error;
-
-  if (synthesizer.device !== settledDevice) {
-    settledDevice = synthesizer.device;
-    writeVoiceDevice(settledDevice);
-  }
-
-  const { sampleRate, samples } = clip;
-  if (request.type === VoiceRequestType.Speak) {
-    const gain = request.volume / MAX_VOLUME;
-    const playerFailure = playAudio(getWavBytes({ sampleRate, samples: samples.map((sample) => sample * gain) }));
+  const gain = request.volume / MAX_VOLUME;
+  const play = async (clip: PcmClip) => {
+    const audio = getWavBytes({ ...clip, samples: clip.samples.map((sample) => sample * gain) });
+    const playerFailure = await playAudio(audio);
     if (playerFailure) writeVoiceLog(`the player did not play: ${playerFailure}`);
+  };
+  const sentences = request.type === VoiceRequestType.Warm ? [WARM_TEXT] : splitSentences(request.text);
+  let playback: Promise<void> = Promise.resolve();
+  for (const sentence of sentences) {
+    const clip = await synthesizer.synthesize(sentence, speaker);
+    if (!clip) {
+      await playback;
+      return VoiceStatus.Error;
+    }
+
+    // A rung the engine moved down to part way through a reply is the one the rest of it is read on, and the one
+    // The next synthesizer starts from
+    if (synthesizer.device !== settledDevice) {
+      settledDevice = synthesizer.device;
+      writeVoiceDevice(settledDevice);
+    }
+
+    if (request.type !== VoiceRequestType.Speak) continue;
+
+    await playback;
+    // The last moment before this sentence is committed to the player, which is where a newer reply arriving
+    // During the synthesis or during the sentence before it is caught
+    if (checkIsSuperseded()) return VoiceStatus.Superseded;
+
+    playback = play(clip);
   }
 
+  await playback;
   return VoiceStatus.Ok;
 };
 // A synthesis that throws drops its request and keeps the engine: one sentence the model rejects does not cost
 // A reload for the next
-const queue = createLatestWinsQueue(async (request: SpeechRequest) => {
-  const [outcome] = await Promise.allSettled([speak(request)]);
+const queue = createLatestWinsQueue(async (request: SpeechRequest, checkIsSuperseded: () => boolean) => {
+  const [outcome] = await Promise.allSettled([speak(request, checkIsSuperseded)]);
   if (outcome?.status === "fulfilled") return outcome.value;
 
   writeVoiceLog(`${request.type} failed: ${String(outcome?.reason)}`);
