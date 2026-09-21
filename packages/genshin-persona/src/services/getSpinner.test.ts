@@ -6,7 +6,10 @@ import { getSpinner } from "#src/services/getSpinner";
 import { describe, expect, test } from "vitest";
 
 describe(getSpinner, () => {
+  // The tips are keyed by the English name and labelled with the display name, so the two differ here
   const name = "Hu Tao";
+  const displayName = "胡桃";
+  const character = { displayName, name };
   const base: SpinnerContent = { tips: ["baseTip"], verbs: ["baseVerb"] };
   const verbs = ["verb"];
   const lines: VoiceLine[] = [{ text: "line", title: "title" }];
@@ -14,8 +17,8 @@ describe(getSpinner, () => {
   test("puts the base verbs ahead of the character's and their lines under their name", () => {
     expect.hasAssertions();
 
-    expect(getSpinner(base, name, verbs, lines)).toStrictEqual({
-      label: name,
+    expect(getSpinner(base, character, verbs, lines)).toStrictEqual({
+      label: displayName,
       tips: [{ id: "genshin-persona.huTao-1", text: "line" }],
       verbs: ["baseVerb", "verb"],
     });
@@ -29,7 +32,7 @@ describe(getSpinner, () => {
       { text: "b".repeat(MAX_SPINNER_TIP_LENGTH + 1), title: "title" },
     ];
 
-    expect(getSpinner(base, name, verbs, longLines).tips).toStrictEqual([
+    expect(getSpinner(base, character, verbs, longLines).tips).toStrictEqual([
       { id: "genshin-persona.huTao-1", text: "line." },
     ]);
   });
@@ -42,13 +45,13 @@ describe(getSpinner, () => {
       title: "title",
     }));
 
-    expect(getSpinner(base, name, verbs, manyLines).tips).toHaveLength(MAX_SPINNER_TIP_COUNT);
+    expect(getSpinner(base, character, verbs, manyLines).tips).toHaveLength(MAX_SPINNER_TIP_COUNT);
   });
 
   test("shows the base tips under no name for a character with no lines", () => {
     expect.hasAssertions();
 
-    expect(getSpinner(base, name, verbs, [])).toStrictEqual({
+    expect(getSpinner(base, character, verbs, [])).toStrictEqual({
       label: "",
       tips: [{ id: "genshin-persona.teyvat-1", text: "baseTip" }],
       verbs: ["baseVerb", "verb"],
@@ -58,7 +61,7 @@ describe(getSpinner, () => {
   test("shows the base content alone for a character with neither a card nor lines", () => {
     expect.hasAssertions();
 
-    expect(getSpinner(base, name, [], [])).toStrictEqual({
+    expect(getSpinner(base, character, [], [])).toStrictEqual({
       label: "",
       tips: [{ id: "genshin-persona.teyvat-1", text: "baseTip" }],
       verbs: ["baseVerb"],

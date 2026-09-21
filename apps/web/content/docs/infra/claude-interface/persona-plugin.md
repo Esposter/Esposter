@@ -1,6 +1,6 @@
 ---
 title: Persona plugin
-description: Stage 1 of the Claude interface — a workspace package that is also a Claude Code plugin, reading every playable character from a game-data dependency Renovate keeps current, picking one for the session — by lore through a typed decision when a key is set, by the nearest birthday otherwise — forcing an output style that keeps the voice out of code, and carrying the authoring skill for the optional persona card a character earns.
+description: Stage 1 of the Claude interface — a workspace package that is also a Claude Code plugin, reading every playable character from a game-data dependency Renovate keeps current, picking one for the session — by lore through a typed decision when a key is set, by the nearest birthday otherwise — writing everything it says in the language one master toggle sets, forcing an output style that keeps the voice out of code, and carrying the authoring skill for the optional persona card a character earns.
 ---
 
 # Persona plugin
@@ -179,15 +179,76 @@ The plugin's authoring skill keeps the hand-written half honest: the card shape 
 
 The card is the per-character half of the persona and the output style is the invariant half, on purpose: a style per character would be the same lines in a file the tool cannot switch per session, and the card already reaches the model as context at every start. Beside the voice the model also gets the game's one-line description of the character, the lore it answers from when asked who it is.
 
+## The three languages
+
+Three settings decide what a session reads, and they are deliberately not one axis — each answers a question the others cannot, and each costs something different to change.
+
+| Tier      | Set                            | What it decides                      | Cost to change                                      |
+| :-------- | :----------------------------- | :----------------------------------- | :-------------------------------------------------- |
+| Replies   | anything                       | what the model writes prose in       | a line of context                                   |
+| Interface | what the data package declares | every word the plugin puts on screen | a state file, and a module for our own words        |
+| Dub       | four                           | whose voice reads a reply            | an install of a couple of gigabytes and a proof run |
+
+**The set of interface languages is read off the data package's own language enum**, exported at runtime beside its query functions, so a bump that adds a language is a language the plugin speaks with nothing to edit — the same stance the roster takes, where a new patch is one dependency bump and no generated list. The `language` verb given no argument prints them, which is the whole of the discovery.
+
+The master toggle sits at the middle tier and cascades upward only: setting the interface language sets the reply language with it, and either stays overridable on its own afterwards. That is the per-setting customization without a matrix of switches, because an override is only written when somebody wants the two to disagree — labels in one language and prose in another, which is a real want in both directions.
+
+**The dub stays outside the cascade and is reported on rather than changed.** It answers a different question from a set of four, and a multi-gigabyte download must never be a side effect of a labels setting. So the interface verb ends by naming the state the dub is in: set to a language a dub exists for, it says so and names the command that installs it; set to any other, it says plainly that replies keep reading in whichever voice is already set up.
+
+```mermaid
+flowchart TD
+    Language["language verb<br/>the master toggle"]
+    Reply["reply verb<br/>set, else cascaded"]
+    Dub["voice verb<br/>whose voice, never cascaded"]
+
+    Language -->|cascades unless set| Reply
+    Language -.->|reports, never installs| Dub
+    Language --> Data{"Does the data package carry it?"}
+    Data -- "name, title, element, region, description, the character's own lines" --> Free["Card headline, spinner tips, status line"]
+    Data -- "our own words" --> Module{"A module for this language?"}
+    Module -- yes --> Ours["Base verbs and tips, the character's gerunds, the verbs' output"]
+    Module -- no --> Fallback["English, under a localized headline"]
+    Reply --> Prose["The model's prose"]
+    Prose --> Script{"A script the engine reads?"}
+    Script -- no --> Silent["Not spoken, logged"]
+    Script -- yes --> Dub
+    Dub --> Speech["The spoken first sentence"]
+```
+
+### What the data package answers, and what is ours
+
+Passing the English name as the query language and the chosen one as the result language answers every field the card and the status line show — the name, the title, the element and region text, and the one-line description — and answers the character's own voice lines in the same call, at the same count as English. The spinner's tips are those lines, so the largest readable surface localizes for the cost of two options on a query that is already made. The roster is read twice rather than once: the English records are the identity, the localized records are what is read, and they are matched on the id the package gives rather than on the order it returns them in.
+
+What is ours is one authored module per language under `src/localizations/`, named for the language the way a card is named for its character: that language's base Teyvat verbs and tips, each character's spinner gerunds keyed by the character's English name, the locale its dates are formatted against, and every line the verbs themselves print. Only English fills every string; another language fills what it has translated and inherits the rest per string, so a half-translated language is a legal state rather than a missing key, and `untranslated` is the queue of characters it has no gerunds for — the third queue beside `uncarded` and `unverbed`.
+
+**The authored card is never translated.** Its habits and sign-off reach the model and not the person, and its greeting is a line the model performs rather than a label anyone reads; a model given all three in English and asked to answer in Japanese answers in Japanese with the register intact. So they follow the reply language by themselves, at no authoring cost and with the card's fifty-token ceiling untouched.
+
+### Identity and display
+
+The English name is the identity: the pin, the pick records, the reference clips, the card modules and every wiki lookup are keyed by it, and it is stable across a change of language. Beside it rides the name that language spells the character by, which is what the status line draws and the card heads. The status line's colour is looked up by the **English** element for the same reason — a localized element text matches no key in the colour map, and the fallback is an uncoloured nameplate, so the failure would have been silent. A typed name resolves against either, because the localized one is what a person sees and therefore copies.
+
+A change of interface language rewrites the session's record, the pin and the spinner exactly as a change of character does, since all three carry the name being drawn. The roster cache is keyed by the data package's version **and** the language, so a change of either is a miss rather than a stale read.
+
+### What this deliberately does not reach
+
+- **Claude Code's own interface stays English.** Its menus, its help, its permission dialogs and its own hints belong to the tool, and no plugin setting reaches them. What the plugin localizes is the whole of what a plugin owns. The revisit trigger is the tool taking a language setting of its own.
+- **A language with no module reads in English for the words that are ours** — localized names, titles and tips under English verbs — which is the intended half-translated state, not a failure.
+- **A dub exists for four of the fifteen**, so a French or Thai interface with a Japanese voice is a legal state and the common one outside those four.
+- **Replies in a non-Latin script are not spoken**, because the engine's own gate drops them, so a cascade to Japanese silences a set-up voice until [multilingual spoken replies](/docs/proposals/infra/multilingual-spoken-replies) lands; the verb warns at the moment the cascade would cause it.
+- **A character the data package has no lines for falls back to the base tips rather than to English lines**, because the wiki that carries them is English only and a spinner mixing two scripts reads worse than the base tips do.
+- **A language switch reaches the spinner at the next session**, the same constraint every character switch already carries and for the same reason: the tool reads its spinner keys once per process.
+
 ## The commands
 
-Every control is its own slash command — `/genshin-persona:today`, `roster`, `use`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `setup` and `teardown`, namespaced by the plugin's name — because a verb hidden inside one command's argument is invisible in the menu and a bare invocation of that command has no meaning. Each is a skill of a command and a relay rule that the user alone can invoke, so its description is read by a person browsing the menu and never loaded into the session. One more skill, `genshin`, is the model's and hidden from the menu: it carries the table of verbs, so a request put in words — who is this, louder, be Furina — reaches the right one, and a request that says nothing about how long is `use`, never `pin`. Every command runs the plugin's own script and relays its lines, because the roster is game data nothing but the script has read, and the script's last line says when the change lands.
+Every control is its own slash command — `/genshin-persona:today`, `roster`, `use`, `pin`, `unpin`, `mute`, `unmute`, `volume`, `language`, `reply`, `status`, `setup` and `teardown`, namespaced by the plugin's name — because a verb hidden inside one command's argument is invisible in the menu and a bare invocation of that command has no meaning. Each is a skill of a command and a relay rule that the user alone can invoke, so its description is read by a person browsing the menu and never loaded into the session. One more skill, `genshin`, is the model's and hidden from the menu: it carries the table of verbs, so a request put in words — who is this, louder, be Furina — reaches the right one, and a request that says nothing about how long is `use`, never `pin`. Every command runs the plugin's own script and relays its lines, because the roster is game data nothing but the script has read, and the script's last line says when the change lands.
+
+One of them changes nothing. Every setting is its own file in the state directory, which is the right shape for writing one and no shape at all for reading them, and until `status` the only verb that reported anything was `voice`. It prints every knob with its **provenance** rather than its value alone, because a value and where it came from are different facts and only the second explains the behaviour: whether this session has a character of its own or is reading the pin, whether the reply language was set or cascaded, whether the status line and spinner in the user settings are the plugin's. It reads the same files the other verbs write, so there is no second record of the state to keep in step.
 
 ## The settings a plugin cannot ship
 
 A plugin's own settings file may set two keys, both about subagents, so the status line, the spinner verbs and the spinner tips are user settings. The `setup` command writes them and `teardown` removes exactly what `setup` wrote. The spinner keys are taken over outright — the built-in verbs and tips are replaced, not joined — while a status line that is not the plugin's is left alone, because replacing it would lose something the person wrote.
 
-The spinner follows the character. Its verbs have two layers of the same shape: the base Teyvat verbs and tips in `baseSpinnerContent.ts`, and the character's own `verbs` on their card — read by a person, never by the model, so the card's fifty-token ceiling is untouched. The verbs show both layers, the base ahead of the character's. The tips show one, and the card holds none: the tool puts one label in front of every tip in the override — a tip object carries none, and an empty label falls back to its own "Tip" — so every line of the character's runs under their name, off the game data or, before it carries them, the community wiki, each cut to the opening sentences that fit the five hundred characters a tip may run to, since the tool drops a longer one whole and a twin's lines are dialogues, and the list cut at the two hundred the tool reads. A card holds no tip of its own because a tip performed in our words from those same lines is a paraphrase shown beside its original. The base tips, which are nobody's line, show only for a character with no lines anywhere yet, under "Tip". The lines cost the data package or a wiki round trip, and the session-start hook's stdout is the model's context, so the hook reads none of it: it spawns a detached script, the way it wakes the voice, which reads the lines and rewrites the two settings keys — and skips both when the label already names the character, so on most days nothing is read and nothing is written. `use`, `pin` and `unpin` rewrite them the same way, inline; `setup` reads the spinner afresh every time, so a card's verbs edited since are picked up there. The tool reads both spinner keys once per process — a settings file is watched and most edits reach the running session, but these two do not, checked by eye after a rewrite — so the spinner is the one surface a switch reaches at the next session rather than in the reply. The tips are inline in the setting rather than in a tips file because the file bought nothing: read once per process too, and one more state path to keep readable from every shell. The spinner is also one user setting shared by every running session, so two sessions speaking as different characters take turns owning it, last writer wins. A rewrite decides on the settings it writes back rather than the ones it read the lines on: the keys are read again when the lines come in, so a `teardown` landing in that window is not undone by the spinner it interrupted.
+The spinner follows the character. Its verbs have two layers of the same shape: the interface language's base Teyvat verbs and tips, in its module under `src/localizations/`, and the character's own `verbs` — the card's under English and that module's otherwise — read by a person, never by the model, so the card's fifty-token ceiling is untouched. The verbs show both layers, the base ahead of the character's. The tips show one, and the card holds none: the tool puts one label in front of every tip in the override — a tip object carries none, and an empty label falls back to its own "Tip" — so every line of the character's runs under their name as the interface language spells it, off the game data or, before it carries them, the community wiki, each cut to the opening sentences that fit the five hundred characters a tip may run to, since the tool drops a longer one whole and a twin's lines are dialogues, and the list cut at the two hundred the tool reads. A card holds no tip of its own because a tip performed in our words from those same lines is a paraphrase shown beside its original. The base tips, which are nobody's line, show only for a character with no lines anywhere yet, under "Tip". The lines cost the data package or a wiki round trip, and the session-start hook's stdout is the model's context, so the hook reads none of it: it spawns a detached script, the way it wakes the voice, which reads the lines and rewrites the two settings keys — and skips both when the label already names the character in the language in force, so on most days nothing is read and nothing is written. `use`, `pin` and `unpin` rewrite them the same way, inline; `setup` reads the spinner afresh every time, so a card's verbs edited since are picked up there. The tool reads both spinner keys once per process — a settings file is watched and most edits reach the running session, but these two do not, checked by eye after a rewrite — so the spinner is the one surface a switch reaches at the next session rather than in the reply. The tips are inline in the setting rather than in a tips file because the file bought nothing: read once per process too, and one more state path to keep readable from every shell. The spinner is also one user setting shared by every running session, so two sessions speaking as different characters take turns owning it, last writer wins. A rewrite decides on the settings it writes back rather than the ones it read the lines on: the keys are read again when the lines come in, so a `teardown` landing in that window is not undone by the spinner it interrupted.
 
 The status line has one more problem to solve: an install lands under a directory named after its version, so a setting pointing straight at the plugin's script breaks on every update. The setting points instead at a launcher in the plugin's state directory, one import line, and the hook re-aims that launcher at the running install whenever it differs. An update is followed on the next session, with nothing for the person to repeat.
 
@@ -197,7 +258,7 @@ The line itself is the name in the element's colour, a 24-bit ANSI foreground th
 flowchart LR
     Setup["setup verb"]
     Hook["Session-start hook<br/>the session's character"]
-    Content["baseSpinnerContent + the card's verbs + the lines<br/>verbs in two layers, tips in one"]
+    Content["Base content + gerunds + lines<br/>verbs in two layers, tips in one"]
     Script["spinner.ts, detached<br/>every line of the character's"]
     Settings["User settings<br/>statusLine, spinnerVerbs, spinnerTipsOverride"]
     Launcher["State directory<br/>status.mjs, one import"]
@@ -235,7 +296,7 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 | `packages/genshin-persona/output-styles/in-character.md`           | The standing voice rules, forced on while the plugin is enabled                                                                                    |
 | `packages/genshin-persona/scripts/pick.ts`                         | The session-start entrypoint: resolve the character, print the card, never fail                                                                    |
 | `packages/genshin-persona/scripts/spinner.ts`                      | The spinner rewrite the start hook spawns detached, since the lines cost the data package or the wiki                                              |
-| `packages/genshin-persona/scripts/genshin.ts`                      | The commands' script: roster, today, pin, unpin, mute, unmute, volume, setup, teardown, and the queues                                             |
+| `packages/genshin-persona/scripts/genshin.ts`                      | The commands' script: every verb, the language cascade, the status report, and the queues                                                          |
 | `packages/genshin-persona/scripts/status.ts`                       | The status line: the state files and the roster cache read, the nameplate printed                                                                  |
 | `packages/genshin-persona/src/services/getSessionNameplate.ts`     | The session's record, else the pin, else the birthday pick; never another session's record                                                         |
 | `packages/genshin-persona/src/services/formatNameplate.ts`         | The name in its element's colour, plain where the element has none                                                                                 |
@@ -246,7 +307,11 @@ The revisit trigger is the tool letting a plugin ship these keys, or choose a sp
 | `packages/genshin-persona/src/services/readSpinner.ts`             | The card's verbs and every line of the character's, read into one spinner                                                                          |
 | `packages/genshin-persona/src/services/writeSpinner.ts`            | The two spinner settings, written only when they would change; the tool's watch does the rest                                                      |
 | `packages/genshin-persona/src/services/writeSessionSpinner.ts`     | The spinner for a character, where `setup` opted the settings in and the label is not theirs yet, checked again on the read the write is made from |
-| `packages/genshin-persona/src/services/baseSpinnerContent.ts`      | The base Teyvat verbs every spinner shows first, and the tips a character with no lines falls back to                                              |
+| `packages/genshin-persona/src/localizations/`                      | One authored module per language: its base Teyvat verbs and tips, each character's gerunds, and every line the verbs print                         |
+| `packages/genshin-persona/src/models/Localization.ts`              | What a language's module holds, and what is absent from it because the data package answers it                                                     |
+| `packages/genshin-persona/src/services/readLocalization.ts`        | The language's own words over English's, merged per string so a half-translated language shows each in the language it has                         |
+| `packages/genshin-persona/src/services/readRoster.ts`              | The identity records and the localized ones, matched on the package's id and cached under the version and the language                             |
+| `packages/genshin-persona/src/services/getCanonicalLanguage.ts`    | A language as the data package spells it, matched however it was typed                                                                             |
 | `packages/genshin-persona/src/services/pickCharacter.ts`           | The nearest-birthday pick and its two tie-breaks                                                                                                   |
 | `packages/genshin-persona/src/services/resolveSessionCharacter.ts` | The session's record, then the pin, then a fresh pick; whichever it is, the session records it                                                     |
 | `packages/genshin-persona/src/services/recordSessionCharacter.ts`  | The one writer of a session's record, for the start hook and for `use`, `pin` and `unpin`                                                          |

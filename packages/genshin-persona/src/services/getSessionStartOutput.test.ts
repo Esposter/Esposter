@@ -1,6 +1,8 @@
 import type { Card } from "#src/models/Card";
 import type { PersonaCard } from "#src/models/PersonaCard";
+import type { SessionStartOutput } from "#src/models/SessionStartOutput";
 
+import { DEFAULT_LANGUAGE, REPLY_LANGUAGE_INSTRUCTION } from "#src/services/constants";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
 import { describe, expect, test } from "vitest";
 
@@ -24,7 +26,7 @@ describe(getSessionStartOutput, () => {
 
     const card: Card = { description, headline, note, personaCard };
 
-    expect(getSessionStartOutput(card)).toBe(
+    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
           additionalContext: `Persona: ${headline}\n${description}\n${note}\n- ${habit}\n- Greets: ${greeting}\n- Signs off: ${signOff}`,
@@ -40,11 +42,25 @@ describe(getSessionStartOutput, () => {
 
     const card: Card = { description: "", headline, note: "", personaCard: undefined };
 
-    expect(getSessionStartOutput(card)).toBe(
+    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: { additionalContext: `Persona: ${headline}`, hookEventName: "SessionStart" },
         systemMessage: `✦ ${headline}`,
       }),
     );
+  });
+
+  // The reply language rides in the context beside the card rather than in the output style, which the plugin
+  // Ships and cannot vary per person; English is the default the model already writes in, so it costs no line
+  test("carries no instruction at English, and one naming the language otherwise", () => {
+    expect.hasAssertions();
+
+    const card: Card = { description: "", headline, note: "", personaCard: undefined };
+    const { hookSpecificOutput } = JSON.parse(getSessionStartOutput(card, "Japanese")) as SessionStartOutput;
+
+    expect(hookSpecificOutput.additionalContext).toBe(
+      `Persona: ${headline}\n${REPLY_LANGUAGE_INSTRUCTION("Japanese")}`,
+    );
+    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).not.toContain(REPLY_LANGUAGE_INSTRUCTION(DEFAULT_LANGUAGE));
   });
 });

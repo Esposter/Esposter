@@ -1,6 +1,6 @@
 ---
 name: genshin
-description: Apply when the user asks who the session's Genshin character is, wants the roster, wants a character for this session or pinned for every session, wants a pin removed, wants spoken replies muted, unmuted, louder or softer, wants the voice set up or its dub switched, or wants the status line and spinner set up or removed. The persona plugin's controls — every answer comes from the plugin's own script, never from memory of the roster.
+description: Apply when the user asks who the session's Genshin character is, wants the roster, wants a character for this session or pinned for every session, wants a pin removed, wants spoken replies muted, unmuted, louder or softer, wants the voice set up or its dub switched, wants the plugin's own text or its replies in another language, wants every setting reported, or wants the status line and spinner set up or removed. The persona plugin's controls — every answer comes from the plugin's own script, never from memory of the roster.
 user-invocable: false
 ---
 
@@ -23,10 +23,15 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" <verb> [name]
 | Replies louder or softer, by a number to 100                           | `volume <number>`   |
 | The voice set up, or read in another dub                               | `voice <dub>`       |
 | The status line and the spinner written into user settings, or removed | `setup`, `teardown` |
+| The plugin's own text in another language                              | `language <name>`   |
+| Replies in another language, on their own                              | `reply <name>`      |
+| Every setting at once, changed by nothing                              | `status`            |
 
 Each verb's skill, `skills/<verb>/SKILL.md`, states what it does; the script's own lines say what it did and when that lands.
 
-The authoring verbs — `uncarded`, `unverbed` and `lines <name>` — are the `genshin-author` skill's.
+The authoring verbs — `uncarded`, `unverbed`, `untranslated` and `lines <name>` — are the `genshin-author` skill's.
+
+`language` is the master toggle and carries the reply language with it, so a request for everything in one language is that one verb. `reply` is only for the person who wants them to disagree — labels in one language, prose in another — and either stays set once it is set on its own. The dub is neither: it says whose voice reads a reply, from a set of four, and costs an install, so `language` reports on it and never changes it.
 
 A card a verb prints is the session's card from the reply that relays it: `use`, `pin` and `unpin` switch the voice in the same reply, and only the spinner waits for the next session. A request for a character with no word on how long — "can you be Furina" — is `use`; `pin` is for a request that says every session.
 

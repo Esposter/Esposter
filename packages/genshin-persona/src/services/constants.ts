@@ -10,12 +10,17 @@ export const STATE_DIRECTORY: string = join(homedir(), ".claude", "genshin-perso
 export const PICK_RECORDS_PATH: string = join(STATE_DIRECTORY, "picks.tsv");
 export const PIN_PATH: string = join(STATE_DIRECTORY, "pin");
 export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
+// The two language settings, the persona's rather than the voice's, so `teardown` leaves them where it leaves the
+// Pin: the language every word the plugin writes is in, and the language the model answers in, which follows the
+// First until it is set on its own. Both hold one of the data package's own language names
+export const INTERFACE_LANGUAGE_PATH: string = join(STATE_DIRECTORY, "interface-language");
+export const REPLY_LANGUAGE_PATH: string = join(STATE_DIRECTORY, "reply-language");
 export const VOLUME_PATH: string = join(STATE_DIRECTORY, "volume");
 // The voice half of the state directory, written by the `voice` verb and removed by `teardown`: the dub's code, the
 // Rung of the device ladder the synthesizer settled on, the engine's runtime npm-installed from the manifest the
 // Plugin carries, the weights in the runtime's own cache layout, one reference clip per character fetched so far
 // Under its dub, and why the synthesizer last refused
-export const LANGUAGE_PATH: string = join(STATE_DIRECTORY, "language");
+export const VOICE_LANGUAGE_PATH: string = join(STATE_DIRECTORY, "voice-language");
 export const VOICE_DEVICE_PATH: string = join(STATE_DIRECTORY, "device");
 export const RUNTIME_DIRECTORY: string = join(STATE_DIRECTORY, "runtime");
 export const RUNTIME_MANIFEST_PATH: string = join(RUNTIME_DIRECTORY, "package.json");
@@ -27,7 +32,7 @@ export const VOICE_LOG_PATH: string = join(STATE_DIRECTORY, "voice.log");
 // What `teardown` removes: everything the `voice` verb wrote, and not the pick records or the pin, which are the
 // Persona's rather than the voice's
 export const VOICE_STATE_PATHS: string[] = [
-  LANGUAGE_PATH,
+  VOICE_LANGUAGE_PATH,
   VOICE_DEVICE_PATH,
   RUNTIME_DIRECTORY,
   MODELS_DIRECTORY,
@@ -61,14 +66,22 @@ export const TIP_ID_SEPARATOR = "-";
 export const MAX_SPINNER_TIP_COUNT = 200;
 export const MAX_SPINNER_TIP_LENGTH = 500;
 export const PERSONA_CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "personaCards");
+// One typed module per language for the words the data package does not carry, named for the language the way a
+// Card is named for its character
+export const LOCALIZATIONS_DIRECTORY: string = join(import.meta.dirname, "..", "localizations");
 // A card is a typed module, one per character, named for the character
-export const PERSONA_MODULE_EXTENSION = ".ts";
+export const MODULE_EXTENSION = ".ts";
 // Between a card's habits where the lore pick reads them as one description of the character
 export const HABIT_SEPARATOR = " ";
 export const CARD_DETAIL_SEPARATOR = " · ";
 // What the model reads the headline under, and what the person reads it under
 export const CONTEXT_HEADLINE_PREFIX = "Persona: ";
 export const NAMEPLATE_PREFIX = "✦ ";
+// The one line the reply language costs, put in the session's context beside the card rather than in the output
+// Style, which is a file the plugin ships and is the same for everybody. Absent at English, so the common case
+// Carries no instruction at all
+export const REPLY_LANGUAGE_INSTRUCTION = (language: string): string =>
+  `Write every reply in ${language}. This applies to prose only, and to nothing the output style already excludes from the character's voice: code, comments, commit messages, file contents, commands and error text stay as they are.`;
 export const ANSI_RESET = "\u001B[0m";
 // The status line's colour per element, as the game's interface paints the element's name; an element missing here
 // (the player character's "None") leaves the nameplate in the terminal's own colour
@@ -89,7 +102,12 @@ export const ROSTER_CACHE_PREFIX = "roster-";
 export const ROSTER_CACHE_EXTENSION = ".json";
 // Every month and day is measured inside one leap year, so 29 February is a day like any other and the year wraps
 export const LEAP_YEAR = 2000;
-export const DATE_LOCALE = "en-AU";
+// The weekday in the lore pick's request, which is an English instruction whatever the interface language is; the
+// Locale the birthday aside is formatted against is the interface language's own, on its localization module
+export const LORE_MOMENT_LOCALE = "en-AU";
+// The language every reader falls back to: the one the data package answers in unasked, and the one our own words
+// Are written in
+export const DEFAULT_LANGUAGE = "English";
 // The community wiki: the source of a character's lines before the game-data package carries them, and of the
 // Clip a character's voice is cloned from
 export const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
@@ -119,6 +137,14 @@ export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
 // English dub carries no prefix
 export const WIKI_VOICE_FILE_PREFIX = "VO_";
 export const WIKI_VOICE_FILE_EXTENSION = ".ogg";
+// The data package's language name per dub, for the one thing the interface language says about the voice: whether
+// A dub of this language exists at all. Four of the fifteen, which is why the dub is reported on and never cascaded
+export const VoiceLanguageNameMap: Record<VoiceLanguage, string> = {
+  [VoiceLanguage.Chinese]: "ChineseSimplified",
+  [VoiceLanguage.English]: DEFAULT_LANGUAGE,
+  [VoiceLanguage.Japanese]: "Japanese",
+  [VoiceLanguage.Korean]: "Korean",
+};
 export const LanguageDubPrefixMap: Record<VoiceLanguage, string> = {
   [VoiceLanguage.Chinese]: "ZH_",
   [VoiceLanguage.English]: "",

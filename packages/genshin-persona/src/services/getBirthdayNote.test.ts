@@ -1,5 +1,7 @@
+import english from "#src/localizations/english";
 import { TEST_EPOCH_DATE } from "#src/services/constants.test";
 import { getBirthdayNote } from "#src/services/getBirthdayNote";
+import { readLocalization } from "#src/services/readLocalization";
 import { describe, expect, test } from "vitest";
 
 describe(getBirthdayNote, () => {
@@ -15,6 +17,16 @@ describe(getBirthdayNote, () => {
   ])("%s: reads as the note the card prints", (birthday, expected) => {
     expect.hasAssertions();
 
-    expect(getBirthdayNote(birthday, epoch)).toBe(expected);
+    expect(getBirthdayNote(birthday, epoch, english)).toBe(expected);
+  });
+
+  // The aside is the plugin speaking rather than the character, so it is translated: the date against the
+  // Language's own locale and the distance in its own words
+  test("reads in the interface language, date and distance together", async () => {
+    expect.hasAssertions();
+
+    const localization = await readLocalization("Japanese");
+
+    expect(getBirthdayNote("1/1", epoch, localization)).toBe("[誕生日：1/1、本日]");
   });
 });

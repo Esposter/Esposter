@@ -4,8 +4,8 @@ import { PICK_RECORDS_PATH, STATE_FIELD_SEPARATOR } from "#src/services/constant
 import { writeStateFile } from "#src/services/writeStateFile";
 
 export const writePickRecords = (records: PickRecord[]): void => {
-  const lines = records.map(({ element, isoDate, name, sessionId }) =>
-    [sessionId, isoDate, name, element].join(STATE_FIELD_SEPARATOR),
+  const lines = records.map(({ displayName, element, isoDate, name, sessionId }) =>
+    [sessionId, isoDate, name, element, displayName].join(STATE_FIELD_SEPARATOR),
   );
   writeStateFile(PICK_RECORDS_PATH, lines.join("\n"));
 };

@@ -1,4 +1,4 @@
-import { PERSONA_CARDS_DIRECTORY, PERSONA_MODULE_EXTENSION } from "#src/services/constants";
+import { MODULE_EXTENSION, PERSONA_CARDS_DIRECTORY } from "#src/services/constants";
 import { getPersonaCardName } from "#src/services/getPersonaCardName";
 import { readGenshinDb } from "#src/services/readGenshinDb";
 import { readPersonaCard } from "#src/services/readPersonaCard";
@@ -15,9 +15,9 @@ describe(readPersonaCard, () => {
 
     const genshindb = readGenshinDb();
     const names = genshindb.characters("names", { matchCategories: true });
-    const reachableFileNames = new Set(names.map((name) => `${getPersonaCardName(name)}${PERSONA_MODULE_EXTENSION}`));
+    const reachableFileNames = new Set(names.map((name) => `${getPersonaCardName(name)}${MODULE_EXTENSION}`));
     const unreachableFileNames = readdirSync(PERSONA_CARDS_DIRECTORY).filter(
-      (fileName) => extname(fileName) === PERSONA_MODULE_EXTENSION && !reachableFileNames.has(fileName),
+      (fileName) => extname(fileName) === MODULE_EXTENSION && !reachableFileNames.has(fileName),
     );
 
     expect(unreachableFileNames).toStrictEqual([]);

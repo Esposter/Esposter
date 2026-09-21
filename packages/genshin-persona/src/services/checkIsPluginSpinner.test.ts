@@ -1,7 +1,7 @@
 import type { SpinnerTipsOverride } from "#src/models/SpinnerTipsOverride";
 import type { UserSettings } from "#src/models/UserSettings";
 
-import { BASE_SPINNER_CONTENT } from "#src/services/baseSpinnerContent";
+import english from "#src/localizations/english";
 import { checkIsPluginSpinner } from "#src/services/checkIsPluginSpinner";
 import { getSettingsWithSpinner } from "#src/services/getSettingsWithSpinner";
 import { getSpinner } from "#src/services/getSpinner";
@@ -11,7 +11,7 @@ describe(checkIsPluginSpinner, () => {
   test("reads the spinner setup wrote as ours", () => {
     expect.hasAssertions();
 
-    const settings = getSettingsWithSpinner({}, getSpinner(BASE_SPINNER_CONTENT, "Hu Tao", [], []));
+    const settings = getSettingsWithSpinner({}, getSpinner(english, { displayName: "Hu Tao", name: "Hu Tao" }, [], []));
 
     expect(checkIsPluginSpinner(settings)).toBe(true);
   });

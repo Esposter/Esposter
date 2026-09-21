@@ -3,7 +3,8 @@ import type { readSpinner as baseReadSpinner } from "#src/services/readSpinner";
 import type { readUserSettings as baseReadUserSettings } from "#src/services/readUserSettings";
 import type { writeUserSettings as baseWriteUserSettings } from "#src/services/writeUserSettings";
 
-import { BASE_SPINNER_CONTENT } from "#src/services/baseSpinnerContent";
+import english from "#src/localizations/english";
+import { DEFAULT_LANGUAGE } from "#src/services/constants";
 import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
 import { getSettingsWithSpinner } from "#src/services/getSettingsWithSpinner";
 import { getSpinner } from "#src/services/getSpinner";
@@ -29,9 +30,14 @@ vi.mock(import("#src/services/writeUserSettings"), () => ({
 }));
 
 describe(writeSessionSpinner, () => {
-  const name = "Hu Tao";
-  const spinner = getSpinner(BASE_SPINNER_CONTENT, name, [], [{ text: "text", title: "title" }]);
-  const otherSpinner = getSpinner(BASE_SPINNER_CONTENT, "Venti", [], [{ text: "otherText", title: "title" }]);
+  const character = { displayName: "Hu Tao", name: "Hu Tao" };
+  const spinner = getSpinner(english, character, [], [{ text: "text", title: "title" }]);
+  const otherSpinner = getSpinner(
+    english,
+    { displayName: "Venti", name: "Venti" },
+    [],
+    [{ text: "otherText", title: "title" }],
+  );
   let settings: UserSettings = {};
 
   beforeEach(() => {
@@ -47,7 +53,7 @@ describe(writeSessionSpinner, () => {
   test("writes the spinner where the settings are ours and the label is another character's", async () => {
     expect.hasAssertions();
 
-    await writeSessionSpinner(name, undefined);
+    await writeSessionSpinner(character, undefined, DEFAULT_LANGUAGE);
 
     expect(settings).toStrictEqual(getSettingsWithSpinner({ model: "model" }, spinner));
   });
@@ -60,7 +66,7 @@ describe(writeSessionSpinner, () => {
       return Promise.resolve(spinner);
     });
 
-    await writeSessionSpinner(name, undefined);
+    await writeSessionSpinner(character, undefined, DEFAULT_LANGUAGE);
 
     expect(settings).toStrictEqual({ model: "model" });
     expect(writeUserSettings).toHaveBeenCalledTimes(1);

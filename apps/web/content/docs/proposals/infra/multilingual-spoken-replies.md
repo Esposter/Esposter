@@ -100,4 +100,4 @@ The existing files the work touches, with the role each plays after the change.
 
 - The spelling question is settled: `ja` is the wiki's clip prefix, the ISO code and the model's token; "jp" is a country and would be a fourth spelling between the user and three systems that agree.
 - The original architecture carries two inputs Turbo lacks — an exaggeration and a guidance weight per request. A per-character exaggeration read off the card is the obvious use and is out of this proposal's scope; it is a persona feature, and it waits for the ear to say the default reads flat.
-- Whether the session **replies** in the dub's language is the output style's question, not the engine's: this proposal makes a Japanese sentence audible, and says nothing about who writes one.
+- Who writes a Japanese sentence is already settled and shipped: the reply language of the [persona plugin](/docs/infra/claude-interface/persona-plugin), which the interface language cascades into. This proposal is the other half — making one audible — and until it lands, setting that reply language silences a set-up voice, which the verb says at the moment it would.

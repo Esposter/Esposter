@@ -1,3 +1,4 @@
+import type { Character } from "#src/models/Character";
 import type { Spinner } from "#src/models/Spinner";
 import type { SpinnerContent } from "#src/models/SpinnerContent";
 import type { SpinnerTip } from "#src/models/SpinnerTip";
@@ -19,18 +20,24 @@ const getTips = (idPrefix: string, tips: string[]): SpinnerTip[] =>
     text,
   }));
 
-// The verbs are the base content with the character's behind it. The tips are one layer under one label: every
-// Line of the character's under their name, each cut to what the tool shows, else the base tips under the tool's
-// Own prefix, because a base tip is nobody's line and a name in front of it reads as an attribution. A tip's id
-// Is stable across rewrites so its show history survives the character changing
-export const getSpinner = (base: SpinnerContent, name: string, verbs: string[], lines: VoiceLine[]): Spinner => {
+// The verbs are the interface language's base content with the character's behind it. The tips are one layer under
+// One label: every line of the character's under the name that language spells them by, each cut to what the tool
+// Shows, else the base tips under the tool's own prefix, because a base tip is nobody's line and a name in front of
+// It reads as an attribution. A tip's id is keyed by the English name, so a show history survives both a rewrite of
+// The list and a change of interface language
+export const getSpinner = (
+  base: SpinnerContent,
+  { displayName, name }: Pick<Character, "displayName" | "name">,
+  verbs: string[],
+  lines: VoiceLine[],
+): Spinner => {
   const tips = lines
     .map(({ text }) => cutSpinnerTip(text))
     .filter(Boolean)
     .slice(0, MAX_SPINNER_TIP_COUNT);
   const hasOwnTips = tips.length > 0;
   return {
-    label: hasOwnTips ? name : "",
+    label: hasOwnTips ? displayName : "",
     tips: hasOwnTips ? getTips(getPersonaCardName(name), tips) : getTips(BASE_TIP_ID, base.tips),
     verbs: [...base.verbs, ...verbs],
   };

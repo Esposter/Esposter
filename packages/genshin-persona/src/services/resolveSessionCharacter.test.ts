@@ -39,6 +39,8 @@ describe(resolveSessionCharacter, () => {
     birthday: "7/15",
     constellation: "",
     description: "",
+    displayElement: "Pyro",
+    displayName: "Hu Tao",
     element: "Pyro",
     name: "Hu Tao",
     region: "",
@@ -47,6 +49,7 @@ describe(resolveSessionCharacter, () => {
     weapon: "",
   };
   const otherRecord: PickRecord = {
+    displayName: "Venti",
     element: "Anemo",
     isoDate: TEST_EPOCH_DATE.toString(),
     name: "Venti",
@@ -75,7 +78,13 @@ describe(resolveSessionCharacter, () => {
     await expect(resolveSessionCharacter([character], sessionId, TEST_EPOCH_DATE)).resolves.toStrictEqual(character);
     expect(pickRecords).toStrictEqual([
       otherRecord,
-      { element: character.element, isoDate: TEST_EPOCH_DATE.toString(), name: character.name, sessionId },
+      {
+        displayName: character.displayName,
+        element: character.element,
+        isoDate: TEST_EPOCH_DATE.toString(),
+        name: character.name,
+        sessionId,
+      },
     ]);
   });
 });

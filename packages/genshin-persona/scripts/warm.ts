@@ -1,6 +1,6 @@
 import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { getSpeechRequest } from "#src/services/getSpeechRequest";
-import { readLanguage } from "#src/services/readLanguage";
+import { readVoiceLanguage } from "#src/services/readVoiceLanguage";
 import { registerQuietExit } from "#src/services/registerQuietExit";
 import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
 
@@ -8,7 +8,7 @@ import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
 // Session's character's reference fetched and encoded while the person reads the card, so the first reply is warm
 registerQuietExit();
 const [name = ""] = process.argv.slice(2);
-const language = readLanguage();
+const language = readVoiceLanguage();
 if (name && language) {
   const request = await getSpeechRequest(VoiceRequestType.Warm, name, language, "");
   await sendVoiceRequest(request);

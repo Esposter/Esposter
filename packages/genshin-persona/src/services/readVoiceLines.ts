@@ -1,18 +1,27 @@
 import type { VoiceLine } from "#src/models/VoiceLine";
 
+import { DEFAULT_LANGUAGE } from "#src/services/constants";
+import { getCanonicalLanguage } from "#src/services/getCanonicalLanguage";
 import { getPlainLineText } from "#src/services/getPlainLineText";
 import { readGenshinDb } from "#src/services/readGenshinDb";
 import { readWikiStoryLines } from "#src/services/readWikiStoryLines";
 
-// Every line the character speaks, as a person reads it; `checkIsOwnVoiceLine` is the authoring command's cut
-export const readVoiceLines = async (name: string): Promise<VoiceLine[]> => {
+// Every line the character speaks in the interface language, as a person reads it; `checkIsOwnVoiceLine` is the
+// Authoring command's cut. The wiki that carries a character the data package has no lines for yet is English only,
+// So under any other language that character has none here and the base tips show instead — one script in the
+// Spinner rather than two
+export const readVoiceLines = async (name: string, language: string): Promise<VoiceLine[]> => {
   const genshindb = readGenshinDb();
-  const voiceovers = genshindb.voiceovers(name);
+  const resultLanguage = getCanonicalLanguage(Object.values(genshindb.Language), language);
+  const voiceovers = resultLanguage
+    ? genshindb.voiceovers(name, { queryLanguages: [genshindb.Language.English], resultLanguage })
+    : genshindb.voiceovers(name);
   const friendLines = voiceovers?.friendLines ?? [];
-  // A character the data has no lines for yet is usually on the wiki already
-  const lines: VoiceLine[] =
-    friendLines.length > 0
-      ? friendLines.map(({ description, title }) => ({ text: getPlainLineText(description), title: title.trim() }))
-      : await readWikiStoryLines(name);
-  return lines.map(({ text, title }) => ({ text, title }));
+  if (friendLines.length > 0)
+    return friendLines.map(({ description, title }) => ({
+      text: getPlainLineText(description),
+      title: title.trim(),
+    }));
+
+  return language === DEFAULT_LANGUAGE ? readWikiStoryLines(name) : [];
 };

@@ -1,6 +1,6 @@
 ---
 name: genshin-author
-description: Apply when writing, reviewing or listing the persona cards under src/personaCards/ or the base spinner content in src/services/baseSpinnerContent.ts of the genshin-persona plugin — the card's shape and ceiling, the spinner verbs a person reads and the model never does, the one command that prints a character's own lines to write from, and the rule that a card says how the character speaks and never what the assistant does.
+description: Apply when writing, reviewing or listing the persona cards under src/personaCards/ or the per-language modules under src/localizations/ of the genshin-persona plugin — the card's shape and ceiling, the spinner verbs a person reads and the model never does, the one command that prints a character's own lines to write from, and the rule that a card says how the character speaks and never what the assistant does.
 ---
 
 # Authoring a persona card
@@ -12,9 +12,14 @@ A character with no card is fully usable: the session-start hook prints the name
 Newest first, so the queue starts with whoever a player has heard most recently:
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" uncarded   # no card at all
-node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" unverbed   # a card with no verbs
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" uncarded       # no card at all
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" unverbed       # a card with no verbs
+node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" untranslated   # no gerunds in the interface language
 ```
+
+The third queue is a language's rather than a card's, and it is empty under English, where the gerunds are read off the cards themselves. Under any other language they live in one module per language at `src/localizations/<language>.ts`, named the way a card is named for its character, keyed by the character's English name and holding that language's base Teyvat verbs and tips as well. A character with no entry shows the base verbs alone rather than the card's English ones, so the queue draining is what fills a spinner out and never what stops it working.
+
+The habits, the sign-off and the greeting are never translated. They reach the model rather than the person — the greeting is a line it performs — and a model reading them in English answers in whatever language it was asked to, with the register intact. Only what a person reads and the model never does is a language's to write.
 
 ## Shape
 
@@ -69,7 +74,7 @@ The full reasoning — how a reference is chosen and what its likeness number is
 **`verbs` are the person's and never reach the model**: the hook writes them to the spinner. They cost no tokens, so their ceiling is taste rather than budget. A card carries no tips: the spinner's tips are the character's own lines, every one, read off the game data at runtime, and a tip performed in our words from them is a paraphrase shown beside its original.
 
 - **Verbs** are two to four gerunds in the character's occupation, cased like the built-in ones (`["Duelling", "Judging", "Patrolling"]`). A verb can be hyphenated ("Beetle-fighting") but never a phrase. They are shown behind the base list below, so a card lists what only this character would be doing.
-- **The base content** is `BASE_SPINNER_CONTENT` in `src/services/baseSpinnerContent.ts`: the Teyvat verbs every character shows before their own, and the tips shown only for a character with no lines anywhere yet — the tool puts one label over every tip, so a character's lines replace the base tips rather than join them. A base tip is **nobody's line** — Teyvat's rather than a character's.
+- **The base content** is the `tips` and `verbs` of the interface language's module under `src/localizations/`: the Teyvat verbs every character shows before their own, and the tips shown only for a character with no lines anywhere yet — the tool puts one label over every tip, so a character's lines replace the base tips rather than join them. A base tip is **nobody's line** — Teyvat's rather than a character's.
 
 ## Sources
 

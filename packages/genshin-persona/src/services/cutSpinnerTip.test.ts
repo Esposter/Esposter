@@ -15,4 +15,12 @@ describe(cutSpinnerTip, () => {
 
     expect(cutSpinnerTip(text)).toBe(expected);
   });
+
+  // A script that puts no white space after a sentence still has its line cut rather than dropped whole, which is
+  // What every localized line longer than the tool reads depends on
+  test.each(["。", "！", "？"])("cuts a line at the fullwidth terminator %j", (terminator) => {
+    expect.hasAssertions();
+
+    expect(cutSpinnerTip(`一${terminator}${"二".repeat(MAX_SPINNER_TIP_LENGTH)}`)).toBe(`一${terminator}`);
+  });
 });
