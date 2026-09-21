@@ -6,9 +6,9 @@ of the move.
 
 ## The ceiling, and why it is a warning
 
-The ceiling is a byte count and a line count — `MAX_SKILL_BYTES` and `MAX_SKILL_LINES` in
-`scripts/src/services/sweeps/skillDocs/constants.ts`. Bytes are what the context actually costs, lines are the
-readability proxy, and this repo's long prose lines make it easy to pass the first while meeting the second.
+The ceiling is one byte count — `MAX_SKILL_BYTES` in `scripts/src/services/sweeps/skillDocs/constants.ts`.
+Bytes are what an always-on page actually costs a context window, and they are the axis this repo's prose makes
+non-obvious: an em-dash is three of them, so a page that fits by any count of characters can still report.
 
 **It is a warning, never a target.** A skill the warning names has accumulated topics, and the fix is separating
 them — never shaving prose to land under the number, which buys bytes by making every surviving rule harder to
