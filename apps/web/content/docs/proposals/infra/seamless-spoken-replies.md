@@ -1,11 +1,11 @@
 ---
 title: Seamless spoken replies
-description: Proposal — what a reading that feels instantaneous has to meet, in three stages (never pausing, first sound within a fraction of a second, reading while the reply is still being written), what gates each stage on this machine today, and the triggers that reopen the work.
+description: Proposal — what a reading that feels instantaneous has to meet, in three stages (never pausing, first sound within a fraction of a second, reading while the reply is still being written), the compute that gates the first two on this machine today, the mid-reply hook verified for the third, and the triggers that reopen the rest.
 ---
 
 # Seamless spoken replies
 
-Today a reply is read in units — the first sentence alone, then a few at a time — with the first sound arriving after that sentence's whole synthesis and the reading pausing wherever a unit takes longer to make than the one before it took to play ([spoken replies](/docs/infra/claude-interface/spoken-replies)). On this laptop that is a wait of tens of seconds before the first word and a reading a few times slower than the speech itself. The goal is a reading that feels like the character talking as the reply lands. This page states what that means in measurable terms, why it is out of reach here today, and what would bring it back in — so the next session reads the gates rather than timing the engine again.
+Today a reply is read in units — the first sentence alone, then a few at a time — with the first sound arriving after that sentence's whole synthesis and the reading pausing wherever a unit takes longer to make than the one before it took to play ([spoken replies](/docs/infra/claude-interface/spoken-replies)). On this laptop that is a wait of tens of seconds before the first word and a reading a few times slower than the speech itself. The goal is a reading that feels like the character talking as the reply lands. This page states what that means in measurable terms, which of it is out of reach here today and why, which of it is not, and what would bring the rest in — so the next session reads the gates rather than timing the engine again.
 
 ## Scope
 
@@ -15,25 +15,22 @@ Today a reply is read in units — the first sentence alone, then a few at a tim
 
 1. **Never pausing.** Synthesis faster than playback with headroom — a real-time factor well under one, where today's is a few — so once the first unit plays, every unit after it is ready before the one before it ends. Nothing about the shape of the reading changes for this stage; it is compute alone.
 2. **First sound within a fraction of a second** of the reply ending. The first unit's whole synthesis is the wait, so this stage streams inside a unit: the language model's speech tokens are vocoded a few dozen at a time as they are made and each chunk plays as it lands, the shape the [streaming fork of the engine](https://github.com/davidbrowne17/chatterbox-streaming) has, which reaches well under a second to first sound on a desktop GPU. It only pays once stage 1 holds: every extra vocoder pass re-runs the reference's tokens, so on a machine slower than real time the chunks arrive later than the whole unit would have.
-3. **Reading while the reply is still being written.** The hook that speaks fires when the turn ends, so nothing can be read before the last word is generated, however fast the engine. This stage needs a signal mid-reply — a hook the tool does not offer, or the session's transcript read as it grows if the tool writes it incrementally, which is unverified — and is independent of the engine entirely.
+3. **Reading while the reply is still being written.** The Stop hook fires when the turn ends, so nothing is read before the last word is generated, however fast the engine. This stage needs a signal mid-reply, and the tool has one, verified on this machine: the `MessageDisplay` hook fires as each assistant message's text is displayed, with the text in its payload — in pieces at a fixed cadence, each with an index and a final flag, in an interactive session; the whole message at once in a headless one — and in a reply that runs a tool between two sentences the first reaches the hook the whole tool's run before Stop fires, seconds here. The session transcript the Stop hook names grows the same way, one line per content block as each completes. This stage is independent of the engine entirely, so it is the one to build first.
 
 ```mermaid
 flowchart TD
     Now["Today: units, first sound after a whole sentence,<br/>a few times slower than real time"]
+    Signal["MessageDisplay hook — each message's text as it is displayed"]
+    Stage3["Stage 3 — read while the reply is written"]
     Compute{"Language model faster than speech,<br/>with headroom?"}
     Stage1["Stage 1 — never pausing"]
     Stream["Stage 2 — a unit vocoded in chunks,<br/>first sound in a fraction of a second"]
-    Signal{"A mid-reply signal?"}
-    Stage3["Stage 3 — read while the reply is written"]
     Gate1["Gate: a discrete GPU or a faster provider,<br/>or a faster cloner the runtime loads"]
-    Gate3["Gate: a hook mid-reply, or an incremental transcript"]
 
+    Now --> Signal --> Stage3
     Now --> Compute
     Compute -- no --> Gate1 --> Compute
     Compute -- yes --> Stage1 --> Stream
-    Stream --> Signal
-    Signal -- no --> Gate3 --> Signal
-    Signal -- yes --> Stage3
 ```
 
 ## The gates
@@ -44,7 +41,7 @@ flowchart TD
 - **A runtime release that moves the language model's per-token cost by a factor** on WebGPU — the runtime's WebGPU path was rewritten once already for that kind of gain.
 - **A faster cloner the runtime loads.** The voice is the point, so a fast engine that does not clone is not a candidate; a smaller or distilled cloner with a Transformers.js class is, measured the way the engine's variants were, by likeness on a few characters before it stands.
 
-**The trigger is the gate on stage 3**, and nothing about the engine moves it. The tool's hooks fire at the turn's boundaries, and a reading that starts mid-reply needs either a hook the tool adds or the transcript the Stop hook already names — read as it grows, if it grows per message rather than at the end, which nobody has measured.
+**Stage 3 has no gate, only a cost.** The tool's hooks were taken to fire at the turn's boundaries and the transcript's growth was unmeasured; both were checked here. `MessageDisplay` fires mid-turn with the text, and the transcript is appended one line per content block as each completes, so either is a trigger and the hook is the plainer one. What building on it owes: the hook runs before the display continues and is held to a timeout, so it hands the prose to the resident synthesizer and exits, as the Stop hook does today; the text arrives in pieces, so the sentence cut the units already make moves from the whole reply to the stream, holding a piece back until its sentence ends; every message's prose is read rather than the last one's, which is what a reply that talks between tools should sound like; and the Stop hook stops speaking, or the last message is read twice.
 
 ## What this does not propose
 
@@ -56,16 +53,18 @@ flowchart TD
 
 The existing files the work touches, with the role each plays after the change.
 
-| File                                                              | Role                                                                                    |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
-| `scripts/src/voiceMatch/synthesizer.bench.ts`                     | The instrument: flipped on to read whether stage 1 holds on a machine                   |
-| `packages/genshin-persona/src/services/createVoiceSynthesizer.ts` | Stage 2 — tokens vocoded in chunks as they are made, the speech check per chunk         |
-| `packages/genshin-persona/src/services/getSpeechUnits.ts`         | Stage 2 — units give way to chunks of a unit once the first sound no longer waits on it |
-| `packages/genshin-persona/scripts/voice.ts`                       | Stage 2 — the player fed chunks under the one-pending-request rule                      |
-| `packages/genshin-persona/scripts/speak.ts`                       | Stage 3 — a trigger mid-reply, whatever the tool offers                                 |
-| `packages/genshin-persona/src/services/constants.ts`              | The device ladder and the engine's variants, re-measured on whatever closes the gate    |
+| File                                                              | Role                                                                                      |
+| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `scripts/src/voiceMatch/synthesizer.bench.ts`                     | The instrument: flipped on to read whether stage 1 holds on a machine                     |
+| `packages/genshin-persona/src/services/createVoiceSynthesizer.ts` | Stage 2 — tokens vocoded in chunks as they are made, the speech check per chunk           |
+| `packages/genshin-persona/src/services/getSpeechUnits.ts`         | Stage 3 — units cut from a stream of pieces; stage 2 — units give way to chunks of a unit |
+| `packages/genshin-persona/scripts/voice.ts`                       | Stage 2 — the player fed chunks under the one-pending-request rule                        |
+| `packages/genshin-persona/hooks/hooks.json`                       | Stage 3 — the hook that speaks is `MessageDisplay`, and Stop no longer                    |
+| `packages/genshin-persona/scripts/speak.ts`                       | Stage 3 — one request per piece of a message as it lands, and out before the timeout      |
+| `packages/genshin-persona/src/services/constants.ts`              | The device ladder and the engine's variants, re-measured on whatever closes the gate      |
 
 ## Notes
 
 - The [multilingual spoken replies](/docs/proposals/infra/multilingual-spoken-replies) proposal streams by clause to pay for a slower engine; that is stage 2's shape arriving for a different reason, and the two proposals share the player and the synthesizer's chunking when either lands.
+- Stage 3 reads every message's prose where the Stop hook reads the last one's; the [spoken replies](/docs/infra/claude-interface/spoken-replies) page's "the hook speaks a reply's prose" carries that change when the stage ships.
 - "Seamless" on a laptop with an integrated GPU may never hold for this engine, and that is a result: the page then says which gate stood, and the reading stays what it is — a first sentence, then units — rather than a shape tuned for hardware nobody here has.
