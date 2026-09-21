@@ -9,7 +9,7 @@ describe("keyframe-store", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 7.58 KB (7765 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 7.59 KB (7770 bytes)"`);
   });
 
   test("types size", () => {
