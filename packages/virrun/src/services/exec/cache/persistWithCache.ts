@@ -32,8 +32,8 @@ export const persistWithCache = async (
 ): Promise<ExecResult> => {
   const forceColor = options.env?.FORCE_COLOR ?? "";
   const isTaskCacheEnabled = checkIsTaskCacheEnabled();
-  const key = isTaskCacheEnabled ? computeTaskCacheKey(command, options.cwd, maskedPaths, forceColor) : null;
-  if (key === null) {
+  const key = isTaskCacheEnabled ? computeTaskCacheKey(command, options.cwd, maskedPaths, forceColor) : undefined;
+  if (key === undefined) {
     writeVirrunDebug(
       isTaskCacheEnabled
         ? "task cache off — no key (not a git repo or no lockfile)"

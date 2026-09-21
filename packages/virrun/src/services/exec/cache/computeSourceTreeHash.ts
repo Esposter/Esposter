@@ -10,9 +10,9 @@ import { join } from "node:path";
 // (committed + staged blob shas), `git diff --binary` layers the unstaged working delta on top (binary content
 // Included, not the lossy "Binary files differ" line), and untracked-not-ignored files are hashed by content. So
 // Any change — staged, unstaged, or a new file — moves the hash, while a clean tree (CI checkout) needs no per-file
-// Reads. Returns null when this is not a git repo (`git` throws), which disables the cache rather than colliding
+// Reads. Returns undefined when this is not a git repo (`git` throws), which disables the cache rather than colliding
 // Every non-repo onto one key.
-export const computeSourceTreeHash = (cwd: string): null | string => {
+export const computeSourceTreeHash = (cwd: string): string | undefined => {
   const directory = resolveCwd(cwd);
   // Piping git's stderr (the stdio option) instead of letting it inherit the parent's: on a non-repo directory git
   // Prints "fatal: not a git repository" to fd 2 before exiting non-zero, which the getResult below already tolerates —
@@ -40,6 +40,6 @@ export const computeSourceTreeHash = (cwd: string): null | string => {
       .digest("hex");
   }).match(
     (hash) => hash,
-    () => null,
+    () => undefined,
   );
 };

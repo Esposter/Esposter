@@ -27,9 +27,9 @@ export const computeTaskCacheKey = (
   cwd: string,
   maskedPaths: readonly string[],
   forceColor: string,
-): null | string => {
+): string | undefined => {
   const sourceTreeHash = computeSourceTreeHash(cwd);
-  if (sourceTreeHash === null) return null;
+  if (sourceTreeHash === undefined) return undefined;
   return getResult(() =>
     // One JSON payload rather than delimiter-joined fields: a delimiter only separates fields that cannot contain
     // It, and POSIX permits newlines in path names — so a newline-joined key hashed the command `"x\n./a"` under no
@@ -41,6 +41,6 @@ export const computeTaskCacheKey = (
       .digest("hex"),
   ).match(
     (key) => key,
-    () => null,
+    () => undefined,
   );
 };
