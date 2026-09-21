@@ -4,7 +4,7 @@ import type { ThemeOptions, VariationsOptions } from "vuetify/lib/composables/th
 import { defineConfig, presetAttributify, presetWind4 } from "unocss";
 import { elevationPresets, typographyPresets } from "unocss-preset-vuetify";
 
-import { forUnoCSS } from "./configuration/breakpoints";
+import { UNOCSS_BREAKPOINTS } from "./configuration/breakpoints";
 import vuetifyConfig from "./vuetify.config";
 
 const theme = vuetifyConfig.theme as Exclude<ThemeOptions, false>;
@@ -132,7 +132,7 @@ export default defineConfig({
     "text-hint": "op-medium-emphasis text-body-small",
   },
   theme: {
-    breakpoint: forUnoCSS,
+    breakpoint: UNOCSS_BREAKPOINTS,
     colors: Object.fromEntries(allColorKeys.map((key) => [key, `rgb(var(--v-theme-${key}))`])),
     // Override preset-wind4's default sans stack, which lists OS-only fonts
     // ("Segoe UI", "Helvetica Neue", Arial) with no downloadable web source.

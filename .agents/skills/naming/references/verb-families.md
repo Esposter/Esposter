@@ -27,6 +27,17 @@ expression, however large the thing being looked up is.
 **There is no third spelling.** `calculate*` is the same act said differently, so a formula short enough to read
 at a glance is `get*` and everything longer is `compute*`.
 
+## `get*` vs `to*`
+
+`to*` names a pure conversion: one subject in, the same information back in another representation —
+`toTitleCase`, `toColumnKey`, `toClickerSave`, `toAppError`, `toSixDigitHexColor`. The name's second half is the
+representation, so it reads as the return type and the single argument is the whole subject.
+
+`get*` answers a question _about_ a value and leaves it in the shape it arrived in, which is what separates the
+two: `getFilename(path)` picks a part out, `toForwardSlashes(path)` hands the same path back spelled differently.
+A conversion that needs a second argument to say what to convert _with_ is `apply*` (below), and one that walks a
+collection to produce something new is `compute*`.
+
 ## `set*` vs `apply*`
 
 `set*` writes stored state; `apply*` pushes stored state onto something live. `setRemoteAudioMuted(isDeafened)`

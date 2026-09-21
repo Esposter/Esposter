@@ -1,1 +1,1 @@
-export const DIRECTORY = "propertyTypes";
+export const PROPERTY_TYPES_DIRECTORY = "propertyTypes";
