@@ -3,7 +3,7 @@ import type { ResolvedLocalization } from "#src/models/ResolvedLocalization";
 // The language the plugin is written in, and the one every other inherits what it has not translated from. Its
 // Base verbs and tips are the Teyvat content every spinner shows: the verbs ahead of a character's own, the tips
 // Only for a character the data package and the wiki have no lines for, which is nobody's line and so shows under
-// The tool's own prefix rather than a character's name
+// The language's word for "Tip" rather than a character's name
 const english: ResolvedLocalization = {
   characters: {},
   locale: "en-AU",
@@ -90,6 +90,7 @@ const english: ResolvedLocalization = {
     weightsOnDevice: (device) =>
       `Weights present; the engine loads on ${device}, and moves down to the CPU by itself if what it synthesizes there is not speech.`,
   },
+  tipLabel: "Tip",
   tips: [
     "Glide when the cliff is tall and climb when it is not. The stamina is the same either way.",
     "A Statue of The Seven mends what a long road did. Stand near one before the next fight.",

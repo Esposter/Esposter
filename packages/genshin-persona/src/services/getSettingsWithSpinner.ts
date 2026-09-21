@@ -6,6 +6,6 @@ import { SpinnerVerbsMode } from "#src/models/SpinnerVerbsMode";
 // The plugin owns both spinner keys outright: the built-in verbs and tips are replaced, not joined
 export const getSettingsWithSpinner = (settings: UserSettings, { label, tips, verbs }: Spinner): UserSettings => ({
   ...settings,
-  spinnerTipsOverride: { excludeDefault: true, ...(label && { label }), tips },
+  spinnerTipsOverride: { excludeDefault: true, label, tips },
   spinnerVerbs: { mode: SpinnerVerbsMode.Replace, verbs },
 });

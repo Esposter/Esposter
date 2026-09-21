@@ -76,7 +76,7 @@ The full reasoning — how a reference is chosen and what its likeness number is
 **`verbs` are the person's and never reach the model**: the hook writes them to the spinner. They cost no tokens, so their ceiling is taste rather than budget. A card carries no tips: the spinner's tips are the character's own lines, every one, read off the game data at runtime, and a tip performed in our words from them is a paraphrase shown beside its original.
 
 - **Verbs** are two to four gerunds in the character's occupation, cased like the built-in ones (`["Duelling", "Judging", "Patrolling"]`). A verb can be hyphenated ("Beetle-fighting") but never a phrase. They are shown behind the base list below, so a card lists what only this character would be doing.
-- **The base content** is the `tips` and `verbs` of the interface language's module under `src/localizations/`: the Teyvat verbs every character shows before their own, and the tips shown only for a character with no lines anywhere yet — the tool puts one label over every tip, so a character's lines replace the base tips rather than join them. A base tip is **nobody's line** — Teyvat's rather than a character's.
+- **The base content** is the `tips`, `verbs` and `tipLabel` of the interface language's module under `src/localizations/`: the Teyvat verbs every character shows before their own, and the tips shown only for a character with no lines anywhere yet — the tool puts one label over every tip, so a character's lines replace the base tips rather than join them. A base tip is **nobody's line** — Teyvat's rather than a character's — so it stands under `tipLabel`, that language's word for the tool's own "Tip", never a name.
 
 ## Sources
 

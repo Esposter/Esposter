@@ -288,6 +288,14 @@ switch (verb) {
     console.log(strings.pinRemovedInSession);
     break;
   }
+  case GenshinVerb.Unverbed: {
+    const cardedRoster = await readCardedRoster(roster);
+    for (const { character } of cardedRoster
+      .filter(({ personaCard }) => personaCard?.verbs.length === 0)
+      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
+      console.log(getRosterLine(character));
+    break;
+  }
   case GenshinVerb.Untranslated: {
     // The queue the language modules are filled from, the way `unverbed` is the queue the cards' verbs are: who has
     // No gerunds in this language, or a card whose greeting it has not written. English reads both off the cards,

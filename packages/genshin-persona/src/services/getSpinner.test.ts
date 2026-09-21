@@ -10,7 +10,7 @@ describe(getSpinner, () => {
   const name = "Hu Tao";
   const displayName = "胡桃";
   const character = { displayName, name };
-  const base: SpinnerContent = { tips: ["baseTip"], verbs: ["baseVerb"] };
+  const base: SpinnerContent = { tipLabel: "tipLabel", tips: ["baseTip"], verbs: ["baseVerb"] };
   const verbs = ["verb"];
   const lines: VoiceLine[] = [{ text: "line", title: "title" }];
 
@@ -48,11 +48,11 @@ describe(getSpinner, () => {
     expect(getSpinner(base, character, verbs, manyLines).tips).toHaveLength(MAX_SPINNER_TIP_COUNT);
   });
 
-  test("shows the base tips under no name for a character with no lines", () => {
+  test("shows the base tips under the language's word for them for a character with no lines", () => {
     expect.hasAssertions();
 
     expect(getSpinner(base, character, verbs, [])).toStrictEqual({
-      label: "",
+      label: base.tipLabel,
       tips: [{ id: "genshin-persona.teyvat-1", text: "baseTip" }],
       verbs: ["baseVerb", "verb"],
     });
@@ -62,7 +62,7 @@ describe(getSpinner, () => {
     expect.hasAssertions();
 
     expect(getSpinner(base, character, [], [])).toStrictEqual({
-      label: "",
+      label: base.tipLabel,
       tips: [{ id: "genshin-persona.teyvat-1", text: "baseTip" }],
       verbs: ["baseVerb"],
     });

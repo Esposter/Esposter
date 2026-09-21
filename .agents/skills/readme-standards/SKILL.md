@@ -91,6 +91,7 @@ Two lists exist on purpose and are edited together: `AGENTS.md` pairs each path 
    Either way add a key-exports table or architecture notes so the README is useful without the docs site.
 
 4. **Commands** — list the package's own `pnpm` scripts (build, test, lint:fix, typecheck), not root scripts.
-5. **No filler** — skip "we are excited to…", lengthy prose, or content that duplicates CLAUDE.md. READMEs are reference docs.
-6. **Root README** — keep the Packages table in sync when adding/removing packages. Columns: Package (link), Description, Published (✓ or —).
-7. **GitHub URL convention** — `blob/main` for files, `tree/main` for directories (e.g. `.../tree/main/packages/shared` vs `.../blob/main/LICENSE`). Never use relative paths — typedoc resolves them as local media and warns if they resolve to directories.
+5. **Command reference** — a package that is run rather than imported (a CLI, a plugin's slash commands) carries one table of every command it answers to, first under Documentation: the invocation form once above it, then a row per command with its argument and what it does — the ones on no menu included, in their own table. The table is the reference and the prose around it is the explanation; a verb named in prose alone is one nobody finds when they need it.
+6. **No filler** — skip "we are excited to…", lengthy prose, or content that duplicates CLAUDE.md. READMEs are reference docs.
+7. **Root README** — keep the Packages table in sync when adding/removing packages. Columns: Package (link), Description, Published (✓ or —).
+8. **GitHub URL convention** — `blob/main` for files, `tree/main` for directories (e.g. `.../tree/main/packages/shared` vs `.../blob/main/LICENSE`). Never use relative paths — typedoc resolves them as local media and warns if they resolve to directories.

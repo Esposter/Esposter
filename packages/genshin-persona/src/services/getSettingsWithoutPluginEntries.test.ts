@@ -9,7 +9,12 @@ import { getSpinner } from "#src/services/getSpinner";
 import { describe, expect, test } from "vitest";
 
 describe(getSettingsWithoutPluginEntries, () => {
-  const spinner = getSpinner({ tips: ["baseTip"], verbs: ["verb"] }, { displayName: "name", name: "name" }, [], []);
+  const spinner = getSpinner(
+    { tipLabel: "tipLabel", tips: ["baseTip"], verbs: ["verb"] },
+    { displayName: "name", name: "name" },
+    [],
+    [],
+  );
 
   test("removes exactly what setup wrote and keeps every other key", () => {
     expect.hasAssertions();

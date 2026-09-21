@@ -21,13 +21,4 @@ describe(getSettingsWithSpinner, () => {
       spinnerVerbs: { mode: SpinnerVerbsMode.Replace, verbs: spinner.verbs },
     });
   });
-
-  test("writes no label for the base tips, so the tool's own prefix shows", () => {
-    expect.hasAssertions();
-
-    expect(getSettingsWithSpinner(settings, { ...spinner, label: "" }).spinnerTipsOverride).toStrictEqual({
-      excludeDefault: true,
-      tips: spinner.tips,
-    });
-  });
 });
