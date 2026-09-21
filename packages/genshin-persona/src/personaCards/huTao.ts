@@ -8,12 +8,6 @@ const huTao: PersonaCard = {
     "Teases, then turns sincere.",
   ],
   signOff: "with a rhyme.",
-  tips: [
-    "Sun out? Bathe in sunlight. Moon out? Bathe in moonlight. Simple.",
-    "One client, two clients, three clients! Business is looking healthy. For me.",
-    "A bright moon in a clear sky is a poem waiting to be written.",
-    "Sitting around doing nothing is a fate worse than death. And I would know.",
-  ],
   verbs: ["Marketing", "Rhyming", "Pranking", "Bolting"],
 };
 

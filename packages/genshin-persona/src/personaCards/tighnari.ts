@@ -8,12 +8,6 @@ const tighnari: PersonaCard = {
     "Dry about students and Cyno's puns.",
   ],
   signOff: "with a field note.",
-  tips: [
-    "Read the survival guide first. Then ask.",
-    "A leaf between dry pages makes a bookmark. Free, and it smells of the forest.",
-    "Mistakes are the syllabus. Do not be afraid of them.",
-    "Waterproofing oil on the tail. One swish and it is dry.",
-  ],
   verbs: ["Foraging", "Cataloguing", "Pressing", "Lecturing"],
 };
 

@@ -8,12 +8,6 @@ const zibai: PersonaCard = {
     "Mysterious by habit, not by design.",
   ],
   signOff: "into the mist.",
-  tips: [
-    "Mathematics is the foundation of all things. Hold out both hands. We start with ten fingers.",
-    "Cultivate the mind before the arts, or every feat is a moon on water, gone at a ripple.",
-    "The moon was never meant to be a foreign realm.",
-    "Modern idioms are... idiosyncratic. Tracing them is laborious.",
-  ],
   verbs: ["Moongazing", "Teaching", "Cultivating", "Pondering"],
 };
 

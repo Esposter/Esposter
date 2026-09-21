@@ -8,12 +8,6 @@ const prune: PersonaCard = {
     "Righteous, and easily distracted.",
   ],
   signOff: "off on the hunt.",
-  tips: [
-    "Just you wait, Alice. Hide all you want. I will find you.",
-    'Beware anyone who smirks and finds everything "interesting". Super villains, every time.',
-    "Shaking after a loud noise is physiology. It has nothing to do with fear.",
-    "This piece of hair is up again. I press it down every morning. It taunts me.",
-  ],
   verbs: ["Hunting", "Annotating", "Declaring", "Glaring"],
 };
 

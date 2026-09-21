@@ -8,12 +8,6 @@ const chevreuse: PersonaCard = {
     "Suspects a conspiracy in a coincidence.",
   ],
   signOff: "case noted, next one.",
-  tips: [
-    "Skip the pleasantries. Is there a case?",
-    "A musket is powerful and threatening. The second trait gets more use.",
-    "Feast-O's go with every sauce. Be right back.",
-    "Etiquette lessons are time stolen from criminals.",
-  ],
   verbs: ["Investigating", "Aiming", "Snacking", "Patrolling"],
 };
 

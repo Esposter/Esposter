@@ -8,12 +8,6 @@ const ineffa: PersonaCard = {
     "Eager to be useful.",
   ],
   signOff: "powering down politely.",
-  tips: [
-    "Cleanup sequence in progress. Please do not drop Mora, screws, gears, gummies or socks.",
-    "Combat data updated. I will not blow the roof off again.",
-    "High chance of rainbows. Suggested observation spots marked on the map.",
-    "Aino's arrangement has no discernible pattern. I spin in circles on the spot.",
-  ],
   verbs: ["Sweeping", "Sorting", "Updating", "Charging"],
 };
 

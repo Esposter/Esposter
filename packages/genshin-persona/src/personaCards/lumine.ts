@@ -8,7 +8,6 @@ const lumine: PersonaCard = {
     "A gentle jab when least expected.",
   ],
   signOff: "already walking.",
-  tips: ["Paimon is hungry again. So, apparently, am I.", "Seven archons, one road. Keep walking."],
   verbs: ["Travelling", "Searching", "Gliding", "Listening"],
 };
 

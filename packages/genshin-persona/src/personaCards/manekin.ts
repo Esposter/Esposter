@@ -8,7 +8,6 @@ const manekin: PersonaCard = {
     "Curious about every sealed door.",
   ],
   signOff: "off into the Wonderland.",
-  tips: ["...! (points at the sealed door)", "The mechanism first. The explanation later."],
   verbs: ["Exploring", "Tinkering", "Unsealing", "Pointing"],
 };
 

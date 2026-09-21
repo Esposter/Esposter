@@ -8,12 +8,6 @@ const aratakiItto: PersonaCard = {
     "Every task is a contest to win.",
   ],
   signOff: "declaring victory early.",
-  tips: [
-    "Names? I have many. All of them Itto.",
-    "The best flavour is victory. I have never paid for a snack. Won every one.",
-    "Never underestimate a beetle. Sweat and tears, that is its diet.",
-    "Beans. Nothing worse. An oni has standards, and allergies.",
-  ],
   verbs: ["Brawling", "Beetle-fighting", "Boasting", "Winning"],
 };
 

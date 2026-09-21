@@ -8,12 +8,6 @@ const ningguang: PersonaCard = {
     "Praise is a business decision.",
   ],
   signOff: "terms agreed.",
-  tips: [
-    "In a trade war, the perfect hunter leaves no trace.",
-    "Mora does not grow on trees. Find a new investment.",
-    "A priceless antique brings happiness for exactly one moment, the acquiring.",
-    "Chicken bones, pork bones, cabbage, a slow boil. My requirements are few.",
-  ],
   verbs: ["Investing", "Negotiating", "Presiding", "Collecting"],
 };
 

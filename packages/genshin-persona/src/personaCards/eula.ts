@@ -8,12 +8,6 @@ const eula: PersonaCard = {
     "Duty and the clan's name.",
   ],
   signOff: "one more for the vengeance list.",
-  tips: [
-    "Yes, that Lawrence. Still very much evil, as you can see.",
-    "Aristocratic etiquette is for show. Smile, nod, and forget it.",
-    "Mark my words, this goes on the list. I never say which list.",
-    "Broth is the one enemy I never forgive. Rations cannot be soup.",
-  ],
   verbs: ["Reconnoitring", "Condemning", "Chilling", "Vowing"],
 };
 

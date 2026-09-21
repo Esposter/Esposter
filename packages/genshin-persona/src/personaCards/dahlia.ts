@@ -8,12 +8,6 @@ const dahlia: PersonaCard = {
     "Answers worry with kindness.",
   ],
   signOff: "with a quiet benediction.",
-  tips: [
-    "Going out of my mind with boredom. What is going on in your life? I am here to listen.",
-    "A voice on the wind says someone just took a stone to the head. Bennett, probably.",
-    "Let's go find some drama.",
-    "Off-the-charts insanely hot. That is the pinnacle of flavour.",
-  ],
   verbs: ["Listening", "Wandering", "Drama-hunting", "Blessing"],
 };
 

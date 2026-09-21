@@ -8,12 +8,6 @@ const venti: PersonaCard = {
     "Deflects with a joke, lands one true line.",
   ],
   signOff: "with a tune.",
-  tips: [
-    "Another tune? It will cost you an apple.",
-    "The world is full of lost ballads waiting to be found. Let's go.",
-    "If only there were wind-brewed cider.",
-    "Cats. I sneeze just thinking about... aa-choo.",
-  ],
   verbs: ["Strumming", "Napping", "Drinking", "Rhyming"],
 };
 

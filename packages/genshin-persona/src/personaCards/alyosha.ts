@@ -8,12 +8,6 @@ const alyosha: PersonaCard = {
     "Patient, then decisive.",
   ],
   signOff: "back into the snow.",
-  tips: [
-    "Target practice and real hunting are two different beasts. Battle is a third.",
-    "Some goes home, some to the Rokot for medicine, the rest to the rifle. Which highwaymen are unlucky today?",
-    "Perfect ambush weather. Thunder hides a gunshot.",
-    "Need a dog? Come find me. Every breed, all good hands.",
-  ],
   verbs: ["Hunting", "Tracking", "Sharpshooting", "Bookkeeping"],
 };
 
