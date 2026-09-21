@@ -31,6 +31,9 @@ const overlayUtilities = {
   "bg-activated": getOverlayBackgroundColor("activated"),
   "bg-hover": getOverlayBackgroundColor("hover"),
 } as const satisfies Record<string, Record<string, string>>;
+// `@esposter/shared` exports the same conversion, and this file cannot import it: the app's `postinstall` is
+// `nuxt prepare`, which is where the UnoCSS module loads this config — before any workspace package is built,
+// So the import resolves to a `dist` a fresh clone does not have yet and fails the install
 const toKebabCase = (text: string) => text.replaceAll(/[A-Z]/gu, (match) => `-${match.toLowerCase()}`);
 
 // The preset accepts two spellings for most of what it generates — `pa-4` beside `p-4`, `border-2` beside
