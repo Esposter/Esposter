@@ -25,9 +25,8 @@ import { join } from "node:path";
 // The corepack home belongs to every run, not just the capture install: the sandbox mounts `/` read-only, so a command
 // That shells out to `pnpm` resolves the node manager's corepack shim, which downloads the repo's pinned
 // `packageManager` version whenever the host's own corepack cache doesn't already hold it — writing under
-// `$HOME/.cache`
-// And dying with EROFS. Pointing COREPACK_HOME at a bound, host-persisted directory makes that bootstrap writable once
-// And reused by every later run.
+// `$HOME/.cache` and dying with EROFS. Pointing COREPACK_HOME at a bound, host-persisted directory makes that
+// Bootstrap writable once and reused by every later run.
 //
 // The captured login PATH holds only the distro's own directories — getSandboxLoginPath drops the Windows drive
 // Mounts WSL interop appends to every login shell — so nothing on it can resolve the repo's own binaries (`oxlint`,

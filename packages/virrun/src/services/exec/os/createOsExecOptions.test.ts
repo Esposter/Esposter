@@ -35,7 +35,7 @@ vi.mock(import("#src/services/exec/wsl/readWslLoginEnvironment"), () => ({
 
 describe(createOsExecOptions, () => {
   // Inert store options (no fs writes) and the shared wsl mocks, so the injected PATH is composed from the same
-  // ReadWslPath transform the sandbox's own chdir uses. The cache root is a real temp directory per test, since the
+  // `readWslPath` transform the sandbox's own chdir uses. The cache root is a real temp directory per test, since the
   // Corepack home under it is materialized, not merely named.
   const loginPath = TEST_WSL_LOGIN_ENVIRONMENT.path;
 

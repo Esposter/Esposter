@@ -33,10 +33,10 @@ export const VIRRUN_LOGIN_NODE_END_MARKER = "__VIRRUN_LOGIN_NODE_END__";
 // Straight from /mnt/c (v9fs, 15-64x slower); `cache clean --all` sweeps it. See createWslSourceMirrorSync.
 export const VIRRUN_SOURCES_DIRECTORY_NAME = "sources";
 // A source mirror is a self-contained entry directory (`sources/<sha256(hostCwd)>/`) like `snapshots/<hash>`: the
-// Mirrored
-// Repo lives in `tree/` (so the `--overlay-src` lower stays a byte-exact copy of the working tree, unpolluted by
-// Virrun metadata) beside an `origin` marker recording the host cwd it was cloned from. reapAbandonedSourceMirrors
-// Reads that marker to reclaim a whole entry once its source path is gone (deleted worktree / moved repo).
+// Mirrored repo lives in `tree/` (so the `--overlay-src` lower stays a byte-exact copy of the working tree,
+// Unpolluted by virrun metadata) beside an `origin` marker recording the host cwd it was cloned from.
+// `reapAbandonedSourceMirrors` reads that marker to reclaim a whole entry once its source path is gone (deleted
+// Worktree / moved repo).
 export const VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME = "tree";
 export const VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME = "origin";
 // The manifest published beside `tree/` after every successful sync: the working tree's per-entry change signature
@@ -45,9 +45,9 @@ export const VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME = "origin";
 // Sync's flock, via an atomic `mv` from a staged temp, so it never claims a state the mirror doesn't hold.
 export const VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME = "manifest.json";
 // Pid-tagged temp leaves (`<prefix><pid>.<uuid>`) the planner stages into the entry directory for the folded sync
-// Script to
-// Consume: the next manifest and origin marker (each published via atomic `mv`), the staged tar archive of the copied
-// Paths (createSourceMirrorArchive, extracted into `tree/`), and the null-delimited delete (xargs -0 rm -rf) list.
+// Script to consume: the next manifest and origin marker (each published via atomic `mv`), the staged tar archive
+// Of the copied paths (createSourceMirrorArchive, extracted into `tree/`), and the null-delimited delete
+// (xargs -0 rm -rf) list.
 // The host pid tag is load-bearing: staging host-side keeps every temp in the Windows pid domain, so a hard-killed
 // Run's corpses are reclaimed by reapStaleSourceMirrorTemps once the owner pid is dead (same lifecycle as the
 // Snapshot upper temps) — a Linux-side `$$`-tagged temp would be unattributable from the host.
@@ -74,10 +74,9 @@ export const WSL_REMOVE_SCRIPT =
   'for directory; do chmod -R u+rwx -- "$directory" 2>/dev/null; rm -rf -- "$directory"; done';
 // The same teardown driven from the null-delimited list file named by `$1` rather than from the argv, so a sweep is
 // ONE wsl.exe launch however many directories it holds: a launch is a service RPC plus a relay process, and the
-// Per-entry
-// Fan-out it avoids would saturate the WSL service once enough mirrors are stranded to sweep at once, until it
-// Answers every later call with Wsl/Service/E_UNEXPECTED — while an argv-sized batch would trade that for
-// One launch per batch, which is the fan-out again. `xargs -0` keeps any path intact (spaces, newlines) and runs its
+// Per-entry fan-out it avoids would saturate the WSL service once enough mirrors are stranded to sweep at once,
+// Until it answers every later call with Wsl/Service/E_UNEXPECTED — while an argv-sized batch would trade that
+// For one launch per batch, which is the fan-out again. `xargs -0` keeps any path intact (spaces, newlines) and runs its
 // `sh` invocations sequentially when it splits. The list is unlinked last, so a sweep leaves nothing behind.
 //
 // Unlinked with `;` rather than `&&`, deliberately. Keeping the list when the removal fails would keep a file no

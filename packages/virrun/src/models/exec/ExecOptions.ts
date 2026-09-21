@@ -12,9 +12,8 @@ export interface ExecOptions {
   // Whether the sandbox keeps network access (os backend only). Off by default; real installs need it on.
   isNetworkEnabled?: boolean;
   // How the working directory's RAM overlay is layered (os backend only). Omitted is ephemeral (writes vanish in
-  // Tmpfs); a
-  // Capture run sets upperDirectory/workDirectory to persist writes into the snapshot; a fork run
-  // Sets lowerDirectories.
+  // Tmpfs); a capture run sets upperDirectory/workDirectory to persist writes into the snapshot; a fork run sets
+  // `lowerDirectories`.
   overlayLayers?: OverlayLayers;
   stdio: ExecStdio;
   // With stdio "pipe" (os backend only), also stream the output live to the host while capturing it — a tee — naming

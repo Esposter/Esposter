@@ -36,8 +36,8 @@ const EMPTY_LOGIN_ENVIRONMENT: WslLoginEnvironment = { nodeDirectory: "", nodeVe
 // Deletes the instant this capture shell ends — so the raw captured entry is already dead by the time the sandbox (or a
 // Later process reading the persisted cache) runs the command, giving `corepack: command not found` (exit 127).
 // `readlink -f` dereferences that ephemeral symlink to its backing install directory
-// (…/fnm/node-versions/vX/installation/
-// Bin, which also carries corepack/npm/pnpm) and we lead PATH with it. Idempotent for stable managers (nvm/volta):
+// (`…/fnm/node-versions/vX/installation/bin`, which also carries corepack/npm/pnpm) and we lead PATH with it.
+// Idempotent for stable managers (nvm/volta):
 // `readlink -f` on an already-real path is a no-op and re-prepending a directory already on PATH is harmless.
 //
 // The same shell also reports that node's version, which is the version the sandbox actually runs — the host process's

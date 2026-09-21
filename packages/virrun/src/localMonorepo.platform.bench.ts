@@ -63,7 +63,7 @@ afterAll(() => {
 // For a native `pnpm install` and a head-to-head would imply a swap that can't be made. Materializing the tree back
 // To disk costs at least as much as the native install it would replace (byte-copy across the WSL/host boundary vs
 // Native's same-volume hardlink, plus Defender on win32) - see
-// Apps/web/content/docs/virrun/rejected/materialize-node-modules.md. The real, cashable payoff is "run the command
+// `apps/web/content/docs/virrun/rejected/materialize-node-modules.md`. The real, cashable payoff is "run the command
 // Without reinstalling", which the typecheck/build/test fork groups below measure against the native baseline.
 // Captured at module scope rather than in a hook: one snapshot backs every fork below, so it is the file's setup
 // Rather than any one test's. Top-level await materializes the upper layer first. Keyed by the lockfile hash (same
