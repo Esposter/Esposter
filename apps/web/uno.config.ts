@@ -126,7 +126,7 @@ export default defineConfig({
     ...Object.fromEntries(
       Object.entries(typographyPresets.md3).map(([name, styles]) => [
         `text-${toKebabCase(name)}`,
-        [Object.fromEntries(Object.entries(styles).map(([k, v]) => [toKebabCase(k), v]))],
+        [Object.fromEntries(Object.entries(styles).map(([property, value]) => [toKebabCase(property), value]))],
       ]),
     ),
     "text-hint": "op-medium-emphasis text-body-small",
