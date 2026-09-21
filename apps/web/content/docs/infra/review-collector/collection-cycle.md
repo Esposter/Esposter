@@ -99,7 +99,7 @@ Before the port reads the queue, the collector rewrites it onto the tree the win
 ```mermaid
 flowchart TD
   T[target = the fixes head while it owes develop,<br/>else develop] --> A{Queue sits on it}
-  A -->|no| R[Replay the owed commits onto it<br/>one sequence, empties dropped]
+  A -->|no| R[Replay the owed commits onto it<br/>one sequence, empties kept as copies naming their original]
   R -->|stops| C{Dry run, or the<br/>attempt cap reached}
   C -->|yes| AB[Abort — the port holds on it]
   C -->|no| CL[Claude resolves and continues the sequence<br/>a resolution the target absorbs whole is committed empty,<br/>naming its original — never skipped]
