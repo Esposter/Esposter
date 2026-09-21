@@ -6,12 +6,12 @@ import type { ResolvedLocalization } from "#src/models/ResolvedLocalization";
 import { CARD_DETAIL_SEPARATOR } from "#src/services/constants";
 import { getBirthdayNote } from "#src/services/getBirthdayNote";
 
-// The headline and the note are the plugin's own words about the character, so they are the interface language's.
-// The authored card is not: its habits and sign-off reach the model alone, and its greeting is a line the model
-// Performs rather than a label a person reads — the model renders all three in whatever language it answers in, so
-// They stay as written and follow the reply language by themselves
+// The headline, the note and the greeting are what a person reads, so they are the interface language's: the first
+// Two are the plugin's own words about the character, and the greeting is the language's module's where it has one
+// And the card's otherwise. The rest of the authored card reaches the model alone and stays as written — a model
+// Reading the habits and the sign-off in English answers in whatever language it was asked to, register intact
 export const getCard = (
-  { birthday, description, displayElement, displayName, region, title }: Character,
+  { birthday, description, displayElement, displayName, name, region, title }: Character,
   today: Temporal.PlainDate,
   localization: ResolvedLocalization,
   personaCard?: PersonaCard,
@@ -19,6 +19,7 @@ export const getCard = (
   const details = [title, displayElement, region].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
   return {
     description,
+    greeting: localization.characters[name]?.greeting ?? personaCard?.greeting ?? "",
     headline: details ? `${displayName} — ${details}` : displayName,
     note: getBirthdayNote(birthday, today, localization),
     personaCard,

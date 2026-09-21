@@ -23,6 +23,6 @@ export const readSpinner = async (
   const localization = await readLocalization(language);
   const lines = await readVoiceLines(character.name, language);
   const verbs =
-    localization.characterVerbs[character.name] ?? (localization === english ? (personaCard?.verbs ?? []) : []);
+    localization.characters[character.name]?.verbs ?? (localization === english ? (personaCard?.verbs ?? []) : []);
   return getSpinner(localization, character, verbs, lines);
 };

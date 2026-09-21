@@ -5,12 +5,10 @@ import type { ResolvedLocalization } from "#src/models/ResolvedLocalization";
 // Only for a character the data package and the wiki have no lines for, which is nobody's line and so shows under
 // The tool's own prefix rather than a character's name
 const english: ResolvedLocalization = {
-  characterVerbs: {},
-  dateLocale: "en-AU",
+  characters: {},
+  locale: "en-AU",
   strings: {
     birthdayNote: (date, distance) => `[Birthday: ${date}, ${distance}]`,
-    daysAgo: (days) => `${days} days ago`,
-    inDays: (days) => `in ${days} days`,
     interfaceLanguageSet: (language) =>
       `Everything the plugin writes is in ${language} from this reply; the spinner follows at the next session.`,
     languageMustBeOneOf: (languages) => `The language must be one of ${languages}.`,
@@ -71,8 +69,6 @@ const english: ResolvedLocalization = {
         .join("\n"),
     teardownDone:
       "Status line and spinner removed from user settings; both go at the next session. The voice's runtime, weights, references and dub are removed; the pick records, the pin and the languages stay.",
-    today: "today",
-    tomorrow: "tomorrow",
     unmuted: "Spoken replies unmuted.",
     usage: (verbs) => `Usage: genshin.ts <${verbs}> [name]`,
     usingInSession:
@@ -93,7 +89,6 @@ const english: ResolvedLocalization = {
       "Weights present; the engine loads on the CPU — no GPU adapter was found, so a reply is synthesized several times slower than real time.",
     weightsOnDevice: (device) =>
       `Weights present; the engine loads on ${device}, and moves down to the CPU by itself if what it synthesizes there is not speech.`,
-    yesterday: "yesterday",
   },
   tips: [
     "Glide when the cliff is tall and climb when it is not. The stamina is the same either way.",

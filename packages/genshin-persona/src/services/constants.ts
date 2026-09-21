@@ -83,8 +83,9 @@ export const NAMEPLATE_PREFIX = "✦ ";
 export const REPLY_LANGUAGE_INSTRUCTION = (language: string): string =>
   `Write every reply in ${language}. This applies to prose only, and to nothing the output style already excludes from the character's voice: code, comments, commit messages, file contents, commands and error text stay as they are.`;
 export const ANSI_RESET = "\u001B[0m";
-// The status line's colour per element, as the game's interface paints the element's name; an element missing here
-// (the player character's "None") leaves the nameplate in the terminal's own colour
+// The status line's colour per element, as the game's interface paints the element's name: what a character with no
+// Row in `CharacterColorMap` yet is drawn in, and an element missing here too (the player character's "None")
+// Leaves the nameplate in the terminal's own colour
 export const ElementColorMap: Record<string, string> = {
   Anemo: "#33ccb3",
   Cryo: "#98c8e8",

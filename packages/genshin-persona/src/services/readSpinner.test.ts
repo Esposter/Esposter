@@ -34,7 +34,7 @@ describe(readSpinner, () => {
 
     const { verbs } = await readSpinner(character, personaCard, "Japanese");
 
-    expect(verbs.slice(japanese.verbs.length)).toStrictEqual(japanese.characterVerbs["Hu Tao"]);
+    expect(verbs.slice(japanese.verbs.length)).toStrictEqual(japanese.characters["Hu Tao"]?.verbs);
   });
 
   // The card's gerunds are English, so showing them behind localized base verbs would put two scripts in one

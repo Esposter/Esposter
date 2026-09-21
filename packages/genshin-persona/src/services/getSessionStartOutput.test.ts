@@ -24,7 +24,7 @@ describe(getSessionStartOutput, () => {
   test("shows the person the nameplate, the note and the greeting, and hands the model the lore and the habits", () => {
     expect.hasAssertions();
 
-    const card: Card = { description, headline, note, personaCard };
+    const card: Card = { description, greeting, headline, note, personaCard };
 
     expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
@@ -40,7 +40,7 @@ describe(getSessionStartOutput, () => {
   test("drops every line the character does not have", () => {
     expect.hasAssertions();
 
-    const card: Card = { description: "", headline, note: "", personaCard: undefined };
+    const card: Card = { description: "", greeting: "", headline, note: "", personaCard: undefined };
 
     expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
@@ -55,7 +55,7 @@ describe(getSessionStartOutput, () => {
   test("carries no instruction at English, and one naming the language otherwise", () => {
     expect.hasAssertions();
 
-    const card: Card = { description: "", headline, note: "", personaCard: undefined };
+    const card: Card = { description: "", greeting: "", headline, note: "", personaCard: undefined };
     const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, "Japanese"));
 
     expect(hookSpecificOutput).toStrictEqual({

@@ -27,6 +27,6 @@ describe(getBirthdayNote, () => {
 
     const localization = await readLocalization("Japanese");
 
-    expect(getBirthdayNote("1/1", epoch, localization)).toBe("[誕生日：1/1、本日]");
+    expect(getBirthdayNote("1/1", epoch, localization)).toBe("[誕生日：1/1、今日]");
   });
 });

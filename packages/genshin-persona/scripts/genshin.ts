@@ -73,7 +73,9 @@ const [verb, ...nameParts] = process.argv.slice(2);
 const name = nameParts.join(" ");
 const language = readInterfaceLanguage();
 const roster = readRoster(language);
-const { strings } = await readLocalization(language);
+const { locale, strings } = await readLocalization(language);
+// A choice a verb offers is a list in the interface language's own punctuation, which the runtime knows
+const listFormat = new Intl.ListFormat(locale, { type: "disjunction" });
 const today = Temporal.Now.plainDateISO();
 const getRosterLine = ({ birthday, displayElement, displayName, region, title, version }: Character) =>
   [displayName, title, displayElement, region, birthday, `v${version}`].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
@@ -136,12 +138,12 @@ switch (verb) {
   case GenshinVerb.Language: {
     const languageNames = readLanguageNames();
     // Each language is offered in its own words beside the word a person types for it, and either resolves
-    const offered = languageNames
-      .map((languageName) => {
+    const offered = listFormat.format(
+      languageNames.map((languageName) => {
         const ownName = getLanguageDisplayName(languageName, languageName);
         return ownName === languageName ? languageName : `${languageName} (${ownName})`;
-      })
-      .join(", ");
+      }),
+    );
     if (!name) {
       console.log(strings.status(await getStatusReport()));
       console.log(strings.languageMustBeOneOf(offered));
@@ -288,13 +290,18 @@ switch (verb) {
   }
   case GenshinVerb.Untranslated: {
     // The queue the language modules are filled from, the way `unverbed` is the queue the cards' verbs are: who has
-    // No gerunds in this language. English reads them off the cards, so it is never behind
+    // No gerunds in this language, or a card whose greeting it has not written. English reads both off the cards,
+    // So it is never behind
     if (language === DEFAULT_LANGUAGE) break;
 
-    const { characterVerbs } = await readLocalization(language);
-    for (const character of roster
-      .filter(({ name: characterName }) => !characterVerbs[characterName])
-      .toSorted(compareVersionsDescending))
+    const { characters } = await readLocalization(language);
+    const cardedRoster = await readCardedRoster(roster);
+    for (const { character } of cardedRoster
+      .filter(({ character: { name: characterName }, personaCard }) => {
+        const localizedPersonaCard = characters[characterName];
+        return !localizedPersonaCard?.verbs || (Boolean(personaCard) && !localizedPersonaCard.greeting);
+      })
+      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
       console.log(getRosterLine(character));
     break;
   }
@@ -328,7 +335,7 @@ switch (verb) {
     }
 
     if (!checkIsVoiceLanguage(name)) {
-      console.error(strings.voiceLanguageMustBeOneOf(Object.keys(VoiceLanguageNameMap).join(", ")));
+      console.error(strings.voiceLanguageMustBeOneOf(listFormat.format(Object.keys(VoiceLanguageNameMap))));
       process.exitCode = 1;
       break;
     }

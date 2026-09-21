@@ -1,6 +1,7 @@
 import english from "#src/localizations/english";
 import japanese from "#src/localizations/japanese";
 import { readGenshinDb } from "#src/services/readGenshinDb";
+import { readPersonaCard } from "#src/services/readPersonaCard";
 import { describe, expect, test } from "vitest";
 
 // The module is data rather than behaviour, so what is checked is the two ways its data can be wrong without
@@ -12,7 +13,7 @@ describe("japanese", () => {
     expect.hasAssertions();
 
     const names = new Set(readGenshinDb().characters("names", { matchCategories: true }));
-    const unreachableNames = Object.keys(japanese.characterVerbs).filter((name) => !names.has(name));
+    const unreachableNames = Object.keys(japanese.characters).filter((name) => !names.has(name));
 
     expect(unreachableNames).toStrictEqual([]);
   });
@@ -27,5 +28,19 @@ describe("japanese", () => {
     expect.hasAssertions();
 
     expect(japanese.verbs.filter((verb) => english.verbs.includes(verb))).toStrictEqual([]);
+  });
+
+  // A greeting equal to the card's is the English line pasted into the queue's slot, which the welcome would then
+  // Show under a Japanese headline — the very thing the entry exists to end
+  test("greets nobody in the card's own English words", async () => {
+    expect.hasAssertions();
+
+    const personaCards = await Promise.all(
+      Object.entries(japanese.characters).map(
+        async ([name, { greeting }]) => [greeting, await readPersonaCard(name)] as const,
+      ),
+    );
+
+    expect(personaCards.filter(([greeting, personaCard]) => greeting === personaCard?.greeting)).toStrictEqual([]);
   });
 });

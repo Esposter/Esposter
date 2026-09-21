@@ -6,8 +6,6 @@ import type { StatusReport } from "#src/models/StatusReport";
 // Half-translated language is a legal state rather than a missing key
 export interface LocalizationStrings {
   birthdayNote: (date: string, distance: string) => string;
-  daysAgo: (days: number) => string;
-  inDays: (days: number) => string;
   interfaceLanguageSet: (language: string) => string;
   languageMustBeOneOf: (languages: string) => string;
   muted: string;
@@ -29,8 +27,6 @@ export interface LocalizationStrings {
   spoke: (name: string, device: string) => string;
   status: (report: StatusReport) => string;
   teardownDone: string;
-  today: string;
-  tomorrow: string;
   unmuted: string;
   usage: (verbs: string) => string;
   usingInSession: string;
@@ -45,5 +41,4 @@ export interface LocalizationStrings {
   warmRequestUnanswered: (status: string, logPath: string) => string;
   weightsOnCpu: string;
   weightsOnDevice: (device: string) => string;
-  yesterday: string;
 }
