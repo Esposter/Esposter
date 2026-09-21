@@ -181,9 +181,9 @@ export const LanguageDubPrefixMap: Record<VoiceLanguage, string> = {
 // A whole number of this scale, applied as a gain; the top is the engine's own level
 export const MAX_VOLUME = 100;
 // The Nano export ships one variant per component, so the dtype map names what exists rather than what was chosen:
-// The vocoder's 4-bit weights over full-precision activations, the language model's and the speech encoder's
-// Over half-precision ones. The language model's session is keyed `model` and its file `language_model`, so both
-// Spellings carry its dtype
+// Half-precision embeddings, and 4-bit weights for the rest — over full-precision activations in the vocoder and
+// Half-precision ones in the language model and the speech encoder. The language model's session is keyed `model`
+// And its file `language_model`, so both spellings carry its dtype
 export const VOICE_MODEL_ID = "owensong/chatterbox-nano-ONNX";
 export const VOICE_MODEL_ARCHITECTURE = "ChatterboxModel";
 export const VOICE_MODEL_DTYPE: Record<string, string> = {
