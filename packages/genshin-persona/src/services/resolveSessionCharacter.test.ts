@@ -18,19 +18,13 @@ const { pickCurrentCharacter, readPickRecords, readPin, writePickRecords } = vi.
 
 // The state file stands in as an array every double reads and writes, which is what lets a second session write
 // Into it while this one waits on its pick; the pick itself is the network the wait is on
-vi.mock(import("#src/services/readPickRecords"), () => ({
-  readPickRecords: readPickRecords as unknown as typeof baseReadPickRecords,
-}));
+vi.mock(import("#src/services/readPickRecords"), () => ({ readPickRecords }));
 
-vi.mock(import("#src/services/writePickRecords"), () => ({
-  writePickRecords: writePickRecords as unknown as typeof baseWritePickRecords,
-}));
+vi.mock(import("#src/services/writePickRecords"), () => ({ writePickRecords }));
 
-vi.mock(import("#src/services/readPin"), () => ({ readPin: readPin as unknown as typeof baseReadPin }));
+vi.mock(import("#src/services/readPin"), () => ({ readPin }));
 
-vi.mock(import("#src/services/pickCurrentCharacter"), () => ({
-  pickCurrentCharacter: pickCurrentCharacter as unknown as typeof basePickCurrentCharacter,
-}));
+vi.mock(import("#src/services/pickCurrentCharacter"), () => ({ pickCurrentCharacter }));
 
 describe(resolveSessionCharacter, () => {
   const sessionId = "sessionId";
