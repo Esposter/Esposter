@@ -1,4 +1,5 @@
-const WHITESPACE_RUN_REGEX = /\s+/gu;
+import { collapseWhitespace } from "#src/services/collapseWhitespace";
+
 // Templates, tags and bold markers dropped, a link reduced to its label
 const WIKI_MARKUP_REGEX = /\{\{[^}]*\}\}|<[^>]+>|'''/gu;
 const WIKI_LINK_REGEX = /\[\[(?:[^\]|]*\|)?(?<label>[^\]]*)\]\]/gu;
@@ -19,8 +20,4 @@ const stripWikiMarkup = (text: string): string => {
 
 // A line's text as a person reads it, off the wiki's markup or the game data's, which carries the same
 export const getPlainLineText = (text: string): string =>
-  stripWikiMarkup(text)
-    .replaceAll(WIKI_LINK_REGEX, "$<label>")
-    .replaceAll("&mdash;", "—")
-    .replaceAll(WHITESPACE_RUN_REGEX, " ")
-    .trim();
+  collapseWhitespace(stripWikiMarkup(text).replaceAll(WIKI_LINK_REGEX, "$<label>").replaceAll("&mdash;", "—"));

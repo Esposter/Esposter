@@ -135,7 +135,7 @@ node "<plugin root>/scripts/genshin.ts" use furina      # or: /genshin-persona:u
 
 ### Spoken lines
 
-A reply to an ask of the assistant opens with one blockquote line in the character's voice and may close with one; a reply to an ask of the character — a joke, a hello, an opinion — is a few such lines and nothing else. A hook hands each to a resident synthesizer as its line lands, which reads it in the character's cloned voice while the reply is still being written. `mute` and `unmute` decide whether the hook asks it at all, and so does a `volume` of zero. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
+A reply to an ask of the assistant opens with one blockquote line in the character's voice and may close with one; a reply to an ask of the character — a joke, a hello, an opinion, however much was pasted to form it — is such lines and nothing else, as many as the ask deserves, a list of them included. A hook hands each to a resident synthesizer as its line lands, which reads it in the character's cloned voice while the reply is still being written. `mute` and `unmute` decide whether the hook asks it at all, and so does a `volume` of zero. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
 
 ```bash
 node "<plugin root>/scripts/genshin.ts" volume 60     # or: /genshin-persona:volume 60
