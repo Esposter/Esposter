@@ -1,9 +1,14 @@
 import type { ReplyPiece } from "#src/models/ReplyPiece";
+import type { Mock } from "vitest";
 
 import { VoiceStatus } from "#src/models/VoiceStatus";
 import { TURNLESS_PIECE } from "#src/services/constants";
 import { createReplyQueue } from "#src/services/createReplyQueue";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+type Run = (piece: ReplyPiece, checkIsSuperseded: () => boolean) => Promise<VoiceStatus>;
+
+const getRunPieces = (run: Mock<Run>) => run.mock.calls.map(([piece]) => piece);
 
 describe(createReplyQueue, () => {
   const holdMs = 1;
@@ -16,10 +21,7 @@ describe(createReplyQueue, () => {
   const nextMessage: ReplyPiece = { index: 0, isFinal: true, messageId: crypto.randomUUID(), turnId };
   const later: ReplyPiece = { index: 0, isFinal: true, messageId: crypto.randomUUID(), turnId: crypto.randomUUID() };
   const getRun = (openingRun: Promise<VoiceStatus> = Promise.resolve(VoiceStatus.Ok)) =>
-    vi.fn<(piece: ReplyPiece, checkIsSuperseded: () => boolean) => Promise<VoiceStatus>>((piece) =>
-      piece === opening ? openingRun : Promise.resolve(VoiceStatus.Ok),
-    );
-  const getRunPieces = (run: ReturnType<typeof getRun>) => run.mock.calls.map(([piece]) => piece);
+    vi.fn<Run>((piece) => (piece === opening ? openingRun : Promise.resolve(VoiceStatus.Ok)));
 
   beforeEach(() => {
     vi.useFakeTimers();
