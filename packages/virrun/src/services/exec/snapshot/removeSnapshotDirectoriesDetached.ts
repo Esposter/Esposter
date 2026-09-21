@@ -15,8 +15,8 @@ import { reapStaleRemoveLists } from "#src/services/exec/wsl/reapStaleRemoveList
 import { getResult, noop } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-// Fire-and-forget teardown for stale-cache sweeps (pruneStaleSnapshots / pruneStalePrepareLayers /
-// reapAbandonedSourceMirrors) — directories the current run never touches, so their removal has no bearing on
+// Fire-and-forget teardown for stale-cache sweeps (`pruneStaleSnapshots`, `pruneStalePrepareLayers`,
+// `reapAbandonedSourceMirrors`) — directories the current run never touches, so their removal has no bearing on
 // Correctness and must not block the command from starting. A `\\wsl.localhost` snapshot's rm -rf is the expensive
 // Case: a full node_modules / .nuxt closure torn down inside WSL, and during active dev every source edit strands a
 // Superseded prepare layer that the next run would otherwise block on. spawnBackground runs it Linux-side off the 9p
