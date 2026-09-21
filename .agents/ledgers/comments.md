@@ -35,15 +35,15 @@
 | `packages/db-schema` — `schema`, `relations`           | 2026-09-15 | tables and their v2 relations                                                                       |
 | `packages/db-schema` — `services`, package root        | 2026-09-15 | `schema.test.ts`, `pgTable.ts`                                                                      |
 | `packages/keyframe-store`                              | 2026-09-15 | the stored-object and delta prose                                                                   |
-| `apps/infra`                                           | 2026-09-15 | event subscriptions, GitHub rulesets                                                                |
+| `apps/infra`                                           | 2026-09-21 | event subscriptions, GitHub rulesets                                                                |
 | `packages/parse-tmx`                                   | 2026-09-15 | `TMXNode.ts`                                                                                        |
 | `packages/shared`, `packages/shared-node`              | 2026-09-15 | `takeOne`                                                                                           |
-| `packages/virrun` — `models`, package root             | 2026-09-15 |                                                                                                     |
+| `packages/virrun` — `models`, package root             | 2026-09-21 |                                                                                                     |
 | `packages/virrun` — `services/cli`, `configuration`    | 2026-09-15 | plus `source`, `vfs`, `virrun`                                                                      |
-| `packages/virrun` — `services/exec/wsl`                | 2026-09-15 | the mirror prose is the bulk of the package                                                         |
+| `packages/virrun` — `services/exec/wsl`                | 2026-09-21 | the mirror prose is the bulk of the package                                                         |
 | `packages/virrun` — `services/exec/snapshot`           | 2026-09-15 | layers, leases, overlay capture                                                                     |
-| `packages/virrun` — `services/exec/util`               | 2026-09-15 |                                                                                                     |
-| `packages/virrun` — the rest of `services/exec`        | 2026-09-15 | bwrap, cache, differential, native, os, store, test, vfs                                            |
+| `packages/virrun` — `services/exec/util`               | 2026-09-21 |                                                                                                     |
+| `packages/virrun` — the rest of `services/exec`        | 2026-09-21 | bwrap, cache, differential, native, os, store, test, vfs                                            |
 | `packages/vue-phaserjs`                                | 2026-09-15 | composables, store, models, test setup                                                              |
 | `packages/xml2js`                                      | 2026-09-15 | `Parser.ts`                                                                                         |
 | repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-15 | workflow scripts and their tests                                                                    |
