@@ -7,5 +7,5 @@ export const sliceBetweenMarkers = (output: string, begin: string, end: string):
   const contentIndex = beginIndex + begin.length;
   const endIndex = output.indexOf(end, contentIndex);
   if (endIndex === -1) return "";
-  return output.slice(contentIndex, endIndex);
+  else return output.slice(contentIndex, endIndex);
 };

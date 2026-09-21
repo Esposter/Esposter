@@ -153,8 +153,7 @@ export const createKeyframeStore = (
         const isWithinSegmentBudget =
           anchor.anchoredBytes + delta.bytes.byteLength <= delta.keyframeStoredBytes * segmentBudgetRatio;
         if (!isWithinPromotionRatio || !isWithinSegmentBudget) return writeObject(keyframeBytes, "");
-
-        return writeObject(delta.bytes, anchor.hash);
+        else return writeObject(delta.bytes, anchor.hash);
       }),
   };
 };

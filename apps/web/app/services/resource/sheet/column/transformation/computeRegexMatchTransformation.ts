@@ -10,8 +10,8 @@ export const computeRegexMatchTransformation = (
   if (typeof value !== "string") return null;
   return getResult(() => new RegExp(transformation.pattern, "u").exec(value)).match(
     (match) => {
-      if (!match) return null;
-      return match[transformation.groupIndex] ?? null;
+      if (match) return match[transformation.groupIndex] ?? null;
+      else return null;
     },
     () => null,
   );

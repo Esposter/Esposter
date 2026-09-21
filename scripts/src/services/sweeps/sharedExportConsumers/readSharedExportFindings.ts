@@ -43,7 +43,7 @@ export const readSharedExportFindings = (): SharedExportFinding[] => {
         .entries()
         .some(([otherPath, identifiers]) => otherPath !== path && identifiers.has(name));
       if (consumerPackagePaths.length >= MINIMUM_CONSUMER_PACKAGES || isUsedInternally) return [];
-      return [{ consumerPackagePath: consumerPackagePaths[0], name, path }];
+      else return [{ consumerPackagePath: consumerPackagePaths[0], name, path }];
     }),
   );
 };

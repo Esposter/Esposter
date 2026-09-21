@@ -7,11 +7,11 @@ const MONTH_DAY_REGEX = /^(?<month>\d{1,2})\/(?<day>\d{1,2})$/u;
 // Neighbours
 export const parseBirthday = (birthday: string): Temporal.PlainDate | undefined => {
   const match = MONTH_DAY_REGEX.exec(birthday);
-  if (!match?.groups) return undefined;
-
-  return Temporal.PlainDate.from({
-    day: Number(match.groups.day),
-    month: Number(match.groups.month),
-    year: LEAP_YEAR,
-  });
+  if (match?.groups)
+    return Temporal.PlainDate.from({
+      day: Number(match.groups.day),
+      month: Number(match.groups.month),
+      year: LEAP_YEAR,
+    });
+  else return undefined;
 };

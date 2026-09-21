@@ -27,5 +27,5 @@ export const checkIsTolerableArchiveFailure = (stderr: string): boolean => {
     .filter(Boolean)
     .filter((line) => !TRAILER_LINE_REGEXES.some((regex) => regex.test(line)));
   if (reportLines.length === 0) return false;
-  return reportLines.every((line) => SKIPPED_ENTRY_LINE_REGEXES.some((regex) => regex.test(line)));
+  else return reportLines.every((line) => SKIPPED_ENTRY_LINE_REGEXES.some((regex) => regex.test(line)));
 };

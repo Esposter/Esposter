@@ -22,7 +22,9 @@ stops being right and what a reviewer's "use a guard clause" gets wrong.
   reads as code reached after the chain rather than instead of it:
   `if (!x) return a; else if (y) return b; else return c;` — `no-else-return` is off for exactly this reason. Only omit the trailing `else` when the chain has no
   final branch, and only omit chaining altogether when the branches are genuinely independent (different concerns,
-  not a logical chain).
+  not a logical chain). The two-branch case — a guard that returns with a `return` as its next statement — is
+  refused by `no-restricted-syntax` (`packages/configuration/eslint/restrictedSourceSyntaxes.js`); a guard whose
+  fall-through is more than a `return` is still read.
 - **The branch before the terminal `else` may not be negated** — `no-negated-condition` ignores a negated test
   whose alternate is another `if`, so `if (!x) … else if (!y) …` is only legal while the chain stays open; closing
   it with an `else` makes the last negated test an error. Invert that test and swap the final two branches

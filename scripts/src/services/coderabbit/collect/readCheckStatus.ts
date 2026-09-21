@@ -10,6 +10,6 @@ export const readCheckStatus = (pullRequest: number): CheckStatus | undefined =>
   const { stdout } = spawnSync("gh", ["pr", "checks", pullRequest.toString(), "--json", "name,bucket,description"], {
     encoding: "utf8",
   });
-  if (!stdout.trim()) return undefined;
-  return parseMachineJson<CheckStatus[]>(stdout).find(({ name }) => name === CHECK_NAME);
+  if (stdout.trim()) return parseMachineJson<CheckStatus[]>(stdout).find(({ name }) => name === CHECK_NAME);
+  else return undefined;
 };

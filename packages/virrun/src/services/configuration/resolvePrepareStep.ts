@@ -37,8 +37,9 @@ export const resolvePrepareStep = (environment: Environment | undefined, cwd: st
     );
   const relativeDirectory = dirname(configPath);
   if (relativeDirectory === ".") return { command: NUXT_PREPARE_COMMAND, outputs: [NUXT_OUTPUT_DIRECTORY] };
-  return {
-    command: `pnpm --filter ./${relativeDirectory} exec ${NUXT_PREPARE_COMMAND}`,
-    outputs: [`${relativeDirectory}/${NUXT_OUTPUT_DIRECTORY}`],
-  };
+  else
+    return {
+      command: `pnpm --filter ./${relativeDirectory} exec ${NUXT_PREPARE_COMMAND}`,
+      outputs: [`${relativeDirectory}/${NUXT_OUTPUT_DIRECTORY}`],
+    };
 };

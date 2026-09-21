@@ -18,29 +18,29 @@ export const releaseStorageLedgerEntriesByWhere = (
   // The ledger for every user — so it is a no-op rather than a filter drizzle would happily drop
   where: SQL | undefined,
 ): Promise<User["id"][]> => {
-  if (!where) return Promise.resolve([]);
-
-  return db.transaction(async (tx) => {
-    const releasedStorageLedgerEntries = await tx
-      .delete(storageLedger)
-      .where(where)
-      .returning({ countedBytes: storageLedger.countedBytes, userId: storageLedger.userId });
-    if (releasedStorageLedgerEntries.length === 0) return [];
-    // One statement per owner rather than per blob: a prefix release covers a whole directory, and a
-    // Deletion event carries hundreds of names, so decrementing row by row is that many round trips
-    const releasedBytesMap = new Map<string, number>();
-    for (const { countedBytes, userId } of releasedStorageLedgerEntries)
-      releasedBytesMap.set(userId, (releasedBytesMap.get(userId) ?? 0) + countedBytes);
-    // Sorted because `DELETE ... RETURNING` fixes no row order: two releases over an overlapping set of owners
-    // Would otherwise take their `users` locks in opposite orders and deadlock
-    const releasedUserEntries = [...releasedBytesMap].toSorted(([firstUserId], [secondUserId]) =>
-      firstUserId.localeCompare(secondUserId),
-    );
-    for (const [userId, releasedBytes] of releasedUserEntries)
-      await tx
-        .update(users)
-        .set({ storageBytesUsed: sql`GREATEST(0, ${users.storageBytesUsed} - ${releasedBytes})` })
-        .where(eq(users.id, userId));
-    return releasedUserEntries.map(([userId]) => userId);
-  });
+  if (where)
+    return db.transaction(async (tx) => {
+      const releasedStorageLedgerEntries = await tx
+        .delete(storageLedger)
+        .where(where)
+        .returning({ countedBytes: storageLedger.countedBytes, userId: storageLedger.userId });
+      if (releasedStorageLedgerEntries.length === 0) return [];
+      // One statement per owner rather than per blob: a prefix release covers a whole directory, and a
+      // Deletion event carries hundreds of names, so decrementing row by row is that many round trips
+      const releasedBytesMap = new Map<string, number>();
+      for (const { countedBytes, userId } of releasedStorageLedgerEntries)
+        releasedBytesMap.set(userId, (releasedBytesMap.get(userId) ?? 0) + countedBytes);
+      // Sorted because `DELETE ... RETURNING` fixes no row order: two releases over an overlapping set of owners
+      // Would otherwise take their `users` locks in opposite orders and deadlock
+      const releasedUserEntries = [...releasedBytesMap].toSorted(([firstUserId], [secondUserId]) =>
+        firstUserId.localeCompare(secondUserId),
+      );
+      for (const [userId, releasedBytes] of releasedUserEntries)
+        await tx
+          .update(users)
+          .set({ storageBytesUsed: sql`GREATEST(0, ${users.storageBytesUsed} - ${releasedBytes})` })
+          .where(eq(users.id, userId));
+      return releasedUserEntries.map(([userId]) => userId);
+    });
+  else return Promise.resolve([]);
 };

@@ -8,6 +8,5 @@ export const getLanguageDisplayName = (languageName: string, inLanguageName: str
   const languageTag = LanguageLocaleMap[languageName];
   const inLanguageTag = LanguageLocaleMap[inLanguageName];
   if (!languageTag || !inLanguageTag) return languageName;
-
-  return new Intl.DisplayNames([inLanguageTag], { type: "language" }).of(languageTag) ?? languageName;
+  else return new Intl.DisplayNames([inLanguageTag], { type: "language" }).of(languageTag) ?? languageName;
 };

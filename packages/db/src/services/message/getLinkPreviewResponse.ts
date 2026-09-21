@@ -12,24 +12,24 @@ export const getLinkPreviewResponse = (message: string): Promise<LinkPreviewResp
   if (!url) return Promise.resolve(null);
 
   const link = find(url, "url", { defaultProtocol: "https" })[0];
-  if (!link) return Promise.resolve(null);
+  if (link)
+    return getResultAsync(() =>
+      getLinkPreview(link.href, {
+        resolveDNSHost: (targetUrl) =>
+          new Promise((resolve, reject) => {
+            const hostname = new URL(targetUrl).hostname;
+            lookup(hostname, (err, address) => {
+              if (err) {
+                reject(err);
+                return;
+              }
 
-  return getResultAsync(() =>
-    getLinkPreview(link.href, {
-      resolveDNSHost: (targetUrl) =>
-        new Promise((resolve, reject) => {
-          const hostname = new URL(targetUrl).hostname;
-          lookup(hostname, (err, address) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-
-            resolve(address);
-          });
-        }),
-    }),
-  )
-    .orTee(console.error)
-    .unwrapOr(null);
+              resolve(address);
+            });
+          }),
+      }),
+    )
+      .orTee(console.error)
+      .unwrapOr(null);
+  else return Promise.resolve(null);
 };

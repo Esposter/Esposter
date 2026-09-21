@@ -170,9 +170,9 @@ export const fixAjv = {
       .replace(ODP_REEXPORT_REGEX, (_match, exportName: string, varName: string, propName: string) => {
         const modPath = requireMap.get(varName);
         if (!modPath) return "";
-        if (propName === exportName) return `export { ${propName} } from "${modPath}";\n`;
-        if (propName === "default") return `export { default as ${exportName} } from "${modPath}";\n`;
-        return `export { ${propName} as ${exportName} } from "${modPath}";\n`;
+        else if (propName === exportName) return `export { ${propName} } from "${modPath}";\n`;
+        else if (propName === "default") return `export { default as ${exportName} } from "${modPath}";\n`;
+        else return `export { ${propName} as ${exportName} } from "${modPath}";\n`;
       })
       .replaceAll(/^exports\.(?<name>[\w$]+) = (?<value>.+);\n/gmu, "export const $1 = $2;\n")
       .replaceAll(/^exports\.(?<name>[\w$]+) = (?<value>\{[\s\S]*?^\});\n/gmu, "export const $1 = $2;\n")

@@ -7,5 +7,5 @@ import { parsePid } from "#src/services/exec/util/parsePid";
 export const parseTempOwnerPid = (name: string, prefixes: readonly string[]): number | undefined => {
   const matchedPrefix = prefixes.find((prefix) => name.startsWith(prefix));
   if (matchedPrefix === undefined) return undefined;
-  return parsePid(name.slice(matchedPrefix.length));
+  else return parsePid(name.slice(matchedPrefix.length));
 };

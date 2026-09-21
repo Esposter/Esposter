@@ -15,7 +15,7 @@ import { computeStringTransformation } from "@/services/resource/sheet/column/tr
 export const ColumnTransformationComputeMap = {
   [ColumnTransformationType.Aggregation]: (transformation, { findSource, rowIndex, rows }) => {
     if (!rows || rowIndex === undefined) return null;
-    return computeAggregationValue(rows, findSource, transformation, rowIndex);
+    else return computeAggregationValue(rows, findSource, transformation, rowIndex);
   },
   [ColumnTransformationType.ConvertTo]: (transformation, { computeSource }) =>
     computeConvertToTransformation(computeSource(transformation.sourceColumnId), transformation),
@@ -35,7 +35,7 @@ export const ColumnTransformationComputeMap = {
   [ColumnTransformationType.String]: (transformation, { computeSource }) => {
     const value = computeSource(transformation.sourceColumnId);
     if (value === null) return null;
-    return computeStringTransformation(String(value), transformation.stringTransformationType);
+    else return computeStringTransformation(String(value), transformation.stringTransformationType);
   },
   [ColumnTransformationType.StringPattern]: (transformation, { computeSource }) => {
     const values = transformation.sourceColumnIds.map(computeSource);
@@ -44,7 +44,7 @@ export const ColumnTransformationComputeMap = {
   [ColumnTransformationType.StringSplit]: (transformation, { computeSource }) => {
     const value = computeSource(transformation.sourceColumnId);
     if (value === null) return null;
-    return computeSplitTransformation(String(value), transformation.delimiter, transformation.segmentIndex);
+    else return computeSplitTransformation(String(value), transformation.delimiter, transformation.segmentIndex);
   },
 } as const satisfies {
   [K in ColumnTransformationType]: ColumnTransformationComputer<Extract<ColumnTransformation, { type: K }>>;

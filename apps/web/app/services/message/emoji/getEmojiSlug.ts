@@ -8,5 +8,5 @@ import { getEmojiIndex } from "@/services/message/emoji/getEmojiIndex";
 export const getEmojiSlug = (emoji: string) => {
   const { characterEmojiMap, slugEmojiMap } = getEmojiIndex();
   if (slugEmojiMap.has(emoji)) return emoji;
-  return characterEmojiMap.get(getEmojiCharacterKey(emoji))?.slug ?? emoji;
+  else return characterEmojiMap.get(getEmojiCharacterKey(emoji))?.slug ?? emoji;
 };

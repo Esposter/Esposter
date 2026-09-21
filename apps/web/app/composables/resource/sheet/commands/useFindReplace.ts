@@ -7,6 +7,6 @@ export const useFindReplace = () =>
       if (!findValue || findValue === replaceValue) return undefined;
       const affectedCells = findMatchingCells(dataSource, findValue, specificCell);
       if (affectedCells.length === 0) return undefined;
-      return new FindReplaceCommand(findValue, replaceValue, affectedCells);
+      else return new FindReplaceCommand(findValue, replaceValue, affectedCells);
     },
   );

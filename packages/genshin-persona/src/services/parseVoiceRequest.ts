@@ -15,6 +15,5 @@ export const parseVoiceRequest = (line: string): undefined | VoiceRequest => {
   if (typeof language !== "string" || !checkIsVoiceLanguage(language)) return undefined;
   if (typeof name !== "string" || typeof stem !== "string" || typeof text !== "string") return undefined;
   if (typeof volume !== "number" || !checkIsVolume(String(volume))) return undefined;
-
-  return { language, name, stem, text, type, volume };
+  else return { language, name, stem, text, type, volume };
 };

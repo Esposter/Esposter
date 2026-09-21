@@ -7,8 +7,8 @@ import { getResult } from "@esposter/shared";
 export const readProcessStartTimeMs = (pid: number): number | undefined =>
   getResult(() => {
     if (process.platform === "win32") return readWindowsProcessStartTimeMs(pid);
-    if (process.platform === "linux") return readLinuxProcessStartTimeMs(pid);
-    return Number.NaN;
+    else if (process.platform === "linux") return readLinuxProcessStartTimeMs(pid);
+    else return Number.NaN;
   })
     .map((startTimeMs) => (Number.isFinite(startTimeMs) ? startTimeMs : undefined))
     .unwrapOr(undefined);

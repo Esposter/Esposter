@@ -168,5 +168,5 @@ export const syncQueue = async ({
 
   const isReshaped = await reshapeQueue({ cwd, isDryRun, targetSha, viewerLogin });
   if (isOnTarget && !isReshaped) return queueSha;
-  return pushRewrite(cwd, queueSha, isDryRun);
+  else return pushRewrite(cwd, queueSha, isDryRun);
 };

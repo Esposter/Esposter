@@ -19,5 +19,5 @@ export const resolveBackend = (
   if (checkIsVirrunEnabled(env)) return BackendType.Native;
   const backend = resolveRequestedBackend(configuration);
   if (backend === BackendType.Os && !checkIsOsBackendSupported()) return BackendType.Native;
-  return backend;
+  else return backend;
 };

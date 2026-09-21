@@ -201,7 +201,7 @@ export class Parser {
   #collapseCharKey(object: Record<string, unknown>): Record<string, unknown> {
     if (Object.keys(object).length === 1 && this.#options.charkey in object)
       return object[this.#options.charkey] as Record<string, unknown>;
-    return object;
+    else return object;
   }
   // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
   #parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {

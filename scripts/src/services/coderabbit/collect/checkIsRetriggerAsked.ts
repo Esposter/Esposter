@@ -13,6 +13,6 @@ export const checkIsRetriggerAsked = (issueComments: GitHubEntry[], viewerLogin:
     checkIsMarked(comment, CODERABBIT_REST_LOGIN, RATE_LIMIT_COMMENT_MARKER),
   );
   const ask = issueComments.findLast((comment) => checkIsMarked(comment, viewerLogin, PROBE_COMMENT));
-  if (!ask) return false;
-  return !block || Date.parse(ask.updated_at) > Date.parse(block.updated_at);
+  if (ask) return !block || Date.parse(ask.updated_at) > Date.parse(block.updated_at);
+  else return false;
 };

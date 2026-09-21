@@ -9,5 +9,5 @@ export const getHandRolledErrorName = (property: ESTree.Node): string | undefine
   if (value.property.type !== "Identifier" || value.property.name !== "message") return undefined;
   const { object } = value;
   if (object.type !== "NewExpression" || object.callee.type !== "Identifier") return undefined;
-  return object.callee.name;
+  else return object.callee.name;
 };

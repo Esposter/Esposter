@@ -20,8 +20,9 @@ export const getBlobUrlParts = (url: string): undefined | { blobName: string; co
   if (!parsedUrl) return undefined;
   const pathSegments = parsedUrl.pathname.split("/").filter(Boolean);
   if (pathSegments.length < 2) return undefined;
-  return {
-    blobName: decodeSegment(pathSegments.slice(1).join("/")),
-    containerName: decodeSegment(takeOne(pathSegments)),
-  };
+  else
+    return {
+      blobName: decodeSegment(pathSegments.slice(1).join("/")),
+      containerName: decodeSegment(takeOne(pathSegments)),
+    };
 };
