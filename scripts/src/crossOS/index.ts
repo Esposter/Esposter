@@ -1,6 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "node:child_process";
+import { constants } from "node:os";
 
 // oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#` map can reach
 import packageJson from "../../../package.json" with { type: "json" };
@@ -29,4 +30,11 @@ const proc = spawn([command, ...args].join(" "), {
   shell: true,
   stdio: "inherit",
 });
-proc.on("exit", (code) => process.exit(code));
+proc.on("exit", (code, signal) => {
+  // A child killed by a signal carries no exit code, and exiting with that absence is exiting 0 — a run nothing
+  // Finished reported as a success, to CI as much as to the caller. 128 plus the signal number is what a shell
+  // Reports for the same death, so wrapping a command in this one changes nothing about the status it answers with.
+  if (code !== null) process.exit(code);
+  else if (signal) process.exit(128 + constants.signals[signal]);
+  else process.exit(1);
+});
