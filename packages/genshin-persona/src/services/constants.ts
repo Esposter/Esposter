@@ -40,10 +40,14 @@ export const SOURCE_DIRECTORY: string = join(import.meta.dirname, "..");
 export const PLUGIN_DIRECTORY: string = join(SOURCE_DIRECTORY, "..");
 export const SCRIPTS_DIRECTORY: string = join(PLUGIN_DIRECTORY, "scripts");
 export const RUNTIME_SOURCE_DIRECTORY: string = join(PLUGIN_DIRECTORY, "runtime");
+// The two user settings that name a script point at a launcher in the state directory, re-aimed at the running
+// Install on every session start, since an install lands under a directory named after its version
 export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
 export const STATUS_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "status.ts");
+export const SPEAK_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "speak.mjs");
+export const SPEAK_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "speak.ts");
 export const VOICE_SERVER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "voice.ts");
-export const WARM_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "warm.ts");
+export const SEND_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "send.ts");
 export const SPINNER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "spinner.ts");
 // A named pipe on Windows, a socket file elsewhere: one address per machine and no port to collide on
 export const VOICE_SOCKET_PATH: string =
@@ -201,10 +205,6 @@ export const VOICE_SAMPLE_RATE = 24_000;
 // Reference's tokens on every unit, so the trim is what the vendor calls enough — about five seconds — and a likeness
 // Measured no lower than at ten, where three seconds leave the model no ending to find
 export const MAX_REFERENCE_SECONDS = 5;
-// The units after the first hold sentences up to this many characters — about forty words, where a Chatterbox
-// Integration chunks long text — since every unit pays the reference's tokens through the language model and the
-// Vocoder again, and a sentence read alone carries no pitch or pace from the one before it
-export const MAX_SPEECH_UNIT_CHARACTERS = 250;
 // A clip's energy per frame, this long and this far apart; a frame this far below the loudest is not speech
 export const FRAME_SECONDS = 0.04;
 export const HOP_SECONDS = 0.01;
@@ -216,7 +216,8 @@ export const MIN_TURN_PAUSE_SECONDS = 0.4;
 // Lets a sentence the model finds no end for run for minutes and then hand the vocoder a sequence it rejects
 export const MAX_SPEECH_TOKENS_PER_CHARACTER = 4;
 export const MIN_SPEECH_TOKEN_CEILING = 100;
-// What a warm request synthesizes and drops, so the graph's first-call cost is paid before the first reply
+// What a warm request synthesizes for a character with no card, so the graph's first-call cost is paid before the
+// First reply; a carded character's warm synthesizes their greeting, which the first reply opens with
 export const WARM_TEXT = "Ready.";
 // What the `voice` verb speaks once set up, so the person hears the voice before the first reply does
 export const VOICE_PROOF_TEXT = "The voice is set up, and every reply is read from here on.";

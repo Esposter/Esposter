@@ -1,26 +1,33 @@
 import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { checkIsSilent } from "#src/services/checkIsSilent";
+import { SEND_SCRIPT_PATH } from "#src/services/constants";
 import { getSpeechRequest } from "#src/services/getSpeechRequest";
-import { getSpokenProse } from "#src/services/getSpokenProse";
+import { getSpokenLines } from "#src/services/getSpokenLines";
 import { parseHookInput } from "#src/services/parseHookInput";
+import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readSessionCharacterName } from "#src/services/readSessionCharacterName";
 import { readStdin } from "#src/services/readStdin";
 import { readVoiceLanguage } from "#src/services/readVoiceLanguage";
 import { registerQuietExit } from "#src/services/registerQuietExit";
-import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
+import { spawnDetachedScript } from "#src/services/spawnDetachedScript";
 
-// A reply that cannot be spoken is a reply that is not spoken: nothing to print, nothing to block. The gate is the
-// Dub the `voice` verb wrote, since a machine without one has no engine to speak with, then whether the reply
-// Would be heard at all, since every cost of one is paid before the volume is ever applied
+// The MessageDisplay hook, run on every flushed piece of a reply and waited on by the display, so it does the least
+// A hook can: the gates, which are file reads, the spoken lines in the piece, and one detached process that
+// Delivers them — a synthesizer that is not running costs a spawn and a wait inside the load budget, which is not
+// The display's time to spend. A piece that cannot be spoken is one that is not spoken: nothing to print, nothing
+// To block
 registerQuietExit();
 const language = readVoiceLanguage();
 if (language && !checkIsSilent()) {
   const input = await readStdin();
-  const { last_assistant_message: reply = "", session_id: sessionId = "" } = parseHookInput(input);
-  const text = getSpokenProse(reply);
-  const name = readSessionCharacterName(sessionId);
-  if (text && name) {
-    const request = await getSpeechRequest(VoiceRequestType.Speak, name, language, text);
-    await sendVoiceRequest(request);
+  const { delta = "", session_id: sessionId = "", turn_id: turnId = "" } = parseHookInput(input);
+  const lines = getSpokenLines(delta);
+  if (lines.length > 0) {
+    const name = readSessionCharacterName(sessionId);
+    if (name) {
+      const personaCard = await readPersonaCard(name);
+      const request = getSpeechRequest(VoiceRequestType.Speak, name, personaCard, language, lines, turnId);
+      spawnDetachedScript(SEND_SCRIPT_PATH, JSON.stringify(request));
+    }
   }
 }

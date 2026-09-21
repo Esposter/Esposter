@@ -24,7 +24,7 @@ A line's file on the wiki is `VO_`, a dub prefix, the character's name and the l
 
 ```mermaid
 flowchart TD
-    Reply["Stop hook — the reply's prose"]
+    Reply["MessageDisplay hook — a reply's spoken line"]
     Who["Who is this session speaking as?<br/>the pin, else the recorded pick"]
     Card{"Does their card<br/>name a reference?"}
     Map{"Did the measurement<br/>generate one?"}

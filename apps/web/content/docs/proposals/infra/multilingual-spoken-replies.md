@@ -9,7 +9,7 @@ Today the dub picks **whose** voice reads a reply and nothing else: `ja` clones 
 
 ## Scope
 
-**Today:** one engine, Chatterbox Turbo, loaded by model id through the Transformers.js `ChatterboxModel` class; a reply's prose cut into sentences by ASCII sentence terminators and dropped when no Latin letter is in it; the dub code carried on every request and used for one thing, the reference clip's wiki file prefix; each sentence synthesized, then vocoded once, then played as one WAV while the next is generated.
+**Today:** one engine, Chatterbox Turbo, loaded by model id through the Transformers.js `ChatterboxModel` class; a reply's spoken lines — one or two sentences each — dropped when no Latin letter is in one or a letter of another script is; the dub code carried on every request and used for one thing, the reference clip's wiki file prefix; each line synthesized, then vocoded once, then played as one WAV while the next is generated.
 
 **This adds:**
 
@@ -30,7 +30,7 @@ The work below starts when a **released** version of the runtime manifest's one 
 
 ```mermaid
 flowchart TD
-    Reply[Reply text] --> Sentence[First sentence<br/>terminators of every script]
+    Reply[A spoken line] --> Sentence[Its sentences<br/>terminators of every script]
     Sentence --> Script{Script of the sentence}
     Script -- Latin anywhere --> En["[en] token"]
     Script -- else kana, else Han --> Ja["[ja] or [zh] token"]
@@ -57,8 +57,8 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 ### The input
 
 - **Script detection**, one function over the sentence with Unicode script properties, in one precedence a mixed sentence is resolved by: Latin anywhere → `en`; else Hiragana or Katakana → `ja`; else Han → `zh`; else Hangul → `ko`; else nothing the model reads → the sentence is not spoken and `voice.log` says why. The token is `[<code>]` prefixed to the text, the format the model card gives. Latin is first because replies are English unless asked otherwise, so a reply that quotes one Japanese phrase inside English prose is English; the cost is the converse, a Japanese sentence carrying one English word read as `[en]`, and a rule that weighs the scripts rather than ranking them waits for a reply somebody has heard go wrong.
-- **Sentence terminators.** `splitSentences` cuts on `.`, `!` and `?` followed by white space; the fullwidth `。`, `！` and `？` join them, with no white-space requirement, because those scripts put none after a sentence. Without this a Japanese reply is one chunk, and the streaming that makes a long reply bearable does nothing for it.
-- **The interim gate already in place** — `splitSentences` drops a sentence with no Latin letter, so the engine never sees text it cannot read and the ladder never moves for it. The script detection above replaces that gate rather than sitting beside it.
+- **Sentence terminators.** A spoken line is a sentence or two, and the clause cut below starts from its sentences: `.`, `!` and `?` followed by white space, joined by the fullwidth `。`, `！` and `？` with no white-space requirement, because those scripts put none after a sentence. Without this a Japanese line is one chunk, and the streaming that makes a longer line bearable does nothing for it.
+- **The interim gate already in place** — `checkIsReadable` drops a line with no Latin letter, or with a letter of another script in it, so the engine never sees text it cannot read and the ladder never moves for it. The script detection above replaces that gate rather than sitting beside it.
 
 ### The output
 
@@ -82,19 +82,19 @@ Every rule on the [spoken replies](/docs/infra/claude-interface/spoken-replies) 
 
 The existing files the work touches, with the role each plays after the change.
 
-| File                                                              | Role                                                                                          |
-| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
-| `packages/genshin-persona/runtime/package.json`                   | The one dependency whose release is the gate                                                  |
-| `packages/genshin-persona/src/services/constants.ts`              | The model id, the dtypes re-measured, the guidance and sampling constants                     |
-| `packages/genshin-persona/src/services/createVoiceSynthesizer.ts` | Generation with guidance; clauses synthesized and checked one at a time                       |
-| `packages/genshin-persona/src/services/splitSentences.ts`         | Terminators of every script the roster speaks                                                 |
-| `packages/genshin-persona/src/services/getSpeechRequest.ts`       | The script detected and the language token attached; the unreadable dropped                   |
-| `packages/genshin-persona/src/models/SpeechRequest.ts`            | The text's language beside the dub, two fields where there was one                            |
-| `packages/genshin-persona/src/models/VoiceLanguage.ts`            | Unchanged codes — the dub's and the model's tokens are the same ISO spelling                  |
-| `packages/genshin-persona/src/services/createAudioPlayer.ts`      | A player fed clauses rather than a unit of sentences at a time                                |
-| `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer streaming chunks under the one-pending-request rule                  |
-| `scripts/src/services/voiceMatch/measureCharacterReference.ts`    | The likeness re-measured through the new engine                                               |
-| `apps/web/content/docs/infra/claude-interface/spoken-replies.md`  | Rewritten as-built: the engine section, the ladder's memory, streaming no longer a "does not" |
+| File                                                              | Role                                                                                              |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| `packages/genshin-persona/runtime/package.json`                   | The one dependency whose release is the gate                                                      |
+| `packages/genshin-persona/src/services/constants.ts`              | The model id, the dtypes re-measured, the guidance and sampling constants                         |
+| `packages/genshin-persona/src/services/createVoiceSynthesizer.ts` | Generation with guidance; clauses synthesized and checked one at a time                           |
+| `packages/genshin-persona/src/services/checkIsReadable.ts`        | The script of a line detected rather than gated on, terminators of every script the roster speaks |
+| `packages/genshin-persona/src/services/getSpeechRequest.ts`       | The script detected and the language token attached; the unreadable dropped                       |
+| `packages/genshin-persona/src/models/SpeechRequest.ts`            | The text's language beside the dub, two fields where there was one                                |
+| `packages/genshin-persona/src/models/VoiceLanguage.ts`            | Unchanged codes — the dub's and the model's tokens are the same ISO spelling                      |
+| `packages/genshin-persona/src/services/createAudioPlayer.ts`      | A player fed clauses rather than a whole line at a time                                           |
+| `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer streaming chunks under the one-pending-request rule                      |
+| `scripts/src/services/voiceMatch/measureCharacterReference.ts`    | The likeness re-measured through the new engine                                                   |
+| `apps/web/content/docs/infra/claude-interface/spoken-replies.md`  | Rewritten as-built: the engine section, the ladder's memory, streaming no longer a "does not"     |
 
 ## Notes
 

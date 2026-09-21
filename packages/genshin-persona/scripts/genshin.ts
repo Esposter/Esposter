@@ -5,6 +5,7 @@ import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { VoiceStatus } from "#src/models/VoiceStatus";
 import { checkIsMuted } from "#src/services/checkIsMuted";
 import { checkIsOwnVoiceLine } from "#src/services/checkIsOwnVoiceLine";
+import { checkIsPluginHookEntry } from "#src/services/checkIsPluginHookEntry";
 import { checkIsPluginSpinner } from "#src/services/checkIsPluginSpinner";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { checkIsRuntimeInstalled } from "#src/services/checkIsRuntimeInstalled";
@@ -18,6 +19,8 @@ import {
   MODELS_DIRECTORY,
   RUNTIME_MANIFEST_PATH,
   SESSION_ID_ENVIRONMENT_VARIABLE,
+  STATUS_LAUNCHER_PATH,
+  STATUS_SCRIPT_PATH,
   VOICE_CPU_DEVICE,
   VOICE_LOG_PATH,
   VOICE_PROOF_TEXT,
@@ -37,6 +40,7 @@ import { getLanguageDisplayName } from "#src/services/getLanguageDisplayName";
 import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
 import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLine";
 import { getSpeechRequest } from "#src/services/getSpeechRequest";
+import { getWarmRequest } from "#src/services/getWarmRequest";
 import { installVoiceRuntime } from "#src/services/installVoiceRuntime";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
 import { readCardedRoster } from "#src/services/readCardedRoster";
@@ -60,11 +64,12 @@ import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
 import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
 import { setMuted } from "#src/services/setMuted";
 import { writeInterfaceLanguage } from "#src/services/writeInterfaceLanguage";
+import { writeLauncher } from "#src/services/writeLauncher";
 import { writePin } from "#src/services/writePin";
 import { writeReplyLanguage } from "#src/services/writeReplyLanguage";
 import { writeSessionSpinner } from "#src/services/writeSessionSpinner";
+import { writeSpeakHook } from "#src/services/writeSpeakHook";
 import { writeSpinner } from "#src/services/writeSpinner";
-import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
 import { writeUserSettings } from "#src/services/writeUserSettings";
 import { writeVoiceLanguage } from "#src/services/writeVoiceLanguage";
 import { writeVolume } from "#src/services/writeVolume";
@@ -119,6 +124,7 @@ const getStatusReport = async () => {
     interfaceLanguage: getLanguageDisplayName(language, language),
     isFromSessionRecord: Boolean(character),
     isMuted: checkIsMuted(),
+    isPluginSpeakHook: settings.hooks?.MessageDisplay?.some((entry) => checkIsPluginHookEntry(entry)) ?? false,
     isPluginSpinner: checkIsPluginSpinner(settings),
     isPluginStatusLine: checkIsPluginStatusLine(settings.statusLine),
     isReplyLanguageCascaded: !replyLanguage,
@@ -238,7 +244,7 @@ switch (verb) {
     for (const character of roster) console.log(getRosterLine(character));
     break;
   case GenshinVerb.Setup: {
-    writeStatusLauncher();
+    writeLauncher(STATUS_LAUNCHER_PATH, STATUS_SCRIPT_PATH);
     const userSettings = readUserSettings();
     const settings = getSettingsWithStatusLine(userSettings);
     writeUserSettings(settings);
@@ -378,14 +384,15 @@ switch (verb) {
     const character = await getCurrentCharacter();
     if (!character) {
       writeVoiceLanguage(name);
+      writeSpeakHook();
       console.log(strings.voiceLanguageWritten(name));
       break;
     }
 
-    const reference = readCharacterReference(character.name, await readPersonaCard(character.name));
-    if (!reference) console.log(strings.noReference(character.displayName));
+    const personaCard = await readPersonaCard(character.name);
+    if (!readCharacterReference(character.name, personaCard)) console.log(strings.noReference(character.displayName));
 
-    const warmed = await sendVoiceRequest(await getSpeechRequest(VoiceRequestType.Warm, character.name, name, ""));
+    const warmed = await sendVoiceRequest(getWarmRequest(character.name, personaCard, name));
     const [status, device] = warmed.split(VOICE_STATUS_SEPARATOR);
     if (status !== VoiceStatus.Ok) {
       console.error(strings.warmRequestUnanswered(status || "unreachable", VOICE_LOG_PATH));
@@ -394,7 +401,10 @@ switch (verb) {
     }
 
     writeVoiceLanguage(name);
-    await sendVoiceRequest(await getSpeechRequest(VoiceRequestType.Speak, character.name, name, VOICE_PROOF_TEXT));
+    writeSpeakHook();
+    await sendVoiceRequest(
+      getSpeechRequest(VoiceRequestType.Speak, character.name, personaCard, name, [VOICE_PROOF_TEXT]),
+    );
     console.log(strings.spoke(character.displayName, device ?? ""));
     break;
   }

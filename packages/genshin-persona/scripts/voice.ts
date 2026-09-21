@@ -11,13 +11,11 @@ import {
   RUNTIME_MANIFEST_PATH,
   VOICE_IDLE_TIMEOUT_MS,
   VOICE_STATUS_SEPARATOR,
-  WARM_TEXT,
 } from "#src/services/constants";
 import { createAudioPlayer } from "#src/services/createAudioPlayer";
 import { createClipDecoder } from "#src/services/createClipDecoder";
 import { createLatestWinsQueue } from "#src/services/createLatestWinsQueue";
 import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
-import { getSpeechUnits } from "#src/services/getSpeechUnits";
 import { getWavBytes } from "#src/services/getWavBytes";
 import { listenVoiceSocket } from "#src/services/listenVoiceSocket";
 import { parseVoiceRequest } from "#src/services/parseVoiceRequest";
@@ -57,22 +55,26 @@ const synthesizerLoad = createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
   onFallback: writeVoiceLog,
   rungName: settledDevice,
 });
+const getSpeakerKey = ({ language, name, stem }: SpeechRequest) => [language, name, stem].join("/");
 const speakers = new Map<string, SpeakerTensors>();
+// A warm's clip, kept: a carded character's warm synthesizes their greeting, which the output style opens the first
+// Reply with, so that line plays from here rather than being synthesized again
+const warmClips = new Map<string, PcmClip>();
 // The reference is fetched, decoded and encoded once per character, dub and line per process
-const readSpeaker = async ({ language, name, stem }: SpeechRequest) => {
+const readSpeaker = async (request: SpeechRequest) => {
   const [synthesizer, decoder] = await Promise.all([synthesizerLoad, decoderLoad]);
-  const key = [language, name, stem].join("/");
+  const key = getSpeakerKey(request);
   const speaker = speakers.get(key);
   if (speaker) return speaker;
 
-  const clip = await readReferenceClip(name, stem, language, decoder);
+  const clip = await readReferenceClip(request.name, request.stem, request.language, decoder);
   if (!clip) return undefined;
 
   const encoded = await synthesizer.encodeReference(clip);
   speakers.set(key, encoded);
   return encoded;
 };
-// Each unit is synthesized while the one before it plays; a warm has no player and speaks nothing
+// Each line is synthesized while the one before it plays; a warm has no player and speaks nothing
 const speak = async (
   request: SpeechRequest,
   player: AudioPlayer | undefined,
@@ -91,10 +93,10 @@ const speak = async (
     const playerFailure = await playAudio(audio);
     if (playerFailure) writeVoiceLog(`the player did not play: ${playerFailure}`);
   };
-  const units = player ? getSpeechUnits(request.text) : [WARM_TEXT];
   let playback: Promise<void> = Promise.resolve();
-  for (const unit of units) {
-    const clip = await synthesizer.synthesize(unit, speaker);
+  for (const line of request.lines) {
+    const clipKey = `${getSpeakerKey(request)}/${line}`;
+    const clip = warmClips.get(clipKey) ?? (await synthesizer.synthesize(line, speaker));
     if (!clip) {
       await playback;
       return VoiceStatus.Error;
@@ -105,11 +107,17 @@ const speak = async (
       writeVoiceDevice(settledDevice);
     }
 
-    if (!player) continue;
+    if (!player) {
+      warmClips.set(clipKey, clip);
+      continue;
+    }
 
     await playback;
-    // A warm waiting is not a reply, and runs once the reading ends rather than cutting it
-    if (readPending()?.type === VoiceRequestType.Speak) return VoiceStatus.Superseded;
+    // A warm waiting is not a reply, and runs once the reading ends rather than cutting it; so does the rest of
+    // This reply, which is read in order
+    const pendingRequest = readPending();
+    if (pendingRequest?.type === VoiceRequestType.Speak && pendingRequest.turnId !== request.turnId)
+      return VoiceStatus.Superseded;
 
     playback = play(player, clip);
   }
@@ -117,7 +125,7 @@ const speak = async (
   await playback;
   return VoiceStatus.Ok;
 };
-// The player is spawned before the first unit is synthesized, so its start is paid under that synthesis rather than
+// The player is spawned before the first line is synthesized, so its start is paid under that synthesis rather than
 // In front of the first sound. A synthesis that throws drops its request and keeps the engine
 const queue = createLatestWinsQueue(async (request: SpeechRequest, readPending: () => SpeechRequest | undefined) => {
   const player = request.type === VoiceRequestType.Speak ? createAudioPlayer() : undefined;

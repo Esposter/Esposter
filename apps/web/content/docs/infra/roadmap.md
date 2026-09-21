@@ -9,11 +9,15 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 ## Open
 
-- [ ] [Seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) — reading while the reply is written first, since the tool's mid-reply hook is verified on this machine; never pausing, then first sound within a fraction of a second, wait on a GPU that makes speech tokens faster than they are spoken
+No open work.
 
 ## Blocked (a Transformers.js release that loads Chatterbox Multilingual)
 
 - [ ] [Multilingual spoken replies](/docs/proposals/infra/multilingual-spoken-replies) — the text's script picks the model's language token, the dub keeps picking the voice, and the output streams by clause to pay for the slower engine
+
+## Blocked (a GPU that makes speech tokens faster than they are spoken)
+
+- [ ] [Seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) — never pausing, then first sound within a fraction of a second of a spoken line being written; each stage a measurable property with its gate named
 
 ## Blocked (app-side migration off key-based auth first)
 

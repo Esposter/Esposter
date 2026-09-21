@@ -31,12 +31,13 @@ const english: ResolvedLocalization = {
     setupStatusLineKept:
       "Spinner written to user settings, shown from the next session; the status line already there is not ours and was left alone.",
     spoke: (name, device) =>
-      `${name} spoke through the synthesizer on ${device}, where it starts from now; every reply is read from the next one.`,
+      `${name} spoke through the synthesizer on ${device}, where it starts from now. The hook that reads each reply's spoken lines is written to user settings and runs from the next session.`,
     status: ({
       displayName,
       interfaceLanguage,
       isFromSessionRecord,
       isMuted,
+      isPluginSpeakHook,
       isPluginSpinner,
       isPluginStatusLine,
       isReplyLanguageCascaded,
@@ -57,7 +58,7 @@ const english: ResolvedLocalization = {
           ? `Voice: the ${voiceLanguage} dub, runtime ${isRuntimeInstalled ? "installed" : "not installed"}, ${voiceDevice ? `speaking on ${voiceDevice}` : "not yet spoken"}.`
           : "Voice: not set up, so no reply is read aloud.",
         `Replies ${isMuted ? "muted" : `unmuted at volume ${volume}`}.`,
-        `Status line ${isPluginStatusLine ? "ours" : "not ours, and left alone"}; spinner ${isPluginSpinner ? "ours" : "not ours"}.`,
+        `Status line ${isPluginStatusLine ? "ours" : "not ours, and left alone"}; spinner ${isPluginSpinner ? "ours" : "not ours"}; speak hook ${isPluginSpeakHook ? "ours" : "not written"}.`,
         isPluginSpinner
           ? "A character or language changed since this session started shows in the spinner at the next one."
           : "",
@@ -65,7 +66,7 @@ const english: ResolvedLocalization = {
         .filter(Boolean)
         .join("\n"),
     teardownDone:
-      "Status line and spinner removed from user settings; both go at the next session. The voice's runtime, weights, references and dub are removed; the pick records, the pin and the languages stay.",
+      "Status line, spinner and speak hook removed from user settings; all three go at the next session. The voice's runtime, weights, references and dub are removed; the pick records, the pin and the languages stay.",
     unmuted: "Spoken replies unmuted.",
     usage: (verbs) => `Usage: genshin.ts <${verbs}> [name]`,
     usingInSession: "Speaking as this character from this reply, in this session alone.",
