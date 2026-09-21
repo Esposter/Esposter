@@ -209,6 +209,11 @@ export const VOICE_DEVICE_LADDER: [VoiceDeviceRung, ...VoiceDeviceRung[]] = [
   { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_CPU_DEVICE), name: `${VOICE_GPU_DEVICE}-language-model` },
   { devices: getVoiceDeviceMap(VOICE_CPU_DEVICE, VOICE_CPU_DEVICE), name: VOICE_CPU_DEVICE },
 ];
+// The runtime names the provider that raised a failure by its source path, in either separator. A failure the GPU
+// Provider raises — a device lost under load — is the rung's, and the line reads on the rung below; the CPU provider
+// Is deterministic, so a failure it raises is the line's and would recur on every rung
+// oxlint-disable-next-line typescript/no-inferrable-types
+export const GPU_PROVIDER_FAILURE_REGEX: RegExp = new RegExp(String.raw`providers[\\/]${VOICE_GPU_DEVICE}`, "u");
 // A loudest frame at least this loud, since a vocoder run wrong lands tens of decibels under the engine's level, and
 // A quietest frame the speech floor below it, since a sentence has pauses where noise has none
 export const MIN_SPEECH_PEAK_DB = -40;
@@ -229,8 +234,7 @@ export const MIN_TURN_PAUSE_SECONDS = 0.4;
 // Lets a sentence the model finds no end for run for minutes and then hand the vocoder a sequence it rejects
 export const MAX_SPEECH_TOKENS_PER_CHARACTER = 4;
 export const MIN_SPEECH_TOKEN_CEILING = 100;
-// What a warm request synthesizes for a character with no card, so the graph's first-call cost is paid before the
-// First reply; a carded character's warm synthesizes their greeting, which the first reply opens with
+// What a warm request synthesizes, so the graph's first-call cost is paid before the first reply
 export const WARM_TEXT = "Ready.";
 // What the `voice` verb speaks once set up, so the person hears the voice before the first reply does
 export const VOICE_PROOF_TEXT = "The voice is set up, and every reply is read from here on.";

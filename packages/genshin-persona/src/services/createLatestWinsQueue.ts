@@ -5,9 +5,10 @@ import { VoiceStatus } from "#src/models/VoiceStatus";
 // Drops what of the older one is still waiting. The caller of a dropped item learns it was superseded, and the
 // Item running when a newer one arrived can read what is waiting on it, so a reading already under way can stop
 // At its next line for a newer reply rather than read a stale one out over it — and can tell that from a request
-// That only warms, which is not worth cutting a line for. Every push chains one turn onto the last — the first of
-// A run starts at once, every later one waits for the one before — and a turn whose item was dropped before it
-// Finds nothing to run
+// That only warms, which is not worth cutting a line for. An item with no turn — a warm, the proof the `voice`
+// Verb speaks — is not a newer reply, and queues behind whatever waits. Every push chains one turn onto the last —
+// The first of a run starts at once, every later one waits for the one before — and a turn whose item was dropped
+// Before it finds nothing to run
 export const createLatestWinsQueue = <T extends { turnId: string }>(
   run: (item: T, readPending: () => T | undefined) => Promise<VoiceStatus>,
 ): ((item: T) => Promise<VoiceStatus>) => {
@@ -27,7 +28,7 @@ export const createLatestWinsQueue = <T extends { turnId: string }>(
 
   return (item) => {
     const [head] = pending;
-    if (head && head.item.turnId !== item.turnId) {
+    if (item.turnId && head && head.item.turnId !== item.turnId) {
       for (const { resolve } of pending) resolve(VoiceStatus.Superseded);
       pending = [];
     }

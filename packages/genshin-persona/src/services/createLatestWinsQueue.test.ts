@@ -3,10 +3,12 @@ import { createLatestWinsQueue } from "#src/services/createLatestWinsQueue";
 import { describe, expect, test, vi } from "vitest";
 
 describe(createLatestWinsQueue, () => {
-  // A turn's opening and closing lines, and the opening line of the turn after it
-  const opening = { turnId: "" };
-  const closing = { turnId: "" };
-  const later = { turnId: " " };
+  // A turn's opening and closing lines, the opening line of the turn after it, and a warm, which has no turn
+  const turnId = crypto.randomUUID();
+  const opening = { turnId };
+  const closing = { turnId };
+  const later = { turnId: crypto.randomUUID() };
+  const warm = { turnId: "" };
   const getRun = (firstRun: Promise<VoiceStatus>) =>
     vi.fn<(item: { turnId: string }, readPending: () => undefined | { turnId: string }) => Promise<VoiceStatus>>(
       (item) => (item === opening ? firstRun : Promise.resolve(VoiceStatus.Ok)),
@@ -46,6 +48,24 @@ describe(createLatestWinsQueue, () => {
     await expect(third).resolves.toBe(VoiceStatus.Ok);
     expect(run).toHaveBeenCalledTimes(2);
     expect(run.mock.calls[1]?.[0]).toBe(later);
+  });
+
+  test("queues an item with no turn behind what is waiting rather than dropping it", async () => {
+    expect.hasAssertions();
+
+    const { promise: firstRun, resolve: endFirstRun } = Promise.withResolvers<VoiceStatus>();
+    const run = getRun(firstRun);
+    const push = createLatestWinsQueue(run);
+    const first = push(opening);
+    const second = push(closing);
+    const third = push(warm);
+    endFirstRun(VoiceStatus.Ok);
+
+    await expect(first).resolves.toBe(VoiceStatus.Ok);
+    await expect(second).resolves.toBe(VoiceStatus.Ok);
+    await expect(third).resolves.toBe(VoiceStatus.Ok);
+    expect(run).toHaveBeenCalledTimes(3);
+    expect(run.mock.calls[2]?.[0]).toBe(warm);
   });
 
   test("lets the item already running read what is waiting on it", async () => {
