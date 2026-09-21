@@ -37,7 +37,6 @@ describe(writeSessionSpinner, () => {
   let settings: UserSettings = {};
 
   beforeEach(() => {
-    vi.clearAllMocks();
     settings = getSettingsWithSpinner({ model: "model" }, otherSpinner);
     readUserSettings.mockImplementation(() => structuredClone(settings));
     writeUserSettings.mockImplementation((newSettings) => {

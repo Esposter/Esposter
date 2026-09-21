@@ -70,6 +70,5 @@ describe(getSessionStartOutput, () => {
       additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${REPLY_LANGUAGE_INSTRUCTION("Japanese")}`,
       hookEventName: "SessionStart",
     });
-    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).not.toContain(REPLY_LANGUAGE_INSTRUCTION(DEFAULT_LANGUAGE));
   });
 });

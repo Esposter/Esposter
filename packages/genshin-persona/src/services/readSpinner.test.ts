@@ -6,7 +6,10 @@ import { DEFAULT_LANGUAGE } from "#src/services/constants";
 import { readSpinner } from "#src/services/readSpinner";
 import { describe, expect, test, vi } from "vitest";
 
-const { readVoiceLines } = vi.hoisted(() => ({ readVoiceLines: vi.fn<typeof baseReadVoiceLines>() }));
+// No character here has lines, since the gerunds are what these suites read
+const { readVoiceLines } = vi.hoisted(() => ({
+  readVoiceLines: vi.fn<typeof baseReadVoiceLines>(() => Promise.resolve([])),
+}));
 
 vi.mock(import("#src/services/readVoiceLines"), () => ({ readVoiceLines }));
 
@@ -21,7 +24,6 @@ describe(readSpinner, () => {
 
   test("takes a character's gerunds off the card under English", async () => {
     expect.hasAssertions();
-    readVoiceLines.mockResolvedValue([]);
 
     const { verbs } = await readSpinner(character, personaCard, DEFAULT_LANGUAGE);
 
@@ -30,7 +32,6 @@ describe(readSpinner, () => {
 
   test("takes them off the language's module under another language", async () => {
     expect.hasAssertions();
-    readVoiceLines.mockResolvedValue([]);
 
     const { verbs } = await readSpinner(character, personaCard, "Japanese");
 
@@ -41,7 +42,6 @@ describe(readSpinner, () => {
   // Spinner; a character the language has no entry for shows the base verbs alone instead
   test("shows the base verbs alone for a character the language has no gerunds for", async () => {
     expect.hasAssertions();
-    readVoiceLines.mockResolvedValue([]);
 
     const { verbs } = await readSpinner({ displayName: "name", name: "name" }, personaCard, "Japanese");
 
@@ -52,7 +52,6 @@ describe(readSpinner, () => {
   // English gerunds there would lose verbs without ever mixing two scripts
   test("keeps the card's gerunds under a language whose module is not written yet", async () => {
     expect.hasAssertions();
-    readVoiceLines.mockResolvedValue([]);
 
     const { verbs } = await readSpinner(character, personaCard, "Turkish");
 

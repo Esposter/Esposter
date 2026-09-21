@@ -40,7 +40,6 @@ describe(resolveSessionCharacter, () => {
   let pickRecords: PickRecord[] = [];
 
   beforeEach(() => {
-    vi.clearAllMocks();
     pickRecords = [];
     readPickRecords.mockImplementation(() => [...pickRecords]);
     writePickRecords.mockImplementation((records) => {
