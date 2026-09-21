@@ -5,24 +5,24 @@ description: Proposal — read a reply in the language it is written in, through
 
 # Multilingual spoken replies
 
-Today the dub picks **whose** voice reads a reply and nothing else: `ja` clones the Japanese actor, and the engine still reads English, because Chatterbox Turbo is an English-only model. A reply written in Japanese would reach a tokenizer with no Japanese in it and come back as the near-silence the [device ladder](/docs/infra/claude-interface/spoken-replies) takes for a provider fault, so today it is not sent at all. This proposal makes the language a property of the text rather than a limit of the engine, and shapes both ends of the pipe for the model that allows it.
+Today the dub picks **whose** voice reads a reply and nothing else: `ja` clones the Japanese actor, and the engine still reads English, because Chatterbox Nano is an English-only model. A reply written in Japanese would reach a tokenizer with no Japanese in it and come back as the near-silence the [device ladder](/docs/infra/claude-interface/spoken-replies) takes for a provider fault, so today it is not sent at all. This proposal makes the language a property of the text rather than a limit of the engine, and shapes both ends of the pipe for the model that allows it.
 
 ## Scope
 
-**Today:** one engine, Chatterbox Turbo, loaded by model id through the Transformers.js `ChatterboxModel` class; a reply's spoken lines — one or two sentences each — dropped when no Latin letter is in one or a letter of another script is; the dub code carried on every request and used for one thing, the reference clip's wiki file prefix; each line synthesized, then vocoded once, then played as one WAV while the next is generated.
+**Today:** one engine, Chatterbox Nano, loaded by model id through the Transformers.js `ChatterboxModel` class; a reply's spoken lines — one or two sentences each — dropped when no Latin letter is in one or a letter of another script is; the dub code carried on every request and used for one thing, the reference clip's wiki file prefix; each line synthesized, then vocoded once, then played as one WAV while the next is generated.
 
 **This adds:**
 
 1. **The model** — Chatterbox Multilingual, the 0.5B checkpoint trained on 23 languages including `ja`, `zh` and `ko`, the three dubs beside English the wiki hosts. Its ONNX export exists; what does not yet exist is a Transformers.js release that loads it. That release is the gate, below.
 2. **The input** — the text's language detected from its script and handed to the model as its language token, sentence terminators of every script the roster speaks, and a sentence in a script no model reads dropped before it can be mistaken for a broken device.
-3. **The output** — the sentence synthesized and vocoded in clauses so playback starts before the last token, because the original architecture read at half Turbo's speed when both were measured, and the warm number that made streaming unnecessary will not survive the swap.
-4. **The measurement** — every precision choice and every reference likeness re-measured against the new engine, since all of them were measured against Turbo.
+3. **The output** — the sentence synthesized and vocoded in clauses so playback starts before the last token, because the multilingual checkpoint is the 0.5B architecture, several times Nano's size, and the reading faster than real time that makes streaming unnecessary today will not survive the swap.
+4. **The measurement** — every precision choice and every reference likeness re-measured against the new engine, since all of them were measured against Nano.
 
 Nothing here touches what the dub means to the user: `voice ja` still says whose voice, and the `VoiceLanguage` codes stay the ISO ones because the model's language tokens are spelled the same way.
 
 ## The gate
 
-Transformers.js loads Chatterbox Turbo and no other Chatterbox. The multilingual checkpoint fails at load — no "config.json" in any public export — and would fail at generation if it loaded, because it needs classifier-free guidance the JavaScript generation loop does not implement (Transformers.js issue 1656). The open pull request 1705 adds the guidance path, "min_p" sampling and the processor ordering the Python reference uses, and demonstrates French and German on WebGPU; it also notes that the community exports ship a malformed "post_processor" and that no official export with complete configs exists.
+Transformers.js loads the English Chatterbox exports — Turbo, and Nano through the same class — and no multilingual one. The multilingual checkpoint fails at load — no "config.json" in any public export — and would fail at generation if it loaded, because it needs classifier-free guidance the JavaScript generation loop does not implement (Transformers.js issue 1656). The open pull request 1705 adds the guidance path, "min_p" sampling and the processor ordering the Python reference uses, and demonstrates French and German on WebGPU; it also notes that the community exports ship a malformed "post_processor" and that no official export with complete configs exists.
 
 The work below starts when a **released** version of the runtime manifest's one dependency loads the multilingual checkpoint from a repository that ships its configs — checked the way the `voice` verb already proves an engine, by speaking one sentence. It does not start on the pull request's branch, and it does not start by writing the four-session generation loop by hand against the ONNX runtime: that loop with guidance, sampling and language tokens is precisely the upstream work, and a copy of it here is a second engine to maintain.
 
@@ -50,7 +50,7 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 ### The model
 
 - `VOICE_MODEL_ID` moves to the multilingual export; the English engine's id goes with it, not kept beside — the rollback is git.
-- `VOICE_MODEL_DTYPE` starts from Turbo's choices (half-precision speech encoder, 4-bit language model, full-precision vocoder) as hypotheses, and each is re-measured on one character before it stands.
+- `VOICE_MODEL_DTYPE` starts from the variants the multilingual export ships, and each choice among them is re-measured on one character before it stands.
 - Generation gains the two options the checkpoint needs — the guidance scale and "min_p" — as named constants beside `MAX_SPEECH_TOKENS_PER_CHARACTER`, at the values the model card's reference loop uses. Guidance runs the language model over a batch of two, so the memory a rung needs doubles; the ladder's mechanism is unchanged, and whether the top rung still fits is a fact the first load reports.
 - Chinese needs the Cangjie character mapping the export ships; whether the runtime's processor applies it or the request has to is a question the release answers, and the `[zh]` path is not declared working until a Chinese sentence has been heard.
 
@@ -99,5 +99,5 @@ The existing files the work touches, with the role each plays after the change.
 ## Notes
 
 - The spelling question is settled: `ja` is the wiki's clip prefix, the ISO code and the model's token; "jp" is a country and would be a fourth spelling between the user and three systems that agree.
-- The original architecture carries two inputs Turbo lacks — an exaggeration and a guidance weight per request. A per-character exaggeration read off the card is the obvious use and is out of this proposal's scope; it is a persona feature, and it waits for the ear to say the default reads flat.
+- The original architecture carries two inputs Nano lacks — an exaggeration and a guidance weight per request. A per-character exaggeration read off the card is the obvious use and is out of this proposal's scope; it is a persona feature, and it waits for the ear to say the default reads flat.
 - Who writes a Japanese sentence is already settled and shipped: the reply language of the [persona plugin](/docs/infra/claude-interface/persona-plugin), which the interface language cascades into. This proposal is the other half — making one audible — and until it lands, setting that reply language silences a set-up voice, which the verb says at the moment it would.

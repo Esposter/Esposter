@@ -180,17 +180,18 @@ export const LanguageDubPrefixMap: Record<VoiceLanguage, string> = {
 };
 // A whole number of this scale, applied as a gain; the top is the engine's own level
 export const MAX_VOLUME = 100;
-// A dtype per component, each measured against the character's own voice: the vocoder alone stays full precision,
-// Since its half-precision variant costs a tenth to a fifth of the likeness. The language model's session is keyed
-// `model` and its file `language_model`, so both spellings carry its dtype
-export const VOICE_MODEL_ID = "ResembleAI/chatterbox-turbo-ONNX";
+// The Nano export ships one variant per component, so the dtype map names what exists rather than what was chosen:
+// The vocoder's 4-bit weights over full-precision activations, the language model's and the speech encoder's
+// Over half-precision ones. The language model's session is keyed `model` and its file `language_model`, so both
+// Spellings carry its dtype
+export const VOICE_MODEL_ID = "owensong/chatterbox-nano-ONNX";
 export const VOICE_MODEL_ARCHITECTURE = "ChatterboxModel";
 export const VOICE_MODEL_DTYPE: Record<string, string> = {
-  conditional_decoder: "fp32",
+  conditional_decoder: "q4",
   embed_tokens: "fp16",
   language_model: "q4f16",
   model: "q4f16",
-  speech_encoder: "fp16",
+  speech_encoder: "q4f16",
 };
 export const VOICE_CPU_DEVICE = "cpu";
 export const VOICE_GPU_DEVICE = "webgpu";

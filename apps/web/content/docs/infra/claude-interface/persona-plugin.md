@@ -185,11 +185,11 @@ The card is the per-character half of the persona and the output style is the in
 
 Three settings decide what a session reads, and they are deliberately not one axis — each answers a question the others cannot, and each costs something different to change.
 
-| Tier      | Set                            | What it decides                      | Cost to change                                      |
-| :-------- | :----------------------------- | :----------------------------------- | :-------------------------------------------------- |
-| Replies   | anything                       | what the model writes prose in       | a line of context                                   |
-| Interface | what the data package declares | every word the plugin puts on screen | a state file, and a module for our own words        |
-| Dub       | four                           | whose voice reads a reply            | an install of a couple of gigabytes and a proof run |
+| Tier      | Set                            | What it decides                      | Cost to change                                 |
+| :-------- | :----------------------------- | :----------------------------------- | :--------------------------------------------- |
+| Replies   | anything                       | what the model writes prose in       | a line of context                              |
+| Interface | what the data package declares | every word the plugin puts on screen | a state file, and a module for our own words   |
+| Dub       | four                           | whose voice reads a reply            | an install of about a gigabyte and a proof run |
 
 **The set of interface languages is read off the data package's own language enum**, exported at runtime beside its query functions, so a bump that adds a language is a language the plugin speaks with nothing to edit — the same stance the roster takes, where a new patch is one dependency bump and no generated list. The `language` verb given no argument prints them, which is the whole of the discovery. Each is printed in its own words beside the word a person types for it — `Japanese (日本語)` — and either resolves, so what the verb invites is what it accepts.
 
@@ -197,7 +197,7 @@ Naming a language in its own words, and in any other's, is the runtime's job rat
 
 The master toggle sits at the middle tier and cascades upward only: setting the interface language sets the reply language with it, and either stays overridable on its own afterwards. That is the per-setting customization without a matrix of switches, because an override is only written when somebody wants the two to disagree — labels in one language and prose in another, which is a real want in both directions.
 
-**The dub stays outside the cascade and is reported on rather than changed.** It answers a different question from a set of four, and a multi-gigabyte download must never be a side effect of a labels setting. So the interface verb ends by naming the state the dub is in: set to a language a dub exists for, it says so and names the command that installs it; set to any other, it says plainly that replies keep reading in whichever voice is already set up.
+**The dub stays outside the cascade and is reported on rather than changed.** It answers a different question from a set of four, and a download of most of a gigabyte must never be a side effect of a labels setting. So the interface verb ends by naming the state the dub is in: set to a language a dub exists for, it says so and names the command that installs it; set to any other, it says plainly that replies keep reading in whichever voice is already set up.
 
 ```mermaid
 flowchart TD
