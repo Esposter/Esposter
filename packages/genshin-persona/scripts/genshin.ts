@@ -81,7 +81,7 @@ const getRosterLine = ({ birthday, displayElement, displayName, region, title, v
   [displayName, title, displayElement, region, birthday, `v${version}`].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
 const compareVersionsDescending = (a: Character, b: Character) =>
   b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name);
-// Set in every Bash tool subprocess, so a verb the model runs knows the session it runs in; empty from a shell
+// Empty from a shell, where the tool set nothing
 const sessionId = process.env[SESSION_ID_ENVIRONMENT_VARIABLE] ?? "";
 // The language is read again rather than closed over, because the `language` verb changes it and then prints the
 // Card: the card a verb prints is always in the language in force at the end of that verb
