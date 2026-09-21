@@ -9,7 +9,7 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 ## Open
 
-- [ ] [Seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) — first sound within a fraction of a second of a spoken line being written, by vocoding a line in chunks as its tokens are made; the never-pausing stage before it holds since the engine moved to Nano
+- [ ] [Seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) — first sound within a fraction of a second of a spoken line being written, streamed from inside the line; the never-pausing stage before it holds since the engine moved to Nano
 
 ## Blocked (the character voice still switched on after two weeks of daily use)
 
