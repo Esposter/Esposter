@@ -13,6 +13,8 @@ vi.mock(import("#src/services/jev/readAnswers"), () => ({
 
 describe(readReleaseGate, () => {
   const input = { answers: [], feedback: "feedback", riskBlock: "riskBlock" };
+  // One step inside the band, off either edge
+  const bandStep = 0.01;
   const answerWith = (probability: number) => {
     readAnswers.mockResolvedValue({ isOpen: { noul: probability, type: "noul" } } as never);
   };
@@ -35,13 +37,16 @@ describe(readReleaseGate, () => {
     });
   });
 
-  test.each([0.5, 0.16, 0.84])("escalates %f to the session", async (probability) => {
-    expect.hasAssertions();
+  test.each([0.5, 1 - HIGH_STAKES_CONFIDENCE + bandStep, HIGH_STAKES_CONFIDENCE - bandStep])(
+    "escalates %f to the session",
+    async (probability) => {
+      expect.hasAssertions();
 
-    answerWith(probability);
+      answerWith(probability);
 
-    await expect(readReleaseGate(input)).resolves.toBeUndefined();
-  });
+      await expect(readReleaseGate(input)).resolves.toBeUndefined();
+    },
+  );
 
   // No key, or a tier that failed: the verdict is the session's, as it was before there was a gate
   test("escalates when the tier answers nothing", async () => {

@@ -48,6 +48,12 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const filePath = `${TEST_FILENAME}.ts`;
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
   const readSubjects = (range: string): string[] => runGit(["log", "--format=%s", range], getCwd()).trim().split("\n");
+  // Two sides of one line that rewrite it differently, and the resolution the resolver writes from both. Letters
+  // Rather than the canonical space and double space: a patch id ignores whitespace, so `git cherry` reads two
+  // Sides that differ only in it as one commit already ported and replays nothing
+  const queueContent = "a";
+  const fixContent = "b";
+  const resolvedContent = `${fixContent}${queueContent}`;
   // A window ported one queue commit with a fix landing inside its context lines, which is the drift that makes
   // `git cherry` read the copy as still owed; the queue then grew one more commit
   const setupDriftedPort = (): { developSha: string; owedSha: string; queueSha: string } => {
@@ -112,7 +118,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     movedPath: string,
     movedContent: string,
   ): { developSha: string; movedSha: string; queueSha: string } => {
-    const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, "fix"));
+    const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, fixContent));
     switchTo(`${developSha}~1`);
     const queueSha = publish(QUEUE_BRANCH, commitFile(nestedPath, ""));
     const movedSha = publish(TEST_FILENAME, commitFile(movedPath, movedContent));
@@ -135,7 +141,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   test("leaves the rewrite unpushed when a commit the session pushed under it conflicts with it", async () => {
     expect.hasAssertions();
 
-    const { developSha, movedSha, queueSha } = setupMovedQueue(filePath, "queue");
+    const { developSha, movedSha, queueSha } = setupMovedQueue(filePath, queueContent);
 
     await expect(syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha })).resolves.toBeUndefined();
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(movedSha);
@@ -161,15 +167,15 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const rootSha = readSha("HEAD");
     commitFile(filePath, "");
     const baseSha = publish(DEVELOP_BRANCH, "HEAD");
-    const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, "queue"));
+    const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, queueContent));
     switchTo(baseSha);
-    const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, "fix"));
+    const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, fixContent));
     switchTo(rootSha);
     return { developSha, queueSha };
   };
   // What the resolver does by hand: both sides in the file, staged, and the sequence resumed
   const resolveConflict = (): void => {
-    writeFileSync(join(getCwd(), filePath), "fix queue");
+    writeFileSync(join(getCwd(), filePath), resolvedContent);
     runGit(["add", filePath], getCwd());
     runGit(["cherry-pick", "--continue"], getCwd());
   };
@@ -215,10 +221,10 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     commitFile(filePath, "");
     const baseSha = publish(DEVELOP_BRANCH, "HEAD");
     const absorbedSha = commitFile(nestedPath, "");
-    const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, "queue"));
+    const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, queueContent));
     switchTo(baseSha);
     commitFiles([nestedPath, `${nestedPath}.ts`], "");
-    const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, "fix"));
+    const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, fixContent));
     switchTo(rootSha);
     return { absorbedSha, developSha, queueSha };
   };
@@ -287,7 +293,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runSession).toHaveBeenCalledTimes(1);
     expect(runSession.mock.calls[0]?.[0].prompt).toContain(`stopped on ${queueSha} at these paths:\n\n- ${filePath}`);
     expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath]);
-    expect(runGit(["show", "--format=", syncedSha, "--", filePath], getCwd())).toContain("+fix queue");
+    expect(runGit(["show", "--format=", syncedSha, "--", filePath], getCwd())).toContain(`+${resolvedContent}`);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
 
@@ -305,7 +311,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     await expect(
       syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the resolver left afc657d5e91e3511c65c73f432615a705c835c36 unresolved (attempt 1 of 3)]`,
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the resolver left 6ca8469b467e76e23cc04181de825f8d94960a44 unresolved (attempt 1 of 3)]`,
     );
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
   });
@@ -319,7 +325,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     await expect(
       syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the resolver left afc657d5e91e3511c65c73f432615a705c835c36 unresolved (attempt 1 of 3)]`,
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the resolver left 6ca8469b467e76e23cc04181de825f8d94960a44 unresolved (attempt 1 of 3)]`,
     );
     expect(runGh).toHaveBeenCalledTimes(2);
     expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${queueSha}/comments`);
@@ -330,7 +336,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { developSha, queueSha } = setupConflict();
-    const commitComments = Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
+    const commitComments = Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
       body: getMarker(SYNC_FAILED_MARKER, queueSha),
       id,
       updated_at: "",
@@ -450,9 +456,9 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, oversizedSha, queueSha } = setupOversized();
     runSession.mockImplementation(() => {
       const baseSha = readSha("HEAD");
-      const theirsSha = commitFile(filePath, "theirs");
+      const theirsSha = commitFile(filePath, queueContent);
       switchTo(baseSha);
-      commitFile(filePath, "ours");
+      commitFile(filePath, fixContent);
       getResult(() => runGit(["merge", theirsSha], getCwd())).unwrapOr("");
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
@@ -473,7 +479,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { developSha, oversizedSha, queueSha } = setupOversized();
     runGh.mockReturnValue(
       JSON.stringify([
-        Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
+        Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
           body: getMarker(RESHAPE_FAILED_MARKER, oversizedSha),
           id,
           updated_at: "",

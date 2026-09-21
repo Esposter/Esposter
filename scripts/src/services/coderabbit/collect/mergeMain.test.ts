@@ -119,7 +119,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const { candidateSha, mainSha } = setupConflict();
     runGh.mockReturnValue(
       JSON.stringify([
-        Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
+        Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
           body: getMarker(FOLD_FAILED_MARKER, mainSha),
           id,
           updated_at: "",

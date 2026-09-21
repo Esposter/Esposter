@@ -12,10 +12,10 @@ describe(getFailedLogExcerpt, () => {
 
     const lines = Array.from({ length: FAILED_LOG_TAIL_LINES + 1 }, (_value, index) => getLine("a", index.toString()));
     const log = [...lines, getLine("b", "\u001B[31m×\u001B[0m")].join("\n");
-    const excerpt = getFailedLogExcerpt(log);
+    // The tail is every line but the first, which the cap pushed out
+    const tail = Array.from({ length: FAILED_LOG_TAIL_LINES }, (_value, index) => (index + 1).toString()).join("\n");
 
-    expect(excerpt.startsWith("### a\n\n1\n")).toBe(true);
-    expect(excerpt.endsWith(`${FAILED_LOG_TAIL_LINES}\n\n### b\n\n×`)).toBe(true);
+    expect(getFailedLogExcerpt(log)).toBe(`### a\n\n${tail}\n\n### b\n\n×`);
   });
 
   test("reads nothing off a line that is not the runner's", () => {

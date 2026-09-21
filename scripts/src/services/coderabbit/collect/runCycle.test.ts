@@ -43,7 +43,7 @@ import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP } from "#src/services/coderabbit
 import { runGit } from "#src/services/shared/runGit";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const { judgeRelease, readCheckStatus, runDrainStep, runGh, runSession, spawnPnpm } = vi.hoisted(() => ({
   judgeRelease: vi.fn<typeof baseJudgeRelease>(),
@@ -93,10 +93,6 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     setupFixtureRepository();
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
-  // The fixture's shas are deterministic, so a post one test made to main's head would read as another's
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
   const completedCheck: CheckStatus = { bucket: PASS_BUCKET, description: COMPLETED_DESCRIPTION, name: CHECK_NAME };
   const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
   // CI's verdict on main's head, red when a test says so, and what every `pnpm` the lane spawns answers
@@ -365,7 +361,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       [],
       [],
       [],
-      Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
+      Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
         ...getMarked(getMarker(REPAIR_FAILED_MARKER, mainSha)),
         id,
       })),
@@ -439,7 +435,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // A first commit over the cap is the reshaper's; past its attempts it can never fit and no event clears it, so
   // The commit is told once and the run fails red for a person
   const getExhaustedReshapes = (sha: string): GitHubEntry[] =>
-    Array.from({ length: SESSION_ATTEMPT_CAP }, (_, id) => ({
+    Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
       ...getMarked(getMarker(RESHAPE_FAILED_MARKER, sha)),
       id,
     }));
@@ -679,7 +675,16 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(judgeRelease).toHaveBeenCalledTimes(1);
-    expect(judgeRelease.mock.calls[0]?.[0]).toMatchObject({ developSha, level: TEST_FILENAME, pullRequest });
+    expect(judgeRelease.mock.calls[0]?.[0]).toStrictEqual({
+      cwd: getCwd(),
+      developSha,
+      isDryRun: false,
+      issueComments: [getCleanWalkthrough(developSha, TEST_FILENAME)],
+      level: TEST_FILENAME,
+      pullRequest,
+      reviews: [],
+      viewerLogin,
+    });
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Pushed,
       reason: `1 queue commits and 0 fix commits reached ${DEVELOP_BRANCH}`,

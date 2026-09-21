@@ -41,7 +41,6 @@ describe(resolveLockfileConflicts, () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
     runGit.mockReturnValue("");
   });
 

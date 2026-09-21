@@ -14,29 +14,29 @@ describe(readRegistryOutdatedDependencies, () => {
     expect.hasAssertions();
 
     const entries: DependencyEntry[] = [
-      { group: DependencyGroup.Engines, packageName: "node", specifier: "^26.0.0" },
-      { group: DependencyGroup.Engines, packageName: "node", specifier: "^26.8.0" },
+      { group: DependencyGroup.Engines, packageName: "a", specifier: "^0.0.0" },
+      { group: DependencyGroup.Engines, packageName: "a", specifier: "^0.1.0" },
     ];
-    vi.mocked(getLatestVersion).mockResolvedValue("26.8.1");
+    vi.mocked(getLatestVersion).mockResolvedValue("0.1.1");
 
     const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
 
     expect(outdatedDependencies).toStrictEqual([
       {
-        current: "26.8.0",
+        current: "0.1.0",
         dependencyType: "engine",
         dependents: ["engines"],
-        latest: "26.8.1",
-        packageName: "node",
-        specifier: "^26.8.0",
+        latest: "0.1.1",
+        packageName: "a",
+        specifier: "^0.1.0",
       },
       {
-        current: "26.0.0",
+        current: "0.0.0",
         dependencyType: "engine",
         dependents: ["engines"],
-        latest: "26.8.1",
-        packageName: "node",
-        specifier: "^26.0.0",
+        latest: "0.1.1",
+        packageName: "a",
+        specifier: "^0.0.0",
       },
     ]);
   });
