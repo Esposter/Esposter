@@ -8,8 +8,9 @@ import type { SpinnerContent } from "#src/models/SpinnerContent";
 // Language ships in as many passes as it takes
 export interface Localization extends SpinnerContent {
   // The spinner gerunds of one character, keyed by that character's English name, which is the identity every state
-  // File and every lookup uses. A character with no entry shows the base verbs alone rather than English ones, so a
-  // Half-translated language never mixes two scripts in one spinner
+  // File and every lookup uses. A character with no entry here shows the base verbs alone rather than the card's
+  // English ones behind localized ones, so a half-translated language never mixes two scripts in one spinner —
+  // Which is why the test is this module's words rather than the language's name, as `readSpinner` explains
   characterVerbs: Record<string, string[]>;
   // What the birthday aside's date is formatted against
   dateLocale: string;

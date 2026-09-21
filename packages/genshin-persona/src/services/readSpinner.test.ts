@@ -47,4 +47,15 @@ describe(readSpinner, () => {
 
     expect(verbs).toStrictEqual(japanese.verbs);
   });
+
+  // A language nobody has written a module for inherits English, base verbs included, so suppressing the card's
+  // English gerunds there would lose verbs without ever mixing two scripts
+  test("keeps the card's gerunds under a language whose module is not written yet", async () => {
+    expect.hasAssertions();
+    readVoiceLines.mockResolvedValue([]);
+
+    const { verbs } = await readSpinner(character, personaCard, "Turkish");
+
+    expect(verbs.at(-1)).toBe("Marketing");
+  });
 });
