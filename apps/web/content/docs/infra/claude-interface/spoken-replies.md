@@ -130,7 +130,7 @@ flowchart TD
 
 ## Failure semantics
 
-A reply that cannot be spoken is not spoken, and nothing waits; the diagnosis is on disk.
+A reply that cannot be spoken is not spoken, and nothing waits on it without a bound: the one wait here is a piece held for a predecessor that has not arrived, which lasts the hook's own timeout and no longer. The diagnosis is on disk.
 
 - **The server cannot load** — no runtime, a corrupt weight, a provider that rejects the graph: it writes the reason to `voice.log` and exits. Every hook then finds no server, spawns one, watches it die, and stays silent.
 - **A synthesis fails** mid-request: a failure the GPU provider raises moves the engine one rung down, like silence, and the line is read there; any other is the line's, so that request is dropped, the reason logged, and the server keeps serving on the rung it is on.
