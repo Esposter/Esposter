@@ -1,7 +1,8 @@
 import type { PcmClip } from "#src/models/PcmClip";
 
-// Linear interpolation, which is enough here: every rate this meets is a downsample from 24 or 48 kHz to the
-// 16 kHz the models read, and what a speaker encoder and a pitch tracker measure sits well below the aliased band
+// Linear interpolation, which is enough here: every rate this meets is a downsample — the wiki's clips to the
+// Engine's rate, or to the rate the reference selection's models read — and what a speaker encoder and a pitch
+// Tracker measure sits well below the aliased band
 export const resampleClip = ({ sampleRate, samples }: PcmClip, targetSampleRate: number): PcmClip => {
   if (sampleRate === targetSampleRate) return { sampleRate, samples };
 

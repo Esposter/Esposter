@@ -1,6 +1,5 @@
 import type { RepairInput } from "#src/models/coderabbit/collect/RepairInput";
 import type { RepairResult } from "#src/models/coderabbit/collect/RepairResult";
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
@@ -19,6 +18,7 @@ import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount"
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getRepairPrompt } from "#src/services/coderabbit/collect/getRepairPrompt";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
+import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readFailedLog } from "#src/services/coderabbit/collect/readFailedLog";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
@@ -28,7 +28,6 @@ import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedSha
 import { repairMechanically } from "#src/services/coderabbit/collect/repairMechanically";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
-import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -47,7 +46,7 @@ export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: Repair
   if (!check) return { isUnderRepair: false };
 
   const failedMarker = getMarker(REPAIR_FAILED_MARKER, mainSha);
-  const comments = readEntries<GitHubEntry>(`commits/${mainSha}/comments`);
+  const comments = readCommitComments(mainSha);
   const attempts = getMarkedCount(comments, viewerLogin, failedMarker) + readStackedRepairs(mainSha, cwd);
   if (attempts >= SESSION_ATTEMPT_CAP) {
     console.info(`${MAIN_BRANCH} is red past ${attempts} repairs — a person's`);

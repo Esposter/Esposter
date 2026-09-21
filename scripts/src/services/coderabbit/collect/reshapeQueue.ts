@@ -1,5 +1,4 @@
 import type { ReshapeInput } from "#src/models/coderabbit/collect/ReshapeInput";
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
@@ -16,11 +15,11 @@ import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { getReshapeFailure } from "#src/services/coderabbit/collect/getReshapeFailure";
 import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePrompt";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
+import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
-import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
@@ -47,7 +46,7 @@ export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: Re
     return false;
   }
   const marker = getMarker(RESHAPE_FAILED_MARKER, sha);
-  const comments = readEntries<GitHubEntry>(`commits/${sha}/comments`);
+  const comments = readCommitComments(sha);
   const attempts = getMarkedCount(comments, viewerLogin, marker);
   if (attempts >= SESSION_ATTEMPT_CAP) {
     console.info(`reshape: ${sha} failed ${attempts} times, so it is a person's — the port holds on it`);

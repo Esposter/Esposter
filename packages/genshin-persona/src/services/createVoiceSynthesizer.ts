@@ -6,7 +6,8 @@ import type { VoiceSynthesizerOptions } from "#src/models/VoiceSynthesizerOption
 
 import { checkIsSpeech } from "#src/services/checkIsSpeech";
 import {
-  UNBOUNDED_SPEECH_TOKENS,
+  MAX_SPEECH_TOKENS_PER_CHARACTER,
+  MIN_SPEECH_TOKEN_CEILING,
   VOICE_DEVICE_LADDER,
   VOICE_MODEL_ARCHITECTURE,
   VOICE_MODEL_DTYPE,
@@ -14,13 +15,8 @@ import {
   VOICE_SAMPLE_RATE,
 } from "#src/services/constants";
 
-// The engine loaded once, its weights fetched into the models directory on the first load and read from there
-// After, on the first rung of the device ladder that loads — from the rung named, when the last synthesizer on
-// This machine settled on one, since the rungs above it were walked past already. Every synthesis is checked by
-// Its sound: one that is not speech reloads the engine one rung down and runs again, since a provider can load a
-// Graph and still run it wrong without a word, and the rung that spoke is the one every synthesis after it runs
-// On. Which rung is reported, because the CPU rungs speak slower and the person should know; every move down is
-// Reported as well
+// The engine on the first rung of the device ladder that loads, from the rung named; a synthesis that is not speech
+// Reloads one rung down and runs again, since a provider can load a graph and still run it wrong without a word
 export const createVoiceSynthesizer = async (
   { AutoConfig, AutoProcessor, ChatterboxModel, env, Tensor }: VoiceRuntime,
   modelsDirectory: string,
@@ -38,8 +34,7 @@ export const createVoiceSynthesizer = async (
       dtype: VOICE_MODEL_DTYPE,
       progress_callback: onProgress,
     });
-  // The engine on the first of these rungs that loads, with the rungs left below it; the bottom rung's rejection
-  // Is the load's, with the reason the runtime gives
+  // The bottom rung's rejection is the load's, with the reason the runtime gives
   const load = async (rung: VoiceDeviceRung, rungsBelow: VoiceDeviceRung[]): Promise<LoadedVoiceModel> => {
     const [nextRung, ...rungsBelowNext] = rungsBelow;
     if (!nextRung) return { model: await loadRung(rung), rung, rungsBelow };
@@ -69,7 +64,7 @@ export const createVoiceSynthesizer = async (
         const waveform = await loaded.model.generate({
           ...inputs,
           ...speaker,
-          max_new_tokens: UNBOUNDED_SPEECH_TOKENS,
+          max_new_tokens: Math.max(MIN_SPEECH_TOKEN_CEILING, text.length * MAX_SPEECH_TOKENS_PER_CHARACTER),
         });
         const clip = { sampleRate: VOICE_SAMPLE_RATE, samples: Float32Array.from(waveform.data) };
         if (checkIsSpeech(clip)) return clip;

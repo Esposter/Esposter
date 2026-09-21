@@ -48,7 +48,7 @@
 | `packages/xml2js`                                      | 2026-09-15 | `Parser.ts`                                                                                         |
 | repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-15 | workflow scripts and their tests                                                                    |
 | `.github` — workflows, composite actions               | 2026-09-15 | the densest rationale prose outside `apps/web`; `github-actions` for what a step's comment may keep |
-| `packages/genshin-persona`                             | —          | opened 2026-09-20; unread                                                                           |
+| `packages/genshin-persona`                             | 2026-09-21 | the data package's load cost, stated once at `readGenshinDb`                                        |
 
 Greps, per unit:
 

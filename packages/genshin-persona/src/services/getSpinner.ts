@@ -22,9 +22,9 @@ const getTips = (idPrefix: string, tips: string[]): SpinnerTip[] =>
 
 // The verbs are the interface language's base content with the character's behind it. The tips are one layer under
 // One label: every line of the character's under the name that language spells them by, each cut to what the tool
-// Shows, else the base tips under the tool's own prefix, because a base tip is nobody's line and a name in front of
-// It reads as an attribution. A tip's id is keyed by the English name, so a show history survives both a rewrite of
-// The list and a change of interface language
+// Shows, else the base tips under that language's word for "Tip", because a base tip is nobody's line and a name
+// In front of it reads as an attribution. A tip's id is keyed by the English name, so a show history survives both
+// A rewrite of the list and a change of interface language
 export const getSpinner = (
   base: SpinnerContent,
   { displayName, name }: Pick<Character, "displayName" | "name">,
@@ -37,7 +37,7 @@ export const getSpinner = (
     .slice(0, MAX_SPINNER_TIP_COUNT);
   const hasOwnTips = tips.length > 0;
   return {
-    label: hasOwnTips ? displayName : "",
+    label: hasOwnTips ? displayName : base.tipLabel,
     tips: hasOwnTips ? getTips(getPersonaCardName(name), tips) : getTips(BASE_TIP_ID, base.tips),
     verbs: [...base.verbs, ...verbs],
   };

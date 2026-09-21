@@ -8,3 +8,6 @@ export const VoiceLanguage = {
 } as const;
 
 export type VoiceLanguage = (typeof VoiceLanguage)[keyof typeof VoiceLanguage];
+
+// Widened off the as-const union, so a string typed by a person or read off a request can be looked up in it
+export const VoiceLanguages: readonly string[] = Object.values(VoiceLanguage);

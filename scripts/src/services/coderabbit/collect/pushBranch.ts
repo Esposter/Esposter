@@ -14,7 +14,8 @@ const readRemoteSha = (branch: string, cwd?: string): string | undefined => {
 // Swap is the `--force-with-lease`: the remote refuses the update itself if the branch left the sha every count
 // Was measured from, so the read above it is only an early exit. The lease makes the push forced, so the
 // Fast-forward git used to refuse is asserted here — a non-descendant target is the porter's bug, not a race —
-// Except for a rewrite, whose whole point is a target that does not descend. A rejection is a moved branch only when the ref re-reads as moved; the rejection text is localized.
+// Except for a rewrite, whose whole point is a target that does not descend. A rejection is a moved branch only
+// When the ref re-reads as moved; the rejection text is localized
 export const pushBranch = ({ branch, cwd, expectedSha, isDryRun, isRewrite, sha }: PushBranchInput): boolean => {
   if (readRemoteSha(branch, cwd) !== expectedSha) return false;
   else if (isDryRun) {

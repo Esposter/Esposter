@@ -26,7 +26,7 @@ describe(readLocalization, () => {
 
     expect(localization.tips).toStrictEqual(japanese.tips);
     expect(localization.verbs).toStrictEqual(japanese.verbs);
-    expect(localization.dateLocale).toBe("ja-JP");
+    expect(localization.locale).toBe("ja-JP");
   });
 
   test("fills every string, the language's own over English's", async () => {

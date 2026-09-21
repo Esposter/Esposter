@@ -19,3 +19,4 @@ splits at `services/exec`'s subdirectories.
 | `vue-phaserjs`                                                                                      | 2026-09-15 |                                                        |
 | `configuration`, `infra`                                                                            | 2026-09-15 |                                                        |
 | `keyframe-store`                                                                                    | 2026-09-15 |                                                        |
+| `genshin-persona`                                                                                   | 2026-09-21 | its mocks are hoisted factories, typed off the source  |

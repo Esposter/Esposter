@@ -5,7 +5,7 @@ left when this ledger was written.
 
 | Unit                                                           | Swept      | Notes                                                                                         |
 | -------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
-| `scripts/src/services/coderabbit/collect`                      | —          | the collector's decision surface                                                              |
+| `scripts/src/services/coderabbit/collect`                      | 2026-09-21 | the collector's decision surface                                                              |
 | `scripts/src/services/coderabbit` — `feedback`, `shared`       | 2026-09-20 |                                                                                               |
 | `scripts/src/services/sweeps` — the scans                      | 2026-09-20 | everything but `ledgerCoverage` and `skillDocs`                                               |
 | `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`  | 2026-09-20 | the two that read the ledgers and the skill tree                                              |

@@ -16,6 +16,7 @@ describe(checkIsSpeech, () => {
     { clip: getClip(() => 1), expected: false, name: "a full-scale constant with no pause" },
   ])("$name", ({ clip, expected }) => {
     expect.hasAssertions();
+
     expect(checkIsSpeech(clip)).toBe(expected);
   });
 });

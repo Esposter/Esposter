@@ -4,7 +4,7 @@ import type { SpinnerTip } from "#src/models/SpinnerTip";
 // Character's own behind it; the tips carry one, the character's lines, because the tool shows one label in front
 // Of every tip
 export interface Spinner {
-  // The character's name in front of their own tips, "" for the base tips, which are nobody's
+  // The character's name in front of their own tips, the language's word for "Tip" in front of the base tips
   label: string;
   tips: SpinnerTip[];
   verbs: string[];

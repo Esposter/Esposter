@@ -1,6 +1,5 @@
 import type { ExpressLaneInput } from "#src/models/coderabbit/collect/ExpressLaneInput";
 import type { ExpressLaneResult } from "#src/models/coderabbit/collect/ExpressLaneResult";
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { checkIsGreen } from "#src/services/coderabbit/collect/checkIsGreen";
@@ -17,8 +16,8 @@ import { portExpress } from "#src/services/coderabbit/collect/portExpress";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readClaimedShas } from "#src/services/coderabbit/collect/readClaimedShas";
+import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
 import { repairMain } from "#src/services/coderabbit/collect/repairMain";
-import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 
 // A red cut is told once on each commit it carried: the port never carries a commit claiming no review, so a
 // Claim the checks refuse would otherwise sit in the queue unread and unsaid. The lane tries it again every run
@@ -26,10 +25,7 @@ import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 const postRedCut = (shas: string[], viewerLogin: string): void => {
   for (const sha of shas) {
     const marker = getMarker(EXPRESS_FAILED_MARKER, sha);
-    if (
-      readEntries<GitHubEntry>(`commits/${sha}/comments`).some((comment) => checkIsMarked(comment, viewerLogin, marker))
-    )
-      continue;
+    if (readCommitComments(sha).some((comment) => checkIsMarked(comment, viewerLogin, marker))) continue;
     postCommitComment(
       sha,
       `${marker}\nThe express cut carrying this commit is red — its \`${EXPRESS_TRAILER}\` trailer claims no review, and the checks refused the cut. No window carries a claimed commit, so nothing behind it waits; drop the trailer to have it reviewed, or repair it. The lane tries again on every run.`,

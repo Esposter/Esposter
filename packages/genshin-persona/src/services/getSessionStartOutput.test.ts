@@ -1,7 +1,12 @@
 import type { Card } from "#src/models/Card";
 import type { PersonaCard } from "#src/models/PersonaCard";
 
-import { DEFAULT_LANGUAGE, REPLY_LANGUAGE_INSTRUCTION } from "#src/services/constants";
+import {
+  CONTEXT_HEADLINE_PREFIX,
+  DEFAULT_LANGUAGE,
+  NAMEPLATE_PREFIX,
+  REPLY_LANGUAGE_INSTRUCTION,
+} from "#src/services/constants";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
 import { parseJsonObject } from "#src/services/parseJsonObject";
 import { describe, expect, test } from "vitest";
@@ -24,15 +29,15 @@ describe(getSessionStartOutput, () => {
   test("shows the person the nameplate, the note and the greeting, and hands the model the lore and the habits", () => {
     expect.hasAssertions();
 
-    const card: Card = { description, headline, note, personaCard };
+    const card: Card = { description, greeting, headline, note, personaCard };
 
     expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
-          additionalContext: `Persona: ${headline}\n${description}\n${note}\n- ${habit}\n- Greets: ${greeting}\n- Signs off: ${signOff}`,
+          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${description}\n${note}\n- ${habit}\n- Greets: ${greeting}\n- Signs off: ${signOff}`,
           hookEventName: "SessionStart",
         },
-        systemMessage: `✦ ${headline}\n${note}\n${greeting}`,
+        systemMessage: `${NAMEPLATE_PREFIX}${headline}\n${note}\n${greeting}`,
       }),
     );
   });
@@ -40,12 +45,15 @@ describe(getSessionStartOutput, () => {
   test("drops every line the character does not have", () => {
     expect.hasAssertions();
 
-    const card: Card = { description: "", headline, note: "", personaCard: undefined };
+    const card: Card = { description: "", greeting: "", headline, note: "", personaCard: undefined };
 
     expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
-        hookSpecificOutput: { additionalContext: `Persona: ${headline}`, hookEventName: "SessionStart" },
-        systemMessage: `✦ ${headline}`,
+        hookSpecificOutput: {
+          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}`,
+          hookEventName: "SessionStart",
+        },
+        systemMessage: `${NAMEPLATE_PREFIX}${headline}`,
       }),
     );
   });
@@ -55,13 +63,12 @@ describe(getSessionStartOutput, () => {
   test("carries no instruction at English, and one naming the language otherwise", () => {
     expect.hasAssertions();
 
-    const card: Card = { description: "", headline, note: "", personaCard: undefined };
+    const card: Card = { description: "", greeting: "", headline, note: "", personaCard: undefined };
     const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, "Japanese"));
 
     expect(hookSpecificOutput).toStrictEqual({
-      additionalContext: `Persona: ${headline}\n${REPLY_LANGUAGE_INSTRUCTION("Japanese")}`,
+      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${REPLY_LANGUAGE_INSTRUCTION("Japanese")}`,
       hookEventName: "SessionStart",
     });
-    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).not.toContain(REPLY_LANGUAGE_INSTRUCTION(DEFAULT_LANGUAGE));
   });
 });

@@ -1,11 +1,11 @@
 import type { CardedCharacter } from "#src/models/CardedCharacter";
-import type { Character } from "#src/models/Character";
 import type { Moment } from "#src/models/Moment";
 import type { PersonaCard } from "#src/models/PersonaCard";
 
 import english from "#src/localizations/english";
 import { HABIT_SEPARATOR, LORE_PICK_INSTRUCTIONS } from "#src/services/constants";
 import { TEST_EPOCH_DATE } from "#src/services/constants.test";
+import { createCharacter } from "#src/services/createCharacter.test";
 import { getBirthdayNote } from "#src/services/getBirthdayNote";
 import { getLorePickRequest } from "#src/services/getLorePickRequest";
 import { describe, expect, test } from "vitest";
@@ -29,12 +29,12 @@ describe(getLorePickRequest, () => {
     weapon: "weapon",
   };
   // The display fields are absent from the state: the tier is asked in English, and both names are one character
-  const character: Character = {
+  const character = createCharacter({
     ...facts,
     description: "description",
     displayElement: facts.element,
     displayName: facts.name,
-  };
+  });
   const personaCard: PersonaCard = {
     greeting: "greeting",
     habits: ["", " "],

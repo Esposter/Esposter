@@ -51,13 +51,14 @@ export const judgeRelease = async ({
   viewerLogin,
 }: ReleaseVerdictInput): Promise<CycleOutcome | undefined> => {
   const marker = getMarker(VERDICT_MARKER, developSha);
+  // A merge merges; a hold ports on, which is no outcome of this step's
+  const applyVerdict = (verdict: ReleaseVerdict) =>
+    verdict === ReleaseVerdict.Merge ? mergeReleasePullRequest({ developSha, isDryRun, pullRequest }) : undefined;
   const recorded = issueComments.findLast((comment) => checkIsMarked(comment, viewerLogin, marker));
   if (recorded) {
     const { reason, verdict } = getReleaseVerdict(recorded.body.slice(recorded.body.indexOf(marker) + marker.length));
     console.info(`release verdict at ${developSha} recorded: ${verdict} — ${reason}`);
-    return verdict === ReleaseVerdict.Merge
-      ? mergeReleasePullRequest({ developSha, isDryRun, pullRequest })
-      : undefined;
+    return applyVerdict(verdict);
   }
 
   if (isDryRun) {
@@ -99,9 +100,7 @@ export const judgeRelease = async ({
           : "Something real is left, so the release is a person's: merge this pull request, or close it to pause. The collector keeps porting meanwhile, and the next head is judged afresh."
       }`,
     );
-    return verdict === ReleaseVerdict.Merge
-      ? mergeReleasePullRequest({ developSha, isDryRun, pullRequest })
-      : undefined;
+    return applyVerdict(verdict);
   };
   // The same question, asked first of the text alone: a rationale the record already settles needs no
   // Session, and most heads are that one (`llm-delegation` skill). Asked ahead of the account's own limit

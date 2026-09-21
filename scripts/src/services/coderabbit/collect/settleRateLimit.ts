@@ -27,8 +27,9 @@ export const settleRateLimit = ({
     );
     console.info(`rate limited — retrigger in ${retriggerDelaySeconds}s, the deadline the bot stated`);
     return { retriggerDelaySeconds };
-    // Once per block: the bot's answer runs the cycle again, and an unguarded ask would answer that answer
-  } else if (checkIsRetriggerAsked(issueComments, viewerLogin)) {
+  }
+  // Once per block: the bot's answer runs the cycle again, and an unguarded ask would answer that answer
+  else if (checkIsRetriggerAsked(issueComments, viewerLogin)) {
     console.info("rate limited — the review it refused is already asked for");
     return {};
   }

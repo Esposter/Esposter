@@ -19,15 +19,11 @@ const { readSpinner, readUserSettings, writeUserSettings } = vi.hoisted(() => ({
 
 // The settings file stands in as one object every double reads and writes, which is what lets a `teardown` land
 // While the lines are read; the lines are the wiki round trip the wait is on
-vi.mock(import("#src/services/readSpinner"), () => ({ readSpinner: readSpinner as unknown as typeof baseReadSpinner }));
+vi.mock(import("#src/services/readSpinner"), () => ({ readSpinner }));
 
-vi.mock(import("#src/services/readUserSettings"), () => ({
-  readUserSettings: readUserSettings as unknown as typeof baseReadUserSettings,
-}));
+vi.mock(import("#src/services/readUserSettings"), () => ({ readUserSettings }));
 
-vi.mock(import("#src/services/writeUserSettings"), () => ({
-  writeUserSettings: writeUserSettings as unknown as typeof baseWriteUserSettings,
-}));
+vi.mock(import("#src/services/writeUserSettings"), () => ({ writeUserSettings }));
 
 describe(writeSessionSpinner, () => {
   const character = { displayName: "Hu Tao", name: "Hu Tao" };
@@ -41,7 +37,6 @@ describe(writeSessionSpinner, () => {
   let settings: UserSettings = {};
 
   beforeEach(() => {
-    vi.clearAllMocks();
     settings = getSettingsWithSpinner({ model: "model" }, otherSpinner);
     readUserSettings.mockImplementation(() => structuredClone(settings));
     writeUserSettings.mockImplementation((newSettings) => {
