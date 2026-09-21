@@ -1,3 +1,4 @@
+import type { CardedCharacter } from "#src/models/CardedCharacter";
 import type { Character } from "#src/models/Character";
 
 import { GenshinVerb, GenshinVerbs } from "#src/models/GenshinVerb";
@@ -84,8 +85,17 @@ const listFormat = new Intl.ListFormat(locale, { type: "disjunction" });
 const today = Temporal.Now.plainDateISO();
 const getRosterLine = ({ birthday, displayElement, displayName, region, title, version }: Character) =>
   [displayName, title, displayElement, region, birthday, `v${version}`].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
-const compareVersionsDescending = (a: Character, b: Character) =>
-  b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name);
+// An authoring queue prints the characters that meet it newest first, so a patch's arrivals are at the top
+const printQueue = async (checkIsQueued: (cardedCharacter: CardedCharacter) => boolean) => {
+  const cardedRoster = await readCardedRoster(roster);
+  for (const { character } of cardedRoster
+    .filter((cardedCharacter) => checkIsQueued(cardedCharacter))
+    .toSorted(
+      ({ character: a }, { character: b }) =>
+        b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name),
+    ))
+    console.log(getRosterLine(character));
+};
 // Empty from a shell, where the tool set nothing
 const sessionId = process.env[SESSION_ID_ENVIRONMENT_VARIABLE] ?? "";
 // The language is read again rather than closed over, because the `language` verb changes it and then prints the
@@ -131,7 +141,7 @@ const getStatusReport = async () => {
     isRuntimeInstalled: checkIsRuntimeInstalled(),
     pinnedName: pin?.name ?? "",
     replyLanguage: getLanguageDisplayName(replyLanguage ?? language, language),
-    voiceDevice: readVoiceDevice() ?? "",
+    voiceDevice: readVoiceDevice(),
     voiceLanguage: readVoiceLanguage(),
     volume: readVolume(),
   };
@@ -269,14 +279,9 @@ switch (verb) {
     if (character) await printCard(character);
     break;
   }
-  case GenshinVerb.Uncarded: {
-    const cardedRoster = await readCardedRoster(roster);
-    for (const { character } of cardedRoster
-      .filter(({ personaCard }) => !personaCard)
-      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
-      console.log(getRosterLine(character));
+  case GenshinVerb.Uncarded:
+    await printQueue(({ personaCard }) => !personaCard);
     break;
-  }
   case GenshinVerb.Unmute:
     setMuted(false);
     console.log(strings.unmuted);
@@ -300,24 +305,15 @@ switch (verb) {
     if (language === DEFAULT_LANGUAGE) break;
 
     const { characters } = await readLocalization(language);
-    const cardedRoster = await readCardedRoster(roster);
-    for (const { character } of cardedRoster
-      .filter(({ character: { name: characterName }, personaCard }) => {
-        const localizedPersonaCard = characters[characterName];
-        return !localizedPersonaCard?.verbs || (Boolean(personaCard) && !localizedPersonaCard.greeting);
-      })
-      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
-      console.log(getRosterLine(character));
+    await printQueue(({ character: { name: characterName }, personaCard }) => {
+      const localizedPersonaCard = characters[characterName];
+      return !localizedPersonaCard?.verbs || (Boolean(personaCard) && !localizedPersonaCard.greeting);
+    });
     break;
   }
-  case GenshinVerb.Unverbed: {
-    const cardedRoster = await readCardedRoster(roster);
-    for (const { character } of cardedRoster
-      .filter(({ personaCard }) => personaCard?.verbs.length === 0)
-      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
-      console.log(getRosterLine(character));
+  case GenshinVerb.Unverbed:
+    await printQueue(({ personaCard }) => personaCard?.verbs.length === 0);
     break;
-  }
   case GenshinVerb.Use: {
     const character = findCharacterByName(roster, name);
     if (!character) {
@@ -341,7 +337,7 @@ switch (verb) {
       const voiceLanguage = readVoiceLanguage();
       console.log(
         voiceLanguage
-          ? strings.voiceStatus(checkIsRuntimeInstalled(), voiceLanguage, readVoiceDevice() ?? "", VOICE_LOG_PATH)
+          ? strings.voiceStatus(checkIsRuntimeInstalled(), voiceLanguage, readVoiceDevice(), VOICE_LOG_PATH)
           : strings.voiceUnset,
       );
       break;

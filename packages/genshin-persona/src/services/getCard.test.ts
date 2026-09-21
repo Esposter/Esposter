@@ -1,28 +1,15 @@
-import type { Character } from "#src/models/Character";
 import type { PersonaCard } from "#src/models/PersonaCard";
 
 import english from "#src/localizations/english";
 import { TEST_EPOCH_DATE } from "#src/services/constants.test";
+import { createCharacter } from "#src/services/createCharacter.test";
 import { getCard } from "#src/services/getCard";
 import { readLocalization } from "#src/services/readLocalization";
 import { describe, expect, test } from "vitest";
 
 describe(getCard, () => {
   const greeting = "greeting";
-  const character: Character = {
-    affiliation: "",
-    birthday: "",
-    constellation: "",
-    description: "",
-    displayElement: "",
-    displayName: "displayName",
-    element: "",
-    name: "Hu Tao",
-    region: "",
-    title: "",
-    version: "",
-    weapon: "",
-  };
+  const character = createCharacter({ displayName: "displayName", name: "Hu Tao" });
   const personaCard: PersonaCard = { greeting, habits: [], signOff: "signOff", verbs: [] };
 
   // The greeting is the one line of the card a person reads before the model has said anything, so it is the

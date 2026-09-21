@@ -21,13 +21,20 @@ export const createReplyQueue = <T extends ReplyPiece>(
   let hold: ReturnType<typeof setTimeout> | undefined;
   let drain: Promise<void> = Promise.resolve();
   const takeNext = () => {
-    if (reading)
-      return waiting.find(({ piece }) => piece.messageId === reading.messageId && piece.index === reading.nextIndex);
-
     const [first] = waiting;
+    if (reading) {
+      const { messageId, nextIndex } = reading;
+      return waiting.find(({ piece }) => piece.messageId === messageId && piece.index === nextIndex);
+    }
+
     if (!first?.piece.turnId) return first;
     // The earliest-arrived message opens with its first piece, even when that arrived after a later one
     return waiting.find(({ piece }) => piece.messageId === first.piece.messageId && piece.index === 0);
+  };
+  // Every drain chains onto the last, so one piece runs at a time
+  const drainAfter = async (previous: Promise<void>) => {
+    await previous;
+    await drainNext();
   };
   const skipMissing = () => {
     hold = undefined;
@@ -36,7 +43,7 @@ export const createReplyQueue = <T extends ReplyPiece>(
     const turnId = reading?.turnId ?? first?.piece.turnId ?? "";
     const indexes = waiting.filter(({ piece }) => piece.messageId === messageId).map(({ piece }) => piece.index);
     reading = indexes.length > 0 ? { messageId, nextIndex: Math.min(...indexes), turnId } : undefined;
-    drain = drain.then(drainNext);
+    drain = drainAfter(drain);
   };
   const drainNext = async (): Promise<void> => {
     const next = takeNext();
@@ -72,7 +79,7 @@ export const createReplyQueue = <T extends ReplyPiece>(
 
     const { promise, resolve } = Promise.withResolvers<VoiceStatus>();
     waiting = [...waiting, { piece, resolve }];
-    drain = drain.then(drainNext);
+    drain = drainAfter(drain);
     return promise;
   };
 };

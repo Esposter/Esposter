@@ -5,8 +5,11 @@ import { describe, expect, test } from "vitest";
 
 describe(parseVoiceRequest, () => {
   const request = {
+    index: 0,
+    isFinal: false,
     language: VoiceLanguage.English,
     lines: ["lines"],
+    messageId: "messageId",
     name: "name",
     stem: "stem",
     turnId: "turnId",
@@ -36,6 +39,10 @@ describe(parseVoiceRequest, () => {
     { ...request, lines: "lines" },
     { ...request, lines: [0] },
     { ...request, turnId: undefined },
+    { ...request, messageId: undefined },
+    { ...request, index: -1 },
+    { ...request, index: 0.1 },
+    { ...request, isFinal: "false" },
   ])("rejects %j", (value) => {
     expect.hasAssertions();
 

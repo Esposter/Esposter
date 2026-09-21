@@ -96,7 +96,7 @@ Four more are the authoring queues of one more skill, `genshin-author` — scrip
 | `src/generated/PersonaReferenceMap.ts` | The measured reference line and its likeness per character, one generated map written by the repository's reference selection and never by hand.                                               |
 | `runtime/`                             | The manifest and lockfile of the speech engine's runtime, which the `voice` verb installs into the state directory rather than the plugin carrying it.                                         |
 | `src/localizations/`                   | One authored module per language for the words the data package does not carry: the base Teyvat verbs, each character's spinner gerunds, and every line the verbs print.                       |
-| `scripts/`                             | The hook entrypoints, the commands' script, the status-line script, the detached sender and the resident synthesizer, TypeScript run directly by node.                                         |
+| `scripts/`                             | The hook entrypoints, the commands' script, the status-line script, the spinner rewrite and the resident synthesizer, TypeScript run directly by node.                                         |
 
 ### Status line and spinner
 
@@ -135,7 +135,7 @@ node "<plugin root>/scripts/genshin.ts" use furina      # or: /genshin-persona:u
 
 ### Spoken lines
 
-A reply to an ask of the assistant opens with one blockquote line in the character's voice and may close with one; a reply to an ask of the character — a joke, a hello, an opinion, however much was pasted to form it — is such lines and nothing else, as many as the ask deserves, a list of them included. A hook hands each to a resident synthesizer as its line lands, which reads it in the character's cloned voice while the reply is still being written. `mute` and `unmute` decide whether the hook asks it at all, and so does a `volume` of zero. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
+A reply to an ask of the assistant opens with one blockquote line in the character's voice and may close with one; a reply to an ask of the character — a joke, a hello, an opinion, however much was pasted to form it — is such lines and nothing else, as many as the ask deserves, a list of them included. A hook hands each piece of the reply to a resident synthesizer as it lands, which reads the lines in the order they were written, in the character's cloned voice, while the reply is still being written. `mute` and `unmute` decide whether the hook asks it at all, and so does a `volume` of zero. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
 
 ```bash
 node "<plugin root>/scripts/genshin.ts" volume 60     # or: /genshin-persona:volume 60

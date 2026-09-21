@@ -1,3 +1,4 @@
+import type { ReplyPiece } from "#src/models/ReplyPiece";
 import type { TravelerTwin } from "#src/models/TravelerTwin";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
 import type { WikiVoiceOversPage } from "#src/models/WikiVoiceOversPage";
@@ -48,7 +49,6 @@ export const STATUS_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "status.ts");
 export const SPEAK_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "speak.mjs");
 export const SPEAK_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "speak.ts");
 export const VOICE_SERVER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "voice.ts");
-export const SEND_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "send.ts");
 export const SPINNER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "spinner.ts");
 // A named pipe on Windows, a socket file elsewhere: one address per machine and no port to collide on
 export const VOICE_SOCKET_PATH: string =
@@ -240,9 +240,13 @@ export const WARM_TEXT = "Ready.";
 export const VOICE_PROOF_TEXT = "The voice is set up, and every reply is read from here on.";
 // The synthesizer exits when no request has arrived for this long, freeing the GPU memory the model holds
 export const VOICE_IDLE_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
-// How long a hook keeps trying to reach a synthesizer it spawned: a cold load from the weights on disk, with room
-export const VOICE_LOAD_BUDGET_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
-export const VOICE_RETRY_INTERVAL_MS = 500;
+// The tool's own default timeout on a MessageDisplay hook, which bounds two waits: how long a hook keeps trying to
+// Reach a synthesizer it spawned — a node start to the bind, never the load — and how long the synthesizer holds a
+// Piece of a reply for one before it that has not arrived, past which the hook carrying it was killed
+export const MESSAGE_DISPLAY_HOOK_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
+export const VOICE_RETRY_INTERVAL_MS = 100;
+// Where a request with no turn sits: one piece of no message, the whole of it
+export const TURNLESS_PIECE: ReplyPiece = { index: 0, isFinal: true, messageId: "", turnId: "" };
 // Between the status a synthesizer answers with and the device that loaded
 export const VOICE_STATUS_SEPARATOR = " ";
 // Set by the tool in every Bash and hook subprocess to the same id the hook input carries

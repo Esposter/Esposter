@@ -9,6 +9,9 @@ export const parseHookInput = (text: string): HookInput => {
   const parsedInput = parseJsonObject(text);
   return {
     delta: typeof parsedInput.delta === "string" ? parsedInput.delta : "",
+    final: typeof parsedInput.final === "boolean" ? parsedInput.final : false,
+    index: typeof parsedInput.index === "number" && Number.isInteger(parsedInput.index) ? parsedInput.index : 0,
+    message_id: typeof parsedInput.message_id === "string" ? parsedInput.message_id : "",
     session_id: typeof parsedInput.session_id === "string" ? parsedInput.session_id : "",
     turn_id: typeof parsedInput.turn_id === "string" ? parsedInput.turn_id : "",
   };
