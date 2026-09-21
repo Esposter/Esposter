@@ -1,4 +1,3 @@
-import type { Character } from "#src/models/Character";
 import type { PickRecord } from "#src/models/PickRecord";
 import type { pickCurrentCharacter as basePickCurrentCharacter } from "#src/services/pickCurrentCharacter";
 import type { readPickRecords as baseReadPickRecords } from "#src/services/readPickRecords";
@@ -6,6 +5,7 @@ import type { readPin as baseReadPin } from "#src/services/readPin";
 import type { writePickRecords as baseWritePickRecords } from "#src/services/writePickRecords";
 
 import { TEST_EPOCH_DATE } from "#src/services/constants.test";
+import { createCharacter } from "#src/services/createCharacter.test";
 import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -28,26 +28,14 @@ vi.mock(import("#src/services/pickCurrentCharacter"), () => ({ pickCurrentCharac
 
 describe(resolveSessionCharacter, () => {
   const sessionId = "sessionId";
-  const character: Character = {
-    affiliation: "Wangsheng Funeral Parlor",
-    birthday: "7/15",
-    constellation: "",
-    description: "",
-    displayElement: "Pyro",
-    displayName: "Hu Tao",
-    element: "Pyro",
-    name: "Hu Tao",
-    region: "",
-    title: "",
-    version: "",
-    weapon: "",
-  };
+  // The three fields the record is written from
+  const character = createCharacter({ displayName: "displayName", element: "element", name: "name" });
   const otherRecord: PickRecord = {
-    displayName: "Venti",
-    element: "Anemo",
+    displayName: " ",
+    element: " ",
     isoDate: TEST_EPOCH_DATE.toString(),
-    name: "Venti",
-    sessionId: "otherSessionId",
+    name: " ",
+    sessionId: " ",
   };
   let pickRecords: PickRecord[] = [];
 

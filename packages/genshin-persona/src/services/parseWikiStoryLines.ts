@@ -2,7 +2,8 @@ import type { WikiStoryLine } from "#src/models/WikiStoryLine";
 
 import { getPlainLineText } from "#src/services/getPlainLineText";
 import { getWikiFileStem } from "#src/services/getWikiFileStem";
-import { parseWikiTemplateLines, sliceWikiTemplate } from "#src/services/parseWikiTemplateLines";
+import { parseWikiTemplateLines } from "#src/services/parseWikiTemplateLines";
+import { sliceWikiTemplate } from "#src/services/sliceWikiTemplate";
 
 // The story template holds the lines a reply is spoken in the register of; the combat template after it is left
 // Out, and a page without one lists no lines

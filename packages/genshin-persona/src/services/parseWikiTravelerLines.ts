@@ -3,7 +3,8 @@ import type { WikiStoryLine } from "#src/models/WikiStoryLine";
 
 import { getPlainLineText } from "#src/services/getPlainLineText";
 import { getWikiFileStem } from "#src/services/getWikiFileStem";
-import { parseWikiTemplateLines, sliceWikiTemplate } from "#src/services/parseWikiTemplateLines";
+import { parseWikiTemplateLines } from "#src/services/parseWikiTemplateLines";
+import { sliceWikiTemplate } from "#src/services/sliceWikiTemplate";
 
 // The Traveler's story template names a file per twin for every line, and every line is a dialogue with Paimon:
 // The turns are separated by a line break, each opens with its speaker in bold, and a word the twins say

@@ -1,8 +1,8 @@
-import type { Character } from "#src/models/Character";
 import type { Nameplate } from "#src/models/Nameplate";
 import type { PickRecord } from "#src/models/PickRecord";
 
 import { TEST_EPOCH_DATE } from "#src/services/constants.test";
+import { createCharacter } from "#src/services/createCharacter.test";
 import { getSessionNameplate } from "#src/services/getSessionNameplate";
 import { describe, expect, test } from "vitest";
 
@@ -17,20 +17,11 @@ describe(getSessionNameplate, () => {
     sessionId,
   };
   const pin: Nameplate = { displayName: "pin", element: "", name: "pin" };
-  const birthdayCharacter: Character = {
-    affiliation: "",
+  const birthdayCharacter = createCharacter({
     birthday: "1/1",
-    constellation: "",
-    description: "",
-    displayElement: "",
     displayName: "birthdayCharacter",
-    element: "",
     name: "birthdayCharacter",
-    region: "",
-    title: "",
-    version: "",
-    weapon: "",
-  };
+  });
   const roster = [birthdayCharacter];
 
   test("names the session's own record over the pin and the pick", () => {

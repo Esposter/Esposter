@@ -1,23 +1,9 @@
-import type { Character } from "#src/models/Character";
-
+import { createCharacter } from "#src/services/createCharacter.test";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { describe, expect, test } from "vitest";
 
 describe(findCharacterByName, () => {
-  const character: Character = {
-    affiliation: "",
-    birthday: "",
-    constellation: "",
-    description: "",
-    displayElement: "炎",
-    displayName: "胡桃",
-    element: "Pyro",
-    name: "Hu Tao",
-    region: "",
-    title: "",
-    version: "",
-    weapon: "",
-  };
+  const character = createCharacter({ displayName: "胡桃", name: "Hu Tao" });
   const roster = [character];
 
   // The English name is the identity every state file and the wiki are keyed by, and the display name is what the

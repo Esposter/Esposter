@@ -1,19 +1,9 @@
 import type { WikiTemplateLine } from "#src/models/WikiTemplateLine";
 
-const TEMPLATE_END = "\n}}";
 const WIKI_TITLE_REGEX = /\|vo_(?<id>\d+_\d+)_title\s*=\s*(?<title>.*)/gu;
 const WIKI_TEXT_REGEX = /\|vo_(?<id>\d+_\d+)_tx\s*=\s*(?<text>[\s\S]*?)(?=\n\|vo_|\n<!--|\n\}\}|$)/gu;
 const readEntries = (template: string, regex: RegExp, group: string) =>
   new Map(Array.from(template.matchAll(regex), (match) => [match.groups?.id ?? "", match.groups?.[group] ?? ""]));
-
-// The one voice-over template a page's lines are read from, whole; a page without it holds no lines
-export const sliceWikiTemplate = (wikitext: string, start: string): string => {
-  const startIndex = wikitext.indexOf(start);
-  if (startIndex === -1) return "";
-
-  const endIndex = wikitext.indexOf(TEMPLATE_END, startIndex);
-  return wikitext.slice(startIndex, endIndex === -1 ? undefined : endIndex);
-};
 
 // Every line the template lists under one file field, as the template writes it — the placeholders every title
 // And file name carry a name through are the caller's to fill, since each template spells them its own way

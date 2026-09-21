@@ -1,6 +1,7 @@
 import type { UserSettings } from "#src/models/UserSettings";
 
 import { SpinnerVerbsMode } from "#src/models/SpinnerVerbsMode";
+import { FOREIGN_STATUS_LINE } from "#src/services/constants.test";
 import { getPluginStatusLine } from "#src/services/getPluginStatusLine";
 import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
 import { getSettingsWithSpinner } from "#src/services/getSettingsWithSpinner";
@@ -9,7 +10,6 @@ import { describe, expect, test } from "vitest";
 
 describe(getSettingsWithoutPluginEntries, () => {
   const spinner = getSpinner({ tips: ["baseTip"], verbs: ["verb"] }, { displayName: "name", name: "name" }, [], []);
-  const foreignStatusLine = { command: "command", type: "command" } as const;
 
   test("removes exactly what setup wrote and keeps every other key", () => {
     expect.hasAssertions();
@@ -25,7 +25,7 @@ describe(getSettingsWithoutPluginEntries, () => {
     const settings: UserSettings = {
       spinnerTipsOverride: { excludeDefault: false, tips: [{ id: "id", text: "text" }] },
       spinnerVerbs: { mode: SpinnerVerbsMode.Append, verbs: ["ownVerb"] },
-      statusLine: foreignStatusLine,
+      statusLine: FOREIGN_STATUS_LINE,
     };
 
     expect(getSettingsWithoutPluginEntries(settings)).toStrictEqual(settings);
