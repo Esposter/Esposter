@@ -204,9 +204,11 @@ export const HOP_SECONDS = 0.01;
 export const SPEECH_FLOOR_DB = 35;
 // A twin's line is theirs only until Paimon answers, so their reference is cut at the first silence this long
 export const MIN_TURN_PAUSE_SECONDS = 0.4;
-// The runtime stops at twenty tokens when this option is left out, so no bound is passed rather than none
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this identifier would otherwise infer
-export const UNBOUNDED_SPEECH_TOKENS: number = Infinity;
+// A ceiling on the speech tokens one sentence may generate, in proportion to its text with a floor for the shortest:
+// English reads at one to three tokens a character, a fixed ceiling cuts a long sentence mid-word, and no ceiling
+// Lets a sentence the model finds no end for run for minutes and then hand the vocoder a sequence it rejects
+export const MAX_SPEECH_TOKENS_PER_CHARACTER = 4;
+export const MIN_SPEECH_TOKEN_CEILING = 100;
 // What a warm request synthesizes and drops, so the graph's first-call cost is paid before the first reply
 export const WARM_TEXT = "Ready.";
 // What the `voice` verb speaks once set up, so the person hears the voice before the first reply does

@@ -4,7 +4,12 @@ import type { VoiceModelOptions } from "#src/models/VoiceModelOptions";
 import type { VoiceRuntime } from "#src/models/VoiceRuntime";
 import type { VoiceTensor } from "#src/models/VoiceTensor";
 
-import { VOICE_DEVICE_LADDER, VOICE_SAMPLE_RATE } from "#src/services/constants";
+import {
+  MAX_SPEECH_TOKENS_PER_CHARACTER,
+  MIN_SPEECH_TOKEN_CEILING,
+  VOICE_DEVICE_LADDER,
+  VOICE_SAMPLE_RATE,
+} from "#src/services/constants";
 import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
 import { describe, expect, test, vi } from "vitest";
 
@@ -98,6 +103,23 @@ describe(createVoiceSynthesizer, () => {
     expect(synthesizer.device).toBe(rungName);
     expect(from_pretrained).toHaveBeenCalledTimes(1);
     expect(onFallback).toHaveBeenCalledTimes(0);
+  });
+
+  test.each([
+    ["the floor for a short text", text, MIN_SPEECH_TOKEN_CEILING],
+    [
+      "in proportion to a long text",
+      text.repeat(MIN_SPEECH_TOKEN_CEILING),
+      text.length * MIN_SPEECH_TOKEN_CEILING * MAX_SPEECH_TOKENS_PER_CHARACTER,
+    ],
+  ])("caps the generation at %s", async (_case, spoken, ceiling) => {
+    expect.hasAssertions();
+
+    const { models, runtime } = getRuntime([speech, speech, speech]);
+    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory);
+    await synthesizer.synthesize(spoken, speaker);
+
+    expect(models[0]?.generate).toHaveBeenCalledExactlyOnceWith({ ...speaker, max_new_tokens: ceiling });
   });
 
   test("synthesizes nothing when the last rung returns silence too", async () => {

@@ -1,3 +1,4 @@
+import type { AudioPlayer } from "#src/models/AudioPlayer";
 import type { PcmClip } from "#src/models/PcmClip";
 import type { SpeakerTensors } from "#src/models/SpeakerTensors";
 import type { SpeechRequest } from "#src/models/SpeechRequest";
@@ -12,13 +13,13 @@ import {
   VOICE_STATUS_SEPARATOR,
   WARM_TEXT,
 } from "#src/services/constants";
+import { createAudioPlayer } from "#src/services/createAudioPlayer";
 import { createClipDecoder } from "#src/services/createClipDecoder";
 import { createLatestWinsQueue } from "#src/services/createLatestWinsQueue";
 import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
 import { getWavBytes } from "#src/services/getWavBytes";
 import { listenVoiceSocket } from "#src/services/listenVoiceSocket";
 import { parseVoiceRequest } from "#src/services/parseVoiceRequest";
-import { playAudio } from "#src/services/playAudio";
 import { readReferenceClip } from "#src/services/readReferenceClip";
 import { readVoiceDevice } from "#src/services/readVoiceDevice";
 import { readVoiceRuntime } from "#src/services/readVoiceRuntime";
@@ -43,11 +44,13 @@ process.on("unhandledRejection", (reason) => {
 const server = createServer();
 if (!(await listenVoiceSocket(server))) process.exit(0);
 
+// Nothing between the bind and the connection handler below yields to the event loop: a hook connecting in such a gap
+// Is accepted by nobody and waits for an answer that never comes, so every load is started here and awaited later
 const idleTimer = setTimeout(() => {
   process.exit(0);
 }, VOICE_IDLE_TIMEOUT_MS);
 const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
-const decoder = await createClipDecoder();
+const decoderLoad = createClipDecoder();
 // The rung is written once the engine has spoken on it, since a load alone proves nothing about the sound
 let settledDevice = readVoiceDevice();
 const synthesizerLoad = createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
@@ -57,7 +60,7 @@ const synthesizerLoad = createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
 const speakers = new Map<string, SpeakerTensors>();
 // The reference is fetched, decoded and encoded once per character, dub and line per process
 const readSpeaker = async ({ language, name, stem }: SpeechRequest) => {
-  const synthesizer = await synthesizerLoad;
+  const [synthesizer, decoder] = await Promise.all([synthesizerLoad, decoderLoad]);
   const key = [language, name, stem].join("/");
   const speaker = speakers.get(key);
   if (speaker) return speaker;
@@ -69,8 +72,12 @@ const readSpeaker = async ({ language, name, stem }: SpeechRequest) => {
   speakers.set(key, encoded);
   return encoded;
 };
-// Each sentence is synthesized while the one before it plays
-const speak = async (request: SpeechRequest, readPending: () => SpeechRequest | undefined) => {
+// Each sentence is synthesized while the one before it plays; a warm has no player and speaks nothing
+const speak = async (
+  request: SpeechRequest,
+  player: AudioPlayer | undefined,
+  readPending: () => SpeechRequest | undefined,
+) => {
   const synthesizer = await synthesizerLoad;
   const speaker = await readSpeaker(request);
   if (!speaker) {
@@ -79,12 +86,12 @@ const speak = async (request: SpeechRequest, readPending: () => SpeechRequest | 
   }
 
   const gain = request.volume / MAX_VOLUME;
-  const play = async (clip: PcmClip) => {
+  const play = async ({ play: playAudio }: AudioPlayer, clip: PcmClip) => {
     const audio = getWavBytes({ ...clip, samples: clip.samples.map((sample) => sample * gain) });
     const playerFailure = await playAudio(audio);
     if (playerFailure) writeVoiceLog(`the player did not play: ${playerFailure}`);
   };
-  const sentences = request.type === VoiceRequestType.Warm ? [WARM_TEXT] : splitSentences(request.text);
+  const sentences = player ? splitSentences(request.text) : [WARM_TEXT];
   let playback: Promise<void> = Promise.resolve();
   for (const sentence of sentences) {
     const clip = await synthesizer.synthesize(sentence, speaker);
@@ -98,21 +105,24 @@ const speak = async (request: SpeechRequest, readPending: () => SpeechRequest | 
       writeVoiceDevice(settledDevice);
     }
 
-    if (request.type !== VoiceRequestType.Speak) continue;
+    if (!player) continue;
 
     await playback;
     // A warm waiting is not a reply, and runs once the reading ends rather than cutting it
     if (readPending()?.type === VoiceRequestType.Speak) return VoiceStatus.Superseded;
 
-    playback = play(clip);
+    playback = play(player, clip);
   }
 
   await playback;
   return VoiceStatus.Ok;
 };
-// A synthesis that throws drops its request and keeps the engine
+// The player is spawned before the first sentence is synthesized, so its start is paid under that synthesis rather
+// Than in front of the first sound. A synthesis that throws drops its request and keeps the engine
 const queue = createLatestWinsQueue(async (request: SpeechRequest, readPending: () => SpeechRequest | undefined) => {
-  const [outcome] = await Promise.allSettled([speak(request, readPending)]);
+  const player = request.type === VoiceRequestType.Speak ? createAudioPlayer() : undefined;
+  const [outcome] = await Promise.allSettled([speak(request, player, readPending)]);
+  await player?.close();
   if (outcome?.status === "fulfilled") return outcome.value;
 
   writeVoiceLog(`${request.type} failed: ${String(outcome?.reason)}`);
@@ -161,5 +171,5 @@ server.on("connection", (socket) => {
   socket.on("error", () => {});
 });
 
-const [load] = await Promise.allSettled([synthesizerLoad]);
+const [load] = await Promise.allSettled([synthesizerLoad, decoderLoad]);
 if (load?.status === "rejected") exit(`load failed: ${String(load.reason)}`);
