@@ -28,8 +28,12 @@ describe(deserializeValue, () => {
     expect.hasAssertions();
 
     const missingMonthDate = "1970-13-01";
+    const missingDayDate = "1970-02-30T00:00:00.000Z";
+    const missingDayLiteral = `datetime'${missingDayDate}'`;
 
     expect(deserializeValue(missingMonthDate)).toBe(missingMonthDate);
+    expect(deserializeValue(missingDayDate)).toBe(missingDayDate);
+    expect(deserializeValue(missingDayLiteral)).toBe(missingDayLiteral);
   });
 
   test("parses an Azure Table datetime literal back to a Date", () => {
