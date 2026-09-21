@@ -124,6 +124,32 @@ describe(createReplyQueue, () => {
     expect(getRunPieces(run)).toStrictEqual([opening, later]);
   });
 
+  test("holds a newer turn's piece for the whole of its own timeout rather than what the turn it replaced had left", async () => {
+    expect.hasAssertions();
+
+    // Long enough that most of the replaced turn's hold has passed by the time the newer turn lands
+    const longHoldMs = 10;
+    const laterMessageId = crypto.randomUUID();
+    const laterTurnId = crypto.randomUUID();
+    const laterOpening: ReplyPiece = { index: 0, isFinal: false, messageId: laterMessageId, turnId: laterTurnId };
+    const laterClosing: ReplyPiece = { index: 1, isFinal: true, messageId: laterMessageId, turnId: laterTurnId };
+    const run = getRun();
+    const push = createReplyQueue(run, longHoldMs);
+    const superseded = push(closing);
+    await vi.advanceTimersByTimeAsync(0);
+    await vi.advanceTimersByTimeAsync(longHoldMs - 1);
+    const second = push(laterClosing);
+    await vi.advanceTimersByTimeAsync(1);
+
+    await expect(superseded).resolves.toBe(VoiceStatus.Superseded);
+    expect(run).toHaveBeenCalledTimes(0);
+
+    const first = push(laterOpening);
+
+    await expect(Promise.all([first, second])).resolves.toStrictEqual([VoiceStatus.Ok, VoiceStatus.Ok]);
+    expect(getRunPieces(run)).toStrictEqual([laterOpening, laterClosing]);
+  });
+
   test("queues a piece with no turn behind what is waiting rather than dropping it", async () => {
     expect.hasAssertions();
 

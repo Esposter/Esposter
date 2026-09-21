@@ -80,6 +80,10 @@ export const createReplyQueue = <T extends ReplyPiece>(
       for (const entry of waiting) if (entry.piece.turnId) entry.resolve(VoiceStatus.Superseded);
       waiting = waiting.filter((entry) => !entry.piece.turnId);
       reading = undefined;
+      // The hold was the replaced turn's wait for a piece of its own, and what it would move on to is now the
+      // Newer turn's — so it is dropped here and the newer turn waits the whole of its own
+      clearTimeout(hold);
+      hold = undefined;
     }
 
     if (piece.turnId) currentTurnId = piece.turnId;
