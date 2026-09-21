@@ -8,17 +8,18 @@ describe(formatCard, () => {
   const greeting = "greeting";
   const headline = "headline";
 
-  // A verb prints this to one stream the model and the person both read, so the greeting in it is the resolved
-  // One the welcome shows — the interface language's where that language has written it — and never the card's own
-  test("greets in the resolved line rather than the authored one", () => {
+  // This block is the model's, and it is one block in one language: English habits, an English sign-off and the
+  // Card's own greeting between them. The interface language's line is the welcome's alone, off the same card's
+  // Resolved field, so a language that has written one never lands a second script in the middle of this
+  test("greets in the card's own line rather than the welcome's resolved one", () => {
     expect.hasAssertions();
 
     const card: Card = {
       description: "",
-      greeting,
+      greeting: "resolvedGreeting",
       headline,
       note: "",
-      personaCard: { greeting: "authoredGreeting", habits: ["habit"], signOff: "signOff", verbs: [] },
+      personaCard: { greeting, habits: ["habit"], signOff: "signOff", verbs: [] },
     };
 
     expect(formatCard(card)).toBe(
