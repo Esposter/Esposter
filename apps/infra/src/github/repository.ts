@@ -1,7 +1,7 @@
 import * as github from "@pulumi/github";
 
-// Single source of truth: GitHub topics mirror the root package.json keywords.
-// Keep both lists curated to valid topic syntax (lowercase, hyphenated, <=20 entries).
+// Single source of truth: GitHub topics mirror the root package.json keywords. Keep both lists curated to valid
+// Topic syntax (lowercase, hyphenated, <=20 entries).
 // oxlint-disable-next-line no-restricted-imports -- the repo-root manifest, which no `#src/*` map can reach
 import packageJson from "../../../../package.json" with { type: "json" };
 
@@ -16,9 +16,8 @@ export const repository: github.Repository = new github.Repository(
     // Commit carrying the pull request's title and body; develop and main pin the merge commit in their ruleset
     allowSquashMerge: true,
     allowUpdateBranch: true,
-    // Native auto-delete bypasses rulesets and would nuke develop on a develop -> main
-    // Merge. Disabled here; the Delete Merged Branch workflow cleans up head branches
-    // While excluding long-lived branches (main, develop).
+    // Native auto-delete bypasses rulesets and would nuke develop on a develop -> main merge. Disabled here; the
+    // Delete Merged Branch workflow cleans up head branches while excluding long-lived branches (main, develop).
     deleteBranchOnMerge: false,
     description: "A nice and casual place for posting random things.",
     hasDiscussions: true,

@@ -10,8 +10,8 @@ export const printOutdatedDependencies = (outdatedDependencies: OutdatedDependen
   console.log(color.cyan("Outdated dependencies"));
   printTable(
     ["Package", "Current", "Latest", "Dependents"],
-    outdatedDependencies.map(({ current, dependencyType, dependents, latest, pkg }) => {
-      const packageLabel = dependencyType ? `${pkg} (${dependencyType})` : pkg;
+    outdatedDependencies.map(({ current, dependencyType, dependents, latest, packageName }) => {
+      const packageLabel = dependencyType ? `${packageName} (${dependencyType})` : packageName;
 
       return [packageLabel, current, getColorizedLatestVersion(current, latest, color), dependents.join(", ")];
     }),

@@ -4,7 +4,7 @@ import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 // Than report a synced queue over a claimed commit nothing carries
 export interface ExpressLaneResult {
   // The queue commits claiming no review that reached `main` on neither a cut nor this run: the cut is red, or
-  // `main` itself is and the repair went first
+  // Past its attempts on this head, or `main` itself is red and the repair went first
   heldShas: string[];
   outcome?: CycleOutcome;
 }

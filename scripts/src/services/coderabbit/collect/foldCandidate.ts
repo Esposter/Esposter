@@ -12,6 +12,7 @@ import { runGit } from "#src/services/shared/runGit";
 // What `main` brings costs the review nothing. Nothing is verified here: `develop`'s own CI is the check
 // (`EXPRESS_VERIFY_COMMANDS` says why the express lane differs).
 export const foldCandidate = async ({
+  collectorSha,
   cwd,
   developSha,
   fixCount,
@@ -20,7 +21,7 @@ export const foldCandidate = async ({
   queueShas,
   viewerLogin,
 }: FoldInput): Promise<string> => {
-  const mergeOutcome = await mergeMain({ cwd, viewerLogin });
+  const mergeOutcome = await mergeMain({ collectorSha, cwd, viewerLogin });
   const isMainMerged = mergeOutcome === MergeMainOutcome.Merged;
   // A fast-forward moves develop to the queue's own sha, so it must carry exactly what was measured: no fixes
   // Ahead, the queue sitting on develop, no fold of `main` on top, and nothing between develop and the cut the

@@ -1,9 +1,8 @@
-import { parseWorkspacePackageGlobs } from "#src/services/shared/parseWorkspacePackageGlobs";
+import { parseWorkspacePackageGlobs, WORKSPACE_FILE } from "@esposter/configuration";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const GLOB_SUFFIX = "/*";
-const WORKSPACE_FILENAME = "pnpm-workspace.yaml";
 
 // Every member's directory, workspace-relative, in the order `pnpm-workspace.yaml` declares them. The list is
 // Read from that file rather than repeated as a constant here, because a copy is a member the tooling silently
@@ -11,7 +10,7 @@ const WORKSPACE_FILENAME = "pnpm-workspace.yaml";
 // `dir/*` entry expands to the children holding a manifest, sorted, since `readdirSync` order is the
 // Filesystem's and this feeds a committed artifact; anything else is one member named outright.
 export const getWorkspacePackageDirectories = (root: string): string[] =>
-  parseWorkspacePackageGlobs(readFileSync(resolve(root, WORKSPACE_FILENAME), "utf8")).flatMap((glob) => {
+  parseWorkspacePackageGlobs(readFileSync(resolve(root, WORKSPACE_FILE), "utf8")).flatMap((glob) => {
     if (!glob.endsWith(GLOB_SUFFIX)) return [glob];
 
     const workspaceDirectory = glob.slice(0, -GLOB_SUFFIX.length);

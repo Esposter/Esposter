@@ -41,7 +41,12 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The single fast-forward push or guarded by a predicate a later run re-evaluates, so any event may run this
 // And a run against unchanged state does nothing. It returns its verdict rather than exiting, which is what
 // Makes a dry run one mode of the same code path (docs: infra/review-collector).
-export const runCycle = async ({ cwd, isDryRun, pullRequest: namedPullRequest }: CycleInput): Promise<CycleOutcome> => {
+export const runCycle = async ({
+  collectorSha,
+  cwd,
+  isDryRun,
+  pullRequest: namedPullRequest,
+}: CycleInput): Promise<CycleOutcome> => {
   // Every outcome from the gate down carries whatever retrigger the bot's stated deadline owes
   let retriggerDelaySeconds: number | undefined;
   const getOutcome = (kind: CycleOutcomeKind, reason: string, targetSha?: string): CycleOutcome => ({
@@ -63,7 +68,15 @@ export const runCycle = async ({ cwd, isDryRun, pullRequest: namedPullRequest }:
   // The express lane, before the pull request is even looked up: a commit claiming no review reaches `main`
   // Directly and the fold carries it to `develop` with the next window — and a red `main` its cut cannot pass is
   // Repaired by the lane's own cut
-  const expressed = await runExpressLane({ cwd, developSha, isDryRun, mainSha, queueSha, viewerLogin });
+  const expressed = await runExpressLane({
+    collectorSha,
+    cwd,
+    developSha,
+    isDryRun,
+    mainSha,
+    queueSha,
+    viewerLogin,
+  });
   if (expressed.outcome) return expressed.outcome;
   // No release pull request: the last one merged and the next window is still filling from the merge base
   const releasePullRequest = namedPullRequest === undefined ? readReleasePullRequest() : undefined;
@@ -105,6 +118,7 @@ export const runCycle = async ({ cwd, isDryRun, pullRequest: namedPullRequest }:
 
   if (pullRequest !== undefined) {
     const drain = await runDrainStep({
+      collectorSha,
       cwd,
       developSha,
       frontierCommits,
@@ -143,7 +157,15 @@ export const runCycle = async ({ cwd, isDryRun, pullRequest: namedPullRequest }:
   const owingFixesSha = fixShas.length > 0 ? reviewFixesSha : undefined;
   // The queue is rebuilt on the tree the window is built on before the port reads it, so a conflict is met here
   // Once rather than held on every run
-  const syncedQueueSha = await syncQueue({ cwd, developSha, isDryRun, owingFixesSha, queueSha, viewerLogin });
+  const syncedQueueSha = await syncQueue({
+    collectorSha,
+    cwd,
+    developSha,
+    isDryRun,
+    owingFixesSha,
+    queueSha,
+    viewerLogin,
+  });
   if (syncedQueueSha === undefined) return getMovedOutcome(QUEUE_BRANCH);
   const port = portWindow({ cwd, developSha, fixShas, frontierSha: frontier, queueSha: syncedQueueSha });
   // With no pull request open, what `develop` already carries above the merge base is the first review's window
@@ -184,7 +206,7 @@ export const runCycle = async ({ cwd, isDryRun, pullRequest: namedPullRequest }:
     else if (expressed.heldShas.length > 0)
       return getOutcome(
         CycleOutcomeKind.Idle,
-        `${expressed.heldShas.length} claimed commits wait on the express lane — a red cut, a patch that does not apply yet, or a red ${MAIN_BRANCH} under repair`,
+        `${expressed.heldShas.length} claimed commits wait on the express lane — a red cut, one past its attempts on this ${MAIN_BRANCH} head, a patch that does not apply yet, or a red ${MAIN_BRANCH} under repair`,
       );
     return getOutcome(CycleOutcomeKind.Idle, `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`);
   }
@@ -198,6 +220,7 @@ export const runCycle = async ({ cwd, isDryRun, pullRequest: namedPullRequest }:
     );
 
   const targetSha = await foldCandidate({
+    collectorSha,
     cwd,
     developSha,
     fixCount: port.fixCount,

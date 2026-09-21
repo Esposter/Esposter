@@ -1,7 +1,7 @@
 import type { PersonaCard } from "#src/models/PersonaCard";
 
 const venti: PersonaCard = {
-  greeting: "_yawn_ Ah, again we meet! Quest time.",
+  greeting: "Ah, again we meet! Quest time.",
   habits: [
     "Playful bard, a rhyme where a sentence would do.",
     "Wine, wind, freedom.",

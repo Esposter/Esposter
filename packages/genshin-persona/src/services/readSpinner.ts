@@ -16,7 +16,7 @@ import { readVoiceLines } from "#src/services/readVoiceLines";
 // Character shows the base verbs alone rather than two scripts in one list, and `readLocalization` answering
 // English itself is exactly the test for that
 export const readSpinner = async (
-  character: Pick<Character, "displayName" | "name">,
+  character: Pick<Character, "description" | "displayName" | "name">,
   personaCard: PersonaCard | undefined,
   language: string,
 ): Promise<Spinner> => {
@@ -24,5 +24,5 @@ export const readSpinner = async (
   const lines = await readVoiceLines(character.name, language);
   const verbs =
     localization.characters[character.name]?.verbs ?? (localization === english ? (personaCard?.verbs ?? []) : []);
-  return getSpinner(localization, character, verbs, lines);
+  return getSpinner(localization.verbs, character, verbs, lines);
 };

@@ -18,10 +18,10 @@ describe("japanese", () => {
     expect(unreachableNames).toStrictEqual([]);
   });
 
-  test.each(["tips", "verbs"] as const)("has as many base %s as English", (key) => {
+  test("has as many base verbs as English", () => {
     expect.hasAssertions();
 
-    expect(japanese[key]).toHaveLength(english[key].length);
+    expect(japanese.verbs).toHaveLength(english.verbs.length);
   });
 
   test("shares no base verb with English, which would be an untranslated entry", () => {

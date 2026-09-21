@@ -21,7 +21,7 @@ one set of names across every promoted ledger.
 
 ## The find recipe
 
-The chain candidates — a guard whose next statement at the same indent is another guard or the fall-through return. Roughly one in four is a chain; the rest are guards over different subjects, or guards each depending on the one above having passed, which the rule keeps split.
+The chain candidates — a guard whose next statement at the same indent is another guard or the fall-through return. Roughly one in four is a chain; the rest are guards over different subjects, guards each depending on the one above having passed, or a fall-through that carries the happy path — a block, or a `return` with a body of its own — all of which the rule keeps split. A one-`return` guard over a one-`return` fall-through is the pair that takes its `else`, a formatter wrap included.
 
 ```bash
 rg -U --pcre2 '^(\s*)if \(.*\) return .*;\n(\1//.*\n)*\1(if \(.*\) return .*;|return .*;)' -g '*.ts' -g '*.vue' apps packages scripts

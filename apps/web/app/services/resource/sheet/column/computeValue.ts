@@ -21,8 +21,8 @@ export const computeValue = (
     return ColumnTransformationComputeMap[column.transformation.type](column.transformation as never, {
       computeSource: (sourceColumnId) => {
         const sourceColumn = columns.find(({ id }) => id === sourceColumnId);
-        if (!sourceColumn) return null;
-        return computeValue(rows, row, columns, sourceColumn, rowIndex, visitedColumnIds);
+        if (sourceColumn) return computeValue(rows, row, columns, sourceColumn, rowIndex, visitedColumnIds);
+        else return null;
       },
       findSource: (sourceColumnId) => columns.find(({ id }) => id === sourceColumnId),
       rowIndex,

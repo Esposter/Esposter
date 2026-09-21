@@ -40,18 +40,18 @@ One accepted caveat: a command that makes a _soft/optional_ network call and sti
 
 Paths relative to `packages/virrun/src/services/exec/cache/`.
 
-| File                                   | Role                                                                                               |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `computeTaskCacheKey.ts`               | sha256 over environment key + source-tree hash + command + mask + color level; null → run uncached |
-| `computeSourceTreeHash.ts`             | git-based working-tree hash (also keys the prepare layer)                                          |
-| `checkIsTaskCacheEnabled.ts`           | default-on, off in CI / `--no-cache` / `VIRRUN_NO_CACHE`                                           |
-| `persistWithCache.ts`                  | the orchestration above — hit replay, hermetic miss, record on exit 0                              |
-| `resolveTaskCacheLocation.ts`          | resolve `tasks/<key>` — pure addressing + existence                                                |
-| `recordTaskCache.ts`                   | materialize payload + meta in a pid-tagged temp, atomic rename publish                             |
-| `replayTaskCache.ts`                   | apply the recorded flush plan to the host, reproduce streams + exit code                           |
-| `checkHasDependencyClosureMutation.ts` | the lockfile-rewrite guard                                                                         |
-| `checkIsNetworkFailure.ts`             | network-error signature match for the `--no-cache` hint                                            |
-| `taskCache.equivalence.test.ts`        | replay must be observably identical to a real re-run                                               |
+| File                                   | Role                                                                                                    |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `computeTaskCacheKey.ts`               | sha256 over environment key + source-tree hash + command + mask + color level; undefined → run uncached |
+| `computeSourceTreeHash.ts`             | git-based working-tree hash (also keys the prepare layer)                                               |
+| `checkIsTaskCacheEnabled.ts`           | default-on, off in CI / `--no-cache` / `VIRRUN_NO_CACHE`                                                |
+| `persistWithCache.ts`                  | the orchestration above — hit replay, hermetic miss, record on exit 0                                   |
+| `resolveTaskCacheLocation.ts`          | resolve `tasks/<key>` — pure addressing + existence                                                     |
+| `recordTaskCache.ts`                   | materialize payload + meta in a pid-tagged temp, atomic rename publish                                  |
+| `replayTaskCache.ts`                   | apply the recorded flush plan to the host, reproduce streams + exit code                                |
+| `checkHasDependencyClosureMutation.ts` | the lockfile-rewrite guard                                                                              |
+| `checkIsNetworkFailure.ts`             | network-error signature match for the `--no-cache` hint                                                 |
+| `taskCache.equivalence.test.ts`        | replay must be observably identical to a real re-run                                                    |
 
 ## Notes
 

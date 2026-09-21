@@ -5,22 +5,22 @@ description: One breakpoint scale feeding both Vuetify and UnoCSS, and when to b
 
 # Responsive Breakpoints
 
-The app styles with two systems — Vuetify components and UnoCSS utilities — and they agree on where a viewport becomes narrow because they are given the same numbers. `configuration/breakpoints.ts` declares one private scale (`xs`, `sm`, `md`, `lg`, `xl`, `xxl`) typed as Vuetify's `DisplayThresholds`, and exports it twice: `forVuetify` is the raw numeric map, and `forUnoCSS` is the same map with each value rendered as a px string. Nothing else in the repo defines a breakpoint, and nothing should — a second scale is how a component ends up folding its layout at one width while the utility inside it folds at another.
+The app styles with two systems — Vuetify components and UnoCSS utilities — and they agree on where a viewport becomes narrow because they are given the same numbers. `configuration/breakpoints.ts` declares one scale (`xs`, `sm`, `md`, `lg`, `xl`, `xxl`) typed as Vuetify's `DisplayThresholds`, and exports it as `BREAKPOINTS`, beside `UNOCSS_BREAKPOINTS` — the same scale with each value rendered as a px string. Nothing else in the repo defines a breakpoint, and nothing should — a second scale is how a component ends up folding its layout at one width while the utility inside it folds at another.
 
 ## How it works
 
 ```mermaid
 flowchart TD
   scale["configuration/breakpoints.ts — one DisplayThresholds scale"]
-  scale -->|"forVuetify"| vuetify["vuetify.config.ts — display.thresholds"]
-  scale -->|"forUnoCSS"| uno["uno.config.ts — theme.breakpoint"]
+  scale -->|"BREAKPOINTS"| vuetify["vuetify.config.ts — display.thresholds"]
+  scale -->|"UNOCSS_BREAKPOINTS"| uno["uno.config.ts — theme.breakpoint"]
   vuetify -->|"auto-imported useVDisplay"| script["script setup — smAndDown, mobile, width"]
   uno -->|"variant prefixes"| template["template — md:grid-cols-2, lg:flex-row"]
   script --> layout["a structurally different layout"]
   template --> values["the same layout with different values"]
 ```
 
-`vuetify.config.ts` passes `forVuetify` as `display.thresholds` alongside `mobileBreakpoint: "md"`, which makes `mobile` true below the `md` threshold — the same width `smAndDown` covers, so the two flags agree by configuration rather than by coincidence. `uno.config.ts` passes `forUnoCSS` as `theme.breakpoint`, which is what makes `sm:`/`md:`/`lg:`/`xl:` prefixes resolve to those same widths. That file also imports the Vuetify config directly for colours, so the two systems share a palette as well as a scale.
+`vuetify.config.ts` passes `BREAKPOINTS` as `display.thresholds` alongside `mobileBreakpoint: "md"`, which makes `mobile` true below the `md` threshold — the same width `smAndDown` covers, so the two flags agree by configuration rather than by coincidence. `uno.config.ts` passes `UNOCSS_BREAKPOINTS` as `theme.breakpoint`, which is what makes `sm:`/`md:`/`lg:`/`xl:` prefixes resolve to those same widths. That file also imports the Vuetify config directly for colours, so the two systems share a palette as well as a scale.
 
 ## Choosing where to branch
 

@@ -23,9 +23,8 @@ export const getRender =
           return true;
         }
 
-        if (!component) return false;
-
-        return (component.ref as SuggestionList).onKeyDown(props);
+        if (component) return (component.ref as SuggestionList).onKeyDown(props);
+        else return false;
       },
 
       onStart: getSynchronizedFunction((props) =>

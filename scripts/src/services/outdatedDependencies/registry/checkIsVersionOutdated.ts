@@ -5,7 +5,6 @@ import { getVersionParts } from "#src/services/shared/getVersionParts";
 export const checkIsVersionOutdated = (current: string, latest: string): boolean => {
   const baseComparison = compareVersionBase(current, latest);
   if (baseComparison > 0) return false;
-  if (baseComparison < 0) return true;
-
-  return comparePrerelease(getVersionParts(current).prerelease, getVersionParts(latest).prerelease) < 0;
+  else if (baseComparison < 0) return true;
+  else return comparePrerelease(getVersionParts(current).prerelease, getVersionParts(latest).prerelease) < 0;
 };

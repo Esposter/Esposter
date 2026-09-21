@@ -85,15 +85,12 @@ export const createVirrun = async ({
     const { directory, exists, hash } = resolveSnapshotLocation(cwd);
     // Announce this process as a live user of the snapshot BEFORE the prune/mint — a concurrent run on a different
     // Lockfile hash prunes every directory that isn't its own hash and holds no live lease, so leasing first is what
-    // Stops it
-    // Reclaiming this directory in the window between minting it and mounting it. Released on dispose; a hard-killed
-    // Run's
-    // Lease is reaped later. createLease mkdirs the leases directory, so the lease exists even on a cold
-    // (not-yet-minted) run.
+    // Stops it reclaiming this directory in the window between minting it and mounting it. Released on dispose; a
+    // Hard-killed run's lease is reaped later. createLease mkdirs the leases directory, so the lease exists even on a
+    // Cold (not-yet-minted) run.
     leases.push(createLease(directory));
     // Sweep superseded snapshots, then reap any temp a hard-killed run stranded in the live directory (its finalizer
-    // Never
-    // Ran), before hitting or minting this one — so the cache never grows past the live entry plus its published
+    // Never ran), before hitting or minting this one — so the cache never grows past the live entry plus its published
     // Layers.
     pruneStaleSnapshots(hash);
     reapStaleTemps(directory, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
@@ -111,10 +108,9 @@ export const createVirrun = async ({
     if (prepareStep === undefined) return [];
     const location = resolvePrepareLocation(cwd, prepareStep);
     // Same live-user lease as the deps snapshot, on the source-keyed prepare directory, and taken FIRST for the same
-    // Reason:
-    // A concurrent run on a different key prunes any layer that isn't its own key and has no live lease, so leasing
-    // Before the prune/materialize is what stops it reclaiming this freshly-built layer in the window before we mount
-    // It.
+    // Reason: a concurrent run on a different key prunes any layer that isn't its own key and has no live lease, so
+    // Leasing before the prune/materialize is what stops it reclaiming this freshly-built layer in the window before we
+    // Mount it.
     leases.push(createLease(location.directory));
     pruneStalePrepareLayers(location.key);
     reapStaleTemps(location.directory, VIRRUN_SNAPSHOT_TEMP_PREFIXES);

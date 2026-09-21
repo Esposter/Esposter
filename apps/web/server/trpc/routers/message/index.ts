@@ -25,7 +25,6 @@ import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -36,6 +35,7 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
+import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
 import { updateEntityConditionally } from "@@/server/services/azure/table/updateEntityConditionally";
 import { generateWebPubSubClientAccessUrl } from "@@/server/services/azure/webPubSub/generateWebPubSubClientAccessUrl";
 import { on } from "@@/server/services/events/on";
@@ -65,7 +65,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
-import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
+import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import {
   cloneFiles,
   createMessage,
@@ -403,9 +403,8 @@ export const baseMessageRouter = router({
     async ({ input: { roomId, threadRootRowKey } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       const replyClauses: Clause<StandardMessageEntity>[] = [
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+        ...getLivePartitionClauses<StandardMessageEntity>(roomId),
         { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: threadRootRowKey },
-        getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
       const [rootMessage, replies] = await Promise.all([
         getEntity(messageClient, StandardMessageEntity, roomId, threadRootRowKey),

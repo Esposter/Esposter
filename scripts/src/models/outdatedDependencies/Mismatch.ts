@@ -2,7 +2,7 @@ import type { DependencyGroup } from "#src/models/outdatedDependencies/Dependenc
 
 export interface Mismatch {
   group: DependencyGroup;
-  pkg: string;
+  packageName: string;
   resolved: string;
   specifier: string;
 }

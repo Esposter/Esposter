@@ -6,7 +6,7 @@ import { getFollowedTagEntries } from "#src/services/outdatedDependencies/renova
 import { describe, expect, test } from "vitest";
 
 describe(getFollowedTagEntries, () => {
-  const entry: DependencyEntry = { group: DependencyGroup.Catalog, pkg: "a", specifier: "1.0.0-rc.0" };
+  const entry: DependencyEntry = { group: DependencyGroup.Catalog, packageName: "a", specifier: "1.0.0-rc.0" };
   const followed: RenovateRule = { followTag: "rc", matchPackageNames: ["a"] };
 
   test("carries the followed tag onto the entry the rule names", () => {

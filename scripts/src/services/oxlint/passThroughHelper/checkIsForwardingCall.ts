@@ -16,6 +16,7 @@ export const checkIsForwardingCall = (
   } else if (expression.callee.type !== "Identifier") return false;
   const expectedNames = receiverName === parameterNames[0] ? parameterNames.slice(1) : parameterNames;
   const argumentNames = expression.arguments.map((argument) => getArgumentName(argument));
-  if (argumentNames.length !== expectedNames.length) return false;
-  return argumentNames.every((argumentName, index) => argumentName === expectedNames[index]);
+  if (argumentNames.length === expectedNames.length)
+    return argumentNames.every((argumentName, index) => argumentName === expectedNames[index]);
+  else return false;
 };

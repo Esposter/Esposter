@@ -40,12 +40,11 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
   run: ({ args }) => {
     getResult(() => {
       // Corpses first, on win32: a hard-killed run's surviving WSL tree holds the store and snapshot directories open,
-      // So a
-      // Clean that ran ahead of the sweep would be asked to remove exactly what something still has mounted. Blocking,
-      // Unlike the startup sweep: TERM only asks, so a fire-and-forget reap returns while the tree is still unwinding
-      // And hands the removals below the very race the sweep is here to close. The sweep is keyed on owner liveness,
-      // Which is also why the run registry is swept rather than deleted outright — a live run's entry is the only
-      // Record of a tree that is still to be reaped if that run is killed later, and a clean that dropped it would
+      // So a clean that ran ahead of the sweep would be asked to remove exactly what something still has mounted.
+      // Blocking, unlike the startup sweep: TERM only asks, so a fire-and-forget reap returns while the tree is still
+      // Unwinding and hands the removals below the very race the sweep is here to close. The sweep is keyed on owner
+      // Liveness, which is also why the run registry is swept rather than deleted outright — a live run's entry is the
+      // Only record of a tree that is still to be reaped if that run is killed later, and a clean that dropped it would
       // Strand the tree with nothing left to find it by.
       if (process.platform === "win32") reapOrphanedWslRuns(true);
       removeCacheDirectory(getRepoCacheDirectory(""));

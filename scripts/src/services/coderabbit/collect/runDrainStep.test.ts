@@ -27,6 +27,7 @@ vi.mock(import("#src/services/coderabbit/collect/drainFindings"), () => ({
 describe(runDrainStep, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
   const baseInput = {
+    collectorSha: "collectorSha",
     frontierCommits: [],
     isDryRun: false,
     issueComments: [],

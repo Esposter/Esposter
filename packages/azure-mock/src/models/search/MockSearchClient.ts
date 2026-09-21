@@ -37,7 +37,7 @@ const compareValues = (firstValue: unknown, secondValue: unknown): number => {
   const secondComparable = toComparable(secondValue);
   if (typeof firstComparable === "number" && typeof secondComparable === "number")
     return firstComparable - secondComparable;
-  return String(firstComparable).localeCompare(String(secondComparable));
+  else return String(firstComparable).localeCompare(String(secondComparable));
 };
 
 const sortDocuments = (documents: Record<string, unknown>[], orderBy: string[]): Record<string, unknown>[] => {

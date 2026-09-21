@@ -25,9 +25,8 @@ import { afterAll, test } from "vitest";
 // Task), so the reporter renders each warm layer as a speedup multiplier: cold − (+snapshot) is the install the
 // SNAPSHOT layer saves, (+snapshot) − (+snapshot+prepare) is the `nuxt prepare` the PREPARE layer saves. Gated on
 // `isSandboxInstallSupported` (stronger than checkIsOsBackendSupported — cold performs a real install, so node/pnpm
-// Must be
-// Reachable and $HOME writable). A `.platform.bench.ts`: the os backend runs os/linux natively and os/wsl bridged
-// From win32, so each host writes its own committed artifact.
+// Must be reachable and $HOME writable). A `.platform.bench.ts`: the os backend runs os/linux natively and os/wsl
+// Bridged from win32, so each host writes its own committed artifact.
 //
 // Cold is measured over a CLEAN CHECKOUT (cleanSource), not the live repo: overlaying an install on the developer's
 // Populated node_modules is a warm no-op, so a repo-source cold would measure the same warm typecheck as the warm
@@ -117,8 +116,8 @@ afterAll(() => {
   if (!isBenchable) return;
   restoreCacheHome();
   // `removeSnapshotDirectory` (not rmSync) handles the mode-000 overlay work directory and, on win32, the
-  // \\wsl.localhost
-  // UNC teardown. Safe unconditionally: these homes are bench-owned leaves, never the developer's real cache.
+  // `\\wsl.localhost` UNC teardown. Safe unconditionally: these homes are bench-owned leaves, never the developer's
+  // Real cache.
   removeSnapshotDirectory(COLD_HOME);
   removeSnapshotDirectory(SNAPSHOT_HOME);
   // The checkout is a plain $HOME-staged directory (no overlay internals); rmSync clears it and its warm store.

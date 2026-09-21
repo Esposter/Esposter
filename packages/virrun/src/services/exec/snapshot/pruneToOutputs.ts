@@ -1,8 +1,8 @@
 import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnapshotDirectory";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-// The inverse of pruneSnapshotUpper: a prepare capture's upper holds the framework's generated `outputs` (e.g.
-// Packages/app/.nuxt) plus incidental churn the prepare command made against the dep tree and lockfile. This layer
+// The inverse of pruneSnapshotUpper: a prepare capture's upper holds the framework's generated `outputs` (the
+// App's `.nuxt`) plus incidental churn the prepare command made against the dep tree and lockfile. This layer
 // Owns only the declared `outputs` — everything else is already supplied by the deps snapshot below — so keep every
 // Output subtree (and the directories on the path to one) and drop the rest in a single rm per discarded subtree.
 // `outputs` are workspace-root-relative POSIX paths matched against the upper's own layout; filesystem ops use the

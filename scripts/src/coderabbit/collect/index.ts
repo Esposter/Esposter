@@ -1,4 +1,8 @@
-import { DRY_RUN_WORKTREE_PREFIX, RETRIGGER_DELAY_OUTPUT } from "#src/services/coderabbit/collect/constants";
+import {
+  COLLECTOR_SOURCE_PATH,
+  DRY_RUN_WORKTREE_PREFIX,
+  RETRIGGER_DELAY_OUTPUT,
+} from "#src/services/coderabbit/collect/constants";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
@@ -24,6 +28,10 @@ const {
 const pullRequest = pullRequestArgument === undefined ? undefined : Number(pullRequestArgument);
 if (pullRequest !== undefined && !checkIsGitHubNumber(pullRequest))
   throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
+
+// The basis every attempt count names (`getMarker`): the hash of the collector's own source at the ref this run
+// Started from, read before the pass switches the checkout to the trees it builds on
+const collectorSha = runGit(["rev-parse", `HEAD:${COLLECTOR_SOURCE_PATH}`]).trim();
 
 const dirtyPaths = readDirtyPaths();
 if (!isDryRun && dirtyPaths.length > 0)
@@ -57,7 +65,12 @@ if (isDryRun) {
   });
 }
 
-const { kind, reason, retriggerDelaySeconds, targetSha } = await runCycle({ cwd, isDryRun, pullRequest });
+const { kind, reason, retriggerDelaySeconds, targetSha } = await runCycle({
+  collectorSha,
+  cwd,
+  isDryRun,
+  pullRequest,
+});
 console.info(`${kind}: ${reason}${targetSha ? ` — ${targetSha}` : ""}`);
 if (retriggerDelaySeconds !== undefined && !isDryRun)
   writeJobOutput(RETRIGGER_DELAY_OUTPUT, retriggerDelaySeconds.toString());

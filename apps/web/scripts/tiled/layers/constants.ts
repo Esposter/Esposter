@@ -1,1 +1,1 @@
-export const DIRECTORY = "layers";
+export const LAYERS_DIRECTORY = "layers";

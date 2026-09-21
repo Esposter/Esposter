@@ -14,10 +14,10 @@ describe(computeSourceTreeHash, () => {
     cleanup();
   });
 
-  test("is null when the directory is not a git repository", () => {
+  test("is undefined when the directory is not a git repository", () => {
     expect.hasAssertions();
 
-    expect(computeSourceTreeHash(create())).toBeNull();
+    expect(computeSourceTreeHash(create())).toBeUndefined();
   });
 
   test("is stable for an unchanged tree", () => {

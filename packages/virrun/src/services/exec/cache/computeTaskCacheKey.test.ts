@@ -9,8 +9,9 @@ import { afterEach, describe, expect, test } from "vitest";
 describe(computeTaskCacheKey, () => {
   const MASKED_PATHS: readonly string[] = [];
   // Every key below needs the sandbox node major, which computeEnvironmentKey probes from a WSL login shell on win32 —
-  // With none reachable the key is null by design, and comparing null against null asserts nothing at all. The two
-  // Null cases above stay: they are what the probe failing looks like. CI is linux, where the probe is process.version
+  // With none reachable the key is undefined by design, and comparing one undefined against another asserts nothing
+  // At all. The two undefined cases above stay: they are what the probe failing looks like. CI is linux, where the
+  // Probe is process.version
   const IS_SANDBOX_NODE_VERSION_READABLE = Boolean(getSandboxNodeVersion());
 
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
@@ -21,19 +22,19 @@ describe(computeTaskCacheKey, () => {
     cleanup();
   });
 
-  test("is null when there is no git repository to hash the source tree", () => {
+  test("is undefined when there is no git repository to hash the source tree", () => {
     expect.hasAssertions();
 
-    expect(computeTaskCacheKey(command, createWorkspace(), MASKED_PATHS, forceColor)).toBeNull();
+    expect(computeTaskCacheKey(command, createWorkspace(), MASKED_PATHS, forceColor)).toBeUndefined();
   });
 
-  test("is null when there is no lockfile to key the dependency closure", () => {
+  test("is undefined when there is no lockfile to key the dependency closure", () => {
     expect.hasAssertions();
 
     const directory = create();
     initRepository(directory);
 
-    expect(computeTaskCacheKey(command, directory, MASKED_PATHS, forceColor)).toBeNull();
+    expect(computeTaskCacheKey(command, directory, MASKED_PATHS, forceColor)).toBeUndefined();
   });
 
   test.skipIf(!IS_SANDBOX_NODE_VERSION_READABLE)("is stable for the same command, lockfile, and source tree", () => {

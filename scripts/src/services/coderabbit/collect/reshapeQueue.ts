@@ -2,6 +2,7 @@ import type { ReshapeInput } from "#src/models/coderabbit/collect/ReshapeInput";
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { abortSequencing } from "#src/services/coderabbit/collect/abortSequencing";
+import { checkIsPicked } from "#src/services/coderabbit/collect/checkIsPicked";
 import {
   EXPRESS_TRAILER,
   RESHAPE_FAILED_MARKER,
@@ -22,7 +23,7 @@ import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The queue never holds on the cap: the first owed commit that alone changes more files than a window may carry
 // Is repackaged here — by the drain's session, told what shape to leave and proved by the tree it left — into the
@@ -30,7 +31,13 @@ import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 // Commit per run: the rewrite's push fires the next. Whether HEAD was rewritten is the answer; a failed attempt
 // Is counted on the commit and fails the run, and past the cap the commit is left as it is — the port holds on
 // It, and the held notice says so (docs: infra/review-collector/collection-cycle, "Sync").
-export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: ReshapeInput): Promise<boolean> => {
+export const reshapeQueue = async ({
+  collectorSha,
+  cwd,
+  isDryRun,
+  targetSha,
+  viewerLogin,
+}: ReshapeInput): Promise<boolean> => {
   const owedShas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${targetSha}..HEAD`], cwd));
   // A commit claiming no review is the express lane's at any size, so the cap is not its measure: reshaping one
   // Would pay a session per run to repackage what no window will ever carry
@@ -45,7 +52,7 @@ export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: Re
     console.info(`would reshape ${sha} — ${fileCount} files alone against the cap of ${REVIEW_FILE_CAP}`);
     return false;
   }
-  const marker = getMarker(RESHAPE_FAILED_MARKER, sha);
+  const marker = getMarker(RESHAPE_FAILED_MARKER, sha, [collectorSha]);
   const comments = readCommitComments(sha);
   const attempts = getMarkedCount(comments, viewerLogin, marker);
   if (attempts >= SESSION_ATTEMPT_CAP) {
@@ -70,14 +77,9 @@ export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: Re
   }
   const failure = isEnded ? getReshapeFailure(sha, cwd) : "exited non-zero";
   // The final tree equals the original's, so what followed the commit applies as it did — a stop here is a
-  // Reshaping that lied about its tree in a way the diff did not show, and counts the same
-  const isReplayed =
-    failure === undefined &&
-    (restShas.length === 0 ||
-      getResult(() => runGit(["cherry-pick", "--empty=drop", ...restShas], cwd)).match(
-        () => true,
-        () => false,
-      ));
+  // Reshaping that lied about its tree in a way the diff did not show, and counts the same. What followed may
+  // Hold an empty copy a resolution left this run, which the same sequence rides through
+  const isReplayed = failure === undefined && checkIsPicked(restShas, cwd);
   if (failure !== undefined || !isReplayed) {
     const reason = failure ?? `left a tree the commits after ${sha} no longer apply to`;
     // A session handed the repackaging can leave any operation open, not only the cherry-pick this step runs, and

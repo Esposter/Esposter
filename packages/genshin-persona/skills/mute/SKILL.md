@@ -1,6 +1,6 @@
 ---
 name: mute
-description: Stops the Stop hook speaking replies. The pick and the card are unaffected.
+description: Stops replies' spoken lines being read aloud. The pick and the card are unaffected.
 disable-model-invocation: true
 ---
 

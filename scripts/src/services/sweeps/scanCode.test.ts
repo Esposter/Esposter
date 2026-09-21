@@ -53,7 +53,7 @@ describe(scanCode, () => {
   test.each([
     ["a string", 'a="s"/b;c', "a=/b;c"],
     ["a template literal", `a=\`\${s}\`/b;c`, "a=s/b;c"],
-  ])("reads a division after %s", (_, code, expected) => {
+  ])("reads a division after %s", (_title, code, expected) => {
     expect.hasAssertions();
 
     expect(readCode(code)).toBe(expected);

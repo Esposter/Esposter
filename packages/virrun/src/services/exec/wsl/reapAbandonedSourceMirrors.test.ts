@@ -13,8 +13,8 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // `getWslNativeCacheRoot` resolves the ext4 cache root the mirrors live under; point it at a per-test temp directory (a
-// Plain
-// Local path, so removeSnapshotDirectoriesDetached teardown stays synchronous and deterministic — no WSL round-trip).
+// Plain local path, so removeSnapshotDirectoriesDetached teardown stays synchronous and deterministic — no WSL
+// Round-trip).
 const { cacheRootHolder } = vi.hoisted(() => ({ cacheRootHolder: { value: "" } }));
 
 vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({

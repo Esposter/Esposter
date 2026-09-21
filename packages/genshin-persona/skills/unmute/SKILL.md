@@ -1,6 +1,6 @@
 ---
 name: unmute
-description: Lets the Stop hook speak again.
+description: Lets replies' spoken lines be read aloud again.
 disable-model-invocation: true
 ---
 

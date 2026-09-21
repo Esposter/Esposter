@@ -22,7 +22,12 @@ stops being right and what a reviewer's "use a guard clause" gets wrong.
   reads as code reached after the chain rather than instead of it:
   `if (!x) return a; else if (y) return b; else return c;` — `no-else-return` is off for exactly this reason. Only omit the trailing `else` when the chain has no
   final branch, and only omit chaining altogether when the branches are genuinely independent (different concerns,
-  not a logical chain).
+  not a logical chain). Where the guard is one `return` and the fall-through is one `return`, the pair is the chain and
+  takes its `else` — a line the formatter wraps is still that pair. Where the fall-through is a block, or a
+  `return` whose expression carries a body of its own (a callback, a literal that runs to several lines), it is the
+  happy path and the guard stays — closing it would indent the happy path under the `if` the first bullet exits
+  ahead of. No enforcer takes this: a selector sees one `ReturnStatement` either way, and how much of the function
+  that statement is comes from reading it.
 - **The branch before the terminal `else` may not be negated** — `no-negated-condition` ignores a negated test
   whose alternate is another `if`, so `if (!x) … else if (!y) …` is only legal while the chain stays open; closing
   it with an `else` makes the last negated test an error. Invert that test and swap the final two branches

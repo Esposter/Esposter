@@ -9,5 +9,5 @@ export const computeConvertToTransformation = (
   transformation: ConvertToTransformation,
 ): ColumnValue => {
   if (transformation.targetType === ColumnType.String) return value === null ? null : String(value);
-  return coerceValue(value === null ? "" : String(value), transformation.targetType);
+  else return coerceValue(value === null ? "" : String(value), transformation.targetType);
 };

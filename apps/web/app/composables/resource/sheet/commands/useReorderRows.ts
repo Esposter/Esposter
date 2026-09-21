@@ -46,5 +46,5 @@ export const useReorderRows = () =>
     }
 
     if (fromIndex === toIndex) return undefined;
-    return new MoveRowCommand(fromIndex, toIndex);
+    else return new MoveRowCommand(fromIndex, toIndex);
   });

@@ -4,10 +4,9 @@ import { DiagnosticCheckType } from "#src/models/cli/DiagnosticCheckType";
 import { DiagnosticStatus } from "#src/models/cli/DiagnosticStatus";
 import { readSandboxProbeOutput } from "#src/services/cli/doctor/readSandboxProbeOutput";
 import { buildWslLoginShellCommand } from "#src/services/exec/wsl/buildWslLoginShellCommand";
-// Off win32 the host's own node runs the sandbox, so the check is N/A. On win32 it probes node via the user's real
-// WSL login + interactive shell (buildWslLoginShellCommand), matching how readWslLoginEnvironment captures the
-// Toolchain the
-// Backend can reach — a profile/rc-bound version manager (fnm/nvm) is invisible to a bare `wsl.exe --exec`.
+// Off win32 the host's own node runs the sandbox, so the check is N/A. On win32 it probes node via the user's real WSL
+// Login + interactive shell (buildWslLoginShellCommand), matching how readWslLoginEnvironment captures the toolchain
+// The backend can reach — a profile/rc-bound version manager (fnm/nvm) is invisible to a bare `wsl.exe --exec`.
 export const probeWslNode = (): DiagnosticCheck => {
   const label = "WSL Linux node";
   const type = DiagnosticCheckType.WslNode;

@@ -8,10 +8,10 @@ import { satisfies } from "semver";
 // Earlier one, so each key is read from the last rule that sets it, and the rule that set the holding key is the
 // Answer — its description is the reason the report prints.
 export const getHoldingRule = (
-  { latest, pkg }: OutdatedDependency,
+  { latest, packageName }: OutdatedDependency,
   rules: RenovateRule[],
 ): RenovateRule | undefined => {
-  const matchingRules = rules.filter(({ matchPackageNames }) => matchPackageNames.includes(pkg));
+  const matchingRules = rules.filter(({ matchPackageNames }) => matchPackageNames.includes(packageName));
   const enabledRule = matchingRules.findLast(({ enabled }) => enabled !== undefined);
   if (enabledRule?.enabled === false) return enabledRule;
 
@@ -21,6 +21,5 @@ export const getHoldingRule = (
     !satisfies(latest, allowedVersionsRule.allowedVersions, { includePrerelease: true })
   )
     return allowedVersionsRule;
-
-  return undefined;
+  else return undefined;
 };

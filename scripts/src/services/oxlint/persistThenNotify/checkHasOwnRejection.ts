@@ -7,5 +7,5 @@ export const checkHasOwnRejection = (value: unknown): boolean =>
   collectOwnNodes(value, (node) => {
     if (node.type === "ThrowStatement") return [true];
     if (node.type === "ReturnStatement" && node.argument && checkIsPromiseReject(node.argument)) return [true];
-    return undefined;
+    else return undefined;
   }).length > 0;

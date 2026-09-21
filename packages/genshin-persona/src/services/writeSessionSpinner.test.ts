@@ -26,11 +26,11 @@ vi.mock(import("#src/services/readUserSettings"), () => ({ readUserSettings }));
 vi.mock(import("#src/services/writeUserSettings"), () => ({ writeUserSettings }));
 
 describe(writeSessionSpinner, () => {
-  const character = { displayName: "Hu Tao", name: "Hu Tao" };
-  const spinner = getSpinner(english, character, [], [{ text: "text", title: "title" }]);
+  const character = { description: "description", displayName: "Hu Tao", name: "Hu Tao" };
+  const spinner = getSpinner(english.verbs, character, [], [{ text: "text", title: "title" }]);
   const otherSpinner = getSpinner(
-    english,
-    { displayName: "Venti", name: "Venti" },
+    english.verbs,
+    { description: "otherDescription", displayName: "Venti", name: "Venti" },
     [],
     [{ text: "otherText", title: "title" }],
   );

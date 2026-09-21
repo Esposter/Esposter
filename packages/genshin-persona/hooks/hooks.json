@@ -9,17 +9,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "async": true,
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/speak.ts\""
-          }
-        ]
-      }
     ]
   }
 }

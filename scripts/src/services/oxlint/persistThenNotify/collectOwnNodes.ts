@@ -12,5 +12,5 @@ export const collectOwnNodes = <T>(value: unknown, select: (node: ESTree.Node) =
   if (typeof node.type !== "string" || FunctionNodeTypes.has(node.type)) return [];
   const selected = select(node);
   if (selected) return selected;
-  return Object.entries(node).flatMap(([key, child]) => (key === "parent" ? [] : collectOwnNodes(child, select)));
+  else return Object.entries(node).flatMap(([key, child]) => (key === "parent" ? [] : collectOwnNodes(child, select)));
 };

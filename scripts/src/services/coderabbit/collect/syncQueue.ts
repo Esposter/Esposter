@@ -2,6 +2,7 @@ import type { SyncQueueInput } from "#src/models/coderabbit/collect/SyncQueueInp
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
+import { checkIsPicked } from "#src/services/coderabbit/collect/checkIsPicked";
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import {
   DEVELOP_BRANCH,
@@ -29,28 +30,15 @@ import { resolveLockfileConflicts } from "#src/services/coderabbit/collect/resol
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
-
-// One sequence rather than a pick per commit: a stop is resumed by `--continue`, and a copy the tree already
-// Holds drops on its own. Whether the sequence ran to its end — a stop leaves it open for the resolver. `-x`
-// Names the original in every copy it lands, which is the one record a resolution that drifted the copy's patch
-// Id cannot lose (`readCherryShas`), and so the one thing `checkIsCarried` can read the replay against.
-// `--empty=drop` answers for a commit that empties as it applies; `--allow-empty` for one that arrives empty,
-// Which is a resolution's own record of a change the target already held and stalls the sequence without it
-const checkIsPicked = (shas: string[], cwd: string): boolean =>
-  shas.length === 0 ||
-  getResult(() => runGit(["cherry-pick", "-x", "--allow-empty", "--empty=drop", ...shas], cwd)).match(
-    () => true,
-    () => false,
-  );
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Whether the replay carries every commit the queue owed — by patch id, or by a copy naming it as its original.
 // A closed sequencer over a clean tree says only that nothing is mid-flight: `git cherry-pick --abort` leaves
 // Exactly that, with the replay reset to the target and every owed commit about to be force-pushed away, as does
 // A `--skip`. This is the test that reads the work rather than the state it was left in — and the reason the
-// Resolver is denied `--skip` outright: a resolution the target absorbs whole lands as an empty copy naming its
-// Original, because no test over content can tell that drop from an abandoned one, while the copy says which it
-// Was (`getSyncPrompt`).
+// Resolver is denied `--skip` outright, and the replay `--empty=drop`: a commit the target absorbs whole lands
+// As an empty copy naming its original, because no test over content can tell that drop from an abandoned one,
+// While the copy says which it was (`getSyncPrompt`, `checkIsPicked`).
 const checkIsCarried = (queueSha: string, cwd: string): boolean =>
   readCherryShas(readHeadSha(cwd), queueSha, cwd).length === 0;
 
@@ -94,6 +82,7 @@ const pushRewrite = (cwd: string, expectedSha: string, isDryRun: boolean): strin
 // Read when nothing was rewritten — or nothing when the queue moved under the run: the push that moved it fires
 // A run of its own, and a port read off the stale head would hold on a conflict the next run resolves.
 export const syncQueue = async ({
+  collectorSha,
   cwd,
   developSha,
   isDryRun,
@@ -126,7 +115,7 @@ export const syncQueue = async ({
         const conflictedPaths = readUnmergedPaths(cwd);
         // The attempts are counted on the commit itself: the queue is synced with no pull request open as often
         // As with one, and a count kept on the pull request would leave the resolver uncapped in between
-        const marker = getMarker(SYNC_FAILED_MARKER, conflictSha);
+        const marker = getMarker(SYNC_FAILED_MARKER, conflictSha, [collectorSha]);
         const comments = readCommitComments(conflictSha);
         const attempts = getMarkedCount(comments, viewerLogin, marker);
         if (attempts >= SESSION_ATTEMPT_CAP)
@@ -166,7 +155,7 @@ export const syncQueue = async ({
     }
   }
 
-  const isReshaped = await reshapeQueue({ cwd, isDryRun, targetSha, viewerLogin });
+  const isReshaped = await reshapeQueue({ collectorSha, cwd, isDryRun, targetSha, viewerLogin });
   if (isOnTarget && !isReshaped) return queueSha;
-  return pushRewrite(cwd, queueSha, isDryRun);
+  else return pushRewrite(cwd, queueSha, isDryRun);
 };

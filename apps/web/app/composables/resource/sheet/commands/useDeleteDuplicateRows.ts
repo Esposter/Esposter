@@ -6,5 +6,5 @@ export const useDeleteDuplicateRows = () =>
   useSheetCommand((dataSource, keepMode: KeepDuplicateMode = KeepDuplicateMode.First) => {
     const duplicateRows = findDuplicateRows(dataSource, keepMode);
     if (duplicateRows.length === 0) return undefined;
-    return new DeleteRowsCommand(duplicateRows);
+    else return new DeleteRowsCommand(duplicateRows);
   });

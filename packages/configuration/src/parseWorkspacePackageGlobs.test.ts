@@ -1,4 +1,4 @@
-import { parseWorkspacePackageGlobs } from "#src/services/shared/parseWorkspacePackageGlobs";
+import { parseWorkspacePackageGlobs } from "#src/parseWorkspacePackageGlobs";
 import { describe, expect, test } from "vitest";
 
 describe(parseWorkspacePackageGlobs, () => {

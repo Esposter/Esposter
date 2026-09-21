@@ -8,12 +8,17 @@ export const printMismatches = (mismatches: Mismatch[], color: ColorPalette): vo
 
   console.log(
     color.yellow(
-      "Catalog specifiers out of sync with lockfile resolutions — bump pnpm-workspace.yaml or run pnpm refresh:lockfile",
+      "Specifiers out of sync with lockfile resolutions — bump pnpm-workspace.yaml or run pnpm refresh:lockfile; an npm manifest regenerates its own lockfile",
     ),
   );
   printTable(
     ["Package", "Specifier", "Resolved", "Group"],
-    mismatches.map(({ group, pkg, resolved, specifier }) => [pkg, color.red(specifier), color.green(resolved), group]),
+    mismatches.map(({ group, packageName, resolved, specifier }) => [
+      packageName,
+      color.red(specifier),
+      color.green(resolved),
+      group,
+    ]),
     color,
   );
 };

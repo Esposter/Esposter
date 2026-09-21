@@ -11,4 +11,4 @@ disable-model-invocation: true
 node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voice $ARGUMENTS
 ```
 
-Relay its lines as written. The first run downloads the engine's runtime and weights — a couple of gigabytes — and prints its progress; it ends by speaking one sentence as this session's character, so the person hears the voice before the first reply does.
+Relay its lines as written. The first run downloads the engine's runtime and weights — a couple of gigabytes — and prints its progress; it ends by speaking one sentence as this session's character, so the person hears the voice before the first reply does. It also writes the hook that reads each reply's spoken lines into user settings, which the tool reads once per process, so replies are read from the next session.

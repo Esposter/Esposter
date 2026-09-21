@@ -5,18 +5,18 @@ splits at `services/exec`'s subdirectories.
 
 | Unit                                                                                                | Swept      | Notes                                                  |
 | --------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------ |
-| `virrun` — `services/exec/snapshot`                                                                 | 2026-09-15 |                                                        |
-| `virrun` — `services/exec/wsl`                                                                      | 2026-09-15 |                                                        |
-| `virrun` — `services/exec/util`                                                                     | 2026-09-15 |                                                        |
-| `virrun` — `services/exec/{test,cache,os}`                                                          | 2026-09-15 |                                                        |
-| `virrun` — `services/exec` the rest: `vfs`, `bwrap`, `differential`, `store`, `native` and the root | 2026-09-15 |                                                        |
-| `virrun` — `services/{cli,configuration,source,virrun}`, `models`, the root                         | 2026-09-15 | its two mocked path constants stay — see the README    |
-| `azure-functions`                                                                                   | 2026-09-15 | every `mockDb` stays — hoisted factory, see the README |
-| `azure`, `azure-mock`                                                                               | 2026-09-15 |                                                        |
-| `db`, `db-schema`, `db-mock`                                                                        | 2026-09-15 |                                                        |
-| `shared`, `shared-node`                                                                             | 2026-09-15 |                                                        |
-| `parse-tmx`, `xml2js`                                                                               | 2026-09-15 |                                                        |
-| `vue-phaserjs`                                                                                      | 2026-09-15 |                                                        |
-| `configuration`, `infra`                                                                            | 2026-09-15 |                                                        |
-| `keyframe-store`                                                                                    | 2026-09-15 |                                                        |
+| `virrun` — `services/exec/snapshot`                                                                 | 2026-09-21 |                                                        |
+| `virrun` — `services/exec/wsl`                                                                      | 2026-09-21 |                                                        |
+| `virrun` — `services/exec/util`                                                                     | 2026-09-21 |                                                        |
+| `virrun` — `services/exec/{test,cache,os}`                                                          | 2026-09-21 |                                                        |
+| `virrun` — `services/exec` the rest: `vfs`, `bwrap`, `differential`, `store`, `native` and the root | 2026-09-21 |                                                        |
+| `virrun` — `services/{cli,configuration,source,virrun}`, `models`, the root                         | 2026-09-21 | its two mocked path constants stay — see the README    |
+| `azure-functions`                                                                                   | 2026-09-21 | every `mockDb` stays — hoisted factory, see the README |
+| `azure`, `azure-mock`                                                                               | 2026-09-21 |                                                        |
+| `db`, `db-schema`, `db-mock`                                                                        | 2026-09-21 |                                                        |
+| `shared`, `shared-node`                                                                             | 2026-09-21 |                                                        |
+| `parse-tmx`, `xml2js`                                                                               | 2026-09-21 |                                                        |
+| `vue-phaserjs`                                                                                      | 2026-09-21 |                                                        |
+| `configuration`, `infra`                                                                            | 2026-09-21 |                                                        |
+| `keyframe-store`                                                                                    | 2026-09-21 |                                                        |
 | `genshin-persona`                                                                                   | 2026-09-21 | its mocks are hoisted factories, typed off the source  |

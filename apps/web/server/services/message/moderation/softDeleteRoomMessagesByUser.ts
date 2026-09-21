@@ -1,16 +1,10 @@
 import type { Clause } from "@esposter/azure";
 
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
+import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
-import {
-  AZURE_MAX_PAGE_SIZE,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-  getTableNullClause,
-  serializeClauses,
-} from "@esposter/azure";
+import { AZURE_MAX_PAGE_SIZE, BinaryOperator, serializeClauses } from "@esposter/azure";
 import { deserializeEntity, getFilesBlobNames, serializeEntity, submitTransactionBatches } from "@esposter/db";
 import {
   AzureContainer,
@@ -25,9 +19,8 @@ import { noop } from "@esposter/shared";
 export const softDeleteRoomMessagesByUser = async (roomId: string, targetUserId: string): Promise<void> => {
   const messageClient = await useTableClient(AzureTable.Messages);
   const clauses: Clause<StandardMessageEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+    ...getLivePartitionClauses<StandardMessageEntity>(roomId),
     { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: targetUserId },
-    getTableNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   const filter = serializeClauses(clauses);
   const now = new Date();

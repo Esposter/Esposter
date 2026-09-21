@@ -7,5 +7,5 @@ export const useStringTransformation = () =>
   useSheetCommand((dataSource, stringTransformationType: StringTransformationType) => {
     const affectedCells = getStringColumnsAffectedCells(dataSource);
     if (affectedCells.length === 0) return undefined;
-    return new StringTransformationCommand(stringTransformationType, affectedCells);
+    else return new StringTransformationCommand(stringTransformationType, affectedCells);
   });

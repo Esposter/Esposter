@@ -5,6 +5,6 @@ export const getVersionChangeLevel = (current: string, latest: string): VersionC
   const currentParts = getVersionParts(current);
   const latestParts = getVersionParts(latest);
   if (currentParts.major !== latestParts.major) return VersionChangeLevel.Major;
-  if (currentParts.minor !== latestParts.minor) return VersionChangeLevel.Minor;
-  return VersionChangeLevel.Patch;
+  else if (currentParts.minor === latestParts.minor) return VersionChangeLevel.Patch;
+  else return VersionChangeLevel.Minor;
 };

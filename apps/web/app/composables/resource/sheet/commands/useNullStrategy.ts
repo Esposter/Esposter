@@ -8,5 +8,5 @@ export const useNullStrategy = () =>
     const affectedCells = strategy === NullStrategy.ReplaceWithNA ? getNullAffectedCells(dataSource) : [];
     const affectedRows = strategy === NullStrategy.DropRow ? getNullAffectedRows(dataSource) : [];
     if (affectedCells.length === 0 && affectedRows.length === 0) return undefined;
-    return new NullStrategyCommand(strategy, affectedCells, affectedRows);
+    else return new NullStrategyCommand(strategy, affectedCells, affectedRows);
   });

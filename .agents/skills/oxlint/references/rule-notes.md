@@ -10,6 +10,15 @@ Fix it by making that path's value a promise (`return Promise.resolve({ status: 
 
 That fix restores the return type but not the rejection path: without `async`, a throw in the synchronous part of the body escapes at the call site instead of rejecting the returned promise, so a caller that only attaches `.catch()` never sees it. When the function is written to throw for its callers to handle as a rejection, keep `async` and disable `require-await` on it with that reason.
 
+## The `no-inferrable-types` autofix strips an annotation `--isolatedDeclarations` needs
+
+A template literal with a substitution is not an expression the declaration emitter can write a type for, so an
+exported const initialized by one fails `TS9010` in every `packages/*` library the moment its `: string` annotation
+goes — and `typescript/no-inferrable-types` reports that annotation and `--fix` deletes it. The annotation is
+redundant to the linter and mandatory to the typecheck, so it goes back with a directive rather than being argued
+with, and a lint pass that autofixed it is not done until the typecheck has run over the same tree
+(`packages/genshin-persona/src/services/constants.ts` carries four, and a dozen more sit across the packages).
+
 ## `typescript/no-useless-default-assignment` (oxlint)
 
 The rule proves a default can never fire from the signature it is written on — and for an overloaded function that

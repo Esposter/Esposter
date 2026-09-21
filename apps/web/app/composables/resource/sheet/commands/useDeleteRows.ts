@@ -13,5 +13,5 @@ export const useDeleteRows = () =>
       indexedRows.push({ index, row: structuredClone(toRawDeep(takeOne(dataSource.rows, index))) });
     }
     if (indexedRows.length === 0) return undefined;
-    return new DeleteRowsCommand(indexedRows);
+    else return new DeleteRowsCommand(indexedRows);
   });

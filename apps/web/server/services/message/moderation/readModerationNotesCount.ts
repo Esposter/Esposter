@@ -1,9 +1,9 @@
 import type { Clause } from "@esposter/azure";
 import type { ModerationNoteEntity, RoomInMessage, User } from "@esposter/db-schema";
 
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
+import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
+import { BinaryOperator, serializeClauses } from "@esposter/azure";
 import { readEntitiesCount } from "@esposter/db";
 import { AzureTable, ModerationNoteEntityPropertyNames } from "@esposter/db-schema";
 
@@ -14,9 +14,8 @@ export const readModerationNotesCount = async (
   targetUserId: User["id"],
 ): Promise<number> => {
   const clauses: Clause<ModerationNoteEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+    ...getLivePartitionClauses<ModerationNoteEntity>(roomId),
     { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.eq, value: targetUserId },
-    getTableNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   const moderationNotesClient = await useTableClient(AzureTable.ModerationNotes);
   return readEntitiesCount(moderationNotesClient, { filter: serializeClauses(clauses) });

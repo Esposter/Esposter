@@ -1,7 +1,8 @@
 import type { SyncPromptInput } from "#src/models/coderabbit/collect/SyncPromptInput";
 
 import { QUEUE_BRANCH, SESSION_DENIALS } from "#src/services/coderabbit/collect/constants";
-import { LOCKFILE, WORKSPACE_FILE } from "#src/services/shared/constants";
+import { LOCKFILE } from "#src/services/shared/constants";
+import { WORKSPACE_FILE } from "@esposter/configuration";
 
 // The resolver is the drain's session pointed at a conflict instead of a finding: the same checkout, the same
 // Denials (no push, no branch switch, no GitHub), and the sequencer it must run to the end. The judgment it is

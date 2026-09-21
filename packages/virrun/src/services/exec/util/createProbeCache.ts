@@ -4,12 +4,11 @@ import { VIRRUN_FORCE_PROBE_KEY } from "#src/services/exec/util/constants";
 import { getHostFingerprint } from "#src/services/exec/util/getHostFingerprint";
 // The three-tier control flow every host probe shares, so the caching contract lives in exactly one place: the
 // In-process memo short-circuits repeat calls within a run; the persisted cross-process cache (getHostFingerprint-
-// Keyed so it self-invalidates on a kernel change; VIRRUN_FORCE_PROBE bypasses it but never the memo, which is
-// Always sound) reuses a prior process's verdict; only a cold cache runs the probe, then persists the values
+// Keyed so it self-invalidates on a kernel change; VIRRUN_FORCE_PROBE bypasses it but never the memo, which is always
+// Sound) reuses a prior process's verdict; only a cold cache runs the probe, then persists the values
 // The `shouldPersist` predicate selects — a probe that degrades on transient failure passes a non-degraded one so the
-// Failure
-// Re-probes next process instead of caching the miss. A probe that throws leaves both tiers unset, so the next call
-// Re-probes. Everything probe-specific — filename, value schema, age bound, which side the cache is stored on —
+// Failure re-probes next process instead of caching the miss. A probe that throws leaves both tiers unset, so the next
+// Call re-probes. Everything probe-specific — filename, value schema, age bound, which side the cache is stored on —
 // Stays with each probe via readPersistedCache/writePersistedCache; only the tier ordering lives here.
 export const createProbeCache = <TValue>({
   probe,

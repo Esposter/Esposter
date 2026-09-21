@@ -11,7 +11,9 @@ import { GroupMetadataMap } from "#src/services/outdatedDependencies/registry/Gr
 import { getLatestVersion } from "#src/services/shared/getLatestVersion";
 import { getResultAsync } from "@esposter/shared";
 
-export const getRegistryOutdatedDependencies = async (entries: DependencyEntry[]): Promise<OutdatedDependencyCheck> => {
+export const readRegistryOutdatedDependencies = async (
+  entries: DependencyEntry[],
+): Promise<OutdatedDependencyCheck> => {
   // Keyed by the entry object itself, because a package name is not an identity: two manifests declaring the
   // Same engine under different constraints are two entries, and so is a package that is both a config
   // Dependency and an engine. Keyed by name, the last result written wins and is then emitted once per entry
@@ -29,8 +31,8 @@ export const getRegistryOutdatedDependencies = async (entries: DependencyEntry[]
       if (!entry) return;
       nextIndex += 1;
 
-      const { followTag, group, pkg, specifier } = entry;
-      await getResultAsync(() => getLatestVersion(pkg, followTag)).match(
+      const { dependent: entryDependent, followTag, group, packageName, specifier } = entry;
+      await getResultAsync(() => getLatestVersion(packageName, followTag)).match(
         (latest) => {
           const current = getSpecifierBase(specifier);
           const { dependencyType, dependent } = GroupMetadataMap[group];
@@ -39,14 +41,14 @@ export const getRegistryOutdatedDependencies = async (entries: DependencyEntry[]
               current,
               // A followed tag is what the Latest column then holds, so the tag is the label
               dependencyType: followTag ?? dependencyType,
-              dependents: [dependent],
+              dependents: [entryDependent ?? dependent],
               latest,
-              pkg,
+              packageName,
               specifier,
             });
         },
         (error) => {
-          errors.push({ error: error.message, pkg });
+          errors.push({ error: error.message, packageName });
         },
       );
     }
@@ -62,11 +64,12 @@ export const getRegistryOutdatedDependencies = async (entries: DependencyEntry[]
   });
 
   return {
-    errors: errors.toSorted((left, right) => left.pkg.localeCompare(right.pkg)),
+    errors: errors.toSorted((left, right) => left.packageName.localeCompare(right.packageName)),
     outdatedDependencies: outdatedDependencies
       .toSorted(
         (left, right) =>
-          left.changeLevel - right.changeLevel || left.dependency.pkg.localeCompare(right.dependency.pkg),
+          left.changeLevel - right.changeLevel ||
+          left.dependency.packageName.localeCompare(right.dependency.packageName),
       )
       .map(({ dependency }) => dependency),
   };

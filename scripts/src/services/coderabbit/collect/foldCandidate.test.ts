@@ -13,6 +13,7 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const filePath = `${TEST_FILENAME}.ts`;
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
   const viewerLogin = "viewerLogin";
+  const collectorSha = "collectorSha";
   const readParents = (sha: string): string[] =>
     runGit(["rev-list", "--parents", "--max-count=1", sha], getCwd()).trim().split(" ").slice(1);
 
@@ -22,6 +23,7 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const developSha = readSha("HEAD");
     const queueShas = [commitFile(filePath, ""), commitFile(nestedPath, "")];
     const targetSha = await foldCandidate({
+      collectorSha,
       cwd: getCwd(),
       developSha,
       fixCount: 0,
@@ -46,6 +48,7 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(developSha);
     for (const sha of [firstSha, queueSha]) pickCommit(sha, getCwd());
     const targetSha = await foldCandidate({
+      collectorSha,
       cwd: getCwd(),
       developSha,
       fixCount: 0,
@@ -70,6 +73,7 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(developSha);
     pickCommit(queueSha, getCwd());
     const targetSha = await foldCandidate({
+      collectorSha,
       cwd: getCwd(),
       developSha,
       fixCount: 0,
@@ -91,6 +95,7 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(developSha);
     const queueSha = commitFile(filePath, "");
     const targetSha = await foldCandidate({
+      collectorSha,
       cwd: getCwd(),
       developSha,
       fixCount: 0,
@@ -120,6 +125,7 @@ describe(foldCandidate, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     switchTo(developSha);
     const queueSha = commitFile(filePath, "");
     const targetSha = await foldCandidate({
+      collectorSha,
       cwd: getCwd(),
       developSha,
       fixCount: 0,

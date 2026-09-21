@@ -1,5 +1,5 @@
-// Execution path a passthrough command takes on the os backend (apps/web/content/docs/virrun/write-back.md and
-// Snapshot-and-fork.md).
+// Execution path a passthrough command takes on the os backend (`apps/web/content/docs/virrun/write-back.md` and
+// `apps/web/content/docs/virrun/snapshot-and-fork.md`).
 export enum ExecutionMode {
   // Cold plain exec, no warm-cache reuse (`virrun exec`).
   Exec = "exec",

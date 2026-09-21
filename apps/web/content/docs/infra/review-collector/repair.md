@@ -21,8 +21,8 @@ flowchart TD
   G -->|nothing moved| C
   G -->|the tree moved| GV{The regenerated tree passes every check}
   GV -->|no| RS[Restore the head, discard the regeneration] --> C
-  GV -->|yes| GC[Commit it carrying Repairs: head — no session read this red] --> PU
-  C[Claude, detached at the head, with the failing jobs' log tails<br/>one commit carrying Repairs: head]
+  GV -->|yes| GC[Commit it carrying Repairs: head against the collector — no session read this red] --> PU
+  C[Claude, detached at the head, with the failing jobs' log tails<br/>one commit carrying Repairs: head against the collector]
   C -->|anything but a trailered commit over a clean tree| F[Count the attempt on the head, fail red]
   C -->|committed| V{The cut passes every check}
   V -->|no| N[Count the attempt on the head<br/>the claimed commits wait, unsaid] --> L2[The rest of the pass]
@@ -31,13 +31,13 @@ flowchart TD
 
 ## What it reads
 
-| Fact          | Source                                                                                                                                                                                                                                                     |
-| :------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `main` is red | the newest run of each workflow the repairer answers — CI and CodeQL (`MAIN_CHECK_WORKFLOW_FILES`) — for the head, by the file (`gh run list --commit`); concluded `failure`, nothing else, and a run still going or cancelled is not a red                |
-| what is red   | the tail of every failing job's log (`gh run view --log-failed`), one section per job, colours stripped — a check states its verdict at the end of what it printed, and CodeQL's gate prints the open alerts, one per line with its path, rule and message |
-| the streak    | the attempts noted on the head in marker comments, plus the repairs already stacked consecutively at the head by their `Repairs:` trailer                                                                                                                  |
+| Fact          | Source                                                                                                                                                                                                                                                                              |
+| :------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `main` is red | the newest run of each workflow the repairer answers — CI and CodeQL (`MAIN_CHECK_WORKFLOW_FILES`) — for the head, by the file (`gh run list --commit`); concluded `failure`, nothing else, and a run still going or cancelled is not a red                                         |
+| what is red   | the tail of every failing job's log (`gh run view --log-failed`), one section per job, colours stripped — a check states its verdict at the end of what it printed, and CodeQL's gate prints the open alerts, one per line with its path, rule and message                          |
+| the streak    | the attempts noted on the head in marker comments plus the repairs already stacked consecutively at the head by their `Repairs:` trailer — both halves naming this collector's source as their basis, like every count ([the runner's counts](/docs/infra/review-collector/runner)) |
 
-**A repair that landed red counts.** Every repair makes a new head, and a fresh count per head would pay a session and a verify on every head a red nobody can answer produces — a check only CI runs, a flaky test. The consecutive `Repairs:` commits at the head are the record git already holds of how many times this streak was answered, and the marker comments on the head are the attempts that produced no push; the cap bounds their sum.
+**A repair that landed red counts.** Every repair makes a new head, and a fresh count per head would pay a session and a verify on every head a red nobody can answer produces — a check only CI runs, a flaky test. The consecutive `Repairs:` commits at the head are the record git already holds of how many times this streak was answered, and the marker comments on the head are the attempts that produced no push; the cap bounds their sum. **The trailer names the collector that wrote it**, because a commit carries no marker and the basis has to travel on the commit for the count to read it: a repairer fixed since reads a head three of its predecessor's repairs left red as one nothing of its own has answered, exactly as it reads that head's markers, where a count over every repair the head carries would hand a fix to the collector a head it could never try.
 
 ## The regenerating repair
 
@@ -48,7 +48,7 @@ Before any session is asked for one, the collector runs every root script that r
 | The regenerators                    | Then                                                                                                                |
 | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
 | moved nothing                       | no session-free repair is possible; the session runs against the head untouched                                     |
-| moved the tree, and it is green     | committed with `Repairs: <head>`, pushed as the lane's cut — no session read this red                               |
+| moved the tree, and it is green     | committed with `Repairs: <head> against:<collector>`, pushed as the lane's cut — no session read this red           |
 | moved the tree, and it is still red | the head is restored and the session runs against it, so a partial regeneration is never what a session starts from |
 
 The suite is only ever the price of a tree that moved. A head the regenerators leave untouched — a failing test, an open alert, a lint rule that ships no fix — reaches the session having spent nothing at all, and a head they move without answering costs the one verify that found that out: runner minutes, which the pipeline has, rather than a slice of the window, which is what it is short of. A repair that proved itself green this way is not put through the same suite a second time when the lane picks it up; a session's repair carries no such proof and is verified there as it always was.
@@ -57,9 +57,9 @@ Their exit status is nothing to read: `lint:fix` exits non-zero on exactly the p
 
 ## The session
 
-The drain's session under the drain's denials ([collection cycle](/docs/infra/review-collector/collection-cycle)), detached at `main`'s head with the tree installed, handed the run's URL and the log tails, and told what a red asks for: a lint rule its substitution in the repo's own convention, a size snapshot a rebuild and the narrowed `-u` run, a failing test whichever of the code or the assertion the test proves wrong, a code-scanning alert the rule's own remedy at the line it names — never a dismissal or a suppression comment. It runs each failed check locally as CI runs it — a scan has no local run, and the push's own scan proves that repair — commits once with `Repairs: <head>`, and leaves the tree clean. The body is the only review the repair gets, so it says what each red was and what answered it.
+The drain's session under the drain's denials ([collection cycle](/docs/infra/review-collector/collection-cycle)), detached at `main`'s head with the tree installed, handed the run's URL and the log tails, and told what a red asks for: a lint rule its substitution in the repo's own convention, a size snapshot a rebuild and the narrowed `-u` run, a failing test whichever of the code or the assertion the test proves wrong, a code-scanning alert the rule's own remedy at the line it names — never a dismissal or a suppression comment. It runs each failed check locally as CI runs it — a scan has no local run, and the push's own scan proves that repair — commits once with `Repairs: <head> against:<collector>`, and leaves the tree clean. The body is the only review the repair gets, so it says what each red was and what answered it.
 
-What proves the repair is read off the tree, never the session's word: a clean exit, a clean tree, and a head that moved by the one commit the session was told to leave, carrying the trailer that names this head. One commit exactly: the streak reads a repair off the head as a commit, so a session that left three would spend the whole streak on itself and hand the head it made to a person. Anything else counts the attempt on the head and fails the run, as the fold's resolver does. A session that could not start — Claude Code's own limit, a launch that never happened — is nobody's attempt.
+What proves the repair is read off the tree, never the session's word: a clean exit, a clean tree, and a head that moved by the one commit the session was told to leave, carrying the trailer that names this head and this collector — the same trailer the streak counts, so a repair the proof accepts is one the next streak can read. One commit exactly: the streak reads a repair off the head as a commit, so a session that left three would spend the whole streak on itself and hand the head it made to a person. Anything else counts the attempt on the head and fails the run, as the fold's resolver does. A session that could not start — Claude Code's own limit, a launch that never happened — is nobody's attempt.
 
 Past the streak the head is a person's, said once on it — and their repair arrives the only way a session's commit reaches `main` unread: a queue commit carrying `Express:`, which the lane cuts and verifies as it does any other.
 

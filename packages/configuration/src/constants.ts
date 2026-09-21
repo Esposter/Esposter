@@ -77,3 +77,8 @@ export const CTIX_VUE_CONFIGURATION = ".ctirc-vue";
 // Import mechanism, so they repeat the literal and `constants.test.ts` is the only thing holding the copies to
 // This one. Drift is silent: a suffix ctix stops excluding puts a test file in the published barrel.
 export const NON_SOURCE_SUFFIXES = [".bench.ts", ".test-d.ts", ".test.ts"] as const;
+// `pnpm`'s workspace manifest, at the repository root — the one list of members every tool that runs across the
+// Workspace derives its own from, since a copy is a member the tool silently stops covering the day one is added.
+// `pnpm` parses it at the start of every command, so a resolver handed a checkout where it still holds conflict
+// Markers is told to resolve it before anything else (`git` skill)
+export const WORKSPACE_FILE = "pnpm-workspace.yaml";

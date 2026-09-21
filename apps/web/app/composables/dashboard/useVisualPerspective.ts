@@ -16,9 +16,8 @@ export const useVisualPerspective = (visualId: MaybeRefOrGetter<string>, getChar
   // The parameter repeats, so vue-router hands back a string for one entry and an array for several
   const viewEntries = computed(() => {
     const view = currentRoute.value.query[DASHBOARD_VIEW_QUERY_KEY];
-    if (!view) return [];
-
-    return (Array.isArray(view) ? view : [view]).filter((entry) => typeof entry === "string");
+    if (view) return (Array.isArray(view) ? view : [view]).filter((entry) => typeof entry === "string");
+    else return [];
   });
   const applyView = () => {
     const chart = getChart();

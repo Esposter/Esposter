@@ -3,13 +3,12 @@ import type { Resource } from "@esposter/db-schema";
 
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
-import { useDownload } from "@@/server/composables/azure/container/useDownload";
+import { readSerializedResourceContent } from "@@/server/services/resource/readSerializedResourceContent";
 import { chargeSnapshotVersion } from "@@/server/services/resource/snapshot/chargeSnapshotVersion";
 import { collectSnapshotObjects } from "@@/server/services/resource/snapshot/collectSnapshotObjects";
 import { writeSnapshotVersion } from "@@/server/services/resource/snapshot/writeSnapshotVersion";
-import { checkIsNotFound, getContentBlobName } from "@esposter/db";
-import { AzureContainer, resources, resourceVersions, SnapshotChannel, SnapshotReason } from "@esposter/db-schema";
-import { getResultAsync, noop, streamToText } from "@esposter/shared";
+import { resources, resourceVersions, SnapshotChannel, SnapshotReason } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
 
 // A point the owner can return to, taken from the working copy as it stands. Returns the version it wrote, or
@@ -27,18 +26,8 @@ export const takeResourceRevision = async (
   const { id } = resource;
   // A missing content blob is "nothing to snapshot", never an error: a resource created and never saved
   // Reaches the before-restore and before-import triggers exactly like any other
-  const contentStream = await getResultAsync(() =>
-    useDownload(AzureContainer.ResourceAssets, getContentBlobName(id)),
-  ).match(
-    ({ readableStreamBody }) => readableStreamBody,
-    (error) => {
-      if (checkIsNotFound(error)) return undefined;
-      throw error;
-    },
-  );
-  if (!contentStream) return undefined;
-
-  const serializedContent = await streamToText(contentStream);
+  const serializedContent = await readSerializedResourceContent(id);
+  if (!serializedContent) return undefined;
   // Claimed in SQL so concurrent takes each get a distinct number. The counter leads the write, so a failed
   // Write burns a number rather than reusing one — which is the harmless direction: the rows are what answer
   // Which revisions exist, and a burned number simply has none. The timestamp moves with it for the same

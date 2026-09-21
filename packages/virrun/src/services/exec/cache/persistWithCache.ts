@@ -32,8 +32,8 @@ export const persistWithCache = async (
 ): Promise<ExecResult> => {
   const forceColor = options.env?.FORCE_COLOR ?? "";
   const isTaskCacheEnabled = checkIsTaskCacheEnabled();
-  const key = isTaskCacheEnabled ? computeTaskCacheKey(command, options.cwd, maskedPaths, forceColor) : null;
-  if (key === null) {
+  const key = isTaskCacheEnabled ? computeTaskCacheKey(command, options.cwd, maskedPaths, forceColor) : undefined;
+  if (key === undefined) {
     writeVirrunDebug(
       isTaskCacheEnabled
         ? "task cache off — no key (not a git repo or no lockfile)"
@@ -80,8 +80,8 @@ export const persistWithCache = async (
   );
   // The run above was hermetic (network unshared). If it FAILED reaching the network, the tool's own error is opaque (a
   // Buried "fetch failed"), so translate it into the cause + the --no-cache fix — human CLI path only (inherit,
-  // Matching
-  // The hit label; a programmatic pipe caller reads the streams itself). Recording was already skipped (exit != 0).
+  // Matching the hit label; a programmatic pipe caller reads the streams itself). Recording was already skipped (exit
+  // != 0).
   if (
     result.exitCode !== 0 &&
     options.stdio === "inherit" &&

@@ -5,32 +5,32 @@ import type { Colors, ThemeOptions } from "vuetify/lib/composables/theme.mjs";
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
-import { forVuetify } from "./configuration/breakpoints";
+import { BREAKPOINTS } from "./configuration/breakpoints";
 import { EN_US_SEGMENTER } from "./shared/services/intl/constants";
 
-const BaseColorsCommon = {
+const BASE_COLORS_COMMON = {
   border: "#ccc",
   error: "#ff5252",
   info: "#2d88ff",
   primary: "#42b883",
 } as const satisfies Partial<Colors>;
 
-const BaseColorsMap = {
+const ThemeModeBaseColorsMap = {
   [ThemeMode.dark]: {
-    ...BaseColorsCommon,
+    ...BASE_COLORS_COMMON,
     background: "#18191a",
     surface: "#36393f",
     text: "#fff",
   },
   [ThemeMode.light]: {
-    ...BaseColorsCommon,
+    ...BASE_COLORS_COMMON,
     background: "#dae0e6",
     surface: "#fff",
     text: "#000",
   },
 } as const satisfies Partial<Record<ThemeMode, Partial<Colors>>>;
 
-export type BaseColors = (typeof BaseColorsMap)[Exclude<ThemeMode, ThemeMode.system>];
+export type BaseColors = (typeof ThemeModeBaseColorsMap)[Exclude<ThemeMode, ThemeMode.system>];
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3
@@ -41,18 +41,18 @@ const toSixDigitHexColor = (hexColor: string) =>
     : hexColor;
 
 export const getBaseColorsExtension = (colors: BaseColors) => {
-  const sanitisedColors = Object.fromEntries(
+  const sanitizedColors = Object.fromEntries(
     Object.entries(colors).map(([color, hex]) => [color, `${hex[0]}${toSixDigitHexColor(hex.slice(1))}`]),
   );
   return {
-    "background-opacity-20": `${sanitisedColors.background}33`,
-    "background-opacity-40": `${sanitisedColors.background}66`,
-    "background-opacity-80": `${sanitisedColors.background}cc`,
-    "info-opacity-10": `${sanitisedColors.info}1a`,
+    "background-opacity-20": `${sanitizedColors.background}33`,
+    "background-opacity-40": `${sanitizedColors.background}66`,
+    "background-opacity-80": `${sanitizedColors.background}cc`,
+    "info-opacity-10": `${sanitizedColors.info}1a`,
     "on-info-opacity-10": colors.text,
     "on-primary-opacity-10": colors.text,
-    "primary-opacity-10": `${sanitisedColors.primary}1a`,
-    "surface-opacity-80": `${sanitisedColors.surface}cc`,
+    "primary-opacity-10": `${sanitizedColors.primary}1a`,
+    "surface-opacity-80": `${sanitizedColors.surface}cc`,
   };
 };
 
@@ -63,15 +63,15 @@ const theme: ThemeOptions = {
   themes: {
     [ThemeMode.dark]: {
       colors: {
-        ...BaseColorsMap[ThemeMode.dark],
-        ...getBaseColorsExtension(BaseColorsMap[ThemeMode.dark]),
+        ...ThemeModeBaseColorsMap[ThemeMode.dark],
+        ...getBaseColorsExtension(ThemeModeBaseColorsMap[ThemeMode.dark]),
       },
       dark: true,
     },
     [ThemeMode.light]: {
       colors: {
-        ...BaseColorsMap[ThemeMode.light],
-        ...getBaseColorsExtension(BaseColorsMap[ThemeMode.light]),
+        ...ThemeModeBaseColorsMap[ThemeMode.light],
+        ...getBaseColorsExtension(ThemeModeBaseColorsMap[ThemeMode.light]),
       },
       dark: false,
     },
@@ -131,7 +131,7 @@ const defaults: DefaultsOptions = {
 
 const display: DisplayOptions = {
   mobileBreakpoint: "md",
-  thresholds: forVuetify,
+  thresholds: BREAKPOINTS,
 };
 
 export default defineVuetifyConfiguration({ defaults, display, labComponents: true, theme });

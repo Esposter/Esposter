@@ -31,5 +31,5 @@ export const checkIsOsBackendSupported = (): boolean => {
   // Un-nested run under the same fingerprint). Mirrors resolveBackend's nesting degrade — the backend degrades to
   // Native and these os tests skip rather than crash mid-run.
   if (checkIsVirrunEnabled(process.env)) return false;
-  return readOsBackendSupport() ?? false;
+  else return readOsBackendSupport() ?? false;
 };

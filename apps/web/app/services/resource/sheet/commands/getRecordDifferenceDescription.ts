@@ -21,5 +21,5 @@ export const getRecordDifferenceDescription = (original: object, updated: object
     rows.push(`${key} | ${formattedOriginalValue} | ${formattedUpdatedValue}`);
   }
   if (rows.length === 0) return "";
-  return [RECORD_DIFFERENCE_HEADER, ...rows].join("\n");
+  else return [RECORD_DIFFERENCE_HEADER, ...rows].join("\n");
 };

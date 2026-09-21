@@ -60,12 +60,13 @@ Build OData filter strings with `serializeClauses` from `@esposter/azure`.
 
 ```ts
 const clauses: Clause<StandardMessageEntity>[] = [
-  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+  ...getLivePartitionClauses<StandardMessageEntity>(roomId),
   { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: userId },
-  getTableNullClause(ItemMetadataPropertyNames.deletedAt),
 ];
 const filter = serializeClauses(clauses);
 ```
+
+**A soft-deleted table's "live rows of this partition" is `getLivePartitionClauses(partitionKey)`** (`apps/web/server/services/azure/table/`), never the partition clause and the `deletedAt` null clause spelled side by side — the pair is what every read of a room's messages, notes and log lines opens with, and a read that spelled only the first half would resurface what a delete hid.
 
 **"Everything under this partition" is `getPartitionKeyFilter(id)`** (`@esposter/azure`), never a hand-built one-clause `serializeClauses` call and never a template literal. Every table partitions on its owning entity's id, so a read, a count and a purge of the same entity all start from that one filter — writing it once is what keeps the three from disagreeing after a key-shape change. A feature that also filters on its own columns drops back to the clause array above.
 
@@ -94,7 +95,7 @@ export class MyEntity extends AzureEntity {
 
 ## Soft-Delete
 
-Set `deletedAt` and `updatedAt` together via `serializeEntity`. `getTableNullClause(ItemMetadataPropertyNames.deletedAt)` filters to non-deleted rows only.
+Set `deletedAt` and `updatedAt` together via `serializeEntity`. `getTableNullClause(ItemMetadataPropertyNames.deletedAt)` filters to non-deleted rows only, and a partition-scoped read takes it through `getLivePartitionClauses` (above).
 
 ```ts
 const now = new Date();

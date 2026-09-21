@@ -6,6 +6,7 @@ import type { VoiceSynthesizerOptions } from "#src/models/VoiceSynthesizerOption
 
 import { checkIsSpeech } from "#src/services/checkIsSpeech";
 import {
+  GPU_PROVIDER_FAILURE_REGEX,
   MAX_SPEECH_TOKENS_PER_CHARACTER,
   MIN_SPEECH_TOKEN_CEILING,
   VOICE_DEVICE_LADDER,
@@ -15,8 +16,9 @@ import {
   VOICE_SAMPLE_RATE,
 } from "#src/services/constants";
 
-// The engine on the first rung of the device ladder that loads, from the rung named; a synthesis that is not speech
-// Reloads one rung down and runs again, since a provider can load a graph and still run it wrong without a word
+// The engine on the first rung of the device ladder that loads, from the rung named; a synthesis that is not speech,
+// Or one the GPU provider fails, reloads one rung down and runs again, since a provider can load a graph and still run
+// It wrong without a word, and can lose its device with one
 export const createVoiceSynthesizer = async (
   { AutoConfig, AutoProcessor, ChatterboxModel, env, Tensor }: VoiceRuntime,
   modelsDirectory: string,
@@ -52,6 +54,20 @@ export const createVoiceSynthesizer = async (
   const [startRung = VOICE_DEVICE_LADDER[0], ...lowerRungs] = VOICE_DEVICE_LADDER.slice(startIndex);
   let loaded = await load(startRung, lowerRungs);
   const processor = await AutoProcessor.from_pretrained(VOICE_MODEL_ID);
+  // One rung down, or false from the bottom rung
+  const stepDown = async (failure: string) => {
+    const [nextRung, ...rungsBelowNext] = loaded.rungsBelow;
+    if (!nextRung) {
+      onFallback?.(`${loaded.rung.name} ${failure}, and no device rung is left below it`);
+      return false;
+    }
+
+    onFallback?.(`${loaded.rung.name} ${failure}; the engine moves one rung down`);
+    // A provider that lost its device may not release what it held; the rung below loads either way
+    await Promise.allSettled([loaded.model.dispose()]);
+    loaded = await load(nextRung, rungsBelowNext);
+    return true;
+  };
 
   return {
     get device() {
@@ -61,23 +77,25 @@ export const createVoiceSynthesizer = async (
     synthesize: async (text, speaker) => {
       const inputs = await processor(text);
       for (;;) {
-        const waveform = await loaded.model.generate({
-          ...inputs,
-          ...speaker,
-          max_new_tokens: Math.max(MIN_SPEECH_TOKEN_CEILING, text.length * MAX_SPEECH_TOKENS_PER_CHARACTER),
-        });
-        const clip = { sampleRate: VOICE_SAMPLE_RATE, samples: Float32Array.from(waveform.data) };
-        if (checkIsSpeech(clip)) return clip;
+        const [outcome] = await Promise.allSettled([
+          loaded.model.generate({
+            ...inputs,
+            ...speaker,
+            max_new_tokens: Math.max(MIN_SPEECH_TOKEN_CEILING, text.length * MAX_SPEECH_TOKENS_PER_CHARACTER),
+          }),
+        ]);
+        if (outcome?.status === "rejected") {
+          const reason = String(outcome.reason);
+          // The bottom rung runs nothing on the GPU, so a failure the GPU provider raises always has a rung below
+          if (GPU_PROVIDER_FAILURE_REGEX.test(reason) && (await stepDown("failed on the GPU"))) continue;
 
-        const [nextRung, ...rungsBelowNext] = loaded.rungsBelow;
-        if (!nextRung) {
-          onFallback?.(`${loaded.rung.name} synthesized silence, and no device rung is left below it`);
+          onFallback?.(`${loaded.rung.name} did not read the line: ${reason}`);
           return undefined;
         }
 
-        onFallback?.(`${loaded.rung.name} synthesized silence; the engine moves one rung down`);
-        await loaded.model.dispose();
-        loaded = await load(nextRung, rungsBelowNext);
+        const clip = { sampleRate: VOICE_SAMPLE_RATE, samples: Float32Array.from(outcome.value.data) };
+        if (checkIsSpeech(clip)) return clip;
+        if (!(await stepDown("synthesized silence"))) return undefined;
       }
     },
   };

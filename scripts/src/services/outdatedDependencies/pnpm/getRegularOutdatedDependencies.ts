@@ -32,16 +32,16 @@ export const getRegularOutdatedDependencies = async (root: string): Promise<Outd
       if (!parsed || typeof parsed !== "object") return getPnpmOutdatedFailure(UNEXPECTED_JSON_OUTPUT);
 
       const outdatedDependencies: OutdatedDependency[] = [];
-      for (const [pkg, dependency] of Object.entries(parsed)) {
+      for (const [packageName, dependency] of Object.entries(parsed)) {
         if (!checkIsPnpmOutdatedDependency(dependency))
-          return getPnpmOutdatedFailure(`unexpected JSON entry for ${pkg}`);
+          return getPnpmOutdatedFailure(`unexpected JSON entry for ${packageName}`);
 
         outdatedDependencies.push({
           current: dependency.current ?? "",
           dependencyType: getDependencyType(dependency.dependencyType ?? ""),
           dependents: getOutdatedDependents(dependency.dependentPackages),
           latest: dependency.latest,
-          pkg,
+          packageName,
           specifier: "",
         });
       }

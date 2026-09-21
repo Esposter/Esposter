@@ -8,10 +8,11 @@ export const parseNodeInvocation = (command: readonly string[] | string): NodeIn
   if (!tokens) return undefined;
   const [binary, second, third, ...rest] = tokens;
   if (binary !== "node" || second === undefined) return undefined;
-  if (second === "-e" || second === "--eval")
+  else if (second === "-e" || second === "--eval")
     return third !== undefined && rest.length === 0 ? { code: third, file: "" } : undefined;
   // `node <file>`: a single non-flag argument with no script args (those are not emulated yet).
-  return third === undefined && rest.length === 0 && Boolean(second) && !second.startsWith("-")
-    ? { code: "", file: second }
-    : undefined;
+  else
+    return third === undefined && rest.length === 0 && Boolean(second) && !second.startsWith("-")
+      ? { code: "", file: second }
+      : undefined;
 };

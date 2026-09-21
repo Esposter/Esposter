@@ -17,10 +17,10 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Persistent `--overlay` so a capture's writes land on disk — both required together, one without the other throws.
 //
 // `sourceDirectory` is the read-only source lower's real location, decoupled from `cwd` (the overlay *mountpoint* +
-// Chdir).
-// They coincide natively, so it defaults to `cwd`. Under the win32 os backend they diverge: the source content lives
-// On the ext4 mirror (fast v9fs-free reads) but the sandbox must present it at — and chdir into — the repo's logical
-// Path, so `pwd` and every absolute path a tool prints match the native baseline instead of leaking the mirror path.
+// Chdir). They coincide natively, so it defaults to `cwd`. Under the win32 os backend they diverge: the source content
+// Lives on the ext4 mirror (fast v9fs-free reads) but the sandbox must present it at — and chdir into — the repo's
+// Logical path, so `pwd` and every absolute path a tool prints match the native baseline instead of leaking the
+// Mirror path.
 // A string command runs through `/bin/sh -c`; an argv array runs as-is.
 export const buildBwrapArgs = (
   command: readonly string[] | string,

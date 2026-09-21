@@ -35,9 +35,9 @@ export const createSnapshotObjectStore = async (resourceId: Resource["id"]): Pro
           throw error;
         },
       );
-      if (!readableStreamBody) return undefined;
-
-      return Buffer.concat((await Array.fromAsync(readableStreamBody)).map((chunk) => Buffer.from(chunk)));
+      if (readableStreamBody)
+        return Buffer.concat((await Array.fromAsync(readableStreamBody)).map((chunk) => Buffer.from(chunk)));
+      else return undefined;
     },
     write: (key, bytes) =>
       getResultAsync(() =>

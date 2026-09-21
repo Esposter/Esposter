@@ -8,7 +8,7 @@ import { definePlugin } from "@oxlint/plugins";
 // Is a rename with an import: the caller still hand-writes every argument, so forgetting one is exactly as easy
 // As it was inline. The check is purely syntactic and runs in oxlint's single root pass.
 //
-// What it deliberately cannot see is why a wrapper is kept, so three shapes are exempted here rather than
+// What it deliberately cannot see is why a wrapper is kept, so four shapes are exempted here rather than
 // Reported and disabled everywhere they occur:
 //
 // - A member call on an UPPER_SNAKE object (`UUIDV4_REGEX.test(uuid)`) supplies the constant its callers would
@@ -16,6 +16,8 @@ import { definePlugin } from "@oxlint/plugins";
 // - A parameter with a default (`(a, b = X) => f(a, b)`) supplies that default.
 // - A non-identifier argument — a literal, an `as`, an arrow, a member access — is something the caller did not
 //   Hand over, so the wrapper is absorbing at least that much.
+// - A type predicate return (`(value): value is T => list.includes(value)`) absorbs the narrowing itself, which
+//   Is the one thing its call sites cannot write inline.
 //
 // Everything left over is reported, and the repo carries no production suppression for it: a narrowed parameter
 // Type, a "single definition point" several reads agree on and an upstream API name were each considered and

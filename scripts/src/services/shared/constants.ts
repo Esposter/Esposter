@@ -1,4 +1,4 @@
-import { KIBIBYTE } from "@esposter/configuration";
+import { KIBIBYTE, WORKSPACE_FILE } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -9,11 +9,6 @@ export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
 // Every commit's body, a listing of every tracked file each run to megabytes, and the default buffer throws
 // ENOBUFS rather than truncating — a failure that reads as the tool being broken from the call site.
 export const MAX_BUFFER_BYTES: number = 256 * KIBIBYTE ** 2;
-
-// `pnpm`'s workspace manifest, at the repository root. `pnpm` parses it at the start of every command, so a
-// Resolver handed a checkout where it still holds conflict markers is told to resolve it before anything else
-// (`git` skill)
-export const WORKSPACE_FILE = "pnpm-workspace.yaml";
 
 // Every script reads and writes against the repository rather than against `scripts/`. A `..` chain is what this
 // Was, and it is wrong the first time the file counting it moves a directory — which it has done once already,
@@ -37,6 +32,11 @@ export const REGISTRY_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ second
 export const LOCKFILE = "pnpm-lock.yaml";
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
+
+// Npm's lockfile, beside every manifest that is installed by `npm ci` rather than by the workspace — a Claude Code
+// Plugin's root, and the runtime manifest its `voice` verb copies out. The outdated report finds those manifests
+// By this file, since nothing else marks them.
+export const NPM_LOCKFILE = "package-lock.json";
 
 // The formatter's config, at the repository root. Its `ignorePatterns` is the repo's one list of generated files
 // (`oxlint` skill, `references/lint-configuration.md`), which is why a scan that must skip them reads it too.

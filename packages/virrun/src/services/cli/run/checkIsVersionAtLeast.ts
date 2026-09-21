@@ -8,6 +8,6 @@ export const checkIsVersionAtLeast = (version: string, minimum: string): boolean
   const [actualMajor, actualMinor, actualPatch] = actual;
   const [minimumMajor, minimumMinor, minimumPatch] = required;
   if (actualMajor !== minimumMajor) return actualMajor > minimumMajor;
-  if (actualMinor !== minimumMinor) return actualMinor > minimumMinor;
-  return actualPatch >= minimumPatch;
+  else if (actualMinor === minimumMinor) return actualPatch >= minimumPatch;
+  else return actualMinor > minimumMinor;
 };

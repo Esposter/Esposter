@@ -29,7 +29,7 @@ import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 // Than waiting for the release to bring the two together. The lockfile conflict that merge always brings is
 // Rebuilt from the installed tree (`git` skill); any other conflict is the resolver's, counted on `main`'s head,
 // And past its attempts the fold is abandoned — the release merge is then where a person meets it.
-export const mergeMain = async ({ cwd, viewerLogin }: MergeMainInput): Promise<MergeMainOutcome> => {
+export const mergeMain = async ({ collectorSha, cwd, viewerLogin }: MergeMainInput): Promise<MergeMainOutcome> => {
   const main = `origin/${MAIN_BRANCH}`;
   if (checkIsAncestor(main, "HEAD", cwd)) return MergeMainOutcome.AlreadyMerged;
 
@@ -52,7 +52,7 @@ export const mergeMain = async ({ cwd, viewerLogin }: MergeMainInput): Promise<M
     console.info(`main not folded — ${reason}: ${conflictedPaths.join(", ")}`);
     return MergeMainOutcome.Conflicted;
   };
-  const marker = getMarker(FOLD_FAILED_MARKER, mainSha);
+  const marker = getMarker(FOLD_FAILED_MARKER, mainSha, [collectorSha]);
   const comments = readCommitComments(mainSha);
   const attempts = getMarkedCount(comments, viewerLogin, marker);
   if (attempts >= SESSION_ATTEMPT_CAP) return abort(`its conflicts failed the resolver ${attempts} times`);

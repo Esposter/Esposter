@@ -30,10 +30,10 @@ import type { Plugin } from "vite";
 //   Introduces `const _exports = {};`, remaps all `exports.*` to `_exports.*`,
 //   Then emits `const _debug = common(_exports); export default _debug;`.
 const ESM_FLAG_REGEX = /Object\.defineProperty\(exports, "__esModule", \{[^}]*\}\);\n/gu;
-const REQUIRE_REGEX = /^(?<keyword>const|var) (?<varName>\w+) = require\("(?<modPath>[^"]+)"\);\n/gmu;
+const REQUIRE_REGEX = /^(?<keyword>const|var) (?<variableName>\w+) = require\("(?<modulePath>[^"]+)"\);\n/gmu;
 const INLINE_REQUIRE_REGEX = /\brequire\(["'](?<path>[^"']+)["']\)/gu;
-const ODP_REEXPORT_REGEX =
-  /^Object\.defineProperty\(exports, "(?<exportName>[\w$]+)", \{ enumerable: true, get: function \(\) \{ return (?<varName>\w+)\.(?<propName>[\w$]+); \} \}\);\n/gmu;
+const OBJECT_DEFINE_PROPERTY_REEXPORT_REGEX =
+  /^Object\.defineProperty\(exports, "(?<exportName>[\w$]+)", \{ enumerable: true, get: function \(\) \{ return (?<variableName>\w+)\.(?<propertyName>[\w$]+); \} \}\);\n/gmu;
 
 export const fixAjv = {
   enforce: "pre",
@@ -43,47 +43,50 @@ export const fixAjv = {
     if (!cleanId) return undefined;
     // ── debug/src/browser.js ────────────────────────────────────────────────
     if (cleanId.includes("/debug/") && cleanId.endsWith("/src/browser.js")) {
-      const inlineRequireMap = new Map<string, string>();
+      const inlineModulePathVariableNameMap = new Map<string, string>();
       for (const [, path] of code.matchAll(INLINE_REQUIRE_REGEX)) {
-        if (!path || !path.startsWith(".") || inlineRequireMap.has(path)) continue;
-        const varName = path.replace(/^(?:\.\/)+/u, "").replaceAll(/[^a-zA-Z0-9_$]/gu, "_");
-        inlineRequireMap.set(path, varName);
+        if (!path || !path.startsWith(".") || inlineModulePathVariableNameMap.has(path)) continue;
+        const variableName = path.replace(/^(?:\.\/)+/u, "").replaceAll(/[^a-zA-Z0-9_$]/gu, "_");
+        inlineModulePathVariableNameMap.set(path, variableName);
       }
       const result = code
         .replace('"use strict";\n', "")
         .replace('"use strict"\n', "")
         .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {
-          const vn = inlineRequireMap.get(path);
-          return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
+          const variableName = inlineModulePathVariableNameMap.get(path);
+          return variableName ? `(${variableName}.default ?? ${variableName})` : `require("${path}")`;
         })
         // Remap `exports.X` → `_exports.X` (negative lookbehind avoids touching `module.exports`)
         .replaceAll(/(?<!module\.)\bexports\b/gu, "_exports")
         .replaceAll(/^module\.exports = (?<body>.+);\n/gmu, "const _debug = $1;\nexport default _debug;\n")
         .replaceAll(/\bmodule\.exports\b/gu, "_debug");
       const imports = Array.from(
-        inlineRequireMap.entries(),
-        ([path, varName]) => `import * as ${varName} from "${path}";\n`,
+        inlineModulePathVariableNameMap.entries(),
+        ([path, variableName]) => `import * as ${variableName} from "${path}";\n`,
       ).join("");
       return `${imports}const _exports = {}\n${result}`;
     }
     // ── debug/src/common.js ──────────────────────────────────────────────────
     if (cleanId.includes("/debug/") && cleanId.endsWith("/src/common.js")) {
       // Collect non-relative inline requires (only `require('ms')` in practice).
-      const pkgRequireMap = new Map<string, string>();
+      const packageModulePathVariableNameMap = new Map<string, string>();
       for (const [, path] of code.matchAll(INLINE_REQUIRE_REGEX)) {
-        if (!path || path.startsWith(".") || pkgRequireMap.has(path)) continue;
-        pkgRequireMap.set(path, path.replaceAll(/[^a-zA-Z0-9_$]/gu, "_"));
+        if (!path || path.startsWith(".") || packageModulePathVariableNameMap.has(path)) continue;
+        packageModulePathVariableNameMap.set(path, path.replaceAll(/[^a-zA-Z0-9_$]/gu, "_"));
       }
       const result = code
         .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {
-          const vn = pkgRequireMap.get(path);
-          return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
+          const variableName = packageModulePathVariableNameMap.get(path);
+          return variableName ? `(${variableName}.default ?? ${variableName})` : `require("${path}")`;
         })
         .replace(
           /^module\.exports = (?<id>[\w$]+);?\n/mu,
           (_match, name) => `${name}.default = ${name};\nexport default ${name};\n`,
         );
-      const imports = Array.from(pkgRequireMap, ([path, vn]) => `import * as ${vn} from "${path}";\n`).join("");
+      const imports = Array.from(
+        packageModulePathVariableNameMap,
+        ([path, variableName]) => `import * as ${variableName} from "${path}";\n`,
+      ).join("");
       return `${imports}${result}`;
     }
     // ── Generic ajv transform ────────────────────────────────────────────────
@@ -98,37 +101,37 @@ export const fixAjv = {
       )
     )
       return undefined;
-    // Build variable → module-path map for top-level requires (used by ODP re-export resolver).
-    const requireMap = new Map<string, string>();
+    // Build variable → module-path map for top-level requires (used by the Object.defineProperty re-export resolver).
+    const variableNameModulePathMap = new Map<string, string>();
     // oxlint-disable-next-line unicorn/no-unreadable-array-destructuring
-    for (const [, , varName, modPath] of code.matchAll(REQUIRE_REGEX)) {
-      if (!varName || !modPath) continue;
-      requireMap.set(varName, modPath);
+    for (const [, , variableName, modulePath] of code.matchAll(REQUIRE_REGEX)) {
+      if (!variableName || !modulePath) continue;
+      variableNameModulePathMap.set(variableName, modulePath);
     }
-    // Vars that are mutated (X.prop = val) or called as functions (X(...)) need the actual
+    // Variables that are mutated (X.prop = val) or called as functions (X(...)) need the actual
     // exported value rather than the sealed namespace — use `(ns.default ?? ns)` to unwrap.
-    // Note: mutated vars must NOT use Object.assign(Object.create(null), fn) because that
+    // Note: mutated variables must NOT use Object.assign(Object.create(null), fn) because that
     // Creates a non-callable plain object (e.g. equal.js: `const equal = require("fast-deep-equal");
     // Equal.code = '...'` — equal must stay callable).
-    const needsUnwrapVars = new Set<string>();
-    for (const [varName] of requireMap) {
-      const escaped = varName.replaceAll(/[$()*+.?[\\\]^{|}]/gu, String.raw`\$&`);
+    const unwrapVariableNames = new Set<string>();
+    for (const [variableName] of variableNameModulePathMap) {
+      const escapedVariableName = variableName.replaceAll(/[$()*+.?[\\\]^{|}]/gu, String.raw`\$&`);
       if (
-        new RegExp(`\\b${escaped}\\.[\\w$]+ =(?!=)`, "u").test(code) ||
-        new RegExp(`\\b${escaped}\\s*\\(`, "u").test(code)
+        new RegExp(`\\b${escapedVariableName}\\.[\\w$]+ =(?!=)`, "u").test(code) ||
+        new RegExp(`\\b${escapedVariableName}\\s*\\(`, "u").test(code)
       )
-        needsUnwrapVars.add(varName);
+        unwrapVariableNames.add(variableName);
     }
     // Collect inline require() calls not already covered by a top-level `const/var X = require(Y)`.
-    const handledPaths = new Set(requireMap.values());
-    const inlineRequireMap = new Map<string, string>(); // Path → varName
+    const handledPaths = new Set(variableNameModulePathMap.values());
+    const inlineModulePathVariableNameMap = new Map<string, string>(); // Path → variableName
     for (const [, path] of code.matchAll(INLINE_REQUIRE_REGEX)) {
       // Skip package-name paths — they appear in string literals like `uri.code = 'require("...")'`
       // And must not be extracted or we'd create a spurious circular import.
       if (!path?.startsWith(".")) continue;
-      if (inlineRequireMap.has(path) || handledPaths.has(path)) continue;
-      const varName = path.replace(/^(?:\.\/)+/u, "").replaceAll(/[^a-zA-Z0-9_$]/gu, "_");
-      inlineRequireMap.set(path, varName);
+      if (inlineModulePathVariableNameMap.has(path) || handledPaths.has(path)) continue;
+      const variableName = path.replace(/^(?:\.\/)+/u, "").replaceAll(/[^a-zA-Z0-9_$]/gu, "_");
+      inlineModulePathVariableNameMap.set(path, variableName);
     }
 
     let result = code
@@ -140,15 +143,15 @@ export const fixAjv = {
       // Step 3: remove void 0 init chains
       .replaceAll(/^(?:exports\.[\w$]+ = )+void 0;\n/gmu, "")
       // Step 4: top-level require() → import
-      .replace(REQUIRE_REGEX, (_m: string, _kw: string, vName: string, modPath: string) => {
-        if (needsUnwrapVars.has(vName))
-          return `import * as _${vName}_ns from "${modPath}";\nconst ${vName} = (_${vName}_ns.default ?? _${vName}_ns);\n`;
-        return `import * as ${vName} from "${modPath}";\n`;
+      .replace(REQUIRE_REGEX, (_match: string, _keyword: string, variableName: string, modulePath: string) => {
+        if (unwrapVariableNames.has(variableName))
+          return `import * as _${variableName}_ns from "${modulePath}";\nconst ${variableName} = (_${variableName}_ns.default ?? _${variableName}_ns);\n`;
+        else return `import * as ${variableName} from "${modulePath}";\n`;
       })
       // Step 5: inline require() → extracted variable (`.default ?? ns` for CJS compat)
       .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {
-        const vn = inlineRequireMap.get(path);
-        return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
+        const variableName = inlineModulePathVariableNameMap.get(path);
+        return variableName ? `(${variableName}.default ?? ${variableName})` : `require("${path}")`;
       })
       // Steps 6–8: module.exports assignments
       .replaceAll(/^module\.exports = exports = [\w$]+;?\n/gmu, "")
@@ -167,13 +170,16 @@ export const fixAjv = {
       // Steps 11–14: exports.X → named exports
       .replace(/^exports\.default = (?<id>[\w$]+);\n/mu, "export default $1;\n")
       .replaceAll(/^exports\.(?<name>[\w$]+) = \1;\n/gmu, "export { $1 };\n")
-      .replace(ODP_REEXPORT_REGEX, (_match, exportName: string, varName: string, propName: string) => {
-        const modPath = requireMap.get(varName);
-        if (!modPath) return "";
-        if (propName === exportName) return `export { ${propName} } from "${modPath}";\n`;
-        if (propName === "default") return `export { default as ${exportName} } from "${modPath}";\n`;
-        return `export { ${propName} as ${exportName} } from "${modPath}";\n`;
-      })
+      .replace(
+        OBJECT_DEFINE_PROPERTY_REEXPORT_REGEX,
+        (_match, exportName: string, variableName: string, propertyName: string) => {
+          const modulePath = variableNameModulePathMap.get(variableName);
+          if (!modulePath) return "";
+          else if (propertyName === exportName) return `export { ${propertyName} } from "${modulePath}";\n`;
+          else if (propertyName === "default") return `export { default as ${exportName} } from "${modulePath}";\n`;
+          else return `export { ${propertyName} as ${exportName} } from "${modulePath}";\n`;
+        },
+      )
       .replaceAll(/^exports\.(?<name>[\w$]+) = (?<value>.+);\n/gmu, "export const $1 = $2;\n")
       .replaceAll(/^exports\.(?<name>[\w$]+) = (?<value>\{[\s\S]*?^\});\n/gmu, "export const $1 = $2;\n")
       .replaceAll(/^exports\.(?<name>[\w$]+) = (?<value>\[[\s\S]*?^\]);\n/gmu, "export const $1 = $2;\n")
@@ -186,10 +192,10 @@ export const fixAjv = {
       // Step 16: clean up remaining exports.X reads (internal references after step 14)
       .replaceAll(/\bexports\.(?<name>[\w$]+)\b/gu, "$1");
     // Prepend imports for inline requires extracted in step 5.
-    if (inlineRequireMap.size > 0) {
+    if (inlineModulePathVariableNameMap.size > 0) {
       const imports = Array.from(
-        inlineRequireMap.entries(),
-        ([path, varName]) => `import * as ${varName} from "${path}";\n`,
+        inlineModulePathVariableNameMap.entries(),
+        ([path, variableName]) => `import * as ${variableName} from "${path}";\n`,
       ).join("");
       result = imports + result;
     }

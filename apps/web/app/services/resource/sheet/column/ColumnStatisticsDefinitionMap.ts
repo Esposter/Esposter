@@ -13,7 +13,7 @@ export const ColumnStatisticsDefinitionMap = {
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => {
       if (nonNullNumbers.length === 0) return undefined;
-      return Math.round(getAverage(nonNullNumbers) * 100) / 100;
+      else return Math.round(getAverage(nonNullNumbers) * 100) / 100;
     },
     format: formatOptionalColumnValue,
     key: "average",

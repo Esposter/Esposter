@@ -11,8 +11,8 @@ export const getManifestDependencies = (manifests: ManifestFile[]): ManifestDepe
     if (name === undefined) continue;
 
     for (const field of DependencyFields)
-      for (const [pkg, specifier] of Object.entries(manifest[field] ?? {}))
-        manifestDependencies.push({ field, manifestName: name, manifestPath: path, pkg, specifier });
+      for (const [packageName, specifier] of Object.entries(manifest[field] ?? {}))
+        manifestDependencies.push({ field, manifestName: name, manifestPath: path, packageName, specifier });
   }
 
   return manifestDependencies;

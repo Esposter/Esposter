@@ -38,7 +38,7 @@ export const reapOrphanedWslRuns = (isBlocking = false): void => {
       const { marker, ownerPid } = WSL_RUN_ENTRY_REGEX.exec(name)?.groups ?? {};
       if (marker === undefined || ownerPid === undefined) return [];
       if (checkIsOwnerAlive(Number(ownerPid), join(runsDirectory, name))) return [];
-      return [{ marker, name }];
+      else return [{ marker, name }];
     });
     if (orphanedEntries.length === 0) return;
 

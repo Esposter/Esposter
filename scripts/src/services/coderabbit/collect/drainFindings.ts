@@ -40,6 +40,7 @@ import { join } from "node:path";
 // Comment every run reads until it lifts.
 export const drainFindings = async ({
   baseSha,
+  collectorSha,
   issueComments,
   newestReviewId,
   reviewFixesSha,
@@ -47,13 +48,15 @@ export const drainFindings = async ({
   ...drainInput
 }: DrainFindingsInput): Promise<DrainFindingsResult> => {
   const { pullRequest } = drainInput;
-  const quarantinedMarker = getMarker(QUARANTINED_MARKER, newestReviewId);
+  // The quarantine is the cap's own verdict, so it names the basis the count did: a collector that changed since
+  // Drains the review again rather than porting past it on a count the old code ran up
+  const quarantinedMarker = getMarker(QUARANTINED_MARKER, newestReviewId, [collectorSha]);
   if (issueComments.some((comment) => checkIsMarked(comment, viewerLogin, quarantinedMarker))) {
     console.info(`review ${newestReviewId} is quarantined — porting without its fixes`);
     return { isStarted: true, reviewFixesSha };
   }
 
-  const failedMarker = getMarker(DRAIN_FAILED_MARKER, newestReviewId);
+  const failedMarker = getMarker(DRAIN_FAILED_MARKER, newestReviewId, [collectorSha]);
   const attempts = getMarkedCount(issueComments, viewerLogin, failedMarker);
   if (attempts >= SESSION_ATTEMPT_CAP) {
     postComment(

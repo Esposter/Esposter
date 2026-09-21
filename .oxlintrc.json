@@ -424,6 +424,7 @@
     "unicorn/import-style": "off",
     "unicorn/max-nested-calls": "off",
     "unicorn/no-array-reduce": "off",
+    "unicorn/no-array-reverse": ["error", { "allowExpressionStatement": false }],
     "unicorn/no-await-expression-member": "off",
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",

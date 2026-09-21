@@ -26,7 +26,7 @@ export const getDrainEventLine = (line: string): DrainLogLine | undefined => {
         return `→ ${block.name} ${summary}`.trim();
       }
       // A thinking block, or a kind a later release adds: read as a tool call it would throw on a missing `input`
-      return "";
+      else return "";
     });
     const text = lines.filter(Boolean).join("\n");
     return text ? { isNarration: true, text } : undefined;

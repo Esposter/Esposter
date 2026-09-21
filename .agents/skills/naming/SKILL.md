@@ -54,12 +54,13 @@ Where two of these collide — `check*` against `is*` against `getIs*`, and `isP
 - `compute*` for a value an algorithm produces from a collection or a dataset
 - CRUD prefixes (`create*`, `update*`, `delete*`) for data/store operations
 - `set*` for a function that writes stored state, named after the field it writes
+- `to*` for a pure conversion handing the subject back in another representation: `toTitleCase`, `toColumnKey`
 - `store*` prefix for subscription-driven state-update counterparts of async user actions: `deleteFoo` (user action) + `storeDeleteFoo` (subscription update). Never on unpaired methods
 - `on*` for a function something else calls with an event or an input it did not initiate; direct actions use the action name (`submit`, `save`, `delete`)
 - **No cardinality suffixes** — upgrading single-item → batch keeps the same name
 
 Where two of these collide — `get` against `read` against `count`, `set` against `apply`, `get` against
-`compute`, `on` against `handle`, and the `By<Selector>` that is not a cardinality suffix —
+`compute`, `get` against `to`, `on` against `handle`, and the `By<Selector>` that is not a cardinality suffix —
 `references/verb-families.md` separates them.
 
 ## Variables

@@ -1,3 +1,4 @@
+import type { CardedCharacter } from "#src/models/CardedCharacter";
 import type { Character } from "#src/models/Character";
 
 import { GenshinVerb, GenshinVerbs } from "#src/models/GenshinVerb";
@@ -5,6 +6,7 @@ import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { VoiceStatus } from "#src/models/VoiceStatus";
 import { checkIsMuted } from "#src/services/checkIsMuted";
 import { checkIsOwnVoiceLine } from "#src/services/checkIsOwnVoiceLine";
+import { checkIsPluginHookEntry } from "#src/services/checkIsPluginHookEntry";
 import { checkIsPluginSpinner } from "#src/services/checkIsPluginSpinner";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { checkIsRuntimeInstalled } from "#src/services/checkIsRuntimeInstalled";
@@ -18,6 +20,8 @@ import {
   MODELS_DIRECTORY,
   RUNTIME_MANIFEST_PATH,
   SESSION_ID_ENVIRONMENT_VARIABLE,
+  STATUS_LAUNCHER_PATH,
+  STATUS_SCRIPT_PATH,
   VOICE_CPU_DEVICE,
   VOICE_LOG_PATH,
   VOICE_PROOF_TEXT,
@@ -37,6 +41,7 @@ import { getLanguageDisplayName } from "#src/services/getLanguageDisplayName";
 import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
 import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLine";
 import { getSpeechRequest } from "#src/services/getSpeechRequest";
+import { getWarmRequest } from "#src/services/getWarmRequest";
 import { installVoiceRuntime } from "#src/services/installVoiceRuntime";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
 import { readCardedRoster } from "#src/services/readCardedRoster";
@@ -60,11 +65,12 @@ import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
 import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
 import { setMuted } from "#src/services/setMuted";
 import { writeInterfaceLanguage } from "#src/services/writeInterfaceLanguage";
+import { writeLauncher } from "#src/services/writeLauncher";
 import { writePin } from "#src/services/writePin";
 import { writeReplyLanguage } from "#src/services/writeReplyLanguage";
 import { writeSessionSpinner } from "#src/services/writeSessionSpinner";
+import { writeSpeakHook } from "#src/services/writeSpeakHook";
 import { writeSpinner } from "#src/services/writeSpinner";
-import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
 import { writeUserSettings } from "#src/services/writeUserSettings";
 import { writeVoiceLanguage } from "#src/services/writeVoiceLanguage";
 import { writeVolume } from "#src/services/writeVolume";
@@ -79,8 +85,17 @@ const listFormat = new Intl.ListFormat(locale, { type: "disjunction" });
 const today = Temporal.Now.plainDateISO();
 const getRosterLine = ({ birthday, displayElement, displayName, region, title, version }: Character) =>
   [displayName, title, displayElement, region, birthday, `v${version}`].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
-const compareVersionsDescending = (a: Character, b: Character) =>
-  b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name);
+// An authoring queue prints the characters that meet it newest first, so a patch's arrivals are at the top
+const printQueue = async (checkIsQueued: (cardedCharacter: CardedCharacter) => boolean) => {
+  const cardedRoster = await readCardedRoster(roster);
+  for (const { character } of cardedRoster
+    .filter((cardedCharacter) => checkIsQueued(cardedCharacter))
+    .toSorted(
+      ({ character: a }, { character: b }) =>
+        b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name),
+    ))
+    console.log(getRosterLine(character));
+};
 // Empty from a shell, where the tool set nothing
 const sessionId = process.env[SESSION_ID_ENVIRONMENT_VARIABLE] ?? "";
 // The language is read again rather than closed over, because the `language` verb changes it and then prints the
@@ -100,13 +115,10 @@ const getCurrentCharacter = () => {
   return resolveSessionCharacter(roster, sessionId, today);
 };
 // The session speaks as the character from the reply that relays the card: its record is rewritten so every later
-// Start, the status line and the speech hook agree, and the spinner follows where `setup` opted it in. The record
-// Carries the name the interface language spells them by, so a change of language rewrites it the same way
+// Start, the status line and the speech hook agree. The spinner is not rewritten here: the tool read its keys when
+// This session started, so a write now reaches only some other session, and a switch scoped to this one must not
 const switchSessionCharacter = async (character: Character) => {
-  // Read again for the reason `printCard` gives
-  const currentLanguage = readInterfaceLanguage();
   recordSessionCharacter(character, sessionId, today.toString());
-  await writeSessionSpinner(character, await readPersonaCard(character.name), currentLanguage);
   await printCard(character);
 };
 
@@ -122,13 +134,14 @@ const getStatusReport = async () => {
     interfaceLanguage: getLanguageDisplayName(language, language),
     isFromSessionRecord: Boolean(character),
     isMuted: checkIsMuted(),
+    isPluginSpeakHook: settings.hooks?.MessageDisplay?.some((entry) => checkIsPluginHookEntry(entry)) ?? false,
     isPluginSpinner: checkIsPluginSpinner(settings),
     isPluginStatusLine: checkIsPluginStatusLine(settings.statusLine),
     isReplyLanguageCascaded: !replyLanguage,
     isRuntimeInstalled: checkIsRuntimeInstalled(),
     pinnedName: pin?.name ?? "",
     replyLanguage: getLanguageDisplayName(replyLanguage ?? language, language),
-    voiceDevice: readVoiceDevice() ?? "",
+    voiceDevice: readVoiceDevice(),
     voiceLanguage: readVoiceLanguage(),
     volume: readVolume(),
   };
@@ -211,6 +224,8 @@ switch (verb) {
     }
 
     writePin(pinnedCharacter);
+    // The pinned character is what every later session speaks as, so the spinner may follow where `setup` opted it in
+    await writeSessionSpinner(pinnedCharacter, await readPersonaCard(pinnedCharacter.name), language);
     if (sessionId) {
       await switchSessionCharacter(pinnedCharacter);
       console.log(strings.pinnedInSession);
@@ -239,7 +254,7 @@ switch (verb) {
     for (const character of roster) console.log(getRosterLine(character));
     break;
   case GenshinVerb.Setup: {
-    writeStatusLauncher();
+    writeLauncher(STATUS_LAUNCHER_PATH, STATUS_SCRIPT_PATH);
     const userSettings = readUserSettings();
     const settings = getSettingsWithStatusLine(userSettings);
     writeUserSettings(settings);
@@ -264,14 +279,9 @@ switch (verb) {
     if (character) await printCard(character);
     break;
   }
-  case GenshinVerb.Uncarded: {
-    const cardedRoster = await readCardedRoster(roster);
-    for (const { character } of cardedRoster
-      .filter(({ personaCard }) => !personaCard)
-      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
-      console.log(getRosterLine(character));
+  case GenshinVerb.Uncarded:
+    await printQueue(({ personaCard }) => !personaCard);
     break;
-  }
   case GenshinVerb.Unmute:
     setMuted(false);
     console.log(strings.unmuted);
@@ -295,24 +305,15 @@ switch (verb) {
     if (language === DEFAULT_LANGUAGE) break;
 
     const { characters } = await readLocalization(language);
-    const cardedRoster = await readCardedRoster(roster);
-    for (const { character } of cardedRoster
-      .filter(({ character: { name: characterName }, personaCard }) => {
-        const localizedPersonaCard = characters[characterName];
-        return !localizedPersonaCard?.verbs || (Boolean(personaCard) && !localizedPersonaCard.greeting);
-      })
-      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
-      console.log(getRosterLine(character));
+    await printQueue(({ character: { name: characterName }, personaCard }) => {
+      const localizedPersonaCard = characters[characterName];
+      return !localizedPersonaCard?.verbs || (Boolean(personaCard) && !localizedPersonaCard.greeting);
+    });
     break;
   }
-  case GenshinVerb.Unverbed: {
-    const cardedRoster = await readCardedRoster(roster);
-    for (const { character } of cardedRoster
-      .filter(({ personaCard }) => personaCard?.verbs.length === 0)
-      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
-      console.log(getRosterLine(character));
+  case GenshinVerb.Unverbed:
+    await printQueue(({ personaCard }) => personaCard?.verbs.length === 0);
     break;
-  }
   case GenshinVerb.Use: {
     const character = findCharacterByName(roster, name);
     if (!character) {
@@ -336,7 +337,7 @@ switch (verb) {
       const voiceLanguage = readVoiceLanguage();
       console.log(
         voiceLanguage
-          ? strings.voiceStatus(checkIsRuntimeInstalled(), voiceLanguage, readVoiceDevice() ?? "", VOICE_LOG_PATH)
+          ? strings.voiceStatus(checkIsRuntimeInstalled(), voiceLanguage, readVoiceDevice(), VOICE_LOG_PATH)
           : strings.voiceUnset,
       );
       break;
@@ -379,14 +380,15 @@ switch (verb) {
     const character = await getCurrentCharacter();
     if (!character) {
       writeVoiceLanguage(name);
+      writeSpeakHook();
       console.log(strings.voiceLanguageWritten(name));
       break;
     }
 
-    const reference = readCharacterReference(character.name, await readPersonaCard(character.name));
-    if (!reference) console.log(strings.noReference(character.displayName));
+    const personaCard = await readPersonaCard(character.name);
+    if (!readCharacterReference(character.name, personaCard)) console.log(strings.noReference(character.displayName));
 
-    const warmed = await sendVoiceRequest(await getSpeechRequest(VoiceRequestType.Warm, character.name, name, ""));
+    const warmed = await sendVoiceRequest(getWarmRequest(character.name, personaCard, name));
     const [status, device] = warmed.split(VOICE_STATUS_SEPARATOR);
     if (status !== VoiceStatus.Ok) {
       console.error(strings.warmRequestUnanswered(status || "unreachable", VOICE_LOG_PATH));
@@ -395,7 +397,10 @@ switch (verb) {
     }
 
     writeVoiceLanguage(name);
-    await sendVoiceRequest(await getSpeechRequest(VoiceRequestType.Speak, character.name, name, VOICE_PROOF_TEXT));
+    writeSpeakHook();
+    await sendVoiceRequest(
+      getSpeechRequest(VoiceRequestType.Speak, character.name, personaCard, name, [VOICE_PROOF_TEXT]),
+    );
     console.log(strings.spoke(character.displayName, device ?? ""));
     break;
   }

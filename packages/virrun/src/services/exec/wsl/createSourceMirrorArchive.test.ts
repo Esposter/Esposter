@@ -76,10 +76,9 @@ describe(createSourceMirrorArchive, () => {
       expect.hasAssertions();
 
       // The real regression: a package `eslint.config.js` links to a sibling directory whose file resolves its own
-      // Imports
-      // From that directory. Dereferencing (`tar -h`) copied the target's content into the link's location, so its
-      // Relative
-      // Resolution broke; preserving the link lets Node walk its realpath and resolve from the target's real directory.
+      // Imports from that directory. Dereferencing (`tar -h`) copied the target's content into the link's location, so
+      // Its relative resolution broke; preserving the link lets Node walk its realpath and resolve from the target's
+      // Real directory.
       const siblingDirectoryName = "sibling";
       const linkTarget = `${siblingDirectoryName}/target`;
       const linkFilename = "link";

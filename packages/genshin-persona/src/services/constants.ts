@@ -1,5 +1,7 @@
+import type { ReplyPiece } from "#src/models/ReplyPiece";
 import type { TravelerTwin } from "#src/models/TravelerTwin";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
+import type { WikiVoiceOversPage } from "#src/models/WikiVoiceOversPage";
 
 import { TravelerGender } from "#src/models/TravelerGender";
 import { VoiceLanguage } from "#src/models/VoiceLanguage";
@@ -34,16 +36,19 @@ export const VOICE_STATE_PATHS: string[] = [
   REFERENCES_DIRECTORY,
   VOICE_LOG_PATH,
 ];
+export const SOURCE_DIRECTORY: string = join(import.meta.dirname, "..");
+const PLUGIN_DIRECTORY = join(SOURCE_DIRECTORY, "..");
+const SCRIPTS_DIRECTORY = join(PLUGIN_DIRECTORY, "scripts");
 // Copied into the runtime directory before `npm ci`; the plugin's own manifest never names the package, since the
 // Install copies the plugin whole and runs a frozen install under a ceiling
-export const SOURCE_DIRECTORY: string = join(import.meta.dirname, "..");
-export const PLUGIN_DIRECTORY: string = join(SOURCE_DIRECTORY, "..");
-export const SCRIPTS_DIRECTORY: string = join(PLUGIN_DIRECTORY, "scripts");
 export const RUNTIME_SOURCE_DIRECTORY: string = join(PLUGIN_DIRECTORY, "runtime");
+// The two user settings that name a script point at a launcher in the state directory, re-aimed at the running
+// Install on every session start, since an install lands under a directory named after its version
 export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
 export const STATUS_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "status.ts");
+export const SPEAK_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "speak.mjs");
+export const SPEAK_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "speak.ts");
 export const VOICE_SERVER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "voice.ts");
-export const WARM_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "warm.ts");
 export const SPINNER_SCRIPT_PATH: string = join(SCRIPTS_DIRECTORY, "spinner.ts");
 // A named pipe on Windows, a socket file elsewhere: one address per machine and no port to collide on
 export const VOICE_SOCKET_PATH: string =
@@ -58,8 +63,6 @@ export const PLUGIN_MARKER = "genshin-persona";
 export const PLAYER_FILE_PREFIX: string = `${PLUGIN_MARKER}-${process.pid}-`;
 // Between the marker and a tip id's own prefix
 export const TIP_ID_MARKER_SEPARATOR = ".";
-// The prefix of the base tips' ids; a character's own tips take the card's name
-export const BASE_TIP_ID = "teyvat";
 // Between a tip id's prefix and its index
 export const TIP_ID_SEPARATOR = "-";
 // The tool reads this many tips off the override and no more, and drops a tip longer than this
@@ -126,13 +129,25 @@ export const LanguageLocaleMap: Record<string, string> = {
 };
 
 // The source of a character's lines before the game-data package carries them, and of the clip a voice is cloned from
-export const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
+const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
 export const WIKI_VOICE_OVERS_URL: string = `${WIKI_ORIGIN}/api.php?action=parse&prop=wikitext&format=json&page=`;
 // The imageinfo query, which answers a file title with the file's URL in one call
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
 export const WIKI_IMAGE_INFO_URL: string = `${WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=`;
 export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
+// The character's own voice-over page, which every other language's is a subpage of
+export const WIKI_ENGLISH_VOICE_OVERS_PAGE: WikiVoiceOversPage = { fieldSuffix: "", subpage: "" };
+// The wiki transcribes the four dubs' lines, each on its own subpage of the character's English page; the Chinese
+// Page holds both scripts, keyed by a suffix on every title and text field. The other languages have no page, so a
+// Character the data package has no lines for yet in one of them shows their description
+export const WikiVoiceOversPageMap: Record<string, WikiVoiceOversPage> = {
+  ChineseSimplified: { fieldSuffix: "_s", subpage: "/Chinese" },
+  ChineseTraditional: { fieldSuffix: "_t", subpage: "/Chinese" },
+  [DEFAULT_LANGUAGE]: WIKI_ENGLISH_VOICE_OVERS_PAGE,
+  Japanese: { fieldSuffix: "", subpage: "/Japanese" },
+  Korean: { fieldSuffix: "", subpage: "/Korean" },
+};
 // The twins have no page of their own: every line is a dialogue with Paimon on the Traveler's story pages, filed
 // Under a file per twin, with a gendered word choice in the text
 export const TravelerTwinMap: Record<string, TravelerTwin> = {
@@ -140,7 +155,7 @@ export const TravelerTwinMap: Record<string, TravelerTwin> = {
   Lumine: { gender: TravelerGender.Female, namePlaceholder: "{character2}" },
 };
 // A host that takes the connection and never finishes would otherwise hold the hook a reply waits behind open
-export const WIKI_FETCH_TIMEOUT_MS = 10_000;
+export const WIKI_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
 // The file host serves a clip only to a request naming the wiki as its referer, and its edge answers `fetch` with a
 // Browser challenge under the same headers, so a clip is read through `readWikiFile`
 export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
@@ -165,17 +180,18 @@ export const LanguageDubPrefixMap: Record<VoiceLanguage, string> = {
 };
 // A whole number of this scale, applied as a gain; the top is the engine's own level
 export const MAX_VOLUME = 100;
-// A dtype per component, each measured against the character's own voice: the vocoder alone stays full precision,
-// Since its half-precision variant costs a tenth to a fifth of the likeness. The language model's session is keyed
-// `model` and its file `language_model`, so both spellings carry its dtype
-export const VOICE_MODEL_ID = "ResembleAI/chatterbox-turbo-ONNX";
+// The Nano export ships one variant per component, so the dtype map names what exists rather than what was chosen:
+// Half-precision embeddings, and 4-bit weights for the rest — over full-precision activations in the vocoder and
+// Half-precision ones in the language model and the speech encoder. The language model's session is keyed `model`
+// And its file `language_model`, so both spellings carry its dtype
+export const VOICE_MODEL_ID = "owensong/chatterbox-nano-ONNX";
 export const VOICE_MODEL_ARCHITECTURE = "ChatterboxModel";
 export const VOICE_MODEL_DTYPE: Record<string, string> = {
-  conditional_decoder: "fp32",
+  conditional_decoder: "q4",
   embed_tokens: "fp16",
   language_model: "q4f16",
   model: "q4f16",
-  speech_encoder: "fp16",
+  speech_encoder: "q4f16",
 };
 export const VOICE_CPU_DEVICE = "cpu";
 export const VOICE_GPU_DEVICE = "webgpu";
@@ -194,13 +210,20 @@ export const VOICE_DEVICE_LADDER: [VoiceDeviceRung, ...VoiceDeviceRung[]] = [
   { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_CPU_DEVICE), name: `${VOICE_GPU_DEVICE}-language-model` },
   { devices: getVoiceDeviceMap(VOICE_CPU_DEVICE, VOICE_CPU_DEVICE), name: VOICE_CPU_DEVICE },
 ];
+// The runtime names the provider that raised a failure by its source path, in either separator. A failure the GPU
+// Provider raises — a device lost under load — is the rung's, and the line reads on the rung below; the CPU provider
+// Is deterministic, so a failure it raises is the line's and would recur on every rung
+// oxlint-disable-next-line typescript/no-inferrable-types
+export const GPU_PROVIDER_FAILURE_REGEX: RegExp = new RegExp(String.raw`providers[\\/]${VOICE_GPU_DEVICE}`, "u");
 // A loudest frame at least this loud, since a vocoder run wrong lands tens of decibels under the engine's level, and
 // A quietest frame the speech floor below it, since a sentence has pauses where noise has none
 export const MIN_SPEECH_PEAK_DB = -40;
 // The rate the engine reads a reference at and writes a waveform at
 export const VOICE_SAMPLE_RATE = 24_000;
-// The engine conditions on this much of a reference, so a longer clip is trimmed rather than encoded whole
-export const MAX_REFERENCE_SECONDS = 10;
+// The engine conditions on this much of a reference, trimmed from a clip's opening: the vocoder runs over the
+// Reference's tokens on every unit, so the trim is what the vendor calls enough — about five seconds — and a likeness
+// Measured no lower than at ten, where three seconds leave the model no ending to find
+export const MAX_REFERENCE_SECONDS = 5;
 // A clip's energy per frame, this long and this far apart; a frame this far below the loudest is not speech
 export const FRAME_SECONDS = 0.04;
 export const HOP_SECONDS = 0.01;
@@ -208,19 +231,23 @@ export const SPEECH_FLOOR_DB = 35;
 // A twin's line is theirs only until Paimon answers, so their reference is cut at the first silence this long
 export const MIN_TURN_PAUSE_SECONDS = 0.4;
 // A ceiling on the speech tokens one sentence may generate, in proportion to its text with a floor for the shortest:
-// English reads at one to three tokens a character, a fixed ceiling cuts a long sentence mid-word, and no ceiling
+// A few tokens a character is above what English reads at, a fixed ceiling cuts a long sentence mid-word, and no ceiling
 // Lets a sentence the model finds no end for run for minutes and then hand the vocoder a sequence it rejects
 export const MAX_SPEECH_TOKENS_PER_CHARACTER = 4;
 export const MIN_SPEECH_TOKEN_CEILING = 100;
-// What a warm request synthesizes and drops, so the graph's first-call cost is paid before the first reply
+// What a warm request synthesizes, so the graph's first-call cost is paid before the first reply
 export const WARM_TEXT = "Ready.";
 // What the `voice` verb speaks once set up, so the person hears the voice before the first reply does
-export const VOICE_PROOF_TEXT = "The voice is set up, and every reply is read from here on.";
+export const VOICE_PROOF_TEXT = "The voice is set up, and a reply's spoken lines are read from the next session on.";
 // The synthesizer exits when no request has arrived for this long, freeing the GPU memory the model holds
 export const VOICE_IDLE_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
-// How long a hook keeps trying to reach a synthesizer it spawned: a cold load from the weights on disk, with room
-export const VOICE_LOAD_BUDGET_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
-export const VOICE_RETRY_INTERVAL_MS = 500;
+// The tool's own default timeout on a MessageDisplay hook, which bounds two waits: how long a hook keeps trying to
+// Reach a synthesizer it spawned — a node start to the bind, never the load — and how long the synthesizer holds a
+// Piece of a reply for one before it that has not arrived, past which the hook carrying it was killed
+export const MESSAGE_DISPLAY_HOOK_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
+export const VOICE_RETRY_INTERVAL_MS = 100;
+// Where a request with no turn sits: one piece of no message, the whole of it
+export const TURNLESS_PIECE: ReplyPiece = { index: 0, isFinal: true, messageId: "", turnId: "" };
 // Between the status a synthesizer answers with and the device that loaded
 export const VOICE_STATUS_SEPARATOR = " ";
 // Set by the tool in every Bash and hook subprocess to the same id the hook input carries
@@ -228,6 +255,6 @@ export const SESSION_ID_ENVIRONMENT_VARIABLE = "CLAUDE_CODE_SESSION_ID";
 export const TYPESAFE_KEY_ENVIRONMENT_VARIABLE = "CLAUDE_PLUGIN_OPTION_TYPESAFE_KEY";
 export const TYPESAFE_KEY_FALLBACK_ENVIRONMENT_VARIABLE = "TYPESAFE_API_KEY";
 // One attempt and a short ceiling: the lore pick sits in the session-start path and has the birthday pick behind it
-export const LORE_PICK_TIMEOUT_MS = 8000;
+export const LORE_PICK_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 8 }).total("milliseconds");
 export const LORE_PICK_INSTRUCTIONS =
   "Which character should keep the person company in today's session? Each option is described by how that character talks and carries themselves. Weigh what the date means in the game: a birthday today or within a few days, a festival or event of a region in this season, a release or story anniversary, the patch that is live. Weigh the person's moment too: the weekday, the hour and the place. Every character is a fair pick; the choice is a preference, not a rule.";

@@ -7,7 +7,7 @@ describe(parseWorkspaceEntries, () => {
     expect.hasAssertions();
 
     expect(parseWorkspaceEntries(DependencyGroup.Catalog, "  a: ^0.0.0\n")).toStrictEqual([
-      { group: DependencyGroup.Catalog, pkg: "a", specifier: "^0.0.0" },
+      { group: DependencyGroup.Catalog, packageName: "a", specifier: "^0.0.0" },
     ]);
   });
 

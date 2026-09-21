@@ -11,10 +11,10 @@ import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput"
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
 import { readModerationNotesCountInputSchema } from "#shared/models/db/moderation/ReadModerationNotesCountInput";
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { RoomMemberRemovalAction } from "@@/server/models/room/RoomMemberRemovalAction";
+import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
@@ -39,7 +39,7 @@ import { assertIsRoomMiddleware } from "@@/server/trpc/middleware/assertIsRoomMi
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause } from "@esposter/azure";
+import { BinaryOperator } from "@esposter/azure";
 import { checkHasPermission, createEntity } from "@esposter/db";
 import {
   AdminActionType,
@@ -236,10 +236,7 @@ export const moderationRouter = router({
   readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query<
     CursorPaginationData<ModerationLogEntity>
   >(async ({ input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
-    const clauses: Clause<ModerationLogEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-      getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-    ];
+    const clauses = getLivePartitionClauses<ModerationLogEntity>(roomId);
     if (actorUserId)
       clauses.push({
         key: ModerationLogEntityPropertyNames.actorUserId,
@@ -274,9 +271,8 @@ export const moderationRouter = router({
       ]);
 
       const clauses: Clause<ModerationNoteEntity>[] = [
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+        ...getLivePartitionClauses<ModerationNoteEntity>(roomId),
         { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.eq, value: targetUserId },
-        getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
       return readCursorPaginationDataAzureTable(moderationNotesClient, ModerationNoteEntity, {
         clauses,
