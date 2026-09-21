@@ -20,8 +20,7 @@ const english: ResolvedLocalization = {
     pinnedInSession:
       "Pinned for every session from the next start, and for this one from this reply; the spinner follows at the next session.",
     pinRemoved: "Pin removed; the pick decides again from the next session.",
-    pinRemovedInSession:
-      "Pin removed; the pick decides again from the next session, and for this one from this reply; the spinner follows at the next session.",
+    pinRemovedInSession: "Pin removed; the pick decides again from the next session, and for this one from this reply.",
     replyLanguageSet: (language) => `Replies are written in ${language} from the next reply.`,
     replyLanguageSilencesVoice:
       "The voice reads English and is not asked for a reply in another script, so replies stay silent in this language until the engine reads it.",
@@ -69,8 +68,7 @@ const english: ResolvedLocalization = {
       "Status line and spinner removed from user settings; both go at the next session. The voice's runtime, weights, references and dub are removed; the pick records, the pin and the languages stay.",
     unmuted: "Spoken replies unmuted.",
     usage: (verbs) => `Usage: genshin.ts <${verbs}> [name]`,
-    usingInSession:
-      "Speaking as this character from this reply, in this session alone; the spinner follows at the next session.",
+    usingInSession: "Speaking as this character from this reply, in this session alone.",
     voiceLanguageAvailable: (dub) => `A ${dub} dub exists; install it with the voice verb to hear replies read in it.`,
     voiceLanguageMustBeOneOf: (dubs) => `The dub must be one of ${dubs}.`,
     voiceLanguageUnavailable:

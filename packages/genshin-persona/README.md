@@ -106,7 +106,7 @@ node "<plugin root>/scripts/genshin.ts" teardown
 
 The status line prints the session's character in their own colour — the one the official art hangs on them, the element's for a character with no colour of their own yet — from the plugin's state files alone, and shows from the first frame of every session — the birthday pick stands in until the session's record is written, never another session's character. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat.
 
-The spinner replaces the built-in verbs and tips with the session's character's: the interface language's base Teyvat verbs with the character's own behind them, and under the character's name as that language spells it every line of theirs, off the game data or the community wiki, and for a character with no lines anywhere yet, the game's one-line description of them — outside English that is the newest patches' characters, about a fifth of the roster, until a bump of the data package carries their lines. The session-start hook rewrites the two settings from a detached process whenever the character changes, and so do `use`, `pin` and `unpin`; Claude Code reads the spinner keys once per process, so a rewrite shows from the next session. A status line that is not the plugin's is left alone.
+The spinner replaces the built-in verbs and tips with the session's character's: the interface language's base Teyvat verbs with the character's own behind them, and under the character's name as that language spells it every line of theirs, off the game data or the community wiki, and for a character with no lines anywhere yet, the game's one-line description of them — outside English that is the newest patches' characters, about a fifth of the roster, until a bump of the data package carries their lines. The session-start hook rewrites the two settings from a detached process whenever the character changes, and so does `pin`; Claude Code reads the spinner keys once per process, so a rewrite shows from the next session, which is why `use` and `unpin` leave the spinner alone — their pick is this session's, and a write would only reach another's. A status line that is not the plugin's is left alone.
 
 ### Languages
 
@@ -134,7 +134,7 @@ Every playable character comes from the game-data dependency — no generated ro
 node "<plugin root>/scripts/genshin.ts" use furina      # or: /genshin-persona:use furina
 ```
 
-The command reads the session id Claude Code sets in every Bash subprocess and rewrites that session's record, which the status line, the Stop hook and every later clear, compact or resume read; the card it prints is the one the model answers as from that reply. The spinner alone waits for the next session, because Claude Code reads its keys once per process. A session that started before a pin keeps its own character.
+The command reads the session id Claude Code sets in every Bash subprocess and rewrites that session's record, which the status line, the Stop hook and every later clear, compact or resume read; the card it prints is the one the model answers as from that reply. The spinner is left as it is, because Claude Code reads its keys once per process and a rewrite would reach another session rather than this one. A session that started before a pin keeps its own character.
 
 ### Spoken replies
 

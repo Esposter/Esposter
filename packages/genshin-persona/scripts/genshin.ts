@@ -100,13 +100,10 @@ const getCurrentCharacter = () => {
   return resolveSessionCharacter(roster, sessionId, today);
 };
 // The session speaks as the character from the reply that relays the card: its record is rewritten so every later
-// Start, the status line and the speech hook agree, and the spinner follows where `setup` opted it in. The record
-// Carries the name the interface language spells them by, so a change of language rewrites it the same way
+// Start, the status line and the speech hook agree. The spinner is not rewritten here: the tool read its keys when
+// This session started, so a write now reaches only some other session, and a switch scoped to this one must not
 const switchSessionCharacter = async (character: Character) => {
-  // Read again for the reason `printCard` gives
-  const currentLanguage = readInterfaceLanguage();
   recordSessionCharacter(character, sessionId, today.toString());
-  await writeSessionSpinner(character, await readPersonaCard(character.name), currentLanguage);
   await printCard(character);
 };
 
@@ -211,6 +208,8 @@ switch (verb) {
     }
 
     writePin(pinnedCharacter);
+    // The pinned character is what every later session speaks as, so the spinner may follow where `setup` opted it in
+    await writeSessionSpinner(pinnedCharacter, await readPersonaCard(pinnedCharacter.name), language);
     if (sessionId) {
       await switchSessionCharacter(pinnedCharacter);
       console.log(strings.pinnedInSession);
