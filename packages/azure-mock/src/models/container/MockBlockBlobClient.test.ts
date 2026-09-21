@@ -1,7 +1,9 @@
 import { MOCK_BLOB_BASE_URL } from "#src/constants";
 import { MockBlockBlobClient } from "#src/models/container/MockBlockBlobClient";
 import { MOCK_BLOB_SEEDED_PROPERTIES } from "#src/services/container/constants";
+import { readMockBlobMetadata } from "#src/services/container/readMockBlobMetadata";
 import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";
+import { MockContainerBlobMetadataDatabase } from "#src/store/MockContainerBlobMetadataDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -13,6 +15,22 @@ describe(MockBlockBlobClient, () => {
   afterEach(() => {
     MockContainerDatabase.clear();
     MockContainerBlobDatesDatabase.clear();
+    MockContainerBlobMetadataDatabase.clear();
+  });
+
+  // A blob is its content plus the records keyed to it, and the blob client's delete takes all of them the way
+  // The container client's does — or the next blob seeded under the name inherits metadata it never carried
+  test.for(["delete", "deleteIfExists"] as const)("%s clears the blob's metadata", async (method) => {
+    expect.hasAssertions();
+
+    const client = getClient();
+    await client.upload("", 0, { metadata: { reason: "reason" } });
+
+    expect(readMockBlobMetadata(containerName, blobName)).toStrictEqual({ reason: "reason" });
+
+    await client[method]();
+
+    expect(readMockBlobMetadata(containerName, blobName)).toBeUndefined();
   });
 
   // A seeded blob reports the seeded etag, so a caller that read one can claim it exactly once: the write mints a
