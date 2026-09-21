@@ -9,8 +9,9 @@ import { afterEach, describe, expect, test } from "vitest";
 describe(computeTaskCacheKey, () => {
   const MASKED_PATHS: readonly string[] = [];
   // Every key below needs the sandbox node major, which computeEnvironmentKey probes from a WSL login shell on win32 —
-  // With none reachable the key is undefined by design, and comparing undefined against undefined asserts nothing at
-  // All. The two undefined cases above stay: they are what the probe failing looks like. CI is linux, where the probe is process.version
+  // With none reachable the key is undefined by design, and comparing one undefined against another asserts nothing
+  // At all. The two undefined cases above stay: they are what the probe failing looks like. CI is linux, where the
+  // Probe is process.version
   const IS_SANDBOX_NODE_VERSION_READABLE = Boolean(getSandboxNodeVersion());
 
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
