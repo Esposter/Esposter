@@ -10,8 +10,8 @@ import { registerQuietExit } from "#src/services/registerQuietExit";
 import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
 
 // A reply that cannot be spoken is a reply that is not spoken: nothing to print, nothing to block. The gate is the
-// Voice language the `voice` verb wrote, since a machine without one has no engine to speak with, then whether
-// The reply would be heard at all, since every cost of one is paid before the volume is ever applied
+// Dub the `voice` verb wrote, since a machine without one has no engine to speak with, then whether the reply
+// Would be heard at all, since every cost of one is paid before the volume is ever applied
 registerQuietExit();
 const language = readVoiceLanguage();
 if (language && !checkIsSilent()) {
