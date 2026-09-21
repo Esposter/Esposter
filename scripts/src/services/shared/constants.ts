@@ -1,4 +1,4 @@
-import { KIBIBYTE } from "@esposter/configuration";
+import { KIBIBYTE, WORKSPACE_FILE } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -9,11 +9,6 @@ export const NPM_REGISTRY_URL = "https://registry.npmjs.org";
 // Every commit's body, a listing of every tracked file each run to megabytes, and the default buffer throws
 // ENOBUFS rather than truncating — a failure that reads as the tool being broken from the call site.
 export const MAX_BUFFER_BYTES: number = 256 * KIBIBYTE ** 2;
-
-// `pnpm`'s workspace manifest, at the repository root. `pnpm` parses it at the start of every command, so a
-// Resolver handed a checkout where it still holds conflict markers is told to resolve it before anything else
-// (`git` skill)
-export const WORKSPACE_FILE = "pnpm-workspace.yaml";
 
 // Every script reads and writes against the repository rather than against `scripts/`. A `..` chain is what this
 // Was, and it is wrong the first time the file counting it moves a directory — which it has done once already,

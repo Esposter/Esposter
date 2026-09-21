@@ -1,7 +1,8 @@
 import type { FoldPromptInput } from "#src/models/coderabbit/collect/FoldPromptInput";
 
 import { DEVELOP_BRANCH, MAIN_BRANCH, SESSION_DENIALS } from "#src/services/coderabbit/collect/constants";
-import { LOCKFILE, WORKSPACE_FILE } from "#src/services/shared/constants";
+import { LOCKFILE } from "#src/services/shared/constants";
+import { WORKSPACE_FILE } from "@esposter/configuration";
 
 // The resolver pointed at a merge instead of a cherry-pick: `main` moved under a window — an express cut, a
 // Bump — and the window's own commits touched the same lines. Both sides survive, the merge is committed, and
