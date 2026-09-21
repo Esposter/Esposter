@@ -14,7 +14,8 @@ export const deserializeValue = (serializedValue: string): SerializableValue => 
     return serializedValue.slice(1, -1).replaceAll("''", "'");
   else {
     const date = new Date(serializedValue);
-    if (Number.isNaN(date)) return serializedValue;
+    // `Number.isNaN` never coerces, so the Date object itself is asked whether its time is a number
+    if (Number.isNaN(date.getTime())) return serializedValue;
     else return date;
   }
 };

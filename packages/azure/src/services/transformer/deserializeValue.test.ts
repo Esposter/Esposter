@@ -24,6 +24,14 @@ describe(deserializeValue, () => {
     expect(deserializeValue(escapeValue(value))).toBe(value);
   });
 
+  test("keeps a date the calendar lacks as the string it was", () => {
+    expect.hasAssertions();
+
+    const missingMonthDate = "1970-13-01";
+
+    expect(deserializeValue(missingMonthDate)).toBe(missingMonthDate);
+  });
+
   test("parses an Azure Table datetime literal back to a Date", () => {
     expect.hasAssertions();
 
