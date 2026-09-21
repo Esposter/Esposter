@@ -22,3 +22,5 @@ export const GenshinVerb = {
 } as const;
 
 export type GenshinVerb = (typeof GenshinVerb)[keyof typeof GenshinVerb];
+
+export const GenshinVerbs: readonly GenshinVerb[] = Object.values(GenshinVerb);

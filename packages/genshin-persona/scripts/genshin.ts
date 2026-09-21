@@ -1,6 +1,6 @@
 import type { Character } from "#src/models/Character";
 
-import { GenshinVerb } from "#src/models/GenshinVerb";
+import { GenshinVerb, GenshinVerbs } from "#src/models/GenshinVerb";
 import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { VoiceStatus } from "#src/models/VoiceStatus";
 import { checkIsMuted } from "#src/services/checkIsMuted";
@@ -402,6 +402,6 @@ switch (verb) {
     console.log(strings.volumeSet(name));
     break;
   default:
-    console.error(strings.usage(Object.values(GenshinVerb).join(" | ")));
+    console.error(strings.usage(GenshinVerbs.join(" | ")));
     process.exitCode = 1;
 }
