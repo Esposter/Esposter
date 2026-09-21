@@ -5,6 +5,4 @@ import { readStateFile } from "#src/services/readStateFile";
 // A caller falls back to the interface language, so the absence is the fact rather than a copy of that value. It
 // Takes any text the model could answer in, and unlike the interface language it reaches no file path, so it has no
 // Shape to check
-export const readReplyLanguage = (): string | undefined => {
-  return readStateFile(REPLY_LANGUAGE_PATH) || undefined;
-};
+export const readReplyLanguage = (): string | undefined => readStateFile(REPLY_LANGUAGE_PATH) || undefined;

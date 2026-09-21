@@ -37,9 +37,9 @@ export const readRoster = (language: string): Character[] => {
           verboseCategories: true,
         })
       : characters;
-  const localizedById = new Map(localizedCharacters.map((localized) => [localized.id, localized]));
+  const localizedCharacterMap = new Map(localizedCharacters.map((localized) => [localized.id, localized]));
   const roster = characters.map<Character>((character) => {
-    const localized = localizedById.get(character.id) ?? character;
+    const localized = localizedCharacterMap.get(character.id) ?? character;
     return {
       affiliation: localized.affiliation,
       birthday: character.birthdaymmdd,
