@@ -34,13 +34,15 @@ const spawnPlayer = () => {
 // Answers every clip left with why
 export const createAudioPlayer = (): AudioPlayer => {
   const player = spawnPlayer();
-  const answers: ((failure: string) => void)[] = [];
+  let answers: ((failure: string) => void)[] = [];
   const { promise: exit, resolve: resolveExit } = Promise.withResolvers<void>();
   let exitFailure = "";
   let buffer = "";
   const settle = (failure: string) => {
     exitFailure = failure;
-    for (const answer of answers.splice(0)) answer(failure);
+    const pendingAnswers = answers;
+    answers = [];
+    for (const answer of pendingAnswers) answer(failure);
     resolveExit();
   };
   player.stdout?.setEncoding("utf8");

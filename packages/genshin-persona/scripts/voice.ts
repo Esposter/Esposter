@@ -171,5 +171,7 @@ server.on("connection", (socket) => {
   socket.on("error", () => {});
 });
 
-const [load] = await Promise.allSettled([synthesizerLoad, decoderLoad]);
-if (load?.status === "rejected") exit(`load failed: ${String(load.reason)}`);
+// Either load failing leaves the socket bound over an engine that answers nothing, since a reading awaits both, so
+// Both outcomes are read rather than the synthesizer's alone
+for (const load of await Promise.allSettled([synthesizerLoad, decoderLoad]))
+  if (load.status === "rejected") exit(`load failed: ${String(load.reason)}`);
