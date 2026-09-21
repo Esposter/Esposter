@@ -21,14 +21,16 @@ const spawnPlayer = (audioPath: string) => {
 };
 
 // Each desktop's stock player, handed a WAV on disk: none of them reads audio from a pipe, and a temp file the
-// Player has finished with is deleted whether or not it played. Why it did not play — a player not installed, or
-// One that refused the file — or "" once it did, since the sound is the only other sign
+// Player has finished with is deleted whether or not it played. Why it did not play — a player not installed, one
+// That refused the file, or one the OS stopped, which carries the signal it was stopped by in place of an exit
+// Status — or "" once it did, since the sound is the only other sign
 export const playAudio = (audio: Uint8Array): string => {
   const audioPath = join(tmpdir(), `genshin-persona-${process.pid}.wav`);
   writeFileSync(audioPath, audio);
-  const { error, status } = spawnPlayer(audioPath);
+  const { error, signal, status } = spawnPlayer(audioPath);
   rmSync(audioPath, { force: true });
   if (error) return error.message;
+  if (status === 0) return "";
 
-  return status === 0 ? "" : `the player exited ${status}`;
+  return signal ? `the player was stopped by ${signal}` : `the player exited ${status}`;
 };

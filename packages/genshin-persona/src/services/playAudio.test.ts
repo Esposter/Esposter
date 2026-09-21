@@ -25,6 +25,11 @@ describe(playAudio, () => {
   test.each([
     { expected: "playAudio", name: "a player that could not be spawned", outcome: { error: new Error("playAudio") } },
     { expected: "the player exited 1", name: "a player that refused the file", outcome: { status: 1 } },
+    {
+      expected: "the player was stopped by SIGKILL",
+      name: "a player the OS stopped",
+      outcome: { signal: "SIGKILL", status: null },
+    },
   ])("answers $name with why", ({ expected, outcome }) => {
     expect.hasAssertions();
 
