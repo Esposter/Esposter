@@ -39,7 +39,8 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, commitFiles, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
     setupFixtureRepository();
   const viewerLogin = "viewerLogin";
-  const baseInput = { isDryRun: false, viewerLogin };
+  const collectorSha = "collectorSha";
+  const baseInput = { collectorSha, isDryRun: false, viewerLogin };
   // The attempts are read off the conflicting commit's own comments, one `gh` page of none unless a test says otherwise
   beforeEach(() => {
     runGh.mockReturnValue("[[]]");
@@ -329,7 +330,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     expect(runGh).toHaveBeenCalledTimes(2);
     expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${queueSha}/comments`);
-    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(SYNC_FAILED_MARKER, queueSha));
+    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(SYNC_FAILED_MARKER, queueSha, [collectorSha]));
   });
 
   test("leaves a conflict past the attempt cap to a person without spending a session", async () => {
@@ -337,7 +338,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     const { developSha, queueSha } = setupConflict();
     const commitComments = Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-      body: getMarker(SYNC_FAILED_MARKER, queueSha),
+      body: getMarker(SYNC_FAILED_MARKER, queueSha, [collectorSha]),
       id,
       updated_at: "",
       user: { login: viewerLogin },
@@ -443,7 +444,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the reshaper left 790c344961556abb76524da297401750f776af92 over the cap without an Express trailer (attempt 1 of 3 on e1b1241d5399c7d8234f33a42c525fc449150d8c)]`,
     );
     expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${oversizedSha}/comments`);
-    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha));
+    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]));
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
     expect(readSha("HEAD")).toBe(queueSha);
   });
@@ -468,7 +469,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the reshaper left an operation in progress (attempt 1 of 3 on e1b1241d5399c7d8234f33a42c525fc449150d8c)]`,
     );
-    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha));
+    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]));
     expect(readSha("HEAD")).toBe(queueSha);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
   });
@@ -480,7 +481,7 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runGh.mockReturnValue(
       JSON.stringify([
         Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-          body: getMarker(RESHAPE_FAILED_MARKER, oversizedSha),
+          body: getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]),
           id,
           updated_at: "",
           user: { login: viewerLogin },

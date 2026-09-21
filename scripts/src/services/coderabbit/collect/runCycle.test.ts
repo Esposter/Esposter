@@ -19,6 +19,7 @@ import {
   CI_FAILURE_CONCLUSION,
   COMPLETED_DESCRIPTION,
   DEVELOP_BRANCH,
+  EXPRESS_FAILED_MARKER,
   EXPRESS_TRAILER,
   HELD_MARKER,
   INSTALL_COMMAND,
@@ -101,7 +102,8 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // What `gh` answers: the login, the release pull request list, the reviews, the issue comments, every commit's
   // Comments, CI's runs for main's head, a red run's log, and `[[]]` for every other paginated list — the one
   // Page of nothing a `--slurp` returns
-  const baseInput = { isDryRun: false };
+  const collectorSha = "collectorSha";
+  const baseInput = { collectorSha, isDryRun: false };
   const answerGh = (
     releasePullRequests: ReleasePullRequest[],
     reviews: GitHubReview[] = [],
@@ -298,7 +300,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
           "api",
           `repos/{owner}/{repo}/commits/${mainSha}/comments`,
           "-f",
-          `body=${getMarker(REPAIR_FAILED_MARKER, mainSha)}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to repair this red ${MAIN_BRANCH} head failed. See the collector run.`,
+          `body=${getMarker(REPAIR_FAILED_MARKER, mainSha, [collectorSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to repair this red ${MAIN_BRANCH} head failed. See the collector run.`,
         ],
       ],
     ]);
@@ -343,15 +345,16 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     expect(outcome).toStrictEqual({
       kind: CycleOutcomeKind.Idle,
-      reason: `1 claimed commits wait on the express lane — a red cut, a patch that does not apply yet, or a red ${MAIN_BRANCH} under repair`,
+      reason: `1 claimed commits wait on the express lane — a red cut, one past its attempts on this ${MAIN_BRANCH} head, a patch that does not apply yet, or a red ${MAIN_BRANCH} under repair`,
       retriggerDelaySeconds: undefined,
       targetSha: undefined,
     });
     expect(runGh.mock.calls.filter(([args]) => args[2] === "-f")).toHaveLength(0);
   });
 
-  // Past its repairs a red main is a person's, said once on the head, and a red cut is the claimed commit's own
-  test("tells a claimed commit its cut is red once a red main is past its repairs", async () => {
+  // Past its repairs a red main is a person's, said once on the head, and a red cut is the claimed commit's own —
+  // Counted on it against the head it was checked on and the collector that checked it
+  test("counts a red cut on its commit once a red main is past its repairs", async () => {
     expect.hasAssertions();
 
     const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
@@ -362,7 +365,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       [],
       [],
       Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-        ...getMarked(getMarker(REPAIR_FAILED_MARKER, mainSha)),
+        ...getMarked(getMarker(REPAIR_FAILED_MARKER, mainSha, [collectorSha])),
         id,
       })),
       [redRun],
@@ -373,7 +376,48 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(outcome.kind).toBe(CycleOutcomeKind.Idle);
     expect(runSession).not.toHaveBeenCalled();
     expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
-    expect(getCommitCommentPosts(claimedSha)).toHaveLength(1);
+    expect(getCommitCommentPosts(claimedSha)).toStrictEqual([
+      [
+        [
+          "api",
+          `repos/{owner}/{repo}/commits/${claimedSha}/comments`,
+          "-f",
+          expect.stringContaining(
+            `${getMarker(EXPRESS_FAILED_MARKER, claimedSha, [collectorSha, mainSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to cut`,
+          ),
+        ],
+      ],
+    ]);
+  });
+
+  // The checks answer the same for the same tree: past the cap against this main head the commit is not cut
+  // Again — no suite spent — until main moves or the collector changes, which the marker's basis reads by itself
+  test("leaves a claimed commit past its attempts on this main head uncut, without running the checks", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    commitFile(TEST_FILENAME, "");
+    const claimedSha = publish(QUEUE_BRANCH, claimExpress());
+    answerGh(
+      [],
+      [],
+      [],
+      Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
+        ...getMarked(getMarker(EXPRESS_FAILED_MARKER, claimedSha, [collectorSha, mainSha])),
+        id,
+      })),
+    );
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `1 claimed commits wait on the express lane — a red cut, one past its attempts on this ${MAIN_BRANCH} head, a patch that does not apply yet, or a red ${MAIN_BRANCH} under repair`,
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
+    });
+    expect(spawnPnpm).not.toHaveBeenCalled();
+    expect(getCommitCommentPosts(claimedSha)).toHaveLength(0);
+    expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
   });
 
   // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there
@@ -436,7 +480,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   // The commit is told once and the run fails red for a person
   const getExhaustedReshapes = (sha: string): GitHubEntry[] =>
     Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-      ...getMarked(getMarker(RESHAPE_FAILED_MARKER, sha)),
+      ...getMarked(getMarker(RESHAPE_FAILED_MARKER, sha, [collectorSha])),
       id,
     }));
 

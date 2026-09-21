@@ -82,6 +82,7 @@ const pushRewrite = (cwd: string, expectedSha: string, isDryRun: boolean): strin
 // Read when nothing was rewritten — or nothing when the queue moved under the run: the push that moved it fires
 // A run of its own, and a port read off the stale head would hold on a conflict the next run resolves.
 export const syncQueue = async ({
+  collectorSha,
   cwd,
   developSha,
   isDryRun,
@@ -114,7 +115,7 @@ export const syncQueue = async ({
         const conflictedPaths = readUnmergedPaths(cwd);
         // The attempts are counted on the commit itself: the queue is synced with no pull request open as often
         // As with one, and a count kept on the pull request would leave the resolver uncapped in between
-        const marker = getMarker(SYNC_FAILED_MARKER, conflictSha);
+        const marker = getMarker(SYNC_FAILED_MARKER, conflictSha, [collectorSha]);
         const comments = readCommitComments(conflictSha);
         const attempts = getMarkedCount(comments, viewerLogin, marker);
         if (attempts >= SESSION_ATTEMPT_CAP)
@@ -154,7 +155,7 @@ export const syncQueue = async ({
     }
   }
 
-  const isReshaped = await reshapeQueue({ cwd, isDryRun, targetSha, viewerLogin });
+  const isReshaped = await reshapeQueue({ collectorSha, cwd, isDryRun, targetSha, viewerLogin });
   if (isOnTarget && !isReshaped) return queueSha;
   else return pushRewrite(cwd, queueSha, isDryRun);
 };

@@ -1,4 +1,6 @@
 export interface SyncQueueInput {
+  // The basis the resolver's and the reshaper's attempts are counted against (`getMarker`)
+  collectorSha: string;
   cwd: string;
   developSha: string;
   isDryRun: boolean;

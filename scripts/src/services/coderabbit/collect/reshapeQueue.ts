@@ -31,7 +31,13 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Commit per run: the rewrite's push fires the next. Whether HEAD was rewritten is the answer; a failed attempt
 // Is counted on the commit and fails the run, and past the cap the commit is left as it is — the port holds on
 // It, and the held notice says so (docs: infra/review-collector/collection-cycle, "Sync").
-export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: ReshapeInput): Promise<boolean> => {
+export const reshapeQueue = async ({
+  collectorSha,
+  cwd,
+  isDryRun,
+  targetSha,
+  viewerLogin,
+}: ReshapeInput): Promise<boolean> => {
   const owedShas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${targetSha}..HEAD`], cwd));
   // A commit claiming no review is the express lane's at any size, so the cap is not its measure: reshaping one
   // Would pay a session per run to repackage what no window will ever carry
@@ -46,7 +52,7 @@ export const reshapeQueue = async ({ cwd, isDryRun, targetSha, viewerLogin }: Re
     console.info(`would reshape ${sha} — ${fileCount} files alone against the cap of ${REVIEW_FILE_CAP}`);
     return false;
   }
-  const marker = getMarker(RESHAPE_FAILED_MARKER, sha);
+  const marker = getMarker(RESHAPE_FAILED_MARKER, sha, [collectorSha]);
   const comments = readCommitComments(sha);
   const attempts = getMarkedCount(comments, viewerLogin, marker);
   if (attempts >= SESSION_ATTEMPT_CAP) {

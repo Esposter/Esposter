@@ -15,6 +15,7 @@ import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnr
 // Downloading Claude Code to be refused again; so does a drain that could not start, since porting would put a
 // Window ahead of findings that must lead it.
 export const runDrainStep = async ({
+  collectorSha,
   cwd,
   developSha,
   frontierCommits,
@@ -69,6 +70,7 @@ export const runDrainStep = async ({
 
   const drain = await drainFindings({
     baseSha: owingFixesSha ?? developSha,
+    collectorSha,
     feedback: getFeedbackReport({ issueComments, isThreadListed: false, review: newestReview, threads }),
     issueComments,
     newestReviewId: newestReview.id,

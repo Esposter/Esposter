@@ -41,11 +41,17 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Repair that landed red would otherwise start a fresh count on the head it made. Past the streak the head is a
 // Person's and the lane is open again: their repair arrives as a claimed commit, and holding the lane on the red
 // It answers would keep it out.
-export const repairMain = async ({ cwd, isDryRun, mainSha, viewerLogin }: RepairInput): Promise<RepairResult> => {
+export const repairMain = async ({
+  collectorSha,
+  cwd,
+  isDryRun,
+  mainSha,
+  viewerLogin,
+}: RepairInput): Promise<RepairResult> => {
   const check = readRedMainCheck(mainSha);
   if (!check) return { isUnderRepair: false };
 
-  const failedMarker = getMarker(REPAIR_FAILED_MARKER, mainSha);
+  const failedMarker = getMarker(REPAIR_FAILED_MARKER, mainSha, [collectorSha]);
   const comments = readCommitComments(mainSha);
   const attempts = getMarkedCount(comments, viewerLogin, failedMarker) + readStackedRepairs(mainSha, cwd);
   if (attempts >= SESSION_ATTEMPT_CAP) {

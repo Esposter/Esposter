@@ -105,10 +105,17 @@ export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
 
 export const COMMIT_BODY_FORMAT = "%H%x1F%B%x1E";
 
-// How many times one unit of work may fail its session before it is a person's: a review is quarantined and its
-// Findings stay open, a commit is left for the port to hold on, a red head is left red. The collector ports
-// Without them rather than stalling every window behind one thing nobody sees.
+// How many times one unit of work may fail — its session, or the checks over its express cut — against one
+// Basis before it is a person's: a review is quarantined and its findings stay open, a commit is left for the
+// Port to hold on, a red head is left red, a claimed commit waits uncut. The collector ports without them
+// Rather than stalling every window behind one thing nobody sees. The basis is what every attempt's marker
+// Names (`getMarker`): a count that outlived the collector code that failed it, or the `main` head a cut was
+// Checked on, would leave the work waiting on a person to reset a number.
 export const SESSION_ATTEMPT_CAP = 3;
+
+// The tree the collector's own source lives in, whose hash at the run's start is the basis every attempt count
+// Names — a change to any of it is a fresh turn for whatever failed under the old
+export const COLLECTOR_SOURCE_PATH = "scripts";
 
 // Hidden markers in pull request comments — the collector's durable memory for what a commit cannot carry
 export const DRAIN_FAILED_MARKER = "review-collector drain-failed";
@@ -140,8 +147,9 @@ export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
 // A fold of `main` whose conflict the resolver failed on, counted on `main`'s head
 export const FOLD_FAILED_MARKER = "review-collector fold-failed";
 
-// A commit claiming no review whose cut failed the checks, noted once on the commit: the port never carries it,
-// So a person drops the claim or repairs it, and nothing behind it waits
+// A commit claiming no review whose cut failed the checks, counted on the commit against the `main` head the
+// Cut was checked on: the port never carries it, so nothing behind it waits, and past the cap on one head it
+// Waits uncut until `main` moves or the collector changes — or a person drops the claim or repairs it
 export const EXPRESS_FAILED_MARKER = "review-collector express-failed";
 
 // A red `main` head whose repair the session failed on, counted on the head; with the repairs already stacked at

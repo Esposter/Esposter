@@ -35,7 +35,8 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runGh.mockReturnValue("[[]]");
     runSession.mockReset();
   });
-  const getInput = () => ({ cwd: getCwd(), viewerLogin });
+  const collectorSha = "collectorSha";
+  const getInput = () => ({ collectorSha, cwd: getCwd(), viewerLogin });
   // A conflict nothing mechanical decides: main edited the file the candidate deleted
   const setupConflict = (): { candidateSha: string; mainSha: string } => {
     const baseSha = commitFile(filePath, "");
@@ -96,7 +97,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the resolver left the fold of 646cf33bb0af71bf79f4ac95d887c6d6a4bd7450 unresolved (attempt 1 of 3)]`,
     );
     expect(runGh.mock.calls[1]?.[0]).toContain(`repos/{owner}/{repo}/commits/${mainSha}/comments`);
-    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(FOLD_FAILED_MARKER, mainSha));
+    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(FOLD_FAILED_MARKER, mainSha, [collectorSha]));
     // The merge is cleared on the way out: the next command run over this checkout is a `git checkout`, which
     // Refuses over an unresolved index
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
@@ -120,7 +121,7 @@ describe(mergeMain, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runGh.mockReturnValue(
       JSON.stringify([
         Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-          body: getMarker(FOLD_FAILED_MARKER, mainSha),
+          body: getMarker(FOLD_FAILED_MARKER, mainSha, [collectorSha]),
           id,
           updated_at: "",
           user: { login: viewerLogin },
