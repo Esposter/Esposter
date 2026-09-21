@@ -8,7 +8,7 @@ left when this ledger was written.
 | `scripts/src/services/coderabbit/collect`                      | 2026-09-21 | the collector's decision surface                                                              |
 | `scripts/src/services/coderabbit` — `feedback`, `shared`       | 2026-09-20 |                                                                                               |
 | `scripts/src/services/sweeps` — the scans                      | 2026-09-20 | everything but `ledgerCoverage` and `skillDocs`                                               |
-| `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`  | 2026-09-20 | the two that read the ledgers and the skill tree                                              |
+| `scripts/src/services/sweeps` — `ledgerCoverage`, `skillDocs`  | 2026-09-21 | the two that read the ledgers and the skill tree                                              |
 | `scripts/src/services/outdatedDependencies`                    | 2026-09-20 |                                                                                               |
 | `scripts/src/services/oxlint`                                  | 2026-09-20 |                                                                                               |
 | `scripts/src/services/citations`                               | 2026-09-16 |                                                                                               |
@@ -21,7 +21,7 @@ left when this ledger was written.
 | `scripts/src/updateNode`                                       | 2026-09-15 |                                                                                               |
 | the repository root — config and Markdown                      | 2026-09-06 | the composite actions already carry what the workflows share                                  |
 | `apps/web/configuration`                                       | 2026-09-15 | the relative imports are the pre-alias config exception; the splash table is generator output |
-| the app's root config files                                    | 2026-09-15 |                                                                                               |
+| the app's root config files                                    | 2026-09-21 |                                                                                               |
 | `content/docs` — the two suites                                | 2026-09-15 | the enforcers, not the pages                                                                  |
 | `content/docs` — `resource`                                    | 2026-09-06 |                                                                                               |
 | `content/docs` — `esbabbler`                                   | 2026-09-06 |                                                                                               |

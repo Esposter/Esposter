@@ -2,7 +2,7 @@
 
 | Unit                                                           | Swept      | Notes                                                                              |
 | -------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------- |
-| `architecture/*.md`                                            | 2026-09-15 |                                                                                    |
+| `architecture/*.md`                                            | 2026-09-21 |                                                                                    |
 | `resource/*.md`                                                | 2026-09-15 | every area index carries a `Shipped log`, one line per program of work             |
 | `esbabbler/*.md`, `esbabbler/calls/`                           | 2026-09-15 | the widest area by some margin                                                     |
 | `virrun/*.md`                                                  | 2026-09-15 | bench figures belong to the artifacts that hold them, never to prose               |
