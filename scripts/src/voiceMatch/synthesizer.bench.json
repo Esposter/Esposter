@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "filepath": "src/voiceMatch/synthesizer.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 11107.812,
+              "name": "short",
+              "p99": 12139.324461999997,
+              "rme": 24.334510745537763,
+              "sampleCount": 3
+            },
+            {
+              "mean": 14344.665966666676,
+              "name": "medium",
+              "p99": 16639.165138000004,
+              "rme": 37.70575881596635,
+              "sampleCount": 3
+            },
+            {
+              "mean": 21035.348366666673,
+              "name": "long",
+              "p99": 21174.91531200002,
+              "rme": 1.5917881093409667,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "synthesizer > synthesize - sentence shapes"
+        }
+      ]
+    }
+  ]
+}
