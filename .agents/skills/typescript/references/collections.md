@@ -7,7 +7,8 @@ enforcer catches which, the shapes that survive, and the two calls this repo alr
 ## Mutating array methods
 
 `sort()`, `reverse()` and `splice()` are all errors — the first two from oxlint (`unicorn/no-array-sort`,
-`unicorn/no-array-reverse`), `splice` from `no-restricted-syntax`, and all three restated in
+`unicorn/no-array-reverse`, the latter with its statement-form allowance switched off — a bare `items.reverse();`
+is the mutation, not an exception to it), `splice` from `no-restricted-syntax`, and all three restated in
 `vue/no-restricted-syntax` for the template expressions oxlint does not read. Write `toSorted`/`toReversed`/
 `toSpliced` and assign the result back.
 
