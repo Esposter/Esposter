@@ -14,7 +14,7 @@ Today a reply's spoken lines are read as each is written, every line after its w
 **This defines** two stages, each a property that can be measured rather than a feeling:
 
 1. **Never pausing.** Synthesis faster than playback with headroom — a real-time factor well under one, where today's is a few — so once a line's first sentence plays, everything after it is ready before the sound before it ends. Nothing about the shape of the reading changes for this stage; it is compute alone.
-2. **First sound within a fraction of a second** of the line being written. The line's whole synthesis is the wait, so this stage streams inside a line: the language model's speech tokens are vocoded a few dozen at a time as they are made and each chunk plays as it lands, the shape the [streaming fork of the engine](https://github.com/davidbrowne17/chatterbox-streaming) has, which reaches well under a second to first sound on a desktop GPU. It only pays once stage 1 holds: every extra vocoder pass re-runs the reference's tokens, so on a machine slower than real time the chunks arrive later than the whole line would have.
+2. **First sound within a fraction of a second** of the line being written. The line's whole synthesis is the wait, so this stage streams inside a line: the language model's speech tokens are vocoded a few dozen at a time as they are made and each chunk plays as it lands, the shape of [chatterbox-streaming](https://github.com/davidbrowne17/chatterbox-streaming), the engine's streaming fork, which on a desktop GPU gets first sound out in a fraction of a second. It only pays once stage 1 holds: every extra vocoder pass re-runs the reference's tokens, so on a machine slower than real time the chunks arrive later than the whole line would have.
 
 ```mermaid
 flowchart TD
@@ -31,13 +31,13 @@ flowchart TD
 
 ## The gates
 
-**Compute is the gate on both stages, and it is this machine's.** The language model makes speech tokens at about half the rate they are spoken at, on an integrated GPU through the WebGPU provider — the one provider that reaches an AMD card from Node under Windows, since no CUDA toolchain does and DirectML rejects two of the graph's ops. The bottom rung's CPU language model is slower again, and the vocoder's half-precision GPU variant, the one that would take it off the CPU, costs a tenth to a fifth of the likeness and stands declined. What closes the gate, any one of:
+**Compute is the gate on both stages, and it is this machine's.** The language model produces speech tokens at roughly half real time on an integrated GPU through the WebGPU provider — the one provider that reaches an AMD card from Node under Windows, since no CUDA toolchain does and DirectML rejects two of the graph's ops. The bottom rung's CPU language model is slower again, and the vocoder's half-precision GPU variant, the one that would take it off the CPU, costs a tenth to a fifth of the likeness and stands declined. What closes the gate, any one of:
 
 - **A machine whose GPU runs the language model several times faster** — a discrete card through the same provider, or a provider the runtime gains that reaches the card better. The committed bench is the instrument: the stage holds when the short sentence reads in less than its own spoken length.
 - **A runtime release that moves the language model's per-token cost by a factor** on WebGPU — the runtime's WebGPU path was rewritten once already for that kind of gain.
 - **A faster cloner the runtime loads.** The voice is the point, so a fast engine that does not clone is not a candidate; a smaller or distilled cloner with a Transformers.js class is, measured the way the engine's variants were, by likeness on a few characters before it stands.
 
-**The trigger is no gate.** Reading a line while the reply is still being written was the third stage of this proposal until it was measured: the tool's `MessageDisplay` hook hands a script each piece of a reply as it is displayed, cut at line breaks, and the session transcript grows one line per content block as each completes — so the hook is the trigger, built, and what remains between a line's being written and its being heard is the engine alone.
+**The trigger is no gate.** Reading a line while the reply is still being written was the third stage of this proposal until it was measured: the tool's `MessageDisplay` hook hands a script every displayed piece of a reply, split where its lines break, and the session transcript grows one line per content block as each completes — so the hook is the trigger, built, and what remains between a line's being written and its being heard is the engine alone.
 
 ## What this does not propose
 
@@ -47,8 +47,6 @@ flowchart TD
 - **A stock line played to cover the wait.** A bark that is not the reply's own line is a fake, and nothing is made ahead: every spoken line is written for its ask, the card's greeting included, which the welcome shows and no reply repeats.
 
 ## Key files
-
-The existing files the work touches, with the role each plays after the change.
 
 | File                                                              | Role                                                                                 |
 | :---------------------------------------------------------------- | :----------------------------------------------------------------------------------- |

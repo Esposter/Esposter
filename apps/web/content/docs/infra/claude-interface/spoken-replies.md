@@ -25,7 +25,7 @@ sequenceDiagram
     participant Wiki as Community wiki
     participant Player as Player process, one per reading
 
-    Start->>Server: warm — this session's character, one short word; the server spawned first when nothing listens
+    Start->>Server: warm — this session's character, one short word, the server spawned first when nothing listens
     Server->>Server: bind the socket, attach the handler, load the engine on the rung on file, else the top
     Server->>Wiki: the reference clip, once, cached under the state directory
     Server->>Server: encode the reference, synthesize the word
