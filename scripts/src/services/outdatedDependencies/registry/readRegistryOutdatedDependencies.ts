@@ -31,7 +31,7 @@ export const readRegistryOutdatedDependencies = async (
       if (!entry) return;
       nextIndex += 1;
 
-      const { followTag, group, packageName, specifier } = entry;
+      const { dependent: entryDependent, followTag, group, packageName, specifier } = entry;
       await getResultAsync(() => getLatestVersion(packageName, followTag)).match(
         (latest) => {
           const current = getSpecifierBase(specifier);
@@ -41,7 +41,7 @@ export const readRegistryOutdatedDependencies = async (
               current,
               // A followed tag is what the Latest column then holds, so the tag is the label
               dependencyType: followTag ?? dependencyType,
-              dependents: [dependent],
+              dependents: [entryDependent ?? dependent],
               latest,
               packageName,
               specifier,

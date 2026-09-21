@@ -63,4 +63,26 @@ describe(readRegistryOutdatedDependencies, () => {
       },
     ]);
   });
+
+  test("attributes an entry to its own dependent over the group's label", async () => {
+    expect.hasAssertions();
+
+    const entries: DependencyEntry[] = [
+      { dependent: "dependent", group: DependencyGroup.Npm, packageName: "a", specifier: "^0.0.0" },
+    ];
+    vi.mocked(getLatestVersion).mockResolvedValue("0.0.1");
+
+    const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
+
+    expect(outdatedDependencies).toStrictEqual([
+      {
+        current: "0.0.0",
+        dependencyType: "npm",
+        dependents: ["dependent"],
+        latest: "0.0.1",
+        packageName: "a",
+        specifier: "^0.0.0",
+      },
+    ]);
+  });
 });

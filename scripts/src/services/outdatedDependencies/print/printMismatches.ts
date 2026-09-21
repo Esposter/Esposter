@@ -8,7 +8,7 @@ export const printMismatches = (mismatches: Mismatch[], color: ColorPalette): vo
 
   console.log(
     color.yellow(
-      "Catalog specifiers out of sync with lockfile resolutions — bump pnpm-workspace.yaml or run pnpm refresh:lockfile",
+      "Specifiers out of sync with lockfile resolutions — bump pnpm-workspace.yaml or run pnpm refresh:lockfile; an npm manifest regenerates its own lockfile",
     ),
   );
   printTable(

@@ -19,11 +19,25 @@ describe(getUncatalogedManifestDependencies, () => {
     const uncatalogedDependency = { ...baseDependency, specifier: "^0.0.0" };
 
     expect(
-      getUncatalogedManifestDependencies([
-        { ...baseDependency, specifier: "catalog:" },
-        { ...baseDependency, specifier: "workspace:" },
-        uncatalogedDependency,
-      ]),
+      getUncatalogedManifestDependencies(
+        [
+          { ...baseDependency, specifier: "catalog:" },
+          { ...baseDependency, specifier: "workspace:" },
+          uncatalogedDependency,
+        ],
+        new Set(),
+      ),
     ).toStrictEqual([uncatalogedDependency]);
+  });
+
+  test("skips a manifest npm installs", () => {
+    expect.hasAssertions();
+
+    expect(
+      getUncatalogedManifestDependencies(
+        [{ ...baseDependency, manifestPath: "manifestPath", specifier: "^0.0.0" }],
+        new Set(["manifestPath"]),
+      ),
+    ).toStrictEqual([]);
   });
 });

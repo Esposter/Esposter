@@ -38,6 +38,11 @@ export const LOCKFILE = "pnpm-lock.yaml";
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
 
+// Npm's lockfile, beside every manifest that is installed by `npm ci` rather than by the workspace — a Claude Code
+// Plugin's root, and the runtime manifest its `voice` verb copies out. The outdated report finds those manifests
+// By this file, since nothing else marks them.
+export const NPM_LOCKFILE = "package-lock.json";
+
 // The formatter's config, at the repository root. Its `ignorePatterns` is the repo's one list of generated files
 // (`oxlint` skill, `references/lint-configuration.md`), which is why a scan that must skip them reads it too.
 export const FORMATTER_CONFIGURATION_FILE = ".oxfmtrc.json";

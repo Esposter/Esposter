@@ -42,7 +42,10 @@ runs its scripts by stripping types (`apps/web/content/docs/infra/claude-interfa
   `@esposter/configuration` are found one directory walk up, in the root's `node_modules`, because the package's
   own holds only its runtime dependency. The npm lockfile beside the manifest is generated from a **clean copy
   of the manifest alone** (`npm install --package-lock-only` in a scratch directory), never in place: run in the
-  workspace it records pnpm's store links as the packages, and the remote `npm ci` cannot resolve them.
+  workspace it records pnpm's store links as the packages, and the remote `npm ci` cannot resolve them. That
+  lockfile is also how the outdated-dependency report finds the manifest — beside a `package-lock.json`, plain
+  ranges are the `npm` group checked against it, not an uncataloged violation — which is what reaches the
+  runtime manifest under the plugin that no workspace glob lists.
 - **The `#src/*` specifier drops its extension** (`#src/services/x`, never `#src/services/x.ts`): the manifest's
   map appends `.ts`, and node resolves the map literally.
 - **Erasable TypeScript only.** Stripping erases none of `enum`, `namespace` or `import =`, so none of the three
