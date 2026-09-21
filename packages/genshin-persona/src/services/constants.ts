@@ -237,7 +237,7 @@ export const MIN_SPEECH_TOKEN_CEILING = 100;
 // What a warm request synthesizes, so the graph's first-call cost is paid before the first reply
 export const WARM_TEXT = "Ready.";
 // What the `voice` verb speaks once set up, so the person hears the voice before the first reply does
-export const VOICE_PROOF_TEXT = "The voice is set up, and every reply is read from here on.";
+export const VOICE_PROOF_TEXT = "The voice is set up, and a reply's spoken lines are read from the next session on.";
 // The synthesizer exits when no request has arrived for this long, freeing the GPU memory the model holds
 export const VOICE_IDLE_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
 // The tool's own default timeout on a MessageDisplay hook, which bounds two waits: how long a hook keeps trying to
