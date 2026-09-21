@@ -9,6 +9,13 @@ on:
 jobs:
   collect:
     name: Collect
+    # The caller's filter, repeated — the two are held equal by `eventFilter.test.ts`. The caller's copy is what
+    # frees the concurrency slot, since an event it rejects starts no called workflow at all and a job skipped
+    # here would already have taken the group's one pending run and evicted the fire waiting in it. This copy is
+    # the pinned one, and it decides nothing while the two agree: it holds only over the window where the
+    # caller — read from the event's own ref, so `main`'s copy for a status or a comment — is a release behind a
+    # change to the filter, where without it every event those deliveries carry would run a cycle.
+    #
     # Only the bot's reviews of the release pull request, CodeRabbit's own status on a commit `develop` carries
     # (every deployment writes one against the same commits) and the bot's own comments run a cycle — the
     # collector's marker comments would otherwise wake the cycle that posted them. The status event needs the
@@ -33,7 +40,9 @@ jobs:
     timeout-minutes: 120
     permissions:
       contents: read
-    # Every fire waits for the one ahead and re-reads the remote; on the job rather than the workflow so the
+    # A fire waits for the one ahead and re-reads the remote, and GitHub holds one pending run per group — so a
+    # third arriving supersedes the one waiting, which is only harmless while every run that takes the slot runs
+    # the cycle (the caller's filter is what keeps that true). On the job rather than the workflow so the
     # retrigger's wait never holds it
     concurrency:
       group: review-collector
