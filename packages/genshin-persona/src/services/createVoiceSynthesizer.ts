@@ -15,6 +15,7 @@ import {
   VOICE_MODEL_ID,
   VOICE_SAMPLE_RATE,
 } from "#src/services/constants";
+import { deleteSupersededModels } from "#src/services/deleteSupersededModels";
 
 // The engine on the first rung of the device ladder that loads, from the rung named; a synthesis that is not speech,
 // Or one the GPU provider fails, reloads one rung down and runs again, since a provider can load a graph and still run
@@ -25,6 +26,7 @@ export const createVoiceSynthesizer = async (
   { onFallback, onProgress, rungName = "" }: VoiceSynthesizerOptions = {},
 ): Promise<VoiceSynthesizer> => {
   env.cacheDir = modelsDirectory;
+  deleteSupersededModels(modelsDirectory);
   // The checkpoint's configuration names no architecture, and the runtime's progress tracker resolves the files to
   // Expect from one; named here, it expects the engine's four sessions rather than a single model file
   const config = await AutoConfig.from_pretrained(VOICE_MODEL_ID);
