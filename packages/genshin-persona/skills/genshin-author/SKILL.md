@@ -80,7 +80,7 @@ The full reasoning — how a reference is chosen and what its likeness number is
 
 ## Sources
 
-A line is drawn from the character's own in-game lines and story, and one command prints them — the description, then every line the game-data dependency carries, and when it carries none yet, the same lines read off the community wiki's voice-over page:
+A line is drawn from the character's own in-game lines and story, and one command prints them — the description, then every line the game-data dependency carries, and when it carries none yet, the same lines read off the community wiki's voice-over page for the interface language, which the wiki keeps for the four dubs:
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" lines <name>

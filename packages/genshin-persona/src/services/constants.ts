@@ -1,5 +1,6 @@
 import type { TravelerTwin } from "#src/models/TravelerTwin";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
+import type { WikiVoiceOversPage } from "#src/models/WikiVoiceOversPage";
 
 import { TravelerGender } from "#src/models/TravelerGender";
 import { VoiceLanguage } from "#src/models/VoiceLanguage";
@@ -135,6 +136,18 @@ export const WIKI_VOICE_OVERS_URL: string = `${WIKI_ORIGIN}/api.php?action=parse
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer
 export const WIKI_IMAGE_INFO_URL: string = `${WIKI_ORIGIN}/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=`;
 export const WIKI_USER_AGENT = "esposter-genshin-persona (card authoring)";
+// The character's own voice-over page, which every other language's is a subpage of
+export const WIKI_ENGLISH_VOICE_OVERS_PAGE: WikiVoiceOversPage = { fieldSuffix: "", subpage: "" };
+// The wiki transcribes the four dubs' lines, each on its own subpage of the character's English page; the Chinese
+// Page holds both scripts, keyed by a suffix on every title and text field. The other languages have no page, so a
+// Character the data package has no lines for yet in one of them shows their description
+export const WikiVoiceOversPageMap: Record<string, WikiVoiceOversPage> = {
+  ChineseSimplified: { fieldSuffix: "_s", subpage: "/Chinese" },
+  ChineseTraditional: { fieldSuffix: "_t", subpage: "/Chinese" },
+  [DEFAULT_LANGUAGE]: WIKI_ENGLISH_VOICE_OVERS_PAGE,
+  Japanese: { fieldSuffix: "", subpage: "/Japanese" },
+  Korean: { fieldSuffix: "", subpage: "/Korean" },
+};
 // The twins have no page of their own: every line is a dialogue with Paimon on the Traveler's story pages, filed
 // Under a file per twin, with a gendered word choice in the text
 export const TravelerTwinMap: Record<string, TravelerTwin> = {

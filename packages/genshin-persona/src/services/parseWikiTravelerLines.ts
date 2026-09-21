@@ -1,6 +1,7 @@
 import type { TravelerTwin } from "#src/models/TravelerTwin";
 import type { WikiStoryLine } from "#src/models/WikiStoryLine";
 
+import { WIKI_ENGLISH_VOICE_OVERS_PAGE } from "#src/services/constants";
 import { getPlainLineText } from "#src/services/getPlainLineText";
 import { getWikiFileStem } from "#src/services/getWikiFileStem";
 import { parseWikiTemplateLines } from "#src/services/parseWikiTemplateLines";
@@ -24,15 +25,17 @@ export const parseWikiTravelerLines = (
   { gender, namePlaceholder }: TravelerTwin,
 ): WikiStoryLine[] => {
   const template = sliceWikiTemplate(wikitext, TRAVELER_TEMPLATE_START);
-  return parseWikiTemplateLines(template, `${FILE_FIELD_PREFIX}${gender}`).flatMap<WikiStoryLine>(
-    ({ file, text, title }) => {
-      const [openingTurn = ""] = text.split(TURN_SEPARATOR);
-      const turn = openingTurn.trim();
-      if (!turn.startsWith(TRAVELER_SPEAKER)) return [];
+  return parseWikiTemplateLines(
+    template,
+    `${FILE_FIELD_PREFIX}${gender}`,
+    WIKI_ENGLISH_VOICE_OVERS_PAGE.fieldSuffix,
+  ).flatMap<WikiStoryLine>(({ file, text, title }) => {
+    const [openingTurn = ""] = text.split(TURN_SEPARATOR);
+    const turn = openingTurn.trim();
+    if (!turn.startsWith(TRAVELER_SPEAKER)) return [];
 
-      const stem = getWikiFileStem(file, namePlaceholder, name);
-      const words = turn.slice(TRAVELER_SPEAKER.length).replaceAll(WORD_CHOICE_REGEX, `$<${gender}>`);
-      return stem && title ? [{ stem, text: getPlainLineText(words), title: title.trim() }] : [];
-    },
-  );
+    const stem = getWikiFileStem(file, namePlaceholder, name);
+    const words = turn.slice(TRAVELER_SPEAKER.length).replaceAll(WORD_CHOICE_REGEX, `$<${gender}>`);
+    return stem && title ? [{ stem, text: getPlainLineText(words), title: title.trim() }] : [];
+  });
 };

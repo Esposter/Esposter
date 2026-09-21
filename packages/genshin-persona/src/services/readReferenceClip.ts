@@ -2,7 +2,7 @@ import type { ClipDecoder } from "#src/models/ClipDecoder";
 import type { PcmClip } from "#src/models/PcmClip";
 import type { VoiceLanguage } from "#src/models/VoiceLanguage";
 
-import { MAX_REFERENCE_SECONDS, VOICE_SAMPLE_RATE } from "#src/services/constants";
+import { MAX_REFERENCE_SECONDS, VOICE_SAMPLE_RATE, WIKI_ENGLISH_VOICE_OVERS_PAGE } from "#src/services/constants";
 import { cutReferenceClip } from "#src/services/cutReferenceClip";
 import { getReferencePath } from "#src/services/getReferencePath";
 import { getWikiFileTitle } from "#src/services/getWikiFileTitle";
@@ -14,9 +14,9 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 
 // A character the reference selection could not measure is spoken from the longest story line the wiki lists —
-// Spoken, never silent
+// Spoken, never silent; a stem is the same in every dub, so the English page names it
 const readLongestStoryStem = async (name: string) => {
-  const lines = await readWikiStoryLines(name);
+  const lines = await readWikiStoryLines(name, WIKI_ENGLISH_VOICE_OVERS_PAGE);
   const [longest] = lines.toSorted((a, b) => b.text.length - a.text.length);
   return longest?.stem ?? "";
 };
