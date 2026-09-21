@@ -8,8 +8,6 @@ const SENTENCE_REGEX = /.*?[.!?](?=\s|$)|.+$/gu;
 const LATIN_LETTER_REGEX = /\p{Script=Latin}/u;
 const OTHER_SCRIPT_LETTER_REGEX = /(?!\p{Script=Latin})\p{L}/u;
 
-// One sentence per unit and deliberately not packed into longer runs: the first is the whole of what the person
-// Waits for, and every one after it is generated while the one before plays, so a longer first unit buys nothing
 export const splitSentences = (prose: string): string[] =>
   (prose.match(SENTENCE_REGEX) ?? [])
     .map((sentence) => sentence.trim())

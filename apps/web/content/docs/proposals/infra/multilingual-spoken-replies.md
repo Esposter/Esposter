@@ -51,7 +51,7 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 
 - `VOICE_MODEL_ID` moves to the multilingual export; Turbo's id goes with it, not kept beside — the rollback is git, as it was for the Azure path.
 - `VOICE_MODEL_DTYPE` starts from Turbo's choices (half-precision speech encoder, 4-bit language model, full-precision vocoder) as hypotheses, and each is re-measured on one character before it stands.
-- Generation gains the two options the checkpoint needs — the guidance scale and "min_p" — as named constants beside `UNBOUNDED_SPEECH_TOKENS`, at the values the model card's reference loop uses. Guidance runs the language model over a batch of two, so the memory a rung needs doubles; the ladder's mechanism is unchanged, and whether the top rung still fits is a fact the first load reports.
+- Generation gains the two options the checkpoint needs — the guidance scale and "min_p" — as named constants beside `MAX_SPEECH_TOKENS_PER_CHARACTER`, at the values the model card's reference loop uses. Guidance runs the language model over a batch of two, so the memory a rung needs doubles; the ladder's mechanism is unchanged, and whether the top rung still fits is a fact the first load reports.
 - Chinese needs the Cangjie character mapping the export ships; whether the runtime's processor applies it or the request has to is a question the release answers, and the `[zh]` path is not declared working until a Chinese sentence has been heard.
 
 ### The input
@@ -91,7 +91,7 @@ The existing files the work touches, with the role each plays after the change.
 | `packages/genshin-persona/src/services/getSpeechRequest.ts`       | The script detected and the language token attached; the unreadable dropped                   |
 | `packages/genshin-persona/src/models/SpeechRequest.ts`            | The text's language beside the dub, two fields where there was one                            |
 | `packages/genshin-persona/src/models/VoiceLanguage.ts`            | Unchanged codes — the dub's and the model's tokens are the same ISO spelling                  |
-| `packages/genshin-persona/src/services/createAudioPlayer.ts`      | A player fed clauses rather than one sentence at a time                                       |
+| `packages/genshin-persona/src/services/createAudioPlayer.ts`      | A player fed clauses rather than a unit of sentences at a time                                |
 | `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer streaming chunks under the one-pending-request rule                  |
 | `scripts/src/services/voiceMatch/measureCharacterReference.ts`    | The likeness re-measured through the new engine                                               |
 | `apps/web/content/docs/infra/claude-interface/spoken-replies.md`  | Rewritten as-built: the engine section, the ladder's memory, streaming no longer a "does not" |

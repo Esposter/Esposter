@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "genshin-persona",
   "displayName": "Genshin Persona",
-  "description": "Speaks as the Genshin Impact character whose birthday is nearest to today, in prose only, and reads each reply aloud, a sentence at a time, in the character's own cloned voice.",
+  "description": "Speaks as the Genshin Impact character whose birthday is nearest to today, in prose only, and reads each reply aloud, the first sentence first and then a few at a time, in the character's own cloned voice.",
   "author": {
     "name": "Esposter",
     "url": "https://github.com/Esposter"

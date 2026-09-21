@@ -2,7 +2,7 @@
   "name": "@esposter/genshin-persona",
   "version": "3.2.0",
   "private": true,
-  "description": "A Claude Code plugin that speaks as the Genshin Impact character whose birthday is nearest, and reads each reply aloud, a sentence at a time, in the character's own cloned voice.",
+  "description": "A Claude Code plugin that speaks as the Genshin Impact character whose birthday is nearest, and reads each reply aloud, the first sentence first and then a few at a time, in the character's own cloned voice.",
   "keywords": [
     "claude-code",
     "claude-code-plugin",

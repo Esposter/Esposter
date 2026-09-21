@@ -199,8 +199,14 @@ export const VOICE_DEVICE_LADDER: [VoiceDeviceRung, ...VoiceDeviceRung[]] = [
 export const MIN_SPEECH_PEAK_DB = -40;
 // The rate the engine reads a reference at and writes a waveform at
 export const VOICE_SAMPLE_RATE = 24_000;
-// The engine conditions on this much of a reference, so a longer clip is trimmed rather than encoded whole
-export const MAX_REFERENCE_SECONDS = 10;
+// The engine conditions on this much of a reference, trimmed from a clip's opening: the vocoder runs over the
+// Reference's tokens on every unit, so the trim is what the vendor calls enough — about five seconds — and a likeness
+// Measured no lower than at ten, where three seconds leave the model no ending to find
+export const MAX_REFERENCE_SECONDS = 5;
+// The units after the first hold sentences up to this many characters — about forty words, where a Chatterbox
+// Integration chunks long text — since every unit pays the reference's tokens through the language model and the
+// Vocoder again, and a sentence read alone carries no pitch or pace from the one before it
+export const MAX_SPEECH_UNIT_CHARACTERS = 250;
 // A clip's energy per frame, this long and this far apart; a frame this far below the loudest is not speech
 export const FRAME_SECONDS = 0.04;
 export const HOP_SECONDS = 0.01;
@@ -208,7 +214,7 @@ export const SPEECH_FLOOR_DB = 35;
 // A twin's line is theirs only until Paimon answers, so their reference is cut at the first silence this long
 export const MIN_TURN_PAUSE_SECONDS = 0.4;
 // A ceiling on the speech tokens one sentence may generate, in proportion to its text with a floor for the shortest:
-// English reads at one to three tokens a character, a fixed ceiling cuts a long sentence mid-word, and no ceiling
+// A few tokens a character is above what English reads at, a fixed ceiling cuts a long sentence mid-word, and no ceiling
 // Lets a sentence the model finds no end for run for minutes and then hand the vocoder a sequence it rejects
 export const MAX_SPEECH_TOKENS_PER_CHARACTER = 4;
 export const MIN_SPEECH_TOKEN_CEILING = 100;
