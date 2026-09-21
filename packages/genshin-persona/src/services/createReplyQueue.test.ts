@@ -105,6 +105,25 @@ describe(createReplyQueue, () => {
     expect(getRunPieces(run)).toStrictEqual([opening, later]);
   });
 
+  test("answers a piece of a turn a newer one replaced rather than reading it over the newer turn", async () => {
+    expect.hasAssertions();
+
+    const run = getRun();
+    const push = createReplyQueue(run, holdMs);
+    const first = push(opening);
+    await vi.advanceTimersByTimeAsync(0);
+    const third = push(later);
+    // The hook carrying the older turn's closing line was held up and lands after the turn that replaced it
+    const second = push(closing);
+
+    await expect(Promise.all([first, second, third])).resolves.toStrictEqual([
+      VoiceStatus.Ok,
+      VoiceStatus.Superseded,
+      VoiceStatus.Ok,
+    ]);
+    expect(getRunPieces(run)).toStrictEqual([opening, later]);
+  });
+
   test("queues a piece with no turn behind what is waiting rather than dropping it", async () => {
     expect.hasAssertions();
 

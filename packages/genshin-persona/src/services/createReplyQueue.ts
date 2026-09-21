@@ -10,12 +10,17 @@ import { VoiceStatus } from "#src/models/VoiceStatus";
 // And the message moves on to the earliest piece of it still waiting. A newer turn's piece replaces whole what of
 // The older turn still waits, and the piece running can ask whether one waits on it, so a reading already under
 // Way stops at its next line rather than reading a stale one out over the newer reply. A piece with no turn — a
-// Warm, the proof the `voice` verb speaks — is not a newer reply and queues behind whatever waits
+// Warm, the proof the `voice` verb speaks — is not a newer reply and queues behind whatever waits. A turn a newer
+// One replaced is replaced for good, since the hooks run concurrently: a piece of it arriving after the turn that
+// Replaced it is a late piece of a turn nobody is listening to, and is answered rather than read
 export const createReplyQueue = <T extends ReplyPiece>(
   run: (piece: T, checkIsSuperseded: () => boolean) => Promise<VoiceStatus>,
   holdMs: number,
 ): ((piece: T) => Promise<VoiceStatus>) => {
   let waiting: { piece: T; resolve: (status: VoiceStatus) => void }[] = [];
+  // The turn whose pieces the queue is taking, and every turn a newer one has taken it from
+  let currentTurnId = "";
+  const supersededTurnIds = new Set<string>();
   // The message being read and the index of its next piece; nothing between messages
   let reading: undefined | { messageId: string; nextIndex: number; turnId: string };
   let hold: ReturnType<typeof setTimeout> | undefined;
@@ -67,16 +72,17 @@ export const createReplyQueue = <T extends ReplyPiece>(
   };
 
   return (piece) => {
-    const isNewerTurn =
-      Boolean(piece.turnId) &&
-      ((reading !== undefined && reading.turnId !== piece.turnId) ||
-        waiting.some((entry) => entry.piece.turnId && entry.piece.turnId !== piece.turnId));
+    if (supersededTurnIds.has(piece.turnId)) return Promise.resolve(VoiceStatus.Superseded);
+
+    const isNewerTurn = Boolean(piece.turnId) && Boolean(currentTurnId) && currentTurnId !== piece.turnId;
     if (isNewerTurn) {
+      supersededTurnIds.add(currentTurnId);
       for (const entry of waiting) if (entry.piece.turnId) entry.resolve(VoiceStatus.Superseded);
       waiting = waiting.filter((entry) => !entry.piece.turnId);
       reading = undefined;
     }
 
+    if (piece.turnId) currentTurnId = piece.turnId;
     const { promise, resolve } = Promise.withResolvers<VoiceStatus>();
     waiting = [...waiting, { piece, resolve }];
     drain = drainAfter(drain);
