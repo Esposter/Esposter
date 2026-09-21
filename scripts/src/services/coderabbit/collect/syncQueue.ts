@@ -1,5 +1,4 @@
 import type { SyncQueueInput } from "#src/models/coderabbit/collect/SyncQueueInput";
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
@@ -20,6 +19,7 @@ import { getSyncPrompt } from "#src/services/coderabbit/collect/getSyncPrompt";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { pushBranch } from "#src/services/coderabbit/collect/pushBranch";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
+import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readSha } from "#src/services/coderabbit/collect/readSha";
@@ -27,7 +27,6 @@ import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmerged
 import { reshapeQueue } from "#src/services/coderabbit/collect/reshapeQueue";
 import { resolveLockfileConflicts } from "#src/services/coderabbit/collect/resolveLockfileConflicts";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
-import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
@@ -128,7 +127,7 @@ export const syncQueue = async ({
         // The attempts are counted on the commit itself: the queue is synced with no pull request open as often
         // As with one, and a count kept on the pull request would leave the resolver uncapped in between
         const marker = getMarker(SYNC_FAILED_MARKER, conflictSha);
-        const comments = readEntries<GitHubEntry>(`commits/${conflictSha}/comments`);
+        const comments = readCommitComments(conflictSha);
         const attempts = getMarkedCount(comments, viewerLogin, marker);
         if (attempts >= SESSION_ATTEMPT_CAP)
           return abort(conflictSha, `its resolution failed ${attempts} times, so it is a person's`);

@@ -1,5 +1,4 @@
 import type { MergeMainInput } from "#src/models/coderabbit/collect/MergeMainInput";
-import type { GitHubEntry } from "#src/models/coderabbit/shared/GitHubEntry";
 
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
@@ -18,11 +17,11 @@ import { getFoldPrompt } from "#src/services/coderabbit/collect/getFoldPrompt";
 import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
+import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readUnmergedPaths } from "#src/services/coderabbit/collect/readUnmergedPaths";
 import { rebuildLockfile } from "#src/services/coderabbit/collect/rebuildLockfile";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
-import { readEntries } from "#src/services/coderabbit/shared/readEntries";
 import { runGit } from "#src/services/shared/runGit";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -54,7 +53,7 @@ export const mergeMain = async ({ cwd, viewerLogin }: MergeMainInput): Promise<M
     return MergeMainOutcome.Conflicted;
   };
   const marker = getMarker(FOLD_FAILED_MARKER, mainSha);
-  const comments = readEntries<GitHubEntry>(`commits/${mainSha}/comments`);
+  const comments = readCommitComments(mainSha);
   const attempts = getMarkedCount(comments, viewerLogin, marker);
   if (attempts >= SESSION_ATTEMPT_CAP) return abort(`its conflicts failed the resolver ${attempts} times`);
 
