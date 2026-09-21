@@ -1,7 +1,12 @@
 import type { Card } from "#src/models/Card";
 import type { PersonaCard } from "#src/models/PersonaCard";
 
-import { DEFAULT_LANGUAGE, REPLY_LANGUAGE_INSTRUCTION } from "#src/services/constants";
+import {
+  CONTEXT_HEADLINE_PREFIX,
+  DEFAULT_LANGUAGE,
+  NAMEPLATE_PREFIX,
+  REPLY_LANGUAGE_INSTRUCTION,
+} from "#src/services/constants";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
 import { parseJsonObject } from "#src/services/parseJsonObject";
 import { describe, expect, test } from "vitest";
@@ -29,10 +34,10 @@ describe(getSessionStartOutput, () => {
     expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
-          additionalContext: `Persona: ${headline}\n${description}\n${note}\n- ${habit}\n- Greets: ${greeting}\n- Signs off: ${signOff}`,
+          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${description}\n${note}\n- ${habit}\n- Greets: ${greeting}\n- Signs off: ${signOff}`,
           hookEventName: "SessionStart",
         },
-        systemMessage: `✦ ${headline}\n${note}\n${greeting}`,
+        systemMessage: `${NAMEPLATE_PREFIX}${headline}\n${note}\n${greeting}`,
       }),
     );
   });
@@ -44,8 +49,11 @@ describe(getSessionStartOutput, () => {
 
     expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
-        hookSpecificOutput: { additionalContext: `Persona: ${headline}`, hookEventName: "SessionStart" },
-        systemMessage: `✦ ${headline}`,
+        hookSpecificOutput: {
+          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}`,
+          hookEventName: "SessionStart",
+        },
+        systemMessage: `${NAMEPLATE_PREFIX}${headline}`,
       }),
     );
   });
@@ -59,7 +67,7 @@ describe(getSessionStartOutput, () => {
     const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, "Japanese"));
 
     expect(hookSpecificOutput).toStrictEqual({
-      additionalContext: `Persona: ${headline}\n${REPLY_LANGUAGE_INSTRUCTION("Japanese")}`,
+      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${REPLY_LANGUAGE_INSTRUCTION("Japanese")}`,
       hookEventName: "SessionStart",
     });
     expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).not.toContain(REPLY_LANGUAGE_INSTRUCTION(DEFAULT_LANGUAGE));

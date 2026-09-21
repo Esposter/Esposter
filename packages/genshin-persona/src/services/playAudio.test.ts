@@ -1,5 +1,6 @@
 import type { spawn as baseSpawn } from "node:child_process";
 
+import { PLAYER_FILE_PREFIX } from "#src/services/constants";
 import { playAudio } from "#src/services/playAudio";
 import { EventEmitter } from "node:events";
 import { readdirSync } from "node:fs";
@@ -19,8 +20,7 @@ const getPlayer = (answer: (player: EventEmitter) => void) => {
   });
   return player as ReturnType<typeof baseSpawn>;
 };
-const checkHasLeftovers = () =>
-  readdirSync(tmpdir()).some((name) => name.startsWith(`genshin-persona-${process.pid}-`));
+const checkHasLeftovers = () => readdirSync(tmpdir()).some((name) => name.startsWith(PLAYER_FILE_PREFIX));
 
 describe(playAudio, () => {
   test("runs the player with its window hidden, and deletes the WAV after", async () => {

@@ -1,5 +1,5 @@
 import { CharacterColorMap } from "#src/services/CharacterColorMap";
-import { ANSI_RESET, ElementColorMap } from "#src/services/constants";
+import { ANSI_RESET, ElementColorMap, NAMEPLATE_PREFIX } from "#src/services/constants";
 import { formatNameplate } from "#src/services/formatNameplate";
 import { getAnsiForegroundColor } from "#src/util/getAnsiForegroundColor";
 import { assert, describe, expect, test } from "vitest";
@@ -17,7 +17,7 @@ describe(formatNameplate, () => {
     assert.exists(color);
 
     expect(formatNameplate({ displayName, element: "Pyro", name: characterName })).toBe(
-      `${getAnsiForegroundColor(color)}✦ ${displayName}${ANSI_RESET}`,
+      `${getAnsiForegroundColor(color)}${NAMEPLATE_PREFIX}${displayName}${ANSI_RESET}`,
     );
   });
 
@@ -27,7 +27,7 @@ describe(formatNameplate, () => {
       expect.hasAssertions();
 
       expect(formatNameplate({ displayName, element, name })).toBe(
-        `${getAnsiForegroundColor(color)}✦ ${displayName}${ANSI_RESET}`,
+        `${getAnsiForegroundColor(color)}${NAMEPLATE_PREFIX}${displayName}${ANSI_RESET}`,
       );
     },
   );
@@ -35,6 +35,6 @@ describe(formatNameplate, () => {
   test.each(["", "None"])("leaves the nameplate plain for the element %j", (element) => {
     expect.hasAssertions();
 
-    expect(formatNameplate({ displayName, element, name })).toBe(`✦ ${displayName}`);
+    expect(formatNameplate({ displayName, element, name })).toBe(`${NAMEPLATE_PREFIX}${displayName}`);
   });
 });
