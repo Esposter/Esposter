@@ -28,9 +28,9 @@ const isBenchable = IS_ENABLED && !IS_CI;
 // Speaks from exactly what a reply does; the sentences are three shapes a reply's prose takes, each read whole
 const CHARACTER_NAME = "Aino";
 const SENTENCES = {
-  short: "Ooh, a new project? Hand me a wrench.",
-  medium: "The vocoder runs on the processor on this rung, and every unit pays for it before a sound is heard.",
   long: "Every problem is a machine to rebuild better, so I took the whole engine apart on the bench, laid every gear out in a row, and found the one that was grinding against the reference clip the whole time.",
+  medium: "The vocoder runs on the processor on this rung, and every unit pays for it before a sound is heard.",
+  short: "Ooh, a new project? Hand me a wrench.",
 };
 
 describe.skipIf(!isBenchable)("synthesizer", () => {
