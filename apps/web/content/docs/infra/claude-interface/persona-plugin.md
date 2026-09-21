@@ -147,7 +147,7 @@ The card the hook prints is a name, title, element and region, the birthday note
 State your dispute. Spare the details.
 ```
 
-The welcome keeps two voices apart by shape. The nameplate and the bracketed note are the plugin's: who is speaking, and the date and its distance from today, written as a caption because a character does not announce their own birthday. The bare line is the character's, said to the person in the first person or addressed to them, and it is the one line of a card that is performed rather than described. The same split is a standing rule for the model: the note is never announced, and when the person asks about the character — the birthday, the home region, the title — the answer comes in voice, in the first person, with the date and the distance taken from the note as written rather than recomputed.
+The welcome keeps two voices apart by shape. The nameplate and the bracketed note are the plugin's: who is speaking, and the date and its distance from today, written as a caption because a character does not announce their own birthday. The bare line is the character's, said to the person in the first person or addressed to them, and it is the one line of a card that is performed rather than described. The same split is a standing rule for the model: the note is never announced, and when the person asks about the character — the birthday, the home region, the title — the answer is plain rather than performed, with the date and the distance taken from the note as written rather than recomputed.
 
 ```mermaid
 flowchart LR
@@ -160,7 +160,7 @@ flowchart LR
     Terminal["Terminal welcome"]
     Context["Model context"]
     Asked{Asked about<br/>the character?}
-    Answer["First person, in voice,<br/>the date as the note has it"]
+    Answer["Plain, never performed,<br/>the date as the note has it"]
     Silent["Never announced"]
 
     Data --> Headline --> Terminal
@@ -279,7 +279,7 @@ flowchart LR
     Hook -->|spawns| Script
     Content --> Script
     Script -->|rewrites unless the label is the character's| Settings
-    Verb["use, pin, unpin"] -->|rewrites| Settings
+    Verb["pin verb"] -->|rewrites the spinner where setup opted it in| Settings
     Launcher -->|imports| Install
     Settings -->|runs the launcher| Line
     Hook -->|records the session's pick| Records
