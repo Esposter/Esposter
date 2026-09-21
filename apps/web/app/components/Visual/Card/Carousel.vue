@@ -102,10 +102,10 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
       scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 1 - i))}`,
     });
 
-  items.reverse();
+  const reversedItems = items.toReversed();
   // Pad the rest so we don't operate on undefined.
-  for (let i = numberOfCards; i < maxShownCards; i++) items.push({});
-  return items;
+  for (let i = numberOfCards; i < maxShownCards; i++) reversedItems.push({});
+  return reversedItems;
 });
 const activeCardStyle = computed<CardStyleVariables>(() => ({
   oldMarginRight: normalCardStyles.value.length > 0 ? takeOne(normalCardStyles.value).marginRight : "0",
