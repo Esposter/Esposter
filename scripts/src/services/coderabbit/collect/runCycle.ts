@@ -133,17 +133,20 @@ export const runCycle = async ({
     if (drain.outcome) return drain.outcome;
     reviewFixesSha = drain.reviewFixesSha;
     // A review that ends at the head and left nothing open is a release: the bot's own risk verdict on that head
-    // Is the last word when it is the least, and a reading of its rationale against the tree otherwise
+    // Is the last word when it is the least, and a reading of what it did write against the tree otherwise. A
+    // Block naming an older head, or no block at all, states nothing about this one — the bot writes one on some
+    // Releases and not others, for no reason this side can read — so that is a head to judge and never a head to
+    // Wait on: a clean release held for a block nobody promised is held forever, and reads as `Idle` while it is.
     const mergeRisk = getMergeRisk(issueComments);
-    if (gate.kind === GateDecisionKind.Proceed && drain.isClean && mergeRisk?.coveredSha === developSha) {
-      if (mergeRisk.level === MERGEABLE_RISK_LEVEL)
-        return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
+    const level = mergeRisk?.coveredSha === developSha ? mergeRisk.level : undefined;
+    if (gate.kind === GateDecisionKind.Proceed && drain.isClean) {
+      if (level === MERGEABLE_RISK_LEVEL) return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
       const judged = await judgeRelease({
         cwd,
         developSha,
         isDryRun,
         issueComments,
-        level: mergeRisk.level,
+        level,
         pullRequest,
         reviews,
         viewerLogin,

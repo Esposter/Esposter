@@ -23,7 +23,7 @@ import { postDrainLimited } from "#src/services/coderabbit/collect/postDrainLimi
 import { readDrainLimitResetMs } from "#src/services/coderabbit/collect/readDrainLimitResetMs";
 import { readReleaseGate } from "#src/services/coderabbit/collect/readReleaseGate";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
-import { WALKTHROUGH_MARKERS } from "#src/services/coderabbit/feedback/constants";
+import { ASSESSMENT_MARKER, RISK_MARKER } from "#src/services/coderabbit/feedback/constants";
 import { getFeedbackReport } from "#src/services/coderabbit/feedback/getFeedbackReport";
 import { getLatestMarkedBlock } from "#src/services/coderabbit/feedback/getLatestMarkedBlock";
 import { readUnresolvedThreads } from "#src/services/coderabbit/feedback/readUnresolvedThreads";
@@ -35,9 +35,10 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-// A clean review the bot rates above the least risk is judged, once per head: the level is the bot's impression
-// Across every round and does not reset when its concerns are answered, so whether anything real is left is a
-// Reading of the rationale against the tree — the one thing here only a session can do. The verdict is recorded
+// A clean review the bot rates above the least risk — or does not rate at all — is judged, once per head: the
+// Level is the bot's impression across every round and does not reset when its concerns are answered, so whether
+// Anything real is left is a reading of the rationale against the tree — the one thing here only a session can
+// Do, and the only reading there is when the bot wrote no rationale. The verdict is recorded
 // On the pull request with the verb beside the marker, and a later run re-applies it rather than judging again:
 // A `merge` whose `gh pr merge` failed merges now, a `hold` ports on. No outcome means the window ports as usual.
 export const judgeRelease = async ({
@@ -61,12 +62,17 @@ export const judgeRelease = async ({
     return applyVerdict(verdict);
   }
 
+  // The level when the bot stated one for this head, and its silence when it did not — a clean review is judged
+  // Either way, and what is written on the pull request says which of the two the judgement answered
+  const statedRisk =
+    level === undefined
+      ? "the bot stated no merge risk for it"
+      : `the bot rates the merge risk _${level}_, above _${MERGEABLE_RISK_LEVEL}_`;
   if (isDryRun) {
-    console.info(`would judge the release at ${developSha} — the bot rates the merge risk ${level}`);
+    console.info(`would judge the release at ${developSha} — ${statedRisk}`);
     return undefined;
   }
 
-  const [riskMarker = ""] = WALKTHROUGH_MARKERS;
   // Read the way the feedback report reads the same block: oldest first by `updated_at`, because the walkthrough
   // Carrying it is edited in place across reviews and its position among the comments never moves with it
   // (`getSortedByUpdatedAt`), and through the reader that already knows the block is not always in the newest
@@ -74,7 +80,11 @@ export const judgeRelease = async ({
   const botBodies = getSortedByUpdatedAt(issueComments.filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)).map(
     ({ body }) => body,
   );
-  const riskBlock = getLatestMarkedBlock(botBodies, riskMarker) ?? "";
+  // The rationale when the bot wrote one, its change assessment when it did not — the head reached here either
+  // Way, and a judge handed nothing at all would be reading the feedback report alone for a question the
+  // Walkthrough is supposed to frame
+  const riskBlock =
+    getLatestMarkedBlock(botBodies, RISK_MARKER) ?? getLatestMarkedBlock(botBodies, ASSESSMENT_MARKER) ?? "";
   const newestReview = reviews.findLast(({ body }) => body);
   const threads = readUnresolvedThreads(pullRequest);
   const feedback = newestReview
@@ -94,7 +104,7 @@ export const judgeRelease = async ({
     console.info(`release verdict at ${developSha}: ${verdict} — ${reason}`);
     postComment(
       pullRequest,
-      `${marker} ${verdict} — ${reason}\nThe review at ${developSha} left nothing open and the bot rates the merge risk _${level}_, above _${MERGEABLE_RISK_LEVEL}_. ${
+      `${marker} ${verdict} — ${reason}\nThe review at ${developSha} left nothing open and ${statedRisk}. ${
         verdict === ReleaseVerdict.Merge
           ? "Nothing real is left, so the collector merges the release."
           : "Something real is left, so the release is a person's: merge this pull request, or close it to pause. The collector keeps porting meanwhile, and the next head is judged afresh."

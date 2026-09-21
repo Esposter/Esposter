@@ -7,8 +7,9 @@ export interface VerdictPromptInput {
   developSha: string;
   // The `ai:coderabbit:feedback` report — what every review said and what was answered
   feedback: string;
-  level: string;
-  // The walkthrough's merge-risk block as the bot wrote it, rationale included
+  level?: string;
+  // The walkthrough's merge-risk block as the bot wrote it, rationale included — its change assessment when it
+  // Wrote no risk block for this head
   riskBlock: string;
   verdictPath: string;
 }

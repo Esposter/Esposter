@@ -17,6 +17,7 @@ import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { judgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
+import { ASSESSMENT_MARKER } from "#src/services/coderabbit/feedback/constants";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { existsSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
@@ -185,6 +186,20 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       ],
     ]);
     expect(getMergeCalls()).toHaveLength(1);
+  });
+
+  // The bot writes its merge-risk block on some releases and not others, so a head it stated no level for is
+  // Judged on the block it did write — never merged unasked on a level nobody gave, and never held for one
+  test("judges a head the bot stated no merge risk for, on its change assessment", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    const assessment = `<!-- ${ASSESSMENT_MARKER}_start -->\n**Priority:** ${TEST_FILENAME}\n<!-- ${ASSESSMENT_MARKER}_end -->`;
+    answerWith(`${ReleaseVerdict.Merge} — nothing is left`);
+    await judgeRelease({ ...getInput(developSha, [getComment(CODERABBIT_REST_LOGIN, assessment)]), level: undefined });
+
+    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`**Priority:** ${TEST_FILENAME}`);
+    expect(getCommentCalls()[0]?.[0].at(-1)).toContain("the bot stated no merge risk for it");
   });
 
   test("ports on with a hold verdict recorded", async () => {

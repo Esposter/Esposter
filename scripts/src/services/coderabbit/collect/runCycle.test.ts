@@ -81,9 +81,10 @@ vi.mock(import("#src/services/coderabbit/collect/runDrainStep"), () => ({
 }));
 
 // The bot's walkthrough after a review that found nothing: no review body, the range in the recent-review block
-// And the merge risk it states for the head it read — the least unless a test says otherwise
+// And the merge risk it states for the head it read — the least unless a test says otherwise, and no block
+// At all for `""`, which is the walkthrough it writes on some releases and not others
 const getCleanWalkthrough = (sha: string, level = MERGEABLE_RISK_LEVEL): GitHubEntry => ({
-  body: `<!-- ${RECENT_REVIEW_MARKER}_start -->between ${sha} and ${sha}<!-- ${RECENT_REVIEW_MARKER}_end -->\n**Merge Risk:** _${TEST_FILENAME} ${level}_\n<!-- final_review_risk_coverage:{"sourceCommitId":"${sha}","coveredCommitId":"${sha}","kind":"reviewed"} -->`,
+  body: `<!-- ${RECENT_REVIEW_MARKER}_start -->between ${sha} and ${sha}<!-- ${RECENT_REVIEW_MARKER}_end -->${level === "" ? "" : `\n**Merge Risk:** _${TEST_FILENAME} ${level}_\n<!-- final_review_risk_coverage:{"sourceCommitId":"${sha}","coveredCommitId":"${sha}","kind":"reviewed"} -->`}`,
   id: 0,
   updated_at: "",
   user: { login: CODERABBIT_REST_LOGIN },
@@ -741,6 +742,24 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       retriggerDelaySeconds: undefined,
       targetSha: queueSha,
     });
+    expect(getPrCalls("merge")).toHaveLength(0);
+  });
+
+  // The bot writes that block on some releases and not others, so a head it states no level for is judged too:
+  // Waiting for a block nobody promised holds a clean release forever, under a line that reads as healthy
+  test("judges the release when the walkthrough states no merge risk for the head", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    publish(QUEUE_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha, "")]);
+    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
+    const merged = { kind: CycleOutcomeKind.Merged, reason: TEST_FILENAME };
+    judgeRelease.mockResolvedValue(merged);
+
+    await expect(runCycle({ ...baseInput, cwd: getCwd() })).resolves.toStrictEqual(merged);
+    // Judged on no level, and never merged unasked on one nobody gave
+    expect(judgeRelease.mock.calls[0]?.[0].level).toBeUndefined();
     expect(getPrCalls("merge")).toHaveLength(0);
   });
 

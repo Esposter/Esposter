@@ -16,7 +16,7 @@ Two actors work the release pull request — the working session and the collect
 
 The one ref with two writers is `ai/queue`, and the lease is what keeps it one at a time: the session pushes it plain, so a queue the collector rewrote refuses the push until the session has pulled, and the collector rewrites it with `--force-with-lease` on the sha its run read, so a session push in between refuses the rewrite — which then carries what that push added onto itself and leases the new head. Neither can overwrite what the other wrote without having read it first.
 
-The release pull request has one writer too: the collector opens it over whatever window `develop` carries that no review has read, and merges it once a review at the head is clean — on the least merge risk, or on the verdict's word above it; a person merges one the verdict held, or closes it to pause. `main`'s two writers never race: the [express lane](/docs/infra/review-collector/express-lane) cuts only what applies cleanly on `main`, and the fold brings `main` into `develop` before the release merge meets the two.
+The release pull request has one writer too: the collector opens it over whatever window `develop` carries that no review has read, and merges it once a review at the head is clean — on the least merge risk, or on the verdict's word for every other reading of that head, including the bot stating none; a person merges one the verdict held, or closes it to pause. `main`'s two writers never race: the [express lane](/docs/infra/review-collector/express-lane) cuts only what applies cleanly on `main`, and the fold brings `main` into `develop` before the release merge meets the two.
 
 ```mermaid
 sequenceDiagram

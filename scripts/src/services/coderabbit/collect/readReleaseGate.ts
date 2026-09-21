@@ -11,7 +11,8 @@ import { noul } from "@typesafe-ai/sdk";
 // It are answered, so the common head is one where the rationale names nothing the pull request has not already
 // Answered — and that reading is in the rationale, the fixes and the rejections, all of which are in hand here.
 // What is not in hand is the tree, so a rationale that turns on what the code actually does lands in the band
-// And the session reads it there.
+// And the session reads it there. A head the bot stated no risk for arrives with its change assessment in place
+// Of the rationale, which names no concern — so the record alone settles it, which is what it is for.
 export const readReleaseGate = async ({
   answers,
   feedback,
@@ -21,9 +22,10 @@ export const readReleaseGate = async ({
     { answers, feedback, riskBlock },
     {
       isOpen: noul(
-        "Does the merge-risk rationale name a concern that no fix or rejection recorded on this pull request answered?",
+        "Does the bot's block name a concern that no fix or rejection recorded on this pull request answered?",
         {
-          false: "Every concern the rationale names was fixed, or rejected with evidence nothing here refutes.",
+          false:
+            "Every concern the block names was fixed, or rejected with evidence nothing here refutes — or it names none at all.",
           true: "At least one concern it names is left standing, or turns on what the code does rather than on what the record says.",
         },
       ),

@@ -8,11 +8,11 @@ CodeRabbit's feedback is split across three endpoints, and reading one silently 
 nothing tells you a category was missed. `pnpm ai:coderabbit:feedback <pr>` reads all three; this is what they
 are, for the ad-hoc question the script does not answer.
 
-| Endpoint               | Carries                                                                          | Lost by skipping it                                                                               |
-| :--------------------- | :------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
-| `pulls/<pr>/reviews`   | `Actionable comments posted: N`, the nitpick block, the outside-diff-range block | Every bodied finding — neither bucket ever exists as an inline comment                            |
-| `pulls/<pr>/comments`  | the file-anchored inline findings, and the comment id a reply needs              | The threads, and any way to answer one                                                            |
-| `issues/<pr>/comments` | the walkthrough: Merge Risk, the pre-merge checks, rate-limit notices            | The verdict — it appears in no review body, so the other two reconcile perfectly while missing it |
+| Endpoint               | Carries                                                                                                   | Lost by skipping it                                                                               |
+| :--------------------- | :-------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| `pulls/<pr>/reviews`   | `Actionable comments posted: N`, the nitpick block, the outside-diff-range block                          | Every bodied finding — neither bucket ever exists as an inline comment                            |
+| `pulls/<pr>/comments`  | the file-anchored inline findings, and the comment id a reply needs                                       | The threads, and any way to answer one                                                            |
+| `issues/<pr>/comments` | the walkthrough: Merge Risk when written, the change assessment, the pre-merge checks, rate-limit notices | The verdict — it appears in no review body, so the other two reconcile perfectly while missing it |
 
 A one-off read of one endpoint is a single command and stays one:
 
