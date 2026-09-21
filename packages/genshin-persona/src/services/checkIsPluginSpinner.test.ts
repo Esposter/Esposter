@@ -11,7 +11,10 @@ describe(checkIsPluginSpinner, () => {
   test("reads the spinner setup wrote as ours", () => {
     expect.hasAssertions();
 
-    const settings = getSettingsWithSpinner({}, getSpinner(english, { displayName: "Hu Tao", name: "Hu Tao" }, [], []));
+    const settings = getSettingsWithSpinner(
+      {},
+      getSpinner(english.verbs, { description: "description", displayName: "Hu Tao", name: "Hu Tao" }, [], []),
+    );
 
     expect(checkIsPluginSpinner(settings)).toBe(true);
   });

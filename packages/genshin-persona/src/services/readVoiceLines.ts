@@ -9,8 +9,8 @@ import { readWikiStoryLines } from "#src/services/readWikiStoryLines";
 
 // Every line the character speaks in the interface language, as a person reads it; `checkIsOwnVoiceLine` is the
 // Authoring command's cut. The wiki that carries a character the data package has no lines for yet is English only,
-// So under any other language that character has none here and the base tips show instead — one script in the
-// Spinner rather than two
+// So under any other language that character has none here and the spinner shows their description instead — one
+// Script in the spinner rather than two
 export const readVoiceLines = (name: string, language: string): Promise<VoiceLine[]> => {
   const genshindb = readGenshinDb();
   const resultLanguage = getCanonicalLanguage(readLanguageNames(), language);

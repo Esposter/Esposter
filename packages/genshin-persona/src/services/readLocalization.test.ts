@@ -24,7 +24,6 @@ describe(readLocalization, () => {
 
     const localization = await readLocalization("Japanese");
 
-    expect(localization.tips).toStrictEqual(japanese.tips);
     expect(localization.verbs).toStrictEqual(japanese.verbs);
     expect(localization.locale).toBe("ja-JP");
   });

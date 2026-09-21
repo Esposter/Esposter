@@ -1,9 +1,7 @@
 import type { ResolvedLocalization } from "#src/models/ResolvedLocalization";
 
 // The language the plugin is written in, and the one every other inherits what it has not translated from. Its
-// Base verbs and tips are the Teyvat content every spinner shows: the verbs ahead of a character's own, the tips
-// Only for a character the data package and the wiki have no lines for, which is nobody's line and so shows under
-// The language's word for "Tip" rather than a character's name
+// Base verbs are the Teyvat gerunds every spinner shows ahead of a character's own
 const english: ResolvedLocalization = {
   characters: {},
   locale: "en-AU",
@@ -90,24 +88,6 @@ const english: ResolvedLocalization = {
     weightsOnDevice: (device) =>
       `Weights present; the engine loads on ${device}, and moves down to the CPU by itself if what it synthesizes there is not speech.`,
   },
-  tipLabel: "Tip",
-  tips: [
-    "Glide when the cliff is tall and climb when it is not. The stamina is the same either way.",
-    "A Statue of The Seven mends what a long road did. Stand near one before the next fight.",
-    "Cook before the fight, never during it.",
-    "Every commission ends the same way. Report back, collect, rest.",
-    "Teleport where the road is known. Walk where it is not, because that is how waypoints are found.",
-    "Wish sparingly. Pity is patience, not a plan.",
-    "A domain is cleared one room at a time, and so is a task.",
-    "Save the burst for the shield, not the slime.",
-    "The map remembers where you have been so you do not have to.",
-    "Rain slows the road and sharpens Hydro. Wait it out, or use it.",
-    "Paimon would say it is time to eat. Paimon is usually right.",
-    "Read the tablet before pressing the switch. The puzzle is always explained once.",
-    "A chest under a rock is still a chest.",
-    "Commissions reset at dawn. So does your patience, if you let it.",
-    "Sprint on the flat and walk the slope, and the stamina lasts the whole hill.",
-  ],
   verbs: [
     "Adventuring",
     "Alchemizing",

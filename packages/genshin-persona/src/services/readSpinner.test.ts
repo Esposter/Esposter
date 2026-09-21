@@ -14,7 +14,7 @@ const { readVoiceLines } = vi.hoisted(() => ({
 vi.mock(import("#src/services/readVoiceLines"), () => ({ readVoiceLines }));
 
 describe(readSpinner, () => {
-  const character = { displayName: "胡桃", name: "Hu Tao" };
+  const character = { description: "description", displayName: "胡桃", name: "Hu Tao" };
   const personaCard: PersonaCard = {
     greeting: "greeting",
     habits: [],
@@ -43,7 +43,11 @@ describe(readSpinner, () => {
   test("shows the base verbs alone for a character the language has no gerunds for", async () => {
     expect.hasAssertions();
 
-    const { verbs } = await readSpinner({ displayName: "name", name: "name" }, personaCard, "Japanese");
+    const { verbs } = await readSpinner(
+      { description: "description", displayName: "name", name: "name" },
+      personaCard,
+      "Japanese",
+    );
 
     expect(verbs).toStrictEqual(japanese.verbs);
   });

@@ -16,7 +16,7 @@ import { writeUserSettings } from "#src/services/writeUserSettings";
 // Read's, so the ownership it was decided on is the ownership written back, and a spinner torn down while the
 // Lines were read is not restored. The first read only spares the lines where nothing would be written anyway
 export const writeSessionSpinner = async (
-  character: Pick<Character, "displayName" | "name">,
+  character: Pick<Character, "description" | "displayName" | "name">,
   personaCard: PersonaCard | undefined,
   language: string,
 ): Promise<void> => {

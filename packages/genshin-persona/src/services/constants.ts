@@ -58,8 +58,6 @@ export const PLUGIN_MARKER = "genshin-persona";
 export const PLAYER_FILE_PREFIX: string = `${PLUGIN_MARKER}-${process.pid}-`;
 // Between the marker and a tip id's own prefix
 export const TIP_ID_MARKER_SEPARATOR = ".";
-// The prefix of the base tips' ids; a character's own tips take the card's name
-export const BASE_TIP_ID = "teyvat";
 // Between a tip id's prefix and its index
 export const TIP_ID_SEPARATOR = "-";
 // The tool reads this many tips off the override and no more, and drops a tip longer than this
