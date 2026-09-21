@@ -1,7 +1,8 @@
 import type { MechanicalRepairInput } from "#src/models/coderabbit/collect/MechanicalRepairInput";
 
 import { checkIsGreen } from "#src/services/coderabbit/collect/checkIsGreen";
-import { MAIN_BRANCH, REPAIR_REGENERATE_COMMANDS, REPAIRS_TRAILER } from "#src/services/coderabbit/collect/constants";
+import { MAIN_BRANCH, REPAIR_REGENERATE_COMMANDS } from "#src/services/coderabbit/collect/constants";
+import { getRepairTrailer } from "#src/services/coderabbit/collect/getRepairTrailer";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
@@ -17,7 +18,12 @@ import { runGit } from "#src/services/shared/runGit";
 // Is restored so the session starts from the tree it would have found.
 //
 // Returns the repair's commit, or nothing when the tree did not move or moved without going green.
-export const repairMechanically = ({ cwd, mainSha, runUrl }: MechanicalRepairInput): string | undefined => {
+export const repairMechanically = ({
+  collectorSha,
+  cwd,
+  mainSha,
+  runUrl,
+}: MechanicalRepairInput): string | undefined => {
   for (const args of REPAIR_REGENERATE_COMMANDS) {
     console.info(`regenerate: pnpm ${args.join(" ")}`);
     spawnPnpm(args, { cwd, stdio: "inherit" });
@@ -46,7 +52,7 @@ export const repairMechanically = ({ cwd, mainSha, runUrl }: MechanicalRepairInp
         ...paths,
       ].join("\n"),
       "--trailer",
-      `${REPAIRS_TRAILER}: ${mainSha}`,
+      getRepairTrailer(mainSha, collectorSha),
     ],
     cwd,
   );

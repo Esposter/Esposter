@@ -31,13 +31,13 @@ import {
   RECENT_REVIEW_MARKER,
   REPAIR_FAILED_MARKER,
   REPAIR_REGENERATE_COMMANDS,
-  REPAIRS_TRAILER,
   RESHAPE_FAILED_MARKER,
   REVIEW_FIXES_BRANCH,
   SESSION_ATTEMPT_CAP,
 } from "#src/services/coderabbit/collect/constants";
 import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit/collect/constants.test";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
+import { getRepairTrailer } from "#src/services/coderabbit/collect/getRepairTrailer";
 import { runCycle } from "#src/services/coderabbit/collect/runCycle";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
 import { CODERABBIT_REST_LOGIN, REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
@@ -241,7 +241,10 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     spawnPnpm.mockReturnValue(greenSpawn);
     runSession.mockImplementation(() => {
       commitFile(`${TEST_FILENAME}.ts`, "");
-      runGit(["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${REPAIRS_TRAILER}: ${mainSha}`], getCwd());
+      runGit(
+        ["commit", "--quiet", "--amend", "--no-edit", "--trailer", getRepairTrailer(mainSha, collectorSha)],
+        getCwd(),
+      );
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
@@ -318,7 +321,10 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     runSession.mockImplementation(() => {
       for (const name of [`${TEST_FILENAME}.ts`, `${TEST_FILENAME}/${TEST_FILENAME}.ts`]) {
         commitFile(name, "");
-        runGit(["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${REPAIRS_TRAILER}: ${mainSha}`], getCwd());
+        runGit(
+          ["commit", "--quiet", "--amend", "--no-edit", "--trailer", getRepairTrailer(mainSha, collectorSha)],
+          getCwd(),
+        );
       }
       return Promise.resolve({ isEnded: true, isStarted: true });
     });
