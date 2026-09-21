@@ -8,6 +8,13 @@ description: Apply when naming any identifier. Esposter naming conventions — b
 Every rule here governs a name **we** author. A name a dependency reads or writes is its own — that boundary,
 and the eight shapes it takes, is `references/names-a-dependency-owns.md`.
 
+A subsystem often keeps two settled words for one concept on purpose: a short one for prose and a longer one for
+identifiers — the persona plugin's spoken language is a **dub** in every comment and doc and a `VoiceLanguage` in
+every type, guard and path. **A sibling takes the identifier word, never the prose one.** Naming the second reader
+"readDub" beside `checkIsVoiceLanguage` invents a third spelling, and nothing catches it: a grep for the concept
+stops finding half its call sites while the typecheck stays green. Grep the existing type, guard and constant for
+the concept and match them exactly; the prose keeps its short word in comments, docs and user-facing strings.
+
 | Read when                                                                                 | Page                                    |
 | ----------------------------------------------------------------------------------------- | --------------------------------------- |
 | Two boolean spellings both look right — a predicate vs a flag, `isPending` vs `isLoading` | `references/boolean-families.md`        |

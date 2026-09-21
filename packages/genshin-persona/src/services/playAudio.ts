@@ -1,27 +1,44 @@
-import type { SpawnSyncOptions } from "node:child_process";
+import type { SpawnOptions } from "node:child_process";
 
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // The player's window stays hidden: the synthesizer runs detached with no console of its own, and a console
-// Program spawned from one is given a new window otherwise
-const PLAYER_OPTIONS: SpawnSyncOptions = { windowsHide: true };
+// Program spawned from one is given a new window otherwise. Its streams go nowhere, since the call awaits the
+// Player rather than reading it, and a pipe nobody drains is one more way for a player to wedge
+const PLAYER_OPTIONS: SpawnOptions = { stdio: "ignore", windowsHide: true };
 
-// Each desktop's stock player, handed a WAV on disk: none of them reads audio from a pipe, and a temp file the
-// Player has finished with is deleted whether or not it played
-export const playAudio = (audio: Uint8Array): void => {
-  const audioPath = join(tmpdir(), `genshin-persona-${process.pid}.wav`);
-  writeFileSync(audioPath, audio);
+const spawnPlayer = (audioPath: string) => {
   if (process.platform === "win32")
-    spawnSync(
+    return spawn(
       "powershell",
       ["-NoProfile", "-NonInteractive", "-Command", `(New-Object System.Media.SoundPlayer '${audioPath}').PlaySync()`],
       PLAYER_OPTIONS,
     );
-  else if (process.platform === "darwin") spawnSync("afplay", [audioPath], PLAYER_OPTIONS);
-  else spawnSync("aplay", ["-q", audioPath], PLAYER_OPTIONS);
+  else if (process.platform === "darwin") return spawn("afplay", [audioPath], PLAYER_OPTIONS);
+  return spawn("aplay", ["-q", audioPath], PLAYER_OPTIONS);
+};
 
+// Each desktop's stock player, handed a WAV on disk: none of them reads audio from a pipe, and a temp file the
+// Player has finished with is deleted whether or not it played. The name carries an id of its own because the
+// Next chunk of a reply is written while this one is still being played from its file. Why it did not play — a
+// Player not installed, one that refused the file, or one the OS stopped, which closes with the signal it was
+// Stopped by in place of an exit status — or "" once it did, since the sound is the only other sign
+export const playAudio = async (audio: Uint8Array): Promise<string> => {
+  const audioPath = join(tmpdir(), `genshin-persona-${process.pid}-${crypto.randomUUID()}.wav`);
+  writeFileSync(audioPath, audio);
+  const { promise, resolve } = Promise.withResolvers<string>();
+  const player = spawnPlayer(audioPath);
+  player.on("error", (error) => {
+    resolve(error.message);
+  });
+  player.on("close", (status, signal) => {
+    if (status === 0) resolve("");
+    else resolve(signal ? `the player was stopped by ${signal}` : `the player exited ${status}`);
+  });
+  const failure = await promise;
   rmSync(audioPath, { force: true });
+  return failure;
 };

@@ -1,10 +1,11 @@
 import type { Character } from "#src/models/Character";
 
 import { GenshinVerb } from "#src/models/GenshinVerb";
-import { VoiceLanguage } from "#src/models/VoiceLanguage";
 import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { VoiceStatus } from "#src/models/VoiceStatus";
-import { BASE_SPINNER_CONTENT } from "#src/services/baseSpinnerContent";
+import { checkIsMuted } from "#src/services/checkIsMuted";
+import { checkIsOwnVoiceLine } from "#src/services/checkIsOwnVoiceLine";
+import { checkIsPluginSpinner } from "#src/services/checkIsPluginSpinner";
 import { checkIsPluginStatusLine } from "#src/services/checkIsPluginStatusLine";
 import { checkIsRuntimeInstalled } from "#src/services/checkIsRuntimeInstalled";
 import { checkIsVoiceLanguage } from "#src/services/checkIsVoiceLanguage";
@@ -12,6 +13,7 @@ import { checkIsVolume } from "#src/services/checkIsVolume";
 import { connectVoiceServer } from "#src/services/connectVoiceServer";
 import {
   CARD_DETAIL_SEPARATOR,
+  DEFAULT_LANGUAGE,
   MAX_VOLUME,
   MODELS_DIRECTORY,
   RUNTIME_MANIFEST_PATH,
@@ -20,53 +22,70 @@ import {
   VOICE_LOG_PATH,
   VOICE_PROOF_TEXT,
   VOICE_STATUS_SEPARATOR,
+  VoiceLanguageNameMap,
 } from "#src/services/constants";
 import { createVoiceProgressPrinter } from "#src/services/createVoiceProgressPrinter";
 import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
 import { deletePin } from "#src/services/deletePin";
+import { deleteVoiceDevice } from "#src/services/deleteVoiceDevice";
 import { deleteVoiceState } from "#src/services/deleteVoiceState";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { formatCard } from "#src/services/formatCard";
+import { getCanonicalLanguage } from "#src/services/getCanonicalLanguage";
 import { getCard } from "#src/services/getCard";
+import { getLanguageDisplayName } from "#src/services/getLanguageDisplayName";
 import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
 import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLine";
 import { getSpeechRequest } from "#src/services/getSpeechRequest";
-import { getSpinner } from "#src/services/getSpinner";
 import { installVoiceRuntime } from "#src/services/installVoiceRuntime";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
 import { readCardedRoster } from "#src/services/readCardedRoster";
 import { readCharacterReference } from "#src/services/readCharacterReference";
-import { readLanguage } from "#src/services/readLanguage";
+import { readInterfaceLanguage } from "#src/services/readInterfaceLanguage";
+import { readLanguageNames } from "#src/services/readLanguageNames";
+import { readLocalization } from "#src/services/readLocalization";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readPin } from "#src/services/readPin";
+import { readReplyLanguage } from "#src/services/readReplyLanguage";
 import { readRoster } from "#src/services/readRoster";
+import { readSpinner } from "#src/services/readSpinner";
 import { readUserSettings } from "#src/services/readUserSettings";
+import { readVoiceDevice } from "#src/services/readVoiceDevice";
+import { readVoiceLanguage } from "#src/services/readVoiceLanguage";
 import { readVoiceLines } from "#src/services/readVoiceLines";
 import { readVoiceRuntime } from "#src/services/readVoiceRuntime";
+import { readVolume } from "#src/services/readVolume";
 import { recordSessionCharacter } from "#src/services/recordSessionCharacter";
 import { resolveSessionCharacter } from "#src/services/resolveSessionCharacter";
 import { sendVoiceRequest } from "#src/services/sendVoiceRequest";
 import { setMuted } from "#src/services/setMuted";
-import { writeLanguage } from "#src/services/writeLanguage";
+import { writeInterfaceLanguage } from "#src/services/writeInterfaceLanguage";
 import { writePin } from "#src/services/writePin";
+import { writeReplyLanguage } from "#src/services/writeReplyLanguage";
 import { writeSessionSpinner } from "#src/services/writeSessionSpinner";
 import { writeSpinner } from "#src/services/writeSpinner";
 import { writeStatusLauncher } from "#src/services/writeStatusLauncher";
 import { writeUserSettings } from "#src/services/writeUserSettings";
+import { writeVoiceLanguage } from "#src/services/writeVoiceLanguage";
 import { writeVolume } from "#src/services/writeVolume";
 
 const [verb, ...nameParts] = process.argv.slice(2);
 const name = nameParts.join(" ");
-const roster = readRoster();
+const language = readInterfaceLanguage();
+const roster = readRoster(language);
+const { strings } = await readLocalization(language);
 const today = Temporal.Now.plainDateISO();
-const getRosterLine = ({ birthday, element, name: characterName, region, title, version }: Character) =>
-  [characterName, title, element, region, birthday, `v${version}`].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
+const getRosterLine = ({ birthday, displayElement, displayName, region, title, version }: Character) =>
+  [displayName, title, displayElement, region, birthday, `v${version}`].filter(Boolean).join(CARD_DETAIL_SEPARATOR);
 const compareVersionsDescending = (a: Character, b: Character) =>
   b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name);
 // Set in every Bash tool subprocess, so a verb the model runs knows the session it runs in; empty from a shell
 const sessionId = process.env[SESSION_ID_ENVIRONMENT_VARIABLE] ?? "";
+// The language is read again rather than closed over, because the `language` verb changes it and then prints the
+// Card: the card a verb prints is always in the language in force at the end of that verb
 const printCard = async (character: Character) => {
-  const card = getCard(character, today, await readPersonaCard(character.name));
+  const localization = await readLocalization(readInterfaceLanguage());
+  const card = getCard(character, today, localization, await readPersonaCard(character.name));
   console.log(formatCard(card));
 };
 // This session's character when run inside one, else the pin, else a fresh pick: the resolution the start hook runs,
@@ -74,41 +93,117 @@ const printCard = async (character: Character) => {
 // Of it
 const getCurrentCharacter = () => {
   const pin = readPin();
-  if (pin && !findCharacterByName(roster, pin.name))
-    console.log(`The pin "${pin.name}" names no character in the roster and is ignored.`);
+  if (pin && !findCharacterByName(roster, pin.name)) console.log(strings.pinIgnored(pin.name));
 
   return resolveSessionCharacter(roster, sessionId, today);
 };
 // The session speaks as the character from the reply that relays the card: its record is rewritten so every later
-// Start, the status line and the speech hook agree, and the spinner follows where `setup` opted it in
+// Start, the status line and the speech hook agree, and the spinner follows where `setup` opted it in. The record
+// Carries the name the interface language spells them by, so a change of language rewrites it the same way
 const switchSessionCharacter = async (character: Character) => {
+  // Read again for the reason `printCard` gives
+  const currentLanguage = readInterfaceLanguage();
   recordSessionCharacter(character, sessionId, today.toString());
-  writeSessionSpinner(character, await readPersonaCard(character.name));
+  await writeSessionSpinner(character, await readPersonaCard(character.name), currentLanguage);
   await printCard(character);
 };
 
+// Every knob in one read, for the verbs that report rather than change: the status verb, and either language verb
+// Given no argument
+const getStatusReport = async () => {
+  const pin = readPin();
+  const character = sessionId ? await resolveSessionCharacter(roster, sessionId, today) : undefined;
+  const replyLanguage = readReplyLanguage();
+  const settings = readUserSettings();
+  return {
+    displayName: character?.displayName ?? pin?.displayName ?? "",
+    interfaceLanguage: getLanguageDisplayName(language, language),
+    isFromSessionRecord: Boolean(character),
+    isMuted: checkIsMuted(),
+    isPluginSpinner: checkIsPluginSpinner(settings),
+    isPluginStatusLine: checkIsPluginStatusLine(settings.statusLine),
+    isReplyLanguageCascaded: !replyLanguage,
+    isRuntimeInstalled: checkIsRuntimeInstalled(),
+    pinnedName: pin?.name ?? "",
+    replyLanguage: getLanguageDisplayName(replyLanguage ?? language, language),
+    voiceDevice: readVoiceDevice() ?? "",
+    voiceLanguage: readVoiceLanguage(),
+    volume: readVolume(),
+  };
+};
+
 switch (verb) {
+  case GenshinVerb.Language: {
+    const languageNames = readLanguageNames();
+    // Each language is offered in its own words beside the word a person types for it, and either resolves
+    const offered = languageNames
+      .map((languageName) => {
+        const ownName = getLanguageDisplayName(languageName, languageName);
+        return ownName === languageName ? languageName : `${languageName} (${ownName})`;
+      })
+      .join(", ");
+    if (!name) {
+      console.log(strings.status(await getStatusReport()));
+      console.log(strings.languageMustBeOneOf(offered));
+      break;
+    }
+
+    const canonicalLanguage = getCanonicalLanguage(languageNames, name);
+    if (!canonicalLanguage) {
+      console.error(strings.languageMustBeOneOf(offered));
+      process.exitCode = 1;
+      break;
+    }
+
+    writeInterfaceLanguage(canonicalLanguage);
+    // Everything downstream reads the language afresh: the roster in it, which builds that language's cache, the
+    // Words that are ours in it, and the session's record and spinner, whose name is drawn from it
+    const localizedRoster = readRoster(canonicalLanguage);
+    const { strings: localizedStrings } = await readLocalization(canonicalLanguage);
+    const character = await resolveSessionCharacter(localizedRoster, sessionId, today);
+    if (character && sessionId) {
+      recordSessionCharacter(character, sessionId, today.toString());
+      await writeSessionSpinner(character, await readPersonaCard(character.name), canonicalLanguage);
+    }
+
+    const pin = readPin();
+    const pinnedCharacter = findCharacterByName(localizedRoster, pin?.name ?? "");
+    if (pinnedCharacter) writePin(pinnedCharacter);
+    console.log(localizedStrings.interfaceLanguageSet(getLanguageDisplayName(canonicalLanguage, canonicalLanguage)));
+    // A multi-gigabyte download is never a side effect of a labels setting, so the dub is reported on and left
+    // Alone. Three states and three answers: no dub of this language, one that is not installed, and one that
+    // Already is — which is the quiet case, since there is nothing for the person to do about it
+    const [matchingDub] =
+      Object.entries(VoiceLanguageNameMap).find(([, languageName]) => languageName === canonicalLanguage) ?? [];
+    if (canonicalLanguage !== DEFAULT_LANGUAGE)
+      if (!matchingDub) console.log(localizedStrings.voiceLanguageUnavailable);
+      else if (matchingDub !== readVoiceLanguage()) console.log(localizedStrings.voiceLanguageAvailable(matchingDub));
+
+    if (character) await printCard(character);
+    break;
+  }
   case GenshinVerb.Lines: {
     const character = findCharacterByName(roster, name);
     if (!character) {
-      console.error(`No character named "${name}" is in the roster.`);
+      console.error(strings.noCharacterNamed(name));
       process.exitCode = 1;
       break;
     }
 
     console.log(`${getRosterLine(character)}\n${character.description}`);
-    const voiceLines = await readVoiceLines(character.name);
-    for (const { text, title } of voiceLines) console.log(`- ${title}: ${text}`);
+    const voiceLines = await readVoiceLines(character.name, language);
+    for (const { text, title } of voiceLines.filter((line) => checkIsOwnVoiceLine(line)))
+      console.log(`- ${title}: ${text}`);
     break;
   }
   case GenshinVerb.Mute:
     setMuted(true);
-    console.log("Spoken replies muted.");
+    console.log(strings.muted);
     break;
   case GenshinVerb.Pin: {
     const pinnedCharacter = findCharacterByName(roster, name);
     if (!pinnedCharacter) {
-      console.error(`No character named "${name}" is in the roster.`);
+      console.error(strings.noCharacterNamed(name));
       process.exitCode = 1;
       break;
     }
@@ -116,14 +211,26 @@ switch (verb) {
     writePin(pinnedCharacter);
     if (sessionId) {
       await switchSessionCharacter(pinnedCharacter);
-      console.log(
-        "Pinned for every session from the next start, and for this one from this reply; the spinner follows at the next session.",
-      );
+      console.log(strings.pinnedInSession);
       break;
     }
 
     await printCard(pinnedCharacter);
-    console.log("Pinned for every session from the next start.");
+    console.log(strings.pinned);
+    break;
+  }
+  case GenshinVerb.Reply: {
+    if (!name) {
+      console.log(strings.status(await getStatusReport()));
+      break;
+    }
+
+    // Anything the model can write is a legal reply language, so this is not held to the data package's fifteen;
+    // The canonical spelling is taken where it names one of them, so the common case reads as the language verb's
+    const replyLanguage = getCanonicalLanguage(readLanguageNames(), name) ?? name;
+    writeReplyLanguage(replyLanguage);
+    console.log(strings.replyLanguageSet(getLanguageDisplayName(replyLanguage, language)));
+    if (replyLanguage !== DEFAULT_LANGUAGE && readVoiceLanguage()) console.log(strings.replyLanguageSilencesVoice);
     break;
   }
   case GenshinVerb.Roster:
@@ -135,26 +242,19 @@ switch (verb) {
     const settings = getSettingsWithStatusLine(userSettings);
     writeUserSettings(settings);
     const character = await getCurrentCharacter();
-    if (character) {
-      const personaCard = await readPersonaCard(character.name);
-      writeSpinner(getSpinner(BASE_SPINNER_CONTENT, character.name, personaCard));
-    }
-
-    console.log(
-      checkIsPluginStatusLine(settings.statusLine)
-        ? "Status line and spinner written to user settings; both show from the next session."
-        : "Spinner written to user settings, shown from the next session; the status line already there is not ours and was left alone.",
-    );
+    if (character) writeSpinner(await readSpinner(character, await readPersonaCard(character.name), language));
+    console.log(checkIsPluginStatusLine(settings.statusLine) ? strings.setupDone : strings.setupStatusLineKept);
     break;
   }
+  case GenshinVerb.Status:
+    console.log(strings.status(await getStatusReport()));
+    break;
   case GenshinVerb.Teardown: {
     const userSettings = readUserSettings();
     const settings = getSettingsWithoutPluginEntries(userSettings);
     writeUserSettings(settings);
     await deleteVoiceState();
-    console.log(
-      "Status line and spinner removed from user settings; both go at the next session. The voice's runtime, weights, references and language are removed; the pick records and the pin stay.",
-    );
+    console.log(strings.teardownDone);
     break;
   }
   case GenshinVerb.Today: {
@@ -172,74 +272,77 @@ switch (verb) {
   }
   case GenshinVerb.Unmute:
     setMuted(false);
-    console.log("Spoken replies unmuted.");
+    console.log(strings.unmuted);
     break;
   case GenshinVerb.Unpin: {
     deletePin();
     const character = sessionId ? await pickCurrentCharacter(roster, today) : undefined;
     if (!character) {
-      console.log("Pin removed; the pick decides again from the next session.");
+      console.log(strings.pinRemoved);
       break;
     }
 
     await switchSessionCharacter(character);
-    console.log(
-      "Pin removed; the pick decides again from the next session, and for this one from this reply; the spinner follows at the next session.",
-    );
+    console.log(strings.pinRemovedInSession);
     break;
   }
-  case GenshinVerb.Untipped: {
-    const cardedRoster = await readCardedRoster(roster);
-    for (const { character } of cardedRoster
-      .filter(({ personaCard }) => personaCard && (personaCard.tips.length === 0 || personaCard.verbs.length === 0))
-      .toSorted((a, b) => compareVersionsDescending(a.character, b.character)))
+  case GenshinVerb.Untranslated: {
+    // The queue the language modules are filled from, the way `unverbed` is the queue the cards' verbs are: who has
+    // No gerunds in this language. English reads them off the cards, so it is never behind
+    if (language === DEFAULT_LANGUAGE) break;
+
+    const { characterVerbs } = await readLocalization(language);
+    for (const character of roster
+      .filter(({ name: characterName }) => !characterVerbs[characterName])
+      .toSorted(compareVersionsDescending))
       console.log(getRosterLine(character));
     break;
   }
   case GenshinVerb.Use: {
     const character = findCharacterByName(roster, name);
     if (!character) {
-      console.error(`No character named "${name}" is in the roster.`);
+      console.error(strings.noCharacterNamed(name));
       process.exitCode = 1;
       break;
     }
 
     if (!sessionId) {
-      console.error("No session to use a character in: this runs from inside a Claude Code session.");
+      console.error(strings.noSession);
       process.exitCode = 1;
       break;
     }
 
     await switchSessionCharacter(character);
-    console.log(
-      "Speaking as this character from this reply, in this session alone; the spinner follows at the next session.",
-    );
+    console.log(strings.usingInSession);
     break;
   }
   case GenshinVerb.Voice: {
     if (!name) {
-      const language = readLanguage();
+      const voiceLanguage = readVoiceLanguage();
       console.log(
-        language
-          ? `Runtime ${checkIsRuntimeInstalled() ? "installed" : "not installed"}; ${language} dub; the log is ${VOICE_LOG_PATH}.`
-          : "No voice set up: run this with a dub to install the engine and choose one.",
+        voiceLanguage
+          ? strings.voiceStatus(checkIsRuntimeInstalled(), voiceLanguage, readVoiceDevice() ?? "", VOICE_LOG_PATH)
+          : strings.voiceUnset,
       );
       break;
     }
 
     if (!checkIsVoiceLanguage(name)) {
-      console.error(`The dub must be one of ${Object.values(VoiceLanguage).join(", ")}.`);
+      console.error(strings.voiceLanguageMustBeOneOf(Object.keys(VoiceLanguageNameMap).join(", ")));
       process.exitCode = 1;
       break;
     }
 
-    if (checkIsRuntimeInstalled()) console.log("Runtime installed.");
+    // The proof walks the device ladder from the top, so a rung this machine once demoted is tried again here and
+    // Nowhere else: the rung on file is cleared, and a synthesizer still running — on that rung, or on the runtime
+    // Being replaced — is stopped, so the one the warm spawns loads afresh
+    deleteVoiceDevice();
+    await connectVoiceServer({ type: VoiceRequestType.Stop });
+    if (checkIsRuntimeInstalled()) console.log(strings.runtimeInstalled);
     else {
-      console.log("Installing the engine's runtime into the state directory...");
-      // A synthesizer still running on the runtime being replaced is stopped, so the next hook loads the new one
-      await connectVoiceServer({ type: VoiceRequestType.Stop });
+      console.log(strings.runtimeInstalling);
       if (!installVoiceRuntime()) {
-        console.error("npm could not install the runtime; the voice stays off.");
+        console.error(strings.runtimeInstallFailed);
         process.exitCode = 1;
         break;
       }
@@ -249,58 +352,49 @@ switch (verb) {
     // Downloaded by loading the engine once here — with progress, which the detached synthesizer cannot print —
     // And the synthesizer then loads them from the cache inside a hook's budget
     const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
-    const synthesizer = await createVoiceSynthesizer(
-      runtime,
-      MODELS_DIRECTORY,
-      createVoiceProgressPrinter(),
-      console.log,
-    );
+    const synthesizer = await createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
+      onFallback: console.log,
+      onProgress: createVoiceProgressPrinter(),
+    });
     console.log(
-      synthesizer.device === VOICE_CPU_DEVICE
-        ? "Weights present; the engine loads on the CPU — no GPU adapter was found, so a reply is synthesized several times slower than real time."
-        : `Weights present; the engine loads on ${synthesizer.device}, and moves down to the CPU by itself if what it synthesizes there is not speech.`,
+      synthesizer.device === VOICE_CPU_DEVICE ? strings.weightsOnCpu : strings.weightsOnDevice(synthesizer.device),
     );
     // The dub on disk is the gate every spoken reply passes, so it is written only where this run proved the
     // Voice — a setup that failed after it leaves the replies silent rather than broken in the hooks' silence
     const character = await getCurrentCharacter();
     if (!character) {
-      writeLanguage(name);
-      console.log(`Dub ${name} written; no character to prove the voice with from here.`);
+      writeVoiceLanguage(name);
+      console.log(strings.voiceLanguageWritten(name));
       break;
     }
 
     const reference = readCharacterReference(character.name, await readPersonaCard(character.name));
-    if (!reference)
-      console.log(
-        `${character.name} has no measured reference, so the longest story line the wiki lists reads for them.`,
-      );
+    if (!reference) console.log(strings.noReference(character.displayName));
 
     const warmed = await sendVoiceRequest(await getSpeechRequest(VoiceRequestType.Warm, character.name, name, ""));
     const [status, device] = warmed.split(VOICE_STATUS_SEPARATOR);
     if (status !== VoiceStatus.Ok) {
-      console.error(
-        `The synthesizer did not answer the warm request (${status || "unreachable"}); see ${VOICE_LOG_PATH}.`,
-      );
+      console.error(strings.warmRequestUnanswered(status || "unreachable", VOICE_LOG_PATH));
       process.exitCode = 1;
       break;
     }
 
-    writeLanguage(name);
+    writeVoiceLanguage(name);
     await sendVoiceRequest(await getSpeechRequest(VoiceRequestType.Speak, character.name, name, VOICE_PROOF_TEXT));
-    console.log(`${character.name} spoke through the synthesizer on ${device}; every reply is read from the next one.`);
+    console.log(strings.spoke(character.displayName, device ?? ""));
     break;
   }
   case GenshinVerb.Volume:
     if (!checkIsVolume(name)) {
-      console.error(`Volume must be a whole number from 0 to ${MAX_VOLUME}.`);
+      console.error(strings.volumeMustBeWholeNumber(MAX_VOLUME));
       process.exitCode = 1;
       break;
     }
 
     writeVolume(name);
-    console.log(`Spoken replies at volume ${name} from the next reply.`);
+    console.log(strings.volumeSet(name));
     break;
   default:
-    console.error(`Usage: genshin.ts <${Object.values(GenshinVerb).join(" | ")}> [name]`);
+    console.error(strings.usage(Object.values(GenshinVerb).join(" | ")));
     process.exitCode = 1;
 }

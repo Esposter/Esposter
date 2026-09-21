@@ -9,13 +9,21 @@ import { describe, expect, test } from "vitest";
 describe(getSessionNameplate, () => {
   const sessionId = "sessionId";
   const todayIsoDate = TEST_EPOCH_DATE.toString();
-  const pickRecord: PickRecord = { element: "", isoDate: todayIsoDate, name: "pickRecord", sessionId };
-  const pin: Nameplate = { element: "", name: "pin" };
+  const pickRecord: PickRecord = {
+    displayName: "pickRecord",
+    element: "",
+    isoDate: todayIsoDate,
+    name: "pickRecord",
+    sessionId,
+  };
+  const pin: Nameplate = { displayName: "pin", element: "", name: "pin" };
   const birthdayCharacter: Character = {
     affiliation: "",
     birthday: "1/1",
     constellation: "",
     description: "",
+    displayElement: "",
+    displayName: "birthdayCharacter",
     element: "",
     name: "birthdayCharacter",
     region: "",

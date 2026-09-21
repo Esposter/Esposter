@@ -2,6 +2,7 @@ import type { CardedCharacter } from "#src/models/CardedCharacter";
 import type { Moment } from "#src/models/Moment";
 import type { ChoiceCriteria, ChoiceQuestion, SystemOneRequest } from "@typesafe-ai/sdk";
 
+import english from "#src/localizations/english";
 import { HABIT_SEPARATOR, LORE_PICK_INSTRUCTIONS } from "#src/services/constants";
 import { getBirthdayNote } from "#src/services/getBirthdayNote";
 import { choice } from "@typesafe-ai/sdk";
@@ -29,7 +30,9 @@ export const getLorePickRequest = (
       characters: cardedRoster.map(
         ({ character: { affiliation, birthday, constellation, element, name, region, title, version, weapon } }) => ({
           affiliation,
-          birthday: getBirthdayNote(birthday, today),
+          // English whatever the interface language is: this is a field of a machine request whose instructions are
+          // English, not a label a person reads
+          birthday: getBirthdayNote(birthday, today, english),
           constellation,
           element,
           name,

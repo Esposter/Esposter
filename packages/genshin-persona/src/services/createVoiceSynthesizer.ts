@@ -1,12 +1,12 @@
 import type { LoadedVoiceModel } from "#src/models/LoadedVoiceModel";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
-import type { VoiceProgress } from "#src/models/VoiceProgress";
 import type { VoiceRuntime } from "#src/models/VoiceRuntime";
 import type { VoiceSynthesizer } from "#src/models/VoiceSynthesizer";
+import type { VoiceSynthesizerOptions } from "#src/models/VoiceSynthesizerOptions";
 
 import { checkIsSpeech } from "#src/services/checkIsSpeech";
 import {
-  MAX_SPEECH_TOKENS,
+  UNBOUNDED_SPEECH_TOKENS,
   VOICE_DEVICE_LADDER,
   VOICE_MODEL_ARCHITECTURE,
   VOICE_MODEL_DTYPE,
@@ -15,15 +15,16 @@ import {
 } from "#src/services/constants";
 
 // The engine loaded once, its weights fetched into the models directory on the first load and read from there
-// After, on the first rung of the device ladder that loads. Every synthesis is checked by its sound: one that is
-// Not speech reloads the engine one rung down and runs again, since a provider can load a graph and still run it
-// Wrong without a word, and the rung that spoke is the one every synthesis after it runs on. Which rung is
-// Reported, because the CPU rungs speak slower and the person should know; every move down is reported as well
+// After, on the first rung of the device ladder that loads — from the rung named, when the last synthesizer on
+// This machine settled on one, since the rungs above it were walked past already. Every synthesis is checked by
+// Its sound: one that is not speech reloads the engine one rung down and runs again, since a provider can load a
+// Graph and still run it wrong without a word, and the rung that spoke is the one every synthesis after it runs
+// On. Which rung is reported, because the CPU rungs speak slower and the person should know; every move down is
+// Reported as well
 export const createVoiceSynthesizer = async (
   { AutoConfig, AutoProcessor, ChatterboxModel, env, Tensor }: VoiceRuntime,
   modelsDirectory: string,
-  onProgress?: (progress: VoiceProgress) => void,
-  onFallback?: (message: string) => void,
+  { onFallback, onProgress, rungName = "" }: VoiceSynthesizerOptions = {},
 ): Promise<VoiceSynthesizer> => {
   env.cacheDir = modelsDirectory;
   // The checkpoint's configuration names no architecture, and the runtime's progress tracker resolves the files to
@@ -49,8 +50,12 @@ export const createVoiceSynthesizer = async (
     onFallback?.(`${rung.name} did not load the engine: ${String(outcome?.reason)}`);
     return load(nextRung, rungsBelowNext);
   };
-  const [topRung, ...lowerRungs] = VOICE_DEVICE_LADDER;
-  let loaded = await load(topRung, lowerRungs);
+  const startIndex = Math.max(
+    VOICE_DEVICE_LADDER.findIndex((rung) => rung.name === rungName),
+    0,
+  );
+  const [startRung = VOICE_DEVICE_LADDER[0], ...lowerRungs] = VOICE_DEVICE_LADDER.slice(startIndex);
+  let loaded = await load(startRung, lowerRungs);
   const processor = await AutoProcessor.from_pretrained(VOICE_MODEL_ID);
 
   return {
@@ -61,7 +66,11 @@ export const createVoiceSynthesizer = async (
     synthesize: async (text, speaker) => {
       const inputs = await processor(text);
       for (;;) {
-        const waveform = await loaded.model.generate({ ...inputs, ...speaker, max_new_tokens: MAX_SPEECH_TOKENS });
+        const waveform = await loaded.model.generate({
+          ...inputs,
+          ...speaker,
+          max_new_tokens: UNBOUNDED_SPEECH_TOKENS,
+        });
         const clip = { sampleRate: VOICE_SAMPLE_RATE, samples: Float32Array.from(waveform.data) };
         if (checkIsSpeech(clip)) return clip;
 

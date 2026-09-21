@@ -1,22 +1,29 @@
 import type { VoiceLine } from "#src/models/VoiceLine";
 
+import { DEFAULT_LANGUAGE } from "#src/services/constants";
+import { getCanonicalLanguage } from "#src/services/getCanonicalLanguage";
 import { getPlainLineText } from "#src/services/getPlainLineText";
 import { readGenshinDb } from "#src/services/readGenshinDb";
 import { readWikiStoryLines } from "#src/services/readWikiStoryLines";
 
-// Lines that carry no voice: how the character feels about others, the daily greetings, the gift and ascension
-// Acknowledgements
-const SKIPPED_TITLE_REGEX =
-  /^(?:About |More About|Feelings About|Good (?:Morning|Afternoon|Evening|Night)|Receiving a Gift|Birthday|Ascension)/u;
-
-export const readVoiceLines = async (name: string): Promise<VoiceLine[]> => {
+// Every line the character speaks in the interface language, as a person reads it; `checkIsOwnVoiceLine` is the
+// Authoring command's cut. The wiki that carries a character the data package has no lines for yet is English only,
+// So under any other language that character has none here and the base tips show instead — one script in the
+// Spinner rather than two
+export const readVoiceLines = (name: string, language: string): Promise<VoiceLine[]> => {
   const genshindb = readGenshinDb();
-  const voiceovers = genshindb.voiceovers(name);
+  const resultLanguage = getCanonicalLanguage(Object.values(genshindb.Language), language);
+  const voiceovers = resultLanguage
+    ? genshindb.voiceovers(name, { queryLanguages: [genshindb.Language.English], resultLanguage })
+    : genshindb.voiceovers(name);
   const friendLines = voiceovers?.friendLines ?? [];
-  // A character the data has no lines for yet is usually on the wiki already
-  const lines: VoiceLine[] =
-    friendLines.length > 0
-      ? friendLines.map(({ description, title }) => ({ text: getPlainLineText(description), title: title.trim() }))
-      : await readWikiStoryLines(name);
-  return lines.filter(({ title }) => !SKIPPED_TITLE_REGEX.test(title)).map(({ text, title }) => ({ text, title }));
+  if (friendLines.length > 0)
+    return Promise.resolve(
+      friendLines.map(({ description, title }) => ({
+        text: getPlainLineText(description),
+        title: title.trim(),
+      })),
+    );
+
+  return language === DEFAULT_LANGUAGE ? readWikiStoryLines(name) : Promise.resolve([]);
 };

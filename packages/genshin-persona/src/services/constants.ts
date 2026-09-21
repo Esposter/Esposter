@@ -10,11 +10,18 @@ export const STATE_DIRECTORY: string = join(homedir(), ".claude", "genshin-perso
 export const PICK_RECORDS_PATH: string = join(STATE_DIRECTORY, "picks.tsv");
 export const PIN_PATH: string = join(STATE_DIRECTORY, "pin");
 export const MUTED_PATH: string = join(STATE_DIRECTORY, "muted");
+// The two language settings, the persona's rather than the voice's, so `teardown` leaves them where it leaves the
+// Pin: the language every word the plugin writes is in, and the language the model answers in, which follows the
+// First until it is set on its own. Both hold one of the data package's own language names
+export const INTERFACE_LANGUAGE_PATH: string = join(STATE_DIRECTORY, "interface-language");
+export const REPLY_LANGUAGE_PATH: string = join(STATE_DIRECTORY, "reply-language");
 export const VOLUME_PATH: string = join(STATE_DIRECTORY, "volume");
 // The voice half of the state directory, written by the `voice` verb and removed by `teardown`: the dub's code, the
-// Engine's runtime npm-installed from the manifest the plugin carries, the weights in the runtime's own cache
-// Layout, one reference clip per character fetched so far under its dub, and why the synthesizer last refused
-export const LANGUAGE_PATH: string = join(STATE_DIRECTORY, "language");
+// Rung of the device ladder the synthesizer settled on, the engine's runtime npm-installed from the manifest the
+// Plugin carries, the weights in the runtime's own cache layout, one reference clip per character fetched so far
+// Under its dub, and why the synthesizer last refused
+export const VOICE_LANGUAGE_PATH: string = join(STATE_DIRECTORY, "voice-language");
+export const VOICE_DEVICE_PATH: string = join(STATE_DIRECTORY, "device");
 export const RUNTIME_DIRECTORY: string = join(STATE_DIRECTORY, "runtime");
 export const RUNTIME_MANIFEST_PATH: string = join(RUNTIME_DIRECTORY, "package.json");
 export const RUNTIME_LOCKFILE_PATH: string = join(RUNTIME_DIRECTORY, "package-lock.json");
@@ -25,7 +32,8 @@ export const VOICE_LOG_PATH: string = join(STATE_DIRECTORY, "voice.log");
 // What `teardown` removes: everything the `voice` verb wrote, and not the pick records or the pin, which are the
 // Persona's rather than the voice's
 export const VOICE_STATE_PATHS: string[] = [
-  LANGUAGE_PATH,
+  VOICE_LANGUAGE_PATH,
+  VOICE_DEVICE_PATH,
   RUNTIME_DIRECTORY,
   MODELS_DIRECTORY,
   REFERENCES_DIRECTORY,
@@ -38,6 +46,7 @@ export const STATUS_LAUNCHER_PATH: string = join(STATE_DIRECTORY, "status.mjs");
 export const STATUS_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "status.ts");
 export const VOICE_SERVER_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "voice.ts");
 export const WARM_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "warm.ts");
+export const SPINNER_SCRIPT_PATH: string = join(import.meta.dirname, "..", "..", "scripts", "spinner.ts");
 // One local address per machine that node's `net` serves from either spelling: a named pipe on Windows, a socket
 // File in the state directory elsewhere, and no port to collide on
 export const VOICE_SOCKET_PATH: string =
@@ -52,15 +61,27 @@ export const TIP_ID_MARKER_SEPARATOR = ".";
 export const BASE_TIP_ID = "teyvat";
 // Between a tip id's prefix and its index
 export const TIP_ID_SEPARATOR = "-";
+// The tool reads this many tips off the override and no more, so a character's list is cut there, and drops a
+// Tip longer than this, so a line is cut to the sentences that fit
+export const MAX_SPINNER_TIP_COUNT = 200;
+export const MAX_SPINNER_TIP_LENGTH = 500;
 export const PERSONA_CARDS_DIRECTORY: string = join(import.meta.dirname, "..", "personaCards");
+// One typed module per language for the words the data package does not carry, named for the language the way a
+// Card is named for its character
+export const LOCALIZATIONS_DIRECTORY: string = join(import.meta.dirname, "..", "localizations");
 // A card is a typed module, one per character, named for the character
-export const PERSONA_MODULE_EXTENSION = ".ts";
+export const MODULE_EXTENSION = ".ts";
 // Between a card's habits where the lore pick reads them as one description of the character
 export const HABIT_SEPARATOR = " ";
 export const CARD_DETAIL_SEPARATOR = " · ";
 // What the model reads the headline under, and what the person reads it under
 export const CONTEXT_HEADLINE_PREFIX = "Persona: ";
 export const NAMEPLATE_PREFIX = "✦ ";
+// The one line the reply language costs, put in the session's context beside the card rather than in the output
+// Style, which is a file the plugin ships and is the same for everybody. Absent at English, so the common case
+// Carries no instruction at all
+export const REPLY_LANGUAGE_INSTRUCTION = (language: string): string =>
+  `Write every reply in ${language}. This applies to prose only, and to nothing the output style already excludes from the character's voice: code, comments, commit messages, file contents, commands and error text stay as they are.`;
 export const ANSI_RESET = "\u001B[0m";
 // The status line's colour per element, as the game's interface paints the element's name; an element missing here
 // (the player character's "None") leaves the nameplate in the terminal's own colour
@@ -81,7 +102,34 @@ export const ROSTER_CACHE_PREFIX = "roster-";
 export const ROSTER_CACHE_EXTENSION = ".json";
 // Every month and day is measured inside one leap year, so 29 February is a day like any other and the year wraps
 export const LEAP_YEAR = 2000;
-export const DATE_LOCALE = "en-AU";
+// The weekday in the lore pick's request, which is an English instruction whatever the interface language is; the
+// Locale the birthday aside is formatted against is the interface language's own, on its localization module
+export const LORE_MOMENT_LOCALE = "en-AU";
+// The language every reader falls back to: the one the data package answers in unasked, and the one our own words
+// Are written in
+export const DEFAULT_LANGUAGE = "English";
+// The BCP-47 tag of each language the data package names, which is the one thing about a language it does not
+// Carry and `Intl.DisplayNames` needs: with it every language is named in its own words, and in any other
+// Language's. A language added by a later version and missing here is named by the package's own English word for
+// It, which is also what a person types, so nothing breaks while the row is added
+export const LanguageLocaleMap: Record<string, string> = {
+  ChineseSimplified: "zh-Hans",
+  ChineseTraditional: "zh-Hant",
+  English: "en",
+  French: "fr",
+  German: "de",
+  Indonesian: "id",
+  Italian: "it",
+  Japanese: "ja",
+  Korean: "ko",
+  Portuguese: "pt",
+  Russian: "ru",
+  Spanish: "es",
+  Thai: "th",
+  Turkish: "tr",
+  Vietnamese: "vi",
+};
+
 // The community wiki: the source of a character's lines before the game-data package carries them, and of the
 // Clip a character's voice is cloned from
 export const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
@@ -101,7 +149,8 @@ export const TravelerTwinMap: Record<string, TravelerTwin> = {
 // Response would otherwise hold the command — or the hook a reply waits behind — open for as long as it cared to
 export const WIKI_FETCH_TIMEOUT_MS = 10_000;
 // The wiki's file host serves a file only to a request that says it came from the wiki — hotlink protection, which
-// The API is exempt from — so a clip is fetched naming the page it was found on, under the plugin's own user agent
+// The API is exempt from — so a clip is fetched naming the page it was found on, under the plugin's own user agent;
+// Its edge also challenges the fetch client's handshake, so a clip is read through `readWikiFile` and never `fetch`
 export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
   referer: `${WIKI_ORIGIN}/`,
   "user-agent": WIKI_USER_AGENT,
@@ -110,6 +159,14 @@ export const WIKI_FILE_REQUEST_HEADERS: Record<string, string> = {
 // English dub carries no prefix
 export const WIKI_VOICE_FILE_PREFIX = "VO_";
 export const WIKI_VOICE_FILE_EXTENSION = ".ogg";
+// The data package's language name per dub, for the one thing the interface language says about the voice: whether
+// A dub of this language exists at all. Four of the fifteen, which is why the dub is reported on and never cascaded
+export const VoiceLanguageNameMap: Record<VoiceLanguage, string> = {
+  [VoiceLanguage.Chinese]: "ChineseSimplified",
+  [VoiceLanguage.English]: DEFAULT_LANGUAGE,
+  [VoiceLanguage.Japanese]: "Japanese",
+  [VoiceLanguage.Korean]: "Korean",
+};
 export const LanguageDubPrefixMap: Record<VoiceLanguage, string> = {
   [VoiceLanguage.Chinese]: "ZH_",
   [VoiceLanguage.English]: "",
@@ -122,8 +179,9 @@ export const MAX_VOLUME = 100;
 // The engine: Chatterbox Turbo through the ONNX runtime, with a dtype per component, each measured against the
 // Character's own voice before it was chosen: the speech encoder's half-precision weights cost no likeness; the
 // Language model is the 4-bit variant, which cost none either and speaks twice as fast; the vocoder stays full
-// Precision, because its half-precision variant is the one that moved the likeness, by a fifth. The language
-// Model's session is keyed `model` and its file `language_model`, so both spellings carry its dtype
+// Precision, because its half-precision variant is the one that moved the likeness, by a tenth to a fifth — on the
+// GPU rung, which it alone passes the sound check on. The language model's session is keyed `model` and its file
+// `language_model`, so both spellings carry its dtype
 export const VOICE_MODEL_ID = "ResembleAI/chatterbox-turbo-ONNX";
 export const VOICE_MODEL_ARCHITECTURE = "ChatterboxModel";
 export const VOICE_MODEL_DTYPE: Record<string, string> = {
@@ -148,7 +206,9 @@ const getVoiceDeviceMap = (languageModelDevice: string, vocoderDevice: string): 
 // A graph can still run it wrong — this machine's WebGPU provider returns a constant near-silence from the full
 // Precision vocoder on most runs and throws nothing — so a synthesis that is not speech moves the engine down one
 // Rung and runs again, a load that rejects moves it the same way, and the last rung failing is an error the log
-// Sees. A rung is named for what runs on the GPU, since the CPU vocoder still speaks ahead of real time
+// Sees. The rung that spoke is kept in the state directory, so the next synthesizer starts there rather than
+// Walking the rungs above it again, and the `voice` verb clears it so its proof walks the ladder from the top. A
+// Rung is named for what runs on the GPU, since the CPU vocoder still speaks ahead of real time
 export const VOICE_DEVICE_LADDER: [VoiceDeviceRung, ...VoiceDeviceRung[]] = [
   { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_GPU_DEVICE), name: VOICE_GPU_DEVICE },
   { devices: getVoiceDeviceMap(VOICE_GPU_DEVICE, VOICE_CPU_DEVICE), name: `${VOICE_GPU_DEVICE}-language-model` },
@@ -169,8 +229,10 @@ export const HOP_SECONDS = 0.01;
 export const SPEECH_FLOOR_DB = 35;
 // A twin's line is theirs only until Paimon answers, so their reference is cut at the first silence this long
 export const MIN_TURN_PAUSE_SECONDS = 0.4;
-// A ceiling on a sentence's length in speech tokens, so a runaway generation ends
-export const MAX_SPEECH_TOKENS = 400;
+// A sentence ends at the model's end-of-sequence token and nowhere else; the runtime stops at twenty tokens when
+// This option is left out, so it is passed as no bound rather than dropped
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this identifier would otherwise infer
+export const UNBOUNDED_SPEECH_TOKENS: number = Infinity;
 // What a warm request synthesizes and drops, so the graph's first-call cost is paid before the first reply
 export const WARM_TEXT = "Ready.";
 // What the `voice` verb speaks once set up, so the person hears the voice before the first reply does

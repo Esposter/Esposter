@@ -9,6 +9,8 @@ const createCharacter = (birthday: string): Character => ({
   birthday,
   constellation: "",
   description: "",
+  displayElement: "",
+  displayName: birthday,
   element: "",
   name: birthday,
   region: "",

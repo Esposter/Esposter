@@ -76,4 +76,5 @@ The suite runs **once per coherent chunk, on `ai/queue`** — not per commit —
 - **Never `pnpm <script> -- <args>`** — pnpm forwards the literal `--` and the flags are dropped; pass them as direct args (`pnpm test -u`).
 - **A caller runs the script, not the binary under it** — `pnpm exec <binary>` in a workflow is a second definition that drifts; where no script has the shape, add one (`bench:ci`).
 - **A script is invoked bare — `pnpm <script>`, never `pnpm run <script>`** — including under `-C` and `--filter`. `run` is load-bearing only for a name that shadows a pnpm command, and that collision is the thing to spot.
-- How each of the four fails, the name that shadows a command today, and the `@esposter/virrun` typo that passed clean while CI failed: `references/pnpm-traps.md`.
+- **A suite that shells out to `git` cannot run under root `pnpm test` on Windows** — virrun reaches the checkout through WSL, where git refuses to discover the repository, so every `scripts/src/workspace` suite fails on a clean tree; run it as `pnpm -C scripts exec vitest run <path>`.
+- How each of the five fails, the name that shadows a command today, and the `@esposter/virrun` typo that passed clean while CI failed: `references/pnpm-traps.md`.

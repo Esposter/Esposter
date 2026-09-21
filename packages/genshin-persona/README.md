@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-A Claude Code plugin that speaks as a Genshin Impact character picked at session start — by lore through a typed decision when you give it a TypeSafe key, by the nearest birthday otherwise — in prose only, never in code, commits or error text, and reads the first sentence of each reply aloud in the character's own cloned voice, by an engine that runs on your machine.
+A Claude Code plugin that speaks as a Genshin Impact character picked at session start — by lore through a typed decision when you give it a TypeSafe key, by the nearest birthday otherwise — in prose only, never in code, commits or error text, and reads each reply aloud in the character's own cloned voice, a sentence at a time so the reading starts before the reply is finished generating, by an engine that runs on your machine.
 
 ## Table of Contents
 
@@ -22,6 +22,8 @@ claude plugin install genshin-persona@esposter
 ```
 
 The install copies the plugin into the plugin cache and installs its dependencies from the npm lockfile beside this manifest. From the next session the character is picked and its card is in context; nothing else is needed.
+
+A clone of this repository needs neither command: `.agents/settings.json` declares the marketplace with the relative source `.` and enables the plugin, so opening the checkout in Claude Code installs it at project scope once you trust the repository, and the plugin is read from the checkout itself.
 
 Spoken replies stay off until the `voice` verb has set the engine up, once, with the dub the reference lines are taken from — `en`, `ja`, `ko` or `zh`:
 
@@ -43,18 +45,18 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What it ships
 
-| Component                              | Role                                                                                                                                                                                                    |
-| :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `hooks/hooks.json`                     | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply.                                            |
-| `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                                                                      |
-| `skills/<verb>/SKILL.md`               | One slash command per verb — `/genshin-persona:today`, `roster`, `use`, `pin`, `unpin`, `voice`, `mute`, `unmute`, `volume`, `setup`, `teardown` — for you alone to invoke.                             |
-| `skills/genshin/SKILL.md`              | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                                                  |
-| `skills/genshin-author/SKILL.md`       | How a persona card and its spinner lines are written, the command that prints a character's own lines to write from, and the two queues.                                                                |
-| `src/personaCards/`                    | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, their spinner verbs and tips for you, and the reference line only where an ear chose one. |
-| `src/generated/PersonaReferenceMap.ts` | The measured reference line and its likeness per character, one generated map written by the repository's reference selection and never by hand.                                                        |
-| `runtime/`                             | The manifest and lockfile of the speech engine's runtime, which the `voice` verb installs into the state directory rather than the plugin carrying it.                                                  |
-| `src/services/baseSpinnerContent.ts`   | The base Teyvat verbs every spinner shows before the character's own, and the tips a card without its own falls back to.                                                                                |
-| `scripts/`                             | The hook entrypoints, the commands' script, the status-line script and the resident synthesizer, TypeScript run directly by node.                                                                       |
+| Component                              | Role                                                                                                                                                                                               |
+| :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hooks/hooks.json`                     | A session-start hook that picks the character, greets you with its name and prints its card as context, and an asynchronous Stop hook that speaks the reply.                                       |
+| `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: in character in prose, never in code, with coding kept.                                                                                 |
+| `skills/<verb>/SKILL.md`               | One slash command per verb — `/genshin-persona:today`, `roster`, `use`, `pin`, `unpin`, `voice`, `mute`, `unmute`, `volume`, `language`, `reply`, `status`, `setup`, `teardown` — yours to invoke. |
+| `skills/genshin/SKILL.md`              | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                                             |
+| `skills/genshin-author/SKILL.md`       | How a persona card and its spinner verbs are written, the command that prints a character's own lines to write from, and the two queues.                                                           |
+| `src/personaCards/`                    | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, their spinner verbs for you, and the reference line only where an ear chose one.     |
+| `src/generated/PersonaReferenceMap.ts` | The measured reference line and its likeness per character, one generated map written by the repository's reference selection and never by hand.                                                   |
+| `runtime/`                             | The manifest and lockfile of the speech engine's runtime, which the `voice` verb installs into the state directory rather than the plugin carrying it.                                             |
+| `src/localizations/`                   | One authored module per language for the words the data package does not carry: the base Teyvat verbs and tips, each character's spinner gerunds, and every line the verbs print.                  |
+| `scripts/`                             | The hook entrypoints, the commands' script, the status-line script and the resident synthesizer, TypeScript run directly by node.                                                                  |
 
 ### Status line and spinner
 
@@ -67,7 +69,21 @@ node "<plugin root>/scripts/genshin.ts" teardown
 
 The status line prints the session's character in their element's colour, from the plugin's state files alone, and shows from the first frame of every session — the birthday pick stands in until the session's record is written, never another session's character. An install lands under a directory named after its version, so the setting points at a launcher in the state directory that every session start re-aims at the running install; a plugin update is followed on the next session with nothing to repeat.
 
-The spinner replaces the built-in verbs and tips with the session's character's: the base Teyvat verbs in `baseSpinnerContent.ts` with the character's own behind them, and the character's tips alone under their name — the tool shows one label over every tip, so the base tips, nobody's line, appear only for a character whose card has none, under the tool's own "Tip". The session-start hook rewrites the two settings whenever the character changes, and so do `use`, `pin` and `unpin`; Claude Code reads the spinner keys once per process, so a rewrite shows from the next session. A status line that is not the plugin's is left alone.
+The spinner replaces the built-in verbs and tips with the session's character's: the interface language's base Teyvat verbs with the character's own behind them, and under the character's name as that language spells it every line of theirs, off the game data or the community wiki — the tool shows one label over every tip, so the base tips, nobody's line, appear only for a character with no lines yet, under the tool's own "Tip". The session-start hook rewrites the two settings from a detached process whenever the character changes, and so do `use`, `pin` and `unpin`; Claude Code reads the spinner keys once per process, so a rewrite shows from the next session. A status line that is not the plugin's is left alone.
+
+### Languages
+
+Three settings, and they are not one axis. The **interface language** is every word the plugin writes — the card, the spinner's verbs and tips, the status line and each verb's own output — and it is the master toggle; the **reply language** is what the model writes prose in, and follows the interface language until it is set on its own; the **dub** says whose voice reads a reply and is neither, because it comes from a set of four and costs an install:
+
+```bash
+node "<plugin root>/scripts/genshin.ts" language japanese   # or: /genshin-persona:language japanese
+node "<plugin root>/scripts/genshin.ts" reply english       # labels in one language, prose in another
+node "<plugin root>/scripts/genshin.ts" status              # every setting, and where each value came from
+```
+
+The languages on offer are read off the data package rather than listed anywhere, so a bump that adds one is a language the plugin speaks with nothing to edit; `language` with no argument prints them, each in its own words beside the word you type for it — `Japanese (日本語)` — and either resolves. Everything that package carries — each character's name, title, element, region, description and every one of their own voice lines, which are the spinner's tips — arrives localized for nothing. The words that are ours do not: the base Teyvat verbs, the base tips, each character's spinner gerunds and the verbs' own output live in one authored module per language under `src/localizations/`, and English and Japanese are written. A language with no module still localizes everything the data package answers and falls back to English per string for the rest, so a half-translated language is a legal state rather than a broken one.
+
+The interface language never changes the dub: setting one a dub exists for says so and names the command, and setting any other says plainly that replies keep reading in whichever voice is already set up. The authored card is untouched by all of it — the habits and sign-off reach the model alone, and the greeting is a line it performs, so all three follow the reply language by themselves and none is translated.
 
 ### How the character is picked
 
@@ -85,7 +101,7 @@ The command reads the session id Claude Code sets in every Bash subprocess and r
 
 ### Spoken replies
 
-The Stop hook hands each reply's first sentence to a resident synthesizer — one process per machine that holds the loaded engine, woken by the session-start hook so the first reply is warm, and gone again after half an hour idle. `mute` and `unmute` decide whether the hook asks it at all. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
+The Stop hook hands each reply's prose to a resident synthesizer — one process per machine that holds the loaded engine, woken by the session-start hook so the first reply is warm, and gone again after half an hour idle — which reads it one sentence at a time, playing each while the next is generated. `mute` and `unmute` decide whether the hook asks it at all, and so does a `volume` of zero, which is silence the engine should not be woken for. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
 
 ```bash
 node "<plugin root>/scripts/genshin.ts" volume 60     # or: /genshin-persona:volume 60

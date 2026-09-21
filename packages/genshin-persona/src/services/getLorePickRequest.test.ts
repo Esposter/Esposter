@@ -3,6 +3,7 @@ import type { Character } from "#src/models/Character";
 import type { Moment } from "#src/models/Moment";
 import type { PersonaCard } from "#src/models/PersonaCard";
 
+import english from "#src/localizations/english";
 import { HABIT_SEPARATOR, LORE_PICK_INSTRUCTIONS } from "#src/services/constants";
 import { TEST_EPOCH_DATE } from "#src/services/constants.test";
 import { getBirthdayNote } from "#src/services/getBirthdayNote";
@@ -27,17 +28,24 @@ describe(getLorePickRequest, () => {
     version: "version",
     weapon: "weapon",
   };
-  const character: Character = { ...facts, description: "description" };
+  // The display fields are absent from the state: the tier is asked in English, and both names are one character
+  const character: Character = {
+    ...facts,
+    description: "description",
+    displayElement: facts.element,
+    displayName: facts.name,
+  };
   const personaCard: PersonaCard = {
     greeting: "greeting",
     habits: ["", " "],
     signOff: "signOff",
-    tips: ["tip"],
     verbs: ["verb"],
   };
   const carded: CardedCharacter = { character, personaCard };
-  const uncarded: CardedCharacter = { character: { ...character, name: "uncarded" } };
-  const untitled: CardedCharacter = { character: { ...character, description: "", name: "untitled", title: "" } };
+  const uncarded: CardedCharacter = { character: { ...character, displayName: "uncarded", name: "uncarded" } };
+  const untitled: CardedCharacter = {
+    character: { ...character, description: "", displayName: "untitled", name: "untitled", title: "" },
+  };
 
   test("describes a carded character by their habits and one without by the game's own line", () => {
     expect.hasAssertions();
@@ -61,7 +69,7 @@ describe(getLorePickRequest, () => {
     const { state } = getLorePickRequest([carded], today, moment);
 
     expect(state).toStrictEqual({
-      characters: [{ ...facts, birthday: getBirthdayNote(birthday, today) }],
+      characters: [{ ...facts, birthday: getBirthdayNote(birthday, today, english) }],
       today: { date: today.toString(), ...moment },
     });
   });
