@@ -5,7 +5,7 @@ description: One repo script that, for every roster character, fetches their sto
 
 # Reference selection
 
-A zero-shot clone is only as good as its reference, and a character has tens of lines to choose from — one-second interjections and minute-long stories, in registers from a whisper to a shout. Which one represents the voice is a measurement, not a guess, and this is the tooling that makes it: one `scripts` command, with nothing outside npm.
+A zero-shot clone is only as good as its reference, and a character has tens of lines to choose from — one-second interjections and minute-long stories, in registers from a whisper to a shout. Which one represents the voice is a measurement, and this is the tooling that makes it: one `scripts` command, with nothing outside npm.
 
 ```bash
 pnpm ai:voice-match [en | ja | ko | zh] [--write]          # measure the roster in one dub; --write generates the map
@@ -13,7 +13,7 @@ pnpm ai:voice-match en Aether Lumine --write                # the characters nam
 pnpm ai:voice-match --check                                 # every character's reference, asked of the wiki in every dub
 ```
 
-It measures over the wiki's files because the wiki is where the plugin fetches a reference from, and a measurement over the same file the plugin will use is the only one that measures the right thing. The game install, which the benchmark before it read through a Wwise decoder, is not needed by anything any more.
+It measures over the wiki's files because the wiki is where the plugin fetches a reference from, and a measurement over the same file the plugin will use is the only one that measures the right thing.
 
 ## What the measurement computes
 
@@ -22,7 +22,7 @@ For every character on the roster, in one dub:
 1. **Their lines.** The story template of the character's voice-over page lists every line with the file its clip is kept under; the combat template after it is left out, since a reply is spoken in the story register. Each file's URL is asked of the wiki's API in one batched call, and each clip is fetched and decoded with the plugin's own Vorbis decoder — in memory, measured and dropped. A player twin's lines are the Traveler's dialogues with Paimon, and each clip is cut to the twin's opening turn before anything is read off it — the plugin's own cut, so the measurement and the reference are the same audio ([per-character voices](/docs/infra/claude-interface/per-character-voices)).
 2. **The profile.** One unit embedding per clip through the speaker-verification encoder, over the clip's opening seconds, averaged and renormed — the centre of the character's voice. A character with fewer than a handful of usable clips is reported rather than profiled.
 3. **The reference.** The clip nearest that centre by cosine, among those with at least a few seconds of speech at or above a signal-to-noise floor: the clip that is most typically the character, which is what a clone should be conditioned on.
-4. **The likeness.** The reference trimmed to the five seconds the engine conditions on, encoded into speaker tensors, one fixed carrier sentence synthesized from them through the same engine the plugin speaks with, and the output's embedding against the profile. Same encoder, carrier and trim for every character, so the numbers compare across the roster.
+4. **The likeness.** The reference trimmed to the seconds the engine conditions on, encoded into speaker tensors, one fixed carrier sentence synthesized from them through the same engine the plugin speaks with, and the output's embedding against the profile. Same encoder, carrier and trim for every character, so the numbers compare across the roster.
 
 The profile is a working value and is not written anywhere. A run measures the roster whole, or only the characters named after the dub — for a page the wiki changed, or a character the last run could not reach — and a named run writes its entries into the map and keeps the rest.
 
@@ -48,7 +48,7 @@ flowchart LR
 
 One generated map, `packages/genshin-persona/src/generated/PersonaReferenceMap.ts`: per character, the line's **stem** — its file name on the wiki without the dub prefix and extension, the same in every dub — and the **likeness** its clone scored. The plugin reads it on every spoken reply, and so does the runner: a named run seeds itself from the map so the characters it does not measure keep their entries, and `--check` resolves each character's line through the same function the plugin does. One map rather than a module per character, which is the exception the [generated artifacts](/docs/architecture/generated-artifacts) page states and gives the reason for. Precedence against a card's `reference` is resolved in code, never by copying ([per-character voices](/docs/infra/claude-interface/per-character-voices)).
 
-The run prints one line per character — the stem, the likeness, how many clips the profile pooled and the reference's speech seconds and signal to noise — then the count measured and the characters it could not. `--write` generates the map at the end; a run without it is a dry measurement. Across the roster in English the likeness reads about 0.9 on average, from about 0.7 upward; a character the wiki has no voice-over page for yet is reported and left out of the map.
+The run prints one line per character — the stem, the likeness, how many clips the profile pooled and the reference's speech seconds and signal to noise — then the count measured and the characters it could not. `--write` generates the map at the end; a run without it is a dry measurement. A character the wiki has no voice-over page for yet is reported and left out of the map.
 
 ## The check
 
@@ -60,7 +60,7 @@ The decoded clips exist only in memory: fetched, decoded, measured and dropped, 
 
 ## Settled — it lives in `scripts`, not in the plugin
 
-The runner reads the plugin's source — its wiki reading, its decoder, its engine loading, its card naming — and writes into the plugin's `generated/` folder, so the question of why it is not _inside_ the plugin is asked; the answer is the plugin's install. `claude plugin install` copies the plugin into its cache and freezes an `npm ci` there under a one-minute ceiling, which is why the package declares no devDependencies at all ([persona plugin](/docs/infra/claude-interface/persona-plugin)). The runner needs the speaker encoder and the in-process transformer library in its own `node_modules`, which would then install on every stranger's machine or break the install outright. So the tooling sits with the repository's own tooling in `scripts`, reaches into the plugin's source the way that package addresses itself, and the plugin receives only what it consumes: one map. The engine itself the plugin loads from a runtime its `voice` verb installs into the state directory ([spoken replies](/docs/infra/claude-interface/spoken-replies)), and the runner resolves the same package from its own dependencies through the same reader.
+The runner reads the plugin's source — its wiki reading, its decoder, its engine loading, its card naming — and writes into the plugin's `generated/` folder. It is not inside the plugin because of the plugin's install: `claude plugin install` copies the plugin into its cache and freezes an `npm ci` there under a one-minute ceiling, which is why the package declares no devDependencies at all ([persona plugin](/docs/infra/claude-interface/persona-plugin)). The runner needs the speaker encoder and the in-process transformer library in its own `node_modules`, which would then install on every stranger's machine or break the install outright. So the tooling sits with the repository's own tooling in `scripts`, reaches into the plugin's source the way that package addresses itself, and the plugin receives only what it consumes: one map. The engine itself the plugin loads from a runtime its `voice` verb installs into the state directory ([spoken replies](/docs/infra/claude-interface/spoken-replies)), and the runner resolves the same package from its own dependencies through the same reader.
 
 ## Key files
 
@@ -82,7 +82,6 @@ The runner reads the plugin's source — its wiki reading, its decoder, its engi
 
 ## Notes
 
-- The measurement runs on one dub and its stem serves every dub. Whether the Japanese performance of the _same_ line is the best Japanese reference is a refinement the runner can make by running per dub and keying the map by it; it starts with English, the language the ear settled on for the catalogue voices before it.
-- The likeness is a validation number, not a ranking: there is no catalogue to rank any more, and one character's score is compared with their own next run, not with another character's.
-- The engine's own variants were chosen the same way: the half-precision speech encoder and the 4-bit language model cost no likeness, and the half-precision vocoder cost a tenth to a fifth of it on each of three characters, so the vocoder alone stays full precision. The 0.5B original checkpoint scored the same as Turbo and read at half the speed, so Turbo stands.
+- The measurement runs on one dub and its stem serves every dub. Whether the Japanese performance of the _same_ line is the best Japanese reference is a refinement the runner can make by running per dub and keying the map by it; it starts with English.
+- The engine's own variants and any candidate engine are chosen the same way: the likeness re-measured on a few characters, with the choice and its cost recorded on the [spoken replies](/docs/infra/claude-interface/spoken-replies) page.
 - The likeness is amplitude-blind: the embedder normalises what it hears, so a vocoder that returns near-silence scores as if it had spoken. A run therefore scores nothing an engine synthesized on a rung the [device ladder](/docs/infra/claude-interface/spoken-replies) has not heard speak — the engine moves down on any synthesis that is not speech, the run reports every move, and a character no rung speaks for ends it. The stems are chosen from the wiki's clips before the engine speaks, so a re-measurement moves the numbers and not the lines.

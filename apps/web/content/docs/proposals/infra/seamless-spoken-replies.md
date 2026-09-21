@@ -41,7 +41,7 @@ flowchart TD
 
 ## What this does not propose
 
-- **Dropping the clone for speed.** A catalogue voice reads faster on any hardware and was the first thing this feature replaced; the persona is the character's own voice or it is nothing.
+- **Dropping the clone for speed.** A catalogue voice reads faster on any hardware; the persona is the character's own voice or it is nothing.
 - **Streaming inside a line before stage 1 holds.** Measured here, every extra vocoder pass would cost seconds; the shape moves the pause rather than removing it.
 - **Two lines in flight.** Measured and rejected on the [spoken replies](/docs/infra/claude-interface/spoken-replies) page: the vocoder's threads take every core, so the language model gains nothing from running beside it.
 - **A stock line played to cover the wait.** A bark that is not the reply's own line is a fake, and nothing is made ahead: every spoken line is written for its ask, the card's greeting included, which the welcome shows and no reply repeats.
