@@ -8,7 +8,7 @@ import { describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
 
-vi.mock(import("node:child_process"), () => ({ spawn }));
+vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
 
 // The player as it answers once the call is already awaiting it, which is the only order a spawned process can
 // Answer a caller in
