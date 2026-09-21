@@ -46,9 +46,9 @@ runs its scripts by stripping types (`apps/web/content/docs/infra/claude-interfa
 - **The `#src/*` specifier drops its extension** (`#src/services/x`, never `#src/services/x.ts`): the manifest's
   map appends `.ts`, and node resolves the map literally.
 - **Erasable TypeScript only.** An `enum` is the one declaration type stripping cannot erase, so an enum is a
-  frozen object with a derived type. `Temporal` is the plugin's date layer and a global only from the node major its
-  own `engines.node` names, which is why that field states the feature floor rather than restating the root's pin:
-  a stranger's `npm ci` warns on it before a hook crashes (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).
+  frozen object with a derived type. `Temporal` is the plugin's date layer, and the node major it arrived in is
+  what the plugin's own `engines.node` states — the feature floor, not the root's pin; why the two differ is the
+  docs page's (`apps/web/content/docs/infra/claude-interface/persona-plugin.md`).
 - It is excluded from `typedoc.config.js` like the configuration package: it has no barrel to document.
 
 ## Bin entrypoints — no shebang
