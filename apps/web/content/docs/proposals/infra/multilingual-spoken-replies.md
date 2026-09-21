@@ -62,9 +62,8 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 
 ### The output
 
-- **Clauses, not sentences.** The synthesizer splits the sentence at clause punctuation — commas, semicolons, dashes, their fullwidth forms — synthesizes each in turn and hands each vocoded chunk to the player as it lands, so the first sound arrives after the first clause's tokens rather than the last sentence's. The speech check runs per chunk with the same two thresholds; a chunk that fails moves the ladder exactly as a sentence does.
-- **A player that takes a stream.** The stock player plays one file; streaming needs either a sequence of files queued back to back or a process reading PCM from a pipe. The choice is the player's per desktop and is made when the first chunk exists to play — the split above is worth having even into a queue of files.
-- **The one pending request** keeps its meaning across chunks: a newer reply replaces a reply still waiting, and a reply whose first chunk is playing finishes.
+- **Clauses, not sentences.** The synthesizer cuts a sentence at clause punctuation — commas, semicolons, dashes, their fullwidth forms — and synthesizes each cut in turn, so the first sound arrives after the first clause's tokens rather than the last sentence's. Where the [seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) proposal cuts by token count to shorten the first wait of an engine that already reads faster than real time, this one cuts at punctuation, because a clause is the longest unit a slower engine can be trusted to read whole.
+- **Everything past the cut is that proposal's stage 2**, and is built once by whichever of the two lands first: the per-chunk speech check and the ladder it moves, the player that takes a stream rather than a file, and what the single pending request means while a reply is part-played.
 
 ### The measurement
 

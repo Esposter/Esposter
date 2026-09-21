@@ -144,7 +144,7 @@ A reply that cannot be spoken is not spoken, and nothing waits on it without a b
 ## What it does not do
 
 - **Read another language.** The engine is English-only, so the dub picks whose voice reads a reply and not what language it reads: `ja` clones the Japanese actor, and the actor reads English. A line with no Latin letter in it, or with a letter of any other script in it, is not sent: the first the tokenizer returns as the near-silence the device ladder takes for a broken provider, and the second the model reads from unknown tokens it finds no end for. Gated per line, so one such line inside an English reply is skipped rather than walking the ladder down. Reading a reply in the language it is written in is the [multilingual spoken replies](/docs/proposals/infra/multilingual-spoken-replies) proposal.
-- **Stream inside a line.** A line is synthesized whole and vocoded once, so its first sample arrives after its last token; the streaming is between lines. Vocoding a line in chunks as its tokens are made is the [seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) proposal.
+- **Stream inside a line.** A line is synthesized whole and vocoded once, so its first sample arrives after its last token; the streaming is between lines. Doing it inside a line instead is stage 2 of the [seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) proposal.
 - **Serve the app.** It is a personal machine's process for a personal plugin; nothing in the estate knows it exists.
 - **Ship any audio.** The reference clips are fetched from the wiki to this machine and cached under the state directory, never committed, for the reason the [per-character voices](/docs/infra/claude-interface/per-character-voices) page gives.
 
