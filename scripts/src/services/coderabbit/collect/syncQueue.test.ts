@@ -207,6 +207,43 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
 
+  // Develop carries the queue's first commit as a repaired copy under another patch id — one more file in it — so
+  // `git cherry` reads the original as owed and its replay comes out empty; the second conflicts, which is what
+  // Puts the sequence's end to the resolver's check
+  const setupAbsorbedReplay = (): { absorbedSha: string; developSha: string; queueSha: string } => {
+    const rootSha = readSha("HEAD");
+    commitFile(filePath, "");
+    const baseSha = publish(DEVELOP_BRANCH, "HEAD");
+    const absorbedSha = commitFile(nestedPath, "");
+    const queueSha = publish(QUEUE_BRANCH, commitFile(filePath, "queue"));
+    switchTo(baseSha);
+    commitFiles([nestedPath, `${nestedPath}.ts`], "");
+    const developSha = publish(DEVELOP_BRANCH, commitFile(filePath, "fix"));
+    switchTo(rootSha);
+    return { absorbedSha, developSha, queueSha };
+  };
+
+  test("keeps a commit the target absorbed under another patch id as an empty copy the sequence's end carries", async () => {
+    expect.hasAssertions();
+
+    const { absorbedSha, developSha, queueSha } = setupAbsorbedReplay();
+    vi.stubEnv("GIT_EDITOR", "true");
+    runSession.mockImplementation(() => {
+      resolveConflict();
+      return Promise.resolve({ isEnded: true, isStarted: true });
+    });
+    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+
+    assert.exists(syncedSha);
+    expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual([filePath, nestedPath]);
+    const copySha = readSha(`${syncedSha}~1`);
+    expect(runGit(["show", "--format=", copySha], getCwd())).toBe("");
+    expect(runGit(["show", "--format=%b", "--no-patch", copySha], getCwd())).toContain(
+      `(cherry picked from commit ${absorbedSha})`,
+    );
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+  });
+
   test("sheds an empty copy on the next rewrite rather than replaying it", async () => {
     expect.hasAssertions();
 
@@ -348,6 +385,25 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     const claimedSha = readSha(`${syncedSha}~2`);
     expect(readTrailedShas([claimedSha], EXPRESS_TRAILER, getCwd())).toStrictEqual(new Set([claimedSha]));
     expect(runGit(["diff", queueSha, syncedSha], getCwd())).toBe("");
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+  });
+
+  // The copy a resolution left this run sits behind the reshaped commit, and rides the replay of what followed it
+  test("replays an empty copy behind the reshaped commit", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, "HEAD");
+    const oversizedSha = commitFiles(overflowPaths, "");
+    runGit(["-c", "core.editor=true", "commit", "--allow-empty", "--message", "absorbed"], getCwd());
+    const queueSha = publish(QUEUE_BRANCH, "HEAD");
+    runSession.mockImplementation(() => {
+      reshape(oversizedSha, REVIEW_FILE_CAP);
+      return Promise.resolve({ isEnded: true, isStarted: true });
+    });
+    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+
+    assert.exists(syncedSha);
+    expect(readSubjects(`${developSha}..${syncedSha}`)).toStrictEqual(["absorbed", "rule", "moves"]);
     expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
   });
 

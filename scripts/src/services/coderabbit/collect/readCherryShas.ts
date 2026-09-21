@@ -13,9 +13,8 @@ import { runGit } from "#src/services/shared/runGit";
 export const readCherryShas = (upstream: string, head: string, cwd?: string): string[] => {
   const main = `origin/${MAIN_BRANCH}`;
   // `git cherry` reads a commit that changes nothing as owed, and it can never be: what an empty commit carries
-  // Is its message, and the message is the record that the target already holds the change (`getSyncPrompt`).
-  // Replaying it would stall the next sequence — `--empty` governs a commit that becomes empty, never one that
-  // Arrived that way — so the diff filter drops it here, and the queue sheds it on the rewrite that follows
+  // Is its message, and the message is the record that the target already holds the change (`checkIsPicked`,
+  // `getSyncPrompt`). So the diff filter drops it here, and the queue sheds it on the rewrite that follows
   const authored = new Set(
     getNonEmptyLines(
       runGit(["log", "--format=%H", "--no-merges", "--diff-filter=ACDMRT", head, `^${upstream}`, `^${main}`], cwd),
