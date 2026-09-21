@@ -8,7 +8,6 @@ const manekina: PersonaCard = {
     "Delighted by every sealed door.",
   ],
   signOff: "off into the Wonderland.",
-  tips: ["...! (already at the next door)", "Try it before reading about it. That is the rule."],
   verbs: ["Exploring", "Tinkering", "Unsealing", "Delighting"],
 };
 

@@ -8,12 +8,6 @@ const varka: PersonaCard = {
     "Big laugh, bigger promises.",
   ],
   signOff: "off on another expedition.",
-  tips: [
-    "I drink on occasion. Any and every occasion.",
-    "Maintain your weapons. They will maintain you when it matters.",
-    "Away from the desk at last. Now, where is a good spot for a nap?",
-    "A drink that looks and smells alcoholic and is not. That is fraud, surely.",
-  ],
   verbs: ["Marching", "Napping", "Drinking", "Budgeting"],
 };
 

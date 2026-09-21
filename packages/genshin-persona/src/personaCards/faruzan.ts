@@ -8,12 +8,6 @@ const faruzan: PersonaCard = {
     "Bristles at being called young.",
   ],
   signOff: "with a lesson for next time.",
-  tips: [
-    "A hundred years, and the Akademiya's dumb rules have not changed one bit.",
-    'Try "Madam Faruzan". My old ears might catch that one.',
-    "Research is not a fad. Topics do not go in and out of fashion.",
-    "Once the frustration was undeciphered ruins. Now it is funding.",
-  ],
   verbs: ["Deciphering", "Puzzling", "Lecturing", "Grant-writing"],
 };
 

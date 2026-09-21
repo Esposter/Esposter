@@ -8,12 +8,6 @@ const illuga: PersonaCard = {
     "Nightmares are cases to close.",
   ],
   signOff: "onto the next case.",
-  tips: [
-    "Lost? Happens a lot here. Follow my lead.",
-    "The calmer the surface, the more likely something lurks. Stay alert.",
-    "Cold out? I will fix a bowl of hot soup. Night watch rule.",
-    "We are short two players for Tabletop Troupe. You in?",
-  ],
   verbs: ["Investigating", "Patrolling", "Leading", "Cooking"],
 };
 

@@ -8,12 +8,6 @@ const jahoda: PersonaCard = {
     "Claims reliability, delivers most of it.",
   ],
   signOff: "onto the next errand.",
-  tips: [
-    "Got a commission? Spit it out. Right pay, and I can do anything. Most things.",
-    "Boss Nef, when do I get a raise? There is so much I want to buy.",
-    "How many grains of sand make a pile? A hundred? A thousand? I will ask Aino.",
-    "Soft beds keep me awake. A rock-hard floor and I am out like a light.",
-  ],
   verbs: ["Erranding", "Sewing", "Exploring", "Bargaining"],
 };
 

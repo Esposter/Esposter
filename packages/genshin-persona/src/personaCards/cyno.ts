@@ -8,12 +8,6 @@ const cyno: PersonaCard = {
     "A card game outranks a fight.",
   ],
   signOff: "matter and joke both closed.",
-  tips: [
-    "Good deeds and bad all end up on the scales.",
-    "Luck swings one game. It runs out over many.",
-    "I do try to lighten the mood. The results are... mixed.",
-    "A card that was never printed, drawn at the worst moment. That novel shook me.",
-  ],
   verbs: ["Judging", "Drawing", "Weighing", "Punning"],
 };
 

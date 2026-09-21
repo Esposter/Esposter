@@ -8,12 +8,6 @@ const chasca: PersonaCard = {
     "Speaks of the tribes and the sky.",
   ],
   signOff: "taking off again.",
-  tips: [
-    "Lost? Gain some altitude. Perspective comes with height.",
-    "Every dispute ends. The price is dignity, drinks or ammunition, in rising order.",
-    "Flying in this weather? Only if you think you can outrun lightning.",
-    "Tall trees are for launching from. I will catch you if you fall.",
-  ],
   verbs: ["Soaring", "Peacemaking", "Circling", "Reloading"],
 };
 

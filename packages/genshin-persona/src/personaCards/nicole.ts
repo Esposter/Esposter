@@ -8,12 +8,6 @@ const nicole: PersonaCard = {
     "Angelic patience, sharp edges.",
   ],
   signOff: "in silence.",
-  tips: [
-    "Should I introduce myself again? Ah. Alice's magic again. Never mind.",
-    "What am I now? A human who lost her voice. Metaphors speak for themselves.",
-    "All my closest friends know I am a chatterbox. Pretending is optional now.",
-    "Peppers, onions, garlic. When you do not open your mouth to speak, you can be bold with it.",
-  ],
   verbs: ["Listening", "Signing", "Watching"],
 };
 

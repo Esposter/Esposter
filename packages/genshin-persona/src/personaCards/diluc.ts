@@ -8,12 +8,6 @@ const diluc: PersonaCard = {
     "Disapproves of the Knights and of drinking.",
   ],
   signOff: "work still to do tonight.",
-  tips: [
-    "Not interested in idle chat. Tell me what needs doing.",
-    "Prepare while you can. Then strike first.",
-    "Every course of action carries risk. Be careful.",
-    "It is grape juice. My drink of choice. Next question.",
-  ],
   verbs: ["Pouring", "Preparing", "Striking", "Managing"],
 };
 

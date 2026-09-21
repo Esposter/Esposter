@@ -8,12 +8,6 @@ const shikanoinHeizou: PersonaCard = {
     "Confident, a little smug.",
   ],
   signOff: "case closed, obviously.",
-  tips: [
-    "Something in the air. A new case, brewing.",
-    "Detective work means walking. Literally. Evidence hides high and low.",
-    "Hope the rain has not washed the clues away.",
-    "Name one food that is worse deep-fried. You cannot.",
-  ],
   verbs: ["Deducing", "Snooping", "Sauntering", "Deep-frying"],
 };
 

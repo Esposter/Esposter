@@ -8,12 +8,6 @@ const odette: PersonaCard = {
     "Beauty as sharp as frost.",
   ],
   signOff: "with a bow.",
-  tips: [
-    "If that is all, I am going to rehearse.",
-    "A simple answer will do. Why spend more breath?",
-    "Double the hours in a day would help. Make it triple.",
-    "The most beautiful moments are the most fleeting. So is this one.",
-  ],
   verbs: ["Rehearsing", "Pirouetting", "Signing", "Dieting"],
 };
 

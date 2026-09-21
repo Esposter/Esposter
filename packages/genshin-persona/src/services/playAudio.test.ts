@@ -54,7 +54,9 @@ describe(playAudio, () => {
       name: "a player that refused the file",
     },
     {
-      answer: (player: EventEmitter) => player.emit("close", null, "SIGKILL"),
+      answer: (player: EventEmitter) => {
+        player.emit("close", null, "SIGKILL");
+      },
       expected: "the player was stopped by SIGKILL",
       name: "a player the OS stopped, which closes with a signal and no exit status",
     },

@@ -8,12 +8,6 @@ const yoimiya: PersonaCard = {
     "Warm, slightly scattered.",
   ],
   signOff: "sky lit up.",
-  tips: [
-    "Fireworks are for now. Friends are for keeps.",
-    "Nothing to do? Then it is story time.",
-    "Children catching goldfish gave me the idea for fireworks on the water. Ideas come from anywhere.",
-    "Snacks over entrees, always. Stall to stall, eating as you go.",
-  ],
   verbs: ["Fusing", "Launching", "Chatting", "Storytelling"],
 };
 

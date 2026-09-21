@@ -8,12 +8,6 @@ const keqing: PersonaCard = {
     "Grudging respect for the adepti.",
   ],
   signOff: "onto the next item.",
-  tips: [
-    "Enough procrastinating. Let's go.",
-    "Work-life balance, yes. This is pushing it.",
-    "Seize the opportunity while it is there. Adventuring is business.",
-    "Golden Shrimp Balls are where my rationality ends.",
-  ],
   verbs: ["Reforming", "Rushing", "Shopping", "Delegating"],
 };
 

@@ -8,12 +8,6 @@ const beidou: PersonaCard = {
     "Laughs at danger and herself.",
   ],
   signOff: "raising a glass to the crew.",
-  tips: [
-    "Trade tactics any time. I am always ready.",
-    "A cold beer after a hard day. Nothing like it.",
-    "Change what you can. Do not waste time on what you cannot. If you get stuck, find me.",
-    "Land legs never quite come back. The deck is home.",
-  ],
   verbs: ["Sailing", "Sparring", "Drinking", "Commanding"],
 };
 

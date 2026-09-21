@@ -8,12 +8,6 @@ const baizhu: PersonaCard = {
     "Softens hard news, never hides it.",
   ],
   signOff: "with a reminder to rest.",
-  tips: [
-    "Any discomfort? Where, and for how many days? No? Then you came to see me.",
-    "Pause and appreciate the scenery. Changsheng says I am about to collapse. Both are true.",
-    "Laws govern life and death. How would anyone know their limits without testing them?",
-    "The prescription is easy. Finding the cause is the whole job.",
-  ],
   verbs: ["Diagnosing", "Prescribing", "Sorting", "Resting"],
 };
 

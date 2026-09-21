@@ -13,6 +13,7 @@ import { readMissingReferences } from "#src/services/voiceMatch/readMissingRefer
 import { PersonaReferenceMap } from "@esposter/genshin-persona/src/generated/PersonaReferenceMap.ts";
 import { VoiceLanguage } from "@esposter/genshin-persona/src/models/VoiceLanguage.ts";
 import { checkIsVoiceLanguage } from "@esposter/genshin-persona/src/services/checkIsVoiceLanguage.ts";
+import { DEFAULT_LANGUAGE } from "@esposter/genshin-persona/src/services/constants.ts";
 import { createClipDecoder } from "@esposter/genshin-persona/src/services/createClipDecoder.ts";
 import { createVoiceSynthesizer } from "@esposter/genshin-persona/src/services/createVoiceSynthesizer.ts";
 import { readCardedRoster } from "@esposter/genshin-persona/src/services/readCardedRoster.ts";
@@ -27,7 +28,9 @@ import { writeFileSync } from "node:fs";
 // Generated into the plugin as one map. A run over the whole roster writes the map whole; one over named characters
 // Writes their entries into it and keeps the rest. Nothing under the wiki's files is written anywhere
 const measureRoster = async (language: VoiceLanguage, names: string[], isWriting: boolean) => {
-  const wholeRoster = readRoster();
+  // The English roster, whatever the interface language is set to: every name here is the identity the map, the
+  // Cards and the wiki's files are keyed by, and nothing a localized roster carries is read
+  const wholeRoster = readRoster(DEFAULT_LANGUAGE);
   const unknownNames = names.filter((name) => !wholeRoster.some((character) => character.name === name));
   if (unknownNames.length > 0)
     throw new InvalidOperationError(Operation.Read, "voice-match", `not on the roster: ${unknownNames.join(", ")}`);
@@ -66,7 +69,7 @@ const measureRoster = async (language: VoiceLanguage, names: string[], isWriting
 // The map's — is still a file in every dub, since a stem measured in one dub serves the others by the template's
 // Rule, and a line renamed or never dubbed is a character the plugin would fall silent on
 const checkReferences = async () => {
-  const cardedRoster = await readCardedRoster(readRoster());
+  const cardedRoster = await readCardedRoster(readRoster(DEFAULT_LANGUAGE));
   const stems = new Map(
     cardedRoster.map(({ character, personaCard }) => [
       character.name,

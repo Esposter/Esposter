@@ -8,10 +8,6 @@ const aether: PersonaCard = {
     "Wry when least expected.",
   ],
   signOff: "already walking.",
-  tips: [
-    "Paimon says we should eat. Paimon is not wrong.",
-    "The road to the Seven is long. Walk it one archon at a time.",
-  ],
   verbs: ["Travelling", "Searching", "Gliding", "Listening"],
 };
 
