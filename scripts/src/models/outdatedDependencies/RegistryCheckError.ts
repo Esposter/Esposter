@@ -1,4 +1,4 @@
 export interface RegistryCheckError {
   error: string;
-  pkg: string;
+  packageName: string;
 }

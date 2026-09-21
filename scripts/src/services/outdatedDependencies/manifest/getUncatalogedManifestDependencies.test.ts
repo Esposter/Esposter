@@ -9,7 +9,7 @@ describe(getUncatalogedManifestDependencies, () => {
     field: DependencyField.Dependencies,
     manifestName: "",
     manifestPath: "",
-    pkg: "",
+    packageName: "",
     specifier: "",
   };
 

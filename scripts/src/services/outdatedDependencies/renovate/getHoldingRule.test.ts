@@ -10,7 +10,7 @@ describe(getHoldingRule, () => {
     dependencyType: "",
     dependents: [],
     latest: "2.0.0",
-    pkg: "a",
+    packageName: "a",
     specifier: "",
   };
   const capped: RenovateRule = { allowedVersions: "<2", matchPackageNames: ["a"] };

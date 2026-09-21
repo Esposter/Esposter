@@ -10,9 +10,9 @@ export const printUncatalogedManifestDependencies = (dependencies: ManifestDepen
   console.log(color.red("Dependencies not using catalog:/workspace: specifiers"));
   printTable(
     ["Package", "Specifier", "Dependents"],
-    dependencies.map(({ field, manifestName, pkg, specifier }) => {
+    dependencies.map(({ field, manifestName, packageName, specifier }) => {
       const dependencyType = getDependencyType(field);
-      const packageLabel = dependencyType ? `${pkg} (${dependencyType})` : pkg;
+      const packageLabel = dependencyType ? `${packageName} (${dependencyType})` : packageName;
 
       return [color.yellow(packageLabel), color.red(specifier), manifestName];
     }),

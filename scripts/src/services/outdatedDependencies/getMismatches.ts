@@ -6,12 +6,12 @@ import { getSpecifierBase } from "#src/services/outdatedDependencies/getSpecifie
 export const getMismatches = (entries: DependencyEntry[], resolvedVersions: Map<string, string>): Mismatch[] => {
   const mismatches: Mismatch[] = [];
 
-  for (const { group, pkg, specifier } of entries) {
-    const resolved = resolvedVersions.get(pkg);
+  for (const { group, packageName, specifier } of entries) {
+    const resolved = resolvedVersions.get(packageName);
     if (!resolved) continue;
 
     const specifierBase = getSpecifierBase(specifier);
-    if (specifierBase !== resolved) mismatches.push({ group, pkg, resolved, specifier });
+    if (specifierBase !== resolved) mismatches.push({ group, packageName, resolved, specifier });
   }
 
   return mismatches;

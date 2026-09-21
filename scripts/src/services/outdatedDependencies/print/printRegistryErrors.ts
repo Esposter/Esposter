@@ -9,7 +9,7 @@ export const printRegistryErrors = (errors: RegistryCheckError[], color: ColorPa
   console.log(color.red("Registry check errors"));
   printTable(
     ["Package", "Error"],
-    errors.map(({ error, pkg }) => [pkg, color.red(error)]),
+    errors.map(({ error, packageName }) => [packageName, color.red(error)]),
     color,
   );
 };

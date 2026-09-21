@@ -55,7 +55,7 @@ const renovateRules = getRenovateRules(renovateJson);
 // `pnpm outdated` compares against `latest`, which is not what Renovate proposes for a package a rule follows a
 // Dist-tag for, so those catalog entries are asked of the registry under their tag instead.
 const followedTagEntries = getFollowedTagEntries(catalogEntries, renovateRules);
-const followedPackages = new Set(followedTagEntries.map(({ pkg }) => pkg));
+const followedPackages = new Set(followedTagEntries.map(({ packageName }) => packageName));
 const [regularChecks, registryChecks] = await Promise.all([
   getRegularOutdatedDependencies(REPOSITORY_ROOT),
   getRegistryOutdatedDependencies([...configDependencyEntries, ...engineEntries, ...followedTagEntries]),
@@ -63,7 +63,7 @@ const [regularChecks, registryChecks] = await Promise.all([
 // A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.
 const { held, outdated } = partitionHeldDependencies(
   [
-    ...regularChecks.outdatedDependencies.filter(({ pkg }) => !followedPackages.has(pkg)),
+    ...regularChecks.outdatedDependencies.filter(({ packageName }) => !followedPackages.has(packageName)),
     ...registryChecks.outdatedDependencies,
   ],
   renovateRules,

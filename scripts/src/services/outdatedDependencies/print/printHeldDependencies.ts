@@ -22,7 +22,11 @@ export const printHeldDependencies = (heldDependencies: HeldDependency[], color:
     console.log(color.yellow(reason));
     printTable(
       ["Package", "Current", "Latest"],
-      dependencies.map(({ current, latest, pkg }) => [pkg, current, getColorizedLatestVersion(current, latest, color)]),
+      dependencies.map(({ current, latest, packageName }) => [
+        packageName,
+        current,
+        getColorizedLatestVersion(current, latest, color),
+      ]),
       color,
     );
   }

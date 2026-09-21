@@ -3,6 +3,6 @@ export interface OutdatedDependency {
   dependencyType: string;
   dependents: string[];
   latest: string;
-  pkg: string;
+  packageName: string;
   specifier: string;
 }

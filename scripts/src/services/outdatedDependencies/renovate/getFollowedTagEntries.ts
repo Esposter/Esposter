@@ -10,7 +10,7 @@ export const getFollowedTagEntries = (entries: DependencyEntry[], rules: Renovat
 
   for (const entry of entries) {
     const rule = rules.findLast(
-      ({ followTag, matchPackageNames }) => followTag !== undefined && matchPackageNames.includes(entry.pkg),
+      ({ followTag, matchPackageNames }) => followTag !== undefined && matchPackageNames.includes(entry.packageName),
     );
     if (rule?.followTag !== undefined) followedEntries.push({ ...entry, followTag: rule.followTag });
   }

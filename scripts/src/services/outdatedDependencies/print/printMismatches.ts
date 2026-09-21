@@ -13,7 +13,12 @@ export const printMismatches = (mismatches: Mismatch[], color: ColorPalette): vo
   );
   printTable(
     ["Package", "Specifier", "Resolved", "Group"],
-    mismatches.map(({ group, pkg, resolved, specifier }) => [pkg, color.red(specifier), color.green(resolved), group]),
+    mismatches.map(({ group, packageName, resolved, specifier }) => [
+      packageName,
+      color.red(specifier),
+      color.green(resolved),
+      group,
+    ]),
     color,
   );
 };

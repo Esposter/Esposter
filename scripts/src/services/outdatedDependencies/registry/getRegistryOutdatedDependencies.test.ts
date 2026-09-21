@@ -14,8 +14,8 @@ describe(getRegistryOutdatedDependencies, () => {
     expect.hasAssertions();
 
     const entries: DependencyEntry[] = [
-      { group: DependencyGroup.Engines, pkg: "node", specifier: "^26.0.0" },
-      { group: DependencyGroup.Engines, pkg: "node", specifier: "^26.8.0" },
+      { group: DependencyGroup.Engines, packageName: "node", specifier: "^26.0.0" },
+      { group: DependencyGroup.Engines, packageName: "node", specifier: "^26.8.0" },
     ];
     vi.mocked(getLatestVersion).mockResolvedValue("26.8.1");
 
@@ -27,7 +27,7 @@ describe(getRegistryOutdatedDependencies, () => {
         dependencyType: "engine",
         dependents: ["engines"],
         latest: "26.8.1",
-        pkg: "node",
+        packageName: "node",
         specifier: "^26.8.0",
       },
       {
@@ -35,7 +35,7 @@ describe(getRegistryOutdatedDependencies, () => {
         dependencyType: "engine",
         dependents: ["engines"],
         latest: "26.8.1",
-        pkg: "node",
+        packageName: "node",
         specifier: "^26.0.0",
       },
     ]);
@@ -45,7 +45,7 @@ describe(getRegistryOutdatedDependencies, () => {
     expect.hasAssertions();
 
     const entries: DependencyEntry[] = [
-      { followTag: "rc", group: DependencyGroup.Catalog, pkg: "a", specifier: "1.0.0-rc.0" },
+      { followTag: "rc", group: DependencyGroup.Catalog, packageName: "a", specifier: "1.0.0-rc.0" },
     ];
     vi.mocked(getLatestVersion).mockResolvedValue("1.0.0-rc.1");
 
@@ -58,7 +58,7 @@ describe(getRegistryOutdatedDependencies, () => {
         dependencyType: "rc",
         dependents: ["catalog"],
         latest: "1.0.0-rc.1",
-        pkg: "a",
+        packageName: "a",
         specifier: "1.0.0-rc.0",
       },
     ]);

@@ -5,6 +5,6 @@ import { PNPM_OUTDATED_COMMAND } from "#src/services/outdatedDependencies/pnpm/c
 // A run that answered nothing usable: the one error is attributed to the command itself, since no package can
 // Be blamed for it.
 export const getPnpmOutdatedFailure = (error: string): OutdatedDependencyCheck => ({
-  errors: [{ error, pkg: PNPM_OUTDATED_COMMAND }],
+  errors: [{ error, packageName: PNPM_OUTDATED_COMMAND }],
   outdatedDependencies: [],
 });

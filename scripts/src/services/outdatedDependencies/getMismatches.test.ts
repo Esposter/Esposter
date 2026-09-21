@@ -3,13 +3,13 @@ import { getMismatches } from "#src/services/outdatedDependencies/getMismatches"
 import { describe, expect, test } from "vitest";
 
 describe(getMismatches, () => {
-  const entries = [{ group: DependencyGroup.Catalog, pkg: "a", specifier: "^0.0.0" }];
+  const entries = [{ group: DependencyGroup.Catalog, packageName: "a", specifier: "^0.0.0" }];
 
   test("reports an entry whose specifier base differs from the resolved version", () => {
     expect.hasAssertions();
 
     expect(getMismatches(entries, new Map([["a", "0.0.1"]]))).toStrictEqual([
-      { group: DependencyGroup.Catalog, pkg: "a", resolved: "0.0.1", specifier: "^0.0.0" },
+      { group: DependencyGroup.Catalog, packageName: "a", resolved: "0.0.1", specifier: "^0.0.0" },
     ]);
   });
 

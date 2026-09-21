@@ -5,6 +5,6 @@ export interface DependencyEntry {
   // In place of `latest`
   followTag?: string;
   group: DependencyGroup;
-  pkg: string;
+  packageName: string;
   specifier: string;
 }

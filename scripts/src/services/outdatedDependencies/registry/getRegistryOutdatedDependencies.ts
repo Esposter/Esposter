@@ -29,8 +29,8 @@ export const getRegistryOutdatedDependencies = async (entries: DependencyEntry[]
       if (!entry) return;
       nextIndex += 1;
 
-      const { followTag, group, pkg, specifier } = entry;
-      await getResultAsync(() => getLatestVersion(pkg, followTag)).match(
+      const { followTag, group, packageName, specifier } = entry;
+      await getResultAsync(() => getLatestVersion(packageName, followTag)).match(
         (latest) => {
           const current = getSpecifierBase(specifier);
           const { dependencyType, dependent } = GroupMetadataMap[group];
@@ -41,12 +41,12 @@ export const getRegistryOutdatedDependencies = async (entries: DependencyEntry[]
               dependencyType: followTag ?? dependencyType,
               dependents: [dependent],
               latest,
-              pkg,
+              packageName,
               specifier,
             });
         },
         (error) => {
-          errors.push({ error: error.message, pkg });
+          errors.push({ error: error.message, packageName });
         },
       );
     }
@@ -62,11 +62,12 @@ export const getRegistryOutdatedDependencies = async (entries: DependencyEntry[]
   });
 
   return {
-    errors: errors.toSorted((left, right) => left.pkg.localeCompare(right.pkg)),
+    errors: errors.toSorted((left, right) => left.packageName.localeCompare(right.packageName)),
     outdatedDependencies: outdatedDependencies
       .toSorted(
         (left, right) =>
-          left.changeLevel - right.changeLevel || left.dependency.pkg.localeCompare(right.dependency.pkg),
+          left.changeLevel - right.changeLevel ||
+          left.dependency.packageName.localeCompare(right.dependency.packageName),
       )
       .map(({ dependency }) => dependency),
   };
