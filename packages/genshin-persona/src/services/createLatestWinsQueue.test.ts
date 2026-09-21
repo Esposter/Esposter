@@ -3,7 +3,7 @@ import { createLatestWinsQueue } from "#src/services/createLatestWinsQueue";
 import { describe, expect, test, vi } from "vitest";
 
 const getRun = (firstRun: Promise<VoiceStatus>) =>
-  vi.fn<(item: number, checkIsSuperseded: () => boolean) => Promise<VoiceStatus>>((item) =>
+  vi.fn<(item: number, readPending: () => number | undefined) => Promise<VoiceStatus>>((item) =>
     item === 0 ? firstRun : Promise.resolve(VoiceStatus.Ok),
   );
 
@@ -28,20 +28,20 @@ describe(createLatestWinsQueue, () => {
     expect(run.mock.calls[1]?.[0]).toBe(2);
   });
 
-  test("tells the item already running that a newer one is waiting on it", async () => {
+  test("lets the item already running read what is waiting on it", async () => {
     expect.hasAssertions();
 
     const { promise: firstRun, resolve: endFirstRun } = Promise.withResolvers<VoiceStatus>();
     const run = getRun(firstRun);
     const push = createLatestWinsQueue(run);
     const first = push(0);
-    const checkIsSuperseded = run.mock.calls[0]?.[1];
+    const readPending = run.mock.calls[0]?.[1];
 
-    expect(checkIsSuperseded?.()).toBe(false);
+    expect(readPending?.()).toBeUndefined();
 
     const second = push(1);
 
-    expect(checkIsSuperseded?.()).toBe(true);
+    expect(readPending?.()).toBe(1);
 
     endFirstRun(VoiceStatus.Superseded);
 

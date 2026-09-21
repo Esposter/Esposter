@@ -1,9 +1,9 @@
 import type { Card } from "#src/models/Card";
 import type { PersonaCard } from "#src/models/PersonaCard";
-import type { SessionStartOutput } from "#src/models/SessionStartOutput";
 
 import { DEFAULT_LANGUAGE, REPLY_LANGUAGE_INSTRUCTION } from "#src/services/constants";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
+import { parseJsonObject } from "#src/services/parseJsonObject";
 import { describe, expect, test } from "vitest";
 
 describe(getSessionStartOutput, () => {
@@ -56,11 +56,12 @@ describe(getSessionStartOutput, () => {
     expect.hasAssertions();
 
     const card: Card = { description: "", headline, note: "", personaCard: undefined };
-    const { hookSpecificOutput } = JSON.parse(getSessionStartOutput(card, "Japanese")) as SessionStartOutput;
+    const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, "Japanese"));
 
-    expect(hookSpecificOutput.additionalContext).toBe(
-      `Persona: ${headline}\n${REPLY_LANGUAGE_INSTRUCTION("Japanese")}`,
-    );
+    expect(hookSpecificOutput).toStrictEqual({
+      additionalContext: `Persona: ${headline}\n${REPLY_LANGUAGE_INSTRUCTION("Japanese")}`,
+      hookEventName: "SessionStart",
+    });
     expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).not.toContain(REPLY_LANGUAGE_INSTRUCTION(DEFAULT_LANGUAGE));
   });
 });

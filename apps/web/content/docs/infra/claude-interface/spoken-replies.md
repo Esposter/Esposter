@@ -117,7 +117,7 @@ A reply that cannot be spoken is not spoken, and nothing waits: that rule is unc
 
 ## What it does not do
 
-- **Read another language.** The engine is English-only, so the dub picks whose voice reads a reply and not what language it reads: `ja` clones the Japanese actor, and the actor reads English. A sentence with no Latin letter in it is not sent, because the tokenizer would return it as the near-silence the device ladder takes for a broken provider. Reading a reply in the language it is written in is the [multilingual spoken replies](/docs/proposals/infra/multilingual-spoken-replies) proposal.
+- **Read another language.** The engine is English-only, so the dub picks whose voice reads a reply and not what language it reads: `ja` clones the Japanese actor, and the actor reads English. A sentence with no Latin letter in it is not sent, because the tokenizer would return it as the near-silence the device ladder takes for a broken provider — gated per sentence, since the synthesis is, so one such sentence inside an English reply is skipped rather than walking the ladder down. Reading a reply in the language it is written in is the [multilingual spoken replies](/docs/proposals/infra/multilingual-spoken-replies) proposal.
 - **Stream inside a sentence.** A sentence is synthesized whole and vocoded once over it, so its first sample arrives after its last token. The streaming is between sentences, which is where the wait actually was; splitting a sentence into clauses to overlap further is a refinement the numbers do not yet demand.
 - **Serve the app.** It is a personal machine's process for a personal plugin; nothing in the estate knows it exists.
 - **Ship any audio.** The reference clips are fetched from the wiki to this machine and cached under the state directory, never committed, for the reason the [per-character voices](/docs/infra/claude-interface/per-character-voices) page gives.
@@ -138,7 +138,7 @@ A reply that cannot be spoken is not spoken, and nothing waits: that rule is unc
 | `packages/genshin-persona/src/services/installVoiceRuntime.ts`    | The runtime manifest and lockfile copied and `npm ci` run with scripts off                           |
 | `packages/genshin-persona/runtime/package.json`                   | The one package the engine needs, moved by Renovate like any other                                   |
 | `packages/genshin-persona/src/services/getSpokenProse.ts`         | What of a reply is spoken                                                                            |
-| `packages/genshin-persona/src/services/splitSentences.ts`         | The sentences it is read in, one synthesis each                                                      |
+| `packages/genshin-persona/src/services/splitSentences.ts`         | The sentences it is read in, one synthesis each, the ones the engine cannot read left out            |
 | `packages/genshin-persona/src/services/checkIsSilent.ts`          | Muted, or a volume of zero — no reply sent and no engine woken                                       |
 | `packages/genshin-persona/src/services/playAudio.ts`              | The stock player per desktop, awaited, and the temp file per clip it plays                           |
 | `packages/genshin-persona/src/services/constants.ts`              | The state directory's voice half, the engine's variants, the device ladder, the budgets and timeouts |

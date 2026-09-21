@@ -10,7 +10,7 @@ import { readWikiStoryLines } from "#src/services/readWikiStoryLines";
 // Authoring command's cut. The wiki that carries a character the data package has no lines for yet is English only,
 // So under any other language that character has none here and the base tips show instead — one script in the
 // Spinner rather than two
-export const readVoiceLines = async (name: string, language: string): Promise<VoiceLine[]> => {
+export const readVoiceLines = (name: string, language: string): Promise<VoiceLine[]> => {
   const genshindb = readGenshinDb();
   const resultLanguage = getCanonicalLanguage(Object.values(genshindb.Language), language);
   const voiceovers = resultLanguage
@@ -18,10 +18,12 @@ export const readVoiceLines = async (name: string, language: string): Promise<Vo
     : genshindb.voiceovers(name);
   const friendLines = voiceovers?.friendLines ?? [];
   if (friendLines.length > 0)
-    return friendLines.map(({ description, title }) => ({
-      text: getPlainLineText(description),
-      title: title.trim(),
-    }));
+    return Promise.resolve(
+      friendLines.map(({ description, title }) => ({
+        text: getPlainLineText(description),
+        title: title.trim(),
+      })),
+    );
 
-  return language === DEFAULT_LANGUAGE ? readWikiStoryLines(name) : [];
+  return language === DEFAULT_LANGUAGE ? readWikiStoryLines(name) : Promise.resolve([]);
 };

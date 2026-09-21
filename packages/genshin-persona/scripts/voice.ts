@@ -75,7 +75,7 @@ const readSpeaker = async ({ language, name, stem }: SpeechRequest) => {
 // The reading is streamed: every sentence is synthesized while the sentence before it plays, so the person hears
 // The opening of a reply instead of waiting on the whole of it, and a reply the next prompt has already replaced
 // Stops at the sentence boundary it had reached rather than reading itself out over its replacement
-const speak = async (request: SpeechRequest, checkIsSuperseded: () => boolean) => {
+const speak = async (request: SpeechRequest, readPending: () => SpeechRequest | undefined) => {
   const synthesizer = await synthesizerLoad;
   const speaker = await readSpeaker(request);
   if (!speaker) {
@@ -109,8 +109,9 @@ const speak = async (request: SpeechRequest, checkIsSuperseded: () => boolean) =
 
     await playback;
     // The last moment before this sentence is committed to the player, which is where a newer reply arriving
-    // During the synthesis or during the sentence before it is caught
-    if (checkIsSuperseded()) return VoiceStatus.Superseded;
+    // During the synthesis or during the sentence before it is caught. A warm waiting there is not a reply, and
+    // Runs once the reading ends rather than cutting it
+    if (readPending()?.type === VoiceRequestType.Speak) return VoiceStatus.Superseded;
 
     playback = play(clip);
   }
@@ -120,8 +121,8 @@ const speak = async (request: SpeechRequest, checkIsSuperseded: () => boolean) =
 };
 // A synthesis that throws drops its request and keeps the engine: one sentence the model rejects does not cost
 // A reload for the next
-const queue = createLatestWinsQueue(async (request: SpeechRequest, checkIsSuperseded: () => boolean) => {
-  const [outcome] = await Promise.allSettled([speak(request, checkIsSuperseded)]);
+const queue = createLatestWinsQueue(async (request: SpeechRequest, readPending: () => SpeechRequest | undefined) => {
+  const [outcome] = await Promise.allSettled([speak(request, readPending)]);
   if (outcome?.status === "fulfilled") return outcome.value;
 
   writeVoiceLog(`${request.type} failed: ${String(outcome?.reason)}`);
