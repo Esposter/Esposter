@@ -2,12 +2,12 @@ import { VoiceStatus } from "#src/models/VoiceStatus";
 import { createLatestWinsQueue } from "#src/services/createLatestWinsQueue";
 import { describe, expect, test, vi } from "vitest";
 
-describe(createLatestWinsQueue, () => {
-  const getRun = (firstRun: Promise<VoiceStatus>) =>
-    vi.fn<(item: number, checkIsSuperseded: () => boolean) => Promise<VoiceStatus>>((item) =>
-      item === 0 ? firstRun : Promise.resolve(VoiceStatus.Ok),
-    );
+const getRun = (firstRun: Promise<VoiceStatus>) =>
+  vi.fn<(item: number, checkIsSuperseded: () => boolean) => Promise<VoiceStatus>>((item) =>
+    item === 0 ? firstRun : Promise.resolve(VoiceStatus.Ok),
+  );
 
+describe(createLatestWinsQueue, () => {
   test("runs the newest pending item once the running one ends, and supersedes the rest", async () => {
     expect.hasAssertions();
 
@@ -25,7 +25,7 @@ describe(createLatestWinsQueue, () => {
     await expect(first).resolves.toBe(VoiceStatus.Ok);
     await expect(third).resolves.toBe(VoiceStatus.Ok);
     expect(run).toHaveBeenCalledTimes(2);
-    expect(run).toHaveBeenNthCalledWith(2, 2, expect.any(Function));
+    expect(run.mock.calls[1]?.[0]).toBe(2);
   });
 
   test("tells the item already running that a newer one is waiting on it", async () => {

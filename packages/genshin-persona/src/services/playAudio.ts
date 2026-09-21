@@ -1,7 +1,6 @@
 import type { SpawnOptions } from "node:child_process";
 
 import { spawn } from "node:child_process";
-import { randomUUID } from "node:crypto";
 import { rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -28,7 +27,7 @@ const spawnPlayer = (audioPath: string) => {
 // Player not installed, one that refused the file, or one the OS stopped, which closes with the signal it was
 // Stopped by in place of an exit status — or "" once it did, since the sound is the only other sign
 export const playAudio = async (audio: Uint8Array): Promise<string> => {
-  const audioPath = join(tmpdir(), `genshin-persona-${process.pid}-${randomUUID()}.wav`);
+  const audioPath = join(tmpdir(), `genshin-persona-${process.pid}-${crypto.randomUUID()}.wav`);
   writeFileSync(audioPath, audio);
   const { promise, resolve } = Promise.withResolvers<string>();
   const player = spawnPlayer(audioPath);
