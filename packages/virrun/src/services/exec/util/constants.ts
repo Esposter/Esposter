@@ -101,12 +101,11 @@ export const PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 10 }).
 // Leaves no margin at all, and a machine merely busy enough to cross it turns a cold boot into a "this host cannot
 // Sandbox" verdict. The bound still exists only as a hang guard for a wedged WSL service, which never answers at all.
 export const WSL_PROBE_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
-// Upper bound for a synchronous WSL-side `rm -rf` of a cache directory (removeSnapshotDirectory). Real work — an
-// Unlink of a whole node_modules closure — so it gets minutes rather than the probe's seconds, and its size is
-// Bounded by one cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p
-// Bridge fails
-// The call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents: a run that
-// Never returns and no error to explain it. See apps/web/content/docs/virrun/subprocess-timeouts.md.
+// Upper bound for a synchronous WSL-side `rm -rf` of a cache directory (removeSnapshotDirectory). Real work — an unlink
+// Of a whole node_modules closure — so it gets minutes rather than the probe's seconds, and its size is bounded by one
+// Cache entry rather than by what the run did. The bound exists only so a wedged WSL service or 9p bridge fails the
+// Call instead of blocking the CLI forever, which is exactly how an unbounded execFileSync presents: a run that never
+// Returns and no error to explain it. See apps/web/content/docs/virrun/subprocess-timeouts.md.
 export const WSL_WORK_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // Upper bound for the write-back's overlay python program (runOverlayScript). Sized apart from the work cap because
 // This is the one bound whose work scales with the run rather than with a cache entry: the diff copied back is

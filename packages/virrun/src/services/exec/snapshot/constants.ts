@@ -4,19 +4,16 @@ export const VIRRUN_SNAPSHOTS_DIRECTORY_NAME = "snapshots";
 // Layer while the deps snapshot is untouched. Host-global for the same reason snapshots are — an overlay lower can't
 // Nest inside the source tree.
 export const VIRRUN_PREPARE_DIRECTORY_NAME = "prepare";
-// Overlayfs layer names of a captured snapshot, under .virrun/snapshots/<lockfile-hash>/: `upper` is the
-// Published layer that persists the post-install writes (and doubles as a read-only lower when forking);
-// `work` is the empty scratch directory overlayfs requires alongside a writable upper. A capture/persist run writes
-// Into
-// A pid-tagged mkdtemp temp (`<base>.<pid>.<rand>`, withPidTempPrefix) and renames the upper onto its final name as
-// The atomic publish barrier.
+// Overlayfs layer names of a captured snapshot, under .virrun/snapshots/<lockfile-hash>/: `upper` is the published
+// Layer that persists the post-install writes (and doubles as a read-only lower when forking); `work` is the empty
+// Scratch directory overlayfs requires alongside a writable upper. A capture/persist run writes into a
+// Pid-tagged mkdtemp temp (`<base>.<pid>.<rand>`, withPidTempPrefix) and renames the upper onto its final name as the
+// Atomic publish barrier.
 export const VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME = "upper";
 export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
 // A published snapshot/prepare hash directory carries a `leases/<pid>` file per live run mounting it. pruneStale* keeps
-// A
-// Superseded directory while any lease pid is alive, so a concurrent run on a different lockfile hash can't evict a
-// Layer
-// Another live run is still reading. Dead-pid leases are reaped in place (acquireLease / checkHasLiveLease). The
+// A superseded directory while any lease pid is alive, so a concurrent run on a different lockfile hash can't evict a
+// Layer another live run is still reading. Dead-pid leases are reaped in place (acquireLease / checkHasLiveLease). The
 // Directory sits beside `upper`/`work`, invisible to the mount (which names only those), the reap, and the flush.
 export const VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME = "leases";
 // The reap prefixes every pid-tagged capture/persist temp starts with inside a snapshot/prepare hash directory, ordered
@@ -72,10 +69,9 @@ for root, _dirs, _files in os.walk(up):
 json.dump(entries, sys.stdout)
 `;
 // APPLY (argv: upperDirectory, hostDirectory; stdin: the ordered FlushOp[] as JSON) reconciles the plan onto the host
-// Working
-// Directory: a delete removes the host path; a copy recreates a symlink, mkdirs a directory (children arrive as their
-// Own copies), or copy2's a file (preserving mode). The plan's deletes-before-copies, parent-first ordering is enforced
-// By buildFlushPlan, so apply just executes in order.
+// Working directory: a delete removes the host path; a copy recreates a symlink, mkdirs a directory (children arrive as
+// Their own copies), or copy2's a file (preserving mode). The plan's deletes-before-copies, parent-first ordering is
+// Enforced by buildFlushPlan, so apply just executes in order.
 export const OVERLAY_APPLY_SCRIPT = `
 import json, os, shutil, sys
 up, host = sys.argv[1], sys.argv[2]

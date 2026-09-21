@@ -15,14 +15,13 @@ import { reapStaleRemoveLists } from "#src/services/exec/wsl/reapStaleRemoveList
 import { getResult, noop } from "@esposter/shared";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-// Fire-and-forget teardown for stale-cache sweeps (pruneStaleSnapshots/pruneStalePrepareLayers/
-// `reapAbandonedSourceMirrors`) — directories the current run never touches, so their removal has no bearing on
-// Correctness
-// And must not block the command from starting. A `\\wsl.localhost` snapshot's rm -rf is the expensive case: a full
-// Node_modules / .nuxt closure torn down inside WSL, and during active dev every source edit strands a superseded
-// Prepare layer that the next run would otherwise block on. spawnBackground runs it Linux-side off the 9p bridge,
-// Outliving this process. A plain win32/Linux path stays a synchronous removeSnapshotDirectory: local fs teardown is
-// Cheap, and keeping it synchronous keeps the sweep deterministic for tests and needs no extra process.
+// Fire-and-forget teardown for stale-cache sweeps (pruneStaleSnapshots / pruneStalePrepareLayers /
+// reapAbandonedSourceMirrors) — directories the current run never touches, so their removal has no bearing on
+// Correctness and must not block the command from starting. A `\\wsl.localhost` snapshot's rm -rf is the expensive
+// Case: a full node_modules / .nuxt closure torn down inside WSL, and during active dev every source edit strands a
+// Superseded prepare layer that the next run would otherwise block on. spawnBackground runs it Linux-side off the 9p
+// Bridge, outliving this process. A plain win32/Linux path stays a synchronous removeSnapshotDirectory: local fs
+// Teardown is cheap, and keeping it synchronous keeps the sweep deterministic for tests and needs no extra process.
 //
 // However many directories a sweep finds, it is ONE wsl.exe launch: the paths go into a null-delimited list file the
 // Script reads through `xargs -0`, never into the argv. Each launch costs a service RPC and a relay process, so a
@@ -38,8 +37,7 @@ import { join } from "node:path";
 //
 // Best-effort throughout: a local removal that throws (a file the host still has open) must not cost the remaining
 // Directories their teardown, so each is guarded rather than the batch, and the staging + launch is guarded as a whole
-// —
-// The sweep runs off the critical path for directories this run never touches, so its failure must never fail the
+// — the sweep runs off the critical path for directories this run never touches, so its failure must never fail the
 // User's command. A sweep that stages nothing simply happens again next run.
 export const removeSnapshotDirectoriesDetached = (directories: readonly string[]): void => {
   const linuxDirectories: string[] = [];

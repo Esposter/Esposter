@@ -7,9 +7,8 @@ import { join } from "node:path";
 // Walk a hash directory's `leases/`, dropping every lease whose owner pid has died (a hard-killed run never released
 // Its own), and report whether any live lease remains — the signal pruneStale* uses to spare a superseded layer another
 // Run is still reading, and acquireLease uses to self-heal the live directory the prune never sweeps. Best-effort: an
-// Absent
-// Directory (readdir errors) reads as "no live lease", and a failed file removal just leaves a corpse the next pass
-// Reaps.
+// Absent directory (readdir errors) reads as "no live lease", and a failed file removal just leaves a corpse the next
+// Pass reaps.
 export const reapDeadLeases = (leasesDirectory: string): boolean => {
   const entries = getResult(() => readdirSync(leasesDirectory)).unwrapOr([]);
   let isLeaseLive = false;

@@ -10,9 +10,8 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 // Resolves a repo's warm-snapshot address (environment-keyed: lockfile digest + sandbox node major, host-global)
 // Without materializing anything. It lives outside the repo because the fork run stacks this directory as an overlay
-// Lower
-// Beside the source, and overlayfs rejects a lower that nests inside another. `exists` reflects whether the upper has
-// Been captured.
+// Lower beside the source, and overlayfs rejects a lower that nests inside another. `exists` reflects whether the upper
+// Has been captured.
 export const resolveSnapshotLocation = (cwd: string): SnapshotLocation => {
   const hash = computeEnvironmentKey(cwd);
   const snapshotDirectory = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME, hash);

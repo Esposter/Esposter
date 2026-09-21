@@ -15,11 +15,10 @@ export const createWslBwrapArgs = (
     overlayLayers,
   }: Pick<ExecOptions, "bindDirectories" | "isNetworkEnabled" | "overlayLayers"> = {},
 ): string[] => {
-  // Split the overlay's source from its mountpoint. The read-only source lower is the ext4 MIRROR (the sync script
-  // `createWslOsBackend` folds ahead of bwrap brings it up to date, so reads hit native ext4, not v9fs), but the
-  // Sandbox
-  // Mounts it at — and chdir's into — the repo's logical /mnt/c path, so `pwd` and every absolute path a tool emits
-  // Match the native baseline instead of leaking the mirror's `/home/.../sources/<hash>` path (this is what the
+  // Split the overlay's source from its mountpoint. The read-only source lower is the ext4 MIRROR (the sync
+  // Script `createWslOsBackend` folds ahead of bwrap brings it up to date, so reads hit native ext4, not v9fs), but the
+  // Sandbox mounts it at — and chdir's into — the repo's logical /mnt/c path, so `pwd` and every absolute path a tool
+  // Emits match the native baseline instead of leaking the mirror's `/home/.../sources/<hash>` path (this is what the
   // Working-directory differential pins). Pure — the path is deterministic and the mirror content is the folded
   // Script's job, so building args stays spawn-free.
   const mirrorDirectory = getWslSourceMirrorPath(resolveCwd(cwd));

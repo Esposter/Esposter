@@ -29,9 +29,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const state = vi.hoisted(() => ({ cacheRoot: "", unarchivedPaths: [] as string[] }));
 // The "UNC" cache root is just a real temp directory here, so the planner's host-side staging/reads — including the
-// Real
-// Host `tar` spawn building the archive — exercise real fs; the same TEST_WSL_PREFIX transform the sibling wsl tests
-// Use derives the Linux-side paths embedded in the script.
+// Real host `tar` spawn building the archive — exercise real fs; the same TEST_WSL_PREFIX transform the sibling wsl
+// Tests use derives the Linux-side paths embedded in the script.
 vi.mock(import("#src/services/exec/wsl/getWslNativeCacheRoot"), () => ({
   getWslNativeCacheRoot: () => state.cacheRoot,
 }));

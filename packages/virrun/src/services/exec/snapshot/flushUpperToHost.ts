@@ -1,10 +1,10 @@
 import { applyFlushPlan } from "#src/services/exec/snapshot/applyFlushPlan";
 import { buildHostFlushPlan } from "#src/services/exec/snapshot/buildHostFlushPlan";
 // Reconcile a persist run's overlay upper onto the host (apps/web/content/docs/virrun/write-back.md): build the plan,
-// Then apply it.
-// `persistRun` inlines the two halves so it can reuse the plan for the task cache; this is the single-call entry point.
-// `maskedPaths` (an environment's prepare outputs, plus the source-mirror excludes on win32) are masked from the
-// Flush like node_modules — owned by a layer or by the host alone, never written back from the sandbox.
+// Then apply it. `persistRun` inlines the two halves so it can reuse the plan for the task cache; this is the
+// Single-call entry point. `maskedPaths` (an environment's prepare outputs, plus the source-mirror excludes on win32)
+// Are masked from the flush like node_modules — owned by a layer or by the host alone, never written back from the
+// Sandbox.
 export const flushUpperToHost = (
   upperDirectory: string,
   hostDirectory: string,

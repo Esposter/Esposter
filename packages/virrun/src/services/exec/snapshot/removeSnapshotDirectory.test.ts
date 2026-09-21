@@ -23,9 +23,8 @@ describe(removeSnapshotDirectory, () => {
   // A snapshot leaf on the distro's ext4 (`/home/user/.virrun/snapshots/<hash>/upper`); `h` is a stand-in hash.
   const linuxDirectory = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SNAPSHOTS_DIRECTORY_NAME}/h/${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}`;
   // The WSL-side teardown removeSnapshotDirectory shells out for a UNC snapshot directory: chmod traversable, then rm
-  // -rf.
-  // Paths are passed as positional args, never interpolated, so a quote in one can't break the shell quoting — and the
-  // Bound is the work timeout, not the probe's: unlinking a node_modules closure is minutes of real work, while an
+  // -rf. Paths are passed as positional args, never interpolated, so a quote in one can't break the shell quoting — and
+  // The bound is the work timeout, not the probe's: unlinking a node_modules closure is minutes of real work, while an
   // Unbounded call against a wedged WSL service would never return at all.
   const expectWslRemoval = (timeoutMs: number = WSL_WORK_TIMEOUT_MS) => {
     expect(execFileSync).toHaveBeenCalledExactlyOnceWith(

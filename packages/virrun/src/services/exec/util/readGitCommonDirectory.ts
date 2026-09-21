@@ -8,13 +8,11 @@ import { lstatSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 // Where this tree's git bookkeeping lives: `.git` is that directory in a normal checkout, and a file pointing at
 // Another git directory otherwise — `<commonDirectory>/worktrees/<name>` when the tree is a linked worktree,
-// `<super>/.git/
-// Modules/<name>` when it is a submodule. Which of the two it is, and therefore where the repository's single
-// Worktree registry sits, is a fact git records rather than one the path's shape can be read for: only a worktree's
-// Git directory carries a `commondir`. Stripping two levels unconditionally is right for `worktrees/<name>` and wrong
-// For
-// A submodule, whose git directory IS the common directory — resolving it to the superproject's `.git` reads that
-// Registry instead, finds none of the submodule's own worktrees, and mirrors every one of them as source.
+// `<super>/.git/modules/<name>` when it is a submodule. Which of the two it is, and therefore where the repository's
+// Single worktree registry sits, is a fact git records rather than one the path's shape can be read for: only a
+// Worktree's git directory carries a `commondir`. Stripping two levels unconditionally is right for `worktrees/<name>`
+// And wrong for a submodule, whose git directory IS the common directory — resolving it to the superproject's `.git`
+// Reads that registry instead, finds none of the submodule's own worktrees, and mirrors every one of them as source.
 export const readGitCommonDirectory = (root: string): string | undefined => {
   const gitPath = join(root, GIT_DIRECTORY);
   const stats = getResult(() => lstatSync(gitPath)).unwrapOr(undefined);
@@ -29,11 +27,9 @@ export const readGitCommonDirectory = (root: string): string | undefined => {
     // Registry", so every nested worktree silently mirrors again.
     const gitDirectory = resolve(root, gitdir.slice(GIT_WORKTREE_GITDIR_PREFIX.length).trim());
     // `commondir` is itself resolved against the git directory holding it (git writes `../..` for a worktree entry).
-    // Absent,
-    // The git directory is its own common directory — the submodule case, and the only reading that does not guess: a
-    // Worktree
-    // Entry git has not finished writing yields no registry, which mirrors a tree we needn't rather than reading the
-    // Wrong repository's.
+    // Absent, the git directory is its own common directory — the submodule case, and the only reading that does not
+    // Guess: a worktree entry git has not finished writing yields no registry, which mirrors a tree we needn't rather
+    // Than reading the wrong repository's.
     const commonDirectory = getResult(() => readFileSync(join(gitDirectory, GIT_COMMON_DIRECTORY_FILENAME), "utf8"))
       .unwrapOr("")
       .trim();

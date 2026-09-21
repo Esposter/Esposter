@@ -12,10 +12,10 @@ import { readWslEnvironmentCache } from "#src/services/exec/wsl/readWslEnvironme
 // The node check is what actually closes the toolchain-switch hole the age bound only narrows: the key is
 // `platform:kernel-release`, so a node manager moving to a new version leaves a capture that is the right host's, is
 // Minutes old, and points every sandbox at an install the user just deleted — a PATH resolution walks past into
-// Whatever answers next. Asking the filesystem costs one stat over the 9p bridge and cannot be fooled by any of it; a capture
-// That fails it falls through to a fresh probe exactly like an absent one, so the recovery is the next run, not a
-// Manual clean. Only a capture holding a usable node is ever persisted (readWslLoginEnvironment's `shouldPersist`), so
-// `nodeDirectory` is always a real claim to check rather than sometimes "".
+// Whatever answers next. Asking the filesystem costs one stat over the 9p bridge and cannot be fooled by any of it; a
+// Capture that fails it falls through to a fresh probe exactly like an absent one, so the recovery is the next run, not
+// A manual clean. Only a capture holding a usable node is ever persisted (readWslLoginEnvironment's `shouldPersist`),
+// So `nodeDirectory` is always a real claim to check rather than sometimes "".
 export const readWslLoginEnvironmentCache = (key: string): undefined | WslLoginEnvironment => {
   const cache = readWslEnvironmentCache(
     WSL_LOGIN_ENVIRONMENT_CACHE_FILENAME,

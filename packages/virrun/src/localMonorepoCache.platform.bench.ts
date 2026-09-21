@@ -116,7 +116,8 @@ afterAll(() => {
   if (!isBenchable) return;
   restoreCacheHome();
   // `removeSnapshotDirectory` (not rmSync) handles the mode-000 overlay work directory and, on win32, the
-  // `\\wsl.localhost` UNC teardown. Safe unconditionally: these homes are bench-owned leaves, never the developer's real cache.
+  // `\\wsl.localhost` UNC teardown. Safe unconditionally: these homes are bench-owned leaves, never the developer's
+  // Real cache.
   removeSnapshotDirectory(COLD_HOME);
   removeSnapshotDirectory(SNAPSHOT_HOME);
   // The checkout is a plain $HOME-staged directory (no overlay internals); rmSync clears it and its warm store.

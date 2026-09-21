@@ -108,12 +108,11 @@ export const createWslSourceMirrorSync = (cwd: string, excludes: readonly string
     mkdirSync(entryUnc, { recursive: true });
     // The abandonment reaper can only reclaim an entry it can attribute, so the origin marker is published the moment
     // The entry directory exists rather than at the end of a successful sync: a materialize that dies midway (a killed
-    // Run,
-    // A failed archive) would otherwise leave an unattributable directory no sweep may ever touch, and those corpses
-    // Accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp
-    // Directories.
-    // The publish is best-effort (publishSourceMirrorOrigin), which every planning pass makes safe by republishing
-    // A missing marker — including the no-delta early return above, the path a live repo takes on nearly every run
+    // Run, a failed archive) would otherwise leave an unattributable directory no sweep may ever touch, and those
+    // Corpses accumulate for the life of the machine — gigabytes of ext4 on a box whose test suite runs virrun in temp
+    // Directories. The publish is best-effort (publishSourceMirrorOrigin), which every planning pass makes safe by
+    // Republishing a missing marker — including the no-delta early return above, the path a live repo takes on nearly
+    // Every run
     publishSourceMirrorOrigin(entryUnc, cwd);
     const copyPaths = delta === undefined ? Object.keys(manifest).toSorted() : delta.copyPaths;
     const consumedPaths: string[] = [];

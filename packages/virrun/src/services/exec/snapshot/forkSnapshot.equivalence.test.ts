@@ -15,12 +15,11 @@ import { setupWarmSnapshotSuite } from "#src/services/exec/test/setupWarmSnapsho
 import { describe, expect, test } from "vitest";
 
 // Correctness layer 4 snapshot/fork equivalence (apps/web/content/docs/virrun/correctness.md): a forked warm sandbox
-// Must be observably identical to a freshly booted + installed one. The only variable is how the dependency closure
-// Is presented —
-// Warm fork (frozen overlay upper stacked read-only) vs cold in-place install. Install output is discarded so only
-// The verify command's output is diffed; nothing is normalized, so no real divergence can hide.
-// Each case boots a sandbox and runs a full cold install, so the pair costs minutes of wall clock — too slow for
-// The default suite. The body is kept intact; drop the `.todo` to run it when the fork or overlay layering changes.
+// Must be observably identical to a freshly booted + installed one. The only variable is how the dependency closure is
+// Presented — warm fork (frozen overlay upper stacked read-only) vs cold in-place install. Install output is discarded
+// So only the verify command's output is diffed; nothing is normalized, so no real divergence can hide. Each case boots
+// A sandbox and runs a full cold install, so the pair costs minutes of wall clock — too slow for the default suite. The
+// Body is kept intact; drop the `.todo` to run it when the fork or overlay layering changes.
 describe.todo("forkSnapshot - warm fork matches a cold in-place install (equivalence)", () => {
   const { getBackend, getCorpus } = setupWarmSnapshotSuite();
   const runWarmVsCold = async (command: string, warmOptions: ExecOptions, coldOptions: ExecOptions) => {
@@ -59,21 +58,18 @@ describe.todo("forkSnapshot - warm fork matches a cold in-place install (equival
   );
 
   // The pre-run dependency verification pnpm does may auto-install inside the sandbox and fail when writing bin shims
-  // Into the
-  // Overlay upper (ENOENT node_modules/.bin/*). A warm fork resolves the binary from the frozen snapshot instead.
+  // Into the overlay upper (ENOENT node_modules/.bin/*). A warm fork resolves the binary from the frozen snapshot
+  // Instead.
   test(
     "a forked warm `pnpm exec` runs over the frozen deps without re-installing and matches a cold install",
     async () => {
       expect.hasAssertions();
 
       // Corepack pnpm (not the raw binary find the case above uses) so the run actually traverses
-      // Verify-deps-before-run,
-      // Then `node --version` as the payload — a command pnpm exec always resolves off PATH, so a non-zero exit means
-      // The
-      // Pre-run verification tripped an install, not a missing hoisted bin. createOsInstallOptions binds the corepack
-      // Home
-      // Both sides need to resolve `corepack pnpm`. ESBUILD_VERSION_REGEX is a bare semver, so it matches node's
-      // `vX.Y.Z`.
+      // `verify-deps-before-run`, then `node --version` as the payload — a command pnpm exec always resolves off PATH, so
+      // A non-zero exit means the pre-run verification tripped an install, not a missing hoisted
+      // Bin. createOsInstallOptions binds the corepack home both sides need to resolve `corepack pnpm`.
+      // ESBUILD_VERSION_REGEX is a bare semver, so it matches node's `vX.Y.Z`.
       const execCommand = "corepack pnpm exec node --version";
       const { coldResult, warmResult } = await runWarmVsCold(
         execCommand,

@@ -13,11 +13,9 @@ import { join, relative } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 // Git's own bookkeeping for one linked worktree, both halves of it: `<commonDirectory>/worktrees/<name>/gitdir` holds
-// The
-// Path of that worktree's `.git` file (whose parent is the worktree root), that git directory records the common
-// Directory it
-// Belongs to, and the worktree's `.git` file points back at the entry. `gitdirRecord` overrides only the outward
-// Record, for the relative-path form git writes under `worktree.useRelativePaths`.
+// The path of that worktree's `.git` file (whose parent is the worktree root), that git directory records the common
+// Directory it belongs to, and the worktree's `.git` file points back at the entry. `gitdirRecord` overrides only the
+// Outward record, for the relative-path form git writes under `worktree.useRelativePaths`.
 const registerWorktree = (commonDirectory: string, name: string, worktreeRoot: string, gitdirRecord = ""): void => {
   const entryDirectory = join(commonDirectory, GIT_WORKTREES_DIRECTORY_NAME, name);
   mkdirSync(entryDirectory, { recursive: true });

@@ -11,9 +11,8 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // Correctness layer 4 write-back equivalence (apps/web/content/docs/virrun/write-back.md): a persist run leaves the
 // Host disk exactly as the same command run natively would. One overlay-entry kind per case; one warm snapshot reused
-// Across cases.
-// Each case boots a sandbox and installs, so the suite costs minutes of wall clock — too slow for the default
-// Suite. The body is kept intact; drop the `.todo` to run it when the write-back or flush path changes.
+// Across cases. Each case boots a sandbox and installs, so the suite costs minutes of wall clock — too slow for the
+// Default suite. The body is kept intact; drop the `.todo` to run it when the write-back or flush path changes.
 describe.todo("persistRun - flushes produced files but never node_modules (write-back equivalence)", () => {
   // Stands in for any path the sandbox's source view lacks — on win32 a mirror exclude, e.g. a linked worktree root.
   const MASKED_PATH = "b/c";

@@ -7,12 +7,10 @@ import { getResult, noop } from "@esposter/shared";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 // Take a live-user lease on a snapshot/prepare hash directory by writing `leases/<pid>`, so a concurrent run on a
-// Different
-// Lockfile hash can't prune this layer while we read it (pruneStale* checks checkHasLiveLease). Reaps any dead-pid
-// Lease
-// First — the live directory is never swept by the prune, so acquiring is where its hard-kill corpses die. The returned
-// Handle's release() drops the lease on dispose (best-effort — a failed removal leaves a dead-pid corpse the next pass
-// Reaps); a hard kill skips release entirely and the dead-pid reap reclaims it.
+// Different lockfile hash can't prune this layer while we read it (pruneStale* checks checkHasLiveLease). Reaps any
+// Dead-pid lease first — the live directory is never swept by the prune, so acquiring is where its hard-kill corpses
+// Die. The returned Handle's release() drops the lease on dispose (best-effort — a failed removal leaves a dead-pid
+// Corpse the next pass reaps); a hard kill skips release entirely and the dead-pid reap reclaims it.
 export const createLease = (hashDirectory: string): Lease => {
   const leasesDirectory = join(hashDirectory, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME);
   mkdirSync(leasesDirectory, { recursive: true });
