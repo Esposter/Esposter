@@ -182,7 +182,7 @@ catalog:
   link-preview-js: ^5.0.0
   linkifyjs: ^4.3.3
   livekit-client: ^2.22.3
-  livekit-server-sdk: ^2.19.0
+  livekit-server-sdk: ^2.19.1
   lodash-omitdeep: ^1.10.1
   lowlight: ^3.3.0
   marked: ^18.0.13
