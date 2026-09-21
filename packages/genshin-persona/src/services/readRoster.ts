@@ -7,10 +7,10 @@ import { readGenshinDbVersion } from "#src/services/readGenshinDbVersion";
 import { readRosterCache } from "#src/services/readRosterCache";
 import { writeRosterCache } from "#src/services/writeRosterCache";
 
-// Loading the game-data package costs the better part of a second, and each query it then answers costs a couple of
-// Milliseconds — so the roster is read once per installed version and interface language and kept beside the
-// Plugin's other state. Both are in the cache's name, so a dependency bump and a change of language each invalidate
-// It by themselves: nothing is generated, nothing is checked in, and no step is added to a bump.
+// The roster is read once per installed version and interface language and kept beside the plugin's other state,
+// Since loading the game-data package is the cost `readGenshinDb` names. Both are in the cache's name, so a
+// Dependency bump and a change of language each invalidate it by themselves: nothing is generated, nothing is
+// Checked in, and no step is added to a bump.
 //
 // Two queries rather than one: the English records are the identity every state file and every lookup is keyed by,
 // And the localized records are what is read. The second asks by the English names, so a character is the same

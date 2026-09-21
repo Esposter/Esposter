@@ -8,7 +8,7 @@ import { readCardedRoster } from "#src/services/readCardedRoster";
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 
 // The one place the plugin waits on a network, one attempt with a short ceiling: a start that cannot reach the
-// Tier has the birthday pick to fall back on, never the failure card, and a settled promise is how a rejection
+// Tier has the birthday pick to fall back on, and a settled promise is how a rejection
 // Is read without a try — read to stderr, so the fallback leaves a record of why it was taken. The choice is a
 // Preference, so the answer is taken however spread its probabilities: a confidence floor guards an action, and
 // Nothing here acts

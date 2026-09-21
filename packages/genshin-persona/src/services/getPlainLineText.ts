@@ -13,6 +13,7 @@ const stripWikiMarkup = (text: string): string => {
     previous = stripped;
     stripped = stripped.replaceAll(WIKI_MARKUP_REGEX, "");
   }
+
   return stripped;
 };
 
