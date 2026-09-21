@@ -1,5 +1,4 @@
 import type { Character } from "#src/models/Character";
-import type { VoiceLanguage } from "#src/models/VoiceLanguage";
 
 import { GenshinVerb } from "#src/models/GenshinVerb";
 import { VoiceRequestType } from "#src/models/VoiceRequestType";
@@ -34,6 +33,7 @@ import { findCharacterByName } from "#src/services/findCharacterByName";
 import { formatCard } from "#src/services/formatCard";
 import { getCanonicalLanguage } from "#src/services/getCanonicalLanguage";
 import { getCard } from "#src/services/getCard";
+import { getLanguageDisplayName } from "#src/services/getLanguageDisplayName";
 import { getSettingsWithoutPluginEntries } from "#src/services/getSettingsWithoutPluginEntries";
 import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLine";
 import { getSpeechRequest } from "#src/services/getSpeechRequest";
@@ -81,6 +81,8 @@ const compareVersionsDescending = (a: Character, b: Character) =>
   b.version.localeCompare(a.version, undefined, { numeric: true }) || a.name.localeCompare(b.name);
 // Set in every Bash tool subprocess, so a verb the model runs knows the session it runs in; empty from a shell
 const sessionId = process.env[SESSION_ID_ENVIRONMENT_VARIABLE] ?? "";
+// The language is read again rather than closed over, because the `language` verb changes it and then prints the
+// Card: the card a verb prints is always in the language in force at the end of that verb
 const printCard = async (character: Character) => {
   const localization = await readLocalization(readInterfaceLanguage());
   const card = getCard(character, today, localization, await readPersonaCard(character.name));
@@ -99,24 +101,56 @@ const getCurrentCharacter = () => {
 // Start, the status line and the speech hook agree, and the spinner follows where `setup` opted it in. The record
 // Carries the name the interface language spells them by, so a change of language rewrites it the same way
 const switchSessionCharacter = async (character: Character) => {
+  // Read again for the reason `printCard` gives
   const currentLanguage = readInterfaceLanguage();
   recordSessionCharacter(character, sessionId, today.toString());
   await writeSessionSpinner(character, await readPersonaCard(character.name), currentLanguage);
   await printCard(character);
 };
 
+// Every knob in one read, for the verbs that report rather than change: the status verb, and either language verb
+// Given no argument
+const getStatusReport = async () => {
+  const pin = readPin();
+  const character = sessionId ? await resolveSessionCharacter(roster, sessionId, today) : undefined;
+  const replyLanguage = readReplyLanguage();
+  const settings = readUserSettings();
+  return {
+    displayName: character?.displayName ?? pin?.displayName ?? "",
+    interfaceLanguage: getLanguageDisplayName(language, language),
+    isFromSessionRecord: Boolean(character),
+    isMuted: checkIsMuted(),
+    isPluginSpinner: checkIsPluginSpinner(settings),
+    isPluginStatusLine: checkIsPluginStatusLine(settings.statusLine),
+    isReplyLanguageCascaded: !replyLanguage,
+    isRuntimeInstalled: checkIsRuntimeInstalled(),
+    pinnedName: pin?.name ?? "",
+    replyLanguage: getLanguageDisplayName(replyLanguage ?? language, language),
+    voiceDevice: readVoiceDevice() ?? "",
+    voiceLanguage: readVoiceLanguage(),
+    volume: readVolume(),
+  };
+};
+
 switch (verb) {
   case GenshinVerb.Language: {
     const languageNames = readLanguageNames();
+    // Each language is offered in its own words beside the word a person types for it, and either resolves
+    const offered = languageNames
+      .map((languageName) => {
+        const ownName = getLanguageDisplayName(languageName, languageName);
+        return ownName === languageName ? languageName : `${languageName} (${ownName})`;
+      })
+      .join(", ");
     if (!name) {
       console.log(strings.status(await getStatusReport()));
-      console.log(strings.languageMustBeOneOf(languageNames.join(", ")));
+      console.log(strings.languageMustBeOneOf(offered));
       break;
     }
 
     const canonicalLanguage = getCanonicalLanguage(languageNames, name);
     if (!canonicalLanguage) {
-      console.error(strings.languageMustBeOneOf(languageNames.join(", ")));
+      console.error(strings.languageMustBeOneOf(offered));
       process.exitCode = 1;
       break;
     }
@@ -135,18 +169,16 @@ switch (verb) {
     const pin = readPin();
     const pinnedCharacter = findCharacterByName(localizedRoster, pin?.name ?? "");
     if (pinnedCharacter) writePin(pinnedCharacter);
-    console.log(localizedStrings.interfaceLanguageSet(canonicalLanguage));
+    console.log(localizedStrings.interfaceLanguageSet(getLanguageDisplayName(canonicalLanguage, canonicalLanguage)));
     // A multi-gigabyte download is never a side effect of a labels setting, so the dub is reported on and left
-    // Alone: whether one of this language exists, and never an install
-    const matchingDub = Object.entries(VoiceLanguageNameMap).find(
-      ([, languageName]) => languageName === canonicalLanguage,
-    );
+    // Alone. Three states and three answers: no dub of this language, one that is not installed, and one that
+    // Already is — which is the quiet case, since there is nothing for the person to do about it
+    const [matchingDub] =
+      Object.entries(VoiceLanguageNameMap).find(([, languageName]) => languageName === canonicalLanguage) ?? [];
     if (canonicalLanguage !== DEFAULT_LANGUAGE)
-      console.log(
-        matchingDub && matchingDub[0] !== readVoiceLanguage()
-          ? localizedStrings.voiceLanguageAvailable(matchingDub[0])
-          : localizedStrings.voiceLanguageUnavailable,
-      );
+      if (!matchingDub) console.log(localizedStrings.voiceLanguageUnavailable);
+      else if (matchingDub !== readVoiceLanguage()) console.log(localizedStrings.voiceLanguageAvailable(matchingDub));
+
     if (character) await printCard(character);
     break;
   }
@@ -197,7 +229,7 @@ switch (verb) {
     // The canonical spelling is taken where it names one of them, so the common case reads as the language verb's
     const replyLanguage = getCanonicalLanguage(readLanguageNames(), name) ?? name;
     writeReplyLanguage(replyLanguage);
-    console.log(strings.replyLanguageSet(replyLanguage));
+    console.log(strings.replyLanguageSet(getLanguageDisplayName(replyLanguage, language)));
     if (replyLanguage !== DEFAULT_LANGUAGE && readVoiceLanguage()) console.log(strings.replyLanguageSilencesVoice);
     break;
   }
@@ -257,9 +289,9 @@ switch (verb) {
   case GenshinVerb.Untranslated: {
     // The queue the language modules are filled from, the way `unverbed` is the queue the cards' verbs are: who has
     // No gerunds in this language. English reads them off the cards, so it is never behind
-    const { characterVerbs } = await readLocalization(language);
     if (language === DEFAULT_LANGUAGE) break;
 
+    const { characterVerbs } = await readLocalization(language);
     for (const character of roster
       .filter(({ name: characterName }) => !characterVerbs[characterName])
       .toSorted(compareVersionsDescending))
@@ -365,30 +397,4 @@ switch (verb) {
   default:
     console.error(strings.usage(Object.values(GenshinVerb).join(" | ")));
     process.exitCode = 1;
-}
-
-// Every knob in one read, for the verbs that report rather than change: the status verb, and either language verb
-// Given no argument. Declared after the switch because a function declaration is hoisted and this keeps the verbs
-// Themselves at the top of the file
-async function getStatusReport() {
-  const pin = readPin();
-  const character = sessionId ? await resolveSessionCharacter(roster, sessionId, today) : undefined;
-  const replyLanguage = readReplyLanguage();
-  const settings = readUserSettings();
-  const voiceLanguage: undefined | VoiceLanguage = readVoiceLanguage();
-  return {
-    displayName: character?.displayName ?? pin?.displayName ?? "",
-    interfaceLanguage: language,
-    isFromSessionRecord: Boolean(character),
-    isMuted: checkIsMuted(),
-    isPluginSpinner: checkIsPluginSpinner(settings),
-    isPluginStatusLine: checkIsPluginStatusLine(settings.statusLine),
-    isReplyLanguageCascaded: !replyLanguage,
-    isRuntimeInstalled: checkIsRuntimeInstalled(),
-    pinnedName: pin?.name ?? "",
-    replyLanguage: replyLanguage ?? language,
-    voiceDevice: readVoiceDevice() ?? "",
-    voiceLanguage,
-    volume: readVolume(),
-  };
 }

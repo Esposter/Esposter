@@ -4,7 +4,8 @@ import { describe, expect, test } from "vitest";
 describe(getCanonicalLanguage, () => {
   const languageNames = ["English", "Japanese", "ChineseSimplified"];
 
-  test.each(["Japanese", "japanese", "JAPANESE", "jApAnEsE"])(
+  // The verbs print each language in its own words as well as the package's, so both are typeable
+  test.each(["Japanese", "japanese", "JAPANESE", "jApAnEsE", "日本語"])(
     "%j answers the spelling the data package uses",
     (name) => {
       expect.hasAssertions();

@@ -108,6 +108,28 @@ export const LORE_MOMENT_LOCALE = "en-AU";
 // The language every reader falls back to: the one the data package answers in unasked, and the one our own words
 // Are written in
 export const DEFAULT_LANGUAGE = "English";
+// The BCP-47 tag of each language the data package names, which is the one thing about a language it does not
+// Carry and `Intl.DisplayNames` needs: with it every language is named in its own words, and in any other
+// Language's. A language added by a later version and missing here is named by the package's own English word for
+// It, which is also what a person types, so nothing breaks while the row is added
+export const LanguageLocaleMap: Record<string, string> = {
+  ChineseSimplified: "zh-Hans",
+  ChineseTraditional: "zh-Hant",
+  English: "en",
+  French: "fr",
+  German: "de",
+  Indonesian: "id",
+  Italian: "it",
+  Japanese: "ja",
+  Korean: "ko",
+  Portuguese: "pt",
+  Russian: "ru",
+  Spanish: "es",
+  Thai: "th",
+  Turkish: "tr",
+  Vietnamese: "vi",
+};
+
 // The community wiki: the source of a character's lines before the game-data package carries them, and of the
 // Clip a character's voice is cloned from
 export const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
