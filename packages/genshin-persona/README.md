@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-A Claude Code plugin that speaks as a Genshin Impact character picked at session start — by lore through a typed decision when you give it a TypeSafe key, by the nearest birthday otherwise — in prose only, never in code, commits or error text, and reads the first sentence of each reply aloud in the character's own cloned voice, by an engine that runs on your machine.
+A Claude Code plugin that speaks as a Genshin Impact character picked at session start — by lore through a typed decision when you give it a TypeSafe key, by the nearest birthday otherwise — in prose only, never in code, commits or error text, and reads each reply aloud in the character's own cloned voice, a sentence at a time so the reading starts before the reply is finished generating, by an engine that runs on your machine.
 
 ## Table of Contents
 
@@ -87,7 +87,7 @@ The command reads the session id Claude Code sets in every Bash subprocess and r
 
 ### Spoken replies
 
-The Stop hook hands each reply's first sentence to a resident synthesizer — one process per machine that holds the loaded engine, woken by the session-start hook so the first reply is warm, and gone again after half an hour idle. `mute` and `unmute` decide whether the hook asks it at all. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
+The Stop hook hands each reply's prose to a resident synthesizer — one process per machine that holds the loaded engine, woken by the session-start hook so the first reply is warm, and gone again after half an hour idle — which reads it one sentence at a time, playing each while the next is generated. `mute` and `unmute` decide whether the hook asks it at all, and so does a `volume` of zero, which is silence the engine should not be woken for. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
 
 ```bash
 node "<plugin root>/scripts/genshin.ts" volume 60     # or: /genshin-persona:volume 60

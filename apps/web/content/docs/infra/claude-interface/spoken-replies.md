@@ -1,6 +1,6 @@
 ---
 title: Spoken replies
-description: Stages 2 and 3 of the Claude interface as built — an asynchronous Stop hook that hands each reply's first sentence to a resident synthesizer on this machine, which reads it in the character's own cloned voice through Chatterbox on the first device that speaks; the voice verb that installs the engine into the plugin's state directory; and the gate that keeps a machine without one silent.
+description: Stages 2 and 3 of the Claude interface as built — an asynchronous Stop hook that hands each reply's prose to a resident synthesizer on this machine, which reads it a sentence at a time in the character's own cloned voice through Chatterbox on the first device that speaks, playing each sentence while the next is generated; the voice verb that installs the engine into the plugin's state directory; and the gates that keep a machine without one, or a session that would hear nothing, from doing the work at all.
 ---
 
 # Spoken replies
@@ -11,10 +11,10 @@ Stage 2 shipped first through an Azure Speech free-tier account and a catalogue 
 
 ## How it works
 
-1. **The Stop hook** — asynchronous, so the prompt never waits — takes the reply text, strips code blocks, tables and markup, keeps the first sentence, and sends one JSON line over a local socket: the session's character, the line their voice is cloned from, the dub, the sentence and the volume. It reads who the session speaks as from what the session start already recorded, never by picking again.
-2. **The resident synthesizer** — one process per machine, spawned detached by whichever hook finds no server listening — holds the loaded engine. It binds the socket before the engine loads, so a second hook finds the address taken rather than loading a second engine, and a request arriving during the load waits for it. Per request it fetches the character's reference clip on first use, encodes it once per process, synthesizes the sentence, checks that what came back is speech, applies the volume as a gain on the samples, and plays the WAV through the desktop's stock player with its window hidden. It keeps **one pending request**: a reply that lands while a sentence is being synthesized replaces any reply still waiting, and playback in progress finishes. Idle for half an hour, it exits and frees the GPU.
+1. **The Stop hook** — asynchronous, so the prompt never waits — takes the reply text, strips code blocks, tables and markup, and sends what prose is left over a local socket as one JSON line: the session's character, the line their voice is cloned from, the dub, the prose and the volume. The whole of the prose, because the reading is streamed rather than waited on. It reads who the session speaks as from what the session start already recorded, never by picking again.
+2. **The resident synthesizer** — one process per machine, spawned detached by whichever hook finds no server listening — holds the loaded engine. It binds the socket before the engine loads, so a second hook finds the address taken rather than loading a second engine, and a request arriving during the load waits for it. Per request it fetches the character's reference clip on first use and encodes it once per process, then **reads the prose one sentence at a time**: each sentence is synthesized, checked for speech, given the volume as a gain and handed to the desktop's stock player with its window hidden, while the sentence after it is already being generated. The first sound arrives after one sentence's synthesis rather than the whole reply's. It keeps **one pending request**: a reply that lands while another is being read replaces any reply still waiting, and tells the reading already under way, which stops at the sentence boundary it has reached rather than finishing over its replacement. Idle for half an hour, it exits and frees the GPU.
 3. **The SessionStart hook** spawns a detached warm request for the session's character, so the load and the first-synthesis cost are paid while the person reads the card and types, not on the first reply. The hook itself waits on nothing: its stdout is the model's context.
-4. **The gate** is the dub file the `voice` verb writes: a machine that never ran it has no engine, and every hook returns at once. `mute` and `unmute` are a second flag file the hooks honour on top; `volume` is a whole number of a scale of a hundred, applied as a gain.
+4. **The gates** are the dub file the `voice` verb writes — a machine that never ran it has no engine, and every hook returns at once — and whether the session would hear anything at all. `mute` and `unmute` are a second flag file, and a `volume` of zero counts as the same silence, since it is a gain that multiplies every sample away. Both are checked before a reply is sent **and** before the session start wakes the engine, because every cost of a spoken reply — the reference fetch, the graph load, every token — is paid before the gain is ever applied. `volume` is otherwise a whole number of a scale of a hundred.
 
 ```mermaid
 sequenceDiagram
@@ -28,11 +28,14 @@ sequenceDiagram
     Server->>Server: bind the socket, load the engine on the rung on file, else the top
     Server->>Wiki: the reference clip, once, cached under the state directory
     Server->>Server: encode the reference, one short synthesis
-    Stop->>Server: speak — character, stem, dub, first sentence, volume
-    Server->>Server: synthesize the newest pending request
-    Server->>Server: not speech — one rung down the device ladder, again, the rung kept on file
-    Server->>Server: apply the gain
-    Server->>Player: WAV, deleted after playback, window hidden
+    Stop->>Server: speak — character, stem, dub, the reply's prose, volume
+    loop each sentence, generated while the one before it plays
+        Server->>Server: synthesize the newest pending request's next sentence
+        Server->>Server: not speech — one rung down the device ladder, again, the rung kept on file
+        Server->>Server: apply the gain
+        Server->>Player: WAV, deleted after playback, window hidden
+    end
+    Note over Server: a newer reply waiting — stop at this sentence boundary
     Note over Server: idle for half an hour — exit, freeing the GPU
 ```
 
@@ -115,7 +118,7 @@ A reply that cannot be spoken is not spoken, and nothing waits: that rule is unc
 ## What it does not do
 
 - **Read another language.** The engine is English-only, so the dub picks whose voice reads a reply and not what language it reads: `ja` clones the Japanese actor, and the actor reads English. A sentence with no Latin letter in it is not sent, because the tokenizer would return it as the near-silence the device ladder takes for a broken provider. Reading a reply in the language it is written in is the [multilingual spoken replies](/docs/proposals/infra/multilingual-spoken-replies) proposal.
-- **Streaming.** The port synthesizes the whole sentence and then runs the vocoder once over it, so the first sample arrives after the last token; splitting a sentence into clauses to overlap synthesis with playback is a refinement the warm number does not yet demand.
+- **Stream inside a sentence.** A sentence is synthesized whole and vocoded once over it, so its first sample arrives after its last token. The streaming is between sentences, which is where the wait actually was; splitting a sentence into clauses to overlap further is a refinement the numbers do not yet demand.
 - **Serve the app.** It is a personal machine's process for a personal plugin; nothing in the estate knows it exists.
 - **Ship any audio.** The reference clips are fetched from the wiki to this machine and cached under the state directory, never committed, for the reason the [per-character voices](/docs/infra/claude-interface/per-character-voices) page gives.
 
@@ -123,23 +126,25 @@ A reply that cannot be spoken is not spoken, and nothing waits: that rule is unc
 
 | File                                                              | Role                                                                                                 |
 | :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
-| `packages/genshin-persona/scripts/speak.ts`                       | The Stop hook: the gate, the first sentence, one request                                             |
+| `packages/genshin-persona/scripts/speak.ts`                       | The Stop hook: the gates, the reply's prose, one request                                             |
 | `packages/genshin-persona/scripts/warm.ts`                        | The warm request the SessionStart hook spawns detached                                               |
 | `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer: the socket, the load, the queue, the idle exit                             |
 | `packages/genshin-persona/src/services/sendVoiceRequest.ts`       | The client: connect, else spawn a server and retry inside the load budget                            |
-| `packages/genshin-persona/src/services/createLatestWinsQueue.ts`  | One pending request, replaced by whatever arrives after it                                           |
+| `packages/genshin-persona/src/services/createLatestWinsQueue.ts`  | One pending request, replaced by whatever arrives after it, and the running one told                 |
 | `packages/genshin-persona/src/services/createVoiceSynthesizer.ts` | The engine on the first rung that loads, moved down by a synthesis that is not speech                |
 | `packages/genshin-persona/src/services/checkIsSpeech.ts`          | What a synthesis has to sound like to count as spoken                                                |
 | `packages/genshin-persona/src/services/readVoiceDevice.ts`        | The rung the last synthesizer spoke on, where the next starts                                        |
 | `packages/genshin-persona/src/services/readReferenceClip.ts`      | The character's clip, fetched from the wiki on first use and cached                                  |
 | `packages/genshin-persona/src/services/installVoiceRuntime.ts`    | The runtime manifest and lockfile copied and `npm ci` run with scripts off                           |
 | `packages/genshin-persona/runtime/package.json`                   | The one package the engine needs, moved by Renovate like any other                                   |
-| `packages/genshin-persona/src/services/getFirstSentence.ts`       | What of a reply is spoken                                                                            |
-| `packages/genshin-persona/src/services/playAudio.ts`              | The stock player per desktop, and the temp file it plays                                             |
+| `packages/genshin-persona/src/services/getSpokenProse.ts`         | What of a reply is spoken                                                                            |
+| `packages/genshin-persona/src/services/splitSentences.ts`         | The sentences it is read in, one synthesis each                                                      |
+| `packages/genshin-persona/src/services/checkIsSilent.ts`          | Muted, or a volume of zero — no reply sent and no engine woken                                       |
+| `packages/genshin-persona/src/services/playAudio.ts`              | The stock player per desktop, awaited, and the temp file per clip it plays                           |
 | `packages/genshin-persona/src/services/constants.ts`              | The state directory's voice half, the engine's variants, the device ladder, the budgets and timeouts |
 
 ## Notes
 
-- The hook speaks a first sentence, not the reply: a reply is often a table or a diff, and the point is to know the turn ended and what it said, not to hear code read aloud. A reply with no prose at all is not spoken.
+- The hook speaks a reply's prose, not the reply: a reply is often a table or a diff, and the point is to hear what the turn said, not to hear code read aloud. A reply with no prose at all is not spoken. It was a first sentence until the reading was streamed — the cut was the wait, and once the wait was one sentence rather than the whole reply there was nothing left for it to buy.
 - The idle timeout and the load budget are the two constants a person might tune; the plugin declares both and nothing else about the server is configurable, because the `voice` verb is where the choices are made.
 - The AMD card on this machine rules the Python engines out as much as the install ceiling does: none of the CUDA toolchains reach it under Windows, and the WebGPU provider is the one route that does from Node. DirectML was tried and rejects the speech encoder's attention op and a slice in the language model.
