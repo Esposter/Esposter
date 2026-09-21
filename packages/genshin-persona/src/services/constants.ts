@@ -51,8 +51,11 @@ export const VOICE_SOCKET_PATH: string =
 export const USER_SETTINGS_PATH: string = join(homedir(), ".claude", "settings.json");
 // What marks a status line command and a tip id as this plugin's, whichever character wrote them
 export const PLUGIN_MARKER = "genshin-persona";
-// The WAV a sentence is played from carries the process, so two synthesizers on one machine never share a name
-export const PLAYER_FILE_PREFIX = `${PLUGIN_MARKER}-${process.pid}-`;
+// The WAV a sentence is played from carries the process, so two synthesizers on one machine never share a name.
+// The annotation is redundant to oxlint but mandatory to the typecheck — an interpolated value cannot be inferred
+// Under --isolatedDeclarations, which the shared node config turns on for this package.
+// oxlint-disable-next-line typescript/no-inferrable-types
+export const PLAYER_FILE_PREFIX: string = `${PLUGIN_MARKER}-${process.pid}-`;
 // Between the marker and a tip id's own prefix
 export const TIP_ID_MARKER_SEPARATOR = ".";
 // The prefix of the base tips' ids; a character's own tips take the card's name

@@ -140,7 +140,7 @@ A reply that cannot be spoken is not spoken, and nothing waits: that rule is unc
 | `packages/genshin-persona/src/services/getSpokenProse.ts`         | What of a reply is spoken                                                                            |
 | `packages/genshin-persona/src/services/splitSentences.ts`         | The sentences it is read in, one synthesis each, the ones the engine cannot read left out            |
 | `packages/genshin-persona/src/services/checkIsSilent.ts`          | Muted, or a volume of zero — no reply sent and no engine woken                                       |
-| `packages/genshin-persona/src/services/playAudio.ts`              | The stock player per desktop, awaited, and the temp file per clip it plays                           |
+| `packages/genshin-persona/src/services/createAudioPlayer.ts`      | The stock player per desktop, one process per reading, and the temp file per clip it plays           |
 | `packages/genshin-persona/src/services/constants.ts`              | The state directory's voice half, the engine's variants, the device ladder, the budgets and timeouts |
 
 ## Notes

@@ -91,7 +91,7 @@ The existing files the work touches, with the role each plays after the change.
 | `packages/genshin-persona/src/services/getSpeechRequest.ts`       | The script detected and the language token attached; the unreadable dropped                   |
 | `packages/genshin-persona/src/models/SpeechRequest.ts`            | The text's language beside the dub, two fields where there was one                            |
 | `packages/genshin-persona/src/models/VoiceLanguage.ts`            | Unchanged codes — the dub's and the model's tokens are the same ISO spelling                  |
-| `packages/genshin-persona/src/services/playAudio.ts`              | A player fed clauses rather than one sentence at a time                                       |
+| `packages/genshin-persona/src/services/createAudioPlayer.ts`      | A player fed clauses rather than one sentence at a time                                       |
 | `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer streaming chunks under the one-pending-request rule                  |
 | `scripts/src/services/voiceMatch/measureCharacterReference.ts`    | The likeness re-measured through the new engine                                               |
 | `apps/web/content/docs/infra/claude-interface/spoken-replies.md`  | Rewritten as-built: the engine section, the ladder's memory, streaming no longer a "does not" |

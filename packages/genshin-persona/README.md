@@ -71,7 +71,7 @@ A `<name>` is a character's, matched whole and ignoring case, in English or as t
 | `setup`    | —                        | Writes the status line and the spinner into user settings, the spinner under this session's character.                                                                                             |
 | `teardown` | —                        | Removes exactly what `setup` and `voice` wrote: the two settings, and the voice's runtime, weights, cached clips and dub.                                                                          |
 
-Four more are the authoring queues of the `genshin-author` skill, script-only and on no menu:
+Four more are the authoring queues of one more skill, `genshin-author` — script-only and on no menu:
 
 | Verb           | Argument | What it does                                                                                                                                 |
 | :------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
