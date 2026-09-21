@@ -2,11 +2,11 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-A Claude Code plugin that gives every session a Genshin Impact character: each reply opens with one spoken line in their voice, the rest is plain, and the line is read aloud in the character's own cloned voice by an engine on your machine.
+A Claude Code plugin that gives every session a Genshin Impact character: a reply to a question for the assistant opens with one spoken line in their voice and answers plainly, a reply to a question for the character — a joke, a hello — is all spoken lines, and every line is read aloud in the character's own cloned voice by an engine on your machine.
 
 - **A character per session** — picked by the nearest birthday, or by lore through one typed decision when you give it a TypeSafe key; `use` and `pin` override the pick.
-- **A spoken channel, not a persona in the prose** — every reply opens with a blockquote line the character says, the first reply of a session with their greeting, and everything else — the answer, the code, the commit message — is a neutral assistant's.
-- **Read aloud as it is written** — a hook hands each spoken line to a resident synthesizer the moment its line lands, and the line is read in the character's cloned voice while the reply is still streaming; the first reply's line was made at the session start and plays at once.
+- **A spoken channel, not a persona in the prose** — the character speaks in blockquote lines and nowhere else: one line opening an answer a reader will use, with everything else — the answer, the code, the commit message — a neutral assistant's, and the whole reply when the ask was the character's.
+- **Read aloud as it is written** — a hook hands each spoken line to a resident synthesizer the moment its line lands, and the line is read in the character's cloned voice while the reply is still streaming; the engine is warmed at the session start so the first reply pays no load.
 - **Localized** — the card, the spinner, the status line and every line the plugin prints in the language you set, and replies in the one you choose.
 
 ## Table of Contents
@@ -88,7 +88,7 @@ Four more are the authoring queues of one more skill, `genshin-author` — scrip
 | Component                              | Role                                                                                                                                                                                           |
 | :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `hooks/hooks.json`                     | A session-start hook that picks the character, greets you with its name and prints its card as context. The hook that reads a reply's spoken lines is a user setting `voice` writes.           |
-| `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: a blockquote line is the character's spoken line, and everything else is plain, with coding kept.                                   |
+| `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: a blockquote line is the character's spoken line, the ask decides how much of a reply that is, and the rest is plain.               |
 | `skills/<verb>/SKILL.md`               | One slash command per verb, `/genshin-persona:<verb>` — the command reference above — yours to invoke.                                                                                         |
 | `skills/genshin/SKILL.md`              | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                                         |
 | `skills/genshin-author/SKILL.md`       | How a persona card and its spinner verbs are written, the command that prints a character's own lines to write from, and the two queues.                                                       |
@@ -135,7 +135,7 @@ node "<plugin root>/scripts/genshin.ts" use furina      # or: /genshin-persona:u
 
 ### Spoken lines
 
-Every reply opens with one blockquote line in the character's voice, and may close with one; a hook hands each to a resident synthesizer as its line lands, which reads it in the character's cloned voice while the reply is still being written. `mute` and `unmute` decide whether the hook asks it at all, and so does a `volume` of zero. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
+A reply to an ask of the assistant opens with one blockquote line in the character's voice and may close with one; a reply to an ask of the character — a joke, a hello, an opinion — is a few such lines and nothing else. A hook hands each to a resident synthesizer as its line lands, which reads it in the character's cloned voice while the reply is still being written. `mute` and `unmute` decide whether the hook asks it at all, and so does a `volume` of zero. `volume <number>` is a whole number from 0 to 100, applied as a gain, from the next reply on:
 
 ```bash
 node "<plugin root>/scripts/genshin.ts" volume 60     # or: /genshin-persona:volume 60

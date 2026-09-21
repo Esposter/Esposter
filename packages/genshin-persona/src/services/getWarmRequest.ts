@@ -6,12 +6,10 @@ import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { WARM_TEXT } from "#src/services/constants";
 import { getSpeechRequest } from "#src/services/getSpeechRequest";
 
-// What a warm synthesizes: a carded character's greeting, which the output style opens the first reply with, so
-// The synthesizer keeps that clip and the first reply's opening line plays without a synthesis; one short word
-// For a character with no card, so the graph's first-call cost is still paid before the first reply
+// What a warm synthesizes: one short word, so the graph's first-call cost is paid before the first reply. Nothing
+// Is kept: every spoken line is written for its ask, so no clip made ahead would be asked for again
 export const getWarmRequest = (
   name: string,
   personaCard: PersonaCard | undefined,
   language: VoiceLanguage,
-): SpeechRequest =>
-  getSpeechRequest(VoiceRequestType.Warm, name, personaCard, language, [personaCard?.greeting ?? WARM_TEXT]);
+): SpeechRequest => getSpeechRequest(VoiceRequestType.Warm, name, personaCard, language, [WARM_TEXT]);

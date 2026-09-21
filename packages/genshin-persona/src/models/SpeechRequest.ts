@@ -4,7 +4,7 @@ import type { VoiceRequestType } from "#src/models/VoiceRequestType";
 // A request that reads a character's reference: spoken, or only warmed
 export interface SpeechRequest {
   language: VoiceLanguage;
-  // Read in order, each synthesized whole: a reply's spoken lines, or the one line a warm synthesizes and keeps
+  // Read in order, each synthesized whole: a reply's spoken lines, or the one word a warm synthesizes
   lines: string[];
   // The character whose reference reads the lines
   name: string;

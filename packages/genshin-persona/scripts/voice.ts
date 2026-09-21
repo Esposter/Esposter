@@ -57,9 +57,6 @@ const synthesizerLoad = createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
 });
 const getSpeakerKey = ({ language, name, stem }: SpeechRequest) => [language, name, stem].join("/");
 const speakers = new Map<string, SpeakerTensors>();
-// A warm's clip, kept: a carded character's warm synthesizes their greeting, which the output style opens the first
-// Reply with, so that line plays from here rather than being synthesized again
-const warmClips = new Map<string, PcmClip>();
 // The reference is fetched, decoded and encoded once per character, dub and line per process
 const readSpeaker = async (request: SpeechRequest) => {
   const [synthesizer, decoder] = await Promise.all([synthesizerLoad, decoderLoad]);
@@ -95,8 +92,7 @@ const speak = async (
   };
   let playback: Promise<void> = Promise.resolve();
   for (const line of request.lines) {
-    const clipKey = `${getSpeakerKey(request)}/${line}`;
-    const clip = warmClips.get(clipKey) ?? (await synthesizer.synthesize(line, speaker));
+    const clip = await synthesizer.synthesize(line, speaker);
     if (!clip) {
       await playback;
       return VoiceStatus.Error;
@@ -107,10 +103,7 @@ const speak = async (
       writeVoiceDevice(settledDevice);
     }
 
-    if (!player) {
-      warmClips.set(clipKey, clip);
-      continue;
-    }
+    if (!player) continue;
 
     await playback;
     // A warm waiting is not a reply, and runs once the reading ends rather than cutting it; so does the rest of
@@ -126,7 +119,7 @@ const speak = async (
   return VoiceStatus.Ok;
 };
 // The player is spawned before the first line is synthesized, so its start is paid under that synthesis rather than
-// In front of the first sound. A synthesis that throws drops its request and keeps the engine
+// In front of the first sound. A request that throws is dropped and keeps the engine
 const queue = createLatestWinsQueue(async (request: SpeechRequest, readPending: () => SpeechRequest | undefined) => {
   const player = request.type === VoiceRequestType.Speak ? createAudioPlayer() : undefined;
   const [outcome] = await Promise.allSettled([speak(request, player, readPending)]);

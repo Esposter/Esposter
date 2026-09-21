@@ -5,7 +5,7 @@ description: Proposal — what a spoken line that sounds the moment it is writte
 
 # Seamless spoken replies
 
-Today a reply's spoken lines are read as each is written, the first reply's opening line from a clip made at the session start, every other line after its whole synthesis ([spoken replies](/docs/infra/claude-interface/spoken-replies)). On this laptop that synthesis is several seconds for a short sentence, a few times longer than the sentence takes to say, so a line is heard while the reply is still streaming rather than as the character says it, and a two-sentence line, or a closing line following an opening one, pauses wherever a sentence takes longer to make than the one before it took to play. The goal is a line that sounds the moment it is written. This page states what that means in measurable terms, why it is out of reach here today, and what would bring it in — so the next session reads the gates rather than timing the engine again.
+Today a reply's spoken lines are read as each is written, every line after its whole synthesis, the engine warmed at the session start ([spoken replies](/docs/infra/claude-interface/spoken-replies)). On this laptop that synthesis is several seconds for a short sentence, a few times longer than the sentence takes to say, so a line is heard while the reply is still streaming rather than as the character says it, and a two-sentence line, or a closing line following an opening one, pauses wherever a sentence takes longer to make than the one before it took to play. The goal is a line that sounds the moment it is written. This page states what that means in measurable terms, why it is out of reach here today, and what would bring it in — so the next session reads the gates rather than timing the engine again.
 
 ## Scope
 
@@ -44,7 +44,7 @@ flowchart TD
 - **Dropping the clone for speed.** A catalogue voice reads faster on any hardware and was the first thing this feature replaced; the persona is the character's own voice or it is nothing.
 - **Streaming inside a line before stage 1 holds.** Measured here, every extra vocoder pass would cost seconds; the shape moves the pause rather than removing it.
 - **Two lines in flight.** Measured and rejected on the [spoken replies](/docs/infra/claude-interface/spoken-replies) page: the vocoder's threads take every core, so the language model gains nothing from running beside it.
-- **A stock line played to cover the wait.** A bark that is not the reply's own line is a fake; the one line the plugin makes ahead is the card's greeting, because the output style fixes the first reply's line to it.
+- **A stock line played to cover the wait.** A bark that is not the reply's own line is a fake, and nothing is made ahead: every spoken line is written for its ask, the card's greeting included, which the welcome shows and no reply repeats.
 
 ## Key files
 
