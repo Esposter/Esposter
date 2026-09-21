@@ -1,9 +1,8 @@
-import type { Clause } from "@esposter/azure";
 import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
+import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
+import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { getTopNEntitiesByType } from "@esposter/db";
 import { AzureTable, MessageTypeEntityMap } from "@esposter/db-schema";
 
@@ -16,10 +15,7 @@ export const readMessagesByRowKeys = async (
   rowKeys: StandardMessageEntity["rowKey"][],
 ): Promise<MessageEntity[]> => {
   const messageClient = await useTableClient(AzureTable.Messages);
-  const clauses: Clause<StandardMessageEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-    getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-  ];
+  const clauses = getLivePartitionClauses<StandardMessageEntity>(roomId);
   for (const rowKey of rowKeys)
     clauses.push({
       key: CompositeKeyPropertyNames.rowKey,

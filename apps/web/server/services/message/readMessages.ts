@@ -4,19 +4,13 @@ import type { Clause } from "@esposter/azure";
 import type { MessageEntity } from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
 
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
-import {
-  BinaryOperator,
-  CompositeKey,
-  CompositeKeyPropertyNames,
-  getTableNullClause,
-  serializeClauses,
-} from "@esposter/azure";
+import { BinaryOperator, CompositeKey, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { getTopNEntities, getTopNEntitiesByType } from "@esposter/db";
 import {
   AzureTable,
@@ -34,10 +28,7 @@ export const readMessages = async ({
   roomId,
 }: SetOptional<ReadMessagesInput, "limit">) => {
   const sortBy: SortItem<keyof CompositeKey>[] = [{ isIncludeValue, ...MESSAGE_ROWKEY_SORT_ITEM }];
-  const clauses: Clause<MessageEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-    getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-  ];
+  const clauses = getLivePartitionClauses<MessageEntity>(roomId);
   if (inputFilter?.isPinned)
     clauses.push({ key: StandardMessageEntityPropertyNames.isPinned, operator: BinaryOperator.eq, value: true });
 
