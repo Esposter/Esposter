@@ -11,7 +11,9 @@ import { GroupMetadataMap } from "#src/services/outdatedDependencies/registry/Gr
 import { getLatestVersion } from "#src/services/shared/getLatestVersion";
 import { getResultAsync } from "@esposter/shared";
 
-export const getRegistryOutdatedDependencies = async (entries: DependencyEntry[]): Promise<OutdatedDependencyCheck> => {
+export const readRegistryOutdatedDependencies = async (
+  entries: DependencyEntry[],
+): Promise<OutdatedDependencyCheck> => {
   // Keyed by the entry object itself, because a package name is not an identity: two manifests declaring the
   // Same engine under different constraints are two entries, and so is a package that is both a config
   // Dependency and an engine. Keyed by name, the last result written wins and is then emitted once per entry

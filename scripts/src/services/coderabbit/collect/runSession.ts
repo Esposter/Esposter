@@ -16,7 +16,7 @@ import { createInterface } from "node:readline";
 // The one exemption authenticates the `claude` invocation itself.
 const EXEMPT_SECRET_VARIABLES = new Set(["CLAUDE_CODE_OAUTH_TOKEN"]);
 
-const SECRET_VARIABLE_PATTERN = /credential|key|password|secret|token/iu;
+const SECRET_VARIABLE_REGEX = /credential|key|password|secret|token/iu;
 
 // The one launcher every role goes through, its model handed in rather than fixed here (`SessionRoleModelMap`).
 // Stdout is streamed rather than inherited: each event is logged as it lands, and the sentence Claude Code
@@ -25,7 +25,7 @@ const SECRET_VARIABLE_PATTERN = /credential|key|password|secret|token/iu;
 export const runSession = async ({ cwd, model, prompt }: SessionInput): Promise<SessionRun> => {
   const environment = Object.fromEntries(
     Object.keys(process.env)
-      .filter((key) => EXEMPT_SECRET_VARIABLES.has(key) || !SECRET_VARIABLE_PATTERN.test(key))
+      .filter((key) => EXEMPT_SECRET_VARIABLES.has(key) || !SECRET_VARIABLE_REGEX.test(key))
       .map((key) => [key, process.env[key]]),
   );
   const child = spawn(

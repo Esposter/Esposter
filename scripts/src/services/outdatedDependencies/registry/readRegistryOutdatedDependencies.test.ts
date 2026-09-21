@@ -1,7 +1,7 @@
 import type { DependencyEntry } from "#src/models/outdatedDependencies/DependencyEntry";
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
-import { getRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/getRegistryOutdatedDependencies";
+import { readRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/readRegistryOutdatedDependencies";
 import { getLatestVersion } from "#src/services/shared/getLatestVersion";
 import { describe, expect, test, vi } from "vitest";
 
@@ -9,7 +9,7 @@ vi.mock(import("#src/services/shared/getLatestVersion"), () => ({
   getLatestVersion: vi.fn<typeof getLatestVersion>(),
 }));
 
-describe(getRegistryOutdatedDependencies, () => {
+describe(readRegistryOutdatedDependencies, () => {
   test("reports every entry sharing a package name under its own specifier", async () => {
     expect.hasAssertions();
 
@@ -19,7 +19,7 @@ describe(getRegistryOutdatedDependencies, () => {
     ];
     vi.mocked(getLatestVersion).mockResolvedValue("26.8.1");
 
-    const { outdatedDependencies } = await getRegistryOutdatedDependencies(entries);
+    const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
 
     expect(outdatedDependencies).toStrictEqual([
       {
@@ -49,7 +49,7 @@ describe(getRegistryOutdatedDependencies, () => {
     ];
     vi.mocked(getLatestVersion).mockResolvedValue("1.0.0-rc.1");
 
-    const { outdatedDependencies } = await getRegistryOutdatedDependencies(entries);
+    const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
 
     expect(getLatestVersion).toHaveBeenCalledWith("a", "rc");
     expect(outdatedDependencies).toStrictEqual([

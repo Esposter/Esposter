@@ -14,7 +14,7 @@ import { printMismatches } from "#src/services/outdatedDependencies/print/printM
 import { printOutdatedDependencies } from "#src/services/outdatedDependencies/print/printOutdatedDependencies";
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
 import { printUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/print/printUncatalogedManifestDependencies";
-import { getRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/getRegistryOutdatedDependencies";
+import { readRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/readRegistryOutdatedDependencies";
 import { getFollowedTagEntries } from "#src/services/outdatedDependencies/renovate/getFollowedTagEntries";
 import { getRenovateRules } from "#src/services/outdatedDependencies/renovate/getRenovateRules";
 import { partitionHeldDependencies } from "#src/services/outdatedDependencies/renovate/partitionHeldDependencies";
@@ -58,7 +58,7 @@ const followedTagEntries = getFollowedTagEntries(catalogEntries, renovateRules);
 const followedPackages = new Set(followedTagEntries.map(({ packageName }) => packageName));
 const [regularChecks, registryChecks] = await Promise.all([
   getRegularOutdatedDependencies(REPOSITORY_ROOT),
-  getRegistryOutdatedDependencies([...configDependencyEntries, ...engineEntries, ...followedTagEntries]),
+  readRegistryOutdatedDependencies([...configDependencyEntries, ...engineEntries, ...followedTagEntries]),
 ]);
 // A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.
 const { held, outdated } = partitionHeldDependencies(
