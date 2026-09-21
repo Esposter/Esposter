@@ -20,12 +20,11 @@ export const probeBubblewrap = (): DiagnosticCheck => {
     };
   if (checkIsVersionAtLeast(output, MINIMUM_BUBBLEWRAP_VERSION))
     return { fix: "", label, note: output, status: DiagnosticStatus.Ok, type };
-  else
-    return {
-      fix: `upgrade bubblewrap to >= ${MINIMUM_BUBBLEWRAP_VERSION} for RAM-overlay support`,
-      label,
-      note: `${output} is too old`,
-      status: DiagnosticStatus.Missing,
-      type,
-    };
+  return {
+    fix: `upgrade bubblewrap to >= ${MINIMUM_BUBBLEWRAP_VERSION} for RAM-overlay support`,
+    label,
+    note: `${output} is too old`,
+    status: DiagnosticStatus.Missing,
+    type,
+  };
 };

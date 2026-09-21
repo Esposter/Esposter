@@ -27,9 +27,8 @@ const DESTRUCTURE_REGEX = /^\{(?<names>.*)\}$/su;
 
 const getCitedNames = (token: string): string[] => {
   const names = DESTRUCTURE_REGEX.exec(token)?.groups?.names;
-  if (names !== undefined) return names.split(",").map((name) => name.trim());
-
-  return [CALL_REGEX.exec(token)?.groups?.callee ?? token];
+  if (names === undefined) return [CALL_REGEX.exec(token)?.groups?.callee ?? token];
+  else return names.split(",").map((name) => name.trim());
 };
 
 // A placeholder is a whole segment of the name rather than a run of letters inside one: `readFoos` is an example

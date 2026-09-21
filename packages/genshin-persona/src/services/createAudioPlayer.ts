@@ -21,12 +21,11 @@ const getUnixPlayerScript = (player: string) =>
 const spawnPlayer = () => {
   if (process.platform === "win32")
     return spawn("powershell", ["-NoProfile", "-NonInteractive", "-Command", WINDOWS_PLAYER_SCRIPT], PLAYER_OPTIONS);
-  else
-    return spawn(
-      "sh",
-      ["-c", getUnixPlayerScript(process.platform === "darwin" ? "afplay" : "aplay -q")],
-      PLAYER_OPTIONS,
-    );
+  return spawn(
+    "sh",
+    ["-c", getUnixPlayerScript(process.platform === "darwin" ? "afplay" : "aplay -q")],
+    PLAYER_OPTIONS,
+  );
 };
 
 // The player spawned at once, so its start overlaps the first clip's synthesis. A clip is written to a temp file of

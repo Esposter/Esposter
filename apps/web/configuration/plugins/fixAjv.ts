@@ -143,7 +143,7 @@ export const fixAjv = {
       .replace(REQUIRE_REGEX, (_m: string, _kw: string, vName: string, modPath: string) => {
         if (needsUnwrapVars.has(vName))
           return `import * as _${vName}_ns from "${modPath}";\nconst ${vName} = (_${vName}_ns.default ?? _${vName}_ns);\n`;
-        return `import * as ${vName} from "${modPath}";\n`;
+        else return `import * as ${vName} from "${modPath}";\n`;
       })
       // Step 5: inline require() → extracted variable (`.default ?? ns` for CJS compat)
       .replaceAll(INLINE_REQUIRE_REGEX, (_match, path: string) => {

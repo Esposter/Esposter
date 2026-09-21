@@ -11,6 +11,5 @@ const WORKSPACE_PACKAGE_ENTRY_REGEX = /^[ ]+- ['"]?(?<glob>[^'"\n]+?)['"]?$/gmu;
 export const parseWorkspacePackageGlobs = (workspaceYaml: string): string[] => {
   const entries = WORKSPACE_PACKAGES_SECTION_REGEX.exec(workspaceYaml)?.groups?.entries;
   if (entries === undefined) return [];
-
-  return Array.from(entries.matchAll(WORKSPACE_PACKAGE_ENTRY_REGEX), (match) => match.groups?.glob ?? "");
+  else return Array.from(entries.matchAll(WORKSPACE_PACKAGE_ENTRY_REGEX), (match) => match.groups?.glob ?? "");
 };

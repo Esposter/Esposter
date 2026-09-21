@@ -6,11 +6,10 @@ import { getResult } from "@esposter/shared";
 // Reads as dead.
 export const checkIsProcessAlive = (pid: number): boolean => {
   if (pid <= 0) return false;
-  else
-    return getResult(() => {
-      process.kill(pid, 0);
-    }).match(
-      () => true,
-      (error) => "code" in error && error.code === "EPERM",
-    );
+  return getResult(() => {
+    process.kill(pid, 0);
+  }).match(
+    () => true,
+    (error) => "code" in error && error.code === "EPERM",
+  );
 };

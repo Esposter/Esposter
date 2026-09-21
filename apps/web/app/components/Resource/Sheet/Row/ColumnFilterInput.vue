@@ -36,7 +36,7 @@ const stringValue = computed({
   get: () => {
     if (modelValue.value?.type === ColumnType.Date || modelValue.value?.type === ColumnType.String)
       return modelValue.value.value;
-    return "";
+    else return "";
   },
   set: (value) => {
     if (column.type !== ColumnType.Boolean && column.type !== ColumnType.Computed && column.type !== ColumnType.Number)

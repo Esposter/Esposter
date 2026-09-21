@@ -21,6 +21,5 @@ export const getHoldingRule = (
     !satisfies(latest, allowedVersionsRule.allowedVersions, { includePrerelease: true })
   )
     return allowedVersionsRule;
-
-  return undefined;
+  else return undefined;
 };

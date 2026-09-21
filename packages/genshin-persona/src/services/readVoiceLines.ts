@@ -25,5 +25,6 @@ export const readVoiceLines = (name: string, language: string): Promise<VoiceLin
         title: title.trim(),
       })),
     );
-  else return language === DEFAULT_LANGUAGE ? readWikiStoryLines(name) : Promise.resolve([]);
+
+  return language === DEFAULT_LANGUAGE ? readWikiStoryLines(name) : Promise.resolve([]);
 };
