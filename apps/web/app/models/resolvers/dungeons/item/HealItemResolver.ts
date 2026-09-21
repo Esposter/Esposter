@@ -24,9 +24,7 @@ export class HealItemResolver extends AItemResolver {
     } else if (monster.value.status.health === monster.value.statistics.maxHealth) {
       infoDialogMessage.value.text = `${monster.value.key} is already fully healed.`;
       return false;
-    }
-
-    return true;
+    } else return true;
   }
 
   override async handleItem(scene: SceneWithPlugins, item: Ref<Item>, monster: Ref<Monster>) {
