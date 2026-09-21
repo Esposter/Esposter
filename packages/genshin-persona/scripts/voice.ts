@@ -27,10 +27,8 @@ import { writeVoiceDevice } from "#src/services/writeVoiceDevice";
 import { writeVoiceLog } from "#src/services/writeVoiceLog";
 import { createServer } from "node:net";
 
-// The resident synthesizer: one process per machine holding the loaded engine, spoken to over the local socket by
-// Every hook, exiting when idle. It binds the address before the engine loads so a second hook finds it taken
-// Rather than loading a second engine, and a request that arrives during the load waits for it. Whatever fails
-// Is written to the log, because the hooks stay silent on its behalf
+// The address is bound before the engine loads, so a second hook finds it taken rather than loading a second engine;
+// Every failure is logged, since the hooks stay silent on its behalf
 const exit = (message: string) => {
   writeVoiceLog(message);
   process.exit(1);
@@ -50,8 +48,7 @@ const idleTimer = setTimeout(() => {
 }, VOICE_IDLE_TIMEOUT_MS);
 const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
 const decoder = await createClipDecoder();
-// The engine starts on the rung the last synthesizer settled on, and the rung this one speaks on is kept for the
-// Next — written once it has spoken there, since a load alone proves nothing about the sound
+// The rung is written once the engine has spoken on it, since a load alone proves nothing about the sound
 let settledDevice = readVoiceDevice();
 const synthesizerLoad = createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
   onFallback: writeVoiceLog,
@@ -72,9 +69,7 @@ const readSpeaker = async ({ language, name, stem }: SpeechRequest) => {
   speakers.set(key, encoded);
   return encoded;
 };
-// The reading is streamed: every sentence is synthesized while the sentence before it plays, so the person hears
-// The opening of a reply instead of waiting on the whole of it, and a reply the next prompt has already replaced
-// Stops at the sentence boundary it had reached rather than reading itself out over its replacement
+// Each sentence is synthesized while the one before it plays
 const speak = async (request: SpeechRequest, readPending: () => SpeechRequest | undefined) => {
   const synthesizer = await synthesizerLoad;
   const speaker = await readSpeaker(request);
@@ -98,8 +93,6 @@ const speak = async (request: SpeechRequest, readPending: () => SpeechRequest | 
       return VoiceStatus.Error;
     }
 
-    // A rung the engine moved down to part way through a reply is the one the rest of it is read on, and the one
-    // The next synthesizer starts from
     if (synthesizer.device !== settledDevice) {
       settledDevice = synthesizer.device;
       writeVoiceDevice(settledDevice);
@@ -108,9 +101,7 @@ const speak = async (request: SpeechRequest, readPending: () => SpeechRequest | 
     if (request.type !== VoiceRequestType.Speak) continue;
 
     await playback;
-    // The last moment before this sentence is committed to the player, which is where a newer reply arriving
-    // During the synthesis or during the sentence before it is caught. A warm waiting there is not a reply, and
-    // Runs once the reading ends rather than cutting it
+    // A warm waiting is not a reply, and runs once the reading ends rather than cutting it
     if (readPending()?.type === VoiceRequestType.Speak) return VoiceStatus.Superseded;
 
     playback = play(clip);
@@ -119,8 +110,7 @@ const speak = async (request: SpeechRequest, readPending: () => SpeechRequest | 
   await playback;
   return VoiceStatus.Ok;
 };
-// A synthesis that throws drops its request and keeps the engine: one sentence the model rejects does not cost
-// A reload for the next
+// A synthesis that throws drops its request and keeps the engine
 const queue = createLatestWinsQueue(async (request: SpeechRequest, readPending: () => SpeechRequest | undefined) => {
   const [outcome] = await Promise.allSettled([speak(request, readPending)]);
   if (outcome?.status === "fulfilled") return outcome.value;
@@ -152,8 +142,8 @@ server.on("connection", (socket) => {
 
     const [line = ""] = buffer.split("\n");
     buffer = "";
-    // A line that is not JSON at all throws out of the parser synchronously, and `Promise.try` is what turns that
-    // Into a rejection this answers with, rather than one nothing on the socket ever hears
+    // A line that is not JSON throws out of the parser synchronously; `Promise.try` turns that into a rejection this
+    // Answers rather than one nothing on the socket hears
     const [outcome] = await Promise.allSettled([Promise.try(() => handleLine(line))]);
     const status = outcome?.status === "fulfilled" ? outcome.value : VoiceStatus.Error;
     if (outcome?.status === "rejected") writeVoiceLog(`request failed: ${outcome.reason}`);
@@ -161,10 +151,10 @@ server.on("connection", (socket) => {
     const device = load?.status === "fulfilled" ? load.value.device : "";
     socket.end(`${[status, device].filter(Boolean).join(VOICE_STATUS_SEPARATOR)}\n`);
   };
-  // `socket.on` is a third-party slot that cannot be widened to take a promise, and `getSynchronizedFunction` —
-  // The codebase's one sanctioned fire-and-forget — lives in the web app a shipped plugin cannot import from
+  // `socket.on` is a third-party slot that takes no promise, and the codebase's synchronized-function helper lives in
+  // The web app a shipped plugin cannot import from
   socket.on("data", (chunk: string) => {
-    // oxlint-disable-next-line typescript/no-floating-promises -- `answer` settles every outcome a request has and ends the socket on each, so the only throw left in it is the log write, which the handler above already exits on
+    // oxlint-disable-next-line typescript/no-floating-promises -- `answer` settles every outcome and ends the socket on each
     answer(chunk);
   });
   // A hook that exited before reading its answer
