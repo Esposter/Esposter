@@ -351,6 +351,34 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runGit(["status", "--porcelain"], getCwd())).toBe("");
   });
 
+  // The count reads only the attempts made against this collector's source: markers another collector's code ran
+  // Up say nothing about this one, so the commit gets its turn again with nothing reset by hand
+  test("gives a conflict past the cap under another collector a fresh turn", async () => {
+    expect.hasAssertions();
+
+    const { developSha, queueSha } = setupConflict();
+    runGh.mockReturnValue(
+      JSON.stringify([
+        Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
+          body: getMarker(SYNC_FAILED_MARKER, queueSha, ["otherCollectorSha"]),
+          id,
+          updated_at: "",
+          user: { login: viewerLogin },
+        })),
+      ]),
+    );
+    vi.stubEnv("GIT_EDITOR", "true");
+    runSession.mockImplementation(() => {
+      resolveConflict();
+      return Promise.resolve({ isEnded: true, isStarted: true });
+    });
+    const syncedSha = await syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha });
+
+    assert.exists(syncedSha);
+    expect(runSession).toHaveBeenCalledTimes(1);
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(syncedSha);
+  });
+
   // A commit alone over the cap can never ride a window, so the sync hands it to the reshaper before the port
   // Reads it: the parts that need no review claim the express lane, the rest fit the cap, and the tree is the same
   const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
