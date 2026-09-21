@@ -46,6 +46,12 @@ describe("passThroughHelper", () => {
     { name: "readsMember", source: `export const a = () => b.c;`, violations: 0 },
     { name: "buildsObject", source: `export const a = (b: string) => ({ b });`, violations: 0 },
     { name: "chainsCall", source: `export const a = (b: string) => f(b).c();`, violations: 0 },
+    // A type predicate absorbs the narrowing: its callee returns a boolean and the wrapper a guard.
+    {
+      name: "narrowsWithTypePredicate",
+      source: `export const a = (b: string): b is X => Xs.includes(b);`,
+      violations: 0,
+    },
     // An identity function pins inference; it forwards nothing because it calls nothing.
     { name: "identityFunction", source: `export const a = (b: string) => b;`, violations: 0 },
     // A local helper is not the package's surface, so it is nobody's call site to get wrong.
