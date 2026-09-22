@@ -1,4 +1,4 @@
-import type { ManifestDependency } from "#src/models/outdatedDependencies/ManifestDependency";
+import type { ManifestDependency } from "#src/models/outdatedDependencies/shared/ManifestDependency";
 
 // A manifest npm installs states its own ranges by necessity — npm reads neither protocol — so its dependencies
 // Are checked as the npm group rather than flagged here.

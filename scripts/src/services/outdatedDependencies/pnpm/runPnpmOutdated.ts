@@ -1,4 +1,4 @@
-import type { PnpmOutdatedRun } from "#src/models/outdatedDependencies/PnpmOutdatedRun";
+import type { PnpmOutdatedRun } from "#src/models/outdatedDependencies/pnpm/PnpmOutdatedRun";
 
 import {
   PNPM_OUTDATED_ARGS,

@@ -1,4 +1,4 @@
-import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
+import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
 import { describe, expect, test } from "vitest";
 

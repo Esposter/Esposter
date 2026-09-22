@@ -1,4 +1,4 @@
-import { VersionChangeLevel } from "#src/models/outdatedDependencies/VersionChangeLevel";
+import { VersionChangeLevel } from "#src/models/outdatedDependencies/shared/VersionChangeLevel";
 import { getVersionChangeLevel } from "#src/services/outdatedDependencies/getVersionChangeLevel";
 import { describe, expect, test } from "vitest";
 

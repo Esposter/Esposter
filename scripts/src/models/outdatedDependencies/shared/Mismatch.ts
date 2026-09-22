@@ -1,4 +1,4 @@
-import type { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
+import type { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 
 export interface Mismatch {
   group: DependencyGroup;

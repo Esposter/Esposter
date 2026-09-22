@@ -1,7 +1,7 @@
-import type { DependencyEntry } from "#src/models/outdatedDependencies/DependencyEntry";
-import type { OutdatedDependency } from "#src/models/outdatedDependencies/OutdatedDependency";
-import type { OutdatedDependencyCheck } from "#src/models/outdatedDependencies/OutdatedDependencyCheck";
-import type { RegistryCheckError } from "#src/models/outdatedDependencies/RegistryCheckError";
+import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
+import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared/OutdatedDependency";
+import type { OutdatedDependencyCheck } from "#src/models/outdatedDependencies/shared/OutdatedDependencyCheck";
+import type { RegistryCheckError } from "#src/models/outdatedDependencies/shared/RegistryCheckError";
 
 import { getSpecifierBase } from "#src/services/outdatedDependencies/getSpecifierBase";
 import { getVersionChangeLevel } from "#src/services/outdatedDependencies/getVersionChangeLevel";

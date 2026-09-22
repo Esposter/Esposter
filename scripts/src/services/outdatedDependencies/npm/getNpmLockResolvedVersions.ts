@@ -1,4 +1,4 @@
-import type { NpmLockfile } from "#src/models/outdatedDependencies/NpmLockfile";
+import type { NpmLockfile } from "#src/models/outdatedDependencies/npm/NpmLockfile";
 
 import { NPM_LOCKFILE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";

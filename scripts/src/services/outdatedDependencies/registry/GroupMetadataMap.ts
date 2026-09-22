@@ -1,6 +1,6 @@
-import type { GroupMetadata } from "#src/models/outdatedDependencies/GroupMetadata";
+import type { GroupMetadata } from "#src/models/outdatedDependencies/registry/GroupMetadata";
 
-import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
+import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 
 // A catalog entry reaches the registry only when a `renovate.json` rule follows a dist-tag for it; every other
 // One is checked against the lockfile. An npm entry names its own manifest as the dependent, so the label here

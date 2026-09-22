@@ -1,4 +1,4 @@
-import type { RenovateRule } from "#src/models/outdatedDependencies/RenovateRule";
+import type { RenovateRule } from "#src/models/outdatedDependencies/renovate/RenovateRule";
 
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";

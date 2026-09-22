@@ -1,4 +1,4 @@
-import type { DependencyEntry } from "#src/models/outdatedDependencies/DependencyEntry";
+import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
 
 // One manifest npm installs, as the report reads it: what it declares, and what the lockfile beside it resolved.
 export interface NpmProject {

@@ -1,5 +1,5 @@
-import type { OutdatedDependency } from "#src/models/outdatedDependencies/OutdatedDependency";
-import type { OutdatedDependencyCheck } from "#src/models/outdatedDependencies/OutdatedDependencyCheck";
+import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared/OutdatedDependency";
+import type { OutdatedDependencyCheck } from "#src/models/outdatedDependencies/shared/OutdatedDependencyCheck";
 
 import { getDependencyType } from "#src/services/outdatedDependencies/getDependencyType";
 import { checkIsPnpmOutdatedDependency } from "#src/services/outdatedDependencies/pnpm/checkIsPnpmOutdatedDependency";

@@ -1,4 +1,4 @@
-import type { ColorPalette } from "#src/models/outdatedDependencies/ColorPalette";
+import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
 
 // ANSI SGR escape sequences for terminal color; the reset code returns the foreground to the default.
 const escape = "\u001B";

@@ -1,4 +1,4 @@
-import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
+import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 import { getNpmEntries } from "#src/services/outdatedDependencies/npm/getNpmEntries";
 import { describe, expect, test } from "vitest";
 

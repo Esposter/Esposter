@@ -1,5 +1,5 @@
-import type { OutdatedDependency } from "#src/models/outdatedDependencies/OutdatedDependency";
-import type { RenovateRule } from "#src/models/outdatedDependencies/RenovateRule";
+import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared/OutdatedDependency";
+import type { RenovateRule } from "#src/models/outdatedDependencies/renovate/RenovateRule";
 
 import { getHoldingRule } from "#src/services/outdatedDependencies/renovate/getHoldingRule";
 import { describe, expect, test } from "vitest";

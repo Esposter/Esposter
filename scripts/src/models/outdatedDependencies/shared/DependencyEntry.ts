@@ -1,4 +1,4 @@
-import type { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
+import type { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 
 export interface DependencyEntry {
   // The manifest that declares the entry, for a group a manifest declares rather than a workspace section; absent,

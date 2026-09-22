@@ -1,4 +1,4 @@
-import type { OutdatedDependency } from "#src/models/outdatedDependencies/OutdatedDependency";
+import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared/OutdatedDependency";
 
 // A manifest npm installs is also a workspace member, so `pnpm outdated` lists its packages under its name from
 // The workspace lockfile — while the registry lists the same packages under the same name from the npm lockfile,

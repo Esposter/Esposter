@@ -1,4 +1,4 @@
-import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
+import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 import { getMismatches } from "#src/services/outdatedDependencies/getMismatches";
 import { getLockCatalogVersions } from "#src/services/outdatedDependencies/lock/getLockCatalogVersions";
 import { getLockConfigDependencyVersions } from "#src/services/outdatedDependencies/lock/getLockConfigDependencyVersions";

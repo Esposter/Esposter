@@ -1,5 +1,5 @@
-import type { DependencyEntry } from "#src/models/outdatedDependencies/DependencyEntry";
-import type { Mismatch } from "#src/models/outdatedDependencies/Mismatch";
+import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
+import type { Mismatch } from "#src/models/outdatedDependencies/shared/Mismatch";
 
 import { getSpecifierBase } from "#src/services/outdatedDependencies/getSpecifierBase";
 

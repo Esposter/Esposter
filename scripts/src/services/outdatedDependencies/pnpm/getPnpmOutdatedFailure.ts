@@ -1,4 +1,4 @@
-import type { OutdatedDependencyCheck } from "#src/models/outdatedDependencies/OutdatedDependencyCheck";
+import type { OutdatedDependencyCheck } from "#src/models/outdatedDependencies/shared/OutdatedDependencyCheck";
 
 import { PNPM_OUTDATED_COMMAND } from "#src/services/outdatedDependencies/pnpm/constants";
 

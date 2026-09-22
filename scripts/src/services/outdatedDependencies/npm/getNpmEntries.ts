@@ -1,7 +1,7 @@
-import type { DependencyEntry } from "#src/models/outdatedDependencies/DependencyEntry";
+import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
 import type { PackageManifest } from "@esposter/configuration";
 
-import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
+import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 import { DependencyFields } from "#src/models/shared/DependencyField";
 
 // Every field, not `dependencies` alone: a manifest npm installs declares no devDependencies by design, and the

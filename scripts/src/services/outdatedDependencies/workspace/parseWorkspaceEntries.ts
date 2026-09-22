@@ -1,5 +1,5 @@
-import type { DependencyEntry } from "#src/models/outdatedDependencies/DependencyEntry";
-import type { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
+import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
+import type { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 
 const ENTRY_REGEX = /^[ ]{2}['"]?(?<packageName>[^'":\n]+)['"]?:\s*(?<specifier>.+)$/gmu;
 

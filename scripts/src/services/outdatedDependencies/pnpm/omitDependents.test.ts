@@ -1,4 +1,4 @@
-import type { OutdatedDependency } from "#src/models/outdatedDependencies/OutdatedDependency";
+import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared/OutdatedDependency";
 
 import { omitDependents } from "#src/services/outdatedDependencies/pnpm/omitDependents";
 import { describe, expect, test } from "vitest";

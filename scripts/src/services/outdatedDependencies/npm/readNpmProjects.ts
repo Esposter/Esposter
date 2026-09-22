@@ -1,5 +1,5 @@
-import type { NpmLockfile } from "#src/models/outdatedDependencies/NpmLockfile";
-import type { NpmProject } from "#src/models/outdatedDependencies/NpmProject";
+import type { NpmLockfile } from "#src/models/outdatedDependencies/npm/NpmLockfile";
+import type { NpmProject } from "#src/models/outdatedDependencies/npm/NpmProject";
 import type { PackageManifest } from "@esposter/configuration";
 
 import { getNpmEntries } from "#src/services/outdatedDependencies/npm/getNpmEntries";

@@ -1,5 +1,5 @@
-import type { ColorPalette } from "#src/models/outdatedDependencies/ColorPalette";
-import type { Mismatch } from "#src/models/outdatedDependencies/Mismatch";
+import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
+import type { Mismatch } from "#src/models/outdatedDependencies/shared/Mismatch";
 
 import { printTable } from "#src/services/outdatedDependencies/print/printTable";
 

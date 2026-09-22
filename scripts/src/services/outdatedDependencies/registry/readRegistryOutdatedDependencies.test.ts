@@ -1,6 +1,6 @@
-import type { DependencyEntry } from "#src/models/outdatedDependencies/DependencyEntry";
+import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
 
-import { DependencyGroup } from "#src/models/outdatedDependencies/DependencyGroup";
+import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 import { readRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/readRegistryOutdatedDependencies";
 import { getLatestVersion } from "#src/services/shared/getLatestVersion";
 import { describe, expect, test, vi } from "vitest";

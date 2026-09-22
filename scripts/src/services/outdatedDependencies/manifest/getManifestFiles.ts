@@ -1,4 +1,4 @@
-import type { ManifestFile } from "#src/models/outdatedDependencies/ManifestFile";
+import type { ManifestFile } from "#src/models/outdatedDependencies/manifest/ManifestFile";
 import type { PackageManifest } from "@esposter/configuration";
 
 import { getPackageJsonPaths } from "#src/services/shared/getPackageJsonPaths";

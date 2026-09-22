@@ -1,5 +1,5 @@
-import type { ColorPalette } from "#src/models/outdatedDependencies/ColorPalette";
-import type { RegistryCheckError } from "#src/models/outdatedDependencies/RegistryCheckError";
+import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
+import type { RegistryCheckError } from "#src/models/outdatedDependencies/shared/RegistryCheckError";
 
 import { printTable } from "#src/services/outdatedDependencies/print/printTable";
 
