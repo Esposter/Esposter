@@ -58,10 +58,20 @@ its colocated test with it, and the alias import replaces the barrel one — and
 A clean pass prints nothing, and `scripts/src/workspace/sharedExportConsumers.test.ts` fails on anything it
 prints, so the rule is enforced rather than swept.
 
+## Next enforceable
+
+A screaming constant at module scope in an SFC or a composable. Two sittings have now written it — the two the
+last one moved beside their consumers, the eleven this one did — and it is decidable from one file's syntax with
+no list: a `const` whose name is `SCREAMING_SNAKE` at the top level of a `.vue` script or a `composables/**`
+file, `constants.ts` excepted. The next pass that writes it writes the oxlint plugin instead (`oxlint` skill,
+`references/custom-js-plugins.md`), and the scan's `module constant` check retires with it.
+
 ## Exclusions
 
 - Generated barrels (`index.ts` from `ctix`) and `snapshot.json` — machine state.
 - Literals a postinstall-evaluated or JSON config must repeat, which the skill names as the one sanctioned duplication.
 - Two exports sharing module-private state through closure — a pending set, a cached promise, a code set, a
-  dispatch map. One-export-per-file cannot reach them without making that state a module global, which trades a
-  file boundary for a wider one.
+  dispatch map, the four names `initTRPC` hands out. One-export-per-file cannot reach them without making that
+  state a module global, which trades a file boundary for a wider one.
+- A table read as two entities keeps both select schemas in the table file (`posts` as comments): the second
+  schema is derived from the same table, so it is the table's concern rather than a second one.
