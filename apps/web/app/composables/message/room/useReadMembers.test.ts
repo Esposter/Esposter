@@ -19,7 +19,7 @@ describe(useReadMembers, () => {
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
   const roleId = crypto.randomUUID();
-  const newCount = 5;
+  const newCount = 1;
 
   const mountRead = async () => {
     wrapper = await mountSuspended(
