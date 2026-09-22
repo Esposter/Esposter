@@ -2,7 +2,8 @@ import type { BenchCompareOptions } from "vitest";
 
 // The task a group's `vs base` multiplier is measured against when the group has one: the host-baseline
 // Benches, where beating native is the whole point
-export const BASELINE_TASK_NAME = "native"; // Zeroing both time budgets is what makes a committed sample count machine-stable: with no wall-clock budget
+export const BASELINE_TASK_NAME = "native";
+// Zeroing both time budgets is what makes a committed sample count machine-stable: with no wall-clock budget
 // To fill, tinybench falls back to pure iteration counts instead of running as many rounds as the budget
 // Affords, which is a function of the host. The counts are named rather than left to tinybench's own defaults
 // (64 measured, 16 warmup) because a bench here can be a whole build — eighty runs of one is tens of minutes,
