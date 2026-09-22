@@ -274,6 +274,30 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(runSession).not.toHaveBeenCalled();
   });
 
+  // A claimed commit built on the window the release still reviews cannot apply to main, and no window carries it
+  // Alone: the run says it waits rather than reporting a synced queue, and main is left where it was
+  test("reports a claimed commit whose patch does not apply to main as waiting", async () => {
+    expect.hasAssertions();
+
+    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    commitFile(TEST_FILENAME, " ");
+    publish(QUEUE_BRANCH, claimExpress());
+    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
+    readCheckStatus.mockReturnValue(completedCheck);
+    runDrainStep.mockResolvedValue({ isClean: false, reviewFixesSha: undefined } satisfies DrainStepResult);
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Idle,
+      reason: `1 claimed commits wait on the express lane — a patch that does not apply to ${MAIN_BRANCH} yet`,
+      retriggerDelaySeconds: undefined,
+      targetSha: undefined,
+    });
+    expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
+    expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
   // The session's word proves nothing: a repair that is not a trailered commit over a clean tree counts the
   // Attempt on main's head and fails the run, as the fold does
   test("counts a repair that left no trailered commit on main's head and fails the run", async () => {
