@@ -2,7 +2,6 @@ import { pgTable } from "#src/pgTable";
 import { resources } from "#src/schema/resources";
 import { users } from "#src/schema/users";
 import { primaryKey, text, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-orm/zod";
 
 // A row exists iff the user has starred the resource. Server-side rather than per-device — a star that
 // Vanishes on another device reads as data loss, unlike recents which are tolerably per-device.
@@ -20,5 +19,3 @@ export const resourceFavorites = pgTable(
 );
 
 export type ResourceFavorite = typeof resourceFavorites.$inferSelect;
-
-export const selectResourceFavoriteSchema = createSelectSchema(resourceFavorites);

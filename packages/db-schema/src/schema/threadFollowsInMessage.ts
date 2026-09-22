@@ -3,7 +3,6 @@ import { messageSchema } from "#src/schema/messageSchema";
 import { roomsInMessage } from "#src/schema/roomsInMessage";
 import { users } from "#src/schema/users";
 import { boolean, primaryKey, text, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-orm/zod";
 
 export const threadFollowsInMessage = pgTable(
   "threadFollows",
@@ -30,5 +29,3 @@ export const threadFollowsInMessage = pgTable(
 );
 
 export type ThreadFollowInMessage = typeof threadFollowsInMessage.$inferSelect;
-
-export const selectThreadFollowInMessageSchema = createSelectSchema(threadFollowsInMessage);
