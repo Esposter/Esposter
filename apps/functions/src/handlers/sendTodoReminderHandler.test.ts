@@ -2,10 +2,12 @@ import type { Database } from "@esposter/db-schema";
 
 import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
 import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/eventGridPublisherClient.test";
+import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { AppNotificationType, AzureContainer, resources, ResourceType, users } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { MockContainerClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -31,19 +33,16 @@ const seedContent = (resourceId: string, items: { dueAt: string; id: string; nam
 
 describe(sendTodoReminderHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
-  const name = "task";
+  const name = "name";
   const userId = crypto.randomUUID();
-  const dueAt = new Date(Date.now() + Temporal.Duration.from({ hours: 1 }).total("milliseconds"));
+  const dueAt = new Date(0);
 
-  const insertResource = async () => {
-    const [resource] = await mockDb.insert(resources).values({ name, type: ResourceType.TodoList, userId }).returning();
-    if (!resource) throw new Error("resource insert failed");
-    return resource;
-  };
+  const insertResource = async () =>
+    takeOne(await mockDb.insert(resources).values({ name, type: ResourceType.TodoList, userId }).returning());
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
+    await mockDb.insert(users).values(createUser(userId));
   });
 
   afterEach(async () => {
@@ -92,7 +91,7 @@ describe(sendTodoReminderHandler, () => {
 
     const resource = await insertResource();
     const itemId = crypto.randomUUID();
-    const reDatedAt = new Date(dueAt.getTime() + Temporal.Duration.from({ hours: 1 }).total("milliseconds"));
+    const reDatedAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
     await seedContent(resource.id, [{ dueAt: reDatedAt.toISOString(), id: itemId, name }]);
     await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id }, context);
 

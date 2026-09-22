@@ -1,6 +1,7 @@
-import type { InvocationContext as AInvocationContext, EventGridEvent } from "@azure/functions";
+import type { InvocationContext as AInvocationContext } from "@azure/functions";
 
 import { createEventGridNotificationHandler } from "#src/handlers/createEventGridNotificationHandler";
+import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
 import { InvocationContext } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
@@ -15,16 +16,6 @@ describe(createEventGridNotificationHandler, () => {
   const schema = z.object({ attempt: z.number().default(0), id: z.string() });
   const data: z.input<typeof schema> = { id: "" };
   const parsedData: z.infer<typeof schema> = { attempt: 0, id: "" };
-  const createEvent = (): EventGridEvent => ({
-    data,
-    dataVersion: "1.0",
-    eventTime: new Date(0).toISOString(),
-    eventType: "",
-    id: crypto.randomUUID(),
-    metadataVersion: "1",
-    subject: "",
-    topic: "",
-  });
 
   test("hands the parsed data to send", async () => {
     expect.hasAssertions();
@@ -34,7 +25,7 @@ describe(createEventGridNotificationHandler, () => {
       .mockResolvedValue();
     const handler = createEventGridNotificationHandler(AzureFunction.ProcessNotification, schema, send, () => "");
 
-    await handler(createEvent(), context);
+    await handler(createEventGridEvent({ data }), context);
 
     expect(send).toHaveBeenCalledExactlyOnceWith(context, parsedData);
   });
@@ -42,14 +33,14 @@ describe(createEventGridNotificationHandler, () => {
   test("rethrows a failing send so Event Grid redelivers the event", async () => {
     expect.hasAssertions();
 
-    const error = new Error("error");
+    const error = new Error("");
     const send = vi
       .fn<(context: AInvocationContext, data: z.infer<typeof schema>) => Promise<void>>()
       .mockRejectedValue(error);
     const handler = createEventGridNotificationHandler(AzureFunction.ProcessNotification, schema, send, () => "");
 
-    await expect(handler(createEvent(), context)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: ${error.message}]`,
+    await expect(handler(createEventGridEvent({ data }), context)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error]`,
     );
   });
 });

@@ -2,6 +2,7 @@ import type { Database } from "@esposter/db-schema";
 
 import { pushWebhookHandler } from "#src/handlers/pushWebhookHandler";
 import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/eventGridPublisherClient.test";
+import { createUser } from "#src/services/shared/createUser.test";
 import { HttpRequest, InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { appUsersInMessage, roomsInMessage, users, webhooksInMessage } from "@esposter/db-schema";
@@ -36,9 +37,9 @@ describe(pushWebhookHandler, () => {
   const context = new InvocationContext();
   const seedWebhook = async () => {
     const userId = crypto.randomUUID();
-    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
+    await mockDb.insert(users).values(createUser(userId));
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
-    const appUser = takeOne(await mockDb.insert(appUsersInMessage).values({ name: "Bot" }).returning());
+    const appUser = takeOne(await mockDb.insert(appUsersInMessage).values({ name }).returning());
     return takeOne(
       await mockDb
         .insert(webhooksInMessage)
@@ -68,7 +69,7 @@ describe(pushWebhookHandler, () => {
   test("returns 400 when id param is not a UUID", async () => {
     expect.hasAssertions();
 
-    const result = await pushWebhookHandler(createMockRequest({ id: "not-a-uuid", token }), context);
+    const result = await pushWebhookHandler(createMockRequest({ id: "", token }), context);
 
     expect(result?.status).toBe(400);
   });
@@ -78,7 +79,7 @@ describe(pushWebhookHandler, () => {
 
     const webhook = await seedWebhook();
 
-    const result = await pushWebhookHandler(createMockRequest({ id: webhook.id, token }, "{invalid"), context);
+    const result = await pushWebhookHandler(createMockRequest({ id: webhook.id, token }, "{"), context);
 
     expect(result?.status).toBe(400);
   });

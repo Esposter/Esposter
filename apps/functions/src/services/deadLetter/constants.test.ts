@@ -1,5 +1,5 @@
 import { describe } from "vitest";
 
-export const MOCK_ENDPOINT = "http://mock-endpoint";
+export const MOCK_ENDPOINT = "";
 
 describe.todo("constants");

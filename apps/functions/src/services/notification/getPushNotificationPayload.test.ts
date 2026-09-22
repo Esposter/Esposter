@@ -3,10 +3,10 @@ import { AppNotificationType, NotificationSeverity, PUSH_NOTIFICATION_MESSAGE_MA
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getPushNotificationPayload, () => {
-  const baseUrl = "https://esposter.test";
+  const baseUrl = "baseUrl";
   const body = "body";
   const icon = "icon";
-  const path = "/path";
+  const path = "path";
   const severity = NotificationSeverity.Info;
   const title = "title";
   const type = AppNotificationType.Message;
@@ -35,7 +35,7 @@ describe(getPushNotificationPayload, () => {
   test(`truncates the body to ${PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH} characters`, () => {
     expect.hasAssertions();
 
-    const longBody = "a".repeat(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH + 10);
+    const longBody = "a".repeat(PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH + 1);
     // Spelled out rather than computed with `truncate`, which is what the payload uses: an expectation built
     // From the function under test cannot fail on what that function appends, so a stray character in the
     // Suffix would pass unnoticed

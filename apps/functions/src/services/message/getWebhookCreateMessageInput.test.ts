@@ -10,7 +10,7 @@ describe(getWebhookCreateMessageInput, () => {
     userId: crypto.randomUUID(),
   };
   const payload: WebhookPayload = {
-    avatar_url: "url",
+    avatar_url: "avatar_url",
     content: "content",
     username: "username",
   };

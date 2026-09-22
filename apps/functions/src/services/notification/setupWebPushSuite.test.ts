@@ -2,7 +2,6 @@ import type { Database } from "@esposter/db-schema";
 
 import { MOCK_ENDPOINT } from "#src/services/deadLetter/constants.test";
 import { pushSubscriptions, sessions, users } from "@esposter/db-schema";
-import { ID_SEPARATOR } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, describe } from "vitest";
 // The shared teardown behind every web-push suite: per-test subscription cleanup + mock reset, and user cleanup at
@@ -16,7 +15,7 @@ export const setupWebPushSuite = (
   pushSubscription: { auth: string; endpoint: string; p256dh: string; sessionId: string; userId: string };
   seedSession: () => Promise<void>;
 } => {
-  const sessionId = `session${ID_SEPARATOR}${userId}`;
+  const sessionId = crypto.randomUUID();
 
   afterEach(async () => {
     await getMockDb().delete(pushSubscriptions).where(eq(pushSubscriptions.userId, userId));

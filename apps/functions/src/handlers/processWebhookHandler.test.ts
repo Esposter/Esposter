@@ -2,6 +2,7 @@ import type { WebhookEventGridData } from "#src/models/message/WebhookEventGridD
 import type { WebhookPayload } from "@esposter/db-schema";
 
 import { processWebhookHandler } from "#src/handlers/processWebhookHandler";
+import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
 import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/eventGridPublisherClient.test";
 import { InvocationContext } from "@azure/functions";
 import { AzureTable } from "@esposter/db-schema";
@@ -32,19 +33,12 @@ describe(processWebhookHandler, () => {
     expect.hasAssertions();
 
     const result = await processWebhookHandler(
-      {
+      createEventGridEvent({
         data: {
           payload: { content: "content", username: "username" } satisfies WebhookPayload,
           webhook: { roomId, userId },
         } satisfies WebhookEventGridData,
-        dataVersion: "1.0",
-        eventTime: new Date(0).toISOString(),
-        eventType: "",
-        id: crypto.randomUUID(),
-        metadataVersion: "1",
-        subject: "",
-        topic: "",
-      },
+      }),
       context,
     );
 
