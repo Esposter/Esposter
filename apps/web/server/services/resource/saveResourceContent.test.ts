@@ -100,7 +100,7 @@ describe(saveResourceContent, () => {
   const item = new TodoListItem({ dueAt, name });
   const content: TodoListResource = { items: [item] };
   // Storage's own per-blob ordering value, as the first save's event would carry it
-  const sequencer = "0000000000000abc000000000000000000001";
+  const sequencer = "0";
   const { contentSchema } = ResourceDefinitionMap[ResourceType.TodoList];
   const createReminder = (resourceId: Resource["id"]) => ({
     body: { dueAt, itemId: item.id, resourceId },
