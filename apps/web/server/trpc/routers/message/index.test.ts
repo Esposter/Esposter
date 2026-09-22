@@ -10,7 +10,7 @@ import type { MockInstance } from "vitest";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { MessageCreationRejectionReasonMap } from "@@/server/services/message/moderation/MessageCreationRejectionReasonMap";
@@ -247,7 +247,7 @@ describe("messageRouter", () => {
     const message = createOwnMentionMessage();
     const firstMessage = await messageCaller.createMessage({ message, roomId });
     const secondMessage = await messageCaller.createMessage({ message, roomId });
-    const cursor = serialize({ rowKey: secondMessage.rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]);
+    const cursor = serialize({ rowKey: secondMessage.rowKey }, [MESSAGE_ROW_KEY_SORT_ITEM]);
     let messages = await messageCaller.readMessages({ cursor, roomId });
 
     expect(messages.items).toHaveLength(1);
@@ -276,7 +276,7 @@ describe("messageRouter", () => {
     expect(messages.items).toHaveLength(1);
     expect(takeOne(messages.items).rowKey).toBe(firstMessage.rowKey);
 
-    const cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
+    const cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROW_KEY_SORT_ITEM]);
     messages = await messageCaller.readMessages({
       cursor,
       order: SortOrder.Asc,

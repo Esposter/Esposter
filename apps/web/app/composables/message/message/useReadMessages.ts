@@ -1,7 +1,7 @@
 import type { MessageEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useDataStore } from "@/store/message/data";
@@ -56,12 +56,12 @@ export const useReadMessages = () => {
         const messages = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
         if (messages.length > 0) {
           const cursorPaginationData = await $trpc.message.readMessages.query({
-            cursor: serialize({ rowKey: takeOne(messages).rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
+            cursor: serialize({ rowKey: takeOne(messages).rowKey }, [MESSAGE_ROW_KEY_SORT_ITEM]),
             isIncludeValue: true,
             roomId,
           });
           hasMoreNewer.value = true;
-          nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
+          nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [MESSAGE_ROW_KEY_SORT_ITEM]);
           await readMetadata(cursorPaginationData.items);
           return cursorPaginationData;
         }

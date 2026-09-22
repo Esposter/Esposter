@@ -29,7 +29,7 @@ import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -336,7 +336,7 @@ export const baseMessageRouter = router({
     // The client's create handler already absorbs by id — the same guard reconnect catch-up needs anyway
     const createdMessages = on(messageEventEmitter, "createMessage", { signal });
     if (lastEventId) {
-      let cursor = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROWKEY_SORT_ITEM]);
+      let cursor = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROW_KEY_SORT_ITEM]);
       let hasMore = true;
       const messages: MessageEntity[] = [];
 

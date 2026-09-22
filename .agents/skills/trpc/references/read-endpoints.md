@@ -38,7 +38,7 @@ return readCursorPaginationDataAzureTable(fooClient, FooEntity, {
   clauses,
   cursor,
   limit,
-  sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
+  sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
 });
 ```
 
