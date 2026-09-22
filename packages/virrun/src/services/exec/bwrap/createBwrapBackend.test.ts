@@ -55,6 +55,10 @@ const createFakeChild = ({
   return child as ChildProcess;
 };
 
+// The status block the wsl backend appends to stderr, as the folded script prints it
+const createStatusTrailer = (exitCode: number): string =>
+  `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":${exitCode}}\n${WSL_BWRAP_STATUS_END}`;
+
 describe(createBwrapBackend, () => {
   // The wsl backend can't let stderr stream live — it carries the bwrap status block it has to parse — so it
   // Captures stderr regardless of stdio. These cases pin down that the captured stderr is never swallowed:
@@ -68,9 +72,6 @@ describe(createBwrapBackend, () => {
       ERROR_NAME,
     );
   const exec = (stdio: ExecStdio, tee?: ExecTeeTarget) => createBackend().exec(["tsc"], { cwd: "", stdio, tee });
-  // The status block the wsl backend appends to stderr, as the folded script prints it
-  const createStatusTrailer = (exitCode: number) =>
-    `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":${exitCode}}\n${WSL_BWRAP_STATUS_END}`;
 
   beforeEach(() => {
     spawn.mockReset();
