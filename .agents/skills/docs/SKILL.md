@@ -1,6 +1,6 @@
 ---
 name: docs
-description: Apply when creating, updating, or referencing any documentation page, proposal, roadmap, or deferred/rejected idea. Esposter documentation conventions for apps/web/content/docs, the in-app /docs section rendered by @nuxt/content — location carries status, one feature or idea per file, the two-field frontmatter, the Mermaid diagram mandate, plain GFM .md registered in the area index.md and DocsSectionGroupsMap.ts, prose that states magnitudes and never restates what the repo can count, docs moving with the code, and repo-wide standards in architecture/.
+description: Apply when creating, updating, or referencing any documentation page, proposal, roadmap, or deferred/rejected idea. Esposter documentation conventions for apps/web/content/docs, the in-app /docs section rendered by @nuxt/content — location carries status, one feature or idea per file, the two-field frontmatter and the model a proposal adds, the Mermaid diagram mandate, plain GFM .md registered in the area index.md and DocsSectionGroupsMap.ts, prose that states magnitudes and never restates what the repo can count, docs moving with the code, and repo-wide standards in architecture/.
 ---
 
 # Docs — Esposter Conventions
@@ -46,7 +46,7 @@ description: <one sentence; drives nav tooltips and search>
 ---
 ```
 
-Nothing else unless the renderer needs it. No status/date/author fields — location carries status, git carries history.
+Nothing else unless the renderer needs it, with one exception: **a proposal adds `model: <model id>`** — the model that wrote it, or last rewrote its substance (`model: claude-opus-5-5`) — because a spec is executed cold later and the reader weighs it by who designed it; git names the committer, not the model behind the design. No status or date fields — location carries status, git carries history.
 
 ## Writing style
 
