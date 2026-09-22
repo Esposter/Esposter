@@ -7,18 +7,19 @@ import { assert, describe, expect, test } from "vitest";
 
 describe("text", () => {
   const { mountGameObject, sceneKey } = setupGameObjectSuite();
+  const fontSize = "1px";
 
   test("merges defaultTextStyle from store with the provided style", () => {
     expect.hasAssertions();
 
     mountGameObject(Text, {
       props: {
-        configuration: { style: { fontSize: "24px" }, text: "", x: 0, y: 0 },
+        configuration: { style: { fontSize }, text: "", x: 0, y: 0 },
       },
     });
 
     const textStore = useTextStore();
-    textStore.defaultTextStyle = { color: "#ff0000", fontSize: "16px" };
+    textStore.defaultTextStyle = { fontSize: "0px" };
 
     const scene = startTestScene(sceneKey);
     const capturedText = scene.children.list.find((gameObject) => gameObject instanceof GameObjects.Text);
@@ -26,7 +27,7 @@ describe("text", () => {
     assert.exists(capturedText);
 
     // Provided style.fontSize overrides the default
-    expect(capturedText.style.fontSize).toBe("24px");
+    expect(capturedText.style.fontSize).toBe(fontSize);
 
     textStore.defaultTextStyle = undefined;
   });

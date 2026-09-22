@@ -3,7 +3,7 @@ import type { GameObjects } from "phaser";
 import { pushGameObject } from "#src/services/shared/pushGameObject";
 import { describe, expect, test, vi } from "vitest";
 
-const createMockGameObject = (depth?: number) => ({ depth, type: "GameObject" }) as unknown as GameObjects.GameObject;
+const createMockGameObject = (depth?: number) => ({ depth, type: "" }) as unknown as GameObjects.GameObject;
 
 const createMockContainer = (existingDepths: (number | undefined)[] = []) => {
   const list = existingDepths.map((depth) => createMockGameObject(depth));

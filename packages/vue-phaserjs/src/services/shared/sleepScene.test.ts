@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 describe(sleepScene, () => {
   const sceneKey = "sceneKey";
-  const durationMs = 500;
+  const durationMs = 1;
 
   // The clock only advances on a game step, which the headless fixture never takes, so the timer here can only be
   // The one the scene's shutdown discards
