@@ -3,7 +3,7 @@ import type { EventGridEventInput } from "@esposter/db-schema";
 import { replayDeadLetterEventHandler } from "#src/handlers/replayDeadLetterEventHandler";
 import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
 import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
-import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/eventGridPublisherClient.test";
+import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/constants.test";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/deadLetter/constants";
 import { InvocationContext } from "@azure/functions";

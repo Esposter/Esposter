@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
-import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/eventGridPublisherClient.test";
+import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/constants.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { getContentBlobName } from "@esposter/db";
