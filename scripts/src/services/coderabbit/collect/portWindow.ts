@@ -37,22 +37,35 @@ export const portWindow = ({ cwd, developSha, fixShas, frontierSha, queueSha }: 
   const claimedShas = readTrailedShas(owedShas, EXPRESS_TRAILER, cwd);
   const queueShas: string[] = [];
   let heldSha: string | undefined;
+  // The claimed commits passed over since the last carry, in queue order
+  let skippedShas: string[] = [];
   for (const sha of owedShas) {
-    // A commit claiming no review is the express lane's, never a window's: the lane cuts it onto `main` when it
-    // Applies and passes the checks, and a red one is told on the commit — either way nothing behind it waits
-    if (claimedShas.has(sha)) continue;
-    const outcome = pickCommit(sha, cwd);
-    if (outcome === PickOutcome.Conflict) {
-      heldSha = sha;
-      break;
-    } else if (outcome === PickOutcome.Empty) continue;
-
-    if (readWindowFileCount(frontierSha, cwd) > REVIEW_FILE_CAP) {
-      runGit(["reset", "--hard", "HEAD~1"], cwd);
+    // A commit claiming no review is the express lane's, not a window's: the lane cuts it onto `main` when it
+    // Applies, so nothing behind it waits on a review it does not need
+    if (claimedShas.has(sha)) {
+      skippedShas = [...skippedShas, sha];
+      continue;
+    }
+    const baseSha = readHeadSha(cwd);
+    let carriedShas: string[] = [];
+    let outcome = pickCommit(sha, cwd);
+    // Unless what follows builds on it — its own fix, most often — which the lane cannot apply either while the
+    // Claimed commit is still owed: the window carries the claims passed over, then the commit, so neither lane
+    // Waits on the other
+    if (outcome === PickOutcome.Conflict && skippedShas.length > 0) {
+      carriedShas = skippedShas.filter((skippedSha) => pickCommit(skippedSha, cwd) === PickOutcome.Applied);
+      outcome = pickCommit(sha, cwd);
+    }
+    if (outcome === PickOutcome.Empty) {
+      runGit(["reset", "--hard", baseSha], cwd);
+      continue;
+    } else if (outcome === PickOutcome.Conflict || readWindowFileCount(frontierSha, cwd) > REVIEW_FILE_CAP) {
+      runGit(["reset", "--hard", baseSha], cwd);
       heldSha = sha;
       break;
     }
-    queueShas.push(sha);
+    queueShas.push(...carriedShas, sha);
+    skippedShas = skippedShas.filter((skippedSha) => !carriedShas.includes(skippedSha));
   }
 
   return { fileCount: readWindowFileCount(frontierSha, cwd), fixCount: fixShas.length, heldSha, queueShas };

@@ -19,7 +19,6 @@ import {
   CI_FAILURE_CONCLUSION,
   COMPLETED_DESCRIPTION,
   DEVELOP_BRANCH,
-  EXPRESS_FAILED_MARKER,
   EXPRESS_TRAILER,
   HELD_MARKER,
   INSTALL_COMMAND,
@@ -57,7 +56,7 @@ const { judgeRelease, readCheckStatus, runDrainStep, runGh, runSession, spawnPnp
 
 // The seams the pass cannot reach from a fixture repository: `gh`, the check status it reads through
 // `gh pr checks`, the steps that spawn Claude — the drain, the release verdict and the repairer's session — and
-// The `pnpm` the express lane verifies a cut with. Git runs for real.
+// The `pnpm` the repairer verifies a repair with. Git runs for real.
 vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 vi.mock(import("#src/services/coderabbit/collect/runSession"), () => ({
@@ -167,12 +166,6 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     return readSha("HEAD");
   };
-  // Every check red, the install alone green — a repair needs the tree installed before the session runs
-  const answerRedChecks = () => {
-    spawnPnpm.mockImplementation((args) =>
-      args.join(" ") === INSTALL_COMMAND.join(" ") ? greenSpawn : { ...greenSpawn, status: 1 },
-    );
-  };
 
   // What a regenerator does to the tree, in the one test that needs it: the first of them rewrites a tracked
   // File and every other `pnpm` answers as the test's own mock says
@@ -261,15 +254,15 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
   });
 
-  // The cut goes first even over a red main: a claimed commit may be the repair, and it reaches main this way alone
-  test("cuts a claimed commit whose cut is green over a red main, without a session", async () => {
+  // The cut goes first even over a red main, and unverified: a claimed commit may be the repair, and one its own
+  // Checks refuse is made green by a later commit or the repairer — a gate here held it and what builds on it forever
+  test("cuts a claimed commit over a red main without running the checks or a session", async () => {
     expect.hasAssertions();
 
     publish(DEVELOP_BRANCH, MAIN_BRANCH);
     commitFile(TEST_FILENAME, "");
     publish(QUEUE_BRANCH, claimExpress());
     answerGh([], [], [], [], [redRun]);
-    spawnPnpm.mockReturnValue(greenSpawn);
     const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
 
     expect(outcome).toStrictEqual({
@@ -277,6 +270,7 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       reason: `1 express commits reached ${MAIN_BRANCH}`,
       targetSha: readSha(`origin/${MAIN_BRANCH}`),
     });
+    expect(spawnPnpm).not.toHaveBeenCalled();
     expect(runSession).not.toHaveBeenCalled();
   });
 
@@ -335,96 +329,6 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
     expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
     expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
-  });
-
-  // A red cut over a red main under repair is the red of neither: the claimed commit waits, told nothing — here
-  // Behind a repairer that could not start
-  test("holds a claimed commit whose cut is red while a red main is under repair, unsaid", async () => {
-    expect.hasAssertions();
-
-    publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    commitFile(TEST_FILENAME, "");
-    publish(QUEUE_BRANCH, claimExpress());
-    answerGh([], [], [], [], [redRun]);
-    answerRedChecks();
-    runSession.mockResolvedValue({ isEnded: false, isStarted: false });
-    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
-
-    expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Idle,
-      reason: `1 claimed commits wait on the express lane — a red cut, one past its attempts on this ${MAIN_BRANCH} head, a patch that does not apply yet, or a red ${MAIN_BRANCH} under repair`,
-      retriggerDelaySeconds: undefined,
-      targetSha: undefined,
-    });
-    expect(runGh.mock.calls.filter(([args]) => args[2] === "-f")).toHaveLength(0);
-  });
-
-  // Past its repairs a red main is a person's, said once on the head, and a red cut is the claimed commit's own —
-  // Counted on it against the head it was checked on and the collector that checked it
-  test("counts a red cut on its commit once a red main is past its repairs", async () => {
-    expect.hasAssertions();
-
-    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    commitFile(TEST_FILENAME, "");
-    const claimedSha = publish(QUEUE_BRANCH, claimExpress());
-    answerGh(
-      [],
-      [],
-      [],
-      Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-        ...getMarked(getMarker(REPAIR_FAILED_MARKER, mainSha, [collectorSha])),
-        id,
-      })),
-      [redRun],
-    );
-    answerRedChecks();
-    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
-
-    expect(outcome.kind).toBe(CycleOutcomeKind.Idle);
-    expect(runSession).not.toHaveBeenCalled();
-    expect(getCommitCommentPosts(mainSha)).toHaveLength(1);
-    expect(getCommitCommentPosts(claimedSha)).toStrictEqual([
-      [
-        [
-          "api",
-          `repos/{owner}/{repo}/commits/${claimedSha}/comments`,
-          "-f",
-          expect.stringContaining(
-            `${getMarker(EXPRESS_FAILED_MARKER, claimedSha, [collectorSha, mainSha])}\nAttempt 1 of ${SESSION_ATTEMPT_CAP} to cut`,
-          ),
-        ],
-      ],
-    ]);
-  });
-
-  // The checks answer the same for the same tree: past the cap against this main head the commit is not cut
-  // Again — no suite spent — until main moves or the collector changes, which the marker's basis reads by itself
-  test("leaves a claimed commit past its attempts on this main head uncut, without running the checks", async () => {
-    expect.hasAssertions();
-
-    const mainSha = publish(DEVELOP_BRANCH, MAIN_BRANCH);
-    commitFile(TEST_FILENAME, "");
-    const claimedSha = publish(QUEUE_BRANCH, claimExpress());
-    answerGh(
-      [],
-      [],
-      [],
-      Array.from({ length: SESSION_ATTEMPT_CAP }, (_value, id) => ({
-        ...getMarked(getMarker(EXPRESS_FAILED_MARKER, claimedSha, [collectorSha, mainSha])),
-        id,
-      })),
-    );
-    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
-
-    expect(outcome).toStrictEqual({
-      kind: CycleOutcomeKind.Idle,
-      reason: `1 claimed commits wait on the express lane — a red cut, one past its attempts on this ${MAIN_BRANCH} head, a patch that does not apply yet, or a red ${MAIN_BRANCH} under repair`,
-      retriggerDelaySeconds: undefined,
-      targetSha: undefined,
-    });
-    expect(spawnPnpm).not.toHaveBeenCalled();
-    expect(getCommitCommentPosts(claimedSha)).toHaveLength(0);
-    expect(readSha(`origin/${MAIN_BRANCH}`)).toBe(mainSha);
   });
 
   // One commit is the whole of what the queue owed — the port stops only at the cap or on a conflict — so there

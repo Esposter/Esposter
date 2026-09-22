@@ -10,7 +10,7 @@ import { runGit } from "#src/services/shared/runGit";
 // Fold `main` into the candidate the port built and name the sha `develop` is pushed to. The fold is never
 // Undone for the cap: the window is counted on the pull request's own side of `main` (`readWindowFileCount`), so
 // What `main` brings costs the review nothing. Nothing is verified here: `develop`'s own CI is the check
-// (`EXPRESS_VERIFY_COMMANDS` says why the express lane differs).
+// (`REPAIR_VERIFY_COMMANDS` says why).
 export const foldCandidate = async ({
   collectorSha,
   cwd,

@@ -33,16 +33,14 @@ import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A red `main` is the collector's: the release merges on the review alone, so what CI held — a lint rule a bump
-// Enabled, a size snapshot a build moved — lands on `main` unread and stays until something answers it, and the
-// Express lane verifies every cut on that tree, so a red `main` refuses every claimed commit for a red none of
-// Them made. The drain's session is pointed at CI's own verdict on the head and commits the repair, which the
-// Lane verifies with every check and pushes as a cut of its own; the claimed commits go on the run that push
-// Fires. Bounded per streak: the attempts noted on the head plus the repairs already stacked at it, since a
-// Repair that landed red would otherwise start a fresh count on the head it made. Both halves are counted
+// Enabled, a size snapshot a build moved, a claimed commit the express lane cut unverified — lands on `main`
+// Unread and stays until something answers it. The drain's session is pointed at CI's own verdict on the head and
+// Commits the repair, which the lane verifies with every check and pushes as a cut of its own. Bounded per
+// Streak: the attempts noted on the head plus the repairs already stacked at it, since a repair that landed red
+// Would otherwise start a fresh count on the head it made. Both halves are counted
 // Against this collector's own source — the markers naming it, and the repairs whose trailer does — so a
 // Repairer fixed since gets its turns at a head an older one ran the cap up on. Past the streak the head is a
-// Person's and the lane is open again: their repair arrives as a claimed commit, and holding the lane on the red
-// It answers would keep it out.
+// Person's: their repair arrives as a claimed commit.
 export const repairMain = async ({
   collectorSha,
   cwd,
@@ -51,7 +49,7 @@ export const repairMain = async ({
   viewerLogin,
 }: RepairInput): Promise<RepairResult> => {
   const check = readRedMainCheck(mainSha);
-  if (!check) return { isUnderRepair: false };
+  if (!check) return {};
 
   const failedMarker = getMarker(REPAIR_FAILED_MARKER, mainSha, [collectorSha]);
   const comments = readCommitComments(mainSha);
@@ -64,7 +62,7 @@ export const repairMain = async ({
         mainSha,
         `${exhaustedMarker}\n\`${MAIN_BRANCH}\` is red on ${check.url} past ${attempts} repairs, so the next is a person's — a commit carrying the \`${EXPRESS_TRAILER}\` trailer, which the lane cuts as usual.`,
       );
-    return { isUnderRepair: false };
+    return {};
   }
 
   console.info(
@@ -72,7 +70,7 @@ export const repairMain = async ({
   );
   if (isDryRun) {
     console.info("would repair — a dry run runs no Claude session");
-    return { isUnderRepair: true };
+    return {};
   }
 
   runGit(["switch", "--detach", mainSha], cwd);
@@ -86,7 +84,7 @@ export const repairMain = async ({
   const mechanicalSha = repairMechanically({ collectorSha, cwd, mainSha, runUrl: check.url });
   if (mechanicalSha !== undefined) {
     console.info(`${MAIN_BRANCH} repaired at ${mechanicalSha} without a session — its regenerators answered the red`);
-    return { isUnderRepair: true, isVerified: true, targetSha: mechanicalSha };
+    return { isVerified: true, targetSha: mechanicalSha };
   }
 
   const prompt = getRepairPrompt({
@@ -102,7 +100,7 @@ export const repairMain = async ({
   });
   if (!isStarted) {
     console.info("the repairer could not start, and no attempt is counted");
-    return { isUnderRepair: true };
+    return {};
   }
   // What proves a repair is a clean exit over a clean tree that moved by the one commit the session was told to
   // Leave, carrying the trailer that names this head and this collector; the session's word proves nothing.
@@ -128,5 +126,5 @@ export const repairMain = async ({
       `the repairer left ${mainSha} unrepaired (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
     );
   }
-  return { isUnderRepair: true, targetSha: headSha };
+  return { targetSha: headSha };
 };

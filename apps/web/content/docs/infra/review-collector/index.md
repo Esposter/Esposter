@@ -13,7 +13,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 2. [The drain](/docs/infra/review-collector/drain) — the first of the steps Claude runs: which findings are open, what the session is handed and denied, and how a drain that fails is quarantined. The resolver, the reshaper and the verdict are the same session pointed at other work.
 3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one pull request without racing.
-5. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window, because they claim nothing in them needs review and the checks agree.
+5. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window, because they claim nothing in them needs review; they land on `main` unverified, and a red they leave is the repairer's.
 6. [Repair](/docs/infra/review-collector/repair) — a red `main` answered from CI's own verdict by the repo's own regenerators where they answer it and by the same session where they do not, either way as a cut of the lane's own.
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).

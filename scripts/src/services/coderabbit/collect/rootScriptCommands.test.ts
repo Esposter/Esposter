@@ -1,6 +1,6 @@
 import {
-  EXPRESS_BUILD_APPS_COMMAND,
-  EXPRESS_VERIFY_COMMANDS,
+  REPAIR_BUILD_APPS_COMMAND,
+  REPAIR_VERIFY_COMMANDS,
   INSTALL_COMMAND,
   REPAIR_REGENERATE_COMMANDS,
 } from "#src/services/coderabbit/collect/constants";
@@ -50,9 +50,9 @@ describe("rootScriptCommands", () => {
     return steps.flatMap((step) => (typeof step === "string" ? getExpandedCommands(scripts, step) : [step]));
   };
 
-  // The checks the express lane owes, in the order it runs them: a root script named as the one it stands in for,
+  // The checks a repair owes, in the order they run: a root script named as the one it stands in for,
   // Or the one command no root script holds — the two app bundles the suite asserts against.
-  test("the lane runs what the root scripts run, minus the virrun wrapper", () => {
+  test("the repair runs what the root scripts run, minus the virrun wrapper", () => {
     expect.hasAssertions();
 
     const expected = getExpandedSteps([
@@ -60,11 +60,11 @@ describe("rootScriptCommands", () => {
       "build:packages",
       "typecheck",
       "lint",
-      EXPRESS_BUILD_APPS_COMMAND,
+      REPAIR_BUILD_APPS_COMMAND,
       "test",
     ]);
 
-    expect(EXPRESS_VERIFY_COMMANDS).toStrictEqual([INSTALL_COMMAND, ...expected]);
+    expect(REPAIR_VERIFY_COMMANDS).toStrictEqual([INSTALL_COMMAND, ...expected]);
   });
 
   // Every root script that rewrites a tracked artifact rather than reading one. `lint:fix` is `lint`'s own
