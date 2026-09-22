@@ -1,13 +1,10 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
 import { SnapshotChannel } from "@esposter/db-schema";
 import { getDecodedUriComponent } from "@esposter/shared";
-import { z } from "zod";
 
-// Hoisted: this runs once per embedded asset url on a publish and once per asset request on a published page,
-// So a page with hundreds of images would otherwise build and discard that many schemas
-const UUID_SCHEMA = z.uuid();
 // The single decoder + validator for `/api/resource-assets/{encodedPath}` — shared by the serving endpoint
 // And the publish/duplicate clone service. Url segments map one-to-one onto blob-name segments, so rejecting
 // Any decoded segment that could re-introduce a separator makes traversal impossible by construction: a
@@ -29,7 +26,7 @@ export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath |
   }
 
   const [resourceId, directoryName, publishId, publishedFilesDirectoryName] = decodedSegments;
-  if (!resourceId || !UUID_SCHEMA.safeParse(resourceId).success) return undefined;
+  if (!resourceId || !checkIsUuidV4(resourceId)) return undefined;
 
   const blobName = decodedSegments.join("/");
   if (decodedSegments.length === 3 && directoryName === FILES_DIRECTORY_SEGMENT)
@@ -40,7 +37,7 @@ export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath |
     // The publish clone directory is a per-attempt uuid, never the publishVersion — the clone runs before the
     // Transaction claims one (see createSnapshotAssetsDirectoryName)
     publishId &&
-    UUID_SCHEMA.safeParse(publishId).success &&
+    checkIsUuidV4(publishId) &&
     publishedFilesDirectoryName === FILES_DIRECTORY_SEGMENT
   )
     return { blobName, isPublished: true, resourceId };
