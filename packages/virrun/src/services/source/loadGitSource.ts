@@ -21,18 +21,17 @@ export const loadGitSource = async (source: GitSource): Promise<LoadedSource> =>
     source.repo,
     cwd,
   ];
-  const { exitCode, stderr } = await getResultAsync(() =>
-    createNativeBackend().exec(command, { cwd: "", stdio: "pipe" }),
-  ).match(
-    (value) => value,
+  // One rejection path, like loadFilesSource: a spawn failure and a non-zero exit both tear the directory down
+  return getResultAsync(async () => {
+    const { exitCode, stderr } = await createNativeBackend().exec(command, { cwd: "", stdio: "pipe" });
+    if (exitCode !== 0)
+      throw new InvalidOperationError(Operation.Read, source.repo, `git clone failed (exit ${exitCode}): ${stderr}`);
+    return { cwd, dispose };
+  }).match(
+    (loadedSource) => loadedSource,
     async (error) => {
       await dispose();
       throw error;
     },
   );
-  if (exitCode !== 0) {
-    await dispose();
-    throw new InvalidOperationError(Operation.Read, source.repo, `git clone failed (exit ${exitCode}): ${stderr}`);
-  }
-  return { cwd, dispose };
 };
