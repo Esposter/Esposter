@@ -32,12 +32,12 @@ for (const ledgerPath of getSweepFilePaths(`${LEDGER_DIRECTORY}/*.md`).filter((p
   // A derived ledger's rows are the tree's before any trailer dates them, so a unit added since opens at `—` and
   // One removed goes, with no row anyone edits by hand
   const getUnits = LedgerUnitsMap[ledger];
-  const synced = getUnits ? syncLedgerUnits(text, getUnits()) : text;
-  const { matched, text: rewritten } = applyLedgerEvents(synced, ledger, events);
+  const syncedText = getUnits ? syncLedgerUnits(text, getUnits()) : text;
+  const { matched, text: rewrittenText } = applyLedgerEvents(syncedText, ledger, events);
   for (const event of matched) matchedEvents.add(event);
-  if (rewritten === text) continue;
+  if (rewrittenText === text) continue;
 
-  writeFileSync(absolutePath, rewritten);
+  writeFileSync(absolutePath, rewrittenText);
   console.info(ledgerPath);
 }
 
