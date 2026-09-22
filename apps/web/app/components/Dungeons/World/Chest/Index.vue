@@ -4,6 +4,7 @@ import type { Position } from "grid-engine";
 
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { getAnimationConfiguration } from "@/services/dungeons/animation/getAnimationConfiguration";
+import { CHEST_CLOSED_FRAME, CHEST_OPENED_FRAME } from "@/services/dungeons/chest/constants";
 import { Sprite, useAnimations } from "vue-phaserjs";
 
 interface Props {
@@ -12,12 +13,10 @@ interface Props {
 }
 
 const { chest, position } = defineProps<Props>();
-const START_FRAME = 18 * 32 + 19;
-const END_FRAME = 18 * 32 + 21;
 // Reactivity will be handled by animations
-const frame = chest.isOpened ? END_FRAME : START_FRAME;
+const frame = chest.isOpened ? CHEST_OPENED_FRAME : CHEST_CLOSED_FRAME;
 const animations = useAnimations((scene) => [
-  getAnimationConfiguration(scene, TilesetKey.Dungeon, { end: END_FRAME, start: START_FRAME }),
+  getAnimationConfiguration(scene, TilesetKey.Dungeon, { end: CHEST_OPENED_FRAME, start: CHEST_CLOSED_FRAME }),
 ]);
 const playAnimationKey = ref<TilesetKey>();
 

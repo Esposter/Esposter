@@ -1,6 +1,7 @@
-const DURATION_UNITS = ["day", "hour", "minute", "second"] as const;
+import type { DurationUnit } from "@/models/date/DurationUnit";
 
-type DurationUnit = (typeof DURATION_UNITS)[number];
+import { DurationUnits } from "@/models/date/DurationUnit";
+
 // Pinned to en-US rather than the reader's locale, like every other formatter here: a duration is rendered on
 // Both sides of hydration, and a server that speaks a different locale would print different text to the one
 // The browser then computes.
@@ -17,7 +18,7 @@ const DurationUnitFormatterMap: Record<DurationUnit, Intl.NumberFormat> = {
 // Printing it at all.
 export const formatDuration = (ms: number): string => {
   const duration = Temporal.Duration.from({ milliseconds: Math.max(Math.round(ms), 0) });
-  for (const unit of DURATION_UNITS) {
+  for (const unit of DurationUnits) {
     const total = Math.round(duration.total(unit));
     if (total > 0) return DurationUnitFormatterMap[unit].format(total);
   }

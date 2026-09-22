@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 
-import { DataSourceTypes } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
+import { DATA_SOURCE_ACCEPT, DATA_SOURCE_ACCEPTS } from "@/services/resource/sheet/dataSource/constants";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { getDataSourceTypeByFileName } from "@/services/resource/sheet/dataSource/getDataSourceTypeByFileName";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
@@ -16,8 +16,6 @@ const error = defineModel<string>("error", { default: "" });
 const isParsing = defineModel<boolean>("isParsing", { default: false });
 // The filename is the best name the user never has to type, so the form takes it as its own
 const emit = defineEmits<{ parse: [name: string] }>();
-const ACCEPTS = DataSourceTypes.map((type) => DataSourceConfigurationMap[type].accept);
-const ACCEPT = ACCEPTS.join(",");
 const dropZone = useTemplateRef("dropZone");
 const file = ref<File>();
 const parseFile = async (newFile: File) => {
@@ -25,7 +23,7 @@ const parseFile = async (newFile: File) => {
   sheetResource.value = undefined;
   const type = getDataSourceTypeByFileName(newFile.name);
   if (!type) {
-    error.value = `${newFile.name} is not a ${ACCEPTS.join(" or ")} file`;
+    error.value = `${newFile.name} is not a ${DATA_SOURCE_ACCEPTS.join(" or ")} file`;
     return;
   }
 
@@ -66,10 +64,10 @@ const onUpdateFile = async (newFile?: File | File[]) => {
 <template>
   <div ref="dropZone" p-4 b-2 rd b-dashed flex flex-col gap-2 :class="isOverDropZone ? 'b-primary' : 'b-border'">
     <span text-hint>
-      Drop a {{ ACCEPT }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
+      Drop a {{ DATA_SOURCE_ACCEPT }} file here, or pick one — the rows land in the new sheet's Data blade. Optional.
     </span>
     <v-file-input
-      :accept="ACCEPT"
+      :accept="DATA_SOURCE_ACCEPT"
       density="comfortable"
       label="File"
       :error-messages="error"

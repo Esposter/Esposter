@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MenuTextStyle } from "@/assets/dungeons/scene/monsterParty/styles/MenuTextStyle";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
+import { DEFAULT_INFO_DIALOG_MESSAGE, INFO_CONTAINER_HEIGHT } from "@/services/dungeons/scene/monsterParty/constants";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useMonsterPartyInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
@@ -16,7 +16,6 @@ const { isWaitingForPlayerSpecialInput } = storeToRefs(dialogStore);
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
 const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 const { infoDialogMessage, infoTextDisplayWidth } = storeToRefs(monsterPartyInfoPanelStore);
-const RECTANGLE_HEIGHT = 65;
 const isCancelButtonActive = computed(() => monsterPartyOptionGrid.value === PlayerSpecialInput.Cancel);
 const y = ref<number>();
 
@@ -36,7 +35,7 @@ watchImmediate(isCancelButtonActive, (newIsCancelButtonActive) => {
       :configuration="{
         origin: 0,
         width: 867,
-        height: RECTANGLE_HEIGHT,
+        height: INFO_CONTAINER_HEIGHT,
         fillColor: 0xede4f3,
         strokeStyle: [8, 0x905ac2],
       }"
@@ -58,6 +57,6 @@ watchImmediate(isCancelButtonActive, (newIsCancelButtonActive) => {
       }"
       @update:display-width="infoTextDisplayWidth = $event"
     />
-    <DungeonsUIInputPromptCursor :y="RECTANGLE_HEIGHT / 2 - 3" />
+    <DungeonsUIInputPromptCursor :y="INFO_CONTAINER_HEIGHT / 2 - 3" />
   </Container>
 </template>

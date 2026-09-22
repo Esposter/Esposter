@@ -1,10 +1,7 @@
 import type { CacheTag } from "@/models/cache/CacheTag";
 
+import { DEFAULT_CACHE_KEY } from "@/services/cache/constants";
 import { useCacheStore } from "@/store/cache";
-
-// A session-scoped cache holds one entry, so it needs no key of its own — the keyed form is the general case
-// And this is that form with a single, unnamed key
-const DEFAULT_CACHE_KEY = "";
 
 interface CachedReadOptions<TResult> {
   // Whether an invalidation re-reads at once or only drops the entry, declared once per cache instead of

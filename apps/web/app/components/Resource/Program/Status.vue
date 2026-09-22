@@ -2,6 +2,7 @@
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
 
 import { RESOURCE_DATE_TIME_ATTRIBUTES } from "@/services/resource/constants";
+import { ProgramStatusHeaders } from "@/services/resource/program/ProgramStatusHeaders";
 import { useNotificationStore } from "@/store/notification";
 import { useProgramStore } from "@/store/resource/program";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
@@ -20,11 +21,6 @@ const statusRows = ref<ProgramStatusRow[]>([]);
 // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
 const isRespondedPartial = ref(false);
 const respondedCount = computed(() => statusRows.value.filter(({ isResponded }) => isResponded).length);
-const HEADERS = [
-  { key: "keyValue", title: "Participant" },
-  { key: "addedAt", title: "Added" },
-  { key: "isResponded", title: "Responded" },
-];
 const readStatus = async () => {
   await getResultAsync(() => $trpc.program.readProgramStatus.query({ id: id.value })).match((programStatus) => {
     isRespondedPartial.value = programStatus.isRespondedPartial;
@@ -82,7 +78,7 @@ await readStatus();
       title="No participants yet"
       description="Bind an audience on the Setup blade, then generate participants."
     />
-    <v-data-table v-else :headers="HEADERS" :items="statusRows">
+    <v-data-table v-else :headers="ProgramStatusHeaders" :items="statusRows">
       <template #[`item.addedAt`]="{ item }">
         <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.addedAt" />
       </template>
