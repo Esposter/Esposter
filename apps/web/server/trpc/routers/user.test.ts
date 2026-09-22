@@ -295,7 +295,7 @@ describe("userRouter", () => {
 
   // `NaN` survives a string round trip through `Number` and fails no range comparison, so it is the one name
   // The integer check alone keeps out
-  test.each(["notASlot", "NaN"])("readCallBackgrounds passes over %s under the prefix", async (slotName) => {
+  test.each(["a", String(Number.NaN)])("readCallBackgrounds passes over %s under the prefix", async (slotName) => {
     expect.hasAssertions();
 
     MockContainerDatabase.set(
