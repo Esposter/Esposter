@@ -90,11 +90,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
 
     const outcome = await executeSaveRevisionMutation(
       () => $trpc.resource.saveResourceRevision.mutate({ id: resource.id }),
-      {
-        key: resource.id,
-        onError: createErrorNotification,
-        onSuccess: () => readSnapshotHistory(),
-      },
+      { key: resource.id, onError: createErrorNotification, onSuccess: () => readSnapshotHistory() },
     );
     return outcome.status === MutationStatus.Succeeded;
   };

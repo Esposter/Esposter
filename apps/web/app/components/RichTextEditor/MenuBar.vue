@@ -20,13 +20,9 @@ const items = computed<MenuItem[]>(() => [
     },
     title: "Strike",
   },
-  {
-    isDivider: true,
-  },
+  { isDivider: true },
   ...getListMenuItems(editor),
-  {
-    isDivider: true,
-  },
+  { isDivider: true },
   {
     disabled: !editor?.can().undo(),
     icon: "mdi-undo",

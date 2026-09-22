@@ -16,18 +16,8 @@ const BASE_COLORS_COMMON = {
 } as const satisfies Partial<Colors>;
 
 const ThemeModeBaseColorsMap = {
-  [ThemeMode.dark]: {
-    ...BASE_COLORS_COMMON,
-    background: "#18191a",
-    surface: "#36393f",
-    text: "#fff",
-  },
-  [ThemeMode.light]: {
-    ...BASE_COLORS_COMMON,
-    background: "#dae0e6",
-    surface: "#fff",
-    text: "#000",
-  },
+  [ThemeMode.dark]: { ...BASE_COLORS_COMMON, background: "#18191a", surface: "#36393f", text: "#fff" },
+  [ThemeMode.light]: { ...BASE_COLORS_COMMON, background: "#dae0e6", surface: "#fff", text: "#000" },
 } as const satisfies Partial<Record<ThemeMode, Partial<Colors>>>;
 
 export type BaseColors = (typeof ThemeModeBaseColorsMap)[Exclude<ThemeMode, ThemeMode.system>];
@@ -76,11 +66,7 @@ const theme: ThemeOptions = {
       dark: false,
     },
   },
-  variations: {
-    colors: ["primary"],
-    darken: 1,
-    lighten: 1,
-  },
+  variations: { colors: ["primary"], darken: 1, lighten: 1 },
 };
 // Every input in the app renders its details row only when it has something to say. Vuetify's own default
 // Reserves the row unconditionally, which pads every form with a blank line for a message that is usually

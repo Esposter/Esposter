@@ -13,49 +13,26 @@ export class FunnelResolver extends AVisualTypeResolver {
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.chart = defu(
-      {
-        type: uncapitalize(VisualType.Bar),
-      },
-      apexOptions.chart,
-    );
+    apexOptions.chart = defu({ type: uncapitalize(VisualType.Bar) }, apexOptions.chart);
     apexOptions.dataLabels = defu<NonNullable<ApexOptions["dataLabels"]>, ApexOptions["dataLabels"][]>(
       {
-        dropShadow: {
-          enabled: true,
-        },
+        dropShadow: { enabled: true },
         enabled: true,
         formatter: (_value, options) => options?.w.globals.labels[options.dataPointIndex],
       },
       apexOptions.dataLabels,
     );
-    apexOptions.legend = defu(
-      {
-        show: false,
-      },
-      apexOptions.legend,
-    );
+    apexOptions.legend = defu({ show: false }, apexOptions.legend);
     apexOptions.plotOptions = defu(
-      {
-        bar: {
-          barHeight: "80%",
-          borderRadius: 0,
-          horizontal: true,
-          isFunnel: true,
-        },
-      },
+      { bar: { barHeight: "80%", borderRadius: 0, horizontal: true, isFunnel: true } },
       apexOptions.plotOptions,
     );
     apexOptions.subtitle = defu<NonNullable<ApexOptions["subtitle"]>, ApexOptions["subtitle"][]>(
-      {
-        align: "center",
-      },
+      { align: "center" },
       apexOptions.subtitle,
     );
     apexOptions.title = defu<NonNullable<ApexOptions["title"]>, ApexOptions["title"][]>(
-      {
-        align: "center",
-      },
+      { align: "center" },
       apexOptions.title,
     );
   }

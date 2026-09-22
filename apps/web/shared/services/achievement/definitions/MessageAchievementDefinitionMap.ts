@@ -36,13 +36,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     triggerPath: "message.createMessage",
   }),
   [MessageAchievementName.EarlyBird]: defineAchievementDefinition({
-    condition: {
-      maximum: 7,
-      minimum: 5,
-      referenceUnit: "day",
-      type: AchievementConditionType.Time,
-      unit: "hour",
-    },
+    condition: { maximum: 7, minimum: 5, referenceUnit: "day", type: AchievementConditionType.Time, unit: "hour" },
     description: "Send a message between 5-7 AM",
     icon: "mdi-weather-sunset-up",
     points: 25,
@@ -75,12 +69,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   }),
   [MessageAchievementName.FileSharer]: defineAchievementDefinition({
     amount: 1,
-    condition: {
-      operator: BinaryOperator.gt,
-      path: "files.length",
-      type: AchievementConditionType.Property,
-      value: 0,
-    },
+    condition: { operator: BinaryOperator.gt, path: "files.length", type: AchievementConditionType.Property, value: 0 },
     description: "Share your first file",
     icon: "mdi-file-upload",
     points: 20,
@@ -135,13 +124,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     triggerPath: "message.createMessage",
   }),
   [MessageAchievementName.NightOwl]: defineAchievementDefinition({
-    condition: {
-      maximum: 5,
-      minimum: 0,
-      referenceUnit: "day",
-      type: AchievementConditionType.Time,
-      unit: "hour",
-    },
+    condition: { maximum: 5, minimum: 0, referenceUnit: "day", type: AchievementConditionType.Time, unit: "hour" },
     description: "Send a message between midnight and 5 AM",
     icon: "mdi-weather-night",
     points: 30,

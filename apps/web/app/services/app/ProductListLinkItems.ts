@@ -4,21 +4,9 @@ import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
 import { RoutePath } from "@esposter/shared";
 
 export const ProductListLinkItems = [
-  {
-    href: RoutePath.MessagesIndex,
-    icon: "mdi-message-fast",
-    title: MESSAGE_DISPLAY_NAME,
-  },
-  {
-    href: RoutePath.CallsIndex,
-    icon: "mdi-video",
-    title: "Calls",
-  },
-  {
-    href: RoutePath.ResourceExplorer,
-    icon: "mdi-earth",
-    title: "Resource Explorer",
-  },
+  { href: RoutePath.MessagesIndex, icon: "mdi-message-fast", title: MESSAGE_DISPLAY_NAME },
+  { href: RoutePath.CallsIndex, icon: "mdi-video", title: "Calls" },
+  { href: RoutePath.ResourceExplorer, icon: "mdi-earth", title: "Resource Explorer" },
   {
     children: [
       {

@@ -49,10 +49,7 @@ export const useDragAndDrop = () => {
     // Centre the dropped node on the mouse once initialized, then remove the listener.
     const { off } = onNodesInitialized(() => {
       updateNode(id, ({ dimensions, position: nodePosition }) => ({
-        position: {
-          x: nodePosition.x - dimensions.width / 2,
-          y: nodePosition.y - dimensions.height / 2,
-        },
+        position: { x: nodePosition.x - dimensions.width / 2, y: nodePosition.y - dimensions.height / 2 },
       }));
       off();
     });

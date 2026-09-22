@@ -45,16 +45,7 @@ const {
 } = useResourceListFilters(defaultSortBy);
 const { debouncedFilter: search, editedFilter: editedSearchQuery } = useDebouncedFilter(searchQuery);
 const { count, createResourcesPageReader, error, isPending, items, readResources, refresh } = useReadResources(
-  {
-    searchQuery: search,
-    status,
-    tagName,
-    tagValue,
-    types,
-    updatedAfter,
-    updatedBefore,
-    updatedFilter,
-  },
+  { searchQuery: search, status, tagName, tagValue, types, updatedAfter, updatedBefore, updatedFilter },
   source,
 );
 const resourceIdActionItemsMap = computed(() => new Map(items.value.map((item) => [item.id, getActionItems(item)])));

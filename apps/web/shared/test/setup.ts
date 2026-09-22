@@ -100,11 +100,7 @@ vi.mock("nitropack/runtime", () => ({
   useRuntimeConfig: () => ({
     // Nuxt 4.5's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
     // (via `#build/fetch`'s eager `$fetch.create`), so the mock must carry the standard `app` defaults.
-    app: {
-      baseURL: "/",
-      buildAssetsDir: "/_nuxt/",
-      cdnURL: "",
-    },
+    app: { baseURL: "/", buildAssetsDir: "/_nuxt/", cdnURL: "" },
     public: {
       appEnv: Environment.Development,
       azure: {

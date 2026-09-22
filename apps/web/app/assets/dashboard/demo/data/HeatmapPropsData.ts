@@ -3,9 +3,7 @@ import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 import { createData } from "@/services/dashboard/demo/createData";
 
 export const HeatmapPropsData = {
-  options: {
-    colors: ["#008FFB"],
-  },
+  options: { colors: ["#008FFB"] },
   series: [
     {
       data: createData(18, {

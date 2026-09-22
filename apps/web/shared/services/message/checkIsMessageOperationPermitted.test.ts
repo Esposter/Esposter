@@ -34,16 +34,8 @@ describe(checkIsMessageOperationPermitted, () => {
 
     expect(matrix).toMatchInlineSnapshot(`
       {
-        "Call": {
-          "author": [],
-          "member": [],
-          "moderator": [],
-        },
-        "EditRoom": {
-          "author": [],
-          "member": [],
-          "moderator": [],
-        },
+        "Call": { "author": [], "member": [], "moderator": [] },
+        "EditRoom": { "author": [], "member": [], "moderator": [] },
         "Message": {
           "author": [
             "Delete",
@@ -57,11 +49,7 @@ describe(checkIsMessageOperationPermitted, () => {
             "Update",
           ],
         },
-        "PinMessage": {
-          "author": [],
-          "member": [],
-          "moderator": [],
-        },
+        "PinMessage": { "author": [], "member": [], "moderator": [] },
         "Poll": {
           "author": [
             "Delete",
@@ -77,11 +65,7 @@ describe(checkIsMessageOperationPermitted, () => {
             "Vote",
           ],
         },
-        "System": {
-          "author": [],
-          "member": [],
-          "moderator": [],
-        },
+        "System": { "author": [], "member": [], "moderator": [] },
         "Webhook": {
           "author": [],
           "member": [],

@@ -12,30 +12,14 @@ export const CursorUpgradeMap = {
     description: `The ${Target.Mouse} and ${pluralize(Target.Cursor)} are **twice** as efficient.`,
     flavorDescription: "prod prod",
     price: 1e2,
-    effects: [
-      {
-        value: 2,
-        targets: [Target.Mouse, Target.Cursor],
-        configuration: {
-          type: EffectType.Multiplicative,
-        },
-      },
-    ],
+    effects: [{ value: 2, targets: [Target.Mouse, Target.Cursor], configuration: { type: EffectType.Multiplicative } }],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 1 }],
   },
   [CursorUpgradeId["Carpal Tunnel Prevention Cream"]]: {
     description: `The ${Target.Mouse} and ${pluralize(Target.Cursor)} are **twice** as efficient.`,
     flavorDescription: "it... it hurts to click...",
     price: 5e2,
-    effects: [
-      {
-        value: 2,
-        targets: [Target.Mouse, Target.Cursor],
-        configuration: {
-          type: EffectType.Multiplicative,
-        },
-      },
-    ],
+    effects: [{ value: 2, targets: [Target.Mouse, Target.Cursor], configuration: { type: EffectType.Multiplicative } }],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 1 }],
   },
   [CursorUpgradeId.Ambidextrous]: {
@@ -61,10 +45,7 @@ export const CursorUpgradeMap = {
       {
         value: 0.1,
         targets: [Target.Mouse, Target.Cursor],
-        configuration: {
-          type: EffectType.BuildingAdditiveNor,
-          targets: [Target.Cursor],
-        },
+        configuration: { type: EffectType.BuildingAdditiveNor, targets: [Target.Cursor] },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 25 }],
@@ -77,10 +58,7 @@ export const CursorUpgradeMap = {
       {
         value: 5,
         targets: [CursorUpgradeId["Thousand Fingers"]],
-        configuration: {
-          type: EffectType.Multiplicative,
-          itemType: Target.Upgrade,
-        },
+        configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 50 }],
@@ -93,10 +71,7 @@ export const CursorUpgradeMap = {
       {
         value: 10,
         targets: [CursorUpgradeId["Thousand Fingers"]],
-        configuration: {
-          type: EffectType.Multiplicative,
-          itemType: Target.Upgrade,
-        },
+        configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 100 }],
@@ -109,10 +84,7 @@ export const CursorUpgradeMap = {
       {
         value: 20,
         targets: [CursorUpgradeId["Thousand Fingers"]],
-        configuration: {
-          type: EffectType.Multiplicative,
-          itemType: Target.Upgrade,
-        },
+        configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 150 }],
@@ -125,10 +97,7 @@ export const CursorUpgradeMap = {
       {
         value: 20,
         targets: [CursorUpgradeId["Thousand Fingers"]],
-        configuration: {
-          type: EffectType.Multiplicative,
-          itemType: Target.Upgrade,
-        },
+        configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 200 }],
@@ -141,10 +110,7 @@ export const CursorUpgradeMap = {
       {
         value: 20,
         targets: [CursorUpgradeId["Thousand Fingers"]],
-        configuration: {
-          type: EffectType.Multiplicative,
-          itemType: Target.Upgrade,
-        },
+        configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 250 }],
@@ -157,10 +123,7 @@ export const CursorUpgradeMap = {
       {
         value: 20,
         targets: [CursorUpgradeId["Thousand Fingers"]],
-        configuration: {
-          type: EffectType.Multiplicative,
-          itemType: Target.Upgrade,
-        },
+        configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 300 }],
@@ -173,10 +136,7 @@ export const CursorUpgradeMap = {
       {
         value: 20,
         targets: [CursorUpgradeId["Thousand Fingers"]],
-        configuration: {
-          type: EffectType.Multiplicative,
-          itemType: Target.Upgrade,
-        },
+        configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 350 }],
@@ -189,10 +149,7 @@ export const CursorUpgradeMap = {
       {
         value: 20,
         targets: [CursorUpgradeId["Thousand Fingers"]],
-        configuration: {
-          type: EffectType.Multiplicative,
-          itemType: Target.Upgrade,
-        },
+        configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 400 }],
@@ -205,10 +162,7 @@ export const CursorUpgradeMap = {
       {
         value: 20,
         targets: [CursorUpgradeId["Thousand Fingers"]],
-        configuration: {
-          type: EffectType.Multiplicative,
-          itemType: Target.Upgrade,
-        },
+        configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 450 }],
@@ -221,10 +175,7 @@ export const CursorUpgradeMap = {
       {
         value: 20,
         targets: [CursorUpgradeId["Thousand Fingers"]],
-        configuration: {
-          type: EffectType.Multiplicative,
-          itemType: Target.Upgrade,
-        },
+        configuration: { type: EffectType.Multiplicative, itemType: Target.Upgrade },
       },
     ],
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 500 }],

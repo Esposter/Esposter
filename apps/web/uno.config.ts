@@ -97,13 +97,8 @@ export default defineConfig({
   },
   presets: [
     presetWind4({
-      dark: {
-        dark: ".v-theme--dark",
-        light: ".v-theme--light",
-      },
-      preflights: {
-        reset: false,
-      },
+      dark: { dark: ".v-theme--dark", light: ".v-theme--light" },
+      preflights: { reset: false },
     }),
     presetAttributify(),
   ],

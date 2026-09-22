@@ -6,11 +6,7 @@ import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
 import { compileVariable } from "#shared/services/compiler/compileVariable";
 
 export const BuildingMap = {
-  [BuildingId.Cursor]: {
-    flavorDescription: "Autoclicks once every 10 seconds.",
-    basePrice: 15,
-    baseValue: 1e-1,
-  },
+  [BuildingId.Cursor]: { flavorDescription: "Autoclicks once every 10 seconds.", basePrice: 15, baseValue: 1e-1 },
   [BuildingId.Grandma]: {
     flavorDescription: `A nice grandma to make more ${compileVariable("pluralName")}.`,
     basePrice: 1e2,

@@ -88,12 +88,7 @@ const commandItems = computed<Item[]>(() => [
   // Every type has revisions, so the command is unconditional — recovery is core rather than a capability.
   // Taking one is not a command at all: revisions accrue on their own, and a Save beside an editor that
   // Already persists on its own would read as the thing that makes an edit durable
-  {
-    icon: "mdi-history",
-    isGroupStart: true,
-    onClick: () => openVersionHistory(),
-    title: "Version history",
-  },
+  { icon: "mdi-history", isGroupStart: true, onClick: () => openVersionHistory(), title: "Version history" },
   // Publishing and unpublishing are one executor, so one pending flag covers the single button that is
   // Rendered for whichever of them applies
   ...(isPublishable.value

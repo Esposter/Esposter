@@ -25,10 +25,7 @@ export default defineEventHandler(async (event) => {
       `${runtimeConfig.public.azure.function.baseUrl}/api/webhooks/${id}/${token}`,
       {
         body,
-        headers: {
-          "Content-Type": MimeType.Json,
-          "x-functions-key": runtimeConfig.azure.function.key,
-        },
+        headers: { "Content-Type": MimeType.Json, "x-functions-key": runtimeConfig.azure.function.key },
         ignoreResponseError: true,
         method: "POST",
       },

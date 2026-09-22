@@ -17,10 +17,7 @@ import { join } from "node:path";
 // Reports the on-disk cache tiers: the repo-local dep store and the host-global snapshots, prepare layers and task
 // Entries. IO lives here; rendering is the pure formatCacheListing.
 export const cacheLsCommand: CommandDef = defineCommand({
-  meta: {
-    description: "List the repo-local dependency store and host-global warm snapshots.",
-    name: CommandType.Ls,
-  },
+  meta: { description: "List the repo-local dependency store and host-global warm snapshots.", name: CommandType.Ls },
   run: () => {
     getResult(() => {
       const repoStorePath = join(getRepoCacheDirectory(""), VIRRUN_STORE_DIRECTORY_NAME);

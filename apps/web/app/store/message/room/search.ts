@@ -5,10 +5,7 @@ export const useRoomSearchStore = defineStore("message/room/search", () => {
   return useCursorSearcher((searchQuery, cursor, options) => {
     const normalizedSearchQuery = normalizeString(searchQuery);
     return $trpc.room.readRooms.query(
-      {
-        cursor,
-        filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined,
-      },
+      { cursor, filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined },
       options,
     );
   }, true);

@@ -8,12 +8,7 @@ import { LikeAchievementName } from "@esposter/db-schema";
 export const LikeAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Like, {
   [LikeAchievementName.Critic]: defineAchievementDefinition({
     amount: 10,
-    condition: {
-      operator: BinaryOperator.eq,
-      path: "value",
-      type: AchievementConditionType.Property,
-      value: -1,
-    },
+    condition: { operator: BinaryOperator.eq, path: "value", type: AchievementConditionType.Property, value: -1 },
     description: "Dislike 10 posts",
     icon: "mdi-thumb-down",
     points: 15,
@@ -28,12 +23,7 @@ export const LikeAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
   }),
   [LikeAchievementName.Disliker]: defineAchievementDefinition({
     amount: 1,
-    condition: {
-      operator: BinaryOperator.eq,
-      path: "value",
-      type: AchievementConditionType.Property,
-      value: -1,
-    },
+    condition: { operator: BinaryOperator.eq, path: "value", type: AchievementConditionType.Property, value: -1 },
     description: "Dislike a post",
     icon: "mdi-thumb-down",
     points: 5,
@@ -48,12 +38,7 @@ export const LikeAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
   }),
   [LikeAchievementName.Liker]: defineAchievementDefinition({
     amount: 1,
-    condition: {
-      operator: BinaryOperator.eq,
-      path: "value",
-      type: AchievementConditionType.Property,
-      value: 1,
-    },
+    condition: { operator: BinaryOperator.eq, path: "value", type: AchievementConditionType.Property, value: 1 },
     description: "Like a post",
     icon: "mdi-thumb-up",
     points: 5,
@@ -61,12 +46,7 @@ export const LikeAchievementDefinitionMap = defineAchievementDefinitionMap(Achie
   }),
   [LikeAchievementName.SuperFan]: defineAchievementDefinition({
     amount: 100,
-    condition: {
-      operator: BinaryOperator.eq,
-      path: "value",
-      type: AchievementConditionType.Property,
-      value: 1,
-    },
+    condition: { operator: BinaryOperator.eq, path: "value", type: AchievementConditionType.Property, value: 1 },
     description: "Like 100 posts",
     icon: "mdi-heart-multiple",
     points: 75,

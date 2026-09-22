@@ -73,9 +73,7 @@ export const useGrapesJsEditor = async (
       // oxlint-disable-next-line typescript/no-deprecated -- fromElement still functional in GrapesJS; removing it would change initial-load behavior
       fromElement: true,
       height: "100%",
-      storageManager: {
-        type: "document",
-      },
+      storageManager: { type: "document" },
     });
     newEditor.Storage.add("document", {
       load: () => storage.load(),

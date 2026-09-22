@@ -24,12 +24,7 @@ const { inputPromptCursorDisplayWidth, inputPromptCursorX, isInputPromptCursorVi
       scaleX: scale * 2,
       scaleY: scale * 1.5,
       displayWidth: inputPromptCursorDisplayWidth,
-      tween: {
-        delay: 0,
-        duration: 500,
-        repeat: -1,
-        y: getTweenRange(y, y + 6),
-      },
+      tween: { delay: 0, duration: 500, repeat: -1, y: getTweenRange(y, y + 6) },
     }"
     @update:display-width="inputPromptCursorDisplayWidth = $event"
   />

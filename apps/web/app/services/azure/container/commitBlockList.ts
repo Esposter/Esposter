@@ -15,9 +15,6 @@ export const commitBlockList = (sasUrl: string, blockIds: string[], contentType?
       ${blockIds.map((blockId) => `<Latest>${blockId}</Latest>`).join("\n")}
     </BlockList>
   `,
-    headers: {
-      "Content-Type": MimeType.Xml,
-      ...(contentType && { [BLOB_CONTENT_TYPE_HEADER]: contentType }),
-    },
+    headers: { "Content-Type": MimeType.Xml, ...(contentType && { [BLOB_CONTENT_TYPE_HEADER]: contentType }) },
     method: "PUT",
   });

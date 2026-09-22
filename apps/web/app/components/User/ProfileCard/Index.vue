@@ -19,18 +19,9 @@ const profileCardRows = computed(() => {
     throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });
 
   return {
-    name: {
-      type: RowValueType.Text,
-      value: session.value.user.name,
-    },
-    biography: {
-      type: RowValueType.Textarea,
-      value: session.value.user.biography,
-    },
-    image: {
-      type: RowValueType.Image,
-      value: session.value.user.image,
-    },
+    name: { type: RowValueType.Text, value: session.value.user.name },
+    biography: { type: RowValueType.Textarea, value: session.value.user.biography },
+    image: { type: RowValueType.Image, value: session.value.user.image },
   } as const;
 });
 // `Object.fromEntries` types its result as a plain record, so the key-to-value correspondence the rows

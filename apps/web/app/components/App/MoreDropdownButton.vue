@@ -11,26 +11,11 @@ const { data: session } = await authClient.useSession(useFetch);
 const items = computed<ListLinkItem[]>(() =>
   session.value
     ? [
-        {
-          href: RoutePath.UserSettings,
-          icon: "mdi-cog",
-          title: "Settings",
-        },
+        { href: RoutePath.UserSettings, icon: "mdi-cog", title: "Settings" },
         ...MoreDropdownLinkItems,
-        {
-          icon: "mdi-logout",
-          onClick: () => signOutOfBrowser(),
-          title: "Logout",
-        },
+        { icon: "mdi-logout", onClick: () => signOutOfBrowser(), title: "Logout" },
       ]
-    : [
-        {
-          href: RoutePath.Login,
-          icon: "mdi-login",
-          title: "Login",
-        },
-        ...MoreDropdownLinkItems,
-      ],
+    : [{ href: RoutePath.Login, icon: "mdi-login", title: "Login" }, ...MoreDropdownLinkItems],
 );
 const menu = ref(false);
 </script>

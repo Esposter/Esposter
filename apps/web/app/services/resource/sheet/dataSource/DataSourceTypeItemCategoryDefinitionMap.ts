@@ -6,18 +6,9 @@ import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArr
 // Exported for the icon: the import and export submenus show each format against its own, and only this map
 // Knows which one that is
 export const DataSourceTypeItemCategoryDefinitionMap = {
-  [DataSourceType.Csv]: {
-    icon: "mdi-file-delimited",
-    title: DataSourceType.Csv,
-  },
-  [DataSourceType.Json]: {
-    icon: "mdi-code-json",
-    title: DataSourceType.Json,
-  },
-  [DataSourceType.Xlsx]: {
-    icon: "mdi-file-excel",
-    title: DataSourceType.Xlsx,
-  },
+  [DataSourceType.Csv]: { icon: "mdi-file-delimited", title: DataSourceType.Csv },
+  [DataSourceType.Json]: { icon: "mdi-code-json", title: DataSourceType.Json },
+  [DataSourceType.Xlsx]: { icon: "mdi-file-excel", title: DataSourceType.Xlsx },
 } as const satisfies Record<DataSourceType, { icon: string; title: string }>;
 
 export const DataSourceTypeItemCategoryDefinitions: (SelectItemCategoryDefinition<DataSourceType> & {

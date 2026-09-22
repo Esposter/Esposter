@@ -17,10 +17,7 @@ export const bansInMessage = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  {
-    extraConfig: ({ roomId, userId }) => [primaryKey({ columns: [roomId, userId] })],
-    schema: messageSchema,
-  },
+  { extraConfig: ({ roomId, userId }) => [primaryKey({ columns: [roomId, userId] })], schema: messageSchema },
 );
 
 export type BanInMessage = typeof bansInMessage.$inferSelect;

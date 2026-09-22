@@ -18,11 +18,7 @@ export const uploadBlocks = async (file: Blob, sasUrl: string, progressNotifier?
     promises.push(
       fetch(`${sasUrl}&comp=block&blockid=${blockId}`, {
         body: file.slice(start, end),
-        headers: {
-          [BLOB_CONTENT_TYPE_HEADER]: file.type,
-          "Content-Type": file.type,
-          "x-ms-blob-type": "BlockBlob",
-        },
+        headers: { [BLOB_CONTENT_TYPE_HEADER]: file.type, "Content-Type": file.type, "x-ms-blob-type": "BlockBlob" },
         method: "PUT",
       }),
     );

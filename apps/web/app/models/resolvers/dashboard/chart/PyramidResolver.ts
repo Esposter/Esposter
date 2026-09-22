@@ -11,13 +11,6 @@ export class PyramidResolver<T extends BasicChartConfiguration> extends AChartTy
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.plotOptions = defu(
-      {
-        bar: {
-          distributed: true,
-        },
-      },
-      apexOptions.plotOptions,
-    );
+    apexOptions.plotOptions = defu({ bar: { distributed: true } }, apexOptions.plotOptions);
   }
 }

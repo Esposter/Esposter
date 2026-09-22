@@ -23,10 +23,7 @@ const lines = computed(() => (dialogMessage.title ? [dialogMessage.title, dialog
       x: 18,
       y: 12 + DialogTextStyle.fontSize * index,
       text: line,
-      style: {
-        ...DialogTextStyle,
-        wordWrap: { width: DIALOG_WIDTH - WORD_PADDING },
-      },
+      style: { ...DialogTextStyle, wordWrap: { width: DIALOG_WIDTH - WORD_PADDING } },
     }"
   />
 </template>

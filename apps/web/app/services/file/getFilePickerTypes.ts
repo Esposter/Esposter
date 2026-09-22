@@ -6,10 +6,5 @@ import { normalizeString } from "@esposter/shared";
 // Which is the first extension without its dot, the way a native save dialog names a format
 export const getFilePickerTypes = (mimeType: MimeType, accept: string) => {
   const extensions = accept.split(",").map((extension) => normalizeString(extension));
-  return [
-    {
-      accept: { [mimeType]: extensions },
-      description: (extensions[0] ?? "").replace(/^\./u, "").toUpperCase(),
-    },
-  ];
+  return [{ accept: { [mimeType]: extensions }, description: (extensions[0] ?? "").replace(/^\./u, "").toUpperCase() }];
 };

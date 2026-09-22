@@ -24,9 +24,7 @@ describe(checkIsTMXEmbeddedTilesetNode, () => {
     expect(
       checkIsTMXEmbeddedTilesetNode(
         assertNode<TMXDataNode>({
-          $: {
-            encoding: Encoding.Base64,
-          },
+          $: { encoding: Encoding.Base64 },
           $$: undefined,
           _: "",
         }),

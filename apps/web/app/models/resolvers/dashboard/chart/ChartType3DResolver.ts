@@ -11,17 +11,7 @@ export class ChartType3DResolver<T extends BasicChartConfiguration> extends ACha
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.fill = defu(
-      {
-        type: "gradient",
-      },
-      apexOptions.fill,
-    );
-    apexOptions.theme = defu(
-      {
-        palette: "palette2",
-      },
-      apexOptions.theme,
-    );
+    apexOptions.fill = defu({ type: "gradient" }, apexOptions.fill);
+    apexOptions.theme = defu({ palette: "palette2" }, apexOptions.theme);
   }
 }

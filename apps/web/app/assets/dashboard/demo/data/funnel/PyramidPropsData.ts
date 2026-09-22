@@ -21,10 +21,5 @@ export const PyramidPropsData = {
       ],
     },
   },
-  series: [
-    {
-      data: [200, 330, 548, 740, 880, 990, 1100, 1380],
-      name: "",
-    },
-  ],
+  series: [{ data: [200, 330, 548, 740, 880, 990, 1100, 1380], name: "" }],
 } as const satisfies VisualPropsData;

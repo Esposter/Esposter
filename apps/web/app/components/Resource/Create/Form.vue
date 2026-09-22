@@ -57,10 +57,7 @@ const submit = async () => {
             contentVersion: resource.contentVersion,
             id: resource.id,
           }),
-        {
-          key: resource.id,
-          onError: createErrorNotification,
-        },
+        { key: resource.id, onError: createErrorNotification },
       );
       // They came to see their rows, so a successful import lands on the Data blade rather than Overview
       await navigateTo(

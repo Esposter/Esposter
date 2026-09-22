@@ -38,10 +38,7 @@ export const auth = betterAuth({
     },
   },
   database: drizzleAdapter(db, drizzleAdapterConfiguration),
-  rateLimit: {
-    max: standardRateLimiter.points,
-    window: standardRateLimiter.duration,
-  },
+  rateLimit: { max: standardRateLimiter.points, window: standardRateLimiter.duration },
   socialProviders: {
     facebook: {
       clientId: process.env.FACEBOOK_CLIENT_ID,
