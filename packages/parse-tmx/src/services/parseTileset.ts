@@ -12,15 +12,10 @@ export const parseTileset = (node: TMXTilesetNode): TMXTilesetParsed => {
   if (checkIsExternalTileset(node.$)) return structuredClone(node.$);
 
   const { $, $$, tile } = node as TMXEmbeddedTilesetNode;
+  const imageNode = $$.find((childNode) => childNode["#name"] === TMXNodeType.Image);
+  if (!imageNode) throw new InvalidOperationError(Operation.Read, parseTileset.name, $.name);
 
-  for (const childNode of $$) {
-    const tmxNodeType = childNode["#name"];
-    if (tmxNodeType !== TMXNodeType.Image) continue;
-
-    const image = structuredClone(childNode.$ as TMXImageShared);
-    const tiles = tile?.map((t) => parseTile(t)) ?? [];
-    return { ...$, image, tiles };
-  }
-
-  throw new InvalidOperationError(Operation.Read, parseTileset.name, $.name);
+  const image = structuredClone(imageNode.$ as TMXImageShared);
+  const tiles = tile?.map((tileNode) => parseTile(tileNode)) ?? [];
+  return { ...$, image, tiles };
 };
