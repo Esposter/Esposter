@@ -18,7 +18,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
 
-**The release merges itself.** A review at `develop`'s head that left nothing open is merged to `main` by the cycle — on the bot's least merge risk outright, on any other level once the session has read the rationale against the tree and found nothing real left ([merge](/docs/infra/review-collector/collection-cycle)). A person merges only a release the verdict held, and closing the pull request without merging is their pause.
+**The release merges itself.** A review at `develop`'s head that left nothing open is merged to `main` by the cycle — on the bot's least merge risk outright, on every other reading of that head, including none at all, once the verdict has read what the bot did write against the tree and found nothing real left ([merge](/docs/infra/review-collector/collection-cycle)). A person merges only a release the verdict held, and closing the pull request without merging is their pause.
 
 ## Principles
 
@@ -57,9 +57,9 @@ flowchart TD
   G -->|yes| O{Open findings}
   O -->|yes| DR[Drain into ai/review-fixes<br/>Claude fixes or rejects each]
   O -->|no| CL{Review clean at the head}
-  CL -->|yes, least risk| MG[Merge the release PR<br/>the push to main returns develop, exit]
+  CL -->|yes, least risk stated| MG[Merge the release PR<br/>the push to main returns develop, exit]
   CL -->|no| SY
-  CL -->|yes, risk above the least| J{Verdict for this head<br/>recorded, else Claude reads the rationale}
+  CL -->|yes, any other risk<br/>or none stated| J{Verdict for this head<br/>recorded, else Claude reads what the bot wrote}
   J -->|merge| MG
   J -->|hold — a person merges| SY
   DR --> SY[Rewrite ai/queue onto the tree the window is built on<br/>Claude resolves a conflict, repackages a commit alone over the cap]

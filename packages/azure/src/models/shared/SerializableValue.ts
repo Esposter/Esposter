@@ -1,6 +1,5 @@
+import { SERIALIZABLE_VALUE_MAX_LENGTH } from "#src/services/shared/constants";
 import { z } from "zod";
-
-export const SERIALIZABLE_VALUE_MAX_LENGTH = 100;
 
 export type SerializableValue = boolean | Date | null | number | string;
 

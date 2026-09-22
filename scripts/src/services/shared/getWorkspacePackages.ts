@@ -1,6 +1,7 @@
 import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 import type { PackageManifest } from "@esposter/configuration";
 
+import { PACKAGE_JSON_FILENAME } from "#src/services/shared/constants";
 import { getPackageJsonPaths } from "#src/services/shared/getPackageJsonPaths";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFileSync } from "node:fs";
@@ -14,7 +15,7 @@ import { basename, dirname, relative, resolve } from "node:path";
 // Workspace package, so it is dropped by identity rather than by position, and the rest are sorted because
 // `readdirSync` order is the filesystem's and this feeds a committed artifact.
 export const getWorkspacePackages = (root: string): WorkspacePackage[] => {
-  const rootPackageJsonPath = resolve(root, "package.json");
+  const rootPackageJsonPath = resolve(root, PACKAGE_JSON_FILENAME);
   return getPackageJsonPaths(root)
     .filter((packageJsonPath) => packageJsonPath !== rootPackageJsonPath)
     .toSorted()

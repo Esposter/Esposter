@@ -4,7 +4,7 @@ import type { PackageManifest } from "@esposter/configuration";
 
 import { getNpmEntries } from "#src/services/outdatedDependencies/npm/getNpmEntries";
 import { getNpmLockResolvedVersions } from "#src/services/outdatedDependencies/npm/getNpmLockResolvedVersions";
-import { NPM_LOCKFILE } from "#src/services/shared/constants";
+import { NPM_LOCKFILE, PACKAGE_JSON_FILENAME } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
 import { readFileSync } from "node:fs";
@@ -16,7 +16,7 @@ import { dirname, resolve } from "node:path";
 // Rather than pointing at a workspace section.
 export const readNpmProjects = (root: string): NpmProject[] =>
   getSweepFilePaths(`*${NPM_LOCKFILE}`).map((lockfilePath) => {
-    const manifestPath = resolve(root, dirname(lockfilePath), "package.json");
+    const manifestPath = resolve(root, dirname(lockfilePath), PACKAGE_JSON_FILENAME);
     const manifest = parseMachineJson<PackageManifest>(readFileSync(manifestPath, "utf8"));
     const lockfile = parseMachineJson<NpmLockfile>(readFileSync(resolve(root, lockfilePath), "utf8"));
     const manifestName = manifest.name ?? "";

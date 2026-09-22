@@ -5,8 +5,7 @@ import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisher
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
 import { logAndRethrow } from "#src/services/shared/logAndRethrow";
-import { RestError } from "@azure/storage-blob";
-import { getContentBlobName } from "@esposter/db";
+import { checkIsNotFound, getContentBlobName } from "@esposter/db";
 import {
   AppNotificationType,
   AzureContainer,
@@ -36,7 +35,7 @@ export const sendTodoReminderHandler: ServiceBusQueueHandler = (message, context
     const buffer = await getResultAsync(() => blockBlobClient.downloadToBuffer()).match(
       (response) => response,
       (error) => {
-        if (error instanceof RestError && error.statusCode === 404) return undefined;
+        if (checkIsNotFound(error)) return undefined;
         throw error;
       },
     );

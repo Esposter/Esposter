@@ -11,6 +11,6 @@ export const parseGroup = async (
 ): Promise<TMXGroupLayerParsed> => {
   const { $$ } = node;
   const group = cloneNodeWithType<TMXGroupLayerParsed>(node);
-  group.layers = await Promise.all($$.map((l) => parseNode(l, expectedCount, translateFlips)));
+  group.layers = await Promise.all($$.map((layerNode) => parseNode(layerNode, expectedCount, translateFlips)));
   return group;
 };

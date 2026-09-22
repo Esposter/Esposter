@@ -7,8 +7,9 @@ export interface ReleaseVerdictInput {
   developSha: string;
   isDryRun: boolean;
   issueComments: GitHubEntry[];
-  // The level the bot stated, above the one the collector merges on unasked
-  level: string;
+  // The level the bot stated for this head, above the one the collector merges on unasked — absent when its
+  // Walkthrough carries no merge-risk block at all, which is a head to judge and never one to merge unasked
+  level?: string;
   pullRequest: number;
   reviews: GitHubReview[];
   viewerLogin: string;

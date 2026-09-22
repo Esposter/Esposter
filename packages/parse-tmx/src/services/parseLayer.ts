@@ -10,7 +10,7 @@ export const parseLayer = (node: TMXLayerNode): TMXLayerParsed => {
   const { image, object, properties } = node;
   const layer = cloneNodeWithType<TMXLayerParsed>(node);
   if (image) layer.image = structuredClone(takeOne(image).$);
-  if (object) layer.objects = object.map((o) => parseObject(o));
+  if (object) layer.objects = object.map((objectNode) => parseObject(objectNode));
   if (properties) layer.properties = parseProperties(properties);
   return layer;
 };

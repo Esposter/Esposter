@@ -16,9 +16,7 @@ export const checkHasPermission = async (
   if (!room) return false;
   else if (room.userId === userId) return true;
 
-  const permissions = await getPermissions(db, userId, roomId);
   // What the bits mean is `@esposter/db-schema`'s to say, so this function is only the query around it.
   // The owner already returned above — reaching here means the caller is not one
-  if (permissions) return baseCheckHasPermission(permissions, permission, false);
-  else return false;
+  return baseCheckHasPermission(await getPermissions(db, userId, roomId), permission, false);
 };

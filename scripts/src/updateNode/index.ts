@@ -1,4 +1,4 @@
-import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PACKAGE_JSON_FILENAME, PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getLatestVersion } from "#src/services/shared/getLatestVersion";
 import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { getEnginesNode } from "#src/services/updateNode/getEnginesNode";
@@ -21,7 +21,7 @@ const { major } = getVersionParts(version);
 // 2. Bump the two node pins package.json carries: `devEngines.runtime` is what `pnpm/setup` installs on the
 // Runners, `engines.node` is what every other tool reads. They are the same number by definition, so they are
 // Written together and never separately.
-const packageJsonPath = resolve(REPOSITORY_ROOT, "package.json");
+const packageJsonPath = resolve(REPOSITORY_ROOT, PACKAGE_JSON_FILENAME);
 const packageJson = readFileSync(packageJsonPath, "utf8");
 const oldVersion = getEnginesNode(packageJson);
 // The pins / @types/node only need rewriting when the target differs. We still hand off to fnm

@@ -3,16 +3,10 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
 import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
 import { ExternalSceneStore } from "#src/store/scene";
+import { getOrCreate } from "@esposter/shared";
 
 export const pushListener = (lifecycle: Lifecycle, listener: (scene: SceneWithPlugins) => void, key?: string) => {
   const sceneKey = key ?? useInjectSceneKey();
-  const listenersMap = ExternalSceneStore.lifecycleListenersMap.get(lifecycle);
-  if (!listenersMap) {
-    ExternalSceneStore.lifecycleListenersMap.set(lifecycle, new Map([[sceneKey, [listener]]]));
-    return;
-  }
-
-  const listeners = listenersMap.get(sceneKey);
-  if (listeners) listeners.push(listener);
-  else listenersMap.set(sceneKey, [listener]);
+  const listenersMap = getOrCreate(ExternalSceneStore.lifecycleListenersMap, lifecycle, () => new Map());
+  getOrCreate(listenersMap, sceneKey, () => []).push(listener);
 };

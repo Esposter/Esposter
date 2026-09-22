@@ -188,11 +188,13 @@ export class Parser {
     });
   }
 
+  // A second value under a key that holds a lone one promotes it to an array and lands beside it: the promotion
+  // Alone would drop the value that caused it, which is the second of three siblings under `explicitArray: false`
   #assignOrPush(object: Record<string, unknown>, key: string, newValue: unknown): void {
     if (key in object) {
       const objectValue = object[key];
       if (Array.isArray(objectValue)) objectValue.push(newValue);
-      else defineProperty(object, key, [objectValue]);
+      else defineProperty(object, key, [objectValue, newValue]);
     } else if (this.#options.explicitArray) defineProperty(object, key, [newValue]);
     else defineProperty(object, key, newValue);
   }

@@ -31,15 +31,14 @@ import type { Except } from "type-fest";
 
 import { BLOB_NOT_FOUND_MESSAGE } from "#src/constants";
 import { MockRestError } from "#src/models/shared/MockRestError";
+import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getBlobUrl } from "#src/services/container/getBlobUrl";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
-import { getMockBlobKey } from "#src/services/container/getMockBlobKey";
 import { getMockContainer } from "#src/services/container/getMockContainer";
 import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { storeMockBlobWrite } from "#src/services/container/storeMockBlobWrite";
 import { createMockResponse } from "#src/services/shared/createMockResponse";
 import { getMockSasUrl } from "#src/services/shared/getMockSasUrl";
-import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 import { noop } from "@esposter/shared";
@@ -103,18 +102,12 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   delete(): Promise<BlobDeleteResponse> {
-    if (!this.container.has(this.name)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
-    this.container.delete(this.name);
-    MockContainerBlobDatesDatabase.delete(getMockBlobKey(this.containerName, this.name));
+    if (!deleteMockBlob(this.containerName, this.name)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     return Promise.resolve({ _response: createMockResponse(200) });
   }
 
   deleteIfExists(): Promise<BlobDeleteIfExistsResponse> {
-    const succeeded = this.container.has(this.name);
-    if (succeeded) {
-      this.container.delete(this.name);
-      MockContainerBlobDatesDatabase.delete(getMockBlobKey(this.containerName, this.name));
-    }
+    const succeeded = deleteMockBlob(this.containerName, this.name);
     return Promise.resolve({ _response: createMockResponse(succeeded ? 200 : 404), succeeded });
   }
 
