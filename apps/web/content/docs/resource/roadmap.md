@@ -9,5 +9,6 @@ Azure-portal parity program for the Resource Explorer: every product is already 
 
 ## Later
 
+- [ ] Prune the page-builder plugin belt — absorb the block-registering plugins that are unmaintained or imported through `@ts-expect-error`, keep the engines (the webpage preset, the image editor, the exporter); lowest value per unit of effort in the [dependency admission](/docs/architecture/dependency-admission) analysis, so it goes last
 - [ ] [Content-addressed assets](/docs/proposals/resource/content-addressed-assets) — a publish references assets by content instead of cloning them, with reference rows written from a scan of each version's content and a count-but-never-collect period before anything is deleted
 - [ ] [Paid storage tiers](/docs/proposals/resource/paid-storage-tiers) — sell a larger allowance through a merchant-of-record checkout, with the tier column staying the one input to the quota gate. Blocked on wanting to take money at all, and on shipping account deletion + data export alongside it
