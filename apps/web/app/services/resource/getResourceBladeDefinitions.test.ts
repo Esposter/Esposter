@@ -53,7 +53,7 @@ describe(getResourceBladeDefinitions, () => {
 
   test("rejects a blade no type offers", () => {
     expect.hasAssertions();
-    expect(checkIsValidResourceBlade(ResourceType.Note, "not-a-blade")).toBe(false);
+    expect(checkIsValidResourceBlade(ResourceType.Note, "")).toBe(false);
   });
 
   // A guard that only checks the slug against the whole blade vocabulary would route a Sheet to an Editor

@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 // A resolver that is no longer active never takes its own options back out, so an evaluation that layered them
 // Into the initial options themselves would keep applying the type the visual no longer has
 describe(useApexOptions, () => {
-  const height = 100;
+  const height = 1;
   // The one call site builds this from the visual's data and its measured height — neither of which changes
   // When the visual type or the chart type does, so it stays cached across those edits
   const createInitialOptions = () => computed<ApexOptions>(() => ({ chart: { height } }));

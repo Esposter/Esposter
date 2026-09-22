@@ -40,13 +40,13 @@ describe(usePasteRangeFromClipboard, () => {
     const { dataSource } = setupWithDataSource(
       createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]),
     );
-    readTextMock.mockResolvedValueOnce("10\t20");
+    readTextMock.mockResolvedValueOnce("3\t4");
     selectAnchor(0, 0);
     const pasteRangeFromClipboard = usePasteRangeFromClipboard();
     await pasteRangeFromClipboard();
 
-    expect(takeOne(dataSource.rows).data.a).toBe("10");
-    expect(takeOne(dataSource.rows).data.b).toBe("20");
+    expect(takeOne(dataSource.rows).data.a).toBe("3");
+    expect(takeOne(dataSource.rows).data.b).toBe("4");
   });
 
   test("overwrites only the columns from the column anchor on", async () => {
@@ -55,13 +55,13 @@ describe(usePasteRangeFromClipboard, () => {
     const { dataSource } = setupWithDataSource(
       createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]),
     );
-    readTextMock.mockResolvedValueOnce("99");
+    readTextMock.mockResolvedValueOnce("3");
     selectAnchor(0, 1);
     const pasteRangeFromClipboard = usePasteRangeFromClipboard();
     await pasteRangeFromClipboard();
 
     expect(takeOne(dataSource.rows).data.a).toBe("1");
-    expect(takeOne(dataSource.rows).data.b).toBe("99");
+    expect(takeOne(dataSource.rows).data.b).toBe("3");
   });
 
   test("appends new rows when the pasted data extends past the last row", async () => {
@@ -100,12 +100,12 @@ describe(usePasteRangeFromClipboard, () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource(createDataSource([createNumberColumn("n")], [createRow({ n: 1 })]));
-    readTextMock.mockResolvedValueOnce("42");
+    readTextMock.mockResolvedValueOnce("0");
     selectAnchor(0, 0);
     const pasteRangeFromClipboard = usePasteRangeFromClipboard();
     await pasteRangeFromClipboard();
 
-    expect(takeOne(dataSource.rows).data.n).toBe(42);
+    expect(takeOne(dataSource.rows).data.n).toBe(0);
   });
 
   test("inserts rows at the anchor row in shift-down mode", async () => {

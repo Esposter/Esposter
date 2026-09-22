@@ -85,10 +85,10 @@ describe("resourceSheetRowTable", () => {
     expect.hasAssertions();
 
     const sourceColumn = createNumberColumn(name);
-    const computedColumn = createComputedColumn("computed", sourceColumn.id);
-    await mountWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ [name]: 1234 })]));
+    const computedColumn = createComputedColumn("a", sourceColumn.id);
+    await mountWithDataSource(createDataSource([sourceColumn, computedColumn], [createRow({ [name]: 0 })]));
 
-    expect(getCellTexts(firstDataColumnIndex + 1)).toStrictEqual(["1234"]);
+    expect(getCellTexts(firstDataColumnIndex + 1)).toStrictEqual(["0"]);
   });
 
   // What a reader sees is the formatted text, so that is what the search box has to match — matching the

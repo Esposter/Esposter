@@ -96,54 +96,48 @@ describe(useUpdateColumn, () => {
   test("recasts String values to Number when type changes", async () => {
     expect.hasAssertions();
 
-    const initialDataSource = createDataSource(
-      [createColumn("score")],
-      [createRow({ score: "42" }), createRow({ score: "7" })],
-    );
+    const initialDataSource = createDataSource([createColumn("a")], [createRow({ a: "0" }), createRow({ a: "1" })]);
     const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const sheetHistoryStore = useSheetHistoryStore();
     const { undo } = sheetHistoryStore;
     const column = takeOne(dataSource.columns);
-    await updateColumn("score", createUpdatedColumn(column, { type: ColumnType.Number }));
+    await updateColumn("a", createUpdatedColumn(column, { type: ColumnType.Number }));
 
-    expect(takeOne(dataSource.rows).data.score).toBe(42);
-    expect(takeOne(dataSource.rows, 1).data.score).toBe(7);
+    expect(takeOne(dataSource.rows).data.a).toBe(0);
+    expect(takeOne(dataSource.rows, 1).data.a).toBe(1);
 
     undo(dataSource);
 
-    expect(takeOne(dataSource.rows).data.score).toBe("42");
-    expect(takeOne(dataSource.rows, 1).data.score).toBe("7");
+    expect(takeOne(dataSource.rows).data.a).toBe("0");
+    expect(takeOne(dataSource.rows, 1).data.a).toBe("1");
     expect(takeOne(dataSource.columns).type).toBe(ColumnType.String);
   });
 
   test("recasts Number values to String when type changes", async () => {
     expect.hasAssertions();
 
-    const initialDataSource = createDataSource(
-      [createNumberColumn("score")],
-      [createRow({ score: 42 }), createRow({ score: 7 })],
-    );
+    const initialDataSource = createDataSource([createNumberColumn("a")], [createRow({ a: 0 }), createRow({ a: 1 })]);
     const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource.columns);
-    await updateColumn("score", createUpdatedColumn(column, { type: ColumnType.String }));
+    await updateColumn("a", createUpdatedColumn(column, { type: ColumnType.String }));
 
-    expect(takeOne(dataSource.rows).data.score).toBe("42");
-    expect(takeOne(dataSource.rows, 1).data.score).toBe("7");
+    expect(takeOne(dataSource.rows).data.a).toBe("0");
+    expect(takeOne(dataSource.rows, 1).data.a).toBe("1");
   });
 
   test("does not recast values when type is unchanged", async () => {
     expect.hasAssertions();
 
-    const initialDataSource = createDataSource([createNumberColumn("score")], [createRow({ score: 42 })]);
+    const initialDataSource = createDataSource([createNumberColumn("a")], [createRow({ a: 0 })]);
     const { dataSource } = setupWithDataSource(initialDataSource);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource.columns);
     const originalSize = column.size;
-    await updateColumn("score", createUpdatedColumn(column, { description: "updated" }));
+    await updateColumn("a", createUpdatedColumn(column, { description: "updated" }));
 
-    expect(takeOne(dataSource.rows).data.score).toBe(42);
+    expect(takeOne(dataSource.rows).data.a).toBe(0);
     expect(takeOne(dataSource.columns).size).toBe(originalSize);
   });
 

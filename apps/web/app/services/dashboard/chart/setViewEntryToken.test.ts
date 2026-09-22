@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 describe(setViewEntryToken, () => {
   const visualId = crypto.randomUUID();
-  const otherEntry = `${crypto.randomUUID()}${DASHBOARD_VIEW_SEPARATOR}other`;
+  const otherEntry = `${crypto.randomUUID()}${DASHBOARD_VIEW_SEPARATOR} `;
   const token = "token";
 
   test("replaces this visual's entry and leaves every other visual's alone", () => {

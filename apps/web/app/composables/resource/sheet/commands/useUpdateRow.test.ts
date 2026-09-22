@@ -15,10 +15,10 @@ describe(useUpdateRow, () => {
     const { dataSource } = setupWithDataSource();
     const updateRow = useUpdateRow();
     const originalRow = takeOne(dataSource.rows);
-    await updateRow(createUpdatedRow(originalRow, { data: { "": 10, " ": 11 } }));
+    await updateRow(createUpdatedRow(originalRow, { data: { "": 2, " ": 3 } }));
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(10);
-    expect(takeOne(dataSource.rows).data[" "]).toBe(11);
+    expect(takeOne(dataSource.rows).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows).data[" "]).toBe(3);
   });
 
   test("snapshot immutability - mutating passed object after call does not affect undo history", async () => {
@@ -29,10 +29,10 @@ describe(useUpdateRow, () => {
     const sheetHistoryStore = useSheetHistoryStore();
     const { redo, undo } = sheetHistoryStore;
     const originalRow = takeOne(dataSource.rows);
-    const updatedRow = reactive(createUpdatedRow(originalRow, { data: { "": 10, " ": 11 } }));
+    const updatedRow = reactive(createUpdatedRow(originalRow, { data: { "": 2, " ": 3 } }));
     await updateRow(updatedRow);
-    updatedRow.data[""] = 99;
-    updatedRow.data[" "] = 99;
+    updatedRow.data[""] = 4;
+    updatedRow.data[" "] = 4;
     undo(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(0);
@@ -40,7 +40,7 @@ describe(useUpdateRow, () => {
 
     redo(dataSource);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe(10);
-    expect(takeOne(dataSource.rows).data[" "]).toBe(11);
+    expect(takeOne(dataSource.rows).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows).data[" "]).toBe(3);
   });
 });
