@@ -9,8 +9,8 @@ import {
   VIRRUN_LOGIN_NODE_END_MARKER,
   VIRRUN_LOGIN_PATH_BEGIN_MARKER,
   VIRRUN_LOGIN_PATH_END_MARKER,
+  WSL_EXECUTABLE,
 } from "#src/services/exec/wsl/constants";
-import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 import { TEST_WSL_LOGIN_ENVIRONMENT } from "#src/services/exec/wsl/constants.test";
 import { writeWslEnvironmentCache } from "#src/services/exec/wsl/writeWslEnvironmentCache";
 import { takeOne } from "@esposter/shared";
