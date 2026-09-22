@@ -11,14 +11,9 @@ export const prodApicEsposterAe001: azure_native.web.Connection = new azure_nati
   {
     connectionName,
     location: AzureAustraliaEastLocation,
-    properties: {
-      api: AzureAppServiceApiReference,
-      displayName: connectionName,
-    },
+    properties: { api: AzureAppServiceApiReference, displayName: connectionName },
     resourceGroupName: prodRgEsposterAe001.name,
-    tags: {
-      ...ApplicationTags,
-    },
+    tags: { ...ApplicationTags },
   },
   {
     parent: prodRgEsposterAe001,

@@ -20,9 +20,7 @@ export const getEventSubscriptionDeleteActions = (
         connection,
         method: HttpMethod.Delete,
         path: getEventSubscriptionResourcePath(resourceGroup, topic, eventSubscription),
-        queries: {
-          "x-ms-api-version": AzureEventGridApiVersion,
-        },
+        queries: { "x-ms-api-version": AzureEventGridApiVersion },
       }),
     ]),
   );

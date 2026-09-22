@@ -23,9 +23,7 @@ export const prodAgEsposter003: azure_native.monitor.ActionGroup = new azure_nat
       },
     ],
     resourceGroupName: prodRgEsposterAe001.name,
-    tags: {
-      ...ApplicationTags,
-    },
+    tags: { ...ApplicationTags },
   },
   {
     parent: prodRgEsposterAe001,

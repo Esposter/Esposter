@@ -20,16 +20,8 @@ export const prodAspEsposterAe001: azure_native.web.AppServicePlan = new azure_n
     perSiteScaling: false,
     reserved: false,
     resourceGroupName: prodRgEsposterAe001.name,
-    sku: {
-      capacity: 0,
-      family: "Y",
-      name: "Y1",
-      size: "Y1",
-      tier: "Dynamic",
-    },
-    tags: {
-      ...ApplicationTags,
-    },
+    sku: { capacity: 0, family: "Y", name: "Y1", size: "Y1", tier: "Dynamic" },
+    tags: { ...ApplicationTags },
     targetWorkerCount: 0,
     targetWorkerSizeId: 0,
     zoneRedundant: false,

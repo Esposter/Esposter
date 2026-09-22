@@ -10,17 +10,13 @@ export const devEvgtEsposterAe001: azure_native.eventgrid.Topic = new azure_nati
   {
     dataResidencyBoundary: azure_native.eventgrid.DataResidencyBoundary.WithinRegion,
     disableLocalAuth: false,
-    identity: {
-      type: azure_native.eventgrid.IdentityType.None,
-    },
+    identity: { type: azure_native.eventgrid.IdentityType.None },
     inputSchema: azure_native.eventgrid.InputSchema.EventGridSchema,
     location: AzureAustraliaEastLocation,
     minimumTlsVersionAllowed: azure_native.eventgrid.TlsVersion.TlsVersion_1_2,
     publicNetworkAccess: azure_native.eventgrid.PublicNetworkAccess.Enabled,
     resourceGroupName: devRgEsposterAe001.name,
-    tags: {
-      ...ApplicationTags,
-    },
+    tags: { ...ApplicationTags },
     topicName,
   },
   {

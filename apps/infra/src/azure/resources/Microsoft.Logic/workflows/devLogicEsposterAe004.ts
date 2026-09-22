@@ -33,16 +33,12 @@ export const devLogicEsposterAe004: azure_native.logic.Workflow = new azure_nati
       AzureMonthlyRecurrenceWorkflowTriggers,
     ),
     endpointsConfiguration: AzureLogicAppEndpointsConfiguration,
-    identity: {
-      type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned,
-    },
+    identity: { type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned },
     location: AzureAustraliaEastLocation,
     parameters: getWorkflowConnectionParameters(devApicEsposterAe004, AzureResourceManagerManagedApiId),
     resourceGroupName: devRgEsposterAe001.name,
     state: azure_native.logic.WorkflowState.Enabled,
-    tags: {
-      ...ApplicationTags,
-    },
+    tags: { ...ApplicationTags },
     workflowName,
   },
   {

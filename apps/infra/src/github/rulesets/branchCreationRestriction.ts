@@ -32,9 +32,7 @@ export const branchCreationRestriction: github.RepositoryRuleset = new github.Re
     enforcement: "active",
     name: "branch creation restriction",
     repository: repository.name,
-    rules: {
-      creation: true,
-    },
+    rules: { creation: true },
     target: "branch",
   },
   {

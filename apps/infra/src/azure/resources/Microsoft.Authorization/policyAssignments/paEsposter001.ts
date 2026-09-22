@@ -11,9 +11,7 @@ export const paEsposter001: azure_native.authorization.PolicyAssignment =
       definitionVersion: "1.*.*",
       displayName: "Require a tag on resources",
       enforcementMode: azure_native.authorization.EnforcementMode.Default,
-      metadata: {
-        assignedBy: "Jimmy Chen",
-      },
+      metadata: { assignedBy: "Jimmy Chen" },
       parameters: {
         tagName: {
           value: ApplicationTagName,

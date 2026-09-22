@@ -10,9 +10,7 @@ export const devstesposter001ManagementPolicy: azure_native.storage.ManagementPo
     {
       accountName: devstesposter001.name,
       managementPolicyName: "default",
-      policy: {
-        rules: getStorageManagementPolicyRules(devstesposter001Deadletter),
-      },
+      policy: { rules: getStorageManagementPolicyRules(devstesposter001Deadletter) },
       resourceGroupName: devRgEsposterAe001.name,
     },
     {

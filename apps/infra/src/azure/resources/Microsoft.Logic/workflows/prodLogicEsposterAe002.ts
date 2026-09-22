@@ -29,16 +29,12 @@ export const prodLogicEsposterAe002: azure_native.logic.Workflow = new azure_nat
       AzureMonthlyRecurrenceWorkflowTriggers,
     ),
     endpointsConfiguration: AzureLogicAppEndpointsConfiguration,
-    identity: {
-      type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned,
-    },
+    identity: { type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned },
     location: AzureAustraliaEastLocation,
     parameters: getWorkflowConnectionParameters(prodApicEsposterAe002, AzureAppServiceManagedApiId),
     resourceGroupName: prodRgEsposterAe001.name,
     state: azure_native.logic.WorkflowState.Enabled,
-    tags: {
-      ...ApplicationTags,
-    },
+    tags: { ...ApplicationTags },
     workflowName,
   },
   {

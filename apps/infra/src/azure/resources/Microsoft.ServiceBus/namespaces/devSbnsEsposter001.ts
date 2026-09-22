@@ -12,13 +12,8 @@ export const devSbnsEsposter001: azure_native.servicebus.Namespace = new azure_n
     minimumTlsVersion: azure_native.servicebus.TlsVersion.TlsVersion_1_2,
     namespaceName,
     resourceGroupName: devRgEsposterAe001.name,
-    sku: {
-      name: azure_native.servicebus.SkuName.Basic,
-      tier: azure_native.servicebus.SkuTier.Basic,
-    },
-    tags: {
-      ...ApplicationTags,
-    },
+    sku: { name: azure_native.servicebus.SkuName.Basic, tier: azure_native.servicebus.SkuTier.Basic },
+    tags: { ...ApplicationTags },
   },
   {
     parent: devRgEsposterAe001,

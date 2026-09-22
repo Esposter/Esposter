@@ -23,9 +23,7 @@ export const devAgEsposter001: azure_native.monitor.ActionGroup = new azure_nati
       },
     ],
     resourceGroupName: devRgEsposterAe001.name,
-    tags: {
-      ...ApplicationTags,
-    },
+    tags: { ...ApplicationTags },
   },
   {
     parent: devRgEsposterAe001,

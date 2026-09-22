@@ -17,7 +17,5 @@ export const getFunctionAppPowerAction = (
     connection,
     method: HttpMethod.Post,
     path: pulumi.interpolate`${getWorkflowResourceGroupPath(resourceGroup)}/Microsoft.Web/sites/@{encodeURIComponent('${site.name}')}/${action}`,
-    queries: {
-      "api-version": "2019-08-01",
-    },
+    queries: { "api-version": "2019-08-01" },
   });

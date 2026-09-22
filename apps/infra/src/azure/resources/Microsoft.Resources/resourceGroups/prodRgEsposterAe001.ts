@@ -9,9 +9,7 @@ export const prodRgEsposterAe001: azure_native.resources.ResourceGroup = new azu
   {
     location: AzureAustraliaEastLocation,
     resourceGroupName,
-    tags: {
-      ...ApplicationTags,
-    },
+    tags: { ...ApplicationTags },
   },
   {
     protect: true,

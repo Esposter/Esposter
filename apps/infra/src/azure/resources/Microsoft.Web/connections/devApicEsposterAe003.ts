@@ -11,14 +11,9 @@ export const devApicEsposterAe003: azure_native.web.Connection = new azure_nativ
   {
     connectionName,
     location: AzureAustraliaEastLocation,
-    properties: {
-      api: AzureResourceManagerApiReference,
-      displayName: connectionName,
-    },
+    properties: { api: AzureResourceManagerApiReference, displayName: connectionName },
     resourceGroupName: devRgEsposterAe001.name,
-    tags: {
-      ...ApplicationTags,
-    },
+    tags: { ...ApplicationTags },
   },
   {
     parent: devRgEsposterAe001,
