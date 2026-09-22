@@ -17,7 +17,7 @@ import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/coderabbit
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
 import { judgeRelease } from "#src/services/coderabbit/collect/judgeRelease";
 import { setupFixtureRepository } from "#src/services/coderabbit/collect/setupFixtureRepository.test";
-import { ASSESSMENT_MARKER } from "#src/services/coderabbit/feedback/constants";
+import { ASSESSMENT_MARKER, RISK_MARKER } from "#src/services/coderabbit/feedback/constants";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { existsSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
@@ -46,6 +46,11 @@ vi.mock(import("#src/services/coderabbit/feedback/readUnresolvedThreads"), () =>
 vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown as typeof baseRunGh }));
 
 const getComment = (login: string, body: string): GitHubEntry => ({ body, id: 0, updated_at: "", user: { login } });
+
+// A walkthrough carrying both blocks the judge can be handed, each telling itself apart by its own marker
+const getBlock = (marker: string) => `<!-- ${marker}_start -->\n${marker}\n<!-- ${marker}_end -->`;
+
+const WALKTHROUGH = [getBlock(RISK_MARKER), getBlock(ASSESSMENT_MARKER)].join("\n");
 
 describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, getCwd, publish, readSha } = setupFixtureRepository();
@@ -189,17 +194,40 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   });
 
   // The bot writes its merge-risk block on some releases and not others, so a head it stated no level for is
-  // Judged on the block it did write — never merged unasked on a level nobody gave, and never held for one
-  test("judges a head the bot stated no merge risk for, on its change assessment", async () => {
+  // Judged on the block it did write — never merged unasked on a level nobody gave, and never held for one. A
+  // Block naming an older head leaves `level` undefined the same way, and it rates code the fixes have since
+  // Changed, so the walkthrough carrying one is that same head and the rationale is left where it lies.
+  test("judges a head the bot stated no merge risk for on its change assessment, never on a stale rationale", async () => {
     expect.hasAssertions();
 
     const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
-    const assessment = `<!-- ${ASSESSMENT_MARKER}_start -->\n**Priority:** ${TEST_FILENAME}\n<!-- ${ASSESSMENT_MARKER}_end -->`;
     answerWith(`${ReleaseVerdict.Merge} — nothing is left`);
-    await judgeRelease({ ...getInput(developSha, [getComment(CODERABBIT_REST_LOGIN, assessment)]), level: undefined });
+    await judgeRelease({ ...getInput(developSha, [getComment(CODERABBIT_REST_LOGIN, WALKTHROUGH)]), level: undefined });
 
-    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`**Priority:** ${TEST_FILENAME}`);
+    const riskBlock = readReleaseGate.mock.calls[0]?.[0].riskBlock;
+    expect(riskBlock).toContain(ASSESSMENT_MARKER);
+    expect(riskBlock).not.toContain(RISK_MARKER);
+    expect(runSession.mock.calls[0]?.[0].prompt).toContain(
+      `## The bot's change assessment\n\n<!-- ${ASSESSMENT_MARKER}_start -->`,
+    );
     expect(getCommentCalls()[0]?.[0].at(-1)).toContain("the bot stated no merge risk for it");
+  });
+
+  // The other half of the same rule: a level reached here only because the block covers this head, so that
+  // Block is the rationale the question is asked over and the assessment is the one left out
+  test("judges a head the bot stated a merge risk for on that rationale", async () => {
+    expect.hasAssertions();
+
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerWith(`${ReleaseVerdict.Merge} — nothing is left`);
+    await judgeRelease(getInput(developSha, [getComment(CODERABBIT_REST_LOGIN, WALKTHROUGH)]));
+
+    const riskBlock = readReleaseGate.mock.calls[0]?.[0].riskBlock;
+    expect(riskBlock).toContain(RISK_MARKER);
+    expect(riskBlock).not.toContain(ASSESSMENT_MARKER);
+    expect(runSession.mock.calls[0]?.[0].prompt).toContain(
+      `## The bot's merge-risk block\n\n<!-- ${RISK_MARKER}_start -->`,
+    );
   });
 
   test("ports on with a hold verdict recorded", async () => {

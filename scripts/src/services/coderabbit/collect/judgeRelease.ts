@@ -80,11 +80,14 @@ export const judgeRelease = async ({
   const botBodies = getSortedByUpdatedAt(issueComments.filter(({ user }) => user.login === CODERABBIT_REST_LOGIN)).map(
     ({ body }) => body,
   );
-  // The rationale when the bot wrote one, its change assessment when it did not — the head reached here either
-  // Way, and a judge handed nothing at all would be reading the feedback report alone for a question the
-  // Walkthrough is supposed to frame
+  // The rationale only where the level came with it: `level` is undefined for a block naming an older head as
+  // Much as for no block at all, and that block is the bot's reading of code the fixes have already changed.
+  // Both read the change assessment instead — the block the bot writes every time, and the one the gate and the
+  // Prompt below already say they were handed whenever the level is missing
   const riskBlock =
-    getLatestMarkedBlock(botBodies, RISK_MARKER) ?? getLatestMarkedBlock(botBodies, ASSESSMENT_MARKER) ?? "";
+    (level === undefined
+      ? getLatestMarkedBlock(botBodies, ASSESSMENT_MARKER)
+      : getLatestMarkedBlock(botBodies, RISK_MARKER)) ?? "";
   const newestReview = reviews.findLast(({ body }) => body);
   const threads = readUnresolvedThreads(pullRequest);
   const feedback = newestReview
