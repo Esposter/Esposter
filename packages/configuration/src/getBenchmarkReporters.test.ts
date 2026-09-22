@@ -11,7 +11,7 @@ describe(getBenchmarkReporters, () => {
   test("reports through the colocated reporter on a bench run", () => {
     expect.hasAssertions();
 
-    process.argv = ["node", "vitest.mjs", "bench", "--run"];
+    process.argv = ["", "", "bench"];
 
     expect(getBenchmarkReporters()).toStrictEqual(["default", "@esposter/shared-node/reporter"]);
   });
@@ -21,11 +21,11 @@ describe(getBenchmarkReporters, () => {
   test.each([
     ["run", "bench"],
     ["--project", "bench"],
-    ["watch", "src/getBenchmarkReporters.bench.ts"],
+    ["watch", "a.bench.ts"],
   ])("leaves Vitest's own reporters in place for `vitest %s %s`", (...commandArguments) => {
     expect.hasAssertions();
 
-    process.argv = ["node", "vitest.mjs", ...commandArguments];
+    process.argv = ["", "", ...commandArguments];
 
     expect(getBenchmarkReporters()).toBeUndefined();
   });
