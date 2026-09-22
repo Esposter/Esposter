@@ -38,7 +38,7 @@
   "dependencies": {
     "@typesafe-ai/sdk": "^0.6.0",
     "@wasm-audio-decoders/ogg-vorbis": "^0.1.20",
-    "genshin-db": "^5.2.13"
+    "genshin-db": "^5.2.14"
   },
   "engines": {
     "node": ">=26.9.0"
