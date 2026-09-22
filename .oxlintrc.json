@@ -16,6 +16,7 @@
     "**/composables/visual/useFluidSimulator.ts"
   ],
   "jsPlugins": [
+    "./scripts/src/oxlint/comments.ts",
     "./scripts/src/oxlint/errorAlert.ts",
     "./scripts/src/oxlint/errorHandling.ts",
     "./scripts/src/oxlint/literalUnion.ts",
@@ -188,6 +189,7 @@
   "plugins": ["import", "oxc", "promise", "typescript", "unicorn", "vitest", "vue"],
   "rules": {
     "class-methods-use-this": "off",
+    "comments/no-capitalized-identifier": "error",
     "complexity": "off",
     "curly": ["error", "multi"],
     "error-alert/no-raw-error-alert": "error",
