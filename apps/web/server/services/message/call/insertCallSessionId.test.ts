@@ -1,6 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { UNIQUE_VIOLATION_ERROR_CODE } from "@@/server/services/message/call/constants";
+import { UNIQUE_VIOLATION_ERROR_CODE } from "@@/server/services/db/constants";
 import { insertCallSessionId } from "@@/server/services/message/call/insertCallSessionId";
 import { describe, expect, test } from "vitest";
 
@@ -23,7 +23,10 @@ describe(insertCallSessionId, () => {
   test("reports a taken id as no id, so the caller mints another", async () => {
     expect.hasAssertions();
 
-    const db = createDb(() => Promise.reject(Object.assign(new Error(" "), { code: UNIQUE_VIOLATION_ERROR_CODE })));
+    // Drizzle hands the driver's error up as the cause of its own
+    const db = createDb(() =>
+      Promise.reject(new Error(" ", { cause: Object.assign(new Error(" "), { code: UNIQUE_VIOLATION_ERROR_CODE }) })),
+    );
 
     await expect(insertCallSessionId(db, { userId })).resolves.toBeUndefined();
   });

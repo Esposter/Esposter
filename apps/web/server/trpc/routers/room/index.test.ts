@@ -34,6 +34,18 @@ import {
 } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+// The id generator is the seam a collision is injected at; it delegates to the real one by default, so every
+// Other test is unaffected
+const { createIdMock } = vi.hoisted(() => ({
+  createIdMock: vi.fn<typeof import("#shared/util/math/random/createId").createId>(),
+}));
+
+vi.mock(import("#shared/util/math/random/createId"), async (importOriginal) => {
+  const { createId } = await importOriginal();
+  createIdMock.mockImplementation(createId);
+  return { createId: createIdMock };
+});
+
 // Uploaded through the client, so the mock dates the blob now
 const uploadPublicUserAssetBlob = (blobName: string) =>
   new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
@@ -580,6 +592,24 @@ describe("roomRouter", () => {
 
     expect(secondInvite.id).not.toBe(firstInvite.id);
     expect(secondInvite).toStrictEqual({ ...myInvite, user: secondInvite.user });
+  });
+
+  // The insert that finds the collision aborts the transaction it runs in, so a retry that is not its own
+  // Savepoint fails as "transaction aborted" and the create reports an id-allocation failure for a room whose
+  // Next id was free
+  test("re-rolls an invite id that collides with another member's link", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
+    assert(myInvite);
+    await mockSessionOnce(mockContext.db, member);
+    createIdMock.mockReturnValueOnce(myInvite.id);
+    const invite = await createUnlimitedInvite(newRoom.id);
+
+    expect(createIdMock).toHaveReturnedWith(myInvite.id);
+    expect(invite.id).not.toBe(myInvite.id);
   });
 
   test("creates invite with expiry and max uses", async () => {

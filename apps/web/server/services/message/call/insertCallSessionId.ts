@@ -1,7 +1,7 @@
 import type { Context } from "@@/server/trpc/context";
 
 import { createId } from "#shared/util/math/random/createId";
-import { UNIQUE_VIOLATION_ERROR_CODE } from "@@/server/services/message/call/constants";
+import { checkIsUniqueViolation } from "@@/server/services/db/checkIsUniqueViolation";
 import { CALL_ID_LENGTH, callSessionsInMessage } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
@@ -20,8 +20,7 @@ export const insertCallSessionId = (
   ).match(
     (callSessions) => callSessions[0]?.id,
     (error) => {
-      if (typeof error === "object" && error !== null && "code" in error && error.code === UNIQUE_VIOLATION_ERROR_CODE)
-        return undefined;
+      if (checkIsUniqueViolation(error)) return undefined;
       throw error;
     },
   );
