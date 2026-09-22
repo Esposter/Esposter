@@ -9,7 +9,7 @@ import { describe, expect, test } from "vitest";
 // What the base schema's catchall is for. A subclass schema is built by spreading `.shape`, and a spread copies
 // Fields and nothing else, so each one has to re-declare the catchall or it silently drops the editor's state
 describe("grapesJs editor schemas", () => {
-  const grapesJsState = { assets: [{ src: "https://example.com/a.png" }], styles: [{ selectors: ["a"] }] };
+  const grapesJsState = { assets: [{ src: "" }], styles: [{ selectors: [""] }] };
   const editorSchemas: [string, z.ZodType, object][] = [
     ["grapesJsEditorSchema", grapesJsEditorSchema, structuredClone(new WebpageEditor())],
     ["emailEditorSchema", emailEditorSchema, structuredClone(new EmailEditor())],
