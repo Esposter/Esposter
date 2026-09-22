@@ -35,7 +35,7 @@ describe(computeDatePartTransformation, () => {
   test("returns null for invalid date", () => {
     expect.hasAssertions();
     expect(
-      computeDatePartTransformation("not-a-date", createTransformation(DatePartType.Year), DateFormat["YYYY-MM-DD"]),
+      computeDatePartTransformation("a", createTransformation(DatePartType.Year), DateFormat["YYYY-MM-DD"]),
     ).toBeNull();
   });
 

@@ -42,14 +42,14 @@ describe(getDisplayText, () => {
   test("renders a column with no format chosen as its raw value", () => {
     expect.hasAssertions();
 
-    expect(getDisplayText(1234, createNumberColumn(name))).toBe("1234");
+    expect(getDisplayText(1, createNumberColumn(name))).toBe("1");
   });
 
   test("renders a column type that has no format at all as its raw value", () => {
     expect.hasAssertions();
 
     expect(getDisplayText("value", createColumn(name))).toBe("value");
-    expect(getDisplayText(1234, createComputedColumn(name, ""))).toBe("1234");
+    expect(getDisplayText(1, createComputedColumn(name, ""))).toBe("1");
   });
 
   test("renders an empty cell as empty text", () => {

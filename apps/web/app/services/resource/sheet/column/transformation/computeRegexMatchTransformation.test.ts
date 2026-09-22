@@ -14,7 +14,7 @@ describe(computeRegexMatchTransformation, () => {
 
   test("extracts regex capture group", () => {
     expect.hasAssertions();
-    expect(computeRegexMatchTransformation("user@example.com", baseTransformation)).toBe("example.com");
+    expect(computeRegexMatchTransformation("a@b", baseTransformation)).toBe("b");
   });
 
   test("returns null when pattern does not match", () => {
