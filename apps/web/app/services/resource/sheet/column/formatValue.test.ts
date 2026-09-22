@@ -51,7 +51,7 @@ describe(formatValue, () => {
 
   test("returns raw string for invalid date string", () => {
     expect.hasAssertions();
-    expect(formatValue("not-a-date", DateFormat["YYYY-MM-DD"])).toBe("not-a-date");
+    expect(formatValue("a", DateFormat["YYYY-MM-DD"])).toBe("a");
   });
 
   test("returns empty string for non-boolean value with boolean format", () => {

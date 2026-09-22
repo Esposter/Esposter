@@ -30,7 +30,7 @@ describe("roomEmojiRouter", () => {
   const oversizedSize = MAX_ROOM_EMOJI_SIZE_BYTES + 1;
   // A slug the dataset owns, which a room may not shadow
   const unicodeEmojiSlug = "fire";
-  const position = 5;
+  const position = 1;
   // The client's PUT, which is what makes the blob the create insists on exist
   const uploadRoomEmojiBlob = async (id: string, body = "") => {
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
@@ -64,9 +64,9 @@ describe("roomEmojiRouter", () => {
     expect.hasAssertions();
 
     await expect(
-      roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype: "application/pdf", roomId, size }),
+      roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype: MimeType.Pdf, roomId, size }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ mimetype: "application/pdf", size }))}]`,
+      `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ mimetype: MimeType.Pdf, size }))}]`,
     );
   });
 
@@ -174,10 +174,10 @@ describe("roomEmojiRouter", () => {
     expect.hasAssertions();
 
     const roomEmoji = await createRoomEmoji();
-    const updatedRoomEmoji = await roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: "updated_name", roomId });
+    const updatedRoomEmoji = await roomEmojiCaller.updateRoomEmoji({ id: roomEmoji.id, name: "a", roomId });
 
     expect(updatedRoomEmoji.id).toBe(roomEmoji.id);
-    expect(updatedRoomEmoji.name).toBe("updated_name");
+    expect(updatedRoomEmoji.name).toBe("a");
   });
 
   test("fails updateRoomEmoji with a name another emoji in the room holds", async () => {

@@ -14,7 +14,7 @@ describe(parseOverlayEntryKind, () => {
   test(`a character device with a non-zero rdev is ${OverlayEntryKind.Regular} (a real device node, not a whiteout)`, () => {
     expect.hasAssertions();
 
-    expect(parseOverlayEntryKind({ isCharacterDevice: true, isDirectory: false, rdev: 259 }, false)).toBe(
+    expect(parseOverlayEntryKind({ isCharacterDevice: true, isDirectory: false, rdev: 1 }, false)).toBe(
       OverlayEntryKind.Regular,
     );
   });

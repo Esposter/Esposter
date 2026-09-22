@@ -16,8 +16,8 @@ const readLastModified = (blobName: string) =>
   MockContainerBlobDatesDatabase.get(getMockBlobKey(AzureContainer.DeadLetter, blobName))?.lastModified;
 
 describe(drainDeadLetterContainer, () => {
-  const strandedBlobName = "topic/subscription/2026/8/23/12/stranded.json";
-  const freshBlobName = "topic/subscription/2026/8/23/12/fresh.json";
+  const strandedBlobName = "";
+  const freshBlobName = " ";
   const content = Buffer.from("");
 
   afterEach(() => {

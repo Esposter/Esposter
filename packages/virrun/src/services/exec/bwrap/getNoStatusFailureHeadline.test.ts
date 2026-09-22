@@ -4,19 +4,19 @@ import {
   WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER,
 } from "#src/services/exec/bwrap/constants";
 import { getNoStatusFailureHeadline } from "#src/services/exec/bwrap/getNoStatusFailureHeadline";
+import { constants } from "node:os";
 import { describe, expect, test } from "vitest";
 
 describe(getNoStatusFailureHeadline, () => {
-  const BWRAP_STDERR = "bwrap: execvp tsc: No such file or directory\n";
-  const SIGTERM_NUMBER = 15;
+  const SIGTERM_NUMBER = constants.signals.SIGTERM;
 
   test("names the prelude that failed before the sandbox started", () => {
     expect.hasAssertions();
 
-    expect(getNoStatusFailureHeadline(`${WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER} with exit code 1\n`)).toBe(
+    expect(getNoStatusFailureHeadline(WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER)).toBe(
       "the source mirror sync failed before the sandbox started",
     );
-    expect(getNoStatusFailureHeadline(`${WSL_SOURCE_MIRROR_LOCK_FAILURE_MARKER} within 300s\n`)).toBe(
+    expect(getNoStatusFailureHeadline(WSL_SOURCE_MIRROR_LOCK_FAILURE_MARKER)).toBe(
       "the source mirror lock was never acquired, so the sandbox never started",
     );
   });
@@ -38,6 +38,6 @@ describe(getNoStatusFailureHeadline, () => {
   test("blames bubblewrap only for an ordinary non-signal failure", () => {
     expect.hasAssertions();
 
-    expect(getNoStatusFailureHeadline(BWRAP_STDERR, 1)).toBe("bubblewrap failed to set up the sandbox");
+    expect(getNoStatusFailureHeadline("", 1)).toBe("bubblewrap failed to set up the sandbox");
   });
 });

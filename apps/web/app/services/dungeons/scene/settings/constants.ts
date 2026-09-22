@@ -10,7 +10,14 @@ export const SETTINGS_POSITION_INCREMENT = { y: 55 } as const satisfies Except<P
 export const INITIAL_SETTINGS_VALUE_POSITION = { x: 320 } as const satisfies Except<Position, "y">;
 export const SETTINGS_VALUE_POSITION_INCREMENT = { x: 170 } as const satisfies Except<Position, "y">;
 
+export const THEME_MODE_PICKER_PADDING = 100;
+export const THEME_MODE_PICKER_CURSOR_X = INITIAL_SETTINGS_VALUE_POSITION.x + THEME_MODE_PICKER_PADDING;
+export const THEME_MODE_PICKER_TEXT_X = THEME_MODE_PICKER_CURSOR_X + THEME_MODE_PICKER_PADDING;
+// The cursors are centred on the text rather than aligned to its top
+export const THEME_MODE_PICKER_CURSOR_OFFSET_Y = 12;
+
 export const VOLUME_SLIDER_BAR_WIDTH = 300;
+export const VOLUME_SLIDER_OFFSET_Y = 17;
 export const VOLUME_SLIDER_WIDTH = 10;
 export const VOLUME_SLIDER_HEIGHT = 25;
 export const VOLUME_SLIDER_START_X = INITIAL_SETTINGS_VALUE_POSITION.x;

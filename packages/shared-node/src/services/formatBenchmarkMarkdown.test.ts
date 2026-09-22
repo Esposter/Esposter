@@ -1,5 +1,6 @@
 import type { BenchmarkReport } from "#src/models/BenchmarkReport";
 
+import { BASELINE_TASK_NAME } from "#src/services/constants";
 import { formatBenchmarkMarkdown } from "#src/services/formatBenchmarkMarkdown";
 import { describe, expect, test } from "vitest";
 
@@ -55,7 +56,7 @@ describe(formatBenchmarkMarkdown, () => {
           groups: [
             {
               benchmarks: [
-                { mean: 2, name: "native", p99: 0, rme: 0, sampleCount: 0 },
+                { mean: 2, name: BASELINE_TASK_NAME, p99: 0, rme: 0, sampleCount: 0 },
                 { mean: 1, name: " ", p99: 0, rme: 0, sampleCount: 0 },
                 { mean: 4, name: "  ", p99: 0, rme: 0, sampleCount: 0 },
               ],

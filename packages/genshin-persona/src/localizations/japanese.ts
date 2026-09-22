@@ -361,6 +361,7 @@ const japanese: Localization = {
       "重みを確認しました。GPUアダプタが見つからないためCPUで動作します。返信の合成は実時間の数倍かかります。",
     weightsOnDevice: (device) =>
       `重みを確認しました。エンジンは${device}で動作し、そこでの合成が音声にならない場合は自動でCPUに切り替わります。`,
+    weightsPresent: "重みは確認済みです。",
   },
   verbs: [
     "冒険中",

@@ -2,10 +2,12 @@ import { createNormalizedStringSchema } from "#src/services/zod/createNormalized
 import { describe, expect, test } from "vitest";
 
 describe(createNormalizedStringSchema, () => {
+  const schema = createNormalizedStringSchema(1);
+
   test("trims whitespace before validating", () => {
     expect.hasAssertions();
 
-    expect(createNormalizedStringSchema(5).parse(" a ")).toBe("a");
-    expect(createNormalizedStringSchema(5).parse(" ")).toBe("");
+    expect(schema.parse(" a ")).toBe("a");
+    expect(schema.parse(" ")).toBe("");
   });
 });

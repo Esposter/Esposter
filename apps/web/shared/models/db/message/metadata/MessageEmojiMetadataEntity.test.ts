@@ -14,7 +14,7 @@ describe("messageEmojiMetadataEntitySchema", () => {
   });
 
   // Both pass `z.emoji()` on its own, which is the whole reason the count is there
-  test.each(["😀😀", "123"])("rejects %s", (emojiTag) => {
+  test.each(["😀😀", "0"])("rejects %s", (emojiTag) => {
     expect.hasAssertions();
 
     expect(emojiTagSchema.safeParse(emojiTag).success).toBe(false);

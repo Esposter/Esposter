@@ -25,6 +25,7 @@ import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { checkIsSameDevice } from "@@/server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
+import { checkIsUniqueViolation } from "@@/server/services/db/checkIsUniqueViolation";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
@@ -118,13 +119,21 @@ export const baseRoomRouter = router({
 
         for (let i = 0; i < MAX_INVITE_ID_RETRIES; i++) {
           const id = createId(INVITE_ID_LENGTH);
-          const invites = await getResultAsync(() =>
-            tx
-              .insert(invitesInMessage)
-              .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
-              .returning(),
-          ).unwrapOr(undefined);
-          if (invites) return { ...takeOne(invites), user };
+          // Each attempt is its own savepoint: a failed insert aborts the enclosing transaction, so a retry issued
+          // Straight on it fails as "transaction aborted" rather than as another roll of the id. Only a collision
+          // Is retried — anything else is the database itself, and re-rolling the id through it hides the report
+          const invite = await getResultAsync(() =>
+            tx.transaction((savepoint) =>
+              savepoint
+                .insert(invitesInMessage)
+                .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
+                .returning(),
+            ),
+          ).match(takeOne, (error) => {
+            if (checkIsUniqueViolation(error)) return undefined;
+            throw error;
+          });
+          if (invite) return { ...invite, user };
         }
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId, "UNPROCESSABLE_CONTENT");
       }),

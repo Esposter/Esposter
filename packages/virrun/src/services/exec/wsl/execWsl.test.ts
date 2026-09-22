@@ -1,6 +1,8 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
 import { WSL_PROBE_TIMEOUT_MS, WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
+import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
+import { TEST_WSL_DISTRO } from "#src/services/exec/wsl/constants.test";
 import { execWsl } from "#src/services/exec/wsl/execWsl";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -22,7 +24,7 @@ describe(execWsl, () => {
     execFileSync.mockReturnValue(Buffer.from("a"));
 
     expect(execWsl(["--exec", "sh"])).toBe("a");
-    expect(execFileSync).toHaveBeenCalledExactlyOnceWith("wsl.exe", ["--exec", "sh"], {
+    expect(execFileSync).toHaveBeenCalledExactlyOnceWith(WSL_EXECUTABLE, ["--exec", "sh"], {
       encoding: "buffer",
       stdio: "pipe",
       timeout: WSL_PROBE_TIMEOUT_MS,
@@ -35,7 +37,7 @@ describe(execWsl, () => {
 
     execWsl(["--exec", "sh"], { timeout: WSL_WORK_TIMEOUT_MS });
 
-    expect(execFileSync).toHaveBeenCalledExactlyOnceWith("wsl.exe", ["--exec", "sh"], {
+    expect(execFileSync).toHaveBeenCalledExactlyOnceWith(WSL_EXECUTABLE, ["--exec", "sh"], {
       encoding: "buffer",
       stdio: "pipe",
       timeout: WSL_WORK_TIMEOUT_MS,
@@ -47,22 +49,22 @@ describe(execWsl, () => {
     expect.hasAssertions();
 
     execFileSync.mockImplementation(() => {
-      throw Object.assign(new Error("Command failed"), {
-        stderr: Buffer.from("Wsl/Service/E_UNEXPECTED", "utf16le"),
+      throw Object.assign(new Error(" "), {
+        stderr: Buffer.from("stderr", "utf16le"),
       });
     });
 
     expect(() => execWsl(["--exec", "sh"])).toThrowErrorMatchingInlineSnapshot(`
       [ExecFileError: Command failed: wsl.exe --exec sh
-      Wsl/Service/E_UNEXPECTED]
+      stderr]
     `);
   });
 
   test("callers reading wsl.exe's own stdout override the encoding, keeping the utf16le stderr", () => {
     expect.hasAssertions();
 
-    execFileSync.mockReturnValue(Buffer.from("Ubuntu", "utf16le"));
+    execFileSync.mockReturnValue(Buffer.from(TEST_WSL_DISTRO, "utf16le"));
 
-    expect(execWsl(["-l", "-q"], { encoding: "utf16le" })).toBe("Ubuntu");
+    expect(execWsl(["-l", "-q"], { encoding: "utf16le" })).toBe(TEST_WSL_DISTRO);
   });
 });

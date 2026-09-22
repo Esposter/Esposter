@@ -17,7 +17,7 @@ describe("filterRouter", () => {
   const words = ["word"];
   const updatedWords = ["word", "updatedword"];
   const timeoutDurationMs = 1;
-  const position = 5;
+  const position = 1;
 
   beforeAll(() => {
     mockContext = getMockContext();

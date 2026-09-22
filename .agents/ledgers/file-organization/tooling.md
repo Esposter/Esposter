@@ -10,6 +10,6 @@
 | `scripts/src/outdatedDependencies` — `models`, `lock`, `workspace` | 2026-09-12 | the readers of the two yaml files                                                             |
 | `scripts/src/outdatedDependencies` — the rest                      | 2026-09-12 | `manifest`, `registry`, `pnpm`, `print`, and what two of them share at the root               |
 | `scripts/src/updateNode`                                           | 2026-09-12 |                                                                                               |
-| `scripts/src/sweeps` — `constantScope`, `repeatedListItems`        | 2026-09-12 | one entrypoint per scan                                                                       |
-| `scripts/src/sweeps` — the rest                                    | 2026-09-12 | `skillDocs`, `sharedExportConsumers`, `unterminatedResults`, the root helpers                 |
+| `scripts/src/sweeps` — `constantScope`, `repeatedListItems`        | 2026-09-22 | one entrypoint per scan                                                                       |
+| `scripts/src/sweeps` — the rest                                    | 2026-09-22 | `skillDocs`, `sharedExportConsumers`, `unterminatedResults`, the root helpers                 |
 | `scripts/src` — `services`, `models`, `workspace`, root            | 2026-09-13 | a repo invariant suite is a `workspace/` suite; cross-command files are in `shared`           |

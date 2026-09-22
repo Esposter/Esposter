@@ -31,7 +31,7 @@ The gate at the top is the one that matters. Everything below it rests on a sing
 
 **Does:** runs `build:packages` under `vp run --cache`, dumps the input set it inferred, computes what `get-build-cache-keys` hashes for the same tree, and diffs them. The method and how to read each direction of the diff are in [task runner](/docs/proposals/refactors/vite-plus/task-runner).
 
-**Blocked by:** nothing.
+**Blocked by:** a Linux host. The kill condition is about the bubblewrap overlay and worker fan-out, neither of which the Windows dev loop runs — virrun there uses the OS backend — so the measurement is a CI job or a WSL shell with `vp` installed, and it has not been run. Until it is, nothing below this phase is reachable, and this proposal stays a proposal: it designs a gate that does not exist yet, and no upstream release settles the question for it.
 
 **Ends when:** both directions of the diff are explained. Files hashed today but not traced are the over-invalidation being bought out. Files traced but not hashed are the interesting direction — each is either a tracing artifact or a real input the current key is missing, and the second reading means the existing cache can already serve a stale build.
 

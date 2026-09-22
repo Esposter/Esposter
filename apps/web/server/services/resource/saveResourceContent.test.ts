@@ -100,7 +100,7 @@ describe(saveResourceContent, () => {
   const item = new TodoListItem({ dueAt, name });
   const content: TodoListResource = { items: [item] };
   // Storage's own per-blob ordering value, as the first save's event would carry it
-  const sequencer = "0000000000000abc000000000000000000001";
+  const sequencer = "0";
   const { contentSchema } = ResourceDefinitionMap[ResourceType.TodoList];
   const createReminder = (resourceId: Resource["id"]) => ({
     body: { dueAt, itemId: item.id, resourceId },
@@ -341,7 +341,7 @@ describe(saveResourceContent, () => {
     // Rejecting the version bump instead would fail before the blob was ever written and prove nothing
     uploadMock.mockImplementationOnce(async (...parameters: Parameters<typeof uploadMock>) => {
       await uploadMock.getMockImplementation()?.(...parameters);
-      throw new Error("rejected");
+      throw new Error(" ");
     });
 
     await expect(
@@ -350,7 +350,7 @@ describe(saveResourceContent, () => {
         resource: program,
         updateContentVersion: (tx) => updateContentVersion(tx, program.id),
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: rejected]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     await expect(readBoundResourceId(program.id)).resolves.toBeNull();
   });
@@ -367,9 +367,9 @@ describe(saveResourceContent, () => {
       saveResourceContent(ctx, {
         content: unboundProgramContent,
         resource: program,
-        updateContentVersion: () => Promise.reject(new Error("stale")),
+        updateContentVersion: () => Promise.reject(new Error(" ")),
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: stale]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     await expect(readBoundResourceId(program.id)).resolves.toBe(surveyId);
   });

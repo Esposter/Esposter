@@ -4,7 +4,7 @@ import { describe, expect, test, vi } from "vitest";
 
 describe(useCameraStore, () => {
   const sceneKey = "sceneKey";
-  const durationMs = 500;
+  const durationMs = 1;
 
   test.each(["fadeIn", "fadeOut"] as const)("%s sets isFading and forwards to the main camera", (fade) => {
     expect.hasAssertions();

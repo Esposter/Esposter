@@ -1,8 +1,9 @@
-import type { EventGridEvent } from "@azure/functions";
 import type { BlobDeletionEventGridData, Database } from "@esposter/db-schema";
 
 import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
+import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
+import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, storageLedger, users } from "@esposter/db-schema";
@@ -44,22 +45,13 @@ const readContainer = () => {
   return [...container.keys()];
 };
 
-const createEventGridEvent = (data: BlobDeletionEventGridData): EventGridEvent => ({
-  data,
-  dataVersion: "1.0",
-  eventTime: new Date(0).toISOString(),
-  eventType: "",
-  id: crypto.randomUUID(),
-  metadataVersion: "1",
-  subject: "",
-  topic: "",
-});
+const createBlobDeletionEvent = (data: BlobDeletionEventGridData) => createEventGridEvent({ data });
 
 const createEvent = (blobNames: string[]) =>
-  createEventGridEvent({ blobNames, containerName: AzureContainer.MessageAssets });
+  createBlobDeletionEvent({ blobNames, containerName: AzureContainer.MessageAssets });
 
 const createPrefixEvent = (prefix: string, createdBefore: Date) =>
-  createEventGridEvent({ containerName: AzureContainer.MessageAssets, createdBefore, prefix });
+  createBlobDeletionEvent({ containerName: AzureContainer.MessageAssets, createdBefore, prefix });
 
 describe(processBlobDeletionHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
@@ -91,16 +83,7 @@ describe(processBlobDeletionHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    const createdAt = new Date(0);
-    await mockDb.insert(users).values({
-      createdAt,
-      email: userId,
-      emailVerified: true,
-      id: userId,
-      image: "",
-      name: "name",
-      updatedAt: createdAt,
-    });
+    await mockDb.insert(users).values(createUser(userId));
   });
 
   afterEach(async () => {
@@ -160,7 +143,7 @@ describe(processBlobDeletionHandler, () => {
 
     await seedBlob(prefixedBlobName);
     await processBlobDeletionHandler(
-      createPrefixEvent(prefix, new Date(Date.now() + Temporal.Duration.from({ minutes: 1 }).total("milliseconds"))),
+      createPrefixEvent(prefix, new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds"))),
       context,
     );
 

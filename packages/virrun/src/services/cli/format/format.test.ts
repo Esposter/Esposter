@@ -21,9 +21,9 @@ describe(formatVirrunBanner, () => {
   test("joins a multi-token command and reports backend and node version", () => {
     expect.hasAssertions();
 
-    expect(
-      stripAnsi(formatVirrunBanner({ backend: BackendType.Os, command: ["oxfmt", "--check"], nodeVersion: "v26.4.0" })),
-    ).toBe('[virrun] running "oxfmt --check" (backend=os, node=v26.4.0)');
+    expect(stripAnsi(formatVirrunBanner({ backend: BackendType.Os, command: ["a", "b"], nodeVersion: "v0.0.0" }))).toBe(
+      '[virrun] running "a b" (backend=os, node=v0.0.0)',
+    );
   });
 });
 
@@ -31,15 +31,13 @@ describe(formatVirrunCacheHit, () => {
   test("joins a multi-token argv command", () => {
     expect.hasAssertions();
 
-    expect(stripAnsi(formatVirrunCacheHit(["oxfmt", "--check"]))).toBe(
-      '[virrun] task cache hit — replaying "oxfmt --check"',
-    );
+    expect(stripAnsi(formatVirrunCacheHit(["a", "b"]))).toBe('[virrun] task cache hit — replaying "a b"');
   });
 
   test("renders a pre-joined string command as-is", () => {
     expect.hasAssertions();
 
-    expect(stripAnsi(formatVirrunCacheHit("pnpm lint"))).toBe('[virrun] task cache hit — replaying "pnpm lint"');
+    expect(stripAnsi(formatVirrunCacheHit("a b"))).toBe('[virrun] task cache hit — replaying "a b"');
   });
 });
 
@@ -47,7 +45,7 @@ describe(formatVirrunDebug, () => {
   test("prefixes the message with the virrun tag and debug label", () => {
     expect.hasAssertions();
 
-    expect(stripAnsi(formatVirrunDebug("task cache off"))).toBe("[virrun] debug — task cache off");
+    expect(stripAnsi(formatVirrunDebug("message"))).toBe("[virrun] debug — message");
   });
 });
 
@@ -65,7 +63,7 @@ describe(formatVirrunError, () => {
   test("prefixes the message with the virrun tag", () => {
     expect.hasAssertions();
 
-    expect(stripAnsi(formatVirrunError("no pnpm-lock.yaml found"))).toBe("[virrun] no pnpm-lock.yaml found");
+    expect(stripAnsi(formatVirrunError("message"))).toBe("[virrun] message");
   });
 
   // The only line whose color carries meaning a stripped assertion cannot see: `colorize` is a no-op under vitest,
@@ -76,12 +74,8 @@ describe(formatVirrunError, () => {
 
     vi.stubEnv("FORCE_COLOR", "true");
 
-    expect(formatVirrunError("no pnpm-lock.yaml found")).toBe(
-      formatVirrunLine(colorize("no pnpm-lock.yaml found", Color.Red)),
-    );
-    expect(formatVirrunError("no pnpm-lock.yaml found")).not.toBe(
-      formatVirrunLine(colorize("no pnpm-lock.yaml found", Color.Green)),
-    );
+    expect(formatVirrunError("message")).toBe(formatVirrunLine(colorize("message", Color.Red)));
+    expect(formatVirrunError("message")).not.toBe(formatVirrunLine(colorize("message", Color.Green)));
   });
 });
 
@@ -89,8 +83,8 @@ describe(formatVirrunNetworkHint, () => {
   test("names the command and points at the native / --no-cache escapes", () => {
     expect.hasAssertions();
 
-    expect(stripAnsi(formatVirrunNetworkHint("pnpm outdated -r"))).toMatchInlineSnapshot(`
-      "[virrun] "pnpm outdated -r" tried to use the network, but cached runs are sandboxed offline so results stay reproducible.
+    expect(stripAnsi(formatVirrunNetworkHint("a b"))).toMatchInlineSnapshot(`
+      "[virrun] "a b" tried to use the network, but cached runs are sandboxed offline so results stay reproducible.
       [virrun] If it needs the network, run it natively — drop the virrun -- prefix — or, to keep the sandbox, re-run uncached with virrun --no-cache -- (or VIRRUN_NO_CACHE=1)."
     `);
   });
@@ -98,9 +92,8 @@ describe(formatVirrunNetworkHint, () => {
   test("joins an argv command for display", () => {
     expect.hasAssertions();
 
-    expect(stripAnsi(formatVirrunNetworkHint(["node", "scripts/src/outdatedDependencies/index.ts"])))
-      .toMatchInlineSnapshot(`
-      "[virrun] "node scripts/src/outdatedDependencies/index.ts" tried to use the network, but cached runs are sandboxed offline so results stay reproducible.
+    expect(stripAnsi(formatVirrunNetworkHint(["a", "b"]))).toMatchInlineSnapshot(`
+      "[virrun] "a b" tried to use the network, but cached runs are sandboxed offline so results stay reproducible.
       [virrun] If it needs the network, run it natively — drop the virrun -- prefix — or, to keep the sandbox, re-run uncached with virrun --no-cache -- (or VIRRUN_NO_CACHE=1)."
     `);
   });
@@ -152,8 +145,8 @@ describe(formatVirrunResult, () => {
   test("joins a multi-token command and reports exit code and duration", () => {
     expect.hasAssertions();
 
-    expect(stripAnsi(formatVirrunResult({ command: ["oxfmt", "--check"], durationMs: 1234, exitCode: 0 }))).toBe(
-      '[virrun] "oxfmt --check" exited 0 in 1234ms',
+    expect(stripAnsi(formatVirrunResult({ command: ["a", "b"], durationMs: 1, exitCode: 0 }))).toBe(
+      '[virrun] "a b" exited 0 in 1ms',
     );
   });
 });

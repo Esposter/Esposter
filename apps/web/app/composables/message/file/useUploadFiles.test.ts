@@ -34,6 +34,9 @@ describe(useUploadFiles, () => {
   const fileId = crypto.randomUUID();
   // The grant the server mints beside each write target — the composer hands it back to reclaim the upload
   const token = "token";
+  const sasUrl = "sasUrl";
+  const thumbnailSasUrl = "thumbnailSasUrl";
+  const slowSasUrl = "slowSasUrl";
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -41,9 +44,7 @@ describe(useUploadFiles, () => {
     // Which is all this composable needs from it.
     setCurrentRoomId(roomId);
     server.use(
-      trpcMsw.message.generateUploadFileSasEntities.query(() => [
-        { id: fileId, sasUrl: "https://sas.url/original", thumbnailSasUrl: "https://sas.url/thumbnail", token },
-      ]),
+      trpcMsw.message.generateUploadFileSasEntities.query(() => [{ id: fileId, sasUrl, thumbnailSasUrl, token }]),
     );
     vi.spyOn(globalThis.URL, "createObjectURL").mockReturnValue("blob:url");
     vi.spyOn(globalThis.URL, "revokeObjectURL").mockImplementation(noop);
@@ -66,8 +67,8 @@ describe(useUploadFiles, () => {
     const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     server.use(trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles));
-    uploadBlocksMock.mockImplementation((_blob: Blob, sasUrl: string) =>
-      sasUrl.endsWith("thumbnail") ? Promise.reject(new Error(filename)) : Promise.resolve(),
+    uploadBlocksMock.mockImplementation((_blob: Blob, url: string) =>
+      url === thumbnailSasUrl ? Promise.reject(new Error(filename)) : Promise.resolve(),
     );
     await useUploadFiles(target)([createFile()]);
 
@@ -138,14 +139,14 @@ describe(useUploadFiles, () => {
     let isSlowUploadFinished = false;
     server.use(
       trpcMsw.message.generateUploadFileSasEntities.query(() => [
-        { id: fileId, sasUrl: "https://sas.url/original", token },
-        { id: slowFileId, sasUrl: "https://sas.url/slow", token },
+        { id: fileId, sasUrl, token },
+        { id: slowFileId, sasUrl: slowSasUrl, token },
       ]),
     );
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     server.use(trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles));
-    uploadBlocksMock.mockImplementation((_blob: Blob, sasUrl: string) =>
-      sasUrl.endsWith("slow")
+    uploadBlocksMock.mockImplementation((_blob: Blob, url: string) =>
+      url === slowSasUrl
         ? new Promise<void>((resolve) => {
             setTimeout(() => {
               isSlowUploadFinished = true;
@@ -186,8 +187,8 @@ describe(useUploadFiles, () => {
 
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
-    uploadBlocksMock.mockImplementation((_blob: Blob, sasUrl: string) =>
-      sasUrl.endsWith("thumbnail") ? Promise.reject(new Error(filename)) : Promise.resolve(),
+    uploadBlocksMock.mockImplementation((_blob: Blob, url: string) =>
+      url === thumbnailSasUrl ? Promise.reject(new Error(filename)) : Promise.resolve(),
     );
     await useUploadFiles(target)([createFile()]);
 

@@ -33,12 +33,13 @@ describe(MockContainerClient, () => {
     expect.hasAssertions();
 
     const blobName = "blobName";
+    const metadata = { reason: "reason" };
     const client = new MockContainerClient(MOCK_BLOB_BASE_URL, containerName);
     const blockBlobClient = client.getBlockBlobClient(blobName);
-    await blockBlobClient.upload("", 0, { metadata: { reason: "reason" } });
+    await blockBlobClient.upload("", 0, { metadata });
     const [uploadedBlob] = await Array.fromAsync(client.listBlobsFlat({ includeMetadata: true }));
 
-    expect(uploadedBlob?.metadata).toStrictEqual({ reason: "reason" });
+    expect(uploadedBlob?.metadata).toStrictEqual(metadata);
 
     await client.deleteBlob(blobName);
     MockContainerDatabase.get(containerName)?.set(blobName, Buffer.from(""));

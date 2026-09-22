@@ -55,7 +55,7 @@ describe(forwardTerminationSignals, () => {
 
     const { child, kill } = createFakeChild();
     const onTerminate = vi.fn<() => void>(() => {
-      throw new Error("reaper spawn failed");
+      throw new Error(" ");
     });
     const beforeSigint = process.listeners("SIGINT");
     forwardTerminationSignals(child, onTerminate);
@@ -86,7 +86,7 @@ describe(forwardTerminationSignals, () => {
     const { child } = createFakeChild();
     const beforeSigint = process.listeners("SIGINT");
     forwardTerminationSignals(child);
-    child.emit("error", new Error("spawn failed"));
+    child.emit("error", new Error(" "));
 
     expect(process.listeners("SIGINT")).toStrictEqual(beforeSigint);
   });

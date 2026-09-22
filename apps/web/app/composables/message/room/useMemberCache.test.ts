@@ -68,8 +68,8 @@ describe(useMemberCache, () => {
     await mountCache();
     // Both totals are server-computed, so the room left behind is the last thing that set them. Neither can be
     // Refetched offline, and the room being switched into must not inherit either
-    getMemberCountsRef(partitionKey).value.count = 5;
-    getMemberCountsRef(partitionKey).value.countsByTopRole = [{ count: 5, roleId: crypto.randomUUID() }];
+    getMemberCountsRef(partitionKey).value.count = 1;
+    getMemberCountsRef(partitionKey).value.countsByTopRole = [{ count: 1, roleId: crypto.randomUUID() }];
     setCurrentRoomId(secondPartitionKey);
     await flushCache();
 

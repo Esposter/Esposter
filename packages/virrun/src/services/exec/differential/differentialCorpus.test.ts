@@ -19,14 +19,14 @@ export const NODE_DIFFERENTIAL_CORPUS: readonly DifferentialCase[] = [
   { command: `node -e "process.stdout.write(require('node:path').sep)"`, name: "module require" },
   { command: `node -e ""`, name: "empty program" },
   { command: `node -e "throw new Error(' ')"`, name: "uncaught throw" },
-  { command: `node -p "1 + 1"`, name: "print expression" },
+  { command: `node -p "0"`, name: "print expression" },
   { command: `node --version`, name: "version flag" },
 ];
 
 // Arbitrary shell processes only a real-exec backend can run — native and the os sandbox. `date +%s` carries
 // The digit-mask rule so the corpus exercises the normalization seam, not just verbatim comparisons.
 export const SHELL_DIFFERENTIAL_CORPUS: readonly DifferentialCase[] = [
-  { command: `echo hello`, name: "echo" },
+  { command: `echo a`, name: "echo" },
   { command: `printf 'a\\nb'`, name: "printf multiline" },
   { command: `pwd`, name: "working directory" },
   { command: `cat /etc/hostname`, name: "read system file" },

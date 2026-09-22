@@ -24,9 +24,9 @@ describe(useReadSearchedMessages, () => {
   let createSearchHistory: MockInstance<ReturnType<typeof useSearchHistoryStore>["createSearchHistory"]>;
   let readSearchedMessages: ReturnType<typeof useReadSearchedMessages>;
   const roomId = crypto.randomUUID();
-  const newCount = 3;
+  const newCount = 1;
   const otherRoomId = crypto.randomUUID();
-  const otherRoomPage = 5;
+  const otherRoomPage = 3;
   const roomPage = 2;
   const query = "a";
   const pendingFilter = { type: FilterType.Has, value: "" };

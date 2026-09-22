@@ -5,7 +5,11 @@ import { VIRRUN_PREPARE_DIRECTORY_NAME } from "#src/services/exec/snapshot/const
 import { removeSnapshotDirectoriesDetached } from "#src/services/exec/snapshot/removeSnapshotDirectoriesDetached";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_DIR, TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { VIRRUN_REMOVE_LIST_TEMP_PREFIX, WSL_REMOVE_LIST_SCRIPT } from "#src/services/exec/wsl/constants";
+import {
+  VIRRUN_REMOVE_LIST_TEMP_PREFIX,
+  WSL_EXECUTABLE,
+  WSL_REMOVE_LIST_SCRIPT,
+} from "#src/services/exec/wsl/constants";
 import { TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_LEGACY_UNC_PREFIX } from "#src/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
 import { joinNullDelimited } from "#src/services/exec/wsl/joinNullDelimited";
@@ -88,7 +92,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
     // Outright, while an argv-sized batch would reintroduce that fan-out one launch at a time. Never `detached`
     // Either: on win32 that flag makes Windows ignore windowsHide and flash an empty console (nodejs#21825).
     expect(spawn).toHaveBeenCalledExactlyOnceWith(
-      "wsl.exe",
+      WSL_EXECUTABLE,
       ["--exec", "sh", "-c", WSL_REMOVE_LIST_SCRIPT, "sh", expect.stringContaining(VIRRUN_REMOVE_LIST_TEMP_PREFIX)],
       { stdio: "ignore", windowsHide: true },
     );
@@ -135,7 +139,7 @@ describe(removeSnapshotDirectoriesDetached, () => {
 
     expect(rmSync).toHaveBeenCalledTimes(1);
     expect(spawn).toHaveBeenCalledTimes(1);
-    expect(takeOne(spawn.mock.calls)[0]).toBe("wsl.exe");
+    expect(takeOne(spawn.mock.calls)[0]).toBe(WSL_EXECUTABLE);
     expect(readStagedList()).toBe(joinNullDelimited([linuxDirectory]));
   });
 });

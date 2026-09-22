@@ -2,6 +2,7 @@ import type { Database, ScheduledMessageJobPayload } from "@esposter/db-schema";
 
 import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
 import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
+import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createReplyThreadFollows } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
@@ -57,8 +58,10 @@ vi.mock(import("#src/services/notification/webpush"), () => import("#src/service
 
 describe(processScheduledMessageJobHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
+  const error = new Error(" ");
   const name = "name";
   const otherRoomId = crypto.randomUUID();
+  const replyRowKey = "replyRowKey";
   const reminderPayload: ScheduledMessageJobPayload = { text: "text", type: ScheduledMessageJobType.Reminder };
   const roomId = crypto.randomUUID();
   const scheduledMessagePayload: ScheduledMessageJobPayload = {
@@ -91,10 +94,7 @@ describe(processScheduledMessageJobHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values([
-      { email: "", emailVerified: true, id: userId, name },
-      { email: "a", emailVerified: true, id: memberUserId, name },
-    ]);
+    await mockDb.insert(users).values([createUser(userId), createUser(memberUserId)]);
     await mockDb.insert(roomsInMessage).values([
       { id: roomId, name, userId },
       { id: otherRoomId, name, userId },
@@ -222,7 +222,6 @@ describe(processScheduledMessageJobHandler, () => {
   test("creates the message under the thread root the payload names", async () => {
     expect.hasAssertions();
 
-    const replyRowKey = "replyRowKey";
     const job = await insertJob({ ...scheduledMessagePayload, replyRowKey });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
@@ -237,7 +236,6 @@ describe(processScheduledMessageJobHandler, () => {
   test("follows the thread it replies into", async () => {
     expect.hasAssertions();
 
-    const replyRowKey = "replyRowKey";
     const job = await insertJob({ ...scheduledMessagePayload, replyRowKey });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
@@ -259,8 +257,8 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const sendSpy = vi.spyOn(eventGridPublisherClient, "send");
-    vi.mocked(createReplyThreadFollows).mockRejectedValueOnce(new Error(" "));
-    const job = await insertJob({ ...scheduledMessagePayload, replyRowKey: "replyRowKey" });
+    vi.mocked(createReplyThreadFollows).mockRejectedValueOnce(error);
+    const job = await insertJob({ ...scheduledMessagePayload, replyRowKey });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const room = await mockDb.query.roomsInMessage.findFirst({
@@ -275,7 +273,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("completes job when notifying fails after the message is created", async () => {
     expect.hasAssertions();
 
-    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(new Error(" "));
+    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(error);
     const job = await insertJob(scheduledMessagePayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
@@ -290,7 +288,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("advances the slowmode clock when notifying fails after the message is created", async () => {
     expect.hasAssertions();
 
-    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(new Error(" "));
+    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(error);
     const job = await insertJob(scheduledMessagePayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
@@ -308,9 +306,12 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const timeoutDurationMs = 1;
-    await mockDb
-      .insert(roomFiltersInMessage)
-      .values({ action: WordFilterAction.Timeout, roomId, timeoutDurationMs, words: ["message"] });
+    await mockDb.insert(roomFiltersInMessage).values({
+      action: WordFilterAction.Timeout,
+      roomId,
+      timeoutDurationMs,
+      words: [scheduledMessagePayload.message],
+    });
     const job = await insertJob(scheduledMessagePayload, { userId: memberUserId });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 

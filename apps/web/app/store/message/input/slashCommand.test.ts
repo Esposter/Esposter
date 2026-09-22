@@ -146,7 +146,7 @@ describe(useSlashCommandStore, () => {
     const { collapseToText, setPendingSlashCommand } = slashCommandStore;
     const inputStore = useInputStore();
     const { input } = storeToRefs(inputStore);
-    const text = `${parameter1}${ID_SEPARATOR}value1 ${parameter2}${ID_SEPARATOR}value2 trailing`;
+    const text = `${parameter1}${ID_SEPARATOR}a ${parameter2}${ID_SEPARATOR}b c`;
     setPendingSlashCommand(mockSlashCommand, text);
     collapseToText();
 

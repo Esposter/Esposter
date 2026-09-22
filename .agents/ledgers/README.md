@@ -21,6 +21,7 @@ are the `sweeps` skill's `references/standing-resume.md`.
 | [schemas](schemas.md)                                 | `zod` + `drizzle` skills                               | one schema tree            | `packages/db-schema` `packages/db` `packages/db-mock` `apps/web/shared/models` `apps/web/app/models` |
 | [styling](styling.md)                                 | `styling` + `unocss` + `vuetify` + `responsive` skills | one component tree         | `apps/web/app/components` `apps/web/app/pages` `apps/web/app/layouts` `apps/web/app/assets`          |
 | [testing](testing/)                                   | `testing` skill                                        | one tree of suites         | `*.test.ts` `*.test-d.ts` `*.bench.ts`                                                               |
+| [test-values](test-values/)                           | `test-values` skill                                    | one tree of suites         | `*.test.ts` `*.test-d.ts` `*.bench.ts`                                                               |
 | [trpc](trpc.md)                                       | `trpc` skill                                           | one router tree            | `apps/web/server/trpc`                                                                               |
 | [typescript](typescript/)                             | `typescript` skill                                     | one tree                   | `apps` `packages` `scripts`                                                                          |
 | [ux](ux.md)                                           | `ux` skill                                             | one product area           | `apps/web/app/components` `apps/web/app/pages`                                                       |
@@ -29,8 +30,9 @@ are the `sweeps` skill's `references/standing-resume.md`.
 
 Three scopes are deliberately not a directory list. The quality lane reads any code, so narrowing it
 would only hide the areas nobody has looked at; `testing` is scoped by filename because a suite sits beside
-whatever it tests rather than in a tree of its own — as does `bench`, which reads the same files for a different
-question: `testing` asks whether the file is a well-formed suite, `bench` whether the measurement is honest.
+whatever it tests rather than in a tree of its own — as do `test-values` and `bench`, which read the same files for
+a different question each: `testing` asks whether the file is a well-formed suite, `test-values` whether its
+literals are the least ones, `bench` whether the measurement is honest.
 
 Still unledgered, and known to be: `pagination`, `invariants`, `runtime-efficiency`, and the product skills
 (`esbabbler`, `routing`, `slash-commands`, `tiptap`, `vjsf`, `grapesjs`, `azure-table`, `string-utils`) — each

@@ -28,6 +28,14 @@ claude plugin install genshin-persona@esposter
 
 From the next session the character is picked and its card is in context; nothing else is needed. A clone of this repository needs neither command: `.agents/settings.json` declares the marketplace with the relative source `.` and enables the plugin, so opening the checkout in Claude Code installs it at project scope once you trust the repository.
 
+Updating is one command, which refreshes the marketplace itself; the plugin declares no version, so every merge to `main` is an update, and the next session loads it:
+
+```bash
+claude plugin update genshin-persona@esposter
+```
+
+To stop running it, switch auto-update on once for this marketplace — `/plugin`, **Marketplaces**, `esposter`, **Enable auto-update** — which Claude Code leaves off for any marketplace that is not Anthropic's; the plugin then follows `main` in the background and loads on the launch after. Nothing below is repeated for an update: the state directory's launchers re-aim at the running copy at every session start, and the voice's runtime and weights are kept until the copy carries a newer lockfile or engine, which `voice` with no argument reports and `voice <dub>` run again picks up, installing only what changed.
+
 Spoken lines stay silent until the `voice` verb has set the engine up, once, with the dub the reference lines are taken from — `en`, `ja`, `ko` or `zh`:
 
 ```bash

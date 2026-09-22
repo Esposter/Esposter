@@ -1,13 +1,13 @@
 ---
-title: Dependency reduction
-description: What a third-party package must earn to stay in the catalog, the gap analysis across the workspace, and the ranked backlog of absorptions.
+title: Dependency admission
+description: What a third-party package must earn to stay in the catalog — the three real costs, the admission test, the stop list, and the gap analysis that applied it once.
 ---
 
-# Dependency Reduction
+# Dependency Admission
 
 Every version in the workspace lives in one place — the `catalog` block of `pnpm-workspace.yaml`, with `catalogMode: strict` so no package may pin its own. That single file makes the whole dependency surface readable in one sitting, which is what makes an initiative like this possible at all: the question "what are we paying for" has one answer, not fourteen.
 
-This page owns the **rule** for what a third-party package must earn, and the **gap analysis** that applies it once. It is deliberately not a list of rewrites. Most of the catalog passes the test, several entries that look absorbable are the ones we most want to keep, and the honest output of the analysis is a short backlog rather than a long one. When an entry on that backlog is big enough to need a design, it graduates to its own proposal page and is linked from here — this page never grows into the spec.
+This page owns the **rule** for what a third-party package must earn, and the **gap analysis** that applies it once. It is deliberately not a list of rewrites. Most of the catalog passes the test, several entries that look absorbable are the ones we most want to keep, and the honest output of the analysis is a short backlog rather than a long one — which lives on the roadmap of the area whose component carries the dependency, never here. When an item is big enough to need a design, it graduates to its own proposal page — this page never grows into the spec.
 
 ## What actually costs us
 
@@ -96,16 +96,11 @@ Recording these matters as much as the backlog, because each is a candidate some
 - **The indent-stripping template tag**, behind a request body, the query logger and the virtual runner's command help. The tag is a few lines; the part that is not is escape handling, and getting it wrong corrupts a payload rather than a message.
 - **The progress aggregate**, behind block upload. Counting settled blocks ourselves is small, but the counter needs a per-promise continuation and our conventions route those through `Result`, which makes this a rewrite of the upload path rather than a swap. It goes with whatever next touches that path.
 
-## Backlog
+## What the analysis left open
 
-Ranked by what each buys, not by size. What is left all needs a design first — the cleanups are done.
+The two thinnings the gate did not settle are roadmap items, each on the area whose component carries the dependency: the 3D visual on the about page ([users roadmap](/docs/user/roadmap)) and the page-builder plugin belt ([resource roadmap](/docs/resource/roadmap)). The media viewer was the first item off that list, and the shape the rest should follow: the lightbox library owned what opening an attachment does, could not grow the video half of it, and what replaced it is a dialog over the two elements the message row already renders — no engine kept, because there was none to keep. It is described in [file & media](/docs/esbabbler/file-media).
 
-1. **Question the 3D visual, then decide its dependencies.** Whether one decorative component earns a declarative renderer is a product question, and the dependency answer follows it rather than leading it. No work until that is answered.
-2. **Prune the page-builder plugin belt.** Absorb the block-registering plugins that are unmaintained or untyped, keep the engines. Lowest value per unit of effort, so it goes last.
-
-The media viewer was the first item off this list, and the shape the rest should follow: the lightbox library owned what opening an attachment does, could not grow the video half of it, and what replaced it is a dialog over the two elements the message row already renders — no engine kept, because there was none to keep. It is described in [file & media](/docs/esbabbler/file-media).
-
-The chart wrapper is deliberately absent. It is the cheapest item in the analysis and it buys the least, which makes it something to fold into whichever change next touches that component rather than a task of its own.
+The chart wrapper is deliberately not an item. It is the cheapest thinning in the analysis and it buys the least, which makes it something to fold into whichever change next touches that component rather than a task of its own.
 
 ## Executing an absorption
 

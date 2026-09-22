@@ -5,6 +5,6 @@ describe(getAnsiForegroundColor, () => {
   test("spells a hex triplet as the truecolor foreground escape", () => {
     expect.hasAssertions();
 
-    expect(getAnsiForegroundColor("#d376f0")).toBe("\u001B[38;2;211;118;240m");
+    expect(getAnsiForegroundColor("#010203")).toBe("\u001B[38;2;1;2;3m");
   });
 });

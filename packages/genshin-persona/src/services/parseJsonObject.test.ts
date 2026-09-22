@@ -8,7 +8,7 @@ describe(parseJsonObject, () => {
     expect(parseJsonObject('{"key":"key"}')).toStrictEqual({ key: "key" });
   });
 
-  test.each(["null", "[]", '"text"', "0"])("drops the %s root its reader cannot destructure", (text) => {
+  test.each(["null", "[]", '""', "0"])("drops the %s root its reader cannot destructure", (text) => {
     expect.hasAssertions();
 
     expect(parseJsonObject(text)).toStrictEqual({});

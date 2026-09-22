@@ -17,8 +17,8 @@ describe(getLanguageDisplayName, () => {
   // A language a later version of the data package adds, before its tag is written down: the package's own English
   // Word for it is also the word a person types, so the fallback is always something they recognise
   test.each([
-    ["Klingon", DEFAULT_LANGUAGE],
-    [DEFAULT_LANGUAGE, "Klingon"],
+    [" ", DEFAULT_LANGUAGE],
+    [DEFAULT_LANGUAGE, " "],
   ])("falls back to the package's word when %s or %s has no tag", (languageName, inLanguageName) => {
     expect.hasAssertions();
 

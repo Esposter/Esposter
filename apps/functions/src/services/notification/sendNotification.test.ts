@@ -1,9 +1,10 @@
 import type { Database } from "@esposter/db-schema";
 
-import { MOCK_ENDPOINT } from "#src/services/deadLetter/constants.test";
+import { MOCK_ENDPOINT } from "#src/services/notification/constants.test";
 import { sendNotification } from "#src/services/notification/sendNotification";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
+import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -16,7 +17,6 @@ import {
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { ID_SEPARATOR } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -36,22 +36,19 @@ describe(sendNotification, () => {
   const context = new InvocationContext();
   const message = "<p>a</p>";
   const name = "name";
-  const path = "/path";
+  const path = "path";
   const title = "title";
   const senderUserId = crypto.randomUUID();
   const subscriberUserId = crypto.randomUUID();
   const roomId = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
-  const actingSessionId = `session${ID_SEPARATOR}acting`;
+  const actingSessionId = crypto.randomUUID();
   const standardMessage = { message, partitionKey: roomId, rowKey, userId: senderUserId };
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, subscriberUserId);
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values([
-      { email: "", emailVerified: true, id: senderUserId, name },
-      { email: " ", emailVerified: true, id: subscriberUserId, name },
-    ]);
+    await mockDb.insert(users).values([createUser(senderUserId), createUser(subscriberUserId)]);
     await seedSession();
     // The subscriber's second device, so a notification the first one caused still has somewhere to land
     await mockDb.insert(sessions).values({
@@ -103,7 +100,7 @@ describe(sendNotification, () => {
     expect.hasAssertions();
 
     const trim = vi.spyOn(mockDb, "delete").mockImplementationOnce(() => {
-      throw new Error("trim failed");
+      throw new Error(" ");
     });
 
     await expect(
@@ -125,7 +122,7 @@ describe(sendNotification, () => {
 
     await mockDb
       .insert(pushSubscriptions)
-      .values([pushSubscription, { ...pushSubscription, endpoint: "acting", sessionId: actingSessionId }]);
+      .values([pushSubscription, { ...pushSubscription, endpoint: " ", sessionId: actingSessionId }]);
     await sendNotification(context, {
       excludedSessionId: actingSessionId,
       path,

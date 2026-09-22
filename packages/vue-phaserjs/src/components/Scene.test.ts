@@ -1,6 +1,7 @@
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
 import Scene from "#src/components/Scene.vue";
+import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
 import { useCameraStore } from "#src/store/camera";
 import { useInputStore } from "#src/store/input";
 import { getTestGame, getTestPinia, removeTestScene } from "#src/test/fixtures/headlessGame.test";
@@ -39,16 +40,16 @@ describe("scene", () => {
     expect.hasAssertions();
 
     const game = getTestGame();
-    const order: string[] = [];
+    const order: Lifecycle[] = [];
     mountScene({
-      onCreate: () => order.push("create"),
-      onInit: () => order.push("init"),
-      onPreload: () => order.push("preload"),
+      onCreate: () => order.push(Lifecycle.Create),
+      onInit: () => order.push(Lifecycle.Init),
+      onPreload: () => order.push(Lifecycle.Preload),
     });
 
     game.scene.start(sceneKey);
 
-    expect(order).toStrictEqual(["init", "preload", "create"]);
+    expect(order).toStrictEqual([Lifecycle.Init, Lifecycle.Preload, Lifecycle.Create]);
   });
 
   test("emits shutdown when the scene is stopped externally", () => {

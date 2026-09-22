@@ -17,7 +17,8 @@ const SKIPPED_ENTRY_LINE_REGEXES = [
   /^tar(?:\.exe)?: .*: Cannot stat: .+$/u,
 ];
 const TRAILER_LINE_REGEXES = [
-  /^tar(?:\.exe)?: Error exit delayed from previous errors\.$/u,
+  // Libarchive 3.8 dropped the trailing period, so both spellings of the bsdtar trailer are the same line
+  /^tar(?:\.exe)?: Error exit delayed from previous errors\.?$/u,
   /^tar(?:\.exe)?: Exiting with failure status due to previous errors$/u,
 ];
 

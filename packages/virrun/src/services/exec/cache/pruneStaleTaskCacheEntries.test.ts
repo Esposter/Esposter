@@ -4,8 +4,10 @@ import {
   TASK_CACHE_TEMP_PREFIX,
 } from "#src/services/exec/cache/constants";
 import { pruneStaleTaskCacheEntries } from "#src/services/exec/cache/pruneStaleTaskCacheEntries";
+import { PID } from "#src/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { seedDirectory } from "#src/services/exec/test/seedDirectory.test";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { existsSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -38,8 +40,8 @@ describe(pruneStaleTaskCacheEntries, () => {
   test("removes an entry not touched within the max age while keeping a recent one", () => {
     expect.hasAssertions();
 
-    const staleEntry = seedEntry("stale", STALE_AGE_DAYS);
-    const recentEntry = seedEntry("recent", 0);
+    const staleEntry = seedEntry(" ", STALE_AGE_DAYS);
+    const recentEntry = seedEntry(TEST_FILENAME, 0);
 
     pruneStaleTaskCacheEntries(tasksRoot);
 
@@ -50,7 +52,7 @@ describe(pruneStaleTaskCacheEntries, () => {
   test("never touches a pid-tagged temp even when it is old", () => {
     expect.hasAssertions();
 
-    const temp = seedEntry(`${TASK_CACHE_TEMP_PREFIX}123.abc`, STALE_AGE_DAYS);
+    const temp = seedEntry(`${TASK_CACHE_TEMP_PREFIX}${PID}.${TEST_FILENAME}`, STALE_AGE_DAYS);
 
     pruneStaleTaskCacheEntries(tasksRoot);
 
@@ -60,7 +62,7 @@ describe(pruneStaleTaskCacheEntries, () => {
   test("keeps an entry whose meta file is missing rather than evicting on a blind guess", () => {
     expect.hasAssertions();
 
-    const noMetaEntry = seedDirectory(join(tasksRoot, "no-meta"));
+    const noMetaEntry = seedDirectory(join(tasksRoot, TEST_FILENAME));
 
     pruneStaleTaskCacheEntries(tasksRoot);
 

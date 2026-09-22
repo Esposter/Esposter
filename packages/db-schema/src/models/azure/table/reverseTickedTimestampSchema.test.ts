@@ -21,8 +21,8 @@ describe("reverseTickedTimestampSchema", () => {
     ["an empty string", ""],
     ["a uuid", crypto.randomUUID()],
     ["a negative countdown", "-1"],
-    ["a decimal point", "1.0"],
-    ["padding", " 1"],
+    ["a decimal point", "0.0"],
+    ["padding", " 0"],
     ["one digit past the maximum", `${AZURE_SELF_DESTRUCT_TIMER}9`],
   ])("rejects %s", (_description, rowKey) => {
     expect.hasAssertions();

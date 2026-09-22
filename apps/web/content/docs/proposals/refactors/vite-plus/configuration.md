@@ -48,7 +48,7 @@ The rule set, the plugin list and the per-glob `overrides` move into the `lint` 
 Two things need care:
 
 - **The local JS rule plugins must keep loading.** Several rules enforcing this repository's own conventions are JavaScript plugins declared in `jsPlugins`, and they are not optional — they are the enforcement half of conventions the skills only describe. Oxlint's JS plugin support is what Vite+ exposes, so this is a relocation rather than a rewrite, but it is the first thing to verify and the phase fails without it.
-- **ESLint does not leave.** Oxlint parses a `.vue` file's script block and not its template, and templates are where a large share of this repo's rules apply. `vp lint` therefore replaces the oxlint invocation and not the ESLint one, and the two continue to run side by side exactly as they do today. Which rules eventually cross over is governed by the [ESLint to oxlint migration](/docs/proposals/refactors/eslint-to-oxlint-migration) and is not accelerated by this proposal — Vite+ changes who invokes the linter, not what it can parse.
+- **ESLint does not leave.** Oxlint parses a `.vue` file's script block and not its template, and templates are where a large share of this repo's rules apply. `vp lint` therefore replaces the oxlint invocation and not the ESLint one, and the two continue to run side by side exactly as they do today. Which rules eventually cross over is governed by the [ESLint to oxlint migration](/docs/architecture/lint-toolchain) and is not accelerated by this proposal — Vite+ changes who invokes the linter, not what it can parse.
 
 ## Format
 

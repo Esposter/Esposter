@@ -39,6 +39,6 @@ describe(substituteMergeFields, () => {
   test("leaves merge fields without a matching column", () => {
     expect.hasAssertions();
 
-    expect(substituteMergeFields("{{unknown}}", { [columnName]: "a" })).toBe("{{unknown}}");
+    expect(substituteMergeFields("{{-1}}", { [columnName]: "a" })).toBe("{{-1}}");
   });
 });

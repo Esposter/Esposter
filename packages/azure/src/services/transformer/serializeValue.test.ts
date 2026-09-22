@@ -3,10 +3,10 @@ import { serializeValue } from "#src/services/transformer/serializeValue";
 import { describe, expect, test } from "vitest";
 
 describe(serializeValue, () => {
+  const epoch = new Date(0);
+
   test("serializes", () => {
     expect.hasAssertions();
-
-    const epoch = new Date(0);
 
     expect(serializeValue(true)).toBe(String(true));
     expect(serializeValue(epoch)).toBe(epoch.toISOString());
@@ -18,8 +18,6 @@ describe(serializeValue, () => {
 
   test("wraps a Date in a datetime literal for a table filter", () => {
     expect.hasAssertions();
-
-    const epoch = new Date(0);
 
     expect(serializeValue(epoch, true)).toBe(`datetime'${epoch.toISOString()}'`);
   });

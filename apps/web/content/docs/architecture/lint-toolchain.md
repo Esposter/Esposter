@@ -1,11 +1,11 @@
 ---
-title: ESLint → oxlint migration
-description: Ongoing migration of lint rules from ESLint to oxlint, prioritized by rule execution time.
+title: Lint toolchain
+description: Oxlint as the one repo-wide pass with ESLint behind it for what oxlint cannot parse, the config that keeps the two from double-linting, and the blocker table a bump is read against.
 ---
 
-# ESLint → oxlint Migration
+# Lint Toolchain
 
-Move lint rules from ESLint to oxlint whenever oxlint gains coverage, prioritized by what actually costs time in the ESLint pass. Oxlint clears the whole repo in seconds; ESLint is the slower half by an order of magnitude, and its cost is concentrated in a handful of rules rather than spread across the set. Since the type-aware rules left (`neverthrow/must-use-result` dropped, `typescript-eslint` removed), the remaining pass is short enough to run on every change — `lint` is no longer near CI's critical path, which belongs to `build app`.
+Two linters, one direction: a rule moves from ESLint to oxlint whenever oxlint gains coverage, prioritized by what actually costs time in the ESLint pass. The move is gated on upstream — each rule still in ESLint waits on a trigger the table below names — so this page is the mechanism as it stands and the blocker table a bump is read against, never a schedule. Oxlint clears the whole repo in seconds; ESLint is the slower half by an order of magnitude, and its cost is concentrated in a handful of rules rather than spread across the set. Since the type-aware rules left (`neverthrow/must-use-result` dropped, `typescript-eslint` removed), the remaining pass is short enough to run on every change — `lint` is no longer near CI's critical path, which belongs to `build app`.
 
 ## What works today
 

@@ -7,10 +7,10 @@ describe(getVisibleSectionIds, () => {
   // Viewport is below its real one
   const VIEWPORT_TOP = 100;
   const sections = [
-    { id: "first", top: -400 },
-    { id: "second", top: 200 },
-    { id: "third", top: 600 },
-    { id: "fourth", top: 1200 },
+    { id: "a", top: -400 },
+    { id: "b", top: 200 },
+    { id: "c", top: 600 },
+    { id: "d", top: 1200 },
   ];
 
   // The reason the rail stretches rather than points: reading under one heading while the next is on screen is
@@ -18,7 +18,7 @@ describe(getVisibleSectionIds, () => {
   test("returns every section overlapping the viewport", () => {
     expect.hasAssertions();
 
-    expect(getVisibleSectionIds(sections, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["first", "second", "third"]);
+    expect(getVisibleSectionIds(sections, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["a", "b", "c"]);
   });
 
   // The case that separates this from "which headings are on screen", and the one a rewrite is most likely to
@@ -27,11 +27,11 @@ describe(getVisibleSectionIds, () => {
     expect.hasAssertions();
 
     const longSection = [
-      { id: "before", top: -5000 },
-      { id: "after", top: 5000 },
+      { id: "a", top: -5000 },
+      { id: "b", top: 5000 },
     ];
 
-    expect(getVisibleSectionIds(longSection, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["before"]);
+    expect(getVisibleSectionIds(longSection, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["a"]);
   });
 
   // A section whose next heading has passed the sticky bar is behind it, however far its own heading is above
@@ -39,11 +39,11 @@ describe(getVisibleSectionIds, () => {
     expect.hasAssertions();
 
     const scrolledPast = [
-      { id: "read", top: -900 },
-      { id: "reading", top: 50 },
+      { id: "a", top: -900 },
+      { id: "b", top: 50 },
     ];
 
-    expect(getVisibleSectionIds(scrolledPast, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["reading"]);
+    expect(getVisibleSectionIds(scrolledPast, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["b"]);
   });
 
   // Clicking a table-of-contents link lands its heading on the top line, which leaves a sub-pixel sliver of the
@@ -52,22 +52,22 @@ describe(getVisibleSectionIds, () => {
     expect.hasAssertions();
 
     const justLanded = [
-      { id: "previous", top: -700 },
-      { id: "clicked", top: VIEWPORT_TOP + 0.5 },
+      { id: "a", top: -700 },
+      { id: "b", top: VIEWPORT_TOP + 0.5 },
     ];
 
-    expect(getVisibleSectionIds(justLanded, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["clicked"]);
+    expect(getVisibleSectionIds(justLanded, VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["b"]);
   });
 
   test("runs the last section to the bottom of the document", () => {
     expect.hasAssertions();
 
-    expect(getVisibleSectionIds([{ id: "only", top: -9000 }], VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["only"]);
+    expect(getVisibleSectionIds([{ id: "a", top: -9000 }], VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual(["a"]);
   });
 
   test("returns nothing when every section is below the viewport", () => {
     expect.hasAssertions();
 
-    expect(getVisibleSectionIds([{ id: "later", top: 900 }], VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual([]);
+    expect(getVisibleSectionIds([{ id: "a", top: 900 }], VIEWPORT_TOP, VIEWPORT_BOTTOM)).toStrictEqual([]);
   });
 });

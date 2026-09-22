@@ -86,6 +86,7 @@ const english: ResolvedLocalization = {
       "Weights present; the engine loads on the CPU — no GPU adapter was found, so a reply is synthesized several times slower than real time.",
     weightsOnDevice: (device) =>
       `Weights present; the engine loads on ${device}, and moves down to the CPU by itself if what it synthesizes there is not speech.`,
+    weightsPresent: "Weights present.",
   },
   verbs: [
     "Adventuring",

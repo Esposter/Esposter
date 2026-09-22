@@ -36,6 +36,7 @@
     "ai:coderabbit:feedback": "node src/coderabbit/feedback/index.ts",
     "ai:sweep:constant-scope": "node src/sweeps/constantScope/index.ts",
     "ai:sweep:duplicate-prose": "node src/sweeps/duplicateProse/index.ts",
+    "ai:sweep:file-organization": "tsx src/sweeps/fileOrganization/index.ts",
     "ai:sweep:ledger-coverage": "tsx src/sweeps/ledgerCoverage/index.ts",
     "ai:sweep:repeated-list-items": "node src/sweeps/repeatedListItems/index.ts",
     "ai:sweep:shared-export-consumers": "node src/sweeps/sharedExportConsumers/index.ts",

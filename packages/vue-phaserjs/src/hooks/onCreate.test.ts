@@ -6,6 +6,7 @@ import { describe, expect, test, vi } from "vitest";
 
 describe(onCreate, () => {
   const sceneKey = "sceneKey";
+  const otherSceneKey = "otherSceneKey";
 
   test("fires listener exactly once during create", () => {
     expect.hasAssertions();
@@ -19,27 +20,25 @@ describe(onCreate, () => {
     removeTestScene(sceneKey);
   });
 
-  test("sceneA listener does not fire when sceneB starts", () => {
+  test("a scene's listener does not fire when another scene starts", () => {
     expect.hasAssertions();
 
-    const sceneKeyA = "sceneKeyA";
-    const sceneKeyB = "sceneKeyB";
-    const listenerA = vi.fn<(scene: SceneWithPlugins) => void>();
-    const listenerB = vi.fn<(scene: SceneWithPlugins) => void>();
-    onCreate(listenerA, sceneKeyA);
-    onCreate(listenerB, sceneKeyB);
+    const listener = vi.fn<(scene: SceneWithPlugins) => void>();
+    const otherListener = vi.fn<(scene: SceneWithPlugins) => void>();
+    onCreate(listener, sceneKey);
+    onCreate(otherListener, otherSceneKey);
 
-    startTestScene(sceneKeyA);
+    startTestScene(sceneKey);
 
-    expect(listenerA).toHaveBeenCalledTimes(1);
-    expect(listenerB).toHaveBeenCalledTimes(0);
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(otherListener).toHaveBeenCalledTimes(0);
 
-    startTestScene(sceneKeyB);
+    startTestScene(otherSceneKey);
 
-    expect(listenerA).toHaveBeenCalledTimes(1);
-    expect(listenerB).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(otherListener).toHaveBeenCalledTimes(1);
 
-    removeTestScene(sceneKeyA);
-    removeTestScene(sceneKeyB);
+    removeTestScene(sceneKey);
+    removeTestScene(otherSceneKey);
   });
 });

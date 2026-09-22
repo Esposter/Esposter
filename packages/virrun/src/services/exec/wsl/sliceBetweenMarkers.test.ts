@@ -4,12 +4,12 @@ import { describe, expect, test } from "vitest";
 describe(sliceBetweenMarkers, () => {
   const begin = "<begin>";
   const end = "<end>";
-  const value = "captured";
+  const value = "value";
 
   test("returns the value between the markers, ignoring surrounding shell noise", () => {
     expect.hasAssertions();
 
-    expect(sliceBetweenMarkers(`motd\n${begin}${value}${end}trailing`, begin, end)).toBe(value);
+    expect(sliceBetweenMarkers(` ${begin}${value}${end} `, begin, end)).toBe(value);
   });
 
   test("returns an empty value when a marker is missing", () => {
@@ -27,6 +27,6 @@ describe(sliceBetweenMarkers, () => {
   test("returns the value when the end marker also appears in the noise before the begin marker", () => {
     expect.hasAssertions();
 
-    expect(sliceBetweenMarkers(`${end}motd\n${begin}${value}${end}`, begin, end)).toBe(value);
+    expect(sliceBetweenMarkers(`${end} ${begin}${value}${end}`, begin, end)).toBe(value);
   });
 });

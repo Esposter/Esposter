@@ -25,12 +25,12 @@ describe(checkIsVersionAtLeast, () => {
   test("extracts the triple from a `bwrap --version` line", () => {
     expect.hasAssertions();
 
-    expect(checkIsVersionAtLeast("bubblewrap 0.11.1", minimum)).toBe(true);
+    expect(checkIsVersionAtLeast(`a ${minimum}`, minimum)).toBe(true);
   });
 
   test("treats an unparseable version as below the minimum", () => {
     expect.hasAssertions();
 
-    expect(checkIsVersionAtLeast("unknown", minimum)).toBe(false);
+    expect(checkIsVersionAtLeast("a", minimum)).toBe(false);
   });
 });

@@ -42,7 +42,7 @@ describe(MockBlobBatchClient, () => {
   test("deletes a blob whose name the url percent-encodes", async () => {
     expect.hasAssertions();
 
-    const unencodedBlobName = "my photo.png";
+    const unencodedBlobName = " a";
     MockContainerDatabase.set(containerName, new Map([[unencodedBlobName, Buffer.from("")]]));
     const client = new MockBlobBatchClient(MOCK_BLOB_BASE_URL);
     const response = await client.deleteBlobs(
@@ -63,7 +63,7 @@ describe(MockBlobBatchClient, () => {
     MockContainerDatabase.set(containerName, new Map([[blobName, Buffer.from("")]]));
     const client = new MockBlobBatchClient(MOCK_BLOB_BASE_URL);
     const response = await client.deleteBlobs(
-      ["not a url", `${MOCK_BLOB_BASE_URL}/${containerName}/${blobName}`],
+      ["", `${MOCK_BLOB_BASE_URL}/${containerName}/${blobName}`],
       new AnonymousCredential(),
     );
 
@@ -77,7 +77,7 @@ describe(MockBlobBatchClient, () => {
   test("deletes the rest of the batch when one name is not valid percent-encoding", async () => {
     expect.hasAssertions();
 
-    const malformedBlobName = "100%.png";
+    const malformedBlobName = "%";
     MockContainerDatabase.set(
       containerName,
       new Map([

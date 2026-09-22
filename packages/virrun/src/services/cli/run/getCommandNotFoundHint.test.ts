@@ -7,13 +7,13 @@ import { afterEach, assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(getCommandNotFoundHint, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  const script = "typecheck";
+  const script = "script";
   const bwrapError = `bubblewrap failed to set up the sandbox\nbwrap: execvp ${script}: No such file or directory`;
   let cwd = "";
 
   beforeEach(() => {
     cwd = create();
-    writeFileSync(join(cwd, "package.json"), JSON.stringify({ scripts: { [script]: "vue-tsc" } }));
+    writeFileSync(join(cwd, "package.json"), JSON.stringify({ scripts: { [script]: "" } }));
   });
 
   afterEach(() => {
@@ -27,8 +27,8 @@ describe(getCommandNotFoundHint, () => {
     assert.exists(hint);
 
     expect(stripAnsi(hint)).toMatchInlineSnapshot(`
-      "[virrun] "typecheck" is not an executable — virrun runs commands, not package scripts.
-      [virrun] Did you mean:  virrun -- pnpm typecheck"
+      "[virrun] "script" is not an executable — virrun runs commands, not package scripts.
+      [virrun] Did you mean:  virrun -- pnpm script"
     `);
   });
 
@@ -39,34 +39,32 @@ describe(getCommandNotFoundHint, () => {
     assert.exists(hint);
 
     expect(stripAnsi(hint)).toMatchInlineSnapshot(`
-      "[virrun] "typecheck" is not an executable — virrun runs commands, not package scripts.
-      [virrun] Did you mean:  virrun -- pnpm typecheck"
+      "[virrun] "script" is not an executable — virrun runs commands, not package scripts.
+      [virrun] Did you mean:  virrun -- pnpm script"
     `);
   });
 
   test("gives generic executable guidance when the missing command is not a script", () => {
     expect.hasAssertions();
 
-    const hint = getCommandNotFoundHint(["gcc"], `bwrap: execvp gcc: No such file or directory`, cwd);
+    const hint = getCommandNotFoundHint(["a"], "bwrap: execvp a: No such file or directory", cwd);
     assert.exists(hint);
 
     expect(stripAnsi(hint)).toMatchInlineSnapshot(`
-      "[virrun] "gcc" is not an executable — virrun runs commands, not package scripts.
-      [virrun] Pass a real executable, e.g. \`virrun -- pnpm gcc\`, and check it is installed and spelled correctly."
+      "[virrun] "a" is not an executable — virrun runs commands, not package scripts.
+      [virrun] Pass a real executable, e.g. \`virrun -- pnpm a\`, and check it is installed and spelled correctly."
     `);
   });
 
   test("returns undefined when the error is unrelated to a missing command", () => {
     expect.hasAssertions();
 
-    expect(getCommandNotFoundHint([script], "overlay mount failed: permission denied", cwd)).toBeUndefined();
+    expect(getCommandNotFoundHint([script], "", cwd)).toBeUndefined();
   });
 
   test("returns undefined when the missing binary is not the command the user asked to run", () => {
     expect.hasAssertions();
 
-    expect(
-      getCommandNotFoundHint(["pnpm", script], `bwrap: execvp node: No such file or directory`, cwd),
-    ).toBeUndefined();
+    expect(getCommandNotFoundHint(["a", script], "bwrap: execvp b: No such file or directory", cwd)).toBeUndefined();
   });
 });

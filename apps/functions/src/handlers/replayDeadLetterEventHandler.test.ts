@@ -1,7 +1,7 @@
-import type { EventGridEvent } from "@azure/functions";
 import type { EventGridEventInput } from "@esposter/db-schema";
 
 import { replayDeadLetterEventHandler } from "#src/handlers/replayDeadLetterEventHandler";
+import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
 import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
 import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/eventGridPublisherClient.test";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
@@ -41,7 +41,7 @@ describe(replayDeadLetterEventHandler, () => {
 
   const context = new InvocationContext({ logHandler: () => {} });
   const data = "data";
-  const dataVersion = "1.0";
+  const dataVersion = "dataVersion";
   const eventType = AzureFunction.ProcessNotification;
   const subject = "subject";
   const eventId = crypto.randomUUID();
@@ -52,16 +52,6 @@ describe(replayDeadLetterEventHandler, () => {
     eventType: type,
     id,
     subject,
-  });
-  const createEvent = (blobSubject: string): EventGridEvent => ({
-    data: {},
-    dataVersion,
-    eventTime: new Date(0).toISOString(),
-    eventType: "",
-    id: crypto.randomUUID(),
-    metadataVersion: "1",
-    subject: blobSubject,
-    topic: "",
   });
 
   afterEach(() => {
@@ -75,7 +65,7 @@ describe(replayDeadLetterEventHandler, () => {
 
     const content = JSON.stringify([createDeadLetteredEvent(eventId)]);
     await seedBlob(content);
-    await replayDeadLetterEventHandler(createEvent(""), context);
+    await replayDeadLetterEventHandler(createEventGridEvent(), context);
 
     expect(readContainer()).toStrictEqual({ [blobName]: content });
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
@@ -89,7 +79,7 @@ describe(replayDeadLetterEventHandler, () => {
       const content = JSON.stringify([createDeadLetteredEvent(eventId)]);
       await seedBlob(content, `${prefix}${blobName}`);
       await replayDeadLetterEventHandler(
-        createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${prefix}${blobName}`),
+        createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${prefix}${blobName}` }),
         context,
       );
 
@@ -103,7 +93,10 @@ describe(replayDeadLetterEventHandler, () => {
 
     const content = JSON.stringify([createDeadLetteredEvent(eventId), createDeadLetteredEvent(eventId)]);
     await seedBlob(content);
-    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+    await replayDeadLetterEventHandler(
+      createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+      context,
+    );
 
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toStrictEqual([
       createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}1`),
@@ -117,7 +110,10 @@ describe(replayDeadLetterEventHandler, () => {
 
     const content = JSON.stringify([createDeadLetteredEvent(eventId), createDeadLetteredEvent(secondEventId)]);
     await seedBlob(content);
-    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+    await replayDeadLetterEventHandler(
+      createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+      context,
+    );
 
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toStrictEqual([
       createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}1`),
@@ -135,7 +131,10 @@ describe(replayDeadLetterEventHandler, () => {
     ];
     const errorSpy = vi.spyOn(context, "error");
     await seedBlob(JSON.stringify(cappedEvents));
-    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+    await replayDeadLetterEventHandler(
+      createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+      context,
+    );
 
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
     expect(readContainer()).toStrictEqual({
@@ -155,14 +154,16 @@ describe(replayDeadLetterEventHandler, () => {
   test("quarantines with the dead-letter diagnostics kept and the replay count stripped", async () => {
     expect.hasAssertions();
 
-    const deadLetterReason = "MaxDeliveryAttemptsExceeded";
     const cappedEvent = {
       ...createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS}`),
-      deadLetterReason,
-      deliveryAttempts: 7,
+      deadLetterReason: "deadLetterReason",
+      deliveryAttempts: 1,
     };
     await seedBlob(JSON.stringify([cappedEvent]));
-    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+    await replayDeadLetterEventHandler(
+      createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+      context,
+    );
 
     expect(readContainer()).toStrictEqual({
       [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([{ ...cappedEvent, id: eventId }]),
@@ -179,7 +180,10 @@ describe(replayDeadLetterEventHandler, () => {
     const content = JSON.stringify([cappedEvent, replayableEvent]);
     const errorSpy = vi.spyOn(context, "error");
     await seedBlob(content);
-    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+    await replayDeadLetterEventHandler(
+      createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+      context,
+    );
 
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toStrictEqual([
       createDeadLetteredEvent(`${secondEventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS}`),
@@ -199,7 +203,10 @@ describe(replayDeadLetterEventHandler, () => {
     const webhookEvent = createDeadLetteredEvent(eventId, AzureFunction.ProcessWebhook);
     const errorSpy = vi.spyOn(context, "error");
     await seedBlob(JSON.stringify([webhookEvent]));
-    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+    await replayDeadLetterEventHandler(
+      createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+      context,
+    );
 
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
     expect(readContainer()).toStrictEqual({
@@ -216,7 +223,10 @@ describe(replayDeadLetterEventHandler, () => {
     const errorSpy = vi.spyOn(context, "error");
 
     await expect(
-      replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context),
+      replayDeadLetterEventHandler(
+        createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+        context,
+      ),
     ).resolves.toBeUndefined();
 
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
@@ -229,7 +239,10 @@ describe(replayDeadLetterEventHandler, () => {
     const malformedContent = "";
     const errorSpy = vi.spyOn(context, "error");
     await seedBlob(malformedContent);
-    await replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context);
+    await replayDeadLetterEventHandler(
+      createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+      context,
+    );
 
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
     expect(readContainer()).toStrictEqual({ [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: malformedContent });
@@ -244,7 +257,7 @@ describe(replayDeadLetterEventHandler, () => {
 
     const malformedContent = "";
     const error = new Error(" ");
-    const blobEvent = createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`);
+    const blobEvent = createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` });
     const errorSpy = vi.spyOn(context, "error");
     await seedBlob(malformedContent);
     // The failing delete leaves the original in place, so the redelivery reruns the quarantine step on a copy that
@@ -274,7 +287,10 @@ describe(replayDeadLetterEventHandler, () => {
     vi.spyOn(MockBlockBlobClient.prototype, "upload").mockRejectedValue(error);
 
     await expect(
-      replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context),
+      replayDeadLetterEventHandler(
+        createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+        context,
+      ),
     ).resolves.toBeUndefined();
 
     expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toStrictEqual([
@@ -293,7 +309,7 @@ describe(replayDeadLetterEventHandler, () => {
   test("publishes an oversized blob as several requests, covering every event", async () => {
     expect.hasAssertions();
 
-    const oversizedData = "d".repeat(MAX_EVENT_GRID_PUBLISH_BYTES);
+    const oversizedData = "a".repeat(MAX_EVENT_GRID_PUBLISH_BYTES);
     const deadLetteredEvents = [
       { ...createDeadLetteredEvent(eventId), data: oversizedData },
       { ...createDeadLetteredEvent(secondEventId), data: oversizedData },
@@ -302,7 +318,10 @@ describe(replayDeadLetterEventHandler, () => {
     const sendSpy = vi.spyOn(eventGridPublisherClient, "send");
 
     await expect(
-      replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context),
+      replayDeadLetterEventHandler(
+        createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+        context,
+      ),
     ).resolves.toBeUndefined();
 
     expect(sendSpy).toHaveBeenCalledTimes(2);
@@ -320,7 +339,10 @@ describe(replayDeadLetterEventHandler, () => {
     vi.spyOn(eventGridPublisherClient, "send").mockRejectedValue(new Error(" "));
 
     await expect(
-      replayDeadLetterEventHandler(createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`), context),
+      replayDeadLetterEventHandler(
+        createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
+        context,
+      ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     expect(readContainer()).toStrictEqual({ [blobName]: content });
@@ -335,7 +357,7 @@ describe(replayDeadLetterEventHandler, () => {
     );
     const content = JSON.stringify([cappedEvent, replayableEvent]);
     const error = new Error(" ");
-    const blobEvent = createEvent(`${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}`);
+    const blobEvent = createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` });
     const errorSpy = vi.spyOn(context, "error");
     await seedBlob(content);
     vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(error);

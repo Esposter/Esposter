@@ -22,7 +22,18 @@ one set of names across every promoted ledger.
 
 ## Find recipe
 
-A duplicate constant is the one thing no skill states a grep for, because it is found by value rather than by name:
+```bash
+pnpm ai:sweep:file-organization
+```
+
+The scan lives in `scripts/src/sweeps/fileOrganization/` rather than in this file because it is a program: whether
+a second export is a second concern is a comparison of names word by word — a schema beside its type, an enum
+beside its values array, a table beside its row type and select schema — and a grep cannot hold that. What it
+prints is a candidate list for the pass, never a finding: the skill's exceptions are a roster no scan can hold,
+so no workspace test asserts the list empty, and a unit is dated by reading it, not by the scan coming back
+clean. Its cases are `getFileOrganizationFindings.test.ts`, which is what keeps "prove the scan can fail" proved.
+
+A duplicate constant is the one thing the scan does not read, because it is found by value rather than by name:
 
 ```bash
 # String literals appearing in more than one file — the candidate list, not the finding
@@ -47,10 +58,20 @@ its colocated test with it, and the alias import replaces the barrel one — and
 A clean pass prints nothing, and `scripts/src/workspace/sharedExportConsumers.test.ts` fails on anything it
 prints, so the rule is enforced rather than swept.
 
+## Next enforceable
+
+A screaming constant at module scope in an SFC or a composable. Two sittings have now written it — the two the
+last one moved beside their consumers, the eleven this one did — and it is decidable from one file's syntax with
+no list: a `const` whose name is `SCREAMING_SNAKE` at the top level of a `.vue` script or a `composables/**`
+file, `constants.ts` excepted. The next pass that writes it writes the oxlint plugin instead (`oxlint` skill,
+`references/custom-js-plugins.md`), and the scan's `module constant` check retires with it.
+
 ## Exclusions
 
 - Generated barrels (`index.ts` from `ctix`) and `snapshot.json` — machine state.
 - Literals a postinstall-evaluated or JSON config must repeat, which the skill names as the one sanctioned duplication.
 - Two exports sharing module-private state through closure — a pending set, a cached promise, a code set, a
-  dispatch map. One-export-per-file cannot reach them without making that state a module global, which trades a
-  file boundary for a wider one.
+  dispatch map, the four names `initTRPC` hands out. One-export-per-file cannot reach them without making that
+  state a module global, which trades a file boundary for a wider one.
+- A table read as two entities keeps both select schemas in the table file (`posts` as comments): the second
+  schema is derived from the same table, so it is the table's concern rather than a second one.

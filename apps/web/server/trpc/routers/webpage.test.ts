@@ -92,12 +92,10 @@ describe("webpageRouter", () => {
       return content;
     });
     // The repair's own transform, which is the one that rejects
-    transformPublishedBlobUrlsMock.mockRejectedValueOnce(
-      new TRPCError({ code: "NOT_FOUND", message: "Dataset not found" }),
-    );
+    transformPublishedBlobUrlsMock.mockRejectedValueOnce(new TRPCError({ code: "NOT_FOUND", message: "" }));
 
     await expect(caller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Dataset not found]`,
+      `[TRPCError]`,
     );
   });
 

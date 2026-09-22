@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 
+import { DRAFT_DEBOUNCE_MS } from "@/services/message/draft/constants";
 import { draftsSerializer } from "@/services/message/draft/draftsSerializer";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
@@ -22,7 +23,6 @@ describe(useInputStore, () => {
   const roomId1 = crypto.randomUUID();
   const roomId2 = crypto.randomUUID();
   const draftContent = marked.parse("draftContent", { async: false });
-  const debounceMs = 300;
 
   beforeEach(() => {
     // Frozen rather than merely faked, so a draft's `updatedAt` is an exact value instead of "some Date"
@@ -52,7 +52,7 @@ describe(useInputStore, () => {
     setStoredDraft(roomId1, draftContent);
     // The clock moves between the write and the boot that restores it, so a re-stamped draft is visible: the
     // Drafts list is ordered by this, and re-stamping on boot would reorder every draft
-    vi.advanceTimersByTime(debounceMs);
+    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
     useInputStore();
 
     expect(readStoredDraft(roomId1)?.updatedAt).toStrictEqual(new Date(0));
@@ -85,7 +85,7 @@ describe(useInputStore, () => {
   test("removes stored draft content that sanitizes to empty", () => {
     expect.hasAssertions();
 
-    setStoredDraft(roomId1, "<script>alert(1)</script>");
+    setStoredDraft(roomId1, "<script></script>");
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
 
@@ -148,12 +148,12 @@ describe(useInputStore, () => {
     const { drafts, input } = storeToRefs(inputStore);
     input.value = draftContent;
     await nextTick();
-    vi.advanceTimersByTime(debounceMs);
+    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
     await nextTick();
 
     expect(readStoredDraft(roomId1)?.content).toBe(draftContent);
     // The debounce is what elapsed the frozen clock, so the stamp is that instant exactly
-    expect(readStoredDraft(roomId1)?.updatedAt).toStrictEqual(new Date(debounceMs));
+    expect(readStoredDraft(roomId1)?.updatedAt).toStrictEqual(new Date(DRAFT_DEBOUNCE_MS));
     expect(input.value).toBe(draftContent);
     expect(drafts.value.has(roomId1)).toBe(true);
   });
@@ -192,7 +192,7 @@ describe(useInputStore, () => {
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
     const { setDraft } = inputStore;
-    setDraft(roomId1, "<script>alert(1)</script>");
+    setDraft(roomId1, "<script></script>");
 
     expect(readStoredDraft(roomId1)).toBeUndefined();
     expect(input.value).toBe("");
@@ -207,7 +207,7 @@ describe(useInputStore, () => {
     const { drafts, input } = storeToRefs(inputStore);
     input.value = "";
     await nextTick();
-    vi.advanceTimersByTime(debounceMs);
+    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
     await nextTick();
 
     expect(readStoredDraft(roomId1)).toBeUndefined();
@@ -219,9 +219,9 @@ describe(useInputStore, () => {
 
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
-    input.value = "<script>alert(1)</script>";
+    input.value = "<script></script>";
     await nextTick();
-    vi.advanceTimersByTime(debounceMs);
+    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
     await nextTick();
 
     expect(readStoredDraft(roomId1)).toBeUndefined();
@@ -234,12 +234,12 @@ describe(useInputStore, () => {
   test("keeps the raw editor text in input while persisting the sanitized draft", async () => {
     expect.hasAssertions();
 
-    const unsafeContent = `${draftContent}<script>alert(1)</script>`;
+    const unsafeContent = `${draftContent}<script></script>`;
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
     input.value = unsafeContent;
     await nextTick();
-    vi.advanceTimersByTime(debounceMs);
+    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
     await nextTick();
 
     expect(input.value).toBe(unsafeContent);
@@ -257,10 +257,10 @@ describe(useInputStore, () => {
     const { input } = storeToRefs(inputStore);
     input.value = draftContent;
     await nextTick();
-    vi.advanceTimersByTime(debounceMs - 1);
+    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS - 1);
     setCurrentRoomId(roomId2);
     await nextTick();
-    vi.advanceTimersByTime(debounceMs);
+    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS);
     await nextTick();
 
     expect(readStoredDraft(roomId1)?.content).toBe(draftContent);
@@ -273,7 +273,7 @@ describe(useInputStore, () => {
     const { input } = storeToRefs(inputStore);
     input.value = draftContent;
     await nextTick();
-    vi.advanceTimersByTime(debounceMs - 1);
+    vi.advanceTimersByTime(DRAFT_DEBOUNCE_MS - 1);
     await nextTick();
 
     expect(readStoredDraft(roomId1)).toBeUndefined();

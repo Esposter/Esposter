@@ -6,7 +6,7 @@ import { getPartitionKeyFilter } from "#src/services/transformer/getPartitionKey
 import { describe, expect, test } from "vitest";
 
 describe(getPartitionKeyFilter, () => {
-  const partitionKey = "1";
+  const partitionKey = "";
 
   test("filters to one partition", () => {
     expect.hasAssertions();

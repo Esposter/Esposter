@@ -6,21 +6,20 @@ describe(truncate, () => {
     expect.hasAssertions();
 
     expect(truncate("", 0)).toBe("");
-    expect(truncate("aaaaa", 5)).toBe("aaaaa");
-    expect(truncate("aaaaa", 10)).toBe("aaaaa");
+    expect(truncate("a", 1)).toBe("a");
+    expect(truncate("a", 2)).toBe("a");
   });
 
   test("truncates and appends suffix when over length", () => {
     expect.hasAssertions();
 
-    expect(truncate("aaaaaaaaaaa", 5)).toBe("aa...");
-    expect(truncate("a".repeat(110), 100)).toHaveLength(100);
+    expect(truncate("aaaaa", 4)).toBe("a...");
   });
 
   test("slices without suffix when length is shorter than suffix", () => {
     expect.hasAssertions();
 
     expect(truncate(" ", 0)).toBe("");
-    expect(truncate("aaaaa", 2)).toBe("aa");
+    expect(truncate("aaa", 2)).toBe("aa");
   });
 });

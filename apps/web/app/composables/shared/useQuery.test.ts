@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useQuery, () => {
   const result = "result";
-  const rejection = new Error("error");
+  const rejection = new Error(" ");
 
   beforeEach(() => {
     setActivePinia(createPinia());

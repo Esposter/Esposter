@@ -30,9 +30,9 @@ describe(writeSessionSpinner, () => {
   const spinner = getSpinner(english.verbs, character, [], [{ text: "text", title: "title" }]);
   const otherSpinner = getSpinner(
     english.verbs,
-    { description: "otherDescription", displayName: "Venti", name: "Venti" },
+    { description: " ", displayName: " ", name: " " },
     [],
-    [{ text: "otherText", title: "title" }],
+    [{ text: " ", title: "title" }],
   );
   let settings: UserSettings = {};
 

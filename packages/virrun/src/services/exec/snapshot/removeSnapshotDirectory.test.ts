@@ -8,7 +8,7 @@ import { removeSnapshotDirectory } from "#src/services/exec/snapshot/removeSnaps
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { CACHE_CLEAN_TIMEOUT_MS, WSL_WORK_TIMEOUT_MS } from "#src/services/exec/util/constants";
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
-import { WSL_REMOVE_SCRIPT } from "#src/services/exec/wsl/constants";
+import { WSL_EXECUTABLE, WSL_REMOVE_SCRIPT } from "#src/services/exec/wsl/constants";
 import { TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_UNC_PREFIX } from "#src/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "#src/services/exec/wsl/createTestWslUnc.test";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -28,7 +28,7 @@ describe(removeSnapshotDirectory, () => {
   // Unbounded call against a wedged WSL service would never return at all.
   const expectWslRemoval = (timeoutMs: number = WSL_WORK_TIMEOUT_MS) => {
     expect(execFileSync).toHaveBeenCalledExactlyOnceWith(
-      "wsl.exe",
+      WSL_EXECUTABLE,
       ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDirectory],
       { encoding: "buffer", stdio: "pipe", timeout: timeoutMs, windowsHide: true },
     );

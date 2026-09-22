@@ -14,8 +14,8 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 describe(useEmailEditorStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
-  const html = "<html></html>";
-  const projectData: ProjectData = { pages: [{ component: "<div>page</div>" }] };
+  const html = "";
+  const projectData: ProjectData = { pages: [{ component: "" }] };
   // Only the MJML compile command is reached, and a failed compile is its own (already covered) fallback path
   const editor = { runCommand: () => ({ html }) } as unknown as Editor;
   const createResource = (contentVersion = 0) =>

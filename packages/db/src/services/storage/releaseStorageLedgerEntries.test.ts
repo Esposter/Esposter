@@ -1,5 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
+import { createUser } from "#src/services/message/createUser.test";
 import { chargeStorageLedgerEntry } from "#src/services/storage/chargeStorageLedgerEntry";
 import { reconcileStorageLedgerEntry } from "#src/services/storage/reconcileStorageLedgerEntry";
 import { releaseStorageLedgerEntries } from "#src/services/storage/releaseStorageLedgerEntries";
@@ -17,13 +18,13 @@ describe(releaseStorageLedgerEntries, () => {
   const userId = crypto.randomUUID();
   const containerName = AzureContainer.ResourceAssets;
   const resourceId = crypto.randomUUID();
-  const blobName = `${resourceId}/files/blobName`;
-  const declaredBytes = 10;
-  const actualBytes = 4;
-  const overwrittenBytes = 7;
+  const blobName = `${resourceId}/blobName`;
+  const declaredBytes = 3;
+  const actualBytes = 1;
+  const overwrittenBytes = 2;
   // Storage's per-blob ordering values, as they would arrive: the earlier write's event carries the lower one
-  const sequencer = "0000000000000abc000000000000000000001";
-  const laterSequencer = "0000000000000abc000000000000000000002";
+  const sequencer = "0";
+  const laterSequencer = "1";
   const readStorageBytesUsed = async () =>
     (await db.query.users.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;
@@ -41,16 +42,7 @@ describe(releaseStorageLedgerEntries, () => {
 
   beforeAll(async () => {
     db = await createMockDb();
-    const createdAt = new Date(0);
-    await db.insert(users).values({
-      createdAt,
-      email: userId,
-      emailVerified: true,
-      id: userId,
-      image: "",
-      name: "name",
-      updatedAt: createdAt,
-    });
+    await db.insert(users).values(createUser(userId, new Date(0), "name"));
   });
 
   afterEach(async () => {

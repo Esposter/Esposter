@@ -14,7 +14,7 @@ describe(readBenchmarkEnvironment, () => {
     expect.hasAssertions();
 
     const core: CpuInfo = {
-      model: "AMD Ryzen 7 7730U with Radeon Graphics          ",
+      model: "a ",
       speed: 0,
       times: { idle: 0, irq: 0, nice: 0, sys: 0, user: 0 },
     };
@@ -25,6 +25,6 @@ describe(readBenchmarkEnvironment, () => {
       .split("\n")
       .find((line) => line.startsWith("- CPU: "));
 
-    expect(cpuLine).toBe("- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 2");
+    expect(cpuLine).toBe("- CPU: a × 2");
   });
 });

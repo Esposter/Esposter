@@ -9,7 +9,7 @@ describe(checkIsLanguageName, () => {
   });
 
   // The name reaches a file path in the roster cache, so a state file holding anything but a name is not read
-  test.each(["", " ", "../../escaped", "ja-JP", "Japanese 2"])("%j is not one", (name) => {
+  test.each(["", " ", "..", "ja-JP", "Japanese 2"])("%j is not one", (name) => {
     expect.hasAssertions();
 
     expect(checkIsLanguageName(name)).toBe(false);

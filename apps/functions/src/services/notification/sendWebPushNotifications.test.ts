@@ -3,6 +3,7 @@ import type { Database } from "@esposter/db-schema";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
+import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptions, users } from "@esposter/db-schema";
@@ -23,7 +24,6 @@ vi.mock(import("#src/services/notification/webpush"), () => import("#src/service
 
 describe(sendWebPushNotifications, () => {
   const context = new InvocationContext();
-  const name = "name";
   const payload = "";
   const userId = crypto.randomUUID();
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, userId);
@@ -32,7 +32,7 @@ describe(sendWebPushNotifications, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
+    await mockDb.insert(users).values(createUser(userId));
     await seedSession();
   });
 
@@ -52,7 +52,7 @@ describe(sendWebPushNotifications, () => {
     expect.hasAssertions();
 
     const { auth, endpoint, expirationTime, id, p256dh } = await seedSubscription();
-    vi.mocked(webpush.sendNotification).mockRejectedValueOnce(new WebPushError("Gone", 410, {}, "", ""));
+    vi.mocked(webpush.sendNotification).mockRejectedValueOnce(new WebPushError("", 410, {}, "", ""));
     await sendWebPushNotifications(context, [{ auth, endpoint, expirationTime, id, p256dh }], payload);
     const remainingPushSubscriptions = await mockDb
       .select()
@@ -66,7 +66,7 @@ describe(sendWebPushNotifications, () => {
     expect.hasAssertions();
 
     const { auth, endpoint, expirationTime, id, p256dh } = await seedSubscription();
-    vi.mocked(webpush.sendNotification).mockRejectedValueOnce(new WebPushError("Server Error", 500, {}, "", ""));
+    vi.mocked(webpush.sendNotification).mockRejectedValueOnce(new WebPushError("", 500, {}, "", ""));
     await sendWebPushNotifications(context, [{ auth, endpoint, expirationTime, id, p256dh }], payload);
     const remainingPushSubscriptions = await mockDb
       .select()

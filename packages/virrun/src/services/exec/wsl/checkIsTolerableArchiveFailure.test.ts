@@ -7,7 +7,7 @@ describe(checkIsTolerableArchiveFailure, () => {
   // Path that vanished since the manifest walk — and their summary trailers. Bsdtar names no path on the vanished one.
   const BSDTAR_UNREADABLE_LINE = `tar.exe: Couldn't open ${TEST_FILENAME}: Permission denied`;
   const BSDTAR_VANISHED_LINE = "tar.exe: : Couldn't visit directory: No such file or directory";
-  const BSDTAR_TRAILER_LINE = "tar.exe: Error exit delayed from previous errors.";
+  const BSDTAR_TRAILER_LINE = "tar.exe: Error exit delayed from previous errors";
   const GNU_UNREADABLE_LINE = `tar: ${TEST_FILENAME}: Cannot open: Permission denied`;
   const GNU_VANISHED_LINE = `tar: ${TEST_FILENAME}: Cannot stat: No such file or directory`;
   const GNU_TRAILER_LINE = "tar: Exiting with failure status due to previous errors";
@@ -19,6 +19,17 @@ describe(checkIsTolerableArchiveFailure, () => {
       checkIsTolerableArchiveFailure(
         `${BSDTAR_UNREADABLE_LINE}\r\n${BSDTAR_VANISHED_LINE}\r\n${BSDTAR_TRAILER_LINE}\r\n`,
       ),
+    ).toBe(true);
+  });
+
+  // Libarchive before 3.8 ended the trailer with a period, and a host tar is whichever version Windows ships
+  test("ignores an older bsdtar's trailer, which ends in a period", () => {
+    expect.hasAssertions();
+
+    expect(
+      checkIsTolerableArchiveFailure(`${BSDTAR_VANISHED_LINE}
+${BSDTAR_TRAILER_LINE}.
+`),
     ).toBe(true);
   });
 

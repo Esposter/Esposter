@@ -37,7 +37,7 @@ describe(signOutOfBrowser, () => {
     expect.hasAssertions();
 
     vi.spyOn(console, "error").mockImplementation(noop);
-    signOut.mockRejectedValue(new Error("error"));
+    signOut.mockRejectedValue(new Error(" "));
     await signOutOfBrowser(RoutePath.Login);
 
     expect(window.location.href).toBe(RoutePath.Login);

@@ -50,11 +50,11 @@ describe(writeDeadLetterBlob, () => {
 
     const containerClient = await getContainerClient(AzureContainer.DeadLetter);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    vi.spyOn(blockBlobClient, "upload").mockRejectedValue(new MockRestError("Server busy.", 503));
+    vi.spyOn(blockBlobClient, "upload").mockRejectedValue(new MockRestError("", 503));
     vi.spyOn(containerClient, "getBlockBlobClient").mockReturnValue(blockBlobClient);
 
     await expect(
       writeDeadLetterBlob(containerClient, blobName, DEAD_LETTER_QUARANTINE_PREFIX, content),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[MockRestError: Server busy.]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[MockRestError]`);
   });
 });

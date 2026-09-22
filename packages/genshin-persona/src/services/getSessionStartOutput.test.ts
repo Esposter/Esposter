@@ -14,9 +14,9 @@ import { describe, expect, test } from "vitest";
 describe(getSessionStartOutput, () => {
   const description = "description";
   const headline = "headline";
-  const note = "[note]";
+  const note = "note";
   const greeting = "greeting";
-  const signOff = "sign-off";
+  const signOff = "signOff";
   const habit = "habit";
   // The session-start output never reads the voice or the verbs; production owns what those are
   const personaCard: PersonaCard = {
@@ -31,7 +31,7 @@ describe(getSessionStartOutput, () => {
 
     const card: Card = { description, greeting, headline, note, personaCard };
 
-    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).toBe(
+    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
           additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${description}\n${note}\n- ${habit}\n- Greets: ${greeting}\n- Signs off: ${signOff}`,
@@ -47,7 +47,7 @@ describe(getSessionStartOutput, () => {
 
     const card: Card = { description: "", greeting: "", headline, note: "", personaCard: undefined };
 
-    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE)).toBe(
+    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
           additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}`,
@@ -60,14 +60,20 @@ describe(getSessionStartOutput, () => {
 
   // The reply language rides in the context beside the card rather than in the output style, which the plugin
   // Ships and cannot vary per person; English is the default the model already writes in, so it costs no line
-  test("carries no instruction at English, and one naming the language otherwise", () => {
+  // While the card it reads is English too. The card is in the interface language, and an English reply beside a
+  // Card in another language would otherwise drift into it
+  test.each([
+    ["Japanese", DEFAULT_LANGUAGE],
+    ["Japanese", "Japanese"],
+    [DEFAULT_LANGUAGE, "Japanese"],
+  ])("carries an instruction naming the reply language %s beside a card in %s", (replyLanguage, interfaceLanguage) => {
     expect.hasAssertions();
 
     const card: Card = { description: "", greeting: "", headline, note: "", personaCard: undefined };
-    const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, "Japanese"));
+    const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, replyLanguage, interfaceLanguage));
 
     expect(hookSpecificOutput).toStrictEqual({
-      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${REPLY_LANGUAGE_INSTRUCTION("Japanese")}`,
+      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${REPLY_LANGUAGE_INSTRUCTION(replyLanguage)}`,
       hookEventName: "SessionStart",
     });
   });

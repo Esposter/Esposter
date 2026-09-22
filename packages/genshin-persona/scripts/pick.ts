@@ -41,5 +41,5 @@ if (character) {
   // More than a synthesizer's bind
   spawnDetachedScript(SPINNER_SCRIPT_PATH, character.name);
   await deliverWarmRequest(character.name, personaCard);
-  console.log(getSessionStartOutput(card, readReplyLanguage() ?? language));
+  console.log(getSessionStartOutput(card, readReplyLanguage() ?? language, language));
 }

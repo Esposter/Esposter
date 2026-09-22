@@ -8,6 +8,8 @@ import { describe, expect, test } from "vitest";
 
 // The isTableFilter value matrix lives in serializeValue.test.ts; here only the clause assembly.
 describe(serializeClause, () => {
+  const values = [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey];
+
   test("serializes", () => {
     expect.hasAssertions();
 
@@ -27,8 +29,6 @@ describe(serializeClause, () => {
   test(`serializes ${SearchOperator.arrayContains} with simple collection key`, () => {
     expect.hasAssertions();
 
-    const values = [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey];
-
     expect(
       serializeClause({
         key: CompositeKeyPropertyNames.partitionKey,
@@ -42,8 +42,6 @@ describe(serializeClause, () => {
 
   test(`serializes ${SearchOperator.arrayContains} with collection/property key`, () => {
     expect.hasAssertions();
-
-    const values = [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey];
 
     expect(
       serializeClause({

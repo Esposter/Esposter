@@ -9,21 +9,22 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-15T09:48:33.368Z
-- Commit: 79bdfb05c
-- Node: v26.8.2
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- Date: 2026-09-22T01:47:13.753Z
+- Commit: 186f17175
+- Node: v26.9.0
+- OS: win32 10.0.26200 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## ai:sweep commands end to end
 
 | task                             | vs base | mean (ms) | ±rme    | p99 (ms)  | samples |
 | -------------------------------- | ------- | --------- | ------- | --------- | ------- |
-| ai:sweep:repeated-list-items     | 1.00×   | 637.8604  | ±14.18% | 676.0365  | 3       |
-| ai:sweep:constant-scope          | 0.88×   | 722.0393  | ±4.70%  | 737.2987  | 3       |
-| ai:sweep:skill-docs              | 0.77×   | 827.2046  | ±6.88%  | 849.1349  | 3       |
-| ai:sweep:shared-export-consumers | 0.55×   | 1158.1951 | ±2.85%  | 1171.0374 | 3       |
-| ai:sweep:unterminated-results    | 0.49×   | 1289.5352 | ±6.51%  | 1325.7988 | 3       |
-| ai:sweep:ledger-coverage         | 0.42×   | 1511.4219 | ±1.51%  | 1520.2603 | 3       |
-| ai:sweep:duplicate-prose         | 0.38×   | 1695.7309 | ±10.39% | 1752.6770 | 3       |
+| ai:sweep:repeated-list-items     | 1.00×   | 1923.2125 | ±15.50% | 2055.3207 | 3       |
+| ai:sweep:ledger-coverage         | 0.73×   | 2639.8671 | ±2.25%  | 2657.7424 | 3       |
+| ai:sweep:skill-docs              | 0.52×   | 3727.9154 | ±26.68% | 4166.3999 | 3       |
+| ai:sweep:file-organization       | 0.5×    | 3864.3245 | ±7.39%  | 3943.7423 | 3       |
+| ai:sweep:shared-export-consumers | 0.46×   | 4167.0856 | ±15.83% | 4447.8774 | 3       |
+| ai:sweep:unterminated-results    | 0.4×    | 4767.7332 | ±11.02% | 5000.0899 | 3       |
+| ai:sweep:constant-scope          | 0.38×   | 5073.6575 | ±33.38% | 5713.1964 | 3       |
+| ai:sweep:duplicate-prose         | 0.34×   | 5737.3747 | ±59.23% | 7228.1468 | 3       |

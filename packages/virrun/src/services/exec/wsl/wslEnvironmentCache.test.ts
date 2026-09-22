@@ -14,7 +14,7 @@ import { z } from "zod";
 // `filename` — so the reader and the writer share a suite rather than each asserting half a round-trip.
 describe("wslEnvironmentCache", () => {
   const { getCacheHome } = setupTemporaryCacheHome();
-  const key = "linux:6.18.0";
+  const key = "key";
   const value = "";
 
   test("returns undefined when no value has been persisted yet", () => {

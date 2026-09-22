@@ -13,7 +13,7 @@ import { describe, test } from "vitest";
 const BENCH_ROW_COUNTS = [1000, 10000, 100000];
 const SEED = 1;
 const EMPTY_ANCHOR: VersionAnchor = { anchoredBytes: 0, hash: "" };
-const COPY_KEY = "copy";
+const COPY_KEY = "";
 // One group per document size, so every task in it shares the scale and `vs base` isolates the shape of the
 // Edit — a single cell, half the cells, a rewrite, and bytes that cannot be compressed or differenced at all,
 // Which is the honest worst case — against writing the plaintext straight to the backend, exactly what a

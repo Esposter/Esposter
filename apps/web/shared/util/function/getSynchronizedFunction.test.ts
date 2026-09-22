@@ -17,7 +17,7 @@ describe(getSynchronizedFunction, () => {
   test("reports nothing when the original function rejects", async () => {
     expect.hasAssertions();
 
-    const originalFunction = vi.fn<() => Promise<void>>().mockRejectedValue(new Error("rejected"));
+    const originalFunction = vi.fn<() => Promise<void>>().mockRejectedValue(new Error(" "));
 
     getSynchronizedFunction(originalFunction)();
 

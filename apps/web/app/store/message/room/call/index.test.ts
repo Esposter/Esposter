@@ -20,7 +20,7 @@ beforeEach(() => {
 describe(useCallStore, () => {
   const server = setupMswTrpc();
   const callSessionId = crypto.randomUUID();
-  const imagePath = "/image.png";
+  const imagePath = "imagePath";
   const roomId = crypto.randomUUID();
   const threadRootRowKey = crypto.randomUUID();
 
@@ -126,7 +126,7 @@ describe(useCallStore, () => {
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
     const liveKitStore = useLiveKitStore();
-    vi.spyOn(liveKitStore, "disconnect").mockRejectedValue(new Error("disconnect"));
+    vi.spyOn(liveKitStore, "disconnect").mockRejectedValue(new Error(" "));
     const callStore = useCallStore();
     const { isConnecting } = storeToRefs(callStore);
     await join(callStore);

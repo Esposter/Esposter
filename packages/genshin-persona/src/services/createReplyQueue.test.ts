@@ -128,7 +128,7 @@ describe(createReplyQueue, () => {
     expect.hasAssertions();
 
     // Long enough that most of the replaced turn's hold has passed by the time the newer turn lands
-    const longHoldMs = 10;
+    const longHoldMs = 2;
     const laterMessageId = crypto.randomUUID();
     const laterTurnId = crypto.randomUUID();
     const laterOpening: ReplyPiece = { index: 0, isFinal: false, messageId: laterMessageId, turnId: laterTurnId };

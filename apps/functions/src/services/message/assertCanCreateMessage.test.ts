@@ -1,6 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { assertCanCreateMessage } from "#src/services/message/assertCanCreateMessage";
+import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -33,10 +34,7 @@ describe(assertCanCreateMessage, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    await mockDb.insert(users).values([
-      { email: "", emailVerified: true, id: ownerUserId, name },
-      { email: " ", emailVerified: true, id: memberUserId, name },
-    ]);
+    await mockDb.insert(users).values([createUser(ownerUserId), createUser(memberUserId)]);
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId: ownerUserId });
     await mockDb.insert(usersToRoomsInMessage).values([
       { roomId, userId: ownerUserId },

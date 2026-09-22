@@ -8,13 +8,13 @@ describe(parseProcStatStartTicks, () => {
   test("reads the 22nd field", () => {
     expect.hasAssertions();
 
-    expect(parseProcStatStartTicks(`4242 (node) ${fieldsBeforeStartTime} 123456 0 0`)).toBe(123456);
+    expect(parseProcStatStartTicks(`0 (a) ${fieldsBeforeStartTime} 1 0 0`)).toBe(1);
   });
 
   // A comm holding a space and a `)` shifts every field for a split of the whole line
   test("counts from the last closing parenthesis, not the first", () => {
     expect.hasAssertions();
 
-    expect(parseProcStatStartTicks(`4242 (my (odd) name) ${fieldsBeforeStartTime} 123456 0 0`)).toBe(123456);
+    expect(parseProcStatStartTicks(`0 (a (a) a) ${fieldsBeforeStartTime} 1 0 0`)).toBe(1);
   });
 });

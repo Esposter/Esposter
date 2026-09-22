@@ -1,6 +1,6 @@
 ---
 title: Test harness workarounds
-description: Every shim the suite carries because a runner or its DOM lacks a feature, the signal that retires each one, and what deleting it takes with it.
+description: Every shim the suite carries because a runner or its DOM lacks a feature, the probe that retires each one, and what deleting it takes with it — a blocker table gated on upstream, read on the bump that could move a row.
 ---
 
 # Test Harness Workarounds

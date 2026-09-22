@@ -16,7 +16,7 @@ describe(readLocalization, () => {
   test("answers English for a language no module is written for", async () => {
     expect.hasAssertions();
 
-    await expect(readLocalization("Turkish")).resolves.toBe(english);
+    await expect(readLocalization(" ")).resolves.toBe(english);
   });
 
   test("takes the language's own base content", async () => {

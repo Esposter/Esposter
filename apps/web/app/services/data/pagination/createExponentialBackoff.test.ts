@@ -5,7 +5,7 @@ describe(createExponentialBackoff, () => {
   const baseDelayMs = 1;
   const maxDelayMs = 2;
   const value = "value";
-  const error = new Error("error");
+  const error = new Error(" ");
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -30,14 +30,12 @@ describe(createExponentialBackoff, () => {
     const executeWithBackoff = createExponentialBackoff(baseDelayMs, maxDelayMs);
     const operation = vi.fn<() => Promise<string>>(() => Promise.reject(error));
 
-    await expect(executeWithBackoff(operation)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: ${error.message}]`);
+    await expect(executeWithBackoff(operation)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     expect(setTimeoutSpy).not.toHaveBeenCalled();
 
     // Second attempt waits baseDelayMs; third and fourth are capped at maxDelayMs (2 ** 1, then 2 ** 2 clamped)
     for (const expectedDelayMs of [baseDelayMs, maxDelayMs, maxDelayMs]) {
-      await expect(executeWithBackoff(operation)).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[Error: ${error.message}]`,
-      );
+      await expect(executeWithBackoff(operation)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
       expect(setTimeoutSpy.mock.lastCall?.[1]).toBe(expectedDelayMs);
     }
 
@@ -51,7 +49,7 @@ describe(createExponentialBackoff, () => {
     const executeWithBackoff = createExponentialBackoff(baseDelayMs, maxDelayMs);
 
     await expect(executeWithBackoff(() => Promise.reject(error))).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: ${error.message}]`,
+      `[Error:  ]`,
     );
     await expect(executeWithBackoff(() => Promise.resolve(value))).resolves.toBe(value);
 

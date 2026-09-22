@@ -3,6 +3,7 @@ import type { TableEntity } from "@azure/data-tables";
 import { MockTableClient } from "#src/models/table/MockTableClient";
 import { MockTableDatabase } from "#src/store/MockTableDatabase";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import { ID_SEPARATOR } from "@esposter/shared";
 import { afterEach, describe, expect, test } from "vitest";
 
 const readByPage = async (client: MockTableClient, maxPageSize?: number) => {
@@ -40,8 +41,8 @@ describe(MockTableClient, () => {
     expect.hasAssertions();
 
     const client = new MockTableClient(tableName, tableName);
-    await client.createEntity<TableEntity>({ partitionKey: "a|b", rowKey: "c" });
-    await client.createEntity<TableEntity>({ partitionKey: "a", rowKey: "b|c" });
+    await client.createEntity<TableEntity>({ partitionKey: ID_SEPARATOR, rowKey: "" });
+    await client.createEntity<TableEntity>({ partitionKey: "", rowKey: ID_SEPARATOR });
     const entities = await readByPage(client);
 
     expect(entities).toHaveLength(2);

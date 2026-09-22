@@ -14,8 +14,8 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 describe(useWebpageEditorStore, () => {
   const server = setupMswTrpc();
   const resourceId = crypto.randomUUID();
-  const projectData: ProjectData = { pages: [{ component: "<div>page</div>" }] };
-  const render = { css: ".page {}", html: "<div>page</div>" };
+  const projectData: ProjectData = { pages: [{ component: "" }] };
+  const render = { css: "", html: "" };
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Webpage });
   let content: WebpageEditor;

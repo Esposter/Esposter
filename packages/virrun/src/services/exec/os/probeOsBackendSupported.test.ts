@@ -28,7 +28,7 @@ describe.skipIf(process.platform !== "linux")(probeOsBackendSupported, () => {
     expect.hasAssertions();
 
     execFileSync.mockImplementation(() => {
-      throw new Error("bwrap: Can't make overlay mount ... userxattr: Invalid argument");
+      throw new Error(" ");
     });
 
     expect(probeOsBackendSupported()).toBe(false);
@@ -41,7 +41,7 @@ describe.skipIf(process.platform !== "linux")(probeOsBackendSupported, () => {
     expect.hasAssertions();
 
     execFileSync.mockImplementation(() => {
-      throw Object.assign(new Error("spawnSync bwrap ETIMEDOUT"), { signal: "SIGTERM" });
+      throw Object.assign(new Error(" "), { signal: "SIGTERM" });
     });
 
     expect(probeOsBackendSupported()).toBeUndefined();

@@ -7,7 +7,7 @@ describe(getTopRolePosition, () => {
   const { getMockContext, getRoleCaller, getRoomCaller, getRoomId } = setupRoomSuite();
   const name = "name";
   const updatedName = "updatedName";
-  const position = 5;
+  const position = 1;
   const updatedPosition = position + 1;
 
   test("returns -1 with no assigned roles", async () => {

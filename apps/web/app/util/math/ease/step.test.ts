@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 
 describe(step, () => {
   const speed = 1;
-  const threshold = 10;
+  const threshold = 1;
   const thresholds: Threshold[] = [{ speed, threshold }, { speed: speed + 1 }];
 
   test("steps", () => {

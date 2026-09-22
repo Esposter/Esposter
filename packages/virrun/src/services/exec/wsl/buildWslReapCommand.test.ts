@@ -1,5 +1,5 @@
 import { buildWslReapCommand } from "#src/services/exec/wsl/buildWslReapCommand";
-import { VIRRUN_WSL_PROCESS_MARKER, WSL_REAPER_SHELL_NAME } from "#src/services/exec/wsl/constants";
+import { VIRRUN_WSL_PROCESS_MARKER, WSL_EXECUTABLE, WSL_REAPER_SHELL_NAME } from "#src/services/exec/wsl/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -13,7 +13,7 @@ describe(buildWslReapCommand, () => {
 
     const command = buildWslReapCommand([VIRRUN_WSL_PROCESS_MARKER, OTHER_MARKER]);
 
-    expect(command.slice(0, 4)).toStrictEqual(["wsl.exe", "--exec", "sh", "-c"]);
+    expect(command.slice(0, 4)).toStrictEqual([WSL_EXECUTABLE, "--exec", "sh", "-c"]);
     expect(command.slice(5)).toStrictEqual([WSL_REAPER_SHELL_NAME, VIRRUN_WSL_PROCESS_MARKER, OTHER_MARKER]);
   });
 

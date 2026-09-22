@@ -10,13 +10,13 @@ describe(filterDataSourceColumns, () => {
   test(`computed column value is included in filtered rows`, () => {
     expect.hasAssertions();
 
-    const sourceColumn = createNumberColumn("price");
-    const computedColumn = createComputedColumn("priceStr", sourceColumn.id);
-    const dataSource = createDataSource([sourceColumn, computedColumn], [createRow({ price: 42 })]);
+    const sourceColumn = createNumberColumn("a");
+    const computedColumn = createComputedColumn("b", sourceColumn.id);
+    const dataSource = createDataSource([sourceColumn, computedColumn], [createRow({ a: 0 })]);
 
     const { rows } = filterDataSourceColumns(dataSource.columns, dataSource.rows, [sourceColumn.id, computedColumn.id]);
 
-    expect(takeOne(rows).data).toStrictEqual({ price: 42, priceStr: "42" });
+    expect(takeOne(rows).data).toStrictEqual({ a: 0, b: "0" });
   });
 
   test(`non-exported columns are excluded from rows`, () => {

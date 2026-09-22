@@ -13,7 +13,7 @@ describe(pickCharacter, () => {
   test("picks the nearest birthday by circular distance, so late December neighbours early January", () => {
     expect.hasAssertions();
 
-    const roster = [createBirthdayCharacter("12/30"), createBirthdayCharacter("1/4"), createBirthdayCharacter("6/1")];
+    const roster = [createBirthdayCharacter("12/30"), createBirthdayCharacter("1/4"), createBirthdayCharacter("1/5")];
 
     expect(pickCharacter(roster, epoch)).toStrictEqual(createBirthdayCharacter("12/30"));
   });
@@ -61,8 +61,8 @@ describe(pickCharacter, () => {
 
     const traveler = createBirthdayCharacter("");
 
-    expect(pickCharacter([traveler, createBirthdayCharacter("7/1")], epoch)).toStrictEqual(
-      createBirthdayCharacter("7/1"),
+    expect(pickCharacter([traveler, createBirthdayCharacter("1/2")], epoch)).toStrictEqual(
+      createBirthdayCharacter("1/2"),
     );
     expect(pickCharacter([traveler], epoch)).toBeUndefined();
   });

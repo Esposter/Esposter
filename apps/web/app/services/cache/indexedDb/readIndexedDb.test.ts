@@ -35,13 +35,13 @@ describe(readIndexedDb, () => {
   test("reports a refused read to its caller", async () => {
     expect.hasAssertions();
 
-    const error = new Error("error");
+    const error = new Error(" ");
     vi.spyOn(indexedDB, "open").mockImplementation(() => {
       throw error;
     });
 
     await expect(
       readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: ${error.message}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
   });
 });

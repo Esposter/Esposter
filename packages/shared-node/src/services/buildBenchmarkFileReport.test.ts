@@ -1,6 +1,7 @@
 import type { BenchmarkTestCase, BenchmarkTestCaseTask } from "#src/models/BenchmarkTestCase";
 
 import { buildBenchmarkFileReport } from "#src/services/buildBenchmarkFileReport";
+import { BASELINE_TASK_NAME } from "#src/services/constants";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -15,13 +16,13 @@ const createTestCase = (fullName: string, benchmarks: BenchmarkTestCase["benchma
 });
 
 describe(buildBenchmarkFileReport, () => {
-  const filepath = "a.bench.ts";
+  const filepath = "";
 
   test("projects each benchmarking test into a group keyed by its full name, fastest task first", () => {
     expect.hasAssertions();
 
     const report = buildBenchmarkFileReport(filepath, [
-      createTestCase("group > case", () => [{ name: "case", tasks: [createTask(" ", 2), createTask("native", 1)] }]),
+      createTestCase(" ", () => [{ name: "", tasks: [createTask(" ", 2), createTask(BASELINE_TASK_NAME, 1)] }]),
     ]);
 
     expect(report).toStrictEqual({
@@ -31,10 +32,10 @@ describe(buildBenchmarkFileReport, () => {
           groups: [
             {
               benchmarks: [
-                { mean: 1, name: "native", p99: 1, rme: 0, sampleCount: 1 },
+                { mean: 1, name: BASELINE_TASK_NAME, p99: 1, rme: 0, sampleCount: 1 },
                 { mean: 1, name: " ", p99: 1, rme: 0, sampleCount: 1 },
               ],
-              fullName: "group > case",
+              fullName: " ",
             },
           ],
         },
@@ -46,22 +47,19 @@ describe(buildBenchmarkFileReport, () => {
     expect.hasAssertions();
 
     const report = buildBenchmarkFileReport(filepath, [
-      createTestCase("case", () => [
-        { name: "first", tasks: [createTask("native")] },
-        { name: "second", tasks: [createTask("native")] },
+      createTestCase("a", () => [
+        { name: "b", tasks: [createTask("")] },
+        { name: "c", tasks: [createTask("")] },
       ]),
     ]);
 
-    expect(takeOne(report.files).groups.map(({ fullName }) => fullName)).toStrictEqual([
-      "case > first",
-      "case > second",
-    ]);
+    expect(takeOne(report.files).groups.map(({ fullName }) => fullName)).toStrictEqual(["a > b", "a > c"]);
   });
 
   test("omits tests that recorded no benchmarks", () => {
     expect.hasAssertions();
 
-    const report = buildBenchmarkFileReport(filepath, [createTestCase("no benches", () => [])]);
+    const report = buildBenchmarkFileReport(filepath, [createTestCase("", () => [])]);
 
     expect(report).toStrictEqual({ files: [{ filepath, groups: [] }] });
   });
@@ -70,10 +68,10 @@ describe(buildBenchmarkFileReport, () => {
     expect.hasAssertions();
 
     // A task that threw on every iteration is recorded with no finite stats.
-    const testCases = [createTestCase("group", () => [{ name: "group", tasks: [createTask("os", 1, Number.NaN)] }])];
+    const testCases = [createTestCase("", () => [{ name: "", tasks: [createTask("", 1, Number.NaN)] }])];
 
     expect(() => buildBenchmarkFileReport(filepath, testCases)).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "group", `benchmark "os" produced no samples — it likely threw on every iteration`).message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, "", `benchmark "" produced no samples — it likely threw on every iteration`).message}]`,
     );
   });
 });

@@ -10,7 +10,7 @@ describe(useMutation, () => {
   const key = "";
   const otherKey = " ";
   const result = "result";
-  const error = new Error("error");
+  const error = new Error(" ");
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -405,7 +405,7 @@ describe(useMutation, () => {
           throw error;
         },
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: error]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     expect(checkIsPending(key)).toBe(false);
     expect(isPending.value).toBe(false);
@@ -441,7 +441,7 @@ describe(useMutation, () => {
         },
         key,
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: error]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     expect(isPending.value).toBe(false);
     expect(checkIsPending(key)).toBe(false);
@@ -460,7 +460,7 @@ describe(useMutation, () => {
           throw error;
         },
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: error]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     await executeMutation(mutate, { key });
 
     expect(mutate).toHaveBeenCalledTimes(1);

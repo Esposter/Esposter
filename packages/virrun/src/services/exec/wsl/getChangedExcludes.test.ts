@@ -1,11 +1,10 @@
 import { getChangedExcludes } from "#src/services/exec/wsl/getChangedExcludes";
-import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { describe, expect, test } from "vitest";
 
 describe(getChangedExcludes, () => {
-  const NODE_MODULES_EXCLUDE = "node_modules";
-  const WORKTREE_EXCLUDE = `./${AGENT_WORKTREES_DIRECTORY}`;
-  const NUXT_OUTPUT_EXCLUDE = "./apps/web/.nuxt";
+  const NODE_MODULES_EXCLUDE = "a";
+  const WORKTREE_EXCLUDE = "b";
+  const NUXT_OUTPUT_EXCLUDE = "c";
 
   test("returns the excludes only one side holds, in both directions", () => {
     expect.hasAssertions();

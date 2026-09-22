@@ -34,6 +34,18 @@ import {
 } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+// The id generator is the seam a collision is injected at; it delegates to the real one by default, so every
+// Other test is unaffected
+const { createIdMock } = vi.hoisted(() => ({
+  createIdMock: vi.fn<typeof import("#shared/util/math/random/createId").createId>(),
+}));
+
+vi.mock(import("#shared/util/math/random/createId"), async (importOriginal) => {
+  const { createId } = await importOriginal();
+  createIdMock.mockImplementation(createId);
+  return { createId: createIdMock };
+});
+
 // Uploaded through the client, so the mock dates the blob now
 const uploadPublicUserAssetBlob = (blobName: string) =>
   new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
@@ -44,6 +56,7 @@ describe("roomRouter", () => {
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   const roomId = crypto.randomUUID();
   const name = "name";
+  const expireAfterMinutes = InviteExpireAfterMinutesMap["30 minutes"];
   const updatedName = "updatedName";
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
   const publicUserAssetsUrlPrefix = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`;
@@ -525,11 +538,11 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     await roomCaller.createInvite({
-      expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
+      expireAfterMinutes,
       maxUses: 0,
       roomId: newRoom.id,
     });
-    vi.setSystemTime(Temporal.Duration.from({ minutes: 31 }).total("milliseconds"));
+    vi.setSystemTime(Temporal.Duration.from({ minutes: expireAfterMinutes + 1 }).total("milliseconds"));
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
     expect(myInvite).toBeUndefined();
@@ -581,17 +594,37 @@ describe("roomRouter", () => {
     expect(secondInvite).toStrictEqual({ ...myInvite, user: secondInvite.user });
   });
 
+  // The insert that finds the collision aborts the transaction it runs in, so a retry that is not its own
+  // Savepoint fails as "transaction aborted" and the create reports an id-allocation failure for a room whose
+  // Next id was free
+  test("re-rolls an invite id that collides with another member's link", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
+    assert(myInvite);
+    await mockSessionOnce(mockContext.db, member);
+    createIdMock.mockReturnValueOnce(myInvite.id);
+    const invite = await createUnlimitedInvite(newRoom.id);
+
+    expect(createIdMock).toHaveReturnedWith(myInvite.id);
+    expect(invite.id).not.toBe(myInvite.id);
+  });
+
   test("creates invite with expiry and max uses", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
+      expireAfterMinutes,
       maxUses,
       roomId: newRoom.id,
     });
 
-    expect(newInvite.expiresAt).toStrictEqual(new Date(Temporal.Duration.from({ minutes: 30 }).total("milliseconds")));
+    expect(newInvite.expiresAt).toStrictEqual(
+      new Date(Temporal.Duration.from({ minutes: expireAfterMinutes }).total("milliseconds")),
+    );
     expect(newInvite.maxUses).toBe(maxUses);
     expect(newInvite.uses).toBe(0);
   });
@@ -647,11 +680,11 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
+      expireAfterMinutes,
       maxUses: 0,
       roomId: newRoom.id,
     });
-    vi.setSystemTime(Temporal.Duration.from({ minutes: 31 }).total("milliseconds"));
+    vi.setSystemTime(Temporal.Duration.from({ minutes: expireAfterMinutes + 1 }).total("milliseconds"));
     await mockSessionOnce(mockContext.db);
 
     await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
