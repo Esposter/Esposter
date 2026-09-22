@@ -449,8 +449,8 @@ describe(createResourceProcedures, () => {
     // The table client is constructed per call, so the failure is injected on the prototype.
     // The counter inserts the day's first view and merges every one after it — never upserts, because
     // Two concurrent first views would both merge count: 1 and drop an increment
-    vi.spyOn(MockTableClient.prototype, "createEntity").mockRejectedValue(new Error("Table write failed"));
-    vi.spyOn(MockTableClient.prototype, "updateEntity").mockRejectedValue(new Error("Table write failed"));
+    vi.spyOn(MockTableClient.prototype, "createEntity").mockRejectedValue(new Error(""));
+    vi.spyOn(MockTableClient.prototype, "updateEntity").mockRejectedValue(new Error(""));
     vi.spyOn(console, "error").mockImplementation(noop);
     const { content } = await dashboardCaller.readPublishedResourceContent(newResource.id);
     await waitForSynchronizedFunctions();
