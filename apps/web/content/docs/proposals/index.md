@@ -23,5 +23,6 @@ The list is which areas keep a roadmap, not which have work open — a mature ar
 Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [the Vite+ migration](/docs/proposals/refactors/vite-plus) — make `vp` the toolchain entry point and cached task runner, retire the hand-rolled caches and virrun, and leave Nuxt owning the app build.
+- [objectWrap collapse](/docs/proposals/refactors/object-wrap-collapse) — hand the one-line-object rule to `oxfmt`, at the cost of every deliberate expansion in the repository.
 
 Sweeps are not proposals. A proposal designs behaviour that does not exist yet; a sweep carries a settled convention across code that already works and changes nothing about what it does. They are tracked as repo state in `.agents/ledgers/`, one ledger file per sweep — or one coverage folder, once a sweep outgrows a single file.

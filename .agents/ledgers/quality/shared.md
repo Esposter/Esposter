@@ -3,7 +3,7 @@
 | Unit                                                                            | Swept      | Notes                                                                                                                     |
 | ------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------- |
 | optimistic rollbacks                                                            | 2026-09-14 | every `applyOptimistic` returns a rollback or `noop` with the reason it cannot; the server half is `withResourceRollback` |
-| `app/components/Styled`                                                         | 2026-09-12 |                                                                                                                           |
+| `app/components/Styled`                                                         | 2026-09-22 |                                                                                                                           |
 | `shared/models/db/message` — the roots                                          | 2026-09-21 |                                                                                                                           |
 | `shared/models/db/message` — `scheduledMessageJob`, `metadata`                  | 2026-09-21 |                                                                                                                           |
 | `shared/models/db/room`                                                         | 2026-09-21 |                                                                                                                           |
