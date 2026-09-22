@@ -23,6 +23,7 @@
     "./scripts/src/oxlint/passThroughHelper.ts",
     "./scripts/src/oxlint/persistThenNotify.ts",
     "./scripts/src/oxlint/propsInterface.ts",
+    "./scripts/src/oxlint/testValues.ts",
     "./scripts/src/oxlint/trpcProcedure.ts"
   ],
   "options": {
@@ -65,6 +66,12 @@
       "files": ["apps/web/server/trpc/**/*.test.ts"],
       "rules": {
         "trpc-procedure/require-return-type": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"],
+      "rules": {
+        "test-values/no-typed-date": "error"
       }
     },
     {
