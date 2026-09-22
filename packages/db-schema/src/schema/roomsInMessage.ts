@@ -1,4 +1,4 @@
-import { MimeCategory, mimeCategorySchema } from "#src/models/file/MimeCategory";
+import { MimeCategories, MimeCategory, mimeCategorySchema } from "#src/models/file/MimeCategory";
 import { RoomType, roomTypeSchema } from "#src/models/message/RoomType";
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/messageSchema";
@@ -20,11 +20,11 @@ export const mimeCategoryEnum = pgEnum("mimeCategory", MimeCategory);
 export const roomsInMessage = pgTable(
   "rooms",
   {
-    // Attachment categories members may upload to this room — defaults to every category (no restriction).
+    // Attachment categories members may upload to this room — every category is no restriction
     allowedMimeCategories: mimeCategoryEnum()
       .array()
       .notNull()
-      .default([MimeCategory.Audio, MimeCategory.Document, MimeCategory.Image, MimeCategory.Video]),
+      .default([...MimeCategories]),
     categoryId: uuid().references(() => roomCategoriesInMessage.id, { onDelete: "set null" }),
     id: uuid().primaryKey().defaultRandom(),
     image: text().notNull().default(""),
