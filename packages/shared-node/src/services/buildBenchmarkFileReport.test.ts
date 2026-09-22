@@ -22,7 +22,7 @@ describe(buildBenchmarkFileReport, () => {
     expect.hasAssertions();
 
     const report = buildBenchmarkFileReport(filepath, [
-      createTestCase("", () => [{ name: "", tasks: [createTask(" ", 2), createTask(BASELINE_TASK_NAME, 1)] }]),
+      createTestCase(" ", () => [{ name: "", tasks: [createTask(" ", 2), createTask(BASELINE_TASK_NAME, 1)] }]),
     ]);
 
     expect(report).toStrictEqual({
@@ -35,7 +35,7 @@ describe(buildBenchmarkFileReport, () => {
                 { mean: 1, name: BASELINE_TASK_NAME, p99: 1, rme: 0, sampleCount: 1 },
                 { mean: 1, name: " ", p99: 1, rme: 0, sampleCount: 1 },
               ],
-              fullName: "",
+              fullName: " ",
             },
           ],
         },
