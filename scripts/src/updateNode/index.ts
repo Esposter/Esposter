@@ -1,8 +1,8 @@
 import { PACKAGE_JSON_FILENAME, PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getLatestVersion } from "#src/services/shared/getLatestVersion";
 import { getVersionParts } from "#src/services/shared/getVersionParts";
+import { readLatestVersion } from "#src/services/shared/readLatestVersion";
 import { getEnginesNode } from "#src/services/updateNode/getEnginesNode";
-import { getRegistryLatestVersionForPrefix } from "#src/services/updateNode/getRegistryLatestVersionForPrefix";
+import { readRegistryLatestVersionForPrefix } from "#src/services/updateNode/readRegistryLatestVersionForPrefix";
 import { setCatalogTypesNode } from "#src/services/updateNode/setCatalogTypesNode";
 import { setDevEnginesRuntime } from "#src/services/updateNode/setDevEnginesRuntime";
 import { setEnginesNode } from "#src/services/updateNode/setEnginesNode";
@@ -17,7 +17,9 @@ import { resolve } from "node:path";
 // Version. Default to the latest stable from npm.
 const requested = process.argv[2]?.replace(/^[v^]/u, "");
 const version =
-  requested === undefined ? await getLatestVersion("node") : await getRegistryLatestVersionForPrefix("node", requested);
+  requested === undefined
+    ? await readLatestVersion("node")
+    : await readRegistryLatestVersionForPrefix("node", requested);
 const { major } = getVersionParts(version);
 // 2. Bump the two node pins package.json carries: `devEngines.runtime` is what `pnpm/setup` installs on the
 // Runners, `engines.node` is what every other tool reads. They are the same number by definition, so they are
@@ -36,7 +38,7 @@ if (isNewVersion) {
   writeFileSync(packageJsonPath, packageJsonWithNodePins);
   console.info(`✔ package.json devEngines.runtime + engines.node → ^${version}`);
   // 3. Bump the @types/node catalog entry to the highest release matching the new node major.
-  const typesVersion = await getRegistryLatestVersionForPrefix("@types/node", String(major));
+  const typesVersion = await readRegistryLatestVersionForPrefix("@types/node", String(major));
   const workspacePath = resolve(REPOSITORY_ROOT, WORKSPACE_FILE);
   const workspace = readFileSync(workspacePath, "utf8");
   const workspaceWithTypesNode = setCatalogTypesNode(workspace, typesVersion);

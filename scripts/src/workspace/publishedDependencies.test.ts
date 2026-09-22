@@ -1,6 +1,6 @@
 import { DependencyField } from "#src/models/shared/DependencyField";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getWorkspacePackages } from "#src/services/shared/getWorkspacePackages";
+import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { describe, expect, test } from "vitest";
 
 /**
@@ -11,7 +11,7 @@ import { describe, expect, test } from "vitest";
  * visible.
  */
 describe("publishedDependencies", () => {
-  const workspacePackages = getWorkspacePackages(REPOSITORY_ROOT);
+  const workspacePackages = readWorkspacePackages(REPOSITORY_ROOT);
   // Every field a consumer's package manager reads as an edge to resolve. `peerDependenciesMeta` counts for the
   // Same reason the build's allowlist reads it: a name declared only there is still externalized, so a private
   // One is still an import the consumer cannot resolve.

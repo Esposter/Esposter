@@ -1,7 +1,7 @@
 import type { SharedExportFinding } from "#src/models/sweeps/sharedExportConsumers/SharedExportFinding";
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
+import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { MINIMUM_CONSUMER_PACKAGES } from "#src/services/sweeps/sharedExportConsumers/constants";
 import { getConsumerPackagePaths } from "#src/services/sweeps/sharedExportConsumers/getConsumerPackagePaths";
 import { getExportNames } from "#src/services/sweeps/sharedExportConsumers/getExportNames";
@@ -21,7 +21,7 @@ const readSource = (path: string): readonly [string, string] =>
 // Is dead. An export the package's own other files name stays whatever the count — it is a piece of an export
 // That does clear the threshold, and the rule is about packages, not files.
 export const readSharedExportFindings = (): SharedExportFinding[] => {
-  const sharedFiles = getSweepFilePaths(`${SHARED_PACKAGE_PATH}/src/*.ts`)
+  const sharedFiles = readSweepFilePaths(`${SHARED_PACKAGE_PATH}/src/*.ts`)
     .filter((path) => !path.endsWith("index.ts"))
     .map((path) => readSource(path));
   const sharedSources = sharedFiles.filter(([path]) => !path.includes(".test."));
@@ -31,7 +31,7 @@ export const readSharedExportFindings = (): SharedExportFinding[] => {
   // Every file outside the defining package. `packages/shared` naming its own export is the library using itself,
   // So counting it would let one real consumer clear a threshold that asks for two.
   const packageIdentifiersMap = getPackageIdentifiersMap(
-    getSweepFilePaths("*.ts", "*.vue")
+    readSweepFilePaths("*.ts", "*.vue")
       .filter((path) => !path.includes("/dist/") && getPackagePath(path) !== SHARED_PACKAGE_PATH)
       .map((path) => readSource(path)),
   );

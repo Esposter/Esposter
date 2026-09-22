@@ -4,11 +4,11 @@ import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventTy
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { LEDGER_DIRECTORY } from "#src/services/sweeps/constants";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
 import { applyLedgerEvents } from "#src/services/sweeps/ledgerCoverage/applyLedgerEvents";
 import { getLedgerEvents } from "#src/services/sweeps/ledgerCoverage/getLedgerEvents";
 import { LedgerUnitsMap } from "#src/services/sweeps/ledgerCoverage/LedgerUnitsMap";
 import { syncLedgerUnits } from "#src/services/sweeps/ledgerCoverage/syncLedgerUnits";
+import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -25,7 +25,7 @@ const log = runGit([
 const events = getLedgerEvents(log);
 const matchedEvents = new Set<LedgerEvent>();
 
-for (const ledgerPath of getSweepFilePaths(`${LEDGER_DIRECTORY}/*.md`).filter((path) => !path.endsWith("README.md"))) {
+for (const ledgerPath of readSweepFilePaths(`${LEDGER_DIRECTORY}/*.md`).filter((path) => !path.endsWith("README.md"))) {
   const ledger = ledgerPath.slice(LEDGER_DIRECTORY.length + 1, -".md".length);
   const absolutePath = resolve(REPOSITORY_ROOT, ledgerPath);
   const text = readFileSync(absolutePath, "utf8");

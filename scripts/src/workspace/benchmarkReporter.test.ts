@@ -1,7 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getWorkspacePackageDirectories } from "#src/services/shared/getWorkspacePackageDirectories";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
+import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
+import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -25,8 +25,8 @@ describe("benchmarkReporter", () => {
   const REPORTER_PACKAGE_NAME = "@esposter/shared-node";
   // Discovered from the bench files themselves rather than listed: a listed set stops covering the package that
   // Adds its first bench after this was written, which is one of the two ways the invariant breaks.
-  const BENCHING_PACKAGE_PATHS = getWorkspacePackageDirectories(REPOSITORY_ROOT).filter(
-    (packagePath) => getSweepFilePaths(`${packagePath}/**/*.bench.ts`).length > 0,
+  const BENCHING_PACKAGE_PATHS = readWorkspacePackageDirectories(REPOSITORY_ROOT).filter(
+    (packagePath) => readSweepFilePaths(`${packagePath}/**/*.bench.ts`).length > 0,
   );
   // The other way, and the one that has already happened: the root owns no bench file, so nothing about the tree
   // Points at it — yet 🏎️ Bench starts its `vitest bench --run` here, which makes the root a run directory with
@@ -53,7 +53,7 @@ describe("benchmarkReporter", () => {
   test("finds the same members that declare a bench script", () => {
     expect.hasAssertions();
 
-    const declaringPackagePaths = getWorkspacePackageDirectories(REPOSITORY_ROOT).filter((packagePath) =>
+    const declaringPackagePaths = readWorkspacePackageDirectories(REPOSITORY_ROOT).filter((packagePath) =>
       Boolean(
         parseMachineJson<{ scripts?: Record<string, unknown> }>(
           readFileSync(resolve(REPOSITORY_ROOT, packagePath, "package.json"), "utf8"),

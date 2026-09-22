@@ -6,5 +6,5 @@ import { runGh } from "#src/services/shared/runGh";
 // REST accepts `repos/{owner}/{repo}` and lets `gh` fill both in from the checkout's remote; GraphQL substitutes
 // Nothing, so a query naming the repository has to be handed real values. Reading them beats a constant: a
 // Hardcoded slug is wrong in a fork and silently reads the upstream's reviews instead of the fork's.
-export const getRepository = (): RepositoryView =>
+export const readRepository = (): RepositoryView =>
   parseMachineJson<RepositoryView>(runGh(["repo", "view", "--json", "owner,name"]));

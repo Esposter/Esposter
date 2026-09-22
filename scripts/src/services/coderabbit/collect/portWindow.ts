@@ -3,11 +3,11 @@ import type { PortResult } from "#src/models/coderabbit/collect/PortResult";
 
 import { PickOutcome } from "#src/models/coderabbit/collect/PickOutcome";
 import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
-import { getWindowFileCount } from "#src/services/coderabbit/collect/getWindowFileCount";
 import { pickCommit } from "#src/services/coderabbit/collect/pickCommit";
 import { readCherryShas } from "#src/services/coderabbit/collect/readCherryShas";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
+import { readWindowFileCount } from "#src/services/coderabbit/collect/readWindowFileCount";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -24,7 +24,7 @@ export const portWindow = ({ cwd, developSha, fixShas, frontierSha, queueSha }: 
     if (pickCommit(sha, cwd) === PickOutcome.Conflict)
       throw new InvalidOperationError(Operation.Update, "coderabbit", `fix ${sha} conflicts with develop`);
   // Fixes ride whole or the run fails: a drain that touched more files than its findings is for a person to see
-  if (fixShas.length > 0 && getWindowFileCount(frontierSha, cwd) > REVIEW_FILE_CAP)
+  if (fixShas.length > 0 && readWindowFileCount(frontierSha, cwd) > REVIEW_FILE_CAP)
     throw new InvalidOperationError(
       Operation.Update,
       "coderabbit",
@@ -47,7 +47,7 @@ export const portWindow = ({ cwd, developSha, fixShas, frontierSha, queueSha }: 
       break;
     } else if (outcome === PickOutcome.Empty) continue;
 
-    if (getWindowFileCount(frontierSha, cwd) > REVIEW_FILE_CAP) {
+    if (readWindowFileCount(frontierSha, cwd) > REVIEW_FILE_CAP) {
       runGit(["reset", "--hard", "HEAD~1"], cwd);
       heldSha = sha;
       break;
@@ -55,5 +55,5 @@ export const portWindow = ({ cwd, developSha, fixShas, frontierSha, queueSha }: 
     queueShas.push(sha);
   }
 
-  return { fileCount: getWindowFileCount(frontierSha, cwd), fixCount: fixShas.length, heldSha, queueShas };
+  return { fileCount: readWindowFileCount(frontierSha, cwd), fixCount: fixShas.length, heldSha, queueShas };
 };

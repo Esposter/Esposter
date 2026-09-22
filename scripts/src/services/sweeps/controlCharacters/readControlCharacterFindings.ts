@@ -1,6 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getControlCharacters } from "#src/services/sweeps/controlCharacters/getControlCharacters";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
+import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -20,7 +20,7 @@ const EXCLUDED_PATHSPECS = [":(exclude)apps/web/public/cmaps", ":(exclude).claud
 
 // Every tracked file in the repository, scanned, one `path:line: U+XXXX` per character that renders as nothing.
 export const readControlCharacterFindings = (): string[] =>
-  getSweepFilePaths(...EXCLUDED_PATHSPECS).flatMap((path) => {
+  readSweepFilePaths(...EXCLUDED_PATHSPECS).flatMap((path) => {
     const contents = readFileSync(resolve(REPOSITORY_ROOT, path));
     if (contents.includes(BINARY_BYTE)) return [];
 

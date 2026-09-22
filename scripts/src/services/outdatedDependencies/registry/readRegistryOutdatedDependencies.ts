@@ -8,7 +8,7 @@ import { getVersionChangeLevel } from "#src/services/outdatedDependencies/getVer
 import { checkIsVersionOutdated } from "#src/services/outdatedDependencies/registry/checkIsVersionOutdated";
 import { REGISTRY_CONCURRENCY } from "#src/services/outdatedDependencies/registry/constants";
 import { GroupMetadataMap } from "#src/services/outdatedDependencies/registry/GroupMetadataMap";
-import { getLatestVersion } from "#src/services/shared/getLatestVersion";
+import { readLatestVersion } from "#src/services/shared/readLatestVersion";
 import { getResultAsync } from "@esposter/shared";
 
 export const readRegistryOutdatedDependencies = async (
@@ -32,7 +32,7 @@ export const readRegistryOutdatedDependencies = async (
       nextIndex += 1;
 
       const { dependent: entryDependent, followTag, group, packageName, specifier } = entry;
-      await getResultAsync(() => getLatestVersion(packageName, followTag)).match(
+      await getResultAsync(() => readLatestVersion(packageName, followTag)).match(
         (latest) => {
           const current = getSpecifierBase(specifier);
           const { dependencyType, dependent } = GroupMetadataMap[group];

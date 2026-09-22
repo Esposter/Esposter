@@ -1,5 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
+import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -19,7 +19,7 @@ describe("reviewFileCap", () => {
   test("no prose restates the cap as a number", () => {
     expect.hasAssertions();
 
-    const offenders = getSweepFilePaths(...PROSE_GLOBS).flatMap((path) =>
+    const offenders = readSweepFilePaths(...PROSE_GLOBS).flatMap((path) =>
       readFileSync(join(REPOSITORY_ROOT, path), "utf8")
         .split("\n")
         .flatMap((line, index) => (FILE_NUMBER_REGEX.test(line) ? [`${path}:${index + 1}`] : [])),

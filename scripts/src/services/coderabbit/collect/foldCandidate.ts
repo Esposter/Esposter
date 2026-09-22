@@ -1,14 +1,14 @@
 import type { FoldInput } from "#src/models/coderabbit/collect/FoldInput";
 
 import { MergeMainOutcome } from "#src/models/coderabbit/collect/MergeMainOutcome";
-import { getWindowFileCount } from "#src/services/coderabbit/collect/getWindowFileCount";
 import { mergeMain } from "#src/services/coderabbit/collect/mergeMain";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { readWindowFileCount } from "#src/services/coderabbit/collect/readWindowFileCount";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
 
 // Fold `main` into the candidate the port built and name the sha `develop` is pushed to. The fold is never
-// Undone for the cap: the window is counted on the pull request's own side of `main` (`getWindowFileCount`), so
+// Undone for the cap: the window is counted on the pull request's own side of `main` (`readWindowFileCount`), so
 // What `main` brings costs the review nothing. Nothing is verified here: `develop`'s own CI is the check
 // (`EXPRESS_VERIFY_COMMANDS` says why the express lane differs).
 export const foldCandidate = async ({
@@ -36,7 +36,7 @@ export const foldCandidate = async ({
   const isFastForward = fixCount === 0 && mergeBase === developSha && isCutExact && !isMainMerged;
   const targetSha = isFastForward ? (cutSha ?? developSha) : readHeadSha(cwd);
   console.info(
-    `cut: ${queueShas.length} queue commits = ${getWindowFileCount(frontierSha, cwd)} files${isMainMerged ? ", main folded in" : ""}${mergeOutcome === MergeMainOutcome.Conflicted ? ", main conflicts past the resolver's attempts — the release merge is a person's" : ""}${isFastForward ? ", fast-forward" : ""}`,
+    `cut: ${queueShas.length} queue commits = ${readWindowFileCount(frontierSha, cwd)} files${isMainMerged ? ", main folded in" : ""}${mergeOutcome === MergeMainOutcome.Conflicted ? ", main conflicts past the resolver's attempts — the release merge is a person's" : ""}${isFastForward ? ", fast-forward" : ""}`,
   );
   return targetSha;
 };

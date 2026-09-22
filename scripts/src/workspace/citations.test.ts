@@ -2,7 +2,7 @@ import { getBacktickedTokens } from "#src/services/citations/getBacktickedTokens
 import { readCitingPages } from "#src/services/citations/readCitingPages";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
+import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
 import { AGENT_WORKTREES_DIRECTORY, APP_RELATIVE_PREFIXES, DOCS_API_DIRECTORY } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
@@ -29,7 +29,7 @@ describe("citations", () => {
   // A token is a path when its first segment names something git tracks at the repo root or it carries an
   // App-relative prefix — which keeps the identifier tokens in the same prose (`useQuery`, `--no-cache`) and the
   // Install-time paths (`node_modules/.vite`) out of the check.
-  const repositoryEntryNames = new Set(getSweepFilePaths(".").map((path) => takeOne(path.split("/"), 0)));
+  const repositoryEntryNames = new Set(readSweepFilePaths(".").map((path) => takeOne(path.split("/"), 0)));
   const generatedDocsDirectory = `public/${DOCS_API_DIRECTORY}`;
   const checkIsRepositoryPath = (token: string) =>
     REPOSITORY_PATH_REGEX.test(token) &&

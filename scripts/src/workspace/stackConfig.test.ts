@@ -1,5 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
+import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -19,7 +19,7 @@ describe("stackConfig", () => {
   test("no stack file carries an encrypted value", () => {
     expect.hasAssertions();
 
-    const stackPaths = getSweepFilePaths("Pulumi.*.yaml", "**/Pulumi.*.yaml");
+    const stackPaths = readSweepFilePaths("Pulumi.*.yaml", "**/Pulumi.*.yaml");
 
     expect(
       stackPaths.filter((path) => SECURE_VALUE_REGEX.test(readFileSync(join(REPOSITORY_ROOT, path), "utf8"))),

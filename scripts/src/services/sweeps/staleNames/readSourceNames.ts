@@ -1,6 +1,6 @@
 import { FORMATTER_CONFIGURATION_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
+import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
 import { getComponentName } from "#src/services/sweeps/staleNames/getComponentName";
 import { globSync, readFileSync } from "node:fs";
@@ -31,7 +31,7 @@ export const readSourceNames = (): Set<string> => {
   const names = new Set<string>();
   const generatedPatterns = readGeneratedPatterns();
 
-  for (const path of getSweepFilePaths(".")) {
+  for (const path of readSweepFilePaths(".")) {
     for (const segment of path.split("/")) {
       names.add(segment);
       for (const part of segment.split(".")) names.add(part);

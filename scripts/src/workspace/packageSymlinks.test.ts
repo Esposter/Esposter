@@ -1,5 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getWorkspacePackageDirectories } from "#src/services/shared/getWorkspacePackageDirectories";
+import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
 import { readdirSync, readlinkSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -31,7 +31,7 @@ describe("packageSymlinks", () => {
   test("never resolve outside their own package", () => {
     expect.hasAssertions();
 
-    const escapingSymlinkPaths = getWorkspacePackageDirectories(REPOSITORY_ROOT).flatMap((packageDirectory) => {
+    const escapingSymlinkPaths = readWorkspacePackageDirectories(REPOSITORY_ROOT).flatMap((packageDirectory) => {
       const packageRoot = resolve(REPOSITORY_ROOT, packageDirectory);
       return readSymlinkPaths(packageRoot)
         .filter((path) => {
