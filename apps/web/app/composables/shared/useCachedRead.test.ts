@@ -36,7 +36,7 @@ describe(useCachedRead, () => {
 
     const query = vi.fn<(cacheKey: string) => Promise<string>>();
     const onError = vi.fn<(error: Error) => void>();
-    query.mockRejectedValueOnce(new Error("")).mockResolvedValue(result);
+    query.mockRejectedValueOnce(new Error(" ")).mockResolvedValue(result);
     const { read } = useCachedRead(query, { onError, onSuccess: noop });
     await read();
     await read();

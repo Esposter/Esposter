@@ -126,7 +126,7 @@ describe(useCallStore, () => {
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
     const liveKitStore = useLiveKitStore();
-    vi.spyOn(liveKitStore, "disconnect").mockRejectedValue(new Error(""));
+    vi.spyOn(liveKitStore, "disconnect").mockRejectedValue(new Error(" "));
     const callStore = useCallStore();
     const { isConnecting } = storeToRefs(callStore);
     await join(callStore);

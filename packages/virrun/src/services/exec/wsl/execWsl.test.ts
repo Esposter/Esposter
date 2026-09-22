@@ -49,7 +49,7 @@ describe(execWsl, () => {
     expect.hasAssertions();
 
     execFileSync.mockImplementation(() => {
-      throw Object.assign(new Error(""), {
+      throw Object.assign(new Error(" "), {
         stderr: Buffer.from("stderr", "utf16le"),
       });
     });

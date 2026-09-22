@@ -13,7 +13,7 @@ vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unk
 // Captures in `buffer`. wsl.exe writes its own diagnostics as UTF-16LE, which the wrapper detects from the bytes.
 const mockFailure = (stderr: string, stderrEncoding: BufferEncoding): void => {
   execFileSync.mockImplementation(() => {
-    throw Object.assign(new Error(""), { status: 1, stderr: Buffer.from(stderr, stderrEncoding) });
+    throw Object.assign(new Error(" "), { status: 1, stderr: Buffer.from(stderr, stderrEncoding) });
   });
 };
 
@@ -114,7 +114,7 @@ describe(execFileHidden, () => {
     expect.hasAssertions();
 
     execFileSync.mockImplementation(() => {
-      throw Object.assign(new Error(""), {
+      throw Object.assign(new Error(" "), {
         signal: "SIGTERM",
         status: null,
         stderr: Buffer.from("aa", "utf16le").subarray(0, -1),
@@ -146,7 +146,7 @@ describe(execFileHidden, () => {
     // A killed child's stderr is whatever it had written when it died, so callers that classify that text need
     // The kill itself surfaced — otherwise a truncated fragment reads like a complete verdict
     execFileSync.mockImplementation(() => {
-      throw Object.assign(new Error(""), {
+      throw Object.assign(new Error(" "), {
         signal: "SIGTERM",
         status: null,
         stderr: Buffer.from(""),
@@ -162,7 +162,7 @@ describe(execFileHidden, () => {
     expect.hasAssertions();
 
     execFileSync.mockImplementation(() => {
-      throw new Error("");
+      throw new Error(" ");
     });
 
     expect(() => execFileHidden("a", ["b"], { stdio: "inherit" })).toThrowErrorMatchingInlineSnapshot(`

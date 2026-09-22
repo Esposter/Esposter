@@ -145,7 +145,7 @@ describe(useOnlineSubscribable, () => {
 
     vi.spyOn(console, "error").mockImplementation(noop);
     callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>();
-    callback.mockRejectedValueOnce(new Error(""));
+    callback.mockRejectedValueOnce(new Error(" "));
     await mountSubscribable();
     await flushPromises();
     source.value = " ";

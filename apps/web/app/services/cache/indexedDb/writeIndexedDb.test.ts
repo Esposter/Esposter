@@ -81,13 +81,13 @@ describe(writeIndexedDb, () => {
   test("reports a refused write to its caller", async () => {
     expect.hasAssertions();
 
-    const error = new Error("");
+    const error = new Error(" ");
     vi.spyOn(indexedDB, "open").mockImplementation(() => {
       throw error;
     });
 
     await expect(
       writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1], message1.partitionKey),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
   });
 });

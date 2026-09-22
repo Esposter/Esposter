@@ -341,7 +341,7 @@ describe(saveResourceContent, () => {
     // Rejecting the version bump instead would fail before the blob was ever written and prove nothing
     uploadMock.mockImplementationOnce(async (...parameters: Parameters<typeof uploadMock>) => {
       await uploadMock.getMockImplementation()?.(...parameters);
-      throw new Error("");
+      throw new Error(" ");
     });
 
     await expect(
@@ -350,7 +350,7 @@ describe(saveResourceContent, () => {
         resource: program,
         updateContentVersion: (tx) => updateContentVersion(tx, program.id),
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     await expect(readBoundResourceId(program.id)).resolves.toBeNull();
   });
@@ -367,9 +367,9 @@ describe(saveResourceContent, () => {
       saveResourceContent(ctx, {
         content: unboundProgramContent,
         resource: program,
-        updateContentVersion: () => Promise.reject(new Error("")),
+        updateContentVersion: () => Promise.reject(new Error(" ")),
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     await expect(readBoundResourceId(program.id)).resolves.toBe(surveyId);
   });

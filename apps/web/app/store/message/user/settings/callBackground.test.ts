@@ -82,7 +82,7 @@ describe(useCallBackgroundStore, () => {
     server.use(
       trpcMsw.user.readCallBackgrounds.query(() => callBackgrounds),
       trpcMsw.user.deleteCallBackground.mutation(({ input }) => {
-        if (input.slot === 0) throw new Error("");
+        if (input.slot === 0) throw new Error(" ");
         return undefined;
       }),
     );

@@ -147,7 +147,7 @@ describe("readWslLoginEnvironment", () => {
     expect.hasAssertions();
 
     execFileSync.mockImplementation(() => {
-      throw new Error("");
+      throw new Error(" ");
     });
     const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 

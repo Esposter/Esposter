@@ -121,16 +121,16 @@ describe(useCursorPaginationOperationData, () => {
       callback();
       return 0 as never;
     });
-    const error = new Error("");
+    const error = new Error(" ");
     const query = vi.fn<(cursor?: string) => Promise<CursorPaginationData<string>>>(() => Promise.reject(error));
     const onComplete = vi.fn<() => void>();
 
-    await expect(readMoreItems(query, onComplete)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
+    await expect(readMoreItems(query, onComplete)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     expect(query).toHaveBeenCalledTimes(1);
     expect(setTimeoutSpy).not.toHaveBeenCalled();
 
-    await expect(readMoreItems(query, onComplete)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
+    await expect(readMoreItems(query, onComplete)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     expect(setTimeoutSpy.mock.lastCall?.[1]).toBe(BACKOFF_BASE_DELAY_MS);
     expect(query).toHaveBeenCalledTimes(2);

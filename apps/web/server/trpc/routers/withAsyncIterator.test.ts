@@ -36,8 +36,8 @@ describe(withAsyncIterator, () => {
     const returnFn = vi.fn<() => Promise<IteratorResult<unknown>>>();
 
     await expect(
-      withAsyncIterator(createIterator(returnFn), () => Promise.reject(new Error(""))),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
+      withAsyncIterator(createIterator(returnFn), () => Promise.reject(new Error(" "))),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     expect(returnFn).toHaveBeenCalledExactlyOnceWith();
   });
 });

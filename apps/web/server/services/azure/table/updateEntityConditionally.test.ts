@@ -39,7 +39,7 @@ describe(updateEntityConditionally, () => {
   test("re-applies the intent to the version it re-read rather than the one it started from", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi.fn<WriteEntity>().mockRejectedValueOnce(new Error("")).mockResolvedValueOnce(undefined);
+    const writeEntity = vi.fn<WriteEntity>().mockRejectedValueOnce(new Error(" ")).mockResolvedValueOnce(undefined);
     const updatedEntity = await updateEntityConditionally(
       getTableClient(() => Promise.resolve(getEntityRecord(concurrentMessage, "2"))),
       StandardMessageEntity,
@@ -64,7 +64,7 @@ describe(updateEntityConditionally, () => {
   test("rethrows the write error when the version has not moved", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("")));
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error(" ")));
 
     await expect(
       updateEntityConditionally(
@@ -77,13 +77,13 @@ describe(updateEntityConditionally, () => {
           writeEntity,
         },
       ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
   });
 
   test("throws NOT_FOUND when the entity is gone by the time it re-reads", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("")));
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error(" ")));
 
     await expect(
       updateEntityConditionally(
@@ -110,7 +110,7 @@ describe(updateEntityConditionally, () => {
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
     const readError = new MockRestError("", 503);
-    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("")));
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error(" ")));
 
     await expect(
       updateEntityConditionally(
@@ -133,7 +133,7 @@ describe(updateEntityConditionally, () => {
   test("throws CONFLICT when every attempt loses the race", async () => {
     expect.hasAssertions();
 
-    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error("")));
+    const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error(" ")));
     let etag = 1;
 
     await expect(
