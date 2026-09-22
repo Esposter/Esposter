@@ -4,4 +4,4 @@ The app's smaller products — posts, the clicker, achievements, docs, the user 
 
 | Unit                                                           | Swept      | Notes |
 | -------------------------------------------------------------- | ---------- | ----- |
-| `app/components` — `Visual`, `User`, `Docs`, `Clicker`, `Post` | 2026-09-12 |       |
+| `app/components` — `Visual`, `User`, `Docs`, `Clicker`, `Post` | 2026-09-22 |       |
