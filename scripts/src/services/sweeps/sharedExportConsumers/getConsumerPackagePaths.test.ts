@@ -13,8 +13,8 @@ describe(getConsumerPackagePaths, () => {
       getConsumerPackagePaths(
         name,
         getPackageIdentifiersMap([
-          ["apps/web/app/first.ts", `${name}(items)`],
-          ["packages/virrun/src/second.ts", `${name}(items)`],
+          ["apps/web/a.ts", `${name}(items)`],
+          ["packages/virrun/a.ts", `${name}(items)`],
         ]),
       ),
     ).toStrictEqual(["apps/web", "packages/virrun"]);
@@ -27,7 +27,7 @@ describe(getConsumerPackagePaths, () => {
       getConsumerPackagePaths(
         name,
         getPackageIdentifiersMap([
-          ["apps/web/app/first.ts", `${name}(items)`],
+          ["apps/web/a.ts", `${name}(items)`],
           ["apps/web/app/second.ts", `${name}(items)`],
         ]),
       ),
@@ -38,16 +38,14 @@ describe(getConsumerPackagePaths, () => {
   test("reports nothing when the export is named nowhere", () => {
     expect.hasAssertions();
 
-    expect(
-      getConsumerPackagePaths(name, getPackageIdentifiersMap([["apps/web/app/first.ts", "somethingElse(items)"]])),
-    ).toStrictEqual([]);
+    expect(getConsumerPackagePaths(name, getPackageIdentifiersMap([["apps/web/a.ts", "b(items)"]]))).toStrictEqual([]);
   });
 
   test("does not count a longer name that merely contains this one", () => {
     expect.hasAssertions();
 
     expect(
-      getConsumerPackagePaths(name, getPackageIdentifiersMap([["apps/web/app/first.ts", `${name}Async(items)`]])),
+      getConsumerPackagePaths(name, getPackageIdentifiersMap([["apps/web/a.ts", `${name}Async(items)`]])),
     ).toStrictEqual([]);
   });
 
@@ -55,10 +53,7 @@ describe(getConsumerPackagePaths, () => {
     expect.hasAssertions();
 
     expect(
-      getConsumerPackagePaths(
-        "$trpc",
-        getPackageIdentifiersMap([["apps/web/app/first.ts", "$trpc.room.readRooms.query()"]]),
-      ),
+      getConsumerPackagePaths("$trpc", getPackageIdentifiersMap([["apps/web/a.ts", "$trpc.room.readRooms.query()"]])),
     ).toStrictEqual(["apps/web"]);
   });
 });
