@@ -14,17 +14,8 @@ jobs:
     # here would already have taken the group's one pending run and evicted the fire waiting in it. This copy is
     # the pinned one, and it decides nothing while the two agree: it holds only over the window where the
     # caller — read from the event's own ref, so `main`'s copy for a status or a comment — is a release behind a
-    # change to the filter, where without it every event those deliveries carry would run a cycle.
-    #
-    # Only the bot's reviews of the release pull request, CodeRabbit's own status on a commit `develop` carries
-    # (every deployment writes one against the same commits) and the bot's own comments run a cycle — the
-    # collector's marker comments would otherwise wake the cycle that posted them. The status event needs the
-    # branch as well as the context: the bot writes that status on every pull request it is asked about,
-    # renovate's included, and a cycle woken by one only reaches the gates and exits, having paid for a runner,
-    # an install and a clone to do it. A status payload lists every branch carrying its sha, not just the ones
-    # heading it, so a status on a sha `develop` has already moved past still names it. A CI run's completion
-    # runs a cycle only when it is `main`'s and red — the one conclusion the repairer answers; every other branch's
-    # CI, and a green `main`, would pay for a runner to reach the gates and exit.
+    # change to the filter, where without it every event those deliveries carry would run a cycle. What the
+    # filter admits, and why, is written on the caller's copy.
     if: >-
       (github.event_name != 'pull_request_review' ||
       (github.event.review.user.login == 'coderabbitai[bot]' && github.event.pull_request.head.ref == 'develop')) &&

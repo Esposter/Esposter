@@ -13,7 +13,7 @@ export const ResourceContentHookMap = {
   // The live document a third-party editor owns takes the content the re-read above just landed. A library
   // That holds the document itself has no ref to re-render from, and holding a pre-restore copy is not a stale
   // View but a write-back clobber: its next autosave carries the old document at the restore's own fresh
-  // ContentVersion, which the server accepts (/docs/architecture/third-party-document-adapters)
+  // `contentVersion`, which the server accepts (/docs/architecture/third-party-document-adapters)
   Adopt: createHookRegistry<(type: ResourceType) => Promisable<void>>(),
   // The working copy was replaced wholesale, which a restore is the one write to do. Registered by the content
   // Stores, which re-read their own blob; every Vue-rendered type is finished here, because its blade renders

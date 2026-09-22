@@ -39,7 +39,8 @@ export const COLOCATED_MAP_SUFFIXES: readonly string[] = ["Hook", "HookMap", "Ev
 export const COMPONENTS_DIRECTORY = "/components/";
 // A schema sits beside its type in a model file whatever the two are called (the zod skill)
 export const SCHEMA_SUFFIX = "Schema";
-// A drizzle table file's `pgEnum` wrappers sit beside the table that reads them (`.agents/ledgers/file-organization/packages.md`)
+// A drizzle table file's `pgEnum` wrappers sit beside the table that reads them
+// (`.agents/ledgers/file-organization/packages.md`)
 export const SCHEMA_DIRECTORY = "/schema/";
 export const ENUM_SUFFIX = "Enum";
 // A type-utility folder is a models layer for types with no runtime twin (`util/types/`)

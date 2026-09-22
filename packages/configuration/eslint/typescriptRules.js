@@ -53,7 +53,7 @@ export default {
       // Same thing a second way. Every branch reads what the name is attached to rather than the name alone,
       // Because the shape is what makes it a lookup: a map is data, so a function keeps its `By<Selector>`
       // (`getDataSourceTypeByFileName`), `byPage` on azure-mock's `PagedAsyncIterableIterator` is the azure
-      // Sdk's own paging contract, and `isGroupedByType` is a boolean. So a lookup is recognised by a
+      // SDK's own paging contract, and `isGroupedByType` is a boolean. So a lookup is recognised by a
       // `Map`/`Record` annotation, a `new Map`/`Object.groupBy` initialiser, or an object literal — and the
       // Object-literal branches take the `By` infix only, since `To` collides with the `usersToRooms` join
       // Table's own name, which reads as `<key>To<value>` and is no more ours to rename than `byPage`. A lookup

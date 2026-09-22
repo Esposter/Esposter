@@ -28,7 +28,7 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
     />
     <v-row v-else dense>
       <v-col v-for="{ count, type } of counts" :key="type" cols="12" sm="6" md="4" lg="3">
-        <!-- A card is the affordance for the type filter, so it navigates back into the list rather than anywhere new -->
+        <!-- A card is the type filter's affordance, so it navigates back into the list rather than anywhere new -->
         <v-card h-full @click="emit('select', type)">
           <v-card-text flex gap-4 items-center>
             <v-icon size="x-large" :icon="ResourceDefinitionMap[type].icon" />
