@@ -1,20 +1,23 @@
 ---
 name: run-app
-description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified, and why an agent never drives the app in a browser to do it. Driving Chrome over CDP is banned here (flaky and slow); the alternatives are generating the CSS offline for a styling question, a component test when one is cheap under the default setup, and otherwise the user's own eyes. Also covers launching the dev server for the user.
+description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified: never a browser inside the edit loop (slow), and at most one visual pass at the end of a visual change, against approved baseline screenshots. Before that, the offline CSS for a styling question, a component test when one is cheap, and the user's own eyes. Also covers launching the dev server for the user.
 ---
 
 # Verifying a UI Change
 
 Typecheck cannot see layout, so the question of what proves a visual change is real comes up on every one. The answer here is **not** a browser an agent drives.
 
-## Driving the app in a browser is banned
+## A browser never runs inside the edit loop
 
-No headless Chrome, no CDP, no screenshot loop, no seeded session to get past `middleware: "auth"` — not as a fallback, not "just this once for a layout change". Two reasons, and neither is fixable by a better script:
+No headless Chrome, no CDP, no screenshot after each edit, no poll loop for async components. A dev server, a client-bundle warmup and a seeded session cost more wall clock than the edit, and inside the loop that wait is paid on every iteration. So while the change is being made: make it, run the check suite (`package-scripts`), and move on.
 
-- **There is no standard for what "it looks right" means**, so the check is flaky by construction. A screenshot proves the page rendered, not that the spacing is the spacing that was asked for, and every one of these runs ends in a judgement call an agent is in no position to make.
-- **It is slow enough to dominate the change.** A dev server, a client-bundle warmup, a seeded session row to delete afterwards and a poll loop for async components cost more wall clock than the edit, and the wait is spent on every iteration.
+## One visual pass, at the end
 
-So: make the change, run the check suite (`package-scripts`), and say plainly what you did not verify.
+A change that is **visual** — a layout, a dialog, a scene — and that none of the cheaper checks below can prove earns **one** browser pass, once, when the change is otherwise done: after the review, beside the final check suite, never between edits. The pass captures the states the change touched and compares each against an **approved baseline screenshot** committed beside the suite, which is what makes it a check rather than a judgement: the baseline is the standard for what "looks right" means, and a diff against it is the finding. A state with no baseline yet is captured, read by the agent (a screenshot is an image the agent can look at), and handed to the user to approve — approving it is committing it as the baseline.
+
+The pass is Playwright against the real app, not a component gallery: Storybook or Histoire is a second app to keep working with Nuxt and a set of stories that rot, where Playwright boots the app the user runs and asserts on what they would see. Until the suite exists, the pass is the agent's own screenshot of the touched state, read and handed over — still once, still at the end.
+
+Skip the pass when a cheaper check already proves the change, or when the change is not visual. Never report a visual change as verified without saying which check did it.
 
 ## What replaces it
 
@@ -51,9 +54,10 @@ So: make the change, run the check suite (`package-scripts`), and say plainly wh
 
 2. **A component test, when it is cheap.** If the behaviour mounts under the repo's default Vitest setup and the assertions are about rendered structure or state a user depends on, write one — `testing` owns the conventions.
 3. **Otherwise nothing, and say so.** A component test that only exists after mocking a large surface — a store graph, the tRPC client, Vuetify internals, a browser API per assertion — is not worth its weight: it pins the mocks rather than the component, and it is the maintenance the next change pays. **Not adding the test is the correct outcome there** and needs no apology; the layout is the user's to eyeball.
-4. **The user's own eyes** are the acceptance check for anything visual. Hand over what changed and what to look at, rather than claiming a look you did not take.
+4. **The end-of-change visual pass** above, when the change is visual and 1–3 cannot prove it.
+5. **The user's own eyes** remain the acceptance check for anything without an approved baseline. Hand over what changed and what to look at, rather than claiming a look you did not take.
 
-Never report a visual change as verified on the strength of typecheck, lint or a passing suite. Say which of the four above happened.
+Never report a visual change as verified on the strength of typecheck, lint or a passing suite. Say which of the five above happened.
 
 ## Launching the dev server (for the user, not for a driver)
 
@@ -73,6 +77,6 @@ Four things bite, all of them cheaply:
 - **The first request builds the client bundle** and can sit for minutes; a 90s timeout looks like a hang. Give it 300s+ before concluding anything.
 - **Killing the wrapper leaves the server.** Stopping the background shell kills `pnpm`, not the `nuxt.mjs` child — it keeps the port and the lock. Kill by PID tree (`taskkill /PID <pid> /T /F`), and check `Get-NetTCPConnection -State Listen -LocalPort 3000,3001` afterwards.
 
-**What a dev server is for:** reading what Vite actually serves — a transformed module, `/_nuxt/@vite/env` for the resolved `define` values, a resolved import graph. That is a fact a test cannot give you, and it is worth the boot. It is **not** for driving the app; see the ban above.
+**What a dev server is for:** reading what Vite actually serves — a transformed module, `/_nuxt/@vite/env` for the resolved `define` values, a resolved import graph. That is a fact a test cannot give you, and it is worth the boot. It is **not** for driving the app inside the edit loop; the one end-of-change pass above is the only browser run.
 
 **Never write a temp script under `apps/web` while a dev server is running there.** Every create/delete triggers a Nitro rebuild, and a few in quick succession corrupt the dev build into `worker entry not found in .nuxt/dev/index.mjs`, which only a restart clears. Run throwaway scripts with `node --input-type=module --eval '<source>'` from `apps/web` instead — module resolution works from the cwd and nothing enters the watched tree.
