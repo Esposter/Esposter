@@ -12,12 +12,12 @@ describe(getMockContainer, () => {
   test("returns the same map for the same container name", () => {
     expect.hasAssertions();
 
-    expect(getMockContainer("containerName")).toBe(getMockContainer("containerName"));
+    expect(getMockContainer("")).toBe(getMockContainer(""));
   });
 
   test("returns a separate map per container name", () => {
     expect.hasAssertions();
 
-    expect(getMockContainer("containerName")).not.toBe(getMockContainer("otherContainerName"));
+    expect(getMockContainer("")).not.toBe(getMockContainer(" "));
   });
 });

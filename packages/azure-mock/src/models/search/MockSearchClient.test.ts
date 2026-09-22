@@ -15,10 +15,10 @@ describe(MockSearchClient, () => {
 
     const client = new MockSearchClient(indexName);
     await client.uploadDocuments([
-      { message: "needle", rowKey: "0", title: "ignored" },
-      { message: "haystack", rowKey: "1", title: "needle" },
+      { "": " ", " ": "", rowKey: "0" },
+      { "": "", " ": " ", rowKey: "1" },
     ]);
-    const { count, results } = await client.search("needle", { includeTotalCount: true, searchFields: ["message"] });
+    const { count, results } = await client.search(" ", { includeTotalCount: true, searchFields: [""] });
     const documents: Record<string, unknown>[] = [];
     for await (const { document } of results) documents.push(document);
 
@@ -31,13 +31,10 @@ describe(MockSearchClient, () => {
 
     const client = new MockSearchClient(indexName);
     await client.uploadDocuments([
-      { files: [{ filename: "needle" }], rowKey: "0" },
-      { files: [{ filename: "haystack" }], rowKey: "1" },
+      { "": [{ "": " " }], rowKey: "0" },
+      { "": [{ "": "" }], rowKey: "1" },
     ]);
-    const { count, results } = await client.search("needle", {
-      includeTotalCount: true,
-      searchFields: ["files/filename"],
-    });
+    const { count, results } = await client.search(" ", { includeTotalCount: true, searchFields: ["/"] });
     const documents: Record<string, unknown>[] = [];
     for await (const { document } of results) documents.push(document);
 

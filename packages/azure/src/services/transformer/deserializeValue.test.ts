@@ -3,10 +3,10 @@ import { escapeValue } from "#src/services/transformer/escapeValue";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeValue, () => {
+  const epoch = new Date(0);
+
   test("deserializes", () => {
     expect.hasAssertions();
-
-    const epoch = new Date(0);
 
     expect(deserializeValue(String(true))).toBe(true);
     expect(deserializeValue(epoch.toISOString())).toStrictEqual(epoch);
@@ -19,7 +19,7 @@ describe(deserializeValue, () => {
   test("round-trips a value carrying the literal delimiter", () => {
     expect.hasAssertions();
 
-    const value = "o'brien' or 1 eq 1";
+    const value = "'";
 
     expect(deserializeValue(escapeValue(value))).toBe(value);
   });
@@ -38,8 +38,6 @@ describe(deserializeValue, () => {
 
   test("parses an Azure Table datetime literal back to a Date", () => {
     expect.hasAssertions();
-
-    const epoch = new Date(0);
 
     expect(deserializeValue(`datetime'${epoch.toISOString()}'`)).toStrictEqual(epoch);
   });

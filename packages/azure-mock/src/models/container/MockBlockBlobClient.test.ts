@@ -10,6 +10,7 @@ import { afterEach, describe, expect, test } from "vitest";
 describe(MockBlockBlobClient, () => {
   const blobName = "blobName";
   const containerName = "containerName";
+  const metadata = { reason: "reason" };
   const getClient = () => new MockBlockBlobClient(MOCK_BLOB_BASE_URL, containerName, blobName);
 
   afterEach(() => {
@@ -24,9 +25,9 @@ describe(MockBlockBlobClient, () => {
     expect.hasAssertions();
 
     const client = getClient();
-    await client.upload("", 0, { metadata: { reason: "reason" } });
+    await client.upload("", 0, { metadata });
 
-    expect(readMockBlobMetadata(containerName, blobName)).toStrictEqual({ reason: "reason" });
+    expect(readMockBlobMetadata(containerName, blobName)).toStrictEqual(metadata);
 
     await client[method]();
 

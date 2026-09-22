@@ -36,13 +36,13 @@ describe(applyFilter, () => {
   test("matches null clauses against null and missing values", () => {
     expect.hasAssertions();
 
-    const deletedAtKey = "deletedAt";
-    const documentsWithDeletedAt: Record<string, unknown>[] = [
-      { [deletedAtKey]: null, partitionKey, rowKey },
+    const key = "";
+    const documentsWithKey: Record<string, unknown>[] = [
+      { [key]: null, partitionKey, rowKey },
       { partitionKey, rowKey: "1" },
-      { [deletedAtKey]: "", partitionKey, rowKey: "2" },
+      { [key]: "", partitionKey, rowKey: "2" },
     ];
-    const filteredDocuments = applyFilter(documentsWithDeletedAt, [getTableNullClause(deletedAtKey)]);
+    const filteredDocuments = applyFilter(documentsWithKey, [getTableNullClause(key)]);
 
     expect(filteredDocuments).toHaveLength(2);
     expect(takeOne(filteredDocuments).rowKey).toBe(rowKey);
