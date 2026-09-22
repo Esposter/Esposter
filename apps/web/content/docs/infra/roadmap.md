@@ -9,13 +9,13 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 ## Open
 
+- [ ] [Agent console](/docs/proposals/infra/agent-console) — a Nuxt page that replaces the terminal at full parity, over a host on the machine with the code, agents behind drivers and the look behind themes (default, then Genshin), with a playable codebase city
 - [ ] [Seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) — first sound within a fraction of a second of a spoken line being written, streamed from inside the line; the never-pausing stage before it holds since the engine moved to Nano
 
 ## Blocked (the character voice still switched on after two weeks of daily use)
 
 - [ ] [The viewer as the stage](/docs/proposals/infra/viewer-stage) — each spoken line a bubble and a sound on the model in the desktop viewer already running, through its local socket, and the terminal's attention hooks moving the model; no window built
 - [ ] [Chat into the session](/docs/proposals/infra/channel-chat) — a local chat page as a channel pushing typed lines into the terminal's own session, and a permission answered by tapping the model; behind the research-preview flag on every launch
-- [ ] [Agent console](/docs/proposals/infra/agent-console) — a web-app route that replaces the terminal as the working surface, at full parity with it, with TresJS views of the session around it; after the chat
 
 ## Blocked (a Transformers.js release that loads Chatterbox Multilingual)
 

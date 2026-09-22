@@ -14,7 +14,7 @@ The spoken replies are heard and not seen. The ambience gives them a picture on 
 
 **This adds:**
 
-1. **An envelope.** The synthesizer already holds each clip's samples; it computes their loudness in short frames — one number per frame — and posts the envelope to the channel server with the line, before the clip plays.
+1. **An envelope.** The synthesizer already holds each clip's samples; it computes their loudness in short frames — one number per frame — and posts the envelope to the console host with the line, before the clip plays.
 2. **The field.** A particle preset per element on cientos's particle components — `Sparkles` for Dendro and Electro, `Precipitation` for Cryo and Hydro rain, `Smoke` for Anemo — its intensity following the envelope in time with playback. Hydro's calm state is the app's own fluid simulator, reused as it stands.
 3. **Quiet by default.** With no line playing the field idles at its lowest rate, and it stops rendering entirely while the page is hidden.
 
@@ -24,13 +24,13 @@ The spoken replies are heard and not seen. The ambience gives them a picture on 
 sequenceDiagram
     participant Display as MessageDisplay hook
     participant Server as Resident synthesizer
-    participant Channel as Channel server
+    participant Host as Console host
     participant Page as The console, the field
 
     Display->>Server: a spoken line
     Server->>Server: synthesize the clip, frame its loudness
-    Server->>Channel: the envelope, with the line
-    Channel->>Page: the envelope on the stream
+    Server->>Host: the envelope, with the line
+    Host->>Page: the envelope on the wire
     Server->>Server: play the clip
     Page->>Page: field intensity follows the envelope
 ```
@@ -38,7 +38,7 @@ sequenceDiagram
 ```text
 packages/genshin-persona/src/services/
   getLoudnessEnvelope.ts        ← one loudness value per short frame of a clip
-apps/web/app/components/AgentConsole/Ambience/
+apps/web/app/components/AgentConsole/Theme/Genshin/
   AgentConsoleAmbience.vue              ← the seven element presets, driven by the envelope
 ```
 

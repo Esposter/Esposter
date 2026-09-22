@@ -16,7 +16,7 @@ Unlike the other views this one is Esposter's own: it reads the collector's bran
 
 **This adds:**
 
-1. **A read.** The channel server runs the reads the collector's own dry run already makes — the branch heads, the owed commits by patch id, the claimed ones, the release pull request's gate, the held marker — through the `gh` login the person already has, on the page opening and on each push the stream reports. No new token and no API beyond the free one.
+1. **A read.** A repository may declare commands the host runs for a view and returns as JSON; this one declares `pnpm ai:coderabbit:state`, a new script over the reads the collector's own dry run already makes — the branch heads, the owed commits by patch id, the claimed ones, the release pull request's gate, the held marker — through the `gh` login the person already has, run on the view opening and on each push the session makes. No new token and no API beyond the free one.
 2. **The picture.** Boats in queue order upstream; claimed boats in the canal; the window as the boats inside the lock; the lock gate open or shut by the review gate's decision; a red `main` as a storm over the sea.
 3. **A click.** A boat opens its commit on GitHub; the held boat opens the comment that holds it.
 
@@ -31,10 +31,10 @@ flowchart LR
 ```
 
 ```text
-packages/genshin-persona/src/services/agentConsole/
-  readHarbourState.ts        ← the collector's own reads, through gh, on open and on push
-apps/web/app/components/AgentConsole/Harbour/
-  AgentConsoleHarbour.vue            ← the river, the boats, the lock, the storm
+scripts/src/coderabbit/state/
+  index.ts                   ← `ai:coderabbit:state`: the collector's own reads as JSON
+apps/web/app/components/AgentConsole/View/Harbour/
+  AgentConsoleHarbour.vue    ← the river, the boats, the lock, the storm
 ```
 
 **Rendering:** TresJS, with cientos `Ocean` for the water, `Instances` for the boats and `Precipitation` for a red `main`'s storm; nothing needs raw Three.js.
@@ -50,4 +50,4 @@ apps/web/app/components/AgentConsole/Harbour/
 ## Notes
 
 - The reads belong to the collector, so the harbour imports them rather than copying them: a view that reimplemented "what is owed" would draw a harbour the collector disagrees with.
-- The plugin is published and the collector is not, so the view is loaded only when the working tree holds the collector's source; everywhere else the page never offers it.
+- The host is published and the collector is not, so the view is offered only when the session's repository declares its command; everywhere else the page never shows it.
