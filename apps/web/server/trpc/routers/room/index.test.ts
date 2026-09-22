@@ -41,8 +41,8 @@ const { createIdMock } = vi.hoisted(() => ({
 }));
 
 vi.mock(import("#shared/util/math/random/createId"), async (importOriginal) => {
-  const { createId } = await importOriginal();
-  createIdMock.mockImplementation(createId);
+  const original = await importOriginal();
+  createIdMock.mockImplementation(original.createId);
   return { createId: createIdMock };
 });
 

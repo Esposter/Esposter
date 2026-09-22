@@ -129,10 +129,13 @@ export const baseRoomRouter = router({
                 .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
                 .returning(),
             ),
-          ).match(takeOne, (error) => {
-            if (checkIsUniqueViolation(error)) return undefined;
-            throw error;
-          });
+          ).match(
+            (invites) => takeOne(invites),
+            (error) => {
+              if (checkIsUniqueViolation(error)) return undefined;
+              throw error;
+            },
+          );
           if (invite) return { ...invite, user };
         }
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId, "UNPROCESSABLE_CONTENT");
