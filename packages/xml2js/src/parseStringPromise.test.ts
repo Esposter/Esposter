@@ -3,6 +3,19 @@ import { parseStringPromise } from "#src/parseStringPromise";
 import { describe, expect, test } from "vitest";
 
 describe(parseStringPromise, () => {
+  // The first repeated child promotes the lone value to an array, and the value that caused the promotion has to
+  // Land in it — every sibling after the first is what `explicitArray: false` collects
+  test("keeps every repeated child when explicitArray is off", async () => {
+    expect.hasAssertions();
+
+    const result = await parseStringPromise<{ root: { child: string[] } }>(
+      "<root><child>a</child><child>b</child><child>c</child></root>",
+      { explicitArray: false },
+    );
+
+    expect(result.root.child).toStrictEqual(["a", "b", "c"]);
+  });
+
   test("collapses whitespace runs in every text child when normalize is set", async () => {
     expect.hasAssertions();
 
