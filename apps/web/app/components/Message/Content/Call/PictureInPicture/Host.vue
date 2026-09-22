@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { PICTURE_IN_PICTURE_WINDOW_OPTIONS } from "@/services/message/room/call/constants";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 
-const { close, open, pictureInPictureWindow } = useDocumentPictureInPicture({ height: 320, width: 420 });
+const { close, open, pictureInPictureWindow } = useDocumentPictureInPicture(PICTURE_IN_PICTURE_WINDOW_OPTIONS);
 const callStore = useCallStore();
 const { callRoute, isInCall } = storeToRefs(callStore);
 const mediaStore = useMediaStore();

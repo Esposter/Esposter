@@ -12,3 +12,6 @@ export const SCREEN_SHARE_CAPTURE_OPTIONS = {
   selfBrowserSurface: "exclude",
   surfaceSwitching: "include",
 } as const;
+// The popped-out call window's initial size — a compact tile that fits a video and the control bar, which the
+// User resizes from there
+export const PICTURE_IN_PICTURE_WINDOW_OPTIONS = { height: 320, width: 420 } as const;
