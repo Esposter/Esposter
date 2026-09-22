@@ -1,6 +1,7 @@
 ---
 title: Commands
 description: Every root script under the migration — which become `vp` tasks, which collapse into one another, and which stop existing.
+model: claude-opus-5
 ---
 
 # Commands

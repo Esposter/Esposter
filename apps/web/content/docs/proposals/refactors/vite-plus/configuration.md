@@ -1,6 +1,7 @@
 ---
 title: Configuration
 description: Move lint, format and task settings into the Vite+ config without producing a monolith — one file per concern, composed at the root, and the seam where Nuxt keeps its own config.
+model: claude-opus-5
 ---
 
 # Configuration

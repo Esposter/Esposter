@@ -1,6 +1,7 @@
 ---
 title: Invite friends picker
 description: Proposal — the invite dialog lists the sender's friends with an Invite beside each, so inviting one is a click rather than a copied link pasted somewhere else.
+model: claude-opus-5
 ---
 
 # Invite Friends Picker

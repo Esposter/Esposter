@@ -1,6 +1,7 @@
 ---
 title: Vite+ migration
 description: Proposal — make `vp` the repository's toolchain entry point and cached task runner, retire the hand-rolled build cache and virrun, and leave Nuxt owning the app build.
+model: claude-opus-5
 ---
 
 # Vite+ Migration

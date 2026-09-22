@@ -1,6 +1,7 @@
 ---
 title: Task runner
 description: Replace the two hand-rolled content-hash caches with `vp run --cache`, whose inputs are traced from what a command actually reads rather than enumerated ahead of it.
+model: claude-opus-5
 ---
 
 # Task Runner

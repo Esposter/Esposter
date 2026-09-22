@@ -1,6 +1,7 @@
 ---
 title: Server-resolved display names
 description: Proposal — resolve a room display name in the query that finds and orders it, so searching for the name on screen matches the row on screen.
+model: claude-opus-5
 ---
 
 # Server-Resolved Display Names

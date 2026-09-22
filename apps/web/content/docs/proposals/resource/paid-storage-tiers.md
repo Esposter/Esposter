@@ -1,6 +1,7 @@
 ---
 title: Paid storage tiers
 description: Proposal — sell a larger storage allowance through a merchant-of-record checkout, with the tier column staying the one thing the quota gate reads.
+model: claude-opus-5
 ---
 
 # Paid Storage Tiers

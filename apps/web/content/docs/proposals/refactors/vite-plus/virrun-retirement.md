@@ -1,6 +1,7 @@
 ---
 title: virrun retirement
 description: virrun does three separable jobs; Vite+ replaces one, the third turns out to be self-inflicted, and what is left is a speed-against-maintenance trade with nothing gating it.
+model: claude-opus-5
 ---
 
 # virrun Retirement
