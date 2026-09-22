@@ -14,7 +14,7 @@ import { z } from "zod";
 // Reader and the writer share a suite rather than each asserting half a round-trip.
 describe("capabilityCache", () => {
   const { getCacheHome } = setupTemporaryCacheHome();
-  const key = "linux:6.18.0";
+  const key = "key";
 
   test("returns undefined when no verdict has been persisted yet", () => {
     expect.hasAssertions();
