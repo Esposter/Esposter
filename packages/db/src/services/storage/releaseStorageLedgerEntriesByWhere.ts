@@ -28,12 +28,12 @@ export const releaseStorageLedgerEntriesByWhere = (
     if (releasedStorageLedgerEntries.length === 0) return [];
     // One statement per owner rather than per blob: a prefix release covers a whole directory, and a
     // Deletion event carries hundreds of names, so decrementing row by row is that many round trips
-    const releasedBytesMap = new Map<string, number>();
+    const userIdReleasedBytesMap = new Map<string, number>();
     for (const { countedBytes, userId } of releasedStorageLedgerEntries)
-      releasedBytesMap.set(userId, (releasedBytesMap.get(userId) ?? 0) + countedBytes);
+      userIdReleasedBytesMap.set(userId, (userIdReleasedBytesMap.get(userId) ?? 0) + countedBytes);
     // Sorted because `DELETE ... RETURNING` fixes no row order: two releases over an overlapping set of owners
     // Would otherwise take their `users` locks in opposite orders and deadlock
-    const releasedUserEntries = [...releasedBytesMap].toSorted(([firstUserId], [secondUserId]) =>
+    const releasedUserEntries = [...userIdReleasedBytesMap].toSorted(([firstUserId], [secondUserId]) =>
       firstUserId.localeCompare(secondUserId),
     );
     for (const [userId, releasedBytes] of releasedUserEntries)

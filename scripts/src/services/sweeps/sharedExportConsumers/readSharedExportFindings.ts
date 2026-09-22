@@ -27,7 +27,7 @@ export const readSharedExportFindings = (): SharedExportFinding[] => {
   const sharedSources = sharedFiles.filter(([path]) => !path.includes(".test."));
   // A suite of the package reads an export as much as a source file does: a fixture shared by one suite here
   // And one in a consumer is used internally, and a suite asserting through a helper keeps that helper home
-  const sharedIdentifiersMap = new Map(sharedFiles.map(([path, text]) => [path, getIdentifiers(text)] as const));
+  const sharedPathIdentifiersMap = new Map(sharedFiles.map(([path, text]) => [path, getIdentifiers(text)] as const));
   // Every file outside the defining package. `packages/shared` naming its own export is the library using itself,
   // So counting it would let one real consumer clear a threshold that asks for two.
   const packageIdentifiersMap = getPackageIdentifiersMap(
@@ -39,7 +39,7 @@ export const readSharedExportFindings = (): SharedExportFinding[] => {
   return sharedSources.flatMap(([path, text]) =>
     getExportNames(text).flatMap((name) => {
       const consumerPackagePaths = getConsumerPackagePaths(name, packageIdentifiersMap);
-      const isUsedInternally = sharedIdentifiersMap
+      const isUsedInternally = sharedPathIdentifiersMap
         .entries()
         .some(([otherPath, identifiers]) => otherPath !== path && identifiers.has(name));
       if (consumerPackagePaths.length >= MINIMUM_CONSUMER_PACKAGES || isUsedInternally) return [];
