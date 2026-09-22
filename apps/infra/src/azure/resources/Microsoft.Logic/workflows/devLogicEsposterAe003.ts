@@ -35,8 +35,5 @@ export const devLogicEsposterAe003: azure_native.logic.Workflow = new azure_nati
     tags: { ...ApplicationTags },
     workflowName,
   },
-  {
-    parent: devRgEsposterAe001,
-    protect: true,
-  },
+  { parent: devRgEsposterAe001, protect: true },
 );

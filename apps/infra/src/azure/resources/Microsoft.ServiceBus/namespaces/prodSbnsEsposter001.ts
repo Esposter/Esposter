@@ -15,8 +15,5 @@ export const prodSbnsEsposter001: azure_native.servicebus.Namespace = new azure_
     sku: { name: azure_native.servicebus.SkuName.Basic, tier: azure_native.servicebus.SkuTier.Basic },
     tags: { ...ApplicationTags },
   },
-  {
-    parent: prodRgEsposterAe001,
-    protect: true,
-  },
+  { parent: prodRgEsposterAe001, protect: true },
 );

@@ -13,8 +13,5 @@ export const prodstesposter001ManagementPolicy: azure_native.storage.ManagementP
       policy: { rules: getStorageManagementPolicyRules(prodstesposter001Deadletter) },
       resourceGroupName: prodRgEsposterAe001.name,
     },
-    {
-      parent: prodstesposter001,
-      protect: true,
-    },
+    { parent: prodstesposter001, protect: true },
   );

@@ -13,8 +13,5 @@ export const prodstesposter001Deadletter: azure_native.storage.BlobContainer = n
     publicAccess: azure_native.storage.PublicAccess.None,
     resourceGroupName: prodRgEsposterAe001.name,
   },
-  {
-    parent: prodstesposter001,
-    protect: true,
-  },
+  { parent: prodstesposter001, protect: true },
 );

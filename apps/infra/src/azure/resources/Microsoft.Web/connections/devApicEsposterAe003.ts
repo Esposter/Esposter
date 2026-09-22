@@ -15,8 +15,5 @@ export const devApicEsposterAe003: azure_native.web.Connection = new azure_nativ
     resourceGroupName: devRgEsposterAe001.name,
     tags: { ...ApplicationTags },
   },
-  {
-    parent: devRgEsposterAe001,
-    protect: true,
-  },
+  { parent: devRgEsposterAe001, protect: true },
 );

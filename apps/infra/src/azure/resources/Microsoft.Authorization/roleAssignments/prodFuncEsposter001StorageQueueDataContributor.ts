@@ -17,8 +17,5 @@ export const prodFuncEsposter001StorageQueueDataContributor: azure_native.author
       roleDefinitionId: AzureStorageQueueDataContributorRoleDefinitionId,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.Storage/storageAccounts/${prodstesposter001.name}`,
     },
-    {
-      parent: prodstesposter001,
-      protect: true,
-    },
+    { parent: prodstesposter001, protect: true },
   );

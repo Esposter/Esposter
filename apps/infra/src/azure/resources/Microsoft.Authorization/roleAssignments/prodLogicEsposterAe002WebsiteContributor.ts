@@ -16,8 +16,5 @@ export const prodLogicEsposterAe002WebsiteContributor: azure_native.authorizatio
       roleDefinitionId: AzureWebsiteContributorRoleDefinitionId,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.Web/sites/${prodFuncEsposter001.name}`,
     },
-    {
-      parent: prodFuncEsposter001,
-      protect: true,
-    },
+    { parent: prodFuncEsposter001, protect: true },
   );

@@ -21,8 +21,5 @@ export const prodWpsEsposter001: azure_native.webpubsub.WebPubSub = new azure_na
     tags: { ...ApplicationTags },
     tls: { clientCertEnabled: false },
   },
-  {
-    parent: prodRgEsposterAe001,
-    protect: true,
-  },
+  { parent: prodRgEsposterAe001, protect: true },
 );

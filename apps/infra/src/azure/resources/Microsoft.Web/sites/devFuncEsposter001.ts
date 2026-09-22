@@ -99,8 +99,5 @@ export const devFuncEsposter001: azure_native.web.WebApp = new azure_native.web.
     storageAccountRequired: false,
     tags: { ...ApplicationTags },
   },
-  {
-    parent: devRgEsposterAe001,
-    protect: true,
-  },
+  { parent: devRgEsposterAe001, protect: true },
 );

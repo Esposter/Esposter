@@ -36,8 +36,5 @@ export const prodEvgsEsposterAe007: azure_native.eventgrid.SystemTopicEventSubsc
       retryPolicy: AzureEventSubscriptionRetryPolicy,
       systemTopicName: prodEgstEsposterAe001.name,
     },
-    {
-      parent: prodEgstEsposterAe001,
-      protect: true,
-    },
+    { parent: prodEgstEsposterAe001, protect: true },
   );

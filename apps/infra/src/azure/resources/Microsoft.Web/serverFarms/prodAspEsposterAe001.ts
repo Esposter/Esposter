@@ -26,8 +26,5 @@ export const prodAspEsposterAe001: azure_native.web.AppServicePlan = new azure_n
     targetWorkerSizeId: 0,
     zoneRedundant: false,
   },
-  {
-    parent: prodRgEsposterAe001,
-    protect: true,
-  },
+  { parent: prodRgEsposterAe001, protect: true },
 );

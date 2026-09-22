@@ -21,7 +21,5 @@ export const paEsposter001: azure_native.authorization.PolicyAssignment =
       policyDefinitionId: "/providers/Microsoft.Authorization/policyDefinitions/871b6d14-10aa-478d-b590-94f262ecfa99",
       scope: `subscriptions/${AzureSubscriptionId}`,
     },
-    {
-      protect: true,
-    },
+    { protect: true },
   );

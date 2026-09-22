@@ -19,8 +19,5 @@ export const prodEvgtEsposterAe001: azure_native.eventgrid.Topic = new azure_nat
     tags: { ...ApplicationTags },
     topicName,
   },
-  {
-    parent: prodRgEsposterAe001,
-    protect: true,
-  },
+  { parent: prodRgEsposterAe001, protect: true },
 );

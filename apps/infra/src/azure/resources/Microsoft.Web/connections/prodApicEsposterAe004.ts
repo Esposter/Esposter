@@ -15,8 +15,5 @@ export const prodApicEsposterAe004: azure_native.web.Connection = new azure_nati
     resourceGroupName: prodRgEsposterAe001.name,
     tags: { ...ApplicationTags },
   },
-  {
-    parent: prodRgEsposterAe001,
-    protect: true,
-  },
+  { parent: prodRgEsposterAe001, protect: true },
 );

@@ -44,8 +44,5 @@ export const devstesposter001: azure_native.storage.StorageAccount = new azure_n
     sku: { name: azure_native.storage.SkuName.Standard_LRS },
     tags: { ...ApplicationTags },
   },
-  {
-    parent: devRgEsposterAe001,
-    protect: true,
-  },
+  { parent: devRgEsposterAe001, protect: true },
 );

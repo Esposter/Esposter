@@ -17,8 +17,5 @@ export const devEgstEsposterAe001: azure_native.eventgrid.SystemTopic = new azur
     tags: { ...ApplicationTags },
     topicType: "Microsoft.Storage.StorageAccounts",
   },
-  {
-    parent: devstesposter001,
-    protect: true,
-  },
+  { parent: devstesposter001, protect: true },
 );

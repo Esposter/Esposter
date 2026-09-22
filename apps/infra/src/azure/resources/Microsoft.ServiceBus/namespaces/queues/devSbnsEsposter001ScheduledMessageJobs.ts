@@ -7,13 +7,6 @@ const queueName = AzureQueue.ScheduledMessageJobs;
 
 export const devSbnsEsposter001ScheduledMessageJobs: azure_native.servicebus.Queue = new azure_native.servicebus.Queue(
   `dev-sbns-esposter-001/${queueName}`,
-  {
-    namespaceName: devSbnsEsposter001.name,
-    queueName,
-    resourceGroupName: devRgEsposterAe001.name,
-  },
-  {
-    parent: devSbnsEsposter001,
-    protect: true,
-  },
+  { namespaceName: devSbnsEsposter001.name, queueName, resourceGroupName: devRgEsposterAe001.name },
+  { parent: devSbnsEsposter001, protect: true },
 );

@@ -26,8 +26,5 @@ export const devSrchEsposter001: azure_native.search.Service = new azure_native.
     tags: { ...ApplicationTags },
     upgradeAvailable: azure_native.search.UpgradeAvailable.NotAvailable,
   },
-  {
-    parent: devRgEsposterAe001,
-    protect: true,
-  },
+  { parent: devRgEsposterAe001, protect: true },
 );

@@ -26,8 +26,5 @@ export const devstesposter001Properties: azure_native.storage.BlobServicePropert
       resourceGroupName: devRgEsposterAe001.name,
       restorePolicy: { enabled: false },
     },
-    {
-      parent: devstesposter001,
-      protect: true,
-    },
+    { parent: devstesposter001, protect: true },
   );
