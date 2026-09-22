@@ -10,6 +10,8 @@ const english: ResolvedLocalization = {
     interfaceLanguageSet: (language) =>
       `Everything the plugin writes is in ${language} from this reply; the spinner follows at the next session.`,
     languageMustBeOneOf: (languages) => `The language must be one of ${languages}.`,
+    lorePicked: "Picked by lore; the tier's leaning:",
+    lorePickUnanswered: (reason) => `The lore pick did not answer (${reason}); picked by birthday instead.`,
     muted: "Spoken replies muted.",
     noCharacterNamed: (name) => `No character named "${name}" is in the roster.`,
     noReference: (name) =>
@@ -68,6 +70,7 @@ const english: ResolvedLocalization = {
     teardownDone:
       "Status line, spinner and speak hook removed from user settings; all three go at the next session. The voice's runtime, weights, references and dub are removed; the pick records, the pin and the languages stay.",
     unmuted: "Spoken replies unmuted.",
+    upcomingBirthdays: (list) => `Birthdays this week: ${list}.`,
     usage: (verbs) => `Usage: genshin.ts <${verbs}> [name]`,
     usingInSession: "Speaking as this character from this reply, in this session alone.",
     voiceLanguageAvailable: (dub) => `A ${dub} dub exists; install it with the voice verb to hear replies read in it.`,
@@ -75,6 +78,8 @@ const english: ResolvedLocalization = {
     voiceLanguageUnavailable:
       "No dub of this language exists, so replies keep reading in whichever voice is already set up.",
     voiceLanguageWritten: (dub) => `Dub ${dub} written; no character to prove the voice with from here.`,
+    voiceRemark: (dub, device, isMuted, volume) =>
+      `Voice: the ${dub} dub${device ? ` on ${device}` : ""}, ${isMuted ? "muted" : `volume ${volume}`}.`,
     voiceStatus: (isRuntimeInstalled, dub, device, logPath) =>
       `Runtime ${isRuntimeInstalled ? "installed" : "not installed"}; ${dub} dub; the engine ${device ? `speaks on ${device}` : "has not spoken yet"}; the log is ${logPath}.`,
     voiceUnset: "No voice set up: run this with a dub to install the engine and choose one.",
