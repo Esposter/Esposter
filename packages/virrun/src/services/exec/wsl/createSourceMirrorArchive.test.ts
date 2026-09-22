@@ -79,9 +79,9 @@ describe(createSourceMirrorArchive, () => {
       // Imports from that directory. Dereferencing (`tar -h`) copied the target's content into the link's location, so
       // Its relative resolution broke; preserving the link lets Node walk its realpath and resolve from the target's
       // Real directory.
-      const siblingDirectoryName = "sibling";
-      const linkTarget = `${siblingDirectoryName}/target`;
-      const linkFilename = "link";
+      const siblingDirectoryName = TEST_FILENAME;
+      const linkTarget = `${siblingDirectoryName}/${TEST_FILENAME}`;
+      const linkFilename = "b";
       mkdirSync(join(cwd, siblingDirectoryName));
       writeFileSync(join(cwd, linkTarget), TEST_FILENAME);
       symlinkSync(linkTarget, join(cwd, linkFilename));
@@ -106,7 +106,7 @@ describe(createSourceMirrorArchive, () => {
     // The manifest walk and this spawn cannot be atomic, so a build output or editor temp listed a moment ago may be
     // Gone by now. Tar skips it, archives everything else, and exits non-zero — the plan must survive that, and bsdtar
     // Names no path on this report (`tar: : Couldn't visit directory`), so only the archive's members can attribute it.
-    const vanishedFilename = "vanished";
+    const vanishedFilename = "b";
     writeFileSync(join(cwd, TEST_FILENAME), TEST_FILENAME);
 
     const { archiveFilename, unarchivedPaths } = createSourceMirrorArchive(
@@ -129,7 +129,7 @@ describe(createSourceMirrorArchive, () => {
     // The message names absolute temp paths and a pid, and the two host tars word it differently — nothing
     // Reconstructable, so the abort is observed rather than snapshotted
     const isAborted = getResult(() =>
-      createSourceMirrorArchive(join(cwd, "missing"), entryUnc, [TEST_FILENAME], TAG),
+      createSourceMirrorArchive(join(cwd, TEST_FILENAME), entryUnc, [TEST_FILENAME], TAG),
     ).match(
       () => false,
       () => true,

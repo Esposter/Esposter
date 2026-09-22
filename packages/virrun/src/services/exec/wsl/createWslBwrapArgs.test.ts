@@ -61,9 +61,9 @@ describe(createWslBwrapArgs, () => {
   test("translates capture overlay upper and work directories before building the argv", () => {
     expect.hasAssertions();
 
-    const upperDirectory = String.raw`C:\cache\snap\upper`;
-    const workDirectory = String.raw`C:\cache\snap\work`;
-    const args = createWslBwrapArgs("pnpm install", TEST_REPO_ROOT_WIN, {
+    const upperDirectory = String.raw`C:\b`;
+    const workDirectory = String.raw`C:\c`;
+    const args = createWslBwrapArgs("", TEST_REPO_ROOT_WIN, {
       overlayLayers: { upperDirectory, workDirectory },
     });
 
@@ -83,15 +83,15 @@ describe(createWslBwrapArgs, () => {
         "--overlay-src",
         "/a/.virrun/sources",
         "--overlay",
-        "/wsl/C:\\cache\\snap\\upper",
-        "/wsl/C:\\cache\\snap\\work",
+        "/wsl/C:\\b",
+        "/wsl/C:\\c",
         "/wsl/C:\\a",
         "--chdir",
         "/wsl/C:\\a",
         "--",
         "/bin/sh",
         "-c",
-        "pnpm install",
+        "",
       ]
     `);
   });
@@ -99,8 +99,8 @@ describe(createWslBwrapArgs, () => {
   test("translates fork overlay lower directories before building the argv", () => {
     expect.hasAssertions();
 
-    const snapshotUpper = String.raw`C:\cache\snap\upper`;
-    const args = createWslBwrapArgs("vitest", TEST_REPO_ROOT_WIN, {
+    const snapshotUpper = String.raw`C:\b`;
+    const args = createWslBwrapArgs("", TEST_REPO_ROOT_WIN, {
       overlayLayers: { lowerDirectories: [snapshotUpper] },
     });
 
@@ -120,7 +120,7 @@ describe(createWslBwrapArgs, () => {
         "--overlay-src",
         "/a/.virrun/sources",
         "--overlay-src",
-        "/wsl/C:\\cache\\snap\\upper",
+        "/wsl/C:\\b",
         "--tmp-overlay",
         "/wsl/C:\\a",
         "--chdir",
@@ -128,7 +128,7 @@ describe(createWslBwrapArgs, () => {
         "--",
         "/bin/sh",
         "-c",
-        "vitest",
+        "",
       ]
     `);
   });

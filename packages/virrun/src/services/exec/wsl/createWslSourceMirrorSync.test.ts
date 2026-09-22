@@ -258,7 +258,7 @@ describe(createWslSourceMirrorSync, () => {
   test("falls back to the full materialize when a bare-name exclude changed", () => {
     expect.hasAssertions();
 
-    publish([...excludes, "dist"]);
+    publish([...excludes, "a"]);
 
     const { mirrorPath, script } = createWslSourceMirrorSync(cwd, excludes);
 

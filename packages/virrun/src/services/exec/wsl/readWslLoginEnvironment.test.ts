@@ -10,6 +10,7 @@ import {
   VIRRUN_LOGIN_PATH_BEGIN_MARKER,
   VIRRUN_LOGIN_PATH_END_MARKER,
 } from "#src/services/exec/wsl/constants";
+import { WSL_EXECUTABLE } from "#src/services/exec/wsl/constants";
 import { TEST_WSL_LOGIN_ENVIRONMENT } from "#src/services/exec/wsl/constants.test";
 import { writeWslEnvironmentCache } from "#src/services/exec/wsl/writeWslEnvironmentCache";
 import { takeOne } from "@esposter/shared";
@@ -68,7 +69,7 @@ describe("readWslLoginEnvironment", () => {
     const [file, args] = takeOne(calls, calls.length - 1);
     const script = takeOne(args ?? [], 3);
 
-    expect(file).toBe("wsl.exe");
+    expect(file).toBe(WSL_EXECUTABLE);
     expect([takeOne(args ?? []), takeOne(args ?? [], 1), takeOne(args ?? [], 2)]).toStrictEqual(["--exec", "sh", "-c"]);
     expect(script).toMatchInlineSnapshot(
       `"SHELL_BIN="\${SHELL:-}"; [ -x "$SHELL_BIN" ] || SHELL_BIN="$(getent passwd "$(id -un)" 2>/dev/null | cut -d: -f7)"; [ -x "$SHELL_BIN" ] || SHELL_BIN=/bin/sh; exec "$SHELL_BIN" -lic 'nodeBin="$(command -v node 2>/dev/null)"; [ -n "$nodeBin" ] && PATH="$(dirname "$(readlink -f "$nodeBin")"):$PATH"; nodeVersion="$(node --version 2>/dev/null)"; printf "__VIRRUN_LOGIN_PATH_BEGIN__%s__VIRRUN_LOGIN_PATH_END____VIRRUN_LOGIN_NODE_BEGIN__%s__VIRRUN_LOGIN_NODE_END__" "$PATH" "$nodeVersion"'"`,
@@ -146,7 +147,7 @@ describe("readWslLoginEnvironment", () => {
     expect.hasAssertions();
 
     execFileSync.mockImplementation(() => {
-      throw new Error("wsl.exe not found");
+      throw new Error("");
     });
     const { readWslLoginEnvironment } = await import("#src/services/exec/wsl/readWslLoginEnvironment");
 
