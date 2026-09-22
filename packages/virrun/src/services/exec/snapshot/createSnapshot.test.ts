@@ -20,7 +20,7 @@ vi.mock(
 
 describe(createSnapshot, () => {
   const { createWorkspace } = setupTemporaryCacheHome();
-  const command = "pnpm install";
+  const command = "";
   let repository = "";
 
   beforeEach(() => {

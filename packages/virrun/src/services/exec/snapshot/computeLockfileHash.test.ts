@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(computeLockfileHash, () => {
-  const lockfileContent = "lockfileVersion: '9.0'\n";
+  const lockfileContent = "";
 
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
   // A lockfile-less directory exercises the throw path; any other content makes a workspace root.
@@ -31,9 +31,7 @@ describe(computeLockfileHash, () => {
     expect(computeLockfileHash(createRepository(lockfileContent))).toBe(
       computeLockfileHash(createRepository(lockfileContent)),
     );
-    expect(computeLockfileHash(createRepository(lockfileContent))).not.toBe(
-      computeLockfileHash(createRepository(`${lockfileContent}  added: true\n`)),
-    );
+    expect(computeLockfileHash(createRepository(lockfileContent))).not.toBe(computeLockfileHash(createRepository(" ")));
   });
 
   test("hashes the workspace-root lockfile when invoked from a nested subdirectory", () => {
@@ -54,7 +52,7 @@ describe(computeLockfileHash, () => {
     const beforeHash = computeLockfileHash(repository);
     // An in-process rewrite (an install regenerating the lockfile) must invalidate the cached digest; the size
     // Change alone defeats the stat guard even where the mtime resolution can't see a fast back-to-back write.
-    writeFileSync(lockfile, `${lockfileContent}  added: true\n`);
+    writeFileSync(lockfile, " ");
 
     expect(computeLockfileHash(repository)).not.toBe(beforeHash);
   });

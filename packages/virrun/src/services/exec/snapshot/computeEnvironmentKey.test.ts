@@ -4,19 +4,20 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 const { getSandboxNodeVersion } = vi.hoisted(() => ({
-  getSandboxNodeVersion: vi.fn<() => string>(() => "v26.5.0"),
+  getSandboxNodeVersion: vi.fn<() => string>(() => "v0.0.0"),
 }));
 
 vi.mock(import("#src/services/exec/util/getSandboxNodeVersion"), () => ({ getSandboxNodeVersion }));
 
 describe(computeEnvironmentKey, () => {
   const { createWorkspace } = setupTemporaryCacheHome();
-  const lockfileContent = "lockfileVersion: '9.0'\n";
+  const lockfileContent = "";
+  const nodeVersion = "v0.0.0";
 
   test("is stable for the same lockfile and node", () => {
     expect.hasAssertions();
 
-    getSandboxNodeVersion.mockReturnValue("v26.5.0");
+    getSandboxNodeVersion.mockReturnValue(nodeVersion);
 
     expect(computeEnvironmentKey(createWorkspace(lockfileContent))).toBe(
       computeEnvironmentKey(createWorkspace(lockfileContent)),
@@ -26,19 +27,19 @@ describe(computeEnvironmentKey, () => {
   test("moves when the dependency closure changes", () => {
     expect.hasAssertions();
 
-    getSandboxNodeVersion.mockReturnValue("v26.5.0");
+    getSandboxNodeVersion.mockReturnValue(nodeVersion);
 
     expect(computeEnvironmentKey(createWorkspace(lockfileContent))).not.toBe(
-      computeEnvironmentKey(createWorkspace(`${lockfileContent}  added: true\n`)),
+      computeEnvironmentKey(createWorkspace(" ")),
     );
   });
 
   test("moves when the sandbox node major changes — an installed node_modules is ABI-bound", () => {
     expect.hasAssertions();
 
-    getSandboxNodeVersion.mockReturnValue("v26.5.0");
+    getSandboxNodeVersion.mockReturnValue(nodeVersion);
     const beforeKey = computeEnvironmentKey(createWorkspace(lockfileContent));
-    getSandboxNodeVersion.mockReturnValue("v27.0.0");
+    getSandboxNodeVersion.mockReturnValue("v1.0.0");
 
     expect(computeEnvironmentKey(createWorkspace(lockfileContent))).not.toBe(beforeKey);
   });
@@ -63,9 +64,9 @@ describe(computeEnvironmentKey, () => {
   test("holds across a node minor or patch bump, so a routine upgrade keeps the warm snapshot", () => {
     expect.hasAssertions();
 
-    getSandboxNodeVersion.mockReturnValue("v26.5.0");
+    getSandboxNodeVersion.mockReturnValue(nodeVersion);
     const beforeKey = computeEnvironmentKey(createWorkspace(lockfileContent));
-    getSandboxNodeVersion.mockReturnValue("v26.9.1");
+    getSandboxNodeVersion.mockReturnValue("v0.1.1");
 
     expect(computeEnvironmentKey(createWorkspace(lockfileContent))).toBe(beforeKey);
   });

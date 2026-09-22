@@ -28,8 +28,8 @@ describe(parseOverlayManifest, () => {
   test("throws on malformed JSON", () => {
     expect.hasAssertions();
 
-    expect(() => parseOverlayManifest("not json")).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: parseOverlayManifest, Unexpected token 'o', "not json" is not valid JSON]`,
+    expect(() => parseOverlayManifest("")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: parseOverlayManifest, Unexpected end of JSON input]`,
     );
   });
 

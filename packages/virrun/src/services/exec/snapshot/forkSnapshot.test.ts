@@ -27,7 +27,7 @@ describe(forkSnapshot, () => {
     const { upperDirectory } = resolveSnapshotLocation(repository);
     mkdirSync(upperDirectory, { recursive: true });
     const backend = createRecordingBackend({ exitCode: 0, stderr: "", stdout });
-    const result = await forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" });
+    const result = await forkSnapshot(backend, "", { cwd: repository, stdio: "pipe" });
 
     expect(result.stdout).toBe(stdout);
     expect(backend.calls[0]?.overlayLayers).toStrictEqual({ lowerDirectories: [upperDirectory] });
@@ -40,7 +40,7 @@ describe(forkSnapshot, () => {
     mkdirSync(upperDirectory, { recursive: true });
     const prepareUpperDirectory = create();
     const backend = createRecordingBackend();
-    await forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" }, [prepareUpperDirectory]);
+    await forkSnapshot(backend, "", { cwd: repository, stdio: "pipe" }, [prepareUpperDirectory]);
 
     expect(backend.calls[0]?.overlayLayers).toStrictEqual({
       lowerDirectories: [upperDirectory, prepareUpperDirectory],
@@ -52,9 +52,7 @@ describe(forkSnapshot, () => {
 
     const backend = createRecordingBackend();
 
-    expect(() =>
-      forkSnapshot(backend, "vitest", { cwd: repository, stdio: "pipe" }),
-    ).toThrowErrorMatchingInlineSnapshot(
+    expect(() => forkSnapshot(backend, "", { cwd: repository, stdio: "pipe" })).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, forkSnapshot.name, "no captured snapshot to fork; run createSnapshot first").message}]`,
     );
   });

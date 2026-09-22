@@ -59,7 +59,7 @@ describe(persistRun, () => {
 
     exec.mockResolvedValue({ exitCode: 0, stderr: "", stdout: "" });
 
-    const result = await persistRun(backend, "oxfmt", { cwd: HOST_DIRECTORY, stdio: "pipe" }, [], [], onPersist);
+    const result = await persistRun(backend, "", { cwd: HOST_DIRECTORY, stdio: "pipe" }, [], [], onPersist);
 
     expect(result.exitCode).toBe(0);
 
@@ -76,7 +76,7 @@ describe(persistRun, () => {
 
     exec.mockResolvedValue({ exitCode: 1, stderr: "", stdout: "" });
 
-    const result = await persistRun(backend, "eslint --fix", { cwd: HOST_DIRECTORY, stdio: "pipe" }, [], [], onPersist);
+    const result = await persistRun(backend, "", { cwd: HOST_DIRECTORY, stdio: "pipe" }, [], [], onPersist);
 
     expect(result.exitCode).toBe(1);
 
@@ -91,7 +91,7 @@ describe(persistRun, () => {
 
     exec.mockResolvedValue({ exitCode: 1, stderr: "", stdout: "" });
 
-    await persistRun(backend, "eslint --fix", { cwd: HOST_DIRECTORY, stdio: "pipe" });
+    await persistRun(backend, "", { cwd: HOST_DIRECTORY, stdio: "pipe" });
 
     expect(removeSnapshotDirectory).toHaveBeenCalledTimes(2);
   });

@@ -65,7 +65,7 @@ describe(sweepStaleEntries, () => {
   test("is a no-op when the directory does not exist", () => {
     expect.hasAssertions();
 
-    const absentDirectory = join(directory, "absent");
+    const absentDirectory = join(directory, TEST_FILENAME);
 
     sweepStaleEntries(absentDirectory, checkIsStale);
 
