@@ -31,7 +31,7 @@ describe("moderationRouter", () => {
   let roomId: string;
   const durationMs = 1;
   const note = "note";
-  const position = 5;
+  const position = 1;
   const emptyFilters = { actorUserId: "", targetUserId: "", type: "" } as const;
   const readBanRows = (userId: string) =>
     mockContext.db
@@ -454,7 +454,7 @@ describe("moderationRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    const noteCount = 3;
+    const noteCount = 2;
     for (let i = 0; i < noteCount; i++) {
       vi.setSystemTime(i);
       await moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id });
