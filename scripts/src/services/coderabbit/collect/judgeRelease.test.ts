@@ -47,10 +47,7 @@ vi.mock(import("#src/services/shared/runGh"), () => ({ runGh: runGh as unknown a
 
 const getComment = (login: string, body: string): GitHubEntry => ({ body, id: 0, updated_at: "", user: { login } });
 
-// A walkthrough carrying both blocks the judge can be handed, each telling itself apart by its own marker
 const getBlock = (marker: string) => `<!-- ${marker}_start -->\n${marker}\n<!-- ${marker}_end -->`;
-
-const WALKTHROUGH = [getBlock(RISK_MARKER), getBlock(ASSESSMENT_MARKER)].join("\n");
 
 describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const { commitFile, getCwd, publish, readSha } = setupFixtureRepository();
@@ -58,6 +55,8 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const ONE_HOUR_MS: number = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
   const viewerLogin = "viewerLogin";
   const level = TEST_FILENAME;
+  // A walkthrough carrying both blocks the judge can be handed, each telling itself apart by its own marker
+  const WALKTHROUGH = [getBlock(RISK_MARKER), getBlock(ASSESSMENT_MARKER)].join("\n");
   const review: GitHubReview = {
     body: "**Actionable comments posted: 0**",
     commit_id: "",
