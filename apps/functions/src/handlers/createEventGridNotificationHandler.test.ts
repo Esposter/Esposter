@@ -33,14 +33,14 @@ describe(createEventGridNotificationHandler, () => {
   test("rethrows a failing send so Event Grid redelivers the event", async () => {
     expect.hasAssertions();
 
-    const error = new Error("");
+    const error = new Error(" ");
     const send = vi
       .fn<(context: AInvocationContext, data: z.infer<typeof schema>) => Promise<void>>()
       .mockRejectedValue(error);
     const handler = createEventGridNotificationHandler(AzureFunction.ProcessNotification, schema, send, () => "");
 
     await expect(handler(createEventGridEvent({ data }), context)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error]`,
+      `[Error:  ]`,
     );
   });
 });

@@ -100,7 +100,7 @@ describe(sendNotification, () => {
     expect.hasAssertions();
 
     const trim = vi.spyOn(mockDb, "delete").mockImplementationOnce(() => {
-      throw new Error("");
+      throw new Error(" ");
     });
 
     await expect(

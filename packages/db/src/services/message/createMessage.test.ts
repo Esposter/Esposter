@@ -63,13 +63,13 @@ describe(createMessage, () => {
   test("removes the index row again when the entity write fails", async () => {
     expect.hasAssertions();
 
-    const createMessageEntityError = new Error("");
+    const createMessageEntityError = new Error(" ");
     const { messageAscendingClient, messageAscendingMock, messageClient } =
       createTableClients(createMessageEntityError);
 
     await expect(
       createMessage(messageClient, messageAscendingClient, input),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     // The row taken back is the row written, not merely some row
     const [indexEntity] = takeOne(messageAscendingMock.createEntity.mock.calls);
 
