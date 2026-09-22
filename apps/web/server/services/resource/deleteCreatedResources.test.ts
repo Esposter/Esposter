@@ -84,7 +84,7 @@ describe(deleteCreatedResources, () => {
     vi.spyOn(console, "error").mockImplementation(noop);
     containerClientMock.current = {
       listBlobsFlat: () => {
-        throw new Error("message");
+        throw new Error("");
       },
     } as unknown as ContainerClient;
     await createActivity();

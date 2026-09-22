@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { MOCK_ENDPOINT } from "#src/services/deadLetter/constants.test";
+import { MOCK_ENDPOINT } from "#src/services/notification/constants.test";
 import { pushSubscriptions, sessions, users } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, describe } from "vitest";

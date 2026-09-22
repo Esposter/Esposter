@@ -23,9 +23,7 @@ describe(insertCallSessionId, () => {
   test("reports a taken id as no id, so the caller mints another", async () => {
     expect.hasAssertions();
 
-    const db = createDb(() =>
-      Promise.reject(Object.assign(new Error("message"), { code: UNIQUE_VIOLATION_ERROR_CODE })),
-    );
+    const db = createDb(() => Promise.reject(Object.assign(new Error(""), { code: UNIQUE_VIOLATION_ERROR_CODE })));
 
     await expect(insertCallSessionId(db, { userId })).resolves.toBeUndefined();
   });
@@ -35,10 +33,8 @@ describe(insertCallSessionId, () => {
 
     // Swallowed, a dead connection burns every attempt and then surfaces as an id-allocation failure, which is
     // The one thing that did not go wrong
-    const db = createDb(() => Promise.reject(new Error("connection terminated")));
+    const db = createDb(() => Promise.reject(new Error("")));
 
-    await expect(insertCallSessionId(db, { userId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: connection terminated]`,
-    );
+    await expect(insertCallSessionId(db, { userId })).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
   });
 });

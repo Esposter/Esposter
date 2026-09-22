@@ -20,7 +20,7 @@ describe(cloneFiles, () => {
     const beginCopyFromURL = vi.fn<(copySource: string) => Promise<{ pollUntilDone: () => Promise<void> }>>(
       (copySource) =>
         rejectSource && copySource.endsWith(rejectSource)
-          ? Promise.reject(new Error("CannotVerifyCopySource"))
+          ? Promise.reject(new Error(""))
           : Promise.resolve({ pollUntilDone: () => Promise.resolve() }),
     );
     const deletedBlobNames: string[] = [];
@@ -82,7 +82,7 @@ describe(cloneFiles, () => {
         sourcePrefix,
         destinationPrefix,
       ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: CannotVerifyCopySource]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
 
     expect(deletedBlobNames).toHaveLength(1);
     expect(takeOne(deletedBlobNames).endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
@@ -105,7 +105,7 @@ describe(cloneFiles, () => {
         sourcePrefix,
         destinationPrefix,
       ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: CannotVerifyCopySource]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error]`);
 
     // Only the sibling that landed — the failing copy wrote nothing to clear
     expect(deletedBlobNames).toHaveLength(1);

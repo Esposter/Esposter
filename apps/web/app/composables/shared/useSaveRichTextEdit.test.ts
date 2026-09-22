@@ -60,7 +60,7 @@ describe(useSaveRichTextEdit, () => {
 
     const { edited, emit, save } = createSave(
       edit,
-      vi.fn<() => Promise<unknown>>(() => Promise.reject(new Error("error"))),
+      vi.fn<() => Promise<unknown>>(() => Promise.reject(new Error(""))),
     );
     save(createEditor(text));
     await waitForSynchronizedFunctions();

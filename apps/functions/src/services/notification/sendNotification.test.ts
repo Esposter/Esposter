@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { MOCK_ENDPOINT } from "#src/services/deadLetter/constants.test";
+import { MOCK_ENDPOINT } from "#src/services/notification/constants.test";
 import { sendNotification } from "#src/services/notification/sendNotification";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
