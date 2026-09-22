@@ -10,5 +10,5 @@ Every workspace package outside `apps/web` and `packages/shared`.
 | `packages/virrun` — the rest                                                   | 2026-09-21 |       |
 | `apps/infra`, `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-09-21 |       |
 | `packages/configuration`, `scripts`                                            | 2026-09-21 |       |
-| `packages/keyframe-store`                                                      | 2026-09-15 |       |
+| `packages/keyframe-store`                                                      | 2026-09-22 |       |
 | `packages/genshin-persona`                                                     | 2026-09-21 |       |
