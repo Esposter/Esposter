@@ -33,7 +33,7 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 ## Comments
 
 - **A `//` comment goes on its own line _above_ the code it describes, never trailing on the same line.** `const x = f(); // why` becomes a comment line then the statement. Own-line comments read consistently, survive the capitalization hook, and don't push lines past the width limit. (Directive comments that must be inline — a rare `// eslint-disable-line` — are the only exception.)
-- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only. This includes **functional/directive comments** (`// oxlint-disable-next-line ...`, `// @ts-expect-error ...`, etc.) — they attach directly to the line they govern with no surrounding blank line.
+- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only. This includes **functional/directive comments** (`// oxlint-disable-next-line ...`, `// @ts-expect-error ...`, etc.) — they attach directly to the line they govern with no surrounding blank line. **Module scope is not an exception**: `const X = …;` / blank line / `// …` / `export const Y = …` is this violation, not a paragraph break between two declarations — the comment is the break, so the blank line goes. The only blank line a comment sits under is the import block's, or a file-level `/* … */` directive's.
 
   ```ts
   // CORRECT — comment acts as separator

@@ -53,7 +53,10 @@
 Greps, per unit:
 
 1. `^\s*//.{85,}` over `*.ts`, `*.vue`
-2. `\n[ \t]*\n[ \t]*//` multiline (skip `.test.ts`/`.test-d.ts` and the import→body boundary)
+2. `\n[ \t]*\n[ \t]*//` multiline (skip `.test.ts`/`.test-d.ts`, the import→body boundary and a file-level
+   `/* … */` directive). **Module scope included** — a declaration, a blank line and then a commented declaration
+   is a hit, not a paragraph break; the first pass read it as one and left it standing in every constants file,
+   which is the shape this grep exists to catch
 3. `/\*` over `*.ts`, `*.vue`. Three shapes are not comments and are most of the hits: `import.meta.glob`, a glob in a string or an attribute value (`accept="image/*"`), and a `<style>` block, where `/* */` is the only syntax CSS has.
 4. `<!--` over `*.vue`
 5. `(used to|previously|no longer|formerly|the old |the former |now that |replaces the |we now )` over `//`/`<!--` lines — the history-narration ban. Most hits are present-tense domain uses (`the old manifest`, `no longer resolvable`); what fails is a clause naming what the code replaced.
