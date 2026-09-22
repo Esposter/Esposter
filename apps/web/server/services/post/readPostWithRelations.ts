@@ -18,11 +18,7 @@ export const readPostWithRelations = async (
   getPostWithViewerLike(
     await requireEntity(
       db.query.posts.findFirst({
-        where: {
-          id: {
-            eq: id,
-          },
-        },
+        where: { id: { eq: id } },
         with: userId ? getViewerPostRelations(userId) : PostRelations,
       }),
       entityType,

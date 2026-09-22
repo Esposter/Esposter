@@ -16,6 +16,13 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 - **No blank lines within Vue templates.** A blank line inserted to visually separate template sections is a smell that the component owns more than one responsibility — extract each section into its own focused child component rather than spacing them apart. See the `vue-page-composition` skill (maximal granularity / one concern per component).
 - **Imports** — order and blank lines are autofixed by `perfectionist/sort-imports` (`packages/configuration/eslint/plugins/perfectionist.js`); `pnpm lint:fix` settles it. `internalPattern: []` is what collapses every source (`external-pkg`, `#shared`, `@vueuse/*`, `@/`) into one bucket per kind, so the fixer produces a contiguous `import type` group, one blank line, then a contiguous value group. Don't hand-place import blank lines.
 
+## Object Literals
+
+- **An object literal that fits the width is written on one line.** `oxfmt` preserves whatever expansion the
+  source already has — a newline between `{` and the first key keeps the object broken however short it is — so a
+  nested `where: { userId: { eq: userId } }` typed out over seven lines survives `pnpm format` untouched and
+  drifts from the inline form every sibling uses. Nothing reports it, so it is collapsed by hand when it fits.
+
 ## Comments
 
 - **A `//` comment goes on its own line _above_ the code it describes, never trailing on the same line.** `const x = f(); // why` becomes a comment line then the statement. Own-line comments read consistently, survive the capitalization hook, and don't push lines past the width limit. (Directive comments that must be inline — a rare `// eslint-disable-line` — are the only exception.)

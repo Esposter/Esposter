@@ -372,14 +372,7 @@ export const baseRoomRouter = router({
       if (!invite || !checkIsInviteUsable(invite)) return undefined;
 
       const membership = await ctx.db.query.usersToRoomsInMessage.findFirst({
-        where: {
-          roomId: {
-            eq: invite.roomId,
-          },
-          userId: {
-            eq: ctx.getSessionPayload.user.id,
-          },
-        },
+        where: { roomId: { eq: invite.roomId }, userId: { eq: ctx.getSessionPayload.user.id } },
       });
       return { ...invite, isMember: Boolean(membership) };
     }),

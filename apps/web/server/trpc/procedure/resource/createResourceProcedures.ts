@@ -165,15 +165,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
             sortBy.length > 0 ? parseSortByToSql(resource, sortBy) : desc(resource.updatedAt),
           where: {
             // Soft-deleted resources belong to the Recycle bin, never to a type's own listing
-            deletedAt: {
-              isNull: true,
-            },
-            type: {
-              eq: type,
-            },
-            userId: {
-              eq: ctx.getSessionPayload.user.id,
-            },
+            deletedAt: { isNull: true },
+            type: { eq: type },
+            userId: { eq: ctx.getSessionPayload.user.id },
           },
           with: { publication: true },
         });
