@@ -42,7 +42,7 @@ describe(serializeCsv, () => {
 
   test.each([
     ["0,1", '"0,1"'],
-    ['say "hi"', '"say ""hi"""'],
+    ['"', '""""'],
     ["0\n1", '"0\n1"'],
     ["0\r1", '"0\r1"'],
   ])("quotes a cell holding %j", async (value, expected) => {
@@ -82,12 +82,12 @@ describe(serializeCsv, () => {
 
     const dataSource = createDataSource(
       [createColumn("a"), createColumn("b"), createColumn("c")],
-      [createRow({ a: "0,1", b: 'say "hi"', c: null })],
+      [createRow({ a: "0,1", b: '"', c: null })],
     );
     const { rows } = await roundTrip(dataSource);
 
     expect(rows).toHaveLength(1);
-    expect(takeOne(rows).data).toStrictEqual({ a: "0,1", b: 'say "hi"', c: null });
+    expect(takeOne(rows).data).toStrictEqual({ a: "0,1", b: '"', c: null });
   });
 
   test("a cell containing a newline round trips as one row", async () => {
