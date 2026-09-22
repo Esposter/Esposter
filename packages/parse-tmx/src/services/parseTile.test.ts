@@ -14,7 +14,7 @@ describe(parseTile, () => {
   const name = "name";
   const value = "value";
   const id = 0;
-  const frame = 1;
+  const frame = 0;
   const baseNode = { $: { id }, $$: [] };
 
   test("parses animation frames", () => {

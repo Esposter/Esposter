@@ -7,8 +7,8 @@ describe(parseNumbers, () => {
 
     expect(parseNumbers("1")).toBe(1);
     expect(parseNumbers("-1")).toBe(-1);
-    expect(parseNumbers("1.5")).toBe(1.5);
-    expect(parseNumbers("1e3")).toBe(1000);
+    expect(parseNumbers("0.1")).toBe(0.1);
+    expect(parseNumbers("1e1")).toBe(10);
     expect(parseNumbers("")).toBe(0);
     expect(parseNumbers("a")).toBe("a");
   });

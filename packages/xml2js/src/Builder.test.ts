@@ -8,34 +8,32 @@ describe(Builder, () => {
   test("renders nullish values as empty elements", () => {
     expect.hasAssertions();
 
-    expect(builder.buildObject({ root: { array: [null, undefined], object: null, value: undefined } })).toBe(
-      `${xmlDeclaration}<root><array/><array/><object/><value/></root>`,
+    expect(builder.buildObject({ a: { b: [null, undefined], c: null, d: undefined } })).toBe(
+      `${xmlDeclaration}<a><b/><b/><c/><d/></a>`,
     );
   });
 
   test("renders scalar values as element text", () => {
     expect.hasAssertions();
 
-    expect(builder.buildObject({ root: { array: ["a", "b"], boolean: true, number: 1, string: "a" } })).toBe(
-      `${xmlDeclaration}<root><array>a</array><array>b</array><boolean>true</boolean><number>1</number><string>a</string></root>`,
+    expect(builder.buildObject({ a: { b: ["a", "b"], c: true, d: 0, e: "a" } })).toBe(
+      `${xmlDeclaration}<a><b>a</b><b>b</b><c>true</c><d>0</d><e>a</e></a>`,
     );
   });
 
   test("renders every entry of a root array", () => {
     expect.hasAssertions();
 
-    expect(builder.buildObject({ root: [{ item: 1, other: 2 }, { item: 3 }] })).toBe(
-      `${xmlDeclaration}<root><item>1</item><other>2</other><item>3</item></root>`,
+    expect(builder.buildObject({ a: [{ b: 0, c: 1 }, { b: 2 }] })).toBe(
+      `${xmlDeclaration}<a><b>0</b><c>1</c><b>2</b></a>`,
     );
   });
 
   test("renders nothing for a nullish root array member or attribute bag", () => {
     expect.hasAssertions();
 
-    expect(builder.buildObject({ root: [{ item: 1 }, null, undefined] })).toBe(
-      `${xmlDeclaration}<root><item>1</item></root>`,
-    );
-    expect(builder.buildObject({ root: { $: null, item: 1 } })).toBe(`${xmlDeclaration}<root><item>1</item></root>`);
+    expect(builder.buildObject({ a: [{ b: 0 }, null, undefined] })).toBe(`${xmlDeclaration}<a><b>0</b></a>`);
+    expect(builder.buildObject({ a: { $: null, b: 0 } })).toBe(`${xmlDeclaration}<a><b>0</b></a>`);
   });
 
   test("wraps every scalar value in cdata", () => {
@@ -43,8 +41,8 @@ describe(Builder, () => {
 
     const cdataBuilder = new Builder({ cdata: true, renderOpts: { pretty: false } });
 
-    expect(cdataBuilder.buildObject({ root: { array: ["a", 2, false], boolean: true, number: 1, string: "a" } })).toBe(
-      `${xmlDeclaration}<root><array><![CDATA[a]]></array><array><![CDATA[2]]></array><array><![CDATA[false]]></array><boolean><![CDATA[true]]></boolean><number><![CDATA[1]]></number><string><![CDATA[a]]></string></root>`,
+    expect(cdataBuilder.buildObject({ a: { b: ["a", 0, false], c: true, d: 0, e: "a" } })).toBe(
+      `${xmlDeclaration}<a><b><![CDATA[a]]></b><b><![CDATA[0]]></b><b><![CDATA[false]]></b><c><![CDATA[true]]></c><d><![CDATA[0]]></d><e><![CDATA[a]]></e></a>`,
     );
   });
 });

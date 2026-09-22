@@ -3,7 +3,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(unpackTileBytes, () => {
-  const bufferSize = 4;
+  const bufferSize = Uint32Array.BYTES_PER_ELEMENT;
 
   test("unpacks", () => {
     expect.hasAssertions();

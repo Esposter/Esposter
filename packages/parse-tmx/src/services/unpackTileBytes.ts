@@ -10,7 +10,8 @@ export const unpackTileBytes = (bytes: Uint8Array, expectedCount: number): numbe
 
   const unpackedTiles: number[] = [];
   const dataView = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-  for (let i = 0; i < expectedCount; i += 4) unpackedTiles.push(dataView.getUint32(i, true));
+  for (let i = 0; i < expectedCount; i += Uint32Array.BYTES_PER_ELEMENT)
+    unpackedTiles.push(dataView.getUint32(i, true));
 
   return unpackedTiles;
 };
