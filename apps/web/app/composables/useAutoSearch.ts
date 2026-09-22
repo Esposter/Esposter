@@ -2,7 +2,7 @@ import { AUTO_SEARCH_THROTTLE_MS } from "@/services/shared/constants";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, normalizeString } from "@esposter/shared";
 
-export interface UseAutoSearchOptions {
+interface UseAutoSearchOptions {
   isIncludeEmptySearchQuery?: true;
   // Called when the query empties out so the consumer can drop stale results
   reset: () => void;

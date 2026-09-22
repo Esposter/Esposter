@@ -1,7 +1,7 @@
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getResultAsync, noop } from "@esposter/shared";
 
-export interface UseDocumentPictureInPictureOptions {
+interface UseDocumentPictureInPictureOptions {
   height?: number;
   width?: number;
 }
