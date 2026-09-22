@@ -13,6 +13,16 @@ describe(getFileOrganizationFindings, () => {
     ]);
   });
 
+  test("reports an operation beside the value whose noun it carries", () => {
+    expect.hasAssertions();
+
+    const source = "export type User = 0;\nexport const deleteUser = 0;\n";
+    expect(getFileOrganizationFindings(SERVICE_PATH, source)).toStrictEqual([
+      { names: ["User", "deleteUser"], path: SERVICE_PATH, type: FileOrganizationFindingType.ExportsPerFile },
+      { names: ["User"], path: SERVICE_PATH, type: FileOrganizationFindingType.TypeOutsideModels },
+    ]);
+  });
+
   test.each([
     ["a schema beside its type", "export interface Thing {}\nexport const thingSchema = 0;\n"],
     ["a values array beside its enum", "export enum VoiceLanguage {}\nexport const VoiceLanguages = [];\n"],

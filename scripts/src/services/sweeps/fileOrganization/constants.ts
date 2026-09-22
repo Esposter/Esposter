@@ -13,6 +13,22 @@ export const CONSTANTS_FILE_REGEX: RegExp = /\/constants(?:\.test|\.bench)?\.ts$
 // Where one identifier word ends and the next begins: a case change, a digit run, or a separator
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const WORD_BOUNDARY_REGEX: RegExp = /(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|[_$]+/u;
+// The naming skill's function prefixes. A name opening on one of them beside a base that does not carry it names
+// What is done to a thing rather than a second spelling of it, however many words the two share — `deleteUser`
+// Beside `User`, `getPersonaReferenceMapSource` beside `PersonaReferenceMap`
+export const OPERATION_PREFIXES: ReadonlySet<string> = new Set([
+  "check",
+  "compute",
+  "create",
+  "delete",
+  "get",
+  "on",
+  "read",
+  "set",
+  "store",
+  "to",
+  "update",
+]);
 export const COMPOSABLE_PREFIX = "use";
 // The naming skill's abstract-class marker, one letter the concrete twin does not carry
 export const ABSTRACT_PREFIX = "a";
