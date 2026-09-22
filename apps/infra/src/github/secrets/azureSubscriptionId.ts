@@ -9,7 +9,5 @@ export const azureSubscriptionId: github.ActionsSecret = new github.ActionsSecre
     secretName: "AZURE_SUBSCRIPTION_ID",
     value: configuration.require("AZURE_SUBSCRIPTION_ID"),
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

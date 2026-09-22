@@ -9,7 +9,5 @@ export const readyForHuman: github.IssueLabel = new github.IssueLabel(
     name: "ready-for-human",
     repository: repository.name,
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

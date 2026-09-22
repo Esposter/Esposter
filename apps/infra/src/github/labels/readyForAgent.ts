@@ -9,7 +9,5 @@ export const readyForAgent: github.IssueLabel = new github.IssueLabel(
     name: "ready-for-agent",
     repository: repository.name,
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

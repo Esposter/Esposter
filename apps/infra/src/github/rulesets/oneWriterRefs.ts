@@ -28,7 +28,5 @@ export const oneWriterRefs: github.RepositoryRuleset = new github.RepositoryRule
     rules: { deletion: true, update: true },
     target: "branch",
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

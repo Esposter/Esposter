@@ -9,7 +9,5 @@ export const pulumiAccessToken: github.ActionsSecret = new github.ActionsSecret(
     secretName: "PULUMI_ACCESS_TOKEN",
     value: configuration.requireSecret("PULUMI_ACCESS_TOKEN"),
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

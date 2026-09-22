@@ -4,11 +4,6 @@ import * as github from "@pulumi/github";
 // Whose `defaultBranch` property is deprecated in favour of this resource.
 export const branchDefault: github.BranchDefault = new github.BranchDefault(
   "branchDefault",
-  {
-    branch: "main",
-    repository: repository.name,
-  },
-  {
-    protect: true,
-  },
+  { branch: "main", repository: repository.name },
+  { protect: true },
 );

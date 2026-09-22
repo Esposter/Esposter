@@ -9,7 +9,5 @@ export const needsTriage: github.IssueLabel = new github.IssueLabel(
     name: "needs-triage",
     repository: repository.name,
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

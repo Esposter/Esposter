@@ -9,12 +9,6 @@ import * as github from "@pulumi/github";
 // And on a pull request rule that counts approvals it would be indistinguishable from one.
 export const workflowPermissions: github.WorkflowRepositoryPermissions = new github.WorkflowRepositoryPermissions(
   "workflowPermissions",
-  {
-    canApprovePullRequestReviews: false,
-    defaultWorkflowPermissions: "read",
-    repository: repository.name,
-  },
-  {
-    protect: true,
-  },
+  { canApprovePullRequestReviews: false, defaultWorkflowPermissions: "read", repository: repository.name },
+  { protect: true },
 );

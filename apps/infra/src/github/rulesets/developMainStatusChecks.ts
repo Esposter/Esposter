@@ -54,7 +54,5 @@ export const developMainStatusChecks: github.RepositoryRuleset = new github.Repo
     },
     target: "branch",
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

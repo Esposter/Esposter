@@ -48,7 +48,5 @@ export const developMainProtection: github.RepositoryRuleset = new github.Reposi
     },
     target: "branch",
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

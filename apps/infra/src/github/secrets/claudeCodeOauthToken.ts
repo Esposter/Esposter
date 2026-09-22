@@ -9,7 +9,5 @@ export const claudeCodeOauthToken: github.ActionsSecret = new github.ActionsSecr
     secretName: "CLAUDE_CODE_OAUTH_TOKEN",
     value: configuration.requireSecret("CLAUDE_CODE_OAUTH_TOKEN"),
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );
