@@ -10,7 +10,7 @@ describe(computeTaskCacheKey, () => {
   const MASKED_PATHS: readonly string[] = [];
   // Every key below needs the sandbox node major, which computeEnvironmentKey probes from a WSL login shell on win32 —
   // With none reachable the key is undefined by design, and comparing one undefined against another asserts nothing
-  // At all. The two undefined cases above stay: they are what the probe failing looks like. CI is linux, where the
+  // At all. The two undefined cases below stay: they are what the probe failing looks like. CI is linux, where the
   // Probe is process.version
   const IS_SANDBOX_NODE_VERSION_READABLE = Boolean(getSandboxNodeVersion());
 

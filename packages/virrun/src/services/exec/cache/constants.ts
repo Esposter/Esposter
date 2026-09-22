@@ -1,7 +1,7 @@
 // Host-global task-cache layout, under getGlobalCacheDirectory()/tasks/<key>/
 // (apps/web/content/docs/virrun/task-cache.md). A cache entry records one exit-0 persist run so an identical later
-// Run (same command + lockfile + source tree) skips the
-// Sandbox entirely and replays the recorded result — the dev-loop "skip unchanged builds" lever (roadmap.md).
+// Run (same command + lockfile + source tree) skips the sandbox entirely and replays the recorded result — the
+// Dev-loop "skip unchanged builds" lever (roadmap.md).
 export const VIRRUN_TASKS_DIRECTORY_NAME = "tasks";
 // The recorded outcome (exit code, stdout, stderr, flush plan) beside the entry's `upper` payload directory. `upper`
 // Mirrors the snapshot layout so both caches read the same way; it holds the copy-op payload the replay flushes.

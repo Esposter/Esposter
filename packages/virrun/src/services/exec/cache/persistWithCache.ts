@@ -59,7 +59,7 @@ export const persistWithCache = async (
   // The task-cache key can't see network state, so a cacheable run must be hermetic for the key to be honest. Deps are
   // Already provisioned (ensureSnapshot ran upstream with network on), so a pure task (typecheck/lint/test) is
   // Unaffected, while a read-network command (`pnpm outdated`/`audit`) can't reach the registry, exits non-zero, and is
-  // Never recorded (onPersist fires only on exit 0). `--no-cache` / CI take the key===null branch above, which keeps
+  // Never recorded (onPersist fires only on exit 0). `--no-cache` / CI take the undefined-key branch above, which keeps
   // Network on — the escape hatch for a command that genuinely needs it.
   const result = await persistRun(
     backend,
