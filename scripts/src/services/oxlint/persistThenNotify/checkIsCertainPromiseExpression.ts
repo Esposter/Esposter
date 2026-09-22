@@ -1,6 +1,6 @@
 import type { ESTree } from "@oxlint/plugins";
 
-import { PromiseChainMethods } from "#src/services/oxlint/persistThenNotify/constants";
+import { PROMISE_CHAIN_METHODS } from "#src/services/oxlint/persistThenNotify/constants";
 import { getPromiseMemberName } from "#src/services/oxlint/persistThenNotify/getPromiseMemberName";
 
 // A returned expression is only read as an effect when its promise-ness is certain from syntax alone: a `.then`
@@ -11,5 +11,5 @@ import { getPromiseMemberName } from "#src/services/oxlint/persistThenNotify/get
 export const checkIsCertainPromiseExpression = (expression: ESTree.Expression): boolean =>
   expression.type === "CallExpression" &&
   expression.callee.type === "MemberExpression" &&
-  ((expression.callee.property.type === "Identifier" && PromiseChainMethods.has(expression.callee.property.name)) ||
+  ((expression.callee.property.type === "Identifier" && PROMISE_CHAIN_METHODS.has(expression.callee.property.name)) ||
     getPromiseMemberName(expression.callee) !== undefined);

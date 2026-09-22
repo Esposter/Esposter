@@ -7,4 +7,4 @@ export enum DependencyField {
   PeerDependencies = "peerDependencies",
 }
 
-export const DependencyFields: DependencyField[] = Object.values(DependencyField);
+export const DEPENDENCY_FIELDS: DependencyField[] = Object.values(DependencyField);

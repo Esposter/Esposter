@@ -1,5 +1,5 @@
 import { zodStrictRecord } from "#shared/services/zod/zodStrictRecord";
-import { AllSpecialValues } from "@esposter/shared";
+import { ALL_SPECIAL_VALUES } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -34,7 +34,7 @@ describe(zodStrictRecord, () => {
   test("invalidates when input is not an object", () => {
     expect.hasAssertions();
 
-    for (const { isPlainObject, value } of AllSpecialValues)
+    for (const { isPlainObject, value } of ALL_SPECIAL_VALUES)
       expect(schema.safeParse(value).success).toBe(isPlainObject);
   });
 });

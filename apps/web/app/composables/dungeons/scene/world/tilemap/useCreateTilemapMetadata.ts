@@ -3,7 +3,7 @@ import type { Tilemaps } from "phaser";
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { addTilesetImage } from "@/services/dungeons/tilemap/addTilesetImage";
-import { BaseTilesetKeys, ObjectgroupNames } from "@/services/dungeons/tilemap/constants";
+import { BASE_TILESET_KEYS, OBJECTGROUP_NAMES } from "@/services/dungeons/tilemap/constants";
 import { createLayer } from "@/services/dungeons/tilemap/createLayer";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
@@ -13,7 +13,7 @@ export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) 
 
   for (const layerName of Object.values(layerNameEnum)) {
     const tilesets: Tilemaps.Tileset[] = [];
-    for (const tilesetKey of BaseTilesetKeys) {
+    for (const tilesetKey of BASE_TILESET_KEYS) {
       const tileset = addTilesetImage(tilemap.value, tilemapKey.value, tilesetKey);
       if (!tileset) continue;
       tilesets.push(tileset);
@@ -29,7 +29,7 @@ export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) 
   if (!objectLayerMap.value) {
     objectLayerMap.value = new Map();
 
-    for (const objectgroupName of ObjectgroupNames) {
+    for (const objectgroupName of OBJECTGROUP_NAMES) {
       const objectLayer = tilemap.value.getObjectLayer(objectgroupName);
       if (!objectLayer) continue;
       objectLayerMap.value.set(objectgroupName, objectLayer);
