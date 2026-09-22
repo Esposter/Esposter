@@ -26,9 +26,8 @@ export const pickCharacterByLore = async (
   if (result?.status !== "fulfilled") return { failure: String(result?.reason) };
 
   const { answers } = result.value;
-  const names = roster.map(({ name }) => name);
   const draw = Math.random();
-  const choice = drawLoreChoice(answers.character.probabilities, names, draw) ?? answers.character.choice;
+  const choice = drawLoreChoice(answers.character.probabilities, draw) ?? answers.character.choice;
   const character = findCharacterByName(roster, choice);
   return character
     ? { character, response: { ...answers.character, choice } }
