@@ -46,6 +46,8 @@ Only the agent harness's machine-local `.git/info/exclude` hides live worktrees 
 
 One vendor path sits beside the tree rather than inside it: `.claude-plugin/marketplace.json`, which makes the repository a Claude Code plugin marketplace. The tool reads that file at that exact root path and no other, so it cannot be moved under `.agents/` or aliased; it names the plugins the repository ships, each a workspace package ([persona plugin](/docs/infra/claude-interface/persona-plugin)), and holds nothing an agent reads.
 
+The plugin commands write `.agents/settings.json` rather than a local sibling, because that is where the enable they are toggling lives: `claude plugin disable` flips the checked-in `true` to `false` and `enable` flips it back, so either leaves a tracked file modified and a session that commits by pathspec without reading `git status` ships it to every clone. There is no untracked escape hatch — `.agents/settings.local.json` is checked in too, holding permissions and nothing else (`claude-permissions`).
+
 ## An agent's programs live in `scripts/`, not in `.agents/`
 
 A recipe pasted into a skill page or a ledger rots silently, for the reasons `.agents/skills/skill-authoring/references/embedded-recipes.md` gives. So a recipe that is more than one command has its entrypoint at `scripts/src/<domain>/<verb>/index.ts` and its functions under `scripts/src/services/<domain>/<verb>/` with a colocated test, where the repository's own toolchain already reaches it: no runner, project or config entry is added to make that work.
@@ -95,15 +97,15 @@ root `docs/` folder this layout exists to avoid. Point the skill at `.agents/` i
 
 ## Key files
 
-| Path                                             | Role                                                                                                    |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| `.agents`                                        | The agent tree — skills, workflows, ledgers, harness settings                                           |
-| `.agents/settings.json`                          | Checked-in harness settings — the marketplace a checkout declares for itself, and the plugin it enables |
-| `.claude`                                        | Symlink alias to `.agents` so Claude Code resolves its own paths                                        |
-| `.claude-plugin/marketplace.json`                | The repository as a Claude Code plugin marketplace — the one vendor path the tool fixes at root         |
-| `AGENTS.md`                                      | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it                                  |
-| `packages/configuration/src/constants.ts`        | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY`                              |
-| `scripts/src/workspace/agentDirectories.test.ts` | Pins both exclusions in the configs that cannot import the constants                                    |
-| `scripts/src/workspace/citations.test.ts`        | Fails on a cited repo path or skill name in the docs, the tree or a README that resolves nowhere        |
-| `scripts/src/workspace/skillDocs.test.ts`        | Fails on every `ai:sweep:skill-docs` finding but the budget                                             |
-| `scripts/src/workspace/staleNames.test.ts`       | Fails on a backticked code name in the same trees that neither the tree nor a dependency holds          |
+| Path                                             | Role                                                                                                                                     |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `.agents`                                        | The agent tree — skills, workflows, ledgers, harness settings                                                                            |
+| `.agents/settings.json`                          | Checked-in harness settings — the marketplace a checkout declares for itself, the plugin it enables, and the auto-update that re-pins it |
+| `.claude`                                        | Symlink alias to `.agents` so Claude Code resolves its own paths                                                                         |
+| `.claude-plugin/marketplace.json`                | The repository as a Claude Code plugin marketplace — the one vendor path the tool fixes at root                                          |
+| `AGENTS.md`                                      | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it                                                                   |
+| `packages/configuration/src/constants.ts`        | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY`                                                               |
+| `scripts/src/workspace/agentDirectories.test.ts` | Pins both exclusions in the configs that cannot import the constants                                                                     |
+| `scripts/src/workspace/citations.test.ts`        | Fails on a cited repo path or skill name in the docs, the tree or a README that resolves nowhere                                         |
+| `scripts/src/workspace/skillDocs.test.ts`        | Fails on every `ai:sweep:skill-docs` finding but the budget                                                                              |
+| `scripts/src/workspace/staleNames.test.ts`       | Fails on a backticked code name in the same trees that neither the tree nor a dependency holds                                           |
