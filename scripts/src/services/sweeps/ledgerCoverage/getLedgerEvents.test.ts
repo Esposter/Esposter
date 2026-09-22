@@ -12,7 +12,7 @@ describe(getLedgerEvents, () => {
     expect.hasAssertions();
 
     expect(getLedgerEvents(getRecord(`${LedgerEventType.Ledger}: a/b${TRAILER_VALUE_SEPARATOR}\`c\`\n`))).toStrictEqual(
-      [{ date, ledger: "a/b", type: LedgerEventType.Ledger, unit: "`c`" }],
+      [{ date, ledger: "a/b", model: "", type: LedgerEventType.Ledger, unit: "`c`" }],
     );
   });
 
@@ -20,7 +20,7 @@ describe(getLedgerEvents, () => {
     expect.hasAssertions();
 
     expect(getLedgerEvents(getRecord(`${LedgerEventType.Reopens}: a\n`))).toStrictEqual([
-      { date, ledger: "a", type: LedgerEventType.Reopens, unit: undefined },
+      { date, ledger: "a", model: "", type: LedgerEventType.Reopens, unit: undefined },
     ]);
   });
 
@@ -30,8 +30,22 @@ describe(getLedgerEvents, () => {
     const body = `${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}\`b\`\n${LedgerEventType.Ledger}: a${TRAILER_VALUE_SEPARATOR}\`c\`\n`;
 
     expect(getLedgerEvents(getRecord(body))).toStrictEqual([
-      { date, ledger: "a", type: LedgerEventType.Ledger, unit: "`b`" },
-      { date, ledger: "a", type: LedgerEventType.Ledger, unit: "`c`" },
+      { date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "`b`" },
+      { date, ledger: "a", model: "", type: LedgerEventType.Ledger, unit: "`c`" },
+    ]);
+  });
+
+  test("reads the model from the commit's co-author trailer", () => {
+    expect.hasAssertions();
+
+    const model = "a";
+    const body = `${LedgerEventType.Ledger}: b${TRAILER_VALUE_SEPARATOR}\`c\`
+
+Co-Authored-By: Claude ${model} (d) <e>
+`;
+
+    expect(getLedgerEvents(getRecord(body))).toStrictEqual([
+      { date, ledger: "b", model, type: LedgerEventType.Ledger, unit: "`c`" },
     ]);
   });
 

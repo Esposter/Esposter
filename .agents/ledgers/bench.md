@@ -20,12 +20,12 @@ the two ways a bench quietly stops measuring what it names.
 
 ## Units
 
-| Unit                                                      | Swept      | Notes                                                                             |
-| --------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------- |
-| `apps/web` — the sheet command benches and their fixtures | 2026-09-22 | 6 groups plus the 4 `.bench.ts` fixture files that carry `describe.todo`          |
-| `packages/keyframe-store`                                 | 2026-09-22 | one `test.for` per document size; every write task copies the seeded backend      |
-| `packages/virrun`                                         | 2026-09-22 | two of the three are switched off — read the gate before judging the bench        |
-| `scripts`                                                 | 2026-09-22 | `buildPackages` is switched off and deletes each `dist`, so it also skips on `CI` |
+| Unit                                                      | Swept               | Notes                                                                             |
+| --------------------------------------------------------- | ------------------- | --------------------------------------------------------------------------------- |
+| `apps/web` — the sheet command benches and their fixtures | 2026-09-22 · Opus 5 | 6 groups plus the 4 `.bench.ts` fixture files that carry `describe.todo`          |
+| `packages/keyframe-store`                                 | 2026-09-22 · Opus 5 | one `test.for` per document size; every write task copies the seeded backend      |
+| `packages/virrun`                                         | 2026-09-22 · Opus 5 | two of the three are switched off — read the gate before judging the bench        |
+| `scripts`                                                 | 2026-09-22 · Opus 5 | `buildPackages` is switched off and deletes each `dist`, so it also skips on `CI` |
 
 ## Find recipe
 
