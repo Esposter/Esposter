@@ -12,12 +12,17 @@ const skinToneEmoji = getEmojiIndex().slugEmojiMap.get(SKIN_TONE_PREVIEW_EMOJI_S
 </script>
 
 <template>
-  <v-menu v-if="skinToneEmoji" location="top">
-    <template #activator="{ props }">
-      <v-btn aria-label="Skin tone" :="props" size="small" variant="text" icon>
-        <span lh-none text-title-medium>{{ applySkinTone(skinToneEmoji, modelValue) }}</span>
-        <v-tooltip activator="parent" text="Skin tone" />
-      </v-btn>
+  <!-- `icon: true` rather than an icon name: the button draws the toned hand itself, and VBtn keeps its circular
+       icon shape only while `icon` is set, which the activator slot would otherwise take away -->
+  <StyledTooltipMenuIconButton
+    v-if="skinToneEmoji"
+    aria-label="Skin tone"
+    :button-props="{ icon: true, size: 'small', variant: 'text' }"
+    :menu-props="{ location: 'top' }"
+    text="Skin tone"
+  >
+    <template #activator>
+      <span lh-none text-title-medium>{{ applySkinTone(skinToneEmoji, modelValue) }}</span>
     </template>
     <v-list density="compact">
       <v-list-item
@@ -29,5 +34,5 @@ const skinToneEmoji = getEmojiIndex().slugEmojiMap.get(SKIN_TONE_PREVIEW_EMOJI_S
         <span lh-none text-title-medium>{{ applySkinTone(skinToneEmoji, skinTone) }}</span>
       </v-list-item>
     </v-list>
-  </v-menu>
+  </StyledTooltipMenuIconButton>
 </template>
