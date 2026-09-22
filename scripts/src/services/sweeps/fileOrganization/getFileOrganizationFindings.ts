@@ -4,6 +4,7 @@ import { FileOrganizationFindingType } from "#src/models/sweeps/fileOrganization
 import { checkIsCompanion } from "#src/services/sweeps/fileOrganization/checkIsCompanion";
 import {
   COLOCATED_MAP_SUFFIXES,
+  COMPONENTS_DIRECTORY,
   COMPOSABLES_DIRECTORY,
   CONSTANTS_FILE_REGEX,
   ENUM_SUFFIX,
@@ -12,8 +13,10 @@ import {
   MODEL_DIRECTORIES,
   MODULE_CONSTANT_REGEX,
   SCHEMA_DIRECTORY,
+  SCHEMA_SUFFIX,
   TYPE_KINDS,
 } from "#src/services/sweeps/fileOrganization/constants";
+import { basename, extname } from "node:path";
 
 const getNames = (text: string, regex: RegExp): string[] => [
   ...new Set(Array.from(text.matchAll(regex), (match) => String(match.groups?.name))),
@@ -26,8 +29,9 @@ const getNames = (text: string, regex: RegExp): string[] => [
 // Exported type outside a models layer is reported when no value export in the file is its companion — the
 // Twin, schema and composable-options shapes the skill allows. A local type is reported unless it is the event
 // Or hook map the skill colocates, in a composable, or in an SFC, whose `Props` is the vue skill's; a suite's
-// Fixture shapes are the testing ledger's, and no suite reaches here. A screaming constant at module scope in an
-// SFC or composable belongs in a `constants.ts`.
+// Fixture shapes are the testing ledger's, and no suite reaches here — and a shape another file reads sits beside
+// The component that owns it, named after its one export. A screaming constant at module scope in an SFC or
+// Composable belongs in a `constants.ts`.
 export const getFileOrganizationFindings = (path: string, text: string): FileOrganizationFinding[] => {
   const isVue = path.endsWith(".vue");
   const isComposable = path.includes(COMPOSABLES_DIRECTORY);
@@ -41,9 +45,12 @@ export const getFileOrganizationFindings = (path: string, text: string): FileOrg
   const findings: FileOrganizationFinding[] = [];
 
   if (!isVue && !isConstantsFile && exportNames.length > 1) {
-    const isTableEnum = (name: string) => path.includes(SCHEMA_DIRECTORY) && name.endsWith(ENUM_SUFFIX);
-    const base = exportNames.filter((name) => !isTableEnum(name)).toSorted((a, b) => a.length - b.length)[0] ?? "";
-    const strangers = exportNames.filter((name) => !checkIsCompanion(name, base) && !isTableEnum(name));
+    const isSanctionedBeside = (name: string) =>
+      (path.includes(SCHEMA_DIRECTORY) && name.endsWith(ENUM_SUFFIX)) ||
+      (MODEL_DIRECTORIES.some((directory) => path.includes(directory)) && name.endsWith(SCHEMA_SUFFIX));
+    const base =
+      exportNames.filter((name) => !isSanctionedBeside(name)).toSorted((a, b) => a.length - b.length)[0] ?? "";
+    const strangers = exportNames.filter((name) => !checkIsCompanion(name, base) && !isSanctionedBeside(name));
     if (strangers.length > 0)
       findings.push({ names: exportNames, path, type: FileOrganizationFindingType.ExportsPerFile });
   }
@@ -51,8 +58,10 @@ export const getFileOrganizationFindings = (path: string, text: string): FileOrg
   if (!isVue && !MODEL_DIRECTORIES.some((directory) => path.includes(directory))) {
     const typeNames = [...new Set(exports.filter(({ isType }) => isType).map(({ name }) => name))];
     const valueNames = [...new Set(exports.filter(({ isType }) => !isType).map(({ name }) => name))];
+    const fileName = basename(path, extname(path));
     const orphans = typeNames.filter(
       (typeName) =>
+        !(path.includes(COMPONENTS_DIRECTORY) && typeName === fileName) &&
         !valueNames.some((valueName) => checkIsCompanion(valueName, typeName) || checkIsCompanion(typeName, valueName)),
     );
     if (orphans.length > 0)

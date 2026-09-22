@@ -6,7 +6,7 @@ export const TYPE_KINDS: readonly string[] = ["interface", "type"];
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const LOCAL_TYPE_REGEX: RegExp = /^(?:interface|type) (?<name>\w+)/gmu;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
-export const MODULE_CONSTANT_REGEX: RegExp = /^const (?<name>[A-Z][A-Z0-9_]+) =/gmu;
+export const MODULE_CONSTANT_REGEX: RegExp = /^const (?<name>[A-Z][A-Z0-9_]+)(?::[^=]+)? =/gmu;
 // The multi-export files the skill sanctions by name: a constants file and its test and bench twins
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const CONSTANTS_FILE_REGEX: RegExp = /\/constants(?:\.test|\.bench)?\.ts$/u;
@@ -18,7 +18,11 @@ export const COMPOSABLE_PREFIX = "use";
 export const ABSTRACT_PREFIX = "a";
 // The event and hook map interfaces the skill colocates with the service that creates the singleton
 // (`references/colocated-types.md`); an emitter's event map is that construct under the emitter's own name
-export const COLOCATED_MAP_SUFFIXES: readonly string[] = ["HookMap", "Events"];
+export const COLOCATED_MAP_SUFFIXES: readonly string[] = ["Hook", "HookMap", "Events"];
+// A shape another file reads sits beside the component that owns it, named after its one export (the vue skill)
+export const COMPONENTS_DIRECTORY = "/components/";
+// A schema sits beside its type in a model file whatever the two are called (the zod skill)
+export const SCHEMA_SUFFIX = "Schema";
 // A drizzle table file's `pgEnum` wrappers sit beside the table that reads them (`.agents/ledgers/file-organization/packages.md`)
 export const SCHEMA_DIRECTORY = "/schema/";
 export const ENUM_SUFFIX = "Enum";

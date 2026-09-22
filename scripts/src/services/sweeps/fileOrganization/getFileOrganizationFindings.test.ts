@@ -24,14 +24,19 @@ describe(getFileOrganizationFindings, () => {
     ["a type and value twin", "export const Name = {};\nexport type Name = 0;\n"],
     ["a function's overloads", "export function a(): void;\nexport function a(b: 0): void;\n"],
     [
+      "a schema factory beside its input type, in a model file",
+      "export interface EventInput {}\nexport const createEventSchema = 0;\n",
+      "packages/db-schema/src/models/EventInput.ts",
+    ],
+    [
       "a table beside its select schema and row type",
       "export const userStatusesInMessage = 0;\nexport type UserStatusInMessage = 0;\nexport const selectUserStatusInMessageSchema = 0;\n",
     ],
-  ])("leaves %s alone", (_, source) => {
+  ])("leaves %s alone", (_, source, path = SERVICE_PATH) => {
     expect.hasAssertions();
 
     expect(
-      getFileOrganizationFindings(SERVICE_PATH, source).filter(
+      getFileOrganizationFindings(path, source).filter(
         ({ type }) => type === FileOrganizationFindingType.ExportsPerFile,
       ),
     ).toStrictEqual([]);
@@ -60,6 +65,8 @@ describe(getFileOrganizationFindings, () => {
     ]);
     expect(getFileOrganizationFindings("apps/web/app/models/a/Thing.ts", source)).toStrictEqual([]);
     expect(getFileOrganizationFindings("packages/shared/src/util/types/Thing.ts", source)).toStrictEqual([]);
+    expect(getFileOrganizationFindings("apps/web/app/components/Thing.ts", source)).toStrictEqual([]);
+    expect(getFileOrganizationFindings("apps/web/app/components/Other.ts", source)).toHaveLength(1);
   });
 
   test("reports a local type unless it is the colocated map", () => {
@@ -85,7 +92,7 @@ describe(getFileOrganizationFindings, () => {
   test("reports a screaming constant at module scope in an SFC or composable", () => {
     expect.hasAssertions();
 
-    const source = "const MAX = 0;\n";
+    const source = "const MAX: number = 0;\n";
     const vuePath = "apps/web/app/components/A.vue";
     expect(getFileOrganizationFindings(vuePath, source)).toStrictEqual([
       { names: ["MAX"], path: vuePath, type: FileOrganizationFindingType.ModuleConstant },
