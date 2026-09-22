@@ -1,4 +1,4 @@
-import { ROSTER_CACHE_EXTENSION, ROSTER_CACHE_PREFIX, STATE_DIRECTORY } from "#src/services/constants";
+import { STATE_DIRECTORY } from "#src/services/constants";
 import { getRosterCachePath } from "#src/services/getRosterCachePath";
 import { writeRosterCache } from "#src/services/writeRosterCache";
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
@@ -17,9 +17,9 @@ describe(writeRosterCache, () => {
   const language = "language";
   const version = "version";
   const currentName = basename(getRosterCachePath(version, language));
-  const staleName = `${ROSTER_CACHE_PREFIX}staleVersion-${language}${ROSTER_CACHE_EXTENSION}`;
+  const staleName = basename(getRosterCachePath(" ", language));
   // What another session starting at the same moment has written and not yet renamed over its target
-  const temporaryName = `${currentName}.1.tmp`;
+  const temporaryName = `${currentName}.${process.pid + 1}.tmp`;
 
   beforeEach(() => {
     mkdirSync(STATE_DIRECTORY, { recursive: true });

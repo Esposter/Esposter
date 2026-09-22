@@ -6,54 +6,48 @@ describe(parseWikiStoryLines, () => {
     expect.hasAssertions();
 
     const wikitext = `{{VO/Story
-|character = Hu Tao
-|vo_01_01_title = About {character}: Work
-|vo_01_01_file = VO_{language}{character} About {character} - Work.ogg
-|vo_01_01_tx = A [[Wangsheng Funeral Parlor|parlor]] {{Ref}} &mdash; '''open'''
+|character = a
+|vo_01_01_title = {character}: b
+|vo_01_01_file = VO_{language}{character} {character} - b.ogg
+|vo_01_01_tx = [[a|b]] {{Ref}} &mdash; '''a'''
 }}
 {{VO/Combat
-|vo_02_01_title = Elemental Skill
-|vo_02_01_file = VO_{language}{character} Elemental Skill.ogg
-|vo_02_01_tx = Boo!
+|vo_02_01_title = a
+|vo_02_01_file = VO_{language}{character} a.ogg
+|vo_02_01_tx = a
 }}`;
 
-    expect(parseWikiStoryLines(wikitext, "")).toStrictEqual([
-      { stem: "Hu Tao About Hu Tao - Work", text: "A parlor — open", title: "About Hu Tao: Work" },
-    ]);
+    expect(parseWikiStoryLines(wikitext, "")).toStrictEqual([{ stem: "a a - b", text: "b — a", title: "a: b" }]);
   });
 
   test("reads a page that leaves the dub to the template the same way", () => {
     expect.hasAssertions();
 
     const wikitext = `{{VO/Story
-|character = Sayu
-|vo_01_01_title = Hello
-|vo_01_01_file = VO_{character} Hello.ogg
-|vo_01_01_tx = Sayu, at your disposal!
+|character = a
+|vo_01_01_title = b
+|vo_01_01_file = VO_{character} b.ogg
+|vo_01_01_tx = a
 }}`;
 
-    expect(parseWikiStoryLines(wikitext, "")).toStrictEqual([
-      { stem: "Sayu Hello", text: "Sayu, at your disposal!", title: "Hello" },
-    ]);
+    expect(parseWikiStoryLines(wikitext, "")).toStrictEqual([{ stem: "a b", text: "a", title: "b" }]);
   });
 
   test("reads one script of a page that carries two by the field suffix", () => {
     expect.hasAssertions();
 
     const wikitext = `{{VO/Story
-|character = Sayu
-|vo_01_01_title_s = 初次见面…
-|vo_01_01_title_t = 初次見面…
-|vo_01_01_subtitle = Hello
-|vo_01_01_file = VO_{language}{character} Hello.ogg
-|vo_01_01_tx_s = 早柚
-|vo_01_01_tx_t = {{MC|m=你|f=妳}}好，早柚
-|vo_01_01_rm = Zǎoyòu
+|character = a
+|vo_01_01_title_s = a
+|vo_01_01_title_t = b
+|vo_01_01_subtitle = a
+|vo_01_01_file = VO_{language}{character} b.ogg
+|vo_01_01_tx_s = a
+|vo_01_01_tx_t = {{MC|m=a|f=b}}c
+|vo_01_01_rm = a
 }}`;
 
-    expect(parseWikiStoryLines(wikitext, "_t")).toStrictEqual([
-      { stem: "Sayu Hello", text: "你好，早柚", title: "初次見面…" },
-    ]);
+    expect(parseWikiStoryLines(wikitext, "_t")).toStrictEqual([{ stem: "a b", text: "ac", title: "b" }]);
   });
 
   test("lists nothing for a page without the story template", () => {

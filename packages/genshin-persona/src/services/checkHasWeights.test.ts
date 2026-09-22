@@ -40,6 +40,6 @@ describe(checkHasWeights, () => {
   test("lacks the weights in a cache that does not exist yet", () => {
     expect.hasAssertions();
 
-    expect(checkHasWeights(join(modelsDirectory, "missing"))).toBe(false);
+    expect(checkHasWeights(join(modelsDirectory, " "))).toBe(false);
   });
 });

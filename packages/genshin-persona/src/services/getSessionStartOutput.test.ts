@@ -14,9 +14,9 @@ import { describe, expect, test } from "vitest";
 describe(getSessionStartOutput, () => {
   const description = "description";
   const headline = "headline";
-  const note = "[note]";
+  const note = "note";
   const greeting = "greeting";
-  const signOff = "sign-off";
+  const signOff = "signOff";
   const habit = "habit";
   // The session-start output never reads the voice or the verbs; production owns what those are
   const personaCard: PersonaCard = {

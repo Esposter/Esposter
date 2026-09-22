@@ -16,7 +16,7 @@ describe(getCanonicalLanguage, () => {
 
   // A code is not a name: the interface language speaks the data package's vocabulary and the dub speaks ISO, so
   // Nothing here silently accepts the other's spelling
-  test.each(["", "ja", "Klingon"])("%j names none of them", (name) => {
+  test.each(["", "ja", " "])("%j names none of them", (name) => {
     expect.hasAssertions();
 
     expect(getCanonicalLanguage(languageNames, name)).toBeUndefined();

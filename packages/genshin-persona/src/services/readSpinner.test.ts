@@ -19,7 +19,7 @@ describe(readSpinner, () => {
     greeting: "greeting",
     habits: [],
     signOff: "signOff",
-    verbs: ["Marketing"],
+    verbs: ["verb"],
   };
 
   test("takes a character's gerunds off the card under English", async () => {
@@ -27,7 +27,7 @@ describe(readSpinner, () => {
 
     const { verbs } = await readSpinner(character, personaCard, DEFAULT_LANGUAGE);
 
-    expect(verbs.at(-1)).toBe("Marketing");
+    expect(verbs.at(-1)).toBe("verb");
   });
 
   test("takes them off the language's module under another language", async () => {
@@ -57,8 +57,8 @@ describe(readSpinner, () => {
   test("keeps the card's gerunds under a language whose module is not written yet", async () => {
     expect.hasAssertions();
 
-    const { verbs } = await readSpinner(character, personaCard, "Turkish");
+    const { verbs } = await readSpinner(character, personaCard, " ");
 
-    expect(verbs.at(-1)).toBe("Marketing");
+    expect(verbs.at(-1)).toBe("verb");
   });
 });

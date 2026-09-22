@@ -46,9 +46,9 @@ describe(createAudioPlayer, () => {
     await expect(first).resolves.toBe("");
     expect(existsSync(paths[0] ?? "")).toBe(false);
 
-    player.stdout.write("the file is not a WAV\n");
+    player.stdout.write("a\n");
 
-    await expect(second).resolves.toBe("the file is not a WAV");
+    await expect(second).resolves.toBe("a");
     expect(checkHasLeftovers()).toBe(false);
   });
 
@@ -58,10 +58,10 @@ describe(createAudioPlayer, () => {
     const { player } = getPlayer();
     const audioPlayer = createAudioPlayer();
     const first = audioPlayer.play(new Uint8Array());
-    player.emit("error", new Error("createAudioPlayer"));
+    player.emit("error", new Error(" "));
 
-    await expect(first).resolves.toBe("createAudioPlayer");
-    await expect(audioPlayer.play(new Uint8Array())).resolves.toBe("createAudioPlayer");
+    await expect(first).resolves.toBe(" ");
+    await expect(audioPlayer.play(new Uint8Array())).resolves.toBe(" ");
     expect(checkHasLeftovers()).toBe(false);
   });
 

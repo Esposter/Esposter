@@ -1,6 +1,7 @@
 import type { HookEntry } from "#src/models/HookEntry";
 
 import { checkIsPluginHookEntry } from "#src/services/checkIsPluginHookEntry";
+import { FOREIGN_HOOK_ENTRY } from "#src/services/constants.test";
 import { getPluginSpeakHookEntry } from "#src/services/getPluginSpeakHookEntry";
 import { parseJsonObject } from "#src/services/parseJsonObject";
 import { describe, expect, test } from "vitest";
@@ -15,7 +16,7 @@ describe(checkIsPluginHookEntry, () => {
   test("leaves an entry someone else wrote under the same event alone", () => {
     expect.hasAssertions();
 
-    expect(checkIsPluginHookEntry({ hooks: [{ command: "node their-own.mjs", type: "command" }] })).toBe(false);
+    expect(checkIsPluginHookEntry(FOREIGN_HOOK_ENTRY)).toBe(false);
   });
 
   test("reads an entry shaped unlike the model as nobody's", () => {

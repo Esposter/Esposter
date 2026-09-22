@@ -23,7 +23,7 @@ describe(checkIsPluginSpinner, () => {
     expect.hasAssertions();
 
     const settings: UserSettings = {
-      spinnerTipsOverride: { excludeDefault: true, label: "✦ Their own", tips: [{ id: "their-1", text: "tip" }] },
+      spinnerTipsOverride: { excludeDefault: true, label: "label", tips: [{ id: "id", text: "text" }] },
     };
 
     expect(checkIsPluginSpinner(settings)).toBe(false);

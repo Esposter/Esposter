@@ -14,7 +14,7 @@ describe(findCharacterByName, () => {
     expect(findCharacterByName(roster, name)).toBe(character);
   });
 
-  test.each(["", "Venti"])("%j resolves to nobody", (name) => {
+  test.each(["", " "])("%j resolves to nobody", (name) => {
     expect.hasAssertions();
 
     expect(findCharacterByName(roster, name)).toBeUndefined();

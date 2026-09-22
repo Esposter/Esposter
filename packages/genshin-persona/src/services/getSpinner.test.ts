@@ -1,6 +1,13 @@
 import type { VoiceLine } from "#src/models/VoiceLine";
 
-import { MAX_SPINNER_TIP_COUNT, MAX_SPINNER_TIP_LENGTH } from "#src/services/constants";
+import {
+  MAX_SPINNER_TIP_COUNT,
+  MAX_SPINNER_TIP_LENGTH,
+  PLUGIN_MARKER,
+  TIP_ID_MARKER_SEPARATOR,
+  TIP_ID_SEPARATOR,
+} from "#src/services/constants";
+import { getPersonaCardName } from "#src/services/getPersonaCardName";
 import { getSpinner } from "#src/services/getSpinner";
 import { describe, expect, test } from "vitest";
 
@@ -12,13 +19,14 @@ describe(getSpinner, () => {
   const baseVerbs = ["baseVerb"];
   const verbs = ["verb"];
   const lines: VoiceLine[] = [{ text: "line", title: "title" }];
+  const tipId = `${PLUGIN_MARKER}${TIP_ID_MARKER_SEPARATOR}${getPersonaCardName(name)}${TIP_ID_SEPARATOR}1`;
 
   test("puts the base verbs ahead of the character's and their lines under their name", () => {
     expect.hasAssertions();
 
     expect(getSpinner(baseVerbs, character, verbs, lines)).toStrictEqual({
       label: displayName,
-      tips: [{ id: "genshin-persona.huTao-1", text: "line" }],
+      tips: [{ id: tipId, text: "line" }],
       verbs: ["baseVerb", "verb"],
     });
   });
@@ -31,9 +39,7 @@ describe(getSpinner, () => {
       { text: "b".repeat(MAX_SPINNER_TIP_LENGTH + 1), title: "title" },
     ];
 
-    expect(getSpinner(baseVerbs, character, verbs, longLines).tips).toStrictEqual([
-      { id: "genshin-persona.huTao-1", text: "line." },
-    ]);
+    expect(getSpinner(baseVerbs, character, verbs, longLines).tips).toStrictEqual([{ id: tipId, text: "line." }]);
   });
 
   test("cuts the tips where the tool stops reading them", () => {
@@ -52,7 +58,7 @@ describe(getSpinner, () => {
 
     expect(getSpinner(baseVerbs, character, [], [])).toStrictEqual({
       label: displayName,
-      tips: [{ id: "genshin-persona.huTao-1", text: "description" }],
+      tips: [{ id: tipId, text: "description" }],
       verbs: ["baseVerb"],
     });
   });

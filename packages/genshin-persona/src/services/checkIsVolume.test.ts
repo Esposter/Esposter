@@ -8,7 +8,7 @@ describe(checkIsVolume, () => {
     expect(checkIsVolume(value)).toBe(true);
   });
 
-  test.each(["", "loud", "101", "-1", "50%", "1.5"])("rejects %j", (value) => {
+  test.each(["", "a", "101", "-1", "0%", "0.1"])("rejects %j", (value) => {
     expect.hasAssertions();
 
     expect(checkIsVolume(value)).toBe(false);

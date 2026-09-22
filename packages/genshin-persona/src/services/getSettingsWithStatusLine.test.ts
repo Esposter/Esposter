@@ -1,5 +1,6 @@
 import type { UserSettings } from "#src/models/UserSettings";
 
+import { PLUGIN_MARKER } from "#src/services/constants";
 import { FOREIGN_STATUS_LINE } from "#src/services/constants.test";
 import { getPluginStatusLine } from "#src/services/getPluginStatusLine";
 import { getSettingsWithStatusLine } from "#src/services/getSettingsWithStatusLine";
@@ -25,9 +26,7 @@ describe(getSettingsWithStatusLine, () => {
   test("replaces a status line an earlier install pasted by hand", () => {
     expect.hasAssertions();
 
-    const settings: UserSettings = {
-      statusLine: { command: 'node "genshin-persona/scripts/status.ts"', type: "command" },
-    };
+    const settings: UserSettings = { statusLine: { command: PLUGIN_MARKER, type: "command" } };
 
     expect(getSettingsWithStatusLine(settings).statusLine).toStrictEqual(getPluginStatusLine());
   });

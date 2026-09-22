@@ -32,9 +32,9 @@ describe(parseVoiceRequest, () => {
   });
 
   test.each([
-    { ...request, type: "sing" },
-    { ...request, language: "fr" },
-    { ...request, volume: "100" },
+    { ...request, type: "" },
+    { ...request, language: "" },
+    { ...request, volume: "0" },
     { ...request, volume: 101 },
     { ...request, lines: "lines" },
     { ...request, lines: [0] },
