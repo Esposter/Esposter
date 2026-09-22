@@ -16,7 +16,6 @@ import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { getResultAsync } from "@esposter/shared";
 import { EventEmitter } from "node:events";
 import { constants } from "node:os";
-import { constants } from "node:os";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
