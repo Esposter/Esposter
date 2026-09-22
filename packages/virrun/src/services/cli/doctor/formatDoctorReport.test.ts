@@ -7,18 +7,19 @@ import { formatDoctorReport } from "#src/services/cli/doctor/formatDoctorReport"
 import { describe, expect, test } from "vitest";
 
 describe(formatDoctorReport, () => {
-  const platform = "win32";
+  const platform = "platform";
+  // Two labels of different lengths, so the column alignment the rows share is what the expected lines read
   const okBubblewrap: DiagnosticCheck = {
     fix: "",
-    label: "bubblewrap >= 0.10.0",
-    note: "bubblewrap 0.11.1",
+    label: "a",
+    note: "note",
     status: DiagnosticStatus.Ok,
     type: DiagnosticCheckType.Bubblewrap,
   };
   const okSandbox: DiagnosticCheck = {
     fix: "",
-    label: "overlay sandbox mount",
-    note: "bubblewrap RAM overlay mounts",
+    label: "aa",
+    note: "note",
     status: DiagnosticStatus.Ok,
     type: DiagnosticCheckType.Sandbox,
   };
@@ -28,9 +29,9 @@ describe(formatDoctorReport, () => {
 
     expect(stripAnsi(formatDoctorReport({ checks: [okBubblewrap, okSandbox], platform }))).toBe(
       [
-        "[virrun] doctor — os backend prerequisites (win32)",
-        "  bubblewrap >= 0.10.0   ok       bubblewrap 0.11.1",
-        "  overlay sandbox mount  ok       bubblewrap RAM overlay mounts",
+        "[virrun] doctor — os backend prerequisites (platform)",
+        "  a   ok       note",
+        "  aa  ok       note",
         "[virrun] os backend ready — `virrun -- <cmd>` runs sandboxed",
       ].join("\n"),
     );
@@ -39,20 +40,14 @@ describe(formatDoctorReport, () => {
   test("appends the fix line and reports fallback when the sandbox check is missing", () => {
     expect.hasAssertions();
 
-    const missingSandbox: DiagnosticCheck = {
-      fix: "enable unprivileged user namespaces + overlayfs",
-      label: "overlay sandbox mount",
-      note: "bwrap could not mount the RAM overlay",
-      status: DiagnosticStatus.Missing,
-      type: DiagnosticCheckType.Sandbox,
-    };
+    const missingSandbox: DiagnosticCheck = { ...okSandbox, fix: "fix", status: DiagnosticStatus.Missing };
 
     expect(stripAnsi(formatDoctorReport({ checks: [okBubblewrap, missingSandbox], platform }))).toBe(
       [
-        "[virrun] doctor — os backend prerequisites (win32)",
-        "  bubblewrap >= 0.10.0   ok       bubblewrap 0.11.1",
-        "  overlay sandbox mount  MISSING  bwrap could not mount the RAM overlay",
-        "      → enable unprivileged user namespaces + overlayfs",
+        "[virrun] doctor — os backend prerequisites (platform)",
+        "  a   ok       note",
+        "  aa  MISSING  note",
+        "      → fix",
         "[virrun] os backend unavailable — commands fall back to native (un-isolated)",
       ].join("\n"),
     );
@@ -62,19 +57,18 @@ describe(formatDoctorReport, () => {
     expect.hasAssertions();
 
     const missingPython: DiagnosticCheck = {
-      fix: "install python3",
-      label: "python3 (write-back)",
-      note: "not found — write-back (persist) can't reconcile produced files",
+      ...okBubblewrap,
+      fix: "fix",
       status: DiagnosticStatus.Missing,
       type: DiagnosticCheckType.Python3,
     };
 
     expect(stripAnsi(formatDoctorReport({ checks: [missingPython, okSandbox], platform }))).toBe(
       [
-        "[virrun] doctor — os backend prerequisites (win32)",
-        "  python3 (write-back)   MISSING  not found — write-back (persist) can't reconcile produced files",
-        "      → install python3",
-        "  overlay sandbox mount  ok       bubblewrap RAM overlay mounts",
+        "[virrun] doctor — os backend prerequisites (platform)",
+        "  a   MISSING  note",
+        "      → fix",
+        "  aa  ok       note",
         "[virrun] os backend mounts, but some commands will fail — see the checks above",
       ].join("\n"),
     );

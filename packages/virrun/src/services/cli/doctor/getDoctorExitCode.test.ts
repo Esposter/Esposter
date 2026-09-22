@@ -7,7 +7,7 @@ import { describe, expect, test } from "vitest";
 
 const createCheck = (status: DiagnosticStatus): DiagnosticCheck => ({
   fix: "",
-  label: "check",
+  label: "label",
   note: "",
   status,
   type: DiagnosticCheckType.Bubblewrap,

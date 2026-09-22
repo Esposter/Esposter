@@ -5,7 +5,7 @@ import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(writeVirrunDebug, () => {
-  const message = "task cache off";
+  const message = "message";
 
   afterEach(() => {
     vi.restoreAllMocks();
