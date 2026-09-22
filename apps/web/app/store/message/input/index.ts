@@ -73,7 +73,8 @@ export const useInputStore = defineStore("message/input", () => {
   const flushOutgoingDraft = (previousComposerKey?: string, previousInput?: string, composerKey?: string) => {
     if (previousComposerKey && previousComposerKey !== composerKey) syncDraft(previousComposerKey, previousInput ?? "");
   };
-
+  // One watcher per composer rather than one over "whatever is being typed in": both are on screen at once, so
+  // A single source would file the thread's reply under the room's key the moment the pane has focus
   watchDebounced(
     () => [input.value, roomStore.currentRoomId],
     ([newInput, roomId], previous) => {

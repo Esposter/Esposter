@@ -14,7 +14,7 @@ usePushToTalk(isInCall, pictureInPictureWindow);
 watch(isPoppedOut, async (newIsPoppedOut) => {
   if (newIsPoppedOut) {
     await open();
-    // Open() no-ops on unsupported browsers and swallows requestWindow rejections (e.g. activation
+    // `open()` no-ops on unsupported browsers and swallows requestWindow rejections (e.g. activation
     // Lost after the screen picker), so if no window materialised, clear the stale intent — otherwise
     // The main view shows an empty PiP placeholder for a call that never popped out.
     if (!pictureInPictureWindow.value) isPoppedOut.value = false;
