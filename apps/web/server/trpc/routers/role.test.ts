@@ -17,7 +17,7 @@ describe("roleRouter", () => {
   let roomId: string;
   const name = "name";
   const updatedName = "updatedName";
-  const position = 5;
+  const position = 1;
 
   beforeAll(() => {
     mockContext = getMockContext();
