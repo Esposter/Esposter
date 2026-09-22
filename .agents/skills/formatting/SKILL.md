@@ -27,7 +27,8 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 - **Never inside an inline snapshot.** The object in a `toMatchInlineSnapshot` template is not source — it is the
   serializer's output, and Vitest compares it line for line, so collapsing one that fits turns a passing suite red
   (five snapshots in `apps/web/app/services/jsonSchema/zodToJsonSchema.test.ts` and `apps/web/uno.config.test.ts`).
-  A snapshot body is rewritten only by `pnpm test <path> --run -u`, never by hand.
+  A snapshot body is rewritten only by `pnpm test <path> --run -u`, never by hand. The rule stops at the
+  snapshot's opening backtick.
 
 ## Comments
 

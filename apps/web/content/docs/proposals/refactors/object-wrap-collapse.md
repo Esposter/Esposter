@@ -5,7 +5,7 @@ description: Proposal — hand the one-line-object rule to oxfmt's objectWrap op
 
 # `objectWrap: "collapse"`
 
-The `formatting` skill holds a rule with no enforcer behind it: **an object literal that fits the width is written on one line.** Nothing reports a violation, so the rule is carried by hand, and a repo-wide pass over it has already been paid once.
+The `formatting` skill holds a rule with no enforcer behind it: **a literal that fits the width goes on one line.** Nothing reports a violation, so the rule is carried by hand, and a repo-wide pass over it has already been paid once.
 
 `oxfmt` can decide it instead. Its `objectWrap` option takes `"preserve"` (the default) or `"collapse"`, and `"collapse"` is the rule exactly:
 
