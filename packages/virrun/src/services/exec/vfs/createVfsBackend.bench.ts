@@ -2,6 +2,7 @@ import { BackendType } from "#src/models/virrun/BackendType";
 import { createNativeBackend } from "#src/services/exec/native/createNativeBackend";
 import { createTemporaryDirectoryTracker } from "#src/services/exec/test/createTemporaryDirectoryTracker.test";
 import { createVfsBackend } from "#src/services/exec/vfs/createVfsBackend";
+import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -9,14 +10,14 @@ import { afterAll, test } from "vitest";
 // The speed gate for the vfs backend: the in-process runner evaluates a short-lived `node -e`/`node <file>` in
 // This process (microseconds) where native pays full process startup. The fall-back case (`node -p`) runs through
 // Both backends to confirm parse-and-delegate adds ~no overhead on commands vfs punts to native.
-const EVAL_COMMAND = `node -e "process.stdout.write('bench')"`;
-const FALLBACK_COMMAND = `node -p "1 + 1"`;
+const EVAL_COMMAND = `node -e "process.stdout.write(' ')"`;
+const FALLBACK_COMMAND = `node -p "0"`;
 const native = createNativeBackend();
 const vfs = createVfsBackend();
 const temporaryDirectories = createTemporaryDirectoryTracker();
 const directory = temporaryDirectories.create();
-writeFileSync(join(directory, "bench.cjs"), "process.stdout.write('bench')");
-const FILE_COMMAND = "node bench.cjs";
+writeFileSync(join(directory, `${TEST_FILENAME}.cjs`), "process.stdout.write(' ')");
+const FILE_COMMAND = `node ${TEST_FILENAME}.cjs`;
 
 afterAll(() => {
   temporaryDirectories.cleanup();

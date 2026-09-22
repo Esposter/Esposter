@@ -15,6 +15,8 @@ import { createBwrapBackend } from "#src/services/exec/bwrap/createBwrapBackend"
 import { TEST_FILENAME } from "#src/services/exec/util/constants.test";
 import { getResultAsync } from "@esposter/shared";
 import { EventEmitter } from "node:events";
+import { constants } from "node:os";
+import { constants } from "node:os";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
@@ -63,7 +65,7 @@ describe(createBwrapBackend, () => {
   const createBackend = () =>
     createBwrapBackend(
       () => [],
-      () => ({ command: ["wsl.exe"], env: {}, statusSource: BwrapStatusSource.Stderr }),
+      () => ({ command: [""], env: {}, statusSource: BwrapStatusSource.Stderr }),
       ERROR_NAME,
     );
   const exec = (stdio: ExecStdio, tee?: ExecTeeTarget) => createBackend().exec(["tsc"], { cwd: "", stdio, tee });
@@ -96,14 +98,14 @@ describe(createBwrapBackend, () => {
   test("carries the close status into the failure headline when no exit code is reported", async () => {
     expect.hasAssertions();
 
-    spawn.mockImplementation(() => createFakeChild({ closeCode: SIGNAL_EXIT_CODE_BASE + 15 }));
+    spawn.mockImplementation(() => createFakeChild({ closeCode: SIGNAL_EXIT_CODE_BASE + constants.signals.SIGTERM }));
     const message = (await getResultAsync(() => exec("pipe"))).match(
       () => "",
       ({ message: errorMessage }) => errorMessage,
     );
 
     expect(message).toBe(
-      `Invalid operation: Create, name: ${ERROR_NAME}, the sandbox was killed by signal 15 — an external kill, not a bwrap failure`,
+      `Invalid operation: Create, name: ${ERROR_NAME}, the sandbox was killed by signal ${constants.signals.SIGTERM} — an external kill, not a bwrap failure`,
     );
   });
 

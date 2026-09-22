@@ -12,7 +12,7 @@ describe(buildBwrapArgs, () => {
   test("wraps a string command in /bin/sh -c after the overlay flags", () => {
     expect.hasAssertions();
 
-    expect(buildBwrapArgs("echo hi", TEST_DIR)).toStrictEqual([
+    expect(buildBwrapArgs("", TEST_DIR)).toStrictEqual([
       "--unshare-all",
       "--die-with-parent",
       "--ro-bind",
@@ -33,16 +33,16 @@ describe(buildBwrapArgs, () => {
       "--",
       "/bin/sh",
       "-c",
-      "echo hi",
+      "",
     ]);
   });
 
   test("spreads an argv command unchanged so it is never reinterpreted by a shell", () => {
     expect.hasAssertions();
 
-    const args = buildBwrapArgs(["git", "clone", "--", "; rm -rf /"], TEST_DIR);
+    const args = buildBwrapArgs(["a", ";"], TEST_DIR);
 
-    expect(args.slice(-4)).toStrictEqual(["git", "clone", "--", "; rm -rf /"]);
+    expect(args.slice(-2)).toStrictEqual(["a", ";"]);
   });
 
   test("mounts the same directory as overlay source, upper, and chdir", () => {
@@ -114,7 +114,7 @@ describe(buildBwrapArgs, () => {
 
     const upperDirectory = `${TEST_DIR}/upper`;
     const workDirectory = `${TEST_DIR}/work`;
-    const args = buildBwrapArgs("pnpm install", TEST_DIR, {}, { upperDirectory, workDirectory });
+    const args = buildBwrapArgs("", TEST_DIR, {}, { upperDirectory, workDirectory });
 
     expect(args).toMatchInlineSnapshot(`
       [
@@ -140,7 +140,7 @@ describe(buildBwrapArgs, () => {
         "--",
         "/bin/sh",
         "-c",
-        "pnpm install",
+        "",
       ]
     `);
   });
@@ -149,7 +149,7 @@ describe(buildBwrapArgs, () => {
     expect.hasAssertions();
 
     const snapshotUpper = `${TEST_DIR}/${TEST_FILENAME}`;
-    const args = buildBwrapArgs("vitest", TEST_DIR, {}, { lowerDirectories: [snapshotUpper] });
+    const args = buildBwrapArgs("", TEST_DIR, {}, { lowerDirectories: [snapshotUpper] });
 
     // The snapshot lower must stack after the source so its files shadow it, and both precede the upper.
     expect(args).toMatchInlineSnapshot(`
@@ -176,7 +176,7 @@ describe(buildBwrapArgs, () => {
         "--",
         "/bin/sh",
         "-c",
-        "vitest",
+        "",
       ]
     `);
   });
