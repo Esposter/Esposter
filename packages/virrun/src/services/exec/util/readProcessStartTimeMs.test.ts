@@ -10,7 +10,9 @@ describe(readProcessStartTimeMs, () => {
 
     const startTimeMs = readProcessStartTimeMs(process.pid);
 
-    expect(Math.abs((startTimeMs ?? 0) - (Date.now() - process.uptime() * 1000))).toBeLessThan(3000);
+    expect(Math.abs((startTimeMs ?? 0) - (Date.now() - process.uptime() * 1000))).toBeLessThan(
+      Temporal.Duration.from({ seconds: 3 }).total("milliseconds"),
+    );
   });
 
   test("returns undefined for a pid nothing holds", () => {

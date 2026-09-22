@@ -83,7 +83,7 @@ describe(createProbeCache, () => {
     expect.hasAssertions();
 
     const probe = vi.fn<() => string>(() => {
-      throw new Error("probe failed");
+      throw new Error("");
     });
     const writePersistedCache = vi.fn<WritePersistedCache>(() => undefined);
     const readValue = createProbeCache({
@@ -93,8 +93,8 @@ describe(createProbeCache, () => {
       writePersistedCache,
     });
 
-    expect(() => readValue()).toThrowErrorMatchingInlineSnapshot(`[Error: probe failed]`);
-    expect(() => readValue()).toThrowErrorMatchingInlineSnapshot(`[Error: probe failed]`);
+    expect(() => readValue()).toThrowErrorMatchingInlineSnapshot(`[Error]`);
+    expect(() => readValue()).toThrowErrorMatchingInlineSnapshot(`[Error]`);
     expect(probe).toHaveBeenCalledTimes(2);
     expect(writePersistedCache).not.toHaveBeenCalled();
   });

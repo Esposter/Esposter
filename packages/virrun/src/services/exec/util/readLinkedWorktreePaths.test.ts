@@ -31,7 +31,7 @@ const registerWorktree = (commonDirectory: string, name: string, worktreeRoot: s
 describe(readLinkedWorktreePaths, () => {
   const WORKTREE_NAME = "b";
   const DOT_PREFIXED_WORKTREE_NAME = `..${WORKTREE_NAME}`;
-  const SUBMODULE_NAME = "sub";
+  const SUBMODULE_NAME = "c";
   // Where git keeps a submodule's git directory inside the superproject — a directory this module never names, since
   // The common directory is read from `commondir` rather than inferred from the layout; the test builds the real thing.
   const GIT_MODULES_DIRECTORY_NAME = "modules";

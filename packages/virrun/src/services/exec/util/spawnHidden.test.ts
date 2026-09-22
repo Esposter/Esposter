@@ -8,8 +8,8 @@ const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
 vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
 
 describe(spawnHidden, () => {
-  const file = "wsl.exe";
-  const args = ["--exec", "true"];
+  const file = "";
+  const args: string[] = [];
 
   beforeEach(() => {
     spawn.mockReset();

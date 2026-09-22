@@ -18,12 +18,12 @@ describe(spawnBackground, () => {
   test("spawns a hidden, stdio-ignored child and never detaches", () => {
     expect.hasAssertions();
 
-    spawnBackground("wsl.exe", ["--exec", "true"]);
+    spawnBackground("", []);
 
     // The regression this guards: `detached` makes win32 ignore windowsHide and flash an empty console
     // (nodejs#21825). toHaveBeenCalledExactlyOnceWith matches the options object exactly, so this fails if a
     // `detached` (or any other) key is ever reintroduced — the shape must stay stdio-ignore + windowsHide.
-    expect(spawn).toHaveBeenCalledExactlyOnceWith("wsl.exe", ["--exec", "true"], {
+    expect(spawn).toHaveBeenCalledExactlyOnceWith("", [], {
       stdio: "ignore",
       windowsHide: true,
     });
@@ -32,7 +32,7 @@ describe(spawnBackground, () => {
   test("swallows the async error and unrefs so the parent can exit while it runs", () => {
     expect.hasAssertions();
 
-    spawnBackground("wsl.exe", []);
+    spawnBackground("", []);
 
     expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop);
     expect(child.unref).toHaveBeenCalledExactlyOnceWith();
