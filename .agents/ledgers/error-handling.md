@@ -4,45 +4,45 @@
 
 | Unit                                                             | Swept      | Notes                                                                                 |
 | ---------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------- |
-| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-09-14 | the widest best-effort tails in the app, all of them awaited                          |
-| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | 2026-09-14 | a bare `UNAUTHORIZED` here is the sanctioned form                                     |
-| `server/trpc/routers` — the resource family                      | 2026-09-14 | the two repeated rejections have named constructors over the guards                   |
-| `server/trpc/routers` — the social and editor routers            | 2026-09-14 | one bare `InvalidOperationError` asserts an unreachable state, so a 500 is what it is |
-| `server/trpc/routers` — the rest                                 | 2026-09-14 |                                                                                       |
-| `server/services/message`                                        | 2026-09-14 |                                                                                       |
-| `server/services` — the rest                                     | 2026-09-14 | the `CONFLICT` pair is the documented exception                                       |
-| `server/composables`                                             | 2026-09-14 | nine client constructors — none wraps a call, so there is nothing to terminate        |
-| `apps/functions`                                                 | 2026-09-14 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)` |
-| `app/store/message`                                              | 2026-09-14 | the fire-and-forget callbacks here are pinned by a test                               |
-| `app/store` — the rest                                           | 2026-09-14 | reports through `useMutation`                                                         |
-| `app/composables/message/room`                                   | 2026-09-14 | the pre-join device probes and the call-session read                                  |
-| `app/composables/message/subscribables`                          | 2026-09-14 | every `onData` body terminates its own chain                                          |
-| `app/composables/message` — the rest                             | 2026-09-14 |                                                                                       |
-| `app/composables/resource/sheet`                                 | 2026-09-14 | the clipboard shortcuts terminate inside the composables they call                    |
-| `app/composables/resource` — the rest                            | 2026-09-14 | every read goes through `readItems`/`useMutation`                                     |
-| `app/composables` — the rest                                     | 2026-09-14 |                                                                                       |
-| `app/services/resource`, `app/services/message`                  | 2026-09-14 |                                                                                       |
-| `app/services` — the rest, `app/util`                            | 2026-09-14 | the file pickers report from inside their own composables                             |
-| `app/components/Message`                                         | 2026-09-14 |                                                                                       |
-| `app/components/Resource`, `app/components/Dungeons`             | 2026-09-14 | `Resource` reaches the server by primitive; the scene lifecycle drops what it returns |
-| `app/components` — the rest                                      | 2026-09-14 |                                                                                       |
-| `packages/db`, `apps/infra`                                      | 2026-09-14 | `db` rolls back then rethrows; `infra` is resource declarations with no error path    |
-| `packages/virrun` — `exec/snapshot`                              | 2026-09-14 | a self-healing branch traces rather than alerts                                       |
-| `packages/virrun` — `exec/wsl`                                   | 2026-09-14 | the mirror's origin marker is the one swallow another sweep's age arm rests on        |
-| `packages/virrun` — `exec/util`                                  | 2026-09-14 | the `unwrapOr` readers answer a missing path with a value                             |
-| `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-09-14 | the hash and key chains answer absence with `null` on purpose                         |
-| `packages/virrun` — `exec` — the rest                            | 2026-09-14 | `bwrap`, `native`, `store`, `vfs`, `differential`, `test`                             |
-| `packages/virrun` — `services/cli`                               | 2026-09-14 | a CLI answers a failure with an exit code and stderr rather than an alert             |
-| `packages/virrun` — `src/models`, `services` — the rest          | 2026-09-14 | every chain rethrows or falls back on a value its own comment names                   |
-| `scripts`                                                        | 2026-09-14 | `TypeError`/`RangeError` stay — the ban is on the bare `Error`, not on a precise one  |
-| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-09-14 | every throw is a stub, an unsupported-in-mock, or an Azure wire response              |
-| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-09-14 | every throw is a named error class, no chain to terminate outside `shared`            |
-| `server/trpc` — `guards`, `procedure`, `plugins`, `middleware`   | 2026-09-14 | a limiter bypass on a local production build is a notice, not an err handler          |
-| `server/api`, `server/routes`                                    | 2026-09-14 |                                                                                       |
-| `app/pages`, `app/layouts`, `app/plugins`, `app/middleware`      | 2026-09-14 | a push payload any worker can post is parsed and dropped rather than reported         |
-| `packages/shared`, `packages/shared-node`                        | 2026-09-14 | the primitives themselves, and the bench reporter that rethrows through them          |
-| `packages/keyframe-store`                                        | 2026-09-14 | the store hands back a `ResultAsync` its caller terminates                            |
-| `packages/configuration`                                         | 2026-09-14 | builds before `@esposter/shared`, so its throws are bare `Error`s by necessity        |
+| `server/trpc/routers/message`, `server/trpc/routers/room`        | 2026-09-22 | the widest best-effort tails in the app, all of them awaited                          |
+| `server/trpc/routers` — `call`, `role`, `userToRoom`, `webhook`  | 2026-09-22 | a bare `UNAUTHORIZED` here is the sanctioned form                                     |
+| `server/trpc/routers` — the resource family                      | 2026-09-22 | the two repeated rejections have named constructors over the guards                   |
+| `server/trpc/routers` — the social and editor routers            | 2026-09-22 | one bare `InvalidOperationError` asserts an unreachable state, so a 500 is what it is |
+| `server/trpc/routers` — the rest                                 | 2026-09-22 |                                                                                       |
+| `server/services/message`                                        | 2026-09-22 |                                                                                       |
+| `server/services` — the rest                                     | 2026-09-22 | the `CONFLICT` pair is the documented exception                                       |
+| `server/composables`                                             | 2026-09-22 | nine client constructors — none wraps a call, so there is nothing to terminate        |
+| `apps/functions`                                                 | 2026-09-22 | every handler ends in `logAndRethrow`; every post-persist effect in `.match(noop, …)` |
+| `app/store/message`                                              | 2026-09-22 | the fire-and-forget callbacks here are pinned by a test                               |
+| `app/store` — the rest                                           | 2026-09-22 | reports through `useMutation`                                                         |
+| `app/composables/message/room`                                   | 2026-09-22 | the pre-join device probes and the call-session read                                  |
+| `app/composables/message/subscribables`                          | 2026-09-22 | every `onData` body terminates its own chain                                          |
+| `app/composables/message` — the rest                             | 2026-09-22 |                                                                                       |
+| `app/composables/resource/sheet`                                 | 2026-09-22 | the clipboard shortcuts terminate inside the composables they call                    |
+| `app/composables/resource` — the rest                            | 2026-09-22 | every read goes through `readItems`/`useMutation`                                     |
+| `app/composables` — the rest                                     | 2026-09-22 |                                                                                       |
+| `app/services/resource`, `app/services/message`                  | 2026-09-22 |                                                                                       |
+| `app/services` — the rest, `app/util`                            | 2026-09-22 | the file pickers report from inside their own composables                             |
+| `app/components/Message`                                         | 2026-09-22 |                                                                                       |
+| `app/components/Resource`, `app/components/Dungeons`             | 2026-09-22 | `Resource` reaches the server by primitive; the scene lifecycle drops what it returns |
+| `app/components` — the rest                                      | 2026-09-22 |                                                                                       |
+| `packages/db`, `apps/infra`                                      | 2026-09-22 | `db` rolls back then rethrows; `infra` is resource declarations with no error path    |
+| `packages/virrun` — `exec/snapshot`                              | 2026-09-22 | a self-healing branch traces rather than alerts                                       |
+| `packages/virrun` — `exec/wsl`                                   | 2026-09-22 | the mirror's origin marker is the one swallow another sweep's age arm rests on        |
+| `packages/virrun` — `exec/util`                                  | 2026-09-22 | the `unwrapOr` readers answer a missing path with a value                             |
+| `packages/virrun` — `exec/cache`, `exec/os`                      | 2026-09-22 | the hash and key chains answer absence with `null` on purpose                         |
+| `packages/virrun` — `exec` — the rest                            | 2026-09-22 | `bwrap`, `native`, `store`, `vfs`, `differential`, `test`                             |
+| `packages/virrun` — `services/cli`                               | 2026-09-22 | a CLI answers a failure with an exit code and stderr rather than an alert             |
+| `packages/virrun` — `src/models`, `services` — the rest          | 2026-09-22 | every chain rethrows or falls back on a value its own comment names                   |
+| `scripts`                                                        | 2026-09-22 | `TypeError`/`RangeError` stay — the ban is on the bare `Error`, not on a precise one  |
+| `packages/azure`, `packages/azure-mock`, `packages/db-mock`      | 2026-09-22 | every throw is a stub, an unsupported-in-mock, or an Azure wire response              |
+| `packages/parse-tmx`, `packages/vue-phaserjs`, `packages/xml2js` | 2026-09-22 | every throw is a named error class, no chain to terminate outside `shared`            |
+| `server/trpc` — `guards`, `procedure`, `plugins`, `middleware`   | 2026-09-22 | a limiter bypass on a local production build is a notice, not an err handler          |
+| `server/api`, `server/routes`                                    | 2026-09-22 |                                                                                       |
+| `app/pages`, `app/layouts`, `app/plugins`, `app/middleware`      | 2026-09-22 | a push payload any worker can post is parsed and dropped rather than reported         |
+| `packages/shared`, `packages/shared-node`                        | 2026-09-22 | the primitives themselves, and the bench reporter that rethrows through them          |
+| `packages/keyframe-store`                                        | 2026-09-22 | the store hands back a `ResultAsync` its caller terminates                            |
+| `packages/configuration`                                         | 2026-09-22 | builds before `@esposter/shared`, so its throws are bare `Error`s by necessity        |
 | `packages/genshin-persona`                                       | 2026-09-21 | no `@esposter/shared` to import: the process boundary terminates, and records first   |
 
 The mechanical half — no `try`/`catch`, no `.isOk`/`.isErr`, no bare `new Error` outside the sites the

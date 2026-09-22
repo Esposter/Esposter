@@ -2,7 +2,7 @@
 
 | Unit                                                                            | Swept      | Notes                                                                                                                     |
 | ------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------- |
-| optimistic rollbacks                                                            | 2026-09-14 | every `applyOptimistic` returns a rollback or `noop` with the reason it cannot; the server half is `withResourceRollback` |
+| optimistic rollbacks                                                            | 2026-09-22 | every `applyOptimistic` returns a rollback or `noop` with the reason it cannot; the server half is `withResourceRollback` |
 | `app/components/Styled`                                                         | 2026-09-22 |                                                                                                                           |
 | `shared/models/db/message` — the roots                                          | 2026-09-21 |                                                                                                                           |
 | `shared/models/db/message` — `scheduledMessageJob`, `metadata`                  | 2026-09-21 |                                                                                                                           |
@@ -18,7 +18,7 @@
 | `shared/services` — the cross-cutting trees                                     | 2026-09-21 | `app`, `intl`, `notification`, `room`, `storage`, `superjson`, `survey`, `trpc`, `zod`                                    |
 | `shared/util`                                                                   | 2026-09-15 |                                                                                                                           |
 | `shared/services/dungeons` + `shared/assets`                                    | 2026-09-21 | the definition data both halves read; `shared/generated` is generator output                                              |
-| `shared/models/dungeons`                                                        | 2026-09-14 | `Direction`'s SCREAMING_SNAKE members and `Position`'s shape are grid-engine's, so they stay                              |
+| `shared/models/dungeons`                                                        | 2026-09-22 | `Direction`'s SCREAMING_SNAKE members and `Position`'s shape are grid-engine's, so they stay                              |
 | `shared/models/clicker`                                                         | 2026-09-21 |                                                                                                                           |
 | `shared/models/achievement` + `services/achievement`                            | 2026-09-21 |                                                                                                                           |
 | `shared/services/resource`                                                      | 2026-09-21 | nothing to collapse — `ResourceDefinitionMap.title` restating the type is load-bearing                                    |

@@ -4,10 +4,10 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 
 | Unit                                                       | Swept      | Notes                                                                                                |
 | ---------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema.ts` + `relations`           | 2026-09-14 | a `r.many` key is the child table's own name; an `r.one` off a role column is the role               |
-| `packages/db-schema/src/schema` — the message tables       | 2026-09-14 | the `*InMessage` family                                                                              |
-| `packages/db-schema/src/schema` — the rest                 | 2026-09-14 | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
-| `shared/models/db/message`                                 | 2026-09-14 | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
+| `packages/db-schema/src/schema.ts` + `relations`           | 2026-09-22 | a `r.many` key is the child table's own name; an `r.one` off a role column is the role               |
+| `packages/db-schema/src/schema` — the message tables       | 2026-09-22 | the `*InMessage` family                                                                              |
+| `packages/db-schema/src/schema` — the rest                 | 2026-09-22 | the twin `friends`/`friendRequests` blocks stay, and the `drizzle` skill says why                    |
+| `shared/models/db/message`                                 | 2026-09-22 | every input is composed by `.pick`/`.shape` spread, so a derived type alias is sanctioned            |
 | `shared/models/db` — the room family                       | 2026-09-15 | `room`, `roomCategory`, `roomEmoji`, `role`, `moderation`, `webhook`                                 |
 | `shared/models/db` — the rest                              | 2026-09-15 | `blueprint`, `friend`, `notification`, `post`, `searchHistory`, `user`, `userSettings`, `userToRoom` |
 | `shared/models/resource/sheet`                             | 2026-09-15 | the split transformation's form defaults stay on the shared schema — `zod` says why                  |
