@@ -68,6 +68,9 @@ describe(createBwrapBackend, () => {
       ERROR_NAME,
     );
   const exec = (stdio: ExecStdio, tee?: ExecTeeTarget) => createBackend().exec(["tsc"], { cwd: "", stdio, tee });
+  // The status block the wsl backend appends to stderr, as the folded script prints it
+  const createStatusTrailer = (exitCode: number) =>
+    `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":${exitCode}}\n${WSL_BWRAP_STATUS_END}`;
 
   beforeEach(() => {
     spawn.mockReset();
@@ -113,9 +116,7 @@ describe(createBwrapBackend, () => {
 
     const commandStderr = "type error\n";
     const write = vi.spyOn(process.stderr, "write").mockReturnValue(true);
-    spawn.mockImplementation(() =>
-      createFakeChild({ stderr: `${commandStderr}${WSL_BWRAP_STATUS_BEGIN}{"exit-code":1}\n${WSL_BWRAP_STATUS_END}` }),
-    );
+    spawn.mockImplementation(() => createFakeChild({ stderr: `${commandStderr}${createStatusTrailer(1)}` }));
     const { exitCode, stderr, stdout } = await exec("inherit");
 
     expect(exitCode).toBe(1);
@@ -129,7 +130,7 @@ describe(createBwrapBackend, () => {
 
     const firstChunk = "resolving\n";
     const secondChunk = "downloading\n";
-    const trailer = `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":0}\n${WSL_BWRAP_STATUS_END}`;
+    const trailer = createStatusTrailer(0);
     // Cut inside the BEGIN marker (< marker length into the trailer) so it genuinely spans two chunks.
     const splitIndex = firstChunk.length + secondChunk.length + Math.floor(WSL_BWRAP_STATUS_BEGIN.length / 2);
     const fullStderr = `${firstChunk}${secondChunk}${trailer}`;
@@ -160,7 +161,7 @@ describe(createBwrapBackend, () => {
     // Holdback" intent self-documenting instead of a magic width.
     const line = `${TEST_FILENAME.repeat(WSL_BWRAP_STATUS_BEGIN.length)}\n`;
     const splitIndex = WSL_BWRAP_STATUS_BEGIN.length;
-    const trailer = `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":0}\n${WSL_BWRAP_STATUS_END}`;
+    const trailer = createStatusTrailer(0);
     const write = vi.spyOn(process.stderr, "write").mockReturnValue(true);
     spawn.mockImplementation(() =>
       createFakeChild({ stderr: [line.slice(0, splitIndex), line.slice(splitIndex), trailer] }),
@@ -190,7 +191,7 @@ describe(createBwrapBackend, () => {
       };
       spawn.mockImplementation(() =>
         createFakeChild({
-          stderr: `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":0}\n${WSL_BWRAP_STATUS_END}`,
+          stderr: createStatusTrailer(0),
           stdout: commandStdout,
         }),
       );
@@ -208,9 +209,7 @@ describe(createBwrapBackend, () => {
 
     const commandStderr = "type error\n";
     const write = vi.spyOn(process.stderr, "write").mockReturnValue(true);
-    spawn.mockImplementation(() =>
-      createFakeChild({ stderr: `${commandStderr}${WSL_BWRAP_STATUS_BEGIN}{"exit-code":1}\n${WSL_BWRAP_STATUS_END}` }),
-    );
+    spawn.mockImplementation(() => createFakeChild({ stderr: `${commandStderr}${createStatusTrailer(1)}` }));
     const { exitCode, stderr } = await exec("pipe");
 
     expect(exitCode).toBe(1);

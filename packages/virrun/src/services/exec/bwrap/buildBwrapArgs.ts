@@ -13,8 +13,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 //
 // `overlayLayers` parametrizes the working-directory overlay (apps/web/content/docs/virrun/snapshot-and-fork.md):
 // `lowerDirectories` adds extra read-only lowers (a fork stacks the frozen snapshot upper here to shadow the source);
-// `upperDirectory`+`workDirectory` switch to a
-// Persistent `--overlay` so a capture's writes land on disk — both required together, one without the other throws.
+// `upperDirectory`+`workDirectory` switch to a persistent `--overlay` so a capture's writes land on disk — both
+// Required together, one without the other throws.
 //
 // `sourceDirectory` is the read-only source lower's real location, decoupled from `cwd` (the overlay *mountpoint* +
 // Chdir). They coincide natively, so it defaults to `cwd`. Under the win32 os backend they diverge: the source content

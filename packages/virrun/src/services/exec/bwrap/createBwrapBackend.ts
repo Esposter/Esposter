@@ -28,11 +28,7 @@ export const createBwrapBackend = (
         bwrapCommand.statusSource === BwrapStatusSource.Fd
           ? [options.stdio, options.stdio, options.stdio, "pipe"]
           : [options.stdio, options.stdio, "pipe"];
-      const child = spawnHidden(file, args, {
-        env: bwrapCommand.env,
-        shell: false,
-        stdio,
-      });
+      const child = spawnHidden(file, args, { env: bwrapCommand.env, shell: false, stdio });
       forwardTerminationSignals(child, bwrapCommand.onTerminate);
       let stdout = "";
       let stderr = "";
