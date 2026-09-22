@@ -9,7 +9,7 @@ describe("parse-tmx", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 11.02 KB (11282 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 11.04 KB (11310 bytes)"`);
   });
 
   test("types size", () => {
