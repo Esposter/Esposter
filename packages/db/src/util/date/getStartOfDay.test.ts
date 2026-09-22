@@ -5,6 +5,6 @@ describe(getStartOfDay, () => {
   test("falls back to the first instant the day holds", () => {
     expect.hasAssertions();
 
-    expect(getStartOfDay(new Date(1970, 0, 1, 13))).toStrictEqual(new Date(1970, 0, 1));
+    expect(getStartOfDay(new Date(1970, 0, 1, 1))).toStrictEqual(new Date(1970, 0, 1));
   });
 });

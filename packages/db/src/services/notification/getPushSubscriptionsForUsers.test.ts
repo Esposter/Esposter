@@ -4,18 +4,15 @@ import { createUser } from "#src/services/message/createUser.test";
 import { getPushSubscriptionsForUsers } from "#src/services/notification/getPushSubscriptionsForUsers";
 import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptions, sessions, users } from "@esposter/db-schema";
-import { ID_SEPARATOR } from "@esposter/shared";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-
-const getEndpoint = (sessionId: string) => `https://push.example.com/${sessionId}`;
 
 describe(getPushSubscriptionsForUsers, () => {
   let db: Database;
   const name = "name";
   const userId = crypto.randomUUID();
   const otherUserId = crypto.randomUUID();
-  const actingSessionId = `session${ID_SEPARATOR}acting`;
-  const otherSessionId = `session${ID_SEPARATOR}other`;
+  const actingSessionId = crypto.randomUUID();
+  const otherSessionId = crypto.randomUUID();
 
   beforeAll(async () => {
     db = await createMockDb();
@@ -29,7 +26,7 @@ describe(getPushSubscriptionsForUsers, () => {
     await db.insert(pushSubscriptions).values(
       [actingSessionId, otherSessionId].map((sessionId) => ({
         auth: "",
-        endpoint: getEndpoint(sessionId),
+        endpoint: sessionId,
         p256dh: "",
         sessionId,
         userId,
@@ -47,7 +44,7 @@ describe(getPushSubscriptionsForUsers, () => {
     const readPushSubscriptions = await getPushSubscriptionsForUsers(db, [userId, otherUserId]);
 
     expect(readPushSubscriptions.map(({ endpoint }) => endpoint).toSorted()).toStrictEqual(
-      [getEndpoint(actingSessionId), getEndpoint(otherSessionId)].toSorted(),
+      [actingSessionId, otherSessionId].toSorted(),
     );
   });
 
@@ -56,6 +53,6 @@ describe(getPushSubscriptionsForUsers, () => {
 
     const readPushSubscriptions = await getPushSubscriptionsForUsers(db, [userId], actingSessionId);
 
-    expect(readPushSubscriptions.map(({ endpoint }) => endpoint)).toStrictEqual([getEndpoint(otherSessionId)]);
+    expect(readPushSubscriptions.map(({ endpoint }) => endpoint)).toStrictEqual([otherSessionId]);
   });
 });

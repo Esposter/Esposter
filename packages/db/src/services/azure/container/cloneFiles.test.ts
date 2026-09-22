@@ -1,12 +1,13 @@
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { cloneFiles } from "#src/services/azure/container/cloneFiles";
-import { AzureContainer, FileEntity } from "@esposter/db-schema";
+import { getThumbnailBlobName } from "#src/services/azure/container/getThumbnailBlobName";
+import { FileEntity } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 describe(cloneFiles, () => {
-  const containerUrl = `https://account.blob.core.windows.net/${AzureContainer.MessageAssets}`;
+  const containerUrl = "";
   const sourcePrefix = crypto.randomUUID();
   const destinationPrefix = crypto.randomUUID();
   const id = crypto.randomUUID();
@@ -64,7 +65,7 @@ describe(cloneFiles, () => {
     );
 
     expect(clonedFile?.hasThumbnail).toBe(true);
-    expect(beginCopyFromURL).toHaveBeenCalledWith(`${containerUrl}/${sourcePrefix}/${id}.thumb`);
+    expect(beginCopyFromURL).toHaveBeenCalledWith(`${containerUrl}/${getThumbnailBlobName(sourcePrefix, id)}`);
   });
 
   // The caller treats a rejection as "nothing was cloned" — the forward posts no message — so anything already
@@ -72,7 +73,7 @@ describe(cloneFiles, () => {
   test("clears what it wrote when the thumbnail copy fails", async () => {
     expect.hasAssertions();
 
-    const { containerClient, deletedBlobNames } = setupContainerClient(".thumb");
+    const { containerClient, deletedBlobNames } = setupContainerClient(getThumbnailBlobName(sourcePrefix, id));
 
     await expect(
       cloneFiles(
