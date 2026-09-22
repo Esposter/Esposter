@@ -1,12 +1,12 @@
 import type { BenchmarkReport } from "#src/models/BenchmarkReport";
 import type { BenchmarkResult } from "#src/models/BenchmarkResult";
 
+import { BASELINE_TASK_NAME } from "#src/services/constants";
 import { takeOne } from "@esposter/shared";
-// The baseline each group's `vs base` multiplier is measured against: the task named "native" when the
-// Group has one — the host-baseline benches, where beating native is the whole point — otherwise the
-// Fastest task, since rows arrive ranked and no registration order survives into the report.
+// The baseline each group's `vs base` multiplier is measured against: the baseline task when the group has
+// One, otherwise the fastest task, since rows arrive ranked and no registration order survives into the report.
 const getBaseline = (benchmarks: BenchmarkResult[]): BenchmarkResult | undefined =>
-  benchmarks.find(({ name }) => name === "native") ?? benchmarks[0];
+  benchmarks.find(({ name }) => name === BASELINE_TASK_NAME) ?? benchmarks[0];
 // Baseline / row mean → a throughput multiplier: baseline reads 1.00×, faster tasks > 1, slower < 1. A
 // Sub-1 ratio goes through `toPrecision` so a 200×-slower task keeps its significant digits rather than
 // Collapsing to 0.00×.
