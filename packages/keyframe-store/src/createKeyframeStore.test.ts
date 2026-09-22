@@ -3,7 +3,7 @@ import type { ObjectStore } from "#src/models/ObjectStore";
 import type { VersionAnchor } from "#src/models/VersionAnchor";
 import type { WrittenVersion } from "#src/models/WrittenVersion";
 
-import { OBJECT_FLAGS_OFFSET } from "#src/constants";
+import { DELTA_FLAG, OBJECT_FLAGS_OFFSET } from "#src/constants";
 import { createKeyframeStore } from "#src/createKeyframeStore";
 import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
 import { createDocumentVersions } from "#src/services/createDocumentVersions.test";
@@ -176,8 +176,9 @@ describe(createKeyframeStore, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Data corruption detected]`);
 
     // A flag nobody defined is refused, never read as a keyframe with its payload cut at the wrong offset
+    const strangerFlag = DELTA_FLAG + 1;
     const strangerFlagBytes = new Uint8Array(keyframeBytes);
-    strangerFlagBytes[OBJECT_FLAGS_OFFSET] = 2;
+    strangerFlagBytes[OBJECT_FLAGS_OFFSET] = strangerFlag;
     memoryObjectStore.objects.set(keyframe.hash, strangerFlagBytes);
 
     await expect(
@@ -188,7 +189,7 @@ describe(createKeyframeStore, () => {
         },
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, "unknown object flags 2").message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, `unknown object flags ${strangerFlag}`).message}]`,
     );
 
     memoryObjectStore.objects.set(keyframe.hash, Buffer.from(""));
