@@ -6,3 +6,10 @@ export const MAX_DOCS_SEARCH_RESULTS = 10;
 export const MAX_MERMAID_SCALE = 4;
 export const MIN_MERMAID_SCALE = 0.5;
 export const PLANNING_GROUP_TITLE = "Planning";
+// Sized to sit inside a code block's top-right corner without covering its first line
+export const PROSE_COPY_BUTTON_PROPS = {
+  color: "grey-lighten-1",
+  density: "comfortable",
+  size: "small",
+  variant: "text",
+} as const;

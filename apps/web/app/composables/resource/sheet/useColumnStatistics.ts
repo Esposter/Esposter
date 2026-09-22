@@ -1,3 +1,5 @@
+import type { ColumnStatisticsRow } from "@/models/resource/sheet/column/ColumnStatisticsRow";
+
 import { computeColumnStatisticsForColumn } from "@/services/resource/sheet/column/computeColumnStatisticsForColumn";
 import { useSheetStore } from "@/store/resource/sheet";
 
@@ -9,7 +11,7 @@ import { useSheetStore } from "@/store/resource/sheet";
 export const useColumnStatistics = () => {
   const sheetStore = useSheetStore();
   const { dataSource } = storeToRefs(sheetStore);
-  return computed(() =>
+  return computed<ColumnStatisticsRow[]>(() =>
     dataSource.value.columns.map((column) => ({
       column,
       statistics: computeColumnStatisticsForColumn(dataSource.value, column),

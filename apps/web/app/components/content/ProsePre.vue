@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { PROSE_COPY_BUTTON_PROPS } from "@/services/docs/constants";
+
 interface Props {
   code?: string;
   language?: string;
@@ -9,7 +11,6 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 const { code = "", language } = defineProps<Props>();
 const { copied, copy } = useClipboard({ source: code });
-const COPY_BUTTON_PROPS = { color: "grey-lighten-1", density: "comfortable", size: "small", variant: "text" } as const;
 </script>
 
 <template>
@@ -27,7 +28,7 @@ const COPY_BUTTON_PROPS = { color: "grey-lighten-1", density: "comfortable", siz
       absolute
       focus:op-100
       group-hover:op-100
-      :button-props="COPY_BUTTON_PROPS"
+      :button-props="PROSE_COPY_BUTTON_PROPS"
       :icon="copied ? 'mdi-check' : 'mdi-content-copy'"
       :text="copied ? 'Copied' : 'Copy'"
       @click="copy()"
