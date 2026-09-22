@@ -27,11 +27,11 @@ pnpm ai:sweep:file-organization
 ```
 
 The scan lives in `scripts/src/sweeps/fileOrganization/` rather than in this file because it is a program: whether
-a second export is a second concern is a comparison of names word by word — a schema beside its type, an enum
-beside its values array, a table beside its row type and select schema — and a grep cannot hold that. What it
-prints is a candidate list for the pass, never a finding: the skill's exceptions are a roster no scan can hold,
-so no workspace test asserts the list empty, and a unit is dated by reading it, not by the scan coming back
-clean. Its cases are `getFileOrganizationFindings.test.ts`, which is what keeps "prove the scan can fail" proved.
+a second export is a second concern is a comparison of names word by word against the exceptions the
+`file-organization` skill names, and a grep cannot hold that. What it prints is a candidate list for the pass,
+never a finding: the skill's exceptions are a roster no scan can hold, so no workspace test asserts the list
+empty, and a unit is dated by reading it, not by the scan coming back clean. Its cases are
+`getFileOrganizationFindings.test.ts`, which is what keeps "prove the scan can fail" proved.
 
 A duplicate constant is the one thing the scan does not read, because it is found by value rather than by name:
 
