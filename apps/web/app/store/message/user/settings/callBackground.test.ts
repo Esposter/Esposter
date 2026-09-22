@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useCallBackgroundStore, () => {
   const server = setupMswTrpc();
-  const callBackground: CallBackground = { sasUrl: "https://mock/0?sig=mock", slot: 0 };
+  const callBackground: CallBackground = { sasUrl: "sasUrl", slot: 0 };
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -78,7 +78,7 @@ describe(useCallBackgroundStore, () => {
   test("a rejected delete does not resurrect a slot deleted beside it", async () => {
     expect.hasAssertions();
 
-    const callBackgrounds = [callBackground, { sasUrl: "https://mock/1?sig=mock", slot: 1 }];
+    const callBackgrounds = [callBackground, { sasUrl: "sasUrl", slot: 1 }];
     server.use(
       trpcMsw.user.readCallBackgrounds.query(() => callBackgrounds),
       trpcMsw.user.deleteCallBackground.mutation(({ input }) => {

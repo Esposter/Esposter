@@ -18,8 +18,8 @@ describe(useFileStore, () => {
   const otherRoomId = crypto.randomUUID();
   const fileId = crypto.randomUUID();
   const filename = "a";
-  const staleUrl = "https://sas.url/stale";
-  const freshUrl = "https://sas.url/fresh";
+  const staleUrl = "staleUrl";
+  const freshUrl = "freshUrl";
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -45,7 +45,7 @@ describe(useFileStore, () => {
     const { getSlice } = dataStore;
     getSlice(roomId).items.value.push(
       createMessageEntity({
-        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: "text/plain", size: 1 }],
+        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: MimeType.PlainText, size: 1 }],
         message: filename,
         roomId,
         type: MessageType.Message,
@@ -71,7 +71,7 @@ describe(useFileStore, () => {
     const { fileUrlMap, viewableFiles } = storeToRefs(fileStore);
     const { getSlice } = dataStore;
     const files = [
-      { mimetype: "image/png", name: "image" },
+      { mimetype: MimeType.Png, name: "image" },
       { mimetype: "video/mp4", name: "video" },
       { mimetype: MimeType.Pdf, name: "document" },
       { mimetype: "audio/mpeg", name: "audio" },
@@ -101,7 +101,7 @@ describe(useFileStore, () => {
     const { getSlice } = dataStore;
     getSlice(roomId).items.value.push(
       createMessageEntity({
-        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: "image/png", size: 1 }],
+        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: MimeType.Png, size: 1 }],
         message: filename,
         roomId,
         type: MessageType.Message,
@@ -130,7 +130,7 @@ describe(useFileStore, () => {
       filename,
       hasThumbnail: false,
       id: crypto.randomUUID(),
-      mimetype: "text/plain",
+      mimetype: MimeType.PlainText,
       size: 1,
     }));
     getSlice(roomId).items.value.push(
@@ -162,7 +162,7 @@ describe(useFileStore, () => {
     useFileStore();
     await MessageHookMap[Operation.Create].run(
       createMessageEntity({
-        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: "text/plain", size: 1 }],
+        files: [{ filename, hasThumbnail: false, id: fileId, mimetype: MimeType.PlainText, size: 1 }],
         message: filename,
         roomId: otherRoomId,
         type: MessageType.Message,

@@ -20,7 +20,7 @@ beforeEach(() => {
 describe(useCallStore, () => {
   const server = setupMswTrpc();
   const callSessionId = crypto.randomUUID();
-  const imagePath = "/image.png";
+  const imagePath = "imagePath";
   const roomId = crypto.randomUUID();
   const threadRootRowKey = crypto.randomUUID();
 
