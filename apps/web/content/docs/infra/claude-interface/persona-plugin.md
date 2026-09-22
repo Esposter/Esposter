@@ -20,7 +20,7 @@ flowchart LR
     Data["genshin-db<br/>every playable character, MIT"]
     Main["main<br/>the collector's merge is the release"]
     Remote["A stranger's plugin cache<br/>copied, then npm ci from the lockfile"]
-    Local["This machine<br/>loaded in place from the checkout"]
+    Local["This machine<br/>copied too, pinned to a commit"]
     Renovate[Renovate]
 
     Marketplace --> Plugin
@@ -28,7 +28,7 @@ flowchart LR
     Renovate -->|bumps both lockfiles| Plugin
     Plugin -->|ai/queue → develop → main| Main
     Main -->|claude plugin install, then update| Remote
-    Plugin -->|local marketplace| Local
+    Plugin -->|local marketplace, install pins a commit| Local
 ```
 
 Two consequences shape the package, both forced by the remote install running a frozen `npm ci` in the copied plugin:
@@ -39,7 +39,7 @@ Two consequences shape the package, both forced by the remote install running a 
 
 The same install rules out two shortcuts that get suggested: `pnpm-lock.yaml` is not a lockfile the installer reads (only bun's and npm's are), and no setting switches it to another package manager — "CLAUDE_PACKAGE_MANAGER" belongs to a third-party plugin's own scripts, not to the tool. `engines.node` is also not the root manifest's pin restated: the root states the version this repository runs on and `update:node` rewrites it, the plugin states the feature floor (Temporal) that travels with the copy, and a stranger's `npm ci` warns on it before a hook crashes.
 
-A checkout declares itself: `.agents/settings.json` names the marketplace `esposter` with the relative source `.` and enables `genshin-persona@esposter`, so a clone opened in Claude Code installs the plugin at project scope once the person trusts the repository, on any machine and with no path anyone types. A plugin whose source is a relative path inside a directory marketplace is **loaded in place**: the CLI records a cache entry keyed by the checkout's commit, but reads the files from the checkout, so a pull that changes the plugin takes effect at the next session start with no step to repeat. Elsewhere the release is a merge to `main`, which the [review collector](/docs/infra/review-collector) performs; an installed copy follows the marketplace on the tool's next plugin update — `claude plugin update`, which refreshes the marketplace first, or the background auto-update the person switches on per marketplace, since the tool leaves it off for every marketplace but Anthropic's own. The plugin declares no version on purpose: with one, an installed copy moves only when the field is bumped, and a release here is a merge and no ceremony, so the version is the commit and every merge is an update. Nothing the update changes is the person's to repeat — the launchers re-aim, the runtime is kept until its lockfile moves, and the weights until the engine does.
+A checkout declares itself: `.agents/settings.json` names the marketplace `esposter` with the relative source `.` and enables `genshin-persona@esposter`, so a clone opened in Claude Code installs the plugin at project scope once the person trusts the repository, on any machine and with no path anyone types. A plugin whose source is a relative path inside a directory marketplace is **copied like any other**, not linked: the CLI writes the files into its own cache under a directory named for the checkout's commit and runs them from there, so a pull that changes the plugin reaches nothing until an update moves the pin. Only the launchers in the state directory name a path, and a verb run straight from the checkout aims them at the working tree — which is how a change can look as though it took effect while the session-start hook is still running the pinned copy, the two surfaces disagreeing until someone reads the launcher. Development that wants the working tree itself loaded passes `--plugin-dir`, which takes a directory for one session with no install and no pin, and is only correct with the installed copy disabled: two loads of one plugin fire every hook twice and, at two different commits, write each other's state. Elsewhere the release is a merge to `main`, which the [review collector](/docs/infra/review-collector) performs; an installed copy follows the marketplace on the tool's next plugin update — `claude plugin update`, which refreshes the marketplace first, or the background auto-update that runs on startup, which the tool leaves off for every marketplace but Anthropic's own and which the checkout therefore declares for itself: `autoUpdate` sits beside the source in `.agents/settings.json`, so a clone re-pins to its own current commit with nothing switched on by hand, and the toggle in the plugin UI reports the value as settings' rather than offering to change it. The plugin declares no version on purpose: with one, an installed copy moves only when the field is bumped, and a release here is a merge and no ceremony, so the version is the commit and every merge is an update. Nothing the update changes is the person's to repeat — the launchers re-aim, the runtime is kept until its lockfile moves, and the weights until the engine does.
 
 ## Installable by anyone
 

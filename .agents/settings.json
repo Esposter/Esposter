@@ -4,6 +4,7 @@
   },
   "extraKnownMarketplaces": {
     "esposter": {
+      "autoUpdate": true,
       "source": {
         "path": ".",
         "source": "directory"

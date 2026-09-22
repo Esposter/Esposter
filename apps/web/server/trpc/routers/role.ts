@@ -18,6 +18,7 @@ import { assertCanGrantPermissions } from "@@/server/services/room/rbac/assertCa
 import { assertCanManageMemberRole } from "@@/server/services/room/rbac/assertCanManageMemberRole";
 import { getRoomMemberAuthority } from "@@/server/services/room/rbac/getRoomMemberAuthority";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
+import { readRoleWithAuthority } from "@@/server/services/room/rbac/readRoleWithAuthority";
 import { router } from "@@/server/trpc";
 import { getInvalidOperationError } from "@@/server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -105,17 +106,7 @@ export const roleRouter = router({
     "roomId",
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { id, roomId } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
-    const [role, actorAuthority] = await Promise.all([
-      requireEntity(
-        ctx.db.query.roomRolesInMessage.findFirst({
-          columns: { isEveryone: true, position: true },
-          where: { id: { eq: id }, roomId: { eq: roomId } },
-        }),
-        DatabaseEntityType.RoomRole,
-        id,
-      ),
-      getRoomMemberAuthority(ctx.db, actorUserId, roomId),
-    ]);
+    const [role, actorAuthority] = await readRoleWithAuthority(ctx.db, actorUserId, id, roomId);
 
     if (role.isEveryone) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, id);
 
@@ -182,17 +173,7 @@ export const roleRouter = router({
   revokeRole: getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { roleId, roomId, userId } }) => {
       const actorUserId = ctx.getSessionPayload.user.id;
-      const [role, actorAuthority] = await Promise.all([
-        requireEntity(
-          ctx.db.query.roomRolesInMessage.findFirst({
-            columns: { position: true },
-            where: { id: { eq: roleId }, roomId: { eq: roomId } },
-          }),
-          DatabaseEntityType.RoomRole,
-          roleId,
-        ),
-        getRoomMemberAuthority(ctx.db, actorUserId, roomId),
-      ]);
+      const [role, actorAuthority] = await readRoleWithAuthority(ctx.db, actorUserId, roleId, roomId);
 
       await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
       // No requireMutation, unlike deleteRole: this asks for an end state — the member does not hold the role
@@ -217,17 +198,7 @@ export const roleRouter = router({
     "roomId",
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
-    const [role, actorAuthority] = await Promise.all([
-      requireEntity(
-        ctx.db.query.roomRolesInMessage.findFirst({
-          columns: { position: true },
-          where: { id: { eq: id }, roomId: { eq: roomId } },
-        }),
-        DatabaseEntityType.RoomRole,
-        id,
-      ),
-      getRoomMemberAuthority(ctx.db, actorUserId, roomId),
-    ]);
+    const [role, actorAuthority] = await readRoleWithAuthority(ctx.db, actorUserId, id, roomId);
 
     const { isOwner, topPosition: actorTopPosition } = actorAuthority;
     if (

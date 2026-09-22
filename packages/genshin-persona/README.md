@@ -34,7 +34,14 @@ Updating is one command, which refreshes the marketplace itself; the plugin decl
 claude plugin update genshin-persona@esposter
 ```
 
-To stop running it, switch auto-update on once for this marketplace — `/plugin`, **Marketplaces**, `esposter`, **Enable auto-update** — which Claude Code leaves off for any marketplace that is not Anthropic's; the plugin then follows `main` in the background and loads on the launch after. Nothing below is repeated for an update: the state directory's launchers re-aim at the running copy at every session start, and the voice's runtime and weights are kept until the copy carries a newer lockfile or engine, which `voice` with no argument reports and `voice <dub>` run again picks up, installing only what changed.
+Developing the plugin from a checkout is the one case the install does not serve: an install is a copy pinned to a commit, so uncommitted work never reaches it. Load the directory itself for the session instead, with the installed copy disabled so only one of them answers:
+
+```bash
+claude plugin disable genshin-persona@esposter
+claude --plugin-dir packages/genshin-persona
+```
+
+Nobody switches that on: `.agents/settings.json` declares `autoUpdate` on the marketplace it declares, and Claude Code leaves it off for every marketplace but Anthropic's own. A checkout therefore re-pins its own plugin to its own current commit on startup, and `/plugin`'s **Enable auto-update** reports the value as settings' rather than offering to change it. An update still moves a pin to a commit, so work that is not committed is not loaded, whatever the toggle says. Nothing below is repeated for an update: the state directory's launchers re-aim at the running copy at every session start, and the voice's runtime and weights are kept until the copy carries a newer lockfile or engine, which `voice` with no argument reports and `voice <dub>` run again picks up, installing only what changed.
 
 Spoken lines stay silent until the `voice` verb has set the engine up, once, with the dub the reference lines are taken from — `en`, `ja`, `ko` or `zh`:
 

@@ -12,14 +12,7 @@ export const readMyInvite = async (
   roomId: string,
 ): Promise<InviteInMessage | undefined> => {
   const invite = await db.query.invitesInMessage.findFirst({
-    where: {
-      roomId: {
-        eq: roomId,
-      },
-      userId: {
-        eq: userId,
-      },
-    },
+    where: { roomId: { eq: roomId }, userId: { eq: userId } },
   });
   if (!invite) return undefined;
   else if (checkIsInviteUsable(invite)) return invite;

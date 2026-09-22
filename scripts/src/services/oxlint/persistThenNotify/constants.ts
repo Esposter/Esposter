@@ -7,15 +7,15 @@ export const MESSAGE =
 // Are deliberately NOT here — both unwrap the original result and rethrow on Err (see error-handling/SKILL.md,
 // Finalizers), so awaiting one after an emit rejects the caller for an entity that already exists and was
 // Already broadcast.
-export const AllowedRoots: ReadonlySet<string> = new Set(["getResult", "getResultAsync"]);
+export const ALLOWED_ROOTS: ReadonlySet<string> = new Set(["getResult", "getResultAsync"]);
 // Terminal helpers whose whole job is to log and put the rejection back.
-export const RethrowingCallees: ReadonlySet<string> = new Set(["logAndRethrow"]);
+export const RETHROWING_CALLEES: ReadonlySet<string> = new Set(["logAndRethrow"]);
 
-export const PromiseCombinators: ReadonlySet<string> = new Set(["all", "any", "race"]);
+export const PROMISE_COMBINATORS: ReadonlySet<string> = new Set(["all", "any", "race"]);
 // The methods whose call is a promise on sight, whatever it chains off
-export const PromiseChainMethods: ReadonlySet<string> = new Set(["catch", "finally", "then"]);
+export const PROMISE_CHAIN_METHODS: ReadonlySet<string> = new Set(["catch", "finally", "then"]);
 // Expressions whose value is written out in place, so nothing already-started can be hiding behind them.
-export const LiteralNodeTypes: ReadonlySet<string> = new Set([
+export const LITERAL_NODE_TYPES: ReadonlySet<string> = new Set([
   "ArrayExpression",
   "ArrowFunctionExpression",
   "Literal",
@@ -23,7 +23,7 @@ export const LiteralNodeTypes: ReadonlySet<string> = new Set([
   "TemplateLiteral",
 ]);
 
-export const FunctionNodeTypes: ReadonlySet<string> = new Set([
+export const FUNCTION_NODE_TYPES: ReadonlySet<string> = new Set([
   "ArrowFunctionExpression",
   "FunctionDeclaration",
   "FunctionExpression",

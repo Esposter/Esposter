@@ -2,7 +2,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { ObjectInteractionEffectMap } from "@/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap";
-import { ObjectgroupNames } from "@/services/dungeons/tilemap/constants";
+import { OBJECTGROUP_NAMES } from "@/services/dungeons/tilemap/constants";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export const useInteractWithObject = async (scene: SceneWithPlugins): Promise<boolean> => {
@@ -10,7 +10,7 @@ export const useInteractWithObject = async (scene: SceneWithPlugins): Promise<bo
   const { objectLayerMap, tilemap } = storeToRefs(worldSceneStore);
   if (!objectLayerMap.value) return false;
 
-  for (const objectgroupName of ObjectgroupNames) {
+  for (const objectgroupName of OBJECTGROUP_NAMES) {
     const objectLayer = objectLayerMap.value.get(objectgroupName);
     if (!objectLayer) continue;
 

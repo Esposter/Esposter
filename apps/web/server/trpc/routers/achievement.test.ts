@@ -141,14 +141,7 @@ describe("achievementRouter", () => {
 
     const userId = getMockSession().user.id;
     const userAchievement = await mockContext.db.query.userAchievements.findFirst({
-      where: {
-        achievementId: {
-          eq: unlockedAchievement.achievementId,
-        },
-        userId: {
-          eq: userId,
-        },
-      },
+      where: { achievementId: { eq: unlockedAchievement.achievementId }, userId: { eq: userId } },
       with: UserAchievementRelations,
     });
 

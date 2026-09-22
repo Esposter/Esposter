@@ -11,7 +11,7 @@ export const DEAD_LETTER_QUARANTINE_PREFIX = "quarantine/";
 export const BLOB_SEGMENT_REGEX = /^(?!\.{1,2}$)[^/\\]+$/u;
 export const FILENAME_MAX_LENGTH = 1000;
 // Characters in the canonical string form `crypto.randomUUID` returns.
-export const UUID_LENGTH = 36;
+const UUID_LENGTH = 36;
 // A `{uuid}|{filename}` blob segment at its longest, for the inputs that carry one whole. Derived rather than
 // Restated, so a filename the upload accepts can never be one the delete rejects.
 export const BLOB_SEGMENT_MAX_LENGTH = UUID_LENGTH + ID_SEPARATOR.length + FILENAME_MAX_LENGTH;

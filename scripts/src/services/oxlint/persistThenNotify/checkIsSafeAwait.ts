@@ -2,7 +2,11 @@ import type { ESTree } from "@oxlint/plugins";
 
 import { checkHasAbsorbingMatchTerminal } from "#src/services/oxlint/persistThenNotify/checkHasAbsorbingMatchTerminal";
 import { checkHasRethrowingTerminal } from "#src/services/oxlint/persistThenNotify/checkHasRethrowingTerminal";
-import { AllowedRoots, LiteralNodeTypes, PromiseCombinators } from "#src/services/oxlint/persistThenNotify/constants";
+import {
+  ALLOWED_ROOTS,
+  LITERAL_NODE_TYPES,
+  PROMISE_COMBINATORS,
+} from "#src/services/oxlint/persistThenNotify/constants";
 import { getBlockEffects } from "#src/services/oxlint/persistThenNotify/getBlockEffects";
 import { getPromiseMemberName } from "#src/services/oxlint/persistThenNotify/getPromiseMemberName";
 import { getRootCalleeName } from "#src/services/oxlint/persistThenNotify/getRootCalleeName";
@@ -19,7 +23,7 @@ import { getRootCalleeName } from "#src/services/oxlint/persistThenNotify/getRoo
 export const checkIsSafeAwait = (argument: ESTree.Expression): boolean => {
   if (checkHasAbsorbingMatchTerminal(argument)) return true;
   const rootName = getRootCalleeName(argument);
-  if (rootName !== undefined && AllowedRoots.has(rootName)) return !checkHasRethrowingTerminal(argument);
+  if (rootName !== undefined && ALLOWED_ROOTS.has(rootName)) return !checkHasRethrowingTerminal(argument);
   const promiseMemberName = argument.type === "CallExpression" ? getPromiseMemberName(argument.callee) : undefined;
   if (argument.type === "CallExpression" && promiseMemberName !== undefined) {
     // `Promise.allSettled` resolves an array of outcomes and never rejects regardless of its elements
@@ -30,9 +34,9 @@ export const checkIsSafeAwait = (argument: ESTree.Expression): boolean => {
     // Would hand the rule's own defect a syntax that walks straight past it
     if (promiseMemberName === "resolve") {
       const [value] = argument.arguments;
-      return value === undefined || LiteralNodeTypes.has(value.type);
+      return value === undefined || LITERAL_NODE_TYPES.has(value.type);
     }
-    if (!PromiseCombinators.has(promiseMemberName)) return false;
+    if (!PROMISE_COMBINATORS.has(promiseMemberName)) return false;
     const [collection] = argument.arguments;
     if (collection?.type === "ArrayExpression")
       return collection.elements.every(

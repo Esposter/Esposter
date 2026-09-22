@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export enum SoundEffectKey {
   Claw = "Claw",
   Flee = "Flee",
@@ -9,5 +7,3 @@ export enum SoundEffectKey {
   StepGrass = "StepGrass",
   TextBlip = "TextBlip",
 }
-
-export const soundEffectKeySchema = z.enum(SoundEffectKey) satisfies z.ZodType<SoundEffectKey>;

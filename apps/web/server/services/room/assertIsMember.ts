@@ -8,14 +8,7 @@ import { TRPCError } from "@trpc/server";
 export const assertIsMember = async (db: Context["db"], { user }: GetSessionPayload, roomIds: string | string[]) => {
   const roomIdArray = Array.isArray(roomIds) ? [...new Set(roomIds)] : [roomIds];
   const foundUsersToRooms = await db.query.usersToRoomsInMessage.findMany({
-    where: {
-      roomId: {
-        in: roomIdArray,
-      },
-      userId: {
-        eq: user.id,
-      },
-    },
+    where: { roomId: { in: roomIdArray }, userId: { eq: user.id } },
   });
   if (foundUsersToRooms.length !== roomIdArray.length) throw new TRPCError({ code: "UNAUTHORIZED" });
 };

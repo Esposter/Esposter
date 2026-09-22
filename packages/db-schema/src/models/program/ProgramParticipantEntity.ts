@@ -1,9 +1,7 @@
 import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
 import type { ToData } from "@esposter/shared";
 
-import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
-import { selectResourceSchema } from "#src/schema/resources";
-import { z } from "zod";
+import { AzureEntity } from "#src/models/azure/table/AzureEntity";
 
 // One row per person in a program's audience: PartitionKey = program id, rowKey = the key value's hash.
 // The key is the participant's identity, so storage itself rejects a second row for someone who already
@@ -26,15 +24,3 @@ export class ProgramParticipantEntity extends AzureEntity {
     Object.assign(this, init);
   }
 }
-
-export const programParticipantEntitySchema = z.object({
-  ...createAzureEntitySchema(
-    z.object({
-      partitionKey: selectResourceSchema.shape.id,
-      rowKey: z.hash("sha256"),
-    }),
-  ).shape,
-  keyValue: z.string().min(1),
-  publicId: z.uuid(),
-  token: z.uuid(),
-}) satisfies z.ZodType<ToData<ProgramParticipantEntity>>;

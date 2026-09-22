@@ -274,6 +274,9 @@ describe(saveResourceContent, () => {
     await saveLatestResourceContent({ items: [] });
     const firstRevisionBytes = await readStoredVersionBytes();
 
+    // The exact figure is the compressed size of the revision, which moves with the content rather than with the
+    // Metering under test — so what is asserted is that it moved off zero, without which the sum below passes
+    // Vacuously
     expect(firstRevisionBytes).toBeGreaterThan(0);
     await expect(readStorageBytesUsed()).resolves.toBe((getStoredContentBytes() ?? 0) + firstRevisionBytes);
 

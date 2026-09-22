@@ -2,16 +2,16 @@ import type { ESTree } from "@oxlint/plugins";
 
 import { checkHasOwnRejection } from "#src/services/oxlint/persistThenNotify/checkHasOwnRejection";
 import { checkIsPromiseReject } from "#src/services/oxlint/persistThenNotify/checkIsPromiseReject";
-import { RethrowingCallees } from "#src/services/oxlint/persistThenNotify/constants";
+import { RETHROWING_CALLEES } from "#src/services/oxlint/persistThenNotify/constants";
 
 // An err handler that puts the rejection back rather than absorbing it: throwing, returning a rejected promise,
 // Or passing a rethrowing callee directly.
 export const checkIsRethrowingHandler = (expression: ESTree.Node | undefined): boolean => {
   if (expression === undefined) return false;
-  else if (expression.type === "Identifier") return RethrowingCallees.has(expression.name);
+  else if (expression.type === "Identifier") return RETHROWING_CALLEES.has(expression.name);
   else if (expression.type === "CallExpression")
     return (
-      (expression.callee.type === "Identifier" && RethrowingCallees.has(expression.callee.name)) ||
+      (expression.callee.type === "Identifier" && RETHROWING_CALLEES.has(expression.callee.name)) ||
       checkIsPromiseReject(expression)
     );
   else if (checkIsPromiseReject(expression)) return true;

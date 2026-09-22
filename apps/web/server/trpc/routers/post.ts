@@ -38,16 +38,8 @@ export const postRouter = router({
       ctx.db.transaction(async (tx) => {
         const parentPost = await requireEntity(
           tx.query.posts.findFirst({
-            columns: {
-              ancestorIds: true,
-              depth: true,
-              id: true,
-            },
-            where: {
-              id: {
-                eq: input.parentId,
-              },
-            },
+            columns: { ancestorIds: true, depth: true, id: true },
+            where: { id: { eq: input.parentId } },
           }),
           DatabaseEntityType.Post,
           input.parentId,
