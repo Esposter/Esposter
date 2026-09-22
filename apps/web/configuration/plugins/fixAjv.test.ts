@@ -103,7 +103,7 @@ describe("fixAjv", () => {
       const result = transform("const x = require('./utils');\nmodule.exports = setup;\n", COMMON_JS_ID);
 
       // Relative requires are left as-is (common.js handler does not run generic transform).
-      // Note: INLINE_REQUIRE_RE normalises quotes to double in the fallback replacement.
+      // Note: INLINE_REQUIRE_REGEX normalises quotes to double in the fallback replacement.
       expect(result).toContain('require("./utils")');
     });
 
