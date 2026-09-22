@@ -1,7 +1,7 @@
-import type { HeldDependency } from "#src/models/outdatedDependencies/shared/HeldDependency";
 import type { HeldPartition } from "#src/models/outdatedDependencies/renovate/HeldPartition";
-import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared/OutdatedDependency";
 import type { RenovateRule } from "#src/models/outdatedDependencies/renovate/RenovateRule";
+import type { HeldDependency } from "#src/models/outdatedDependencies/shared/HeldDependency";
+import type { OutdatedDependency } from "#src/models/outdatedDependencies/shared/OutdatedDependency";
 
 import { getHoldingRule } from "#src/services/outdatedDependencies/renovate/getHoldingRule";
 

@@ -1,5 +1,5 @@
-import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
 import type { ManifestFile } from "#src/models/outdatedDependencies/manifest/ManifestFile";
+import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 

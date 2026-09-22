@@ -1,5 +1,5 @@
-import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
 import type { RenovateRule } from "#src/models/outdatedDependencies/renovate/RenovateRule";
+import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 import { getFollowedTagEntries } from "#src/services/outdatedDependencies/renovate/getFollowedTagEntries";
