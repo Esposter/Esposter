@@ -4,8 +4,7 @@ import type { ObjectStore } from "keyframe-store";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { publishBlobDeletion } from "@@/server/services/azure/eventGrid/publishBlobDeletion";
 import { getSnapshotObjectBlobName } from "@@/server/services/resource/snapshot/getSnapshotObjectBlobName";
-import { RestError } from "@azure/storage-blob";
-import { checkIsNotFound } from "@esposter/db";
+import { checkIsConflict, checkIsNotFound, checkIsPreconditionFailed } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -50,7 +49,7 @@ export const createSnapshotObjectStore = async (resourceId: Resource["id"]): Pro
           // Already stored under its own address, by this write's twin. A single-shot upload violates the
           // Condition as 409 (Put Blob's own special case for `If-None-Match: *`), while a block list large
           // Enough to stage and commit separately violates it as the generic 412 every other conditional write uses
-          if (error instanceof RestError && (error.statusCode === 409 || error.statusCode === 412)) return false;
+          if (checkIsConflict(error) || checkIsPreconditionFailed(error)) return false;
           throw error;
         },
       ),
