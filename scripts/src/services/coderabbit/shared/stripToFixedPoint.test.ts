@@ -1,4 +1,4 @@
-import { stripToFixedPoint } from "#src/services/shared/stripToFixedPoint";
+import { stripToFixedPoint } from "#src/services/coderabbit/shared/stripToFixedPoint";
 import { describe, expect, test } from "vitest";
 
 describe(stripToFixedPoint, () => {

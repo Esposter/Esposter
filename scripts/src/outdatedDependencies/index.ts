@@ -23,13 +23,14 @@ import { partitionHeldDependencies } from "#src/services/outdatedDependencies/re
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
 import { LOCKFILE_PATH, RENOVATE_CONFIGURATION_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { WORKSPACE_FILE } from "@esposter/configuration";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const startedAt = performance.now();
 const color = createColor(!process.env.NO_COLOR);
 
-const workspaceYaml = readFileSync(resolve(REPOSITORY_ROOT, "pnpm-workspace.yaml"), "utf8");
+const workspaceYaml = readFileSync(resolve(REPOSITORY_ROOT, WORKSPACE_FILE), "utf8");
 const lockYaml = readFileSync(LOCKFILE_PATH, "utf8");
 const renovateJson = readFileSync(resolve(REPOSITORY_ROOT, RENOVATE_CONFIGURATION_FILE), "utf8");
 

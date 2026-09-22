@@ -53,10 +53,13 @@ describe(resolveSessionCharacter, () => {
 
     pickCurrentCharacter.mockImplementation(() => {
       writePickRecords([...pickRecords, otherRecord]);
-      return Promise.resolve(character);
+      return Promise.resolve({ character, loreFailure: "" });
     });
 
-    await expect(resolveSessionCharacter([character], sessionId, TEST_EPOCH_DATE)).resolves.toStrictEqual(character);
+    await expect(resolveSessionCharacter([character], sessionId, TEST_EPOCH_DATE)).resolves.toStrictEqual({
+      character,
+      loreFailure: "",
+    });
     expect(pickRecords).toStrictEqual([
       otherRecord,
       {

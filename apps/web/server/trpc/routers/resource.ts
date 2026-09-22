@@ -19,7 +19,7 @@ import { restoreSnapshotVersionInputSchema } from "#shared/models/db/resource/Re
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
@@ -160,7 +160,7 @@ export const resourceRouter = router({
       clauses,
       cursor,
       limit,
-      sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
+      sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
     });
   }),
   readDeletedResources: standardAuthedProcedure

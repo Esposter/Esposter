@@ -4,7 +4,7 @@
 
 | Unit                                                     | Swept      | Notes                                                             |
 | -------------------------------------------------------- | ---------- | ----------------------------------------------------------------- |
-| `server/services`, `server/composables`, `server/models` | 2026-09-12 |                                                                   |
-| `server/trpc` — the resource family                      | 2026-09-12 | `resource`, `survey`, `program`, `procedure/resource`             |
-| `server/trpc` — the room family                          | 2026-09-12 | `room`, `call`, `userToRoom`                                      |
-| `server/trpc` — the rest                                 | 2026-09-12 | the loose routers, `guards`, `procedure`, `plugins`, `middleware` |
+| `server/services`, `server/composables`, `server/models` | 2026-09-22 |                                                                   |
+| `server/trpc` — the resource family                      | 2026-09-22 | `resource`, `survey`, `program`, `procedure/resource`             |
+| `server/trpc` — the room family                          | 2026-09-22 | `room`, `call`, `userToRoom`                                      |
+| `server/trpc` — the rest                                 | 2026-09-22 | the loose routers, `guards`, `procedure`, `plugins`, `middleware` |

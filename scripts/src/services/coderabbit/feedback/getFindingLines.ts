@@ -1,4 +1,4 @@
-import { stripToFixedPoint } from "#src/services/shared/stripToFixedPoint";
+import { stripToFixedPoint } from "#src/services/coderabbit/shared/stripToFixedPoint";
 
 // Sections whose content is machinery rather than findings. The list is what gets suppressed; everything else
 // Prints, so a bucket nobody has seen before shows up by default instead of silently.

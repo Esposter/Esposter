@@ -1,5 +1,6 @@
 import type { ResolvedLocalization } from "#src/models/ResolvedLocalization";
 
+import { BIRTHDAY_DATE_FORMAT } from "#src/services/constants";
 import { getDaysUntil } from "#src/services/getDaysUntil";
 import { parseBirthday } from "#src/services/parseBirthday";
 
@@ -23,6 +24,6 @@ export const getBirthdayNote = (
     daysAhead <= daysBehind ? daysAhead : -daysBehind,
     "day",
   );
-  const formattedDate = birthdayDate.toLocaleString(locale, { day: "numeric", month: "long" });
+  const formattedDate = birthdayDate.toLocaleString(locale, BIRTHDAY_DATE_FORMAT);
   return strings.birthdayNote(formattedDate, distance);
 };

@@ -9,7 +9,7 @@ export const DEFAULT_READ_LIMIT = 15;
 export const BACKOFF_BASE_DELAY_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 export const BACKOFF_MAX_DELAY_MS = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
 // Order is always Asc: Azure Table Storage has no sorting, so we insert-sort via reverse-ticked rowKeys.
-export const MESSAGE_ROWKEY_SORT_ITEM = { key: "rowKey", order: SortOrder.Asc } as const satisfies SortItem<
+export const MESSAGE_ROW_KEY_SORT_ITEM = { key: "rowKey", order: SortOrder.Asc } as const satisfies SortItem<
   keyof MessageEntity
 >;
 // Newest-first, the default every paginated read of a timestamped entity opens on.

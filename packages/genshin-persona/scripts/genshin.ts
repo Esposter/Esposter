@@ -108,12 +108,14 @@ const printCard = async (character: Character) => {
 };
 // This session's character when run inside one, else the pin, else a fresh pick: the resolution the start hook runs,
 // So `today` answers who is speaking now. Under the lore pick a fresh ask may answer differently, which is the point
-// Of it
-const getCurrentCharacter = () => {
+// Of it, and a fresh ask the tier did not answer says so beside the birthday pick that stood in
+const getCurrentCharacter = async () => {
   const pin = readPin();
   if (pin && !findCharacterByName(roster, pin.name)) console.log(strings.pinIgnored(pin.name));
 
-  return resolveSessionCharacter(roster, sessionId, today);
+  const pick = await resolveSessionCharacter(roster, sessionId, today);
+  if (pick?.loreFailure) console.log(strings.lorePickUnanswered(pick.loreFailure));
+  return pick?.character;
 };
 // The session speaks as the character from the reply that relays the card: its record is rewritten so every later
 // Start, the status line and the speech hook agree. The spinner is not rewritten here: the tool read its keys when
@@ -127,13 +129,13 @@ const switchSessionCharacter = async (character: Character) => {
 // Given no argument
 const getStatusReport = async () => {
   const pin = readPin();
-  const character = sessionId ? await resolveSessionCharacter(roster, sessionId, today) : undefined;
+  const pick = sessionId ? await resolveSessionCharacter(roster, sessionId, today) : undefined;
   const replyLanguage = readReplyLanguage();
   const settings = readUserSettings();
   return {
-    displayName: character?.displayName ?? pin?.displayName ?? "",
+    displayName: pick?.character.displayName ?? pin?.displayName ?? "",
     interfaceLanguage: getLanguageDisplayName(language, language),
-    isFromSessionRecord: Boolean(character),
+    isFromSessionRecord: Boolean(pick),
     isMuted: checkIsMuted(),
     isPluginSpeakHook: settings.hooks?.MessageDisplay?.some((entry) => checkIsPluginHookEntry(entry)) ?? false,
     isPluginSpinner: checkIsPluginSpinner(settings),
@@ -176,7 +178,8 @@ switch (verb) {
     // Words that are ours in it, and the session's record and spinner, whose name is drawn from it
     const localizedRoster = readRoster(canonicalLanguage);
     const { strings: localizedStrings } = await readLocalization(canonicalLanguage);
-    const character = await resolveSessionCharacter(localizedRoster, sessionId, today);
+    const pick = await resolveSessionCharacter(localizedRoster, sessionId, today);
+    const character = pick?.character;
     if (character && sessionId) {
       recordSessionCharacter(character, sessionId, today.toString());
       await writeSessionSpinner(character, await readPersonaCard(character.name), canonicalLanguage);
@@ -289,13 +292,14 @@ switch (verb) {
     break;
   case GenshinVerb.Unpin: {
     deletePin();
-    const character = sessionId ? await pickCurrentCharacter(roster, today) : undefined;
-    if (!character) {
+    const pick = sessionId ? await pickCurrentCharacter(roster, today) : undefined;
+    if (!pick) {
       console.log(strings.pinRemoved);
       break;
     }
 
-    await switchSessionCharacter(character);
+    if (pick.loreFailure) console.log(strings.lorePickUnanswered(pick.loreFailure));
+    await switchSessionCharacter(pick.character);
     console.log(strings.pinRemovedInSession);
     break;
   }

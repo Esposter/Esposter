@@ -5,7 +5,7 @@
 | Unit                                                            | Swept      | Notes                                                                                                    |
 | --------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------- |
 | `packages/shared`, `packages/shared-node`                       | 2026-09-14 |                                                                                                          |
-| `shared/services`, `shared/util`                                | 2026-09-11 |                                                                                                          |
+| `shared/services`, `shared/util`                                | 2026-09-22 |                                                                                                          |
 | `shared/models/db/message`                                      | 2026-09-15 | the input schemas every message router imports                                                           |
 | `shared/models/db` — `room`, `role`, `moderation`, `webhook`, … | 2026-09-15 | a field mirroring its own column is `packages/db-schema`'s row, not this one                             |
 | `shared/models/db` — the rest                                   | 2026-09-15 |                                                                                                          |

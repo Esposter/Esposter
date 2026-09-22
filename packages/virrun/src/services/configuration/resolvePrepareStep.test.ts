@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(resolvePrepareStep, () => {
-  // A canonical nuxt.config filename (an instance of NUXT_CONFIG_PATTERN) for the fixture to stage. git ls-files only
+  // A canonical nuxt.config filename (an instance of NUXT_CONFIG_REGEX) for the fixture to stage. git ls-files only
   // Reports tracked files, so the fixture inits a repo and stages the config for detection.
   const NUXT_CONFIG_FILENAME = "nuxt.config.ts";
   const initRepositoryWith = (workspace: string, relativeDirectory: string): void => {

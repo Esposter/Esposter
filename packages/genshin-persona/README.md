@@ -93,18 +93,18 @@ Four more are the authoring queues of one more skill, `genshin-author` — scrip
 
 ### What it ships
 
-| Component                              | Role                                                                                                                                                                                           |
-| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hooks/hooks.json`                     | A session-start hook that picks the character, greets you with its name and prints its card as context. The hook that reads a reply's spoken lines is a user setting `voice` writes.           |
-| `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: a blockquote line is the character's spoken line, the ask decides how much of a reply that is, and the rest is plain.               |
-| `skills/<verb>/SKILL.md`               | One slash command per verb, `/genshin-persona:<verb>` — the command reference above — yours to invoke.                                                                                         |
-| `skills/genshin/SKILL.md`              | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                                         |
-| `skills/genshin-author/SKILL.md`       | How a persona card and its spinner verbs are written, the command that prints a character's own lines to write from, and the two queues.                                                       |
-| `src/personaCards/`                    | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, their spinner verbs for you, and the reference line only where an ear chose one. |
-| `src/generated/PersonaReferenceMap.ts` | The measured reference line and its likeness per character, one generated map written by the repository's reference selection and never by hand.                                               |
-| `runtime/`                             | The manifest and lockfile of the speech engine's runtime, which the `voice` verb installs into the state directory rather than the plugin carrying it.                                         |
-| `src/localizations/`                   | One authored module per language for the words the data package does not carry: the base Teyvat verbs, each character's spinner gerunds, and every line the verbs print.                       |
-| `scripts/`                             | The hook entrypoints, the commands' script, the status-line script, the spinner rewrite and the resident synthesizer, TypeScript run directly by node.                                         |
+| Component                              | Role                                                                                                                                                                                                                          |
+| :------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hooks/hooks.json`                     | A session-start hook that picks the character, greets you with its name, what the pick weighed and who is close, and prints its card as context. The hook that reads a reply's spoken lines is a user setting `voice` writes. |
+| `output-styles/in-character.md`        | The standing rules, forced on while the plugin is enabled: a blockquote line is the character's spoken line, the ask decides how much of a reply that is, and the rest is plain.                                              |
+| `skills/<verb>/SKILL.md`               | One slash command per verb, `/genshin-persona:<verb>` — the command reference above — yours to invoke.                                                                                                                        |
+| `skills/genshin/SKILL.md`              | The model's route from a request in words to one of those verbs; hidden from the menu.                                                                                                                                        |
+| `skills/genshin-author/SKILL.md`       | How a persona card and its spinner verbs are written, the command that prints a character's own lines to write from, and the two queues.                                                                                      |
+| `src/personaCards/`                    | Authored persona cards, one typed module per character, in our words: how the character speaks for the model, their spinner verbs for you, and the reference line only where an ear chose one.                                |
+| `src/generated/PersonaReferenceMap.ts` | The measured reference line and its likeness per character, one generated map written by the repository's reference selection and never by hand.                                                                              |
+| `runtime/`                             | The manifest and lockfile of the speech engine's runtime, which the `voice` verb installs into the state directory rather than the plugin carrying it.                                                                        |
+| `src/localizations/`                   | One authored module per language for the words the data package does not carry: the base Teyvat verbs, each character's spinner gerunds, and every line the verbs print.                                                      |
+| `scripts/`                             | The hook entrypoints, the commands' script, the status-line script, the spinner rewrite and the resident synthesizer, TypeScript run directly by node.                                                                        |
 
 ### Status line and spinner
 
@@ -131,7 +131,7 @@ The languages on offer are the data package's, so `language` with no argument li
 
 ### How the character is picked
 
-Every playable character comes from the game-data dependency — no generated roster, so a new patch is one dependency bump. Without a TypeSafe key the character is whoever's birthday is nearest to today; with one, a single typed decision picks from the whole roster at every session start, with the birthday pick behind it. The pick is recorded against the session id, so a clear, compact or resume after midnight keeps the character the conversation started with.
+Every playable character comes from the game-data dependency — no generated roster, so a new patch is one dependency bump. Without a TypeSafe key the character is whoever's birthday is nearest to today, and the welcome names the other birthdays of the week ahead; with one, a single typed decision picks from the whole roster at every session start, and the welcome charts its answer — the choice and the nearest runners-up with their probabilities — or says why the tier gave none and the birthday pick stood in. Once `voice` has set a dub up, the welcome carries one line about it too. The pick is recorded against the session id, so a clear, compact or resume after midnight keeps the character the conversation started with.
 
 ### Switching mid-session
 

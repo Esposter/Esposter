@@ -8,6 +8,8 @@ export interface LocalizationStrings {
   birthdayNote: (date: string, distance: string) => string;
   interfaceLanguageSet: (language: string) => string;
   languageMustBeOneOf: (languages: string) => string;
+  lorePicked: string;
+  lorePickUnanswered: (reason: string) => string;
   muted: string;
   noCharacterNamed: (name: string) => string;
   noReference: (name: string) => string;
@@ -28,12 +30,14 @@ export interface LocalizationStrings {
   status: (report: StatusReport) => string;
   teardownDone: string;
   unmuted: string;
+  upcomingBirthdays: (list: string) => string;
   usage: (verbs: string) => string;
   usingInSession: string;
   voiceLanguageAvailable: (dub: string) => string;
   voiceLanguageMustBeOneOf: (dubs: string) => string;
   voiceLanguageUnavailable: string;
   voiceLanguageWritten: (dub: string) => string;
+  voiceRemark: (dub: string, device: string, isMuted: boolean, volume: number) => string;
   voiceStatus: (isRuntimeInstalled: boolean, dub: string, device: string, logPath: string) => string;
   voiceUnset: string;
   volumeMustBeWholeNumber: (maxVolume: number) => string;

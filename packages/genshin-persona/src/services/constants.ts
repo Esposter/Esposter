@@ -104,6 +104,10 @@ export const ROSTER_CACHE_PREFIX = "roster-";
 export const ROSTER_CACHE_EXTENSION = ".json";
 // Every month and day is measured inside one leap year, so 29 February is a day like any other and the year wraps
 export const LEAP_YEAR = 2000;
+// The welcome names the other birthdays this many days ahead, today's included
+export const UPCOMING_BIRTHDAYS_DAYS = 7;
+// A birthday as the welcome spells it, in the interface language's own month name
+export const BIRTHDAY_DATE_FORMAT: Intl.DateTimeFormatOptions = { day: "numeric", month: "long" };
 // The lore pick's request is an English instruction whatever the interface language is
 export const LORE_MOMENT_LOCALE = "en-AU";
 // What the data package answers in unasked, and what our own words are written in
@@ -258,3 +262,10 @@ export const TYPESAFE_KEY_FALLBACK_ENVIRONMENT_VARIABLE = "TYPESAFE_API_KEY";
 export const LORE_PICK_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 8 }).total("milliseconds");
 export const LORE_PICK_INSTRUCTIONS =
   "Which character should keep the person company in today's session? Each option is described by how that character talks and carries themselves. Weigh what the date means in the game: a birthday today or within a few days, a festival or event of a region in this season, a release or story anniversary, the patch that is live. Weigh the person's moment too: the weekday, the hour and the place. Every character is a fair pick; the choice is a preference, not a rule.";
+// A reason in the tier's own English, beside the errors its SDK throws, for the one failure the code finds
+export const LORE_PICK_UNKNOWN_NAME = (name: string): string => `answered ${name}, whom the roster does not hold`;
+// The welcome's bar chart of the tier's answer: the choice and the nearest runners-up, one row each, the bar scaled to
+// The longest of them
+export const LORE_CHART_ROWS = 4;
+export const LORE_CHART_WIDTH = 20;
+export const LORE_CHART_GLYPH = "▇";

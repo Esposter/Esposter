@@ -2,7 +2,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Clause } from "@esposter/azure";
 import type { CustomTableClient } from "@esposter/db-schema";
 
-import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { readCursorPaginationDataAzureTable } from "@@/server/services/pagination/cursor/readCursorPaginationDataAzureTable";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
@@ -16,7 +16,7 @@ describe(readCursorPaginationDataAzureTable, () => {
   const partitionKey = crypto.randomUUID();
   const otherPartitionKey = crypto.randomUUID();
   const rowKeys = ["0", "1"];
-  const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
+  const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROW_KEY_SORT_ITEM];
   const clauses: Clause<ModerationLogEntity>[] = [
     { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: partitionKey },
   ];

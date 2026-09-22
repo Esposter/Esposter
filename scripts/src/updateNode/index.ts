@@ -6,6 +6,7 @@ import { getRegistryLatestVersionForPrefix } from "#src/services/updateNode/getR
 import { setCatalogTypesNode } from "#src/services/updateNode/setCatalogTypesNode";
 import { setDevEnginesRuntime } from "#src/services/updateNode/setDevEnginesRuntime";
 import { setEnginesNode } from "#src/services/updateNode/setEnginesNode";
+import { WORKSPACE_FILE } from "@esposter/configuration";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -36,11 +37,11 @@ if (isNewVersion) {
   console.info(`✔ package.json devEngines.runtime + engines.node → ^${version}`);
   // 3. Bump the @types/node catalog entry to the highest release matching the new node major.
   const typesVersion = await getRegistryLatestVersionForPrefix("@types/node", String(major));
-  const workspacePath = resolve(REPOSITORY_ROOT, "pnpm-workspace.yaml");
+  const workspacePath = resolve(REPOSITORY_ROOT, WORKSPACE_FILE);
   const workspace = readFileSync(workspacePath, "utf8");
   const workspaceWithTypesNode = setCatalogTypesNode(workspace, typesVersion);
   writeFileSync(workspacePath, workspaceWithTypesNode);
-  console.info(`✔ pnpm-workspace.yaml @types/node → ^${typesVersion}`);
+  console.info(`✔ ${WORKSPACE_FILE} @types/node → ^${typesVersion}`);
 } else console.info(`node is already ${version} in package.json — ensuring fnm has it installed and defaulted.\n`);
 // 4. Hand off install / default / cleanup of the old version to the native (per-OS) script via crossOS.
 // When the version is unchanged, `old === new`, so the native script's guard skips the removal step.

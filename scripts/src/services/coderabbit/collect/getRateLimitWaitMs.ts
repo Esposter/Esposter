@@ -4,7 +4,7 @@ import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { RATE_LIMIT_COMMENT_MARKER, RETRIGGER_BUFFER_MS } from "#src/services/coderabbit/collect/constants";
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 
-const RATE_LIMIT_RESET_PATTERN = /Next included review available in (?<amount>\d+) (?<unit>hours?|minutes?)/u;
+const RATE_LIMIT_RESET_REGEX = /Next included review available in (?<amount>\d+) (?<unit>hours?|minutes?)/u;
 
 // How long is left of the limit the gate read off the commit status, from the one thing that knows — the
 // Walkthrough CodeRabbit rewrites when it skips a review. Relative to the comment's own timestamp, never to now:
@@ -15,7 +15,7 @@ export const getRateLimitWaitMs = (issueComments: GitHubEntry[], nowMs: number):
   const comment = issueComments.findLast((issueComment) =>
     checkIsMarked(issueComment, CODERABBIT_REST_LOGIN, RATE_LIMIT_COMMENT_MARKER),
   );
-  const groups = comment && RATE_LIMIT_RESET_PATTERN.exec(comment.body)?.groups;
+  const groups = comment && RATE_LIMIT_RESET_REGEX.exec(comment.body)?.groups;
   if (!comment || !groups?.amount || !groups.unit) return undefined;
   const amount = Number(groups.amount);
   const statedMs = Temporal.Duration.from(

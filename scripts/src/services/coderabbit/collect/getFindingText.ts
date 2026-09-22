@@ -1,5 +1,5 @@
 import { HTML_COMMENT_REGEX } from "#src/services/coderabbit/shared/constants";
-import { stripToFixedPoint } from "#src/services/shared/stripToFixedPoint";
+import { stripToFixedPoint } from "#src/services/coderabbit/shared/stripToFixedPoint";
 
 // The hidden comments carry the bot's fingerprints and site lists, and the static-analysis block is the transcript
 // Of every script it ran — tens of kilobytes per finding, none of it the finding

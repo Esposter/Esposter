@@ -14,7 +14,7 @@ describe("reviewFileCap", () => {
     ".agents/skills/review-queue/*.md",
     "apps/web/content/docs/infra/review-collector/*.md",
   ];
-  const FILE_NUMBER_PATTERN = /\b\d+[- ]files?\b|\bfiles? or \d+\b|\bcap of \d+\b/u;
+  const FILE_NUMBER_REGEX = /\b\d+[- ]files?\b|\bfiles? or \d+\b|\bcap of \d+\b/u;
 
   test("no prose restates the cap as a number", () => {
     expect.hasAssertions();
@@ -22,7 +22,7 @@ describe("reviewFileCap", () => {
     const offenders = getSweepFilePaths(...PROSE_GLOBS).flatMap((path) =>
       readFileSync(join(REPOSITORY_ROOT, path), "utf8")
         .split("\n")
-        .flatMap((line, index) => (FILE_NUMBER_PATTERN.test(line) ? [`${path}:${index + 1}`] : [])),
+        .flatMap((line, index) => (FILE_NUMBER_REGEX.test(line) ? [`${path}:${index + 1}`] : [])),
     );
 
     expect(offenders).toStrictEqual([]);

@@ -287,6 +287,8 @@ const japanese: Localization = {
     interfaceLanguageSet: (language) =>
       `この返信からプラグインの表示はすべて${language}になります。スピナーは次のセッションから変わります。`,
     languageMustBeOneOf: (languages) => `言語は次のいずれかを指定してください：${languages}。`,
+    lorePicked: "ロアで選出。判定の内訳：",
+    lorePickUnanswered: (reason) => `ロア判定が応答しなかったため（${reason}）、誕生日で選出しました。`,
     muted: "音声の読み上げをミュートしました。",
     noCharacterNamed: (name) => `「${name}」という名前のキャラクターはロスターにいません。`,
     noReference: (name) => `${name}には測定済みの参照音声がないため、ウィキで最も長いストーリーの台詞が使われます。`,
@@ -343,6 +345,7 @@ const japanese: Localization = {
     teardownDone:
       "ステータスライン、スピナー、読み上げフックをユーザー設定から削除しました。いずれも次のセッションで消えます。音声のランタイム、重み、参照音声、吹き替え設定も削除しました。選択履歴、ピン留め、言語設定は残ります。",
     unmuted: "音声の読み上げを再開しました。",
+    upcomingBirthdays: (list) => `今週の誕生日：${list}。`,
     usage: (verbs) => `使い方：genshin.ts <${verbs}> [名前]`,
     usingInSession: "このセッションに限り、この返信からこのキャラクターとして話します。",
     voiceLanguageAvailable: (dub) =>
@@ -350,6 +353,8 @@ const japanese: Localization = {
     voiceLanguageMustBeOneOf: (dubs) => `吹き替えは次のいずれかを指定してください：${dubs}。`,
     voiceLanguageUnavailable: "この言語の吹き替えはないため、読み上げは現在設定されている声のままです。",
     voiceLanguageWritten: (dub) => `吹き替え${dub}を保存しました。ここで音声を確認できるキャラクターがいません。`,
+    voiceRemark: (dub, device, isMuted, volume) =>
+      `音声：${dub}の吹き替え${device ? `（${device}）` : ""}、${isMuted ? "ミュート中" : `音量${volume}`}。`,
     voiceStatus: (isRuntimeInstalled, dub, device, logPath) =>
       `ランタイムは${isRuntimeInstalled ? "インストール済み" : "未インストール"}、${dub}の吹き替え、エンジンは${device ? `${device}で動作中` : "未実行"}、ログは${logPath}です。`,
     voiceUnset: "音声は未設定です。吹き替えを指定して実行すると、エンジンを導入して設定します。",

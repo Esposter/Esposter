@@ -31,7 +31,7 @@ describe(getSessionStartOutput, () => {
 
     const card: Card = { description, greeting, headline, note, personaCard };
 
-    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
+    expect(getSessionStartOutput(card, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
           additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${description}\n${note}\n- ${habit}\n- Greets: ${greeting}\n- Signs off: ${signOff}`,
@@ -42,12 +42,36 @@ describe(getSessionStartOutput, () => {
     );
   });
 
+  // The remarks are what the plugin says about the session rather than the character, so they sit under the note and
+  // Above the greeting, and reach the person alone
+  test("shows the person the remarks between the note and the greeting, and the model none of them", () => {
+    expect.hasAssertions();
+
+    const card: Card = { description: "", greeting, headline, note, personaCard: undefined };
+    const remark = "remark";
+
+    expect(getSessionStartOutput(card, [remark, "", remark], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
+      JSON.stringify({
+        hookSpecificOutput: {
+          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}
+${note}`,
+          hookEventName: "SessionStart",
+        },
+        systemMessage: `${NAMEPLATE_PREFIX}${headline}
+${note}
+${remark}
+${remark}
+${greeting}`,
+      }),
+    );
+  });
+
   test("drops every line the character does not have", () => {
     expect.hasAssertions();
 
     const card: Card = { description: "", greeting: "", headline, note: "", personaCard: undefined };
 
-    expect(getSessionStartOutput(card, DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
+    expect(getSessionStartOutput(card, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
           additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}`,
@@ -70,7 +94,7 @@ describe(getSessionStartOutput, () => {
     expect.hasAssertions();
 
     const card: Card = { description: "", greeting: "", headline, note: "", personaCard: undefined };
-    const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, replyLanguage, interfaceLanguage));
+    const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, [], replyLanguage, interfaceLanguage));
 
     expect(hookSpecificOutput).toStrictEqual({
       additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${REPLY_LANGUAGE_INSTRUCTION(replyLanguage)}`,

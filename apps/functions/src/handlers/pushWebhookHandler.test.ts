@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { pushWebhookHandler } from "#src/handlers/pushWebhookHandler";
-import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/eventGridPublisherClient.test";
+import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/constants.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { HttpRequest, InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";

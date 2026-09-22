@@ -11,7 +11,7 @@ import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput"
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
 import { readModerationNotesCountInputSchema } from "#shared/models/db/moderation/ReadModerationNotesCountInput";
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
-import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { RoomMemberRemovalAction } from "@@/server/models/room/RoomMemberRemovalAction";
 import { getLivePartitionClauses } from "@@/server/services/azure/table/getLivePartitionClauses";
@@ -256,7 +256,7 @@ export const moderationRouter = router({
       clauses,
       cursor,
       limit,
-      sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
+      sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
     });
   }),
   readModerationNotes: getPermissionsProcedure(
@@ -278,7 +278,7 @@ export const moderationRouter = router({
         clauses,
         cursor,
         limit,
-        sortBy: [MESSAGE_ROWKEY_SORT_ITEM],
+        sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
       });
     },
   ),

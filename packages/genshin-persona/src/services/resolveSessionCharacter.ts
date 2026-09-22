@@ -1,4 +1,5 @@
 import type { Character } from "#src/models/Character";
+import type { SessionPick } from "#src/models/SessionPick";
 
 import { findCharacterByName } from "#src/services/findCharacterByName";
 import { pickCurrentCharacter } from "#src/services/pickCurrentCharacter";
@@ -14,14 +15,16 @@ export const resolveSessionCharacter = async (
   roster: Character[],
   sessionId: string,
   today: Temporal.PlainDate,
-): Promise<Character | undefined> => {
+): Promise<SessionPick | undefined> => {
   const sessionRecord = sessionId ? readPickRecords().find((record) => record.sessionId === sessionId) : undefined;
   const knownCharacter = findCharacterByName(roster, sessionRecord?.name ?? "");
-  if (knownCharacter) return knownCharacter;
+  if (knownCharacter) return { character: knownCharacter, loreFailure: "" };
 
   const pin = readPin();
   const pinnedCharacter = findCharacterByName(roster, pin?.name ?? "");
-  const character = pinnedCharacter ?? (await pickCurrentCharacter(roster, today));
-  if (character && sessionId) recordSessionCharacter(character, sessionId, today.toString());
-  return character;
+  const pick = pinnedCharacter
+    ? { character: pinnedCharacter, loreFailure: "" }
+    : await pickCurrentCharacter(roster, today);
+  if (pick && sessionId) recordSessionCharacter(pick.character, sessionId, today.toString());
+  return pick;
 };
