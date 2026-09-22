@@ -51,38 +51,43 @@ describe("fixAjv", () => {
     test("strips use strict", () => {
       expect.hasAssertions();
 
-      const result = transform('"use strict";\nexports.formatters = {};\n', BROWSER_JS_ID);
-
-      expect(result).not.toContain('"use strict"');
-      expect(result).toContain("_exports.formatters = {};");
+      expect(transform('"use strict";\nexports.formatters = {};\n', BROWSER_JS_ID)).toMatchInlineSnapshot(`
+        "const _exports = {}
+        _exports.formatters = {};
+        "
+      `);
     });
 
     test("extracts inline relative require as import and replaces with unwrapped reference", () => {
       expect.hasAssertions();
 
-      const result = transform('module.exports = require("./common")(exports);\n', BROWSER_JS_ID);
-
-      expect(result).toContain('import * as common from "./common";\n');
-      expect(result).toContain("(common.default ?? common)(_exports)");
-      expect(result).toContain("const _debug =");
-      expect(result).toContain("export default _debug;");
+      expect(transform('module.exports = require("./common")(exports);\n', BROWSER_JS_ID)).toMatchInlineSnapshot(`
+        "import * as common from "./common";
+        const _exports = {}
+        const _debug = (common.default ?? common)(_exports);
+        export default _debug;
+        "
+      `);
     });
 
     test("remaps exports.X to _exports.X but leaves module.exports untouched", () => {
       expect.hasAssertions();
 
-      const result = transform("exports.useColors = function() {};\n", BROWSER_JS_ID);
-
-      expect(result).toContain("_exports.useColors = function() {};");
-      expect(result).not.toMatch(/(?<!_)exports\.useColors/u);
+      expect(transform("exports.useColors = function() {};\n", BROWSER_JS_ID)).toMatchInlineSnapshot(`
+        "const _exports = {}
+        _exports.useColors = function() {};
+        "
+      `);
     });
 
     test("prepends const _exports = {} to output", () => {
       expect.hasAssertions();
 
-      const result = transform("exports.x = 1;\n", BROWSER_JS_ID);
-
-      expect(result).toContain("const _exports = {}");
+      expect(transform("exports.x = 1;\n", BROWSER_JS_ID)).toMatchInlineSnapshot(`
+        "const _exports = {}
+        _exports.x = 1;
+        "
+      `);
     });
   });
 
@@ -90,30 +95,39 @@ describe("fixAjv", () => {
     test("extracts non-relative inline require as import and replaces with unwrapped reference", () => {
       expect.hasAssertions();
 
-      const result = transform("createDebug.humanize = require('ms');\nmodule.exports = setup;\n", COMMON_JS_ID);
-
-      expect(result).toContain('import * as ms from "ms";\n');
-      expect(result).toContain("(ms.default ?? ms)");
-      expect(result).not.toContain("require('ms')");
+      expect(transform("createDebug.humanize = require('ms');\nmodule.exports = setup;\n", COMMON_JS_ID))
+        .toMatchInlineSnapshot(`
+        "import * as ms from "ms";
+        createDebug.humanize = (ms.default ?? ms);
+        setup.default = setup;
+        export default setup;
+        "
+      `);
     });
 
     test("ignores relative require paths", () => {
       expect.hasAssertions();
 
-      const result = transform("const x = require('./utils');\nmodule.exports = setup;\n", COMMON_JS_ID);
-
       // Relative requires are left as-is (common.js handler does not run generic transform).
       // Note: INLINE_REQUIRE_REGEX normalises quotes to double in the fallback replacement.
-      expect(result).toContain('require("./utils")');
+      expect(transform("const x = require('./utils');\nmodule.exports = setup;\n", COMMON_JS_ID))
+        .toMatchInlineSnapshot(`
+        "const x = require("./utils");
+        setup.default = setup;
+        export default setup;
+        "
+      `);
     });
 
     test("converts module.exports = X to export default with .default patch", () => {
       expect.hasAssertions();
 
-      const result = transform("function setup() {}\nmodule.exports = setup;\n", COMMON_JS_ID);
-
-      expect(result).toContain("setup.default = setup;");
-      expect(result).toContain("export default setup;");
+      expect(transform("function setup() {}\nmodule.exports = setup;\n", COMMON_JS_ID)).toMatchInlineSnapshot(`
+        "function setup() {}
+        setup.default = setup;
+        export default setup;
+        "
+      `);
     });
   });
 
@@ -179,20 +193,26 @@ describe("fixAjv", () => {
         expect.hasAssertions();
 
         const code = 'const equal = require("fast-deep-equal");\nequal.code = "...";\n';
-        const result = transform(code, AJV_ID);
 
-        expect(result).toContain('import * as _equal_ns from "fast-deep-equal";\n');
-        expect(result).toContain("const equal = (_equal_ns.default ?? _equal_ns);\n");
+        expect(transform(code, AJV_ID)).toMatchInlineSnapshot(`
+          "import * as _equal_ns from "fast-deep-equal";
+          const equal = (_equal_ns.default ?? _equal_ns);
+          equal.code = "...";
+          "
+        `);
       });
 
       test("unwraps callable require var via ns.default ?? ns", () => {
         expect.hasAssertions();
 
         const code = 'const fn = require("./fn");\nfn();\n';
-        const result = transform(code, AJV_ID);
 
-        expect(result).toContain('import * as _fn_ns from "./fn";\n');
-        expect(result).toContain("const fn = (_fn_ns.default ?? _fn_ns);\n");
+        expect(transform(code, AJV_ID)).toMatchInlineSnapshot(`
+          "import * as _fn_ns from "./fn";
+          const fn = (_fn_ns.default ?? _fn_ns);
+          fn();
+          "
+        `);
       });
 
       test("does not unwrap read-only require var", () => {
@@ -219,11 +239,12 @@ describe("fixAjv", () => {
         expect.hasAssertions();
 
         const code = 'function foo() { return require("./bar"); }\n';
-        const result = transform(code, AJV_ID);
 
-        expect(result?.startsWith('import * as bar from "./bar";\n')).toBe(true);
-        expect(result).toContain("(bar.default ?? bar)");
-        expect(result).not.toContain('require("./bar")');
+        expect(transform(code, AJV_ID)).toMatchInlineSnapshot(`
+          "import * as bar from "./bar";
+          function foo() { return (bar.default ?? bar); }
+          "
+        `);
       });
 
       test("skips non-relative package paths in inline requires", () => {
@@ -232,9 +253,11 @@ describe("fixAjv", () => {
         // Package-name paths appear in code-gen strings like `fn.code = 'require("pkg")'`
         // And must not be extracted as imports.
         const code = "equal.code = 'require(\"ajv/dist/runtime/equal\").default';\n";
-        const result = transform(code, AJV_ID);
 
-        expect(result).toContain('require("ajv/dist/runtime/equal")');
+        expect(transform(code, AJV_ID)).toMatchInlineSnapshot(`
+          "equal.code = 'require("ajv/dist/runtime/equal").default';
+          "
+        `);
       });
     });
 
@@ -248,21 +271,24 @@ describe("fixAjv", () => {
       test("step 7: converts module.exports = X to export default", () => {
         expect.hasAssertions();
 
-        const result = transform("module.exports = Ajv;\n", JSON_SCHEMA_TRAVERSE_ID);
-
-        expect(result).toContain("Ajv.default = Ajv;");
-        expect(result).toContain("export default Ajv;");
+        expect(transform("module.exports = Ajv;\n", JSON_SCHEMA_TRAVERSE_ID)).toMatchInlineSnapshot(`
+          "Ajv.default = Ajv;
+          export default Ajv;
+          "
+        `);
       });
 
       test("step 7: skips module.exports = X when exports.default is present (handled by step 11)", () => {
         expect.hasAssertions();
 
         const code = "exports.default = Ajv;\nmodule.exports = Ajv;\n";
-        const result = transform(code, AJV_ID);
 
-        // Module.exports line is suppressed; exports.default becomes the export
-        expect(result).not.toMatch(/^export default Ajv;\nexport default Ajv;/mu);
-        expect(result).toContain("export default Ajv;");
+        // The module.exports line is suppressed, so exports.default is the one export left
+        expect(transform(code, AJV_ID)).toMatchInlineSnapshot(`
+          "Ajv.default = Ajv;
+          export default Ajv;
+          "
+        `);
       });
 
       test("step 8: removes module.exports.X = Y", () => {
@@ -277,12 +303,15 @@ describe("fixAjv", () => {
         expect.hasAssertions();
 
         const code = "var traverse = module.exports = function traverse(schema) {\n  return schema;\n};\n";
-        const result = transform(code, JSON_SCHEMA_TRAVERSE_ID);
 
-        expect(result).toContain("const traverse = function traverse(schema) {");
-        expect(result).toContain("traverse.default = traverse;");
-        expect(result).toContain("export default traverse;");
-        expect(result).not.toContain("module.exports");
+        expect(transform(code, JSON_SCHEMA_TRAVERSE_ID)).toMatchInlineSnapshot(`
+          "const traverse = function traverse(schema) {
+            return schema;
+          };
+          traverse.default = traverse;
+          export default traverse;
+          "
+        `);
       });
     });
 
@@ -299,9 +328,13 @@ describe("fixAjv", () => {
         expect.hasAssertions();
 
         const code = "module.exports = function setup(env) {\n  return env;\n};\n";
-        const result = transform(code, AJV_ID);
 
-        expect(result).toContain("export default function setup(env) {");
+        expect(transform(code, AJV_ID)).toMatchInlineSnapshot(`
+          "export default function setup(env) {
+            return env;
+          };
+          "
+        `);
       });
     });
 
@@ -309,10 +342,11 @@ describe("fixAjv", () => {
       test("step 11: converts exports.default = X to export default", () => {
         expect.hasAssertions();
 
-        const result = transform("exports.default = Ajv;\n", AJV_ID);
-
-        expect(result).toContain("Ajv.default = Ajv;");
-        expect(result).toContain("export default Ajv;");
+        expect(transform("exports.default = Ajv;\n", AJV_ID)).toMatchInlineSnapshot(`
+          "Ajv.default = Ajv;
+          export default Ajv;
+          "
+        `);
       });
 
       test("step 12: converts exports.X = X (self-reference) to export { X }", () => {
@@ -326,9 +360,11 @@ describe("fixAjv", () => {
 
         const code =
           'const fmt = require("./format");\nObject.defineProperty(exports, "FormatName", { enumerable: true, get: function () { return fmt.FormatName; } });\n';
-        const result = transform(code, AJV_FORMATS_ID);
-
-        expect(result).toContain('export { FormatName } from "./format";');
+        expect(transform(code, AJV_FORMATS_ID)).toMatchInlineSnapshot(`
+          "import * as fmt from "./format";
+          export { FormatName } from "./format";
+          "
+        `);
       });
 
       test("step 13: converts ODP re-export with aliased name to renamed re-export from", () => {
@@ -336,9 +372,11 @@ describe("fixAjv", () => {
 
         const code =
           'const fmt = require("./format");\nObject.defineProperty(exports, "Foo", { enumerable: true, get: function () { return fmt.Bar; } });\n';
-        const result = transform(code, AJV_FORMATS_ID);
-
-        expect(result).toContain('export { Bar as Foo } from "./format";');
+        expect(transform(code, AJV_FORMATS_ID)).toMatchInlineSnapshot(`
+          "import * as fmt from "./format";
+          export { Bar as Foo } from "./format";
+          "
+        `);
       });
 
       test("step 13: converts ODP re-export of default to named re-export from", () => {
@@ -346,9 +384,11 @@ describe("fixAjv", () => {
 
         const code =
           'const fmt = require("./format");\nObject.defineProperty(exports, "Foo", { enumerable: true, get: function () { return fmt.default; } });\n';
-        const result = transform(code, AJV_FORMATS_ID);
-
-        expect(result).toContain('export { default as Foo } from "./format";');
+        expect(transform(code, AJV_FORMATS_ID)).toMatchInlineSnapshot(`
+          "import * as fmt from "./format";
+          export { default as Foo } from "./format";
+          "
+        `);
       });
 
       test("step 14: converts single-line exports.X = expr to export const", () => {
@@ -382,10 +422,14 @@ describe("fixAjv", () => {
 
         const code =
           'var Type;\n(function (Type) {\n  Type[Type["Str"] = 0] = "Str";\n})(Type || (exports.Type = Type = {}));\n';
-        const result = transform(code, AJV_ID);
-
-        expect(result).toContain("export { Type };");
-        expect(result).not.toContain("exports.Type");
+        expect(transform(code, AJV_ID)).toMatchInlineSnapshot(`
+          "var Type;
+          (function (Type) {
+            Type[Type["Str"] = 0] = "Str";
+          })(Type || (Type = Type = {}));
+          export { Type };
+          "
+        `);
       });
     });
 
@@ -395,10 +439,13 @@ describe("fixAjv", () => {
 
         // An internal read that is not a top-level assignment (so steps 11–14 don't catch it)
         const code = "exports.default = Ajv;\nconst alias = exports.validate;\n";
-        const result = transform(code, AJV_ID);
 
-        expect(result).toContain("const alias = validate;");
-        expect(result).not.toContain("exports.validate");
+        expect(transform(code, AJV_ID)).toMatchInlineSnapshot(`
+          "Ajv.default = Ajv;
+          export default Ajv;
+          const alias = validate;
+          "
+        `);
       });
     });
   });
