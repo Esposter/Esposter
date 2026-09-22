@@ -44,6 +44,7 @@ describe("roomRouter", () => {
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   const roomId = crypto.randomUUID();
   const name = "name";
+  const expireAfterMinutes = InviteExpireAfterMinutesMap["30 minutes"];
   const updatedName = "updatedName";
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
   const publicUserAssetsUrlPrefix = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`;
@@ -525,11 +526,11 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     await roomCaller.createInvite({
-      expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
+      expireAfterMinutes,
       maxUses: 0,
       roomId: newRoom.id,
     });
-    vi.setSystemTime(Temporal.Duration.from({ minutes: 31 }).total("milliseconds"));
+    vi.setSystemTime(Temporal.Duration.from({ minutes: expireAfterMinutes + 1 }).total("milliseconds"));
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
     expect(myInvite).toBeUndefined();
@@ -586,12 +587,14 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
+      expireAfterMinutes,
       maxUses,
       roomId: newRoom.id,
     });
 
-    expect(newInvite.expiresAt).toStrictEqual(new Date(Temporal.Duration.from({ minutes: 30 }).total("milliseconds")));
+    expect(newInvite.expiresAt).toStrictEqual(
+      new Date(Temporal.Duration.from({ minutes: expireAfterMinutes }).total("milliseconds")),
+    );
     expect(newInvite.maxUses).toBe(maxUses);
     expect(newInvite.uses).toBe(0);
   });
@@ -647,11 +650,11 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
+      expireAfterMinutes,
       maxUses: 0,
       roomId: newRoom.id,
     });
-    vi.setSystemTime(Temporal.Duration.from({ minutes: 31 }).total("milliseconds"));
+    vi.setSystemTime(Temporal.Duration.from({ minutes: expireAfterMinutes + 1 }).total("milliseconds"));
     await mockSessionOnce(mockContext.db);
 
     await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
