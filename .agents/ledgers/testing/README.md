@@ -9,7 +9,6 @@ files changed since.
 | Rule                                                       | Owner                                                   |
 | ---------------------------------------------------------- | ------------------------------------------------------- |
 | A test earns its line or is deleted; fixtures written once | `testing` — "What to Test"                              |
-| Canonical values; every date computed from the epoch       | `test-values`                                           |
 | Constants inside the `describe`, never module scope        | enforced: `scripts/src/workspace/constantScope.test.ts` |
 | Mock cleanup follows how the mock was created              | `testing` — `references/module-mocks.md`                |
 | `expect.hasAssertions()`, exact assertions, no polling     | `testing` — "Assertions"                                |
@@ -98,6 +97,8 @@ file, because the failure names the global that was missing.
 
 ## Exclusions
 
+- The values a suite writes — canonical scalars, the three checks a string passes, what production owns imported —
+  belong to the [test-values](../test-values/) ledger; this one reads the suite's structure.
 - Coverage thresholds are not a reason to keep a test — a number that only holds because a test restates a
   constant is measuring nothing.
 - `apps/web/uno.config.test.ts` and `apps/web/vuetify.config.test.ts` read as config restatements and are
