@@ -4,11 +4,14 @@ export const DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE = 100;
 // This is what it reads. Deletes are keyed per slot instead — they are independent targets, and sharing one
 // Key would serialise a user working down their own list
 export const CALL_BACKGROUND_UPLOAD_KEY = "callBackgroundUpload";
+// The frame every call video is sized to: what a screen share captures at, and what a virtual background is
+// Rasterized to so it covers the frame without being scaled up
+export const FULL_HD_RESOLUTION = { height: 1080, width: 1920 } as const;
 // Presentation-quality capture: full HD, at a frame rate that keeps slides and code legible without saturating
 // The uplink, and never offering the tab doing the sharing as a surface to share
 export const SCREEN_SHARE_CAPTURE_OPTIONS = {
   audio: true,
-  resolution: { frameRate: 15, height: 1080, width: 1920 },
+  resolution: { ...FULL_HD_RESOLUTION, frameRate: 15 },
   selfBrowserSurface: "exclude",
   surfaceSwitching: "include",
 } as const;
