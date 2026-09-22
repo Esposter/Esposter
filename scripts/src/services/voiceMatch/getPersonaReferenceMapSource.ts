@@ -6,7 +6,7 @@ const IDENTIFIER_REGEX = /^[A-Za-z_$][\w$]*$/u;
 // Character in name order, the name quoted only where it is not an identifier
 export const getPersonaReferenceMapSource = (references: Map<string, PersonaReference>): string => {
   const entries = [...references]
-    .toSorted(([a], [b]) => a.localeCompare(b))
+    .toSorted(([firstName], [secondName]) => firstName.localeCompare(secondName))
     .map(
       ([name, { likeness, stem }]) =>
         `  ${IDENTIFIER_REGEX.test(name) ? name : JSON.stringify(name)}: { likeness: ${likeness}, stem: ${JSON.stringify(stem)} },\n`,

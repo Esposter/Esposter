@@ -30,6 +30,9 @@ export const REGISTRY_FETCH_TIMEOUT_MS: number = Temporal.Duration.from({ second
 // Resolves its merge conflict, the outdated report parses it, its benchmark reads it — and a literal repeated per
 // Consumer is one rename away from a script that reads a file that no longer exists.
 export const LOCKFILE = "pnpm-lock.yaml";
+// The manifest every member and the root carry, which is how a workspace glob's children are told from a plain
+// Directory and how an npm-installed project is found beside its lockfile
+export const PACKAGE_JSON_FILENAME = "package.json";
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
 

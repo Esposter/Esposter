@@ -1,3 +1,4 @@
+import { PACKAGE_JSON_FILENAME } from "#src/services/shared/constants";
 import { parseWorkspacePackageGlobs, WORKSPACE_FILE } from "@esposter/configuration";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -16,7 +17,8 @@ export const getWorkspacePackageDirectories = (root: string): string[] =>
     const workspaceDirectory = glob.slice(0, -GLOB_SUFFIX.length);
     return readdirSync(resolve(root, workspaceDirectory), { withFileTypes: true })
       .filter(
-        (entry) => entry.isDirectory() && existsSync(resolve(root, workspaceDirectory, entry.name, "package.json")),
+        (entry) =>
+          entry.isDirectory() && existsSync(resolve(root, workspaceDirectory, entry.name, PACKAGE_JSON_FILENAME)),
       )
       .map((entry) => `${workspaceDirectory}/${entry.name}`)
       .toSorted();

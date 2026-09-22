@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { execSync } from "node:child_process";
@@ -15,7 +15,7 @@ const SWEEP_SCRIPT_PREFIX = "ai:sweep:";
 // Script's clock"). `ai:sweep:ledger-coverage` rewrites the ledgers exactly as any run of it does, and a second run
 // Finds nothing left to write.
 const { scripts } = parseMachineJson<{ scripts: Record<string, string> }>(
-  readFileSync(resolve(REPOSITORY_ROOT, "package.json"), "utf8"),
+  readFileSync(resolve(REPOSITORY_ROOT, PACKAGE_JSON_FILENAME), "utf8"),
 );
 const sweepScriptNames = Object.keys(scripts).filter((name) => name.startsWith(SWEEP_SCRIPT_PREFIX));
 
