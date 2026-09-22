@@ -89,7 +89,7 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/genshin.ts" voice      # report what is inst
 The plugin ships code and cards. The engine's runtime is a few hundred megabytes of native binaries and the weights about half a gigabyte, and the plugin install runs a frozen `npm ci` under a one-minute ceiling — so none of it is a dependency of the plugin, and all of it is installed by the verb into the directory the plugin already owns for its state. Run with a dub, it first stops any synthesizer running and clears the rung on file, then does the following in order, each skipped when already done:
 
 1. **The runtime.** The plugin carries a second, tiny manifest — `runtime/package.json` with its own npm lockfile — naming the one package the engine needs. The verb copies both into the state directory and runs `npm ci` there with lifecycle scripts off, since the ONNX runtime's binaries ship in the package and its only script fetches a CUDA build on Linux. Renovate moves the manifest's version like every other, and a bumped lockfile is picked up by the next `voice` run. The synthesizer resolves the package from that manifest and loads it by path; the plugin's own manifest never names it.
-2. **The weights.** The runtime's own loader fetches what it is asked to load into a cache directory the verb points at the state directory, so downloading the weights is loading the engine once — in the verb's own process, which can print progress. Exactly the variants the plugin declares are fetched and no other, and a checkpoint the id no longer names is removed where this one lands: the runtime sweeps nothing it has stopped asking for, so a change of engine would otherwise leave the whole of its predecessor behind on every machine that had loaded it.
+2. **The weights.** The runtime's own loader fetches what it is asked to load into a cache directory the verb points at the state directory, so downloading the weights is loading the engine once — in the verb's own process, which can print progress. Exactly the variants the plugin declares are fetched and no other, and a checkpoint the id no longer names is removed where this one lands: the runtime sweeps nothing it has stopped asking for, so a change of engine would otherwise leave the whole of its predecessor behind on every machine that had loaded it. A cache that already holds every declared variant's graph skips this load altogether — it would print nothing and cost the whole of an engine load — and the rung the engine speaks on is the proof's to report.
 3. **The proof.** The verb warms the synthesizer with the current session's character and has it speak one sentence through the resident process, the same path every reply takes, so the person hears the voice they set up before the first reply does.
 4. **The dub.** One file holding the code — `en`, `ja`, `zh` or `ko`, the four the wiki hosts. Every request carries it, so a running synthesizer honours a switch without a restart. It is written **last**, because the file is the gate in front of every spoken reply: a run whose synthesizer never answered the warm leaves no file behind, so the replies stay silent rather than reaching a voice that cannot speak.
 5. **The hook.** Written with the dub: a launcher in the state directory, and one entry under the MessageDisplay event in user settings beside anyone else's, which the tool reads once per process — so replies are read from the next session.
@@ -112,6 +112,7 @@ flowchart TD
     Clear["stop a running synthesizer,<br/>clear the rung on file"]
     Runtime{"runtime/ installed<br/>from this lockfile?"}
     Install["copy the manifest and lockfile, npm ci"]
+    Weights{"models/ holds every<br/>declared variant?"}
     Load["load the engine once → a superseded checkpoint swept,<br/>this one cached, device reported"]
     Proof["warm this session's character,<br/>speak one sentence through the synthesizer"]
     Spoke{"synthesizer<br/>answered?"}
@@ -119,9 +120,11 @@ flowchart TD
     Off["voice stays off"]
 
     Verb --> Clear --> Runtime
-    Runtime -- no --> Install --> Load
-    Runtime -- yes --> Load
-    Load --> Proof --> Spoke
+    Runtime -- no --> Install --> Weights
+    Runtime -- yes --> Weights
+    Weights -- no --> Load --> Proof
+    Weights -- yes --> Proof
+    Proof --> Spoke
     Spoke -- yes --> Language
     Spoke -- no --> Off
 ```
@@ -162,6 +165,7 @@ A reply that cannot be spoken is not spoken, and nothing waits on it without a b
 | `packages/genshin-persona/src/services/createReplyQueue.ts`         | One turn's pieces in the order written, a missing one held for, a newer turn replacing what waits, the running one told       |
 | `packages/genshin-persona/src/services/getSettingsWithSpeakHook.ts` | The hook entry written into user settings beside anyone else's, once                                                          |
 | `packages/genshin-persona/src/services/writeLauncher.ts`            | The launcher a user setting runs a script through, re-aimed at every session start                                            |
+| `packages/genshin-persona/src/services/checkHasWeights.ts`          | Whether the cache holds every declared variant's graph, read before the verb's foreground load                                |
 | `packages/genshin-persona/src/services/createVoiceSynthesizer.ts`   | The engine on the first rung that loads, moved down by a synthesis that is not speech or that the GPU provider fails          |
 | `packages/genshin-persona/src/services/deleteSupersededModels.ts`   | Every checkpoint the model id no longer names, removed where the one in use lands                                             |
 | `packages/genshin-persona/src/services/checkIsSpeech.ts`            | What a synthesis has to sound like to count as spoken                                                                         |

@@ -4,6 +4,7 @@ import type { Character } from "#src/models/Character";
 import { GenshinVerb, GenshinVerbs } from "#src/models/GenshinVerb";
 import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { VoiceStatus } from "#src/models/VoiceStatus";
+import { checkHasWeights } from "#src/services/checkHasWeights";
 import { checkIsMuted } from "#src/services/checkIsMuted";
 import { checkIsOwnVoiceLine } from "#src/services/checkIsOwnVoiceLine";
 import { checkIsPluginHookEntry } from "#src/services/checkIsPluginHookEntry";
@@ -366,15 +367,19 @@ switch (verb) {
 
     // The runtime's own loader fetches what it is asked to load into the models directory, so the weights are
     // Downloaded by loading the engine once here — with progress, which the detached synthesizer cannot print —
-    // And the synthesizer then loads them from the cache inside a hook's budget
-    const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
-    const synthesizer = await createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
-      onFallback: console.log,
-      onProgress: createVoiceProgressPrinter(),
-    });
-    console.log(
-      synthesizer.device === VOICE_CPU_DEVICE ? strings.weightsOnCpu : strings.weightsOnDevice(synthesizer.device),
-    );
+    // And the synthesizer then loads them from the cache inside a hook's budget. A cache already holding them skips
+    // The load, since the rung the engine speaks on is the proof's to report
+    if (checkHasWeights(MODELS_DIRECTORY)) console.log(strings.weightsPresent);
+    else {
+      const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
+      const synthesizer = await createVoiceSynthesizer(runtime, MODELS_DIRECTORY, {
+        onFallback: console.log,
+        onProgress: createVoiceProgressPrinter(),
+      });
+      console.log(
+        synthesizer.device === VOICE_CPU_DEVICE ? strings.weightsOnCpu : strings.weightsOnDevice(synthesizer.device),
+      );
+    }
     // The dub on disk is the gate every spoken reply passes, so it is written only where this run proved the
     // Voice — a setup that failed after it leaves the replies silent rather than broken in the hooks' silence
     const character = await getCurrentCharacter();

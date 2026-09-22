@@ -41,4 +41,5 @@ export interface LocalizationStrings {
   warmRequestUnanswered: (status: string, logPath: string) => string;
   weightsOnCpu: string;
   weightsOnDevice: (device: string) => string;
+  weightsPresent: string;
 }
