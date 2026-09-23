@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { AgentConsoleTips } from "@/services/agentConsole/AgentConsoleTips";
 import { ELAPSED_TICK_MS, TOKEN_COUNT_FORMAT } from "@/services/agentConsole/constants";
 import { WorkingVerbs } from "@/services/agentConsole/WorkingVerbs";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { takeOne } from "@esposter/shared";
-import { AgentEventType, SessionState } from "agent-console-server/contracts";
+import { AgentEventType, SessionState, TodoStatus } from "agent-console-server/contracts";
 
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { conversationEvents, sessionState, turnUsage } = storeToRefs(agentConsoleSessionStore);
-// Mounted once per turn, so the verb and the tip hold for the turn and change with the next
+const { conversationEvents, sessionState, todoUpdate, turnUsage } = storeToRefs(agentConsoleSessionStore);
+// Mounted once per turn, so the verb holds for the turn and changes with the next
 const verb = takeOne(WorkingVerbs, Math.floor(Math.random() * WorkingVerbs.length));
-const tip = takeOne(AgentConsoleTips, Math.floor(Math.random() * AgentConsoleTips.length));
+// The terminal's line names the task in progress while there is one, and the turn's verb otherwise
+const activeForm = computed(
+  () => todoUpdate.value?.todos.find(({ status }) => status === TodoStatus.InProgress)?.activeForm,
+);
 const now = useNow({ scheduler: (callback) => useIntervalFn(callback, ELAPSED_TICK_MS) });
 // The turn started with the prompt that began it, so a page opened mid-turn still counts from there
 const startedAt = computed(
@@ -40,12 +42,11 @@ const progress = computed(() =>
 </script>
 
 <template>
-  <div role="status" flex flex-col>
+  <div role="status">
     <span>
       <UiSpinner />
-      {{ sessionState === SessionState.Compacting ? "Compacting the conversation" : `${verb}…` }}
+      {{ sessionState === SessionState.Compacting ? "Compacting the conversation" : `${activeForm || verb}…` }}
       <span text-muted>({{ progress }})</span>
     </span>
-    <span text-muted pl-4>Tip: {{ tip }}</span>
   </div>
 </template>

@@ -10,13 +10,14 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);
 const agentConsolePanelStore = useAgentConsolePanelStore();
-const { isWorldReady } = storeToRefs(agentConsolePanelStore);
+const { isWorldLoaded, isWorldReady } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const { currentSessionId } = storeToRefs(agentConsoleSessionStore);
 const isMounted = useMounted();
 const loadingSteps = computed<LoadingStep[]>(() => [
   { isDone: isMounted.value, title: "Starting the page" },
-  { isDone: isWorldReady.value, title: "Building the world" },
+  { isDone: isWorldLoaded.value, title: "Loading the world" },
+  { isDone: isWorldReady.value, title: "Drawing the world" },
   { isDone: isMounted.value && status.value !== ConnectionStatus.Connecting, title: "Reaching the host" },
 ]);
 // Once loaded, the page stays loaded: pairing again later shows its own connecting line, not the loading screen

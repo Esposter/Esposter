@@ -17,14 +17,19 @@ const renderStatistics: RenderStatistics = { drawCalls: 0, renderCount: 0, trian
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);
 const agentConsolePanelStore = useAgentConsolePanelStore();
-const { isWorldReady } = storeToRefs(agentConsolePanelStore);
+const { isWorldLoaded, isWorldReady } = storeToRefs(agentConsolePanelStore);
 const agentConsolePlayerStore = useAgentConsolePlayerStore();
 const { reachableWorldPrompt } = storeToRefs(agentConsolePlayerStore);
 const joystickDirection = ref<Vector2Like>({ x: 0, y: 0 });
 const playerInput = usePlayerInput(joystickDirection);
 const isTouchScreen = useMediaQuery("(pointer: coarse)");
 // A world that cannot start, where WebGL is unavailable, still lets the loading screen go: the panels work without it
+onMounted(() => {
+  isWorldLoaded.value = true;
+});
+
 onUnmounted(() => {
+  isWorldLoaded.value = false;
   isWorldReady.value = false;
 });
 </script>

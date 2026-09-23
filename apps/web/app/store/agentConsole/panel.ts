@@ -8,6 +8,9 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
   const commandStore = useCommandStore();
   const isConsoleOpen = ref(false);
   const isPauseMenuOpen = ref(false);
+  // The world's code has arrived and mounted, and then drawn its first frame: the two steps a loading screen can see
+  // In building it, since neither the lazy chunk nor a generated room reports any finer progress
+  const isWorldLoaded = ref(false);
   const isWorldReady = ref(false);
   const consolePanelType = ref(AgentConsolePanelType.Conversation);
   const composerText = ref("");
@@ -39,6 +42,7 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
     isConsoleOpen,
     isPauseMenuOpen,
     isWorldActive,
+    isWorldLoaded,
     isWorldReady,
     openConsole,
     timelineWorldObjectType,
