@@ -29,11 +29,10 @@
   --dock-inset-block-end: 0rem;
   --dock-inset-inline-start: 0rem;
 }
-// The readable-text setting: body text in the system's own face, one step smaller since the pixel face's small letters
-// Read a size below its em. Headings keep the pixel face, since they read their own face token rather than the body's
+// The readable-text setting: body text in the system's own face. Headings and code keep the pixel face, since they read
+// Its own token rather than the body's
 :root[data-readable-text] {
   --ui-font-body: system-ui, sans-serif;
-  --ui-text-body: calc(var(--ui-step) * 4);
 }
 // The document's own chrome in the UI library's tokens, reaching every page whichever library draws it. It sits in the
 // First layer, so a component that paints its own focus or selection still wins. The inherited colours are declared
