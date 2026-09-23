@@ -14,6 +14,7 @@ import {
   SKIPPED_REVIEW_COMMENT_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
+import { foldReleaseMain } from "#src/services/coderabbit/collect/foldReleaseMain";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
 import { getMergeRisk } from "#src/services/coderabbit/collect/getMergeRisk";
 import { getMovedOutcome } from "#src/services/coderabbit/collect/getMovedOutcome";
@@ -153,6 +154,8 @@ export const runCycle = async ({
     const isReviewSkipped = gate.kind === GateDecisionKind.ReviewSkipped;
     const level = mergeRisk?.coveredSha === developSha || isReviewSkipped ? mergeRisk?.level : undefined;
     if ((gate.kind === GateDecisionKind.Proceed || isReviewSkipped) && drain.isClean) {
+      const folded = await foldReleaseMain({ collectorSha, cwd, developSha, isDryRun, mainSha, viewerLogin });
+      if (folded) return folded;
       if (level === MERGEABLE_RISK_LEVEL && !isReviewSkipped)
         return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
       const judged = await judgeRelease({

@@ -97,7 +97,7 @@ const getCommitCommentPosts = (sha: string) =>
   runGh.mock.calls.filter(([args]) => args[1] === `repos/{owner}/{repo}/commits/${sha}/comments` && args[2] === "-f");
 
 describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
-  const { commitFile, commitFiles, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
+  const { commitFile, commitFiles, deleteFile, getCwd, installPreReceiveHook, publish, readSha, switchTo } =
     setupFixtureRepository();
   const pullRequest = 0;
   const viewerLogin = "viewerLogin";
@@ -666,6 +666,38 @@ describe(runCycle, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
       [["pr", "merge", pullRequest.toString(), "--merge", "--admin", "--match-head-commit", developSha]],
     ]);
     expect(readSha(`origin/${DEVELOP_BRANCH}`)).toBe(developSha);
+  });
+
+  // What lands on main after the window went out — a repair, an express cut — can conflict with the release, and a
+  // Merge GitHub cannot create fails every run: main is folded into develop instead, and the new head is reviewed
+  test("folds a main the clean release conflicts with into develop rather than merging", async () => {
+    expect.hasAssertions();
+
+    const baseSha = commitFile(TEST_FILENAME, "");
+    const mainSha = publish(MAIN_BRANCH, commitFile(TEST_FILENAME, " "));
+    switchTo(baseSha);
+    const developSha = publish(DEVELOP_BRANCH, deleteFile(TEST_FILENAME));
+    publish(QUEUE_BRANCH, developSha);
+    answerGh([{ number: pullRequest, state: ReleasePullRequestState.Open }], [], [getCleanWalkthrough(developSha)]);
+    runDrainStep.mockResolvedValue({ isClean: true, reviewFixesSha: undefined } satisfies DrainStepResult);
+    runSession.mockImplementation(() => {
+      writeFileSync(join(getCwd(), TEST_FILENAME), " ");
+      runGit(["add", TEST_FILENAME], getCwd());
+      runGit(["commit", "--quiet", "--no-edit"], getCwd());
+      return Promise.resolve({ isEnded: true, isStarted: true });
+    });
+    const outcome = await runCycle({ ...baseInput, cwd: getCwd() });
+    const foldedSha = readSha(`origin/${DEVELOP_BRANCH}`);
+
+    expect(outcome).toStrictEqual({
+      kind: CycleOutcomeKind.Pushed,
+      reason: `${MAIN_BRANCH} folded into ${DEVELOP_BRANCH} — the release conflicted with it, and merges once the new head is reviewed`,
+      targetSha: foldedSha,
+    });
+    expect(runGit(["rev-list", "--parents", "--max-count=1", foldedSha], getCwd()).trim()).toBe(
+      `${foldedSha} ${developSha} ${mainSha}`,
+    );
+    expect(getPrCalls("merge")).toHaveLength(0);
   });
 
   // A clean review the bot rates above the least risk is judged once per head: a hold ports on, a merge releases

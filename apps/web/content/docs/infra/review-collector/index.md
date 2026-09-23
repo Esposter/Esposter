@@ -56,6 +56,7 @@ flowchart TD
   G -->|yes| O{Open findings}
   O -->|yes| DR[Drain into ai/review-fixes<br/>Claude fixes or rejects each]
   O -->|no| CL{Review clean at the head}
+  CL -->|yes, main conflicts| FR[Fold main into develop<br/>push, exit — the new head is reviewed]
   CL -->|yes, least risk stated| MG[Merge the release PR<br/>the push to main returns develop, exit]
   CL -->|no| SY
   CL -->|yes, any other risk<br/>or none stated| J{Verdict for this head<br/>recorded, else Claude reads what the bot wrote}
