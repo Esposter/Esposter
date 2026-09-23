@@ -44,19 +44,17 @@ What the terminal shows and does, and where the console carries each part, is [t
 
 ## Key files
 
-| File                                                                                              | Role                                                                                   |
-| :------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------- |
-| `packages/agent-console-server/src/contracts.ts`                                                  | The wire the page imports: sessions, events, commands, server messages                 |
-| `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts`                   | The host's socket, token gate, event log and command dispatch                          |
-| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | The Claude Code driver                                                                 |
-| `apps/web/app/pages/agent-console.vue`                                                            | The route, and pairing from the link the host prints                                   |
-| `apps/web/app/store/agentConsole/connection.ts`                                                   | The socket, reconnection, and routing the host's messages into the session store       |
-| `apps/web/app/store/agentConsole/session.ts`                                                      | Every session's event log and the views the work surface reads from it                 |
-| `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts`                               | The theme registry, holding the default theme                                          |
-| `apps/web/visual/agent-console.visual.test.ts`                                                    | The visual suite: the built app in Chrome against a stub host, compared with baselines |
+| File                                                                                              | Role                                                                             |
+| :------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------- |
+| `packages/agent-console-server/src/contracts.ts`                                                  | The wire the page imports: sessions, events, commands, server messages           |
+| `packages/agent-console-server/src/services/server/createAgentConsoleServer.ts`                   | The host's socket, token gate, event log and command dispatch                    |
+| `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | The Claude Code driver                                                           |
+| `apps/web/app/pages/agent-console.vue`                                                            | The route, and pairing from the link the host prints                             |
+| `apps/web/app/store/agentConsole/connection.ts`                                                   | The socket, reconnection, and routing the host's messages into the session store |
+| `apps/web/app/store/agentConsole/session.ts`                                                      | Every session's event log and the views the work surface reads from it           |
+| `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts`                               | The theme registry, holding the default theme                                    |
 
 ## Notes
 
 - The Genshin theme, the views (the collector harbour, the codebase city), the terminal-mirror driver and the extension tiers are still [proposals](/docs/proposals/infra/agent-console). The default theme is the surface every one of them is measured against.
 - Cost is what the SDK reports for the session's query since the host opened it. A session resumed in a new host process starts that count again, as a new terminal process does.
-- The visual suite builds the whole app, so it runs through `pnpm test:visual` and stays out of the default `test` run. A state without a baseline is written where its baseline goes, and committing it approves it.

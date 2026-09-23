@@ -49,18 +49,17 @@ flowchart TD
 2. **The composer and the conversation panel**, so a prompt can be sent and read. This gets a live turn working inside the game.
 3. **Tool calls, subagents and the permission gate** in the world, each with its panel.
 4. **Diffs, the context gauge, cost and model and mode** as in-game objects.
-5. **Delete the Vuetify surface.** The visual suite's baselines are captured again against the voxel surface and handed over for approval.
+5. **Delete the Vuetify surface**, along with every component test that only pinned its markup.
 
 The [Genshin theme](/docs/proposals/infra/agent-console/themes) then dresses this world rather than the Vuetify one. The [voxel atelier](/docs/proposals/infra/agent-console/voxel-atelier) and the [wish banner](/docs/proposals/infra/agent-console/wish-banner) become rooms and events inside it.
 
 ## Key files
 
-| File                                           | Role after the change                                                       |
-| :--------------------------------------------- | :-------------------------------------------------------------------------- |
-| `apps/web/app/pages/agent-console.vue`         | Declares the full-screen layout and mounts the world                        |
-| `apps/web/app/store/agentConsole/session.ts`   | The session store both surfaces read, unchanged                             |
-| `apps/web/app/components/Visual/Gem/Index.vue` | The app's existing TresJS scene, the pattern the world follows              |
-| `apps/web/visual/agent-console.visual.test.ts` | The visual suite, whose states are captured again against the voxel surface |
+| File                                           | Role after the change                                          |
+| :--------------------------------------------- | :------------------------------------------------------------- |
+| `apps/web/app/pages/agent-console.vue`         | Declares the full-screen layout and mounts the world           |
+| `apps/web/app/store/agentConsole/session.ts`   | The session store both surfaces read, unchanged                |
+| `apps/web/app/components/Visual/Gem/Index.vue` | The app's existing TresJS scene, the pattern the world follows |
 
 ```text
 apps/web/app/layouts/immersive.vue

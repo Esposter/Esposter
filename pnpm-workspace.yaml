@@ -98,7 +98,6 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/node": ^26.6.2
-  "@types/pngjs": ^6.0.5
   "@types/semver": ^7.8.0
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
@@ -207,9 +206,6 @@ catalog:
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
   pinia: ^4.0.3
-  pixelmatch: ^7.2.0
-  playwright-core: ^1.63.0
-  pngjs: ^7.0.0
   postgres: ^3.4.9
   prosemirror-state: ^1.4.4
   publint: ^0.3.24
