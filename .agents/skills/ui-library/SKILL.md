@@ -47,4 +47,4 @@ Scrollbars, selection, the caret, native control accents and the focus ring live
 
 ## Migrating a unit
 
-Write down every flow and state a unit has before touching its template; the unit fails if the new version drops any of them. The steps and the order of units are the proposal's `page-migration.md`, and its ledger opens with that stage.
+Write down every flow and state a unit has before touching its template; the unit fails if the new version drops any of them. A unit may redesign across page boundaries — merge, split or move pages — as long as every inventoried flow keeps a place, every old route redirects, and the flow map is regenerated in the same commit (the proposal index's "Licence to redesign"). The steps and the order of units are the proposal's `page-migration.md`, and its ledger opens with that stage.

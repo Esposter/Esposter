@@ -10,7 +10,17 @@ The [agent console](/docs/infra/claude-interface/agent-console) is the one page 
 
 This proposal carries that look across the whole app. It does so with a UI library of our own that lives in `apps/web`, whose behaviour comes from [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) and whose look is entirely ours. Vuetify 0 (the package "@vuetify/v0") is Vuetify's headless layer: components and composables that own focus, keyboard handling, ARIA, selection, validation and positioning, and paint nothing. The migration runs as a ladder of stages. Each stage ships something a user or a contributor feels on the day it lands, and no stage waits for the last one to pay off. The icon font goes early, in a stage of its own, and the last stage removes Vuetify and its Nuxt module once nothing imports them.
 
-The migration is also the chance to fix the layout, not only to repaint it. Most of today's surfaces grew one feature at a time inside Vuetify's app-bar-and-drawer frame. Where a surface has a better arrangement, the stage that restyles it takes that arrangement. What no stage may do is lose a flow: every unit is migrated against a written inventory of what it does today, and a flow missing from the new version is a failed unit, not a trade-off.
+The migration is also the chance to fix the design, not only to repaint it. Most of today's surfaces grew one feature at a time inside Vuetify's app-bar-and-drawer frame, and the app's products sit side by side rather than connected. What no stage may do is lose a flow: every unit is migrated against a written inventory of what it does today, and a flow missing from the new version is a failed unit, not a trade-off.
+
+## Licence to redesign
+
+A stage is free to redesign from the ground up, including across page boundaries. It may merge pages, split one, move a flow to another page, change the route tree, or replace a page with a panel or a dialog, wherever that gives the reader a better result. Three conditions hold it:
+
+- **Every inventoried flow still has a place**, which may be a better one than today's.
+- **Every old address still leads somewhere.** A route that moves or goes away redirects to where its content went, so a bookmark or a shared link never dies.
+- **The [flow map](/docs/proposals/refactors/ui-library/flow-map) is regenerated with the change**, so the new arrangement's links between pages are visible in review rather than argued from memory.
+
+The measure is the reader's effort, not the screen's contents: the fewest surfaces and the least on each one, with anything the reader wants about one click or one keystroke away. The app's products should read as one connected place, each linking to the others where the work crosses, not as a catalogue of separate apps. A design that gets there with less code wins over a cleverer one; the rules against over-engineering apply to the design as they do to the code.
 
 ## The decision
 
@@ -46,12 +56,16 @@ flowchart TD
 | [Schema forms](/docs/proposals/refactors/ui-library/schema-forms)       | Our own renderer for the Zod-generated JSON Schema forms that vjsf draws today                | The sheet column and dashboard dialogs match the rest of the app, and the last Vuetify-bound engine goes |
 | [Retirement](/docs/proposals/refactors/ui-library/retirement)           | Vuetify, its Nuxt module and its UnoCSS preset removed, and their config with them            | A smaller install, a smaller bundle, and one way to build a control                                      |
 
+The [flow map](/docs/proposals/refactors/ui-library/flow-map) is generated before the app shell is designed, since the shell's navigation is designed from it.
+
 The design itself — the tokens, what each surface looks like, and the full list of details that make a UI feel finished — is in [design language](/docs/proposals/refactors/ui-library/design-language). The catalogue of components, each with the Vuetify 0 primitive under it and the Vuetify components it replaces, is in [components](/docs/proposals/refactors/ui-library/components).
 
 ```mermaid
 flowchart TD
   S0[Foundation] --> S1[Icons]
   S0 --> S2[Agent console on the library]
+  S0 --> FM[Flow map, generated]
+  FM --> S3
   S2 --> S3[App shell]
   S3 --> S4[Context menus]
   S3 --> S5[Command palette]
