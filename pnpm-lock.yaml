@@ -552,8 +552,8 @@ catalogs:
       specifier: ^0.8.3
       version: 0.8.3
     fs-extra:
-      specifier: ^11.4.0
-      version: 11.4.0
+      specifier: ^11.4.1
+      version: 11.4.1
     grapesjs:
       specifier: ^0.23.6
       version: 0.23.6
@@ -735,17 +735,17 @@ catalogs:
       specifier: ^2.2.6
       version: 2.2.6
     survey-core:
-      specifier: ^3.1.0
-      version: 3.1.0
+      specifier: ^3.1.1
+      version: 3.1.1
     survey-creator-core:
-      specifier: ^3.1.0
-      version: 3.1.0
+      specifier: ^3.1.1
+      version: 3.1.1
     survey-creator-vue:
-      specifier: ^3.1.0
-      version: 3.1.0
+      specifier: ^3.1.1
+      version: 3.1.1
     survey-vue3-ui:
-      specifier: ^3.1.0
-      version: 3.1.0
+      specifier: ^3.1.1
+      version: 3.1.1
     three:
       specifier: ^0.186.0
       version: 0.186.0
@@ -1335,16 +1335,16 @@ importers:
         version: 2.2.6
       survey-core:
         specifier: 'catalog:'
-        version: 3.1.0
+        version: 3.1.1
       survey-creator-core:
         specifier: 'catalog:'
-        version: 3.1.0(survey-core@3.1.0)
+        version: 3.1.1(survey-core@3.1.1)
       survey-creator-vue:
         specifier: 'catalog:'
-        version: 3.1.0(survey-core@3.1.0)(survey-creator-core@3.1.0(survey-core@3.1.0))(survey-vue3-ui@3.1.0(survey-core@3.1.0)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 3.1.1(survey-core@3.1.1)(survey-creator-core@3.1.1(survey-core@3.1.1))(survey-vue3-ui@3.1.1(survey-core@3.1.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       survey-vue3-ui:
         specifier: 'catalog:'
-        version: 3.1.0(survey-core@3.1.0)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+        version: 3.1.1(survey-core@3.1.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       three:
         specifier: 'catalog:'
         version: 0.186.0
@@ -1486,7 +1486,7 @@ importers:
         version: 6.2.5
       fs-extra:
         specifier: 'catalog:'
-        version: 11.4.0
+        version: 11.4.1
       h3:
         specifier: ^1.15.11
         version: 1.15.11(srvx@0.11.22)
@@ -10200,8 +10200,8 @@ packages:
     resolution: {integrity: sha512-Rx/WycZ60HOaqLKAi6cHRKKI7zxWbJ31MhntmtwMoaTeF7XFH9hhBp8vITaMidfljRQ6eYWCKkaTK+ykVJHP2A==}
     engines: {node: '>= 0.8'}
 
-  fs-extra@11.4.0:
-    resolution: {integrity: sha512-EQsFzMUJkCKGr1ePqlYADkIUmHW1s3ZXr5Yqy6wbGrfUCphpl2maM/kyOIRA2HpP3AaFQTZXD4ldjek+nccddA==}
+  fs-extra@11.4.1:
+    resolution: {integrity: sha512-KYAb4c9BJQI6QqGKthV68OHe0badztdXJWKo0WtBA9IuCFPTKvE5ZdUBglP833aMjhaSPNO4A5j/EkzZtGlKjA==}
     engines: {node: '>=14.14'}
 
   fs-extra@9.1.0:
@@ -14018,31 +14018,31 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  survey-core@3.1.0:
-    resolution: {integrity: sha512-DWY+OF74eST91yYQ0Pi0sQPH1OjXTOa/J01BbWzMTHMqoQZkt28SGPB3Q4win2MPRdqzumNa9fOOlctvDmAcmw==}
+  survey-core@3.1.1:
+    resolution: {integrity: sha512-DCIjC//kSA5ldAjCNqWH8MPz7Rf1v713RYDcilOTCpagj5oJqp++z9/VV4WSliiKV97VaGJ4YHLZodm0Ki24Dw==}
 
-  survey-creator-core@3.1.0:
-    resolution: {integrity: sha512-bmh9KJbG8BWXOVR148QLplqoWO3ruocV90cCsKvYeyLLYk27qTodfKdyQqw0O1DB+8MQ10n4ptyCAJUp7UdtYQ==}
+  survey-creator-core@3.1.1:
+    resolution: {integrity: sha512-EHxL/P/OviOXAqlz+ytibj9zmAFIFPqQycTE8Js+DKkCoLcKEGjkiK1gdiS9P/YmZziBZ36q8mOuVRS0uZLCIg==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
       ace-builds: ^1.4.12
-      survey-core: 3.1.0
+      survey-core: 3.1.1
     peerDependenciesMeta:
       ace-builds:
         optional: true
 
-  survey-creator-vue@3.1.0:
-    resolution: {integrity: sha512-C5q3Otn+T3Pn6jfl0sJI1y7MjzqLMud19pWkPOKoqw20xa/BID35RB8zTj+GjxBnmo43InRB2G6fqngO8Ah5kQ==}
+  survey-creator-vue@3.1.1:
+    resolution: {integrity: sha512-RHEuqBwxZSH9BEwSApyebG20c+0wY+Qbx25bhS/UsEphPdt4YRxvjEy6AtsTWM7ayUuZjHE2RlviQ0widIuCow==}
     peerDependencies:
-      survey-core: 3.1.0
-      survey-creator-core: 3.1.0
-      survey-vue3-ui: 3.1.0
+      survey-core: 3.1.1
+      survey-creator-core: 3.1.1
+      survey-vue3-ui: 3.1.1
       vue: ^3.4.0
 
-  survey-vue3-ui@3.1.0:
-    resolution: {integrity: sha512-vH0LhiVzjl4D7WVtRcz3wAFxhjMr3xQGte4OCCzT9URodnhseZdwYph5oDIN9WMCtr0ccxE/COn7RVd/EMdwOg==}
+  survey-vue3-ui@3.1.1:
+    resolution: {integrity: sha512-y8uOClt58b5MupI8IWZYfWII37Hxxq9Oj45j/BfjiUyoI+f8iPlQYEBTBmUVcWyeO6l9i/ShZOl6Uo1M063u8g==}
     peerDependencies:
-      survey-core: 3.1.0
+      survey-core: 3.1.1
       vue: ^3.4.0
 
   svgo@4.1.0:
@@ -24571,7 +24571,7 @@ snapshots:
 
   fresh@2.0.0: {}
 
-  fs-extra@11.4.0:
+  fs-extra@11.4.1:
     dependencies:
       graceful-fs: 4.2.11
       jsonfile: 6.2.1
@@ -29400,22 +29400,22 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  survey-core@3.1.0: {}
+  survey-core@3.1.1: {}
 
-  survey-creator-core@3.1.0(survey-core@3.1.0):
+  survey-creator-core@3.1.1(survey-core@3.1.1):
     dependencies:
-      survey-core: 3.1.0
+      survey-core: 3.1.1
 
-  survey-creator-vue@3.1.0(survey-core@3.1.0)(survey-creator-core@3.1.0(survey-core@3.1.0))(survey-vue3-ui@3.1.0(survey-core@3.1.0)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)):
+  survey-creator-vue@3.1.1(survey-core@3.1.1)(survey-creator-core@3.1.1(survey-core@3.1.1))(survey-vue3-ui@3.1.1(survey-core@3.1.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)):
     dependencies:
-      survey-core: 3.1.0
-      survey-creator-core: 3.1.0(survey-core@3.1.0)
-      survey-vue3-ui: 3.1.0(survey-core@3.1.0)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      survey-core: 3.1.1
+      survey-creator-core: 3.1.1(survey-core@3.1.1)
+      survey-vue3-ui: 3.1.1(survey-core@3.1.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
 
-  survey-vue3-ui@3.1.0(survey-core@3.1.0)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)):
+  survey-vue3-ui@3.1.1(survey-core@3.1.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)):
     dependencies:
-      survey-core: 3.1.0
+      survey-core: 3.1.1
       vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
 
   svgo@4.1.0:

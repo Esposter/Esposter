@@ -1,0 +1,193 @@
+flowchart LR
+  shell[["The shell"]]
+  route_["/"]
+  route_slug_["/[...slug]"]
+  route_about["/about"]
+  route_achievements["/achievements"]
+  route_agent_console["/agent-console"]
+  route_anime["/anime"]
+  route_calls["/calls"]
+  route_calls_id_["/calls/[id]"]
+  route_clicker["/clicker"]
+  route_docs_slug_["/docs/[...slug]"]
+  route_dungeons["/dungeons"]
+  route_fluid_simulator["/fluid-simulator"]
+  route_login["/login"]
+  route_messages["/messages"]
+  route_messages_id_["/messages/[id]"]
+  route_messages_id_rowKey_["/messages/[id]/[rowKey]"]
+  route_messages_id_thread_rowKey_["/messages/[id]/thread/[rowKey]"]
+  route_messages_draftsandsent["/messages/draftsandsent"]
+  route_messages_friends["/messages/friends"]
+  route_messages_invite_code_["/messages/invite/[code]"]
+  route_post_id_["/post/[id]"]
+  route_post_create["/post/create"]
+  route_post_update_id_["/post/update/[id]"]
+  route_privacy_policy["/privacy-policy"]
+  route_resource_explorer["/resource-explorer"]
+  route_resource_explorer_id_blade_["/resource-explorer/[id]/[[blade]]"]
+  route_resource_explorer_all["/resource-explorer/all"]
+  route_resource_explorer_create["/resource-explorer/create"]
+  route_resource_explorer_create_type_["/resource-explorer/create/[type]"]
+  route_resource_explorer_favorites["/resource-explorer/favorites"]
+  route_resource_explorer_recents["/resource-explorer/recents"]
+  route_resource_explorer_recycle_bin["/resource-explorer/recycle-bin"]
+  route_resource_explorer_tags["/resource-explorer/tags"]
+  route_user_id_["/user/[id]"]
+  route_user_settings["/user/settings"]
+  route_view_type_id_["/view/[type]/[id]"]
+  shell --> route_
+  shell --> route_about
+  shell --> route_achievements
+  shell --> route_agent_console
+  shell --> route_anime
+  shell --> route_calls
+  shell --> route_calls_id_
+  shell --> route_clicker
+  shell --> route_docs_slug_
+  shell --> route_dungeons
+  shell --> route_fluid_simulator
+  shell --> route_login
+  shell --> route_messages
+  shell --> route_messages_id_
+  shell --> route_messages_id_thread_rowKey_
+  shell --> route_privacy_policy
+  shell --> route_resource_explorer
+  shell --> route_resource_explorer_all
+  shell --> route_user_settings
+  route_ --> route_post_create
+  route_ --> route_post_id_
+  route_ --> route_post_update_id_
+  route_ --> route_user_id_
+  route_slug_ --> route_
+  route_achievements --> route_login
+  route_achievements --> route_user_id_
+  route_agent_console --> route_
+  route_calls --> route_calls_id_
+  route_calls --> route_login
+  route_calls_id_ --> route_calls
+  route_calls_id_ --> route_login
+  route_login --> route_
+  route_messages --> route_login
+  route_messages --> route_messages_draftsandsent
+  route_messages --> route_messages_friends
+  route_messages --> route_messages_id_
+  route_messages --> route_messages_invite_code_
+  route_messages_id_ --> route_login
+  route_messages_id_ --> route_messages
+  route_messages_id_ --> route_messages_draftsandsent
+  route_messages_id_ --> route_messages_friends
+  route_messages_id_ --> route_messages_id_rowKey_
+  route_messages_id_ --> route_messages_id_thread_rowKey_
+  route_messages_id_ --> route_messages_invite_code_
+  route_messages_id_rowKey_ --> route_login
+  route_messages_id_rowKey_ --> route_messages
+  route_messages_id_rowKey_ --> route_messages_draftsandsent
+  route_messages_id_rowKey_ --> route_messages_friends
+  route_messages_id_rowKey_ --> route_messages_id_
+  route_messages_id_rowKey_ --> route_messages_id_thread_rowKey_
+  route_messages_id_rowKey_ --> route_messages_invite_code_
+  route_messages_id_thread_rowKey_ --> route_login
+  route_messages_id_thread_rowKey_ --> route_messages
+  route_messages_id_thread_rowKey_ --> route_messages_draftsandsent
+  route_messages_id_thread_rowKey_ --> route_messages_friends
+  route_messages_id_thread_rowKey_ --> route_messages_id_
+  route_messages_id_thread_rowKey_ --> route_messages_id_rowKey_
+  route_messages_id_thread_rowKey_ --> route_messages_invite_code_
+  route_messages_draftsandsent --> route_login
+  route_messages_draftsandsent --> route_messages
+  route_messages_draftsandsent --> route_messages_friends
+  route_messages_draftsandsent --> route_messages_id_
+  route_messages_draftsandsent --> route_messages_id_rowKey_
+  route_messages_draftsandsent --> route_messages_id_thread_rowKey_
+  route_messages_draftsandsent --> route_messages_invite_code_
+  route_messages_friends --> route_login
+  route_messages_friends --> route_messages
+  route_messages_friends --> route_messages_draftsandsent
+  route_messages_friends --> route_messages_id_
+  route_messages_friends --> route_messages_invite_code_
+  route_messages_invite_code_ --> route_login
+  route_messages_invite_code_ --> route_messages_id_
+  route_post_id_ --> route_
+  route_post_id_ --> route_post_update_id_
+  route_post_id_ --> route_user_id_
+  route_post_create --> route_login
+  route_post_create --> route_post_id_
+  route_post_update_id_ --> route_login
+  route_post_update_id_ --> route_post_id_
+  route_resource_explorer --> route_login
+  route_resource_explorer --> route_resource_explorer_all
+  route_resource_explorer --> route_resource_explorer_create
+  route_resource_explorer --> route_resource_explorer_create_type_
+  route_resource_explorer --> route_resource_explorer_favorites
+  route_resource_explorer --> route_resource_explorer_id_blade_
+  route_resource_explorer --> route_resource_explorer_recents
+  route_resource_explorer --> route_resource_explorer_recycle_bin
+  route_resource_explorer --> route_resource_explorer_tags
+  route_resource_explorer_id_blade_ --> route_login
+  route_resource_explorer_id_blade_ --> route_messages
+  route_resource_explorer_id_blade_ --> route_messages_id_
+  route_resource_explorer_id_blade_ --> route_resource_explorer
+  route_resource_explorer_id_blade_ --> route_resource_explorer_all
+  route_resource_explorer_id_blade_ --> route_resource_explorer_favorites
+  route_resource_explorer_id_blade_ --> route_resource_explorer_recents
+  route_resource_explorer_id_blade_ --> route_resource_explorer_recycle_bin
+  route_resource_explorer_id_blade_ --> route_resource_explorer_tags
+  route_resource_explorer_id_blade_ --> route_view_type_id_
+  route_resource_explorer_all --> route_login
+  route_resource_explorer_all --> route_resource_explorer
+  route_resource_explorer_all --> route_resource_explorer_favorites
+  route_resource_explorer_all --> route_resource_explorer_id_blade_
+  route_resource_explorer_all --> route_resource_explorer_recents
+  route_resource_explorer_all --> route_resource_explorer_recycle_bin
+  route_resource_explorer_all --> route_resource_explorer_tags
+  route_resource_explorer_create --> route_login
+  route_resource_explorer_create --> route_resource_explorer
+  route_resource_explorer_create --> route_resource_explorer_all
+  route_resource_explorer_create --> route_resource_explorer_create_type_
+  route_resource_explorer_create --> route_resource_explorer_favorites
+  route_resource_explorer_create --> route_resource_explorer_recents
+  route_resource_explorer_create --> route_resource_explorer_recycle_bin
+  route_resource_explorer_create --> route_resource_explorer_tags
+  route_resource_explorer_create_type_ --> route_login
+  route_resource_explorer_create_type_ --> route_resource_explorer
+  route_resource_explorer_create_type_ --> route_resource_explorer_all
+  route_resource_explorer_create_type_ --> route_resource_explorer_create
+  route_resource_explorer_create_type_ --> route_resource_explorer_favorites
+  route_resource_explorer_create_type_ --> route_resource_explorer_id_blade_
+  route_resource_explorer_create_type_ --> route_resource_explorer_recents
+  route_resource_explorer_create_type_ --> route_resource_explorer_recycle_bin
+  route_resource_explorer_create_type_ --> route_resource_explorer_tags
+  route_resource_explorer_favorites --> route_login
+  route_resource_explorer_favorites --> route_resource_explorer
+  route_resource_explorer_favorites --> route_resource_explorer_all
+  route_resource_explorer_favorites --> route_resource_explorer_id_blade_
+  route_resource_explorer_favorites --> route_resource_explorer_recents
+  route_resource_explorer_favorites --> route_resource_explorer_recycle_bin
+  route_resource_explorer_favorites --> route_resource_explorer_tags
+  route_resource_explorer_recents --> route_login
+  route_resource_explorer_recents --> route_resource_explorer
+  route_resource_explorer_recents --> route_resource_explorer_all
+  route_resource_explorer_recents --> route_resource_explorer_favorites
+  route_resource_explorer_recents --> route_resource_explorer_id_blade_
+  route_resource_explorer_recents --> route_resource_explorer_recycle_bin
+  route_resource_explorer_recents --> route_resource_explorer_tags
+  route_resource_explorer_recycle_bin --> route_login
+  route_resource_explorer_recycle_bin --> route_resource_explorer
+  route_resource_explorer_recycle_bin --> route_resource_explorer_all
+  route_resource_explorer_recycle_bin --> route_resource_explorer_favorites
+  route_resource_explorer_recycle_bin --> route_resource_explorer_id_blade_
+  route_resource_explorer_recycle_bin --> route_resource_explorer_recents
+  route_resource_explorer_recycle_bin --> route_resource_explorer_tags
+  route_resource_explorer_tags --> route_login
+  route_resource_explorer_tags --> route_resource_explorer
+  route_resource_explorer_tags --> route_resource_explorer_all
+  route_resource_explorer_tags --> route_resource_explorer_favorites
+  route_resource_explorer_tags --> route_resource_explorer_recents
+  route_resource_explorer_tags --> route_resource_explorer_recycle_bin
+  route_user_id_ --> route_
+  route_user_id_ --> route_post_id_
+  route_user_id_ --> route_post_update_id_
+  route_user_id_ --> route_user_settings
+  route_user_settings --> route_login
+  route_view_type_id_ --> route_resource_explorer_id_blade_
