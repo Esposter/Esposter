@@ -14,21 +14,26 @@ const { isPauseMenuOpen } = storeToRefs(agentConsolePanelStore);
 const { openConsole } = agentConsolePanelStore;
 const menu = useTemplateRef("menu");
 const activeElement = useActiveElement();
-// The next item or the one before, wrapping at either end
+// The next item or the one before, wrapping at either end: from nothing focused yet, down is the first and up the last
 const moveFocus = (event: KeyboardEvent) => {
   const step = MenuKeyStepMap[event.key.toLowerCase()];
   if (!step || !menu.value) return;
   event.preventDefault();
   const items = [...menu.value.querySelectorAll<HTMLElement>("a, button")];
   const index = activeElement.value ? items.indexOf(activeElement.value) : -1;
-  items.at((index + step) % items.length)?.focus();
+  items.at(index === -1 && step < 0 ? -1 : (index + step) % items.length)?.focus();
 };
 </script>
 
 <template>
   <!-- What leaves the world or the host, kept off the heads-up display, which only describes the session -->
-  <UiDialog v-model="isPauseMenuOpen" title="Paused" w="[min(24rem,90vw)]">
-    <nav ref="menu" aria-label="Paused" p-3 flex flex-col gap-2 @keydown="(event: KeyboardEvent) => moveFocus(event)">
+  <UiDialog
+    v-model="isPauseMenuOpen"
+    title="Paused"
+    w="[min(24rem,90vw)]"
+    @keydown="(event: KeyboardEvent) => moveFocus(event)"
+  >
+    <nav ref="menu" aria-label="Paused" p-3 flex flex-col gap-2>
       <UiButton @click="isPauseMenuOpen = false">Back to the world</UiButton>
       <UiButton
         @click="

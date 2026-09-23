@@ -19,6 +19,16 @@ defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
 const { isTitleHidden, placement = UiDialogPlacement.High, title } = defineProps<Props>();
+const frame = useTemplateRef("frame");
+// Opening moves focus into the dialog, and the browser gives it to the first control when nothing asks for it — the
+// Close button. The dialog takes it itself instead, so nothing reads as chosen until the reader moves, and a control
+// That asks with autofocus, such as a composer, still gets it
+watchImmediate(isOpen, async (newIsOpen) => {
+  if (!newIsOpen) return;
+  await nextTick();
+  const dialog = frame.value?.parentElement;
+  if (dialog && !dialog.querySelector("[autofocus]")) dialog.focus();
+});
 </script>
 
 <template>
@@ -34,18 +44,16 @@ const { isTitleHidden, placement = UiDialogPlacement.High, title } = defineProps
           : 'max-h-[76dvh]',
         { 'mt-[12dvh]': placement === UiDialogPlacement.High },
       ]"
+      tabindex="-1"
       text-inherit
       p-0
       b-none
       bg-transparent
       of-visible
     >
-      <section :class="placement === UiDialogPlacement.Sheet ? 'h-full' : 'max-h-[76dvh]'" flex flex-col ui-frame>
-        <slot />
-        <!-- After the content in the tree and drawn above it, so opening the dialog focuses the content's first control
-          Rather than the close button, which comes last in the tab order, as the modal dialog pattern allows -->
+      <section ref="frame" :class="placement === UiDialogPlacement.Sheet ? 'h-full' : 'max-h-[76dvh]'" flex flex-col ui-frame>
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
-        <header v-else class="title-bar" px-3 py-2 flex gap-2 items-center order-first>
+        <header v-else class="title-bar" px-3 py-2 flex gap-2 items-center>
           <Dialog.Title text-accent flex-1 truncate>{{ title }}</Dialog.Title>
           <UiIconButton
             label="Close"
@@ -54,12 +62,18 @@ const { isTitleHidden, placement = UiDialogPlacement.High, title } = defineProps
             @click="isOpen = false"
           />
         </header>
+        <slot />
       </section>
     </Dialog.Content>
   </Dialog.Root>
 </template>
 
 <style scoped>
+/* The dialog holds focus only until the reader moves it, so it draws no ring of its own */
+.ui-dialog:focus-visible {
+  outline: none;
+}
+
 .title-bar {
   box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
 }
