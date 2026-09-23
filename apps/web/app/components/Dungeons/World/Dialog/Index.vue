@@ -2,6 +2,7 @@
 import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DIALOG_DEPTH, DIALOG_HEIGHT, DIALOG_PADDING, DIALOG_WIDTH } from "@/services/dungeons/scene/world/constants";
+import { PANEL_BORDER_COLOR, PANEL_FILL_COLOR } from "@/services/dungeons/UI/constants";
 import { onSceneEvent } from "@/services/phaser/hooks/onSceneEvent";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
@@ -29,8 +30,8 @@ onSceneEvent(SceneEventKey.ShowMessage, (scene) => {
         origin: 0,
         width: DIALOG_WIDTH,
         height: DIALOG_HEIGHT,
-        fillColor: 0xede4f3,
-        strokeStyle: [8, 0x905ac2],
+        fillColor: PANEL_FILL_COLOR,
+        strokeStyle: [8, PANEL_BORDER_COLOR],
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="controls.setInput(PlayerSpecialInput.Confirm)"
     />

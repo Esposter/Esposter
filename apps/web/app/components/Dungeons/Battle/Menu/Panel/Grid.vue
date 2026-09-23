@@ -10,6 +10,7 @@ import {
   MENU_PADDING,
 } from "@/services/dungeons/scene/battle/menu/constants";
 import { getPanelTextPosition } from "@/services/dungeons/scene/battle/menu/getPanelTextPosition";
+import { PANEL_BORDER_COLOR, PANEL_FILL_COLOR } from "@/services/dungeons/UI/constants";
 import { Container, Rectangle } from "vue-phaserjs";
 
 interface Props {
@@ -29,8 +30,8 @@ const { getText, grid, isVisible, x = 0 } = defineProps<Props>();
         origin: 0,
         width: 500,
         height: MENU_HEIGHT,
-        fillColor: 0xede4f3,
-        strokeStyle: [MENU_PADDING * 2, 0x905ac2],
+        fillColor: PANEL_FILL_COLOR,
+        strokeStyle: [MENU_PADDING * 2, PANEL_BORDER_COLOR],
       }"
     />
     <template v-for="(row, rowIndex) of unref(grid.grid)" :key="rowIndex">
