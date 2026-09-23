@@ -43,7 +43,7 @@ export const portWindow = ({ cwd, developSha, fixShas, frontierSha, queueSha }: 
     // A commit claiming no review is the express lane's, not a window's: the lane cuts it onto `main` when it
     // Applies, so nothing behind it waits on a review it does not need
     if (claimedShas.has(sha)) {
-      skippedShas = [...skippedShas, sha];
+      skippedShas.push(sha);
       continue;
     }
     const baseSha = readHeadSha(cwd);
