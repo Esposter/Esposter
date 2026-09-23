@@ -55,6 +55,23 @@ describe("uiConfirmDialog", () => {
     expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
   });
 
+  test("holds a guarded answer until the name is typed", async () => {
+    expect.hasAssertions();
+
+    const confirmName = "confirmName";
+    const component = mount(UiConfirmDialog, {
+      attachTo: document.body,
+      props: { confirmLabel, confirmName, modelValue: true, title },
+    });
+    await flushPromises();
+
+    expect(getConfirmButton(component).attributes("disabled")).toBe("");
+
+    await component.get("input").setValue(confirmName);
+
+    expect(getConfirmButton(component).attributes("disabled")).toBeUndefined();
+  });
+
   test("stays open to try again when the answer fails", async () => {
     expect.hasAssertions();
 
