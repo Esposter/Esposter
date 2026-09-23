@@ -34,7 +34,7 @@ describe("uiOverflowMenu", () => {
     await menu.trigger("keydown", { key: "Enter" });
     await flushPromises();
 
-    expect(rename).toHaveBeenCalledOnce();
+    expect(rename).toHaveBeenCalledTimes(1);
     expect(document.activeElement).toBe(trigger.element);
   });
 });

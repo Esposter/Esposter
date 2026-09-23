@@ -27,6 +27,20 @@ describe("uiConfirmDialog", () => {
     document.body.innerHTML = "";
   });
 
+  test("is an alert dialog that opens onto Cancel", async () => {
+    expect.hasAssertions();
+
+    const component = mount(UiConfirmDialog, {
+      attachTo: document.body,
+      props: { confirmLabel, modelValue: true, title },
+    });
+    await flushPromises();
+
+    expect(component.get("dialog").attributes("role")).toBe("alertdialog");
+    // The browser's dialog focusing steps take the autofocus element, which happy-dom does not run
+    expect(component.get("button[autofocus]").text()).toBe("Cancel");
+  });
+
   test("holds its answer pending until the caller completes it, then closes", async () => {
     expect.hasAssertions();
 
