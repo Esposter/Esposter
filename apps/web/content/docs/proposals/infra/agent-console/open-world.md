@@ -12,6 +12,7 @@ The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) alread
 
 - **Climate chooses the biome.** Two slower noises beside the height — temperature and moisture — choose the biome at each column: plains, forest, hills, mountains, a river valley, lakes and snow on the peaks. They are read in `getTerrainHeight`'s place by the same generator, from the same seed, so a biome costs a chunk nothing it does not already pay.
 - **The realm is our own.** It takes the feel of classic high fantasy — green rolling hills, an old forest, a great river, a range of dark mountains — but every name, map and piece of lore is original. No place, name or story from a published setting is used: those are someone else's to license, and a world generated from a seed is ours alone.
+- **Water is swum, not walked on.** A water voxel is meshed like any other but collides as nothing: in it the player sinks slowly, Space swims them up, and the drag is water's, as Minecraft's is, so a river is crossed by swimming and a lake is never a floor.
 - **The code is our own.** The biomes and their features are written here, beside the noise and the chunking the terrain already has. A demo whose licence the repository does not hold is read for ideas and never copied.
 
 ## How it works
@@ -39,7 +40,7 @@ flowchart TD
 
 ## What this does not propose
 
-- **Building or mining.** The world is walked, not changed, so nothing about it needs saving.
+- **Building.** Changing the ground is [building](/docs/proposals/infra/agent-console/building)'s, and the realm is generated the same whether or not anyone builds in it.
 - **Other players.** The world is the person's own.
 - **A published setting.** The realm borrows a genre's feel and nothing of any one work.
 
