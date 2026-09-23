@@ -18,7 +18,7 @@ The [agent console](/docs/infra/claude-interface/agent-console) already has a th
 | Reactions | a map from session event to what the theme does — a pose, a sound, a notification tone — on top of the console's own notification when the tab is hidden | none            |
 | Voice     | how the agent's spoken lines are heard                                                                                                                   | none            |
 
-A theme never removes a part of the [voxel surface](/docs/proposals/infra/agent-console/voxel-surface) that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) needs. It may only dress the world and furnish it, which is what keeps a theme cheap to write and impossible to make a downgrade. Each part is added to `AgentConsoleTheme` with the first theme that sets it, never ahead of one.
+A theme never removes a part of the [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) needs. It may only dress the world and furnish it, which is what keeps a theme cheap to write and impossible to make a downgrade. Each part is added to `AgentConsoleTheme` with the first theme that sets it, never ahead of one.
 
 ## The Genshin theme
 

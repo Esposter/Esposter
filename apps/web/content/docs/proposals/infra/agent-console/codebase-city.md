@@ -47,11 +47,11 @@ apps/web/app/components/AgentConsole/View/City/
   AgentConsoleCityHud.vue        ← the parity header over the scene
 ```
 
-**Rendering:** TresJS, with cientos `Instances` for the buildings — one draw per district however many files — `KeyboardControls` for the player, `Billboard` for district names and `Html` for the file panel; nothing needs raw Three.js. Only the districts near the player are built in full detail, and the HUD is fixed DOM, as the [runtime budget](/docs/proposals/infra/agent-console/runtime-budget) sets for every room.
+**Rendering:** TresJS, with cientos `Instances` for the buildings — one draw per district however many files — `KeyboardControls` for the player, `Billboard` for district names and `Html` for the file panel; nothing needs raw Three.js. Only the districts near the player are built in full detail, and the HUD is fixed DOM, as the [runtime budget](/docs/proposals/infra/agent-console/runtime-budget) sets for every view.
 
 ## Notes
 
-- Every interaction in the city is one the work surface already offers — open a file, attach it to a prompt, answer a permission — reached by walking instead of clicking. Nothing is only possible in the city, so the city can be closed at any moment without losing a capability.
+- Every interaction in the city is one the panels already offer — open a file, attach it to a prompt, answer a permission — reached by walking instead of clicking. Nothing is only possible in the city, so the city can be closed at any moment without losing a capability.
 - The git reads run on the host, never in the page: the page never touches the repository, which is what lets the same view work against a remote host.
 
 ## Sources

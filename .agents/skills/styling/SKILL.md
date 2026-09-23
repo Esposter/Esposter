@@ -34,6 +34,10 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
   - A round `px` that is already a token is a duplicated constant first — `borderRadius: "4px 0 0 4px"` wants `var(--border-radius)`, not `"0.25rem"`.
 - `field-sizing: content` is an attributify utility — put `field-sizing-content` directly on the `<input>` / `<textarea>`, never in a scoped class.
 
+## An immersive page owns its look
+
+A page on `apps/web/app/layouts/immersive.vue` is a place of its own, and the theme rules above stop at its root: the agent console draws no Vuetify component, sets its palette as custom properties on its root, and styles its bespoke panels with scoped blocks reading them (`apps/web/content/docs/infra/claude-interface/agent-console/voxel-world.md`). Everything else here still holds inside it: attributify for layout, `rem`, the parent owning spacing.
+
 ## What stays in `class="..."`
 
 Only when technically required:

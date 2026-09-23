@@ -1,6 +1,6 @@
 ---
 title: Agent console
-description: The /agent-console page, which works Claude Code sessions from the browser in place of the terminal. A host package on the machine that holds the code runs the sessions through the Claude Agent SDK and speaks a typed wire to the page. Every session's event log is the page's only state, the default theme keeps it plain Vuetify, and a hidden tab gets a notification when a turn ends or needs attention.
+description: The /agent-console page, which works Claude Code sessions from the browser in place of the terminal. A host package on the machine that holds the code runs the sessions through the Claude Agent SDK and speaks a typed wire to the page. Every session's event log is the page's only state, folded one event at a time into what the page shows. The page is a full-screen voxel world with DOM panels for typing and reading, and a hidden tab gets a notification when a turn ends or needs attention.
 ---
 
 # Agent console
@@ -16,7 +16,7 @@ flowchart LR
   subgraph Browser
     P[The agent console page] --> C[Connection store: one socket, reconnects on its own]
     C --> S[Session store: one event log per session]
-    S --> W[Work surface: header, conversation, timeline, diffs, permission cards, editor]
+    S --> W[Voxel world and panels: figures, gauges, conversation, composer, permission requests]
     W -->|commands| C
   end
   subgraph Host[agent-console-server, on the machine with the code]
@@ -27,9 +27,9 @@ flowchart LR
   C <-->|contracts| WS
 ```
 
-- **The event log is the only state.** The host keeps each open session's events and replays them to a page that connects or reconnects. The page keeps them per session in a store keyed by session id. The header, the timeline, the diffs, the todo list and the permission cards are all computed from that log, so a reconnect that replays it rebuilds every one of them.
+- **The event log is the only state.** The host keeps each open session's events and replays them to a page that connects or reconnects. The page folds them per session, in a store keyed by session id, into everything it shows: the conversation, the timeline, the diffs, the checklist, the permission requests and where each figure stands. An event updates only what it changes, and a reconnect that replays the log rebuilds all of it.
 - **The agent is behind a driver.** The [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) is the one that exists. Any other agent would be one more driver behind the same interface, and never a change to the page.
-- **The look is behind a theme.** `AgentConsoleThemeMap` holds one theme, the default: the work surface in the app's own Vuetify theme, plus a browser notification when a turn ends or a permission prompt waits while the tab is hidden. A reload replays history without ringing, because only events newer than the page's connection trigger a reaction.
+- **The look is behind a theme.** `AgentConsoleThemeMap` holds one theme, the default. It is the [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) with no character in it, plus a browser notification when a turn ends or a permission prompt waits while the tab is hidden. A reload replays history without ringing, because only events newer than the page's connection trigger a reaction.
 - **Nothing waits forever.** The page reconnects with a backoff capped at thirty seconds for as long as it is open. A permission prompt waits on a person, as the terminal's does, but an interrupt settles it as a deny, and so does closing its session.
 
 What the terminal shows and does, and where the console carries each part, is [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity).
@@ -40,6 +40,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | :-------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | [Host](/docs/infra/claude-interface/agent-console/host)                                       | the package, pairing, the token, the preflight, the replayed log and reconnection |
 | [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) | sessions, the one place SDK messages become events, permissions, resume and fork  |
+| [Voxel world](/docs/infra/claude-interface/agent-console/voxel-world)                         | the full-screen surface: the room, the figures, the panels and what it costs      |
 | [Terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity)                 | every terminal surface and action, and the part of the page that carries it       |
 
 ## Key files
@@ -51,10 +52,10 @@ What the terminal shows and does, and where the console carries each part, is [t
 | `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver.ts` | The Claude Code driver                                                           |
 | `apps/web/app/pages/agent-console.vue`                                                            | The route, and pairing from the link the host prints                             |
 | `apps/web/app/store/agentConsole/connection.ts`                                                   | The socket, reconnection, and routing the host's messages into the session store |
-| `apps/web/app/store/agentConsole/session.ts`                                                      | Every session's event log and the views the work surface reads from it           |
+| `apps/web/app/store/agentConsole/session.ts`                                                      | Every session's folded view of its event log, which the page reads               |
 | `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts`                               | The theme registry, holding the default theme                                    |
 
 ## Notes
 
-- The Genshin theme, the views (the collector harbour, the codebase city), the terminal-mirror driver and the extension tiers are still [proposals](/docs/proposals/infra/agent-console). The default theme is the surface every one of them is measured against.
+- The Genshin theme, the views (the collector harbour, the codebase city), the terminal-mirror driver and the extension tiers are still [proposals](/docs/proposals/infra/agent-console). The default theme is the world every one of them is measured against.
 - Cost is what the SDK reports for the session's query since the host opened it. A session resumed in a new host process starts that count again, as a new terminal process does.

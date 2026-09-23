@@ -36,7 +36,7 @@ flowchart TD
 
 ## Tier one — app routes in the side pane
 
-**The pane.** A resizable pane beside the work surface, holding one frame per open route in tabs. The frame is same-origin, so the auth cookie, the Pinia state a page builds for itself and every tRPC call behave exactly as they do in a tab of their own; nothing is proxied and nothing is passed in.
+**The pane.** A resizable pane beside the panels, holding one frame per open route in tabs. The frame is same-origin, so the auth cookie, the Pinia state a page builds for itself and every tRPC call behave exactly as they do in a tab of their own; nothing is proxied and nothing is passed in.
 
 **The embed flag.** A route opened in the pane carries `?embed` in its query. The app's layouts read it once, in one place, and render the page without the app bar, the navigation drawer and the footer — the page itself is untouched, which is what makes this tier free for every page that exists and every page added later. A route that cannot be embedded — one that sets frame headers of its own, or depends on the top-level window — opens in a new tab instead, and says so in the pane's tab.
 
