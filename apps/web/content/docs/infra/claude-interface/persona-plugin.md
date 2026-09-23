@@ -104,7 +104,7 @@ flowchart TD
 The edge cases, each decided and each covered by the pick's tests:
 
 - **Several share the nearest birthday.** The upcoming one wins over the one just passed, because anticipation reads better than aftermath. Among what is left the choice is seeded by the date through a small string hash, so it feels random day to day and is identical for every session started that day.
-- **The session crosses midnight.** Whatever the session is given — the pin's character or a pick — is recorded against the session id at startup and reused on every later start event — clear, compact, resume — so a compaction after midnight never swaps the character mid-conversation, and a pin set after the session started leaves it alone. Records older than a week are pruned whenever one is written.
+- **The session crosses midnight.** Whatever the session is given — the pin's character or a pick — is recorded against the session id at startup and reused on every later start event that keeps the id — compact, resume — so a compaction after midnight never swaps the character mid-conversation, and a pin set after the session started leaves it alone. A clear is a new session id, so it is a new session to the hook and gets a fresh pick. Records older than a week are pruned whenever one is written.
 - **Year wrap and leap day.** Every month and day is measured as a day of one leap year, so late December and early January are neighbours and a 29 February is a day like any other.
 - **A character with no birthday** — Aether and Lumine — is never picked by distance, only pinned.
 - **A pin names a character the roster does not hold.** The pin is ignored and the pick stands; the `today` command reports the stale pin.
@@ -117,7 +117,7 @@ The hook reads one package and one state directory under the user's Claude home:
 
 ## Switching inside a session
 
-The session's record is the one source every reader trusts — the start hook on a clear, compact or resume, the status line, the speech hook — so changing a session's character is rewriting that record, and the tool makes the record reachable from inside the session: every Bash tool subprocess carries the session id in `CLAUDE_CODE_SESSION_ID`, the same id the hook input names. `use <name>` rewrites this session's record and leaves the pin as it stands; `pin <name>` writes the pin for every later session and rewrites this one's record too; `unpin` deletes the pin and gives this session a fresh pick. Each prints the card, and the card printed in the conversation is the one the model answers as from that reply on — the output style's standing rule. The status line and the voice follow on their next run. The spinner does not follow a switch: the tool read its keys when the session started, so a rewrite made inside it reaches only some other session — `pin` rewrites it anyway where `setup` opted the settings in, since the pinned character is what every later session speaks as, and `use` and `unpin` leave it alone, since their pick is this session's and a write would leak it into the next one's spinner. A session that started before the pin keeps its own record, because its conversation started with that character.
+The session's record is the one source every reader trusts — the start hook on a compact or resume, the status line, the speech hook — so changing a session's character is rewriting that record, and the tool makes the record reachable from inside the session: every Bash tool subprocess carries the session id in `CLAUDE_CODE_SESSION_ID`, the same id the hook input names. `use <name>` rewrites this session's record and leaves the pin as it stands; `pin <name>` writes the pin for every later session and rewrites this one's record too; `unpin` deletes the pin and gives this session a fresh pick. Each prints the card, and the card printed in the conversation is the one the model answers as from that reply on — the output style's standing rule. The status line and the voice follow on their next run. The spinner does not follow a switch: the tool read its keys when the session started, so a rewrite made inside it reaches only some other session — `pin` rewrites it anyway where `setup` opted the settings in, since the pinned character is what every later session speaks as, and `use` and `unpin` leave it alone, since their pick is this session's and a write would leak it into the next one's spinner. A session that started before the pin keeps its own record, because its conversation started with that character.
 
 ```mermaid
 flowchart LR
@@ -128,7 +128,7 @@ flowchart LR
     Line["Status line<br/>next redraw"]
     Speech["Speech hook<br/>next reply"]
     Spinner["Spinner<br/>the next session"]
-    Restart["Clear, compact, resume<br/>the start hook reads the record"]
+    Restart["Compact, resume<br/>the start hook reads the record"]
 
     Env --> Verb
     Verb -->|rewrites| Record
