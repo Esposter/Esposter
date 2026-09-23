@@ -40,7 +40,7 @@ defineExpose({ onKeyDown });
     >
       <template #prepend>
         <v-avatar v-if="checkIsRoleMentionItem(item)" size="x-small">
-          <v-icon :color="item.color || undefined">mdi-circle</v-icon>
+          <v-icon :color="item.color || undefined" icon="i-mdi:circle" />
         </v-avatar>
         <MessageModelMemberStatusAvatar
           v-else-if="'image' in item && item.image"
@@ -50,7 +50,7 @@ defineExpose({ onKeyDown });
           :avatar-props="{ size: 'x-small' }"
         />
         <v-avatar v-else size="x-small">
-          <v-icon>mdi-at</v-icon>
+          <v-icon icon="i-mdi:at" />
         </v-avatar>
       </template>
       <v-list-item-title fw-semibold>{{ item.name }}</v-list-item-title>

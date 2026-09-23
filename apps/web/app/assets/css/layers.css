@@ -2,6 +2,7 @@
 
 @layer uno-base;
 @layer uno-theme;
+@layer uno-icons;
 
 @layer vuetify-core;
 @layer vuetify-components;

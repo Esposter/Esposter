@@ -21,12 +21,18 @@ const tagItems = computed(() =>
     <StyledErrorState v-else-if="error" :error @retry="refresh()" />
     <StyledEmptyState
       v-else-if="counts.length === 0"
-      icon="mdi-tag-multiple-outline"
+      icon="i-mdi:tag-multiple-outline"
       title="No tags yet"
       description="Tag a resource from its Overview blade and it will show up here."
     />
     <v-list v-else nav>
-      <v-list-item v-for="{ count, name, to } of tagItems" :key="name" prepend-icon="mdi-tag-outline" :title="name" :to>
+      <v-list-item
+        v-for="{ count, name, to } of tagItems"
+        :key="name"
+        prepend-icon="i-mdi:tag-outline"
+        :title="name"
+        :to
+      >
         <template #append>
           <v-chip size="small" variant="tonal">{{ count }}</v-chip>
         </template>

@@ -9,7 +9,7 @@ const { text } = defineProps<Props>();
 <template>
   <v-tooltip>
     <template #activator="{ props }">
-      <v-icon :="props">mdi-help-circle</v-icon>
+      <v-icon :="props" icon="i-mdi:help-circle" />
     </template>
     {{ text }}
   </v-tooltip>

@@ -56,7 +56,7 @@ outputToCssLayers: {
 - `properties` → `null` — CSS custom property declarations must not be wrapped in a `@layer` or they lose cascade specificity
 - All other layers → `uno-${layer}` (e.g. `default` → `uno-default`, `shortcuts` → `uno-shortcuts`)
 
-Layer declaration order is in `app/assets/css/layers.css`. All `uno-*` layers appear after the `vuetify-*` layers so UnoCSS utilities can override Vuetify defaults.
+Layer declaration order is in `app/assets/css/layers.css`. The utility layers (`uno-shortcuts`, `uno-default`) appear after the `vuetify-*` layers so UnoCSS utilities can override Vuetify defaults. `uno-icons` sits ahead of Vuetify's: an icon rule sets `color: inherit`, and a component colouring its own icon has to win over it.
 
 ## Shortcuts for recurring utility pairs
 

@@ -37,7 +37,7 @@ The theme hand-off also removes the client hint. Vuetify needs to know the brows
 - **Configuration**: the Vuetify config and its test, the module options, the SASS settings file, the rules config, the custom icon plugin, the Vuetify type augmentation, the auto-import workaround for the rules composable, and the module's entries in the Nuxt module lists.
 - **App code**: the Vuetify models and services folders, whose surviving pieces — the theme mode, the custom icons — move under the library's.
 - **The app root**: `App.vue` loses its Vuetify app element, and the layouts lose their Vuetify main and footer.
-- **UnoCSS**: Vuetify's colour names beside the tokens — primary, surface, border and their opacity and variation keys — with the safelist that generates them, the blocklist entries that exist only because Vuetify's own helper classes shared a name with a utility, and the text colour exception that keeps the longer spelling for Vuetify's colour pack.
+- **UnoCSS**: Vuetify's colour names beside the tokens — primary, surface, border and their opacity and variation keys — with the safelist that generates them, the safelisted icon aliases Vuetify draws its own controls with, the blocklist entries that exist only because Vuetify's own helper classes shared a name with a utility, and the text colour exception that keeps the longer spelling for Vuetify's colour pack.
 - **Skills and docs**: the `vuetify` skill; the Vuetify half of the `styling` skill and of the `ux` skill's visual design sources, which point to the design language instead of Material 3; the [responsive](/docs/architecture/responsive) page's second consumer of the scale.
 
 ## Once it lands

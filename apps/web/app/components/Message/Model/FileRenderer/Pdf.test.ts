@@ -68,6 +68,6 @@ describe("messageModelFileRendererPdf", () => {
 
     expect(document.body.textContent).toContain(filename);
     expect(document.body.querySelector(".v-card-actions")).toBeNull();
-    expect(document.body.querySelector('[aria-label="Close"], button .mdi-close')).not.toBeNull();
+    expect(document.body.querySelector('[aria-label="Close"], button [class~="i-mdi:close"]')).not.toBeNull();
   });
 });

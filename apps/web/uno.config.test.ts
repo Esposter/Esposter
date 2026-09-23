@@ -1,3 +1,5 @@
+import { globSync, readFileSync } from "node:fs";
+import { createGenerator } from "unocss";
 import { describe, expect, test } from "vitest";
 
 import unoConfig from "./uno.config";
@@ -145,6 +147,60 @@ describe("unoConfig", () => {
           "op-high-emphasis",
           "op-loading",
           "op-medium-emphasis",
+          "i-mdi:chevron-up",
+          "i-mdi:check",
+          "i-mdi:close-circle",
+          "i-mdi:close",
+          "i-mdi:check-circle",
+          "i-mdi:information",
+          "i-mdi:alert-circle",
+          "i-mdi:chevron-left",
+          "i-mdi:chevron-right",
+          "i-mdi:checkbox-marked",
+          "i-mdi:checkbox-blank-outline",
+          "i-mdi:minus-box",
+          "i-mdi:circle",
+          "i-mdi:arrow-up",
+          "i-mdi:arrow-down",
+          "i-mdi:chevron-down",
+          "i-mdi:menu",
+          "i-mdi:menu-down",
+          "i-mdi:radiobox-marked",
+          "i-mdi:radiobox-blank",
+          "i-mdi:pencil",
+          "i-mdi:star-outline",
+          "i-mdi:star",
+          "i-mdi:star-half-full",
+          "i-mdi:cached",
+          "i-mdi:page-first",
+          "i-mdi:page-last",
+          "i-mdi:unfold-more-horizontal",
+          "i-mdi:paperclip",
+          "i-mdi:plus",
+          "i-mdi:minus",
+          "i-mdi:calendar",
+          "i-mdi:menu-right",
+          "i-mdi:eyedropper",
+          "i-mdi:cloud-upload",
+          "i-mdi:palette",
+          "i-mdi:apple-keyboard-command",
+          "i-mdi:apple-keyboard-control",
+          "i-mdi:keyboard-space",
+          "i-mdi:apple-keyboard-shift",
+          "i-mdi:apple-keyboard-option",
+          "i-mdi:keyboard-return",
+          "i-mdi:arrow-left",
+          "i-mdi:arrow-right",
+          "i-mdi:backspace",
+          "i-mdi:play",
+          "i-mdi:pause",
+          "i-mdi:fullscreen",
+          "i-mdi:fullscreen-exit",
+          "i-mdi:volume-high",
+          "i-mdi:volume-medium",
+          "i-mdi:volume-low",
+          "i-mdi:volume-variant-off",
+          "i-mdi:magnify",
         ],
         "shortcuts": {
           "text-body-large": [
@@ -324,5 +380,30 @@ describe("unoConfig", () => {
         },
       }
     `);
+  });
+
+  // The pipeline scans components but not plain TypeScript, so a .ts file naming an icon opts in with the magic
+  // Comment, and an icon the extractor cannot read out of its file — a v-icon's text content — draws nothing
+  test("every icon named in source generates its rule", async () => {
+    expect.hasAssertions();
+
+    const uno = await createGenerator(unoConfig);
+    const missingIcons: string[] = [];
+
+    for (const path of globSync("{app,shared}/**/*.{ts,vue}", { cwd: import.meta.dirname })) {
+      if (path.endsWith(".test.ts")) continue;
+      const code = readFileSync(`${import.meta.dirname}/${path}`, "utf8");
+      const icons = code.match(/i-mdi:[\da-z-]+/gu);
+      if (!icons) continue;
+      if (path.endsWith(".ts") && !code.includes("@unocss-include")) {
+        missingIcons.push(path);
+        continue;
+      }
+
+      const { matched } = await uno.generate(code, { id: path, preflights: false, safelist: false });
+      for (const icon of icons) if (!matched.has(icon)) missingIcons.push(`${path}: ${icon}`);
+    }
+
+    expect(missingIcons).toStrictEqual([]);
   });
 });

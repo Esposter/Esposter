@@ -1,13 +1,15 @@
 // https://vuetifyjs.com/en/features/css-utilities/unocss-tailwind-preset
+import type { IconsOptions } from "vuetify-nuxt-module";
 import type { ThemeOptions, VariationsOptions } from "vuetify/lib/composables/theme.mjs";
 
-import { defineConfig, presetAttributify, presetWind4 } from "unocss";
+import { defineConfig, presetAttributify, presetIcons, presetWind4 } from "unocss";
 import { elevationPresets, typographyPresets } from "unocss-preset-vuetify";
 
 import { UiTokens } from "./app/models/ui/UiToken";
 import { UNOCSS_BREAKPOINTS } from "./configuration/breakpoints";
 import vuetifyConfig from "./vuetify.config";
 
+const icons = vuetifyConfig.icons as IconsOptions;
 const theme = vuetifyConfig.theme as Exclude<ThemeOptions, false>;
 const firstThemeColors = Object.values(theme.themes ?? {})[0]?.colors ?? {};
 const variations = theme.variations as VariationsOptions;
@@ -101,6 +103,7 @@ export default defineConfig({
       preflights: { reset: false },
     }),
     presetAttributify(),
+    presetIcons(),
   ],
   rules: [
     ...Object.entries(elevationPresets.md3).map(
@@ -119,6 +122,7 @@ export default defineConfig({
     ...Array.from({ length: 6 }, (_value, index) => `elevation-${index}`),
     ...allColorKeys.flatMap((key) => [`bg-${key}`, `text-${key}`]),
     ...Object.keys(opacityUtilities),
+    ...new Set(Object.values(icons.unocssAdditionalIcons ?? {})),
   ],
   shortcuts: {
     ...Object.fromEntries(

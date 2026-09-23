@@ -1,6 +1,6 @@
 ---
 name: ui-library
-description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library — three layers (feature, library, Vuetify 0), the import boundary that keeps Vuetify 0 inside the library, the design tokens as the one source of colour for both libraries during the migration, and the document chrome. Outranks the vendored vuetify0 skill wherever they meet.
+description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library — three layers (feature, library, Vuetify 0), the import boundary that keeps Vuetify 0 inside the library, the design tokens as the one source of colour for both libraries during the migration, the document chrome, and icon names written whole as i-mdi: classes. Outranks the vendored vuetify0 skill wherever they meet.
 ---
 
 # UI Library
@@ -29,6 +29,15 @@ How the palette reaches both libraries, UnoCSS and the first response is `apps/w
 - **A new pair that fails the palette test is re-picked**, never exempted from it.
 - **Only `NuxtTheme` selects a theme**, and the library's theme only ever follows Vuetify's through `useSelectUiTheme`.
 - **A length is a whole number of `--ui-step`.** The type scale and motion durations become tokens beside it with the first component that reads them.
+
+## Icons
+
+How icons reach both libraries is the architecture page's Icons section. The rules an edit follows:
+
+- **An icon is `i-mdi:` and its name, written whole** in the file that uses it — a prop or a map entry. The preset generates only what its extractor sees, so a name assembled at runtime draws nothing, and so does one written as a `v-icon`'s text content: pass it as the `icon` prop.
+- **A `.ts` file that names an icon starts with `// @unocss-include`.** The pipeline does not scan TypeScript — widening it to every `.ts` file feeds the attributify extractor arbitrary code and breaks the stylesheet. `uno.config.test.ts` fails on a file that forgets.
+- **A Vuetify alias needs no hand-written safelist entry.** `vuetify.config.ts` maps every alias from Vuetify's own list, and `uno.config.ts` safelists what it maps.
+- **A test finds an icon by `[class~="i-mdi:close"]`**, never `.i-mdi:close`, which is a pseudo-class selector, not a class.
 
 ## The document chrome
 

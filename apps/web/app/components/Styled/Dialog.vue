@@ -78,7 +78,7 @@ const confirm = () => {
         <StyledTooltipIconButton
           v-if="!hasActions"
           :button-props="CLOSE_DIALOG_BUTTON_PROPS"
-          icon="mdi-close"
+          icon="i-mdi:close"
           text="Close"
           @click="modelValue = false"
         />

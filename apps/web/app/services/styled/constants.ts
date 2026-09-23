@@ -1,3 +1,4 @@
+// @unocss-include
 import type { VBtn, VCard, VDialog } from "vuetify/components";
 
 export const EMOJI_PICKER_TOOLTIP_TEXT = "Add Reaction";
@@ -12,10 +13,13 @@ export const CLOSE_DIALOG_BUTTON_PROPS = Object.freeze({
 // Control beside the copy and edit buttons it sits with
 export const DELETE_DIALOG_BUTTON_PROPS = Object.freeze({ size: "small" } satisfies VBtn["$props"]);
 
-export const RETRY_BUTTON_PROPS = Object.freeze({ prependIcon: "mdi-refresh", text: "Retry" } satisfies VBtn["$props"]);
+export const RETRY_BUTTON_PROPS = Object.freeze({
+  prependIcon: "i-mdi:refresh",
+  text: "Retry",
+} satisfies VBtn["$props"]);
 
 export const KEYBOARD_SHORTCUTS_CARD_PROPS = Object.freeze({
-  prependIcon: "mdi-keyboard",
+  prependIcon: "i-mdi:keyboard",
   title: "Keyboard Shortcuts",
 } satisfies VCard["$props"]);
 

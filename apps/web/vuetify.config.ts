@@ -1,8 +1,10 @@
+import type { IconsOptions } from "vuetify-nuxt-module";
 import type { DefaultsOptions } from "vuetify/lib/composables/defaults.mjs";
 import type { DisplayOptions } from "vuetify/lib/composables/display.mjs";
 import type { Colors, ThemeOptions } from "vuetify/lib/composables/theme.mjs";
 
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
+import { aliases } from "vuetify/iconsets/mdi";
 
 import type { UiTheme } from "./app/models/ui/UiTheme";
 
@@ -127,9 +129,21 @@ const defaults: DefaultsOptions = {
   VTooltip: { location: "top" },
 };
 
+// Icons are UnoCSS classes, generated only for the names the source writes. Vuetify's internal icons — a select's
+// Arrow, a checkbox's mark — are aliases no source file names, and the module maps only some of them to the
+// UnoCSS set, so every alias Vuetify defines is mapped here and `uno.config.ts` safelists the lot
+const icons: IconsOptions = {
+  defaultSet: "unocss-mdi",
+  unocssAdditionalIcons: Object.fromEntries(
+    Object.entries(aliases).flatMap(([alias, icon]) =>
+      typeof icon === "string" ? [[alias, icon.replace(/^mdi-/u, "i-mdi:")]] : [],
+    ),
+  ),
+};
+
 const display: DisplayOptions = {
   mobileBreakpoint: "md",
   thresholds: BREAKPOINTS,
 };
 
-export default defineVuetifyConfiguration({ defaults, display, labComponents: true, theme });
+export default defineVuetifyConfiguration({ defaults, display, icons, labComponents: true, theme });

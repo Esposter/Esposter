@@ -77,7 +77,7 @@ describe("styledDialog", () => {
 
     expect(overlay.querySelector(".v-card-actions")).toBeNull();
     // The row it replaces carried the only explicit dismissal, so the shell owes one back
-    expect(overlay.querySelector('[aria-label="Close"], button .mdi-close')).not.toBeNull();
+    expect(overlay.querySelector('[aria-label="Close"], button [class~="i-mdi:close"]')).not.toBeNull();
   });
 
   test("renders the actions row when there is something to confirm", async () => {
@@ -129,7 +129,7 @@ describe("styledDialog", () => {
       Array.from(overlay.querySelectorAll(".v-card-actions .v-btn"), ({ textContent }) => textContent?.trim()),
     ).toStrictEqual(["Cancel", "a"]);
     // The row carries the dismissal, so the append close button would be a second one
-    expect(overlay.querySelector('[aria-label="Close"], button .mdi-close')).toBeNull();
+    expect(overlay.querySelector('[aria-label="Close"], button [class~="i-mdi:close"]')).toBeNull();
   });
 
   // The header is the reason a search field can sit above a scrolling list without the consumer rebuilding the

@@ -1,11 +1,11 @@
 ---
 title: UI library
-description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
+description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
 ---
 
 # UI Library
 
-The app is moving from Material as Vuetify draws it to a library of its own, built in `apps/web` on [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) — Vuetify's headless layer, which owns focus, keyboard handling, ARIA and positioning and paints nothing. The migration runs as a ladder of stages, designed in the [UI library proposal](/docs/proposals/refactors/ui-library). This page is what exists so far: the foundation every later stage builds on.
+The app is moving from Material as Vuetify draws it to a library of its own, built in `apps/web` on [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) — Vuetify's headless layer, which owns focus, keyboard handling, ARIA and positioning and paints nothing. The migration runs as a ladder of stages, designed in the [UI library proposal](/docs/proposals/refactors/ui-library). This page is what exists so far: the foundation every later stage builds on, and the icons.
 
 The foundation changes no component, and still repaints every page. Its design tokens are the colours of the whole app, Vuetify's pages included, and the document's own chrome — scrollbars, selection, caret, focus ring — reads them on every page whichever library draws it.
 
@@ -33,6 +33,23 @@ flowchart TD
 - **The palette lives in `apps/web/configuration/`**, beside the breakpoint scale, because the Vuetify and UnoCSS configs read it and they load before any `@/` alias resolves. It imports its enums relatively, as the other configuration files do.
 
 The agent console's palette takes its interface half from dusk, so the console and the app's dark theme are one set of colours. The console stays in dusk whichever theme the app is in, and keeps its own world materials — wood, skin, stone and the rest — until its [stage of the migration](/docs/proposals/refactors/ui-library/agent-console) moves its panels onto the library.
+
+## Icons
+
+```mermaid
+flowchart TD
+  S[An icon name in source, written in full] --> X[UnoCSS's extractor]
+  A[Vuetify's own aliases: a select's arrow, a checkbox's mark] -->|safelisted| G
+  X --> G[That icon's rule alone: its SVG as a mask in the current colour]
+  G --> V[A Vuetify icon prop, through the module's UnoCSS icon set]
+  G --> P[The page ships the icons it draws and nothing else]
+```
+
+- **UnoCSS's icons preset is the engine.** A class naming an Iconify icon becomes a rule that draws its SVG as a mask filled with the current colour, so an icon takes the text colour as a glyph did. The Material Design Icons set is read at build time from its Iconify JSON package and never shipped. The rules sit in their own cascade layer ahead of Vuetify's and the utilities, since each also sets its colour to inherit: a component that colours its own icon, as a field does in its error state, and a colour or size utility written on an icon both still win.
+- **A name is written in full**, as "i-mdi:" and the icon's name, because the preset generates only what its extractor finds in source. A name assembled from a prefix and a variable generates nothing and draws an empty box, so it is a review finding. The extractor reads components and markup but not plain TypeScript, which would hand every string in the app to the attributify extractor and break the stylesheet on the first one that looks like an attribute, so a `.ts` file that names an icon opts in with UnoCSS's `@unocss-include` comment on its first line. A `v-icon` takes its icon as the `icon` prop, never as text content, which the extractor does not read. A test generates the icons each source file names and fails on any it cannot find, or on a `.ts` file naming one without the comment.
+- **Vuetify draws through the same CSS.** Its default set is the module's "unocss-mdi", which hands the class to Vuetify's class icon. Vuetify's internal icons are aliases no source file names, and the module maps only some of them, so `vuetify.config.ts` maps every alias Vuetify defines from Vuetify's own list and `uno.config.ts` safelists the result.
+- **The custom component icons** — the anime and dungeon gate marks — stay components in the custom set. The app's Vuetify plugin adds that set to the module's icon configuration rather than replacing it, which would drop the aliases.
+- **Under Vitest the UnoCSS module is not loaded**, so the module falls back to Vuetify's plain class set: an icon still carries its class, which is what a test finds it by, and nothing draws it.
 
 ## One owner per concern
 
@@ -71,26 +88,30 @@ A feature never imports Vuetify 0. Only the library does — its components, com
 
 ## Key files
 
-| File                                              | Role                                                                          |
-| :------------------------------------------------ | :---------------------------------------------------------------------------- |
-| `apps/web/configuration/UiPaletteMap.ts`          | Dusk and dawn, one entry per token                                            |
-| `apps/web/configuration/UiPaletteMap.test.ts`     | Every foreground token against every surface token, at the WCAG AA ratio      |
-| `apps/web/configuration/ThemeModeUiThemeMap.ts`   | The library theme each of Vuetify's resolved modes selects                    |
-| `apps/web/app/models/ui/UiToken.ts`               | The token names                                                               |
-| `apps/web/app/plugins/ui.ts`                      | Vuetify 0's hydration and theme plugins, the theme through the Unhead adapter |
-| `apps/web/app/composables/ui/useSelectUiTheme.ts` | Selects the library theme matching a Vuetify mode                             |
-| `apps/web/app/components/Nuxt/Theme.vue`          | Resolves the mode once and selects it in both libraries                       |
-| `apps/web/vuetify.config.ts`                      | Its theme colours read the palette map                                        |
-| `apps/web/uno.config.ts`                          | Its theme colours include one per token, reading its custom property          |
-| `apps/web/app/assets/css/globals.scss`            | The document chrome and the step token                                        |
-| `apps/web/app/assets/css/layers.css`              | Declares the chrome's layer first                                             |
-| `.oxlintrc.json`                                  | The import boundary                                                           |
-| `.agents/skills/ui-library/SKILL.md`              | The library's conventions                                                     |
+| File                                              | Role                                                                                                  |
+| :------------------------------------------------ | :---------------------------------------------------------------------------------------------------- |
+| `apps/web/configuration/UiPaletteMap.ts`          | Dusk and dawn, one entry per token                                                                    |
+| `apps/web/configuration/UiPaletteMap.test.ts`     | Every foreground token against every surface token, at the WCAG AA ratio                              |
+| `apps/web/configuration/ThemeModeUiThemeMap.ts`   | The library theme each of Vuetify's resolved modes selects                                            |
+| `apps/web/app/models/ui/UiToken.ts`               | The token names                                                                                       |
+| `apps/web/app/plugins/ui.ts`                      | Vuetify 0's hydration and theme plugins, the theme through the Unhead adapter                         |
+| `apps/web/app/composables/ui/useSelectUiTheme.ts` | Selects the library theme matching a Vuetify mode                                                     |
+| `apps/web/app/components/Nuxt/Theme.vue`          | Resolves the mode once and selects it in both libraries                                               |
+| `apps/web/vuetify.config.ts`                      | Its theme colours read the palette map; its icons are the UnoCSS set, every alias mapped              |
+| `apps/web/uno.config.ts`                          | One theme colour per token, reading its custom property; the icons preset, and the safelisted aliases |
+| `apps/web/uno.config.test.ts`                     | Every icon a source file names generates its rule                                                     |
+| `apps/web/app/assets/css/globals.scss`            | The document chrome and the step token                                                                |
+| `apps/web/app/assets/css/layers.css`              | Declares the chrome's layer first, and the icons' ahead of Vuetify's                                  |
+| `apps/web/app/plugins/vuetify.ts`                 | Adds the custom component icons to the module's icon configuration                                    |
+| `.oxlintrc.json`                                  | The import boundary                                                                                   |
+| `.agents/skills/ui-library/SKILL.md`              | The library's conventions                                                                             |
 
 ## Sources
 
 - [Nuxt integration](https://0.vuetifyjs.com/guide/integration/nuxt), Vuetify 0: the transpile entry, the Unhead theme adapter and the hydration plugin.
 - [Theming](https://0.vuetifyjs.com/guide/features/theming), Vuetify 0: themes as custom properties.
 - [AI tools](https://0.vuetifyjs.com/guide/tooling/ai-tools), Vuetify 0: the skill and the markdown twin of every docs page.
+- [Icons preset](https://unocss.dev/presets/icons), UnoCSS: icons as generated CSS masks from Iconify JSON, emitted only for the names the extractor finds.
+- [Vuetify Nuxt module](https://nuxt.vuetifyjs.com/), its icons option: the "unocss-mdi" set and the aliases it maps.
 - [scrollbar-color](https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color), MDN: the standard scrollbar properties the chrome sets.
 - [Success criterion 1.4.3](https://www.w3.org/TR/WCAG22/#contrast-minimum), WCAG 2.2: the AA threshold the palette test holds each pair to.

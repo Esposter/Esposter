@@ -260,6 +260,9 @@ catalogs:
     '@huggingface/transformers':
       specifier: ^4.3.0
       version: 4.3.0
+    '@iconify-json/mdi':
+      specifier: ^1.2.3
+      version: 1.2.3
     '@json-layout/vocabulary':
       specifier: ^2.13.2
       version: 2.13.2
@@ -275,9 +278,6 @@ catalogs:
     '@livekit/track-processors':
       specifier: ^0.8.1
       version: 0.8.1
-    '@mdi/font':
-      specifier: ^7.4.47
-      version: 7.4.47
     '@nuxt/content':
       specifier: ^3.16.1
       version: 3.16.1
@@ -1084,9 +1084,6 @@ importers:
       '@livekit/track-processors':
         specifier: 'catalog:'
         version: 0.8.1(@types/dom-mediacapture-transform@0.1.12)(livekit-client@2.22.3(@types/dom-mediacapture-record@1.0.22))
-      '@mdi/font':
-        specifier: 'catalog:'
-        version: 7.4.47
       '@panzoom/panzoom':
         specifier: 'catalog:'
         version: 4.6.2
@@ -1424,6 +1421,9 @@ importers:
       '@esposter/shared-node':
         specifier: workspace:*
         version: link:../../packages/shared-node
+      '@iconify-json/mdi':
+        specifier: 'catalog:'
+        version: 1.2.3
       '@json-layout/vocabulary':
         specifier: 'catalog:'
         version: 2.13.2(supports-color@10.2.2)
@@ -3916,6 +3916,9 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
+  '@iconify-json/mdi@1.2.3':
+    resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
+
   '@iconify/collections@1.0.739':
     resolution: {integrity: sha512-N507beRtPZRt+YwbmPxOWY6zYzhdH5eunntuJW2lt7JoOzJVzUlJ20NM3XxY+oXch1ZrDDnV0guSbGDFowZLdA==}
 
@@ -4373,9 +4376,6 @@ packages:
 
   '@marijn/find-cluster-break@1.0.4':
     resolution: {integrity: sha512-Wy0V7+SGUjnF9/TkiM1hKVDPj7jKXduPNboMVtHTA8dySMURWqfg/JZ9E2Sq8JgSJmkl7k7Qe9FLeMSrSraWmQ==}
-
-  '@mdi/font@7.4.47':
-    resolution: {integrity: sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==}
 
   '@mediapipe/tasks-vision@0.10.14':
     resolution: {integrity: sha512-vOifgZhkndgybdvoRITzRkIueWWSiCKuEUXXK6Q4FaJsFvRJuwgg++vqFUMlL0Uox62U5aEXFhHxlhV7Ja5e3Q==}
@@ -17724,6 +17724,10 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
+  '@iconify-json/mdi@1.2.3':
+    dependencies:
+      '@iconify/types': 2.0.0
+
   '@iconify/collections@1.0.739':
     dependencies:
       '@iconify/types': 2.0.0
@@ -18248,8 +18252,6 @@ snapshots:
       - supports-color
 
   '@marijn/find-cluster-break@1.0.4': {}
-
-  '@mdi/font@7.4.47': {}
 
   '@mediapipe/tasks-vision@0.10.14': {}
 

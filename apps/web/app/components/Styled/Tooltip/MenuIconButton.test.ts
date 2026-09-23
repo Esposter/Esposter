@@ -5,7 +5,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("styledTooltipMenuIconButton", () => {
-  const icon = "mdi-close";
+  const icon = "i-mdi:close";
 
   test("draws the icon when no activator slot is given", async () => {
     expect.hasAssertions();
@@ -14,7 +14,7 @@ describe("styledTooltipMenuIconButton", () => {
     // Every icon call site with an empty button
     const component = await mountSuspended(StyledTooltipMenuIconButton, { props: { icon } });
 
-    expect(component.find(`.v-btn .${icon}`).exists()).toBe(true);
+    expect(component.find(`.v-btn [class~="${icon}"]`).exists()).toBe(true);
     expect(component.get(".v-btn").classes()).toContain("v-btn--icon");
   });
 

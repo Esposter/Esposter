@@ -57,12 +57,12 @@ catalog:
   "@fullcalendar/vue3": ^7.1.0
   "@hpcc-js/wasm-graphviz": ^1.29.1
   "@huggingface/transformers": ^4.3.0
+  "@iconify-json/mdi": ^1.2.3
   "@json-layout/vocabulary": ^2.13.2
   "@koumoul/vjsf": ^4.6.0
   "@lerna-lite/cli": ^5.6.1
   "@lerna-lite/publish": ^5.6.1
   "@livekit/track-processors": ^0.8.1
-  "@mdi/font": ^7.4.47
   "@nuxt/content": ^3.16.1
   "@nuxt/eslint": ^1.17.0
   "@nuxt/fonts": ^0.14.0
