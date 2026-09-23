@@ -8,7 +8,7 @@ const { active, isPreview = false, message } = defineProps<Props>();
 </script>
 
 <template>
-  <MessageModelMessageTypeSystemLine :active icon="mdi-information-outline" :is-preview :message>
+  <MessageModelMessageTypeSystemLine :active icon="i-mdi:information-outline" :is-preview :message>
     <span italic op-medium-emphasis>{{ message.message }}</span>
   </MessageModelMessageTypeSystemLine>
 </template>

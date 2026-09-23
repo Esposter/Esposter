@@ -38,7 +38,7 @@ const { deleteBan } = banStore;
         <template #activator="{ updateIsOpen }">
           <StyledTooltipIconButton
             :button-props="{ color: 'error', size: 'small', variant: 'text' }"
-            icon="mdi-account-check-outline"
+            icon="i-mdi:account-check-outline"
             text="Unban"
             :tooltip-props="{ location: 'top' }"
             @click.stop="updateIsOpen(true)"

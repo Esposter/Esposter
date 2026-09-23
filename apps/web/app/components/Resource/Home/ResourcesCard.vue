@@ -12,7 +12,7 @@ const tab = useEnumRouteQuery("tab", ResourceHomeTabs, ResourceHomeTab.Recent);
     <v-card-item>
       <div flex flex-wrap gap-4 items-center justify-between>
         <span text-title-large>Resources</span>
-        <v-btn :to="RoutePath.ResourceExplorerAll" append-icon="mdi-arrow-right" variant="text">See all</v-btn>
+        <v-btn :to="RoutePath.ResourceExplorerAll" append-icon="i-mdi:arrow-right" variant="text">See all</v-btn>
       </div>
     </v-card-item>
     <v-tabs v-model="tab">

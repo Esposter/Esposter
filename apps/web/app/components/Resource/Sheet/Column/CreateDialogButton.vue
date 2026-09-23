@@ -34,7 +34,7 @@ const resetForm = () => {
 
 <template>
   <ResourceSheetEditDialogButton
-    icon="mdi-table-column-plus-after"
+    icon="i-mdi:table-column-plus-after"
     title="Create Column"
     tooltip-text="Add Column"
     :edited-value

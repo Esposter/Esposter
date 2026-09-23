@@ -34,7 +34,7 @@ useVHotkey(hotkey, () => {
         :placeholder
         autofocus
         clearable
-        prepend-inner-icon="mdi-magnify"
+        prepend-inner-icon="i-mdi:magnify"
         variant="solo"
         @click:clear="searchQuery = ''"
       />

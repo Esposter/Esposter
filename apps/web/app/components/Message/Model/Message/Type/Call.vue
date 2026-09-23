@@ -27,7 +27,7 @@ const formattedDuration = computed(() => {
 <template>
   <MessageModelMessageTypeSystemLine
     :active
-    :icon="isCallEnded ? 'mdi-phone-hangup' : 'mdi-phone'"
+    :icon="isCallEnded ? 'i-mdi:phone-hangup' : 'i-mdi:phone'"
     :icon-color="isCallEnded ? 'error' : 'success'"
     :is-preview
     :message

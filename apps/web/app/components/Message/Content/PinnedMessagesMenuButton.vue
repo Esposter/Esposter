@@ -11,14 +11,14 @@ const { displayMessages, hasMore } = storeToRefs(pinStore);
 <template>
   <StyledTooltipMenuIconButton
     :button-props="{ size: 'small' }"
-    icon="mdi-pin"
+    icon="i-mdi:pin"
     :menu-props="{ closeOnContentClick: false, location: 'bottom' }"
     text="Pinned Messages"
     :tooltip-props="{ location: 'bottom' }"
   >
     <StyledCard flex flex-col>
       <v-card-title>
-        <v-icon icon="mdi-pin" />
+        <v-icon icon="i-mdi:pin" />
         Pinned messages
       </v-card-title>
       <v-divider />

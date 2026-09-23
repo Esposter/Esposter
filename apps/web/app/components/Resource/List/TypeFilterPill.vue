@@ -26,7 +26,7 @@ const toggleType = (type: ResourceType) => {
         @click="toggleType(value)"
       >
         <template #append>
-          <v-icon v-if="modelValue.includes(value)" icon="mdi-check" />
+          <v-icon v-if="modelValue.includes(value)" icon="i-mdi:check" />
         </template>
       </v-list-item>
     </v-list>

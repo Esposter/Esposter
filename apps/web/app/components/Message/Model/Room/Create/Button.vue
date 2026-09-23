@@ -9,7 +9,7 @@ const { createRoom } = roomStore;
 <template>
   <StyledTooltipIconButton
     :button-props="{ ripple: false, size: 'small' }"
-    icon="mdi-plus"
+    icon="i-mdi:plus"
     text="Create Room"
     @click.stop="createRoom({ name: DEFAULT_NAME })"
   />

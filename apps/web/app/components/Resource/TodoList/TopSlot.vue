@@ -14,12 +14,12 @@ const { editedItem, editFormDialog, searchQuery } = storeToRefs(todoListStore);
       density="compact"
       label="Search"
       max-width="16rem"
-      prepend-inner-icon="mdi-magnify"
+      prepend-inner-icon="i-mdi:magnify"
     />
     <v-spacer />
     <StyledTooltipIconButton
       :button-props="{ flat: false, variant: 'elevated' }"
-      icon="mdi-plus"
+      icon="i-mdi:plus"
       :is-icon-button="false"
       text="Add a todo"
       @click="

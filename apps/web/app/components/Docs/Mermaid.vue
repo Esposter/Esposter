@@ -24,13 +24,13 @@ const { isFullscreen, isSupported: isFullscreenSupported, toggle: toggleFullscre
 const zoomButtonProps = { density: "comfortable", size: "small", variant: "tonal" } as const;
 const zoomControls = computed<MermaidZoomControl[]>(() => {
   const controls: MermaidZoomControl[] = [
-    { icon: "mdi-plus", onClick: () => panzoom.value?.zoomIn(), text: "Zoom in" },
-    { icon: "mdi-minus", onClick: () => panzoom.value?.zoomOut(), text: "Zoom out" },
-    { icon: "mdi-backup-restore", onClick: () => panzoom.value?.reset(), text: "Reset view" },
+    { icon: "i-mdi:plus", onClick: () => panzoom.value?.zoomIn(), text: "Zoom in" },
+    { icon: "i-mdi:minus", onClick: () => panzoom.value?.zoomOut(), text: "Zoom out" },
+    { icon: "i-mdi:backup-restore", onClick: () => panzoom.value?.reset(), text: "Reset view" },
   ];
   if (isFullscreenSupported.value)
     controls.push({
-      icon: isFullscreen.value ? "mdi-fullscreen-exit" : "mdi-fullscreen",
+      icon: isFullscreen.value ? "i-mdi:fullscreen-exit" : "i-mdi:fullscreen",
       onClick: () => toggleFullscreen(),
       text: isFullscreen.value ? "Exit full screen" : "Full screen",
     });

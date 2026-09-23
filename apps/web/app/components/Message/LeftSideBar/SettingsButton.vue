@@ -8,7 +8,7 @@ const { isVisible } = storeToRefs(userSettingsDialogStore);
 <template>
   <StyledTooltipIconButton
     :button-props="{ size: 'small' }"
-    icon="mdi-cog"
+    icon="i-mdi:cog"
     text="User Settings"
     @click="isVisible = true"
   />

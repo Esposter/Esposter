@@ -30,14 +30,14 @@ const isOpen = ref(false);
 <template>
   <div flex flex-col gap-y-3>
     <div flex gap-x-2 items-center>
-      <v-icon color="orange" icon="mdi-trophy" />
+      <v-icon color="orange" icon="i-mdi:trophy" />
       <span fw-bold text-title-large>{{ totalPoints }} achievement points</span>
       <span text-hint>{{ unlockedUserAchievements.length }} unlocked</span>
       <v-spacer />
       <!-- Only when there is more than the summary is showing — otherwise it opens the same few again -->
       <v-btn
         v-if="unlockedUserAchievements.length > MAX_RECENT_ACHIEVEMENTS"
-        append-icon="mdi-chevron-right"
+        append-icon="i-mdi:chevron-right"
         size="small"
         text="View all"
         variant="text"
@@ -52,7 +52,7 @@ const isOpen = ref(false);
         :user-achievement
       />
     </v-row>
-    <StyledDialog v-model="isOpen" :card-props="{ prependIcon: 'mdi-trophy', title: 'Achievements' }">
+    <StyledDialog v-model="isOpen" :card-props="{ prependIcon: 'i-mdi:trophy', title: 'Achievements' }">
       <AchievementGrid
         :achievement-definitions="unlockedAchievementDefinitions"
         :user-achievements="unlockedUserAchievements"

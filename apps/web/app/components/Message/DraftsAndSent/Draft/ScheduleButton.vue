@@ -14,7 +14,7 @@ const { open } = scheduleDialogStore;
 
 <template>
   <MessageDraftsAndSentActionButton
-    icon="mdi-clock-plus-outline"
+    icon="i-mdi:clock-plus-outline"
     text="Schedule message"
     @click="
       open({

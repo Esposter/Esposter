@@ -20,7 +20,7 @@ const progressPercentage = computed(() => uploadFileUrl.progress * 100);
         <div b-1>
           <StyledTooltipIconButton
             :button-props="{ class: 'm-0', color: 'error', size: 'small', tile: true, variant: 'text' }"
-            icon="mdi-delete"
+            icon="i-mdi:delete"
             text="Delete Attachment"
             @click="emit('delete', index)"
           />

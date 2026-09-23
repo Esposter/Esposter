@@ -41,13 +41,13 @@ const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfi
               >
                 <v-avatar color="background" size="7rem">
                   <NuxtImg v-if="modelValue" size-full object-cover :src="modelValue" :alt="name" />
-                  <v-icon v-else icon="mdi-account-multiple" size="3rem" />
+                  <v-icon v-else icon="i-mdi:account-multiple" size="3rem" />
                 </v-avatar>
                 <div v-if="isLoading" flex items-center inset-0 justify-center absolute>
                   <v-progress-circular indeterminate />
                 </div>
                 <v-avatar b-4 b-background b-solid bg-surface right--1 top--1 absolute size="2.5rem">
-                  <v-icon icon="mdi-pencil" size="1.25rem" />
+                  <v-icon icon="i-mdi:pencil" size="1.25rem" />
                 </v-avatar>
               </button>
             </template>

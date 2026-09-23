@@ -18,7 +18,7 @@ const { clearComposer } = inputStore;
 
 <template>
   <MessageDraftsAndSentActionButton
-    icon="mdi-send-outline"
+    icon="i-mdi:send-outline"
     text="Send message"
     @click="
       async () => {

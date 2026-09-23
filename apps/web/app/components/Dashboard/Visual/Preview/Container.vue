@@ -29,7 +29,7 @@ onClickExceptDrag(
     <div flex right-0 top-0 absolute>
       <StyledTooltipIconButton
         :button-props="{ size: 'small' }"
-        icon="mdi-pencil"
+        icon="i-mdi:pencil"
         text="Edit Visual"
         @click.stop="editItem({ id })"
       />

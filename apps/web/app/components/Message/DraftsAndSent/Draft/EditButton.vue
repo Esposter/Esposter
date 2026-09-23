@@ -12,7 +12,7 @@ const { draftItem } = defineProps<Props>();
 
 <template>
   <MessageDraftsAndSentActionButton
-    icon="mdi-pencil-outline"
+    icon="i-mdi:pencil-outline"
     text="Edit draft"
     @click="
       navigateTo(

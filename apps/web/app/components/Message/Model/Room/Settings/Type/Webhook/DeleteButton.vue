@@ -15,7 +15,7 @@ const { deletingId } = storeToRefs(webhookDialogStore);
 <template>
   <StyledTooltipIconButton
     :button-props="{ size: 'small' }"
-    icon="mdi-delete"
+    icon="i-mdi:delete"
     text="Delete Webhook"
     @click="deletingId = id"
   />

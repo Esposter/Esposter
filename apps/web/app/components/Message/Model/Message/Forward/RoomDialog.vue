@@ -40,14 +40,14 @@ const {
         <div flex items-center justify-between>
           Forward To
           <StyledTooltipIconButton
-            icon="mdi-close"
+            icon="i-mdi:close"
             text="Close"
             :button-props="{ density: 'comfortable' }"
             @click="isOpen = false"
           />
         </div>
         <div pb-2 op-medium-emphasis text-title-small>Select where you want to share this message.</div>
-        <v-text-field v-model="searchQuery" append-inner-icon="mdi-magnify" density="compact" placeholder="Search" />
+        <v-text-field v-model="searchQuery" append-inner-icon="i-mdi:magnify" density="compact" placeholder="Search" />
       </v-card-title>
       <v-card-text p-4 of-y-auto>
         <v-list py-0>

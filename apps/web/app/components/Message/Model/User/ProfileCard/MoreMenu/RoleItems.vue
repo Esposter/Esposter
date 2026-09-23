@@ -28,7 +28,7 @@ getSynchronizedFunction(() =>
 <template>
   <v-list-group v-if="checkHasMyPermission(roomId, RoomPermission.ManageRoles) && roles.length > 0" value="Roles">
     <template #activator="{ props: activatorProps }">
-      <v-list-item :="activatorProps" prepend-icon="mdi-shield-key-outline" title="Roles" />
+      <v-list-item :="activatorProps" prepend-icon="i-mdi:shield-key-outline" title="Roles" />
     </template>
     <MessageModelRoomRoleMemberListItem v-for="role of roles" :key="role.id" :role :room-id :user-id="user.id" />
   </v-list-group>

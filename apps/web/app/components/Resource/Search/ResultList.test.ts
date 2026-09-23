@@ -27,7 +27,7 @@ describe("resourceSearchResultList", () => {
         items: [
           {
             group: ResourceSearchGroup.Resources,
-            icon: "mdi-file-outline",
+            icon: "i-mdi:file-outline",
             id,
             title: "name",
             to: RoutePath.Resource(id),
@@ -53,7 +53,7 @@ describe("resourceSearchResultList", () => {
           {
             createTo: RoutePath.ResourceExplorerCreateType(ResourceType.Sheet),
             group: ResourceSearchGroup.Services,
-            icon: "mdi-file-outline",
+            icon: "i-mdi:file-outline",
             id,
             title: "name",
             to: RoutePath.ResourceExplorerAll,

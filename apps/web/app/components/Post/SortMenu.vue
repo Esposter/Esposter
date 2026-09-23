@@ -12,7 +12,7 @@ const { sortType } = storeToRefs(postStore);
     <template #activator="{ props: menuProps }">
       <v-btn
         rd-full
-        append-icon="mdi-menu-down"
+        append-icon="i-mdi:menu-down"
         size="small"
         :prepend-icon="PostSortTypeIconMap[sortType]"
         :text="sortType"

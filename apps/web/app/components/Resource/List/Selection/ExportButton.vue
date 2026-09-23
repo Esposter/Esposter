@@ -10,7 +10,7 @@ const { exportResourcesCsv } = useExportResourcesCsv();
 </script>
 
 <template>
-  <v-btn prepend-icon="mdi-file-export-outline" variant="text" @click="exportResourcesCsv(selectedResources)">
+  <v-btn prepend-icon="i-mdi:file-export-outline" variant="text" @click="exportResourcesCsv(selectedResources)">
     Export CSV
   </v-btn>
 </template>

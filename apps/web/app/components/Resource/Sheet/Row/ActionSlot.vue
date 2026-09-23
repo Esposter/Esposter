@@ -20,13 +20,13 @@ const { deletingId, editingId } = storeToRefs(rowDialogStore);
   <div flex>
     <StyledTooltipIconButton
       :button-props="DENSE_ICON_BUTTON_PROPS"
-      icon="mdi-pencil"
+      icon="i-mdi:pencil"
       :text="getEditRowDescription(index)"
       @click.stop="editingId = row.id"
     />
     <StyledTooltipIconButton
       :button-props="DENSE_ICON_BUTTON_PROPS"
-      icon="mdi-delete"
+      icon="i-mdi:delete"
       :text="getDeleteRowDescription(index)"
       @click.stop="deletingId = row.id"
     />

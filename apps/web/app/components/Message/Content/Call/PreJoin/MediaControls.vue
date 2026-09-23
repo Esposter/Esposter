@@ -21,13 +21,13 @@ const cameraButtonProps = computed(() => getMediaButtonProps(isCameraEnabled));
   <div flex gap-x-3 justify-center>
     <StyledTooltipIconButton
       :button-props="microphoneButtonProps"
-      :icon="isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off'"
+      :icon="isMicrophoneEnabled ? 'i-mdi:microphone' : 'i-mdi:microphone-off'"
       :text="isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'"
       @click="emit('toggleMicrophone')"
     />
     <StyledTooltipIconButton
       :button-props="cameraButtonProps"
-      :icon="isCameraEnabled ? 'mdi-video' : 'mdi-video-off'"
+      :icon="isCameraEnabled ? 'i-mdi:video' : 'i-mdi:video-off'"
       :text="isCameraEnabled ? 'Turn off camera' : 'Turn on camera'"
       @click="emit('toggleCamera')"
     />

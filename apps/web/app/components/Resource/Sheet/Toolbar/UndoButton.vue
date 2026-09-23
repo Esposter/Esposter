@@ -25,7 +25,7 @@ onKeyStroke(["z", "Z"], async (event) => {
 <template>
   <StyledTooltipIconButton
     :button-props="{ disabled: !isUndoable, variant: 'text' }"
-    icon="mdi-undo"
+    icon="i-mdi:undo"
     :tooltip-props="{ location: 'bottom' }"
     @click="onUndo"
   >

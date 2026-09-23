@@ -29,7 +29,7 @@ const { copied, copy } = useClipboard({ source: code });
       focus:op-100
       group-hover:op-100
       :button-props="PROSE_COPY_BUTTON_PROPS"
-      :icon="copied ? 'mdi-check' : 'mdi-content-copy'"
+      :icon="copied ? 'i-mdi:check' : 'i-mdi:content-copy'"
       :text="copied ? 'Copied' : 'Copy'"
       @click="copy()"
     />

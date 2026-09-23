@@ -29,7 +29,7 @@ const applyLink = () => {
           <v-btn
             density="comfortable"
             tile
-            icon="mdi-link-variant"
+            icon="i-mdi:link-variant"
             :active="editor?.isActive('link')"
             :="mergeProps(menuProps, tooltipProps)"
             @click="onOpenLinkMenu"

@@ -16,7 +16,7 @@ const { currentRoomId } = storeToRefs(roomStore);
   <v-avatar color="surface">
     <StyledTooltipMenuIconButton
       :button-props="{ size: 'small' }"
-      icon="mdi-dots-horizontal"
+      icon="i-mdi:dots-horizontal"
       :menu-props="{ location: 'bottom end' }"
       text="More"
     >

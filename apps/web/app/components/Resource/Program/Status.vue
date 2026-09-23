@@ -56,7 +56,7 @@ await readStatus();
         :button-props="{
           disabled: isGeneratePending,
           loading: isGeneratePending,
-          prependIcon: 'mdi-ticket-confirmation',
+          prependIcon: 'i-mdi:ticket-confirmation',
         }"
         @click="generateParticipants"
       >
@@ -74,7 +74,7 @@ await readStatus();
     />
     <StyledEmptyState
       v-if="statusRows.length === 0"
-      icon="mdi-ticket-outline"
+      icon="i-mdi:ticket-outline"
       title="No participants yet"
       description="Bind an audience on the Setup blade, then generate participants."
     />

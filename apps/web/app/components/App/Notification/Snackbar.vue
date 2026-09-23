@@ -48,7 +48,7 @@ const isOpen = computed({
           }
         "
       />
-      <StyledTooltipIconButton icon="mdi-close" text="Dismiss" @click="isOpen = false" />
+      <StyledTooltipIconButton icon="i-mdi:close" text="Dismiss" @click="isOpen = false" />
     </template>
   </v-snackbar>
 </template>

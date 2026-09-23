@@ -13,7 +13,7 @@ const { column } = defineProps<Props>();
     {{ column.name }}
     <v-tooltip v-if="column.description" :text="column.description">
       <template #activator="{ props }">
-        <v-icon icon="mdi-information-outline" size="small" :="props" />
+        <v-icon icon="i-mdi:information-outline" size="small" :="props" />
       </template>
     </v-tooltip>
   </div>

@@ -18,7 +18,7 @@ useQuery(() => (currentRoomId.value ? refetchFollowedThreads(currentRoomId.value
     <span fw-semibold>Followed Threads</span>
     <StyledTooltipIconButton
       :button-props="{ size: 'small', variant: 'text' }"
-      icon="mdi-close"
+      icon="i-mdi:close"
       text="Close followed threads"
       @click="isRightDrawerOpen = false"
     />

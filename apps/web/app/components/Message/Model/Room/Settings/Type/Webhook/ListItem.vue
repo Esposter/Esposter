@@ -19,7 +19,7 @@ const editedName = ref(webhook.name);
   <v-list-item>
     <template #prepend>
       <v-avatar color="background">
-        <v-icon icon="mdi-webhook" />
+        <v-icon icon="i-mdi:webhook" />
       </v-avatar>
     </template>
     <v-text-field

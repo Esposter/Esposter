@@ -15,7 +15,7 @@ const next = computed(() => surround[1]);
     <v-card v-if="previous" :to="previous.path" variant="outlined" hover>
       <v-card-item>
         <p mb-1 flex gap-x-1 items-center text-hint>
-          <v-icon icon="mdi-arrow-left" size="small" />
+          <v-icon icon="i-mdi:arrow-left" size="small" />
           Previous
         </p>
         <v-card-title>{{ previous.title }}</v-card-title>
@@ -27,7 +27,7 @@ const next = computed(() => surround[1]);
       <v-card-item>
         <p mb-1 flex gap-x-1 items-center justify-end text-hint>
           Next
-          <v-icon icon="mdi-arrow-right" size="small" />
+          <v-icon icon="i-mdi:arrow-right" size="small" />
         </p>
         <v-card-title>{{ next.title }}</v-card-title>
         <v-card-subtitle>{{ next.description }}</v-card-subtitle>

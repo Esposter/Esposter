@@ -7,7 +7,7 @@ const { isOpen, toggle } = useToggleRightDrawer(RightDrawer.Member);
 <template>
   <StyledTooltipIconButton
     :button-props="{ size: 'small' }"
-    icon="mdi-account-multiple"
+    icon="i-mdi:account-multiple"
     :text="`${isOpen ? 'Hide' : 'Show'} Member List`"
     :tooltip-props="{ location: 'bottom' }"
     @click="toggle"

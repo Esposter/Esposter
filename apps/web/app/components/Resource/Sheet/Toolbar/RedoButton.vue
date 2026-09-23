@@ -31,7 +31,7 @@ onKeyStroke(["y", "Y"], async (event) => {
 <template>
   <StyledTooltipIconButton
     :button-props="{ disabled: !isRedoable, variant: 'text' }"
-    icon="mdi-redo"
+    icon="i-mdi:redo"
     :tooltip-props="{ location: 'bottom' }"
     @click="onRedo"
   >

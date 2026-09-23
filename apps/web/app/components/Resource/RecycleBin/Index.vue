@@ -21,13 +21,13 @@ const purgeResource = usePurgeResource(refresh);
 const getActionItems = (resource: Resource): Item[] => [
   {
     disabled: checkIsRestorePending(resource.id),
-    icon: "mdi-restore",
+    icon: "i-mdi:restore",
     onClick: () => restoreResource(resource),
     title: "Restore",
   },
   {
     color: "error",
-    icon: "mdi-delete-forever",
+    icon: "i-mdi:delete-forever",
     onClick: () => {
       purgingId.value = resource.id;
     },
@@ -45,8 +45,8 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
         >Deleted resources are permanently removed after {{ RECYCLE_BIN_RETENTION_DAYS }} days.</span
       >
       <v-spacer />
-      <StyledTooltipIconButton icon="mdi-refresh" text="Refresh" @click="refresh()" />
-      <StyledTooltipIconButton :to="closeTo" icon="mdi-close" text="Close" />
+      <StyledTooltipIconButton icon="i-mdi:refresh" text="Refresh" @click="refresh()" />
+      <StyledTooltipIconButton :to="closeTo" icon="i-mdi:close" text="Close" />
     </v-toolbar>
     <v-alert v-if="error && items.length > 0" density="compact" type="error" :text="error" :rounded="0">
       <template #append>
@@ -80,7 +80,7 @@ const onUpdateOptions = (options: ReadResourcesOptions) => readDeletedResources(
         <StyledErrorState v-if="error" :error @retry="refresh()" />
         <StyledEmptyState
           v-else
-          icon="mdi-delete-outline"
+          icon="i-mdi:delete-outline"
           title="Recycle bin is empty"
           :description="`Deleted resources appear here for ${RECYCLE_BIN_RETENTION_DAYS} days before they are permanently removed.`"
         />

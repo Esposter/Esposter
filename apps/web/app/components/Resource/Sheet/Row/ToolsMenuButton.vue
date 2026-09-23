@@ -20,21 +20,21 @@ const isDeduplicateOpen = ref(false);
     spreadsheets group them too — a Data menu you open when you want to clean the sheet, not a permanent rail
     the reader scans past on the way to the table. Add row and Clear filters stay outside it: the first is the
     primary create action, and the second only appears while a filter is on, where it is the state indicator -->
-  <StyledTooltipMenuIconButton :button-props="DENSE_ICON_BUTTON_PROPS" icon="mdi-table-cog" text="Data tools">
+  <StyledTooltipMenuIconButton :button-props="DENSE_ICON_BUTTON_PROPS" icon="i-mdi:table-cog" text="Data tools">
     <v-list density="compact">
-      <v-list-item prepend-icon="mdi-sigma" title="Column statistics" @click="isStatisticsOpen = true" />
+      <v-list-item prepend-icon="i-mdi:sigma" title="Column statistics" @click="isStatisticsOpen = true" />
       <v-list-item
-        prepend-icon="mdi-table-row-remove"
+        prepend-icon="i-mdi:table-row-remove"
         title="Remove duplicate rows"
         @click="isDeduplicateOpen = true"
       />
       <v-list-item
-        :prepend-icon="isOutlierHighlightEnabled ? 'mdi-alert-circle' : 'mdi-alert-circle-outline'"
+        :prepend-icon="isOutlierHighlightEnabled ? 'i-mdi:alert-circle' : 'i-mdi:alert-circle-outline'"
         :title="isOutlierHighlightEnabled ? 'Hide outlier highlighting' : 'Show outlier highlighting'"
         @click="isOutlierHighlightEnabled = !isOutlierHighlightEnabled"
       />
       <v-list-item
-        :prepend-icon="copyIncludesHeaders ? 'mdi-table-headers-eye' : 'mdi-table-headers-eye-off'"
+        :prepend-icon="copyIncludesHeaders ? 'i-mdi:table-headers-eye' : 'i-mdi:table-headers-eye-off'"
         :title="copyIncludesHeaders ? 'Headers included in copy' : 'Headers excluded from copy'"
         @click="copyIncludesHeaders = !copyIncludesHeaders"
       />

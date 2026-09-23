@@ -19,7 +19,7 @@ const buttonProps = computed(() => ({
 <template>
   <MessageDraftsAndSentActionButton
     :button-props
-    icon="mdi-send-outline"
+    icon="i-mdi:send-outline"
     text="Send message"
     @click="sendScheduledMessageNow(scheduledMessageJob.id)"
   />

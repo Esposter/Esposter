@@ -11,5 +11,5 @@ const { copy } = clipboardStore;
 </script>
 
 <template>
-  <v-list-item append-icon="mdi-identifier" title="Copy User ID" @click="copy(userId)" />
+  <v-list-item append-icon="i-mdi:identifier" title="Copy User ID" @click="copy(userId)" />
 </template>

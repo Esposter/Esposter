@@ -8,7 +8,7 @@ const { isFindReplaceOpen } = storeToRefs(findReplaceStore);
 <template>
   <StyledTooltipIconButton
     :button-props="{ density: 'compact', variant: 'text' }"
-    icon="mdi-close"
+    icon="i-mdi:close"
     text="Close"
     @click="isFindReplaceOpen = false"
   />

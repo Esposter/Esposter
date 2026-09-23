@@ -13,10 +13,10 @@ const { currentRoute } = useRouter();
 // Everywhere. The list routes come from the source registry, so adding a source adds a menu entry
 const items = computed<NavigationItem[]>(() =>
   [
-    { icon: "mdi-home-outline", title: "Home", to: RoutePath.ResourceExplorer },
+    { icon: "i-mdi:home-outline", title: "Home", to: RoutePath.ResourceExplorer },
     ...ResourceListSources.map((source) => ResourceListSourceDefinitionMap[source]),
-    { icon: "mdi-tag-multiple-outline", title: "Tags", to: RoutePath.ResourceExplorerTags },
-    { icon: "mdi-delete-outline", title: "Recycle bin", to: RoutePath.ResourceExplorerRecycleBin },
+    { icon: "i-mdi:tag-multiple-outline", title: "Tags", to: RoutePath.ResourceExplorerTags },
+    { icon: "i-mdi:delete-outline", title: "Recycle bin", to: RoutePath.ResourceExplorerRecycleBin },
   ].map(({ icon, title, to }) => ({ icon, isActive: currentRoute.value.path === to, title, to })),
 );
 </script>

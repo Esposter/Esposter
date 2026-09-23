@@ -55,7 +55,7 @@ const formattedTimer = computed(() => {
     </span>
     <StyledTooltipIconButton
       :button-props="recordButtonProps"
-      :icon="isRecording ? 'mdi-stop-circle-outline' : 'mdi-microphone'"
+      :icon="isRecording ? 'i-mdi:stop-circle-outline' : 'i-mdi:microphone'"
       :text="isRecording ? 'Stop Recording' : 'Record Audio Message'"
       @click="
         () => {

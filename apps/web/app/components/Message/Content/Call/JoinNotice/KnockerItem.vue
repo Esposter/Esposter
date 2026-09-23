@@ -36,7 +36,7 @@ const getKnockerAction = (isRunning: Ref<boolean>, action: (callSessionId: strin
 const admitCallKnocker = getKnockerAction(isAdmitting, (callSessionId) => admitKnocker(callSessionId, knocker.id));
 const dismissCallKnocker = getKnockerAction(isDismissing, (callSessionId) => dismissKnocker(callSessionId, knocker.id));
 const admitButtonProps = computed<VBtn["$props"]>(() => ({
-  icon: "mdi-check",
+  icon: "i-mdi:check",
   loading: isAdmitting.value,
   size: "small",
   variant: "tonal",
@@ -59,7 +59,7 @@ const dismissButtonProps = computed<VBtn["$props"]>(() => ({
     </v-tooltip>
     <StyledTooltipIconButton
       :button-props="dismissButtonProps"
-      icon="mdi-close"
+      icon="i-mdi:close"
       text="Dismiss"
       @click="dismissCallKnocker"
     />

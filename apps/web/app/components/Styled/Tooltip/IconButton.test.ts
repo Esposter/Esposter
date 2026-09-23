@@ -12,7 +12,7 @@ describe("styledTooltipIconButton", () => {
     // Navigates — every call site spells navigation this way
     const component = await mountSuspended(StyledTooltipIconButton, {
       attrs: { to: RoutePath.ResourceExplorerAll },
-      props: { icon: "mdi-close" },
+      props: { icon: "i-mdi:close" },
     });
 
     expect(component.get(".v-btn").element.tagName).toBe("A");

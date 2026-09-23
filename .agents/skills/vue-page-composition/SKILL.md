@@ -56,8 +56,8 @@ Granularity must **simplify the problem** or enable **reuse** — what earns a m
 ```ts
 // services/foo/FooItems.ts — array defined here, imported by components/Foo/List.vue
 export const FooItems = [
-  { value: "read", title: "Read", prependIcon: "mdi-eye" },
-  { value: "write", title: "Write", prependIcon: "mdi-pencil" },
+  { value: "read", title: "Read", prependIcon: "i-mdi:eye" },
+  { value: "write", title: "Write", prependIcon: "i-mdi:pencil" },
 ] as const;
 ```
 

@@ -13,7 +13,7 @@ const { editor } = defineProps<Props>();
 const items = computed<MenuItem[]>(() => [
   {
     active: editor?.isActive("paragraph"),
-    icon: "mdi-format-paragraph",
+    icon: "i-mdi:format-paragraph",
     onClick: () => {
       editor?.chain().focus().setParagraph().run();
     },
@@ -21,7 +21,7 @@ const items = computed<MenuItem[]>(() => [
   },
   {
     active: editor?.isActive("heading", { level: 1 }),
-    icon: "mdi-format-header-1",
+    icon: "i-mdi:format-header-1",
     onClick: () => {
       editor?.chain().focus().toggleHeading({ level: 1 }).run();
     },
@@ -29,7 +29,7 @@ const items = computed<MenuItem[]>(() => [
   },
   {
     active: editor?.isActive("heading", { level: 2 }),
-    icon: "mdi-format-header-2",
+    icon: "i-mdi:format-header-2",
     onClick: () => {
       editor?.chain().focus().toggleHeading({ level: 2 }).run();
     },
@@ -37,7 +37,7 @@ const items = computed<MenuItem[]>(() => [
   },
   {
     active: editor?.isActive("heading", { level: 3 }),
-    icon: "mdi-format-header-3",
+    icon: "i-mdi:format-header-3",
     onClick: () => {
       editor?.chain().focus().toggleHeading({ level: 3 }).run();
     },
@@ -47,7 +47,7 @@ const items = computed<MenuItem[]>(() => [
   ...getTextFormatMenuItems(editor),
   {
     active: editor?.isActive("code"),
-    icon: "mdi-code-tags",
+    icon: "i-mdi:code-tags",
     onClick: () => {
       editor?.chain().focus().toggleCode().run();
     },
@@ -57,7 +57,7 @@ const items = computed<MenuItem[]>(() => [
   ...getListMenuItems(editor),
   {
     active: editor?.isActive("blockquote"),
-    icon: "mdi-format-quote-close",
+    icon: "i-mdi:format-quote-close",
     onClick: () => {
       editor?.chain().focus().toggleBlockquote().run();
     },

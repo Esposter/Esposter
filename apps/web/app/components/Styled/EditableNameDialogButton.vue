@@ -67,7 +67,7 @@ const confirmButtonAttrs = computed(() => ({
                   {{ name || placeholder }}
                 </slot>
                 <template #append>
-                  <v-icon v-if="isEditable" :op="isHovering ? undefined : '0!'" icon="mdi-pencil" size="small" />
+                  <v-icon v-if="isEditable" :op="isHovering ? undefined : '0!'" icon="i-mdi:pencil" size="small" />
                 </template>
               </v-btn>
             </template>

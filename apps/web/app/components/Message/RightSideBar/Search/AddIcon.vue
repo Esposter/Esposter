@@ -10,5 +10,5 @@ const { isHovering } = defineProps<Props>();
 </script>
 
 <template>
-  <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
+  <v-icon :op="isHovering ? undefined : '0!'" icon="i-mdi:plus" />
 </template>

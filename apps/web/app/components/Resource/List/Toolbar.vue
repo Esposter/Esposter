@@ -21,7 +21,7 @@ const { closeTo } = storeToRefs(navigationTrailStore);
 const toolbarItems = computed<Item[]>(() => [
   {
     active: isSummaryView.value,
-    icon: "mdi-view-grid-outline",
+    icon: "i-mdi:view-grid-outline",
     onClick: () => {
       isSummaryView.value = !isSummaryView.value;
     },
@@ -29,16 +29,16 @@ const toolbarItems = computed<Item[]>(() => [
   },
   {
     active: isGroupedByType.value,
-    icon: "mdi-format-list-group",
+    icon: "i-mdi:format-list-group",
     onClick: () => {
       isGroupedByType.value = !isGroupedByType.value;
     },
     title: "Group by type",
   },
-  { icon: "mdi-file-export-outline", onClick: () => emit("export"), title: "Export CSV" },
-  { icon: "mdi-refresh", onClick: () => emit("refresh"), title: "Refresh" },
+  { icon: "i-mdi:file-export-outline", onClick: () => emit("export"), title: "Export CSV" },
+  { icon: "i-mdi:refresh", onClick: () => emit("refresh"), title: "Refresh" },
   {
-    icon: "mdi-delete-outline",
+    icon: "i-mdi:delete-outline",
     onClick: async () => {
       await navigateTo(RoutePath.ResourceExplorerRecycleBin);
     },
@@ -56,7 +56,7 @@ const toolbarItems = computed<Item[]>(() => [
       label="Search resources"
       max-width="24rem"
       min-width="12rem"
-      prepend-inner-icon="mdi-magnify"
+      prepend-inner-icon="i-mdi:magnify"
     />
     <v-spacer />
     <StyledTooltipIconButton
@@ -68,7 +68,7 @@ const toolbarItems = computed<Item[]>(() => [
       @click="onClick"
     />
     <ResourceListColumnChooserMenu :source />
-    <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
-    <StyledTooltipIconButton :to="closeTo" icon="mdi-close" text="Close" />
+    <StyledOverflowMenu v-if="smAndDown" icon="i-mdi:dots-horizontal" :items="toolbarItems" />
+    <StyledTooltipIconButton :to="closeTo" icon="i-mdi:close" text="Close" />
   </v-toolbar>
 </template>

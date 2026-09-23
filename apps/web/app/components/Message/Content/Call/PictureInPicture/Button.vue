@@ -10,7 +10,7 @@ const { isPoppedOut } = storeToRefs(mediaStore);
   <MessageContentCallControlActionButton
     v-if="isSupported"
     :color="isPoppedOut ? 'primary' : undefined"
-    icon="mdi-picture-in-picture-bottom-right"
+    icon="i-mdi:picture-in-picture-bottom-right"
     :tooltip="isPoppedOut ? 'Close Picture-in-Picture' : 'Picture-in-Picture'"
     variant="plain"
     @click="isPoppedOut = !isPoppedOut"

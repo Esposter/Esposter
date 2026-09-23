@@ -29,7 +29,7 @@ const cardProps = computed(() => ({ title: `Delete ${selectedLabel.value}` }));
     "
   >
     <template #activator="{ updateIsOpen }">
-      <v-btn color="error" prepend-icon="mdi-delete" variant="text" @click="updateIsOpen(true)">
+      <v-btn color="error" prepend-icon="i-mdi:delete" variant="text" @click="updateIsOpen(true)">
         Delete ({{ selectedResources.length }})
       </v-btn>
     </template>

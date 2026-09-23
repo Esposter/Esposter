@@ -68,7 +68,7 @@ const scheduleMessage = async (onComplete: (isSuccessful?: boolean) => void) => 
   <StyledFormDialog
     v-model="isOpen"
     :card-props
-    :confirm-button-props="{ prependIcon: 'mdi-send-clock', text: 'Schedule Message' }"
+    :confirm-button-props="{ prependIcon: 'i-mdi:send-clock', text: 'Schedule Message' }"
     :confirm-button-attrs
     @submit="(_event, onComplete) => scheduleMessage(onComplete)"
   >

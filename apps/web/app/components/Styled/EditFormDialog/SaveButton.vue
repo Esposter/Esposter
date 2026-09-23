@@ -9,5 +9,5 @@ const buttonProps = computed(() => ({ disabled: !isSavable }));
 </script>
 
 <template>
-  <StyledTooltipIconButton :button-props :form="formId" icon="mdi-content-save" text="Save & Close" type="submit" />
+  <StyledTooltipIconButton :button-props :form="formId" icon="i-mdi:content-save" text="Save & Close" type="submit" />
 </template>

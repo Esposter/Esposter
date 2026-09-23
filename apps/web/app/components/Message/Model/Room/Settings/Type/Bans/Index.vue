@@ -20,7 +20,7 @@ const { hasMore, items } = storeToRefs(banStore);
       v-model="searchQuery"
       density="compact"
       placeholder="Search bans"
-      prepend-inner-icon="mdi-magnify"
+      prepend-inner-icon="i-mdi:magnify"
       clearable
     />
     <v-list v-if="isPending" lines="two">

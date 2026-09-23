@@ -76,7 +76,7 @@ const { data: viewCount } = useQuery(() => {
                      sees. A published resource whose draft has moved says so rather than leaving it to be worked
                      out from the two dates above -->
                 <span v-if="hasUnpublishedChanges" flex gap-1 items-center>
-                  <v-icon color="warning" icon="mdi-alert-outline" size="small" />
+                  <v-icon color="warning" icon="i-mdi:alert-outline" size="small" />
                   Draft changes not published
                 </span>
                 <span v-else op-medium-emphasis>Up to date</span>
@@ -88,7 +88,7 @@ const { data: viewCount } = useQuery(() => {
           <template v-if="publication && viewCount !== undefined">
             <span op-medium-emphasis>Views</span>
             <div flex gap-2 items-center>
-              <v-icon size="small" icon="mdi-eye-outline" />
+              <v-icon size="small" icon="i-mdi:eye-outline" />
               <span>{{ viewCount }}</span>
             </div>
           </template>
@@ -97,7 +97,7 @@ const { data: viewCount } = useQuery(() => {
             <div flex flex-wrap gap-2 items-center>
               <NuxtLink :to="publicUrl" external text-info target="_blank">{{ publicUrl }}</NuxtLink>
               <StyledTooltipIconButton
-                icon="mdi-content-copy"
+                icon="i-mdi:content-copy"
                 text="Copy link"
                 @click="copyLinkToClipboard(publicUrl)"
               />
@@ -112,7 +112,7 @@ const { data: viewCount } = useQuery(() => {
             <!-- The only way into the tags editor. A colourless flat button is transparent here and reads as a
                  Word sitting beside the chips rather than as the control they are edited from -->
             <StyledButton
-              :button-props="{ prependIcon: 'mdi-pencil', size: 'small', text: 'Edit' }"
+              :button-props="{ prependIcon: 'i-mdi:pencil', size: 'small', text: 'Edit' }"
               @click="isTagsEditorOpen = true"
             />
           </div>

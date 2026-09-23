@@ -33,7 +33,7 @@ const emit = defineEmits<{ select: [] }>();
     <template v-if="item.createTo" #append>
       <StyledLinkRowActions>
         <StyledTooltipIconButton
-          icon="mdi-plus"
+          icon="i-mdi:plus"
           text="Create"
           :button-props="{ size: 'small', variant: 'text' }"
           @click="

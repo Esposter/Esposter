@@ -34,7 +34,7 @@ const { deleteRole } = roleStore;
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton
         :button-props="{ color: 'error', density: 'compact', size: 'x-small', variant: 'plain' }"
-        icon="mdi-trash-can-outline"
+        icon="i-mdi:trash-can-outline"
         text="Delete Role"
         @click.stop="updateIsOpen(true)"
       />

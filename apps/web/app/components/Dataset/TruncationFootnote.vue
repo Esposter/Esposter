@@ -16,7 +16,7 @@ const { truncation } = defineProps<Props>();
   <v-tooltip :text="DATASET_ROW_CAP_DESCRIPTION">
     <template #activator="{ props }">
       <div flex gap-1 items-center :="props">
-        <v-icon color="warning" icon="mdi-alert-outline" size="small" />
+        <v-icon color="warning" icon="i-mdi:alert-outline" size="small" />
         <span text-hint>{{ getDatasetTruncationText(truncation) }}</span>
       </div>
     </template>

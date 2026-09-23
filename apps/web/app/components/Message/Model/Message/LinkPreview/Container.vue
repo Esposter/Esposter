@@ -51,7 +51,7 @@ const deleteLinkPreviewResponse = async (onComplete: () => void) => {
       <template #activator="{ updateIsOpen }">
         <StyledTooltipIconButton
           :class="isActive ? undefined : 'invisible'"
-          icon="mdi-close"
+          icon="i-mdi:close"
           text="Close"
           :button-props="{ density: 'comfortable', ripple: false, size: 'small', variant: 'plain' }"
           @click="updateIsOpen(true)"

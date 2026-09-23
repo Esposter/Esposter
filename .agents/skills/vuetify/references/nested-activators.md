@@ -11,7 +11,7 @@ Combine each overlay's slot props with `mergeProps(...)` from `vue` on a single 
   <template #activator="{ props: dialogProps }">
     <v-tooltip text="Options">
       <template #activator="{ props: tooltipProps }">
-        <v-btn icon="mdi-dots-vertical" :="mergeProps(dialogProps, tooltipProps)" />
+        <v-btn icon="i-mdi:dots-vertical" :="mergeProps(dialogProps, tooltipProps)" />
       </template>
     </v-tooltip>
   </template>

@@ -14,7 +14,7 @@ const cardProps = computed(() => ({ title: `Confirm Deletion of ${originalItem?.
 <template>
   <StyledDeleteFormDialog v-if="originalItem" :card-props :confirm-name="name" @delete="emit('delete', $event)">
     <template #activator="{ updateIsOpen }">
-      <StyledTooltipIconButton icon="mdi-delete" text="Delete" @click="updateIsOpen(true)" />
+      <StyledTooltipIconButton icon="i-mdi:delete" text="Delete" @click="updateIsOpen(true)" />
     </template>
     <div>
       To confirm the delete action please enter the name of the

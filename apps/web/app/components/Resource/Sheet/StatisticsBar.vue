@@ -15,11 +15,11 @@ const displaySize = computed(() => getFileSize(statistics.size));
 
 <template>
   <div flex flex-wrap gap-2>
-    <v-chip label size="small" :prepend-icon="isFiltered ? 'mdi-filter' : 'mdi-table-row'">
+    <v-chip label size="small" :prepend-icon="isFiltered ? 'i-mdi:filter' : 'i-mdi:table-row'">
       <template v-if="isFiltered">{{ filteredRowCount }} / {{ statistics.rowCount }} rows</template>
       <template v-else>{{ statistics.rowCount }} rows</template>
     </v-chip>
-    <v-chip label size="small" prepend-icon="mdi-table-column">{{ statistics.columnCount }} columns</v-chip>
-    <v-chip label size="small" prepend-icon="mdi-database">{{ displaySize }}</v-chip>
+    <v-chip label size="small" prepend-icon="i-mdi:table-column">{{ statistics.columnCount }} columns</v-chip>
+    <v-chip label size="small" prepend-icon="i-mdi:database">{{ displaySize }}</v-chip>
   </div>
 </template>

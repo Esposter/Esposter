@@ -9,7 +9,7 @@ const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
   <StyledTooltipIconButton
     v-if="!isLeftDrawerOpenAuto"
     :button-props="{ size: 'small' }"
-    icon="mdi-menu"
+    icon="i-mdi:menu"
     text="Show Room List"
     :tooltip-props="{ location: 'bottom' }"
     @click="isLeftDrawerOpen = true"

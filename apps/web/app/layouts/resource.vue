@@ -24,7 +24,7 @@ const isServiceMenuOpen = ref(false);
       <StyledPageHeader :class="{ 'b-0 b-b-1 b-border b-solid': isHeaderBordered }" :title>
         <template v-if="isServiceMenuShown" #prepend>
           <StyledTooltipIconButton
-            icon="mdi-menu"
+            icon="i-mdi:menu"
             text="Resource menu"
             @click="isServiceMenuOpen = !isServiceMenuOpen"
           />

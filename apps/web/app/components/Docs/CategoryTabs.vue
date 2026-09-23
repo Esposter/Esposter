@@ -35,14 +35,14 @@ const categories = computed(() =>
     <StyledTooltipIconButton
       v-if="!isLeftDrawerOpenAuto"
       :button-props="{ size: 'small' }"
-      icon="mdi-menu"
+      icon="i-mdi:menu"
       text="Show Navigation"
       :tooltip-props="{ location: 'bottom' }"
       @click="isLeftDrawerOpen = true"
     />
     <v-tabs color="primary" :model-value="activeCategory ?? RoutePath.Docs" show-arrows>
       <!-- Exact, or "/docs" resolves with no slug param and counts as active on every docs page -->
-      <v-tab class="text-none" exact prepend-icon="mdi-home" :to="RoutePath.Docs" :value="RoutePath.Docs">
+      <v-tab class="text-none" exact prepend-icon="i-mdi:home" :to="RoutePath.Docs" :value="RoutePath.Docs">
         Overview
       </v-tab>
       <v-tab

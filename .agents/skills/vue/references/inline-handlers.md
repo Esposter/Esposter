@@ -35,10 +35,10 @@ Not only callbacks passed as arguments:
 
   ```vue
   <!-- WRONG — copyFooLink is bound once -->
-  <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyFooLink" />
+  <StyledTooltipIconButton icon="i-mdi:content-copy" text="Copy link" @click="copyFooLink" />
 
   <!-- CORRECT -->
-  <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="async () => { ... }" />
+  <StyledTooltipIconButton icon="i-mdi:content-copy" text="Copy link" @click="async () => { ... }" />
   ```
 
   The one exception is **scope**: a template expression can only reach bindings `<script setup>` exposes to it. Top-level `const`s and imports are exposed, so `getResultAsync`/`noop`/a store method all inline fine. Things the template cannot name — `window` and other browser globals, a local `let`, a type annotation the body needs — force the handler to stay in script:

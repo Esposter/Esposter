@@ -23,7 +23,7 @@ const { clearComposer } = inputStore;
     "
   >
     <template #activator="{ updateIsOpen }">
-      <MessageDraftsAndSentActionButton icon="mdi-delete-outline" text="Delete draft" @click="updateIsOpen(true)" />
+      <MessageDraftsAndSentActionButton icon="i-mdi:delete-outline" text="Delete draft" @click="updateIsOpen(true)" />
     </template>
     Are you sure you want to delete this draft?
   </StyledDeleteFormDialog>

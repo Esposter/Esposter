@@ -19,7 +19,7 @@ const { checkHasSentFriendRequest, sendFriendRequest } = friendRequestStore;
   <v-avatar v-if="!checkIsFriend(user.id) && !checkHasSentFriendRequest(user.id)" color="surface">
     <StyledTooltipIconButton
       :button-props="{ size: 'small' }"
-      icon="mdi-account-plus"
+      icon="i-mdi:account-plus"
       text="Add Friend"
       @click="sendFriendRequest(user.id)"
     />

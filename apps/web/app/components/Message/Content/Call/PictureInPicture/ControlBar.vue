@@ -14,7 +14,7 @@ const { isPoppedOut } = storeToRefs(mediaStore);
       <MessageContentCallAudioDeafenButton />
       <MessageContentCallControlHandButton />
       <MessageContentCallControlActionButton
-        icon="mdi-arrow-expand"
+        icon="i-mdi:arrow-expand"
         tooltip="Return to Call"
         variant="plain"
         @click="isPoppedOut = false"

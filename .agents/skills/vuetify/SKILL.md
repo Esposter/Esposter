@@ -9,7 +9,7 @@ description: Apply when writing or reviewing Vuetify components, dialogs, select
 
 Use `StyledButton` for every confirm / complete / primary call-to-action (create, save, accept, publish, request, start). **Never a raw `color="primary"` `v-btn`** — colourless buttons are transparent by default (`references/button-backgrounds.md`), so a primary-coloured fill reads badly on the app's transparent / `v-main` base; `StyledButton` renders the midnight-bloom gradient + white text instead. It paints with `background-image`, so it is immune to every background rule and inherited variant.
 
-- Pass Vuetify props through `:button-props="{ ... }"` (camelCase — `{ prependIcon: 'mdi-plus', disabled: !isValid, loading: isSubmitting }`).
+- Pass Vuetify props through `:button-props="{ ... }"` (camelCase — `{ prependIcon: 'i-mdi:plus', disabled: !isValid, loading: isSubmitting }`).
 - **`:to`, `type` and native listeners go directly on the wrapper**, never inside `:button-props` — they fall through to the root `v-btn` (`type` is a native attribute, not a typed `VBtn` prop, so `buttonProps` fails typecheck). Link choice, the raw-`<a>` ban and `RoutePath` targets belong to the **routing** skill.
 - Destructive confirms stay a `color="error"` `v-btn` — error red is visible on the transparent base, and `StyledButton` is for positive/primary actions only.
 - **`StyledTooltipIconButton` passes `:icon` by default**, which forces Vuetify's circular icon-button variant — `:is-icon-button="false"` keeps the rectangular shape with the icon as a child (`references/styled-primitives.md`).
@@ -32,7 +32,7 @@ Vuetify composables are auto-imported with a `v` prefix and are globally availab
 
 - **Every icon-only `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` + descriptive `text` so the action is discoverable. A button with **visible label text** is self-describing and needs none.
 - **`#activator` slot always first** in `v-tooltip` (and `v-menu`).
-- **Icon choice for create actions** — use the semantically specific MDI icon when available (`mdi-table-row-plus-after`, `mdi-table-column-plus-after`); fall back to `mdi-plus` for generic create.
+- **Icon choice for create actions** — use the semantically specific MDI icon when available (`i-mdi:table-row-plus-after`, `i-mdi:table-column-plus-after`); fall back to `i-mdi:plus` for generic create.
 - **Inside a `v-text-field` slot** (`#append-inner` etc.) use `variant="plain"` and omit `color` — a `variant="flat" color="primary"` button paints a filled block inside the input, where plain stays transparent and inherits the surrounding text colour.
 
 ## Linked Buttons and Tabs Are Highlighted by the Router — `references/router-driven-highlighting.md`

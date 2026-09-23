@@ -11,7 +11,7 @@ const { createVisual } = visualStore;
     <!-- v-toolbar provides variant="text" and the global VBtn default is flat, so this deliberately
       raised button has to restate both -->
     <StyledTooltipIconButton
-      icon="mdi-plus"
+      icon="i-mdi:plus"
       :button-props="{ flat: false, variant: 'elevated' }"
       :is-icon-button="false"
       text="Add Visual"

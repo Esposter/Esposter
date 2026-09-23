@@ -29,7 +29,7 @@ onMounted(async () => {
     <StyledEmptyState
       v-else-if="items.length === 0"
       description="Changes to this resource will show up here."
-      icon="mdi-history"
+      icon="i-mdi:history"
       title="No activity yet"
     />
     <v-card v-else>

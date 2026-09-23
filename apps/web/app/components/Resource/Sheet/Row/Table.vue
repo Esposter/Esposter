@@ -120,7 +120,7 @@ onClickOutside(table, () => {
           {{ (rowIdIndexMap.get(item.id) ?? -1) + 1 }}
         </template>
         <template #[`item.drag`]>
-          <v-icon v-if="isDraggable" :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
+          <v-icon v-if="isDraggable" :class="DRAG_HANDLE_CLASS" icon="i-mdi:drag" cursor-move />
         </template>
         <template #[`item.actions`]="{ item }">
           <ResourceSheetRowActionSlot :index="rowIdIndexMap.get(item.id) ?? -1" :row="item" />

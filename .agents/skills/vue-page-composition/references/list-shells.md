@@ -26,7 +26,7 @@ When the row itself is a link (`<v-list-item :to>` renders a real `<a href>`), e
 ```vue
 <template #append>
   <StyledLinkRowActions>
-    <StyledTooltipIconButton icon="mdi-plus" text="Create" @click="..." />
+    <StyledTooltipIconButton icon="i-mdi:plus" text="Create" @click="..." />
   </StyledLinkRowActions>
 </template>
 ```

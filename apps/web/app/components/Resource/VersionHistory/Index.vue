@@ -35,7 +35,7 @@ onUnmounted(() => {
     <div py-2 pl-4 pr-2 b-0 b-b-1 b-border b-solid flex gap-2 items-center>
       <span text-title-medium>Version history</span>
       <v-spacer />
-      <StyledTooltipIconButton icon="mdi-close" text="Close version history" @click="closeVersionHistory" />
+      <StyledTooltipIconButton icon="i-mdi:close" text="Close version history" @click="closeVersionHistory" />
     </div>
     <!-- Only a publishable type has two channels to tell apart, so the filter exists where it means something and
       nowhere else — on every other type the timeline is revisions and nothing but -->

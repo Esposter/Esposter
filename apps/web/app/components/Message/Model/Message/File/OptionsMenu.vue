@@ -15,7 +15,7 @@ const { filename, hoverProps, isHovering, url } = defineProps<Props>();
 const emit = defineEmits<{ delete: [] }>();
 const menuItems = computed<Item[]>(() => [
   {
-    icon: "mdi-download",
+    icon: "i-mdi:download",
     onClick: () => {
       downloadUrl(url, filename);
     },
@@ -23,7 +23,7 @@ const menuItems = computed<Item[]>(() => [
   },
   {
     color: "error",
-    icon: "mdi-delete",
+    icon: "i-mdi:delete",
     onClick: () => {
       emit("delete");
     },

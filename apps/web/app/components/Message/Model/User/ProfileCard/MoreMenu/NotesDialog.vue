@@ -52,12 +52,12 @@ const createNote = (onComplete: (isSuccessful?: boolean) => void) =>
 
 <template>
   <StyledFormDialog
-    :card-props="{ prependIcon: 'mdi-note-text-outline', title: `Notes for ${displayName}` }"
+    :card-props="{ prependIcon: 'i-mdi:note-text-outline', title: `Notes for ${displayName}` }"
     :confirm-button-props="{ disabled: !isNoteValid, text: 'Add note' }"
     @submit="(_event, onComplete) => createNote(onComplete)"
   >
     <template #activator="{ updateIsOpen }">
-      <v-list-item prepend-icon="mdi-note-text-outline" title="Notes" @click.stop="updateIsOpen(true)">
+      <v-list-item prepend-icon="i-mdi:note-text-outline" title="Notes" @click.stop="updateIsOpen(true)">
         <template #append>
           <v-badge v-if="moderationNoteCount > 0" :content="moderationNoteCount" color="primary" inline />
         </template>

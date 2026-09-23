@@ -20,8 +20,8 @@ import type { Item } from "@/models/shared/Item";
 // When narrow, the toolbar commands collapse into the … overflow menu — the close ✕ never collapses
 const { smAndDown } = useVDisplay();
 const toolbarItems = computed<Item[]>(() => [
-  { active: isGrouped.value, icon: "mdi-format-list-group", onClick: () => toggleGroup(), title: "Group by type" },
-  { icon: "mdi-refresh", onClick: () => refresh(), title: "Refresh" },
+  { active: isGrouped.value, icon: "i-mdi:format-list-group", onClick: () => toggleGroup(), title: "Group by type" },
+  { icon: "i-mdi:refresh", onClick: () => refresh(), title: "Refresh" },
 ]);
 </script>
 
@@ -34,8 +34,8 @@ const toolbarItems = computed<Item[]>(() => [
     :button-props="{ active }"
     @click="onClick"
   />
-  <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
-  <StyledTooltipIconButton icon="mdi-close" text="Close" :to="closeTo" />
+  <StyledOverflowMenu v-if="smAndDown" icon="i-mdi:dots-horizontal" :items="toolbarItems" />
+  <StyledTooltipIconButton icon="i-mdi:close" text="Close" :to="closeTo" />
 </template>
 ```
 

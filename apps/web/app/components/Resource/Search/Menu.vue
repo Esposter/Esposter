@@ -56,7 +56,7 @@ onClickOutside(root, () => {
       :placeholder
       aria-autocomplete="list"
       variant="solo"
-      prepend-inner-icon="mdi-magnify"
+      prepend-inner-icon="i-mdi:magnify"
       role="combobox"
       clearable
       @focus="isPanelVisible = true"

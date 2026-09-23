@@ -17,7 +17,7 @@ const emit = defineEmits<{ clear: []; refresh: [] }>();
   <StyledErrorState v-if="error" :error @retry="emit('refresh')" />
   <StyledEmptyState
     v-else-if="hasActiveFilters"
-    icon="mdi-filter-off-outline"
+    icon="i-mdi:filter-off-outline"
     title="No resources match your filters"
     description="Try adjusting or clearing your filters."
   >

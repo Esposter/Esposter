@@ -30,7 +30,7 @@ const displayItemType = computed(() => prettify(editedItem.type));
   >
     <template #activator>
       <StyledTooltipIconButton
-        icon="mdi-close"
+        icon="i-mdi:close"
         text="Close"
         @click="
           () => {

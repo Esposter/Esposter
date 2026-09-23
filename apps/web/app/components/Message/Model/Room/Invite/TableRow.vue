@@ -50,7 +50,7 @@ const { countdown, isExpired } = useCountdown(() => invite.expiresAt);
         <StyledTooltipIconButton
           v-if="isCreator"
           :button-props="{ size: 'small' }"
-          icon="mdi-pencil"
+          icon="i-mdi:pencil"
           text="Edit invite link"
           @click="inviteRoomId = roomId"
         />

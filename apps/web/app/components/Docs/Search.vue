@@ -52,7 +52,7 @@ const results = computed(() => {
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton
         :button-props="{ class: 'mx-2' }"
-        icon="mdi-magnify"
+        icon="i-mdi:magnify"
         text="Search (Ctrl+K)"
         @click="updateIsOpen(true)"
       />

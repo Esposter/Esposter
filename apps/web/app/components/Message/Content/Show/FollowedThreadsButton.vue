@@ -7,7 +7,7 @@ const { isOpen, toggle } = useToggleRightDrawer(RightDrawer.Threads);
 <template>
   <StyledTooltipIconButton
     :button-props="{ size: 'small' }"
-    icon="mdi-forum-outline"
+    icon="i-mdi:forum-outline"
     :text="`${isOpen ? 'Hide' : 'Show'} Followed Threads`"
     :tooltip-props="{ location: 'bottom' }"
     @click="toggle"

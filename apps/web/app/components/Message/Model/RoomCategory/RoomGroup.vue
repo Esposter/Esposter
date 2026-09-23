@@ -29,7 +29,7 @@ const isCollapsed = useLocalStorage(LocalStorageKey.MessageCategoryCollapsed(cat
     >
       <v-list-item-title>
         <div flex gap-1 items-center>
-          <v-icon :icon="isCollapsed ? 'mdi-chevron-right' : 'mdi-chevron-down'" size="x-small" />
+          <v-icon :icon="isCollapsed ? 'i-mdi:chevron-right' : 'i-mdi:chevron-down'" size="x-small" />
           {{ category.name }}
         </div>
       </v-list-item-title>

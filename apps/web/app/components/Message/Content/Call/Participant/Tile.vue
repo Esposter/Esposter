@@ -45,7 +45,7 @@ const { isDeafened, isScreenSharing, isSelf, isSpeaking, participant, videoStrea
               absolute
               :="{ ...menuProps, ...tooltipProps }"
               density="comfortable"
-              icon="mdi-dots-vertical"
+              icon="i-mdi:dots-vertical"
               variant="text"
               size="small"
             />
@@ -57,11 +57,11 @@ const { isDeafened, isScreenSharing, isSelf, isSpeaking, participant, videoStrea
       <span fw-medium truncate text-body-small>
         {{ isSelf ? `${participant.name} (You)` : participant.name }}
       </span>
-      <v-icon v-if="isScreenSharing" text-primary icon="mdi-monitor-share" size="small" />
-      <v-icon v-if="participant.isHandRaised" color="warning" icon="mdi-hand-back-right" size="small" />
-      <v-icon v-if="participant.isCameraEnabled" text-primary icon="mdi-video" size="small" />
-      <v-icon v-if="participant.isMuted" icon="mdi-microphone-off" size="small" />
-      <v-icon v-if="isDeafened" icon="mdi-headphones-off" size="small" />
+      <v-icon v-if="isScreenSharing" text-primary icon="i-mdi:monitor-share" size="small" />
+      <v-icon v-if="participant.isHandRaised" color="warning" icon="i-mdi:hand-back-right" size="small" />
+      <v-icon v-if="participant.isCameraEnabled" text-primary icon="i-mdi:video" size="small" />
+      <v-icon v-if="participant.isMuted" icon="i-mdi:microphone-off" size="small" />
+      <v-icon v-if="isDeafened" icon="i-mdi:headphones-off" size="small" />
     </StyledCard>
   </StyledCard>
 </template>

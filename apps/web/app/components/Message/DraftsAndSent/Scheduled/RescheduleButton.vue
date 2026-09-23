@@ -18,7 +18,7 @@ const { open } = scheduleDialogStore;
      and rescheduling one has to keep it there -->
 <template>
   <MessageDraftsAndSentActionButton
-    icon="mdi-clock-edit-outline"
+    icon="i-mdi:clock-edit-outline"
     text="Reschedule message"
     @click="
       open({

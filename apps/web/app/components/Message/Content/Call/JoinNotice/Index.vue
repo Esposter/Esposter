@@ -22,7 +22,7 @@ const { joinNoticeParticipant } = storeToRefs(participantStore);
       <span fw-medium text-body-medium>{{ joinNoticeParticipant.name }} joined the call</span>
       <StyledTooltipIconButton
         :button-props="{ size: 'small', variant: 'plain' }"
-        icon="mdi-close"
+        icon="i-mdi:close"
         text="Close"
         @click="clearJoinNotice()"
       />

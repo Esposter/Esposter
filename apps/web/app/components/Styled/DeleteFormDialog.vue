@@ -11,7 +11,7 @@ const modelValue = defineModel<boolean>({ default: false });
 const { cardProps, confirmButtonProps, confirmName = "" } = defineProps<DeleteFormDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void] }>();
 const confirmNameValue = ref("");
-const mergedCardProps = computed(() => ({ prependIcon: "mdi-delete-alert-outline", ...cardProps }));
+const mergedCardProps = computed(() => ({ prependIcon: "i-mdi:delete-alert-outline", ...cardProps }));
 const mergedConfirmButtonProps = computed(() => ({ color: "error", text: "Delete", ...confirmButtonProps }));
 const confirmButtonAttrs = computed(() => ({
   disabled: Boolean(confirmName) && confirmNameValue.value !== confirmName,

@@ -14,5 +14,5 @@ const buttonProps = computed<VBtn["$props"]>(() => ({
 </script>
 
 <template>
-  <StyledTooltipIconButton :button-props icon="mdi-chevron-down" text="Next (Enter)" @click="goToOccurrence(1)" />
+  <StyledTooltipIconButton :button-props icon="i-mdi:chevron-down" text="Next (Enter)" @click="goToOccurrence(1)" />
 </template>

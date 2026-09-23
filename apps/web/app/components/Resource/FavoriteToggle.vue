@@ -21,7 +21,7 @@ const buttonProps = computed<VBtn["$props"]>(() => ({
 
 <template>
   <StyledTooltipIconButton
-    :icon="isFavorite ? 'mdi-star' : 'mdi-star-outline'"
+    :icon="isFavorite ? 'i-mdi:star' : 'i-mdi:star-outline'"
     :text="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
     :button-props
     @click="toggleFavorite(resource)"

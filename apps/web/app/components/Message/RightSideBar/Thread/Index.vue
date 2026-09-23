@@ -25,7 +25,7 @@ const displayThreadMessages = computed(() =>
         <StyledOverflowMenu v-if="activeRootRowKey" :items="actionItems" text="More" />
         <StyledTooltipIconButton
           :button-props="{ size: 'small', variant: 'text' }"
-          icon="mdi-close"
+          icon="i-mdi:close"
           text="Close thread"
           @click="closeThread()"
         />

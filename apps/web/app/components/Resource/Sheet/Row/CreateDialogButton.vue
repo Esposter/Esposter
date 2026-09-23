@@ -27,7 +27,7 @@ const resetForm = () => {
 <template>
   <ResourceSheetEditDialogButton
     :edited-value="editedRow"
-    icon="mdi-table-row-plus-after"
+    icon="i-mdi:table-row-plus-after"
     :schema="rowSchema"
     title="Create Row"
     tooltip-text="Add Row"

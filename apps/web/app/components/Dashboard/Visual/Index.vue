@@ -58,7 +58,7 @@ const { copy } = clipboardStore;
         <!-- The zoom, the hidden series and the selection are the reader's own work, so the link they send
           Carries it rather than dropping the recipient on the unfiltered dashboard -->
         <StyledTooltipIconButton
-          icon="mdi-link-variant"
+          icon="i-mdi:link-variant"
           text="Copy link to this view"
           :button-props
           @click="copy(getViewUrl())"
@@ -66,7 +66,7 @@ const { copy } = clipboardStore;
         <!-- A snapshotted binding renders baked data, so there is nothing to refresh -->
         <StyledTooltipIconButton
           v-if="visual.dataset && !visual.dataset.snapshot"
-          icon="mdi-refresh"
+          icon="i-mdi:refresh"
           text="Refresh data"
           :button-props="refreshButtonProps"
           @click="refresh()"

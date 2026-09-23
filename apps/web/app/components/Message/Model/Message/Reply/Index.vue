@@ -25,7 +25,7 @@ const scrollToMessage = useScrollToMessage();
       <div flex gap-x-1 items-center>
         <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
         <span fw-bold text-hint>{{ creator.name }}</span>
-        <v-icon v-if="reply.isForward" icon="mdi-share" size="small" />
+        <v-icon v-if="reply.isForward" icon="i-mdi:share" size="small" />
         <span
           v-if="!EMPTY_TEXT_REGEX.test(reply.message)"
           class="rich-text-content"
@@ -44,11 +44,11 @@ const scrollToMessage = useScrollToMessage();
         >
           Click to see attachment
         </span>
-        <v-icon v-if="reply.files.length > 0" icon="mdi-file-image" size="small" />
+        <v-icon v-if="reply.files.length > 0" icon="i-mdi:file-image" size="small" />
       </div>
     </template>
     <template v-else>
-      <v-icon pb-0.75 size="x-small" icon="mdi-reply" />
+      <v-icon pb-0.75 size="x-small" icon="i-mdi:reply" />
       <span pb-0.75 italic text-body-small>Original message was deleted</span>
     </template>
   </div>

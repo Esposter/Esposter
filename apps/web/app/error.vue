@@ -24,10 +24,10 @@ const description = computed(() =>
   what a Vuetify component needs to render at all, rather than a layout choice -->
   <v-app>
     <div flex h-screen items-center justify-center>
-      <StyledEmptyState :description :icon="isNotFound ? 'mdi-map-marker-question' : 'mdi-alert-octagon'" :title>
+      <StyledEmptyState :description :icon="isNotFound ? 'i-mdi:map-marker-question' : 'i-mdi:alert-octagon'" :title>
         <div flex flex-wrap gap-3 justify-center>
           <StyledButton
-            :button-props="{ prependIcon: 'mdi-home' }"
+            :button-props="{ prependIcon: 'i-mdi:home' }"
             @click="
               async () => {
                 await clearError({ redirect: RoutePath.Index });
@@ -38,7 +38,7 @@ const description = computed(() =>
           </StyledButton>
           <v-btn
             v-if="!isNotFound"
-            prepend-icon="mdi-refresh"
+            prepend-icon="i-mdi:refresh"
             variant="tonal"
             @click="
               async () => {

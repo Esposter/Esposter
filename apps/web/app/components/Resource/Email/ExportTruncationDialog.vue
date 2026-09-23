@@ -23,7 +23,7 @@ const isOpen = computed({
   <StyledDialog
     v-if="pendingDataset && truncation"
     v-model="isOpen"
-    :card-props="{ prependIcon: 'mdi-alert-outline', title: 'Export incomplete data?' }"
+    :card-props="{ prependIcon: 'i-mdi:alert-outline', title: 'Export incomplete data?' }"
     :confirm-button-props="{ text: 'Export anyway' }"
     @confirm="
       (onComplete) => {

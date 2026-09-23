@@ -40,7 +40,7 @@ const { createNode, onDragStart } = useDragAndDrop();
     </v-list>
     <StyledTooltipIconButton
       :button-props="{ class: 'self-end' }"
-      icon="mdi-chevron-double-left"
+      icon="i-mdi:chevron-double-left"
       text="Collapse sidebar"
       @click="isSidebarOpen = false"
     />

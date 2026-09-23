@@ -35,7 +35,7 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
   <StyledFormDialog
     v-model="isOpen"
     :card-props="{ title: 'Create Poll' }"
-    :confirm-button-props="{ text: 'Create Poll', prependIcon: 'mdi-poll' }"
+    :confirm-button-props="{ text: 'Create Poll', prependIcon: 'i-mdi:poll' }"
     @submit="submit"
   >
     <v-text-field v-model="question" :rules="requiredRules" label="Question" />
@@ -50,7 +50,7 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
         <template #append>
           <StyledTooltipIconButton
             :button-props="{ disabled: options.length <= POLL_MIN_OPTIONS, size: 'small' }"
-            icon="mdi-close"
+            icon="i-mdi:close"
             text="Remove option"
             @click="options = options.toSpliced(index, 1)"
           />
@@ -61,7 +61,7 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
       <template #activator="{ props: tooltipProps }">
         <v-btn
           :disabled="options.length >= POLL_MAX_OPTIONS"
-          prepend-icon="mdi-plus"
+          prepend-icon="i-mdi:plus"
           :="tooltipProps"
           @click="options.push('')"
         >

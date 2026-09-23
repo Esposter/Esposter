@@ -9,7 +9,7 @@ const { toggleHandRaised } = callStore;
 <template>
   <MessageContentCallControlActionButton
     :color="isHandRaised ? 'warning' : undefined"
-    :icon="isHandRaised ? 'mdi-hand-back-right' : 'mdi-hand-back-right-outline'"
+    :icon="isHandRaised ? 'i-mdi:hand-back-right' : 'i-mdi:hand-back-right-outline'"
     :tooltip="isHandRaised ? 'Lower Hand' : 'Raise Hand'"
     variant="plain"
     @click="toggleHandRaised()"

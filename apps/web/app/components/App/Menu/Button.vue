@@ -9,7 +9,7 @@ const menu = ref(false);
   <v-avatar color="background">
     <StyledTooltipMenuIconButton
       v-model="menu"
-      icon="mdi-dots-grid"
+      icon="i-mdi:dots-grid"
       :menu-props="APP_BAR_MENU_PROPS"
       text="Menu"
       :tooltip-props="APP_BAR_TOOLTIP_PROPS"

@@ -12,7 +12,7 @@ const { isEditRoomDialogOpen } = storeToRefs(roomDialogStore);
 </script>
 
 <template>
-  <MessageModelMessageTypeSystemLine :active icon="mdi-pencil" :is-preview :message>
+  <MessageModelMessageTypeSystemLine :active icon="i-mdi:pencil" :is-preview :message>
     <span fw-bold>{{ creator.name }}</span>
     <template v-if="message.message">
       <span op-medium-emphasis> changed the room name: </span>

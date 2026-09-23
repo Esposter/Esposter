@@ -30,7 +30,7 @@ const isVisible = computed(() => room.userId === session.value?.user.id || check
           :="tooltipProps"
           :ripple="false"
           density="compact"
-          icon="mdi-cog"
+          icon="i-mdi:cog"
           variant="plain"
           size="small"
           @click="settingsRoomId = room.id"

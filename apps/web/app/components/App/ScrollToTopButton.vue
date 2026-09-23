@@ -13,7 +13,7 @@ const goTo = useVGoTo();
       right-4
       fixed
       z-5
-      :button-props="{ icon: 'mdi-chevron-up' }"
+      :button-props="{ icon: 'i-mdi:chevron-up' }"
       @click="goTo(0)"
     />
   </v-fade-transition>

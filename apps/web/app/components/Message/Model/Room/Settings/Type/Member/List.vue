@@ -38,7 +38,7 @@ await readMemberCounts();
       v-model="searchQuery"
       density="compact"
       placeholder="Search members"
-      prepend-inner-icon="mdi-magnify"
+      prepend-inner-icon="i-mdi:magnify"
       clearable
     />
     <v-list density="compact" rd>

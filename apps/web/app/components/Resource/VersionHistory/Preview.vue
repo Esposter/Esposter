@@ -44,7 +44,7 @@ const title = computed(() => (snapshotVersion.value ? getSnapshotVersionTitle(sn
         <span>Previewing {{ title }} — the current draft is untouched</span>
         <v-spacer />
         <StyledButton
-          :button-props="{ prependIcon: 'mdi-restore', text: 'Restore this version', variant: 'text' }"
+          :button-props="{ prependIcon: 'i-mdi:restore', text: 'Restore this version', variant: 'text' }"
           @click="restoringSnapshotVersionId = snapshotVersionId"
         />
         <StyledButton :button-props="{ text: 'Back to current', variant: 'text' }" @click="stopPreviewingSnapshot" />
@@ -54,7 +54,7 @@ const title = computed(() => (snapshotVersion.value ? getSnapshotVersionTitle(sn
       <StyledEmptyState
         v-if="!publishedVersion || !viewComponent"
         description="This version has no rendered form of its own — restore it to see its content."
-        icon="mdi-eye-off-outline"
+        icon="i-mdi:eye-off-outline"
         title="Nothing to preview"
       />
       <Suspense v-else>

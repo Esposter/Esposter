@@ -91,7 +91,7 @@ const clearFilters = () => {
     />
     <v-menu v-if="availableFilterTypes.length > 0">
       <template #activator="{ props: menuProps }">
-        <v-chip prepend-icon="mdi-plus" variant="text" :="menuProps">Add filter</v-chip>
+        <v-chip prepend-icon="i-mdi:plus" variant="text" :="menuProps">Add filter</v-chip>
       </template>
       <v-list density="compact">
         <v-list-item

@@ -19,7 +19,7 @@ const { deviceSections, isMenuOpen } = useCallDeviceSettings([{ kind: "videoinpu
   <StyledTooltipMenuIconButton
     v-model="isMenuOpen"
     :button-props="{ ripple: false, size: 'small', variant: 'plain' }"
-    icon="mdi-chevron-up"
+    icon="i-mdi:chevron-up"
     :menu-props="{ closeOnContentClick: false, location: 'top' }"
     text="Video Settings"
   >

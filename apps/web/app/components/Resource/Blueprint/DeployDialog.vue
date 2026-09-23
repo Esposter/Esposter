@@ -49,7 +49,7 @@ const deploy = async () => {
 </script>
 
 <template>
-  <StyledButton :button-props="{ prependIcon: 'mdi-rocket-launch', text: 'Deploy' }" @click="isOpen = true" />
+  <StyledButton :button-props="{ prependIcon: 'i-mdi:rocket-launch', text: 'Deploy' }" @click="isOpen = true" />
   <v-dialog v-model="isOpen" max-width="32rem">
     <v-card>
       <v-card-title>Deploy blueprint</v-card-title>

@@ -18,7 +18,7 @@ const { hiddenColumnKeys, toggleableHeaders, toggleColumn } = useResourceListCol
     <template #activator="{ props: menuProps }">
       <v-tooltip text="Manage view">
         <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-view-column-outline" :="mergeProps(menuProps, tooltipProps)" />
+          <v-btn icon="i-mdi:view-column-outline" :="mergeProps(menuProps, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>

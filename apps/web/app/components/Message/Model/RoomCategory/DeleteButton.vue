@@ -15,7 +15,7 @@ const { deletingId } = storeToRefs(roomCategoryDialogStore);
 <template>
   <StyledTooltipIconButton
     :button-props="{ size: 'x-small', variant: 'plain' }"
-    icon="mdi-delete"
+    icon="i-mdi:delete"
     text="Delete Category"
     @click.stop="deletingId = category.id"
   />

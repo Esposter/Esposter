@@ -9,7 +9,7 @@ const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
 <template>
   <NuxtInvisibleLink :to="url">
     <StyledCard p-2 flex flex-col size-full items-center justify-center>
-      <v-icon icon="mdi-file" :size="isPreview ? '6rem' : 'large'" />
+      <v-icon icon="i-mdi:file" :size="isPreview ? '6rem' : 'large'" />
       <span>{{ file.filename }}{{ isPreview ? "" : ` (${getFileSize(file.size)})` }}</span>
     </StyledCard>
   </NuxtInvisibleLink>

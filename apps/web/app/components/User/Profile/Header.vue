@@ -24,7 +24,7 @@ const isCurrentUser = computed(() => session.value?.user.id === userId);
     <div v-if="user.biography" op-medium-emphasis text-body-large>{{ user.biography }}</div>
     <StyledButton
       v-if="isCurrentUser"
-      :button-props="{ prependIcon: 'mdi-pencil', size: 'small', text: 'Edit profile', to: RoutePath.UserSettings }"
+      :button-props="{ prependIcon: 'i-mdi:pencil', size: 'small', text: 'Edit profile', to: RoutePath.UserSettings }"
     />
   </div>
 </template>

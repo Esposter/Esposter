@@ -19,7 +19,7 @@ const getDeviceTitle = (device: MediaDeviceInfo, index: number, title: string) =
       <v-list-item
         v-for="(device, index) of devices"
         :key="device.deviceId"
-        :prepend-icon="device.deviceId === selectedId ? 'mdi-check' : undefined"
+        :prepend-icon="device.deviceId === selectedId ? 'i-mdi:check' : undefined"
         :title="getDeviceTitle(device, index, title)"
         @click="emit('select', kind, device.deviceId)"
       />

@@ -49,7 +49,7 @@ const isMenuOpen = ref(false);
               {{ displayName }}
               <v-tooltip v-if="room.userId === member.id" text="Room Owner">
                 <template #activator="{ props }">
-                  <v-icon icon="mdi-crown" :="props" color="yellow-darken-4" />
+                  <v-icon icon="i-mdi:crown" :="props" color="yellow-darken-4" />
                 </template>
               </v-tooltip>
             </div>

@@ -10,7 +10,7 @@ const { isCallViewOpen } = storeToRefs(callStore);
     <MessageContentCallView>
       <template #append>
         <StyledTooltipIconButton
-          icon="mdi-close"
+          icon="i-mdi:close"
           text="Close call view"
           :tooltip-props="{ location: 'bottom' }"
           @click="isCallViewOpen = false"

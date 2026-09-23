@@ -15,7 +15,7 @@ const hasActiveFilters = computed(() =>
   <StyledTooltipIconButton
     v-if="hasActiveFilters"
     :button-props="{ ...DENSE_ICON_BUTTON_PROPS, color: 'primary', variant: 'text' }"
-    icon="mdi-filter-off"
+    icon="i-mdi:filter-off"
     text="Clear Filters"
     @click.stop="clearColumnFilters()"
   />

@@ -19,9 +19,9 @@ export const useFeatureActionItems = () => {
   const getActions = (targetId: string, someState: boolean): Item[] => {
     const items: Item[] = [];
     if (canDoA.value && !someState)
-      items.push({ icon: "mdi-x", title: "Action A", onClick: () => doA(targetId) });
+      items.push({ icon: "i-mdi:x", title: "Action A", onClick: () => doA(targetId) });
     if (canDoB.value)
-      items.push({ icon: "mdi-y", title: "Action B", onClick: () => doB(targetId) });
+      items.push({ icon: "i-mdi:y", title: "Action B", onClick: () => doB(targetId) });
     return items;
   };
 

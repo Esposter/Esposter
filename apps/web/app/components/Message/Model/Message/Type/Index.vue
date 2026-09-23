@@ -48,7 +48,7 @@ const messageHtml = useMessageHtml(
         <template #prepend>
           <v-list-item-subtitle>
             <span italic>
-              <v-icon icon="mdi-share" />
+              <v-icon icon="i-mdi:share" />
               Forwarded
             </span>
           </v-list-item-subtitle>

@@ -47,7 +47,7 @@ const deviceRows = computed(() => [
           :title="label"
         >
           <template #append>
-            <v-icon :color icon="mdi-circle" size="x-small" />
+            <v-icon :color icon="i-mdi:circle" size="x-small" />
           </template>
         </v-list-item>
         <v-divider />

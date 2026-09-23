@@ -13,7 +13,7 @@ const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 
 <template>
   <MessageDraftsAndSentActionButton
-    icon="mdi-pencil-outline"
+    icon="i-mdi:pencil-outline"
     text="Edit scheduled message"
     @click="
       async () => {

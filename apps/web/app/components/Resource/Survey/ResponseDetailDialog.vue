@@ -24,7 +24,7 @@ const { isOpen, item } = useSingletonDialog(detailRowKey, () =>
   <StyledDialog
     v-if="item"
     v-model="isOpen"
-    :card-props="{ prependIcon: 'mdi-comment-account-outline', title: 'Response' }"
+    :card-props="{ prependIcon: 'i-mdi:comment-account-outline', title: 'Response' }"
     :confirm-button-props="{ text: 'Close' }"
     @confirm="(onComplete) => onComplete()"
   >

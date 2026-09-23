@@ -61,9 +61,9 @@ const createFormatCommands = (
 // One command set rendered two ways — a labelled bar when there is room, the overflow menu when there is not.
 // Built once rather than written twice, so a label, an icon or a pending state cannot differ between them
 const commandItems = computed<Item[]>(() => [
-  { icon: "mdi-refresh", loading: isPending.value, onClick: () => readResource(), title: "Refresh" },
+  { icon: "i-mdi:refresh", loading: isPending.value, onClick: () => readResource(), title: "Refresh" },
   {
-    icon: "mdi-pencil",
+    icon: "i-mdi:pencil",
     onClick: () => {
       isRenameOpen.value = true;
     },
@@ -71,7 +71,7 @@ const commandItems = computed<Item[]>(() => [
   },
   {
     color: "error",
-    icon: "mdi-delete",
+    icon: "i-mdi:delete",
     onClick: () => {
       isDeleteOpen.value = true;
     },
@@ -79,7 +79,7 @@ const commandItems = computed<Item[]>(() => [
   },
   {
     disabled: isDuplicatePending.value,
-    icon: "mdi-content-copy",
+    icon: "i-mdi:content-copy",
     isGroupStart: true,
     loading: isDuplicatePending.value,
     onClick: () => duplicateResource(),
@@ -88,7 +88,7 @@ const commandItems = computed<Item[]>(() => [
   // Every type has revisions, so the command is unconditional — recovery is core rather than a capability.
   // Taking one is not a command at all: revisions accrue on their own, and a Save beside an editor that
   // Already persists on its own would read as the thing that makes an edit durable
-  { icon: "mdi-history", isGroupStart: true, onClick: () => openVersionHistory(), title: "Version history" },
+  { icon: "i-mdi:history", isGroupStart: true, onClick: () => openVersionHistory(), title: "Version history" },
   // Publishing and unpublishing are one executor, so one pending flag covers the single button that is
   // Rendered for whichever of them applies
   ...(isPublishable.value
@@ -96,7 +96,7 @@ const commandItems = computed<Item[]>(() => [
         publication.value
           ? {
               disabled: isPublicationPending.value,
-              icon: "mdi-cloud-off-outline",
+              icon: "i-mdi:cloud-off-outline",
               isGroupStart: true,
               loading: isPublicationPending.value,
               onClick: () => unpublishResource(),
@@ -104,7 +104,7 @@ const commandItems = computed<Item[]>(() => [
             }
           : {
               disabled: isPublicationPending.value,
-              icon: "mdi-cloud-upload",
+              icon: "i-mdi:cloud-upload",
               isGroupStart: true,
               loading: isPublicationPending.value,
               onClick: () => publishResource(),
@@ -116,7 +116,7 @@ const commandItems = computed<Item[]>(() => [
   ...(isPublishable.value && publication.value
     ? [
         {
-          icon: "mdi-share-variant",
+          icon: "i-mdi:share-variant",
           onClick: () => {
             isShareOpen.value = true;
           },
@@ -124,8 +124,8 @@ const commandItems = computed<Item[]>(() => [
         },
       ]
     : []),
-  ...createFormatCommands("Import", "mdi-import", importFormats.value, ({ import: run }) => run, true),
-  ...createFormatCommands("Export", "mdi-export", exportFormats.value, ({ export: run }) => run, false),
+  ...createFormatCommands("Import", "i-mdi:import", importFormats.value, ({ import: run }) => run, true),
+  ...createFormatCommands("Export", "i-mdi:export", exportFormats.value, ({ export: run }) => run, false),
 ]);
 </script>
 
@@ -138,7 +138,7 @@ const commandItems = computed<Item[]>(() => [
     <v-menu v-if="items" :disabled>
       <template #activator="{ props: menuActivatorProps }">
         <v-btn
-          append-icon="mdi-menu-down"
+          append-icon="i-mdi:menu-down"
           :color
           :disabled
           :loading
@@ -165,10 +165,10 @@ const commandItems = computed<Item[]>(() => [
       {{ title }}
     </v-btn>
   </template>
-  <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="commandItems" />
+  <StyledOverflowMenu v-if="smAndDown" icon="i-mdi:dots-horizontal" :items="commandItems" />
   <!-- One click, one icon: the star stays out of the overflow menu like the close ✕ -->
   <ResourceFavoriteToggle :resource />
-  <StyledTooltipIconButton :to="closeTo" icon="mdi-close" text="Close" />
+  <StyledTooltipIconButton :to="closeTo" icon="i-mdi:close" text="Close" />
   <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
   <ResourceDeleteDialog v-if="isDeleteOpen" v-model="isDeleteOpen" :remove="deleteResource" :resource />
   <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />

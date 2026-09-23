@@ -30,7 +30,7 @@ const { entry, isMyEntry } = defineProps<Props>();
     <v-spacer />
     <span text-hint>{{ entry.unlockCount }} unlocked</span>
     <v-chip flex gap-x-1 color="orange" size="small">
-      <v-icon icon="mdi-trophy" size="x-small" />
+      <v-icon icon="i-mdi:trophy" size="x-small" />
       {{ entry.points }}
     </v-chip>
   </v-sheet>

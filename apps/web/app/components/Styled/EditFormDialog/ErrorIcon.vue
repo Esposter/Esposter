@@ -34,7 +34,7 @@ defineExpose({ isValid });
 <template>
   <v-tooltip :text="errorMessage" :disabled="!errorMessage">
     <template #activator="{ props }">
-      <v-icon icon="mdi-alert-octagon" :color="isValid ? 'border' : 'error'" start :="props" />
+      <v-icon icon="i-mdi:alert-octagon" :color="isValid ? 'border' : 'error'" start :="props" />
     </template>
   </v-tooltip>
 </template>

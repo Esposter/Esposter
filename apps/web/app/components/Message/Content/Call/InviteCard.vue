@@ -18,7 +18,7 @@ onMounted(() => {
         <span fw-medium text-body-medium>Your call's ready</span>
         <StyledTooltipIconButton
           :button-props="{ size: 'small', variant: 'plain' }"
-          icon="mdi-close"
+          icon="i-mdi:close"
           text="Close"
           @click="isOpen = false"
         />

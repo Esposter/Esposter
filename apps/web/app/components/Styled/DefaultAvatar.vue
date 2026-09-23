@@ -10,6 +10,6 @@ const { avatarProps } = defineProps<Props>();
 
 <template>
   <v-avatar color="background" :="avatarProps">
-    <v-icon icon="mdi-account-multiple" />
+    <v-icon icon="i-mdi:account-multiple" />
   </v-avatar>
 </template>

@@ -32,7 +32,7 @@ const { isVoting, vote } = await useVotePoll(
 <template>
   <MessageModelMessageTypeListItem :active :is-preview>
     <template #prepend>
-      <v-icon icon="mdi-poll" size="small" />
+      <v-icon icon="i-mdi:poll" size="small" />
     </template>
     <span fw-bold>{{ creator.name }}</span>
     <span op-medium-emphasis> created a poll </span>

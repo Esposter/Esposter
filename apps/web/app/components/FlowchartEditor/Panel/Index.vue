@@ -19,7 +19,7 @@ const { removeNodes } = useVueFlow();
         <v-spacer />
         <StyledTooltipIconButton
           :button-props="{ size: 'small' }"
-          icon="mdi-delete"
+          icon="i-mdi:delete"
           text="Delete Node"
           @click="removeNodes(firstSelectedNode.id)"
         />

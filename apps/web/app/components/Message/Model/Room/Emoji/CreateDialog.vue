@@ -42,7 +42,7 @@ const fileRules = computed(() => [
 <template>
   <StyledFormDialog
     v-model="modelValue"
-    :card-props="{ prependIcon: 'mdi-emoticon-plus', title: 'Add Emoji' }"
+    :card-props="{ prependIcon: 'i-mdi:emoticon-plus', title: 'Add Emoji' }"
     :confirm-button-attrs="{ disabled: isFull }"
     :confirm-button-props="{ text: 'Save' }"
     @submit="

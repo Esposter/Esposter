@@ -32,7 +32,7 @@ const isCreator = computed(() => post.userId === session.value?.user.id);
         <StyledTooltipIconButton
           v-if="isCreator"
           :button-props="{ size: 'small', tile: true }"
-          icon="mdi-delete"
+          icon="i-mdi:delete"
           text="Delete Post"
           @click="deletingId = post.id"
         />

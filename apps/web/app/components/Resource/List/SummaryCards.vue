@@ -22,7 +22,7 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
     <!-- The grouped count only returns types the filter actually matched, so an empty summary means an empty list -->
     <StyledEmptyState
       v-else-if="counts.length === 0"
-      icon="mdi-folder-multiple-outline"
+      icon="i-mdi:folder-multiple-outline"
       title="Nothing to summarize"
       description="No resources match the current filters."
     />

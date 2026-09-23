@@ -58,7 +58,7 @@ const selectedDomIndex = computed(() => {
       v-if="searchQuery"
       :id="getResourceSearchOptionId(items.length)"
       :active="selectedIndex === items.length"
-      append-icon="mdi-arrow-right"
+      append-icon="i-mdi:arrow-right"
       role="option"
       title="See all results"
       :to="seeAllTo"

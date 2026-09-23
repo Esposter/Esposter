@@ -47,7 +47,7 @@ const { executeMutation } = useMutation();
               resetForward();
               if (destinationRoomId) {
                 await navigateTo(RoutePath.Messages(destinationRoomId));
-                createAlert('Message forwarded!', 'success', { icon: 'mdi-share', location: 'top center' });
+                createAlert('Message forwarded!', 'success', { icon: 'i-mdi:share', location: 'top center' });
               }
             },
           },

@@ -20,7 +20,7 @@ if (session.value) await readNotifications();
     <StyledTooltipMenuIconButton
       v-model="isPanelOpen"
       aria-label="Notifications"
-      icon="mdi-bell-outline"
+      icon="i-mdi:bell-outline"
       :menu-props="{ closeOnContentClick: false, location: 'bottom end' }"
       text="Notifications"
       :tooltip-props="APP_BAR_TOOLTIP_PROPS"
@@ -38,7 +38,7 @@ if (session.value) await readNotifications();
             </v-btn>
           </template>
         </v-toolbar>
-        <StyledEmptyState v-if="notifications.length === 0" icon="mdi-bell-outline" title="No notifications" />
+        <StyledEmptyState v-if="notifications.length === 0" icon="i-mdi:bell-outline" title="No notifications" />
         <v-list v-else max-h-120 of-y-auto>
           <AppNotificationBellItem v-for="notification of notifications" :key="notification.id" :notification />
           <StyledWaypoint :is-active="hasMore" @change="readMoreNotifications" />

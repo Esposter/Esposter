@@ -19,7 +19,7 @@ const { isCameraEnabled, stream } = defineProps<Props>();
       :srcObject.prop="stream"
     />
     <div v-if="!isCameraEnabled || !stream" flex flex-col gap-y-3 size-full items-center justify-center>
-      <v-icon icon="mdi-camera-off" size="x-large" color="medium-emphasis" />
+      <v-icon icon="i-mdi:camera-off" size="x-large" color="medium-emphasis" />
       <span op-medium-emphasis text-body-medium>Camera is off</span>
     </div>
   </StyledCard>

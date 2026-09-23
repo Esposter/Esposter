@@ -7,7 +7,7 @@ const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 <template>
   <StyledTooltipIconButton
     :button-props="{ size: 'small' }"
-    icon="mdi-plus"
+    icon="i-mdi:plus"
     text="Upload a File"
     @click="
       async () => {

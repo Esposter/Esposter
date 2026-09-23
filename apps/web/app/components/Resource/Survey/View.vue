@@ -66,13 +66,13 @@ onMounted(async () => {
 <template>
   <StyledEmptyState
     v-if="!isAcceptingResponses"
-    icon="mdi-lock-outline"
+    icon="i-mdi:lock-outline"
     :title="name"
     :description="closedMessage || DEFAULT_CLOSED_MESSAGE"
   />
   <StyledEmptyState
     v-else-if="isParticipantTokenRequired"
-    icon="mdi-email-lock-outline"
+    icon="i-mdi:email-lock-outline"
     :title="name"
     description="This survey is open to invited participants only. Please use the personal link you were sent."
   />

@@ -21,7 +21,7 @@ const itemValue = ({ column }: ColumnStatisticsRow) => column.name;
           <template #activator="{ props }">
             <v-btn
               density="compact"
-              icon="mdi-chart-bar"
+              icon="i-mdi:chart-bar"
               variant="text"
               :="props"
               @click.stop="

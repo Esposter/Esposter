@@ -10,7 +10,7 @@ const backgroundColor = computed(() => (disabled ? "transparent" : "currentColor
 
 <template>
   <StyledTooltipIconButton
-    icon="mdi-send"
+    icon="i-mdi:send"
     text="Send (Enter)"
     :button-props="{ disabled, size: 'small' }"
     @click="emit('click')"

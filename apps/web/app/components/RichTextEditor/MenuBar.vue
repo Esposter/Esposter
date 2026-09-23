@@ -14,7 +14,7 @@ const items = computed<MenuItem[]>(() => [
   ...getTextFormatMenuItems(editor),
   {
     active: editor?.isActive("strike"),
-    icon: "mdi-format-strikethrough-variant",
+    icon: "i-mdi:format-strikethrough-variant",
     onClick: () => {
       editor?.chain().focus().toggleStrike().run();
     },
@@ -25,7 +25,7 @@ const items = computed<MenuItem[]>(() => [
   { isDivider: true },
   {
     disabled: !editor?.can().undo(),
-    icon: "mdi-undo",
+    icon: "i-mdi:undo",
     onClick: () => {
       editor?.chain().focus().undo().run();
     },
@@ -33,7 +33,7 @@ const items = computed<MenuItem[]>(() => [
   },
   {
     disabled: !editor?.can().redo(),
-    icon: "mdi-redo",
+    icon: "i-mdi:redo",
     onClick: () => {
       editor?.chain().focus().redo().run();
     },

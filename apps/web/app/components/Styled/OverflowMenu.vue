@@ -7,7 +7,7 @@ interface Props {
   text?: string;
 }
 
-const { icon = "mdi-dots-vertical", items, text = "More commands" } = defineProps<Props>();
+const { icon = "i-mdi:dots-vertical", items, text = "More commands" } = defineProps<Props>();
 </script>
 
 <template>
@@ -21,7 +21,7 @@ const { icon = "mdi-dots-vertical", items, text = "More commands" } = defineProp
         <v-menu v-if="childItems" :disabled location="end">
           <template #activator="{ props: submenuActivatorProps }">
             <v-list-item
-              append-icon="mdi-chevron-right"
+              append-icon="i-mdi:chevron-right"
               :base-color="color"
               :disabled
               :prepend-icon="itemIcon"

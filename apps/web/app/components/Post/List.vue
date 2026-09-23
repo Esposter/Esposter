@@ -33,7 +33,7 @@ watch(sortType, async () => {
         <v-spacer />
         <StyledButton
           :button-props="{
-            prependIcon: 'mdi-square-edit-outline',
+            prependIcon: 'i-mdi:square-edit-outline',
             size: 'small',
             text: 'Create Post',
             to: RoutePath.PostCreate,

@@ -5,7 +5,7 @@ const isOpen = ref(false);
 <template>
   <StyledTooltipIconButton
     :button-props="{ ripple: false, size: 'small' }"
-    icon="mdi-plus"
+    icon="i-mdi:plus"
     text="New Message"
     @click.stop="isOpen = true"
   />

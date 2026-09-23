@@ -20,7 +20,7 @@ const roomName = useRoomName(inviteRoomId);
   <StyledDialog
     v-if="room"
     v-model="isOpen"
-    :card-props="{ prependIcon: 'mdi-account-plus', title: `Invite friends to ${roomName}` }"
+    :card-props="{ prependIcon: 'i-mdi:account-plus', title: `Invite friends to ${roomName}` }"
     :dialog-props="{ maxWidth: '31.25rem' }"
   >
     <div fw-semibold text-body-large>Or send a room invite link to a friend</div>

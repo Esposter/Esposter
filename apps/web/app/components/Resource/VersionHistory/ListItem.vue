@@ -58,12 +58,12 @@ const subtitle = computed(() =>
         <StyledTooltipIconButton
           v-if="snapshotVersion.isCurrent"
           :to="RoutePath.View(resource.type, resource.id)"
-          icon="mdi-open-in-new"
+          icon="i-mdi:open-in-new"
           target="_blank"
           text="Open public link"
         />
         <StyledTooltipIconButton
-          icon="mdi-restore"
+          icon="i-mdi:restore"
           text="Restore this version"
           @click.stop="restoringSnapshotVersionId = snapshotVersionId"
         />

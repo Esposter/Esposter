@@ -13,7 +13,7 @@ const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
 </script>
 
 <template>
-  <v-btn prepend-icon="mdi-floor-plan" variant="text" @click="captureIds = selectedResources.map(({ id }) => id)">
+  <v-btn prepend-icon="i-mdi:floor-plan" variant="text" @click="captureIds = selectedResources.map(({ id }) => id)">
     Save as blueprint
   </v-btn>
 </template>

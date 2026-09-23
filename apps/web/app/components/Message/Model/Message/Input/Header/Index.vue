@@ -19,7 +19,7 @@ const emit = defineEmits<{ close: [] }>();
       right-4
       absolute
       translate-y="-1/2"
-      icon="mdi-close"
+      icon="i-mdi:close"
       text="Close"
       :button-props="{ density: 'compact', size: 'small' }"
       @click="emit('close')"

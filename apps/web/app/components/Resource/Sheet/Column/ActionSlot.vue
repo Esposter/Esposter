@@ -22,7 +22,7 @@ const { chartingColumnName, deletingColumnName, editingColumnName } = storeToRef
     <StyledTooltipIconButton
       v-if="ChartableColumnTypes.has(getEffectiveColumnType(column))"
       :button-props="DENSE_ICON_BUTTON_PROPS"
-      icon="mdi-chart-bar"
+      icon="i-mdi:chart-bar"
       text="Column Chart"
       @click.stop="chartingColumnName = column.name"
     />
@@ -33,13 +33,13 @@ const { chartingColumnName, deletingColumnName, editingColumnName } = storeToRef
     />
     <StyledTooltipIconButton
       :button-props="DENSE_ICON_BUTTON_PROPS"
-      icon="mdi-pencil"
+      icon="i-mdi:pencil"
       :text="getEditColumnDescription(column.name)"
       @click.stop="editingColumnName = column.name"
     />
     <StyledTooltipIconButton
       :button-props="DENSE_ICON_BUTTON_PROPS"
-      icon="mdi-delete"
+      icon="i-mdi:delete"
       :text="getDeleteColumnDescription(column.name)"
       @click.stop="deletingColumnName = column.name"
     />

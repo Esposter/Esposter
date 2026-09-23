@@ -17,7 +17,7 @@ const callRoomName = useRoomName(callRoomId);
       <v-list-item
         v-if="isInCall"
         :to="callRoute"
-        prepend-icon="mdi-phone"
+        prepend-icon="i-mdi:phone"
         density="compact"
         base-color="success"
         mb-1

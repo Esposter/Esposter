@@ -21,8 +21,8 @@ const displaySize = computed(() => getFileSize(metadata.size));
       </v-card-subtitle>
       <template #append>
         <div flex flex-wrap gap-2>
-          <v-chip label size="small" prepend-icon="mdi-database">{{ displaySize }}</v-chip>
-          <v-chip label size="small" prepend-icon="mdi-file-outline">
+          <v-chip label size="small" prepend-icon="i-mdi:database">{{ displaySize }}</v-chip>
+          <v-chip label size="small" prepend-icon="i-mdi:file-outline">
             {{ metadata.dataSourceType.toUpperCase() }}
           </v-chip>
         </div>

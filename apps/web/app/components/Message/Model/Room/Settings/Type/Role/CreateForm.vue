@@ -31,7 +31,7 @@ const submit = async () => {
             size: 'x-small',
             variant: 'plain',
           }"
-          icon="mdi-plus"
+          icon="i-mdi:plus"
           text="Create role"
           @click="submit()"
         />

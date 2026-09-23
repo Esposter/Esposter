@@ -74,7 +74,7 @@ const onUpdateFile = async (newFile?: File | File[]) => {
       :loading="isParsing"
       :model-value="file"
       prepend-icon=""
-      prepend-inner-icon="mdi-paperclip"
+      prepend-inner-icon="i-mdi:paperclip"
       @update:model-value="onUpdateFile"
     />
     <ResourceSheetPreviewTable v-if="sheetResource" :data-source="sheetResource.data" />

@@ -9,7 +9,7 @@ const scrollToMessage = useScrollToMessage();
 </script>
 
 <template>
-  <MessageModelMessageTypeSystemLine :active icon="mdi-pin" :is-preview :message>
+  <MessageModelMessageTypeSystemLine :active icon="i-mdi:pin" :is-preview :message>
     <span fw-bold>{{ creator.name }}</span>
     <span op-medium-emphasis> pinned </span>
     <span

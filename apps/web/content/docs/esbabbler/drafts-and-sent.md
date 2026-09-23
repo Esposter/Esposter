@@ -21,8 +21,8 @@ Scheduled rows come from `message.scheduledMessageJob.readMyScheduledMessageJobs
 
 ## Sidebar indicators
 
-- Draft count: `mdi-pencil` immediately followed by the number; scheduled count: `mdi-clock-outline` + number.
-- Room list items with drafts show a right-side `mdi-pencil` indicator and bold the room name (no `- Draft` suffix).
+- Draft count: `i-mdi:pencil` immediately followed by the number; scheduled count: `i-mdi:clock-outline` + number.
+- Room list items with drafts show a right-side `i-mdi:pencil` indicator and bold the room name (no `- Draft` suffix).
 
 ## Row actions
 

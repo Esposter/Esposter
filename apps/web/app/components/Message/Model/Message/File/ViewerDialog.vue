@@ -60,19 +60,19 @@ onKeyStroke(["ArrowLeft", "ArrowRight"], (event) => {
     <template #prepend-actions>
       <StyledTooltipIconButton
         :button-props="{ disabled: index === 0, variant: 'plain' }"
-        icon="mdi-chevron-left"
+        icon="i-mdi:chevron-left"
         text="Previous"
         @click="view(-1)"
       />
       <StyledTooltipIconButton
         :button-props="{ disabled: index === viewableFiles.length - 1, variant: 'plain' }"
-        icon="mdi-chevron-right"
+        icon="i-mdi:chevron-right"
         text="Next"
         @click="view(1)"
       />
       <StyledTooltipIconButton
         :button-props="{ variant: 'plain' }"
-        icon="mdi-download"
+        icon="i-mdi:download"
         text="Download"
         @click="downloadUrl(url, file.filename)"
       />

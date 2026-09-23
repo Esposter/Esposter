@@ -40,7 +40,7 @@ const updateNotificationType = async (newNotificationType: NotificationType) => 
 <template>
   <StyledTooltipMenuIconButton
     :button-props="{ size: 'small' }"
-    :icon="notificationType === NotificationType.All ? 'mdi-bell' : 'mdi-bell-off'"
+    :icon="notificationType === NotificationType.All ? 'i-mdi:bell' : 'i-mdi:bell-off'"
     :menu-props="{ closeOnContentClick: false, location: 'bottom' }"
     text="Notification Settings"
     :tooltip-props="{ location: 'bottom' }"

@@ -45,21 +45,21 @@ const replyLabel = computed(() => `${comment.commentCount} ${pluralize("reply", 
           <StyledTooltipIconButton
             v-if="session.data"
             :button-props="{ size: 'small', tile: true }"
-            icon="mdi-reply"
+            icon="i-mdi:reply"
             text="Reply"
             @click="replyingId = replyingId === comment.id ? '' : comment.id"
           />
           <StyledTooltipIconButton
             v-if="isCreator"
             :button-props="{ size: 'small', tile: true }"
-            icon="mdi-pencil"
+            icon="i-mdi:pencil"
             text="Edit Comment"
             @click="isUpdateMode = true"
           />
           <StyledTooltipIconButton
             v-if="isCreator"
             :button-props="{ size: 'small', tile: true }"
-            icon="mdi-delete"
+            icon="i-mdi:delete"
             :text="comment.commentCount > 0 ? 'Delete Comment And Replies' : 'Delete Comment'"
             @click="setDeletingComment(comment)"
           />
@@ -67,7 +67,7 @@ const replyLabel = computed(() => `${comment.commentCount} ${pluralize("reply", 
             v-if="comment.commentCount > 0 && !isClamped"
             size="small"
             variant="text"
-            :prepend-icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+            :prepend-icon="isExpanded ? 'i-mdi:chevron-up' : 'i-mdi:chevron-down'"
             :text="replyLabel"
             @click="isExpanded = !isExpanded"
           />
@@ -75,7 +75,7 @@ const replyLabel = computed(() => `${comment.commentCount} ${pluralize("reply", 
             v-else-if="comment.commentCount > 0"
             size="small"
             variant="text"
-            append-icon="mdi-arrow-right"
+            append-icon="i-mdi:arrow-right"
             text="Continue this thread"
             :to="RoutePath.Post(comment.id)"
           />

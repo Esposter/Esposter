@@ -42,7 +42,7 @@ const createWord = () => {
       <template #append-inner>
         <StyledTooltipIconButton
           :button-props="createWordButtonProps"
-          icon="mdi-plus"
+          icon="i-mdi:plus"
           text="Add word"
           @click="createWord()"
         />

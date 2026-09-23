@@ -33,7 +33,7 @@ const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, AchievementStatuses, Achi
 <template>
   <StyledCard>
     <v-card-title flex gap-x-2 items-center>
-      <v-icon icon="mdi-trophy" />
+      <v-icon icon="i-mdi:trophy" />
       Achievements
       <v-spacer />
       <v-chip color="primary" size="small"

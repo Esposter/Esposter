@@ -9,7 +9,7 @@ const { createCall } = callStore;
 const isCreating = ref(false);
 const buttonProps = computed<VBtn["$props"]>(() => ({
   loading: isCreating.value,
-  prependIcon: "mdi-video-plus",
+  prependIcon: "i-mdi:video-plus",
   text: "New call",
 }));
 </script>

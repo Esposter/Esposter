@@ -12,7 +12,7 @@ const emit = defineEmits<{ revoke: [] }>();
 <template>
   <v-list-item px-4>
     <template #prepend>
-      <v-icon :icon="isCurrent ? 'mdi-monitor-shimmer' : 'mdi-monitor'" mr-4 size="large" />
+      <v-icon :icon="isCurrent ? 'i-mdi:monitor-shimmer' : 'i-mdi:monitor'" mr-4 size="large" />
     </template>
     <!-- A list row ellipses its title and clamps its subtitle to one line, which is right for a name standing
          in for a thing the reader already knows and wrong here: the browser, the platform and how recently it

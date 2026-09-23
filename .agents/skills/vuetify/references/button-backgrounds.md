@@ -23,7 +23,7 @@ A **deliberately raised** button (e.g. a raised add action in a page header) res
 
 ```vue
 <StyledTooltipIconButton
-  icon="mdi-plus"
+  icon="i-mdi:plus"
   :button-props="{ flat: false, variant: 'elevated' }"
   :is-icon-button="false"
   text="Add Foo"

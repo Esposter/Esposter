@@ -57,7 +57,7 @@ const dragColumns = computed({
           <ResourceSheetColumnTopSlot />
         </template>
         <template #[`item.drag`]>
-          <v-icon v-if="isDraggable" :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
+          <v-icon v-if="isDraggable" :class="DRAG_HANDLE_CLASS" icon="i-mdi:drag" cursor-move />
         </template>
         <template #[`item.name`]="{ item: column }">
           <ResourceSheetColumnItemSlot :column />

@@ -14,7 +14,7 @@ const { copy } = clipboardStore;
 <template>
   <StyledTooltipIconButton
     :button-props="{ size: 'small' }"
-    icon="mdi-clipboard"
+    icon="i-mdi:clipboard"
     :text="text ?? 'Copy'"
     @click="copy(source)"
   />

@@ -49,7 +49,7 @@ Two panels writing disjoint fields is therefore the normal case rather than a sp
 
 ## Mobile
 
-The shared `MessageModelSettingsLeftSideBar` drawer is `permanent` only on desktop; on `smAndDown` (`useVDisplay`) it becomes a `temporary` overlay drawer, closed by default and opened by a `mdi-menu` hamburger the content header renders on mobile. Selecting any panel closes the drawer so the content takes the full width — the room dialog threads this open-state through the `Dialog` (`open` v-model on the sidebar, `open:drawer` emit from the content), and the [user settings dialog](/docs/esbabbler/settings) does the same via `isDrawerOpen` on its dialog store. The two-pane panels that would otherwise sit side by side — Roles and Members (list column + editor column) — stack to a single column under the `sm` breakpoint (`cols="12" sm="4"` on the list column) so neither pane is squeezed.
+The shared `MessageModelSettingsLeftSideBar` drawer is `permanent` only on desktop; on `smAndDown` (`useVDisplay`) it becomes a `temporary` overlay drawer, closed by default and opened by a `i-mdi:menu` hamburger the content header renders on mobile. Selecting any panel closes the drawer so the content takes the full width — the room dialog threads this open-state through the `Dialog` (`open` v-model on the sidebar, `open:drawer` emit from the content), and the [user settings dialog](/docs/esbabbler/settings) does the same via `isDrawerOpen` on its dialog store. The two-pane panels that would otherwise sit side by side — Roles and Members (list column + editor column) — stack to a single column under the `sm` breakpoint (`cols="12" sm="4"` on the list column) so neither pane is squeezed.
 
 ## Key files
 

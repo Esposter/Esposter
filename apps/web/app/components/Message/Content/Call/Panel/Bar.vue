@@ -11,7 +11,7 @@ const roomParticipantMap = useCallRoomParticipantMap();
 
 <template>
   <v-sheet px-4 py-2 flex gap-x-3 items-center>
-    <v-icon icon="mdi-volume-high" size="small" color="success" />
+    <v-icon icon="i-mdi:volume-high" size="small" color="success" />
     <span fw-medium flex-1 text-body-small>Call</span>
     <div flex gap-x-2 items-center>
       <MessageContentCallParticipantBarAvatar
@@ -25,7 +25,7 @@ const roomParticipantMap = useCallRoomParticipantMap();
     <MessageContentCallControlLeaveButton />
     <StyledTooltipIconButton
       :button-props="{ ripple: false, size: 'x-small', variant: 'text' }"
-      icon="mdi-fullscreen"
+      icon="i-mdi:fullscreen"
       text="Open call view"
       :tooltip-props="{ location: 'bottom' }"
       @click="isCallViewOpen = true"

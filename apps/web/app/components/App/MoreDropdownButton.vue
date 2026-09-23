@@ -11,11 +11,11 @@ const { data: session } = await authClient.useSession(useFetch);
 const items = computed<ListLinkItem[]>(() =>
   session.value
     ? [
-        { href: RoutePath.UserSettings, icon: "mdi-cog", title: "Settings" },
+        { href: RoutePath.UserSettings, icon: "i-mdi:cog", title: "Settings" },
         ...MoreDropdownLinkItems,
-        { icon: "mdi-logout", onClick: () => signOutOfBrowser(), title: "Logout" },
+        { icon: "i-mdi:logout", onClick: () => signOutOfBrowser(), title: "Logout" },
       ]
-    : [{ href: RoutePath.Login, icon: "mdi-login", title: "Login" }, ...MoreDropdownLinkItems],
+    : [{ href: RoutePath.Login, icon: "i-mdi:login", title: "Login" }, ...MoreDropdownLinkItems],
 );
 const menu = ref(false);
 </script>
@@ -28,7 +28,7 @@ const menu = ref(false);
     <StyledTooltipMenuIconButton
       v-model="menu"
       :button-props="session ? { height: '100%' } : {}"
-      :icon="session ? '' : 'mdi-chevron-down'"
+      :icon="session ? '' : 'i-mdi:chevron-down'"
       :menu-props="APP_BAR_MENU_PROPS"
       :text="session ? 'Account' : 'More'"
       :tooltip-props="APP_BAR_TOOLTIP_PROPS"

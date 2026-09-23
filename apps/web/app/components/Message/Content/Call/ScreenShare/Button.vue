@@ -17,7 +17,7 @@ onMounted(() => {
   <MessageContentCallControlActionButton
     v-if="isScreenShareSupported"
     :color="isScreenSharing ? 'error' : undefined"
-    :icon="isScreenSharing ? 'mdi-monitor-off' : 'mdi-monitor-share'"
+    :icon="isScreenSharing ? 'i-mdi:monitor-off' : 'i-mdi:monitor-share'"
     :tooltip="isScreenSharing ? 'Stop Sharing Screen' : 'Share Screen'"
     variant="plain"
     @click="toggleScreenShare()"

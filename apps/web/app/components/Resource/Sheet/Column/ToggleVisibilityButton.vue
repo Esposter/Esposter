@@ -15,7 +15,7 @@ const toggleColumnVisibility = useToggleColumnVisibility();
 <template>
   <StyledTooltipIconButton
     :button-props="DENSE_ICON_BUTTON_PROPS"
-    :icon="isHidden ? 'mdi-eye-off' : 'mdi-eye'"
+    :icon="isHidden ? 'i-mdi:eye-off' : 'i-mdi:eye'"
     :text="getToggleColumnVisibilityDescription(columnName, isHidden)"
     @click="toggleColumnVisibility(columnId)"
   />

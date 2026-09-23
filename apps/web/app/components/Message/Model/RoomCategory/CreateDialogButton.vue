@@ -27,7 +27,7 @@ const name = ref("");
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton
         :button-props="{ size: 'small' }"
-        icon="mdi-folder-plus-outline"
+        icon="i-mdi:folder-plus-outline"
         text="Create Category"
         @click.stop="updateIsOpen(true)"
       />

@@ -40,7 +40,7 @@ onMounted(async () => {
         :class="selectedVirtualBackground === imagePath ? 'b-primary' : 'b-transparent'"
         @click="emit('select', imagePath)"
       >
-        <v-icon v-if="!imagePath" icon="mdi-close" size="small" />
+        <v-icon v-if="!imagePath" icon="i-mdi:close" size="small" />
       </button>
       <!-- A slot's delete sits on the tile rather than behind a menu: the picker is the only surface these
         exist on, so there is nowhere else for it to live -->
@@ -63,7 +63,7 @@ onMounted(async () => {
         />
         <StyledTooltipIconButton
           :button-props="{ density: 'compact', size: 'x-small', variant: 'flat' }"
-          icon="mdi-close"
+          icon="i-mdi:close"
           right--2
           top--2
           absolute
@@ -84,7 +84,7 @@ onMounted(async () => {
         @click="input?.click()"
       >
         <v-progress-circular v-if="isUploadingCallBackground" indeterminate size="1.25rem" />
-        <v-icon v-else icon="mdi-plus" size="small" />
+        <v-icon v-else icon="i-mdi:plus" size="small" />
       </button>
       <!-- The tile above is the labelled upload affordance, so this proxy input stays out of the
         accessibility tree and out of the tab order -->

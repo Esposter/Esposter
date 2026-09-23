@@ -25,7 +25,7 @@ const { origin } = useRequestURL();
 const shareMessage = computed(() =>
   getShareMessage(note.value, `${origin}${RoutePath.View(resource.type, resource.id)}`),
 );
-const cardProps = computed(() => ({ prependIcon: "mdi-share-variant", title: `Share "${resource.name}"` }));
+const cardProps = computed(() => ({ prependIcon: "i-mdi:share-variant", title: `Share "${resource.name}"` }));
 const confirmButtonAttrs = computed(() => ({ disabled: !roomId.value }));
 const noteRules = computed(() => [
   () =>
@@ -79,11 +79,11 @@ const share = async () => {
     <!-- Nothing to pick from is a reason to go make a room, not a disabled button with no explanation -->
     <StyledEmptyState
       v-else-if="roomItems.length === 0"
-      icon="mdi-forum-outline"
+      icon="i-mdi:forum-outline"
       title="You're not in any rooms yet"
       description="Join or create a room in esbabbler and the public link can go straight there."
     >
-      <v-btn :to="RoutePath.MessagesIndex" prepend-icon="mdi-open-in-new" variant="tonal">Go to esbabbler</v-btn>
+      <v-btn :to="RoutePath.MessagesIndex" prepend-icon="i-mdi:open-in-new" variant="tonal">Go to esbabbler</v-btn>
     </StyledEmptyState>
     <div v-else flex flex-col gap-2>
       <v-select v-model="roomId" autofocus label="Room" :items="roomItems" />

@@ -16,7 +16,7 @@ const { rotateToken } = webhookStore;
 <template>
   <StyledTooltipIconButton
     :button-props="{ size: 'small' }"
-    icon="mdi-refresh"
+    icon="i-mdi:refresh"
     text="Rotate Token"
     @click="rotateToken(roomId, { id })"
   />

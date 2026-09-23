@@ -9,7 +9,7 @@ const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 const executeSlashCommand = useExecuteSlashCommand();
 const items = computed<Item[]>(() => [
   {
-    icon: "mdi-file-upload-outline",
+    icon: "i-mdi:file-upload-outline",
     onClick: async () => {
       const files = await pickFiles();
       if (files.length > 0) emit("upload-file", files);
@@ -28,5 +28,5 @@ const items = computed<Item[]>(() => [
      scheduled message were otherwise reachable only by typing the command that opens them, and a second plus
      button beside this one would be two buttons for one idea -->
 <template>
-  <StyledOverflowMenu icon="mdi-plus" :items text="Add" />
+  <StyledOverflowMenu icon="i-mdi:plus" :items text="Add" />
 </template>

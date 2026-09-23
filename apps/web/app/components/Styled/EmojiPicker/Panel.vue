@@ -57,7 +57,7 @@ const emojis = computed(() =>
       v-model="searchQuery"
       density="compact"
       placeholder="Search emoji"
-      prepend-inner-icon="mdi-magnify"
+      prepend-inner-icon="i-mdi:magnify"
       :autofocus="!smAndDown"
       clearable
       m-2

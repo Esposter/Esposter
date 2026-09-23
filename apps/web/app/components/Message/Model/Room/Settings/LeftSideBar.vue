@@ -72,7 +72,7 @@ const onClick = (settingsType: SettingsType) => {
       <v-divider my-2 />
       <MessageModelRoomSettingsLeftSideBarItem
         :color="SettingsListItemMap[SettingsType.Delete].color"
-        :icon="isRoomOwner ? SettingsListItemMap[SettingsType.Delete].icon : 'mdi-exit-run'"
+        :icon="isRoomOwner ? SettingsListItemMap[SettingsType.Delete].icon : 'i-mdi:exit-run'"
         :is-active="false"
         :settings-type="SettingsType.Delete"
         :title="isRoomOwner ? undefined : 'Leave'"

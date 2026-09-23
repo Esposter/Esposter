@@ -27,7 +27,7 @@ const moreMenuProps = computed(() => ({
 <template>
   <StyledTooltipMenuIconButton
     :model-value="optionsMenu?.rowKey === rowKey"
-    icon="mdi-dots-horizontal"
+    icon="i-mdi:dots-horizontal"
     text="More"
     :button-props="{ class: 'm-0', size: 'small', tile: true }"
     :menu-props="moreMenuProps"
@@ -72,7 +72,7 @@ const moreMenuProps = computed(() => ({
           <v-list-item :="menuProps">
             {{ EMOJI_PICKER_TOOLTIP_TEXT }}
             <template #append>
-              <v-icon size="small" icon="mdi-emoticon" />
+              <v-icon size="small" icon="i-mdi:emoticon" />
             </template>
           </v-list-item>
         </template>

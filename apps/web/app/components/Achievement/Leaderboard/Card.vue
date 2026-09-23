@@ -16,14 +16,14 @@ const isMyEntryAppended = computed(() => {
 <template>
   <StyledCard>
     <v-card-title flex gap-x-2 items-center>
-      <v-icon icon="mdi-podium" />
+      <v-icon icon="i-mdi:podium" />
       Points Leaderboard
     </v-card-title>
     <v-card-subtitle>Ranked by total unlocked achievement points</v-card-subtitle>
     <v-card-text>
       <StyledEmptyState
         v-if="leaderboard.entries.length === 0"
-        icon="mdi-trophy-outline"
+        icon="i-mdi:trophy-outline"
         title="No ranked players yet"
         description="Unlock an achievement to claim a spot on the leaderboard."
       />

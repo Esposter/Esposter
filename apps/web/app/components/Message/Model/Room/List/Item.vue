@@ -49,12 +49,12 @@ const mentionCount = computed(() => (isActive.value ? 0 : (myUserToRoom.value?.m
       </v-chip>
       <v-tooltip v-if="hasDraft" text="Draft">
         <template #activator="{ props: activatorProps }">
-          <v-icon :="activatorProps" icon="mdi-pencil" size="x-small" op-medium-emphasis />
+          <v-icon :="activatorProps" icon="i-mdi:pencil" size="x-small" op-medium-emphasis />
         </template>
       </v-tooltip>
       <v-tooltip v-if="room.isReadOnly" text="Read-only">
         <template #activator="{ props: activatorProps }">
-          <v-icon :="activatorProps" icon="mdi-bullhorn-outline" size="x-small" op-medium-emphasis />
+          <v-icon :="activatorProps" icon="i-mdi:bullhorn-outline" size="x-small" op-medium-emphasis />
         </template>
       </v-tooltip>
       <MessageModelRoomListItemSettingsButton :is-active :is-hovering :room />

@@ -40,7 +40,7 @@ const validateFileRule = (fileValue: FileFieldValue) => {
         :rules="[validateFileRule]"
         accept="image/*"
         prepend-icon=""
-        prepend-inner-icon="mdi-upload"
+        prepend-inner-icon="i-mdi:upload"
         label="Upload image"
         density="compact"
         show-size

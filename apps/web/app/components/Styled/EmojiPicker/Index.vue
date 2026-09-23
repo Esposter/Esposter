@@ -44,7 +44,7 @@ const overlay = computed(() =>
           <template #activator="{ props: tooltipActivatorProps }">
             <!-- The tooltip names the icon-only button visually only, so the same text is its accessible name -->
             <v-btn
-              icon="mdi-emoticon"
+              icon="i-mdi:emoticon"
               :aria-label="tooltipProps.text"
               :="mergeProps(menuProps, tooltipActivatorProps, buttonProps)"
             />

@@ -7,7 +7,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>();
    also applies to this button in dark mode. -->
   <StyledTooltipIconButton
     :button-props="{ class: 'rd bottom-2 left-1 fixed', color: 'white', size: 'small' }"
-    icon="mdi-draw"
+    icon="i-mdi:draw"
     text="Animate"
     :tooltip-props="{ location: 'right center' }"
     @click="emit('click', $event)"

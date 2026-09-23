@@ -16,7 +16,7 @@ const buttonProps = computed<VBtn["$props"]>(() => ({
 <template>
   <StyledTooltipIconButton
     :button-props
-    icon="mdi-chevron-up"
+    icon="i-mdi:chevron-up"
     text="Previous (Shift+Enter)"
     @click="goToOccurrence(-1)"
   />

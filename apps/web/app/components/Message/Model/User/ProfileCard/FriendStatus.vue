@@ -18,7 +18,7 @@ const isFriend = computed(() => checkIsFriend(user.id));
 
 <template>
   <div v-if="isFriend || checkHasSentFriendRequest(user.id)" flex gap-x-2>
-    <v-chip v-if="isFriend" density="compact" color="success" prepend-icon="mdi-account-check" text="Friends" />
-    <v-chip v-else density="compact" prepend-icon="mdi-clock-outline" text="Request Sent" />
+    <v-chip v-if="isFriend" density="compact" color="success" prepend-icon="i-mdi:account-check" text="Friends" />
+    <v-chip v-else density="compact" prepend-icon="i-mdi:clock-outline" text="Request Sent" />
   </div>
 </template>

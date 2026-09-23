@@ -34,7 +34,7 @@ const { consumeNotificationAction, deleteNotification } = notificationStore;
     <template #append>
       <!-- The row is a link, so the dismiss stops the click reaching it — dismissing must not navigate -->
       <StyledTooltipIconButton
-        icon="mdi-close"
+        icon="i-mdi:close"
         text="Dismiss"
         @click.stop.prevent="deleteNotification(notification.id)"
       />

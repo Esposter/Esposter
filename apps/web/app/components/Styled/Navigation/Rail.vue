@@ -30,7 +30,7 @@ const activeItem = computed(() => items.find(({ isActive }) => isActive) ?? take
       <v-list nav w-full>
         <v-list-item :="props" :prepend-icon="activeItem.icon" :title="activeItem.title">
           <template #append>
-            <v-icon :icon="isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
+            <v-icon :icon="isOpen ? 'i-mdi:chevron-up' : 'i-mdi:chevron-down'" />
           </template>
         </v-list-item>
       </v-list>
@@ -38,12 +38,12 @@ const activeItem = computed(() => items.find(({ isActive }) => isActive) ?? take
     <StyledNavigationList :items />
   </v-menu>
   <div v-else-if="isCollapsed" px-1 pt-2>
-    <StyledTooltipIconButton icon="mdi-chevron-double-right" :text="showText" @click="isCollapsed = false" />
+    <StyledTooltipIconButton icon="i-mdi:chevron-double-right" :text="showText" @click="isCollapsed = false" />
   </div>
   <div v-else flex flex-col>
     <!-- The caret sits at the end of the rail's own row, the way the portal puts it beside the menu's search -->
     <div px-1 pt-2 flex justify-end>
-      <StyledTooltipIconButton icon="mdi-chevron-double-left" :text="hideText" @click="isCollapsed = true" />
+      <StyledTooltipIconButton icon="i-mdi:chevron-double-left" :text="hideText" @click="isCollapsed = true" />
     </div>
     <StyledNavigationList :items />
   </div>

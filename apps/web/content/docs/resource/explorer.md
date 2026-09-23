@@ -103,7 +103,7 @@ The header carries **no title on this route**: the blade header below already na
 - **No list pane beside the blade.** A resource fills the surface however the visitor reached it: a pane would duplicate a way back that the breadcrumb and the header's close ✕ both already give, and it would spend width the blade itself uses better.
 - **The blade nav is a standing rail, not a drawer** — it is how a reader moves between the faces of the resource they are already in, used constantly rather than a few times a session, so it stays on screen. The [service menu](/docs/resource/resource-service-menu) is the opposite case and is a drawer for exactly that reason.
 - **Collapse caret on the blade nav (desktop)** — the caret sits at the end of the nav's own top row, the way the portal puts one beside its menu search. Clicking it hides the nav column outright rather than narrowing it to icons — a blade is the widest thing on the page and the nav is a handful of links — leaving a thin strip with `»` to restore it. The state is persisted (`LocalStorageKey.IsResourceBladeNavigationCollapsed`), because a reader who reclaimed the width wants it reclaimed on the next resource too.
-- **Mobile-native** — on `smAndDown` (`useVDisplay`) the blade nav collapses from the vertical rail into a dropdown (`v-menu`) whose activator shows the active blade; its caret (`mdi-chevron-up`) renders only while the menu is open. Desktop keeps the inline rail. Both behaviours live in `StyledNavigationRail`.
+- **Mobile-native** — on `smAndDown` (`useVDisplay`) the blade nav collapses from the vertical rail into a dropdown (`v-menu`) whose activator shows the active blade; its caret (`i-mdi:chevron-up`) renders only while the menu is open. Desktop keeps the inline rail. Both behaviours live in `StyledNavigationRail`.
 - **Borders drawn exactly once** — no component double-draws an edge. The blade box carries `b-t` under its header; the blade nav is borderless. Widths are explicit (`b-0 b-t-1`), never inherited from a global reset — see the `styling` skill.
 - **Nested close** — the ✕ peels back to whatever the trail says the visitor came through (`navigationTrail` store's `closeTo`), falling back to the hub on a direct arrival. Clicking it and clicking the last crumb are the same move, on the list page and the resource page alike.
 - **Single unified breadcrumb** — the `resource` layout owns the only breadcrumb; the blade box has none. Vuetify components with a plain destination take `:to`; an inline `@click="navigateTo(...)"` is for logic-then-navigate actions. Declarative links use `NuxtLink`/`NuxtInvisibleLink`. Raw `<a>` is never used — see [navigation](/docs/architecture/navigation).
@@ -114,7 +114,7 @@ On a narrow viewport the two-box layout folds into a single full-width column wi
 ```mermaid
 flowchart LR
   CLOSE["Close ✕<br/>blade box header"] -->|peels back| ALL["/resource-explorer/all<br/>full-width mobile list"]
-  BNAV["Blade dropdown<br/>v-menu activator = active blade"] -->|open| CARET["Caret mdi-chevron-up<br/>shown only while open"]
+  BNAV["Blade dropdown<br/>v-menu activator = active blade"] -->|open| CARET["Caret i-mdi:chevron-up<br/>shown only while open"]
   BNAV -->|pick blade — navigateTo| BLADE["Active blade fills full width"]
 ```
 

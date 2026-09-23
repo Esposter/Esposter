@@ -34,7 +34,7 @@ const isJoinable = computed(() => selectCallSessionInMessageSchema.shape.id.safe
       v-model="callCodeOrLink"
       density="compact"
       label="Enter a code or link"
-      prepend-inner-icon="mdi-keyboard"
+      prepend-inner-icon="i-mdi:keyboard"
       max-w-80
       min-w-72
     />
@@ -44,7 +44,7 @@ const isJoinable = computed(() => selectCallSessionInMessageSchema.shape.id.safe
           :="props"
           :disabled="!isJoinable"
           :loading="isJoining"
-          prepend-icon="mdi-login"
+          prepend-icon="i-mdi:login"
           text="Join"
           type="submit"
         />

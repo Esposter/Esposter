@@ -42,7 +42,7 @@ await readRoomInvites();
                gradient as the primary beside it and the pair stops reading as opposites -->
           <v-btn v-else color="error" text="Pause Invites" variant="flat" @click="saveRoom({ isInvitePaused: true })" />
           <div v-if="room.isInvitePaused" flex gap-2 items-center text-body-small>
-            <v-icon color="warning" icon="mdi-alert-circle" size="small" />
+            <v-icon color="warning" icon="i-mdi:alert-circle" size="small" />
             Invites to this room are currently paused.
           </div>
         </div>
@@ -74,7 +74,7 @@ await readRoomInvites();
              empty state waits until the walk is over rather than announcing itself between pages -->
         <StyledEmptyState
           v-else-if="!hasMore"
-          icon="mdi-send-outline"
+          icon="i-mdi:send-outline"
           title="No invites yet"
           description="Feeling aimless? Like a paper plane drifting through the skies? Get some friends in here by creating an invite link!"
         />

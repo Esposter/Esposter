@@ -18,7 +18,7 @@ const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 <template>
   <StyledTooltipMenuIconButton
     :button-props="DRAFTS_AND_SENT_ACTION_BUTTON_PROPS"
-    icon="mdi-dots-vertical"
+    icon="i-mdi:dots-vertical"
     :menu-props="{ location: 'bottom end' }"
     text="More"
     @click.stop

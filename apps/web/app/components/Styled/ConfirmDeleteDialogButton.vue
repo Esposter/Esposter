@@ -13,7 +13,7 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton
         :button-props="DELETE_DIALOG_BUTTON_PROPS"
-        icon="mdi-delete"
+        icon="i-mdi:delete"
         :text="cardProps?.title?.toString()"
         @click.stop="updateIsOpen(true)"
       />

@@ -60,7 +60,7 @@ const moveRoomCategory = async (roomCategoryId: RoomCategoryInMessage["id"], dir
     <StyledEmptyState
       v-if="rooms.length === 0"
       description="Create a room or join one with an invite link."
-      icon="mdi-forum-outline"
+      icon="i-mdi:forum-outline"
       title="No rooms yet"
     />
     <MessageModelRoomCategoryRoomGroup :rooms="uncategorizedRooms" />

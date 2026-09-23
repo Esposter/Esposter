@@ -36,7 +36,7 @@ const cardProps = computed(() => ({ title: `Delete ${prettify(type)} Visual` }))
     <template #activator="{ updateIsOpen }">
       <StyledTooltipIconButton
         :button-props="{ size: 'small' }"
-        icon="mdi-close"
+        icon="i-mdi:close"
         :text="cardProps.title"
         @click.stop="updateIsOpen(true)"
       />

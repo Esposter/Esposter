@@ -7,7 +7,7 @@ const { toggle } = useToggleRightDrawer(RightDrawer.Search);
 <template>
   <StyledTooltipIconButton
     :button-props="{ size: 'small' }"
-    icon="mdi-magnify"
+    icon="i-mdi:magnify"
     text="Search"
     :tooltip-props="{ location: 'bottom' }"
     @click="toggle"

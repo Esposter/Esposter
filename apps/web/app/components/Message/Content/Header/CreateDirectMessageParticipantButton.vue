@@ -12,7 +12,7 @@ const isOpen = ref(false);
 <template>
   <StyledTooltipIconButton
     :button-props="{ size: 'small' }"
-    icon="mdi-account-plus"
+    icon="i-mdi:account-plus"
     text="Add People"
     :tooltip-props="{ location: 'bottom' }"
     @click="isOpen = true"

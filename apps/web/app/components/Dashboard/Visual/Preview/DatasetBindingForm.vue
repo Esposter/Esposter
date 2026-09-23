@@ -53,13 +53,13 @@ const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name
         <v-select v-model="series.aggregation" :items="DatasetAggregationTypes" label="Aggregation" />
         <StyledTooltipIconButton
           :button-props="{ disabled: modelValue.query.series.length === 1 }"
-          icon="mdi-delete"
+          icon="i-mdi:delete"
           text="Remove series"
           @click="modelValue.query.series = modelValue.query.series.toSpliced(index, 1)"
         />
       </div>
       <StyledTooltipIconButton
-        icon="mdi-plus"
+        icon="i-mdi:plus"
         text="Add series"
         @click="
           modelValue.query.series.push({ aggregation: DatasetAggregationType.Count, column: modelValue.query.xColumn })
