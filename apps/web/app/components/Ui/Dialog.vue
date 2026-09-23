@@ -41,8 +41,11 @@ const { isTitleHidden, placement = UiDialogPlacement.High, title } = defineProps
       of-visible
     >
       <section :class="placement === UiDialogPlacement.Sheet ? 'h-full' : 'max-h-[76dvh]'" flex flex-col ui-frame>
+        <slot />
+        <!-- After the content in the tree and drawn above it, so opening the dialog focuses the content's first control
+          Rather than the close button, which comes last in the tab order, as the modal dialog pattern allows -->
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
-        <header v-else class="title-bar" px-3 py-2 flex gap-2 items-center>
+        <header v-else class="title-bar" px-3 py-2 flex gap-2 items-center order-first>
           <Dialog.Title text-accent flex-1 truncate>{{ title }}</Dialog.Title>
           <UiIconButton
             label="Close"
@@ -51,7 +54,6 @@ const { isTitleHidden, placement = UiDialogPlacement.High, title } = defineProps
             @click="isOpen = false"
           />
         </header>
-        <slot />
       </section>
     </Dialog.Content>
   </Dialog.Root>
