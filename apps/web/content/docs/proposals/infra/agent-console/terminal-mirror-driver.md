@@ -39,4 +39,4 @@ packages/agent-console-server/src/services/drivers/terminalMirror/
 
 ## Notes
 
-- Whether SDK use stays inside the subscription is the fact the SDK driver's cost rests on. It is re-read at every Claude Code billing change, and if it moves, this driver keeps the console free at the price of the controls a channel cannot reach.
+- The SDK driver costs nothing only while SDK use stays inside the subscription. That is re-read at every Claude Code billing change, and if it moves, this driver keeps the console free at the price of the controls a channel cannot reach.

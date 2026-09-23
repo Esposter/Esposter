@@ -28,7 +28,7 @@ flowchart LR
 ```
 
 - **The event log is the only state.** The host keeps each open session's events and replays them to a page that connects or reconnects. The page keeps them per session in a store keyed by session id. The header, the timeline, the diffs, the todo list and the permission cards are all computed from that log, so a reconnect that replays it rebuilds every one of them.
-- **The agent is behind a driver.** The [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) is the one that exists. A driver lists and opens sessions, reports what happens in them as the console's events, and takes the page's commands back, so another agent is a new driver and never a change to the page.
+- **The agent is behind a driver.** The [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) is the one that exists. Any other agent would be one more driver behind the same interface, and never a change to the page.
 - **The look is behind a theme.** `AgentConsoleThemeMap` holds one theme, the default: the work surface in the app's own Vuetify theme, plus a browser notification when a turn ends or a permission prompt waits while the tab is hidden. A reload replays history without ringing, because only events newer than the page's connection trigger a reaction.
 - **Nothing waits forever.** The page reconnects with a backoff capped at thirty seconds for as long as it is open. A permission prompt waits on a person, as the terminal's does, but an interrupt settles it as a deny, and so does closing its session.
 

@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Themes
 
-The [agent console](/docs/infra/claude-interface/agent-console) already has a theme registry. It holds one theme, the default: the work surface in the app's own Vuetify theme, and a browser notification when a hidden session ends a turn or waits on a verdict. A theme today sets only its reactions. This proposal is the rest of what a theme may set, and the Genshin theme that is the first to set it. Here the hidden-tab notification moves out of the default's reactions and into the console, so every theme gets it.
+The [agent console](/docs/infra/claude-interface/agent-console) already has a theme registry. Today its only theme is the default, and the only part a theme sets is its reactions: the default's is a browser notification for a hidden session. This proposal is the rest of what a theme may set, and the Genshin theme that is the first to set it. Here the hidden-tab notification moves out of the default's reactions and into the console, so every theme gets it.
 
 ## What a theme may add
 
