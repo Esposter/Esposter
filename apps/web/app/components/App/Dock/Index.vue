@@ -13,8 +13,8 @@ const { isFooterFocused } = storeToRefs(layoutStore);
   <nav
     aria-label="Dock"
     :class="isFooterFocused ? 'hidden md:flex' : 'flex'"
-    w="full md:[--ui-dock-size]"
-    h="[--ui-dock-size] md:full"
+    w="full md:[--dock-size]"
+    h="[--dock-size] md:full"
     p-2
     gap-2
     items-center
@@ -24,10 +24,13 @@ const { isFooterFocused } = storeToRefs(layoutStore);
     z-1006
     ui-frame
     md:flex-col
+    class="[--ui-tooltip-position-area:top] md:[--ui-tooltip-position-area:right]"
   >
-    <NuxtInvisibleLink :to="RoutePath.Index" :aria-label="SITE_NAME" :title="SITE_NAME" shrink-0>
-      <AppLogo width="2.5rem" />
-    </NuxtInvisibleLink>
+    <UiTooltip #default="{ activatorProps }" :label="SITE_NAME">
+      <NuxtInvisibleLink :="activatorProps" :to="RoutePath.Index" :aria-label="SITE_NAME" shrink-0>
+        <AppLogo width="2.5rem" />
+      </NuxtInvisibleLink>
+    </UiTooltip>
     <AppDockLauncher />
     <AppDockPlaces hidden of-y-auto md:flex md:flex-col />
     <div flex-1 />

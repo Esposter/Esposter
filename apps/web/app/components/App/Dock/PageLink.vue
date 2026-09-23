@@ -13,20 +13,22 @@ const icon = computed(() => getPageIcon(page.path));
 </script>
 
 <template>
-  <NuxtInvisibleLink
-    class="page-link hover:bg-accent/20"
-    :to="page.path"
-    :aria-label="label"
-    :title="label"
-    flex
-    shrink-0
-    size-10
-    items-center
-    justify-center
-  >
-    <v-icon v-if="icon" :icon size="1.5rem" />
-    <UiAvatar v-else :name="label" />
-  </NuxtInvisibleLink>
+  <UiTooltip #default="{ activatorProps }" :label>
+    <NuxtInvisibleLink
+      :="activatorProps"
+      class="page-link hover:bg-accent/20"
+      :to="page.path"
+      :aria-label="label"
+      flex
+      shrink-0
+      size-10
+      items-center
+      justify-center
+    >
+      <v-icon v-if="icon" :icon size="1.5rem" />
+      <UiAvatar v-else :name="label" />
+    </NuxtInvisibleLink>
+  </UiTooltip>
 </template>
 
 <style scoped>

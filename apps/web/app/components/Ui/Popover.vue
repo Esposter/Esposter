@@ -3,6 +3,7 @@ import type { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 
 import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "@/services/ui/constants";
 import { usePopover } from "@vuetify/v0";
+import { mergeProps } from "vue";
 
 interface Props {
   // The panel's accessible name, and its trigger's, since a trigger may show no more than a mark
@@ -44,19 +45,20 @@ watch(isOpenModel, (newIsOpenModel) => {
 </script>
 
 <template>
-  <UiButton
-    ref="trigger"
-    v-bind="$attrs"
-    :aria-controls="id"
-    :aria-expanded="isOpen"
-    :aria-label="label"
-    :popovertarget="id"
-    :style="anchorStyles"
-    :title="label"
-    :variant
-  >
-    <slot name="trigger" />
-  </UiButton>
+  <UiTooltip #default="{ activatorProps }" :disabled="isOpen" :label>
+    <UiButton
+      ref="trigger"
+      :="mergeProps(activatorProps, $attrs)"
+      :aria-controls="id"
+      :aria-expanded="isOpen"
+      :aria-label="label"
+      :popovertarget="id"
+      :style="{ anchorName: [anchorStyles.anchorName, activatorProps.style.anchorName].join(', ') }"
+      :variant
+    >
+      <slot name="trigger" />
+    </UiButton>
+  </UiTooltip>
   <div
     ref="content"
     v-bind="contentAttrs"

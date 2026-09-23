@@ -6,6 +6,7 @@ import { useTypeahead } from "@/composables/ui/useTypeahead";
 import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "@/services/ui/constants";
 import { takeOne } from "@esposter/shared";
 import { usePopover, useRovingFocus } from "@vuetify/v0";
+import { mergeProps } from "vue";
 
 interface Props {
   items: UiMenuItem<T>[];
@@ -79,21 +80,23 @@ watch(isOpen, (newIsOpen) => {
 </script>
 
 <template>
-  <UiButton
-    ref="trigger"
-    v-bind="$attrs"
-    :aria-controls="id"
-    :aria-expanded="isOpen"
-    aria-haspopup="menu"
-    :aria-label="label"
-    :popovertarget="id"
-    :style="anchorStyles"
-    :variant
-    @keydown.down.prevent="open()"
-    @keydown.up.prevent="openAtEnd()"
-  >
-    <slot />
-  </UiButton>
+  <UiTooltip #default="{ activatorProps }" :disabled="isOpen" :label>
+    <UiButton
+      ref="trigger"
+      :="mergeProps(activatorProps, $attrs)"
+      :aria-controls="id"
+      :aria-expanded="isOpen"
+      aria-haspopup="menu"
+      :aria-label="label"
+      :popovertarget="id"
+      :style="{ anchorName: [anchorStyles.anchorName, activatorProps.style.anchorName].join(', ') }"
+      :variant
+      @keydown.down.prevent="open()"
+      @keydown.up.prevent="openAtEnd()"
+    >
+      <slot />
+    </UiButton>
+  </UiTooltip>
   <div
     ref="content"
     v-bind="contentAttrs"

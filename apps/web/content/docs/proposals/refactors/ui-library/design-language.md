@@ -66,7 +66,7 @@ These are the details that make the difference between a themed app and a design
 - **Scrollbars.** Thin, in the palette, set once on the root ([foundation](/docs/architecture/ui-library)). A scroll area inside a frame gets the frame's fill as its track.
 - **Selection and caret** in the accent colour.
 - **Context menus** everywhere a thing on screen has actions of its own ([context menus](/docs/proposals/refactors/ui-library/context-menus)). The browser's own menu stays wherever the app offers nothing better, such as over plain text and links.
-- **Tooltips** as a small frame after a short delay, instantly for the next one while one is open, dismissed by Escape, and never the only place a label lives.
+- **Tooltips** as a small frame that pops out the moment the pointer or the keyboard arrives, dismissed by Escape, and never the only place a label lives.
 - **Toasts** in one stack in one corner, each a frame with its status mark, pausing while hovered, and announced through a live region.
 - **Dialogs** as a frame with a title bar, over a dithered scrim — a checker of the background colour rather than a blurred wash — with focus trapped, restored on close, and the page behind made inert.
 - **Menus and selects** in the top layer through the Popover API, flipped when there is no room, with typeahead, Home and End, and the active option announced.

@@ -56,7 +56,7 @@ describe("styledDialog", () => {
     // The strategy runs on its own timeout once the overlay activates, so the throw lands after the mount
     await sleep(pendingMs);
 
-    expect(document.body.querySelector(".v-overlay__content")?.textContent).toBe("a");
+    expect(document.body.querySelector(".v-overlay__content p")?.textContent).toBe("a");
   });
 
   // Every dialog is meant to reach for this shell, so what these pin are the two shapes whose absence forces a
