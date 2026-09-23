@@ -134,7 +134,7 @@ export const createAgentConsoleServer = async ({
       for (const webSocket of webSocketServer.clients) webSocket.terminate();
       webSocketServer.close();
       httpServer.close();
-      await Promise.all([taskRegistry.drain(), once(httpServer, "close")]);
+      await Promise.all([taskRegistry.drain(), once(webSocketServer, "close"), once(httpServer, "close")]);
     },
     port: typeof address === "object" && address ? address.port : port,
   };
