@@ -29,9 +29,9 @@ flowchart TD
 ```
 
 - **Local.** The page, on the deployed site or on `pnpm dev`, connects to a host on the same machine. This is the whole case for a person at their own computer.
-- **Remote.** A host on another machine — a workstation reached from a laptop, a server — is the same host started to listen beyond the loopback, reached over whatever the person already uses to reach that machine. The page does not care; it has a URL and a token. There is no relay run by Esposter.
+- **Remote.** A host on another machine — a workstation reached from a laptop, a server — is the same host started to listen beyond the loopback, reached over whatever the person already uses to reach that machine. The page does not care; it has a URL and a token. There is no relay run by Esposter. The token and every message cross that path, so a remote host is reached over `wss://` or an encrypted tunnel — an SSH forward to the page's own loopback is the simplest — and never plain `ws://`, which a page on `https` refuses beyond the loopback anyway.
 
 ## Notes
 
-- A page on `https` reaching `http://127.0.0.1` passes the browser's private-network checks only when the host answers their preflight, and current Chrome also asks the person once to allow local network access for the site. The host answers the preflight; the permission is the person's one click. If a browser refuses outright, the local dev server is loopback to loopback and needs neither.
+- A page on `https` reaching the loopback is a local network request, which current Chrome gates on its Local Network Access permission — a prompt the person answers once per site — rather than on the private-network preflight it replaced, so the host has no preflight to answer. The permission is the person's one click. If a browser refuses outright, the local dev server is loopback to loopback and needs neither.
 - The "agent key" a remote setup needs is the host's, set where the host runs. It is never typed into the page, because a key in the page is a key in the browser of whoever has the tab.
