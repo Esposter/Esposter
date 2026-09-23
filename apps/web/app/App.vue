@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { authClient } from "@/services/auth/authClient";
 import { useLayoutStore } from "@/store/layout";
+import { useReadableTextStore } from "@/store/ui/readableText";
 
-const { data: session } = await authClient.useSession(useFetch);
 const { currentRoute } = useRouter();
 const layoutStore = useLayoutStore();
 const { isFooterFocused } = storeToRefs(layoutStore);
+const readableTextStore = useReadableTextStore();
+const { isReadableText } = storeToRefs(readableTextStore);
+// On the root, so the one token swap reaches every page, and in the first response, so the page never paints in the
+// Other face before hydration
+useHead({ htmlAttrs: { "data-readable-text": () => (isReadableText.value ? "" : undefined) } });
+const { data: session } = await authClient.useSession(useFetch);
 // An immersive page is a place of its own and brings its own way back, so it takes neither the dock nor the room
 // The dock would take from it
 const isDockShown = computed(() => currentRoute.value.meta.layout !== "immersive");

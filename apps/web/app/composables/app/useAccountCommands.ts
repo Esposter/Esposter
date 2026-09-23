@@ -5,6 +5,7 @@ import type { ThemeMode } from "@/models/vuetify/ThemeMode";
 import { SecondaryPageLinkItems } from "@/services/app/SecondaryPageLinkItems";
 import { authClient } from "@/services/auth/authClient";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
+import { useReadableTextStore } from "@/store/ui/readableText";
 import { ThemeModeIconMap } from "@/services/vuetify/ThemeModeIconMap";
 import { ThemeModeTooltipMap } from "@/services/vuetify/ThemeModeTooltipMap";
 import { RoutePath } from "@esposter/shared";
@@ -17,6 +18,9 @@ export const useAccountCommands = async () => {
   // Before the await, which leaves the component's setup context behind
   const { global } = useVTheme();
   const toggleTheme = useToggleTheme();
+  const readableTextStore = useReadableTextStore();
+  const { toggleReadableText } = readableTextStore;
+  const { isReadableText } = storeToRefs(readableTextStore);
   const { data: session } = await authClient.useSession(useFetch);
   return computed<UiCommand[]>(() => {
     // Vuetify types its theme name as a bare string, while the themes it is given are exactly `ThemeMode`
@@ -38,6 +42,16 @@ export const useAccountCommands = async () => {
         id: "theme",
         run: () => toggleTheme(),
         title: "Theme",
+      },
+      {
+        description: isReadableText.value ? "On" : "Off",
+        group: ACCOUNT_GROUP,
+        icon: "i-mdi:format-font",
+        id: "readable-text",
+        run: () => {
+          toggleReadableText();
+        },
+        title: "Readable text",
       },
       // oxlint-disable-next-line oxc/no-map-spread -- each command is a new object, never a result mutated in place
       ...SecondaryPageLinkItems.map((item) => ({

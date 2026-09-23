@@ -20,5 +20,6 @@ export const LONG_PRESS_MS = Temporal.Duration.from({ milliseconds: 500 }).total
 export const LONG_PRESS_MOVE_TOLERANCE = 10;
 // Where the browser's own context menu is worth more than ours: in a field, with its spell-check and paste
 export const CONTEXT_MENU_EDITABLE_SELECTOR = 'input, textarea, [contenteditable=""], [contenteditable="true"]';
+export const READABLE_TEXT_COOKIE_NAME = "readable-text";
 // The library's own tooltips, apart from any a primitive opens under its default namespace
 export const TOOLTIP_NAMESPACE = "ui:tooltip";

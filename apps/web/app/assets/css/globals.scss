@@ -14,7 +14,7 @@
   --apx-surface: rgb(var(--v-theme-surface));
   // One voxel: the grid every length of the UI library is a whole number of, and the width of its edges
   --ui-step: 0.25rem;
-  // The library's one face, and the body's own token for it, which the readable-text setting swaps
+  // The library's one face, and the body's own token for it, which the readable-text setting swaps below
   --ui-font-pixel: VT323, monospace;
   --ui-font-body: var(--ui-font-pixel);
   // The type scale, each a whole number of steps: body, a section heading, a page title and a landing page's display
@@ -28,6 +28,12 @@
   // Where the dock takes room from the page, set on the app root by breakpoint and zero on a page with no dock
   --dock-inset-block-end: 0rem;
   --dock-inset-inline-start: 0rem;
+}
+// The readable-text setting: body text in the system's own face, one step smaller since the pixel face's small letters
+// Read a size below its em. Headings keep the pixel face, since they read their own face token rather than the body's
+:root[data-readable-text] {
+  --ui-font-body: system-ui, sans-serif;
+  --ui-text-body: calc(var(--ui-step) * 4);
 }
 // The document's own chrome in the UI library's tokens, reaching every page whichever library draws it. It sits in the
 // First layer, so a component that paints its own focus or selection still wins. The inherited colours are declared
