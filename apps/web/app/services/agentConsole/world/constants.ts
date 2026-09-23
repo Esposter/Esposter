@@ -17,6 +17,14 @@ export const FIGURE_BREATH_SPEED = 3;
 // A camera far off with a narrow field of view, so the room reads nearly as an isometric diorama
 export const CAMERA_POSITION = new Vector3(30, 24, 30);
 export const CAMERA_TARGET = new Vector3(7, 1, 5);
+// How far the camera orbits: around the room's open corner only, so both walls stay behind it, above the floor, and
+// No farther out than where it starts
+export const CAMERA_MIN_AZIMUTH = Math.PI / 12;
+export const CAMERA_MAX_AZIMUTH = (5 * Math.PI) / 12;
+export const CAMERA_MIN_POLAR = Math.PI / 8;
+export const CAMERA_MAX_POLAR = (3 * Math.PI) / 8;
+export const CAMERA_MIN_DISTANCE = 20;
+export const CAMERA_MAX_DISTANCE = 45;
 // Where the gauges stand: the context vessel in the back corner, the coins on the desk, the pages on the workbench,
 // And the lantern under the gate's lintel
 export const VESSEL_POSITION = new Vector3(1, 1, 3);

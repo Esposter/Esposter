@@ -3,50 +3,31 @@ import type { ConversationEvent } from "@/models/agentConsole/ConversationEvent"
 
 import { TOKEN_COUNT_FORMAT } from "@/services/agentConsole/constants";
 import { getDurationSeconds } from "@/services/agentConsole/getDurationSeconds";
-import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
-import { AgentEventType, CommandType } from "agent-console-server/contracts";
+import { AgentEventType } from "agent-console-server/contracts";
 
 interface Props {
   event: ConversationEvent;
 }
 
 const { event } = defineProps<Props>();
-const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-const { sendCommand } = agentConsoleConnectionStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { currentSessionId, toolCallMap } = storeToRefs(agentConsoleSessionStore);
+const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
 </script>
 
 <template>
-  <div v-if="event.type === AgentEventType.UserMessage" flex gap-2 justify-end>
-    <AgentConsolePanelMessageActions :message-uuid="event.messageUuid">
-      <!-- The files are checkpointed before each prompt's edits, so only a prompt is a point they rewind to -->
-      <AgentConsolePanelButton
-        @click="
-          sendCommand({ messageUuid: event.messageUuid, sessionId: currentSessionId, type: CommandType.RewindFiles })
-        "
-      >
-        Rewind files
-      </AgentConsolePanelButton>
-    </AgentConsolePanelMessageActions>
-    <div class="user-message" px-3 py-1 ws-pre-wrap max-w="[80%]">
-      {{ event.text }}
-      <span v-if="event.attachmentCount > 0" class="muted">[{{ event.attachmentCount }} attached]</span>
-    </div>
+  <!-- Every message runs the panel's full width with no box of its own, as the terminal prints it: a prompt is told -->
+  <!-- Apart by its mark, and each message's actions float over its corner while it is hovered or focused -->
+  <div v-if="event.type === AgentEventType.UserMessage" class="group" ws-pre-wrap relative>
+    <span class="prompt-mark">›</span> {{ event.text }}
+    <span v-if="event.attachmentCount > 0" class="muted">[{{ event.attachmentCount }} attached]</span>
+    <AgentConsolePanelMessageActions is-prompt :message-uuid="event.messageUuid" :text="event.text" />
   </div>
-  <div v-else-if="event.type === AgentEventType.AssistantMessage" flex flex-col gap-1>
+  <div v-else-if="event.type === AgentEventType.AssistantMessage" class="group" relative>
     <AgentConsoleMarkdown :source="event.text" />
-    <div flex gap-1>
-      <AgentConsolePanelCopyButton :source="event.text" />
-      <AgentConsolePanelMessageActions :message-uuid="event.messageUuid" />
-    </div>
+    <AgentConsolePanelMessageActions :message-uuid="event.messageUuid" :text="event.text" />
   </div>
-  <!-- Open as it arrives, so what the agent is thinking reads beside what it says; a click folds it away -->
-  <details v-else-if="event.type === AgentEventType.Thinking" class="folded" open>
-    <summary>✻ Thinking</summary>
-    <p class="muted" ws-pre-wrap>{{ event.thinking || "Hidden by the model" }}</p>
-  </details>
+  <AgentConsolePanelThinking v-else-if="event.type === AgentEventType.Thinking" :text="event.thinking" />
   <!-- The fold records the call as it folds its use, so the call as first made is only ever the type's fallback -->
   <AgentConsolePanelToolCall
     v-else-if="event.type === AgentEventType.ToolUse"
@@ -78,8 +59,8 @@ const { currentSessionId, toolCallMap } = storeToRefs(agentConsoleSessionStore);
 </template>
 
 <style scoped>
-.user-message {
-  background-color: var(--agent-console-panel-edge);
+.prompt-mark {
+  color: var(--agent-console-accent);
 }
 
 .output {

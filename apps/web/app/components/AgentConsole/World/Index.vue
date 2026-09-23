@@ -6,7 +6,16 @@ import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import { AgentConsolePaletteMap } from "@/services/agentConsole/AgentConsolePaletteMap";
-import { CAMERA_POSITION, CAMERA_TARGET } from "@/services/agentConsole/world/constants";
+import {
+  CAMERA_MAX_AZIMUTH,
+  CAMERA_MAX_DISTANCE,
+  CAMERA_MAX_POLAR,
+  CAMERA_MIN_AZIMUTH,
+  CAMERA_MIN_DISTANCE,
+  CAMERA_MIN_POLAR,
+  CAMERA_POSITION,
+  CAMERA_TARGET,
+} from "@/services/agentConsole/world/constants";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { NoToneMapping } from "three";
@@ -44,6 +53,19 @@ onUnmounted(() => {
       "
     >
       <TresPerspectiveCamera :fov="30" :look-at="CAMERA_TARGET" :position="CAMERA_POSITION" />
+      <!-- Dragging turns the room and the wheel brings it closer; a click on an object still opens its panel -->
+      <OrbitControls
+        :enable-pan="false"
+        :max-azimuth-angle="CAMERA_MAX_AZIMUTH"
+        :max-distance="CAMERA_MAX_DISTANCE"
+        :max-polar-angle="CAMERA_MAX_POLAR"
+        :min-azimuth-angle="CAMERA_MIN_AZIMUTH"
+        :min-distance="CAMERA_MIN_DISTANCE"
+        :min-polar-angle="CAMERA_MIN_POLAR"
+        :target="CAMERA_TARGET"
+        enable-damping
+        make-default
+      />
       <AgentConsoleWorldScene />
     </TresCanvas>
     <!-- The readouts along the bottom: the host's connection always, and in development what the renderer did -->
