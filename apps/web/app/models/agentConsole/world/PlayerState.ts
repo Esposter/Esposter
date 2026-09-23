@@ -14,6 +14,8 @@ export interface PlayerState {
   previousPosition: Vector3;
   // Where the feet are drawn this frame
   renderPosition: Vector3;
+  // Which of a tick's simulation steps comes next, the first taking the tick's input and the last its gravity and drag
+  tickStep: number;
   // In blocks a tick, as Minecraft keeps it
   velocity: Vector3;
   // How far the feet have walked, which the limbs' swing is timed by rather than by the clock, so the feet never slide

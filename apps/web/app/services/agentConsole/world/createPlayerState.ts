@@ -14,6 +14,7 @@ export const createPlayerState = (): PlayerState => {
     position,
     previousPosition: position.clone(),
     renderPosition: position.clone(),
+    tickStep: 0,
     velocity: new Vector3(),
     walkedDistance: 0,
   };

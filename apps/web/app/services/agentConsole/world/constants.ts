@@ -28,11 +28,17 @@ export const DOOR_OPEN_BOX: VoxelBox = {
 export const DOOR_STAND_POSITION: Vector3Tuple = [0.5, 1, (DOOR_MIN_Z + DOOR_MAX_Z + 1) / 2];
 // Where the main agent stands while it is not using a tool
 export const HOME_POSITION: Vector3Tuple = [8, 1, 6.5];
-// The world around the room: columns of Minecraft's sixteen by sixteen voxels, this tall, generated this many chunks out
-// From the player's own each way and dropped a chunk further out, so a player pacing a border never regenerates one
+// The world around the room: columns of Minecraft's sixteen by sixteen voxels, this tall
 export const CHUNK_SIZE = 16;
 export const WORLD_HEIGHT = 32;
-export const RENDER_DISTANCE = 4;
+// How far past the player the world can be seen: the fog thickens from halfway there to there, counted from wherever
+// The camera's arm has it, and the camera sees no further, so a chunk is generated only where some of the camera's
+// View reaches, and dropped a chunk further out, so a player pacing a border never regenerates one
+export const VIEW_DISTANCE = 48;
+export const FOG_NEAR_DISTANCE = VIEW_DISTANCE / 2;
+// How many chunks the worker is handed at once: one to work on and one waiting, so it never waits on a round trip and
+// Never works through a backlog the player has walked away from
+export const MAX_REQUESTED_CHUNK_COUNT = 2;
 // A chunk's grid also holds a border this wide of its neighbours' voxels, so its edge faces are culled and shaded
 // Against what is really beside them, and its padded side is this long
 export const CHUNK_BORDER = 1;
@@ -50,10 +56,6 @@ export const ROOM_FLAT_MARGIN = 4;
 export const ROOM_BLEND_DISTANCE = 16;
 // Under the grass, this many voxels of dirt before the stone
 export const DIRT_DEPTH = 3;
-// Fog thickens from this far past the player to this far, counted from wherever the camera's arm has it, so the
-// Generated world's edge, never nearer than the render distance, is always lost in it
-export const FOG_NEAR_DISTANCE = RENDER_DISTANCE * CHUNK_SIZE * 0.4;
-export const FOG_FAR_DISTANCE = RENDER_DISTANCE * CHUNK_SIZE * 0.8;
 // An agent's figure is a voxel wide and two thirds of one deep
 export const FIGURE_HALF_WIDTH = 0.5;
 export const FIGURE_HALF_DEPTH = 1 / 3;
@@ -94,10 +96,10 @@ export const PLAYER_SNEAKING_HEIGHT = 1.5;
 // Where the camera looks and its spring arm starts: the middle of the player's head, which sneaking lowers
 export const PLAYER_EYE_HEIGHT = 1.75;
 export const PLAYER_SNEAK_DROP = PLAYER_HEIGHT - PLAYER_SNEAKING_HEIGHT;
-// Minecraft's own movement, in its units of blocks and ticks of a twentieth of a second, which a simulation step
-// Spends a share of. On the ground a tick keeps the velocity's share the block's slipperiness and the air's drag leave
-// And adds the walk's acceleration, so a walk settles a little over four blocks a second; in the air the drag alone
-// Slows it and the acceleration is a fifth. A sprint is three tenths faster and a sneak three tenths of a walk
+// Minecraft's own movement, in its units of blocks and ticks of a twentieth of a second. On the ground a tick adds the
+// Walk's acceleration and then keeps the velocity's share the block's slipperiness and the air's drag leave, so a walk
+// Settles a little over four blocks a second; in the air the drag alone slows it and the acceleration is a fifth. A
+// Sprint is three tenths faster and a sneak three tenths of a walk
 export const TICK_SECONDS = 1 / 20;
 export const GROUND_FRICTION = 0.6 * 0.91;
 export const AIR_FRICTION = 0.91;
@@ -132,13 +134,12 @@ export const PLAYER_RIGHT_LEG_POSITION = new Vector3(-2, 12, 0).multiplyScalar(P
 export const PLAYER_STRIDE_LENGTH = 1.6;
 export const PLAYER_SWING_ANGLE = 0.6;
 export const PLAYER_SWING_SETTLE_RATE = 12;
-// Movement advances in fixed steps, spending the time a frame took in whole steps. A frame longer than the cap — a tab
-// Coming back from the background — is spent as the cap, so the player never jumps across the room
-export const SIMULATION_STEP_SECONDS = 1 / 60;
+// Movement advances in fixed steps, this many to one of Minecraft's ticks, spending the time a frame took in whole
+// Steps. A frame longer than the cap — a tab coming back from the background — is spent as the cap, so the player
+// Never jumps across the room
+export const STEPS_PER_TICK = 3;
+export const SIMULATION_STEP_SECONDS = TICK_SECONDS / STEPS_PER_TICK;
 export const MAX_FRAME_SECONDS = 0.25;
-// A step is a share of one of Minecraft's ticks, and its friction and acceleration that share of a tick's, so a walk
-// Settles on the speed Minecraft's does whatever the step
-export const TICKS_PER_STEP = SIMULATION_STEP_SECONDS / TICK_SECONDS;
 // A stick's tilt below this reads as resting, since a gamepad's sticks never quite centre
 export const GAMEPAD_DEAD_ZONE = 0.15;
 // Where the gauges stand: the context vessel in the back corner, the coins on the desk, the pages on the workbench,
