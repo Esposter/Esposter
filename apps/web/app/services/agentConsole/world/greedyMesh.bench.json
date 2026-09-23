@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "filepath": "app/services/agentConsole/world/greedyMesh.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 3.192169999999965,
+              "name": "solid",
+              "p99": 4.128962999999962,
+              "rme": 13.518093820101939,
+              "sampleCount": 10
+            },
+            {
+              "mean": 95.75992000000006,
+              "name": "checkerboard",
+              "p99": 361.73539200000016,
+              "rme": 89.1200929938199,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "greedyMesh > 16³ chunk"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 11.133649999999943,
+              "name": "solid",
+              "p99": 13.813288000000293,
+              "rme": 8.405784764981096,
+              "sampleCount": 10
+            },
+            {
+              "mean": 166.09802000000013,
+              "name": "checkerboard",
+              "p99": 203.12964300000056,
+              "rme": 10.363796143378762,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "greedyMesh > 32³ chunk"
+        }
+      ]
+    }
+  ]
+}
