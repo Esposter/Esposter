@@ -56,7 +56,7 @@ flowchart TD
 | [Schema forms](/docs/proposals/refactors/ui-library/schema-forms)         | Our own renderer for the Zod-generated JSON Schema forms that vjsf draws today                | The sheet column and dashboard dialogs match the rest of the app, and the last Vuetify-bound engine goes |
 | [Retirement](/docs/proposals/refactors/ui-library/retirement)             | Vuetify, its Nuxt module and its UnoCSS preset removed, and their config with them            | A smaller install, a smaller bundle, and one way to build a control                                      |
 
-The [flow map](/docs/architecture/ui-library#flow-map), shipped, is generated before the app shell is designed, since the shell's navigation is designed from it.
+The [flow map](/docs/architecture/ui-library#flow-map), shipped, is generated before the app shell is designed, since the shell's navigation is designed from it. [Place marks](/docs/proposals/refactors/ui-library/place-marks) stands beside the ladder rather than on it: the app shell's dock learns what a place is, so a resource the reader keeps there shows its type's icon rather than a letter, and it can land between any two units.
 
 The design itself — the tokens, what each surface looks like, and the full list of details that make a UI feel finished — is in [design language](/docs/proposals/refactors/ui-library/design-language). The catalogue of components, each with the Vuetify 0 primitive under it and the Vuetify components it replaces, is in [components](/docs/proposals/refactors/ui-library/components).
 
