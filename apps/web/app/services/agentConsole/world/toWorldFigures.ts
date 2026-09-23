@@ -5,7 +5,7 @@ import type { Vector3Tuple } from "three";
 
 import { WorldObjectType } from "@/models/agentConsole/world/WorldObjectType";
 import { FIGURE_SPACING, HOME_POSITION } from "@/services/agentConsole/world/constants";
-import { ToolWorldObjectTypeMap } from "@/services/agentConsole/world/ToolWorldObjectTypeMap";
+import { getToolWorldObjectType } from "@/services/agentConsole/world/getToolWorldObjectType";
 import { WorldObjectMap } from "@/services/agentConsole/world/WorldObjectMap";
 import { SubagentStatus } from "agent-console-server/contracts";
 
@@ -17,7 +17,7 @@ const getStandingWorldObjectType = (
   isPermissionPending: boolean,
 ) => {
   if (isMain && isPermissionPending) return WorldObjectType.Gate;
-  else if (runningToolCall) return ToolWorldObjectTypeMap[runningToolCall.toolUse.name] ?? WorldObjectType.Desk;
+  else if (runningToolCall) return getToolWorldObjectType(runningToolCall.toolUse.name);
   else if (isMain) return undefined;
   else return WorldObjectType.Portal;
 };

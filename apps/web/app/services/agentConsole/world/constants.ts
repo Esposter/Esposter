@@ -7,6 +7,9 @@ export const ROOM_HEIGHT = 7;
 export const ROOM_DEPTH = 12;
 // Where the main agent stands while it is not using a tool
 export const HOME_POSITION: Vector3Tuple = [8, 1, 6.5];
+// An agent's figure is a voxel wide and two thirds of one deep
+export const FIGURE_HALF_WIDTH = 0.5;
+export const FIGURE_HALF_DEPTH = 1 / 3;
 // How far apart two figures stand at one station
 export const FIGURE_SPACING = 1.25;
 // Voxels a second a figure walks
@@ -97,6 +100,16 @@ export const VESSEL_POSITION = new Vector3(1, 1, 3);
 export const COINS_POSITION = new Vector3(10, 2, 9);
 export const PAGES_POSITION = new Vector3(12, 2, 3);
 export const LANTERN_POSITION = new Vector3(5, 3, 11);
+// Where a player stands to read each gauge: beside the vessel, at the desk's front for the coins, and at the
+// Workbench's end for the pages, clear of the stations' own spots
+export const VESSEL_STAND_POSITION: Vector3Tuple = [2.5, 1, 3.5];
+export const COINS_STAND_POSITION: Vector3Tuple = [10.5, 1, 11.3];
+export const PAGES_STAND_POSITION: Vector3Tuple = [10.3, 1, 3.5];
+// How near a thing's spot a player stands for it to prompt, how much wider than the thing its outline is drawn, and
+// How far above the outline its label floats
+export const REACH_DISTANCE = 1.5;
+export const PROMPT_OUTLINE_MARGIN = 0.05;
+export const PROMPT_LABEL_HEIGHT = 0.5;
 // How tall the context vessel stands when the context is full
 export const VESSEL_HEIGHT = 5;
 // A stack grows by this much a coin or a changed file, and stops at the most it can hold

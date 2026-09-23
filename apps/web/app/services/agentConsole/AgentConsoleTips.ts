@@ -8,5 +8,6 @@ export const AgentConsoleTips = [
   "Escape with the console closed pauses, and the pause menu unpairs or leaves.",
   "T or Enter opens the console over the world, and / opens it with a slash typed.",
   "W, A, S and D walk, Space jumps, Shift sneaks, W twice sprints, and a drag turns the camera.",
+  "Walk up to the board, a station, a gauge or the door and press E to use it.",
   "A session in a hidden tab still notifies you when it needs you.",
 ];

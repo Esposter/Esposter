@@ -12,7 +12,6 @@ import {
   VESSEL_HEIGHT,
   VESSEL_POSITION,
 } from "@/services/agentConsole/world/constants";
-import { toWorldFigures } from "@/services/agentConsole/world/toWorldFigures";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 
 interface Props {
@@ -27,19 +26,17 @@ const {
   fileEdits,
   isContextNearCompaction,
   pendingPermissionRequests,
-  timelineLanes,
   turnResult,
+  worldFigures,
 } = storeToRefs(agentConsoleSessionStore);
-const figures = computed(() =>
-  currentSessionId.value ? toWorldFigures(timelineLanes.value, pendingPermissionRequests.value.length > 0) : [],
-);
 const changedFileCount = computed(() => new Set(fileEdits.value.map(({ filePath }) => filePath)).size);
 </script>
 
 <template>
   <AgentConsoleWorldRoom />
   <AgentConsoleWorldPlayer :player-input />
-  <AgentConsoleWorldFigure v-for="{ id, isMain, position } of figures" :key="id" :is-main :position />
+  <AgentConsoleWorldPrompt :player-input />
+  <AgentConsoleWorldFigure v-for="{ id, isMain, position } of worldFigures" :key="id" :is-main :position />
   <template v-if="currentSessionId">
     <!-- The context vessel fills with the context used, the coins stack with the cost, the pages with the files changed -->
     <AgentConsoleWorldColumn

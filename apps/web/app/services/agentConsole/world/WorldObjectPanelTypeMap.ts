@@ -1,11 +1,11 @@
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { WorldObjectType } from "@/models/agentConsole/world/WorldObjectType";
-// The panel each object opens: the board the sessions, and every station the timeline of the calls made at it. The door
-// Opens nothing, since it leads out
+// The console tab each object opens for a player standing at it: the board the sessions, the gate the waiting request in
+// The conversation, and every station the timeline of the calls made at it. The door opens nothing, since it leads out
 export const WorldObjectPanelTypeMap = {
   [WorldObjectType.Board]: AgentConsolePanelType.Sessions,
   [WorldObjectType.Desk]: AgentConsolePanelType.Timeline,
-  [WorldObjectType.Gate]: AgentConsolePanelType.Timeline,
+  [WorldObjectType.Gate]: AgentConsolePanelType.Conversation,
   [WorldObjectType.Library]: AgentConsolePanelType.Timeline,
   [WorldObjectType.Portal]: AgentConsolePanelType.Timeline,
   [WorldObjectType.Telescope]: AgentConsolePanelType.Timeline,

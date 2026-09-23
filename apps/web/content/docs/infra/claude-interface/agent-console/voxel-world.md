@@ -1,11 +1,11 @@
 ---
 title: Voxel world
-description: The agent console's surface. The voxel room drawn with TresJS is the whole page, with no dock, and the person walks it as a player figure of their own with a camera following behind. The main agent walks to a station for each tool call it waits on, each subagent walks in as a figure of its own, and gauges in the room read the context, the cost and the files changed. Typing and reading happen in a console called up over the world on a key, as a game's chat is, built from the UI library in the page's own pixel palette. No Vuetify component is on the page.
+description: The agent console's surface. The voxel room drawn with TresJS is the whole page, with no dock, and the person walks it as a player figure of their own with a camera following behind, using a thing by standing at it. The main agent walks to a station for each tool call it waits on, each subagent walks in as a figure of its own, and gauges in the room read the context, the cost and the files changed. Typing and reading happen in a console called up over the world on a key, as a game's chat is, built from the UI library in the page's own pixel palette. No Vuetify component is on the page.
 ---
 
 # Voxel world
 
-The [agent console](/docs/infra/claude-interface/agent-console) is a place the session happens in, not an app page with a scene added to it. `/agent-console` uses the `immersive` layout, which has no app bar, drawer, footer or progress bar. The voxel room where the session is acted out fills the viewport, with a heads-up display along its top, and the person is in it as a player figure they walk with the keyboard, a touch joystick or a gamepad. Everything a person types or reads is in the console, an overlay called up over the world the way a game calls up its chat, and a pause menu over the world holds unpairing and leaving. The world needs no host: a page that has never been paired is walked and watched like any other, and the console is where a host is paired, the first time it is opened. Until the page, the world and any paired host are ready, a loading screen covers it.
+The [agent console](/docs/infra/claude-interface/agent-console) is a place the session happens in, not an app page with a scene added to it. `/agent-console` uses the `immersive` layout, which has no app bar, drawer, footer or progress bar. The voxel room where the session is acted out fills the viewport, with a heads-up display along its top, and the person is in it as a player figure they walk with the keyboard, a touch joystick or a gamepad, using a thing in the room by walking up to it. Everything a person types or reads is in the console, an overlay called up over the world the way a game calls up its chat, and a pause menu over the world holds unpairing and leaving. The world needs no host: a page that has never been paired is walked and watched like any other, and the console is where a host is paired, the first time it is opened. Until the page, the world and any paired host are ready, a loading screen covers it.
 
 ## How it works
 
@@ -26,7 +26,10 @@ flowchart TD
   G -->|yes| D[A direction, from the camera's heading]
   D --> X[Whole fixed steps: along x, then z, stopped at a solid voxel]
   X --> Y[The player drawn between its last two steps; the camera follows]
-  Y --> R
+  Y --> Z{A thing in reach, in front of the player?}
+  Z -->|yes| O[Outlined, a label naming E and what it does]
+  O -->|E, the use trigger, or a tap on the label| U[Its console tab, the composer, or the way out]
+  Z --> R
   K{A key, with nothing open over the world} -->|T or Enter| C
   K -->|slash| S[The console, a slash typed]
   K -->|Escape| P[The pause menu]
@@ -42,8 +45,22 @@ flowchart TD
 - **The camera follows.** It sits behind and above the player looking at its head, which a sneak lowers, and trails it with a little lag that reads as weight, or rigidly with reduced motion asked for. A sprint widens its view, as Minecraft's does, unless reduced motion is asked for. A drag on the room, or a gamepad's right stick, turns it around the player and tilts it between above the floor and short of straight down; the wheel brings it in or out, never farther than it starts. Where a wall would stand between the camera and the player, a ray cast through the grid pulls the camera in to just in front of it at once, and it eases back out once the wall is behind (`castThroughGrid`). Nothing in the room answers a click, and the cursor never changes over it.
 - **Each agent is a figure.** `toWorldFigures` reads the timeline lanes. The main agent stands at the station of the tool call it is waiting on, or at the gate while a permission request waits, and otherwise at home. A subagent walks in through the portal, goes to its own call's station, and leaves when it finishes. Figures sharing a station stand side by side. `ToolWorldObjectTypeMap` names each Claude Code tool's station, and any tool it does not name is used at the desk.
 - **The gauges are columns.** The context vessel fills with the share of the context used, and turns to the warning colour at nine tenths of the compaction threshold. The coins stack with the cost, the pages stack with the number of files changed, and the gate's lantern lights while a request waits. Each is one white voxel scaled to its height and tinted by its material, so a change of value rebuilds nothing.
+- **A thing is used by standing at it.** Each thing has a spot a figure stands at to use it, and it is in reach while the player stands within a voxel and a half of that spot and faces the thing's middle, so a thing behind the player never prompts (`findReachableObject`). Of the things in reach, the nearest is outlined and a label over it, ordinary HTML turned to the camera, names the key and what it does. E, a gamepad's use trigger, or a tap on the label does it, and a screen reader hears what is in reach as the player walks up to it. Every one of them is also a tab or a button in the console, so none of it needs the world (`useWorldPrompts`).
+
+  | Thing                         | Its label | What it does                                         |
+  | :---------------------------- | :-------- | :--------------------------------------------------- |
+  | The board                     | Sessions  | The console on the sessions                          |
+  | A station                     | Timeline  | The console on the timeline, at that station's calls |
+  | The context vessel, the coins | Usage     | The console on the usage                             |
+  | The pages                     | Changes   | The console on the changes                           |
+  | The gate                      | Answer    | The console on the waiting request, while one waits  |
+  | The main agent's figure       | Talk      | The console's composer, focused                      |
+  | The door                      | Leave     | The app                                              |
+
+  A station's timeline shows only the calls made at it, by the station `ToolWorldObjectTypeMap` names for each tool, with a button to show every call again.
+
 - **The heads-up display describes the session.** One bar along the top carries the session's title, its state, its context and its cost, and a button that opens the console with its key written on it. While a permission request waits, that button carries a warning mark. The host's connection status reads along the bottom of the world, beside the renderer's figures in development.
-- **The keys are the world's while nothing is over it.** T or Enter opens the console on the conversation with the composer focused, and the slash key opens it with a slash already typed, as a game's command line does. Escape opens the pause menu: back to the world, the sessions, unpair, and leave to the app. The keys are read only while no dialog is open over the world, nothing editable has focus and no modifier is held, so a browser shortcut or a field is never taken over, and the shortcuts dialog lists them.
+- **The keys are the world's while nothing is over it.** T or Enter opens the console on the conversation with the composer focused, and the slash key opens it with a slash already typed, as a game's command line does. E uses what is in reach. Escape opens the pause menu: back to the world, the sessions, unpair, and leave to the app. The keys are read only while no dialog is open over the world, nothing editable has focus and no modifier is held, so a browser shortcut or a field is never taken over, and the shortcuts dialog lists them.
 - **A question from the agent opens the console.** A permission request opens the console on it, and the gate's lantern and the heads-up display's mark stay lit until it has a verdict, so a request never waits where nobody looks.
 - **The latest lines show over the world.** With the console closed, each new reply's opening words appear at the foot of the world, on one line, and fade after a few seconds, as a game's chat lines do. A click on one opens the console. A line is only ever a reply: a diff or a permission request always opens the console instead. A log replayed on connecting shows none.
 - **Unpairing leaves nothing behind.** It drops the sessions, the console and the pause menu along with the host, so the world is left empty and the console asks for a host again.
@@ -79,28 +96,32 @@ The world is open all day beside an editor, so it stays live while keeping each 
 
 ## Key files
 
-| File                                                               | Role                                                                       |
-| :----------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| `apps/web/app/layouts/immersive.vue`                               | The full-screen layout; `App.vue` drops the dock and loading bar for it    |
-| `apps/web/app/components/AgentConsole/Index.vue`                   | The world at full size with the overlays, its dusk theme scope, its font   |
-| `apps/web/app/components/AgentConsole/Overlay.vue`                 | The console: a sheet of tabs, which a permission request opens             |
-| `apps/web/app/components/AgentConsole/PauseMenu.vue`               | Back to the world, the sessions, unpair, and leave to the app              |
-| `apps/web/app/components/AgentConsole/ChatLines.vue`               | The latest replies' opening words over the world, fading                   |
-| `apps/web/app/composables/agentConsole/useAgentConsoleCommands.ts` | The world's keys, bound only while nothing is open over it                 |
-| `apps/web/app/store/agentConsole/panel.ts`                         | Whether the console and the pause menu are open, and the console's tab     |
-| `apps/web/app/components/AgentConsole/World/Index.vue`             | The canvas, the player's state and input, and the development overlay      |
-| `apps/web/app/components/AgentConsole/World/Player.vue`            | The player's six boxes, its fixed-step walk, its swing and its breath      |
-| `apps/web/app/components/AgentConsole/World/FollowCamera.vue`      | Behind the player, turned by a drag, pulled in by a wall                   |
-| `apps/web/app/components/AgentConsole/Joystick.vue`                | The touch joystick                                                         |
-| `apps/web/app/composables/agentConsole/world/usePlayerInput.ts`    | Keys, joystick and gamepad as one direction to walk and one to look, gated |
-| `apps/web/app/services/agentConsole/world/moveThroughGrid.ts`      | One step of the player's box, resolved one axis at a time                  |
-| `apps/web/app/services/agentConsole/world/castThroughGrid.ts`      | How far a ray gets through the grid, which the camera's spring arm reads   |
-| `apps/web/app/components/AgentConsole/World/Figure.vue`            | A figure walking to where it should stand, and breathing there             |
-| `apps/web/app/components/AgentConsole/Panel/Loading.vue`           | The loading screen: the bar, the percentage and the step under way         |
-| `apps/web/app/services/agentConsole/foldAgentEvents.ts`            | The incremental fold every panel and the world read                        |
-| `apps/web/app/services/agentConsole/world/greedyMesh.ts`           | Voxels to one mesh, with occlusion and shading baked in                    |
-| `apps/web/app/services/agentConsole/world/WorldObjectMap.ts`       | Every object in the room, the boxes it is built from and where one stands  |
-| `apps/web/app/services/agentConsole/world/toWorldFigures.ts`       | The timeline lanes read as where each agent stands                         |
+| File                                                                  | Role                                                                       |
+| :-------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| `apps/web/app/layouts/immersive.vue`                                  | The full-screen layout; `App.vue` drops the dock and loading bar for it    |
+| `apps/web/app/components/AgentConsole/Index.vue`                      | The world at full size with the overlays, its dusk theme scope, its font   |
+| `apps/web/app/components/AgentConsole/Overlay.vue`                    | The console: a sheet of tabs, which a permission request opens             |
+| `apps/web/app/components/AgentConsole/PauseMenu.vue`                  | Back to the world, the sessions, unpair, and leave to the app              |
+| `apps/web/app/components/AgentConsole/ChatLines.vue`                  | The latest replies' opening words over the world, fading                   |
+| `apps/web/app/composables/agentConsole/useAgentConsoleCommands.ts`    | The world's keys, bound only while nothing is open over it                 |
+| `apps/web/app/store/agentConsole/panel.ts`                            | Whether the console and the pause menu are open, and the console's tab     |
+| `apps/web/app/components/AgentConsole/World/Index.vue`                | The canvas, the player's state and input, and the development overlay      |
+| `apps/web/app/components/AgentConsole/World/Player.vue`               | The player's six boxes, its fixed-step walk, its swing and its breath      |
+| `apps/web/app/components/AgentConsole/World/FollowCamera.vue`         | Behind the player, turned by a drag, pulled in by a wall                   |
+| `apps/web/app/components/AgentConsole/Joystick.vue`                   | The touch joystick                                                         |
+| `apps/web/app/composables/agentConsole/world/usePlayerInput.ts`       | Keys, joystick and gamepad as one direction to walk and one to look, gated |
+| `apps/web/app/services/agentConsole/world/moveThroughGrid.ts`         | One step of the player's box, resolved one axis at a time                  |
+| `apps/web/app/services/agentConsole/world/castThroughGrid.ts`         | How far a ray gets through the grid, which the camera's spring arm reads   |
+| `apps/web/app/components/AgentConsole/World/Prompt.vue`               | The outline and the label over what is in reach, and the use trigger       |
+| `apps/web/app/composables/agentConsole/world/useWorldPrompts.ts`      | Every thing that can be used by standing at it, and what it does           |
+| `apps/web/app/services/agentConsole/world/findReachableObject.ts`     | The nearest thing in reach and in front of the player                      |
+| `apps/web/app/services/agentConsole/world/WorldObjectPanelTypeMap.ts` | The console tab each object opens for a player standing at it              |
+| `apps/web/app/components/AgentConsole/World/Figure.vue`               | A figure walking to where it should stand, and breathing there             |
+| `apps/web/app/components/AgentConsole/Panel/Loading.vue`              | The loading screen: the bar, the percentage and the step under way         |
+| `apps/web/app/services/agentConsole/foldAgentEvents.ts`               | The incremental fold every panel and the world read                        |
+| `apps/web/app/services/agentConsole/world/greedyMesh.ts`              | Voxels to one mesh, with occlusion and shading baked in                    |
+| `apps/web/app/services/agentConsole/world/WorldObjectMap.ts`          | Every object in the room, the boxes it is built from and where one stands  |
+| `apps/web/app/services/agentConsole/world/toWorldFigures.ts`          | The timeline lanes read as where each agent stands                         |
 
 ## Notes
 
@@ -112,7 +133,7 @@ The world is open all day beside an editor, so it stays live while keeping each 
 ## Settled
 
 - **A column of panels beside the world, and a button that hid it.** The world is the page and the console an overlay over it, so the room is never half the page and no mode can hide a question the agent asked.
-- **Clicking the room.** Nothing in the room answers a click. A thing whose hit area nothing on screen shows is one a person finds only by trying, so each panel an object stood for is a tab in the console.
+- **Clicking the room.** Nothing in the room answers a click. A thing whose hit area nothing on screen shows is one a person finds only by trying, so a thing is used by standing at it, where its prompt shows what it does before it is used.
 - **An orbit camera over the room.** It made the room a diorama to look at; the camera follows the player instead, and the room is a place to be in.
 - **Pointer lock, a first-person view, or clicking to walk.** A locked pointer fights every DOM surface the console is made of, a first-person view of a room this size shows mostly walls, and clicking to walk would make a click on the room mean something again. Touch gets a joystick instead.
 - **A title screen that holds the world back until a host is paired.** The world is the page whether or not a host is paired, and pairing is the console's, asked for when the person opens it to type.
@@ -122,6 +143,8 @@ The world is open all day beside an editor, so it stays live while keeping each 
 - [Meshing in a Minecraft game](https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/), Mikola Lysenko: greedy meshing, where adjacent faces are merged into larger quads, compared against naive and culled meshing.
 - [Ambient occlusion for Minecraft-like worlds](https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/), Mikola Lysenko: per-vertex ambient occlusion from a vertex's two side voxels and its corner voxel, baked at meshing time, and the quad split along its brighter diagonal.
 - [TresCanvas](https://docs.tresjs.org/api/components/tres-canvas), TresJS: the canvas, its `ready` event that ends the loading screen's world step, and its `render` event the development overlay counts.
+- [Proximity prompts](https://create.roblox.com/docs/ui/proximity-prompts), Roblox Creator Hub: a prompt that appears as a person comes within a set distance of an object, names the input that uses it for keyboard, gamepad and touch, and triggers the object's action.
+- [Game accessibility guidelines](https://gameaccessibilityguidelines.com/full-list/): every part of the interface reachable with the same input as the play, more than one input device supported — the rule behind nothing being only in the world.
 - [Dialog (modal) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/), WAI-ARIA Authoring Practices Guide: focus moved into the dialog and kept there, Escape closing it, focus returned to what opened it, and a visible close button — what the console's native dialog gives.
 - [Controls](https://minecraft.wiki/w/Controls), Minecraft Wiki: chat on T, a command on the slash key with the slash typed, and Escape as the pause menu — the keys the console takes.
 - [Skin](https://minecraft.wiki/w/Skin) and [Player](https://minecraft.wiki/w/Player), Minecraft Wiki: the player model's parts and sizes, a box a little over half a block wide and a walk of a little over four blocks a second — the proportions, the box and the speed the player starts from.

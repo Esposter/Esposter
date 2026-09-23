@@ -9,6 +9,7 @@ import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import { AgentConsolePaletteMap } from "@/services/agentConsole/AgentConsolePaletteMap";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
+import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
 import { NoToneMapping } from "three";
 // What the renderer did, shown in development. It is not reactive, so counting a frame never re-renders the canvas
 // That drew it, and the count measures the world rather than itself
@@ -17,6 +18,8 @@ const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { isWorldReady } = storeToRefs(agentConsolePanelStore);
+const agentConsolePlayerStore = useAgentConsolePlayerStore();
+const { reachableWorldPrompt } = storeToRefs(agentConsolePlayerStore);
 const joystickDirection = ref<Vector2Like>({ x: 0, y: 0 });
 const playerInput = usePlayerInput(joystickDirection);
 const isTouchScreen = useMediaQuery("(pointer: coarse)");
@@ -52,6 +55,9 @@ onUnmounted(() => {
     </TresCanvas>
     <!-- On a touch screen, a joystick in the lower corner walks the player, and a drag anywhere else turns the camera -->
     <AgentConsoleJoystick v-if="isTouchScreen" v-model="joystickDirection" bottom-4 left-4 absolute />
+    <!-- What is in reach, said as the player walks up to it: the label over it is drawn fresh for each thing, and a
+      Live region only announces a change to what it already holds -->
+    <p role="status" sr-only>{{ reachableWorldPrompt ? `E: ${reachableWorldPrompt.title}` : "" }}</p>
     <!-- The readouts along the bottom: the host's connection always, and in development what the renderer did -->
     <div flex gap-2 pointer-events-none bottom-2 right-2 absolute>
       <AgentConsolePanelConnectionStatus v-if="status !== ConnectionStatus.Unpaired" />

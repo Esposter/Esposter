@@ -3,6 +3,7 @@ import type { AgentEvent, SessionSummary } from "agent-console-server/contracts"
 import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
 import { createSessionView } from "@/services/agentConsole/createSessionView";
 import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
+import { toWorldFigures } from "@/services/agentConsole/world/toWorldFigures";
 import { AgentEventType, SessionState } from "agent-console-server/contracts";
 // The host's sessions and each one's view of its event log. The log is the only state: everything the page shows is
 // Folded from it as it arrives, so a reconnect that replays the log rebuilds every part of the page
@@ -18,6 +19,10 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const timelineLanes = computed(() => [...sessionView.value.timelineLaneMap.values()]);
   const streamDraft = computed(() => sessionView.value.streamDraft);
   const toolCallMap = computed(() => sessionView.value.toolCallMap);
+  // Where each agent stands in the room, which the figures walk to and the main agent's prompt is measured from
+  const worldFigures = computed(() =>
+    currentSessionId.value ? toWorldFigures(timelineLanes.value, pendingPermissionRequests.value.length > 0) : [],
+  );
   const capabilities = computed(() => sessionView.value.latestEventMap[AgentEventType.Capabilities]);
   const contextUsage = computed(() => sessionView.value.latestEventMap[AgentEventType.ContextUsage]);
   // Warns before automatic compaction rather than at it, which is the moment a person can still choose to compact
@@ -72,5 +77,6 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
     toolCallMap,
     turnResult,
     turnUsage,
+    worldFigures,
   };
 });
