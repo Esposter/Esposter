@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useCommentStore } from "@/store/post/comment";
 
 interface Props {
@@ -26,8 +27,8 @@ const saveComment = useSaveRichTextEdit(
 <template>
   <PostDescriptionRichTextEditor v-model="editedDescriptionHtml" height="4rem" placeholder="">
     <template #append-footer="{ editor }">
-      <v-btn size="small" text="Cancel" variant="outlined" @click="emit('update:update-mode', false)" />
-      <StyledButton v-if="editor" ml-2 :button-props="{ size: 'small', text: 'Save' }" @click="saveComment(editor)" />
+      <UiButton py-1 @click="emit('update:update-mode', false)">Cancel</UiButton>
+      <UiButton v-if="editor" :variant="UiButtonVariant.Accent" py-1 @click="saveComment(editor)">Save</UiButton>
     </template>
   </PostDescriptionRichTextEditor>
 </template>

@@ -24,11 +24,11 @@ const { updatePost } = postStore;
     <Head>
       <Title>{{ post.title }}</Title>
     </Head>
-    <v-container>
+    <div px-4 py-6 w-full ui-body>
       <PostUpsertForm
         :initial-values="{ title: post.title, description: post.description }"
         @submit="
-          async (_event, values) => {
+          async (values) => {
             const updatedPost = await updatePost({ id: post.id, ...values });
             // A rejected edit leaves the reader on what they wrote, exactly as a rejected create does
             if (!updatedPost) return;
@@ -38,6 +38,6 @@ const { updatePost } = postStore;
           }
         "
       />
-    </v-container>
+    </div>
   </NuxtLayout>
 </template>

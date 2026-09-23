@@ -10,9 +10,9 @@ const { isCommentStore, post } = defineProps<Props>();
 </script>
 
 <template>
-  <div flex flex-col items-center>
+  <div flex gap-1 items-center>
     <PostVoteButton :post :is-comment-store :value="1" />
-    {{ post.likeCount }}
+    <span text-center min-w-6>{{ post.likeCount }}</span>
     <PostVoteButton :post :is-comment-store :value="-1" />
   </div>
 </template>

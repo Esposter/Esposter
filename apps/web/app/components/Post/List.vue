@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { PostSortTypes } from "@/models/post/PostSortType";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { usePostStore } from "@/store/post";
 import { RoutePath } from "@esposter/shared";
 
+const postSortTypeItems = PostSortTypes.map((postSortType) => ({ title: postSortType, value: postSortType }));
 const postStore = usePostStore();
 const { hasMore, items, sortType } = storeToRefs(postStore);
 const { resetCursorPaginationData } = postStore;
@@ -15,39 +19,27 @@ watch(sortType, async () => {
 </script>
 
 <template>
-  <v-pull-to-refresh
-    min-h-16
-    @load="
-      async ({ done }) => {
-        await refresh();
-        done();
-      }
-    "
-  >
-    <v-container>
-      <!-- Reddit's own arrangement: the feed is where someone reads a post and decides to write one, so the
-        Create action sits on the feed's own toolbar rather than only in the apps menu, which is a product
-        switcher a reader opens to leave posts rather than to write one -->
-      <div flex gap-x-2 items-center>
-        <PostSortMenu />
-        <v-spacer />
-        <StyledButton
-          :button-props="{
-            prependIcon: 'i-mdi:square-edit-outline',
-            size: 'small',
-            text: 'Create Post',
-            to: RoutePath.PostCreate,
-          }"
-        />
-      </div>
-      <v-divider my-2 />
-      <v-row>
-        <v-col v-for="post of items" :key="post.id" cols="12">
-          <PostCard :post />
-        </v-col>
-      </v-row>
-      <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMorePosts" />
-    </v-container>
-  </v-pull-to-refresh>
+  <!-- Pulling to refresh is the browser's own, which reloads the feed -->
+  <div px-4 py-6 flex flex-col gap-4 w-full ui-body>
+    <!-- Reddit's own arrangement: the feed is where someone reads a post and decides to write one, so the
+      Create action sits on the feed's own toolbar rather than only in the launcher, which a reader opens to leave
+      Posts rather than to write one -->
+    <div flex gap-2 items-center>
+      <UiSelect v-model="sortType" :items="postSortTypeItems" label="Sort by" />
+      <div flex-1 />
+      <UiButtonLink :to="RoutePath.PostCreate" :variant="UiButtonVariant.Accent" py-1>
+        <UiIcon :meaning="UiIconMeaning.Create" />
+        Create post
+      </UiButtonLink>
+    </div>
+    <PostCard v-for="post of items" :key="post.id" :post />
+    <UiEmptyState
+      v-if="items.length === 0"
+      description="A post someone creates shows up here."
+      :meaning="UiIconMeaning.Comment"
+      title="Nothing posted yet"
+    />
+    <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMorePosts" />
+  </div>
   <PostConfirmDeleteDialog />
 </template>

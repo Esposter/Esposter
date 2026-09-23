@@ -108,11 +108,26 @@ canvas {
   min-height: var(--toolbar-height);
   height: auto !important;
 }
-// Restore list padding for rich text (tiptap) output, which the reset layer above zeroes out
+// Rich text (tiptap) output, themed from outside in the library's tokens: list padding the reset layer above zeroes
+// Out, links in the link colour, code in the pixel face whatever the body reads in, and a quote behind a rule in the
+// Edge colour
 .rich-text-content {
   ul,
   ol {
     padding: 0 1rem;
+  }
+
+  a {
+    color: var(--ui-info);
+  }
+
+  code {
+    font-family: var(--ui-font-pixel);
+  }
+
+  blockquote {
+    padding-left: calc(var(--ui-step) * 3);
+    box-shadow: inset var(--ui-step) 0 0 0 var(--ui-panel-edge);
   }
   // A custom emoji is inline text, not a picture in a paragraph: it follows the line's own size the way a
   // Unicode glyph does, so a message that mixes the two lines up whatever the reader's density setting is

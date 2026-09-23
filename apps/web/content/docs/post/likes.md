@@ -32,9 +32,9 @@ flowchart TD
 - `updateLike` — flip an existing vote (`likeCount += 2 × value`, rejecting no-op flips).
 - `deleteLike` — retract (`likeCount −= value`).
 
-**Viewer-scoped reads** — every procedure that returns a post (reads and mutations alike) carries `viewerLike: Like | undefined` on `PostWithRelations`: at most the viewer's own like row, never the full list, since the net count already lives in the denormalized `likeCount`. The `likes` relation is only the server-side fetch strategy — `getViewerPostRelations` filters it to the caller, and `getPostWithViewerLike` maps the result. Unauthenticated rate-limited reads have no viewer, so they skip the like lookup entirely and the arrows render uncolored. A hot feed page's payload is O(posts) instead of O(total likes).
+**Viewer-scoped reads** — every procedure that returns a post (reads and mutations alike) carries `viewerLike: Like | undefined` on `PostWithRelations`: at most the viewer's own like row, never the full list, since the net count already lives in the denormalized `likeCount`. The `likes` relation is only the server-side fetch strategy — `getViewerPostRelations` filters it to the caller, and `getPostWithViewerLike` maps the result. Unauthenticated rate-limited reads have no viewer, so they skip the like lookup entirely and neither arrow is pressed. A hot feed page's payload is O(posts) instead of O(total likes).
 
-**Client** — `PostLikeSection` derives `liked`/`unliked` from `viewerLike`, and maps arrow clicks to the right mutation (up while unliked = flip, up while liked = retract, …). `useLikeOperations` applies the result optimistically to whichever store owns the list (feed posts vs a post page's comments — two store instances of the same shape), patching `viewerLike` and `likeCount` in place so counts update without a refetch.
+**Client** — the vote pill (`PostLikeSection`) holds two toggles, each pressed while it is the viewer's vote; `PostVoteButton` reads that from `viewerLike` and maps a press to the right mutation (up while unliked = flip, up while liked = retract, …). `useLikeOperations` applies the result optimistically to whichever store owns the list (feed posts vs a post page's comments — two store instances of the same shape), patching `viewerLike` and `likeCount` in place so counts update without a refetch.
 
 ## Procedures
 
@@ -55,7 +55,7 @@ Paths are `apps/web`-relative; a `packages/` path is repo-relative.
 | `server/trpc/routers/like.ts`                              | transactional mutations              |
 | `server/services/post/getViewerPostRelations.ts`           | viewer-filtered likes fetch strategy |
 | `server/services/post/getPostWithViewerLike.ts`            | maps the fetched row to `viewerLike` |
-| `app/components/Post/LikeSection.vue`                      | arrows UI + state derivation         |
+| `app/components/Post/VoteButton.vue`                       | one arrow: its toggle and its write  |
 | `app/composables/post/useLikeOperations.ts`                | optimistic store patching            |
 | `app/store/post/like.ts`, `app/store/post/comment/like.ts` | per-list like stores                 |
 

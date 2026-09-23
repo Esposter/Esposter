@@ -15,11 +15,12 @@ const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
 </script>
 
 <template>
-  <StyledDeleteFormDialog
+  <UiConfirmDialog
     v-if="comment"
     v-model="isOpen"
-    :card-props="{ title: 'Delete Comment' }"
-    @delete="
+    confirm-label="Delete"
+    title="Delete comment"
+    @confirm="
       async (onComplete) => {
         if (!comment) return;
         // Narrowing does not survive into the closure below, so the id is read out here
@@ -28,9 +29,13 @@ const { isOpen, item: comment } = useSingletonDialog(deletingId, () =>
       }
     "
   >
-    Are you sure you want to delete this comment?
-    <StyledPreviewCard>
-      <PostPreview :post="comment" />
-    </StyledPreviewCard>
-  </StyledDeleteFormDialog>
+    <p>
+      {{
+        comment.commentCount > 0
+          ? "Are you sure you want to delete this comment and its replies?"
+          : "Are you sure you want to delete this comment?"
+      }}
+    </p>
+    <PostPreview :post="comment" />
+  </UiConfirmDialog>
 </template>

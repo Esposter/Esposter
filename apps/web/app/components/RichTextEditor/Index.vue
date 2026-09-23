@@ -3,7 +3,6 @@ import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBarSl
 import type { FileHandlePluginOptions } from "@tiptap/extension-file-handler";
 import type { AnyExtension, FocusPosition } from "@tiptap/vue-3";
 import type { CSSProperties } from "vue";
-import type { VCard } from "vuetify/components";
 
 import { FileHandler } from "@tiptap/extension-file-handler";
 import { CharacterCount, Placeholder } from "@tiptap/extensions";
@@ -12,7 +11,6 @@ import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 interface Props {
   autofocus?: FocusPosition;
-  cardProps?: VCard["$props"];
   extensions?: AnyExtension[];
   height?: string;
   limit: number;
@@ -26,14 +24,7 @@ defineSlots<{
   "prepend-outer-footer": () => VNode;
 }>();
 const modelValue = defineModel<string>({ required: true });
-const {
-  autofocus = false,
-  cardProps,
-  extensions,
-  height = "auto",
-  limit,
-  placeholder = "Text (optional)",
-} = defineProps<Props>();
+const { autofocus = false, extensions, height = "auto", limit, placeholder = "Text (optional)" } = defineProps<Props>();
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
 const editor = useEditor({
@@ -69,10 +60,12 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
 </script>
 
 <template>
-  <div flex flex-col w-full>
-    <StyledCard :card-props>
+  <div flex flex-col gap-1 w-full>
+    <!-- Tiptap draws only the document, so the chrome around it is the library's, and what the document holds is
+      Themed from outside by the rich text rules -->
+    <div flex flex-col ui-frame>
       <RichTextEditorMenuBar :editor />
-      <v-divider thickness="2" />
+      <div bg-panel-edge h-1 />
       <slot name="prepend-inner-header" />
       <EditorContent class="rich-text-content" :editor />
       <RichTextEditorFooterBar :editor>
@@ -84,10 +77,10 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
           <slot name="append-footer" :="editorProps" />
         </template>
       </RichTextEditorFooterBar>
-    </StyledCard>
-    <div px-1 pt-1 flex justify-between>
+    </div>
+    <div text-muted px-1 flex gap-2 justify-between>
       <slot name="prepend-outer-footer">&nbsp;</slot>
-      <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
+      <span v-if="editor?.isFocused">{{ editor.storage.characterCount.characters() }} / {{ limit }}</span>
     </div>
   </div>
 </template>
@@ -104,7 +97,7 @@ watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
     content: attr(data-placeholder);
     height: 0;
     float: left;
-    opacity: 0.4;
+    color: var(--ui-muted);
     pointer-events: none;
   }
 

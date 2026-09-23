@@ -51,7 +51,6 @@ useCommands(MessageInputCommands);
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[...extensions, slashCommandExtension]"
-      :card-props="replyToMessage ? { class: 'rd-t-none' } : undefined"
       @paste="(_editor, files) => uploadFiles(files)"
     >
       <template #prepend-inner-header>

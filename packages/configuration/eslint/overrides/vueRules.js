@@ -61,6 +61,17 @@ export default {
       element: "time",
       message: "Don't hand-write <time>. Use <NuxtTime>, which renders one and formats it hydration-safely.",
     },
+    // A Vuetify component with no consumer left on the UI library's page migration, so it cannot come back
+    {
+      element: "v-counter",
+      message:
+        "Don't use <v-counter>. Vuetify is leaving for the UI library: a field counts with UiTextField's counter prop, and an editor counts under itself as RichTextEditor does.",
+    },
+    {
+      element: "v-pull-to-refresh",
+      message:
+        "Don't use <v-pull-to-refresh>. Vuetify is leaving for the UI library, and a page that scrolls the document is refreshed by the browser's own pull-to-refresh.",
+    },
   ],
   // Every input Vuetify renders in this app declares `hideDetails: "auto"` once in `vuetify.config.ts`, so a
   // Per-field `hide-details` restates the default at best and defeats it at worst: the bare attribute means
