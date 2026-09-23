@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { MAX_RECENT_ACHIEVEMENTS } from "@/services/achievement/constants";
 import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
 
@@ -28,35 +29,41 @@ const isOpen = ref(false);
 </script>
 
 <template>
-  <div flex flex-col gap-y-3>
-    <div flex gap-x-2 items-center>
-      <v-icon color="orange" icon="i-mdi:trophy" />
-      <span fw-bold text-title-large>{{ totalPoints }} achievement points</span>
-      <span text-hint>{{ unlockedUserAchievements.length }} unlocked</span>
-      <v-spacer />
+  <section flex flex-col gap-3>
+    <div flex flex-wrap gap-2 items-center>
+      <UiIcon :meaning="UiIconMeaning.Achievement" text-warning />
+      <h2 ui-heading>{{ totalPoints }} achievement points</h2>
+      <span text-muted>{{ unlockedUserAchievements.length }} unlocked</span>
+      <div flex-1 />
       <!-- Only when there is more than the summary is showing — otherwise it opens the same few again -->
-      <v-btn
+      <UiButton
         v-if="unlockedUserAchievements.length > MAX_RECENT_ACHIEVEMENTS"
-        append-icon="i-mdi:chevron-right"
-        size="small"
-        text="View all"
-        variant="text"
+        aria-haspopup="dialog"
+        inline-flex
+        gap-1
+        items-center
+        py-1
         @click="isOpen = true"
-      />
+      >
+        View all
+        <UiIcon :meaning="UiIconMeaning.Next" />
+      </UiButton>
     </div>
-    <v-row v-if="recentUserAchievements.length > 0">
+    <ul v-if="recentUserAchievements.length > 0" gap-4 grid cols-1 sm:cols-2 md:cols-3 lg:cols-4>
       <AchievementGridItem
         v-for="userAchievement of recentUserAchievements"
         :key="userAchievement.achievementId"
         :achievement-definition="userAchievement.achievement"
         :user-achievement
       />
-    </v-row>
-    <StyledDialog v-model="isOpen" :card-props="{ prependIcon: 'i-mdi:trophy', title: 'Achievements' }">
-      <AchievementGrid
-        :achievement-definitions="unlockedAchievementDefinitions"
-        :user-achievements="unlockedUserAchievements"
-      />
-    </StyledDialog>
-  </div>
+    </ul>
+    <UiDialog v-model="isOpen" title="Achievements" w="[min(64rem,90vw)]">
+      <div p-3 min-h-0 of-y-auto>
+        <AchievementGrid
+          :achievement-definitions="unlockedAchievementDefinitions"
+          :user-achievements="unlockedUserAchievements"
+        />
+      </div>
+    </UiDialog>
+  </section>
 </template>

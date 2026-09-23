@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { RoutePath } from "@esposter/shared";
 
@@ -18,13 +19,13 @@ const isCurrentUser = computed(() => session.value?.user.id === userId);
 </script>
 
 <template>
-  <div text-center flex flex-col gap-y-3 items-center>
-    <StyledAvatar :image="user.image" :name="user.name" :avatar-props="{ size: '6rem' }" />
-    <div fw-bold text-headline-small>{{ user.name }}</div>
-    <div v-if="user.biography" op-medium-emphasis text-body-large>{{ user.biography }}</div>
-    <StyledButton
-      v-if="isCurrentUser"
-      :button-props="{ prependIcon: 'i-mdi:pencil', size: 'small', text: 'Edit profile', to: RoutePath.UserSettings }"
-    />
-  </div>
+  <header text-center flex flex-col gap-3 items-center>
+    <UiAvatar :image="user.image ?? ''" :name="user.name" is-large />
+    <h1 ui-title>{{ user.name }}</h1>
+    <p v-if="user.biography" text-muted max-w-prose ws-pre-wrap>{{ user.biography }}</p>
+    <UiButtonLink v-if="isCurrentUser" :to="RoutePath.UserSettings" py-1>
+      <UiIcon :meaning="UiIconMeaning.Edit" />
+      Edit profile
+    </UiButtonLink>
+  </header>
 </template>

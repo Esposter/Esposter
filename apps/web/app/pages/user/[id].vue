@@ -18,18 +18,14 @@ await readPosts();
     <Head>
       <Title>{{ user.name }}</Title>
     </Head>
-    <v-container>
+    <div px-4 py-8 flex flex-col gap-8 ui-body>
       <UserProfileHeader :user :user-id />
-      <v-divider my-4 />
       <UserProfileAchievementSummary :user-achievements />
-      <v-divider my-4 />
-      <v-row>
-        <v-col v-for="post of items" :key="post.id" cols="12">
-          <PostCard :post />
-        </v-col>
-      </v-row>
+      <div flex flex-col gap-6>
+        <PostCard v-for="post of items" :key="post.id" :post />
+      </div>
       <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMorePosts" />
-    </v-container>
+    </div>
     <PostConfirmDeleteDialog />
   </NuxtLayout>
 </template>
