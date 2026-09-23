@@ -1,18 +1,17 @@
 ---
 title: World first
-description: Proposal — the agent console inverted. The voxel world becomes the whole page and the console an overlay opened over it, the person gets a player figure they walk freely through the room, and the room is used by walking up to a thing and pressing a key, in place of hidden click targets. Three stages, each shipping on its own.
+description: Proposal — the agent console inverted, its first stage shipped. The voxel world is already the whole page with the console an overlay over it. What is left is a player figure the person walks freely through the room, and the room used by walking up to a thing and pressing a key. Two stages, each shipping on its own.
 model: claude-opus-5-5
 ---
 
 # World first
 
-The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) today is half the page. The other half is a column of panels, and the room is used by clicking objects whose hit areas nothing on screen shows: a click on the board opens the sessions, a click on a station opens the timeline, a click on the door leaves. A person has no way to discover any of that except by trying, and the orbit camera makes the room something to look at rather than a place to be.
+The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) is the page, and the console — the conversation, the composer and the panels — is an overlay called up over it the way a game calls up its chat. Nothing in the room answers a click, so for now the room is only watched, from an orbit camera that makes it something to look at rather than a place to be.
 
-This proposal turns the page inside out. The world is the page. The console, which is the conversation, the composer and the panels, is an overlay called up over the world the way a game calls up its chat. The person is in the room as a player figure they walk with the keyboard, a touch joystick or later a gamepad. A thing in the room is used by walking up to it, where a prompt names the key that uses it, and never by a click on a target nobody can see.
+This proposal puts the person in the room. They are a player figure they walk with the keyboard, a touch joystick or a gamepad, and a thing in the room is used by walking up to it, where a prompt names the key that uses it.
 
 ## Decisions
 
-- **The world is the page; the console is an overlay.** It opens on a key, as a game's chat does, and from a button that is always on screen, and it closes back to the world ([console overlay](/docs/proposals/infra/agent-console/world-first/console-overlay)).
 - **The person is a player figure with free movement.** They walk the floor in every direction, relative to the camera, with the camera following behind them ([player](/docs/proposals/infra/agent-console/world-first/player)).
 - **A thing is used by standing at it.** The nearest thing within reach shows a prompt naming its key, and the key does what the prompt says. There are no invisible click targets left ([interaction](/docs/proposals/infra/agent-console/world-first/interaction)).
 - **Nothing is only in the world.** Every action the world offers is also in the console's tabs, so a keyboard, a screen reader or a person who never walks reaches all of it.
@@ -20,9 +19,8 @@ This proposal turns the page inside out. The world is the page. The console, whi
 
 ## What this replaces
 
-- **The panel column beside the world**, and the button that hid it to give the world the page.
-- **Clicking the room.** The lookup from a clicked face to the voxel behind it and from that voxel to an object, and the map from each object to the panel it opened.
 - **The orbit camera**, which the player's follow camera takes over.
+- **A room that is only watched.** Each object's panel is a console tab today and nothing more; standing at the object reaches it again.
 
 ## How it works
 
@@ -43,11 +41,10 @@ flowchart TD
 
 ## Scope and order
 
-Each stage ships on its own and leaves the page whole.
+Each stage ships on its own and leaves the page whole. The console overlay, which made the world the page, has shipped and is described on the [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) page.
 
-1. **The console overlay.** The world fills the page, the console opens over it, and clicking the room is removed. The world is still watched from the camera the page has today, and the stations' panels move into the console's tabs.
-2. **The player.** The figure, free movement with collision against the room, and the follow camera, which replaces the orbit camera.
-3. **Interaction.** Prompts at the things in the room, so walking up to the board, a station, the gauges, the agent or the door does what clicking them did, visibly.
+1. **The player.** The figure, free movement with collision against the room, and the follow camera, which replaces the orbit camera.
+2. **Interaction.** Prompts at the things in the room, so walking up to the board, a station, the gauges, the agent or the door does what clicking them did, visibly.
 
 The [codebase city](/docs/proposals/infra/agent-console/codebase-city) walks the same player through the repository, so it builds on stage 2 rather than on a figure of its own.
 
@@ -62,7 +59,6 @@ The [codebase city](/docs/proposals/infra/agent-console/codebase-city) walks the
 
 | File                                                         | Role after the change                                                        |
 | :----------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| `apps/web/app/components/AgentConsole/Index.vue`             | The page: the world full size, with the console overlay and the HUD over it  |
 | `apps/web/app/components/AgentConsole/World/Index.vue`       | The canvas and the follow camera in place of the orbit camera                |
 | `apps/web/app/components/AgentConsole/World/Scene.vue`       | The room, the agent figures and the gauges, now joined by the player         |
 | `apps/web/app/services/agentConsole/world/WorldObjectMap.ts` | Where each thing stands, which the prompts read for reach instead of a click |

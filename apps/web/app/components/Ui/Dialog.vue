@@ -4,6 +4,9 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { Dialog } from "@vuetify/v0";
 
 interface Props {
+  // Down one side at the full height on a wide screen and over the whole page on a narrow one, leaving what it is
+  // About in view beside it, rather than high in the middle
+  isSheet?: true;
   // Drawn in a title bar with a close button beside it, or, where the content says what it is on its own, only the
   // Dialog's accessible name
   isTitleHidden?: true;
@@ -16,7 +19,7 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { isTitleHidden, title } = defineProps<Props>();
+const { isSheet, isTitleHidden, title } = defineProps<Props>();
 </script>
 
 <template>
@@ -25,15 +28,14 @@ const { isTitleHidden, title } = defineProps<Props>();
     <Dialog.Content
       v-bind="$attrs"
       class="ui-dialog"
-      mt="[12dvh]"
-      max-h="[76dvh]"
+      :class="isSheet ? 'm-0 h-dvh max-h-dvh max-w-none w-full md:ml-a md:w-1/2 xl:w-2/5' : 'mt-[12dvh] max-h-[76dvh]'"
       text-inherit
       p-0
       b-none
       bg-transparent
       of-visible
     >
-      <section max-h="[76dvh]" flex flex-col ui-frame>
+      <section :class="isSheet ? 'h-full' : 'max-h-[76dvh]'" flex flex-col ui-frame>
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
         <header v-else class="title-bar" px-3 py-2 flex gap-2 items-center>
           <Dialog.Title text-accent flex-1 truncate>{{ title }}</Dialog.Title>

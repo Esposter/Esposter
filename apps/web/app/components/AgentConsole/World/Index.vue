@@ -53,7 +53,7 @@ onUnmounted(() => {
       "
     >
       <TresPerspectiveCamera :fov="30" :look-at="CAMERA_TARGET" :position="CAMERA_POSITION" />
-      <!-- Dragging turns the room and the wheel brings it closer; a click on an object still opens its panel -->
+      <!-- Dragging turns the room and the wheel brings it closer -->
       <OrbitControls
         :enable-pan="false"
         :max-azimuth-angle="CAMERA_MAX_AZIMUTH"

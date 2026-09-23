@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Player
 
-Part of [world first](/docs/proposals/infra/agent-console/world-first). Once the [console overlay](/docs/proposals/infra/agent-console/world-first/console-overlay) has given the world the page, this stage puts the person in it. The room already has figures, one for the main agent and one for each subagent, walking to the station of the tool each one is waiting on. The player is one more figure, and the only one a person moves.
+Part of [world first](/docs/proposals/infra/agent-console/world-first). The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) is already the page, with the console an overlay over it, and this stage puts the person in it. The room already has figures, one for the main agent and one for each subagent, walking to the station of the tool each one is waiting on. The player is one more figure, and the only one a person moves.
 
 ## What it adds
 

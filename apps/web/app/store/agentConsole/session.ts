@@ -3,7 +3,7 @@ import type { AgentEvent, SessionSummary } from "agent-console-server/contracts"
 import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
 import { createSessionView } from "@/services/agentConsole/createSessionView";
 import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
-import { AgentEventType } from "agent-console-server/contracts";
+import { AgentEventType, SessionState } from "agent-console-server/contracts";
 // The host's sessions and each one's view of its event log. The log is the only state: everything the page shows is
 // Folded from it as it arrives, so a reconnect that replays the log rebuilds every part of the page
 export const useAgentConsoleSessionStore = defineStore("agentConsole/session", () => {
@@ -29,6 +29,12 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const rateLimit = computed(() => sessionView.value.latestEventMap[AgentEventType.RateLimit]);
   const sessionSettings = computed(() => sessionView.value.latestEventMap[AgentEventType.SessionSettings]);
   const sessionState = computed(() => sessionView.value.latestEventMap[AgentEventType.SessionState]?.state);
+  // A turn is under way, a permission request or a compaction inside it included: what Escape and the stop button end
+  const isTurnRunning = computed(() =>
+    [SessionState.Compacting, SessionState.RequiresAction, SessionState.Running].includes(
+      sessionState.value ?? SessionState.Idle,
+    ),
+  );
   const todoUpdate = computed(() => sessionView.value.latestEventMap[AgentEventType.TodoUpdate]);
   const turnResult = computed(() => sessionView.value.latestEventMap[AgentEventType.TurnResult]);
   const turnUsage = computed(() => sessionView.value.latestEventMap[AgentEventType.TurnUsage]);
@@ -51,6 +57,7 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
     fileEdits,
     fileOriginMap,
     isContextNearCompaction,
+    isTurnRunning,
     pendingPermissionRequests,
     rateLimit,
     sessions,

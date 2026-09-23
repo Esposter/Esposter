@@ -1,6 +1,6 @@
 ---
 title: Agent console
-description: The /agent-console page, which works Claude Code sessions from the browser in place of the terminal. A host package on the machine that holds the code runs the sessions through the Claude Agent SDK and speaks a typed wire to the page. Every session's event log is the page's only state, folded one event at a time into what the page shows. The page is a full-screen voxel world with DOM panels for typing and reading, and a hidden tab gets a notification when a turn ends or needs attention.
+description: The /agent-console page, which works Claude Code sessions from the browser in place of the terminal. A host package on the machine that holds the code runs the sessions through the Claude Agent SDK and speaks a typed wire to the page. Every session's event log is the page's only state, folded one event at a time into what the page shows. The page is a full-screen voxel world with a console called up over it for typing and reading, and a hidden tab gets a notification when a turn ends or needs attention.
 ---
 
 # Agent console
@@ -16,7 +16,7 @@ flowchart LR
   subgraph Browser
     P[The agent console page] --> C[Connection store: one socket, reconnects on its own]
     C --> S[Session store: one event log per session]
-    S --> W[Voxel world and panels: figures, gauges, conversation, composer, permission requests]
+    S --> W[Voxel world and its console: figures, gauges, conversation, composer, permission requests]
     W -->|commands| C
   end
   subgraph Host[agent-console-server, on the machine with the code]
@@ -40,7 +40,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | :-------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | [Host](/docs/infra/claude-interface/agent-console/host)                                       | the package, pairing, the token, the preflight, the replayed log and reconnection |
 | [Claude Agent SDK driver](/docs/infra/claude-interface/agent-console/claude-agent-sdk-driver) | sessions, the one place SDK messages become events, permissions, resume and fork  |
-| [Voxel world](/docs/infra/claude-interface/agent-console/voxel-world)                         | the full-screen surface: the room, the figures, the panels and what it costs      |
+| [Voxel world](/docs/infra/claude-interface/agent-console/voxel-world)                         | the full-screen surface: the room, the figures, the console and what it costs     |
 | [Terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity)                 | every terminal surface and action, and the part of the page that carries it       |
 
 ## Key files

@@ -7,22 +7,24 @@ import { PermissionModeMenuItems } from "@/services/agentConsole/PermissionModeT
 import { readAttachment } from "@/services/agentConsole/readAttachment";
 import { toSlashCommand } from "@/services/agentConsole/toSlashCommand";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
+import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { CommandType, PermissionMode, SessionState } from "agent-console-server/contracts";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { sendCommand } = agentConsoleConnectionStore;
+const agentConsolePanelStore = useAgentConsolePanelStore();
+const { composerText } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { capabilities, currentSession, currentSessionId, sessionSettings, sessionState } =
+const { capabilities, currentSession, currentSessionId, isTurnRunning, sessionSettings } =
   storeToRefs(agentConsoleSessionStore);
-const text = ref("");
 const prompt = useTemplateRef("prompt");
 const attachments = ref<Attachment[]>([]);
 // The palette lists the session's own commands — the person's skills and plugins included — while the input is a
 // Bare slash command still being typed
 const commandMenuItems = computed(() => {
-  if (!text.value.startsWith("/") || text.value.includes(" ")) return [];
-  const commandPrefix = text.value.slice(1);
+  if (!composerText.value.startsWith("/") || composerText.value.includes(" ")) return [];
+  const commandPrefix = composerText.value.slice(1);
   return (
     capabilities.value?.commands
       .filter(({ name }) => name.startsWith(commandPrefix))
@@ -35,11 +37,6 @@ const commandMenuItems = computed(() => {
 });
 const modelMenuItems = computed(
   () => capabilities.value?.models.map(({ displayName, value }) => ({ title: displayName, value })) ?? [],
-);
-const isRunning = computed(() =>
-  [SessionState.Compacting, SessionState.RequiresAction, SessionState.Running].includes(
-    sessionState.value ?? SessionState.Idle,
-  ),
 );
 // The session's settings are what the host last reported; choosing another asks the host, whose report moves these
 const model = computed({
@@ -65,10 +62,10 @@ const attach = async (files: FileList | undefined) => {
   }
 };
 const submit = () => {
-  if (!text.value && attachments.value.length === 0) return;
-  const sentText = text.value;
+  if (!composerText.value && attachments.value.length === 0) return;
+  const sentText = composerText.value;
   const sentAttachments = attachments.value;
-  text.value = "";
+  composerText.value = "";
   attachments.value = [];
   sendCommand(
     toSlashCommand(currentSessionId.value, sentText) ?? {
@@ -79,13 +76,6 @@ const submit = () => {
     },
   );
 };
-const interrupt = () => {
-  if (isRunning.value) sendCommand({ sessionId: currentSessionId.value, type: CommandType.Interrupt });
-};
-// The terminal's one key for stopping a turn, and its only job here
-onKeyStroke("Escape", () => {
-  interrupt();
-});
 </script>
 
 <template>
@@ -108,10 +98,12 @@ onKeyStroke("Escape", () => {
           <UiIcon :meaning="UiIconMeaning.Remove" />
         </UiButton>
       </div>
+      <!-- eslint-disable vuejs-accessibility/no-autofocus -- the console dialog's initial focus, which the browser moves here as the dialog opens on a key the person pressed to type -->
       <textarea
         ref="prompt"
-        v-model="text"
+        v-model="composerText"
         aria-label="Message Claude"
+        autofocus
         max-h="[40vh]"
         placeholder="Message Claude — / for commands, paste or drop a file"
         rows="1"
@@ -128,20 +120,28 @@ onKeyStroke("Escape", () => {
         "
         @paste="attach($event.clipboardData?.files)"
       />
+      <!-- eslint-enable vuejs-accessibility/no-autofocus -->
       <UiSuggestions
         :field="prompt ?? undefined"
         :items="commandMenuItems"
         label="Slash commands"
         @select="
           (name) => {
-            text = `/${name} `;
+            composerText = `/${name} `;
           }
         "
       />
       <div flex flex-wrap gap-2 items-center>
         <UiSelect v-model="model" :items="modelMenuItems" label="Model" />
         <UiSelect v-model="permissionMode" :items="PermissionModeMenuItems" label="Mode" />
-        <UiButton v-if="isRunning" :variant="UiButtonVariant.Danger" ml-a @click="interrupt()">Stop (Esc)</UiButton>
+        <UiButton
+          v-if="isTurnRunning"
+          :variant="UiButtonVariant.Danger"
+          ml-a
+          @click="sendCommand({ sessionId: currentSessionId, type: CommandType.Interrupt })"
+        >
+          Stop (Esc)
+        </UiButton>
       </div>
     </template>
   </UiFrame>

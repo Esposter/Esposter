@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import {
   COINS_POSITION,
@@ -12,11 +11,8 @@ import {
   VESSEL_POSITION,
 } from "@/services/agentConsole/world/constants";
 import { toWorldFigures } from "@/services/agentConsole/world/toWorldFigures";
-import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 
-const agentConsolePanelStore = useAgentConsolePanelStore();
-const { openedPanelType } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const {
   contextUsage,
@@ -42,19 +38,16 @@ const changedFileCount = computed(() => new Set(fileEdits.value.map(({ filePath 
       :color="isContextNearCompaction ? PaletteColor.Warning : PaletteColor.Info"
       :height="((contextUsage?.percentage ?? 0) / 100) * VESSEL_HEIGHT"
       :position="VESSEL_POSITION"
-      @click="openedPanelType = AgentConsolePanelType.Usage"
     />
     <AgentConsoleWorldColumn
       :color="PaletteColor.Accent"
       :height="Math.min(Math.ceil((turnResult?.totalCostUsd ?? 0) / COST_PER_COIN_USD), MAX_STACK_COUNT) * STACK_STEP"
       :position="COINS_POSITION"
-      @click="openedPanelType = AgentConsolePanelType.Usage"
     />
     <AgentConsoleWorldColumn
       :color="PaletteColor.Text"
       :height="Math.min(changedFileCount, MAX_STACK_COUNT) * STACK_STEP"
       :position="PAGES_POSITION"
-      @click="openedPanelType = AgentConsolePanelType.Changes"
     />
     <AgentConsoleWorldColumn
       :color="pendingPermissionRequests.length > 0 ? PaletteColor.Warning : PaletteColor.Stone"

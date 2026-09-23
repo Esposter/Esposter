@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { SessionStateColorMap } from "@/services/agentConsole/SessionStateColorMap";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
@@ -10,7 +11,7 @@ const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);
 const { sendCommand } = agentConsoleConnectionStore;
 const agentConsolePanelStore = useAgentConsolePanelStore();
-const { openedPanelType } = storeToRefs(agentConsolePanelStore);
+const { consolePanelType } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const { currentSessionId, sessions } = storeToRefs(agentConsoleSessionStore);
 const displaySessions = computed(() =>
@@ -86,7 +87,7 @@ const requestNotificationPermission = async () => {
             () => {
               if (state === SessionState.Closed) sendCommand({ sessionId: id, type: CommandType.Resume });
               else currentSessionId = id;
-              openedPanelType = '';
+              consolePanelType = AgentConsolePanelType.Conversation;
             }
           "
         >

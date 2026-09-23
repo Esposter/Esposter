@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
@@ -31,7 +30,7 @@ describe(useAgentConsoleConnectionStore, () => {
     const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
     const { unpair } = agentConsoleConnectionStore;
     const agentConsolePanelStore = useAgentConsolePanelStore();
-    const { isWorldExpanded, openedPanelType } = storeToRefs(agentConsolePanelStore);
+    const { isConsoleOpen, isPauseMenuOpen } = storeToRefs(agentConsolePanelStore);
     const agentConsoleSessionStore = useAgentConsoleSessionStore();
     const { currentSessionId, sessions } = storeToRefs(agentConsoleSessionStore);
     const sessionId = crypto.randomUUID();
@@ -45,13 +44,13 @@ describe(useAgentConsoleConnectionStore, () => {
       },
     ];
     currentSessionId.value = sessionId;
-    openedPanelType.value = AgentConsolePanelType.Sessions;
-    isWorldExpanded.value = true;
+    isConsoleOpen.value = true;
+    isPauseMenuOpen.value = true;
     unpair();
 
     expect(sessions.value).toHaveLength(0);
     expect(currentSessionId.value).toBe("");
-    expect(openedPanelType.value).toBe("");
-    expect(isWorldExpanded.value).toBe(false);
+    expect(isConsoleOpen.value).toBe(false);
+    expect(isPauseMenuOpen.value).toBe(false);
   });
 });

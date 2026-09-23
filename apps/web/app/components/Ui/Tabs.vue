@@ -30,8 +30,9 @@ const { items, label } = defineProps<Props>();
         {{ title }}
       </Tabs.Item>
     </Tabs.List>
-    <!-- Only the selected panel renders its content: a panel not shown would still mount everything in it -->
-    <Tabs.Panel v-for="{ value } of items" #default="{ isSelected }" :key="value" :value pt-4>
+    <!-- Only the selected panel renders its content: a panel not shown would still mount everything in it. A panel may
+      Shrink below its content, so a grid or flex parent that gives it a height lets what it holds scroll -->
+    <Tabs.Panel v-for="{ value } of items" #default="{ isSelected }" :key="value" :value pt-4 min-h-0>
       <slot v-if="isSelected" :value />
     </Tabs.Panel>
   </Tabs.Root>
