@@ -13,7 +13,8 @@ git log --since=<Last swept date> --name-only --pretty=format: -- '<pathspec>' '
 ```
 
 Everything outside that list was swept at the last pass — skip it rather than re-reading it. A row still at `—`
-has no date to resume from and is a first pass over the whole unit.
+has no date to resume from and is a first pass over the whole unit, and so is a row whose `Swept` model is older
+than the sitting's (`SKILL.md`).
 
 **Each pathspec is quoted, one argument each.** Git does its own matching, and a wildcard that reaches it
 unquoted is expanded by the shell against the working directory first — which narrows the scope silently rather

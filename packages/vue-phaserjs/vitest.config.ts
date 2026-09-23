@@ -12,8 +12,5 @@ export default mergeConfig(getVitestConfiguration(import.meta.dirname), {
       phaser: join(import.meta.dirname, "node_modules/phaser/dist/phaser.esm.js"),
     },
   },
-  test: {
-    environment: "happy-dom",
-    setupFiles: ["./src/test/setupCanvas.ts", "./src/test/setup.ts"],
-  },
+  test: { environment: "happy-dom", setupFiles: ["./src/test/setupCanvas.ts", "./src/test/setup.ts"] },
 });

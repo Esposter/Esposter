@@ -205,11 +205,11 @@ export const runCycle = async ({
       );
     }
     // A claimed commit no cut carried is owed to `main` still, and the port never counts it: said here, or an
-    // Idle run reads as a synced queue over a commit its own comment says is red
+    // Idle run reads as a synced queue over a commit still owed to `main`
     else if (expressed.heldShas.length > 0)
       return getOutcome(
         CycleOutcomeKind.Idle,
-        `${expressed.heldShas.length} claimed commits wait on the express lane — a red cut, one past its attempts on this ${MAIN_BRANCH} head, a patch that does not apply yet, or a red ${MAIN_BRANCH} under repair`,
+        `${expressed.heldShas.length} claimed commits wait on the express lane — a patch that does not apply to ${MAIN_BRANCH} yet`,
       );
     return getOutcome(CycleOutcomeKind.Idle, `nothing owed — ${QUEUE_BRANCH} is synced with ${DEVELOP_BRANCH}`);
   }

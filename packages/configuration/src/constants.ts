@@ -16,9 +16,7 @@ export const AGENT_ALIAS_DIRECTORY = ".claude";
 // Each tool's own configuration. None of those formats can import (`tsconfig.json`, `.oxlintrc.json`, `.oxfmtrc.json`
 // And `.gitignore`), so they repeat the literal and are pinned against this constant by
 // `scripts/src/agentDirectories.test.ts`.
-// The annotation is redundant to oxlint but mandatory to the dts build — an interpolated value cannot be inferred
-// Under --isolatedDeclarations, which is what emits this package's types.
-// oxlint-disable-next-line typescript/no-inferrable-types
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
 // The docs site's one path segment. `apps/web/content/docs` holds the pages, `app/pages/docs/[...slug].vue` is
 // The route that renders them, and `/docs/...` is therefore the url every page is linked by — so the content
@@ -42,8 +40,7 @@ export const APP_RELATIVE_PREFIXES = [
 ] as const;
 // Generated TypeDoc output. It is written into the app's `public/`, so it is served from under the docs route
 // Without being a content page — which is why the docs link check has to allow this one prefix explicitly.
-// The annotation is redundant to oxlint but mandatory to the dts build, as above.
-// oxlint-disable-next-line typescript/no-inferrable-types
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const DOCS_API_DIRECTORY: string = `${DOCS_DIRECTORY}/api`;
 
 export const DISTRIBUTION_DIRECTORY = "dist";

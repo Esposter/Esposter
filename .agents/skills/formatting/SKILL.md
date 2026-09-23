@@ -22,11 +22,18 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
   source already has — a newline between `{` and the first key keeps the object broken however short it is — so a
   nested `where: { userId: { eq: userId } }` typed out over seven lines survives `pnpm format` untouched and
   drifts from the inline form every sibling uses. Nothing reports it, so it is collapsed by hand when it fits.
+  `oxfmt`'s own `objectWrap: "collapse"` would decide it instead, at the cost of every deliberate expansion in
+  the repository — that trade is open in `apps/web/content/docs/proposals/refactors/object-wrap-collapse.md`.
+- **Never inside an inline snapshot.** The object in a `toMatchInlineSnapshot` template is not source — it is the
+  serializer's output, and Vitest compares it line for line, so collapsing one that fits turns a passing suite red
+  (five snapshots in `apps/web/app/services/jsonSchema/zodToJsonSchema.test.ts` and `apps/web/uno.config.test.ts`).
+  A snapshot body is rewritten only by `pnpm test <path> --run -u`, never by hand. The rule stops at the
+  snapshot's opening backtick.
 
 ## Comments
 
 - **A `//` comment goes on its own line _above_ the code it describes, never trailing on the same line.** `const x = f(); // why` becomes a comment line then the statement. Own-line comments read consistently, survive the capitalization hook, and don't push lines past the width limit. (Directive comments that must be inline — a rare `// eslint-disable-line` — are the only exception.)
-- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only. This includes **functional/directive comments** (`// oxlint-disable-next-line ...`, `// @ts-expect-error ...`, etc.) — they attach directly to the line they govern with no surrounding blank line.
+- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only. This includes **functional/directive comments** (`// oxlint-disable-next-line ...`, `// @ts-expect-error ...`, etc.) — they attach directly to the line they govern with no surrounding blank line. **Module scope is not an exception, and neither is a class body or an object literal**: `const X = …;` / blank line / `// …` / `export const Y = …` is this violation, not a paragraph break between two declarations — the comment is the break, so the blank line goes. The only blank line a comment sits under is the import block's, or a file-level `/* … */` directive's.
 
   ```ts
   // CORRECT — comment acts as separator
@@ -55,8 +62,6 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
     // No shared analyser exists to reuse here.
     export const useThing = () => {};
     ```
-
-  - **This is a rule about statements inside a block.** Between two **declarations** the blank line is the paragraph break and the comment attaches to the declaration below it — the two are doing different jobs, so both stay. That is the file's top level, and equally a class body or an object literal, where the members are declarations and closing one up against the next is what deleting the blank line does. Inside a function or a `<script setup>` body there is only one job to do, and the comment does it.
 
   - **Deleting a leading comment takes the separator with it.** A comment above a top-level declaration, or directly under the import block, is standing in for the blank line that would otherwise be there — so a pass that removes the comment has to put the blank line back. The import case fails `import/newline-after-import` at lint; the declaration case fails nothing at all and just reads as two paragraphs run together.
 
@@ -94,7 +99,7 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
   - **A paragraph of prose at module scope keeps `/** */`, whatever it sits above** — the rationale block over a `describe` is the case that arises. `capitalized-comments` rewrites the first letter of every `//` line and leaves a block comment alone, so a wrapped sentence comes back capitalized mid-clause one line in three, and a tool name that lands at a wrap (`ctix`, `pnpm`) comes back as a name that does not exist. The exported-surface rule is about where an editor shows a block; this is about which syntax survives the fixer, and a paragraph only survives as one.
 - **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line, but keep a bulleted list (one item per `//` line) when enumerating distinct items rather than cramming them into one sentence. If an example helps, show only the minimal fragment. Applies to `//`, `/* */`, and Vue `<!-- -->` alike.
 - **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Trim it to the minimal identifying fragment; drop surrounding example values.
-- **Don't fight `eslint(capitalized-comments)`** — oxlint uppercases the first letter of every `//` line, so an identifier that lands at a line front after a rewrap is silently capitalised; put prose in front of it or backtick it, then re-read the joined sentence against the line above. The grep that finds one, and the two silent ways the fix breaks the sentence: `references/capitalized-comments.md`.
+- **Don't fight `eslint(capitalized-comments)`** — oxlint uppercases the first letter of every `//` line, so an identifier that lands at a line front after a rewrap is silently capitalised; put prose in front of it or backtick it, then re-read the joined sentence against the line above. `comments/no-capitalized-identifier` reports the names it can decide; the grep that finds the rest, and the two silent ways the fix breaks the sentence: `references/capitalized-comments.md`.
 
 ## Line Endings
 

@@ -7,8 +7,5 @@ export const toUserAchievementWithDefinition = (
   achievementDefinition: (typeof AchievementDefinitionMap)[AchievementName],
 ): UserAchievementWithDefinition => ({
   ...userAchievement,
-  achievement: {
-    ...achievementDefinition,
-    name: userAchievement.achievement.name,
-  },
+  achievement: { ...achievementDefinition, name: userAchievement.achievement.name },
 });

@@ -34,10 +34,7 @@ export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
     scene.tweens.add({
       delay: 400,
       duration: 800,
-      height: {
-        ease: Math.Easing.Expo.InOut,
-        ...getTweenRange(0, height),
-      },
+      height: { ease: Math.Easing.Expo.InOut, ...getTweenRange(0, height) },
       onComplete: () => {
         scene.cameras.main.filters.internal.remove(mask);
         graphics.destroy();
@@ -48,10 +45,7 @@ export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
         graphics.clear().fillRectShape(rectangleShape);
       },
       targets: rectangleShape,
-      y: {
-        ease: Math.Easing.Expo.InOut,
-        ...getTweenRange(height / 2, 0),
-      },
+      y: { ease: Math.Easing.Expo.InOut, ...getTweenRange(height / 2, 0) },
     });
   });
 };

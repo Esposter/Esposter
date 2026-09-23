@@ -10,11 +10,6 @@ export class TreemapResolver extends AVisualTypeResolver {
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.legend = defu(
-      {
-        show: false,
-      },
-      apexOptions.legend,
-    );
+    apexOptions.legend = defu({ show: false }, apexOptions.legend);
   }
 }

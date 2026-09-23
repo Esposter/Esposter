@@ -1,5 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getWorkspacePackageDirectories } from "#src/services/shared/getWorkspacePackageDirectories";
+import { readWorkspacePackageDirectories } from "#src/services/shared/readWorkspacePackageDirectories";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe } from "vitest";
@@ -9,7 +9,7 @@ import { describe } from "vitest";
 // Invariant over the built packages can be broken. Every member the workspace declares, because two of the ones
 // That build sit under `apps`. (`apps/web` is a Nuxt application, has no tsdown config, and emits nothing.)
 export const readTsdownPackagePaths = (): string[] =>
-  getWorkspacePackageDirectories(REPOSITORY_ROOT).filter((packagePath) =>
+  readWorkspacePackageDirectories(REPOSITORY_ROOT).filter((packagePath) =>
     existsSync(resolve(REPOSITORY_ROOT, packagePath, "tsdown.config.ts")),
   );
 

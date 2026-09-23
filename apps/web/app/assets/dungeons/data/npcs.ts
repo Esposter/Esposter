@@ -8,31 +8,16 @@ import { MovementPattern } from "@/models/dungeons/npc/MovementPattern";
 
 const NpcMap: Record<NpcId, SetOptional<Except<Npc, "id">, "frame" | "movementPattern">> = {
   [NpcId.John]: {
-    effects: [
-      {
-        messages: ["Make sure you read the signposts for helpful tips!"],
-        type: EffectType.Message,
-      },
-    ],
+    effects: [{ messages: ["Make sure you read the signposts for helpful tips!"], type: EffectType.Message }],
     frame: 20,
     movementPattern: MovementPattern.Clockwise,
   },
   [NpcId.Mum]: {
     effects: [
-      {
-        messages: ["You should take a quick rest."],
-        type: EffectType.Message,
-      },
-      {
-        type: EffectType.Heal,
-      },
-      {
-        type: EffectType.SceneFade,
-      },
-      {
-        messages: ["Oh good! You and your monsters are looking great!"],
-        type: EffectType.Message,
-      },
+      { messages: ["You should take a quick rest."], type: EffectType.Message },
+      { type: EffectType.Heal },
+      { type: EffectType.SceneFade },
+      { messages: ["Oh good! You and your monsters are looking great!"], type: EffectType.Message },
     ],
     frame: 30,
   },

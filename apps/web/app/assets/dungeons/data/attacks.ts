@@ -7,14 +7,8 @@ import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArr
 
 const AttackMap = {
   // Weak filler shared across kits — the fallback when signature moves would overkill
-  [AttackId.Bite]: {
-    power: 30,
-    soundEffectKey: SoundEffectKey.Claw,
-  },
-  [AttackId.Slash]: {
-    power: 40,
-    soundEffectKey: SoundEffectKey.Claw,
-  },
+  [AttackId.Bite]: { power: 30, soundEffectKey: SoundEffectKey.Claw },
+  [AttackId.Slash]: { power: 40, soundEffectKey: SoundEffectKey.Claw },
   // Aquavalor's signature — high power compensates the tank's low attack stat
   [AttackId["Aqua Jet"]]: {
     power: 45,

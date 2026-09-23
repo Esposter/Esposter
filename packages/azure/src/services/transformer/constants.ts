@@ -15,7 +15,7 @@ const VALUE_REGEX = [
   // Quoted strings, whose embedded quotes are escaped by being doubled
   "'(?:[^']|'')*'",
 ].join(ID_SEPARATOR);
-// oxlint-disable-next-line typescript/no-inferrable-types
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const CLAUSE_REGEX: RegExp = new RegExp(
   String.raw`^(?<not>not\s+)?(?<key>[A-Za-z0-9_]*)\s*(?<operator>${BinaryOperators.join(ID_SEPARATOR)})\s+(?<value>${VALUE_REGEX})$`,
   "iu",

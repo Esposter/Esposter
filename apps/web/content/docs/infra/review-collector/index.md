@@ -13,7 +13,7 @@ Work is committed faster than CodeRabbit reviews complete, and every step that t
 2. [The drain](/docs/infra/review-collector/drain) — the first of the steps Claude runs: which findings are open, what the session is handed and denied, and how a drain that fails is quarantined. The resolver, the reshaper and the verdict are the same session pointed at other work.
 3. [The runner](/docs/infra/review-collector/runner) — the workflow that fires the cycle, the credentials it holds, why it has no cron, and what a failed run leaves behind.
 4. [Two writers](/docs/infra/review-collector/two-writers) — the ref ownership that lets a session and the collector work one pull request without racing.
-5. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window, because they claim nothing in them needs review and the checks agree.
+5. [The express lane](/docs/infra/review-collector/express-lane) — the commits that never occupy a window, because they claim nothing in them needs review; they land on `main` unverified, and a red they leave is the repairer's.
 6. [Repair](/docs/infra/review-collector/repair) — a red `main` answered from CI's own verdict by the repo's own regenerators where they answer it and by the same session where they do not, either way as a cut of the lane's own.
 
 What the session does on its side — pushing `ai/queue`, rebasing, answering a finding by hand — is the `review-queue` skill (`.agents/skills/review-queue/SKILL.md`).
@@ -22,8 +22,8 @@ What the session does on its side — pushing `ai/queue`, rebasing, answering a 
 
 ## Principles
 
-- **Non-blocking.** A person is told, never waited on. Four cases remain theirs, each posted where it is read: a conflict or a reshaping that failed past its attempt cap, a release the verdict held, a claimed commit whose cut the checks refuse, and a red `main` past its repairs — and only the first holds anything behind it.
-- **Zero-trust commit content.** A session commits anything, in any shape; nothing reads a message as a signal of what a diff is. The collector classifies diffs and rewrites packaging — a commit no window can carry is repackaged, never sent back. A trailer is a claim the checks verify, never a proof.
+- **Non-blocking.** A person is told, never waited on. Three cases remain theirs, each posted where it is read: a conflict or a reshaping that failed past its attempt cap, a release the verdict held, and a red `main` past its repairs — and only the first holds anything behind it.
+- **Zero-trust commit content.** A session commits anything, in any shape; nothing reads a message as a signal of what a diff is. The collector classifies diffs and rewrites packaging — a commit no window can carry is repackaged, never sent back. A trailer is a claim, never a proof — nothing gates the cut it buys, and `main`'s own CI is what reads it.
 - **Judgement is the only thing Claude is paid for.** Six bounded entry points ([runner](/docs/infra/review-collector/runner)), and nothing a rule could decide reaches one of them; the tree or the remote proves every step afterwards.
 - **The review is the gate, never CI.** A release merges on a clean review at the head and its verdict, whatever the checks say. What CI holds at that point is a snapshot a rename moved, a lint rule a sweep enabled, a bundle nobody rebuilt — trivia the bot has already read the cause of, and the [repair](/docs/infra/review-collector/repair) answers it on `main` from CI's own verdict. Waiting for green parks every release behind a repair no review is owed, which is the block this design exists to remove.
 - **One irreversible act per run, compare-and-swapped** — below.
@@ -45,9 +45,7 @@ flowchart TD
   RS -->|yes| FF[Fast-forward develop to main<br/>no slot spent, the pass goes on against it]
   RS -->|no| E
   FF --> E{Any owed commit claims<br/>nothing to review}
-  E -->|yes| EX[Cherry-pick onto main, check]
-  EX -->|green| EP[Push, exit — no window spent]
-  EX -->|red| MR
+  E -->|yes| EP[Cherry-pick onto main<br/>push unverified, exit — no window spent]
   E -->|no| MR{main red on CI}
   MR -->|yes| RG[Run the repo's regenerators, check]
   RG -->|green| RP[Push, exit — no window and no session spent]

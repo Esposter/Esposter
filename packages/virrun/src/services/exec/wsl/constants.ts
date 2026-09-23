@@ -76,7 +76,7 @@ export const WSL_REMOVE_SCRIPT =
 // ONE wsl.exe launch however many directories it holds: a launch is a service RPC plus a relay process, and the
 // Per-entry fan-out it avoids would saturate the WSL service once enough mirrors are stranded to sweep at once,
 // Until it answers every later call with Wsl/Service/E_UNEXPECTED — while an argv-sized batch would trade that
-// For one launch per batch, which is the fan-out again. `xargs -0` keeps any path intact (spaces, newlines) and runs its
+// For one launch per batch, the same fan-out. `xargs -0` keeps any path intact (spaces, newlines) and runs its
 // `sh` invocations sequentially when it splits. The list is unlinked last, so a sweep leaves nothing behind.
 //
 // Unlinked with `;` rather than `&&`, deliberately. Keeping the list when the removal fails would keep a file no

@@ -1,11 +1,11 @@
 ---
 title: Repair
-description: A red main is the collector's — the release merges on the review alone, so what CI held lands on main unread, and CodeQL scans main alone; the repo's own regenerators answer the head first and a session answers what is left, either way as one commit the express lane verifies and pushes, bounded per streak.
+description: A red main is the collector's — the release merges on the review alone, so what CI held lands on main unread, and CodeQL scans main alone; the repo's own regenerators answer the head first and a session answers what is left, either way as one commit verified before the express lane pushes it, bounded per streak.
 ---
 
 # Repair
 
-The release merges on the review and never waits for CI ([principles](/docs/infra/review-collector)), so what CI held at that moment — a lint rule a bump enabled, a size snapshot a build moved, a test a rename path-coupled — lands on `main` unread and stays. CodeQL scans nothing but `main` (`CodeQL.yaml`), so an alert it raises — on the release, or on the week's run with a query pack the release never met — is a red on `main` too, and its gate job fails the run on any alert still open so that it reads as one. Two things then wait on a red head. The [express lane](/docs/infra/review-collector/express-lane) checks every cut against `main`'s tree, so a red head fails every claimed commit for a red none of them made, and nothing behind a claimed commit is blocked but the commit itself sits. And every window `develop` runs its CI on inherits the same red, so the one signal a session has for its own commits says red before it has pushed anything.
+The release merges on the review and never waits for CI ([principles](/docs/infra/review-collector)), so what CI held at that moment — a lint rule a bump enabled, a size snapshot a build moved, a test a rename path-coupled — lands on `main` unread and stays. CodeQL scans nothing but `main` (`CodeQL.yaml`), so an alert it raises — on the release, or on the week's run with a query pack the release never met — is a red on `main` too, and its gate job fails the run on any alert still open so that it reads as one. The [express lane](/docs/infra/review-collector/express-lane) adds its own: its cuts land unverified, so a claimed commit red on its own is a red head too. Nothing waits on a red head — the lane cuts over it regardless — but every window `develop` runs its CI on inherits the same red, so the one signal a session has for its own commits says red before it has pushed anything.
 
 Much of what lands red here has a regenerator already. The formatter over a file a fix left unformatted, a lint rule that ships its own fix, a ledger whose coverage rows a sweep derives from the tree: for each of those the answer is a command this repository already holds, and a session that reads a log to arrive at it has spent a slice of the one shared window on a lookup. So the regenerators run first and the check suite says whether they answered it.
 
@@ -13,8 +13,8 @@ What they do not touch is what genuinely has to be read — which substitution a
 
 ```mermaid
 flowchart TD
-  E[The express cut is red, or there was none] --> R[Read the newest CI and CodeQL runs for main's head]
-  R -->|green, or not concluded| L[A red cut is the claimed commits' own — told on them]
+  E[Nothing to cut] --> R[Read the newest CI and CodeQL runs for main's head]
+  R -->|green, or not concluded| L[Nothing to repair]
   R -->|red| S{Streak under the cap<br/>attempts noted on the head plus repairs stacked at it}
   S -->|no| P[Note it once on the head — a person's<br/>their repair is a claimed commit the lane cuts] --> L
   S -->|yes| G[Run the repo's own regenerators over the head]
@@ -43,7 +43,7 @@ flowchart TD
 
 Before any session is asked for one, the collector runs every root script that rewrites a tracked artifact rather than reading one (`REPAIR_REGENERATE_COMMANDS`): the formatter, the lint passes in their `--fix` form, and the ledger-coverage sweep. Each writes derived output, so what it produces is by construction what a check failing on that output asked for.
 
-**Nothing here classifies the red.** There is no reading of the log, no roster of failure strings, no judgement about which regenerator applies — the regenerators run, and the same check suite an express cut earns is what says whether they answered it. Three outcomes, and the head is left in exactly one state by each:
+**Nothing here classifies the red.** There is no reading of the log, no roster of failure strings, no judgement about which regenerator applies — the regenerators run, and the collector's check suite (`REPAIR_VERIFY_COMMANDS`) is what says whether they answered it. Three outcomes, and the head is left in exactly one state by each:
 
 | The regenerators                    | Then                                                                                                                |
 | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
@@ -61,13 +61,13 @@ The drain's session under the drain's denials ([collection cycle](/docs/infra/re
 
 What proves the repair is read off the tree, never the session's word: a clean exit, a clean tree, and a head that moved by the one commit the session was told to leave, carrying the trailer that names this head and this collector — the same trailer the streak counts, so a repair the proof accepts is one the next streak can read. One commit exactly: the streak reads a repair off the head as a commit, so a session that left three would spend the whole streak on itself and hand the head it made to a person. Anything else counts the attempt on the head and fails the run, as the fold's resolver does. A session that could not start — Claude Code's own limit, a launch that never happened — is nobody's attempt.
 
-Past the streak the head is a person's, said once on it — and their repair arrives the only way a session's commit reaches `main` unread: a queue commit carrying `Express:`, which the lane cuts and verifies as it does any other.
+Past the streak the head is a person's, said once on it — and their repair arrives the only way a session's commit reaches `main` unread: a queue commit carrying `Express:`, which the lane cuts as it does any other.
 
 ## The cut
 
-The express lane's own cut goes first, even over a red `main`: a claimed commit may be the repair — a session that fixed the red itself, a person's past the repairer's attempts — and a green cut is `main` green again with no session spent. Only a red cut, or nothing to cut, asks whether `main` is red; a red head under repair is the collector's, and the red cut is told on no claimed commit, since the red was never theirs. The verify a red cut spends over a red `main` is the price of that order — runner minutes, not a session.
+The express lane's own cut goes first, even over a red `main`: a claimed commit may be the repair — a session that fixed the red itself, a person's past the repairer's attempts — and a cut that answers the red is `main` green again with no session spent. Only nothing to cut asks whether `main` is red; a cut that leaves it red is answered on the run its push fires.
 
-A repair is then a cut of its own, alone: the claimed commits are not picked on top of it, because the verify is one verdict for the whole cut and a claimed commit that is itself red would spend the streak's attempts on a red the repair answered. It earns every check a claimed commit does (`EXPRESS_VERIFY_COMMANDS`); red, the attempt is counted on the head and the claimed commits wait; green, it is pushed to `main` under the same lease every push carries, the run ends on it, and the push fires the cycle that cuts what waited — or fast-forwards `develop` onto it, when nothing of its own sat there. The lane's checks hold no scan, so a repair of an alert is proven by the scan its push fires: an alert still open there is a red on the new head, and the streak counts the repair beneath it as an attempt.
+A repair is then a cut of its own, alone: no claimed commit is picked on top of it, because the verify is one verdict for the whole repair. It earns every check (`REPAIR_VERIFY_COMMANDS`); red, the attempt is counted on the head; green, it is pushed to `main` under the same lease every push carries, the run ends on it, and the push fires the cycle that cuts what waited — or fast-forwards `develop` onto it, when nothing of its own sat there. The lane's checks hold no scan, so a repair of an alert is proven by the scan its push fires: an alert still open there is a red on the new head, and the streak counts the repair beneath it as an attempt.
 
 ## What it does not do
 
@@ -82,7 +82,7 @@ A repair is then a cut of its own, alone: the claimed commits are not picked on 
 | `scripts/src/services/coderabbit/collect/repairMain.ts`          | the step — CI's verdict, the streak, the two repairs, the proof |
 | `scripts/src/services/coderabbit/collect/repairMechanically.ts`  | the regenerators, the verify, the commit or the restore         |
 | `scripts/src/services/coderabbit/collect/checkIsGreen.ts`        | the check suite, shared with the lane's own cut                 |
-| `scripts/src/services/coderabbit/collect/runExpressLane.ts`      | the repair as the lane's own cut, behind a red cut or none      |
+| `scripts/src/services/coderabbit/collect/runExpressLane.ts`      | the repair as the lane's own cut, when there is nothing to cut  |
 | `scripts/src/services/coderabbit/collect/readRedMainCheck.ts`    | the red run on `main`'s head, CI's or CodeQL's                  |
 | `.github/workflows/CodeQL.yaml`                                  | the gate that makes an open alert a red run                     |
 | `scripts/src/services/coderabbit/collect/getFailedLogExcerpt.ts` | the tail of every failing job, one section per job              |
@@ -91,7 +91,7 @@ A repair is then a cut of its own, alone: the claimed commits are not picked on 
 
 ## Notes
 
-- **Rejected: a repair through the review lane, on `ai/review-fixes`.** A fix rides a review window, so `main` stayed red across a review and a release — and the release then merged the same red back. The express lane's verify is the review a repair gets.
+- **Rejected: a repair through the review lane, on `ai/review-fixes`.** A fix rides a review window, so `main` stayed red across a review and a release — and the release then merged the same red back. A repair earns every check before it is cut, and that is the review it gets.
 - **Rejected: learning `main` is red from the express cut's own red, by re-running the failed check on bare `main`.** It repaired only when a claimed commit happened to be waiting, and it ran a second check to learn what CI had already said.
 - **Rejected: the repair ahead of the cut.** It held every claimed commit while `main` was red, which kept out the one commit that answers a red past the repairer's attempts, and spent a session on a red a claimed commit already fixed.
 - **Rejected: an alert as a required check on the pull request.** The scan runs on `main` and on a weekly schedule, never on a pull request, since the release and every bump would pay a full analysis for what the same tree's scan on `main` finds; so an alert is met where the scan is, on `main`, and the repair is what already answers a red there.

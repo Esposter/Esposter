@@ -22,11 +22,7 @@ export const useResourceListActionItems = () => {
       },
       title: "Open in new tab",
     },
-    {
-      icon: "mdi-link-variant",
-      onClick: () => copyLinkToClipboard(RoutePath.Resource(id)),
-      title: "Copy link",
-    },
+    { icon: "mdi-link-variant", onClick: () => copyLinkToClipboard(RoutePath.Resource(id)), title: "Copy link" },
     {
       icon: "mdi-floor-plan",
       onClick: () => {

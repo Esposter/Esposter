@@ -9,10 +9,5 @@ export const RadarPropsData = {
       stepSize: 20,
     },
   },
-  series: [
-    {
-      data: [80, 50, 30, 40, 100, 20],
-      name: "Series 1",
-    },
-  ],
+  series: [{ data: [80, 50, 30, 40, 100, 20], name: "Series 1" }],
 } as const satisfies VisualPropsData;

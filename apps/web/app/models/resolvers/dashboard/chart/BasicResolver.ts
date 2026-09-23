@@ -17,32 +17,10 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
   }
 
   override handleConfiguration(apexOptions: ApexOptions, { dataLabels, subtitle, title }: T) {
-    apexOptions.chart = defu(
-      {
-        zoom: {
-          enabled: false,
-        },
-      },
-      apexOptions.chart,
-    );
-    apexOptions.dataLabels = defu(
-      {
-        enabled: dataLabels,
-      },
-      apexOptions.dataLabels,
-    );
-    apexOptions.subtitle = defu(
-      {
-        text: subtitle,
-      },
-      apexOptions.subtitle,
-    );
-    apexOptions.title = defu(
-      {
-        text: title,
-      },
-      apexOptions.title,
-    );
+    apexOptions.chart = defu({ zoom: { enabled: false } }, apexOptions.chart);
+    apexOptions.dataLabels = defu({ enabled: dataLabels }, apexOptions.dataLabels);
+    apexOptions.subtitle = defu({ text: subtitle }, apexOptions.subtitle);
+    apexOptions.title = defu({ text: title }, apexOptions.title);
   }
 
   override handleSchema(schema: z.ZodObject) {

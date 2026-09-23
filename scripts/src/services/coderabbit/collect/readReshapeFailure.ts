@@ -1,7 +1,7 @@
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
-import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
+import { readFileCount } from "#src/services/coderabbit/collect/readFileCount";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
@@ -11,7 +11,7 @@ import { getResult } from "@esposter/shared";
 // What proves a reshaping, asked of the tree rather than of the session: the same final tree as the original —
 // Repackaged, never edited — and every commit that claims no exemption under the cap. Nothing here reads the
 // Session's word. The first failing check is the reason, or nothing when every one holds.
-export const getReshapeFailure = (originalSha: string, cwd?: string): string | undefined => {
+export const readReshapeFailure = (originalSha: string, cwd?: string): string | undefined => {
   if (checkIsSequencing(cwd)) return "left an operation in progress";
   const dirtyPaths = readDirtyPaths(cwd);
   if (dirtyPaths.length > 0) return `left the working tree dirty:\n${dirtyPaths.join("\n")}`;
@@ -23,6 +23,8 @@ export const getReshapeFailure = (originalSha: string, cwd?: string): string | u
   const shas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${originalSha}^..HEAD`], cwd));
   if (shas.length === 0) return "produced no commit";
   const claimedShas = readTrailedShas(shas, EXPRESS_TRAILER, cwd);
-  const oversized = shas.find((sha) => !claimedShas.has(sha) && getFileCount(`${sha}^..${sha}`, cwd) > REVIEW_FILE_CAP);
+  const oversized = shas.find(
+    (sha) => !claimedShas.has(sha) && readFileCount(`${sha}^..${sha}`, cwd) > REVIEW_FILE_CAP,
+  );
   return oversized === undefined ? undefined : `left ${oversized} over the cap without an ${EXPRESS_TRAILER} trailer`;
 };

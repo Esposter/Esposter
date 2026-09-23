@@ -53,10 +53,7 @@ const monsterName = computed(() => prettify(monster.key));
         x: 162,
         y: 36,
         text: monsterName,
-        style: {
-          color: 'white',
-          fontSize: 30,
-        },
+        style: { color: 'white', fontSize: 30 },
       }"
     />
     <Text
@@ -64,10 +61,7 @@ const monsterName = computed(() => prettify(monster.key));
         x: 26,
         y: 116,
         text: `LV. ${monster.statistics.level}`,
-        style: {
-          color: 'white',
-          fontSize: 22,
-        },
+        style: { color: 'white', fontSize: 22 },
       }"
     />
     <Text
@@ -91,10 +85,7 @@ const monsterName = computed(() => prettify(monster.key));
         originX: 1,
         originY: 0,
         text: `${monster.status.health}/${monster.statistics.maxHealth}`,
-        style: {
-          color: 'white',
-          fontSize: 38,
-        },
+        style: { color: 'white', fontSize: 38 },
       }"
     />
   </Container>

@@ -2,7 +2,7 @@ import type { LedgerEvent } from "#src/models/sweeps/ledgerCoverage/LedgerEvent"
 
 import { LedgerEventType } from "#src/models/sweeps/ledgerCoverage/LedgerEventType";
 import { applyLedgerEvents } from "#src/services/sweeps/ledgerCoverage/applyLedgerEvents";
-import { OPEN_CELL } from "#src/services/sweeps/ledgerCoverage/constants";
+import { OPEN_CELL, SWEPT_CELL_SEPARATOR } from "#src/services/sweeps/ledgerCoverage/constants";
 import { describe, expect, test } from "vitest";
 
 describe(applyLedgerEvents, () => {
@@ -15,9 +15,10 @@ describe(applyLedgerEvents, () => {
 | ------ | ---------- | ----- |
 | ${unit}   | ${swept.padEnd(10)} |       |
 `;
-  const getEvent = (type: LedgerEventType, date: string, eventUnit?: string): LedgerEvent => ({
+  const getEvent = (type: LedgerEventType, date: string, eventUnit?: string, model = ""): LedgerEvent => ({
     date,
     ledger,
+    model,
     type,
     unit: eventUnit,
   });
@@ -30,6 +31,31 @@ describe(applyLedgerEvents, () => {
     expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
       matched: [event],
       text: getText(earlier),
+    });
+  });
+
+  test("names the model the sweep commit was co-authored by", () => {
+    expect.hasAssertions();
+
+    const model = "d";
+    const event = getEvent(LedgerEventType.Ledger, earlier, unit, model);
+
+    expect(applyLedgerEvents(getText(OPEN_CELL), ledger, [event])).toStrictEqual({
+      matched: [event],
+      text: getText(`${earlier}${SWEPT_CELL_SEPARATOR}${model}`),
+    });
+  });
+
+  // A later pass on the same day is the one whose model read the unit last
+  test("names the model of a same-day sweep over a dated row", () => {
+    expect.hasAssertions();
+
+    const model = "d";
+    const event = getEvent(LedgerEventType.Ledger, earlier, unit, model);
+
+    expect(applyLedgerEvents(getText(earlier), ledger, [event])).toStrictEqual({
+      matched: [event],
+      text: getText(`${earlier}${SWEPT_CELL_SEPARATOR}${model}`),
     });
   });
 

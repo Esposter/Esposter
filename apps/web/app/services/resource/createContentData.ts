@@ -27,9 +27,7 @@ export const createContentData = <
     await readResource();
     await readContentData();
   };
-  // A restore replaces the working copy underneath whatever blade is open, so the store re-reads its own
-  // Content instead of the blade being remounted. The row itself is re-read by the caller that runs this, so
-  // The hook is the content half alone
+  // The row itself is re-read by the caller that runs this, so the hook is the content half alone
   ResourceContentHookMap.Reload.register(async (reloadedType) => {
     if (reloadedType === type) await readContentData();
   });

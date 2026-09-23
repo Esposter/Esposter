@@ -38,11 +38,7 @@ export const emojiRouter = router({
         operator: BinaryOperator.eq,
         value: input.messageRowKey,
       },
-      {
-        key: MessageEmojiMetadataEntityPropertyNames.emojiTag,
-        operator: BinaryOperator.eq,
-        value: input.emojiTag,
-      },
+      { key: MessageEmojiMetadataEntityPropertyNames.emojiTag, operator: BinaryOperator.eq, value: input.emojiTag },
     ];
     const existingEmoji = (
       await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {

@@ -1,62 +1,62 @@
 # Docs — skills
 
-| Unit                      | Swept      | Notes |
-| ------------------------- | ---------- | ----- |
-| `azure-table`             | 2026-09-15 |       |
-| `bench`                   | 2026-09-15 |       |
-| `build`                   | 2026-09-22 |       |
-| `claude-permissions`      | 2026-09-22 |       |
-| `code-review`             | 2026-09-15 |       |
-| `coderabbit`              | 2026-09-15 |       |
-| `context-efficiency`      | 2026-09-15 |       |
-| `dependency-updates`      | 2026-09-15 |       |
-| `docs`                    | 2026-09-22 |       |
-| `drizzle`                 | 2026-09-15 |       |
-| `error-handling`          | 2026-09-15 |       |
-| `esbabbler`               | 2026-09-15 |       |
-| `esbabbler-call`          | 2026-09-15 |       |
-| `fallacies`               | 2026-09-22 |       |
-| `file-organization`       | 2026-09-15 |       |
-| `finishing`               | 2026-09-22 |       |
-| `formatting`              | 2026-09-15 |       |
-| `git`                     | 2026-09-15 |       |
-| `github-actions`          | 2026-09-22 |       |
-| `grapesjs`                | 2026-09-22 |       |
-| `invariants`              | 2026-09-22 |       |
-| `llm-delegation`          | 2026-09-20 |       |
-| `model-delegation`        | 2026-09-22 |       |
-| `naming`                  | 2026-09-15 |       |
-| `over-engineering`        | 2026-09-22 |       |
-| `oxlint`                  | 2026-09-15 |       |
-| `package-scripts`         | 2026-09-15 |       |
-| `pagination`              | 2026-09-15 |       |
-| `pinia`                   | 2026-09-15 |       |
-| `pulumi-infra`            | 2026-09-15 |       |
-| `readme-standards`        | 2026-09-22 |       |
-| `responsive`              | 2026-09-15 |       |
-| `review-queue`            | 2026-09-15 |       |
-| `routing`                 | 2026-09-15 |       |
-| `run-app`                 | 2026-09-22 |       |
-| `running-checks`          | 2026-09-22 |       |
-| `runtime-efficiency`      | 2026-09-22 |       |
-| `score`                   | 2026-09-22 |       |
-| `skill-authoring`         | 2026-09-15 |       |
-| `slash-commands`          | 2026-09-22 |       |
-| `string-utils`            | 2026-09-15 |       |
-| `styling`                 | 2026-09-15 |       |
-| `sweeps`                  | 2026-09-22 |       |
-| `test-values`             | 2026-09-15 |       |
-| `testing`                 | 2026-09-15 |       |
-| `tiptap`                  | 2026-09-22 |       |
-| `trpc`                    | 2026-09-15 |       |
-| `typescript`              | 2026-09-15 |       |
-| `unocss`                  | 2026-09-15 |       |
-| `ux`                      | 2026-09-22 |       |
-| `vjsf`                    | 2026-09-15 |       |
-| `vue`                     | 2026-09-15 |       |
-| `vue-component-patterns`  | 2026-09-15 |       |
-| `vue-composable-patterns` | 2026-09-15 |       |
-| `vue-page-composition`    | 2026-09-15 |       |
-| `vue-phaserjs`            | 2026-09-22 |       |
-| `vuetify`                 | 2026-09-15 |       |
-| `zod`                     | 2026-09-15 |       |
+| Unit                      | Swept               | Notes |
+| ------------------------- | ------------------- | ----- |
+| `azure-table`             | 2026-09-22 · Opus 5 |       |
+| `bench`                   | 2026-09-22 · Opus 5 |       |
+| `build`                   | 2026-09-22 · Opus 5 |       |
+| `claude-permissions`      | 2026-09-22 · Opus 5 |       |
+| `code-review`             | 2026-09-22 · Opus 5 |       |
+| `coderabbit`              | 2026-09-22 · Opus 5 |       |
+| `context-efficiency`      | 2026-09-22 · Opus 5 |       |
+| `dependency-updates`      | 2026-09-22 · Opus 5 |       |
+| `docs`                    | 2026-09-22 · Opus 5 |       |
+| `drizzle`                 | 2026-09-22 · Opus 5 |       |
+| `error-handling`          | 2026-09-22 · Opus 5 |       |
+| `esbabbler`               | 2026-09-22 · Opus 5 |       |
+| `esbabbler-call`          | 2026-09-22 · Opus 5 |       |
+| `fallacies`               | 2026-09-22 · Opus 5 |       |
+| `file-organization`       | 2026-09-22 · Opus 5 |       |
+| `finishing`               | 2026-09-22 · Opus 5 |       |
+| `formatting`              | 2026-09-22 · Opus 5 |       |
+| `git`                     | 2026-09-22 · Opus 5 |       |
+| `github-actions`          | 2026-09-22 · Opus 5 |       |
+| `grapesjs`                | 2026-09-22 · Opus 5 |       |
+| `invariants`              | 2026-09-22 · Opus 5 |       |
+| `llm-delegation`          | 2026-09-22 · Opus 5 |       |
+| `model-delegation`        | 2026-09-22 · Opus 5 |       |
+| `naming`                  | 2026-09-22 · Opus 5 |       |
+| `over-engineering`        | 2026-09-22 · Opus 5 |       |
+| `oxlint`                  | 2026-09-22 · Opus 5 |       |
+| `package-scripts`         | 2026-09-22 · Opus 5 |       |
+| `pagination`              | 2026-09-22 · Opus 5 |       |
+| `pinia`                   | 2026-09-22 · Opus 5 |       |
+| `pulumi-infra`            | 2026-09-22 · Opus 5 |       |
+| `readme-standards`        | 2026-09-22 · Opus 5 |       |
+| `responsive`              | 2026-09-22 · Opus 5 |       |
+| `review-queue`            | 2026-09-22 · Opus 5 |       |
+| `routing`                 | 2026-09-22 · Opus 5 |       |
+| `run-app`                 | 2026-09-22 · Opus 5 |       |
+| `running-checks`          | 2026-09-22 · Opus 5 |       |
+| `runtime-efficiency`      | 2026-09-22 · Opus 5 |       |
+| `score`                   | 2026-09-22 · Opus 5 |       |
+| `skill-authoring`         | 2026-09-22 · Opus 5 |       |
+| `slash-commands`          | 2026-09-22 · Opus 5 |       |
+| `string-utils`            | 2026-09-22 · Opus 5 |       |
+| `styling`                 | 2026-09-22 · Opus 5 |       |
+| `sweeps`                  | 2026-09-22 · Opus 5 |       |
+| `test-values`             | 2026-09-22 · Opus 5 |       |
+| `testing`                 | 2026-09-22 · Opus 5 |       |
+| `tiptap`                  | 2026-09-22 · Opus 5 |       |
+| `trpc`                    | 2026-09-22 · Opus 5 |       |
+| `typescript`              | 2026-09-22 · Opus 5 |       |
+| `unocss`                  | 2026-09-22 · Opus 5 |       |
+| `ux`                      | 2026-09-22 · Opus 5 |       |
+| `vjsf`                    | 2026-09-22 · Opus 5 |       |
+| `vue`                     | 2026-09-22 · Opus 5 |       |
+| `vue-component-patterns`  | 2026-09-22 · Opus 5 |       |
+| `vue-composable-patterns` | 2026-09-22 · Opus 5 |       |
+| `vue-page-composition`    | 2026-09-22 · Opus 5 |       |
+| `vue-phaserjs`            | 2026-09-22 · Opus 5 |       |
+| `vuetify`                 | 2026-09-22 · Opus 5 |       |
+| `zod`                     | 2026-09-22 · Opus 5 |       |

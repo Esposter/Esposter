@@ -17,12 +17,12 @@ export const ANSWERS_TRAILER = "Answers";
 export const DRAINS_TRAILER = "Drains";
 
 // The claim a commit needs no review — written by the reshaper on the parts it judged so, or by a session on its
-// Own commit — which the express lane admits and the checks verify. A claim, never a proof: nothing reads it as
+// Own commit — which the express lane cuts onto `main` unverified. A claim, never a proof: nothing reads it as
 // True, only as asked (docs: infra/review-collector/express-lane)
 export const EXPRESS_TRAILER = "Express";
 
 // The record a repair commit carries of the red `main` head it repaired — the repairer's own claim, which the
-// Checks verify like any other; consecutive ones at `main`'s head are the streak the attempt cap bounds
+// Checks verify; consecutive ones at `main`'s head are the streak the attempt cap bounds
 // (docs: infra/review-collector/repair)
 export const REPAIRS_TRAILER = "Repairs";
 
@@ -49,16 +49,16 @@ export const RATE_LIMITED_DESCRIPTION = "Review rate limited";
 // Frozen: a lockfile a commit left stale fails here as CI would fail it, and nothing tracked is rewritten
 export const INSTALL_COMMAND: string[] = ["i", "--frozen-lockfile"];
 
-// The checks an express cut earns before it reaches `main` unread, and the only checks the collector runs on
-// Anything it pushes — a window is verified by develop's own CI, since a red queue commit inside it would hold
-// Every window behind a repair that sits commits later. Check-only: a repair the collector wrote would be a
+// The checks a repair earns before it reaches `main`, and the only checks the collector runs on anything it
+// Pushes — a window is verified by develop's own CI and an express cut by main's, since a gate on either held the
+// Red commit and the later one that fixes it at once. Check-only: a repair the collector wrote would be a
 // Commit nobody reviewed. Each is a root script's own passes minus its `virrun` wrapper — the root `tsc` and
 // The recursive typecheck, oxlint and the two ESLint passes — plus the two app bundles the suite asserts against,
 // Since `@esposter/functions` and `@esposter/infra` each snapshot a `dist` no source tree holds, and a run
 // Without them fails on files no commit touched. The web app's build alone is left out: it is CI's longest job
 // (`apps/web/content/docs/architecture/monorepo-tooling.md`), and `main`'s own CI runs it on the push. The
 // Tests are here because a relocation is exactly what a path-coupled test fails on.
-export const EXPRESS_BUILD_APPS_COMMAND: string[] = [
+export const REPAIR_BUILD_APPS_COMMAND: string[] = [
   "--filter",
   "@esposter/functions",
   "--filter",
@@ -66,7 +66,7 @@ export const EXPRESS_BUILD_APPS_COMMAND: string[] = [
   "build",
 ];
 
-export const EXPRESS_VERIFY_COMMANDS: string[][] = [
+export const REPAIR_VERIFY_COMMANDS: string[][] = [
   INSTALL_COMMAND,
   ["format:check"],
   ["build:packages"],
@@ -75,11 +75,11 @@ export const EXPRESS_VERIFY_COMMANDS: string[][] = [
   ["exec", "oxlint", "--format=default", "--disable-nested-config"],
   ["exec", "eslint", "."],
   ["-r", "--parallel", "run", "lint"],
-  EXPRESS_BUILD_APPS_COMMAND,
+  REPAIR_BUILD_APPS_COMMAND,
   ["exec", "vitest", "run"],
 ];
 
-// What a red `main` is answered with before any session is asked for one, spelled out the way the lane's checks
+// What a red `main` is answered with before any session is asked for one, spelled out the way the repair's checks
 // Are — each a root script's own passes minus its `virrun` wrapper. Every one rewrites a tracked artifact from
 // The tree that artifact is derived from: the formatter's own output, a lint rule's own autofix, a ledger's
 // Coverage rows. What they write is by construction what the check that failed on it asked for, so the red is
@@ -105,12 +105,11 @@ export const ANSWERED_COMMIT_FORMAT = "%H%x1F%s%x1F%B%x1E";
 
 export const COMMIT_BODY_FORMAT = "%H%x1F%B%x1E";
 
-// How many times one unit of work may fail — its session, or the checks over its express cut — against one
-// Basis before it is a person's: a review is quarantined and its findings stay open, a commit is left for the
-// Port to hold on, a red head is left red, a claimed commit waits uncut. The collector ports without them
-// Rather than stalling every window behind one thing nobody sees. The basis is what every attempt's marker
-// Names (`getMarker`): a count that outlived the collector code that failed it, or the `main` head a cut was
-// Checked on, would leave the work waiting on a person to reset a number.
+// How many times one unit of work's session may fail against one basis before it is a person's: a review is
+// Quarantined and its findings stay open, a commit is left for the port to hold on, a red head is left red. The
+// Collector ports without them rather than stalling every window behind one thing nobody sees. The basis is what
+// Every attempt's marker names (`getMarker`): a count that outlived the collector code that failed it would leave
+// The work waiting on a person to reset a number.
 export const SESSION_ATTEMPT_CAP = 3;
 
 // The tree the collector's own source lives in, whose hash at the run's start is the basis every attempt count
@@ -146,11 +145,6 @@ export const RESHAPE_FAILED_MARKER = "review-collector reshape-failed";
 
 // A fold of `main` whose conflict the resolver failed on, counted on `main`'s head
 export const FOLD_FAILED_MARKER = "review-collector fold-failed";
-
-// A commit claiming no review whose cut failed the checks, counted on the commit against the `main` head the
-// Cut was checked on: the port never carries it, so nothing behind it waits, and past the cap on one head it
-// Waits uncut until `main` moves or the collector changes — or a person drops the claim or repairs it
-export const EXPRESS_FAILED_MARKER = "review-collector express-failed";
 
 // A red `main` head whose repair the session failed on, counted on the head; with the repairs already stacked at
 // The head, the streak the cap bounds

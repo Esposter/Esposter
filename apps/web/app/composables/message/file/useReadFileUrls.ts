@@ -20,10 +20,7 @@ export const useReadFileUrls = () => {
     const imageFiles = files.filter((file) => checkHasThumbnail(file));
     const [downloadFileSasUrls, downloadThumbnailSasUrls] = await Promise.all([
       $trpc.message.generateDownloadFileSasUrls.query(
-        {
-          files: files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
-          roomId,
-        },
+        { files: files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })), roomId },
         { context: { isBackground: true } },
       ),
       // The thumbnail is decoration on top of the original, so its query resolves to nothing on failure
@@ -31,10 +28,7 @@ export const useReadFileUrls = () => {
       imageFiles.length > 0
         ? getResultAsync(() =>
             $trpc.message.generateDownloadThumbnailSasUrls.query(
-              {
-                files: imageFiles.map(({ id }) => ({ id })),
-                roomId,
-              },
+              { files: imageFiles.map(({ id }) => ({ id })), roomId },
               { context: { isBackground: true } },
             ),
           ).unwrapOr([])

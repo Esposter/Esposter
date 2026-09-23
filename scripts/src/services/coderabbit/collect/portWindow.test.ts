@@ -12,6 +12,14 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
   const overflowPaths = Array.from({ length: REVIEW_FILE_CAP + 1 }, (_value, index) => `${TEST_FILENAME}/${index}`);
   const filePath = `${TEST_FILENAME}.ts`;
   const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}.ts`;
+  // The claim, as the reshaper or a session writes it
+  const claimExpress = (): string => {
+    runGit(
+      ["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${EXPRESS_TRAILER}: ${TEST_FILENAME}`],
+      getCwd(),
+    );
+    return readSha("HEAD");
+  };
 
   test("ports the fixes first and the queue after them, counting from the frontier", () => {
     expect.hasAssertions();
@@ -40,14 +48,25 @@ describe(portWindow, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
 
     const developSha = readSha("HEAD");
     commitFiles(overflowPaths, "");
-    runGit(
-      ["commit", "--quiet", "--amend", "--no-edit", "--trailer", `${EXPRESS_TRAILER}: ${TEST_FILENAME}`],
-      getCwd(),
-    );
+    claimExpress();
     const queueSha = commitFile(filePath, "");
     const port = portWindow({ cwd: getCwd(), developSha, fixShas: [], frontierSha: developSha, queueSha });
 
     expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha: undefined, queueShas: [queueSha] });
+  });
+
+  // The deadlock this breaks: a claimed commit red on its own, its fix the unclaimed commit after it — the lane
+  // Cannot cut the one green and the window cannot apply the other without it
+  test("carries a claimed commit that a later queue commit builds on", () => {
+    expect.hasAssertions();
+
+    const developSha = readSha("HEAD");
+    commitFile(filePath, "");
+    const claimedSha = claimExpress();
+    const queueSha = commitFile(filePath, " ");
+    const port = portWindow({ cwd: getCwd(), developSha, fixShas: [], frontierSha: developSha, queueSha });
+
+    expect(port).toStrictEqual({ fileCount: 1, fixCount: 0, heldSha: undefined, queueShas: [claimedSha, queueSha] });
   });
 
   test("holds the first queue commit that conflicts with develop", () => {

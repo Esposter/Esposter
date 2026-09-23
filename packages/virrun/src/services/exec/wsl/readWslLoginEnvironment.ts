@@ -57,7 +57,7 @@ const CAPTURE_SCRIPT = buildWslLoginShellCommand(
 // Is otherwise a login-shell spawn whose rc startup is not free. Only a capture that answered both questions is
 // Persisted, so a transient WSL/shell failure re-probes next process rather than caching the default. Both, because
 // A capture that resolved a PATH but no node the sandbox could run still fails every run through it —
-// GetSandboxNodeVersion reports "" and computeEnvironmentKey refuses to key on it — and persisting that pins the
+// `getSandboxNodeVersion` reports "" and computeEnvironmentKey refuses to key on it — and persisting that pins the
 // Failure for the cache's whole age bound, across processes, with no run able to recover on its own.
 export const readWslLoginEnvironment: () => WslLoginEnvironment = createProbeCache({
   probe: () =>
@@ -72,7 +72,7 @@ export const readWslLoginEnvironment: () => WslLoginEnvironment = createProbeCac
         // A node the login shell resolved under a Windows drive mount is the HOST's node reached through interop; it
         // Cannot execute in the Linux sandbox, so the shell answered with something no run can use. Report no node at
         // All rather than a version the sandbox will never run: "" is what stops the capture being persisted and what
-        // ComputeEnvironmentKey refuses to key on, while the version would mint a plausible key for an absent node.
+        // `computeEnvironmentKey` refuses to key on, while the version would mint a plausible key for an absent node.
         return nodeVersion && !WINDOWS_DRIVE_MOUNT_REGEX.test(nodeDirectory)
           ? { nodeDirectory, nodeVersion, path }
           : { nodeDirectory: "", nodeVersion: "", path };

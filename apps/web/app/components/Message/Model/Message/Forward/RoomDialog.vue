@@ -24,10 +24,7 @@ const {
   (query, cursor, options) => {
     const normalizedSearchQuery = normalizeString(query);
     return $trpc.room.readRooms.query(
-      {
-        cursor,
-        filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined,
-      },
+      { cursor, filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined },
       options,
     );
   },

@@ -20,7 +20,7 @@ import { createHash } from "node:crypto";
 // Registered since, or any entry predating the mask itself — would otherwise flush the very ghost paths the mask
 // Exists to stop, on every hit until it ages out. Keying on it retires those entries instead of filtering them
 // Twice, which is what keeps the mask applied in exactly one place (buildHostFlushPlan).
-// Returns null when the source tree can't be hashed (not a git repo) or the lockfile is missing — either way the
+// Returns undefined when the source tree can't be hashed (not a git repo) or the lockfile is missing — either way the
 // Caller falls back to running uncached rather than keying on partial state.
 export const computeTaskCacheKey = (
   command: readonly string[] | string,

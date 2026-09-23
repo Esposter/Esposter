@@ -1,6 +1,6 @@
-export interface SyncQueueInput {
-  // The basis the resolver's and the reshaper's attempts are counted against (`getMarker`)
-  collectorSha: string;
+import type { CycleInput } from "#src/models/coderabbit/collect/CycleInput";
+
+export interface SyncQueueInput extends Pick<CycleInput, "collectorSha"> {
   cwd: string;
   developSha: string;
   isDryRun: boolean;

@@ -56,10 +56,7 @@ export const security: NuxtConfig["security"] = {
     },
   },
   rateLimiter: false,
-  requestSizeLimiter: {
-    maxRequestSizeInBytes: MAX_REQUEST_SIZE,
-    maxUploadFileRequestInBytes: MAX_FILE_REQUEST_SIZE,
-  },
+  requestSizeLimiter: { maxRequestSizeInBytes: MAX_REQUEST_SIZE, maxUploadFileRequestInBytes: MAX_FILE_REQUEST_SIZE },
   // @TODO: https://github.com/wobsoriano/trpc-nuxt/issues/215
   xssValidator: false,
 };

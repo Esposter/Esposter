@@ -2,11 +2,11 @@ import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/De
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 import { readRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/readRegistryOutdatedDependencies";
-import { getLatestVersion } from "#src/services/shared/getLatestVersion";
+import { readLatestVersion } from "#src/services/shared/readLatestVersion";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/shared/getLatestVersion"), () => ({
-  getLatestVersion: vi.fn<typeof getLatestVersion>(),
+vi.mock(import("#src/services/shared/readLatestVersion"), () => ({
+  readLatestVersion: vi.fn<typeof readLatestVersion>(),
 }));
 
 describe(readRegistryOutdatedDependencies, () => {
@@ -17,7 +17,7 @@ describe(readRegistryOutdatedDependencies, () => {
       { group: DependencyGroup.Engines, packageName: "a", specifier: "^0.0.0" },
       { group: DependencyGroup.Engines, packageName: "a", specifier: "^0.1.0" },
     ];
-    vi.mocked(getLatestVersion).mockResolvedValue("0.1.1");
+    vi.mocked(readLatestVersion).mockResolvedValue("0.1.1");
 
     const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
 
@@ -47,11 +47,11 @@ describe(readRegistryOutdatedDependencies, () => {
     const entries: DependencyEntry[] = [
       { followTag: "rc", group: DependencyGroup.Catalog, packageName: "a", specifier: "1.0.0-rc.0" },
     ];
-    vi.mocked(getLatestVersion).mockResolvedValue("1.0.0-rc.1");
+    vi.mocked(readLatestVersion).mockResolvedValue("1.0.0-rc.1");
 
     const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
 
-    expect(getLatestVersion).toHaveBeenCalledWith("a", "rc");
+    expect(readLatestVersion).toHaveBeenCalledWith("a", "rc");
     expect(outdatedDependencies).toStrictEqual([
       {
         current: "1.0.0-rc.0",
@@ -70,7 +70,7 @@ describe(readRegistryOutdatedDependencies, () => {
     const entries: DependencyEntry[] = [
       { dependent: "dependent", group: DependencyGroup.Npm, packageName: "a", specifier: "^0.0.0" },
     ];
-    vi.mocked(getLatestVersion).mockResolvedValue("0.0.1");
+    vi.mocked(readLatestVersion).mockResolvedValue("0.0.1");
 
     const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
 

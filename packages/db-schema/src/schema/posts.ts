@@ -1,5 +1,6 @@
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 
+import { createNameSchema } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { users } from "#src/schema/users";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "#src/services/post/constants";
@@ -46,7 +47,7 @@ export type Post = typeof posts.$inferSelect;
 
 export const selectPostSchema = createSelectSchema(posts, {
   description: (schema) => createPostDescriptionSchema(schema, 0),
-  title: (schema) => schema.min(1).max(POST_TITLE_MAX_LENGTH),
+  title: (schema) => createNameSchema(POST_TITLE_MAX_LENGTH, schema),
 });
 export const selectCommentSchema = createSelectSchema(posts, {
   description: (schema) => createPostDescriptionSchema(schema, 1),

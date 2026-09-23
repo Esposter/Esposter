@@ -28,12 +28,7 @@ defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
       :configuration="{
         title: 'Dungeons',
         type: AUTO,
-        scale: {
-          width: 1024,
-          height: 576,
-          mode: Scale.ScaleModes.FIT,
-          autoCenter: Scale.CENTER_BOTH,
-        },
+        scale: { width: 1024, height: 576, mode: Scale.ScaleModes.FIT, autoCenter: Scale.CENTER_BOTH },
         input: {
           keyboard: true,
           touch: true,
@@ -42,29 +37,11 @@ defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
           activePointers: checkIsMobile() ? 3 : 2,
         },
         plugins: {
-          global: [
-            {
-              key: 'clickOutsidePlugin',
-              plugin: ClickOutsidePlugin,
-              start: true,
-            },
-          ],
+          global: [{ key: 'clickOutsidePlugin', plugin: ClickOutsidePlugin, start: true }],
           scene: [
-            {
-              key: 'gridEngine',
-              plugin: GridEngine,
-              mapping: 'gridEngine',
-            },
-            {
-              key: 'virtualJoystickPlugin',
-              plugin: VirtualJoystickPlugin,
-              mapping: 'virtualJoystickPlugin',
-            },
-            {
-              key: 'sliderPlugin',
-              plugin: SliderPlugin,
-              mapping: 'sliderPlugin',
-            },
+            { key: 'gridEngine', plugin: GridEngine, mapping: 'gridEngine' },
+            { key: 'virtualJoystickPlugin', plugin: VirtualJoystickPlugin, mapping: 'virtualJoystickPlugin' },
+            { key: 'sliderPlugin', plugin: SliderPlugin, mapping: 'sliderPlugin' },
           ],
         },
       }"

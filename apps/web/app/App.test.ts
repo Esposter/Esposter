@@ -16,10 +16,7 @@ describe("app", () => {
             "@/components/Nuxt/**/*.vue",
             "@/components/Transition/**/*.vue",
           ],
-          {
-            eager: true,
-            import: "default",
-          },
+          { eager: true, import: "default" },
         ),
       ).map(async ([filepath, component]) => {
         const mountedComponent = await mountSuspended(component);

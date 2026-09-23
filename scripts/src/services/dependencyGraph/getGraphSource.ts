@@ -15,7 +15,7 @@ import { PackageRoleColorsMap } from "#src/services/dependencyGraph/PackageRoleC
 const getEdgeLines = (workspaceEdges: WorkspaceEdge[], attributes: string): string[] =>
   workspaceEdges.map(({ from, to }) => `  "${from}" -> "${to}" [${attributes}];`);
 
-// In the order the members come in, which `getWorkspacePackages` sorts by path — so the clusters are drawn
+// In the order the members come in, which `readWorkspacePackages` sorts by path — so the clusters are drawn
 // In the same order however the workspace file happens to list its globs.
 const getWorkspaceDirectories = (workspacePackages: WorkspacePackage[]): string[] => [
   ...new Set(

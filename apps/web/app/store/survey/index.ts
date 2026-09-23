@@ -26,8 +26,6 @@ export const useSurveyStore = defineStore("survey", () => {
     await readResource();
     await readSurvey();
   };
-  // A restore replaces the working copy underneath whatever blade is open, so the store re-reads its own
-  // Content instead of the blade being remounted. The row itself is re-read by the caller that runs this.
   // The Collection card renders `settings` and is finished here; the creator holds the model itself and takes
   // It in a second stage (`useSurveyCreator`)
   ResourceContentHookMap.Reload.register(async (reloadedType) => {

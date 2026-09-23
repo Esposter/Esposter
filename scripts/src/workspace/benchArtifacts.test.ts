@@ -1,5 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getSweepFilePaths } from "#src/services/sweeps/getSweepFilePaths";
+import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -18,7 +18,7 @@ describe("benchArtifacts", () => {
   const ARTIFACT_EXTENSIONS = ["json", "md"];
   // Registration is not greppable — a command bench registers through `setupCommandBench` — so the helper marker
   // Is the whole distinction: every other bench file is a bench
-  const benchPaths = getSweepFilePaths("*.bench.ts").filter(
+  const benchPaths = readSweepFilePaths("*.bench.ts").filter(
     (benchPath) => !HELPER_REGEX.test(readFileSync(resolve(REPOSITORY_ROOT, benchPath), "utf8")),
   );
 
@@ -30,7 +30,7 @@ describe("benchArtifacts", () => {
       const base = benchPath.slice(0, -BENCH_SUFFIX.length);
       const artifactPaths = ARTIFACT_EXTENSIONS.map((extension) =>
         isPlatform
-          ? getSweepFilePaths(`${base}.bench.*.${extension}`)
+          ? readSweepFilePaths(`${base}.bench.*.${extension}`)
           : [`${base}.bench.${extension}`].filter((artifactPath) => existsSync(resolve(REPOSITORY_ROOT, artifactPath))),
       );
       return artifactPaths.some((paths) => paths.length === 0);

@@ -1,6 +1,6 @@
-export interface RepairInput {
-  // The basis the repair's attempts are counted against (`getMarker`)
-  collectorSha: string;
+import type { CycleInput } from "#src/models/coderabbit/collect/CycleInput";
+
+export interface RepairInput extends Pick<CycleInput, "collectorSha"> {
   cwd: string;
   isDryRun: boolean;
   mainSha: string;

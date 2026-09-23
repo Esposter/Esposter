@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one. Esposter repo-wide sweep conventions — progress as a ledger in .agents/ledgers/ named after the owning skill, a find recipe proven able to fail, one behaviour-preserving unit per commit with the Ledger trailer dating its row through ai:sweep:ledger-coverage, every sweep standing and resumed from the index row's Scope, a window filled rather than a ledger finished, and a repeated finding handed to an enforcer.
+description: Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one. Esposter repo-wide sweep conventions — progress as a ledger in .agents/ledgers/ named after the owning skill, a find recipe proven able to fail, one behaviour-preserving unit per commit with the Ledger trailer dating its row and naming its model through ai:sweep:ledger-coverage, a row an older model read open for a full pass, every sweep standing and resumed from the index row's Scope, a window filled rather than a ledger finished, and a repeated finding handed to an enforcer.
 ---
 
 # Sweeps
@@ -44,7 +44,7 @@ A grep stays inline in the ledger; anything with control flow is a script under 
 
 ```mermaid
 flowchart LR
-  COVER["ai:sweep:ledger-coverage<br/>dates rows from trailers, syncs derived rows"] --> PICK["pick the next unswept unit"]
+  COVER["ai:sweep:ledger-coverage<br/>dates rows and names their model from trailers, syncs derived rows"] --> PICK["pick the next unswept unit"]
   PICK --> APPLY["apply the owning convention"]
   APPLY --> CHANGED{"did the unit change?"}
   CHANGED -->|"no"| HOLD["hold its trailer for the next commit"]
@@ -84,6 +84,8 @@ the rules held there on that date, nothing more.
 A pass resumes from what changed since that date rather than re-reading the unit, over the pathspecs the sweep's
 **`Scope`** declares in the ledger index — the convention's domain, never the union of its rows. **The resume
 command, and writing or widening a scope**, are `references/standing-resume.md`.
+
+**A row is only as current as the model that read it.** `Swept` names the model beside the date, taken from the sweep commit's `Co-Authored-By` trailer, and a row whose model is older than the sitting's is open for a first pass over the whole unit rather than a resume from its date — a stronger model finds what the weaker one read past, so an upgrade reopens every ledger with no trailer and no edit to any row.
 
 A `—` in `Swept` is unswept, and a fully dated ledger is kept, not deleted — it is the index that answers "was this area swept, and when" in one read (`references/standing-resume.md`). A new convention joins the ledger that already asks its question and resets its dates, since there is no partially-swept state (`references/ledger-files.md`).
 

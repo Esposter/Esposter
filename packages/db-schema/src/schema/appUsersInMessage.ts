@@ -8,11 +8,7 @@ import { createSelectSchema } from "drizzle-orm/zod";
 
 export const appUsersInMessage = pgTable(
   "appUsers",
-  {
-    id: uuid().primaryKey().defaultRandom(),
-    image: text().notNull().default(""),
-    name: text().notNull(),
-  },
+  { id: uuid().primaryKey().defaultRandom(), image: text().notNull().default(""), name: text().notNull() },
   {
     extraConfig: ({ name }) => [
       check("appUsers_name_length_check", createNameCheckSql(name, APP_USER_NAME_MAX_LENGTH)),

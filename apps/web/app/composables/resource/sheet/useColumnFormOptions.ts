@@ -30,12 +30,7 @@ export const useColumnFormOptions = (
     }
     return {
       ajvOptions: {
-        keywords: [
-          {
-            ...uniqueColumnNameKeywordDefinition,
-            validate: uniqueColumnNameKeywordDefinitionValidation,
-          },
-        ],
+        keywords: [{ ...uniqueColumnNameKeywordDefinition, validate: uniqueColumnNameKeywordDefinitionValidation }],
       },
       context: {
         columnItems,

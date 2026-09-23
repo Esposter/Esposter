@@ -24,9 +24,5 @@ export const BarPropsData = {
       ],
     },
   },
-  series: [
-    {
-      data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380],
-    },
-  ],
+  series: [{ data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380] }],
 } as const satisfies VisualPropsData;

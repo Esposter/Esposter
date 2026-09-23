@@ -53,9 +53,7 @@ export const createSourceMirrorArchive = (
     execFileHidden(
       getTarExecutable(),
       ["-c", "--no-recursion", "--null", "-f", archiveUnc, "-C", cwd, "-T", copyListUnc],
-      {
-        timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS,
-      },
+      { timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS },
     ),
   );
   // The list is tar's input and nothing else's, so it is spent the moment tar returns either way — unlinking

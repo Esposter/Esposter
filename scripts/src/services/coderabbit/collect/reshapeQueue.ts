@@ -10,14 +10,14 @@ import {
   SessionRoleModelMap,
 } from "#src/services/coderabbit/collect/constants";
 import { getAttemptFailure } from "#src/services/coderabbit/collect/getAttemptFailure";
-import { getFileCount } from "#src/services/coderabbit/collect/getFileCount";
 import { getMarkedCount } from "#src/services/coderabbit/collect/getMarkedCount";
 import { getMarker } from "#src/services/coderabbit/collect/getMarker";
-import { getReshapeFailure } from "#src/services/coderabbit/collect/getReshapeFailure";
 import { getReshapePrompt } from "#src/services/coderabbit/collect/getReshapePrompt";
 import { postCommitComment } from "#src/services/coderabbit/collect/postCommitComment";
 import { readCommitComments } from "#src/services/coderabbit/collect/readCommitComments";
+import { readFileCount } from "#src/services/coderabbit/collect/readFileCount";
 import { readHeadSha } from "#src/services/coderabbit/collect/readHeadSha";
+import { readReshapeFailure } from "#src/services/coderabbit/collect/readReshapeFailure";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { REVIEW_FILE_CAP } from "#src/services/coderabbit/shared/constants";
@@ -43,11 +43,11 @@ export const reshapeQueue = async ({
   // Would pay a session per run to repackage what no window will ever carry
   const claimedShas = readTrailedShas(owedShas, EXPRESS_TRAILER, cwd);
   const sha = owedShas.find(
-    (owedSha) => !claimedShas.has(owedSha) && getFileCount(`${owedSha}^..${owedSha}`, cwd) > REVIEW_FILE_CAP,
+    (owedSha) => !claimedShas.has(owedSha) && readFileCount(`${owedSha}^..${owedSha}`, cwd) > REVIEW_FILE_CAP,
   );
   if (sha === undefined) return false;
 
-  const fileCount = getFileCount(`${sha}^..${sha}`, cwd);
+  const fileCount = readFileCount(`${sha}^..${sha}`, cwd);
   if (isDryRun) {
     console.info(`would reshape ${sha} — ${fileCount} files alone against the cap of ${REVIEW_FILE_CAP}`);
     return false;
@@ -75,7 +75,7 @@ export const reshapeQueue = async ({
     console.info("reshape: the session could not start — no attempt is counted");
     return false;
   }
-  const failure = isEnded ? getReshapeFailure(sha, cwd) : "exited non-zero";
+  const failure = isEnded ? readReshapeFailure(sha, cwd) : "exited non-zero";
   // The final tree equals the original's, so what followed the commit applies as it did — a stop here is a
   // Reshaping that lied about its tree in a way the diff did not show, and counts the same. What followed may
   // Hold an empty copy a resolution left this run, which the same sequence rides through

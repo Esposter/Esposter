@@ -1,65 +1,68 @@
 # Comments
 
-| Unit                                                   | Swept      | Notes                                                                                               |
-| ------------------------------------------------------ | ---------- | --------------------------------------------------------------------------------------------------- |
-| `apps/web` — `app/components`                          | 2026-09-15 | the densest prose in the app                                                                        |
-| `apps/web` — `app/services`, `app/util`                | 2026-09-15 | the separator and alerting rules, restated per call site                                            |
-| `apps/web` — `app/composables/message`                 | 2026-09-15 | the file, room and subscribable trees                                                               |
-| `apps/web` — the rest of `app/composables`             | 2026-09-15 | the pagination binder and readiness rules, per call site                                            |
-| `apps/web` — `app/models`, `app/types`                 | 2026-09-15 | the dungeons tree's legacy prose                                                                    |
-| `apps/web` — `app/store`                               | 2026-09-15 | the rollback rationale, restated per call site                                                      |
-| `apps/web` — `app/pages`, `layouts`, the rest          | 2026-09-15 | plus `middleware`, `plugins`, `assets`                                                              |
-| `apps/web` — `server/trpc/routers`                     | 2026-09-15 | the per-type router suites                                                                          |
-| `apps/web` — `server/trpc/routers` subtrees            | 2026-09-15 | `message`, `room`, `call`                                                                           |
-| `apps/web` — the rest of `server/trpc`                 | 2026-09-15 | `guards`, `middleware`, `procedure`, `plugins`, root                                                |
-| `apps/web` — `server/services/resource`                | 2026-09-15 |                                                                                                     |
-| `apps/web` — `server/services/message`                 | 2026-09-15 |                                                                                                     |
-| `apps/web` — `server/services` — the dense rest        | 2026-09-15 | `blueprint`, `azure`, `storage`, `survey`, `program`                                                |
-| `apps/web` — the rest of `server/services`             | 2026-09-15 |                                                                                                     |
-| `apps/web` — the rest of `server`                      | 2026-09-15 | `models`, `composables`, `api`, `plugins`, `db`, root                                               |
-| `apps/web` — `shared/models/resource`                  | 2026-09-15 |                                                                                                     |
-| `apps/web` — `shared/models/db`                        | 2026-09-15 |                                                                                                     |
-| `apps/web` — the rest of `shared/models`               | 2026-09-15 |                                                                                                     |
-| `apps/web` — `shared/services`                         | 2026-09-15 |                                                                                                     |
-| `apps/web` — the rest of `shared`                      | 2026-09-15 | `util`, `types`, `assets`, `test`                                                                   |
-| `apps/web` — `configuration`, `content`                | 2026-09-15 | CSP labels, Nuxt config prose                                                                       |
-| `apps/functions` — `handlers`                          | 2026-09-15 | the densest prose in the package                                                                    |
-| `apps/functions` — `services`, the rest                | 2026-09-15 | plus `functions`, `hooks`, `models`, `index.test.ts`                                                |
-| `packages/azure-mock`                                  | 2026-09-15 | filter/search/container mocks                                                                       |
-| `packages/configuration`                               | 2026-09-15 | external lists, `global.d.ts`                                                                       |
-| `packages/db-mock`                                     | 2026-09-15 |                                                                                                     |
-| `packages/db` — `services/azure`                       | 2026-09-15 | table, container and event-grid helpers                                                             |
-| `packages/db` — `services/message`                     | 2026-09-15 | moderation, threads, mentions                                                                       |
-| `packages/db` — the rest of `services`, `models`       | 2026-09-15 | notification, resource, room, storage                                                               |
-| `packages/db-schema` — `models`                        | 2026-09-15 | entity classes, Azure payloads                                                                      |
-| `packages/db-schema` — `schema`, `relations`           | 2026-09-15 | tables and their v2 relations                                                                       |
-| `packages/db-schema` — `services`, package root        | 2026-09-15 | `schema.test.ts`, `pgTable.ts`                                                                      |
-| `packages/keyframe-store`                              | 2026-09-15 | the stored-object and delta prose                                                                   |
-| `apps/infra`                                           | 2026-09-21 | event subscriptions, GitHub rulesets                                                                |
-| `packages/parse-tmx`                                   | 2026-09-15 | `TMXNode.ts`                                                                                        |
-| `packages/shared`, `packages/shared-node`              | 2026-09-15 | `takeOne`                                                                                           |
-| `packages/virrun` — `models`, package root             | 2026-09-21 |                                                                                                     |
-| `packages/virrun` — `services/cli`, `configuration`    | 2026-09-15 | plus `source`, `vfs`, `virrun`                                                                      |
-| `packages/virrun` — `services/exec/wsl`                | 2026-09-21 | the mirror prose is the bulk of the package                                                         |
-| `packages/virrun` — `services/exec/snapshot`           | 2026-09-15 | layers, leases, overlay capture                                                                     |
-| `packages/virrun` — `services/exec/util`               | 2026-09-21 |                                                                                                     |
-| `packages/virrun` — the rest of `services/exec`        | 2026-09-21 | bwrap, cache, differential, native, os, store, test, vfs                                            |
-| `packages/vue-phaserjs`                                | 2026-09-15 | composables, store, models, test setup                                                              |
-| `packages/xml2js`                                      | 2026-09-15 | `Parser.ts`                                                                                         |
-| repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-15 | workflow scripts and their tests                                                                    |
-| `.github` — workflows, composite actions               | 2026-09-15 | the densest rationale prose outside `apps/web`; `github-actions` for what a step's comment may keep |
-| `packages/genshin-persona`                             | 2026-09-21 | the data package's load cost, stated once at `readGenshinDb`                                        |
+| Unit                                                   | Swept               | Notes                                                                                               |
+| ------------------------------------------------------ | ------------------- | --------------------------------------------------------------------------------------------------- |
+| `apps/web` — `app/components`                          | 2026-09-22 · Opus 5 | the densest prose in the app                                                                        |
+| `apps/web` — `app/services`, `app/util`                | 2026-09-22 · Opus 5 | the separator and alerting rules, restated per call site                                            |
+| `apps/web` — `app/composables/message`                 | 2026-09-22 · Opus 5 | the file, room and subscribable trees                                                               |
+| `apps/web` — the rest of `app/composables`             | 2026-09-22 · Opus 5 | the pagination binder and readiness rules, per call site                                            |
+| `apps/web` — `app/models`, `app/types`                 | 2026-09-22 · Opus 5 | the dungeons tree's legacy prose                                                                    |
+| `apps/web` — `app/store`                               | 2026-09-22 · Opus 5 | the rollback rationale, restated per call site                                                      |
+| `apps/web` — `app/pages`, `layouts`, the rest          | 2026-09-22 · Opus 5 | plus `middleware`, `plugins`, `assets`                                                              |
+| `apps/web` — `server/trpc/routers`                     | 2026-09-22 · Opus 5 | the per-type router suites                                                                          |
+| `apps/web` — `server/trpc/routers` subtrees            | 2026-09-22 · Opus 5 | `message`, `room`, `call`                                                                           |
+| `apps/web` — the rest of `server/trpc`                 | 2026-09-22 · Opus 5 | `guards`, `middleware`, `procedure`, `plugins`, root                                                |
+| `apps/web` — `server/services/resource`                | 2026-09-22 · Opus 5 |                                                                                                     |
+| `apps/web` — `server/services/message`                 | 2026-09-22 · Opus 5 |                                                                                                     |
+| `apps/web` — `server/services` — the dense rest        | 2026-09-22 · Opus 5 | `blueprint`, `azure`, `storage`, `survey`, `program`                                                |
+| `apps/web` — the rest of `server/services`             | 2026-09-22 · Opus 5 |                                                                                                     |
+| `apps/web` — the rest of `server`                      | 2026-09-22 · Opus 5 | `models`, `composables`, `api`, `plugins`, `db`, root                                               |
+| `apps/web` — `shared/models/resource`                  | 2026-09-22 · Opus 5 |                                                                                                     |
+| `apps/web` — `shared/models/db`                        | 2026-09-22 · Opus 5 |                                                                                                     |
+| `apps/web` — the rest of `shared/models`               | 2026-09-22 · Opus 5 |                                                                                                     |
+| `apps/web` — `shared/services`                         | 2026-09-22 · Opus 5 |                                                                                                     |
+| `apps/web` — the rest of `shared`                      | 2026-09-22 · Opus 5 | `util`, `types`, `assets`, `test`                                                                   |
+| `apps/web` — `configuration`, `content`                | 2026-09-22 · Opus 5 | CSP labels, Nuxt config prose                                                                       |
+| `apps/functions` — `handlers`                          | 2026-09-22 · Opus 5 | the densest prose in the package                                                                    |
+| `apps/functions` — `services`, the rest                | 2026-09-22 · Opus 5 | plus `functions`, `hooks`, `models`, `index.test.ts`                                                |
+| `packages/azure-mock`                                  | 2026-09-22 · Opus 5 | filter/search/container mocks                                                                       |
+| `packages/configuration`                               | 2026-09-22 · Opus 5 | external lists, `global.d.ts`                                                                       |
+| `packages/db-mock`                                     | 2026-09-22 · Opus 5 |                                                                                                     |
+| `packages/db` — `services/azure`                       | 2026-09-22 · Opus 5 | table, container and event-grid helpers                                                             |
+| `packages/db` — `services/message`                     | 2026-09-22 · Opus 5 | moderation, threads, mentions                                                                       |
+| `packages/db` — the rest of `services`, `models`       | 2026-09-22 · Opus 5 | notification, resource, room, storage                                                               |
+| `packages/db-schema` — `models`                        | 2026-09-22 · Opus 5 | entity classes, Azure payloads                                                                      |
+| `packages/db-schema` — `schema`, `relations`           | 2026-09-22 · Opus 5 | tables and their v2 relations                                                                       |
+| `packages/db-schema` — `services`, package root        | 2026-09-22 · Opus 5 | `schema.test.ts`, `pgTable.ts`                                                                      |
+| `packages/keyframe-store`                              | 2026-09-22 · Opus 5 | the stored-object and delta prose                                                                   |
+| `apps/infra`                                           | 2026-09-21 · Opus 5 | event subscriptions, GitHub rulesets                                                                |
+| `packages/parse-tmx`                                   | 2026-09-22 · Opus 5 | `TMXNode.ts`                                                                                        |
+| `packages/shared`, `packages/shared-node`              | 2026-09-22 · Opus 5 | `takeOne`                                                                                           |
+| `packages/virrun` — `models`, package root             | 2026-09-21 · Opus 5 |                                                                                                     |
+| `packages/virrun` — `services/cli`, `configuration`    | 2026-09-22 · Opus 5 | plus `source`, `vfs`, `virrun`                                                                      |
+| `packages/virrun` — `services/exec/wsl`                | 2026-09-21 · Opus 5 | the mirror prose is the bulk of the package                                                         |
+| `packages/virrun` — `services/exec/snapshot`           | 2026-09-22 · Opus 5 | layers, leases, overlay capture                                                                     |
+| `packages/virrun` — `services/exec/util`               | 2026-09-21 · Opus 5 |                                                                                                     |
+| `packages/virrun` — the rest of `services/exec`        | 2026-09-21 · Opus 5 | bwrap, cache, differential, native, os, store, test, vfs                                            |
+| `packages/vue-phaserjs`                                | 2026-09-22 · Opus 5 | composables, store, models, test setup                                                              |
+| `packages/xml2js`                                      | 2026-09-22 · Opus 5 | `Parser.ts`                                                                                         |
+| repo root — `scripts/`, `.agents/`, root `*.config.ts` | 2026-09-22 · Opus 5 | workflow scripts and their tests                                                                    |
+| `.github` — workflows, composite actions               | 2026-09-22 · Opus 5 | the densest rationale prose outside `apps/web`; `github-actions` for what a step's comment may keep |
+| `packages/genshin-persona`                             | 2026-09-21 · Opus 5 | the data package's load cost, stated once at `readGenshinDb`                                        |
 
 Greps, per unit:
 
 1. `^\s*//.{85,}` over `*.ts`, `*.vue`
-2. `\n[ \t]*\n[ \t]*//` multiline (skip `.test.ts`/`.test-d.ts` and the import→body boundary)
+2. `\n[ \t]*\n[ \t]*//` multiline (skip `.test.ts`/`.test-d.ts`, the import→body boundary and a file-level
+   `/* … */` directive). **Module scope included** — a declaration, a blank line and then a commented declaration
+   is a hit, not a paragraph break; the first pass read it as one and left it standing in every constants file,
+   which is the shape this grep exists to catch
 3. `/\*` over `*.ts`, `*.vue`. Three shapes are not comments and are most of the hits: `import.meta.glob`, a glob in a string or an attribute value (`accept="image/*"`), and a `<style>` block, where `/* */` is the only syntax CSS has.
 4. `<!--` over `*.vue`
 5. `(used to|previously|no longer|formerly|the old |the former |now that |replaces the |we now )` over `//`/`<!--` lines — the history-narration ban. Most hits are present-tense domain uses (`the old manifest`, `no longer resolvable`); what fails is a clause naming what the code replaced.
 6. `^\s*/\*\*` — a doc block. It stays only on an exported API surface, and its content obeys every comment rule: a line restating the declaration's own name, or claiming what `implements` and typecheck already prove, earns nothing. A paragraph of prose at module scope — the rationale block over a `describe` — is the other place one stays, and converting it to `//` is what a pass must not do (`formatting`).
 7. A comment sentence that appears **verbatim in more than one file** — sort the comment lines of the unit, count duplicates, and read every group of two or more. All three syntaxes this ledger governs, not just `//`: a rationale restated inside a `/* */` block or a Vue `<!-- -->` is the same duplicate, and a scan anchored on `//` alone reports a unit clean while both copies stand. A rationale worth writing at every call site is a convention, and the owning skill already states it; the copies are what go stale. This is rule "never restate an established pattern" applied to the one shape a per-file read cannot see. **Run this one over the whole repo, not per unit** — the units are directories and the duplicate pairs straddle them (a dev and a prod resource, a Function handler and the service it mirrors, two components of one feature), so a per-unit pass sees one copy of each pair and passes. What a repo-wide pass finds is the same rationale at every call site of a convention whose skill or docs page already states it; where no page states it, the fact moves to the owner first and the copies go after. Two of them will not be rationale at all but an annotation of a fact the type lost, and those are fixed by naming — a schema, a shared constant — rather than by deleting the line.
-8. `^\s*//\s+[A-Z][a-z]+[A-Z][a-zA-Z]+` and `^\s*//\s+(Pnpm|Oxlint|Eslint|Oxfmt|Ctix|Tsdown|Node_modules|Rolldown|Unconfig|Bwrap|Tinybench|Xlsx|Happy-dom|Nuxt\.config)\b` over `*.ts`, `*.vue` — an identifier `eslint(capitalized-comments)` capitalized because a wrap put it first on its line. Read every hit: a PascalCase name (`MiniSearch`, `RouterLink`, a component) is correct as it stands and most hits are that, while a camelCase or all-lowercase one (`useEditor`, `structuredClone`, `node_modules`, `pnpm`) is now a name that does not exist. The fix is to rewrap so the line opens on prose — never to lowercase it, which the rule rejects, and never to run `--fix`, which writes the corruption. The second alternation is a shape the first cannot express: a mangled **acronym** (`Sdk`, `Sas`) has no internal capital for that pattern to anchor on, and reads as a typo rather than as a name that went missing. A common noun a wrap capitalized (`Url`, `Sub-delimiters`) is correct as it stands and is not this. Re-read the joined sentence after every rewrap — the prose put in front of the identifier has to agree with the line above it, and a repeated article or a dropped object is what this fix leaves behind (`formatting`).
+8. What `comments/no-capitalized-identifier` cannot decide — a tool, a path, or an unprefixed name declared in another file. `^\s*//\s+[A-Z][a-z]+[A-Z][a-zA-Z]+` and `^\s*//\s+(Pnpm|Oxlint|Eslint|Oxfmt|Ctix|Tsdown|Node_modules|Rolldown|Unconfig|Bwrap|Tinybench|Xlsx|Happy-dom|Nuxt\.config)\b` over `*.ts`, `*.vue` — an identifier `eslint(capitalized-comments)` capitalized because a wrap put it first on its line. Read every hit: a PascalCase name (`MiniSearch`, `RouterLink`, a component) is correct as it stands and most hits are that, while a camelCase or all-lowercase one (`useEditor`, `structuredClone`, `node_modules`, `pnpm`) is now a name that does not exist. The fix is to rewrap so the line opens on prose — never to lowercase it, which the rule rejects, and never to run `--fix`, which writes the corruption. The second alternation is a shape the first cannot express: a mangled **acronym** (`Sdk`, `Sas`) has no internal capital for that pattern to anchor on, and reads as a typo rather than as a name that went missing. A common noun a wrap capitalized (`Url`, `Sub-delimiters`) is correct as it stands and is not this. Re-read the joined sentence after every rewrap — the prose put in front of the identifier has to agree with the line above it, and a repeated article or a dropped object is what this fix leaves behind (`formatting`).
 
 9. `^[ \t]*//.{100,}\n[ \t]*// ?\S+( \S+)?\n[ \t]*//.{90,}` multiline (`rg -U`) over `*.ts`, `*.vue` — a one- or two-word comment line between two full ones. A wrap that broke one line at the width without reflowing the paragraph leaves the remainder standing alone, and the sentence reads past it. The fix is reflowing the whole paragraph, which is the rewrap grep 8 then re-reads; a paragraph's last line before a new paragraph starts is not this, which is why the shape needs the full line after it. An indented list item's own continuation is the one hit that stays.
 
@@ -67,4 +70,4 @@ Never swept anywhere: 3-line `//` blocks with every line short.
 
 Excluded: `apps/web/configuration/plugins/fixAjv.ts` + test (numbered step list is a deliberate reference) · `apps/web/shared/types/nuxt.d.ts`, `apps/web/app/types/desmos.d.ts`, `packages/configuration/types/global.d.ts`, `packages/vue-phaserjs/auto-imports.d.ts` (vendored/generated) · `apps/web/app/util/math/random/getRandomValues.ts`, `packages/azure/src/services/table/getTableNullClause.ts` (source-URL references) · `*/tsdown.config.ts`, `@ts-expect-error` / `oxlint-disable` lines (directives) · doc blocks copied verbatim from an upstream type (`azure-mock`'s paging interfaces, the Desmos enums) — they are kept diff-identical to their source, same ground as an unimplemented interface stub.
 
-Enforceable next: comment length and blank-before-comment, via a custom oxlint plugin — oxlint excludes layout rules by design, so this needs a JS plugin rather than a stock rule. SFC block padding already went to `vue/padding-line-between-blocks`. Grep 8 wants the same plugin and is the stronger candidate, because it is the one rule here whose violations another rule's `--fix` actively creates: the plugin knows a wrapped line's opening word and can check it against the identifiers in scope, which a grep can only approximate.
+Enforceable next: comment length and blank-before-comment, via a custom oxlint plugin — oxlint excludes layout rules by design, so this needs a JS plugin rather than a stock rule. SFC block padding already went to `vue/padding-line-between-blocks`.

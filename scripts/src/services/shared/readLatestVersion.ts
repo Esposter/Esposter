@@ -5,7 +5,7 @@ import { getResultAsync } from "@esposter/shared";
 
 // One retry, because the registry answers a cold request with a 5xx often enough to fail a release run that
 // Would have succeeded a second later.
-export const getLatestVersion = (packageName: string, distTag = "latest"): Promise<string> => {
+export const readLatestVersion = (packageName: string, distTag = "latest"): Promise<string> => {
   const readLatest = () => getResultAsync(() => fetchRegistry<PackumentVersion>(packageName, `/${distTag}`));
   return readLatest()
     .orElse(readLatest)

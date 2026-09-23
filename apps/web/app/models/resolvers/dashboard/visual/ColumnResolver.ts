@@ -11,11 +11,6 @@ export class ColumnResolver extends AVisualTypeResolver {
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.chart = defu(
-      {
-        type: uncapitalize(VisualType.Bar),
-      },
-      apexOptions.chart,
-    );
+    apexOptions.chart = defu({ type: uncapitalize(VisualType.Bar) }, apexOptions.chart);
   }
 }

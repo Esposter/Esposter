@@ -21,10 +21,7 @@ const { resource } = storeToRefs(resourceStore);
 const uploadFile = useUploadResourceFile(ResourceType.Email, () => resource.value?.id ?? "");
 const { editor } = await useGrapesJsEditor(
   ResourceType.Email,
-  {
-    load: () => readEmailEditor(),
-    store: (data, editorInstance) => saveEmailEditor(data, editorInstance),
-  },
+  { load: () => readEmailEditor(), store: (data, editorInstance) => saveEmailEditor(data, editorInstance) },
   { plugins: [grapesJSMJML] },
   { upload: uploadFile },
 );

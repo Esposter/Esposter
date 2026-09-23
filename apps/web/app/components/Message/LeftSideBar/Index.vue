@@ -14,11 +14,7 @@ const scheduledMessageJobCount = await $trpc.message.scheduledMessageJob.readMyS
 const items = computed(
   () =>
     [
-      {
-        icon: "mdi-account-group-outline",
-        title: "Friends",
-        value: RoutePath.MessagesFriends,
-      },
+      { icon: "mdi-account-group-outline", title: "Friends", value: RoutePath.MessagesFriends },
       {
         badges: [
           { count: drafts.value.size, icon: DraftsAndSentTabMetadataMap[DraftsAndSentTab.Drafts].icon },

@@ -2,7 +2,7 @@ import type { ReviewThreadsPage } from "#src/models/coderabbit/feedback/ReviewTh
 import type { ReviewThread } from "#src/models/coderabbit/shared/ReviewThread";
 
 import { CODERABBIT_GRAPHQL_LOGIN } from "#src/services/coderabbit/shared/constants";
-import { getRepository } from "#src/services/coderabbit/shared/getRepository";
+import { readRepository } from "#src/services/coderabbit/shared/readRepository";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { runGh } from "#src/services/shared/runGh";
 
@@ -30,7 +30,7 @@ query($owner: String!, $name: String!, $pullRequest: Int!, $endCursor: String) {
 }`;
 
 export const readUnresolvedThreads = (pullRequest: number): ReviewThread[] => {
-  const { name, owner } = getRepository();
+  const { name, owner } = readRepository();
   return parseMachineJson<ReviewThreadsPage[]>(
     runGh([
       "api",

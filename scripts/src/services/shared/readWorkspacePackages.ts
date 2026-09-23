@@ -14,7 +14,7 @@ import { basename, dirname, relative, resolve } from "node:path";
 // `getPackageJsonPaths` leads with the root manifest so a dependency check can read it too. The root is not a
 // Workspace package, so it is dropped by identity rather than by position, and the rest are sorted because
 // `readdirSync` order is the filesystem's and this feeds a committed artifact.
-export const getWorkspacePackages = (root: string): WorkspacePackage[] => {
+export const readWorkspacePackages = (root: string): WorkspacePackage[] => {
   const rootPackageJsonPath = resolve(root, PACKAGE_JSON_FILENAME);
   return getPackageJsonPaths(root)
     .filter((packageJsonPath) => packageJsonPath !== rootPackageJsonPath)

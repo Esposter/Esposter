@@ -3,7 +3,7 @@
 The app's smaller products. Each row carries a product's components with the store, composable and service
 files only it uses.
 
-| Unit                                                                               | Swept      | Notes |
-| ---------------------------------------------------------------------------------- | ---------- | ----- |
-| `Post`, `Clicker`, `Achievement` + their `store`, `composables`, `services`        | 2026-09-22 |       |
-| `Visual`, `About`, `Anime`, `Login`, `desmos` + their `services` and `composables` | 2026-09-22 |       |
+| Unit                                                                               | Swept               | Notes |
+| ---------------------------------------------------------------------------------- | ------------------- | ----- |
+| `Post`, `Clicker`, `Achievement` + their `store`, `composables`, `services`        | 2026-09-22 · Opus 5 |       |
+| `Visual`, `About`, `Anime`, `Login`, `desmos` + their `services` and `composables` | 2026-09-22 · Opus 5 |       |

@@ -11,19 +11,7 @@ export class SlopeResolver extends AVisualTypeResolver {
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.chart = defu(
-      {
-        type: uncapitalize(VisualType.Line),
-      },
-      apexOptions.chart,
-    );
-    apexOptions.plotOptions = defu(
-      {
-        line: {
-          isSlopeChart: true,
-        },
-      },
-      apexOptions.plotOptions,
-    );
+    apexOptions.chart = defu({ type: uncapitalize(VisualType.Line) }, apexOptions.chart);
+    apexOptions.plotOptions = defu({ line: { isSlopeChart: true } }, apexOptions.plotOptions);
   }
 }

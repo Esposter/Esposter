@@ -13,9 +13,7 @@ describe("text", () => {
     expect.hasAssertions();
 
     mountGameObject(Text, {
-      props: {
-        configuration: { style: { fontSize }, text: "", x: 0, y: 0 },
-      },
+      props: { configuration: { style: { fontSize }, text: "", x: 0, y: 0 } },
     });
 
     const textStore = useTextStore();

@@ -80,11 +80,7 @@ export const WebpageEditorStyleManager: EditorConfig["styleManager"] = {
       open: false,
       properties: ["opacity", "border-radius", "border", "box-shadow", "background"],
     },
-    {
-      buildProps: ["transition", "perspective", "transform"],
-      name: "Extra",
-      open: false,
-    },
+    { buildProps: ["transition", "perspective", "transform"], name: "Extra", open: false },
     {
       name: "Flex",
       open: false,

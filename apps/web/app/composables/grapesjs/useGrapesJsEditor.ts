@@ -31,7 +31,7 @@ export const useGrapesJsEditor = async (
   // Adopter that outlives its blade holds a destroyed editor.
   // GrapesJS owns the live project once it has loaded, so a restore has to be handed to it: left holding the
   // Pre-restore project its next storage tick writes that project back at the restore's own fresh
-  // ContentVersion. `load()` re-runs the storage adapter below, which is also the content store's re-read, so
+  // `contentVersion`. `load()` re-runs the storage adapter below, which is also the content store's re-read, so
   // These types register nothing on the Reload stage. Cleared, because the undo stack and the dirty counter it
   // Carries describe a document that is gone
   useAdoptResourceContent(type, async () => {
@@ -73,9 +73,7 @@ export const useGrapesJsEditor = async (
       // oxlint-disable-next-line typescript/no-deprecated -- fromElement still functional in GrapesJS; removing it would change initial-load behavior
       fromElement: true,
       height: "100%",
-      storageManager: {
-        type: "document",
-      },
+      storageManager: { type: "document" },
     });
     newEditor.Storage.add("document", {
       load: () => storage.load(),

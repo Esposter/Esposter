@@ -57,9 +57,7 @@ export const USER_SETTINGS_PATH: string = join(homedir(), ".claude", "settings.j
 // What marks a status line command and a tip id as this plugin's, whichever character wrote them
 export const PLUGIN_MARKER = "genshin-persona";
 // The WAV a sentence is played from carries the process, so two synthesizers on one machine never share a name.
-// The annotation is redundant to oxlint but mandatory to the typecheck — an interpolated value cannot be inferred
-// Under --isolatedDeclarations, which the shared node config turns on for this package.
-// oxlint-disable-next-line typescript/no-inferrable-types
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const PLAYER_FILE_PREFIX: string = `${PLUGIN_MARKER}-${process.pid}-`;
 // Between the marker and a tip id's own prefix
 export const TIP_ID_MARKER_SEPARATOR = ".";
@@ -217,7 +215,7 @@ export const VOICE_DEVICE_LADDER: [VoiceDeviceRung, ...VoiceDeviceRung[]] = [
 // The runtime names the provider that raised a failure by its source path, in either separator. A failure the GPU
 // Provider raises — a device lost under load — is the rung's, and the line reads on the rung below; the CPU provider
 // Is deterministic, so a failure it raises is the line's and would recur on every rung
-// oxlint-disable-next-line typescript/no-inferrable-types
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const GPU_PROVIDER_FAILURE_REGEX: RegExp = new RegExp(String.raw`providers[\\/]${VOICE_GPU_DEVICE}`, "u");
 // A loudest frame at least this loud, since a vocoder run wrong lands tens of decibels under the engine's level, and
 // A quietest frame the speech floor below it, since a sentence has pauses where noise has none
@@ -235,7 +233,7 @@ export const SPEECH_FLOOR_DB = 35;
 // A twin's line is theirs only until Paimon answers, so their reference is cut at the first silence this long
 export const MIN_TURN_PAUSE_SECONDS = 0.4;
 // A ceiling on the speech tokens one sentence may generate, in proportion to its text with a floor for the shortest:
-// A few tokens a character is above what English reads at, a fixed ceiling cuts a long sentence mid-word, and no ceiling
+// A few tokens a character is above what English reads at, a fixed ceiling cuts long sentences mid-word, and no ceiling
 // Lets a sentence the model finds no end for run for minutes and then hand the vocoder a sequence it rejects
 export const MAX_SPEECH_TOKENS_PER_CHARACTER = 4;
 export const MIN_SPEECH_TOKEN_CEILING = 100;

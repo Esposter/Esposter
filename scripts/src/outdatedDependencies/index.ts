@@ -4,8 +4,8 @@ import { getLockCatalogVersions } from "#src/services/outdatedDependencies/lock/
 import { getLockConfigDependencyVersions } from "#src/services/outdatedDependencies/lock/getLockConfigDependencyVersions";
 import { getEngineEntries } from "#src/services/outdatedDependencies/manifest/getEngineEntries";
 import { getManifestDependencies } from "#src/services/outdatedDependencies/manifest/getManifestDependencies";
-import { getManifestFiles } from "#src/services/outdatedDependencies/manifest/getManifestFiles";
 import { getUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/manifest/getUncatalogedManifestDependencies";
+import { readManifestFiles } from "#src/services/outdatedDependencies/manifest/readManifestFiles";
 import { readNpmProjects } from "#src/services/outdatedDependencies/npm/readNpmProjects";
 import { getRegularOutdatedDependencies } from "#src/services/outdatedDependencies/pnpm/getRegularOutdatedDependencies";
 import { omitDependents } from "#src/services/outdatedDependencies/pnpm/omitDependents";
@@ -42,7 +42,7 @@ const configDependencyEntries = parseWorkspaceEntries(
   DependencyGroup.ConfigDependencies,
   getSection(DependencyGroup.ConfigDependencies, workspaceYaml),
 );
-const manifests = getManifestFiles(REPOSITORY_ROOT);
+const manifests = readManifestFiles(REPOSITORY_ROOT);
 const npmProjects = readNpmProjects(REPOSITORY_ROOT);
 const npmManifestPaths = new Set(npmProjects.map(({ manifestPath }) => manifestPath));
 const npmManifestNames = new Set(npmProjects.map(({ manifestName }) => manifestName));

@@ -11,14 +11,6 @@ export class DistributedResolver<T extends BasicChartConfiguration> extends ACha
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.plotOptions = defu(
-      {
-        treemap: {
-          distributed: true,
-          enableShades: false,
-        },
-      },
-      apexOptions.plotOptions,
-    );
+    apexOptions.plotOptions = defu({ treemap: { distributed: true, enableShades: false } }, apexOptions.plotOptions);
   }
 }

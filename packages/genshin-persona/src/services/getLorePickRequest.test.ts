@@ -53,11 +53,7 @@ describe(getLorePickRequest, () => {
     const { questions } = getLorePickRequest([carded, uncarded, untitled], today, moment);
 
     expect(questions.character).toStrictEqual({
-      criteria: {
-        name: personaCard.habits.join(HABIT_SEPARATOR),
-        uncarded: character.description,
-        untitled: null,
-      },
+      criteria: { name: personaCard.habits.join(HABIT_SEPARATOR), uncarded: character.description, untitled: null },
       instructions: LORE_PICK_INSTRUCTIONS,
       type: "choice",
     });

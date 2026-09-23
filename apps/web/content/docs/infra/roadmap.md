@@ -15,6 +15,7 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 - [ ] [The viewer as the stage](/docs/proposals/infra/viewer-stage) — each spoken line a bubble and a sound on the model in the desktop viewer already running, through its local socket, and the terminal's attention hooks moving the model; no window built
 - [ ] [Chat into the session](/docs/proposals/infra/channel-chat) — a local chat page as a channel pushing typed lines into the terminal's own session, and a permission answered by tapping the model; behind the research-preview flag on every launch
+- [ ] [Agent console](/docs/proposals/infra/agent-console) — a web-app route that replaces the terminal as the working surface, at full parity with it, with TresJS views of the session around it; after the chat
 
 ## Blocked (a Transformers.js release that loads Chatterbox Multilingual)
 

@@ -7,15 +7,6 @@ import { pathToFileURL } from "node:url";
 import { describe, expect, test } from "vitest";
 
 describe("schema", () => {
-  const dialect = new PgDialect();
-  const getRenderedChecks = () =>
-    Object.values(schema)
-      .filter((value) => is(value, PgTable))
-      .flatMap((table) =>
-        getTableConfig(table).checks.map((check) => `${check.name}: ${dialect.sqlToQuery(check.value).sql}`),
-      )
-      .join("\n");
-
   // The `pgTable` wrapper's camelCase casing applies to columns and passes the table name through verbatim, and
   // `pgEnum` is not wrapped at all — so nothing normalises either name and nothing else would catch a snake_case
   // One. That is exactly how five tables and eleven enums drifted while the stated rule said the opposite; this is
@@ -65,7 +56,16 @@ describe("schema", () => {
   // Output is identical DDL. A deliberate constraint change updates this snapshot and generates a migration.
   test("check constraint sql", () => {
     expect.hasAssertions();
-    expect(getRenderedChecks()).toMatchInlineSnapshot(`
+
+    const dialect = new PgDialect();
+    const renderedChecks = Object.values(schema)
+      .filter((value) => is(value, PgTable))
+      .flatMap((table) =>
+        getTableConfig(table).checks.map((check) => `${check.name}: ${dialect.sqlToQuery(check.value).sql}`),
+      )
+      .join("\n");
+
+    expect(renderedChecks).toMatchInlineSnapshot(`
       "appUsers_name_length_check: LENGTH(TRIM("message"."appUsers"."name")) BETWEEN 1 AND 100
       blocks_blockerId_blockedId_check: "blocks"."blockerId" != "blocks"."blockedId"
       callSessions_id_length_check: LENGTH("message"."callSessions"."id") = 12

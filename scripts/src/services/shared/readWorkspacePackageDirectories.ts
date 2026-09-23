@@ -10,7 +10,7 @@ const GLOB_SUFFIX = "/*";
 // Stops covering the day one is added outside the two product roots — which is exactly what `scripts` is. A
 // `dir/*` entry expands to the children holding a manifest, sorted, since `readdirSync` order is the
 // Filesystem's and this feeds a committed artifact; anything else is one member named outright.
-export const getWorkspacePackageDirectories = (root: string): string[] =>
+export const readWorkspacePackageDirectories = (root: string): string[] =>
   parseWorkspacePackageGlobs(readFileSync(resolve(root, WORKSPACE_FILE), "utf8")).flatMap((glob) => {
     if (!glob.endsWith(GLOB_SUFFIX)) return [glob];
 

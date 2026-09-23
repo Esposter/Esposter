@@ -29,12 +29,7 @@ export const assertCanCreateMessage = async (
   await executeAutomodAction(
     db,
     () => getTableClient(AzureTable.ModerationLog),
-    {
-      action: rejection.filter.action,
-      roomId,
-      timeoutDurationMs: rejection.filter.timeoutDurationMs,
-      userId,
-    },
+    { action: rejection.filter.action, roomId, timeoutDurationMs: rejection.filter.timeoutDurationMs, userId },
     // Best-effort, but attributable: the timeout still applies, so a lost audit row is a moderator looking at a
     // Timed-out member with nothing explaining it — through the invocation's own sink, never bare console
     (error) => {

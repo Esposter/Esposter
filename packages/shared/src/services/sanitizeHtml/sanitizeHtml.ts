@@ -17,12 +17,7 @@ const transformCellAlign: Transformer = (tagName, attribs): Tag => {
 export const sanitizeHtml = (...[html, options]: Parameters<typeof baseSanitizeHtml>): string =>
   baseSanitizeHtml(html, {
     ...options,
-    allowedAttributes: {
-      ...options?.allowedAttributes,
-      table: ["style"],
-      td: ["style"],
-      th: ["style"],
-    },
+    allowedAttributes: { ...options?.allowedAttributes, table: ["style"], td: ["style"], th: ["style"] },
     transformTags: {
       ...options?.transformTags,
       table: (tagName, attribs) => ({

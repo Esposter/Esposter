@@ -23,11 +23,7 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (db, su
   // The binding is a column, written in the same transaction as the content it is projected from, so the whole
   // Candidate set is one indexed lookup (ResourceBoundResourceIdMap)
   const boundPrograms = await db.query.resources.findMany({
-    where: {
-      boundResourceId: { eq: surveyId },
-      type: { eq: ResourceType.Program },
-      userId: { eq: survey.userId },
-    },
+    where: { boundResourceId: { eq: surveyId }, type: { eq: ResourceType.Program }, userId: { eq: survey.userId } },
   });
   const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
   for (const { id } of boundPrograms) {

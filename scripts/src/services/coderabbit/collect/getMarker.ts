@@ -1,6 +1,6 @@
 import { getBasisText } from "#src/services/coderabbit/collect/getBasisText";
 
-// A hidden marker in a pull request or commit comment is the collector's memory for a fact no commit can carry — a review
+// A hidden marker on a pull request or commit is the collector's memory for a fact no commit can carry — a review
 // Whose body-only findings are answered, a drain that failed, a queue commit whose conflict could not be resolved.
 // An HTML comment renders as nothing. A number keys a review, a string keys a commit. An attempt's marker also
 // Names what the attempt was made against — the collector's own source, and for a cut the `main` head — and a

@@ -11,26 +11,10 @@ export const DIALOG_HEIGHT = 124;
 export const DIALOG_DEPTH = 2000;
 
 const BasePlayerWalkingAnimationMapping = {
-  [InteractableDirection.DOWN]: {
-    leftFoot: 6,
-    rightFoot: 8,
-    standing: 7,
-  },
-  [InteractableDirection.LEFT]: {
-    leftFoot: 9,
-    rightFoot: 11,
-    standing: 10,
-  },
-  [InteractableDirection.RIGHT]: {
-    leftFoot: 3,
-    rightFoot: 5,
-    standing: 4,
-  },
-  [InteractableDirection.UP]: {
-    leftFoot: 0,
-    rightFoot: 2,
-    standing: 1,
-  },
+  [InteractableDirection.DOWN]: { leftFoot: 6, rightFoot: 8, standing: 7 },
+  [InteractableDirection.LEFT]: { leftFoot: 9, rightFoot: 11, standing: 10 },
+  [InteractableDirection.RIGHT]: { leftFoot: 3, rightFoot: 5, standing: 4 },
+  [InteractableDirection.UP]: { leftFoot: 0, rightFoot: 2, standing: 1 },
 } as const satisfies Record<InteractableDirection, FrameRow>;
 
 export const PlayerWalkingAnimationMapping = {

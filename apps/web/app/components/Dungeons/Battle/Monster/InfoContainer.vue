@@ -33,10 +33,7 @@ onUnmounted(() => {
         x: 30,
         y: 20,
         text: monsterName,
-        style: {
-          color: '#7e3d3f',
-          fontSize: 32,
-        },
+        style: { color: '#7e3d3f', fontSize: 32 },
         displayWidth: nameDisplayWidth,
       }"
       @update:display-width="nameDisplayWidth = $event"
@@ -46,10 +43,7 @@ onUnmounted(() => {
         x: 35 + (nameDisplayWidth ?? 0),
         y: 23,
         text: `L${activeMonster.statistics.level}`,
-        style: {
-          color: '#ed474b',
-          fontSize: 28,
-        },
+        style: { color: '#ed474b', fontSize: 28 },
       }"
     />
     <Text
@@ -73,10 +67,7 @@ onUnmounted(() => {
           originX: 1,
           originY: 0,
           text: `${activeMonster.status.health}/${activeMonster.statistics.maxHealth}`,
-          style: {
-            color: '#7e3d3f',
-            fontSize: 16,
-          },
+          style: { color: '#7e3d3f', fontSize: 16 },
         }"
       />
       <Text
