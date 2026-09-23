@@ -2,10 +2,9 @@
 import type { Item } from "@/models/shared/Item";
 import type { Resource } from "@esposter/db-schema";
 
-import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
+import { getResourceLinkItems } from "@/services/resource/getResourceLinkItems";
 import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
 import { useListDialogStore } from "@/store/resource/listDialog";
-import { RoutePath } from "@esposter/shared";
 
 // The row ⋮ menu and the right-click menu are the same commands behind two triggers, so the items have one definition.
 // Plain "Open" is deliberately absent — clicking the row already does that, and a second visible affordance for it
@@ -16,14 +15,7 @@ export const useResourceListActionItems = () => {
   const blueprintCaptureDialogStore = useBlueprintCaptureDialogStore();
   const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
   const getActionItems = ({ id }: Resource): Item[] => [
-    {
-      icon: "i-mdi:open-in-new",
-      onClick: () => {
-        window.open(RoutePath.Resource(id), "_blank");
-      },
-      title: "Open in new tab",
-    },
-    { icon: "i-mdi:link-variant", onClick: () => copyLinkToClipboard(RoutePath.Resource(id)), title: "Copy link" },
+    ...getResourceLinkItems(id),
     {
       icon: "i-mdi:floor-plan",
       onClick: () => {

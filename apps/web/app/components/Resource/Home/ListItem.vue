@@ -3,7 +3,7 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import type { Item } from "@/models/shared/Item";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { copyLinkToClipboard } from "@/services/resource/copyLinkToClipboard";
+import { getResourceLinkItems } from "@/services/resource/getResourceLinkItems";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { RoutePath } from "@esposter/shared";
 
@@ -18,26 +18,15 @@ const { toggleFavorite } = favoriteStore;
 const { getContextMenuProps } = useContextMenu();
 // What a glance at Home wants without opening the resource: it beside this page, its link, and whether it stays one of
 // The favorites. Renaming and deleting are the workbench's, where the row is one of a list that can take them
-const contextMenuProps = getContextMenuProps(resource.id, (): Item[] => {
-  const to = RoutePath.Resource(resource.id);
-  const isFavorite = favoriteIds.value.has(resource.id);
-  return [
-    {
-      icon: "i-pixelarticons:external-link",
-      onClick: () => {
-        window.open(to, "_blank");
-      },
-      title: "Open in new tab",
-    },
-    { icon: "i-pixelarticons:link", onClick: () => copyLinkToClipboard(to), title: "Copy link" },
-    {
-      icon: "i-pixelarticons:star",
-      isGroupStart: true,
-      onClick: () => toggleFavorite(resource),
-      title: isFavorite ? "Remove from favorites" : "Add to favorites",
-    },
-  ];
-});
+const contextMenuProps = getContextMenuProps(resource.id, (): Item[] => [
+  ...getResourceLinkItems(resource.id),
+  {
+    icon: "i-pixelarticons:star",
+    isGroupStart: true,
+    onClick: () => toggleFavorite(resource),
+    title: favoriteIds.value.has(resource.id) ? "Remove from favorites" : "Add to favorites",
+  },
+]);
 </script>
 
 <!-- The resource as an item in its slot, as the page header draws the one open: the type's mark in a sunk block beside
