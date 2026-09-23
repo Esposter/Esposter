@@ -102,7 +102,7 @@ Three search shapes legitimately sit outside `useAutoSearch`, because there is n
 | `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                       |
 | `app/components/App/CommandPalette.vue`                     | The one Ctrl+K palette, app-wide or in the current surface's scope                      |
 | `app/composables/ui/useCommandScope.ts`                     | Hands a surface's search to the palette for as long as it is mounted                    |
-| `app/components/Docs/Search.vue`                            | The docs' scope: client-index results (MiniSearch)                                      |
+| `app/composables/docs/useDocsCommandScope.ts`               | The docs' scope: client-index results (MiniSearch)                                      |
 | `app/services/message/emoji/searchEmojis.ts`                | Client-index emoji search shared by the picker and the composer's `:` trigger           |
 | `app/components/Message/Model/Room/Searcher.vue`            | The rooms' scope: cursor-paginated results (`useRoomSearchStore`)                       |
 | `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                           |
