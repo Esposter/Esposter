@@ -27,7 +27,7 @@ flowchart TD
   VC --> V
 ```
 
-- **A feature never imports Vuetify 0.** It uses the library, and only the library imports Vuetify 0. This keeps the headless layer replaceable and keeps every accessibility decision in one folder. A lint rule holds the boundary ([foundation](/docs/proposals/refactors/ui-library/foundation)).
+- **A feature never imports Vuetify 0.** It uses the library, and only the library imports Vuetify 0. This keeps the headless layer replaceable and keeps every accessibility decision in one folder. A lint rule holds the boundary ([foundation](/docs/architecture/ui-library)).
 - **The look is tokens, not components.** The palette, the type, the voxel step and the edges are custom properties. A component reads tokens and never holds a colour. So the palette can change, or gain a light variant, without a component edit.
 - **Vuetify keeps working until it has no consumer.** The two libraries coexist on one page for as long as the migration takes. They agree because Vuetify's theme is fed from the same tokens from the first stage on.
 - **The library stays in the app.** It moves into a package of its own only when a second app consumes it, which is the repository's rule for any shared code. Until then a package would be a build, a manifest and a publish step guarding nothing.
@@ -36,7 +36,7 @@ flowchart TD
 
 | Stage                                                                   | What ships                                                                                    | What anyone feels on the day                                                                             |
 | :---------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
-| [Foundation](/docs/proposals/refactors/ui-library/foundation)           | Vuetify 0 installed, the tokens, the global chrome, the agent skill and MCP                   | The whole app takes the dusk palette, the pixel scrollbars, the selection and the focus ring at once     |
+| [Foundation](/docs/architecture/ui-library), shipped                    | Vuetify 0 installed, the tokens, the global chrome, the import boundary, the agent skill      | The whole app takes the dusk palette, the pixel scrollbars, the selection and the focus ring at once     |
 | [Icons](/docs/proposals/refactors/ui-library/icons)                     | Icons as tree-shaken CSS instead of a font, then the pixel icon set                           | Every page stops downloading a font of several thousand icons to draw a few dozen                        |
 | [Agent console](/docs/proposals/refactors/ui-library/agent-console)     | The console's bespoke panels become the library's first components, rebuilt on Vuetify 0      | Typeahead, roving focus and proper listbox semantics in every console menu; the library proven on a page |
 | [App shell](/docs/proposals/refactors/ui-library/shell)                 | The frame every page sits in, redesigned: navigation, notifications, account, alerts, dialogs | Every page gets the new frame, and more room for its own content                                         |
@@ -86,7 +86,7 @@ Icons and schema forms hang off nothing but the foundation, so they can run besi
 | `apps/web/app/components/AgentConsole/Panel/Frame.vue`         | The voxel edge the library's frame is lifted from                                 |
 | `apps/web/app/services/agentConsole/AgentConsolePaletteMap.ts` | The palette the app's tokens are lifted from; it keeps only the world's materials |
 | `apps/web/vuetify.config.ts`                                   | Fed from the tokens during coexistence, deleted at retirement                     |
-| `apps/web/uno.config.ts`                                       | Its theme colours read the tokens instead of Vuetify's config                     |
+| `apps/web/uno.config.ts`                                       | Its theme colours are the tokens, Vuetify's names beside them until retirement    |
 | `apps/web/app/components/Styled/Dialog.vue`                    | The dialog shell, rebuilt on the library and kept as the one shell                |
 | `apps/web/app/App.vue`                                         | Loses its Vuetify app root at retirement                                          |
 

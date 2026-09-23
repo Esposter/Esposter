@@ -34,9 +34,9 @@ description: Apply when writing or reviewing styles in .vue or .scss files, or l
   - A round `px` that is already a token is a duplicated constant first — `borderRadius: "4px 0 0 4px"` wants `var(--border-radius)`, not `"0.25rem"`.
 - `field-sizing: content` is an attributify utility — put `field-sizing-content` directly on the `<input>` / `<textarea>`, never in a scoped class.
 
-## An immersive page owns its look
+## The look is the app's, on every page
 
-A page on `apps/web/app/layouts/immersive.vue` is a place of its own, and the theme rules above stop at its root: the agent console draws no Vuetify component, sets its palette as custom properties on its root, and styles its bespoke panels with scoped blocks reading them (`apps/web/content/docs/infra/claude-interface/agent-console/voxel-world.md`). Everything else here still holds inside it: attributify for layout, `rem`, the parent owning spacing.
+An immersive page (`apps/web/app/layouts/immersive.vue`) is one with no app frame, and nothing more: it brings its own way back, not a look of its own. The look is the UI library's tokens, which every page reads whichever library draws it — a colour on any page is a token, and a page that sets its own palette on its root is a finding (the `ui-library` skill). The agent console is the one page still doing so, until its stage of the migration moves its panels onto the library (`apps/web/content/docs/proposals/refactors/ui-library/agent-console.md`); its palette's interface half is already the app's dusk theme. Every rule on this page holds inside an immersive page as on any other.
 
 ## What stays in `class="..."`
 

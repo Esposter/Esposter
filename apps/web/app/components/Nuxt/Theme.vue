@@ -4,6 +4,7 @@ import { THEME_COOKIE_NAME, THEME_COOKIE_OPTIONS } from "@/services/vuetify/cons
 
 defineSlots<{ default: () => VNode }>();
 const theme = useVTheme();
+const selectUiTheme = useSelectUiTheme();
 const themeCookie = useCookie(THEME_COOKIE_NAME, { ...THEME_COOKIE_OPTIONS, default: () => ThemeMode.system });
 const { $ssrClientHints } = useNuxtApp();
 const preferredDark = usePreferredDark();
@@ -14,6 +15,15 @@ const systemThemeMode = computed(() =>
   $ssrClientHints.colorSchemeFromCookie === ThemeMode.dark ? ThemeMode.dark : ThemeMode.light,
 );
 await theme.change(themeCookie.value === ThemeMode.system ? systemThemeMode.value : themeCookie.value);
+// Vuetify's theme is the one selection during the migration, so the library's follows it — on the server render as
+// Well, which an immediate watcher runs in and a lazy one does not
+watchImmediate(
+  () => theme.global.name.value,
+  (newThemeName) => {
+    // Vuetify types its theme name as a bare string, while the themes it is given are exactly the resolved modes
+    selectUiTheme(newThemeName as Exclude<ThemeMode, ThemeMode.system>);
+  },
+);
 
 onMounted(() => {
   // The hint is chromium-only and absent on a first request, so the media query is what finally settles a

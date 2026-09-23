@@ -20,7 +20,7 @@ flowchart TD
   template --> values["the same layout with different values"]
 ```
 
-`vuetify.config.ts` passes `BREAKPOINTS` as `display.thresholds` alongside `mobileBreakpoint: "md"`, which makes `mobile` true below the `md` threshold — the same width `smAndDown` covers, so the two flags agree by configuration rather than by coincidence. `uno.config.ts` passes `UNOCSS_BREAKPOINTS` as `theme.breakpoint`, which is what makes `sm:`/`md:`/`lg:`/`xl:` prefixes resolve to those same widths. That file also imports the Vuetify config directly for colours, so the two systems share a palette as well as a scale.
+`vuetify.config.ts` passes `BREAKPOINTS` as `display.thresholds` alongside `mobileBreakpoint: "md"`, which makes `mobile` true below the `md` threshold — the same width `smAndDown` covers, so the two flags agree by configuration rather than by coincidence. `uno.config.ts` passes `UNOCSS_BREAKPOINTS` as `theme.breakpoint`, which is what makes `sm:`/`md:`/`lg:`/`xl:` prefixes resolve to those same widths. Both configs also read one palette, the [UI library](/docs/architecture/ui-library)'s, so the two systems share colours as well as a scale.
 
 ## Choosing where to branch
 

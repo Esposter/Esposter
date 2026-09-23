@@ -18,7 +18,10 @@ Two systems provide color utilities:
 
 ## Theme colors
 
-Custom theme colors from `vuetify.config.ts` are auto-derived in `uno.config.ts` via `allColorKeys` (base + variations). Vuetify's runtime injects `--v-theme-{color}` variables; UnoCSS maps them to `rgb(var(--v-theme-{color}))` for attributify utilities. Adding a color to `vuetify.config.ts` is all that's needed.
+Two sources, merged in `uno.config.ts`'s `theme.colors`, the second winning on a shared name:
+
+- **The UI library's tokens** — every `UiToken` maps to its own custom property ("var(--ui-accent)"), which Vuetify 0's theme plugin writes per theme. A new colour is a new token in `UiPaletteMap` (`apps/web/configuration/UiPaletteMap.ts`), never a new Vuetify colour (the `ui-library` skill).
+- **Vuetify's colour names** — derived via `allColorKeys` (base + variations) and mapped to `rgb(var(--v-theme-{color}))`, kept only while unmigrated templates still write `primary`, `surface`, `border` and their opacity keys. Vuetify's base colours are themselves built from the palette, so the two agree.
 
 ## Why theme colors must still be safelisted
 

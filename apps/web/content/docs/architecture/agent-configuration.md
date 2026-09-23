@@ -82,6 +82,12 @@ Documentation is **public by default**. Everything explanatory lives in `apps/we
 
 The test is whether a human would ever want to read it on the website. If the answer is yes, it is documentation and belongs under `content/docs`; a skill then links to that page instead of restating it, so one topic keeps one owner.
 
+## Vendored skills
+
+A third-party skill the repository depends on — Vuetify 0's, for the [UI library](/docs/architecture/ui-library) — is copied into `.agents/skills/` by the skills installer, run through `pnpm dlx`, and committed, so every checkout and every cloud session has it without an install step. The installer records what it copied in `skills-lock.json` at the repository root, and that record is what the installer's "update" command refreshes from.
+
+A vendored skill is a dependency, not ours: its frontmatter, prose and citations are its publisher's. So every scan over the agent tree — the skill-docs checks, the citation and stale-name tests, the prose sweeps and the skills ledger — reads the lock file and leaves the skills it names out, the way it leaves `node_modules` out. The exclusion is derived from the installer's own record, so installing or removing a skill needs no edit anywhere else. Where a vendored skill's advice and the repository's conventions meet, the repository's skill names it and says which wins, as the `ui-library` skill does.
+
 ## The engineering skills look for `docs/agents/`
 
 The installed Matt Pocock engineering skills — `triage`, `to-tickets`, `to-spec`, `wayfinder`, `grill-with-docs`,
@@ -97,15 +103,17 @@ root `docs/` folder this layout exists to avoid. Point the skill at `.agents/` i
 
 ## Key files
 
-| Path                                             | Role                                                                                                                                     |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `.agents`                                        | The agent tree — skills, workflows, ledgers, harness settings                                                                            |
-| `.agents/settings.json`                          | Checked-in harness settings — the marketplace a checkout declares for itself, the plugin it enables, and the auto-update that re-pins it |
-| `.claude`                                        | Symlink alias to `.agents` so Claude Code resolves its own paths                                                                         |
-| `.claude-plugin/marketplace.json`                | The repository as a Claude Code plugin marketplace — the one vendor path the tool fixes at root                                          |
-| `AGENTS.md`                                      | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it                                                                   |
-| `packages/configuration/src/constants.ts`        | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY`                                                               |
-| `scripts/src/workspace/agentDirectories.test.ts` | Pins both exclusions in the configs that cannot import the constants                                                                     |
-| `scripts/src/workspace/citations.test.ts`        | Fails on a cited repo path or skill name in the docs, the tree or a README that resolves nowhere                                         |
-| `scripts/src/workspace/skillDocs.test.ts`        | Fails on every `ai:sweep:skill-docs` finding but the budget                                                                              |
-| `scripts/src/workspace/staleNames.test.ts`       | Fails on a backticked code name in the same trees that neither the tree nor a dependency holds                                           |
+| Path                                                    | Role                                                                                                                                     |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `.agents`                                               | The agent tree — skills, workflows, ledgers, harness settings                                                                            |
+| `.agents/settings.json`                                 | Checked-in harness settings — the marketplace a checkout declares for itself, the plugin it enables, and the auto-update that re-pins it |
+| `scripts/src/services/sweeps/readVendoredSkillNames.ts` | Reads the lock file's skill names, which `readSweepFilePaths` and the skills ledger leave out                                            |
+| `skills-lock.json`                                      | The skills installer's record of the vendored skills, which every agent-tree scan leaves out                                             |
+| `.claude`                                               | Symlink alias to `.agents` so Claude Code resolves its own paths                                                                         |
+| `.claude-plugin/marketplace.json`                       | The repository as a Claude Code plugin marketplace — the one vendor path the tool fixes at root                                          |
+| `AGENTS.md`                                             | Repo instruction file — `CLAUDE.md` and `GEMINI.md` are symlinks to it                                                                   |
+| `packages/configuration/src/constants.ts`               | `AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY`                                                               |
+| `scripts/src/workspace/agentDirectories.test.ts`        | Pins both exclusions in the configs that cannot import the constants                                                                     |
+| `scripts/src/workspace/citations.test.ts`               | Fails on a cited repo path or skill name in the docs, the tree or a README that resolves nowhere                                         |
+| `scripts/src/workspace/skillDocs.test.ts`               | Fails on every `ai:sweep:skill-docs` finding but the budget                                                                              |
+| `scripts/src/workspace/staleNames.test.ts`              | Fails on a backticked code name in the same trees that neither the tree nor a dependency holds                                           |

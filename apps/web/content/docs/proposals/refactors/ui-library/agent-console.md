@@ -36,8 +36,8 @@ Conversation, composer, permission, sessions, timeline, changes, usage, the head
 
 ## What else changes
 
-- **The palette splits.** The interface colours leave the console's palette map for the app's tokens, as the [foundation](/docs/proposals/refactors/ui-library/foundation) set up. The world's materials stay in the console's map, and the world keeps reading both as vertex colours, so a panel and the room behind it still agree.
-- **The page's global rules move out.** The console's root sets the font on every element beneath it, sinks every field, and draws every focus ring through deep selectors. Those rules become the library's components and the document's chrome, and the console's root keeps only its layout. What it looked like does not change, because the tokens are the same colours.
+- **The palette splits.** The console's palette map already takes its interface colours from the app's dusk theme ([UI library](/docs/architecture/ui-library)); in this stage they leave it, and the panels read the tokens instead of the console's own custom properties. The world's materials stay in the console's map, and the world keeps reading both as vertex colours, so a panel and the room behind it still agree.
+- **The page's global rules move out.** The console's root sets the font on every element beneath it, sinks every field, draws every focus ring through deep selectors, and colours its own scrollbars, which the document chrome now does for every page. Those rules become the library's components and the document's chrome, and the console's root keeps only its layout. What it looked like does not change, because the tokens are the same colours.
 - **The theme interface keeps its palette slot.** The [themes proposal](/docs/proposals/infra/agent-console/themes) lets a theme set the console's palette. That slot now sets the tokens inside the console's root, which is the same scoping Vuetify 0's scoped theme context provides, so a Genshin theme dresses the console without reaching the rest of the app.
 
 ## Checking it

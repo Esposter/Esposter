@@ -4,20 +4,32 @@ import type { Colors, ThemeOptions } from "vuetify/lib/composables/theme.mjs";
 
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 
+import type { UiTheme } from "./app/models/ui/UiTheme";
+
+import { UiToken } from "./app/models/ui/UiToken";
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
 import { BREAKPOINTS } from "./configuration/breakpoints";
+import { ThemeModeUiThemeMap } from "./configuration/ThemeModeUiThemeMap";
+import { UiPaletteMap } from "./configuration/UiPaletteMap";
 import { EN_US_SEGMENTER } from "./shared/services/intl/constants";
 
-const BASE_COLORS_COMMON = {
-  border: "#ccc",
-  error: "#ff5252",
-  info: "#2d88ff",
-  primary: "#42b883",
-} as const satisfies Partial<Colors>;
+// Every page Vuetify still draws takes the UI library's palette, so the two libraries agree on one page while both are on it
+const getBaseColors = (palette: (typeof UiPaletteMap)[UiTheme]) =>
+  ({
+    background: palette[UiToken.Background],
+    border: palette[UiToken.PanelEdge],
+    error: palette[UiToken.Error],
+    info: palette[UiToken.Info],
+    primary: palette[UiToken.Accent],
+    success: palette[UiToken.Success],
+    surface: palette[UiToken.Panel],
+    text: palette[UiToken.Text],
+    warning: palette[UiToken.Warning],
+  }) satisfies Partial<Colors>;
 
 const ThemeModeBaseColorsMap = {
-  [ThemeMode.dark]: { ...BASE_COLORS_COMMON, background: "#18191a", surface: "#36393f", text: "#fff" },
-  [ThemeMode.light]: { ...BASE_COLORS_COMMON, background: "#dae0e6", surface: "#fff", text: "#000" },
+  [ThemeMode.dark]: getBaseColors(UiPaletteMap[ThemeModeUiThemeMap[ThemeMode.dark]]),
+  [ThemeMode.light]: getBaseColors(UiPaletteMap[ThemeModeUiThemeMap[ThemeMode.light]]),
 } as const satisfies Partial<Record<ThemeMode, Partial<Colors>>>;
 
 export type BaseColors = (typeof ThemeModeBaseColorsMap)[Exclude<ThemeMode, ThemeMode.system>];

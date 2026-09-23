@@ -452,6 +452,9 @@ catalogs:
     '@vuepic/vue-datepicker':
       specifier: ^14.0.0
       version: 14.0.0
+    '@vuetify/v0':
+      specifier: ^1.2.2
+      version: 1.2.2
     '@vueuse/core':
       specifier: ^15.0.0
       version: 15.0.0
@@ -1153,6 +1156,9 @@ importers:
       '@vuepic/vue-datepicker':
         specifier: 'catalog:'
         version: 14.0.0(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
+      '@vuetify/v0':
+        specifier: 'catalog:'
+        version: 1.2.2(@floating-ui/dom@1.8.0)(@js-temporal/polyfill@0.5.1)(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       '@vueuse/core':
         specifier: 'catalog:'
         version: 15.0.0(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))

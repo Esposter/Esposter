@@ -50,6 +50,7 @@
 | `tiptap`                  | 2026-09-22 · Opus 5 |       |
 | `trpc`                    | 2026-09-22 · Opus 5 |       |
 | `typescript`              | 2026-09-22 · Opus 5 |       |
+| `ui-library`              | —                   |       |
 | `unocss`                  | 2026-09-22 · Opus 5 |       |
 | `ux`                      | 2026-09-22 · Opus 5 |       |
 | `vjsf`                    | 2026-09-22 · Opus 5 |       |

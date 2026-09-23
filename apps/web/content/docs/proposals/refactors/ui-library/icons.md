@@ -8,7 +8,7 @@ model: claude-opus-5-5
 
 Every page loads the Material Design Icons web font and its stylesheet today: several thousand glyphs, and a class for each, to draw the few dozen the app uses. The icon names are strings, hundreds of them, passed to Vuetify's icon props and held in maps. This stage moves icons to CSS generated only for the icons the source names, which is a gain on every page on the day it lands, and then moves the library's icons to a pixel set that matches the look.
 
-It depends only on the [foundation](/docs/proposals/refactors/ui-library/foundation), and runs beside any other stage.
+It depends only on the [foundation](/docs/architecture/ui-library), and runs beside any other stage.
 
 ## How it works
 

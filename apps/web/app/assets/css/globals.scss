@@ -14,6 +14,28 @@
   --apx-fore: rgb(var(--v-theme-on-surface));
   --apx-grid: rgba(var(--v-theme-on-surface), 0.12);
   --apx-surface: rgb(var(--v-theme-surface));
+  // One voxel: the grid every length of the UI library is a whole number of, and the width of its edges
+  --ui-step: 0.25rem;
+}
+// The document's own chrome in the UI library's tokens, reaching every page whichever library draws it. It sits in the
+// First layer, so a component that paints its own focus or selection still wins
+@layer ui-chrome {
+  :root {
+    accent-color: var(--ui-accent);
+    caret-color: var(--ui-accent);
+    scrollbar-color: var(--ui-panel-edge) var(--ui-background);
+    scrollbar-width: thin;
+  }
+
+  ::selection {
+    background-color: var(--ui-accent);
+    color: var(--ui-background);
+  }
+
+  :focus-visible {
+    outline: var(--ui-step) solid var(--ui-accent);
+    outline-offset: var(--ui-step);
+  }
 }
 // No global `border-width: 0` here. It looks like the right way to stop a bare `b-solid` painting the CSS
 // Initial `medium` (~3px) on sides it gives no width, but a reset matching `*, ::before, ::after` also reaches

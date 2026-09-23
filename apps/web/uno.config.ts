@@ -4,6 +4,7 @@ import type { ThemeOptions, VariationsOptions } from "vuetify/lib/composables/th
 import { defineConfig, presetAttributify, presetWind4 } from "unocss";
 import { elevationPresets, typographyPresets } from "unocss-preset-vuetify";
 
+import { UiTokens } from "./app/models/ui/UiToken";
 import { UNOCSS_BREAKPOINTS } from "./configuration/breakpoints";
 import vuetifyConfig from "./vuetify.config";
 
@@ -130,7 +131,13 @@ export default defineConfig({
   },
   theme: {
     breakpoint: UNOCSS_BREAKPOINTS,
-    colors: Object.fromEntries(allColorKeys.map((key) => [key, `rgb(var(--v-theme-${key}))`])),
+    // A token reads its custom property, so a utility follows the selected theme at runtime. Vuetify's own colour
+    // Names stay beside them while a template not yet on the library still writes one, and where a name is both,
+    // The token wins: Vuetify's theme is fed the same value, so the two only differ in which library owns it
+    colors: {
+      ...Object.fromEntries(allColorKeys.map((key) => [key, `rgb(var(--v-theme-${key}))`])),
+      ...Object.fromEntries(UiTokens.map((uiToken) => [uiToken, `var(--ui-${uiToken})`])),
+    },
     // Override preset-wind4's default sans stack, which lists OS-only fonts
     // ("Segoe UI", "Helvetica Neue", Arial) with no downloadable web source.
     // These warn at startup because nuxt-og-image scans this token to embed

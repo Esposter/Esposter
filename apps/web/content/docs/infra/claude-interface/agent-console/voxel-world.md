@@ -48,7 +48,7 @@ The panels are bespoke, with no Vuetify:
 - `Panel/Button` is the raised block.
 - `Panel/Menu` is the one listbox. It is behind the slash palette, the repositories offered for a new session, and `Panel/Select` for the model and mode.
 - `Panel/Popover` holds each of those menus in the browser's top layer through the Popover API, so no panel paints over one and no overflow clips it. Floating UI keeps it inside the window, flipping it to the other side of what it hangs off when there is no room, and it stays in place in the document, so it keeps the page's palette and font.
-- The palette is `AgentConsolePaletteMap`, set as custom properties on the page's root by `AgentConsolePaletteStyle`. The world reads the same colours as vertex colours, so a panel and the room it sits over always agree.
+- The palette is `AgentConsolePaletteMap`, set as custom properties on the page's root by `AgentConsolePaletteStyle`. Its interface colours are the app's dusk theme ([UI library](/docs/architecture/ui-library)), and the page stays in dusk whichever theme the app is in; the world's materials are its own. The world reads the same colours as vertex colours, so a panel and the room it sits over always agree.
 - One pixel font sets every panel, and nothing in the page's scoped styles reaches another page.
 
 ## What it costs to run

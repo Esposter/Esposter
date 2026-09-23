@@ -33,7 +33,7 @@ A pressed raised surface swaps its lit and shaded sides and moves down one step,
 
 ## Colour
 
-The palette is the interface half of the console's ([foundation](/docs/proposals/refactors/ui-library/foundation)): background, panel, panel edge, text, muted, accent, and the four status colours, in a dusk theme and a dawn theme. Three rules decide where a colour goes:
+The palette is the interface half of the console's ([foundation](/docs/architecture/ui-library)): background, panel, panel edge, text, muted, accent, and the four status colours, in a dusk theme and a dawn theme. Three rules decide where a colour goes:
 
 - **Emphasis is colour first.** What matters is in the accent colour or the text colour, and what recedes is muted. Opacity is kept for disabled, never used as a second grey.
 - **Status is always paired with a mark.** An error is the error colour and a mark or a word, never the colour alone, so it reads for a reader who cannot tell red from green.
@@ -63,7 +63,7 @@ Vuetify 0 marks state on the element as data attributes — selected, disabled, 
 
 These are the details that make the difference between a themed app and a designed one. Each belongs to a component or to the document, and each is listed so none is left to a default.
 
-- **Scrollbars.** Thin, in the palette, set once on the root ([foundation](/docs/proposals/refactors/ui-library/foundation)). A scroll area inside a frame gets the frame's fill as its track.
+- **Scrollbars.** Thin, in the palette, set once on the root ([foundation](/docs/architecture/ui-library)). A scroll area inside a frame gets the frame's fill as its track.
 - **Selection and caret** in the accent colour.
 - **Context menus** everywhere a thing on screen has actions of its own ([context menus](/docs/proposals/refactors/ui-library/context-menus)). The browser's own menu stays wherever the app offers nothing better, such as over plain text and links.
 - **Tooltips** as a small frame after a short delay, instantly for the next one while one is open, dismissed by Escape, and never the only place a label lives.

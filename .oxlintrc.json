@@ -154,6 +154,34 @@
       }
     },
     {
+      "files": [
+        "apps/web/app/components/Ui/**",
+        "apps/web/app/composables/ui/**",
+        "apps/web/app/models/ui/**",
+        "apps/web/app/plugins/ui.ts",
+        "apps/web/app/services/ui/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "importNames": ["randomUUID"],
+                "message": "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
+                "name": "node:crypto"
+              },
+              {
+                "importNames": ["useRoute"],
+                "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
+                "name": "vue-router"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": ["apps/*/src/**", "packages/*/src/**", "scripts/src/**"],
       "rules": {
         "no-restricted-imports": [
@@ -267,6 +295,16 @@
             "importNames": ["useRoute"],
             "message": "Use `useRouter().currentRoute` instead of `useRoute()` — the injected page route freezes when its page is swapped out, so anything outliving that page reads a stale route.",
             "name": "vue-router"
+          },
+          {
+            "message": "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library.",
+            "name": "@vuetify/v0"
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["@vuetify/v0/*"],
+            "message": "Only the UI library imports Vuetify 0 — use a component from `app/components/Ui`, or add the behaviour to the library. See /docs/architecture/ui-library."
           }
         ]
       }

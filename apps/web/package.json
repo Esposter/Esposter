@@ -106,6 +106,7 @@
     "@vue-flow/node-resizer": "catalog:",
     "@vue-pdf-viewer/viewer": "catalog:",
     "@vuepic/vue-datepicker": "catalog:",
+    "@vuetify/v0": "catalog:",
     "@vueuse/core": "catalog:",
     "@vueuse/router": "catalog:",
     "agent-console-server": "workspace:*",

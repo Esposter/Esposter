@@ -4,6 +4,7 @@ export const build: NuxtConfig["build"] = {
   transpile: [
     "@koumoul/vjsf",
     "@vuepic/vue-datepicker",
+    "@vuetify/v0",
     "survey-creator-vue",
     "trpc-nuxt",
     // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
