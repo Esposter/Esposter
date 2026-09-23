@@ -94,6 +94,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiConfirmDialog`   | `UiDialog`                            | A question before something that cannot be undone: Cancel, and one destructive answer until it lands   |
 | `UiBreadcrumbs`     | Breadcrumbs                           | A trail of links back, whose middle folds behind a button when the row is too short for it             |
 | `UiMeter`           | none                                  | How much of something is used, in the loading bar's blocks, turning warning then danger past its marks |
+| `UiCheckbox`        | Checkbox                              | A sunk box a block of the accent drops into while checked, and half a block while mixed                |
 
 ### Keyboard contracts
 
@@ -103,12 +104,13 @@ The first components came out of the agent console, which drew the look by hand 
 - **A context menu** keeps the menu's contract from the moment it opens onto its first item, and hands focus back to the element it opened over.
 - **A popover** opens from its trigger by click, Enter or Space, and Escape closes it with focus back on the trigger. Its open state is a model as well, so a shortcut elsewhere on the page can open it.
 - **A command list** keeps focus in its field, as suggestions do, and highlights its first command whenever the list changes, so Enter always takes the best match. The arrows walk it, and Enter clicks the highlighted row, so a row that is a link is followed as a pointer would follow it.
-- **A dialog** is the browser's: opening it moves focus inside and traps Tab there, and Escape or a click on the scrim closes it. A confirm dialog's destructive answer stays disabled while it is under way, and a failed one leaves the dialog open to try again.
+- **A dialog** is the browser's: opening it moves focus inside and traps Tab there, and Escape or a click on the scrim closes it. Its title bar follows the content in the tree and is drawn above it, so focus lands on the content's first control, or on whatever in it carries `autofocus`, and never on the close button, which comes last in the tab order. A confirm dialog's destructive answer stays disabled while it is under way, and a failed one leaves the dialog open to try again.
 - **Tabs** are one stop in the tab order, the selected tab. The arrows move to the next or previous tab and select it as they go, Home and End jump to the ends, and each panel is labelled by its tab.
 - **Tab links** are a navigation landmark of ordinary links, each its own stop in the tab order. The current one says so, and the call site decides which that is, since a section's tab stays current on every page in it rather than only on the one it links to.
 - **A collapsible** is a button that says whether it is expanded and names the content it controls. Enter or Space toggles it, as a button's own keys. Its content is not a region: a navigation opens dozens, and a landmark each would crowd the list a screen reader offers.
 - **A text field** is named by its visible label. A failing rule marks it invalid and points it at the message under it, which is a polite live region, and the form around it counts the result at once, so a submit button can stand disabled before it is pressed.
 - **Breadcrumbs** are a navigation landmark holding a list of ordinary links, the marks between them hidden from assistive technology. A trail too long for its row keeps its first and last crumbs and folds the middle behind a button that says how many it hides and whether they are shown, and lays them back out in place.
+- **A checkbox** is a button with the checkbox role, named by its label whether or not the label is drawn, and says whether it is checked, unchecked or mixed. Space or a click toggles it, as a button's own keys.
 - **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none. The menu's whole contract is `useMenu`, which `UiMenu` and the context menu share.
 
 ### Surfaces
