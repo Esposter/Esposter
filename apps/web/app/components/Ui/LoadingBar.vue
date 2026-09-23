@@ -13,7 +13,7 @@ const filledBlockCount = computed(() => Math.round((value / 100) * LOADING_BAR_B
 </script>
 
 <template>
-  <Progress.Root :aria-label="label" :model-value="value" flex gap-1>
+  <Progress.Root :aria-label="label" :model-value="value" flex gap-1 max-w-full>
     <Progress.Fill renderless />
     <span
       v-for="index of LOADING_BAR_BLOCK_COUNT"
@@ -25,12 +25,14 @@ const filledBlockCount = computed(() => Math.round((value / 100) * LOADING_BAR_B
 </template>
 
 <style scoped>
-/* A game's loading bar: a row of voxel blocks, filled from the start as the work gets done */
+/* A game's loading bar: a row of voxel blocks, filled from the start as the work gets done. A container narrower than
+   the row squeezes each block rather than letting the row spill out of it */
 .block {
   background-color: var(--ui-panel);
   box-shadow: inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-panel-edge);
+  flex: 0 1 calc(var(--ui-step) * 4);
   height: calc(var(--ui-step) * 6);
-  width: calc(var(--ui-step) * 4);
+  min-width: var(--ui-step);
 }
 
 .block[data-filled] {
