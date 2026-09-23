@@ -66,6 +66,7 @@ describe("uiContextMenuHost", () => {
       "Rename",
       "Delete",
     ]);
+    expect(component.findAll('[role="separator"]')).toHaveLength(1);
     expect(document.activeElement?.textContent.trim()).toBe("Rename");
   });
 
