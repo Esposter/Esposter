@@ -1,11 +1,11 @@
 import type { RepairInput } from "#src/models/coderabbit/collect/RepairInput";
 import type { RepairResult } from "#src/models/coderabbit/collect/RepairResult";
 
+import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import {
   EXPRESS_TRAILER,
-  INSTALL_COMMAND,
   MAIN_BRANCH,
   REPAIR_EXHAUSTED_MARKER,
   REPAIR_FAILED_MARKER,
@@ -26,11 +26,10 @@ import { readRedMainCheck } from "#src/services/coderabbit/collect/readRedMainCh
 import { readStackedRepairs } from "#src/services/coderabbit/collect/readStackedRepairs";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
 import { repairMechanically } from "#src/services/coderabbit/collect/repairMechanically";
+import { runInstall } from "#src/services/coderabbit/collect/runInstall";
 import { runSession } from "#src/services/coderabbit/collect/runSession";
-import { spawnPnpm } from "#src/services/coderabbit/collect/spawnPnpm";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A red `main` is the collector's: the release merges on the review alone, so what CI held — a lint rule a bump
 // Enabled, a size snapshot a build moved, a claimed commit the express lane cut unverified — lands on `main`
@@ -75,13 +74,14 @@ export const repairMain = async ({
 
   runGit(["switch", "--detach", mainSha], cwd);
   // The tree the repairer's own checks run against is this head, not the one the event checked out (`INSTALL_COMMAND`)
-  if (spawnPnpm(INSTALL_COMMAND, { cwd, stdio: "inherit" }).status !== 0)
-    throw new InvalidOperationError(Operation.Update, "coderabbit", `the install for ${mainSha} failed`);
+  const installFailure = runInstall(cwd);
   // Answered without a session where a regenerator answers it: most of what lands on `main` unread is red for a
   // Reason with one, and the session that reads such a log spends a window of the one account every session here
   // Draws on to reach a command that needs no reading (`llm-delegation` skill). A red no regenerator touches
   // Costs the one check suite it takes to find that out, and the tree it falls through with is untouched.
-  const mechanicalSha = repairMechanically({ collectorSha, cwd, mainSha, runUrl: check.url });
+  // Every regenerator runs on the installed tree, so a head that does not install goes straight to the session
+  const mechanicalSha =
+    installFailure === undefined ? repairMechanically({ collectorSha, cwd, mainSha, runUrl: check.url }) : undefined;
   if (mechanicalSha !== undefined) {
     console.info(`${MAIN_BRANCH} repaired at ${mechanicalSha} without a session — its regenerators answered the red`);
     return { isVerified: true, targetSha: mechanicalSha };
@@ -90,6 +90,7 @@ export const repairMain = async ({
   const prompt = getRepairPrompt({
     collectorSha,
     failedLog: readFailedLog(check.databaseId),
+    installFailure,
     mainSha,
     runUrl: check.url,
   });
@@ -104,7 +105,7 @@ export const repairMain = async ({
   }
   // What proves a repair is a clean exit over a clean tree that moved by the one commit the session was told to
   // Leave, carrying the trailer that names this head and this collector; the session's word proves nothing.
-  // Anything else counts the attempt on the head and fails the run, as the fold does. One commit exactly, because
+  // Anything else counts the attempt on the head and ends the run, as the fold does. One commit exactly, because
   // The streak reads a repair off the head as a commit: a session that left three would spend every attempt of
   // The streak on itself, and the head it made would be a person's however answerable its red still is.
   const headSha = readHeadSha(cwd);
@@ -120,9 +121,7 @@ export const repairMain = async ({
       mainSha,
       getAttemptFailure({ attempts, marker: failedMarker, task: `repair this red ${MAIN_BRANCH} head` }),
     );
-    throw new InvalidOperationError(
-      Operation.Update,
-      "coderabbit",
+    throw new AttemptFailedError(
       `the repairer left ${mainSha} unrepaired (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
     );
   }

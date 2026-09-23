@@ -42,6 +42,7 @@ describe(resolveLockfileConflicts, () => {
   const cwd = "cwd";
 
   beforeEach(() => {
+    rebuildLockfile.mockReturnValue(true);
     runGit.mockReturnValue("");
   });
 
@@ -65,6 +66,19 @@ describe(resolveLockfileConflicts, () => {
 
     expect(resolveLockfileConflicts(cwd, 3)).toBe(false);
     expect(rebuildLockfile).toHaveBeenCalledTimes(1);
+  });
+
+  // An install that fails leaves the stop open for the resolver's session, which can repair what broke it
+  test("leaves a lockfile stop it could not rebuild to the resolver", () => {
+    expect.hasAssertions();
+
+    stopFor(2);
+    readUnmergedPaths.mockReturnValue([LOCKFILE]);
+    rebuildLockfile.mockReturnValue(false);
+
+    expect(resolveLockfileConflicts(cwd, 3)).toBe(false);
+    expect(rebuildLockfile).toHaveBeenCalledTimes(1);
+    expect(runGit).not.toHaveBeenCalled();
   });
 
   // A turn that lands no commit would otherwise spin: the replay's own length is what bounds it

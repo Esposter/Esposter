@@ -23,7 +23,7 @@ flowchart TD
   GV -->|no| RS[Restore the head, discard the regeneration] --> C
   GV -->|yes| GC[Commit it carrying Repairs: head against the collector — no session read this red] --> PU
   C[Claude, detached at the head, with the failing jobs' log tails<br/>one commit carrying Repairs: head against the collector]
-  C -->|anything but a trailered commit over a clean tree| F[Count the attempt on the head, fail red]
+  C -->|anything but a trailered commit over a clean tree| F[Count the attempt on the head<br/>end the run idle, retry in a minute]
   C -->|committed| V{The cut passes every check}
   V -->|no| N[Count the attempt on the head<br/>the claimed commits wait, unsaid] --> L2[The rest of the pass]
   V -->|yes| PU[Push main — exit<br/>the push fires the cycle that cuts the claimed commits]
@@ -57,7 +57,7 @@ Their exit status is nothing to read: `lint:fix` exits non-zero on exactly the p
 
 ## The session
 
-The drain's session under the drain's denials ([collection cycle](/docs/infra/review-collector/collection-cycle)), detached at `main`'s head with the tree installed, handed the run's URL and the log tails, and told what a red asks for: a lint rule its substitution in the repo's own convention, a size snapshot a rebuild and the narrowed `-u` run, a failing test whichever of the code or the assertion the test proves wrong, a code-scanning alert the rule's own remedy at the line it names — never a dismissal or a suppression comment. It runs each failed check locally as CI runs it — a scan has no local run, and the push's own scan proves that repair — commits once with `Repairs: <head> against:<collector>`, and leaves the tree clean. The body is the only review the repair gets, so it says what each red was and what answered it.
+The drain's session under the drain's denials ([collection cycle](/docs/infra/review-collector/collection-cycle)), detached at `main`'s head with the tree installed — or, when the head does not install, handed the install's tail as one more red and no regenerator run first, since every one of them runs on the installed tree — handed the run's URL and the log tails, and told what a red asks for: a lint rule its substitution in the repo's own convention, a size snapshot a rebuild and the narrowed `-u` run, a failing test whichever of the code or the assertion the test proves wrong, a code-scanning alert the rule's own remedy at the line it names — never a dismissal or a suppression comment. It runs each failed check locally as CI runs it — a scan has no local run, and the push's own scan proves that repair — commits once with `Repairs: <head> against:<collector>`, and leaves the tree clean. The body is the only review the repair gets, so it says what each red was and what answered it.
 
 What proves the repair is read off the tree, never the session's word: a clean exit, a clean tree, and a head that moved by the one commit the session was told to leave, carrying the trailer that names this head and this collector — the same trailer the streak counts, so a repair the proof accepts is one the next streak can read. One commit exactly: the streak reads a repair off the head as a commit, so a session that left three would spend the whole streak on itself and hand the head it made to a person. Anything else counts the attempt on the head and fails the run, as the fold's resolver does. A session that could not start — Claude Code's own limit, a launch that never happened — is nobody's attempt.
 

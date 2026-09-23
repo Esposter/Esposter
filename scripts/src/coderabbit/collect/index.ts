@@ -1,4 +1,9 @@
+import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
+
+import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
+import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import {
+  ATTEMPT_RETRY_DELAY_SECONDS,
   COLLECTOR_SOURCE_PATH,
   DRY_RUN_WORKTREE_PREFIX,
   RETRIGGER_DELAY_OUTPUT,
@@ -10,7 +15,7 @@ import { writeJobOutput } from "#src/services/coderabbit/collect/writeJobOutput"
 import { checkIsGitHubNumber } from "#src/services/shared/checkIsGitHubNumber";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
-import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
+import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -63,12 +68,17 @@ if (isDryRun) {
   });
 }
 
-const { kind, reason, retriggerDelaySeconds, targetSha } = await runCycle({
-  collectorSha,
-  cwd,
-  isDryRun,
-  pullRequest,
-});
+// A counted attempt that failed ends the run idle and wakes the next one, rather than red: the retry is already
+// Owed and automatic, and red is kept for what only a person can restart (docs: infra/review-collector)
+const { kind, reason, retriggerDelaySeconds, targetSha } = await getResultAsync(() =>
+  runCycle({ collectorSha, cwd, isDryRun, pullRequest }),
+).match(
+  (outcome) => outcome,
+  (error): CycleOutcome => {
+    if (!(error instanceof AttemptFailedError)) throw error;
+    return { kind: CycleOutcomeKind.Idle, reason: error.message, retriggerDelaySeconds: ATTEMPT_RETRY_DELAY_SECONDS };
+  },
+);
 console.info(`${kind}: ${reason}${targetSha ? ` — ${targetSha}` : ""}`);
 if (retriggerDelaySeconds !== undefined && !isDryRun)
   writeJobOutput(RETRIGGER_DELAY_OUTPUT, retriggerDelaySeconds.toString());

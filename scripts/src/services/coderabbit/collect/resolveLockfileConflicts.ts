@@ -18,9 +18,8 @@ export const resolveLockfileConflicts = (cwd: string, replayedCount: number): bo
     if (!checkIsSequencing(cwd)) return true;
 
     const unmergedPaths = readUnmergedPaths(cwd);
-    if (!checkIsLockfileOnly(unmergedPaths)) return false;
+    if (!checkIsLockfileOnly(unmergedPaths) || !rebuildLockfile(cwd)) return false;
 
-    rebuildLockfile(cwd);
     // `core.editor` rather than the environment: the message the pick carries is the original's, unedited
     getResult(() => runGit(["-c", "core.editor=true", "cherry-pick", "--continue"], cwd)).match(noop, noop);
   }

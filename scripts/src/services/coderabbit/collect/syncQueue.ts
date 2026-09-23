@@ -1,5 +1,6 @@
 import type { SyncQueueInput } from "#src/models/coderabbit/collect/SyncQueueInput";
 
+import { AttemptFailedError } from "#src/models/coderabbit/collect/AttemptFailedError";
 import { SessionRole } from "#src/models/coderabbit/collect/SessionRole";
 import { checkIsAncestor } from "#src/services/coderabbit/collect/checkIsAncestor";
 import { checkIsPicked } from "#src/services/coderabbit/collect/checkIsPicked";
@@ -30,7 +31,6 @@ import { resolveLockfileConflicts } from "#src/services/coderabbit/collect/resol
 import { runSession } from "#src/services/coderabbit/collect/runSession";
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { runGit } from "#src/services/shared/runGit";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Whether the replay carries every commit the queue owed — by patch id, or by a copy naming it as its original.
 // A closed sequencer over a clean tree says only that nothing is mid-flight: `git cherry-pick --abort` leaves
@@ -127,7 +127,7 @@ export const syncQueue = async ({
         });
         if (!isStarted) return abort(conflictSha, "the resolver could not start, and no attempt is counted");
         // A clean exit says the session ended, never how it ended; what proves the resolution is a sequence run
-        // To its end over a clean tree, carrying every commit the queue owed. Anything else fails the run as a
+        // To its end over a clean tree, carrying every commit the queue owed. Anything else ends the run as a
         // Drain does, with the attempt counted on the commit
         else if (
           !isEnded ||
@@ -143,9 +143,7 @@ export const syncQueue = async ({
               task: `resolve the conflict ${conflictSha} brings to ${targetBranch}`,
             }),
           );
-          throw new InvalidOperationError(
-            Operation.Update,
-            "coderabbit",
+          throw new AttemptFailedError(
             `the resolver left ${conflictSha} unresolved (attempt ${attempts + 1} of ${SESSION_ATTEMPT_CAP})`,
           );
         }
