@@ -1,12 +1,12 @@
 ---
 title: World settings
-description: Proposal — an Options entry in the agent console's pause menu, as a game's has, starting with whether the prompts over the room's things are shown, so a person who knows the room can walk it without them.
+description: Proposal — an Options entry in the agent console's pause menu, as a game's has, starting with whether the prompts over what the player can use, such as the door, are shown, so a person who knows the world can walk it without them.
 model: claude-opus-5-5
 ---
 
 # World settings
 
-The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) shows a prompt over each thing in the room, a label and the key that uses it, so a person new to the room learns what each thing does. A person who already knows it may want the room without them. The world has no settings yet, and this proposal gives it a place for them, as a game does.
+The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) shows a prompt over each thing the player can act on, such as the door: a label and the key that uses it, so a person new to the world learns what it does. The console is reached from its own button and keys, never through a prompt. A person who already knows it may want the room without them. The world has no settings yet, and this proposal gives it a place for them, as a game does.
 
 ## Decisions
 
@@ -22,7 +22,7 @@ flowchart LR
   E[Escape] --> P[Pause menu]
   P --> O[Options]
   O --> T{Prompts shown?}
-  T -->|yes — default| S[Label and key over each thing]
+  T -->|yes — default| S[Label and key over what can be used]
   T -->|no| N[Outline only; the key still works]
   O -->|Escape| P
 ```
