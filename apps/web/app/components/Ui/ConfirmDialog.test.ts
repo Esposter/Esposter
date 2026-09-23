@@ -6,11 +6,12 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test } from "vitest";
 
+// Its label shares the button with the spinner while it is pending, so the button is found by its variant
+const getConfirmButton = (component: VueWrapper) => component.get(`button[data-variant="${UiButtonVariant.Danger}"]`);
+
 describe("uiConfirmDialog", () => {
   const confirmLabel = "confirmLabel";
   const title = "title";
-  // Its label shares the button with the spinner while it is pending, so the button is found by its variant
-  const getConfirmButton = (component: VueWrapper) => component.get(`button[data-variant="${UiButtonVariant.Danger}"]`);
   const mountDialog = async () => {
     const component = mount(UiConfirmDialog, {
       attachTo: document.body,
