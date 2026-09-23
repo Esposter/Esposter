@@ -86,6 +86,28 @@ describe("uiMenu", () => {
     expect(document.activeElement).toBe(trigger.element);
   });
 
+  test("reaches a disabled item and says so, but never picks it", async () => {
+    expect.hasAssertions();
+
+    const component = mount(UiMenu, {
+      attachTo: document.body,
+      props: { items: [{ isDisabled: true, title: "Copy", value: "copy" }], label },
+    });
+    const trigger = component.get("button");
+    await trigger.trigger("keydown", { key: "ArrowDown" });
+    await flushPromises();
+    const item = component.get('[role="menuitem"]');
+
+    expect(document.activeElement).toBe(item.element);
+    expect(item.attributes("aria-disabled")).toBe("true");
+
+    await component.get('[role="menu"]').trigger("keydown", { key: "Enter" });
+    await item.trigger("click");
+
+    expect(component.emitted("select")).toBeUndefined();
+    expect(trigger.attributes("aria-expanded")).toBe("true");
+  });
+
   test("closes on Escape with focus back on its trigger", async () => {
     expect.hasAssertions();
 

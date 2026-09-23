@@ -41,6 +41,7 @@ export const useMenu = <T extends string>(
   };
   // Closed before the item runs, so an item that opens a dialog keeps the focus that dialog takes
   const choose = async (value: T, event: KeyboardEvent | MouseEvent) => {
+    if (toValue(items).find((item) => item.value === value)?.isDisabled) return;
     closeToOpener();
     await onSelect(value, event);
   };
