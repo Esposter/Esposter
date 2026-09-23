@@ -475,7 +475,8 @@ describe("unoConfig", () => {
     for (const path of globSync("{app,shared}/**/*.{ts,vue}", { cwd: import.meta.dirname })) {
       if (path.endsWith(".test.ts")) continue;
       const code = readFileSync(`${import.meta.dirname}/${path}`, "utf8");
-      const icons = code.match(/i-[\da-z]+:[\da-z-]+/gu);
+      // Only a class that starts at `i-`: `.ui-dialog:focus-visible` is a selector, not the `dialog` collection
+      const icons = code.match(/(?<![\w-])i-[\da-z]+:[\da-z-]+/gu);
       if (!icons) continue;
       if (path.endsWith(".ts") && !code.includes("@unocss-include")) {
         missingIcons.push(path);
