@@ -44,7 +44,7 @@ A grep stays inline in the ledger; anything with control flow is a script under 
 
 ```mermaid
 flowchart LR
-  COVER["ai:sweep:ledger-coverage<br/>dates rows and names their model from trailers, syncs derived rows"] --> PICK["pick the next unswept unit"]
+  COVER["ai:sweep:ledger-coverage<br/>dates rows, names models from trailers, syncs derived rows"] --> PICK["pick the next unswept unit"]
   PICK --> APPLY["apply the owning convention"]
   APPLY --> CHANGED{"did the unit change?"}
   CHANGED -->|"no"| HOLD["hold its trailer for the next commit"]

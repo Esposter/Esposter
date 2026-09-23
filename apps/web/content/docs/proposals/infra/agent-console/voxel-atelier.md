@@ -43,7 +43,7 @@ apps/web/app/services/agentConsole/
   getRegionPalette.ts        ← floor and wall colours per region
 ```
 
-**Rendering:** TresJS, with cientos `Instances` for the room's voxels and `Levioso` for the figure's idle sway; nothing needs raw Three.js.
+**Rendering:** TresJS; cientos `Instances` draws the room's voxels and `Levioso` the figure's idle sway; nothing needs raw Three.js.
 
 ## Key files
 

@@ -22,15 +22,15 @@ It stays free because it never runs a session of its own. The session is the ter
 
 **This adds** a channel server that serves a loopback API rather than markup, the app route that renders it, and the views below — each its own sub-spec, each switched on independently:
 
-| Page                                                                       | What it is                                                                                     |
-| :------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
-| [Terminal parity](/docs/proposals/infra/agent-console/terminal-parity)     | the work surface: everything the terminal shows, where the console reads it from, and the gaps |
-| [Spatial chat](/docs/proposals/infra/agent-console/spatial-chat)           | the conversation placed in the scene — bubbles for spoken lines, panels for answers            |
-| [Wish banner](/docs/proposals/infra/agent-console/wish-banner)             | the session's character arriving through a wish, the lore odds as its rates, pity              |
-| [Voxel atelier](/docs/proposals/infra/agent-console/voxel-atelier)         | a room the character stands in, changed by what the session does                               |
-| [Codebase city](/docs/proposals/infra/agent-console/codebase-city)         | the repository as a city, the character walking to the file in hand                            |
-| [Collector harbour](/docs/proposals/infra/agent-console/collector-harbour) | the review collector's branches as a river, its commits as boats                               |
-| [Element ambience](/docs/proposals/infra/agent-console/element-ambience)   | a backdrop in the character's element, moved by the spoken line's voice                        |
+| Page                                                                       | What it is                                                                                |
+| :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| [Terminal parity](/docs/proposals/infra/agent-console/terminal-parity)     | the work surface: each thing the terminal shows, its source for the console, and the gaps |
+| [Spatial chat](/docs/proposals/infra/agent-console/spatial-chat)           | the conversation placed in the scene — bubbles for spoken lines, panels for answers       |
+| [Wish banner](/docs/proposals/infra/agent-console/wish-banner)             | the session's character arriving through a wish, the lore odds as its rates, pity         |
+| [Voxel atelier](/docs/proposals/infra/agent-console/voxel-atelier)         | a room the character stands in, changed by what the session does                          |
+| [Codebase city](/docs/proposals/infra/agent-console/codebase-city)         | the repository as a city, the character walking to the file in hand                       |
+| [Collector harbour](/docs/proposals/infra/agent-console/collector-harbour) | the review collector's branches as a river, its commits as boats                          |
+| [Element ambience](/docs/proposals/infra/agent-console/element-ambience)   | a backdrop in the character's element, moved by the spoken line's voice                   |
 
 ## How it works
 
