@@ -19,6 +19,8 @@ export interface Driver {
   resolvePermission: (sessionId: string, requestId: string, behavior: PermissionBehavior, message: string) => void;
   resumeAt: (sessionId: string, messageUuid: string) => Promise<string>;
   resumeSession: (sessionId: string) => Promise<string>;
+  // Puts the files back as they were when the prompt under the message uuid was sent
+  rewindFiles: (sessionId: string, messageUuid: string) => Promise<void>;
   runSlashCommand: (sessionId: string, name: string, commandArguments: string) => void;
   setModel: (sessionId: string, model: string) => Promise<void>;
   setPermissionMode: (sessionId: string, permissionMode: PermissionMode) => Promise<void>;

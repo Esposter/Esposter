@@ -1,9 +1,11 @@
 import type { AgentEvent } from "#src/models/event/AgentEvent";
 import type { EventLog } from "#src/models/server/EventLog";
 
+import { EphemeralAgentEventTypes } from "#src/models/event/EphemeralAgentEventTypes";
 import { getOrCreate } from "@esposter/shared";
 // Every open session's events since it was opened, replayed to a page that connects mid-session. An event already
-// Logged under its id is dropped here, so the page never sees one twice however many paths reported it.
+// Logged under its id is dropped here, so the page never sees one twice however many paths reported it. An
+// Ephemeral event is passed on to the pages connected now and kept from the log.
 export const createEventLog = (): EventLog => {
   const sessionEventMap = new Map<string, { eventIds: Set<string>; events: AgentEvent[] }>();
 
@@ -16,6 +18,11 @@ export const createEventLog = (): EventLog => {
 
       const newEvents: AgentEvent[] = [];
       for (const event of events) {
+        if (EphemeralAgentEventTypes.includes(event.type)) {
+          newEvents.push(event);
+          continue;
+        }
+
         if (sessionEvents.eventIds.has(event.id)) continue;
         sessionEvents.eventIds.add(event.id);
         sessionEvents.events.push(event);

@@ -5,7 +5,7 @@ import type { AgentEvent } from "agent-console-server/contracts";
 import { checkIsConversationEvent } from "@/services/agentConsole/checkIsConversationEvent";
 import { toFileEdits } from "@/services/agentConsole/toFileEdits";
 import { exhaustiveGuard, getOrCreate } from "@esposter/shared";
-import { AgentEventType } from "agent-console-server/contracts";
+import { AgentEventType, EphemeralAgentEventTypes, SessionState } from "agent-console-server/contracts";
 
 const getOrCreateTimelineLane = (sessionView: SessionView, id: string): TimelineLane =>
   getOrCreate(sessionView.timelineLaneMap, id, () => ({ id, title: "", toolCalls: [] }));
@@ -15,14 +15,22 @@ export const foldAgentEvents = (sessionView: SessionView, events: AgentEvent[]) 
   const addedEvents: AgentEvent[] = [];
 
   for (const event of events) {
-    if (sessionView.eventIds.has(event.id)) continue;
-    sessionView.eventIds.add(event.id);
+    // An ephemeral event is never replayed, so it is neither checked against the ids folded nor kept among them
+    if (!EphemeralAgentEventTypes.includes(event.type)) {
+      if (sessionView.eventIds.has(event.id)) continue;
+      sessionView.eventIds.add(event.id);
+    }
+
     addedEvents.push(event);
     Object.assign(sessionView.latestEventMap, { [event.type]: event });
     if (checkIsConversationEvent(event)) sessionView.conversationEvents.push(event);
 
     switch (event.type) {
+      // The whole block replaces the pieces it was streamed in
       case AgentEventType.AssistantMessage:
+      case AgentEventType.Thinking:
+        if (!event.parentToolUseId) sessionView.streamDraft = undefined;
+        break;
       case AgentEventType.Capabilities:
       case AgentEventType.CommandOutput:
       case AgentEventType.Compaction:
@@ -32,18 +40,40 @@ export const foldAgentEvents = (sessionView: SessionView, events: AgentEvent[]) 
       case AgentEventType.RateLimit:
       case AgentEventType.SessionInit:
       case AgentEventType.SessionSettings:
-      case AgentEventType.SessionState:
-      case AgentEventType.Thinking:
       case AgentEventType.TodoUpdate:
       case AgentEventType.TurnResult:
+      case AgentEventType.TurnUsage:
       case AgentEventType.Unknown:
       case AgentEventType.UserMessage:
         break;
+      case AgentEventType.FileRewind: {
+        // The files are back as they were when the prompt was sent, so every change from then on is undone
+        const rewoundAt = sessionView.conversationEvents.find(
+          (conversationEvent) =>
+            conversationEvent.type === AgentEventType.UserMessage &&
+            conversationEvent.messageUuid === event.messageUuid,
+        )?.createdAt;
+        if (!rewoundAt) break;
+        for (const toolUseId of sessionView.fileEditMap.keys()) {
+          const toolCall = sessionView.toolCallMap.get(toolUseId);
+          if (toolCall && toolCall.toolUse.createdAt >= rewoundAt) sessionView.fileEditMap.delete(toolUseId);
+        }
+        break;
+      }
       case AgentEventType.PermissionRequest:
         sessionView.pendingPermissionRequestMap.set(event.requestId, event);
         break;
       case AgentEventType.PermissionResolution:
         sessionView.pendingPermissionRequestMap.delete(event.requestId);
+        break;
+      // A turn that stops, finished or interrupted, leaves no block half written
+      case AgentEventType.SessionState:
+        if (event.state === SessionState.Closed || event.state === SessionState.Idle)
+          sessionView.streamDraft = undefined;
+        break;
+      case AgentEventType.StreamDelta:
+        if (sessionView.streamDraft?.blockId === event.blockId) sessionView.streamDraft.text += event.text;
+        else sessionView.streamDraft = { blockId: event.blockId, isThinking: event.isThinking, text: event.text };
         break;
       case AgentEventType.Subagent: {
         if (!event.toolUseId) break;
@@ -63,6 +93,11 @@ export const foldAgentEvents = (sessionView: SessionView, events: AgentEvent[]) 
         if (!toolCall) break;
         toolCall.result = event;
         if (event.isError) sessionView.fileEditMap.delete(event.toolUseId);
+        else if (event.originalText !== undefined) {
+          const filePath = sessionView.fileEditMap.get(event.toolUseId)?.[0]?.filePath;
+          if (filePath && !sessionView.fileOriginMap.has(filePath))
+            sessionView.fileOriginMap.set(filePath, event.originalText);
+        }
         break;
       }
       case AgentEventType.ToolUse: {

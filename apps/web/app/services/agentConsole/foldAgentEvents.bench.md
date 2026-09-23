@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-23T02:57:33.987Z
-- Commit: 3ef34cf83
+- Date: 2026-09-23T05:00:08.730Z
+- Commit: 2a1900920
 - Node: v26.9.0
 - OS: win32 10.0.26200 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
@@ -20,12 +20,12 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task       | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ---------- | ------- | --------- | ------- | -------- | ------- |
-| messages   | 1.00×   | 0.0390    | ±12.55% | 0.0550   | 10      |
-| tool calls | 0.13×   | 0.3062    | ±24.09% | 0.5385   | 10      |
+| messages   | 1.00×   | 0.0637    | ±17.74% | 0.1016   | 10      |
+| tool calls | 0.15×   | 0.4317    | ±19.47% | 0.6528   | 10      |
 
 ## foldAgentEvents > 10000 events
 
 | task       | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ---------- | ------- | --------- | ------- | -------- | ------- |
-| messages   | 1.00×   | 2.7277    | ±3.95%  | 3.0693   | 10      |
-| tool calls | 0.18×   | 15.3316   | ±17.52% | 20.1067  | 10      |
+| messages   | 1.00×   | 4.9391    | ±17.37% | 7.3928   | 10      |
+| tool calls | 0.23×   | 21.8670   | ±11.19% | 26.8507  | 10      |

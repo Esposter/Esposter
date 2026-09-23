@@ -29,6 +29,9 @@ export const handleCommand = async (driver: Driver, command: Command): Promise<s
       return driver.resumeSession(command.sessionId);
     case CommandType.ResumeAt:
       return driver.resumeAt(command.sessionId, command.messageUuid);
+    case CommandType.RewindFiles:
+      await driver.rewindFiles(command.sessionId, command.messageUuid);
+      return "";
     case CommandType.SetModel:
       await driver.setModel(command.sessionId, command.model);
       return "";

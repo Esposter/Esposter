@@ -3,6 +3,7 @@ import type { CapabilitiesEvent } from "#src/models/event/CapabilitiesEvent";
 import type { CommandOutputEvent } from "#src/models/event/CommandOutputEvent";
 import type { CompactionEvent } from "#src/models/event/CompactionEvent";
 import type { ContextUsageEvent } from "#src/models/event/ContextUsageEvent";
+import type { FileRewindEvent } from "#src/models/event/FileRewindEvent";
 import type { HookEvent } from "#src/models/event/HookEvent";
 import type { HostErrorEvent } from "#src/models/event/HostErrorEvent";
 import type { PermissionRequestEvent } from "#src/models/event/PermissionRequestEvent";
@@ -11,6 +12,7 @@ import type { RateLimitEvent } from "#src/models/event/RateLimitEvent";
 import type { SessionInitEvent } from "#src/models/event/SessionInitEvent";
 import type { SessionSettingsEvent } from "#src/models/event/SessionSettingsEvent";
 import type { SessionStateEvent } from "#src/models/event/SessionStateEvent";
+import type { StreamDeltaEvent } from "#src/models/event/StreamDeltaEvent";
 import type { SubagentEvent } from "#src/models/event/SubagentEvent";
 import type { ThinkingEvent } from "#src/models/event/ThinkingEvent";
 import type { TodoUpdateEvent } from "#src/models/event/TodoUpdateEvent";
@@ -18,6 +20,7 @@ import type { ToolProgressEvent } from "#src/models/event/ToolProgressEvent";
 import type { ToolResultEvent } from "#src/models/event/ToolResultEvent";
 import type { ToolUseEvent } from "#src/models/event/ToolUseEvent";
 import type { TurnResultEvent } from "#src/models/event/TurnResultEvent";
+import type { TurnUsageEvent } from "#src/models/event/TurnUsageEvent";
 import type { UnknownEvent } from "#src/models/event/UnknownEvent";
 import type { UserMessageEvent } from "#src/models/event/UserMessageEvent";
 
@@ -26,6 +29,7 @@ import { capabilitiesEventSchema } from "#src/models/event/CapabilitiesEvent";
 import { commandOutputEventSchema } from "#src/models/event/CommandOutputEvent";
 import { compactionEventSchema } from "#src/models/event/CompactionEvent";
 import { contextUsageEventSchema } from "#src/models/event/ContextUsageEvent";
+import { fileRewindEventSchema } from "#src/models/event/FileRewindEvent";
 import { hookEventSchema } from "#src/models/event/HookEvent";
 import { hostErrorEventSchema } from "#src/models/event/HostErrorEvent";
 import { permissionRequestEventSchema } from "#src/models/event/PermissionRequestEvent";
@@ -34,6 +38,7 @@ import { rateLimitEventSchema } from "#src/models/event/RateLimitEvent";
 import { sessionInitEventSchema } from "#src/models/event/SessionInitEvent";
 import { sessionSettingsEventSchema } from "#src/models/event/SessionSettingsEvent";
 import { sessionStateEventSchema } from "#src/models/event/SessionStateEvent";
+import { streamDeltaEventSchema } from "#src/models/event/StreamDeltaEvent";
 import { subagentEventSchema } from "#src/models/event/SubagentEvent";
 import { thinkingEventSchema } from "#src/models/event/ThinkingEvent";
 import { todoUpdateEventSchema } from "#src/models/event/TodoUpdateEvent";
@@ -41,6 +46,7 @@ import { toolProgressEventSchema } from "#src/models/event/ToolProgressEvent";
 import { toolResultEventSchema } from "#src/models/event/ToolResultEvent";
 import { toolUseEventSchema } from "#src/models/event/ToolUseEvent";
 import { turnResultEventSchema } from "#src/models/event/TurnResultEvent";
+import { turnUsageEventSchema } from "#src/models/event/TurnUsageEvent";
 import { unknownEventSchema } from "#src/models/event/UnknownEvent";
 import { userMessageEventSchema } from "#src/models/event/UserMessageEvent";
 import { z } from "zod";
@@ -51,6 +57,7 @@ export type AgentEvent =
   | CommandOutputEvent
   | CompactionEvent
   | ContextUsageEvent
+  | FileRewindEvent
   | HookEvent
   | HostErrorEvent
   | PermissionRequestEvent
@@ -59,6 +66,7 @@ export type AgentEvent =
   | SessionInitEvent
   | SessionSettingsEvent
   | SessionStateEvent
+  | StreamDeltaEvent
   | SubagentEvent
   | ThinkingEvent
   | TodoUpdateEvent
@@ -66,6 +74,7 @@ export type AgentEvent =
   | ToolResultEvent
   | ToolUseEvent
   | TurnResultEvent
+  | TurnUsageEvent
   | UnknownEvent
   | UserMessageEvent;
 
@@ -76,6 +85,7 @@ export const agentEventSchema: z.ZodDiscriminatedUnion<
     typeof commandOutputEventSchema,
     typeof compactionEventSchema,
     typeof contextUsageEventSchema,
+    typeof fileRewindEventSchema,
     typeof hookEventSchema,
     typeof hostErrorEventSchema,
     typeof permissionRequestEventSchema,
@@ -84,6 +94,7 @@ export const agentEventSchema: z.ZodDiscriminatedUnion<
     typeof sessionInitEventSchema,
     typeof sessionSettingsEventSchema,
     typeof sessionStateEventSchema,
+    typeof streamDeltaEventSchema,
     typeof subagentEventSchema,
     typeof thinkingEventSchema,
     typeof todoUpdateEventSchema,
@@ -91,6 +102,7 @@ export const agentEventSchema: z.ZodDiscriminatedUnion<
     typeof toolResultEventSchema,
     typeof toolUseEventSchema,
     typeof turnResultEventSchema,
+    typeof turnUsageEventSchema,
     typeof unknownEventSchema,
     typeof userMessageEventSchema,
   ],
@@ -101,6 +113,7 @@ export const agentEventSchema: z.ZodDiscriminatedUnion<
   commandOutputEventSchema,
   compactionEventSchema,
   contextUsageEventSchema,
+  fileRewindEventSchema,
   hookEventSchema,
   hostErrorEventSchema,
   permissionRequestEventSchema,
@@ -109,6 +122,7 @@ export const agentEventSchema: z.ZodDiscriminatedUnion<
   sessionInitEventSchema,
   sessionSettingsEventSchema,
   sessionStateEventSchema,
+  streamDeltaEventSchema,
   subagentEventSchema,
   thinkingEventSchema,
   todoUpdateEventSchema,
@@ -116,6 +130,7 @@ export const agentEventSchema: z.ZodDiscriminatedUnion<
   toolResultEventSchema,
   toolUseEventSchema,
   turnResultEventSchema,
+  turnUsageEventSchema,
   unknownEventSchema,
   userMessageEventSchema,
 ]) satisfies z.ZodType<AgentEvent>;

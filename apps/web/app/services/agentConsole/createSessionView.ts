@@ -7,6 +7,7 @@ export const createSessionView = (): SessionView => ({
   // Only ever asked whether it holds an id, so it is kept out of reactivity rather than proxied id by id
   eventIds: markRaw(new Set()),
   fileEditMap: new Map(),
+  fileOriginMap: new Map(),
   latestEventMap: {},
   pendingPermissionRequestMap: new Map(),
   // The main agent's lane is first under an empty id, and each subagent's joins in the order it started

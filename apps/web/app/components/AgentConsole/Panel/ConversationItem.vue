@@ -3,21 +3,33 @@ import type { ConversationEvent } from "@/models/agentConsole/ConversationEvent"
 
 import { TOKEN_COUNT_FORMAT } from "@/services/agentConsole/constants";
 import { getDurationSeconds } from "@/services/agentConsole/getDurationSeconds";
+import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
-import { AgentEventType } from "agent-console-server/contracts";
+import { AgentEventType, CommandType } from "agent-console-server/contracts";
 
 interface Props {
   event: ConversationEvent;
 }
 
 const { event } = defineProps<Props>();
+const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+const { sendCommand } = agentConsoleConnectionStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
+const { currentSessionId, toolCallMap } = storeToRefs(agentConsoleSessionStore);
 </script>
 
 <template>
   <div v-if="event.type === AgentEventType.UserMessage" flex gap-2 justify-end>
-    <AgentConsolePanelMessageActions :message-uuid="event.messageUuid" />
+    <AgentConsolePanelMessageActions :message-uuid="event.messageUuid">
+      <!-- The files are checkpointed before each prompt's edits, so only a prompt is a point they rewind to -->
+      <AgentConsolePanelButton
+        @click="
+          sendCommand({ messageUuid: event.messageUuid, sessionId: currentSessionId, type: CommandType.RewindFiles })
+        "
+      >
+        Rewind files
+      </AgentConsolePanelButton>
+    </AgentConsolePanelMessageActions>
     <div class="user-message" px-3 py-1 ws-pre-wrap max-w="[80%]">
       {{ event.text }}
       <span v-if="event.attachmentCount > 0" class="muted">[{{ event.attachmentCount }} attached]</span>
@@ -51,6 +63,9 @@ const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
   <p v-else-if="event.type === AgentEventType.Compaction" class="muted" text-center>
     — Context compacted · {{ TOKEN_COUNT_FORMAT.format(event.preTokens) }} →
     {{ TOKEN_COUNT_FORMAT.format(event.postTokens) }} tokens —
+  </p>
+  <p v-else-if="event.type === AgentEventType.FileRewind" class="muted" text-center>
+    — Files rewound · {{ event.filePaths.length }} files · +{{ event.insertions }} −{{ event.deletions }} —
   </p>
   <p v-else-if="event.type === AgentEventType.TurnResult" class="muted" text-center>
     — {{ event.isError ? event.subtype : "Turn" }} · {{ getDurationSeconds(event.durationMs) }}s ·

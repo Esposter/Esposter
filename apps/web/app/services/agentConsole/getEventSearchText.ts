@@ -9,6 +9,8 @@ export const getEventSearchText = (event: AgentEvent): string => {
       return event.text;
     case AgentEventType.CommandOutput:
       return event.content;
+    case AgentEventType.FileRewind:
+      return event.filePaths.join(" ");
     case AgentEventType.Hook:
       return `${event.hookEvent} ${event.output}`;
     case AgentEventType.HostError:

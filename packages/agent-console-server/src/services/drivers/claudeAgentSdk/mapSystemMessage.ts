@@ -1,5 +1,10 @@
 import type { AgentEvent } from "#src/models/event/AgentEvent";
-import type { SDKMessage, SDKStatusMessage, SDKSystemMessage } from "@anthropic-ai/claude-agent-sdk";
+import type {
+  SDKMessage,
+  SDKStatusMessage,
+  SDKSystemMessage,
+  SDKThinkingTokensMessage,
+} from "@anthropic-ai/claude-agent-sdk";
 
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { CompactionTrigger } from "#src/models/event/CompactionTrigger";
@@ -13,11 +18,14 @@ const SessionStateMap = {
   requires_action: SessionState.RequiresAction,
   running: SessionState.Running,
 } as const satisfies Record<Extract<SDKMessage, { subtype: "session_state_changed" }>["state"], SessionState>;
-// Every system message but the two carrying the session's settings, which the mapper reads itself because it
-// Keeps them. A subtype this does not name is kept as a raw row: the SDK adds them between releases.
+// Every system message but the three carrying what the mapper keeps, which it reads itself. A subtype this does not name is kept as a raw row: the SDK adds them between releases.
 export const mapSystemMessage = (
-  // The init and status messages carry the session's settings, which the mapper keeps, so they never reach here
-  message: Exclude<Extract<SDKMessage, { type: "system" }>, SDKStatusMessage | SDKSystemMessage>,
+  // The init and status messages carry the session's settings and the thinking tokens its running count, which the
+  // Mapper keeps, so they never reach here
+  message: Exclude<
+    Extract<SDKMessage, { type: "system" }>,
+    SDKStatusMessage | SDKSystemMessage | SDKThinkingTokensMessage
+  >,
   createdAt: Date,
 ): AgentEvent[] => {
   switch (message.subtype) {

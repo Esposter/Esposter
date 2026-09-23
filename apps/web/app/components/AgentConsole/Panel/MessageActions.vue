@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { messageUuid } = defineProps<Props>();
+defineSlots<{ default?: () => VNode }>();
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { sendCommand } = agentConsoleConnectionStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
@@ -24,5 +25,6 @@ const { currentSessionId } = storeToRefs(agentConsoleSessionStore);
     >
       Rewind
     </AgentConsolePanelButton>
+    <slot />
   </div>
 </template>

@@ -59,6 +59,7 @@ describe(createAgentConsoleServer, () => {
           resolvePermission: vi.fn<Driver["resolvePermission"]>(),
           resumeAt: vi.fn<Driver["resumeAt"]>(),
           resumeSession: vi.fn<Driver["resumeSession"]>(),
+          rewindFiles: vi.fn<Driver["rewindFiles"]>(),
           runSlashCommand: vi.fn<Driver["runSlashCommand"]>(),
           setModel: vi.fn<Driver["setModel"]>(),
           setPermissionMode: vi.fn<Driver["setPermissionMode"]>(),
@@ -110,6 +111,24 @@ describe(createAgentConsoleServer, () => {
     expect(sessionOpened).toStrictEqual({ commandId: token, sessionId, type: ServerMessageType.SessionOpened });
     expect(liveEvents).toStrictEqual({ events, sessionId, type: ServerMessageType.Events });
     expect(replayedEvents).toStrictEqual(liveEvents);
+  });
+
+  test("passes an ephemeral event to the pages connected now and keeps it from the log", async () => {
+    expect.hasAssertions();
+
+    const turnUsageEvents: AgentEvent[] = [{ createdAt, id: token, outputTokens: 0, type: AgentEventType.TurnUsage }];
+    const webSocket = connect(token);
+    const pendingSessionOpened = waitForMessage(webSocket, ServerMessageType.SessionOpened);
+    await once(webSocket, "open");
+    webSocket.send(JSON.stringify({ cwd: " ", id: token, type: CommandType.CreateSession }));
+    await pendingSessionOpened;
+    const pendingLiveEvents = waitForMessage(webSocket, ServerMessageType.Events);
+    callbacks.onEvents(sessionId, turnUsageEvents);
+    const liveEvents = await pendingLiveEvents;
+    const replayedEvents = await waitForMessage(connect(token), ServerMessageType.Events);
+
+    expect(liveEvents.events).toStrictEqual(turnUsageEvents);
+    expect(replayedEvents.events).toStrictEqual(events);
   });
 
   test("answers a message that is not a command with why, under no command id", async () => {

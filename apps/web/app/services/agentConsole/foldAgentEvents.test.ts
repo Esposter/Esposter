@@ -1,8 +1,10 @@
+import type { FileRewindEvent, UserMessageEvent } from "agent-console-server/contracts";
+
 import { MAIN_LANE_TITLE } from "@/services/agentConsole/constants";
 import { createSessionView } from "@/services/agentConsole/createSessionView";
 import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
 import { readRecordedEvents } from "@/services/agentConsole/readRecordedEvents.test";
-import { AgentEventType, SubagentStatus } from "agent-console-server/contracts";
+import { AgentEventType, EphemeralAgentEventTypes, SessionState, SubagentStatus } from "agent-console-server/contracts";
 import { describe, expect, test } from "vitest";
 
 describe(foldAgentEvents, () => {
@@ -16,7 +18,8 @@ describe(foldAgentEvents, () => {
     const replayedAddedEvents = foldAgentEvents(sessionView, events);
 
     expect(firstAddedEvents).toStrictEqual(events);
-    expect(replayedAddedEvents).toStrictEqual([]);
+    // The host never replays an ephemeral event, so only a replay of the recording itself folds one twice
+    expect(replayedAddedEvents).toStrictEqual(events.filter(({ type }) => EphemeralAgentEventTypes.includes(type)));
     expect(
       Array.from(sessionView.timelineLaneMap.values(), ({ status, title, toolCalls }) => ({
         status,
@@ -41,6 +44,7 @@ describe(foldAgentEvents, () => {
         .flat()
         .map(({ filePath, newText, oldText }) => ({ filePath, newText, oldText })),
     ).toStrictEqual([{ filePath: "/a", newText: "a", oldText: "" }]);
+    expect([...sessionView.fileOriginMap]).toStrictEqual([["/a", ""]]);
     expect(Array.from(sessionView.pendingPermissionRequestMap.values(), ({ toolName }) => toolName)).toStrictEqual([
       "Write",
     ]);
@@ -55,8 +59,6 @@ describe(foldAgentEvents, () => {
         "ToolUse",
         "ToolUse",
         "ToolUse",
-        "Unknown",
-        "Unknown",
         "Thinking",
         "Hook",
         "Hook",
@@ -69,5 +71,65 @@ describe(foldAgentEvents, () => {
         "TurnResult",
       ]
     `);
+  });
+
+  test("builds the block being written from its pieces until the whole block or the turn's end replaces it", () => {
+    expect.hasAssertions();
+
+    const sessionView = createSessionView();
+    const createdAt = new Date(0);
+    const blockId = " ";
+
+    foldAgentEvents(sessionView, [
+      { blockId, createdAt, id: "a", isThinking: false, text: "a", type: AgentEventType.StreamDelta },
+      { blockId, createdAt, id: "b", isThinking: false, text: "b", type: AgentEventType.StreamDelta },
+    ]);
+
+    expect(sessionView.streamDraft).toStrictEqual({ blockId, isThinking: false, text: "ab" });
+
+    foldAgentEvents(sessionView, [
+      { createdAt, id: "c", messageUuid: "", parentToolUseId: "", text: "ab", type: AgentEventType.AssistantMessage },
+    ]);
+
+    expect(sessionView.streamDraft).toBeUndefined();
+
+    foldAgentEvents(sessionView, [
+      { blockId, createdAt, id: "d", isThinking: true, text: "a", type: AgentEventType.StreamDelta },
+      { createdAt, id: "e", state: SessionState.Idle, type: AgentEventType.SessionState },
+    ]);
+
+    expect(sessionView.streamDraft).toBeUndefined();
+  });
+
+  test("undoes the file changes made from the prompt the files were rewound to on", () => {
+    expect.hasAssertions();
+
+    const messageUuid = " ";
+    const rewindEvent: FileRewindEvent = {
+      createdAt: new Date(0),
+      deletions: 0,
+      filePaths: [],
+      id: crypto.randomUUID(),
+      insertions: 0,
+      messageUuid,
+      type: AgentEventType.FileRewind,
+    };
+    const toUserMessageEvent = (createdAt: Date): UserMessageEvent => ({
+      attachmentCount: 0,
+      createdAt,
+      id: crypto.randomUUID(),
+      messageUuid,
+      parentToolUseId: "",
+      text: "",
+      type: AgentEventType.UserMessage,
+    });
+    const laterSessionView = createSessionView();
+    const earlierSessionView = createSessionView();
+
+    foldAgentEvents(laterSessionView, [...events, toUserMessageEvent(new Date(1)), rewindEvent]);
+    foldAgentEvents(earlierSessionView, [...events, toUserMessageEvent(new Date(0)), rewindEvent]);
+
+    expect(laterSessionView.fileEditMap.size).toBe(1);
+    expect(earlierSessionView.fileEditMap.size).toBe(0);
   });
 });

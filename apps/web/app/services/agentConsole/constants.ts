@@ -14,5 +14,7 @@ export const SPINNER_INTERVAL_MS = Temporal.Duration.from({ milliseconds: 120 })
 export const RESULT_PREVIEW_LINE_COUNT = 3;
 // How often the working line's count of seconds moves on
 export const ELAPSED_TICK_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
+// How many unchanged lines a diff keeps beside a change before folding the rest of the run, as a unified diff does
+export const DIFF_CONTEXT_LINE_COUNT = 3;
 // How many voxel blocks the loading bar is made of
 export const LOADING_BAR_BLOCK_COUNT = 16;

@@ -90,6 +90,12 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     ]);
   };
 
+  const resumeSession = async (sessionId: string) => {
+    if (openSessionMap.has(sessionId)) return sessionId;
+    const cwd = await readSessionCwd(sessionId);
+    return openSessionQuery({ cwd, isFork: false, resumeAt: "", resumeFrom: sessionId, sessionId });
+  };
+
   return {
     close: async () => {
       for (const sessionId of openSessionMap.keys()) closeSession(sessionId);
@@ -141,10 +147,30 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
       if (openSessionMap.has(sessionId)) closeSession(sessionId);
       return openSessionQuery({ cwd, isFork: false, resumeAt: messageUuid, resumeFrom: sessionId, sessionId });
     },
-    resumeSession: async (sessionId) => {
-      if (openSessionMap.has(sessionId)) return sessionId;
-      const cwd = await readSessionCwd(sessionId);
-      return openSessionQuery({ cwd, isFork: false, resumeAt: "", resumeFrom: sessionId, sessionId });
+    resumeSession,
+    // The checkpoints are the session's, kept on disk beside its transcript, so a closed session is resumed to reach
+    // Them. The SDK counts what a rewind changes only on a dry run, so one runs first; a rewind the SDK refuses fails
+    // The command with its reason, and the files stay as they are
+    rewindFiles: async (sessionId, messageUuid) => {
+      await resumeSession(sessionId);
+      const { query } = getOpenSession(sessionId);
+      const { canRewind, deletions, error, filesChanged, insertions } = await query.rewindFiles(messageUuid, {
+        dryRun: true,
+      });
+      if (!canRewind) throw new InvalidOperationError(Operation.Update, sessionId, error ?? "nothing to rewind");
+      const rewindResult = await query.rewindFiles(messageUuid);
+      if (rewindResult.error) throw new InvalidOperationError(Operation.Update, sessionId, rewindResult.error);
+      emit(sessionId, [
+        {
+          createdAt: new Date(),
+          deletions: deletions ?? 0,
+          filePaths: filesChanged ?? [],
+          id: crypto.randomUUID(),
+          insertions: insertions ?? 0,
+          messageUuid,
+          type: AgentEventType.FileRewind,
+        },
+      ]);
     },
     // The SDK runs a slash command written into the prompt, exactly as the terminal's input line does
     runSlashCommand: (sessionId, name, commandArguments) => {
