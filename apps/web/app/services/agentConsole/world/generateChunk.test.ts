@@ -49,9 +49,8 @@ describe(generateChunk, () => {
     ]).flat();
 
     expect(doorway).toStrictEqual(Array.from({ length: 2 * DOOR_HEIGHT }, () => (isDoorOpen ? 0 : woodVoxel)));
-    expect(getWorldVoxel(voxelWorld, 0, DOOR_HEIGHT + 1, DOOR_MIN_Z)).toBe(
-      PaletteColors.indexOf(PaletteColor.Wall) + 1,
-    );
+    // The lintel over the opening
+    expect(getWorldVoxel(voxelWorld, 0, DOOR_HEIGHT + 1, DOOR_MIN_Z)).toBe(woodVoxel);
     // Outside the door: the ground at the room's floor, and over it only the door, where it swings open
     expect(getWorldVoxel(voxelWorld, -1, 0, DOOR_MIN_Z)).toBe(PaletteColors.indexOf(PaletteColor.Grass) + 1);
     expect(getWorldVoxel(voxelWorld, -1, 1, DOOR_MIN_Z)).toBe(0);
