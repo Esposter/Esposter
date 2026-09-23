@@ -13,6 +13,7 @@ export const readRecordedEvents = (): AgentEvent[] => {
     packageDirectory,
     "src/services/drivers/claudeAgentSdk/__snapshots__/recordedSession.events.json",
   );
+  // oxlint-disable-next-line no-restricted-properties -- the event schema validates the fixture and coerces its dates
   return agentEventSchema.array().parse(JSON.parse(readFileSync(eventsPath, "utf8")));
 };
 

@@ -1,0 +1,91 @@
+{
+  "name": "agent-console-server",
+  "version": "3.2.0",
+  "description": "The host behind the Esposter agent console — a loopback WebSocket that runs Claude Code sessions through the Claude Agent SDK and speaks a typed wire to the page.",
+  "keywords": [
+    "agent",
+    "claude",
+    "claude-code",
+    "console",
+    "node",
+    "typescript",
+    "websocket"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/agent-console-server#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bin": {
+    "agent-console-server": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./cli": {
+      "source": "./src/cli.ts",
+      "default": "./dist/cli.js"
+    },
+    "./contracts": {
+      "source": "./src/contracts.ts",
+      "default": "./dist/contracts.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./cli": "./dist/cli.js",
+      "./contracts": "./dist/contracts.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "export:gen": "generate-exports",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "start": "node bin/cli.js",
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "catalog:",
+    "@esposter/shared": "workspace:*",
+    "neverthrow": "catalog:",
+    "ws": "catalog:"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/ws": "catalog:",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "zod": "catalog:"
+  }
+}

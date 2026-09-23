@@ -18,13 +18,12 @@ import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 
-const SCREENSHOT_DIRECTORY = join(import.meta.dirname, "__screenshots__", "agent-console");
 // A state with no baseline yet is written where its baseline goes and passes: committing it is approving it. A
 // State with one is compared pixel by pixel, and a mismatch leaves the capture and the difference beside it
-const compareWithBaseline = (screenshot: Buffer, name: string) => {
-  const baselinePath = join(SCREENSHOT_DIRECTORY, `${name}.png`);
+const compareWithBaseline = (screenshotDirectory: string, screenshot: Buffer, name: string) => {
+  const baselinePath = join(screenshotDirectory, `${name}.png`);
   if (!existsSync(baselinePath)) {
-    mkdirSync(SCREENSHOT_DIRECTORY, { recursive: true });
+    mkdirSync(screenshotDirectory, { recursive: true });
     writeFileSync(baselinePath, screenshot);
     return 0;
   }
@@ -44,8 +43,8 @@ const compareWithBaseline = (screenshot: Buffer, name: string) => {
     },
   );
   if (mismatchedPixelCount > 0) {
-    writeFileSync(join(SCREENSHOT_DIRECTORY, `${name}.actual.png`), screenshot);
-    writeFileSync(join(SCREENSHOT_DIRECTORY, `${name}.difference.png`), PNG.sync.write(difference));
+    writeFileSync(join(screenshotDirectory, `${name}.actual.png`), screenshot);
+    writeFileSync(join(screenshotDirectory, `${name}.difference.png`), PNG.sync.write(difference));
   }
   return mismatchedPixelCount;
 };
@@ -65,6 +64,7 @@ describe("agentConsole", async () => {
     setupTimeout: Temporal.Duration.from({ minutes: 20 }).total("milliseconds"),
   });
 
+  const screenshotDirectory = join(import.meta.dirname, "__screenshots__", "agent-console");
   const token = "a";
   const sessionId = crypto.randomUUID();
   const events = readRecordedEvents();
@@ -82,7 +82,7 @@ describe("agentConsole", async () => {
   let sessions: SessionSummary[] = [];
   let callbacks: DriverCallbacks;
   let server: AgentConsoleServer;
-  const openPage = async (isPaired: boolean): Promise<Page> => {
+  const openPage = (isPaired: boolean): Promise<Page> => {
     const hostUrl = `ws://${DEFAULT_HOSTNAME}:${server.port}/?${TOKEN_QUERY_PARAMETER}=${token}`;
     const path = isPaired
       ? `${RoutePath.AgentConsole}#${PAIRING_HASH_PARAMETER}=${encodeURIComponent(hostUrl)}`
@@ -100,21 +100,20 @@ describe("agentConsole", async () => {
     server = await createAgentConsoleServer({
       createDriver: (driverCallbacks) => {
         callbacks = driverCallbacks;
-        const noop = async () => {};
         return {
-          close: noop,
+          close: () => Promise.resolve(),
           closeSession: () => {},
-          createSession: async () => sessionId,
-          forkSession: async () => sessionId,
-          interrupt: noop,
-          listSessions: async () => sessions,
+          createSession: () => Promise.resolve(sessionId),
+          forkSession: () => Promise.resolve(sessionId),
+          interrupt: () => Promise.resolve(),
+          listSessions: () => Promise.resolve(sessions),
           prompt: () => {},
           resolvePermission: () => {},
-          resumeAt: async () => sessionId,
-          resumeSession: async () => sessionId,
+          resumeAt: () => Promise.resolve(sessionId),
+          resumeSession: () => Promise.resolve(sessionId),
           runSlashCommand: () => {},
-          setModel: noop,
-          setPermissionMode: noop,
+          setModel: () => Promise.resolve(),
+          setPermissionMode: () => Promise.resolve(),
         };
       },
       hostname: DEFAULT_HOSTNAME,
@@ -133,7 +132,7 @@ describe("agentConsole", async () => {
     const page = await openPage(false);
     await page.getByText("Pair with a host").waitFor();
 
-    expect(compareWithBaseline(await page.screenshot(), "unpaired")).toBe(0);
+    expect(compareWithBaseline(screenshotDirectory, await page.screenshot(), "unpaired")).toBe(0);
   });
 
   test("connected with no session", async () => {
@@ -142,7 +141,7 @@ describe("agentConsole", async () => {
     const page = await openPage(true);
     await page.getByText("No session open").waitFor();
 
-    expect(compareWithBaseline(await page.screenshot(), "connected-no-session")).toBe(0);
+    expect(compareWithBaseline(screenshotDirectory, await page.screenshot(), "connected-no-session")).toBe(0);
   });
 
   test("mid-turn with the tool timeline", async () => {
@@ -155,7 +154,7 @@ describe("agentConsole", async () => {
     callbacks.onSessionsChange();
     const page = await openSession();
 
-    expect(compareWithBaseline(await page.screenshot(), "mid-turn")).toBe(0);
+    expect(compareWithBaseline(screenshotDirectory, await page.screenshot(), "mid-turn")).toBe(0);
   });
 
   test("a permission card", async () => {
@@ -166,7 +165,7 @@ describe("agentConsole", async () => {
     const page = await openSession();
     await page.getByText("wants permission").waitFor();
 
-    expect(compareWithBaseline(await page.screenshot(), "permission")).toBe(0);
+    expect(compareWithBaseline(screenshotDirectory, await page.screenshot(), "permission")).toBe(0);
   });
 
   test("a diff", async () => {
@@ -176,6 +175,6 @@ describe("agentConsole", async () => {
     await page.getByRole("tab", { name: "Changes" }).click();
     await page.getByText("/a", { exact: true }).last().click();
 
-    expect(compareWithBaseline(await page.screenshot(), "diff")).toBe(0);
+    expect(compareWithBaseline(screenshotDirectory, await page.screenshot(), "diff")).toBe(0);
   });
 });

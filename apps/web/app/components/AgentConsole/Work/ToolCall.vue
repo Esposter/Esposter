@@ -42,7 +42,7 @@ const summary = computed(() => {
     <v-expansion-panel-text>
       <pre of-x-auto text-body-small>{{ JSON.stringify(toolCall.toolUse.input, null, 2) }}</pre>
       <v-divider v-if="toolCall.result" my-2 />
-      <pre v-if="toolCall.result" white-space-pre-wrap of-x-auto text-body-small>{{ toolCall.result.content }}</pre>
+      <pre v-if="toolCall.result" ws-pre-wrap of-x-auto text-body-small>{{ toolCall.result.content }}</pre>
     </v-expansion-panel-text>
   </v-expansion-panel>
 </template>

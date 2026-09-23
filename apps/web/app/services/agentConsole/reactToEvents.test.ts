@@ -5,15 +5,16 @@ import { reactToEvents } from "@/services/agentConsole/reactToEvents";
 import { readRecordedEvents } from "@/services/agentConsole/readRecordedEvents.test";
 import { describe, expect, test, vi } from "vitest";
 
+const createTheme = () =>
+  ({
+    reactions: {
+      [AgentConsoleReaction.AttentionNeeded]: vi.fn<(title: string, body: string) => void>(),
+      [AgentConsoleReaction.TurnEnded]: vi.fn<(title: string, body: string) => void>(),
+    },
+  }) satisfies AgentConsoleTheme;
+
 describe(reactToEvents, () => {
   const events = readRecordedEvents();
-  const createTheme = () =>
-    ({
-      reactions: {
-        [AgentConsoleReaction.AttentionNeeded]: vi.fn<(title: string, body: string) => void>(),
-        [AgentConsoleReaction.TurnEnded]: vi.fn<(title: string, body: string) => void>(),
-      },
-    }) satisfies AgentConsoleTheme;
 
   test("rings for every turn end and permission prompt after the page connected", () => {
     expect.hasAssertions();

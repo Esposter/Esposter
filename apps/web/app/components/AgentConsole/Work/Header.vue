@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 
-import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
-import { formatTokenCount } from "@/services/agentConsole/formatTokenCount";
+import { CONTEXT_WARNING_RATIO, TOKEN_COUNT_FORMAT } from "@/services/agentConsole/constants";
 import { PermissionModeTitleMap } from "@/services/agentConsole/PermissionModeTitleMap";
 import { SessionStateColorMap } from "@/services/agentConsole/SessionStateColorMap";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
@@ -59,15 +58,14 @@ onKeyStroke("Escape", () => {
               :color="isContextNearCompaction ? 'warning' : 'primary'"
               :model-value="contextUsage.percentage"
               size="2.25rem"
-              width="4"
             >
               <span text-label-small>{{ Math.round(contextUsage.percentage) }}</span>
             </v-progress-circular>
           </template>
-          {{ formatTokenCount(contextUsage.totalTokens) }} of {{ formatTokenCount(contextUsage.maxTokens) }} tokens of
-          context
+          {{ TOKEN_COUNT_FORMAT.format(contextUsage.totalTokens) }} of
+          {{ TOKEN_COUNT_FORMAT.format(contextUsage.maxTokens) }} tokens of context
           <template v-if="contextUsage.autoCompactThreshold">
-            — compacts automatically at {{ formatTokenCount(contextUsage.autoCompactThreshold) }}
+            — compacts automatically at {{ TOKEN_COUNT_FORMAT.format(contextUsage.autoCompactThreshold) }}
           </template>
         </v-tooltip>
         <v-chip v-if="turnResult" prepend-icon="mdi-currency-usd" size="small">

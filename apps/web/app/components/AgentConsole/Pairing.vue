@@ -21,7 +21,7 @@ const { data: isHostRunning } = useFetch(`http://${DEFAULT_HOSTNAME}:${DEFAULT_P
     title="Pair with a host"
   >
     <code>pnpm dlx agent-console-server</code>
-    <div v-if="isHostRunning" text-success>A host is running on this machine — paste the URL it printed.</div>
+    <div v-if="isHostRunning" text-primary>A host is running on this machine — paste the URL it printed.</div>
     <v-form flex gap-2 max-w-160 w-full @submit.prevent="pair(editedHostUrl)">
       <v-text-field
         v-model="editedHostUrl"

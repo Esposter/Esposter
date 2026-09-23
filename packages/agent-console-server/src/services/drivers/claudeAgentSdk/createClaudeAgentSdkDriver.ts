@@ -6,13 +6,14 @@ import type { AgentEvent } from "#src/models/event/AgentEvent";
 
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { SessionState } from "#src/models/session/SessionState";
-import { SESSION_LIST_LIMIT } from "#src/services/drivers/claudeAgentSdk/constants";
 import { closeOpenSession } from "#src/services/drivers/claudeAgentSdk/closeOpenSession";
+import { SESSION_LIST_LIMIT } from "#src/services/drivers/claudeAgentSdk/constants";
 import { createSessionOpener } from "#src/services/drivers/claudeAgentSdk/createSessionOpener";
 import { getEventId } from "#src/services/drivers/claudeAgentSdk/getEventId";
 import { getSessionTitle } from "#src/services/drivers/claudeAgentSdk/getSessionTitle";
+import { readSessionCwd } from "#src/services/drivers/claudeAgentSdk/readSessionCwd";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
-import { getSessionInfo, listSessions } from "@anthropic-ai/claude-agent-sdk";
+import { listSessions } from "@anthropic-ai/claude-agent-sdk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 // Claude Code sessions through the Claude Agent SDK. Sessions are the terminal's own — written where the terminal
 // Writes them, with the terminal's settings — so `claude --resume <id>` picks up a session started here and back.
@@ -44,14 +45,7 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     return openSession;
   };
 
-  const readSessionCwd = async (sessionId: string) => {
-    const sessionInfo = await getSessionInfo(sessionId);
-    if (!sessionInfo?.cwd)
-      throw new InvalidOperationError(Operation.Read, sessionId, "no session with this id on disk");
-    return sessionInfo.cwd;
-  };
-
-  const openSession = createSessionOpener({ emit, onSessionOpen, onSessionsChange, openSessionMap, taskRegistry });
+  const openSessionQuery = createSessionOpener({ emit, onSessionOpen, onSessionsChange, openSessionMap, taskRegistry });
 
   const closeSession = (sessionId: string) => {
     const closingSession = getOpenSession(sessionId);
@@ -108,10 +102,10 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     },
     closeSession,
     createSession: (cwd) =>
-      openSession({ cwd, isFork: false, resumeAt: "", resumeFrom: "", sessionId: crypto.randomUUID() }),
+      openSessionQuery({ cwd, isFork: false, resumeAt: "", resumeFrom: "", sessionId: crypto.randomUUID() }),
     forkSession: async (sessionId, messageUuid) => {
       const cwd = await readSessionCwd(sessionId);
-      return openSession({
+      return openSessionQuery({
         cwd,
         isFork: true,
         resumeAt: messageUuid,
@@ -150,12 +144,12 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     resumeAt: async (sessionId, messageUuid) => {
       const cwd = await readSessionCwd(sessionId);
       if (openSessionMap.has(sessionId)) closeSession(sessionId);
-      return openSession({ cwd, isFork: false, resumeAt: messageUuid, resumeFrom: sessionId, sessionId });
+      return openSessionQuery({ cwd, isFork: false, resumeAt: messageUuid, resumeFrom: sessionId, sessionId });
     },
     resumeSession: async (sessionId) => {
       if (openSessionMap.has(sessionId)) return sessionId;
       const cwd = await readSessionCwd(sessionId);
-      return openSession({ cwd, isFork: false, resumeAt: "", resumeFrom: sessionId, sessionId });
+      return openSessionQuery({ cwd, isFork: false, resumeAt: "", resumeFrom: sessionId, sessionId });
     },
     // The SDK runs a slash command written into the prompt, exactly as the terminal's input line does
     runSlashCommand: (sessionId, name, commandArguments) => {

@@ -48,7 +48,7 @@ const answer = (behavior: PermissionBehavior) => {
           <AgentConsoleWorkDiff :file-edit />
         </div>
       </template>
-      <pre v-else white-space-pre-wrap of-x-auto>{{ JSON.stringify(permissionRequest.input, null, 2) }}</pre>
+      <pre v-else ws-pre-wrap of-x-auto>{{ JSON.stringify(permissionRequest.input, null, 2) }}</pre>
       <v-text-field v-model="denyMessage" density="compact" label="Tell Claude what to do instead (on deny)" />
     </v-card-text>
     <v-card-actions>

@@ -3,6 +3,7 @@ import { SITE_NAME } from "#src/services/app/constants";
 export const RoutePath: {
   readonly About: "/about";
   readonly Achievements: "/achievements";
+  readonly AgentConsole: "/agent-console";
   readonly Anime: "/anime";
   readonly Calls: (id: string) => string;
   readonly CallsIndex: "/calls";
@@ -40,6 +41,7 @@ export const RoutePath: {
 } = {
   About: "/about",
   Achievements: "/achievements",
+  AgentConsole: "/agent-console",
   Anime: "/anime",
   Calls: (id: string) => `/calls/${id}`,
   CallsIndex: "/calls",

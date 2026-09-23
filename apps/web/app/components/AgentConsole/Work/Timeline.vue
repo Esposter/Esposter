@@ -14,7 +14,7 @@ const lanes = computed(() => getTimelineLanes(toolCalls.value, events.value));
         <span text-title-small>{{ lane.title }}</span>
         <v-chip v-if="lane.status" size="x-small">{{ lane.status }}</v-chip>
       </div>
-      <div v-if="lane.toolCalls.length === 0" px-2 op-medium-emphasis text-body-small>No tool calls yet</div>
+      <div v-if="lane.toolCalls.length === 0" px-2 text-hint>No tool calls yet</div>
       <v-expansion-panels v-else variant="accordion" multiple>
         <AgentConsoleWorkToolCall v-for="toolCall of lane.toolCalls" :key="toolCall.toolUse.id" :tool-call />
       </v-expansion-panels>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { getConversationEvents } from "@/services/agentConsole/getConversationEvents";
 
-import { formatTokenCount } from "@/services/agentConsole/formatTokenCount";
+import { TOKEN_COUNT_FORMAT } from "@/services/agentConsole/constants";
 import { getDurationSeconds } from "@/services/agentConsole/getDurationSeconds";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { AgentEventType } from "agent-console-server/contracts";
@@ -17,7 +17,7 @@ const { currentSessionId } = storeToRefs(agentConsoleSessionStore);
 
 <template>
   <div v-if="event.type === AgentEventType.UserMessage" flex gap-1 justify-end>
-    <v-sheet rounded="lg" color="surface-light" max-w="[80%]" white-space-pre-wrap px-3 py-2>
+    <v-sheet rounded="lg" color="surface-light" max-w="[80%]" px-3 py-2 ws-pre-wrap>
       {{ event.text }}
       <v-chip v-if="event.imageCount > 0" size="x-small" prepend-icon="mdi-image">{{ event.imageCount }}</v-chip>
     </v-sheet>
@@ -36,16 +36,17 @@ const { currentSessionId } = storeToRefs(agentConsoleSessionStore);
   <v-expansion-panels v-else-if="event.type === AgentEventType.Hook" variant="accordion">
     <v-expansion-panel :title="`Hook · ${event.hookEvent} · ${event.phase}`">
       <template #text>
-        <pre white-space-pre-wrap>{{ event.output || event.stdout || event.stderr || "No output" }}</pre>
+        <pre ws-pre-wrap>{{ event.output || event.stdout || event.stderr || "No output" }}</pre>
       </template>
     </v-expansion-panel>
   </v-expansion-panels>
-  <v-sheet v-else-if="event.type === AgentEventType.CommandOutput" white-space-pre-wrap font-mono px-3 py-2 rounded>
+  <v-sheet v-else-if="event.type === AgentEventType.CommandOutput" font-mono px-3 py-2 rounded ws-pre-wrap>
     {{ event.content }}
   </v-sheet>
   <v-alert v-else-if="event.type === AgentEventType.HostError" type="error" density="compact" :text="event.message" />
   <v-divider v-else-if="event.type === AgentEventType.Compaction">
-    Context compacted · {{ formatTokenCount(event.preTokens) }} → {{ formatTokenCount(event.postTokens) }} tokens
+    Context compacted · {{ TOKEN_COUNT_FORMAT.format(event.preTokens) }} →
+    {{ TOKEN_COUNT_FORMAT.format(event.postTokens) }} tokens
   </v-divider>
   <v-divider v-else-if="event.type === AgentEventType.TurnResult" op-medium-emphasis text-label-small>
     {{ event.isError ? event.subtype : "Turn" }} · {{ getDurationSeconds(event.durationMs) }}s ·
