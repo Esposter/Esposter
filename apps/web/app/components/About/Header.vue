@@ -1,23 +1,17 @@
 <script setup lang="ts">
 import { VUEJS_LOGO_UWU_PATH } from "#shared/services/app/constants";
-import { ACCENT_CLASSES } from "@/services/about/constants";
-
-const { smAndDown } = useVDisplay();
-const isDark = useIsDark();
 </script>
 
 <template>
-  <div text-center flex flex-col items-center>
-    <div :class="isDark ? ACCENT_CLASSES : []" font="[Inter]" fw-black lh-tight :text="smAndDown ? '5xl' : '7xl'">
-      The
-      <span :class="!isDark ? ACCENT_CLASSES : []">Progressive</span>
+  <header text-center flex flex-col gap-4 items-center>
+    <VisualGem />
+    <!-- The one word the line is about takes the accent a heading is drawn in, and the rest reads as body text -->
+    <h1 ui-display>
+      <span text-text>The</span> Progressive
       <br />
-      JavaScript Application
-    </div>
-    <br />
-    <div op-medium-emphasis text-headline-small>
-      An approachable, performant and versatile javascript application powered by
-    </div>
-    <NuxtImg id="uwu" max-w-180 w-full :src="VUEJS_LOGO_UWU_PATH" alt="uwu" />
-  </div>
+      <span text-text>JavaScript Application</span>
+    </h1>
+    <p text-muted max-w-prose>An approachable, performant and versatile javascript application powered by</p>
+    <NuxtImg max-w-180 w-full :src="VUEJS_LOGO_UWU_PATH" alt="uwu" />
+  </header>
 </template>

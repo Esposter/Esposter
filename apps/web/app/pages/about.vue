@@ -1,32 +1,15 @@
 <template>
   <NuxtLayout>
-    <v-container>
-      <v-row>
-        <v-col flex justify-center>
-          <VisualGem />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <AboutHeader />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <AboutContent />
-        </v-col>
-      </v-row>
+    <article px-4 py-8 flex flex-col gap-16 items-center ui-body>
+      <AboutHeader />
+      <AboutContent />
       <AboutSupporters />
-      <v-row pt-12>
-        <v-col text-center flex justify-center text-headline-small font="[Montserrat]" cols="12">
-          Here's a globe for you to play around with if you are bored 🙂
-        </v-col>
-        <v-col flex justify-center>
-          <ClientOnly>
-            <VisualGlobe />
-          </ClientOnly>
-        </v-col>
-      </v-row>
-    </v-container>
+      <section flex flex-col gap-4 items-center>
+        <h2 text-center ui-heading>Here's a globe for you to play around with if you are bored 🙂</h2>
+        <ClientOnly>
+          <VisualGlobe />
+        </ClientOnly>
+      </section>
+    </article>
   </NuxtLayout>
 </template>
