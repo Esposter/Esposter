@@ -2,7 +2,8 @@
 import type { PageLink } from "@/models/app/PageLink";
 import type { Item } from "@/models/shared/Item";
 
-import { getPageIcon } from "@/services/app/getPageIcon";
+import { getPageLabel } from "@/services/app/getPageLabel";
+import { getPageLinkItem } from "@/services/app/getPageLinkItem";
 import { authClient } from "@/services/auth/authClient";
 import { useBookmarkStore } from "@/store/bookmark";
 import { mergeProps } from "vue";
@@ -12,8 +13,8 @@ interface Props {
 }
 
 const { page } = defineProps<Props>();
-const label = computed(() => page.title || page.path);
-const icon = computed(() => getPageIcon(page.path));
+const label = computed(() => getPageLabel(page.path, page.title));
+const icon = computed(() => getPageLinkItem(page.path)?.icon);
 const { data: session } = await authClient.useSession(useFetch);
 const bookmarkStore = useBookmarkStore();
 const { bookmarkPaths } = storeToRefs(bookmarkStore);

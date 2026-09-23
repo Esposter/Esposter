@@ -3,6 +3,7 @@ import type { UiCommand } from "@/models/ui/UiCommand";
 import type { ThemeMode } from "@/models/vuetify/ThemeMode";
 
 import { SecondaryPageLinkItems } from "@/services/app/SecondaryPageLinkItems";
+import { UserSettingsPageLinkItem } from "@/services/app/UserSettingsPageLinkItem";
 import { authClient } from "@/services/auth/authClient";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
 import { ThemeModeIconMap } from "@/services/vuetify/ThemeModeIconMap";
@@ -29,10 +30,10 @@ export const useAccountCommands = async () => {
       session.value
         ? {
             group: ACCOUNT_GROUP,
-            icon: "i-mdi:cog",
-            id: RoutePath.UserSettings,
-            title: "Settings",
-            to: RoutePath.UserSettings,
+            icon: UserSettingsPageLinkItem.icon,
+            id: UserSettingsPageLinkItem.href,
+            title: UserSettingsPageLinkItem.title,
+            to: UserSettingsPageLinkItem.href,
           }
         : { group: ACCOUNT_GROUP, icon: "i-mdi:login", id: RoutePath.Login, title: "Sign in", to: RoutePath.Login },
       {

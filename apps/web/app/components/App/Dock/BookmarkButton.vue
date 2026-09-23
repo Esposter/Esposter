@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RECENT_PAGE_EXCLUDED_PATHS } from "@/services/app/constants";
+import { getPageLabel } from "@/services/app/getPageLabel";
 import { authClient } from "@/services/auth/authClient";
 import { useBookmarkStore } from "@/store/bookmark";
 import { useRecentPageStore } from "@/store/recentPage";
@@ -30,7 +31,7 @@ const isBookmarked = computed(() => bookmarkPaths.value.has(currentRoute.value.p
     @click="
       toggleBookmark(
         currentRoute.path,
-        rankedRecentPages.find(({ path }) => path === currentRoute.path)?.title || currentRoute.path,
+        getPageLabel(currentRoute.path, rankedRecentPages.find(({ path }) => path === currentRoute.path)?.title ?? ''),
       )
     "
   >

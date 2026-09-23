@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
+import { UserSettingsPageLinkItem } from "@/services/app/UserSettingsPageLinkItem";
 
 definePageMeta({ middleware: "auth" });
 </script>
 
 <template>
   <NuxtLayout>
+    <Head>
+      <Title>{{ UserSettingsPageLinkItem.title }}</Title>
+    </Head>
     <div px-4 py-8 flex flex-col gap-8 ui-body>
       <UserIntroductionCard />
       <div flex flex-col gap-8 md:flex-row md:items-start>

@@ -2,7 +2,8 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
 
 import { COMMAND_PALETTE_SHORTCUT } from "@/services/app/constants";
-import { getPageIcon } from "@/services/app/getPageIcon";
+import { getPageLabel } from "@/services/app/getPageLabel";
+import { getPageLinkItem } from "@/services/app/getPageLinkItem";
 import { ProductGroups } from "@/services/app/ProductGroups";
 import { runCommand } from "@/services/ui/runCommand";
 import { useBookmarkStore } from "@/store/bookmark";
@@ -63,11 +64,11 @@ useCommands(() => [
   // The reader's places, as the dock keeps them: bookmarks, then the pages they come back to most
   // oxlint-disable-next-line oxc/no-map-spread -- each command is a new object, never a result mutated in place
   ...[...bookmarks.value, ...unbookmarkedRecentPages.value].map(({ path, title }): UiCommand => {
-    const icon = getPageIcon(path);
+    const icon = getPageLinkItem(path)?.icon;
     return {
       group: PLACES_GROUP,
       id: `${PLACES_GROUP}${path}`,
-      title: title || path,
+      title: getPageLabel(path, title),
       to: path,
       ...(icon ? { icon } : { image: "" }),
     };
