@@ -39,17 +39,17 @@ const isOpen = ref(false);
       <UiButton
         v-if="unlockedUserAchievements.length > MAX_RECENT_ACHIEVEMENTS"
         aria-haspopup="dialog"
+        py-1
         inline-flex
         gap-1
         items-center
-        py-1
         @click="isOpen = true"
       >
         View all
         <UiIcon :meaning="UiIconMeaning.Next" />
       </UiButton>
     </div>
-    <ul v-if="recentUserAchievements.length > 0" gap-4 grid cols-1 sm:cols-2 md:cols-3 lg:cols-4>
+    <ul v-if="recentUserAchievements.length > 0" gap-4 grid cols-1 lg:cols-4 md:cols-3 sm:cols-2>
       <AchievementGridItem
         v-for="userAchievement of recentUserAchievements"
         :key="userAchievement.achievementId"

@@ -3,7 +3,7 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 import { AchievementStatuses } from "@/models/achievement/AchievementStatus";
 
-export const AchievementStatusItems: UiMenuItem<AchievementStatus>[] = [...AchievementStatuses].map((status) => ({
+export const AchievementStatusItems: UiMenuItem<AchievementStatus>[] = Array.from(AchievementStatuses, (status) => ({
   title: status,
   value: status,
 }));

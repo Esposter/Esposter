@@ -14,7 +14,7 @@ const { to, variant } = defineProps<Props>();
 </script>
 
 <template>
-  <NuxtLink :to :data-variant="variant" no-underline inline-flex gap-2 items-center ui-button>
+  <NuxtLink :to :data-variant="variant" ui-button no-underline inline-flex gap-2 items-center>
     <slot />
   </NuxtLink>
 </template>

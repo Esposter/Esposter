@@ -9,7 +9,7 @@ const { card } = defineProps<Props>();
 </script>
 
 <template>
-  <div p-4 text-center flex break-anywhere items-center justify-center min-h-48 ui-frame ui-heading md:ui-title>
+  <div p-4 text-center flex min-h-48 break-anywhere items-center justify-center ui-frame ui-heading md:ui-title>
     {{ card.text }}
   </div>
 </template>

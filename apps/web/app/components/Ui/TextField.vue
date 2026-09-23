@@ -17,12 +17,13 @@ const { label, rows, rules = [] } = defineProps<Props>();
 // Vuetify's rules own validation until retirement, and one may be a bare result or a promise-like rather than a
 // Function returning a promise, which is all the primitive takes
 const inputRules = computed<FormValidationRule[]>(() =>
-  rules.map((rule) => async (value) => (typeof rule === "function" ? rule(value) : rule)),
+  rules.map((rule) => async (value) => await (typeof rule === "function" ? rule(value) : rule)),
 );
 </script>
 
 <template>
-  <Input.Root v-model="modelValue" #default="{ id }" :rules="inputRules" validate-on="input" flex flex-col gap-1>
+  <Input.Root #default="{ id }" v-model="modelValue" :rules="inputRules" validate-on="input" flex flex-col gap-1>
+    <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the control is the primitive's, which takes the id this label names -->
     <label :for="String(id)" text-muted>{{ label }}</label>
     <Input.Control :as="rows ? 'textarea' : 'input'" :rows class="control" py-1 w-full resize-y ui-sunk />
     <Input.Error #default="{ errors }" text-error>{{ errors[0] }}</Input.Error>

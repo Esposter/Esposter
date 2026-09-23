@@ -15,12 +15,12 @@ const visibleIds = useVisibleSectionIds(UserSettingsPageSections);
           :aria-current="visibleIds.includes(section) ? 'location' : undefined"
           :data-slide-indicator-key="section"
           :to="{ hash: `#${section}` }"
+          hover:bg="accent/10"
+          replace
           px-3
           py-1
           no-underline
           block
-          hover:bg="accent/10"
-          replace
         >
           {{ UserSettingsPageSectionMap[section].title }}
         </NuxtLink>

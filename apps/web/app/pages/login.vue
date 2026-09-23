@@ -8,7 +8,7 @@ definePageMeta({ middleware: "guest" });
 <template>
   <NuxtLayout>
     <div p-4 flex h-full items-center justify-center ui-body>
-      <section p-6 text-center flex flex-col gap-4 w-full max-w-prose ui-frame>
+      <section p-6 text-center flex flex-col gap-4 max-w-prose w-full ui-frame>
         <h1 flex flex-col gap-2 items-center ui-body>
           <span text-muted>Sign in to</span>
           <span flex gap-2 items-center ui-title><AppLogo aria-hidden="true" /> {{ SITE_NAME }}</span>

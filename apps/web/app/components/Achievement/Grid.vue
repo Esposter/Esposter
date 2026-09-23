@@ -11,7 +11,7 @@ const { achievementDefinitions, userAchievements } = defineProps<Props>();
 </script>
 
 <template>
-  <ul gap-4 grid cols-1 sm:cols-2 md:cols-3 lg:cols-4>
+  <ul gap-4 grid cols-1 lg:cols-4 md:cols-3 sm:cols-2>
     <AchievementGridItem
       v-for="achievementDefinition in achievementDefinitions"
       :key="achievementDefinition.name"

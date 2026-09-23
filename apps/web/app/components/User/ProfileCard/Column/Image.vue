@@ -27,6 +27,7 @@ const fileMessage = ref("");
       <UiAvatar :image="(editMode ? modelValue : value) ?? ''" :name="label" />
       <template v-if="editMode">
         <!-- The browser's own file input, hidden behind the library's button, so choosing a file is its dialog -->
+        <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -- hidden, and only ever opened by the labelled button beside it -->
         <input
           ref="fileInput"
           type="file"
@@ -50,7 +51,7 @@ const fileMessage = ref("");
             }
           "
         />
-        <UiButton :disabled="isLoading" inline-flex gap-2 items-center py-1 @click="fileInput?.click()">
+        <UiButton :disabled="isLoading" py-1 inline-flex gap-2 items-center @click="fileInput?.click()">
           <UiSpinner v-if="isLoading" />
           <UiIcon v-else :meaning="UiIconMeaning.Upload" />
           Upload image

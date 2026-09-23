@@ -31,11 +31,11 @@ const { items, label } = defineProps<Props>();
         :key="value"
         :value
         class="tab"
+        hover:bg="accent/10"
+        text-muted
         px-3
         py-1
         cursor-pointer
-        text-muted
-        hover:bg="accent/10"
         text-nowrap
       >
         {{ title }}

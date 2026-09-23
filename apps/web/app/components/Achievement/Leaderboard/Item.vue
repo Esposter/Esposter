@@ -15,7 +15,7 @@ const { entry, isMyEntry } = defineProps<Props>();
 <template>
   <li :class="{ 'bg-accent/10': isMyEntry }" :aria-current="isMyEntry || undefined" px-3 py-2 flex gap-3 items-center>
     <span text-center w-8 ui-heading>{{ entry.rank }}</span>
-    <NuxtInvisibleLink :to="RoutePath.User(entry.user.id)" flex flex-1 gap-3 items-center min-w-0>
+    <NuxtInvisibleLink :to="RoutePath.User(entry.user.id)" flex flex-1 gap-3 min-w-0 items-center>
       <UiAvatar :image="entry.user.image ?? ''" :name="entry.user.name" />
       <span truncate>{{ entry.user.name }}</span>
     </NuxtInvisibleLink>
