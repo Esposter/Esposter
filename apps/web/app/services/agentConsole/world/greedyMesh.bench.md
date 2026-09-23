@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-09-23T21:40:14.297Z
-- Commit: f65a4ce88f
+- Date: 2026-09-23T22:10:29.492Z
+- Commit: 08df429b47
 - Node: v26.9.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,19 +20,19 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------------ | ------- | --------- | ------- | -------- | ------- |
-| solid        | 1.00×   | 3.0898    | ±13.16% | 4.1817   | 10      |
-| checkerboard | 0.14×   | 22.1738   | ±17.01% | 31.2526  | 10      |
+| solid        | 1.00×   | 1.1542    | ±40.61% | 1.9861   | 10      |
+| checkerboard | 0.21×   | 5.4413    | ±4.49%  | 6.0926   | 10      |
 
 ## greedyMesh > 32³ chunk
 
 | task         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------------ | ------- | --------- | ------- | -------- | ------- |
-| solid        | 1.00×   | 14.8606   | ±14.54% | 22.3322  | 10      |
-| checkerboard | 0.11×   | 133.6171  | ±8.50%  | 159.2581 | 10      |
+| solid        | 1.00×   | 3.7495    | ±10.39% | 4.9352   | 10      |
+| checkerboard | 0.062×  | 60.5744   | ±14.09% | 78.0362  | 10      |
 
 ## greedyMesh > terrain chunk
 
-| task  | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| ----- | ------- | --------- | ------ | -------- | ------- |
-| hills | 1.00×   | 2.5224    | ±4.16% | 2.7824   | 10      |
-| spawn | 0.86×   | 2.9362    | ±9.11% | 3.4838   | 10      |
+| task  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ----- | ------- | --------- | ------- | -------- | ------- |
+| hills | 1.00×   | 1.2454    | ±23.29% | 2.1193   | 10      |
+| spawn | 0.75×   | 1.6530    | ±17.18% | 2.3010   | 10      |

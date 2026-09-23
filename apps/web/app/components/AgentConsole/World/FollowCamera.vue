@@ -19,10 +19,10 @@ import {
   CAMERA_STICK_SPEED,
   CAMERA_WALL_MARGIN,
   CAMERA_ZOOM_SPEED,
-  FOG_FAR_DISTANCE,
   FOG_NEAR_DISTANCE,
   PLAYER_EYE_HEIGHT,
   PLAYER_SNEAK_DROP,
+  VIEW_DISTANCE,
 } from "@/services/agentConsole/world/constants";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
 import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
@@ -105,21 +105,24 @@ onBeforeRender(({ delta }) => {
   armLength = clearLength < armLength ? clearLength : armLength + (clearLength - armLength) * followRatio;
   camera.value.position.copy(followedEye).addScaledVector(armDirection, armLength);
   camera.value.lookAt(followedEye);
-  // The fog is measured from the camera, so it starts and ends past the player however far out the arm is
+  // The fog is measured from the camera, so it starts and ends past the player however far out the arm is, and the
+  // Camera sees no further than it ends, so a chunk wholly in the fog is culled rather than drawn
+  const far = armLength + VIEW_DISTANCE;
   fog.near = armLength + FOG_NEAR_DISTANCE;
-  fog.far = armLength + FOG_FAR_DISTANCE;
+  fog.far = far;
   // A sprint widens the view as Minecraft's does, unless reduced motion is asked for
   const fieldOfView =
     playerState.isSprinting && !isReducedMotion
       ? CAMERA_FIELD_OF_VIEW * CAMERA_SPRINT_FIELD_OF_VIEW_RATIO
       : CAMERA_FIELD_OF_VIEW;
-  if (camera.value.fov === fieldOfView) return;
+  if (camera.value.fov === fieldOfView && camera.value.far === far) return;
   camera.value.fov += (fieldOfView - camera.value.fov) * followRatio;
   if (Math.abs(fieldOfView - camera.value.fov) < CAMERA_FIELD_OF_VIEW_SNAP) camera.value.fov = fieldOfView;
+  camera.value.far = far;
   camera.value.updateProjectionMatrix();
 });
 </script>
 
 <template>
-  <TresPerspectiveCamera ref="camera" :fov="CAMERA_FIELD_OF_VIEW" />
+  <TresPerspectiveCamera ref="camera" :far="CAMERA_MAX_DISTANCE + VIEW_DISTANCE" :fov="CAMERA_FIELD_OF_VIEW" />
 </template>
