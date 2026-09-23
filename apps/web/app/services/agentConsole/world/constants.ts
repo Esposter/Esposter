@@ -1,7 +1,5 @@
-import type { VoxelBox } from "@/models/agentConsole/world/VoxelBox";
 import type { Vector3Tuple } from "three";
 
-import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import { Vector3 } from "three";
 // The room, in voxels: a floor walled on all four sides
 export const ROOM_WIDTH = 16;
@@ -13,15 +11,10 @@ export const DOOR_MIN_Z = 8;
 export const DOOR_MAX_Z = 9;
 export const DOOR_HEIGHT = 4;
 export const DOOR_POSITION: Vector3Tuple = [1.5, 1, 9];
-// The door, darker than the timber framing it, fills its opening while it is closed: its voxels are what the player
-// Collides with, and it is used from the middle of the opening, so from either side. It is drawn apart from them as a
-// Panel three sixteenths thick hung on the wall's outer face, swinging outward a quarter turn about a hinge at the
-// Opening's far edge, where it stands straight out from the wall, as wide as the opening, over the ground outside
-export const DOOR_CLOSED_BOX: VoxelBox = {
-  color: PaletteColor.Door,
-  max: [0, DOOR_HEIGHT, DOOR_MAX_Z],
-  min: [0, 1, DOOR_MIN_Z],
-};
+// The door, darker than the timber framing it, is a panel three sixteenths thick hung on the wall's outer face across
+// Its opening, swinging outward a quarter turn about a hinge at the opening's far edge, where it stands straight out
+// From the wall over the ground outside. It is drawn apart from the voxels and collides as its own box, and it is used
+// From within reach of it on either side
 export const DOOR_HINGE_POSITION = new Vector3(0, 1, DOOR_MAX_Z + 1);
 export const DOOR_THICKNESS = 3 / 16;
 export const DOOR_PANEL_POSITION = new Vector3(-DOOR_THICKNESS, 0, DOOR_MIN_Z - DOOR_MAX_Z - 1);
@@ -29,7 +22,6 @@ export const DOOR_PANEL_SCALE = new Vector3(DOOR_THICKNESS, DOOR_HEIGHT, DOOR_MA
 export const DOOR_OPEN_ANGLE = Math.PI / 2;
 // The swing takes the UI's medium duration, four of its motion units, which reduced motion makes none
 export const DOOR_SWING_MOTION_UNITS = 4;
-export const DOOR_STAND_POSITION: Vector3Tuple = [0.5, 1, (DOOR_MIN_Z + DOOR_MAX_Z + 1) / 2];
 // Where the main agent stands while it is not using a tool
 export const HOME_POSITION: Vector3Tuple = [8, 1, 6.5];
 // The world around the room: columns of Minecraft's sixteen by sixteen voxels, this tall
@@ -149,7 +141,7 @@ export const VESSEL_POSITION = new Vector3(1, 1, 3);
 export const COINS_POSITION = new Vector3(10, 2, 9);
 export const PAGES_POSITION = new Vector3(12, 2, 3);
 export const LANTERN_POSITION = new Vector3(5, 3, 11);
-// How near a thing's spot a player stands for it to prompt, how much wider than the thing its outline is drawn, and
+// How near a thing's box a player stands for it to prompt, how much wider than the thing its outline is drawn, and
 // How far above the outline its label floats
 export const REACH_DISTANCE = 1.5;
 export const PROMPT_OUTLINE_MARGIN = 0.05;

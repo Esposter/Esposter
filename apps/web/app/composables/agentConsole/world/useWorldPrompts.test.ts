@@ -10,6 +10,7 @@ describe(useWorldPrompts, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
   });
+
   // Just inside the opening facing out, and just outside it facing in
   test.each([
     { heading: -Math.PI / 2, position: new Vector3(1.4, 1, DOOR_MAX_Z), side: "inside" },
@@ -25,5 +26,18 @@ describe(useWorldPrompts, () => {
 
     expect(reachableWorldPrompt?.id).toBe("door");
     expect(isDoorOpen.value).toBe(true);
+  });
+
+  test("offers the open door to a player behind its panel", () => {
+    expect.hasAssertions();
+
+    const agentConsoleWorldStore = useAgentConsoleWorldStore();
+    const { isDoorOpen } = storeToRefs(agentConsoleWorldStore);
+    isDoorOpen.value = true;
+    const worldPrompts = useWorldPrompts();
+    // Outside, past the panel standing out from the wall, facing back at it
+    const reachableWorldPrompt = findReachableObject(new Vector3(-1, 1, DOOR_MAX_Z + 2), Math.PI, worldPrompts.value);
+
+    expect(reachableWorldPrompt?.id).toBe("door");
   });
 });

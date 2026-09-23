@@ -20,7 +20,7 @@ const { isDoorOpen } = storeToRefs(agentConsoleWorldStore);
 const motionUnit = useCssVar("--ui-motion-unit");
 const swingMs = computed(() => {
   const motionUnitTime = motionUnit.value ?? "";
-  const motionUnitMs = Number.parseFloat(motionUnitTime) * (motionUnitTime.endsWith("ms") ? 1 : 1000);
+  const motionUnitMs = Number(motionUnitTime.replace(/m?s$/u, "")) * (motionUnitTime.endsWith("ms") ? 1 : 1000);
   return (Number.isNaN(motionUnitMs) ? 0 : motionUnitMs) * DOOR_SWING_MOTION_UNITS;
 });
 const geometry = createTintableVoxelGeometry();

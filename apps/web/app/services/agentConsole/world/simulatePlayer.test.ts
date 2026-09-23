@@ -22,9 +22,9 @@ describe(simulatePlayer, () => {
     const playerState = createPlayerState();
     playerState.position.set(3 - PLAYER_HALF_WIDTH - COLLISION_GAP, 1, 0.5);
     const actions: PlayerActions = { isJumping: true, isSneaking: false, isSprinting: false };
-    simulatePlayer(voxelWorld, playerState, actions, 1, 0);
+    simulatePlayer(voxelWorld, [], playerState, actions, 1, 0);
     actions.isJumping = false;
-    for (let index = 1; index < stepCount; index++) simulatePlayer(voxelWorld, playerState, actions, 1, 0);
+    for (let index = 1; index < stepCount; index++) simulatePlayer(voxelWorld, [], playerState, actions, 1, 0);
 
     expect(playerState.position.y).toBe(2 + COLLISION_GAP);
     expect(playerState.isOnGround).toBe(true);

@@ -1,6 +1,7 @@
 import type { PlayerActions } from "@/models/agentConsole/world/PlayerActions";
 import type { PlayerState } from "@/models/agentConsole/world/PlayerState";
 import type { VoxelWorld } from "@/models/agentConsole/world/VoxelWorld";
+import type { WorldBox } from "@/models/agentConsole/world/WorldBox";
 
 import {
   AIR_ACCELERATION,
@@ -28,6 +29,7 @@ const step = new Vector3();
 // A time instead, the jump peaks under a voxel, since Minecraft moves by the whole velocity before gravity takes from it
 export const simulatePlayer = (
   voxelWorld: VoxelWorld,
+  worldBoxes: readonly WorldBox[],
   playerState: PlayerState,
   actions: PlayerActions,
   wishX: number,
@@ -51,6 +53,7 @@ export const simulatePlayer = (
   step.copy(velocity).divideScalar(STEPS_PER_TICK);
   moveThroughGrid(
     voxelWorld,
+    worldBoxes,
     position,
     step,
     actions.isSneaking ? PLAYER_SNEAKING_HEIGHT : PLAYER_HEIGHT,

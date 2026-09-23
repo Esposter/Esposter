@@ -6,7 +6,6 @@ import type { Group } from "three";
 import { CHUNK_SIZE, MAX_REQUESTED_CHUNK_COUNT } from "@/services/agentConsole/world/constants";
 import { createVoxelMeshGeometry } from "@/services/agentConsole/world/createVoxelMeshGeometry";
 import { getChunkKey } from "@/services/agentConsole/world/getChunkKey";
-import { stampDoor } from "@/services/agentConsole/world/stampDoor";
 import { getViewReach } from "@/services/agentConsole/world/getViewReach";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
 import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
@@ -17,7 +16,6 @@ const { onBeforeRender } = useLoop();
 const agentConsolePlayerStore = useAgentConsolePlayerStore();
 const { playerState } = agentConsolePlayerStore;
 const agentConsoleWorldStore = useAgentConsoleWorldStore();
-const { isDoorOpen } = storeToRefs(agentConsoleWorldStore);
 const { voxelWorld } = agentConsoleWorldStore;
 const chunks = useTresTemplateRef<Group>("chunks");
 const material = new MeshBasicMaterial({ vertexColors: true });
@@ -63,7 +61,6 @@ worker.addEventListener(
     // Thrown away if the player walked out of its range before it came back
     if (!chunks.value || getChunkGap(chunkX, chunkZ) >= loadDistance + 1) return;
     voxelWorld.set(chunkKey, voxelGrid);
-    stampDoor(voxelWorld, isDoorOpen.value);
     const geometry = createVoxelMeshGeometry(voxelMesh);
     const mesh = new Mesh(geometry, material);
     mesh.position.set(chunkX * CHUNK_SIZE, 0, chunkZ * CHUNK_SIZE);
@@ -117,12 +114,6 @@ onBeforeRender(({ camera }) => {
   queuedChunkPositions = missingChunkPositions.toSorted((first, second) => getUrgency(first) - getUrgency(second));
   requestQueuedChunks();
 });
-// The door is drawn apart from the chunks, so opening or closing it only writes its voxels, which the player collides
-// With, into the chunk that holds them
-watch(isDoorOpen, (newIsDoorOpen) => {
-  stampDoor(voxelWorld, newIsDoorOpen);
-});
-
 onUnmounted(() => {
   worker.terminate();
   for (const mesh of chunkMeshes.values()) mesh.geometry.dispose();

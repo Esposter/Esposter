@@ -40,6 +40,7 @@ const agentConsolePlayerStore = useAgentConsolePlayerStore();
 const { playerState } = agentConsolePlayerStore;
 const agentConsoleWorldStore = useAgentConsoleWorldStore();
 const { voxelWorld } = agentConsoleWorldStore;
+const { worldBoxes } = storeToRefs(agentConsoleWorldStore);
 const reducedMotion = usePreferredReducedMotion();
 // The head and body stand on their base; a limb hangs from its top, the joint it swings about
 const standingGeometry = createTintableVoxelGeometry().translate(-0.5, 0, -0.5);
@@ -71,7 +72,7 @@ onBeforeRender(({ delta, elapsed }) => {
   accumulatedSeconds += Math.min(delta, MAX_FRAME_SECONDS);
 
   while (accumulatedSeconds >= SIMULATION_STEP_SECONDS) {
-    simulatePlayer(voxelWorld, playerState, actions, wishX, wishZ);
+    simulatePlayer(voxelWorld, worldBoxes.value, playerState, actions, wishX, wishZ);
     accumulatedSeconds -= SIMULATION_STEP_SECONDS;
   }
 

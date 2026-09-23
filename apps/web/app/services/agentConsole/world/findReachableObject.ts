@@ -1,27 +1,30 @@
-import type { WorldPrompt } from "@/models/agentConsole/world/WorldPrompt";
+import type { WorldBox } from "@/models/agentConsole/world/WorldBox";
 import type { Vector3 } from "three";
 
 import { REACH_DISTANCE } from "@/services/agentConsole/world/constants";
-// The nearest thing whose spot the player stands within reach of and whose middle the player faces, so a thing behind
-// The player never prompts. The room holds a handful of things, so it is a scan of them all
-export const findReachableObject = <T extends Pick<WorldPrompt, "max" | "min" | "standPosition">>(
+// The nearest thing within reach of the player and in front of it, as Minecraft reaches for a block: reach is measured
+// To the nearest point of the thing's own box, so a thing is in reach from any side, and a thing behind the player
+// Never prompts. The room holds a handful of things, so it is a scan of them all
+export const findReachableObject = <T extends WorldBox>(
   position: Vector3,
   heading: number,
-  worldPrompts: readonly T[],
+  worldBoxes: readonly T[],
 ) => {
   const headingX = Math.sin(heading);
   const headingZ = Math.cos(heading);
-  let reachableWorldPrompt: T | undefined;
+  let reachableWorldBox: T | undefined;
   let reachableDistance = REACH_DISTANCE;
 
-  for (const worldPrompt of worldPrompts) {
-    const { max, min, standPosition } = worldPrompt;
-    const distance = Math.hypot(standPosition[0] - position.x, standPosition[2] - position.z);
+  for (const worldBox of worldBoxes) {
+    const { max, min } = worldBox;
+    const nearestX = Math.min(Math.max(position.x, min[0]), max[0]);
+    const nearestZ = Math.min(Math.max(position.z, min[2]), max[2]);
+    const distance = Math.hypot(nearestX - position.x, nearestZ - position.z);
     const facing = headingX * ((min[0] + max[0]) / 2 - position.x) + headingZ * ((min[2] + max[2]) / 2 - position.z);
     if (distance > reachableDistance || facing <= 0) continue;
-    reachableWorldPrompt = worldPrompt;
+    reachableWorldBox = worldBox;
     reachableDistance = distance;
   }
 
-  return reachableWorldPrompt;
+  return reachableWorldBox;
 };
