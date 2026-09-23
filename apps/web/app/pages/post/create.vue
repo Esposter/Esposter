@@ -3,6 +3,7 @@ import { usePostStore } from "@/store/post";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
+useHead({ title: "Create post" });
 
 const postStore = usePostStore();
 const { createPost } = postStore;

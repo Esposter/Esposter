@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ middleware: "auth" });
+useHead({ title: "Friends" });
 
 const readFriends = useReadFriends();
 await readFriends();
