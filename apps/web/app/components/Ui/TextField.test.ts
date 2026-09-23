@@ -97,4 +97,18 @@ describe("uiTextField", () => {
 
     expect(component.get("[text-muted]:not(label)").text()).toBe("1 / 1");
   });
+
+  test("keeps a hidden label as its name, and takes a number's type", () => {
+    expect.hasAssertions();
+
+    const component = mount(UiTextField, {
+      props: { isLabelHidden: true, label, modelValue: "", type: "number" as const },
+    });
+    const control = component.get("input");
+    const labelElement = component.get("label");
+
+    expect(labelElement.classes()).toContain("sr-only");
+    expect(labelElement.attributes("for")).toBe(control.attributes("id"));
+    expect(control.attributes("type")).toBe("number");
+  });
 });

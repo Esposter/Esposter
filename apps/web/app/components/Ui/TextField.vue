@@ -8,18 +8,21 @@ interface Props {
   // The most characters it takes, counted under it as the reader types
   counter?: number;
   isAutofocus?: true;
+  // Named for assistive technology alone, where what surrounds the field already says what it is for: a column's
+  // Filter under the column's name, a cell being edited in its row
+  isLabelHidden?: true;
   label: string;
   // Lines of a field that takes several, which the reader can drag taller; a field of one line without it
   rows?: number;
   // Checked as the reader types, each a message or true; a form around the field counts its result
   rules?: ValidationRule[];
-  // A day rather than text, picked from the browser's own calendar in the page's colour scheme; its value reads as
-  // YYYY-MM-DD
-  type?: "date";
+  // A day rather than text, picked from the browser's own calendar in the page's colour scheme, its value reading as
+  // YYYY-MM-DD; or a number, stepped by the arrows, its value still the text typed
+  type?: "date" | "number";
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { counter, isAutofocus, label, rows, rules = [], type } = defineProps<Props>();
+const { counter, isAutofocus, isLabelHidden, label, rows, rules = [], type } = defineProps<Props>();
 // Vuetify's rules own validation until retirement, and one may be a bare result or a promise-like rather than a
 // Function returning a promise, which is all the primitive takes
 const inputRules = computed<FormValidationRule[]>(() =>
@@ -35,7 +38,7 @@ defineExpose({ element });
 <template>
   <Input.Root #default="{ id }" v-model="modelValue" :rules="inputRules" :type validate-on="input" flex flex-col gap-1>
     <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the control is the primitive's, which takes the id this label names -->
-    <label :for="String(id)" text-muted>{{ label }}</label>
+    <label :for="String(id)" :class="{ 'sr-only': isLabelHidden }" text-muted>{{ label }}</label>
     <Input.Control #default="{ attrs }" renderless>
       <component
         :is="rows ? 'textarea' : 'input'"
