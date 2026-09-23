@@ -64,28 +64,38 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       return;
     }
 
-    status.value = ConnectionStatus.Connecting;
-    const socket = new WebSocket(hostUrl.value);
-    webSocket = socket;
-    socket.addEventListener("open", () => {
-      connectedAt = new Date();
-      reconnectDelay = MIN_RECONNECT_DELAY_MS;
-      status.value = ConnectionStatus.Connected;
-    });
-    socket.addEventListener("message", ({ data }) => {
-      getResult(() => serverMessageSchema.parse(JSON.parse(String(data)))).match((serverMessage) => {
-        receive(serverMessage);
-      }, console.error);
-    });
-    socket.addEventListener("close", () => {
-      // A socket this store already replaced — a re-pair — closing late is not the connection going down
-      if (webSocket !== socket) return;
-      status.value = ConnectionStatus.Disconnected;
-      reconnectTimeoutId = window.setTimeout(() => {
-        connect();
-      }, reconnectDelay);
-      reconnectDelay = Math.min(reconnectDelay * 2, MAX_RECONNECT_DELAY_MS);
-    });
+    // A pasted address that is not a WebSocket URL throws here rather than failing to connect. Retrying it could
+    // Never succeed, so it is refused and the page goes back to asking for one
+    getResult(() => new WebSocket(hostUrl.value)).match(
+      (socket) => {
+        status.value = ConnectionStatus.Connecting;
+        webSocket = socket;
+        socket.addEventListener("open", () => {
+          connectedAt = new Date();
+          reconnectDelay = MIN_RECONNECT_DELAY_MS;
+          status.value = ConnectionStatus.Connected;
+        });
+        socket.addEventListener("message", ({ data }) => {
+          getResult(() => serverMessageSchema.parse(JSON.parse(String(data)))).match((serverMessage) => {
+            receive(serverMessage);
+          }, console.error);
+        });
+        socket.addEventListener("close", () => {
+          // A socket this store already replaced — a re-pair — closing late is not the connection going down
+          if (webSocket !== socket) return;
+          status.value = ConnectionStatus.Disconnected;
+          reconnectTimeoutId = window.setTimeout(() => {
+            connect();
+          }, reconnectDelay);
+          reconnectDelay = Math.min(reconnectDelay * 2, MAX_RECONNECT_DELAY_MS);
+        });
+      },
+      (error) => {
+        createAlert(`Not a host URL: ${error.message}`, "error");
+        hostUrl.value = "";
+        status.value = ConnectionStatus.Unpaired;
+      },
+    );
   };
 
   const disconnect = () => {

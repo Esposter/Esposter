@@ -11,7 +11,7 @@ export const reactToEvents = (
   events: AgentEvent[],
   connectedAt: Date,
 ) => {
-  for (const event of events) {
+  for (const event of events)
     if (event.createdAt < connectedAt) continue;
     else if (event.type === AgentEventType.TurnResult)
       theme.reactions[AgentConsoleReaction.TurnEnded](sessionTitle, event.isError ? event.subtype : event.result);
@@ -20,5 +20,4 @@ export const reactToEvents = (
         sessionTitle,
         `${event.toolName} is waiting for permission`,
       );
-  }
 };
