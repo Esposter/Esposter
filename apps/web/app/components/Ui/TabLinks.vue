@@ -2,28 +2,39 @@
 import type { UiTabLink } from "@/models/ui/UiTabLink";
 
 interface Props {
+  // Each link its icon alone, named by its title and showing it as a tooltip, for a row with little width
+  isIconOnly?: true;
   items: UiTabLink[];
   // The navigation's accessible name: what its links move between
   label: string;
 }
 
 // Tabs that go somewhere rather than show a panel, so each is a real link in the tab order and the current one says so
-const { items, label } = defineProps<Props>();
+const { isIconOnly, items, label } = defineProps<Props>();
 </script>
 
 <template>
   <nav :aria-label="label" ui-tab-list>
-    <NuxtLink
+    <UiTooltip
       v-for="{ icon, isCurrent, title, to } of items"
+      #default="{ activatorProps }"
       :key="title"
-      :to
-      :aria-current="isCurrent ? 'page' : undefined"
-      gap-2
-      items-center
-      flex
-      ui-tab
+      :disabled="!isIconOnly"
+      :label="title"
     >
-      <span v-if="icon" :class="icon" aria-hidden="true" size-5 inline-block />{{ title }}
-    </NuxtLink>
+      <NuxtLink
+        :="activatorProps"
+        :to
+        :aria-current="isCurrent ? 'page' : undefined"
+        :aria-label="isIconOnly ? title : undefined"
+        gap-2
+        items-center
+        flex
+        ui-tab
+      >
+        <span v-if="icon" :class="icon" aria-hidden="true" size-5 inline-block />
+        <template v-if="!isIconOnly">{{ title }}</template>
+      </NuxtLink>
+    </UiTooltip>
   </nav>
 </template>

@@ -35,4 +35,19 @@ describe("uiTabLinks", () => {
       { current: "page", href: "/second", title: "second" },
     ]);
   });
+
+  test("names each link by its title when it shows its icon alone", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(UiTabLinks, {
+      props: { isIconOnly: true, items: items.map((item) => ({ ...item, icon: "i-mdi:home" })), label },
+    });
+
+    expect(
+      component.findAll("a").map((link) => ({ label: link.attributes("aria-label"), text: link.text() })),
+    ).toStrictEqual([
+      { label: "first", text: "" },
+      { label: "second", text: "" },
+    ]);
+  });
 });
