@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
+import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { RoutePath } from "@esposter/shared";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+const { status } = storeToRefs(agentConsoleConnectionStore);
 const { unpair } = agentConsoleConnectionStore;
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { isPauseMenuOpen } = storeToRefs(agentConsolePanelStore);
@@ -26,7 +28,7 @@ const { openConsole } = agentConsolePanelStore;
       >
         Sessions
       </UiButton>
-      <UiButton @click="unpair()">Unpair</UiButton>
+      <UiButton v-if="status !== ConnectionStatus.Unpaired" @click="unpair()">Unpair</UiButton>
       <UiButtonLink :to="RoutePath.Index">Leave to the app</UiButtonLink>
     </nav>
   </UiDialog>

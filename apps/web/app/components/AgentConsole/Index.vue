@@ -39,15 +39,14 @@ whenever(
     <section :inert="!isLoaded" size-full relative>
       <ClientOnly>
         <LazyAgentConsoleWorld />
-        <div v-if="status !== ConnectionStatus.Unpaired" p-2 flex flex-col gap-2 pointer-events-none inset-0 absolute>
+        <div p-2 flex flex-col gap-2 pointer-events-none inset-0 absolute>
           <AgentConsolePanelHud pointer-events-auto />
           <AgentConsoleChatLines :key="currentSessionId" mt-a pointer-events-auto />
         </div>
       </ClientOnly>
     </section>
     <ClientOnly>
-      <AgentConsolePanelPairing v-if="status === ConnectionStatus.Unpaired" :inert="!isLoaded" />
-      <template v-else-if="isLoaded">
+      <template v-if="isLoaded">
         <AgentConsoleOverlay />
         <AgentConsolePauseMenu />
       </template>

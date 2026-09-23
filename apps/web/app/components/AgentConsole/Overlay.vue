@@ -38,7 +38,11 @@ watch(
       }
     "
   >
-    <div p-3 flex flex-1 flex-col gap-2 min-h-0>
+    <!-- The world needs no host; the console is where one is paired, the first time it is opened without one -->
+    <div v-if="status === ConnectionStatus.Unpaired" p-3 of-y-auto>
+      <AgentConsolePanelPairing />
+    </div>
+    <div v-else p-3 flex flex-1 flex-col gap-2 min-h-0>
       <p v-if="status === ConnectionStatus.Connecting" role="status">Connecting to the host…</p>
       <p v-else-if="status === ConnectionStatus.Disconnected" text-warning role="status">
         The host is not answering. Reconnecting — start it again and the page picks up where it was.

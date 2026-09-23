@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
+import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { SessionStateColorMap } from "@/services/agentConsole/SessionStateColorMap";
+import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 
+const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+const { status } = storeToRefs(agentConsoleConnectionStore);
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { openConsole } = agentConsolePanelStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
@@ -30,6 +34,7 @@ const {
       </span>
       <span v-if="turnResult">${{ turnResult.totalCostUsd.toFixed(2) }}</span>
     </template>
+    <span v-else-if="status === ConnectionStatus.Unpaired">Not paired with a host</span>
     <span v-else>No session open</span>
     <UiButton ml-a flex gap-2 items-center @click="openConsole(AgentConsolePanelType.Conversation)">
       <UiIcon
