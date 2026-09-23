@@ -13,7 +13,7 @@ const visibleIds = useVisibleSectionIds(() => getTocLinkIds(links));
 
 <template>
   <nav p-4 of-y-auto aria-label="On this page" ui-body>
-    <p mb-3 text-muted uppercase>On this page</p>
+    <p text-muted mb-3 uppercase>On this page</p>
     <ul m-0 p-0 list-none relative shadow="[inset_var(--ui-step)_0_0_0_var(--ui-panel-edge)]">
       <StyledSlideIndicator :active-keys="visibleIds" />
       <DocsTableOfContentsItem v-for="link of links" :key="link.id" :depth="0" :link :visible-ids />

@@ -21,7 +21,7 @@ const categories = computed(() =>
 <template>
   <nav aria-label="Docs pages">
     <template v-for="{ category, categorySections } of categories" :key="category">
-      <p px-2 pt-2 text-muted uppercase>{{ category }}</p>
+      <p text-muted px-2 pt-2 uppercase>{{ category }}</p>
       <ul list-none>
         <li v-for="section of categorySections" :key="section.path">
           <DocsNavigationLink :to="section.path">

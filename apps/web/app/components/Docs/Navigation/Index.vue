@@ -40,7 +40,7 @@ const sectionsWithGroups = computed(() =>
           <ul ml-3 pl-2 list-none shadow="[inset_var(--ui-step)_0_0_0_var(--ui-panel-edge)]">
             <li><DocsNavigationLink :to="section.path">Overview</DocsNavigationLink></li>
             <li v-for="group of groups" :key="group.title ?? ''">
-              <p v-if="group.title" px-2 pt-2 text-muted uppercase>{{ group.title }}</p>
+              <p v-if="group.title" text-muted px-2 pt-2 uppercase>{{ group.title }}</p>
               <ul list-none>
                 <DocsNavigationList v-model:opened="opened" :items="group.items" />
               </ul>

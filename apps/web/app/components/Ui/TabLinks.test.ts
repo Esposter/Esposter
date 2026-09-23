@@ -9,8 +9,8 @@ import { RouterLink } from "vue-router";
 describe("uiTabLinks", () => {
   const label = "label";
   const items: UiTabLink[] = [
-    { isCurrent: false, title: "first", to: "/" },
-    { isCurrent: true, title: "second", to: "/second" },
+    { icon: "i-mdi:home", isCurrent: false, title: "first", to: "/" },
+    { icon: "i-mdi:home", isCurrent: true, title: "second", to: "/second" },
   ];
 
   // The real RouterLink, which marks the link it is exactly on as current by itself: the first link here
@@ -40,7 +40,7 @@ describe("uiTabLinks", () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(UiTabLinks, {
-      props: { isIconOnly: true, items: items.map((item) => ({ ...item, icon: "i-mdi:home" })), label },
+      props: { isIconOnly: true, items, label },
     });
 
     expect(

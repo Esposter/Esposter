@@ -5,9 +5,9 @@ import type { ThemeMode } from "@/models/vuetify/ThemeMode";
 import { SecondaryPageLinkItems } from "@/services/app/SecondaryPageLinkItems";
 import { authClient } from "@/services/auth/authClient";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
-import { useReadableTextStore } from "@/store/ui/readableText";
 import { ThemeModeIconMap } from "@/services/vuetify/ThemeModeIconMap";
 import { ThemeModeTooltipMap } from "@/services/vuetify/ThemeModeTooltipMap";
+import { useReadableTextStore } from "@/store/ui/readableText";
 import { RoutePath } from "@esposter/shared";
 
 const ACCOUNT_GROUP = "Account";

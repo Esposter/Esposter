@@ -10,7 +10,7 @@ const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 
 <template>
   <!-- Opaque, so page content cannot show through while the bar is stuck -->
-  <div v-if="!isLeftDrawerOpenAuto" bg-background px-2 py-1 flex gap-2 items-center top-0 sticky z-1>
+  <div v-if="!isLeftDrawerOpenAuto" px-2 py-1 bg-background flex gap-2 items-center top-0 sticky z-1>
     <UiIconButton
       label="Show navigation"
       :meaning="UiIconMeaning.Menu"

@@ -27,10 +27,10 @@ const { isIconOnly, items, label } = defineProps<Props>();
         :to
         :aria-current="isCurrent ? 'page' : undefined"
         :aria-label="isIconOnly ? title : undefined"
+        ui-tab
+        flex
         gap-2
         items-center
-        flex
-        ui-tab
       >
         <span v-if="icon" :class="icon" aria-hidden="true" size-5 inline-block />
         <template v-if="!isIconOnly">{{ title }}</template>

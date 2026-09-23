@@ -227,14 +227,14 @@ export default defineConfig({
       // No surface of its own, so it can float over content; the panel's colour under it keeps it legible there
       "data-[variant=Quiet]:bg-panel data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
     ].join(" "),
+    // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
+    "ui-item":
+      "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
     // A row of tabs on a one-step line in the edge colour, and one tab in it, which draws its own step of the line in
     // The accent while it is the selected tab or the current page's link
     "ui-tab":
       "px-3 py-1 text-muted text-nowrap cursor-pointer no-underline hover:bg-accent/10 aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-accent)]",
     "ui-tab-list": "flex of-x-auto shadow-[inset_0_calc(var(--ui-step)*-1)_0_0_var(--ui-panel-edge)]",
-    // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
-    "ui-item":
-      "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
   },
   theme: {
     breakpoint: UNOCSS_BREAKPOINTS,
