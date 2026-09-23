@@ -11,27 +11,9 @@ const next = computed(() => surround[1]);
 </script>
 
 <template>
-  <div v-if="previous || next" mt-12 gap-4 grid cols-1 md:cols-2>
-    <v-card v-if="previous" :to="previous.path" variant="outlined" hover>
-      <v-card-item>
-        <p mb-1 flex gap-x-1 items-center text-hint>
-          <v-icon icon="i-mdi:arrow-left" size="small" />
-          Previous
-        </p>
-        <v-card-title>{{ previous.title }}</v-card-title>
-        <v-card-subtitle>{{ previous.description }}</v-card-subtitle>
-      </v-card-item>
-    </v-card>
+  <nav v-if="previous || next" aria-label="Previous and next pages" mt-12 gap-4 grid cols-1 md:cols-2>
+    <DocsSurroundLink v-if="previous" :item="previous" />
     <div v-else />
-    <v-card v-if="next" :to="next.path" variant="outlined" hover text-right>
-      <v-card-item>
-        <p mb-1 flex gap-x-1 items-center justify-end text-hint>
-          Next
-          <v-icon icon="i-mdi:arrow-right" size="small" />
-        </p>
-        <v-card-title>{{ next.title }}</v-card-title>
-        <v-card-subtitle>{{ next.description }}</v-card-subtitle>
-      </v-card-item>
-    </v-card>
-  </div>
+    <DocsSurroundLink v-if="next" is-next :item="next" />
+  </nav>
 </template>

@@ -10,7 +10,6 @@ interface Props {
 }
 
 const { sections } = defineProps<Props>();
-const { currentRoute } = useRouter();
 const categories = computed(() =>
   DocsCategories.map((category) => ({
     category,
@@ -20,23 +19,16 @@ const categories = computed(() =>
 </script>
 
 <template>
-  <v-list color="primary" nav of-y-auto>
+  <nav aria-label="Docs pages">
     <template v-for="{ category, categorySections } of categories" :key="category">
-      <v-list-subheader>{{ category }}</v-list-subheader>
-      <v-list-item
-        v-for="section of categorySections"
-        :key="section.path"
-        :active="currentRoute.path === section.path"
-        :prepend-icon="getSectionIcon(section.path)"
-        :title="section.title"
-        :to="section.path"
-      />
+      <p px-2 pt-2 text-muted uppercase>{{ category }}</p>
+      <ul list-none>
+        <li v-for="section of categorySections" :key="section.path">
+          <DocsNavigationLink :to="section.path">
+            <span :class="getSectionIcon(section.path)" aria-hidden="true" size-5 inline-block />{{ section.title }}
+          </DocsNavigationLink>
+        </li>
+      </ul>
     </template>
-  </v-list>
+  </nav>
 </template>
-
-<style scoped>
-:deep(.v-list-item--active .v-list-item-title) {
-  font-weight: 700;
-}
-</style>
