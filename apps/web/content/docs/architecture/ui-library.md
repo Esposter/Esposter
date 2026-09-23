@@ -1,11 +1,11 @@
 ---
 title: UI library
-description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the first components and the surfaces they are drawn with, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
+description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the first components and the surfaces they are drawn with, the generated map of how the pages link, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
 ---
 
 # UI Library
 
-The app is moving from Material as Vuetify draws it to a library of its own, built in `apps/web` on [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) — Vuetify's headless layer, which owns focus, keyboard handling, ARIA and positioning and paints nothing. The migration runs as a ladder of stages, designed in the [UI library proposal](/docs/proposals/refactors/ui-library). This page is what exists so far: the foundation every later stage builds on, the icons, and the first components, which the agent console is built from.
+The app is moving from Material as Vuetify draws it to a library of its own, built in `apps/web` on [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) — Vuetify's headless layer, which owns focus, keyboard handling, ARIA and positioning and paints nothing. The migration runs as a ladder of stages, designed in the [UI library proposal](/docs/proposals/refactors/ui-library). This page is what exists so far: the foundation every later stage builds on, the icons, the first components, which the agent console is built from, and the flow map the later stages are designed from.
 
 The foundation changes no component, and still repaints every page. Its design tokens are the colours of the whole app, Vuetify's pages included, and the document's own chrome — scrollbars, selection, caret, focus ring — reads them on every page whichever library draws it.
 
@@ -135,6 +135,34 @@ They sit in a cascade layer of their own, declared before every other layer, so 
 
 A feature never imports Vuetify 0. Only the library does — its components, composables, models, services and its plugin — so the headless layer stays replaceable and every accessibility decision stays in one folder. An oxlint restricted-imports entry refuses "@vuetify/v0" and its subpaths everywhere else, with an override for exactly those folders. Vuetify 0 is not auto-imported either: its names collide with VueUse and with the ones Vuetify's module auto-imports, and nothing outside the library would call them.
 
+## Flow map
+
+The migration may move a flow to another page, and the app shell is designed around products linking to each other ([licence to redesign](/docs/proposals/refactors/ui-library#licence-to-redesign)). Both need one picture of where a reader can go from each page, and a hand-drawn map of the whole app would be wrong within a week, so it is generated:
+
+::flow-map
+::
+
+```mermaid
+flowchart TD
+  S[The shell: App.vue and the plugins] --> WS[Walked first]
+  WS --> H[One hub node, its links drawn once]
+  P[app/pages: one node per page file] --> W[Each page walked in turn]
+  WS -->|a file the shell reached is not walked again| W
+  W --> R[Every RoutePath entry named on the way]
+  R --> M[The page that entry lands on]
+  M --> E[An edge from the page to it]
+  H --> G[flowMap.mmd, committed]
+  E --> G
+  G --> T{A test regenerates it: does it differ?}
+  T -->|yes| F[The suite fails until it is regenerated]
+```
+
+- **Navigation is derived, interaction is not.** Every link names its target through `RoutePath` ([navigation](/docs/architecture/navigation)), so where a page can lead is a reference in source. Which dialog a button opens or which menu an item sits in is a code path, and stays in each migrated unit's flow inventory in its commit body.
+- **A file is followed whole.** A page reaches a file by importing it, by naming its component as a tag (resolved with Nuxt's own naming, so a tag is one file), by calling a composable Nuxt auto-imports, or through its layout and middleware. Every `RoutePath` entry a reached file names is an edge. Only `app/` and `shared/` are followed, since an import reaching the server is a type. Following files rather than call paths can overstate what a page links to, so a dead end it shows is a real one.
+- **The shell is a hub.** What `App.vue` and the plugins reach is drawn once from one node, and a page's walk stops at a file the shell already reached, so the sign-in redirect every request carries is the shell's rather than every page's.
+- **A dynamic route is one node.** An entry that takes parameters is called with a placeholder and lands on the page whose pattern matches, the one with fewer catch-alls and more fixed segments first, as the router ranks them. An entry that lands on no page fails the generator.
+- **Committed and checked.** `pnpm flow-map:gen` writes it under the [generated artifacts](/docs/architecture/generated-artifacts) folder, and a test regenerates it and fails when it differs, so a change that adds or removes a link shows it in its diff. It records what the design allows, not what readers do: the app runs no analytics.
+
 ## Agent tooling
 
 - **Vuetify 0's own skill** is vendored into the agent tree, and recorded in `skills-lock.json`. It carries Vuetify 0's decision trees and anti-patterns, and applies inside the library only. The repository's `ui-library` skill holds our conventions on top and outranks it where they meet: its "never a native button" rule is right for a library component and wrong for a feature, which uses the library's instead. How a vendored skill sits in the agent tree is the [agent configuration](/docs/architecture/agent-configuration) page's.
@@ -164,6 +192,9 @@ A feature never imports Vuetify 0. Only the library does — its components, com
 | `apps/web/app/assets/css/globals.scss`            | The document chrome and the step token                                                          |
 | `apps/web/app/assets/css/layers.css`              | Declares the chrome's layer first, and the icons' ahead of Vuetify's                            |
 | `apps/web/app/plugins/vuetify.ts`                 | Adds the custom component icons to the module's icon configuration                              |
+| `apps/web/scripts/flowMap/services/getFlowMap.ts` | Walks the pages and the shell into the flow map                                                 |
+| `apps/web/shared/generated/flowMap/flowMap.mmd`   | The flow map, committed                                                                         |
+| `apps/web/app/components/content/FlowMap.vue`     | Draws the flow map on this page                                                                 |
 | `.oxlintrc.json`                                  | The import boundary                                                                             |
 | `.agents/skills/ui-library/SKILL.md`              | The library's conventions                                                                       |
 
@@ -179,5 +210,6 @@ A feature never imports Vuetify 0. Only the library does — its components, com
 - [The menu role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menu_role), MDN: the menu's keyboard contract and its focus returning to the trigger.
 - [Popover](https://0.vuetifyjs.com/components/disclosure/popover) and [roving focus](https://0.vuetifyjs.com/composables/system/use-roving-focus), Vuetify 0: the primitives under the menu, the select and the suggestions.
 - [position-anchor](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-anchor), MDN, and [anchor positioning's Baseline status](https://github.com/web-platform-dx/web-features/issues/3558), web-features: anchor positioning in every engine since Firefox 147, which is why no JavaScript positioning is installed.
+- [Vue SFC compiler](https://github.com/vuejs/core/tree/main/packages/compiler-sfc): the parser the flow map reads each template's component tags with.
 - [scrollbar-color](https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color), MDN: the standard scrollbar properties the chrome sets.
 - [Success criterion 1.4.3](https://www.w3.org/TR/WCAG22/#contrast-minimum), WCAG 2.2: the AA threshold the palette test holds each pair to.

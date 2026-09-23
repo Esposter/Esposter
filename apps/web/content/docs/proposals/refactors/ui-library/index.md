@@ -18,7 +18,7 @@ A stage is free to redesign from the ground up, including across page boundaries
 
 - **Every inventoried flow still has a place**, which may be a better one than today's.
 - **Every old address still leads somewhere.** A route that moves or goes away redirects to where its content went, so a bookmark or a shared link never dies.
-- **The [flow map](/docs/proposals/refactors/ui-library/flow-map) is regenerated with the change**, so the new arrangement's links between pages are visible in review rather than argued from memory.
+- **The [flow map](/docs/architecture/ui-library#flow-map) is regenerated with the change**, so the new arrangement's links between pages are visible in review rather than argued from memory.
 
 The measure is the reader's effort, not the screen's contents: the fewest surfaces and the least on each one, with anything the reader wants about one click or one keystroke away. The app's products should read as one connected place, each linking to the others where the work crosses, not as a catalogue of separate apps. A design that gets there with less code wins over a cleverer one; the rules against over-engineering apply to the design as they do to the code.
 
@@ -56,7 +56,7 @@ flowchart TD
 | [Schema forms](/docs/proposals/refactors/ui-library/schema-forms)       | Our own renderer for the Zod-generated JSON Schema forms that vjsf draws today                | The sheet column and dashboard dialogs match the rest of the app, and the last Vuetify-bound engine goes |
 | [Retirement](/docs/proposals/refactors/ui-library/retirement)           | Vuetify, its Nuxt module and its UnoCSS preset removed, and their config with them            | A smaller install, a smaller bundle, and one way to build a control                                      |
 
-The [flow map](/docs/proposals/refactors/ui-library/flow-map) is generated before the app shell is designed, since the shell's navigation is designed from it.
+The [flow map](/docs/architecture/ui-library#flow-map), shipped, is generated before the app shell is designed, since the shell's navigation is designed from it.
 
 The design itself — the tokens, what each surface looks like, and the full list of details that make a UI feel finished — is in [design language](/docs/proposals/refactors/ui-library/design-language). The catalogue of components, each with the Vuetify 0 primitive under it and the Vuetify components it replaces, is in [components](/docs/proposals/refactors/ui-library/components).
 
