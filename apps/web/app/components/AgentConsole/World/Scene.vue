@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Vector2 } from "three";
+
 import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import {
   COINS_POSITION,
@@ -13,6 +15,11 @@ import {
 import { toWorldFigures } from "@/services/agentConsole/world/toWorldFigures";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 
+interface Props {
+  readMove: (out: Vector2) => void;
+}
+
+const { readMove } = defineProps<Props>();
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const {
   contextUsage,
@@ -31,6 +38,7 @@ const changedFileCount = computed(() => new Set(fileEdits.value.map(({ filePath 
 
 <template>
   <AgentConsoleWorldRoom />
+  <AgentConsoleWorldPlayer :read-move />
   <AgentConsoleWorldFigure v-for="{ id, isMain, position } of figures" :key="id" :is-main :position />
   <template v-if="currentSessionId">
     <!-- The context vessel fills with the context used, the coins stack with the cost, the pages with the files changed -->

@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Interaction
 
-Part of [world first](/docs/proposals/infra/agent-console/world-first). The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) answers no click, and the [player](/docs/proposals/infra/agent-console/world-first/player) gives the person a figure to walk. This stage connects the two. A thing in the room does something again, but only for a player standing at it, and only after the world has shown what it will do.
+Part of [world first](/docs/proposals/infra/agent-console/world-first). The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) answers no click, and the person walks it as a player figure. This stage connects the two. A thing in the room does something again, but only for a player standing at it, and only after the world has shown what it will do.
 
 ## What it adds
 

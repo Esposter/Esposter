@@ -1,25 +1,23 @@
 ---
 title: World first
-description: Proposal — the agent console inverted, its first stage shipped. The voxel world is already the whole page with the console an overlay over it. What is left is a player figure the person walks freely through the room, and the room used by walking up to a thing and pressing a key. Two stages, each shipping on its own.
+description: Proposal — the agent console inverted, its last stage left. The voxel world is the whole page with the console an overlay over it, and the person walks it as a player. What is left is the room used by walking up to a thing and pressing a key.
 model: claude-opus-5-5
 ---
 
 # World first
 
-The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) is the page, and the console — the conversation, the composer and the panels — is an overlay called up over it the way a game calls up its chat. Nothing in the room answers a click, so for now the room is only watched, from an orbit camera that makes it something to look at rather than a place to be.
+The [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) is the page, and the console — the conversation, the composer and the panels — is an overlay called up over it the way a game calls up its chat. The person walks the room as a player figure, with a camera following behind. Nothing in the room answers a click, so for now a thing in it is only looked at.
 
-This proposal puts the person in the room. They are a player figure they walk with the keyboard, a touch joystick or a gamepad, and a thing in the room is used by walking up to it, where a prompt names the key that uses it.
+This proposal lets the person use what they walk up to: a thing in reach shows a prompt naming the key that uses it.
 
 ## Decisions
 
-- **The person is a player figure with free movement.** They walk the floor in every direction, relative to the camera, with the camera following behind them ([player](/docs/proposals/infra/agent-console/world-first/player)).
 - **A thing is used by standing at it.** The nearest thing within reach shows a prompt naming its key, and the key does what the prompt says. There are no invisible click targets left ([interaction](/docs/proposals/infra/agent-console/world-first/interaction)).
 - **Nothing is only in the world.** Every action the world offers is also in the console's tabs, so a keyboard, a screen reader or a person who never walks reaches all of it.
 - **The figure is ours, in the proportions a player expects.** The player has the blocky head, body, arms and legs that Minecraft made the shape of a voxel person, built from our palette's boxes. It is not Mojang's model and not its skin.
 
 ## What this replaces
 
-- **The orbit camera**, which the player's follow camera takes over.
 - **A room that is only watched.** Each object's panel is a console tab today and nothing more; standing at the object reaches it again.
 
 ## How it works
@@ -41,10 +39,9 @@ flowchart TD
 
 ## Scope and order
 
-Each stage ships on its own and leaves the page whole. The console overlay, which made the world the page, has shipped and is described on the [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) page.
+The console overlay, which made the world the page, and the player, walked with a camera following, have shipped and are described on the [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) page.
 
-1. **The player.** The figure, free movement with collision against the room, and the follow camera, which replaces the orbit camera.
-2. **Interaction.** Prompts at the things in the room, so walking up to the board, a station, the gauges, the agent or the door does what clicking them did, visibly.
+1. **Interaction.** Prompts at the things in the room, so walking up to the board, a station, the gauges, the agent or the door does what clicking them did, visibly.
 
 The [codebase city](/docs/proposals/infra/agent-console/codebase-city) walks the same player through the repository, so it builds on stage 2 rather than on a figure of its own.
 

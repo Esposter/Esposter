@@ -1,6 +1,8 @@
 import type { VoxelGrid } from "@/models/agentConsole/world/VoxelGrid";
 import type { VoxelMesh } from "@/models/agentConsole/world/VoxelMesh";
 import type { Vector3Tuple } from "three";
+
+import { getVoxel } from "@/services/agentConsole/world/getVoxel";
 // How lit a face is by the way it faces, so the world needs no light: tops brightest, then the two sides, then below
 const AXIS_SHADES: readonly [Vector3Tuple, Vector3Tuple] = [
   // Facing +x, +y, +z
@@ -20,12 +22,9 @@ const CORNERS = [
 // Static voxels as one mesh. A face between two solid voxels is never emitted, and neighbouring faces of one colour and
 // One ambient occlusion become one quad, so the triangle count follows the surface and not the volume. Occlusion is
 // Counted from each corner's solid neighbours and baked into the vertex colours with the face's shade
-export const greedyMesh = ({ depth, height, voxels, width }: VoxelGrid, rgbs: readonly Vector3Tuple[]): VoxelMesh => {
+export const greedyMesh = (voxelGrid: VoxelGrid, rgbs: readonly Vector3Tuple[]): VoxelMesh => {
+  const { depth, height, width } = voxelGrid;
   const dimensions = [width, height, depth];
-  const getVoxel = (x: number, y: number, z: number) =>
-    x < 0 || y < 0 || z < 0 || x >= width || y >= height || z >= depth
-      ? 0
-      : (voxels[x + width * (y + height * z)] ?? 0);
   const positions: number[] = [];
   const colors: number[] = [];
   const indices: number[] = [];
@@ -42,7 +41,7 @@ export const greedyMesh = ({ depth, height, voxels, width }: VoxelGrid, rgbs: re
       neighbour[axis] = (position[axis] ?? 0) + offsetAxis;
       neighbour[uAxis] = (position[uAxis] ?? 0) + offsetU;
       neighbour[vAxis] = (position[vAxis] ?? 0) + offsetV;
-      return getVoxel(neighbour[0] ?? 0, neighbour[1] ?? 0, neighbour[2] ?? 0) > 0 ? 1 : 0;
+      return getVoxel(voxelGrid, neighbour[0] ?? 0, neighbour[1] ?? 0, neighbour[2] ?? 0) > 0 ? 1 : 0;
     };
 
     for (const direction of [1, -1])
@@ -53,7 +52,7 @@ export const greedyMesh = ({ depth, height, voxels, width }: VoxelGrid, rgbs: re
           for (let u = 0; u < uSize; u++) {
             position[uAxis] = u;
             position[vAxis] = v;
-            const color = getVoxel(position[0] ?? 0, position[1] ?? 0, position[2] ?? 0);
+            const color = getVoxel(voxelGrid, position[0] ?? 0, position[1] ?? 0, position[2] ?? 0);
             if (color === 0 || isSolid(direction, 0, 0)) {
               mask[u + v * uSize] = 0;
               continue;

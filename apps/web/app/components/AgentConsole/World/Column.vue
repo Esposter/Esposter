@@ -2,7 +2,7 @@
 import type { PaletteColor } from "@/models/agentConsole/PaletteColor";
 
 import { AgentConsolePaletteMap } from "@/services/agentConsole/AgentConsolePaletteMap";
-import { createVoxelGeometry } from "@/services/agentConsole/world/createVoxelGeometry";
+import { createTintableVoxelGeometry } from "@/services/agentConsole/world/createTintableVoxelGeometry";
 import { Vector3 } from "three";
 
 interface Props {
@@ -12,8 +12,8 @@ interface Props {
 }
 
 const { color, height, position } = defineProps<Props>();
-// One white voxel stretched to the height it reads and tinted by the material, so a change of either costs no rebuild
-const geometry = createVoxelGeometry({ depth: 1, height: 1, voxels: Uint8Array.of(1), width: 1 }, [[1, 1, 1]]);
+// Stretched to the height it reads and tinted by the material, so a change of either costs no rebuild
+const geometry = createTintableVoxelGeometry();
 const scale = computed(() => new Vector3(1, height, 1));
 </script>
 
