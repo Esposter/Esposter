@@ -12,8 +12,5 @@ export const getBudgetGuardArguments = (
     ActualCost_100_StopFunction: getBudgetGuardNotification(stopFunctionActionGroup),
   },
   timeGrain: azure_native.consumption.TimeGrainType.Monthly,
-  timePeriod: {
-    endDate: "2035-12-31T00:00:00Z",
-    startDate: "2026-05-01T00:00:00Z",
-  },
+  timePeriod: { endDate: "2035-12-31T00:00:00Z", startDate: "2026-05-01T00:00:00Z" },
 });

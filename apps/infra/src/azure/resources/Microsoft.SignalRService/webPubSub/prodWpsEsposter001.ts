@@ -17,20 +17,9 @@ export const prodWpsEsposter001: azure_native.webpubsub.WebPubSub = new azure_na
     resourceGroupName: prodRgEsposterAe001.name,
     resourceName,
     resourceStopped: "false",
-    sku: {
-      capacity: 1,
-      name: "Free_F1",
-      tier: azure_native.webpubsub.WebPubSubSkuTier.Free,
-    },
-    tags: {
-      ...ApplicationTags,
-    },
-    tls: {
-      clientCertEnabled: false,
-    },
+    sku: { capacity: 1, name: "Free_F1", tier: azure_native.webpubsub.WebPubSubSkuTier.Free },
+    tags: { ...ApplicationTags },
+    tls: { clientCertEnabled: false },
   },
-  {
-    parent: prodRgEsposterAe001,
-    protect: true,
-  },
+  { parent: prodRgEsposterAe001, protect: true },
 );

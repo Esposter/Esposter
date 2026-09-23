@@ -17,8 +17,5 @@ export const prodFuncEsposter001EventGridDataSender: azure_native.authorization.
       roleDefinitionId: AzureEventGridDataSenderRoleDefinitionId,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${prodEvgtEsposterAe001.name}`,
     },
-    {
-      parent: prodEvgtEsposterAe001,
-      protect: true,
-    },
+    { parent: prodEvgtEsposterAe001, protect: true },
   );

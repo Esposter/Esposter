@@ -8,11 +8,7 @@ const recurrence = {
 // The first-of-the-month trigger every guard's restore workflow runs on, so a budget cycle's teardown is undone
 // When the next cycle's budget resets
 const AzureMonthlyRecurrenceWorkflowTriggers: Record<string, unknown> = {
-  Recurrence: {
-    evaluatedRecurrence: recurrence,
-    recurrence,
-    type: "Recurrence",
-  },
+  Recurrence: { evaluatedRecurrence: recurrence, recurrence, type: "Recurrence" },
 };
 
 export default AzureMonthlyRecurrenceWorkflowTriggers;

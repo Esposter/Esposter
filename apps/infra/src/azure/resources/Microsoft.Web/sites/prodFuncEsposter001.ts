@@ -36,9 +36,7 @@ export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web
     ],
     httpsOnly: true,
     hyperV: false,
-    identity: {
-      type: azure_native.web.ManagedServiceIdentityType.SystemAssigned,
-    },
+    identity: { type: azure_native.web.ManagedServiceIdentityType.SystemAssigned },
     ipMode: azure_native.web.IPMode.IPv4,
     isXenon: false,
     keyVaultReferenceIdentity: "SystemAssigned",
@@ -99,12 +97,7 @@ export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web
       use32BitWorkerProcess: false,
     },
     storageAccountRequired: false,
-    tags: {
-      ...ApplicationTags,
-    },
+    tags: { ...ApplicationTags },
   },
-  {
-    parent: prodRgEsposterAe001,
-    protect: true,
-  },
+  { parent: prodRgEsposterAe001, protect: true },
 );

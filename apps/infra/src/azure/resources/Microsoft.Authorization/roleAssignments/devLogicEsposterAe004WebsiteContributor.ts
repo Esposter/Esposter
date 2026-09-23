@@ -16,8 +16,5 @@ export const devLogicEsposterAe004WebsiteContributor: azure_native.authorization
       roleDefinitionId: AzureWebsiteContributorRoleDefinitionId,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${devRgEsposterAe001.name}/providers/Microsoft.Web/sites/${devFuncEsposter001.name}`,
     },
-    {
-      parent: devFuncEsposter001,
-      protect: true,
-    },
+    { parent: devFuncEsposter001, protect: true },
   );

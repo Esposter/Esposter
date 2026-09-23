@@ -8,13 +8,8 @@ export const prodstesposter001Properties: azure_native.storage.BlobServiceProper
     {
       accountName: prodstesposter001.name,
       blobServicesName: "default",
-      changeFeed: {
-        enabled: false,
-      },
-      containerDeleteRetentionPolicy: {
-        days: 7,
-        enabled: true,
-      },
+      changeFeed: { enabled: false },
+      containerDeleteRetentionPolicy: { days: 7, enabled: true },
       cors: {
         corsRules: [
           {
@@ -26,19 +21,10 @@ export const prodstesposter001Properties: azure_native.storage.BlobServiceProper
           },
         ],
       },
-      deleteRetentionPolicy: {
-        allowPermanentDelete: false,
-        days: 7,
-        enabled: true,
-      },
+      deleteRetentionPolicy: { allowPermanentDelete: false, days: 7, enabled: true },
       isVersioningEnabled: false,
       resourceGroupName: prodRgEsposterAe001.name,
-      restorePolicy: {
-        enabled: false,
-      },
+      restorePolicy: { enabled: false },
     },
-    {
-      parent: prodstesposter001,
-      protect: true,
-    },
+    { parent: prodstesposter001, protect: true },
   );

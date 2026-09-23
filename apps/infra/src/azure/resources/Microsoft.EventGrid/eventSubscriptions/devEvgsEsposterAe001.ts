@@ -24,8 +24,5 @@ export const devEvgsEsposterAe001: azure_native.eventgrid.EventSubscription =
       eventSubscriptionName,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${devRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${devEvgtEsposterAe001.name}`,
     },
-    {
-      parent: devEvgtEsposterAe001,
-      protect: true,
-    },
+    { parent: devEvgtEsposterAe001, protect: true },
   );

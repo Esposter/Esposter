@@ -25,10 +25,7 @@ export const oneWriterRefs: github.RepositoryRuleset = new github.RepositoryRule
     enforcement: "active",
     name: "one-writer refs",
     repository: repository.name,
-    rules: {
-      deletion: true,
-      update: true,
-    },
+    rules: { deletion: true, update: true },
     target: "branch",
   },
   {

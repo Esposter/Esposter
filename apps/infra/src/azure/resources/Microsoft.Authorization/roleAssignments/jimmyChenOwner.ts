@@ -11,7 +11,5 @@ export const jimmyChenOwner: azure_native.authorization.RoleAssignment = new azu
     roleDefinitionId: AzureOwnerRoleDefinitionId,
     scope: `subscriptions/${AzureSubscriptionId}`,
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

@@ -12,16 +12,8 @@ export const prodSbnsEsposter001: azure_native.servicebus.Namespace = new azure_
     minimumTlsVersion: azure_native.servicebus.TlsVersion.TlsVersion_1_2,
     namespaceName,
     resourceGroupName: prodRgEsposterAe001.name,
-    sku: {
-      name: azure_native.servicebus.SkuName.Basic,
-      tier: azure_native.servicebus.SkuTier.Basic,
-    },
-    tags: {
-      ...ApplicationTags,
-    },
+    sku: { name: azure_native.servicebus.SkuName.Basic, tier: azure_native.servicebus.SkuTier.Basic },
+    tags: { ...ApplicationTags },
   },
-  {
-    parent: prodRgEsposterAe001,
-    protect: true,
-  },
+  { parent: prodRgEsposterAe001, protect: true },
 );

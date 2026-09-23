@@ -9,20 +9,13 @@ const systemTopicName = "dev-egst-esposter-ae-001";
 export const devEgstEsposterAe001: azure_native.eventgrid.SystemTopic = new azure_native.eventgrid.SystemTopic(
   systemTopicName,
   {
-    identity: {
-      type: azure_native.eventgrid.IdentityType.None,
-    },
+    identity: { type: azure_native.eventgrid.IdentityType.None },
     location: AzureAustraliaEastLocation,
     resourceGroupName: devRgEsposterAe001.name,
     source: devstesposter001.id,
     systemTopicName,
-    tags: {
-      ...ApplicationTags,
-    },
+    tags: { ...ApplicationTags },
     topicType: "Microsoft.Storage.StorageAccounts",
   },
-  {
-    parent: devstesposter001,
-    protect: true,
-  },
+  { parent: devstesposter001, protect: true },
 );

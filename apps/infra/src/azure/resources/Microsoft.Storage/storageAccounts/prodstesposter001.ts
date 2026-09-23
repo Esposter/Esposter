@@ -42,15 +42,8 @@ export const prodstesposter001: azure_native.storage.StorageAccount = new azure_
     },
     publicNetworkAccess: azure_native.storage.PublicNetworkAccess.Enabled,
     resourceGroupName: prodRgEsposterAe001.name,
-    sku: {
-      name: azure_native.storage.SkuName.Standard_LRS,
-    },
-    tags: {
-      ...ApplicationTags,
-    },
+    sku: { name: azure_native.storage.SkuName.Standard_LRS },
+    tags: { ...ApplicationTags },
   },
-  {
-    parent: prodRgEsposterAe001,
-    protect: true,
-  },
+  { parent: prodRgEsposterAe001, protect: true },
 );
