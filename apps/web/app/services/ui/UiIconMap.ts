@@ -34,6 +34,8 @@ export const UiIconMap = {
   [UiIconMeaning.ScrollToTop]: "i-pixelarticons:arrow-up",
   [UiIconMeaning.Search]: "i-pixelarticons:search",
   [UiIconMeaning.SignIn]: "i-pixelarticons:login",
+  [UiIconMeaning.SortAscending]: "i-pixelarticons:arrow-up",
+  [UiIconMeaning.SortDescending]: "i-pixelarticons:arrow-down",
   [UiIconMeaning.Stop]: "i-pixelarticons:stop",
   [UiIconMeaning.Success]: "i-pixelarticons:check",
   [UiIconMeaning.Upload]: "i-pixelarticons:upload",

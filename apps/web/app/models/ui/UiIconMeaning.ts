@@ -31,6 +31,8 @@ export enum UiIconMeaning {
   ScrollToTop = "ScrollToTop",
   Search = "Search",
   SignIn = "SignIn",
+  SortAscending = "SortAscending",
+  SortDescending = "SortDescending",
   Stop = "Stop",
   Success = "Success",
   Upload = "Upload",

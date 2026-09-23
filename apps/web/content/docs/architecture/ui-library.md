@@ -95,6 +95,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiBreadcrumbs`     | Breadcrumbs                           | A trail of links back, whose middle folds behind a button when the row is too short for it             |
 | `UiMeter`           | none                                  | How much of something is used, in the loading bar's blocks, turning warning then danger past its marks |
 | `UiCheckbox`        | Checkbox                              | A sunk box a block of the accent drops into while checked, and half a block while mixed                |
+| `UiDataTable`       | `UiCheckbox`                          | A page of rows a server reads: sortable headers, selection across pages, groups, and its pages         |
 
 ### Keyboard contracts
 
@@ -111,6 +112,7 @@ The first components came out of the agent console, which drew the look by hand 
 - **A text field** is named by its visible label. A failing rule marks it invalid and points it at the message under it, which is a polite live region, and the form around it counts the result at once, so a submit button can stand disabled before it is pressed.
 - **Breadcrumbs** are a navigation landmark holding a list of ordinary links, the marks between them hidden from assistive technology. A trail too long for its row keeps its first and last crumbs and folds the middle behind a button that says how many it hides and whether they are shown, and lays them back out in place.
 - **A checkbox** is a button with the checkbox role, named by its label whether or not the label is drawn, and says whether it is checked, unchecked or mixed. Space or a click toggles it, as a button's own keys.
+- **A data table** is a table named by its label. A sortable header is a button inside the header cell, which says which way it sorts through `aria-sort`: ascending, then descending, then the server's own order. Each row is one stop in the tab order that Enter opens as a click does, so the menu key opens its context menu there too. A row's checkbox is named after the row, and the header's selects the page, saying it is mixed while only some of it is. A group's header is a button that says whether it is open.
 - **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none. The menu's whole contract is `useMenu`, which `UiMenu` and the context menu share.
 
 ### Surfaces
@@ -171,6 +173,7 @@ flowchart TD
 - **The shell's scrim never faded.** The dither's opacity is set outside every layer, so it beat Vuetify's own fade from nothing and the scrim appeared at once. Its fade is now timed and started through Vuetify's fade classes, which are more specific.
 - **A toast only moves on arriving.** Each source takes its own toast away, so a leaving toast would need every source behind one transition group; its arrival is `@starting-style`, which every toast gets whoever mounts it.
 - **Breadcrumbs measure with a gap of their own.** Vuetify 0's breadcrumbs decide what fits from each crumb's width plus a `gap` prop, eight pixels by default, so the list's CSS gap is two steps to match it; a wider one would let the row overflow before anything folds. The primitive places no divider and no ellipsis itself: a divider goes before every crumb after the first, and the ellipsis after the first divider, which is where the fold keeps it.
+- **A server's table is not `createDataTable`.** Vuetify 0's data table keeps its own sort, grouping and page: its sort changes only through a toggle, and what it groups by is fixed when it is made. The resource list keeps its page, size and order in the address, so a link lands on the same page, and a second copy inside the primitive would have to be walked into agreement on every back and forward. `UiDataTable` therefore takes those as models and draws the table itself, on the library's checkbox, select and buttons, with the ARIA the table pattern asks for.
 - **A spinner has text.** `UiSpinner` draws its frames as characters, so a pending button's text is its label and a frame; a test finds that button by its variant or role, never by its text.
 
 ### Themes and scopes
