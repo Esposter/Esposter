@@ -2,6 +2,8 @@
 // Saying more
 export interface UiMenuItem<T extends string> {
   description?: string;
+  // An icon class written whole, drawn before the title
+  icon?: string;
   title: string;
   value: T;
 }

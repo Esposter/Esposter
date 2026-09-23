@@ -11,6 +11,7 @@ interface Props {
   items: UiMenuItem<T>[];
   // The menu's accessible name, and its trigger's, since a trigger may show no more than a mark
   label: string;
+  positionArea?: string;
   variant?: UiButtonVariant;
 }
 
@@ -19,13 +20,13 @@ interface Props {
 // Light-dismissing it and opening it again
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
-const { items, label, variant } = defineProps<Props>();
+const { items, label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
 const emit = defineEmits<{ select: [value: T] }>();
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
 const triggerElement = computed(() => trigger.value?.element);
 const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, id, isOpen, open } = usePopover({
-  positionArea: POPOVER_POSITION_AREA,
+  positionArea,
   positionTry: POPOVER_POSITION_TRY,
 });
 const getItemId = (index: number) => `${id}-item-${index}`;
@@ -105,7 +106,7 @@ watch(isOpen, (newIsOpen) => {
   >
     <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-frame>
       <button
-        v-for="({ description, title, value }, index) of items"
+        v-for="({ description, icon, title, value }, index) of items"
         :id="getItemId(index)"
         :key="value"
         role="menuitem"
@@ -114,7 +115,8 @@ watch(isOpen, (newIsOpen) => {
         ui-item
         @click="choose(value)"
       >
-        {{ title }} <span v-if="description" text-muted>{{ description }}</span>
+        <span v-if="icon" :class="icon" aria-hidden="true" mr-2 align-middle size-5 inline-block />{{ title }}
+        <span v-if="description" text-muted>{{ description }}</span>
       </button>
     </div>
   </div>
