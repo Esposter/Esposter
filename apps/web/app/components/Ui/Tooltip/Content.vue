@@ -29,32 +29,26 @@ attach(content);
 </template>
 
 <style scoped>
-/* It pops out of what it names the moment the pointer arrives, and shrinks back into it on the way out */
+/* It pops out of what it names in two frames the moment the pointer arrives, and back into it on the way out */
 .tooltip {
   opacity: 0;
-  transform: scale(0.6);
+  transform: scale(0.5);
   transition:
-    opacity 0.12s ease-out,
-    transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1),
-    display 0.12s allow-discrete,
-    overlay 0.12s allow-discrete;
+    opacity var(--ui-motion-short),
+    transform var(--ui-motion-short),
+    display var(--ui-motion-short) allow-discrete,
+    overlay var(--ui-motion-short) allow-discrete;
 }
 
 .tooltip:popover-open {
   opacity: 1;
-  transform: scale(1);
+  transform: none;
 }
 
 @starting-style {
   .tooltip:popover-open {
     opacity: 0;
-    transform: scale(0.6);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tooltip {
-    transition: none;
+    transform: scale(0.5);
   }
 }
 </style>

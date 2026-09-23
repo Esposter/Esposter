@@ -37,6 +37,8 @@
   --ui-motion-long: calc(var(--ui-motion-frame) * 4) steps(4, jump-start);
   // Where a dialog arrives from: eight steps above, unless it sets its own, as a sheet does from its side
   --ui-dialog-from: translateY(calc(var(--ui-step) * -8));
+  // Where a panel steps out from: down from its trigger, unless a region sets its own, as the dock does from its edge
+  --ui-popover-from: translateY(calc(var(--ui-step) * -4));
 }
 // Held still under reduced motion: every timing takes no time, so whatever moved is simply there or gone
 @media (prefers-reduced-motion: reduce) {

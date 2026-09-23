@@ -62,6 +62,7 @@ watch(isOpenModel, (newIsOpenModel) => {
   <div
     ref="content"
     v-bind="contentAttrs"
+    class="panel"
     :aria-label="label"
     role="dialog"
     :style="contentStyles"
@@ -73,3 +74,33 @@ watch(isOpenModel, (newIsOpenModel) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* It steps out of what opened it and back in: down from a trigger by default, out of the dock's edge on the dock */
+.panel {
+  opacity: 0;
+  transform: var(--ui-popover-from);
+  transition:
+    opacity var(--ui-motion-short),
+    transform var(--ui-motion-short),
+    display var(--ui-motion-short) allow-discrete,
+    overlay var(--ui-motion-short) allow-discrete;
+}
+
+.panel:popover-open {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--ui-motion-medium),
+    transform var(--ui-motion-medium),
+    display var(--ui-motion-medium) allow-discrete,
+    overlay var(--ui-motion-medium) allow-discrete;
+}
+
+@starting-style {
+  .panel:popover-open {
+    opacity: 0;
+    transform: var(--ui-popover-from);
+  }
+}
+</style>
