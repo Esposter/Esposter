@@ -28,7 +28,7 @@ How the palette reaches both libraries, UnoCSS and the first response is `apps/w
 - **Vuetify never gets a colour of its own** — `vuetify.config.ts` only maps tokens onto its theme keys, so one palette edit repaints both libraries.
 - **A new pair that fails the palette test is re-picked**, never exempted from it.
 - **Only `NuxtTheme` selects a theme**, and the library's theme only ever follows Vuetify's through `useSelectUiTheme`.
-- **A length is a whole number of `--ui-step`, and a duration of frames**: a transition names `--ui-motion-short`, `--ui-motion-medium` or `--ui-motion-long`, each a duration and its steps, and never a time or an easing of its own, so reduced motion holds it still with the rest (the architecture page's Motion section).
+- **A length is a whole number of `--ui-step`, and a duration of `--ui-motion-unit`**: a transition names `--ui-motion-short`, `--ui-motion-medium` or `--ui-motion-long`, each a duration on the one eased curve, and never a time, an easing or a `steps()` of its own, so reduced motion holds it still with the rest. Motion is never stepped: stepped frames read as frame drops and made every pop-in feel slow (the architecture page's Motion section).
 - **Type is the four rules.** A migrated page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. The body's face is its own token, `--ui-font-body`, which the readable-text setting swaps; what must stay pixel whatever the body reads in — code — names `--ui-font-pixel` itself.
 
 ## Icons

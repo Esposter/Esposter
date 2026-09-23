@@ -136,23 +136,24 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 
 ### Motion
 
-The library moves as a voxel world does, a block at a time: every timing is stepped, never eased, and motion says where something came from rather than decorating what is done often.
+Every timing is eased, never stepped: one decelerating curve, so a change starts moving at once and settles into place. Motion says where something came from rather than decorating what is done often.
 
 ```mermaid
 flowchart TD
-  F[One frame] --> S[short: two frames]
-  F --> M[medium: three frames]
-  F --> L[long: four frames]
+  F[One unit] --> S[short: three units]
+  F --> M[medium: four units]
+  F --> L[long: six units]
   S --> T[A tooltip popping out of what it names, and a panel leaving]
   M --> P[A panel arriving, and a dialog leaving]
   L --> D[A dialog or a toast arriving, the status page's blocks]
-  R[Reduced motion] -->|the frame takes no time| F
+  R[Reduced motion] -->|the unit takes no time| F
 ```
 
-- **A duration is a whole number of frames**, as a length is of steps. `--ui-motion-short`, `--ui-motion-medium` and `--ui-motion-long` in `globals.scss` are each a duration and the steps it jumps in, so a transition names one token and every step lasts one frame. Each jumps at its start, so a change answers the moment it is asked for rather than a frame later. Anything leaving takes a size shorter than it took arriving, as Material's motion has it.
-- **Reduced motion is one line.** Under the preference the frame takes no time, so every timing that reads it is instant and nothing is restated per component. The status page keeps a rule of its own, since its blocks' stagger would still hold them back.
-- **A dialog drops into place**, eight steps from above, its dithered scrim stepping in with it, and rises back out. The library's dialog is the browser's, so it moves between its open and closed states from `@starting-style`, and stays in the top layer until it has gone through `allow-discrete` on `display` and `overlay`. The shell is Vuetify's, so it names a transition of the same frames, and its scrim's fade is timed through Vuetify's own fade classes. `--ui-dialog-from` is where it comes from: a sheet rises from the bottom on a narrow screen and steps in from the right on a wide one.
-- **A panel steps out of what opened it**: `UiPopover` from its trigger, and from the dock's edge on the dock, which sets `--ui-popover-from` by breakpoint as it sets where a tooltip opens. **A tooltip** pops out of what it names in two frames. **A toast** steps in from the edge of its corner.
+- **A duration is a whole number of units**, as a length is of steps. `--ui-motion-short`, `--ui-motion-medium` and `--ui-motion-long` in `globals.scss` are each a duration and `--ui-motion-easing`, Material's emphasised curve, so a transition names one token. Anything leaving takes a size shorter than it took arriving, as Material's motion has it.
+- **Never stepped.** The library first stepped every transition a sixty-millisecond frame at a time to read as pixel art. A tooltip or a dialog then arrived in two to four visible jumps, which read as dropped frames and made each one feel slow, so the pixel look lives in the shapes and never in the timing. The skeleton's band is the one stepped loop, since an eased shimmer is what it avoids.
+- **Reduced motion is one line.** Under the preference the unit takes no time, so every timing that reads it is instant and nothing is restated per component. The status page keeps a rule of its own, since its blocks' stagger would still hold them back.
+- **A dialog drops into place**, eight steps from above, its dithered scrim fading in with it, and rises back out. The library's dialog is the browser's, so it moves between its open and closed states from `@starting-style`, and stays in the top layer until it has gone through `allow-discrete` on `display` and `overlay`. The shell is Vuetify's, so it names a transition of the same tokens, and its scrim's fade is timed through Vuetify's own fade classes. `--ui-dialog-from` is where it comes from: a sheet rises from the bottom on a narrow screen and steps in from the right on a wide one.
+- **A panel steps out of what opened it**: `UiPopover` from its trigger, and from the dock's edge on the dock, which sets `--ui-popover-from` by breakpoint as it sets where a tooltip opens. **A tooltip** pops out of what it names in the short timing. **A toast** steps in from the edge of its corner.
 - **Nothing moves on a menu, a select, suggestions or the context menu.** They are opened constantly, and suggestions redraw on every keystroke, so motion would only slow each pick down.
 - **A dialog stands where its purpose puts it.** `UiDialogPlacement` names it: high, so a list changing length under a field never moves the field, as the palette's does; in the middle, for one decision about one thing, as a confirmation is; or down one side as a sheet, as the agent console's is. The dialog shell derives its own: high while its pinned header holds tabs over panels of other heights, as the room and user settings do, and in the middle for every form and question.
 
@@ -175,7 +176,7 @@ flowchart TD
 - **A toast only moves on arriving.** Each source takes its own toast away, so a leaving toast would need every source behind one transition group; its arrival is `@starting-style`, which every toast gets whoever mounts it.
 - **Breadcrumbs measure with a gap of their own.** Vuetify 0's breadcrumbs decide what fits from each crumb's width plus a `gap` prop, eight pixels by default, so the list's CSS gap is two steps to match it; a wider one would let the row overflow before anything folds. The primitive places no divider and no ellipsis itself: a divider goes before every crumb after the first, and the ellipsis after the first divider, which is where the fold keeps it.
 - **A server's table is not `createDataTable`.** Vuetify 0's data table keeps its own sort, grouping and page: its sort changes only through a toggle, and what it groups by is fixed when it is made. The resource list keeps its page, size and order in the address, so a link lands on the same page, and a second copy inside the primitive would have to be walked into agreement on every back and forward. `UiDataTable` therefore takes those as models and draws the table itself, on the library's checkbox, select and buttons, with the ARIA the table pattern asks for.
-- **A skeleton never blinks as a whole.** It first stepped the whole block between two shades, which read well on a card and as a strobe on a blade's full height or a table's rows blinking in step. The block now holds still in the panel colour and a lighter band steps across it, ten steps a sweep, timed in frames so reduced motion holds it with the rest.
+- **A skeleton never blinks as a whole.** It first stepped the whole block between two shades, which read well on a card and as a strobe on a blade's full height or a table's rows blinking in step. The block now holds still in the panel colour and a lighter band steps across it, ten steps a sweep, timed in the motion unit so reduced motion holds it with the rest.
 - **A spinner has text.** `UiSpinner` draws its frames as characters, so a pending button's text is its label and a frame; a test finds that button by its variant or role, never by its text.
 
 ### Themes and scopes
@@ -330,7 +331,7 @@ These are properties of the document rather than of any component, so they are s
 - **The focus ring** on every focus-visible element: a solid accent outline, its width and its offset each one step.
 - **The colour scheme** on the root, from the selected theme, so the browser's own form controls pick the right half.
 
-They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of, and the width of its edges and focus ring — the [type](#type), and the [motion](#motion) timings, each a whole number of frames.
+They sit in a cascade layer of their own, declared before every other layer, so a component that draws its own focus or selection — as Vuetify's fields do — wins over the chrome without an override. Beside the colours, the tokens are `--ui-step`, a quarter rem — the voxel the library's lengths are whole numbers of, and the width of its edges and focus ring — the [type](#type), and the [motion](#motion) timings, each a whole number of units on one curve.
 
 ## Type
 

@@ -62,7 +62,7 @@ const fallenBlockDelay = computed(() => `${digits.value.length * VOXEL_DIGIT_WID
 </template>
 
 <style scoped>
-/* A block drops from above in a few stepped frames, the way a voxel falls in a game, and lands where it stands */
+/* A block drops from above, the way a voxel falls in a game, and lands where it stands */
 .block {
   animation: drop var(--ui-motion-long) both;
 }

@@ -63,7 +63,7 @@ A large part of what Vuetify draws today is layout, and layout is not the librar
 
 - **The grid.** The container, row, column and spacer elements become UnoCSS flex and grid utilities on the elements that are already there. They are among the most used Vuetify elements in the app and none carries behaviour.
 - **Hover wrappers** become a hover variant, or a data attribute where the state is also needed in script.
-- **Expand transitions** become the library's one stepped transition.
+- **Expand transitions** become the library's one eased transition.
 - **Dividers** are a one-step line in the edge colour, a utility rather than a component.
 - **Chips used as labels** become text in the muted colour, which the `ux` skill's visual design sources (`.agents/skills/ux/references/visual-design-sources.md`) already call for. A chip that is a control is a toggle; a chip that is a count is a badge in the accent colour.
 

@@ -7,7 +7,7 @@
 
 <style scoped>
 .skeleton {
-  animation: sweep calc(var(--ui-motion-frame) * 20) steps(10) infinite;
+  animation: sweep calc(var(--ui-motion-unit) * 24) steps(10) infinite;
   background: linear-gradient(
       90deg,
       transparent 40%,

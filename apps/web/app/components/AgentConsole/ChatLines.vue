@@ -62,7 +62,7 @@ watch(
 <style scoped>
 /* Held, then faded out, as a game's chat line is */
 .chat-line {
-  animation: chat-line-fade v-bind(chatLineDuration) steps(4, end) forwards;
+  animation: chat-line-fade v-bind(chatLineDuration) forwards;
 }
 
 @keyframes chat-line-fade {

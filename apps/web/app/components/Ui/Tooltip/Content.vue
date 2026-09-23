@@ -29,7 +29,7 @@ attach(content);
 </template>
 
 <style scoped>
-/* It pops out of what it names in two frames the moment the pointer arrives, and back into it on the way out */
+/* It pops out of what it names the moment the pointer arrives, and back into it on the way out */
 .tooltip {
   opacity: 0;
   transform: scale(0.5);

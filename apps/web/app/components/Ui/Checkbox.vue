@@ -29,7 +29,7 @@ const { isLabelShown, isMixed = false, label } = defineProps<Props>();
 </template>
 
 <style scoped>
-/* The block drops in from above, a frame at a time, and a mixed box holds half of one */
+/* The block drops in from above, and a mixed box holds half of one */
 .mark {
   background-color: var(--ui-accent);
   transform: scaleY(0);
