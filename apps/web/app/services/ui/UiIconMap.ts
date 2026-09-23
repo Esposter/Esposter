@@ -5,6 +5,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 export const UiIconMap = {
   [UiIconMeaning.Bookmark]: "i-pixelarticons:bookmark",
   [UiIconMeaning.Collapse]: "i-pixelarticons:collapse",
+  [UiIconMeaning.Command]: "i-pixelarticons:command",
   [UiIconMeaning.Copy]: "i-pixelarticons:copy",
   [UiIconMeaning.Dropdown]: "i-pixelarticons:chevron-down",
   [UiIconMeaning.Expand]: "i-pixelarticons:expand",

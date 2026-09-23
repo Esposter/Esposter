@@ -1,5 +1,5 @@
 // @unocss-include
-import type { VBtn, VCard, VDialog } from "vuetify/components";
+import type { VBtn } from "vuetify/components";
 
 export const EMOJI_PICKER_TOOLTIP_TEXT = "Add Reaction";
 // Width nudged per arrow press on a resize handle, in the px the width model is kept in
@@ -13,12 +13,3 @@ export const RETRY_BUTTON_PROPS = Object.freeze({
   prependIcon: "i-mdi:refresh",
   text: "Retry",
 } satisfies VBtn["$props"]);
-
-export const KEYBOARD_SHORTCUTS_CARD_PROPS = Object.freeze({
-  prependIcon: "i-mdi:keyboard",
-  title: "Keyboard Shortcuts",
-} satisfies VCard["$props"]);
-
-export const KEYBOARD_SHORTCUTS_DIALOG_PROPS = Object.freeze({ maxWidth: "30rem" } satisfies VDialog["$props"]);
-
-export const SEARCH_DIALOG_PROPS = Object.freeze({ width: "37.5rem" } satisfies VDialog["$props"]);

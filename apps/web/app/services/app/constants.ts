@@ -28,3 +28,5 @@ export const VOXEL_DIGIT_WIDTH = 3;
 export const VOXEL_DROP_STAGGER_MS = Temporal.Duration.from({ milliseconds: 40 }).total("milliseconds");
 // The dock's panels open beside it: right of the rail, extending down, flipped up above the bottom bar
 export const DOCK_POPOVER_POSITION_AREA = "right span-bottom";
+// The one key that opens the command palette on every page
+export const COMMAND_PALETTE_SHORTCUT = "ctrl+k";

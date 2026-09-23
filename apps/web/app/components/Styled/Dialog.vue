@@ -11,7 +11,7 @@ import { mergeProps } from "vue";
 interface Props {
   cardProps?: VCard["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];
-  // Absent when the dialog has nothing to confirm — a search palette, a reference sheet. The whole actions row
+  // Absent when the dialog has nothing to confirm — a reference sheet. The whole actions row
   // Goes with it, cancel included: there is no pending change for cancel to abandon, so a dialog that only reads
   // Would otherwise have to re-roll the shell to get rid of one button it never wanted.
   confirmButtonProps?: VBtn["$props"];
@@ -20,9 +20,6 @@ interface Props {
   dialogProps?: Except<VDialog["$props"], "fullscreen" | "modelValue">;
   // Informational dialogs only acknowledge — cancelling is meaningless when nothing is pending
   hideCancelButton?: boolean;
-  // A command palette carries no chrome: its own hotkey both opens and dismisses it, and a full-screen search
-  // Field is a larger version of nothing. Every other dialog keeps the pair.
-  hideToolbarActions?: boolean;
 }
 
 const slots = defineSlots<{
@@ -39,7 +36,6 @@ const {
   confirmButtonProps,
   dialogProps = {},
   hideCancelButton,
-  hideToolbarActions,
 } = defineProps<Props>();
 const emit = defineEmits<{ confirm: [onComplete: () => void] }>();
 const isFullScreen = ref(false);
@@ -93,29 +89,27 @@ const confirm = () => {
       min-h-0
       ui-frame
     >
-      <header v-if="!hideToolbarActions || cardProps.title" class="title-bar" px-3 py-2 flex gap-2 items-center>
+      <header class="title-bar" px-3 py-2 flex gap-2 items-center>
         <v-icon v-if="typeof cardProps.prependIcon === 'string'" :icon="cardProps.prependIcon" />
         <div flex-1 min-w-0>
           <h2 text-accent truncate>{{ cardProps.title }}</h2>
           <p v-if="cardProps.subtitle" text-sm text-muted truncate>{{ cardProps.subtitle }}</p>
         </div>
-        <template v-if="!hideToolbarActions">
-          <UiIconButton
-            :label="isFullScreen ? 'Exit full screen mode' : 'Enter full screen mode'"
-            :meaning="isFullScreen ? UiIconMeaning.Collapse : UiIconMeaning.Expand"
-            :variant="UiButtonVariant.Quiet"
-            @click="isFullScreen = !isFullScreen"
-          />
-          <!-- Every dialog that keeps the title bar offers exactly one explicit dismissal: Cancel when there is an
-            Actions row, this when there is not. Without it a read-only dialog could only be left by clicking outside -->
-          <UiIconButton
-            v-if="!hasActions"
-            label="Close"
-            :meaning="UiIconMeaning.Remove"
-            :variant="UiButtonVariant.Quiet"
-            @click="modelValue = false"
-          />
-        </template>
+        <UiIconButton
+          :label="isFullScreen ? 'Exit full screen mode' : 'Enter full screen mode'"
+          :meaning="isFullScreen ? UiIconMeaning.Collapse : UiIconMeaning.Expand"
+          :variant="UiButtonVariant.Quiet"
+          @click="isFullScreen = !isFullScreen"
+        />
+        <!-- Every dialog offers exactly one explicit dismissal: Cancel when there is an actions row, this when there is
+          Not. Without it a read-only dialog could only be left by clicking outside -->
+        <UiIconButton
+          v-if="!hasActions"
+          label="Close"
+          :meaning="UiIconMeaning.Remove"
+          :variant="UiButtonVariant.Quiet"
+          @click="modelValue = false"
+        />
       </header>
       <!-- Pinned above the scroll region — a search field, a filter row. Rendered bare so the consumer owns its own
         Padding: the things that go here are usually full-bleed inputs -->

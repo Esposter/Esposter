@@ -2,6 +2,7 @@
 export enum UiIconMeaning {
   Bookmark = "Bookmark",
   Collapse = "Collapse",
+  Command = "Command",
   Copy = "Copy",
   Dropdown = "Dropdown",
   Expand = "Expand",

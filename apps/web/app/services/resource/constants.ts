@@ -5,8 +5,6 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { UPDATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 
-// How long a pending "G" chord prefix stays armed before the second key must be pressed
-export const KEY_CHORD_TIMEOUT_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 // One shared cadence for every edit-triggered autosave — injected by the autosave wrappers so call sites never restate
 // It
 export const RESOURCE_AUTOSAVE_DEBOUNCE_MS = 500;

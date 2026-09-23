@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ middleware: "auth" });
-useResourceKeyboardShortcuts();
+useResourceCommands();
 </script>
 
 <template>
@@ -19,7 +19,5 @@ useResourceKeyboardShortcuts();
         </div>
       </v-container>
     </v-sheet>
-    <ResourceSearchDialog />
-    <ResourceShortcutsOverlay />
   </NuxtLayout>
 </template>

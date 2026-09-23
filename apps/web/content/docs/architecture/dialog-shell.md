@@ -47,11 +47,11 @@ flowchart TD
 
 ## Dialogs with nothing to confirm
 
-A dialog that only shows something — the search palette, the keyboard shortcuts sheet — composes the same shell. Omitting `confirmButtonProps` drops the whole actions row, cancel included: there is no pending change for cancel to abandon, and a read-only dialog forced to carry one button it never wanted is a dialog that re-rolls the frame to get rid of it. The shell still owes exactly one explicit dismissal, so it moves a close button into the card's append slot beside the full-screen toggle — otherwise the only way out is clicking away.
+A dialog that only shows something, a reference sheet, composes the same shell. Omitting `confirmButtonProps` drops the whole actions row, cancel included: there is no pending change for cancel to abandon, and a read-only dialog forced to carry one button it never wanted is a dialog that re-rolls the frame to get rid of it. The shell still owes exactly one explicit dismissal, so it moves a close button into the title bar beside the full-screen toggle — otherwise the only way out is clicking away.
 
-**A command palette is the exception, and passes `hideToolbarActions`.** It is the one read-only dialog that already carries its own dismissal — the hotkey that opened it closes it, and so does `Escape` — so the chrome pair reads as two controls above the search field answering a question nobody asked, and full-screen is a larger version of a list of results. The title bar is dropped whole rather than emptied when there is no title either: a palette with no chrome opens at its search field instead of under a blank bar.
+Such a dialog sometimes needs something pinned above the scroll region: a filter row. That is the `#header` slot, rendered bare so the consumer owns its own padding, because what goes there is normally a full-bleed input.
 
-Such a dialog usually needs something pinned above the scroll region: a search field, a filter row. That is the `#header` slot, rendered bare so the consumer owns its own padding, because what goes there is normally a full-bleed input. `StyledSearchDialog` is the shared palette and the entry point for every command palette in the app ([search](/docs/architecture/search)); `StyledKeyboardShortcutsDialog` renders a `KeyboardShortcutCategory[]` the same way.
+The command palette and the keyboard shortcuts dialog are not on this shell. Their content is the library's alone, so they are the library's own dialog, in the browser's top layer ([command palette](/docs/architecture/ui-library#command-palette)).
 
 ## When a dialog may keep its own shell
 
@@ -70,4 +70,3 @@ Nothing else in the app wants that region, and a slot earning its existence from
 | `app/components/Styled/EditFormDialog/ConfirmCloseDialogButton.vue` | Save / discard / cancel on a dirty close, composed on the shell with `prepend-confirm` |
 | `app/components/Styled/Card.vue`                                    | The bordered card every dialog renders inside                                          |
 | `app/components/Styled/PreviewCard.vue`                             | The quoted-content box a confirm dialog shows the target in                            |
-| `app/components/Styled/SearchDialog.vue`                            | The action-less palette shell — hotkey, search field, results slot                     |

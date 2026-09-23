@@ -2,18 +2,13 @@
 import { RECENT_PAGES_SHOWN_LIMIT } from "@/services/app/constants";
 import { authClient } from "@/services/auth/authClient";
 import { useBookmarkStore } from "@/store/bookmark";
-import { useRecentPageStore } from "@/store/recentPage";
 
 const { data: session } = await authClient.useSession(useFetch);
 const bookmarkStore = useBookmarkStore();
-const { bookmarkPaths, bookmarks } = storeToRefs(bookmarkStore);
+const { bookmarks } = storeToRefs(bookmarkStore);
 const { readBookmarks } = bookmarkStore;
-const recentPageStore = useRecentPageStore();
-const { rankedRecentPages } = storeToRefs(recentPageStore);
-// A bookmarked page is already in reach above, so the recent list spends its few rows on the others
-const recentPages = computed(() =>
-  rankedRecentPages.value.filter(({ path }) => !bookmarkPaths.value.has(path)).slice(0, RECENT_PAGES_SHOWN_LIMIT),
-);
+const unbookmarkedRecentPages = useUnbookmarkedRecentPages();
+const recentPages = computed(() => unbookmarkedRecentPages.value.slice(0, RECENT_PAGES_SHOWN_LIMIT));
 
 if (session.value) await readBookmarks();
 </script>

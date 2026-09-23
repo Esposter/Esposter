@@ -1,11 +1,11 @@
 ---
 title: UI library
-description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the first components and the surfaces they are drawn with, the generated map of how the pages link, the app shell with its dock, toasts and dialogs, the one context menu, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
+description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the first components and the surfaces they are drawn with, the generated map of how the pages link, the app shell with its dock, toasts and dialogs, the one context menu, the one command palette and its registry of shortcuts, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
 ---
 
 # UI Library
 
-The app is moving from Material as Vuetify draws it to a library of its own, built in `apps/web` on [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) — Vuetify's headless layer, which owns focus, keyboard handling, ARIA and positioning and paints nothing. The migration runs as a ladder of stages, designed in the [UI library proposal](/docs/proposals/refactors/ui-library). This page is what exists so far: the foundation every later stage builds on, the icons, the first components, which the agent console is built from, the flow map the later stages are designed from, the app shell every page sits in, and the context menu every thing with actions of its own opens.
+The app is moving from Material as Vuetify draws it to a library of its own, built in `apps/web` on [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) — Vuetify's headless layer, which owns focus, keyboard handling, ARIA and positioning and paints nothing. The migration runs as a ladder of stages, designed in the [UI library proposal](/docs/proposals/refactors/ui-library). This page is what exists so far: the foundation every later stage builds on, the icons, the first components, which the agent console is built from, the flow map the later stages are designed from, the app shell every page sits in, the context menu every thing with actions of its own opens, and the command palette every page answers Ctrl+K with.
 
 The foundation changes no component, and still repaints every page. Its design tokens are the colours of the whole app, Vuetify's pages included, and the document's own chrome — scrollbars, selection, caret, focus ring — reads them on every page whichever library draws it.
 
@@ -78,6 +78,9 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiAvatar`          | Avatar                                | A picture in a frame, or the first letter of its name until one loads                               |
 | `UiToast`           | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                 |
 | `UiToastStack`      | none                                  | The one corner every toast is drawn in, announced as a polite live region                           |
+| `UiDialog`          | Dialog                                | A modal in the top layer, framed, for content that is the library's alone                           |
+| `UiCommandList`     | virtual focus                         | A search field over the commands it finds, grouped under headings, the list always shown            |
+| `UiShortcut`        | none                                  | A shortcut as the raised key caps it is pressed with                                                |
 
 ### Keyboard contracts
 
@@ -86,6 +89,8 @@ The first components came out of the agent console, which drew the look by hand 
 - **Suggestions** leave focus in the field, since typing goes on there. The arrows walk them as the field's active descendant, and Enter or Tab takes the highlighted one. Enter with nothing highlighted is still the field's own key — the composer's send. Escape puts them away without reaching any shortcut on the page, and the next keystroke in the field brings them back. They show while the field has focus and something to offer, and pressing one with the mouse keeps the field focused.
 - **A context menu** keeps the menu's contract from the moment it opens onto its first item, and hands focus back to the element it opened over.
 - **A popover** opens from its trigger by click, Enter or Space, and Escape closes it with focus back on the trigger. Its open state is a model as well, so a shortcut elsewhere on the page can open it.
+- **A command list** keeps focus in its field, as suggestions do, and highlights its first command whenever the list changes, so Enter always takes the best match. The arrows walk it, and Enter clicks the highlighted row, so a row that is a link is followed as a pointer would follow it.
+- **A dialog** is the browser's: opening it moves focus inside and traps Tab there, and Escape or a click on the scrim closes it.
 - **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none. The menu's whole contract is `useMenu`, which `UiMenu` and the context menu share.
 
 ### Surfaces
@@ -107,7 +112,7 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 
 - **The call site's attributes win over the primitive's.** Vuetify 0's button lays its own attributes over the ones passed to it, which would drop a form's submit type and a toggle's pressed state. `UiButton` renders the element itself, from the primitive's attributes with the call site's on top. It exposes that element, because a renderless primitive leaves a fragment rather than an element as the component's root.
 - **A select's model sees only choices.** Vuetify 0's select clears the old choice before it selects the new one, which a model would see as the select going empty for a moment. `UiSelect` passes on only a value, so a call site that sends every change to a server never sends the empty one.
-- **A modal is Vuetify's until its content is not.** Vuetify 0's dialog opens in the browser's top layer, and everything outside the top layer is inert while it is open. Vuetify renders a menu, a select or a tooltip outside the element that opened it, so inside a top-layer dialog each would open underneath it and take no clicks. The dialog shell and the page drawers therefore keep Vuetify's overlay as their behaviour and wear the library's look, and move onto Vuetify 0 once nothing inside them is Vuetify's. A popover is not modal, so the dock's panels are the library's already, drawn with the library's parts alone.
+- **A modal is Vuetify's until its content is not.** Vuetify 0's dialog opens in the browser's top layer, and everything outside the top layer is inert while it is open. Vuetify renders a menu, a select or a tooltip outside the element that opened it, so inside a top-layer dialog each would open underneath it and take no clicks. The dialog shell and the page drawers therefore keep Vuetify's overlay as their behaviour and wear the library's look, and move onto Vuetify 0 once nothing inside them is Vuetify's. The command palette and the shortcuts dialog are the first whose content already is, so they are `UiDialog`s. A popover is not modal, so the dock's panels are the library's already, drawn with the library's parts alone.
 - **A tooltip opens beside a panel, never over it.** Vuetify 0's tooltip content is an auto popover, and opening one closes every other auto popover it is not inside, so hovering one dock button shut the panel another had open. `UiTooltip` keeps the primitive's timing and renders its own content as a manual popover. Its activator is renderless and hands the caller only its handlers and its anchor, since its other attributes would overwrite a button's type and disabled state; a trigger that anchors a panel too names both anchors. Where it opens is `--ui-tooltip-position-area`, which the dock sets beside the rail and above the bar.
 - **A menu takes focus a tick after it opens.** Opening sets the popover's state, and the browser shows the popover and draws a new list of items only in the render that follows; an element in a closed popover takes no focus, so `useMenu` focuses the first item once that render is done.
 - **A spinner is decoration.** It sits beside a line that says what is under way, so it has no progress role and is hidden from assistive technology. The loading bar is the one with a value to report.
@@ -127,14 +132,14 @@ flowchart TD
   L -->|any other| W{At least the md breakpoint?}
   W -->|yes| RL[The dock as a rail down the left edge]
   W -->|no| BB[The dock as a bar along the bottom]
-  RL --> D[Home, launcher, bookmarks and recent pages, notifications, account]
-  BB --> DN[Home, launcher holding the places, notifications, account]
+  RL --> D[Home, launcher, the palette, bookmarks and recent pages, notifications, account]
+  BB --> DN[Home, launcher holding the places, the palette, notifications, account]
   D --> P[The page, its drawers docked past the dock]
   DN --> P
 ```
 
 - **The dock holds the reader's places, not the app's catalogue.** Below the launcher come the pages the reader bookmarked, then the pages they come back to most. A product's own page shows its icon, and any other page, a room or a resource, shows its title's first letter in a frame. On a narrow screen the bar has no room for them, so they lead the launcher's panel instead. Which edge the dock takes is CSS alone: Vuetify's mobile threshold is the `md` breakpoint, the one UnoCSS's variant reads, so no script decides it.
-- **Bookmarks are server-side and recent pages are not.** A bookmark follows the reader between devices, so it is a row of `bookmarks`, toggled from the launcher's panel by a button that says in words whether it bookmarks the page open now or removes it, and capped at a handful, since the dock shows every one. A recent page is a convenience of the device, kept in local storage and ranked by frecency: each visit weighted by how long ago the last one was, in Firefox's age buckets. Home and sign-in are never recent, and a signed-out reader has recent pages only. A page's title is the last part of its document title, read each time its head renders, so a room's name that arrives after its messages is picked up.
+- **Bookmarks are server-side and recent pages are not.** A bookmark follows the reader between devices, so it is a row of `bookmarks`, toggled from the launcher's panel by a button that says in words whether it bookmarks the page open now or removes it, and capped at a handful, since the dock shows every one. A recent page is a convenience of the device, kept in local storage and ranked by frecency: each visit weighted by how long ago the last one was, in Firefox's age buckets. Home, sign-in and an address no page matches are never recent, and a signed-out reader has recent pages only. A page's title is the last part of its document title, read each time its head renders, so a room's name that arrives after its messages is picked up.
 - **The launcher opens every product as a panel**, grouped by what it is for: talk, make, build and play. It is the one list of products: the home and sign-in pages no longer keep a drawer of them, and give that width to their content.
 - **The account menu holds the rarely used**: settings, the theme, the pages outside the products and signing out. Signed out, its trigger is a sign-in mark and signing in leads the same menu.
 - **Notifications** are a popover on the dock with the unread count on its trigger. The panel pages through its list and marks everything read as it closes.
@@ -163,7 +168,7 @@ Every flow the app bar carried has a place in the new frame:
 | Alerts, the clipboard snackbar, notification and achievement toasts | One toast stack in one corner                            |
 | The call picture-in-picture window and the user settings dialog     | Unchanged                                                |
 
-The readable-text setting and the command palette's button are not part of it yet. The setting swaps the body's face, and the body is not in the pixel face until page migration puts it there. The palette's button arrives with the [command palette](/docs/proposals/refactors/ui-library/command-palette).
+The readable-text setting is not part of it yet: it swaps the body's face, and the body is not in the pixel face until page migration puts it there. The dock's command button, after the launcher, opens the [command palette](#command-palette).
 
 ## Context menus
 
@@ -197,6 +202,44 @@ flowchart TD
 | A place on the dock | Open in a new tab, and bookmarking it or removing the bookmark when signed in    |
 
 The rest — a room, a member, a sheet column, a resource in a tree — join as their units migrate in [page migration](/docs/proposals/refactors/ui-library/page-migration), each with the items its overflow button already has.
+
+## Command palette
+
+Ctrl+K opens one palette on every page. It offers what the page in front of the reader can reach or do, by name, and the shortcuts dialog lists every key that works there. Both read one registry of commands.
+
+```mermaid
+flowchart TD
+  M[A surface mounts] --> REG[useCommands: its commands. useCommandScope: its search]
+  U[It unmounts] --> UN[Its entries and their keys leave with it]
+  REG --> S[The command store]
+  REG -->|a command with a shortcut and something to do| HK[Its key, bound through the hotkey composable]
+  K[Ctrl+K or the dock's command button] --> P{Is a scope registered?}
+  P -->|yes| SC[The palette searches the scope: the docs, the rooms, the resources]
+  P -->|no| APP[The palette searches every offered command]
+  SC -->|Backspace on an empty query| APP
+  APP --> MS[MiniSearch over the registered titles]
+  SC --> ST[The surface's own search stack, unchanged]
+  MS --> RUN[A link followed or a command run]
+  ST --> RUN
+  Q[Shift+?] --> D[The shortcuts dialog: every command with a shortcut, grouped by surface]
+  S --> D
+```
+
+- **A command is data.** A `UiCommand` has a title, a group — the surface that registered it — an icon or a picture, and somewhere to go, something to run, or neither. One with somewhere to go is a real link in the palette, so it opens in a new tab like any other. One with neither is a key its surface handles itself, such as the composer's Enter: the shortcuts dialog lists it, and nothing binds or offers it.
+- **A surface registers for as long as it is mounted.** `useCommands` adds a surface's commands to the store and binds each shortcut through Vuetify's hotkey composable until the surface unmounts, so the shortcuts dialog never lists a key that does nothing and the palette only offers what the page can do. A sequence, such as the resource explorer's G then A, is a shortcut like any other. A shortcut never fires while a field has focus, where its keys are typing.
+- **The app's own commands are the dock's.** Home, every product, the reader's bookmarked and recent pages and the account menu's entries are registered app-wide, and the account menu reads the same list, so the two never disagree. A condition such as being signed in is part of the list, so it is re-read whenever the palette shows it.
+- **A surface's search is a scope, not a second palette.** The docs, the room list and the resource explorer's home page keep their search stacks as the [search standard](/docs/architecture/search) describes, and hand the palette their query and what it finds. The palette opens in the scope of the surface in front, and Backspace on an empty query steps out to the whole app. Ctrl+K keeps its meaning on their pages, and everything else is one keystroke further.
+- **App-wide search is on the client.** The titles are in memory, so the palette searches them with MiniSearch, the standard's client branch, and keeps each group together under its heading.
+- **The palette binds its own key**, in a field too, since no typing holds Ctrl, and does not offer itself; its registry entry only lists the key.
+- **Both are the library's dialogs.** The palette and the shortcuts dialog hold nothing of Vuetify's, so they open in the top layer through `UiDialog`, high on the screen so a list changing length never moves the field.
+
+| Surface                      | What it registers                                                                                                                  |
+| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| The app                      | Home, the products, the reader's places, the account menu's entries, and the palette's and dialog's keys                           |
+| The message composer         | Its own keys: sending, a new line, slash commands, mentions, editing the last message                                              |
+| The docs                     | A scope over the docs' sections                                                                                                    |
+| The room list                | A scope over the reader's rooms, read a page at a time                                                                             |
+| The resource explorer's home | Searching resources, going to every resource and opening notifications as G chords, and a scope over resources, services and pages |
 
 ## One owner per concern
 
@@ -302,6 +345,11 @@ flowchart TD
 | `apps/web/app/composables/ui/useContextMenu.ts`    | The props that give an element a context menu, and the long press                               |
 | `apps/web/app/composables/ui/useMenu.ts`           | The menu's keyboard contract, shared by `UiMenu` and the context menu                           |
 | `apps/web/app/store/ui/contextMenu.ts`             | What the context menu shows, where, and over what                                               |
+| `apps/web/app/store/ui/command.ts`                 | The registered commands and scopes, and whether the palette and the shortcuts dialog are open   |
+| `apps/web/app/composables/ui/useCommands.ts`       | Registers a surface's commands and binds their shortcuts while it is mounted                    |
+| `apps/web/app/composables/ui/useCommandScope.ts`   | Hands a surface's search to the palette while it is mounted                                     |
+| `apps/web/app/components/App/CommandPalette.vue`   | The palette, and the app's own commands                                                         |
+| `apps/web/app/components/App/ShortcutsDialog.vue`  | Every registered shortcut, grouped by surface                                                   |
 | `.agents/skills/ui-library/SKILL.md`               | The library's conventions                                                                       |
 
 ## Sources
@@ -319,6 +367,9 @@ flowchart TD
 - [position-anchor](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-anchor), MDN, and [anchor positioning's Baseline status](https://github.com/web-platform-dx/web-features/issues/3558), web-features: anchor positioning in every engine since Firefox 147, which is why no JavaScript positioning is installed.
 - [Address bar ranking](https://firefox-source-docs.mozilla.org/browser/urlbar/ranking.html), Firefox: frecency, the recency-and-frequency score the recent pages are ordered by.
 - [Hick's law](https://lawsofux.com/hicks-law/) and [Fitts's law](https://lawsofux.com/fittss-law/), Laws of UX: a dock of the reader's own places rather than every product, on a screen edge and under the thumb.
+- [Dialog](https://0.vuetifyjs.com/components/disclosure/dialog), Vuetify 0: the native modal dialog under `UiDialog`.
+- [Hotkey](https://0.vuetifyjs.com/composables/system/use-hotkey), Vuetify 0: the hotkey composable a shortcut binds through after retirement.
+- [MiniSearch](https://lucaong.github.io/minisearch/): the client index the app-wide palette searches.
 - [Top layer](https://developer.mozilla.org/en-US/docs/Glossary/Top_layer), MDN: why a modal in it hides whatever renders outside it, which keeps the dialog shell on Vuetify's overlay for now.
 - [Vue SFC compiler](https://github.com/vuejs/core/tree/main/packages/compiler-sfc): the parser the flow map reads each template's component tags with.
 - [scrollbar-color](https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color), MDN: the standard scrollbar properties the chrome sets.

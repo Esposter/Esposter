@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import type { DocsSearchSection } from "@/models/docs/DocsSearchSection";
+import type { UiCommand } from "@/models/ui/UiCommand";
 
 import { ContentCollection } from "#shared/models/content/ContentCollection";
 import { DocsSearchSectionPropertyNames } from "@/models/docs/DocsSearchSection";
 import { MAX_DOCS_SEARCH_RESULTS } from "@/services/docs/constants";
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
+import { useCommandStore } from "@/store/ui/command";
 import { getOrCreate } from "@esposter/shared";
 import MiniSearch from "minisearch";
 
-const isOpen = ref(false);
 const query = ref("");
 const { data: searchSections } = useAsyncData(
   AsyncDataKey.DocsSearchSections,
@@ -33,43 +34,35 @@ const miniSearch = computed(() => {
 // So one page matching in many sections can't flood the list — the DocSearch/VitePress behavior
 const results = computed(() => {
   if (!query.value) return [];
-  const pagePathResultsMap = new Map<string, { id: string; subtitle: string; title: string }>();
+  const pagePathResultsMap = new Map<string, UiCommand>();
   for (const searchResult of miniSearch.value.search(query.value)) {
     // MiniSearch's SearchResult carries its storeFields behind an `any` index signature, which satisfies no
     // Required property — so there is no overlap for a direct cast, and reading them bare would type as `any`.
     // The fields are the ones the index above was told to store
     const { id, title, titles } = searchResult as unknown as Pick<DocsSearchSection, "id" | "title" | "titles">;
     const pagePath = id.split("#")[0] || id;
-    getOrCreate(pagePathResultsMap, pagePath, () => ({ id, subtitle: titles.join(" › ") || pagePath, title }));
+    getOrCreate(pagePathResultsMap, pagePath, () => ({
+      description: titles.join(" › ") || pagePath,
+      group: "Docs",
+      id,
+      title,
+      to: id,
+    }));
     if (pagePathResultsMap.size === MAX_DOCS_SEARCH_RESULTS) break;
   }
   return [...pagePathResultsMap.values()];
 });
+const commandStore = useCommandStore();
+const { openCommandPalette } = commandStore;
+
+useCommandScope({ commands: () => results.value, placeholder: "Search docs", query, title: "Docs" });
 </script>
 
 <template>
-  <StyledSearchDialog v-model="isOpen" v-model:search-query="query" hotkey="ctrl+k" placeholder="Search docs">
-    <template #activator="{ updateIsOpen }">
-      <StyledTooltipIconButton
-        :button-props="{ class: 'mx-2' }"
-        icon="i-mdi:magnify"
-        text="Search (Ctrl+K)"
-        @click="updateIsOpen(true)"
-      />
-    </template>
-    <template v-if="query">
-      <v-divider />
-      <v-list v-if="results.length > 0" max-h-96 of-y-auto>
-        <v-list-item
-          v-for="result of results"
-          :key="result.id"
-          :subtitle="result.subtitle"
-          :title="result.title"
-          :to="result.id"
-          @click="isOpen = false"
-        />
-      </v-list>
-      <p v-else m-0 p-4 text-center op-medium-emphasis>No results for "{{ query }}"</p>
-    </template>
-  </StyledSearchDialog>
+  <StyledTooltipIconButton
+    :button-props="{ class: 'mx-2' }"
+    icon="i-mdi:magnify"
+    text="Search (Ctrl+K)"
+    @click="openCommandPalette()"
+  />
 </template>

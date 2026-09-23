@@ -148,9 +148,11 @@ canvas {
     margin-inline-start: calc(100% * var(--v-col-offset) / var(--v-col-size-columns));
   }
 }
-// The dialog shell's scrim: a dither — a checker of the background colour — rather than a blurred wash. Global, because
-// Vuetify renders the scrim itself, outside anything the shell's own template can scope a style to
-.ui-dialog > .v-overlay__scrim {
+// A dialog's scrim: a dither — a checker of the background colour — rather than a blurred wash. Global, because
+// Vuetify renders the scrim itself, outside anything the shell's own template can scope a style to, and the library's
+// Is the native dialog's backdrop
+.ui-dialog > .v-overlay__scrim,
+dialog.ui-dialog::backdrop {
   background: repeating-conic-gradient(var(--ui-background) 0 25%, transparent 0 50%) 0 0 / calc(var(--ui-step) * 2)
     calc(var(--ui-step) * 2);
   opacity: 0.85;

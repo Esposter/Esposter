@@ -9,8 +9,9 @@ export default defineNuxtPlugin(() => {
   const recentPageStore = useRecentPageStore();
   const { setPageTitle, visitPage } = recentPageStore;
   router.afterEach((to, _from, failure) => {
-    // An aborted or redirected navigation never landed, so it is not a visit
-    if (failure || RECENT_PAGE_EXCLUDED_PATHS.includes(to.path)) return;
+    // An aborted or redirected navigation never landed, and an address no page matches is the status page's, so
+    // Neither is a visit
+    if (failure || to.matched.length === 0 || RECENT_PAGE_EXCLUDED_PATHS.includes(to.path)) return;
     visitPage(to.path);
   });
   head.hooks?.hook("dom:rendered", () => {
