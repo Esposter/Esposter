@@ -13,10 +13,13 @@ interface Props {
   rows?: number;
   // Checked as the reader types, each a message or true; a form around the field counts its result
   rules?: ValidationRule[];
+  // A day rather than text, picked from the browser's own calendar in the page's colour scheme; its value reads as
+  // YYYY-MM-DD
+  type?: "date";
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { counter, isAutofocus, label, rows, rules = [] } = defineProps<Props>();
+const { counter, isAutofocus, label, rows, rules = [], type } = defineProps<Props>();
 // Vuetify's rules own validation until retirement, and one may be a bare result or a promise-like rather than a
 // Function returning a promise, which is all the primitive takes
 const inputRules = computed<FormValidationRule[]>(() =>
@@ -25,7 +28,7 @@ const inputRules = computed<FormValidationRule[]>(() =>
 </script>
 
 <template>
-  <Input.Root #default="{ id }" v-model="modelValue" :rules="inputRules" validate-on="input" flex flex-col gap-1>
+  <Input.Root #default="{ id }" v-model="modelValue" :rules="inputRules" :type validate-on="input" flex flex-col gap-1>
     <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the control is the primitive's, which takes the id this label names -->
     <label :for="String(id)" text-muted>{{ label }}</label>
     <Input.Control
