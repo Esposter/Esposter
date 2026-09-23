@@ -203,6 +203,20 @@ describe("scheduledMessageJobRouter", () => {
     await expect(schedule()).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
+  // The payload stores a room-level send as the "" sentinel, but a message's replyRowKey is absent when it replies
+  // To nothing — a "" reaches the client's reply read as a rowKey and fails its validation
+  test("sends scheduled message now without a replyRowKey", async () => {
+    expect.hasAssertions();
+
+    const { member, scheduledMessageJob } = await setupMemberScheduledMessage();
+    // Joining the room posted a message at the frozen clock, and a rowKey is its timestamp
+    vi.advanceTimersByTime(1);
+    await mockSessionOnce(mockContext.db, member);
+    const newMessage = await scheduledMessageJobCaller.sendScheduledMessageNow({ id: scheduledMessageJob.id });
+
+    expect(newMessage.replyRowKey).toBeUndefined();
+  });
+
   test("fails send scheduled message now with read-only room", async () => {
     expect.hasAssertions();
 
