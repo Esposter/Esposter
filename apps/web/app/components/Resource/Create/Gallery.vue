@@ -21,10 +21,10 @@ const { dense = false } = defineProps<Props>();
       flex-col
       gap-2
       h-full
-      :max-width="dense ? '10rem' : '18rem'"
       :to="RoutePath.ResourceExplorerCreateType(type)"
     >
-      <div flex gap-2 items-center>
+      <!-- A dense column is too narrow for the icon and a one-word title side by side, so the title goes under it -->
+      <div flex gap-2 items-center :class="{ 'flex-col text-center': dense }">
         <v-icon size="large" :icon="ResourceDefinitionMap[type].icon" />
         <span text-title-medium>{{ ResourceDefinitionMap[type].title }}</span>
       </div>
