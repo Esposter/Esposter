@@ -14,7 +14,7 @@ The work surface shows a reply as a message under the one that asked. On the [ag
 
 **This adds:**
 
-1. **Bubbles.** Each spoken line arriving in a reply is a bubble anchored above the figure, one at a time, in the order the hook saw them.
+1. **Bubbles.** Each spoken line arriving in a reply is a bubble anchored above the figure, one at a time, in the order the reply carries them.
 2. **Panels.** Each reply the reply tool sends becomes a panel: an ordinary HTML element placed in the scene with cientos's `Html`, so code blocks keep their text and their selection. The newest panel sits in front; older ones slide back into a stack a click brings forward.
 3. **The text box stays.** Typing works exactly as in the default theme; only where the answer appears changes. A toggle returns the list view.
 

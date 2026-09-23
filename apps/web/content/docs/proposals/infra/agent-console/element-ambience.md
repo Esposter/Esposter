@@ -22,7 +22,7 @@ The spoken replies are heard and not seen. The ambience gives them a picture on 
 
 ```mermaid
 sequenceDiagram
-    participant Display as MessageDisplay hook
+    participant Display as The Genshin theme, each spoken line it finds in a reply
     participant Server as Resident synthesizer
     participant Host as Console host
     participant Page as The console, the field
