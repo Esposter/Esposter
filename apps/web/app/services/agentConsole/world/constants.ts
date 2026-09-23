@@ -22,12 +22,8 @@ export const DOOR_CLOSED_BOX: VoxelBox = {
   max: [0, DOOR_HEIGHT, DOOR_MAX_Z],
   min: [0, 1, DOOR_MIN_Z],
 };
-export const DOOR_OPEN_BOX: Pick<VoxelBox, "max" | "min"> = {
-  max: [-1, DOOR_HEIGHT, DOOR_MAX_Z + 1],
-  min: [DOOR_MIN_Z - DOOR_MAX_Z - 1, 1, DOOR_MAX_Z + 1],
-};
 export const DOOR_HINGE_POSITION = new Vector3(0, 1, DOOR_MAX_Z + 1);
-const DOOR_THICKNESS = 3 / 16;
+export const DOOR_THICKNESS = 3 / 16;
 export const DOOR_PANEL_POSITION = new Vector3(-DOOR_THICKNESS, 0, DOOR_MIN_Z - DOOR_MAX_Z - 1);
 export const DOOR_PANEL_SCALE = new Vector3(DOOR_THICKNESS, DOOR_HEIGHT, DOOR_MAX_Z - DOOR_MIN_Z + 1);
 export const DOOR_OPEN_ANGLE = Math.PI / 2;
