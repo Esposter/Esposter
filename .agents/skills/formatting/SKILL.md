@@ -33,7 +33,7 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
 ## Comments
 
 - **A `//` comment goes on its own line _above_ the code it describes, never trailing on the same line.** `const x = f(); // why` becomes a comment line then the statement. Own-line comments read consistently, survive the capitalization hook, and don't push lines past the width limit. (Directive comments that must be inline — a rare `// eslint-disable-line` — are the only exception.)
-- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only. This includes **functional/directive comments** (`// oxlint-disable-next-line ...`, `// @ts-expect-error ...`, etc.) — they attach directly to the line they govern with no surrounding blank line. **Module scope is not an exception**: `const X = …;` / blank line / `// …` / `export const Y = …` is this violation, not a paragraph break between two declarations — the comment is the break, so the blank line goes. The only blank line a comment sits under is the import block's, or a file-level `/* … */` directive's.
+- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only. This includes **functional/directive comments** (`// oxlint-disable-next-line ...`, `// @ts-expect-error ...`, etc.) — they attach directly to the line they govern with no surrounding blank line. **Module scope is not an exception, and neither is a class body or an object literal**: `const X = …;` / blank line / `// …` / `export const Y = …` is this violation, not a paragraph break between two declarations — the comment is the break, so the blank line goes. The only blank line a comment sits under is the import block's, or a file-level `/* … */` directive's.
 
   ```ts
   // CORRECT — comment acts as separator
@@ -62,8 +62,6 @@ Cross-cutting whitespace and comment rules for all files. Language/framework-spe
     // No shared analyser exists to reuse here.
     export const useThing = () => {};
     ```
-
-  - **This is a rule about statements inside a block.** Between two **declarations** the blank line is the paragraph break and the comment attaches to the declaration below it — the two are doing different jobs, so both stay. That is the file's top level, and equally a class body or an object literal, where the members are declarations and closing one up against the next is what deleting the blank line does. Inside a function or a `<script setup>` body there is only one job to do, and the comment does it.
 
   - **Deleting a leading comment takes the separator with it.** A comment above a top-level declaration, or directly under the import block, is standing in for the blank line that would otherwise be there — so a pass that removes the comment has to put the blank line back. The import case fails `import/newline-after-import` at lint; the declaration case fails nothing at all and just reads as two paragraphs run together.
 
