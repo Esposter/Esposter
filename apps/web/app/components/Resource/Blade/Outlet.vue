@@ -38,7 +38,7 @@ const contentComponent = computed(
   <Suspense v-else-if="contentComponent">
     <component :is="contentComponent" :key="`${resource.id}${ID_SEPARATOR}${activeBlade}`" />
     <template #fallback>
-      <StyledSkeleton />
+      <UiSkeleton h-full />
     </template>
   </Suspense>
 </template>

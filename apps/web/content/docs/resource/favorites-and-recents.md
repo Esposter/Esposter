@@ -23,7 +23,7 @@ flowchart LR
   READ -->|"isFavorite: true"| FLIST["/favorites"]
   READ -->|"lastAccessedAt column"| ALL["/all workbench"]
   STARL["star column on /all"] --> TGL["resource.toggleFavorite"]
-  STARB["star in the blade command bar"] --> TGL
+  STARB["star on the resource's title row"] --> TGL
   TGL --> FAV[("resource_favorites<br/>userId + resourceId")]
   FAV -->|resource.readFavorites| FTAB["Home · Favorites tab"]
   RES[("resources")] -->|FK cascade on delete| FAV

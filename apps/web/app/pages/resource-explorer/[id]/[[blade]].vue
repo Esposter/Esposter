@@ -44,13 +44,18 @@ watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {
 });
 </script>
 
-<!-- No title on the layout: the blade toolbar below already names the resource and the blade it is showing, and
-     the header repeating the name only pushed the content down a row -->
+<!-- The resource heads the page itself, its commands beside its name and its blades as tabs under it -->
 <template>
-  <NuxtLayout name="resource" is-header-bordered>
+  <NuxtLayout name="resource">
     <Head>
       <Title>{{ resource?.name ?? "Resource" }}</Title>
     </Head>
+    <template v-if="resource" #heading>
+      <ResourceBladeHeader :resource />
+    </template>
+    <template v-if="resource" #navigation>
+      <ResourceBladeNavigation :active-blade :resource />
+    </template>
     <template v-if="resource">
       <ResourceExplorer :active-blade :resource />
     </template>

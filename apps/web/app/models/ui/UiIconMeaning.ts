@@ -2,6 +2,7 @@
 export enum UiIconMeaning {
   Achievement = "Achievement",
   Bookmark = "Bookmark",
+  Close = "Close",
   Collapse = "Collapse",
   Command = "Command",
   Comment = "Comment",
@@ -15,6 +16,7 @@ export enum UiIconMeaning {
   Edit = "Edit",
   Expand = "Expand",
   Failure = "Failure",
+  Favorite = "Favorite",
   Info = "Info",
   Launcher = "Launcher",
   Menu = "Menu",

@@ -72,6 +72,10 @@ export default {
       message:
         "Don't use <v-pull-to-refresh>. Vuetify is leaving for the UI library, and a page that scrolls the document is refreshed by the browser's own pull-to-refresh.",
     },
+    ...["v-breadcrumbs", "v-breadcrumbs-divider", "v-breadcrumbs-item"].map((element) => ({
+      element,
+      message: `Don't use <${element}>. Vuetify is leaving for the UI library: a trail of links back is UiBreadcrumbs.`,
+    })),
   ],
   // Every input Vuetify renders in this app declares `hideDetails: "auto"` once in `vuetify.config.ts`, so a
   // Per-field `hide-details` restates the default at best and defeats it at worst: the bare attribute means

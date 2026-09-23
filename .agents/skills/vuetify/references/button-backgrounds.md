@@ -3,7 +3,7 @@
 Read when a button's background is not what you expected, or when reaching for `variant="elevated"` to get a fill back.
 
 1. `globals.scss` (`@layer vuetify-overrides`) transparentises **colourless** flat buttons only: `.v-btn--flat:not([class*="bg-"])`. A `color` on an `elevated`/`flat` variant emits a `bg-*` class in the later `vuetify-utilities` layer, so that fill survives — never add `bg-transparent` to a colourless button, it is already transparent.
-2. **A parent container can override the variant.** `v-card-actions`, `v-toolbar` (so also `StyledPageHeader`), `v-toolbar-items`, `v-banner-actions`, `v-bottom-navigation`, `v-snackbar`, `v-btn-group`, `v-stepper-actions` all `provideDefaults({ VBtn: { variant: … } })` — mostly `"text"`. `variant="text"` routes `color` to the **text**, not the background, so no `bg-*` class is emitted and rule 1 then paints the button transparent.
+2. **A parent container can override the variant.** `v-card-actions`, `v-toolbar`, `v-toolbar-items`, `v-banner-actions`, `v-bottom-navigation`, `v-snackbar`, `v-btn-group`, `v-stepper-actions` all `provideDefaults({ VBtn: { variant: … } })` — mostly `"text"`. `variant="text"` routes `color` to the **text**, not the background, so no `bg-*` class is emitted and rule 1 then paints the button transparent.
 
 ## Do not fight rule 2 with `variant="elevated"`
 

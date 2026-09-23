@@ -42,7 +42,7 @@ the concept and match them exactly; the prose keeps its short word in comments, 
 - `isPending` for a request in flight, `isLoading` for a wait that is not one request
 - `isDirty` for tracking unsaved state — never a `changed` spelling
 - `initial*` for the last-saved snapshot used in dirty comparisons: `initialDataSource`
-- Boolean-valued `LocalStorageKey` registry entries follow the same `is*` rule (`IsResourceBladeNavigationCollapsed`) — the `file-organization` skill (`references/local-storage-keys.md`) owns that registry
+- Boolean-valued `LocalStorageKey` registry entries follow the same `is*` rule — the `file-organization` skill (`references/local-storage-keys.md`) owns that registry
 
 Where two of these collide — `check*` against `is*` against `getIs*`, and `isPending` against `isLoading` —
 `references/boolean-families.md` separates them.

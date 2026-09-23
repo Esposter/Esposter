@@ -14,7 +14,7 @@ const { currentRoute } = vi.hoisted(() => ({ currentRoute: { path: "" } }));
 mockNuxtImport("useRoute", () => () => currentRoute);
 
 const readCrumbs = (element: Element) =>
-  Array.from(element.querySelectorAll(".v-breadcrumbs-item"), (crumb) => crumb.textContent?.trim());
+  Array.from(element.querySelectorAll("nav a"), (crumb) => crumb.textContent?.trim());
 
 // A crumb is a real link, so the trail needs the real RouterLink — mountSuspended otherwise swaps in a stub
 const mountBreadcrumbs = (route: string, trail: NavigationTrailPage[]) => {
@@ -47,6 +47,6 @@ describe("appBreadcrumbs", () => {
 
     const component = await mountBreadcrumbs(RoutePath.ResourceExplorer, []);
 
-    expect(component.find(".v-breadcrumbs-item").exists()).toBe(false);
+    expect(component.find("nav").exists()).toBe(false);
   });
 });

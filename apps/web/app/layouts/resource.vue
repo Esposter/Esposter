@@ -1,44 +1,49 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 interface Props {
-  isHeaderBordered?: true;
   isServiceMenuShown?: true;
   title?: string;
 }
 
 const slots = defineSlots<{
-  actions?: () => VNode;
   default?: () => VNode;
-  filters?: () => VNode;
+  // The title row whole, for a page whose title carries more than a name: a resource's type, its commands
+  heading?: () => VNode;
+  // The page's own sections as tab links, whose line closes the header
+  navigation?: () => VNode;
 }>();
-const { isHeaderBordered, isServiceMenuShown, title } = defineProps<Props>();
+const { isServiceMenuShown, title } = defineProps<Props>();
 const isServiceMenuOpen = ref(false);
 </script>
 
-<!-- The shell every resource page shares: the breadcrumb trail and page title, with the storage meter riding the
-     trail's spare width. The meter lives here rather than in the app bar because storage is what this area
-     spends — it belongs where uploads happen, not in chrome every route pays for.
-     Home opts the service menu in, and its hamburger rides that same row at the end the trail starts from -->
+<!-- The header every resource page shares, as a page header has it: the trail back with the storage meter on its far
+     end, then the page's title, then its sections. The meter lives here rather than in the dock because storage is
+     what this area spends — it belongs where uploads happen, not in chrome every route pays for. Home opts the
+     service menu in, and its mark rides the trail's row at the end the trail starts from -->
 <template>
   <NuxtLayout>
     <div flex flex-col h-full>
-      <StyledPageHeader :class="{ 'b-0 b-b-1 b-border b-solid': isHeaderBordered }" :title>
-        <template v-if="isServiceMenuShown" #prepend>
-          <StyledTooltipIconButton
-            icon="i-mdi:menu"
-            text="Resource menu"
+      <!-- The header alone is the library's type: a page under it not yet migrated keeps Vuetify's -->
+      <header ui-body px-4 pt-3 flex flex-col gap-3 :class="{ 'pb-3': !slots.navigation }">
+        <div flex gap-3 min-h-8 items-center>
+          <UiIconButton
+            v-if="isServiceMenuShown"
+            label="Resource menu"
+            :meaning="UiIconMeaning.Menu"
+            :variant="UiButtonVariant.Quiet"
             @click="isServiceMenuOpen = !isServiceMenuOpen"
           />
-        </template>
-        <template #status>
-          <ResourceStorageMeter />
-        </template>
-        <template v-if="slots.actions" #actions>
-          <slot name="actions" />
-        </template>
-        <template v-if="slots.filters" #filters>
-          <slot name="filters" />
-        </template>
-      </StyledPageHeader>
+          <AppBreadcrumbs />
+          <div ml-auto flex min-w-0>
+            <ResourceStorageMeter />
+          </div>
+        </div>
+        <slot v-if="slots.heading" name="heading" />
+        <h1 v-else-if="title" ui-title>{{ title }}</h1>
+        <slot name="navigation" />
+      </header>
       <!-- Relative so the drawer overlays this region alone, leaving the header and the app chrome reachable -->
       <div flex flex-1 min-h-0 relative>
         <ResourceServiceMenu v-if="isServiceMenuShown" v-model="isServiceMenuOpen" />

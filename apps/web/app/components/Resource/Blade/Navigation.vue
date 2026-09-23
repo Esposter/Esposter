@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { NavigationItem } from "@/models/shared/NavigationItem";
+import type { UiTabLink } from "@/models/ui/UiTabLink";
 import type { Resource } from "@esposter/db-schema";
 
 import { getResourceBladeDefinitions } from "@/services/resource/getResourceBladeDefinitions";
 import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 
 interface Props {
   activeBlade: string;
@@ -12,21 +11,18 @@ interface Props {
 }
 
 const { activeBlade, resource } = defineProps<Props>();
-const items = computed<NavigationItem[]>(() =>
+const items = computed<UiTabLink[]>(() =>
   getResourceBladeDefinitions(resource.type).map(({ icon, slug, title }) => ({
     icon,
-    isActive: activeBlade === slug,
+    isCurrent: activeBlade === slug,
     title,
     to: getResourceBladePath(resource.id, slug),
   })),
 );
 </script>
 
+<!-- A resource's faces as tabs under its title: a handful of them, so a row costs no width the blade could use, and
+     its line closes the page header -->
 <template>
-  <StyledNavigationRail
-    :items
-    hide-text="Hide blade menu"
-    show-text="Show blade menu"
-    :storage-key="LocalStorageKey.IsResourceBladeNavigationCollapsed"
-  />
+  <UiTabLinks :items label="Resource blades" />
 </template>

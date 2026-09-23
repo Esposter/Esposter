@@ -5,6 +5,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 export const UiIconMap = {
   [UiIconMeaning.Achievement]: "i-pixelarticons:trophy",
   [UiIconMeaning.Bookmark]: "i-pixelarticons:bookmark",
+  [UiIconMeaning.Close]: "i-pixelarticons:close",
   [UiIconMeaning.Collapse]: "i-pixelarticons:collapse",
   [UiIconMeaning.Command]: "i-pixelarticons:command",
   [UiIconMeaning.Comment]: "i-pixelarticons:comment",
@@ -18,6 +19,7 @@ export const UiIconMap = {
   [UiIconMeaning.Edit]: "i-pixelarticons:pencil",
   [UiIconMeaning.Expand]: "i-pixelarticons:expand",
   [UiIconMeaning.Failure]: "i-pixelarticons:close",
+  [UiIconMeaning.Favorite]: "i-pixelarticons:star",
   [UiIconMeaning.Info]: "i-pixelarticons:info-box",
   [UiIconMeaning.Launcher]: "i-pixelarticons:grid-3x3",
   [UiIconMeaning.Menu]: "i-pixelarticons:menu",
