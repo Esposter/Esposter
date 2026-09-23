@@ -1,7 +1,6 @@
 flowchart LR
   shell[["The shell"]]
   route_["/"]
-  route_slug_["/[...slug]"]
   route_about["/about"]
   route_achievements["/achievements"]
   route_agent_console["/agent-console"]
@@ -59,7 +58,6 @@ flowchart LR
   route_ --> route_post_id_
   route_ --> route_post_update_id_
   route_ --> route_user_id_
-  route_slug_ --> route_
   route_achievements --> route_login
   route_achievements --> route_user_id_
   route_agent_console --> route_
