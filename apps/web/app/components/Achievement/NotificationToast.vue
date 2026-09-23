@@ -17,7 +17,7 @@ const displayName = computed(() => prettify(userAchievement.achievement.name));
 <template>
   <UiToast :duration-ms="TOAST_DURATION_MS" is-dismissible status="success" @close="emit('close')">
     <template #mark>
-      <v-icon :icon="userAchievement.achievement.icon" size="2rem" />
+      <span :class="userAchievement.achievement.icon" size-8 />
     </template>
     <div text-accent>Achievement unlocked</div>
     <div>{{ displayName }}</div>

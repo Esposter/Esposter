@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PointsLeaderboardEntry } from "#shared/models/achievement/PointsLeaderboardEntry";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RoutePath } from "@esposter/shared";
 
 interface Props {
@@ -12,26 +13,16 @@ const { entry, isMyEntry } = defineProps<Props>();
 </script>
 
 <template>
-  <v-sheet
-    px-3
-    py-2
-    rd
-    flex
-    gap-x-3
-    items-center
-    :border="isMyEntry"
-    :color="isMyEntry ? 'primary-opacity-10' : undefined"
-  >
-    <span fw-bold text-center w-8 text-title-medium>{{ entry.rank }}</span>
-    <NuxtInvisibleLink :to="RoutePath.User(entry.user.id)">
-      <StyledAvatar :image="entry.user.image" :name="entry.user.name" />
+  <li :class="{ 'bg-accent/10': isMyEntry }" :aria-current="isMyEntry || undefined" px-3 py-2 flex gap-3 items-center>
+    <span text-center w-8 ui-heading>{{ entry.rank }}</span>
+    <NuxtInvisibleLink :to="RoutePath.User(entry.user.id)" flex flex-1 gap-3 items-center min-w-0>
+      <UiAvatar :image="entry.user.image ?? ''" :name="entry.user.name" />
+      <span truncate>{{ entry.user.name }}</span>
     </NuxtInvisibleLink>
-    <NuxtInvisibleLink fw-bold :to="RoutePath.User(entry.user.id)">{{ entry.user.name }}</NuxtInvisibleLink>
-    <v-spacer />
-    <span text-hint>{{ entry.unlockCount }} unlocked</span>
-    <v-chip flex gap-x-1 color="orange" size="small">
-      <v-icon icon="i-mdi:trophy" size="x-small" />
+    <span text-muted>{{ entry.unlockCount }} unlocked</span>
+    <span text-warning flex gap-1 items-center>
+      <UiIcon :meaning="UiIconMeaning.Achievement" />
       {{ entry.points }}
-    </v-chip>
-  </v-sheet>
+    </span>
+  </li>
 </template>

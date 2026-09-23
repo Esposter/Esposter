@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { PointsLeaderboard } from "#shared/models/achievement/PointsLeaderboard";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 interface Props {
   leaderboard: PointsLeaderboard;
 }
@@ -14,31 +16,25 @@ const isMyEntryAppended = computed(() => {
 </script>
 
 <template>
-  <StyledCard>
-    <v-card-title flex gap-x-2 items-center>
-      <v-icon icon="i-mdi:podium" />
-      Points Leaderboard
-    </v-card-title>
-    <v-card-subtitle>Ranked by total unlocked achievement points</v-card-subtitle>
-    <v-card-text>
-      <StyledEmptyState
-        v-if="leaderboard.entries.length === 0"
-        icon="i-mdi:trophy-outline"
-        title="No ranked players yet"
-        description="Unlock an achievement to claim a spot on the leaderboard."
+  <UiFrame title="Points Leaderboard">
+    <p text-muted>Ranked by total unlocked achievement points</p>
+    <UiEmptyState
+      v-if="leaderboard.entries.length === 0"
+      :meaning="UiIconMeaning.Achievement"
+      title="No ranked players yet"
+      description="Unlock an achievement to claim a spot on the leaderboard."
+    />
+    <ol v-else flex flex-col gap-1>
+      <AchievementLeaderboardItem
+        v-for="entry in leaderboard.entries"
+        :key="entry.user.id"
+        :entry
+        :is-my-entry="entry.user.id === leaderboard.myEntry?.user.id || undefined"
       />
-      <div v-else flex flex-col gap-y-1>
-        <AchievementLeaderboardItem
-          v-for="entry in leaderboard.entries"
-          :key="entry.user.id"
-          :entry
-          :is-my-entry="entry.user.id === leaderboard.myEntry?.user.id || undefined"
-        />
-        <template v-if="isMyEntryAppended && leaderboard.myEntry">
-          <v-divider my-1 />
-          <AchievementLeaderboardItem :entry="leaderboard.myEntry" is-my-entry />
-        </template>
-      </div>
-    </v-card-text>
-  </StyledCard>
+      <template v-if="isMyEntryAppended && leaderboard.myEntry">
+        <li role="separator" my-1 h-1 bg-panel-edge />
+        <AchievementLeaderboardItem :entry="leaderboard.myEntry" is-my-entry />
+      </template>
+    </ol>
+  </UiFrame>
 </template>
