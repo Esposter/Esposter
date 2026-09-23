@@ -12,6 +12,8 @@ interface Props {
   // Filter under the column's name, a cell being edited in its row
   isLabelHidden?: true;
   label: string;
+  // A hint inside a field whose label is hidden, never a label of its own: "Filter", "Minimum"
+  placeholder?: string;
   // Lines of a field that takes several, which the reader can drag taller; a field of one line without it
   rows?: number;
   // Checked as the reader types, each a message or true; a form around the field counts its result
@@ -22,7 +24,7 @@ interface Props {
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { counter, isAutofocus, isLabelHidden, label, rows, rules = [], type } = defineProps<Props>();
+const { counter, isAutofocus, isLabelHidden, label, placeholder, rows, rules = [], type } = defineProps<Props>();
 // Vuetify's rules own validation until retirement, and one may be a bare result or a promise-like rather than a
 // Function returning a promise, which is all the primitive takes
 const inputRules = computed<FormValidationRule[]>(() =>
@@ -45,6 +47,7 @@ defineExpose({ element });
         ref="element"
         v-bind="attrs"
         :autofocus="isAutofocus"
+        :placeholder
         :rows
         class="control"
         py-1
