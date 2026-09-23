@@ -5,6 +5,9 @@ import type { ValidationRule } from "vuetify";
 import { Input } from "@vuetify/v0";
 
 interface Props {
+  // The most characters it takes, counted under it as the reader types
+  counter?: number;
+  isAutofocus?: true;
   label: string;
   // Lines of a field that takes several, which the reader can drag taller; a field of one line without it
   rows?: number;
@@ -13,7 +16,7 @@ interface Props {
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { label, rows, rules = [] } = defineProps<Props>();
+const { counter, isAutofocus, label, rows, rules = [] } = defineProps<Props>();
 // Vuetify's rules own validation until retirement, and one may be a bare result or a promise-like rather than a
 // Function returning a promise, which is all the primitive takes
 const inputRules = computed<FormValidationRule[]>(() =>
@@ -25,8 +28,20 @@ const inputRules = computed<FormValidationRule[]>(() =>
   <Input.Root #default="{ id }" v-model="modelValue" :rules="inputRules" validate-on="input" flex flex-col gap-1>
     <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the control is the primitive's, which takes the id this label names -->
     <label :for="String(id)" text-muted>{{ label }}</label>
-    <Input.Control :as="rows ? 'textarea' : 'input'" :rows class="control" py-1 w-full resize-y ui-sunk />
-    <Input.Error #default="{ errors }" text-error>{{ errors[0] }}</Input.Error>
+    <Input.Control
+      :as="rows ? 'textarea' : 'input'"
+      :autofocus="isAutofocus"
+      :rows
+      class="control"
+      py-1
+      w-full
+      resize-y
+      ui-sunk
+    />
+    <div flex gap-2>
+      <Input.Error #default="{ errors }" text-error flex-1>{{ errors[0] }}</Input.Error>
+      <span v-if="counter" text-muted>{{ modelValue.length }} / {{ counter }}</span>
+    </div>
   </Input.Root>
 </template>
 

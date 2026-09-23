@@ -73,4 +73,12 @@ describe("uiTextField", () => {
     expect(control.attributes("aria-invalid")).toBeUndefined();
     expect(isValid.value).toBe(true);
   });
+
+  test("counts what is typed against the most it takes", () => {
+    expect.hasAssertions();
+
+    const component = mount(UiTextField, { props: { counter: 1, label, modelValue: " " } });
+
+    expect(component.get("[text-muted]:not(label)").text()).toBe("1 / 1");
+  });
 });

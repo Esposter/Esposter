@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-
 import { useMenu } from "@/composables/ui/useMenu";
+import { getUiMenuItems } from "@/services/ui/getUiMenuItems";
 import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "@/services/ui/constants";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
 import { usePopover } from "@vuetify/v0";
@@ -13,16 +12,7 @@ const anchor = useTemplateRef("anchor");
 const content = useTemplateRef("content");
 const popover = usePopover({ positionArea: POPOVER_POSITION_AREA, positionTry: POPOVER_POSITION_TRY });
 const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, isOpen, open } = popover;
-// An item's title is unique within its menu, so it is the value the menu hands back
-const items = computed<UiMenuItem<string>[]>(() =>
-  (contextMenu.value?.items ?? []).map(({ color, icon, isGroupStart, title }) => ({
-    icon,
-    isDanger: color === "error",
-    isGroupStart,
-    title,
-    value: title,
-  })),
-);
+const items = computed(() => getUiMenuItems(contextMenu.value?.items ?? []));
 // Read when the menu is chosen from rather than when it closes: closing clears what is open
 let openItems = contextMenu.value?.items ?? [];
 let opener: HTMLElement | undefined;

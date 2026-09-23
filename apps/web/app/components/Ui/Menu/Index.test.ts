@@ -81,7 +81,7 @@ describe("uiMenu", () => {
     const { component, trigger } = await mountMenu();
     await component.get('[role="menu"]').trigger("keydown", { key: "Enter" });
 
-    expect(component.emitted("select")).toStrictEqual([["copy"]]);
+    expect(component.emitted<[string, KeyboardEvent]>("select")?.map(([value]) => value)).toStrictEqual(["copy"]);
     expect(trigger.attributes("aria-expanded")).toBe("false");
     expect(document.activeElement).toBe(trigger.element);
   });

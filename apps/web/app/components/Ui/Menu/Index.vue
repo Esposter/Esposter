@@ -21,15 +21,15 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
 const { items, label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
-const emit = defineEmits<{ select: [value: T] }>();
+const emit = defineEmits<{ select: [value: T, event: KeyboardEvent | MouseEvent] }>();
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
 const triggerElement = computed(() => trigger.value?.element);
 const popover = usePopover({ positionArea, positionTry: POPOVER_POSITION_TRY });
 const { anchorStyles, attach, attachAnchor, contentAttrs, contentStyles, id, isOpen, open } = popover;
 const { choose, getItemId, isTabbable, onMenuKeydown, openAtEnd } = useMenu(() => items, popover, {
-  onSelect: (value) => {
-    emit("select", value);
+  onSelect: (value, event) => {
+    emit("select", value, event);
   },
   returnFocusTo: () => triggerElement.value ?? undefined,
 });
