@@ -84,11 +84,13 @@ const uiSurfaceUtilities = {
 } as const satisfies Record<string, Record<string, string>>;
 // The library's type: one pixel face and four sizes, each a whole number of steps. Body text reads its own face token
 // Rather than the pixel face directly, so the readable-text setting swaps one token and no component knows about it;
-// Every size above the body is a heading, which takes the accent so hierarchy survives a reader who scales the text
+// Every size above the body is a heading, which takes the accent so hierarchy survives a reader who scales the text.
+// The face has one weight, so a heading element's own bold would only be synthesised over it
 const getUiTypeUtility = (size: string, fontFamily = "var(--ui-font-pixel)", color = "var(--ui-accent)") => ({
   color,
   "font-family": fontFamily,
   "font-size": `var(--ui-text-${size})`,
+  "font-weight": "normal",
   "line-height": "1.2",
 });
 const uiTypeUtilities = {
