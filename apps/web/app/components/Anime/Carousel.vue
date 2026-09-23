@@ -1,20 +1,34 @@
 <script setup lang="ts">
 import { DRAWINGS } from "@/services/anime/constants";
 import { mod } from "@/util/math/mod";
+import { takeOne } from "@esposter/shared";
 
 const drawingIndex = ref(0);
 </script>
 
 <template>
   <div h-full>
-    <v-carousel v-model="drawingIndex" height="100%" :touch="false" :show-arrows="false" hide-delimiters>
-      <v-carousel-item v-for="(drawing, index) of DRAWINGS" :key="index">
+    <Transition name="drawing" mode="out-in">
+      <!-- A drawing left keeps its calculator, so coming back to it redraws nothing -->
+      <KeepAlive>
         <component
-          :is="drawing"
+          :is="takeOne(DRAWINGS, drawingIndex)"
           @click-left="drawingIndex = mod(drawingIndex - 1, DRAWINGS.length)"
           @click-right="drawingIndex = mod(drawingIndex + 1, DRAWINGS.length)"
         />
-      </v-carousel-item>
-    </v-carousel>
+      </KeepAlive>
+    </Transition>
   </div>
 </template>
+
+<style scoped>
+.drawing-enter-active,
+.drawing-leave-active {
+  transition: opacity var(--ui-motion-medium);
+}
+
+.drawing-enter-from,
+.drawing-leave-to {
+  opacity: 0;
+}
+</style>
