@@ -1,6 +1,6 @@
 ---
 title: Repair
-description: A red main is the collector's — the release merges on the review alone, so what CI held lands on main unread, and CodeQL scans main alone; the repo's own regenerators answer the head first and a session answers what is left, either way as one commit the express lane verifies and pushes, bounded per streak.
+description: A red main is the collector's — the release merges on the review alone, so what CI held lands on main unread, and CodeQL scans main alone; the repo's own regenerators answer the head first and a session answers what is left, either way as one commit verified before the express lane pushes it, bounded per streak.
 ---
 
 # Repair
@@ -91,7 +91,7 @@ A repair is then a cut of its own, alone: no claimed commit is picked on top of 
 
 ## Notes
 
-- **Rejected: a repair through the review lane, on `ai/review-fixes`.** A fix rides a review window, so `main` stayed red across a review and a release — and the release then merged the same red back. The express lane's verify is the review a repair gets.
+- **Rejected: a repair through the review lane, on `ai/review-fixes`.** A fix rides a review window, so `main` stayed red across a review and a release — and the release then merged the same red back. A repair earns every check before it is cut, and that is the review it gets.
 - **Rejected: learning `main` is red from the express cut's own red, by re-running the failed check on bare `main`.** It repaired only when a claimed commit happened to be waiting, and it ran a second check to learn what CI had already said.
 - **Rejected: the repair ahead of the cut.** It held every claimed commit while `main` was red, which kept out the one commit that answers a red past the repairer's attempts, and spent a session on a red a claimed commit already fixed.
 - **Rejected: an alert as a required check on the pull request.** The scan runs on `main` and on a weekly schedule, never on a pull request, since the release and every bump would pay a full analysis for what the same tree's scan on `main` finds; so an alert is met where the scan is, on `main`, and the repair is what already answers a red there.

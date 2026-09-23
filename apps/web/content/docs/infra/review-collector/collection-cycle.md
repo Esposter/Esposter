@@ -43,9 +43,7 @@ flowchart TD
   S[Read state] --> RS{develop an ancestor of main}
   RS -->|yes| FF[Fast-forward develop to main<br/>the pass measures against it] --> EL
   RS -->|no| EL{A queued commit claims no review}
-  EL -->|yes| CP[Cherry-pick onto main, check]
-  CP -->|green| X3[Push, exit — the push re-fires the cycle]
-  CP -->|red| MR
+  EL -->|yes| X3[Cherry-pick onto main<br/>push unverified, exit — the push re-fires the cycle]
   EL -->|no| MR{main red on CI}
   MR -->|yes| RG[Run the repo's regenerators, check]
   RG -->|green| X6[Exit — the push re-fires the cycle]
@@ -188,7 +186,7 @@ With no pull request open, the push is followed by opening one — the same read
 
 ## Notes
 
-- **Rejected: verifying a window before the push** — build, typecheck and lint on the candidate, dropping the tail commit until green. A gate with no remedy: the window is a prefix of the queue, so a red commit inside it holds every window behind it while its repair sits commits later and past the cap, and each attempt spends runner-minutes finding that out. The queue's own CI already names the red commit to the session that can fix it in the next commit. The express lane alone verifies, because it reaches `main` unread.
+- **Rejected: verifying a window before the push** — build, typecheck and lint on the candidate, dropping the tail commit until green. A gate with no remedy: the window is a prefix of the queue, so a red commit inside it holds every window behind it while its repair sits commits later and past the cap, and each attempt spends runner-minutes finding that out. The queue's own CI already names the red commit to the session that can fix it in the next commit. The express lane's cut reaches `main` unread and is not verified either — `main`'s own CI reads it, and a red it leaves is the [repair](/docs/infra/review-collector/repair)'s.
 - **Rejected: a person merges a release the bot rates above the least risk, or rates not at all.** It was the one human step left, and the step every release idled behind: the first release under the self-merge sat clean for a day at `Moderate` and was merged by hand. A person reading a rationale whose concerns the drain already answered adds a delay, not a judgement; the judgement that is real — is anything left — is the verdict's, once per head.
 - **Rejected: holding the queue on a commit alone over the cap for a person to split.** Every hourly slot until then went to the drain's fixes alone, and the red that told the person arrived only with the first clean review. Repackaging is the collector's, and the commit's author is asked for nothing.
 - **Rejected: undoing a fold of `main` that put the range over the cap.** It left `develop` diverged until the release merge, where a conflict was a person's, and it counted files the bot's cap does not.
