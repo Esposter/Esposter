@@ -1,6 +1,7 @@
 ---
 title: Multilingual spoken replies
 description: Proposal — read a reply in the language it is written in, through Chatterbox Multilingual once Transformers.js loads it, with the text shaped for the model on the way in and the audio streamed on the way out to pay for a slower engine.
+model: claude-opus-5
 ---
 
 # Multilingual spoken replies

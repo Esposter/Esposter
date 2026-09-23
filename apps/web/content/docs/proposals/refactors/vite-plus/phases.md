@@ -1,6 +1,7 @@
 ---
 title: Phases
 description: The ordered plan — what each phase does, what blocks it, what proves it finished, and what kills it — plus the parked items and the trigger each one waits on.
+model: claude-opus-5
 ---
 
 # Phases

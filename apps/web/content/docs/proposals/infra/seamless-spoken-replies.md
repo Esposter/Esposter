@@ -1,6 +1,7 @@
 ---
 title: Seamless spoken replies
 description: Proposal — first sound within a fraction of a second of a spoken line being written, by vocoding a line in chunks as its speech tokens are made rather than once after its last; open now that the engine reads faster than real time on this machine, with the measurable property each stage has to meet.
+model: claude-fable-5-1
 ---
 
 # Seamless spoken replies

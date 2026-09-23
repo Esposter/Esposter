@@ -1,6 +1,7 @@
 ---
 title: objectWrap collapse
 description: Proposal — hand the one-line-object rule to oxfmt's objectWrap option, so the formatter decides it instead of a sweep.
+model: claude-opus-5
 ---
 
 # `objectWrap: "collapse"`

@@ -1,6 +1,7 @@
 ---
 title: Docs cleanup
 description: The pages this migration supersedes, the reversed rejection that has to be inverted rather than deleted, and the audit recipe for prose left over from the workspace layout change.
+model: claude-opus-5
 ---
 
 # Docs Cleanup

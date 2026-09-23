@@ -1,6 +1,7 @@
 ---
 title: Nuxt compatibility
 description: What Vite+ actually supports for a Nuxt monorepo, why `vp migrate` cannot be used here at all, and the adoption ladder that follows from both.
+model: claude-opus-5
 ---
 
 # Nuxt Compatibility

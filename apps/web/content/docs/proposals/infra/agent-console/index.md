@@ -1,89 +1,76 @@
 ---
 title: Agent console
-description: Proposal — a page in the web app that replaces the terminal as the place a Claude Code session is worked from, showing everything the terminal shows and more, rendered with TresJS, fed by the plugin's local channel server from the session's own transcript and hooks, and free because the session stays the terminal's own.
+description: Proposal — what the agent console still has to build past the host, the Agent SDK driver, the default theme and terminal parity, which have shipped. The console stays open to others through extension tiers. Next come a Genshin theme dressing the work surface from the persona plugin, views that draw the repository's tooling as places, and a terminal-mirror driver for sessions a terminal already holds.
 model: claude-opus-5-5
 ---
 
 # Agent console
 
-The terminal is where a session is driven today, and every stage of the [Claude interface](/docs/infra/claude-interface) so far has decorated it rather than replaced it. The agent console is the step past that: **one page from which a person works a session without looking at the terminal** — every message, tool call, diff, permission prompt, status figure and spoken line the terminal shows, laid out better than a scrollback can, with a scene around it that makes the session's state visible at a glance. It is an upgrade or it is nothing: any fact the terminal shows and the console does not is a defect, listed in [terminal parity](/docs/proposals/infra/agent-console/terminal-parity) until it is closed.
-
-It stays free because it never runs a session of its own. The session is the terminal's, started as usual; the console reads what that session writes and pushes typed lines into it through a [channel](/docs/proposals/infra/channel-chat) — the same rule that [rejected the SDK-driven companion](/docs/infra/rejected/sdk-driven-companion).
+The [agent console](/docs/infra/claude-interface/agent-console) has shipped its first phase: the `agent-console-server` host, the Claude Agent SDK driver, the default theme and a work surface at [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity). One page of the app now works every Claude Code session on a machine in place of the terminal. This proposal is what comes after that phase. It is judged by the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison): nothing here is built while the console still sends the person back to a terminal during a day's work.
 
 ## Decisions
 
-- **A route in the web app, not a page in the plugin.** The app already carries Vue, Vuetify, TresJS with cientos, the fluid simulator and a build; a page served from the plugin would need a second build of all of it inside the plugin cache, which copies files and runs no build. The route connects to the plugin's channel server on the loopback with the token the server prints, so nothing about the session ever reaches the app's own server.
-- **TresJS first; raw Three.js only where TresJS and cientos have nothing.** Every scene is declared as TresJS components, and cientos covers the parts the views need — `Html` for DOM placed in the scene, `Instances` for thousands of boxes in one draw, `Sparkles`, `Stars` and `Precipitation` for particles, `Billboard` for labels, `Levioso` for idle motion. A view that reaches for `three` directly says so in a note on its own page with the reason; today the only such reach is the fluid simulator the app already owns.
-- **The transcript is the source of truth.** Every hook is handed the session's transcript path; the channel server tails that file, so the console renders the same record the terminal renders from rather than a subset reconstructed from events. Hooks add only what the transcript does not carry live — attention wanted, a turn stopping — and the status line's own input supplies the figures it prints.
-
-## Scope
-
-**Today:** the terminal, the persona plugin's session-start and message-display hooks, and the proposed chat page.
-
-**This adds** a channel server that serves a loopback API rather than markup, the app route that renders it, and the views below — each its own sub-spec, each switched on independently:
-
-| Page                                                                       | What it is                                                                                |
-| :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| [Terminal parity](/docs/proposals/infra/agent-console/terminal-parity)     | the work surface: each thing the terminal shows, its source for the console, and the gaps |
-| [Spatial chat](/docs/proposals/infra/agent-console/spatial-chat)           | the conversation placed in the scene — bubbles for spoken lines, panels for answers       |
-| [Wish banner](/docs/proposals/infra/agent-console/wish-banner)             | the session's character arriving through a wish, the lore odds as its rates, pity         |
-| [Voxel atelier](/docs/proposals/infra/agent-console/voxel-atelier)         | a room the character stands in, changed by what the session does                          |
-| [Codebase city](/docs/proposals/infra/agent-console/codebase-city)         | the repository as a city, the character walking to the file in hand                       |
-| [Collector harbour](/docs/proposals/infra/agent-console/collector-harbour) | the review collector's branches as a river, its commits as boats                          |
-| [Element ambience](/docs/proposals/infra/agent-console/element-ambience)   | a backdrop in the character's element, moved by the spoken line's voice                   |
+- **The look is behind a theme.** The default theme stays the work surface alone. A theme may add a palette, a TresJS scene behind the surface, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
+- **Views are separate from themes.** A view is a panel any theme can show, such as the codebase city or the collector harbour, so a repository's tooling is visualised whatever the console is dressed as.
+- **Other tooling joins through tiers, cheapest first.** App routes open in a side pane with no code, external tools arrive through MCP Apps, and a first-party view is written only when a tool needs the scene ([extensions](/docs/proposals/infra/agent-console/extensions)).
+- **A second driver, for sessions the SDK cannot hold.** A session a terminal already runs is attached to from the outside ([terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver)).
+- **TresJS first; raw Three.js only where TresJS and cientos have nothing,** said on the page of the view that reaches for it, with the reason.
 
 ## How it works
 
 ```mermaid
-sequenceDiagram
-    participant Terminal as Terminal session
-    participant Transcript as Session transcript file
-    participant Hooks as Plugin hooks
-    participant Channel as Channel server, loopback
-    participant Console as Agent console route, TresJS
-
-    Terminal->>Transcript: every message and tool call, as written
-    Hooks->>Channel: the transcript path, attention, stop, status figures
-    Channel->>Transcript: tail from the last offset
-    Channel->>Console: records and events on one server-sent stream, token-gated
-    Console->>Channel: a typed line, a permission verdict
-    Channel->>Terminal: the line as a channel event, the verdict by the relay
+flowchart LR
+  subgraph Browser
+    W[Work surface — shipped] --> T{Theme}
+    T -->|default — shipped| N[Notifications]
+    T -->|Genshin| G[Palette, scene, avatar, voice]
+    W --> V[Views: harbour, city]
+    W --> X[Side pane: app routes, MCP Apps]
+  end
+  subgraph Host[agent-console-server — shipped]
+    D{Driver} -->|Agent SDK — shipped| C[Claude Code session]
+    D -->|terminal mirror| M[A terminal's own session]
+  end
+  W <-->|contracts| D
 ```
 
-The console keeps nothing the session needs: close the tab and nothing is lost, reopen it and the stream replays the transcript from the start. A view that is switched off loads no code.
+## The pages of this proposal
 
-```text
-packages/genshin-persona/
-  scripts/
-    event.ts                         ← the hook every event runs: one line to the loopback
-  src/services/agentConsole/
-    tailTranscript.ts                ← records from the transcript, resumed by byte offset
-    createAgentConsoleServer.ts              ← the token-gated stream and the input and verdict endpoints
-apps/web/app/
-  pages/agent-console.vue                    ← the route: connect with the token, lay out the work surface and the scene
-  components/AgentConsole/           ← one folder per view
-```
+| Page                                                                                 | What it settles                                                              |
+| :----------------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
+| [Workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison)       | today's terminal workflow against the console's, task by task, and the costs |
+| [Terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver) | attaching to a session a terminal runs, through its transcript and a channel |
+| [Extensions](/docs/proposals/infra/agent-console/extensions)                         | how other tooling joins — app routes, MCP Apps, first-party views            |
+| [Themes](/docs/proposals/infra/agent-console/themes)                                 | the parts a theme adds past the default, and the Genshin theme               |
+| [Wish banner](/docs/proposals/infra/agent-console/wish-banner)                       | Genshin theme — the session's character arriving through a wish              |
+| [Voxel atelier](/docs/proposals/infra/agent-console/voxel-atelier)                   | Genshin theme — a room the character stands in, changed by the session       |
+| [Element ambience](/docs/proposals/infra/agent-console/element-ambience)             | Genshin theme — a backdrop in the element, moved by the spoken line          |
+| [Spatial chat](/docs/proposals/infra/agent-console/spatial-chat)                     | a theme option — the conversation placed in the scene                        |
+| [Codebase city](/docs/proposals/infra/agent-console/codebase-city)                   | view — the repository as a city, the agent walking to the file in hand       |
+| [Collector harbour](/docs/proposals/infra/agent-console/collector-harbour)           | view — the review collector's branches as a river                            |
 
-## The gate
+## Scope and order
 
-The console rides on the channel, which sits behind two weeks of daily use of the voice ([roadmap](/docs/infra/roadmap)). Inside it, terminal parity comes first and alone — a console that loses information is a downgrade, whatever the scene looks like — then spatial chat, the wish banner and the collector harbour, then the rest. A view nobody opens after two weeks is deleted, not kept switched off.
+1. **Close the parity gaps** the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) page names: copying a single code block, a merged diff per file, subagent lanes side by side, non-image attachments, and a rewind that restores files. Then do one day's work in the console alone, with every return to the terminal written into the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison).
+2. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience.
+3. **Views**: the collector harbour first, the city after.
+4. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.
 
 ## What this does not propose
 
-- **A session of the console's own.** The reply is the terminal session's, or the console is a chatbot beside the work.
-- **A renderer of the character's Live2D model.** The desktop viewer draws the model ([own Live2D renderer](/docs/infra/deferred/own-live2d-renderer), deferred); the scene's figure is a voxel token in the element's colour.
-- **Reaching the session from anywhere but this machine.** The channel server listens on the loopback alone; the route is a static client of it.
+- **Agents hosted by Esposter.** A hosted agent needs a sandboxed checkout, the user's key held server-side and compute the app would pay for. Every console surveyed runs the agent where the code already is, and so does this one.
+- **A renderer of the character's Live2D model.** The desktop viewer draws it ([own Live2D renderer](/docs/infra/deferred/own-live2d-renderer), deferred).
+- **A new chat product.** The console works the session the code is in; it is not a chatbot beside it.
 
 ## Key files
 
-| File                                           | Role                                                                     |
-| :--------------------------------------------- | :----------------------------------------------------------------------- |
-| `packages/genshin-persona/hooks/hooks.json`    | The event hooks join the session-start hook                              |
-| `packages/genshin-persona/scripts/status.ts`   | The status figures and the element colour the console shows              |
-| `apps/web/app/components/Visual/Gem/Index.vue` | The app's existing TresJS scene, the pattern the console's scenes follow |
+| File                                                                | Role                                                                   |
+| :------------------------------------------------------------------ | :--------------------------------------------------------------------- |
+| `apps/web/app/components/Visual/Gem/Index.vue`                      | The app's existing TresJS scene, the pattern every theme scene follows |
+| `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts` | The theme registry every new theme is added to                         |
+| `packages/genshin-persona/hooks/hooks.json`                         | The persona's hooks, which the Genshin theme reads through the driver  |
 
 ## Notes
 
-- A browser on an `https` page reaching `http://127.0.0.1` passes the private-network checks only when the server answers their preflight and, in current Chrome, once the person allows local network access for the site. That is the first probe; if the browser refuses, the same route runs from the app's local dev server instead, which is loopback to loopback.
-- Maintenance is the cost this accepts: TresJS and cientos move, and the console moves with them. It is accepted because the app already carries both and every other TresJS page moves with them too.
-- The console supersedes the chat's own page: once parity ships, the channel server serves the stream and the endpoints, and the plugin-served markup the chat proposes is deleted rather than kept as a second client.
+- The trade is stated rather than hidden. The terminal costs nothing to keep, while the console is a host, a page and a theme layer to maintain. It is taken because the terminal cannot show a diff, a context gauge, parallel sessions or a scene, and because the console can be played. The [codebase city](/docs/proposals/infra/agent-console/codebase-city) is the repository as a place the person walks their character through, pointing the agent at a building and watching it work.
+- This supersedes the page half of [chat into the session](/docs/proposals/infra/channel-chat): with a driver holding the session, a line typed at the character is simply a prompt. The channel stays only as the terminal-mirror driver's input.

@@ -1,6 +1,7 @@
 ---
 title: Member permission overrides
 description: Proposal — grant or deny one member a permission directly, without minting a role for them, and make the roles panel a list of entries rather than a list of roles.
+model: claude-opus-5
 ---
 
 # Member Permission Overrides

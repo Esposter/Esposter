@@ -1,6 +1,7 @@
 ---
 title: Content-addressed assets
 description: The second phase — addressing resource assets by content so publishing references them instead of cloning them, and what reference tracking costs to make that safe.
+model: claude-opus-5
 ---
 
 # Content-Addressed Assets

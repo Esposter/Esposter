@@ -1,6 +1,7 @@
 ---
 title: Author type search filter
 description: Proposal — an `authorType:` filter separating what a member wrote from what a webhook posted, so the half of the message union that has no userId is reachable from search.
+model: claude-opus-5
 ---
 
 # Author Type Search Filter

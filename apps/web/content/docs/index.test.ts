@@ -200,3 +200,26 @@ describe("keyFiles", () => {
     expect(missingPaths).toStrictEqual([]);
   });
 });
+
+describe("proposalModel", () => {
+  const PROPOSALS_DIRECTORY = "proposals/";
+  const FRONTMATTER_REGEX = /^---\r?\n(?<frontmatter>.*?)\r?\n---/su;
+  const MODEL_REGEX = /^model: claude-[\d.a-z-]+$/mu;
+
+  // A spec is executed cold later and weighed by who designed it, which git cannot say (`docs` skill,
+  // "Frontmatter"). The area index lists proposals and is not one
+  test("every proposal names the model that wrote it", () => {
+    expect.hasAssertions();
+
+    const unnamed = pages
+      .filter(
+        ({ markdown, page }) =>
+          page.startsWith(PROPOSALS_DIRECTORY) &&
+          page !== `${PROPOSALS_DIRECTORY}index.md` &&
+          !MODEL_REGEX.test(FRONTMATTER_REGEX.exec(markdown)?.groups?.frontmatter ?? ""),
+      )
+      .map(({ page }) => page);
+
+    expect(unnamed).toStrictEqual([]);
+  });
+});

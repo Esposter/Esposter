@@ -1,6 +1,7 @@
 ---
 title: Keyless auth hardening
 description: Proposal — move the app off key-based Azure auth, then disable shared-key/local auth estate-wide.
+model: claude-fable-5
 ---
 
 # Keyless Auth Hardening

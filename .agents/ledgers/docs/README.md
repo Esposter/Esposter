@@ -74,7 +74,7 @@ Excluded: `CHANGELOG.md` (lerna output) · `CLAUDE.md`, `GEMINI.md` (symlinks to
 output) · `~/.claude/plugins` skills (external, not ours to edit).
 
 Enforceable next. What is already enforced sits with what it guards: the link, index-coverage,
-Key Files, the label-size cap and both label-line-break checks in `content/docs/index.test.ts`, every backticked
+Key Files, proposal-model, the label-size cap and both label-line-break checks in `content/docs/index.test.ts`, every backticked
 repo path and every ``the `x` skill`` name across all of this ledger's trees in `scripts/src/workspace/citations.test.ts`, every
 backticked code name in the same trees against the tree and the installed packages in `scripts/src/workspace/staleNames.test.ts`
 (the rename greps 2 and 3 find only where the prose admits to it), grep 8's decided subset in

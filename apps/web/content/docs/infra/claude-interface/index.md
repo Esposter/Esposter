@@ -1,13 +1,13 @@
 ---
 title: Claude interface
-description: How the terminal is given a personality and a voice without building an interface — a Genshin persona plugin picked by the calendar, replies spoken in each character's own cloned voice by an engine on this machine, and the terminal kept as the driver because it is the one surface with zero maintenance and no meter.
+description: How Claude Code is given a personality, a voice and a working surface — a Genshin persona plugin picked by the calendar, replies spoken in each character's own cloned voice by an engine on this machine, and the agent console, a page of the app that works the same sessions the terminal does, over a host on the machine with the code.
 ---
 
 # Claude interface
 
 The wish list was personality (a Genshin character, changing with the calendar), a spoken voice, and eventually a companion on the desktop. The constraint was maintenance: nothing that has to be re-implemented when the tool moves under it. **The terminal already exposes every hook the wish list needs, so what shipped is one plugin and nothing in the estate, with the last stage behind a named gate.**
 
-The built stages have their own pages: the [persona plugin](/docs/infra/claude-interface/persona-plugin) and [spoken replies](/docs/infra/claude-interface/spoken-replies), with [per-character voices](/docs/infra/claude-interface/per-character-voices) covering how each character is read in a clone of their own voice and the [reference selection](/docs/infra/claude-interface/reference-selection) measuring which line of their performance the clone is conditioned on. This page holds the decision, the survey it rests on, and where the gated stage waits.
+The built stages have their own pages: the [persona plugin](/docs/infra/claude-interface/persona-plugin), [spoken replies](/docs/infra/claude-interface/spoken-replies) and the [agent console](/docs/infra/claude-interface/agent-console), with [per-character voices](/docs/infra/claude-interface/per-character-voices) covering how each character is read in a clone of their own voice and the [reference selection](/docs/infra/claude-interface/reference-selection) measuring which line of their performance the clone is conditioned on. This page holds the decision, the survey it rests on, and where the gated stage waits.
 
 ## What the terminal offers
 
@@ -32,7 +32,7 @@ There is no speech in the terminal itself; what links the two is a hook talking 
 
 ```mermaid
 flowchart TD
-    Terminal[Claude Code terminal — the driver at every stage]
+    Terminal[Claude Code terminal — the driver of every stage but the console]
     Persona[Persona plugin<br/>output style + a card picked by birthday]
     Voice[Spoken replies<br/>a resident engine on this machine, the character's own clone]
     Companion[The desktop stage<br/>the viewer already running the model, then a chat page as a channel<br/>proposed]
@@ -41,13 +41,15 @@ flowchart TD
     Terminal --> Persona --> Voice --> Gate
     Gate -- yes --> Companion
     Gate -- no --> Persona
+    Console[Agent console<br/>a page of the app working the terminal's own sessions]
+    Terminal -. same sessions, resumed either way .-> Console
 ```
 
-A stage opens on a fact about use or about the platform, never on a wish, and the diagram draws the one gate of use there is, in front of the desktop stage alone. The stages before it waited on the platform instead. The character voice waited on an inference engine that installs in one command with no Python environment, which Transformers.js shipping Chatterbox as a model class runnable from Node on the GPU answered: the engine's runtime is one `npm ci` into the plugin's state directory, run by the `voice` verb ([spoken replies](/docs/infra/claude-interface/spoken-replies)). The desktop stage waited on a platform move and the platform moved twice, once each way: driving a session from a window of our own became permitted rather than forbidden, and on the work's own usage limits rather than free beside them, which is a no under the rule that every stage is free ([SDK-driven companion](/docs/infra/rejected/sdk-driven-companion)), and channels gave a way to push a typed line into the terminal's own session, which is the yes. So the stage is two proposals behind a gate of use, and neither builds a window: the desktop Live2D viewer already running the character's model becomes [the stage](/docs/proposals/infra/viewer-stage) that each spoken line is shown and heard on, and a small local page becomes [the chat](/docs/proposals/infra/channel-chat) whose lines land in the session the terminal holds. A stage that closes its gate goes back one step, not to zero, and a stage's rollback is git. Past the desktop stage, [the agent console](/docs/proposals/infra/agent-console) proposes the step the terminal has been kept for: a web-app page that replaces it as the working surface at full parity, still reading and writing the terminal's own session rather than driving one of its own.
+A stage opens on a fact about use or about the platform, never on a wish, and the diagram draws the one gate of use there is, in front of the desktop stage alone. The stages before it waited on the platform instead. The character voice waited on an inference engine that installs in one command with no Python environment, which Transformers.js shipping Chatterbox as a model class runnable from Node on the GPU answered: the engine's runtime is one `npm ci` into the plugin's state directory, run by the `voice` verb ([spoken replies](/docs/infra/claude-interface/spoken-replies)). The desktop stage waited on a platform move and the platform moved twice, once each way: driving a session from a window of our own became permitted rather than forbidden, and on the work's own usage limits rather than free beside them, which is a no under the rule that every stage is free ([SDK-driven companion](/docs/infra/rejected/sdk-driven-companion)), and channels gave a way to push a typed line into the terminal's own session, which is the yes. So the stage is two proposals behind a gate of use, and neither builds a window: the desktop Live2D viewer already running the character's model becomes [the stage](/docs/proposals/infra/viewer-stage) that each spoken line is shown and heard on, and a small local page becomes [the chat](/docs/proposals/infra/channel-chat) whose lines land in the session the terminal holds. A stage that closes its gate goes back one step, not to zero, and a stage's rollback is git. The [agent console](/docs/infra/claude-interface/agent-console) is the step the terminal was kept for: a page of the app that works the same Claude Code sessions the terminal does, through the Agent SDK, with the session itself as the work rather than a second one beside it. Its first phase has shipped at [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity); its themes and views are [proposals](/docs/proposals/infra/agent-console).
 
 ## Not taken
 
-- **Replacing the terminal with a home-built interface** over the Agent SDK: every turn out of the limits the work needs and a rewrite every time the harness changes shape, against a terminal that costs nothing to keep. The [SDK-driven companion](/docs/infra/rejected/sdk-driven-companion) is the same answer given once more at the desktop stage.
+- **A second session beside the terminal's** over the Agent SDK: every turn out of the limits the work needs, holding none of the work. The [SDK-driven companion](/docs/infra/rejected/sdk-driven-companion) is that answer. The agent console is not it: its session is the work, the one session the terminal would otherwise have run, and the SDK's messages are followed in one mapper so a harness change is one file.
 - **Third-party graphical front-ends**: every one surveyed solves parallel sessions and diff review, which the desktop app now does, and none carries personality. The Live2D companions written for coding agents spectate the same hooks this plugin does, and each brings a window, a renderer and a voice of its own — where the viewer already on the desk and the clone already built are both the better half, and the one thing they lack, a line typed into the running session, channels give.
 - **A terseness plugin kept alongside**: two forces on the voice at once is how a persona becomes a long prompt. If terseness is wanted, it is one line in the output style.
 

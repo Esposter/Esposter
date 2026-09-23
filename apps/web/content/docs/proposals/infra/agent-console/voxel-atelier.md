@@ -10,11 +10,11 @@ A terminal session leaves a diff and a scrollback. The atelier gives it a room: 
 
 ## Scope
 
-**Today:** nothing on the console shows what the session did except the terminal itself.
+**Today:** the work surface lists what the session did, and nothing pictures it.
 
 **This adds** one mapping from event to object, and nothing else:
 
-| Event on the stream         | What appears                                             |
+| Session event               | What appears                                             |
 | :-------------------------- | :------------------------------------------------------- |
 | A file edited or written    | a block on the shelf, coloured by the file's extension   |
 | A command that failed       | a plant by the window wilts; the next success revives it |
@@ -22,13 +22,13 @@ A terminal session leaves a diff and a scrollback. The atelier gives it a room: 
 | The session wants attention | the figure turns to face the viewer                      |
 | A turn ends                 | the figure sits                                          |
 
-The room's state is the stream replayed, so a reopened page rebuilds it; nothing is stored beyond the session.
+The room's state is the session's events replayed, so a reopened page rebuilds it; nothing is stored beyond the session.
 
 ## How it works
 
 ```mermaid
 flowchart LR
-  F[Event on the stream] --> M{Kind}
+  F[Session event] --> M{Kind}
   M -->|edit| B[Place a block, extension colour]
   M -->|failed command| P[Wilt the plant]
   M -->|succeeded command| V[Revive the plant]
@@ -37,7 +37,7 @@ flowchart LR
 ```
 
 ```text
-apps/web/app/components/AgentConsole/Atelier/
+apps/web/app/components/AgentConsole/Theme/Genshin/
   AgentConsoleAtelier.vue            ← the room, the figure, the event-to-object mapping
 apps/web/app/services/agentConsole/
   getRegionPalette.ts        ← floor and wall colours per region

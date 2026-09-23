@@ -1,6 +1,7 @@
 ---
 title: The viewer as the stage
 description: Proposal — the desktop stage of the Claude interface with no window built: the desktop Live2D viewer already running the character's model becomes where each spoken line is shown and heard, through its local control socket, and the terminal's own hooks move the model when the session wants attention.
+model: claude-opus-5
 ---
 
 # The viewer as the stage

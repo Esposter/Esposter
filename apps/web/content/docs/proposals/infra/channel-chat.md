@@ -1,6 +1,7 @@
 ---
 title: Chat into the session
 description: Proposal — the character's chat window as a Claude Code channel: a small local page served by the plugin's own MCP server, whose typed lines are pushed into the running terminal session, so the reply is the coding session's and its spoken lines already reach the viewer; a permission answered by tapping the model; behind the research-preview development flag on every launch.
+model: claude-opus-5
 ---
 
 # Chat into the session
