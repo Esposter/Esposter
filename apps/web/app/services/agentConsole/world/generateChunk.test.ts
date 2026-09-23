@@ -29,31 +29,32 @@ describe(generateChunk, () => {
     expect.hasAssertions();
 
     // Across the room's left wall, so the room's stamp is held to the border as well as the ground
-    const leftGrid = generateChunk(-1, 0);
-    const rightGrid = generateChunk(0, 0);
+    const leftGrid = generateChunk({ chunkX: -1, chunkZ: 0, isDoorOpen: true });
+    const rightGrid = generateChunk({ chunkX: 0, chunkZ: 0, isDoorOpen: true });
 
     expect(getBorder(leftGrid, CHUNK_GRID_SIZE - 2 * CHUNK_BORDER)).toStrictEqual(getBorder(rightGrid, 0));
   });
 
-  test("stamps the room with its door open onto level ground", () => {
+  test.each([false, true])("stamps the door with isDoorOpen %s in its wall on level ground", (isDoorOpen) => {
     expect.hasAssertions();
 
     const voxelWorld = new Map([
-      [getChunkKey(0, 0), generateChunk(0, 0)],
-      [getChunkKey(-1, 0), generateChunk(-1, 0)],
+      [getChunkKey(0, 0), generateChunk({ chunkX: 0, chunkZ: 0, isDoorOpen })],
+      [getChunkKey(-1, 0), generateChunk({ chunkX: -1, chunkZ: 0, isDoorOpen })],
     ]);
+    const woodVoxel = PaletteColors.indexOf(PaletteColor.Wood) + 1;
     const doorway = Array.from({ length: DOOR_HEIGHT }, (_, index) => [
       getWorldVoxel(voxelWorld, 0, index + 1, DOOR_MIN_Z),
       getWorldVoxel(voxelWorld, 0, index + 1, DOOR_MAX_Z),
     ]).flat();
 
-    expect(doorway).toStrictEqual(Array.from({ length: 2 * DOOR_HEIGHT }, () => 0));
+    expect(doorway).toStrictEqual(Array.from({ length: 2 * DOOR_HEIGHT }, () => (isDoorOpen ? 0 : woodVoxel)));
     expect(getWorldVoxel(voxelWorld, 0, DOOR_HEIGHT + 1, DOOR_MIN_Z)).toBe(
       PaletteColors.indexOf(PaletteColor.Wall) + 1,
     );
-    // Outside the door: the ground at the room's floor, and nothing over it but the door swung open against the wall
+    // Outside the door: the ground at the room's floor, and over it only the door, where it swings open
     expect(getWorldVoxel(voxelWorld, -1, 0, DOOR_MIN_Z)).toBe(PaletteColors.indexOf(PaletteColor.Grass) + 1);
     expect(getWorldVoxel(voxelWorld, -1, 1, DOOR_MIN_Z)).toBe(0);
-    expect(getWorldVoxel(voxelWorld, -1, 1, DOOR_MAX_Z + 1)).toBe(PaletteColors.indexOf(PaletteColor.Wood) + 1);
+    expect(getWorldVoxel(voxelWorld, -1, 1, DOOR_MAX_Z + 1)).toBe(isDoorOpen ? woodVoxel : 0);
   });
 });

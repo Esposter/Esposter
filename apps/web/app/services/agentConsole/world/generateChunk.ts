@@ -1,3 +1,4 @@
+import type { ChunkRequest } from "@/models/agentConsole/world/ChunkRequest";
 import type { VoxelGrid } from "@/models/agentConsole/world/VoxelGrid";
 
 import { PaletteColor, PaletteColors } from "@/models/agentConsole/PaletteColor";
@@ -6,6 +7,8 @@ import {
   CHUNK_GRID_SIZE,
   CHUNK_SIZE,
   DIRT_DEPTH,
+  DOOR_CLOSED_BOX,
+  DOOR_OPEN_BOX,
   WORLD_HEIGHT,
 } from "@/services/agentConsole/world/constants";
 import { fillVoxelBox } from "@/services/agentConsole/world/fillVoxelBox";
@@ -17,8 +20,9 @@ const DIRT_VOXEL = PaletteColors.indexOf(PaletteColor.Dirt) + 1;
 const STONE_VOXEL = PaletteColors.indexOf(PaletteColor.Stone) + 1;
 // A chunk's voxels from its position alone, so the same chunk is the same on every load: each column's ground to the
 // Noise's height, grass over a few voxels of dirt over stone, with the room stamped over whatever share of it falls in
-// This chunk. The grid holds the chunk's border of its neighbours' voxels too, generated the same way
-export const generateChunk = (chunkX: number, chunkZ: number): VoxelGrid => {
+// This chunk, its door open or closed. The grid holds the chunk's border of its neighbours' voxels too, generated the
+// Same way
+export const generateChunk = ({ chunkX, chunkZ, isDoorOpen }: ChunkRequest): VoxelGrid => {
   const voxelGrid = {
     depth: CHUNK_GRID_SIZE,
     height: WORLD_HEIGHT,
@@ -36,7 +40,7 @@ export const generateChunk = (chunkX: number, chunkZ: number): VoxelGrid => {
           y === terrainHeight - 1 ? GRASS_VOXEL : y >= terrainHeight - 1 - DIRT_DEPTH ? DIRT_VOXEL : STONE_VOXEL;
     }
 
-  for (const { color, max, min } of RoomVoxelBoxes)
+  for (const { color, max, min } of [...RoomVoxelBoxes, isDoorOpen ? DOOR_OPEN_BOX : DOOR_CLOSED_BOX])
     fillVoxelBox(voxelGrid, {
       color,
       max: [max[0] - originX, max[1], max[2] - originZ],

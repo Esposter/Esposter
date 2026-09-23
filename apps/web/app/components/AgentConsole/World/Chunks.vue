@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { ChunkPosition } from "@/models/agentConsole/world/ChunkPosition";
+import type { ChunkRequest } from "@/models/agentConsole/world/ChunkRequest";
 import type { GeneratedChunk } from "@/models/agentConsole/world/GeneratedChunk";
 import type { Group } from "three";
 
 import { CHUNK_BORDER, CHUNK_SIZE, RENDER_DISTANCE } from "@/services/agentConsole/world/constants";
 import { createVoxelMeshGeometry } from "@/services/agentConsole/world/createVoxelMeshGeometry";
+import { DoorChunkPositions } from "@/services/agentConsole/world/DoorChunkPositions";
 import { getChunkKey } from "@/services/agentConsole/world/getChunkKey";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
 import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
@@ -15,6 +17,7 @@ const { onBeforeRender } = useLoop();
 const agentConsolePlayerStore = useAgentConsolePlayerStore();
 const { playerState } = agentConsolePlayerStore;
 const agentConsoleWorldStore = useAgentConsoleWorldStore();
+const { isDoorOpen } = storeToRefs(agentConsoleWorldStore);
 const { voxelWorld } = agentConsoleWorldStore;
 const chunks = useTresTemplateRef<Group>("chunks");
 const material = new MeshBasicMaterial({ vertexColors: true });
@@ -29,6 +32,12 @@ let centerChunkZ = 0;
 let isSettled = false;
 const checkIsInRange = (chunkX: number, chunkZ: number, distance: number) =>
   Math.max(Math.abs(chunkX - centerChunkX), Math.abs(chunkZ - centerChunkZ)) <= distance;
+const requestChunk = ({ chunkX, chunkZ }: ChunkPosition) => {
+  requestedChunkKeys.add(getChunkKey(chunkX, chunkZ));
+  const chunkRequest: ChunkRequest = { chunkX, chunkZ, isDoorOpen: isDoorOpen.value };
+  // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
+  worker.postMessage(chunkRequest);
+};
 
 worker.addEventListener(
   "message",
@@ -38,6 +47,12 @@ worker.addEventListener(
     // Thrown away if the player walked out of its range before it came back
     if (!chunks.value || !checkIsInRange(chunkX, chunkZ, RENDER_DISTANCE + 1)) return;
     voxelWorld.set(chunkKey, voxelGrid);
+    // A chunk generated again, around the door, takes its old mesh's place
+    const oldMesh = chunkMeshes.get(chunkKey);
+    if (oldMesh) {
+      chunks.value.remove(oldMesh);
+      oldMesh.geometry.dispose();
+    }
     const geometry = createVoxelMeshGeometry(voxelMesh).translate(-CHUNK_BORDER, 0, -CHUNK_BORDER);
     const mesh = new Mesh(geometry, material);
     mesh.position.set(chunkX * CHUNK_SIZE, 0, chunkZ * CHUNK_SIZE);
@@ -76,11 +91,12 @@ onBeforeRender(() => {
       Math.hypot(first.chunkX - chunkX, first.chunkZ - chunkZ) -
       Math.hypot(second.chunkX - chunkX, second.chunkZ - chunkZ),
   );
-  for (const chunkPosition of sortedChunkPositions) {
-    requestedChunkKeys.add(getChunkKey(chunkPosition.chunkX, chunkPosition.chunkZ));
-    // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
-    worker.postMessage(chunkPosition);
-  }
+  for (const chunkPosition of sortedChunkPositions) requestChunk(chunkPosition);
+});
+// Opening or closing the door generates the chunks it stands in again, so its voxels, and so what the player collides
+// With, follow it
+watch(isDoorOpen, () => {
+  for (const chunkPosition of DoorChunkPositions) requestChunk(chunkPosition);
 });
 
 onUnmounted(() => {

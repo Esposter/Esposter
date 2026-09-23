@@ -5,6 +5,8 @@ import { WorldObjectType } from "@/models/agentConsole/world/WorldObjectType";
 import {
   COINS_POSITION,
   COINS_STAND_POSITION,
+  DOOR_CLOSED_BOX,
+  DOOR_STAND_POSITION,
   FIGURE_HALF_DEPTH,
   FIGURE_HALF_WIDTH,
   PAGES_POSITION,
@@ -18,16 +20,19 @@ import { WorldObjectEntries } from "@/services/agentConsole/world/WorldObjectMap
 import { WorldObjectPanelTypeMap } from "@/services/agentConsole/world/WorldObjectPanelTypeMap";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
+import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
 // Everything in the room a player can use by standing at it, and what its key does: the board the sessions, a station
 // The calls made at it, the gauges the usage and the changes, the gate the waiting request while one waits, the main
-// Agent the composer. Each is also a tab or a button in the console
+// Agent the composer, each also a tab or a button in the console, and the door opens or closes
 export const useWorldPrompts = () => {
   const agentConsolePanelStore = useAgentConsolePanelStore();
   const { openConsole } = agentConsolePanelStore;
   const agentConsoleSessionStore = useAgentConsoleSessionStore();
   const { currentSessionId, pendingPermissionRequests, worldFigures } = storeToRefs(agentConsoleSessionStore);
+  const agentConsoleWorldStore = useAgentConsoleWorldStore();
+  const { isDoorOpen } = storeToRefs(agentConsoleWorldStore);
   return computed(() => {
-    const worldPrompts = WorldObjectEntries.filter(
+    const objectPrompts = WorldObjectEntries.filter(
       ([worldObjectType]) => worldObjectType !== WorldObjectType.Gate || pendingPermissionRequests.value.length > 0,
     ).map(([worldObjectType, { boxes, promptTitle, standPosition }]): WorldPrompt => {
       const panelType = WorldObjectPanelTypeMap[worldObjectType];
@@ -48,6 +53,20 @@ export const useWorldPrompts = () => {
         title: promptTitle,
       };
     });
+    // The door is outlined in its opening whichever way it stands, so it is used from either side of the wall
+    const worldPrompts: WorldPrompt[] = [
+      ...objectPrompts,
+      {
+        id: "door",
+        max: [DOOR_CLOSED_BOX.max[0] + 1, DOOR_CLOSED_BOX.max[1] + 1, DOOR_CLOSED_BOX.max[2] + 1],
+        min: DOOR_CLOSED_BOX.min,
+        run: () => {
+          isDoorOpen.value = !isDoorOpen.value;
+        },
+        standPosition: DOOR_STAND_POSITION,
+        title: isDoorOpen.value ? "Close" : "Open",
+      },
+    ];
     if (!currentSessionId.value) return worldPrompts;
     const openUsage = () => openConsole(AgentConsolePanelType.Usage);
     const mainFigure = worldFigures.value.find(({ isMain }) => isMain);

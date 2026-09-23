@@ -1,16 +1,31 @@
+import type { VoxelBox } from "@/models/agentConsole/world/VoxelBox";
 import type { Vector3Tuple } from "three";
 
+import { PaletteColor } from "@/models/agentConsole/PaletteColor";
 import { Vector3 } from "three";
-// The room, in voxels: a floor, a wall behind and a wall to the left, open to the camera on the other two sides
+// The room, in voxels: a floor walled on all four sides
 export const ROOM_WIDTH = 16;
 export const ROOM_HEIGHT = 7;
-export const ROOM_DEPTH = 12;
+export const ROOM_DEPTH = 13;
 // The door's opening in the left wall, two voxels wide and four tall, and where the player and the main agent walk in,
 // Just inside it
 export const DOOR_MIN_Z = 8;
 export const DOOR_MAX_Z = 9;
 export const DOOR_HEIGHT = 4;
 export const DOOR_POSITION: Vector3Tuple = [1.5, 1, 9];
+// The door fills its opening while it is closed, and swung open outward on a hinge at the opening's far edge, it stands
+// Straight out from the wall, as wide as the opening. It is used from the middle of the opening, so from either side
+export const DOOR_CLOSED_BOX: VoxelBox = {
+  color: PaletteColor.Wood,
+  max: [0, DOOR_HEIGHT, DOOR_MAX_Z],
+  min: [0, 1, DOOR_MIN_Z],
+};
+export const DOOR_OPEN_BOX: VoxelBox = {
+  color: PaletteColor.Wood,
+  max: [-1, DOOR_HEIGHT, DOOR_MAX_Z + 1],
+  min: [DOOR_MIN_Z - DOOR_MAX_Z - 1, 1, DOOR_MAX_Z + 1],
+};
+export const DOOR_STAND_POSITION: Vector3Tuple = [0.5, 1, (DOOR_MIN_Z + DOOR_MAX_Z + 1) / 2];
 // Where the main agent stands while it is not using a tool
 export const HOME_POSITION: Vector3Tuple = [8, 1, 6.5];
 // The world around the room: columns of Minecraft's sixteen by sixteen voxels, this tall, generated this many chunks out

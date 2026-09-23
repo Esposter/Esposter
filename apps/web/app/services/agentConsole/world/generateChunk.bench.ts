@@ -7,13 +7,13 @@ describe(generateChunk, () => {
   test("one chunk", async ({ bench }) => {
     await bench.compare(
       bench("spawn", () => {
-        generateChunk(0, 0);
+        generateChunk({ chunkX: 0, chunkZ: 0, isDoorOpen: false });
       }),
       bench("hills", () => {
-        generateChunk(3, 2);
+        generateChunk({ chunkX: 3, chunkZ: 2, isDoorOpen: false });
       }),
       bench("far out", () => {
-        generateChunk(100_000, -100_000);
+        generateChunk({ chunkX: 100_000, chunkZ: -100_000, isDoorOpen: false });
       }),
       BENCHMARK_RUN_OPTIONS,
     );
