@@ -55,7 +55,9 @@ describe("unoConfig", () => {
           ],
           [
             "of-anchor-none",
-            { "overflow-anchor": "none" },
+            {
+              "overflow-anchor": "none",
+            },
           ],
           [
             "bg-activated",
@@ -71,19 +73,27 @@ describe("unoConfig", () => {
           ],
           [
             "op-disabled",
-            { "opacity": "var(--v-disabled-opacity, 0.38)" },
+            {
+              "opacity": "var(--v-disabled-opacity, 0.38)",
+            },
           ],
           [
             "op-high-emphasis",
-            { "opacity": "var(--v-high-emphasis-opacity, 0.87)" },
+            {
+              "opacity": "var(--v-high-emphasis-opacity, 0.87)",
+            },
           ],
           [
             "op-loading",
-            { "opacity": "var(--v-loading-opacity, 0.5)" },
+            {
+              "opacity": "var(--v-loading-opacity, 0.5)",
+            },
           ],
           [
             "op-medium-emphasis",
-            { "opacity": "var(--v-medium-emphasis-opacity, 0.6)" },
+            {
+              "opacity": "var(--v-medium-emphasis-opacity, 0.6)",
+            },
           ],
         ],
         "safelist": [

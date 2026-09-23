@@ -53,8 +53,16 @@ describe(zodToJsonSchema, () => {
     expect(result.properties?.value).toMatchInlineSnapshot(`
       {
         "oneOf": [
-          { "const": "", "title": "Empty", "type": "string" },
-          { "const": " ", "title": "Space", "type": "string" },
+          {
+            "const": "",
+            "title": "Empty",
+            "type": "string",
+          },
+          {
+            "const": " ",
+            "title": "Space",
+            "type": "string",
+          },
         ],
         "title": "Value",
       }
@@ -92,7 +100,9 @@ describe(zodToJsonSchema, () => {
 
     expect(result.properties?.transformation).toMatchInlineSnapshot(`
       {
-        "discriminator": { "propertyName": "type" },
+        "discriminator": {
+          "propertyName": "type",
+        },
         "oneOf": [
           {
             "additionalProperties": false,
@@ -243,7 +253,10 @@ describe(zodToJsonSchema, () => {
 
     expect(result.properties?.sourceColumnId).toMatchInlineSnapshot(`
       {
-        "layout": { "comp": "select", "getItems": "context.columnItems" },
+        "layout": {
+          "comp": "select",
+          "getItems": "context.columnItems",
+        },
         "title": "Source Column Id",
         "type": "string",
       }
@@ -267,7 +280,9 @@ describe(zodToJsonSchema, () => {
 
     expect(result.properties?.name).toMatchInlineSnapshot(`
       {
-        "errorMessage": { "uniqueColumnName": "Column already exists" },
+        "errorMessage": {
+          "uniqueColumnName": "Column already exists",
+        },
         "title": "Name",
         "type": "string",
         "uniqueColumnName": true,
