@@ -73,7 +73,8 @@ When the same attributify utility combination recurs across components (e.g. `op
 can be written several ways across the tree. **`BLOCKED_SPELLINGS` in `uno.config.ts` is the single source of
 truth for which spelling is canonical**: each entry refuses one alias family and names what to write instead.
 The generator honours it by emitting nothing for a blocked token, and `unocss/blocklist` (on in the shared ESLint
-config) reports the attribute or `class` literal that wrote one, with the message. A new alias found in the tree
+config) reports the attribute or `class` literal that wrote one, with the message. A string inside a `:class`
+expression is out of the rule's reach, so `app/templates.test.ts` checks those against the same list. A new alias found in the tree
 joins the list rather than the prose; a bare `rounded` or `border` stays off it because on a Vuetify component
 each is that component's own prop, and the rule reads every valueless attribute.
 

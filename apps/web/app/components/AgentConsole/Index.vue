@@ -41,7 +41,7 @@ whenever(
   <!-- The panels' column beside the world; on a narrow screen the world is a strip above them -->
   <div
     class="agent-console"
-    :class="isPanelColumnShown ? 'grid-rows-[1fr_2fr] md:grid-cols-2 md:grid-rows-1' : 'grid-rows-1'"
+    :class="isPanelColumnShown ? 'rows-[1fr_2fr] md:cols-2 md:rows-1' : 'rows-1'"
     :style="AgentConsolePaletteStyle"
     grid
     size-full

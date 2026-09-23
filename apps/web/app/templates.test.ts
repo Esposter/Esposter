@@ -148,6 +148,33 @@ describe("attributify", () => {
     expect(emptyUtilities).toStrictEqual([]);
   });
 
+  // `unocss/blocklist` reports a refused spelling written as an attribute or a static class, and cannot see one
+  // Inside a `:class` expression, where it is just a string. The generator refuses it there all the same, so a
+  // Grid switched on a condition as `'grid-rows-1'` loses its rows with nothing reporting it. A variant is
+  // Stripped first, because the blocklist is matched against the utility the variant wraps
+  test("writes no refused spelling inside a bound class", async () => {
+    expect.hasAssertions();
+
+    const STRING_LITERAL_REGEX = /(?<quote>["'`])(?<content>.*?)\k<quote>/gu;
+    const uno = await createGenerator(unoConfig);
+    const refusedTokens: string[] = [];
+    for (const { ast, templatePath } of templates) {
+      if (!ast) continue;
+      walkElements(ast, ({ props }) => {
+        for (const prop of props) {
+          const bind = getStaticBind(prop);
+          if (bind?.name !== "class") continue;
+          for (const { groups } of bind.expression.matchAll(STRING_LITERAL_REGEX))
+            for (const token of groups?.content.split(/\s+/u) ?? [])
+              if (token && uno.isBlocked(token.split(":").at(-1) ?? ""))
+                refusedTokens.push(`${templatePath}: ${token}`);
+        }
+      });
+    }
+
+    expect(refusedTokens).toStrictEqual([]);
+  });
+
   // UnoCSS extracts a bare bracket attribute as a class token, so the rule it emits is a `.class` the element
   // Never carries; only the valued form `prop="[...]"` produces an attribute selector
   test("writes every arbitrary value in the valued form", () => {
