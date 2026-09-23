@@ -1,64 +1,63 @@
 import type { AgentEvent, SessionSummary } from "agent-console-server/contracts";
 
-import { getFileEdits } from "@/services/agentConsole/getFileEdits";
-import { getLatestEvent } from "@/services/agentConsole/getLatestEvent";
-import { getPendingPermissionRequests } from "@/services/agentConsole/getPendingPermissionRequests";
-import { getToolCalls } from "@/services/agentConsole/getToolCalls";
+import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
+import { createSessionView } from "@/services/agentConsole/createSessionView";
+import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
 import { AgentEventType } from "agent-console-server/contracts";
-// The host's sessions and each one's event log, and everything the work surface reads off the current one. The log
-// Is the only state: the header, the timeline, the diffs and the cards are all views of it, so a reconnect that
-// Replays the log rebuilds every one of them
+// The host's sessions and each one's view of its event log. The log is the only state: everything the page shows is
+// Folded from it as it arrives, so a reconnect that replays the log rebuilds every part of the page
 export const useAgentConsoleSessionStore = defineStore("agentConsole/session", () => {
   const sessions = ref<SessionSummary[]>([]);
   const currentSessionId = ref("");
-  const { data: events, getDataRef } = useDataMap<AgentEvent[]>(currentSessionId, []);
+  const { data: sessionView, getDataRef } = useDataMap(currentSessionId, createSessionView);
   const currentSession = computed(() => sessions.value.find(({ id }) => id === currentSessionId.value));
-  const toolCalls = computed(() => getToolCalls(events.value));
-  const fileEdits = computed(() => getFileEdits(toolCalls.value));
-  const pendingPermissionRequests = computed(() => getPendingPermissionRequests(events.value));
-  const sessionInit = computed(() => getLatestEvent(events.value, AgentEventType.SessionInit));
-  const sessionSettings = computed(() => getLatestEvent(events.value, AgentEventType.SessionSettings));
-  const capabilities = computed(() => getLatestEvent(events.value, AgentEventType.Capabilities));
-  const contextUsage = computed(() => getLatestEvent(events.value, AgentEventType.ContextUsage));
-  const rateLimit = computed(() => getLatestEvent(events.value, AgentEventType.RateLimit));
-  const todoUpdate = computed(() => getLatestEvent(events.value, AgentEventType.TodoUpdate));
-  const turnResult = computed(() => getLatestEvent(events.value, AgentEventType.TurnResult));
-  const sessionState = computed(() => getLatestEvent(events.value, AgentEventType.SessionState)?.state);
+  const conversationEvents = computed(() => sessionView.value.conversationEvents);
+  const fileEdits = computed(() => [...sessionView.value.fileEditMap.values()].flat());
+  const pendingPermissionRequests = computed(() => [...sessionView.value.pendingPermissionRequestMap.values()]);
+  const timelineLanes = computed(() => [...sessionView.value.timelineLaneMap.values()]);
+  const toolCallMap = computed(() => sessionView.value.toolCallMap);
+  const capabilities = computed(() => sessionView.value.latestEventMap[AgentEventType.Capabilities]);
+  const contextUsage = computed(() => sessionView.value.latestEventMap[AgentEventType.ContextUsage]);
+  // Warns before automatic compaction rather than at it, which is the moment a person can still choose to compact
+  const isContextNearCompaction = computed(() =>
+    contextUsage.value?.autoCompactThreshold
+      ? contextUsage.value.totalTokens >= contextUsage.value.autoCompactThreshold * CONTEXT_WARNING_RATIO
+      : false,
+  );
+  const rateLimit = computed(() => sessionView.value.latestEventMap[AgentEventType.RateLimit]);
+  const sessionSettings = computed(() => sessionView.value.latestEventMap[AgentEventType.SessionSettings]);
+  const sessionState = computed(() => sessionView.value.latestEventMap[AgentEventType.SessionState]?.state);
+  const todoUpdate = computed(() => sessionView.value.latestEventMap[AgentEventType.TodoUpdate]);
+  const turnResult = computed(() => sessionView.value.latestEventMap[AgentEventType.TurnResult]);
 
   const storeSessions = (newSessions: SessionSummary[]) => {
     sessions.value = newSessions;
   };
-  // A log arrives more than once — a replay after a reconnect overlaps what the page already holds — so an event is
-  // Appended once per id
-  const storeEvents = (sessionId: string, newEvents: AgentEvent[]) => {
-    const sessionEvents = getDataRef(sessionId);
-    const eventIds = new Set(sessionEvents.value.map(({ id }) => id));
-    const addedEvents = newEvents.filter(({ id }) => !eventIds.has(id));
-    if (addedEvents.length > 0) sessionEvents.value = [...sessionEvents.value, ...addedEvents];
-    return addedEvents;
-  };
+  const storeEvents = (sessionId: string, newEvents: AgentEvent[]) =>
+    foldAgentEvents(getDataRef(sessionId).value, newEvents);
   const storeSessionReset = (sessionId: string) => {
-    getDataRef(sessionId).value = [];
+    getDataRef(sessionId).value = createSessionView();
   };
 
   return {
     capabilities,
     contextUsage,
+    conversationEvents,
     currentSession,
     currentSessionId,
-    events,
     fileEdits,
+    isContextNearCompaction,
     pendingPermissionRequests,
     rateLimit,
-    sessionInit,
     sessions,
     sessionSettings,
     sessionState,
     storeEvents,
     storeSessionReset,
     storeSessions,
+    timelineLanes,
     todoUpdate,
-    toolCalls,
+    toolCallMap,
     turnResult,
   };
 });

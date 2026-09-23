@@ -33,32 +33,31 @@ const answer = (behavior: PermissionBehavior) => {
 </script>
 
 <template>
-  <StyledCard>
-    <v-card-title>{{ permissionRequest.toolName }} wants permission</v-card-title>
-    <v-card-subtitle v-if="permissionRequest.title || permissionRequest.decisionReason">
-      {{ permissionRequest.title }} {{ permissionRequest.decisionReason }}
-    </v-card-subtitle>
-    <v-card-text flex flex-col gap-2>
-      <div v-if="permissionRequest.blockedPath">
-        Outside the allowed directories: {{ permissionRequest.blockedPath }}
-      </div>
+  <AgentConsolePanelFrame :title="`${permissionRequest.toolName} wants permission`" max-h="[50dvh]">
+    <div flex flex-col gap-2 of-y-auto>
+      <p v-if="permissionRequest.title || permissionRequest.decisionReason">
+        {{ permissionRequest.title }} {{ permissionRequest.decisionReason }}
+      </p>
+      <p v-if="permissionRequest.blockedPath">Outside the allowed directories: {{ permissionRequest.blockedPath }}</p>
       <template v-if="fileEdits.length > 0">
         <div v-for="fileEdit of fileEdits" :key="fileEdit.id">
-          <div font-mono pb-1 text-body-small>{{ fileEdit.filePath }}</div>
-          <AgentConsoleWorkDiff :file-edit />
+          <div>{{ fileEdit.filePath }}</div>
+          <AgentConsolePanelDiff :file-edit />
         </div>
       </template>
-      <pre v-else white-space-pre-wrap of-x-auto>{{ JSON.stringify(permissionRequest.input, null, 2) }}</pre>
-      <v-text-field v-model="denyMessage" density="compact" label="Tell Claude what to do instead (on deny)" />
-    </v-card-text>
-    <v-card-actions>
-      <StyledButton :button-props="{ text: 'Allow' }" @click="answer(PermissionBehavior.Allow)" />
-      <v-btn
-        v-if="permissionRequest.hasSuggestions"
-        text="Allow, and don't ask again"
-        @click="answer(PermissionBehavior.AllowAlways)"
-      />
-      <v-btn color="error" text="Deny" @click="answer(PermissionBehavior.Deny)" />
-    </v-card-actions>
-  </StyledCard>
+      <pre v-else ws-pre-wrap of-x-auto>{{ JSON.stringify(permissionRequest.input, null, 2) }}</pre>
+    </div>
+    <input
+      v-model="denyMessage"
+      aria-label="Tell Claude what to do instead (on deny)"
+      placeholder="Tell Claude what to do instead (on deny)"
+    />
+    <div flex flex-wrap gap-2>
+      <AgentConsolePanelButton is-active @click="answer(PermissionBehavior.Allow)">Allow</AgentConsolePanelButton>
+      <AgentConsolePanelButton v-if="permissionRequest.hasSuggestions" @click="answer(PermissionBehavior.AllowAlways)">
+        Allow, and don't ask again
+      </AgentConsolePanelButton>
+      <AgentConsolePanelButton is-danger @click="answer(PermissionBehavior.Deny)">Deny</AgentConsolePanelButton>
+    </div>
+  </AgentConsolePanelFrame>
 </template>

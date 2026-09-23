@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { getConversationEvents } from "@/services/agentConsole/getConversationEvents";
 import { getEventSearchText } from "@/services/agentConsole/getEventSearchText";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
+import { SessionState } from "agent-console-server/contracts";
 
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
-const { events } = storeToRefs(agentConsoleSessionStore);
+const { conversationEvents, sessionState } = storeToRefs(agentConsoleSessionStore);
 const searchQuery = ref("");
 const displayEvents = computed(() => {
-  const conversationEvents = getConversationEvents(events.value);
   const normalizedSearchQuery = searchQuery.value.toLowerCase();
   return normalizedSearchQuery
-    ? conversationEvents.filter((event) => getEventSearchText(event).toLowerCase().includes(normalizedSearchQuery))
-    : conversationEvents;
+    ? conversationEvents.value.filter((event) =>
+        getEventSearchText(event).toLowerCase().includes(normalizedSearchQuery),
+      )
+    : conversationEvents.value;
 });
 const scrollContainer = useTemplateRef("scrollContainer");
 const { arrivedState } = useScroll(scrollContainer);
@@ -27,17 +28,13 @@ watch(
 </script>
 
 <template>
-  <div flex flex-col>
-    <v-text-field
-      v-model="searchQuery"
-      density="compact"
-      placeholder="Search this session"
-      prepend-inner-icon="mdi-magnify"
-      px-4
-      pt-2
-    />
-    <div ref="scrollContainer" px-4 pb-4 flex flex-1 flex-col gap-3 of-y-auto>
-      <AgentConsoleWorkConversationItem v-for="event of displayEvents" :key="event.id" :event />
+  <AgentConsolePanelFrame>
+    <input v-model="searchQuery" aria-label="Search this session" placeholder="Search this session…" type="search" />
+    <div ref="scrollContainer" flex flex-1 flex-col gap-3 min-h-0 of-y-auto>
+      <AgentConsolePanelConversationItem v-for="event of displayEvents" :key="event.id" :event />
+      <AgentConsolePanelWorking
+        v-if="sessionState && [SessionState.Compacting, SessionState.Running].includes(sessionState)"
+      />
     </div>
-  </div>
+  </AgentConsolePanelFrame>
 </template>
