@@ -41,8 +41,8 @@ const saveStateDefinition = computed<ResourceSaveStateDefinition>(
         <NuxtTime
           v-if="saveState === ResourceSaveState.Saved"
           :datetime="resource.updatedAt"
-          relative
           hidden
+          relative
           md:inline
         />
       </div>

@@ -44,7 +44,7 @@ onMounted(async () => {
         :value-text="usageText"
       />
       <!-- The tooltip still says it where the row has no room for it -->
-      <span text-muted text-nowrap hidden md:inline>{{ usageText }}</span>
+      <span text-muted hidden text-nowrap md:inline>{{ usageText }}</span>
     </div>
   </UiTooltip>
 </template>

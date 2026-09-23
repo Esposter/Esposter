@@ -22,8 +22,8 @@ const emit = defineEmits<{ select: [value: T, event: MouseEvent] }>();
       <button
         :id="getItemId(index)"
         :class="{ 'text-error': isDanger }"
+        class="aria-disabled:op-disabled"
         :aria-disabled="isDisabled || undefined"
-        aria-disabled:op-disabled
         role="menuitem"
         :tabindex="isTabbable(value) ? 0 : -1"
         type="button"

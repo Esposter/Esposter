@@ -101,7 +101,7 @@ const items = computed<Item[]>(() => [
         <span :class="ResourceDefinitionMap[resource.type].icon" aria-hidden="true" size-6 />
       </span>
       <div flex flex-col min-w-0>
-        <h1 ui-title truncate>{{ resource.name }}</h1>
+        <h1 truncate ui-title>{{ resource.name }}</h1>
         <span text-muted>{{ ResourceDefinitionMap[resource.type].title }}</span>
       </div>
     </div>
