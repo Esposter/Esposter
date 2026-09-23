@@ -7,10 +7,10 @@ Read when oxlint's `capitalized-comments` fires on a `//` line, or after rewrapp
 **Where the rule does not run, the style is corruption.** The capital belongs to the linter, not to the house style: a `#` comment in YAML, and any file oxlint does not lint, keeps ordinary sentence case, and copying the continuation capital into one leaves a mid-sentence word reading as a sentence start with nothing to blame and nothing to fix it — `a network Blip exits non-zero`, `which the bridge's nodes do / Not carry`. Here lowercasing **is** the fix, because the rule that rejects it is the one that is absent. The tell is a line opening on a capitalised common noun or verb that the line above ends mid-clause.
 
 **The decidable half is `comments/no-capitalized-identifier`** (`scripts/src/oxlint/comments.ts`). It reports a
-line opening on a function or binding name wherever that name is declared ("GetSandboxNodeVersion",
-"UseEditor"), and a mid-sentence line opening on a name the same file binds lowercase-first. It cannot report a
-tool, a path, or an unprefixed name declared in another file, since recognising one would take a list of the
-repo's tools, so the grep below still owns those.
+line opening on a capitalised function or binding name wherever that name is declared (`getSandboxNodeVersion`
+or `useEditor` written with a capital), and a mid-sentence line opening on a name the same file binds
+lowercase-first. It cannot report a tool, a path, or an unprefixed name declared in another file, since
+recognising one would take a list of the repo's tools, so the grep below still owns those.
 
 **Rewrapping a comment is what creates this**, so it is the edit to re-check rather than the original text. Changing a word early in a block reflows every line after it, and an identifier that sat mid-line lands at the front of one — the corruption is written by the pass that was fixing the previous one. After editing any comment, grep the added lines for a line-initial identifier before committing:
 
