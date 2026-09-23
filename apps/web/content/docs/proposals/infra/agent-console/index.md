@@ -10,7 +10,8 @@ The [agent console](/docs/infra/claude-interface/agent-console) has shipped its 
 
 ## Decisions
 
-- **The look is behind a theme.** The default theme stays the work surface alone. A theme may add a palette, a TresJS scene behind the surface, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
+- **The console becomes a game.** The second phase replaces the Vuetify work surface with a full-screen voxel world that has no app bar. DOM panels remain only for typing and for reading text that must be selectable ([voxel surface](/docs/proposals/infra/agent-console/voxel-surface)).
+- **The look is behind a theme.** The default theme is the voxel world with no character. A theme may add a palette, a TresJS scene behind the surface, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
 - **Views are separate from themes.** A view is a panel any theme can show, such as the codebase city or the collector harbour, so a repository's tooling is visualised whatever the console is dressed as.
 - **Other tooling joins through tiers, cheapest first.** App routes open in a side pane with no code, external tools arrive through MCP Apps, and a first-party view is written only when a tool needs the scene ([extensions](/docs/proposals/infra/agent-console/extensions)).
 - **A second driver, for sessions the SDK cannot hold.** A session a terminal already runs is attached to from the outside ([terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver)).
@@ -21,7 +22,7 @@ The [agent console](/docs/infra/claude-interface/agent-console) has shipped its 
 ```mermaid
 flowchart LR
   subgraph Browser
-    W[Work surface — shipped] --> T{Theme}
+    W[Voxel world and panels] --> T{Theme}
     T -->|default — shipped| N[Notifications]
     T -->|Genshin| G[Palette, scene, avatar, voice]
     W --> V[Views: harbour, city]
@@ -39,6 +40,7 @@ flowchart LR
 | Page                                                                                 | What it settles                                                              |
 | :----------------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
 | [Workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison)       | today's terminal workflow against the console's, task by task, and the costs |
+| [Voxel surface](/docs/proposals/infra/agent-console/voxel-surface)                   | the second phase — the work surface as a full-screen voxel world, no Vuetify |
 | [Terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver) | attaching to a session a terminal runs, through its transcript and a channel |
 | [Extensions](/docs/proposals/infra/agent-console/extensions)                         | how other tooling joins — app routes, MCP Apps, first-party views            |
 | [Themes](/docs/proposals/infra/agent-console/themes)                                 | the parts a theme adds past the default, and the Genshin theme               |
@@ -52,9 +54,10 @@ flowchart LR
 ## Scope and order
 
 1. **Close the parity gaps** the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) page names: copying a single code block, a merged diff per file, subagent lanes side by side, non-image attachments, and a rewind that restores files. Then do one day's work in the console alone, with every return to the terminal written into the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison).
-2. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience.
-3. **Views**: the collector harbour first, the city after.
-4. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.
+2. **The voxel surface**, built in the order its page gives, ending with the Vuetify surface deleted.
+3. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience, all inside the world.
+4. **Views**: the collector harbour first, the city after.
+5. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.
 
 ## What this does not propose
 
