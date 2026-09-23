@@ -3,6 +3,8 @@ import { LOCAL_STORAGE_KEY_SEPARATOR } from "@/services/shared/constants";
 // Central registry for every localStorage key (RoutePath-style) so keys can never overlap.
 // Values are kept byte-identical to their historical strings to preserve existing persisted data.
 export const LocalStorageKey = {
+  // The paired host's address and token — a per-browser convenience, never sent anywhere but that host
+  AgentConsoleHostUrl: "agent-console-host-url",
   ClickerStore: "clicker-store",
   // Every composer's draft in one entry, keyed by composer inside it: the store holds them as a single Map and
   // That Map is the storage, rather than a key per composer the store has to enumerate to find

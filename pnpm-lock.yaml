@@ -503,6 +503,9 @@ catalogs:
     defu:
       specifier: ^6.1.7
       version: 6.1.7
+    diff:
+      specifier: ^9.0.0
+      version: 9.0.0
     dotenv:
       specifier: ^18.0.3
       version: 18.0.3
@@ -1186,6 +1189,9 @@ importers:
       defu:
         specifier: 'catalog:'
         version: 6.1.7
+      diff:
+        specifier: 'catalog:'
+        version: 9.0.0
       drizzle-orm:
         specifier: 'catalog:'
         version: 1.0.0-rc.4(@electric-sql/pglite@0.5.8)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(zod@4.6.5)

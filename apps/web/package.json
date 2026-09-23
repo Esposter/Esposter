@@ -119,6 +119,7 @@
     "debug": "catalog:",
     "dedent": "catalog:",
     "defu": "catalog:",
+    "diff": "catalog:",
     "drizzle-orm": "catalog:",
     "emojilib": "catalog:",
     "eventemitter3": "catalog:",
