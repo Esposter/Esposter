@@ -25,22 +25,31 @@ const { counter, isAutofocus, label, rows, rules = [], type } = defineProps<Prop
 const inputRules = computed<FormValidationRule[]>(() =>
   rules.map((rule) => async (value) => await (typeof rule === "function" ? rule(value) : rule)),
 );
+// The control is ours to render rather than the primitive's, so what completes the field or anchors to it reads the
+// Element here
+const element = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>("element");
+
+defineExpose({ element });
 </script>
 
 <template>
   <Input.Root #default="{ id }" v-model="modelValue" :rules="inputRules" :type validate-on="input" flex flex-col gap-1>
     <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the control is the primitive's, which takes the id this label names -->
     <label :for="String(id)" text-muted>{{ label }}</label>
-    <Input.Control
-      :as="rows ? 'textarea' : 'input'"
-      :autofocus="isAutofocus"
-      :rows
-      class="control"
-      py-1
-      w-full
-      resize-y
-      ui-sunk
-    />
+    <Input.Control #default="{ attrs }" renderless>
+      <component
+        :is="rows ? 'textarea' : 'input'"
+        ref="element"
+        v-bind="attrs"
+        :autofocus="isAutofocus"
+        :rows
+        class="control"
+        py-1
+        w-full
+        resize-y
+        ui-sunk
+      />
+    </Input.Control>
     <div flex gap-2>
       <Input.Error #default="{ errors }" text-error flex-1>{{ errors[0] }}</Input.Error>
       <span v-if="counter" text-muted>{{ modelValue.length }} / {{ counter }}</span>

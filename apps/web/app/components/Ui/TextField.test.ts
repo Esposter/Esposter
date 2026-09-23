@@ -47,6 +47,14 @@ describe("uiTextField", () => {
     expect(component.get(`label[for="${control.attributes("id")}"]`).text()).toBe(label);
   });
 
+  test("exposes its control, which a completion attaches to", () => {
+    expect.hasAssertions();
+
+    const component = mount(UiTextField, { props: { label, modelValue: "" } });
+
+    expect(component.vm.element).toBe(component.get("input").element);
+  });
+
   test("takes several lines as a textarea", () => {
     expect.hasAssertions();
 
