@@ -3,6 +3,7 @@ import type { AgentEvent, SessionSummary } from "agent-console-server/contracts"
 import { CONTEXT_WARNING_RATIO } from "@/services/agentConsole/constants";
 import { createSessionView } from "@/services/agentConsole/createSessionView";
 import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
+import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { toWorldFigures } from "@/services/agentConsole/world/toWorldFigures";
 import { AgentEventType, SessionState } from "agent-console-server/contracts";
 // The host's sessions and each one's view of its event log. The log is the only state: everything the page shows is
@@ -23,6 +24,16 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   const worldFigures = computed(() =>
     currentSessionId.value ? toWorldFigures(timelineLanes.value, pendingPermissionRequests.value.length > 0) : [],
   );
+  // Who the session is presented as, by the first theme that finds its own line in a session-start hook's context
+  const avatar = computed(() => {
+    for (const sessionStartContext of sessionView.value.sessionStartContexts)
+      for (const theme of Object.values(AgentConsoleThemeMap)) {
+        const themeAvatar = theme.getAvatar(sessionStartContext);
+        if (themeAvatar) return themeAvatar;
+      }
+
+    return "";
+  });
   const capabilities = computed(() => sessionView.value.latestEventMap[AgentEventType.Capabilities]);
   const contextUsage = computed(() => sessionView.value.latestEventMap[AgentEventType.ContextUsage]);
   // Warns before automatic compaction rather than at it, which is the moment a person can still choose to compact
@@ -54,6 +65,7 @@ export const useAgentConsoleSessionStore = defineStore("agentConsole/session", (
   };
 
   return {
+    avatar,
     capabilities,
     contextUsage,
     conversationEvents,

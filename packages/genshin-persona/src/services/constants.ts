@@ -77,6 +77,9 @@ export const CARD_DETAIL_SEPARATOR = " · ";
 // What the model reads the headline under, and what the person reads it under
 export const CONTEXT_HEADLINE_PREFIX = "Persona: ";
 export const NAMEPLATE_PREFIX = "✦ ";
+// The line naming the character for a program rather than a person: the agent console's Genshin theme finds it in the
+// Session-start hook's context, spelled the same on both sides, so neither parses the headline's prose
+export const CHARACTER_LINE_PREFIX = "Character: ";
 // In the session's context beside the card rather than in the output style, which is one shipped file the same for
 // Everybody; absent at English
 export const REPLY_LANGUAGE_INSTRUCTION = (language: string): string =>

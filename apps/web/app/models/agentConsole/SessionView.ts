@@ -17,6 +17,8 @@ export interface SessionView {
   fileOriginMap: Map<string, string>;
   latestEventMap: LatestEventMap;
   pendingPermissionRequestMap: Map<string, PermissionRequestEvent>;
+  // The context each session-start hook added, which a theme reads the session's avatar from
+  sessionStartContexts: string[];
   streamDraft?: StreamDraft;
   timelineLaneMap: Map<string, TimelineLane>;
   toolCallMap: Map<string, ToolCall>;

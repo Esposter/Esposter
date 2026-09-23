@@ -13,6 +13,7 @@ const agentConsolePanelStore = useAgentConsolePanelStore();
 const { openConsole } = agentConsolePanelStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const {
+  avatar,
   contextUsage,
   currentSession,
   currentSessionId,
@@ -27,6 +28,10 @@ const {
   <!-- What describes the session, and the one way into the console for a pointer or a touch, its key written on it -->
   <header px-2 py-1 bg="panel/85" flex flex-wrap gap-2 items-center>
     <template v-if="currentSessionId">
+      <span v-if="avatar" flex gap-2 items-center>
+        <UiAvatar :name="avatar" />
+        {{ avatar }}
+      </span>
       <span truncate>{{ currentSession?.title || "New session" }}</span>
       <span v-if="sessionState" :style="{ color: SessionStateColorMap[sessionState] }">{{ sessionState }}</span>
       <span v-if="contextUsage" :class="{ 'text-warning': isContextNearCompaction }">

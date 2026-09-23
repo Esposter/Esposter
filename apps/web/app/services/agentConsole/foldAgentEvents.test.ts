@@ -1,10 +1,16 @@
-import type { FileRewindEvent, UserMessageEvent } from "agent-console-server/contracts";
+import type { FileRewindEvent, HookEvent, UserMessageEvent } from "agent-console-server/contracts";
 
-import { MAIN_LANE_TITLE } from "@/services/agentConsole/constants";
+import { MAIN_LANE_TITLE, SESSION_START_HOOK_EVENT } from "@/services/agentConsole/constants";
 import { createSessionView } from "@/services/agentConsole/createSessionView";
 import { foldAgentEvents } from "@/services/agentConsole/foldAgentEvents";
 import { readRecordedEvents } from "@/services/agentConsole/readRecordedEvents.test";
-import { AgentEventType, EphemeralAgentEventTypes, SessionState, SubagentStatus } from "agent-console-server/contracts";
+import {
+  AgentEventType,
+  EphemeralAgentEventTypes,
+  HookPhase,
+  SessionState,
+  SubagentStatus,
+} from "agent-console-server/contracts";
 import { describe, expect, test } from "vitest";
 
 describe(foldAgentEvents, () => {
@@ -123,6 +129,31 @@ describe(foldAgentEvents, () => {
     ]);
 
     expect(sessionView.streamDraft).toBeUndefined();
+  });
+
+  test("keeps the context a session-start hook added once it has responded", () => {
+    expect.hasAssertions();
+
+    const sessionView = createSessionView();
+    const additionalContext = "additionalContext";
+    const toHookEvent = (phase: HookPhase): HookEvent => ({
+      createdAt: new Date(0),
+      exitCode: 0,
+      hookEvent: SESSION_START_HOOK_EVENT,
+      hookId: " ",
+      hookName: "",
+      id: crypto.randomUUID(),
+      outcome: "",
+      output: "",
+      phase,
+      stderr: "",
+      stdout: JSON.stringify({ hookSpecificOutput: { additionalContext } }),
+      type: AgentEventType.Hook,
+    });
+
+    foldAgentEvents(sessionView, [...events, toHookEvent(HookPhase.Started), toHookEvent(HookPhase.Response)]);
+
+    expect(sessionView.sessionStartContexts).toStrictEqual([additionalContext]);
   });
 
   test("undoes the file changes made from the prompt the files were rewound to on", () => {

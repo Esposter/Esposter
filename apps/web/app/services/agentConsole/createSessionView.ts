@@ -10,6 +10,7 @@ export const createSessionView = (): SessionView => ({
   fileOriginMap: new Map(),
   latestEventMap: {},
   pendingPermissionRequestMap: new Map(),
+  sessionStartContexts: [],
   // The main agent's lane is first under an empty id, and each subagent's joins in the order it started
   timelineLaneMap: new Map([["", { id: "", title: MAIN_LANE_TITLE, toolCalls: [] }]]),
   toolCallMap: new Map(),

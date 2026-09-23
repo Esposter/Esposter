@@ -7,6 +7,7 @@ import { describe, expect, test, vi } from "vitest";
 
 const createTheme = () =>
   ({
+    getAvatar: () => "",
     reactions: {
       [AgentConsoleReaction.AttentionNeeded]: vi.fn<(title: string, body: string) => void>(),
       [AgentConsoleReaction.TurnEnded]: vi.fn<(title: string, body: string) => void>(),
