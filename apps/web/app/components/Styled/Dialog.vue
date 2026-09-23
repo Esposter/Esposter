@@ -45,6 +45,10 @@ const isFullScreen = ref(false);
 // Strategy then throws on `undefined.classList` and the whole page render goes with it, so the open state
 // Waits for the mount that gives it a root
 const isMounted = useMounted();
+// A dialog with a pinned header — room and user settings, whose tabs swap panels of other heights — sits high, as the
+// Palette does, so the header never moves as its body changes length. Any other is one decision about one thing, and
+// Sits in the middle, where Vuetify places it
+const isHigh = computed(() => Boolean(slots.header) && !isFullScreen.value);
 const hasActions = computed(() => Boolean(confirmButtonProps ?? slots["prepend-actions"] ?? slots["prepend-confirm"]));
 const mergedConfirmButtonProps = computed(() => mergeProps(confirmButtonProps ?? {}, confirmButtonAttrs));
 // The confirm button is the library's, so the Vuetify props a caller still passes are read into its words here:
@@ -70,7 +74,10 @@ const confirm = () => {
     Tooltip a dialog's content opens, since those render outside it. The look is the library's -->
   <v-dialog
     class="ui-dialog"
+    :class="{ 'items-start': isHigh }"
+    :content-class="{ 'mt-[12dvh] max-h-[76dvh]': isHigh }"
     :model-value="modelValue && isMounted"
+    transition="ui-dialog-drop"
     :="dialogProps"
     :fullscreen="isFullScreen"
     @update:model-value="modelValue = $event"

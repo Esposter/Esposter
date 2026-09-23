@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { AgentConsolePanelMenuItems, AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
@@ -29,7 +30,7 @@ watch(
   <UiDialog
     v-model="isConsoleOpen"
     title="Console"
-    is-sheet
+    :placement="UiDialogPlacement.Sheet"
     @keydown.esc="
       (event: KeyboardEvent) => {
         if (!isTurnRunning) return;

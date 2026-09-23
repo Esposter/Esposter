@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 
 interface Props {
   // What confirming does, in the danger variant: "Delete"
@@ -18,7 +19,7 @@ const isPending = ref(false);
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :title role="alertdialog" w="[min(32rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title role="alertdialog" w="[min(32rem,90vw)]">
     <div p-3 flex flex-col gap-3 min-h-0 of-y-auto>
       <slot />
     </div>

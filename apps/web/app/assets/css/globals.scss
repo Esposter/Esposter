@@ -28,6 +28,21 @@
   // Where the dock takes room from the page, set on the app root by breakpoint and zero on a page with no dock
   --dock-inset-block-end: 0rem;
   --dock-inset-inline-start: 0rem;
+  // Motion, stepped rather than eased: a duration is a whole number of frames, as a length is of steps, and each
+  // Timing jumps a frame at a time from the first, so a change answers at once. Short for a small thing popping out of
+  // What it hangs off, medium for a panel and for anything leaving, long for a dialog or a toast arriving
+  --ui-motion-frame: 60ms;
+  --ui-motion-short: calc(var(--ui-motion-frame) * 2) steps(2, jump-start);
+  --ui-motion-medium: calc(var(--ui-motion-frame) * 3) steps(3, jump-start);
+  --ui-motion-long: calc(var(--ui-motion-frame) * 4) steps(4, jump-start);
+  // Where a dialog arrives from: eight steps above, unless it sets its own, as a sheet does from its side
+  --ui-dialog-from: translateY(calc(var(--ui-step) * -8));
+}
+// Held still under reduced motion: every timing takes no time, so whatever moved is simply there or gone
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ui-motion-frame: 0s;
+  }
 }
 // The readable-text setting: body text in the system's own face. Headings and code keep the pixel face, since they read
 // Its own token rather than the body's
@@ -183,4 +198,75 @@ dialog.ui-dialog::backdrop {
   background: repeating-conic-gradient(var(--ui-background) 0 25%, transparent 0 50%) 0 0 / calc(var(--ui-step) * 2)
     calc(var(--ui-step) * 2);
   opacity: 0.85;
+}
+// A dialog drops into place as the status page's blocks do: from eight steps above, a frame at a time, its scrim
+// Stepping in with it, and it rises back out a frame quicker. The library's dialog is the browser's, so it moves
+// Between its open and closed states, kept in the top layer until it has gone; the shell is Vuetify's, so it moves
+// Through the transition the shell names and the scrim's own fade
+dialog.ui-dialog,
+dialog.ui-dialog::backdrop {
+  opacity: 0;
+  transition:
+    opacity var(--ui-motion-medium),
+    transform var(--ui-motion-medium),
+    display var(--ui-motion-medium) allow-discrete,
+    overlay var(--ui-motion-medium) allow-discrete;
+}
+
+dialog.ui-dialog {
+  transform: var(--ui-dialog-from);
+}
+
+dialog.ui-dialog[open],
+dialog.ui-dialog[open]::backdrop {
+  transition:
+    opacity var(--ui-motion-long),
+    transform var(--ui-motion-long),
+    display var(--ui-motion-long) allow-discrete,
+    overlay var(--ui-motion-long) allow-discrete;
+}
+
+dialog.ui-dialog[open] {
+  opacity: 1;
+  transform: none;
+}
+
+dialog.ui-dialog[open]::backdrop {
+  opacity: 0.85;
+}
+
+@starting-style {
+  dialog.ui-dialog[open],
+  dialog.ui-dialog[open]::backdrop {
+    opacity: 0;
+  }
+
+  dialog.ui-dialog[open] {
+    transform: var(--ui-dialog-from);
+  }
+}
+
+.ui-dialog-drop-enter-active,
+.ui-dialog > .v-overlay__scrim.fade-transition-enter-active {
+  transition:
+    opacity var(--ui-motion-long),
+    transform var(--ui-motion-long);
+}
+
+.ui-dialog-drop-leave-active,
+.ui-dialog > .v-overlay__scrim.fade-transition-leave-active {
+  transition:
+    opacity var(--ui-motion-medium),
+    transform var(--ui-motion-medium);
+}
+
+.ui-dialog-drop-enter-from,
+.ui-dialog-drop-leave-to {
+  opacity: 0;
+  transform: var(--ui-dialog-from);
+}
+
+.ui-dialog > .v-overlay__scrim.fade-transition-enter-from,
+.ui-dialog > .v-overlay__scrim.fade-transition-leave-to {
+  opacity: 0;
 }

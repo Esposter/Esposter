@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { Dialog } from "@vuetify/v0";
 
 interface Props {
-  // Down one side at the full height on a wide screen and over the whole page on a narrow one, leaving what it is
-  // About in view beside it, rather than high in the middle
-  isSheet?: true;
   // Drawn in a title bar with a close button beside it, or, where the content says what it is on its own, only the
   // Dialog's accessible name
   isTitleHidden?: true;
+  placement?: UiDialogPlacement;
   title: string;
 }
 
@@ -19,23 +18,29 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { isSheet, isTitleHidden, title } = defineProps<Props>();
+const { isTitleHidden, placement = UiDialogPlacement.High, title } = defineProps<Props>();
 </script>
 
 <template>
   <Dialog.Root v-model="isOpen">
-    <!-- High on the screen rather than centred, so a list changing length under a field never moves the field -->
+    <!-- A sheet arrives from the edge it stands on: up from the bottom on a narrow screen, in from the right on a wide
+      One. Any other drops from above -->
     <Dialog.Content
       v-bind="$attrs"
       class="ui-dialog"
-      :class="isSheet ? 'm-0 h-dvh max-h-dvh max-w-none w-full md:ml-a md:w-1/2 xl:w-2/5' : 'mt-[12dvh] max-h-[76dvh]'"
+      :class="[
+        placement === UiDialogPlacement.Sheet
+          ? 'm-0 h-dvh max-h-dvh max-w-none w-full md:ml-a md:w-1/2 xl:w-2/5 [--ui-dialog-from:translateY(calc(var(--ui-step)*8))] md:[--ui-dialog-from:translateX(calc(var(--ui-step)*8))]'
+          : 'max-h-[76dvh]',
+        { 'mt-[12dvh]': placement === UiDialogPlacement.High },
+      ]"
       text-inherit
       p-0
       b-none
       bg-transparent
       of-visible
     >
-      <section :class="isSheet ? 'h-full' : 'max-h-[76dvh]'" flex flex-col ui-frame>
+      <section :class="placement === UiDialogPlacement.Sheet ? 'h-full' : 'max-h-[76dvh]'" flex flex-col ui-frame>
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
         <header v-else class="title-bar" px-3 py-2 flex gap-2 items-center>
           <Dialog.Title text-accent flex-1 truncate>{{ title }}</Dialog.Title>
