@@ -67,10 +67,10 @@ The Azure-portal landing. Not a table — a dashboard of entry points: the inlin
 
 ## All resources — `/resource-explorer/all`
 
-`pages/resource-explorer/all.vue` renders the `resource` layout with `title="All"` above a `v-sheet flex-1` wrapping `ResourceListView` — `v-data-table-server` over `resource.readResources` (cross-type, owner, offset-paginated). `/favorites` and `/recents` are the same three lines with a different `source` prop, so everything below describes them too ([service menu](/docs/resource/resource-service-menu)):
+`pages/resource-explorer/all.vue` renders the `resource` layout with `title="All"` above a `v-sheet flex-1` wrapping `ResourceListView` — a `UiDataTable` over `resource.readResources` (cross-type, owner, offset-paginated). `/favorites` and `/recents` are the same three lines with a different `source` prop, so everything below describes them too ([service menu](/docs/resource/resource-service-menu)):
 
 - Columns: favorite (the star), type (icon + label from `ResourceDefinitionMap`), name, createdAt, updatedAt, lastAccessedAt (hidden by default), and a trailing actions `⋮`. The chooser offers every column except the pinned ones — name for every source, plus the column the source is ordered by, which is what puts **Last Accessed** permanently on `/recents` (`useResourceListColumns`). Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade and as an opt-in filter pill.
-- Toolbar (a fully-bordered `b-1` box, workbench only): search, group-by-type toggle, column chooser, Export CSV, Refresh, and a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
+- Toolbar (workbench only): the search across the row's width, the summary and group-by-type toggles, the column chooser, an overflow menu of Export CSV, Refresh and the recycle bin, and a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
 - Filter-pill row, bulk select, context menu, URL-synced filter state, and the footer count are the list workbench — see [list filters & views](/docs/resource/list-filters-and-views).
 - Row click → `/resource-explorer/{id}` via `navigateTo` — the single affordance for opening a resource (the name cell is plain text, not a competing link).
 - `?search=`, `?types=`, `?status=`, `?sortBy=`, and `?page=` deep-link the list, so [global search](/docs/resource/global-search) links land filtered.
@@ -156,7 +156,7 @@ stateDiagram-v2
 | `app/pages/resource-explorer/[id]/[[blade]].vue`       | resource page shell: loads `useResourceStore`, 404-guards id + blade, clears the store on unmount |
 | `app/layouts/resource.vue`                             | the page header: trail and storage meter, the title row, the page's tabs                          |
 | `app/components/Resource/Explorer/Index.vue`           | the blade body — the outlet and the version history panel on one surface                          |
-| `app/components/Resource/List/View.vue`                | `v-data-table-server` over `resource.readResources` — the workbench, parameterised by `source`    |
+| `app/components/Resource/List/View.vue`                | a `UiDataTable` over `resource.readResources` — the workbench, parameterised by `source`          |
 | `app/components/Resource/ServiceMenu.vue`              | the area's menu, opened from Home's `☰` as a drawer                                              |
 | `app/components/Styled/Navigation/Overlay.vue`         | the drawer shell behind the service menu                                                          |
 | `app/components/Resource/Blade/Header.vue`             | the title row: the resource in its slot, save state, the one action, the star, the overflow and ✕ |

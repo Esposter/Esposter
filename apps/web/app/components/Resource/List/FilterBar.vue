@@ -5,6 +5,8 @@ import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdat
 import type { ResourceType } from "@esposter/db-schema";
 
 import { ResourceListFilterType, ResourceListFilterTypes } from "@/models/resource/list/ResourceListFilterType";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
   hasActiveFilters: boolean;
@@ -69,7 +71,7 @@ const clearFilters = () => {
 </script>
 
 <template>
-  <div px-4 py-2 b-0 b-b-1 b-border b-solid flex flex-wrap gap-2 items-center>
+  <div px-4 pb-2 flex flex-wrap gap-2 items-center>
     <ResourceListTypeFilterPill v-model="types" />
     <ResourceListStatusFilterPill
       v-if="isStatusPillVisible"
@@ -89,20 +91,25 @@ const clearFilters = () => {
       v-model:updated-filter="updatedFilter"
       @remove="removeFilter(ResourceListFilterType.Updated)"
     />
-    <v-menu v-if="availableFilterTypes.length > 0">
-      <template #activator="{ props: menuProps }">
-        <v-chip prepend-icon="i-mdi:plus" variant="text" :="menuProps">Add filter</v-chip>
-      </template>
-      <v-list density="compact">
-        <v-list-item
-          v-for="filterType of availableFilterTypes"
-          :key="filterType"
-          :title="filterType"
-          @click="addedFilterTypes = [...addedFilterTypes, filterType]"
-        />
-      </v-list>
-    </v-menu>
-    <v-spacer />
-    <v-btn v-if="hasActiveFilters" size="small" variant="text" @click="clearFilters()">Clear filters</v-btn>
+    <UiMenu
+      v-if="availableFilterTypes.length > 0"
+      :items="availableFilterTypes.map((filterType) => ({ title: filterType, value: filterType }))"
+      label="Add filter"
+      :variant="UiButtonVariant.Quiet"
+      flex
+      gap-1
+      items-center
+      @select="
+        (filterType) => {
+          addedFilterTypes = [...addedFilterTypes, filterType];
+        }
+      "
+    >
+      <UiIcon :meaning="UiIconMeaning.Create" />
+      Add filter
+    </UiMenu>
+    <UiButton v-if="hasActiveFilters" :variant="UiButtonVariant.Quiet" ml-a @click="clearFilters()">
+      Clear filters
+    </UiButton>
   </div>
 </template>

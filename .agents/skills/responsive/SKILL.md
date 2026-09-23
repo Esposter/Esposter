@@ -9,6 +9,8 @@ Narrow viewports are a first-class target, not an afterthought. A row of buttons
 
 ## Command bars collapse into an overflow dropdown
 
+**On the UI library there is nothing to collapse:** a surface shows its toggles, its one lead action and its close mark, and keeps every occasional command in a `UiOverflowMenu` on every width, as the resource page's header and the resource list do. The rule below is for a Vuetify surface not yet migrated.
+
 **Default rule:** on `smAndDown`, a row of command buttons collapses into a **single `…` overflow menu** whose contents are `v-list-item`s with an icon and a text title. Native mobile UI is a list of labelled rows, not a grid of naked icons — always `:prepend-icon` **and** `:title`, never icon-only menu items.
 
 Use `useVDisplay()` for the breakpoint and `StyledOverflowMenu` for the menu — it takes an `Item[]` and renders the list for you:

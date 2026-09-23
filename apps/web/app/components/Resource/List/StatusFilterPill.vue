@@ -9,20 +9,21 @@ const emit = defineEmits<{ remove: [] }>();
 
 <template>
   <ResourceListFilterPill
-    is-closed-on-content-click
+    #default="{ close }"
     is-removable
     label="Status"
     :value="modelValue || 'all'"
     @remove="emit('remove')"
   >
-    <v-list density="compact">
-      <v-list-item
-        v-for="{ title, value } of ResourceStatusFilterItems"
-        :key="value"
-        :active="modelValue === value"
-        :title
-        @click="modelValue = value"
-      />
-    </v-list>
+    <ResourceListFilterOptions
+      :items="ResourceStatusFilterItems"
+      :selected-values="[modelValue]"
+      @toggle="
+        (value) => {
+          modelValue = value;
+          close();
+        }
+      "
+    />
   </ResourceListFilterPill>
 </template>

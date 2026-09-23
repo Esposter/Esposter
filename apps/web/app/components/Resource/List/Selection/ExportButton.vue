@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+
 interface Props {
   selectedResources: Resource[];
 }
@@ -10,7 +12,5 @@ const { exportResourcesCsv } = useExportResourcesCsv();
 </script>
 
 <template>
-  <v-btn prepend-icon="i-mdi:file-export-outline" variant="text" @click="exportResourcesCsv(selectedResources)">
-    Export CSV
-  </v-btn>
+  <UiButton :variant="UiButtonVariant.Quiet" @click="exportResourcesCsv(selectedResources)">Export CSV</UiButton>
 </template>

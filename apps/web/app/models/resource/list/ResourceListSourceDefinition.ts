@@ -1,5 +1,6 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 export interface ResourceListSourceDefinition {
   // What an unfiltered but empty view says. Shared with the Home card's tabs, so a set is described the same
@@ -8,6 +9,8 @@ export interface ResourceListSourceDefinition {
   // Merged into every read the view issues — the whole difference between the list routes
   filter: { isAccessed?: true; isFavorite?: true };
   icon: string;
+  // The set's mark where the library draws it, as an empty view's
+  meaning: UiIconMeaning;
   // The column this source is ordered by: always rendered, and never offered to the column chooser
   pinnedColumnKey?: keyof ResourceListItem;
   sortBy: readonly SortItem<keyof ResourceListItem>[];

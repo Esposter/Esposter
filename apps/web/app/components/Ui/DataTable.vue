@@ -73,7 +73,7 @@ const groups = computed(() => {
   if (!groupBy) return [{ items, value: undefined }];
   const groupMap = new Map<unknown, T[]>();
   for (const item of items) groupMap.set(item[groupBy], [...(groupMap.get(item[groupBy]) ?? []), item]);
-  return [...groupMap].map(([value, groupItems]) => ({ items: groupItems, value }));
+  return Array.from(groupMap, ([value, groupItems]) => ({ items: groupItems, value }));
 });
 const closedGroupValues = ref(new Set<unknown>());
 const getSortOrder = (key: string) => sortBy.value.find((sortItem) => sortItem.key === key)?.order;
@@ -131,10 +131,10 @@ const toggleGroup = (value: unknown) => {
               :key="column.key"
               class="header"
               :aria-sort="getAriaSort(column.key)"
+              text-muted
               px-2
               py-1
               text-left
-              text-muted
               text-nowrap
             >
               <button

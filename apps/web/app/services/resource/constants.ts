@@ -38,3 +38,5 @@ export const DEFAULT_HIDDEN_RESOURCE_COLUMN_KEYS: string[] = [ResourceListItemPr
 // Matches Vuetify's data-table default so the tracked value is correct before the first update:options
 export const RESOURCE_LIST_ITEMS_PER_PAGE = 10;
 export const RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
+// How many cards the summary stands in with while the counts are on their way
+export const RESOURCE_SUMMARY_SKELETON_COUNT = 3;

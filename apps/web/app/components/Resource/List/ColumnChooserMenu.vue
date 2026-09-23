@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 
-import { mergeProps } from "vue";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
   source: ResourceListSource;
@@ -13,21 +14,19 @@ const { source } = defineProps<Props>();
 const { hiddenColumnKeys, toggleableHeaders, toggleColumn } = useResourceListColumns(source);
 </script>
 
+<!-- A panel rather than a menu, since it stays open while several columns are shown or hidden -->
 <template>
-  <v-menu :close-on-content-click="false">
-    <template #activator="{ props: menuProps }">
-      <v-tooltip text="Manage view">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn icon="i-mdi:view-column-outline" :="mergeProps(menuProps, tooltipProps)" />
-        </template>
-      </v-tooltip>
+  <UiPopover label="Columns" :variant="UiButtonVariant.Quiet" px-0>
+    <template #trigger>
+      <UiIcon :meaning="UiIconMeaning.Columns" />
     </template>
-    <v-list density="compact">
-      <v-list-item v-for="{ key, title } of toggleableHeaders" :key :title @click="toggleColumn(key)">
-        <template #prepend>
-          <v-checkbox-btn density="compact" :model-value="!hiddenColumnKeys.includes(key)" />
-        </template>
-      </v-list-item>
-    </v-list>
-  </v-menu>
+    <UiCheckbox
+      v-for="{ key, title } of toggleableHeaders"
+      :key
+      is-label-shown
+      :label="title"
+      :model-value="!hiddenColumnKeys.includes(key)"
+      @update:model-value="toggleColumn(key)"
+    />
+  </UiPopover>
 </template>

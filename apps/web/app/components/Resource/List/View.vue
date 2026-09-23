@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
-import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 import type { ResourceFilterValues } from "@/models/resource/list/ResourceFilterValues";
-import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
+import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 import { NO_ACTION_ITEMS } from "@/services/shared/constants";
 import { useFavoriteStore } from "@/store/resource/favorite";
 import { useListDialogStore } from "@/store/resource/listDialog";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, takeOne } from "@esposter/shared";
 
 interface Props {
   source?: ResourceListSource;
@@ -62,7 +60,7 @@ const filterValues = computed<ResourceFilterValues>(() => ({
   updatedBefore: updatedBefore.value,
   updatedFilter: updatedFilter.value,
 }));
-// Vuetify resets to page 1 and refires update:options whenever `search` changes, so every filter funnels through it
+// Every filter funnels through one key, so a change to any of them starts the list over from its first page
 const filterKey = computed(() => JSON.stringify(filterValues.value));
 const itemsPerPage = ref(RESOURCE_LIST_ITEMS_PER_PAGE);
 const isGroupedByType = ref(false);
@@ -90,14 +88,14 @@ const { isOpen: isRenameOpen, item: renamingResource } = useSingletonDialog(rena
 const renameResource = useRenameResource(renamingResource, refresh);
 const deletingResource = computed(() => items.value.find(({ id }) => id === deletingId.value));
 const deleteResources = useDeleteResources(items, count, refresh);
-const onClickRow = (_event: MouseEvent, { item }: ItemSlot<ResourceListItem>) =>
-  navigateTo(RoutePath.Resource(item.id));
-const onUpdateOptions = async (options: ReadResourcesOptions) => {
-  itemsPerPage.value = options.itemsPerPage;
-  page.value = options.page;
-  sortBy.value = options.sortBy;
-  await readResources(options);
-};
+
+watch(filterKey, () => {
+  page.value = 1;
+});
+// The page, its size and its order are the address's, so the list reads whatever they say, the first time too
+watchImmediate([page, itemsPerPage, sortBy, filterKey], async () => {
+  await readResources({ itemsPerPage: itemsPerPage.value, page: page.value, sortBy: sortBy.value });
+});
 </script>
 
 <template>
@@ -147,55 +145,50 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         }
       "
     />
-    <v-data-table-server
+    <UiDataTable
       v-else
-      height="100%"
-      item-value="id"
-      show-select
-      flex
-      flex-1
-      flex-col
-      :group-by
-      :headers="visibleHeaders"
+      v-model:items-per-page="itemsPerPage"
+      v-model:page="page"
+      v-model:sort-by="sortBy"
+      :columns="visibleHeaders"
+      :get-item-title="({ name }) => name"
+      :get-row-props="
+        (item) => getContextMenuProps(item.id, () => resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS)
+      "
+      :group-by="isGroupedByType ? ResourceListItemPropertyNames.type : undefined"
+      :is-pending
+      is-selectable
       :items
       :items-length="count"
       :items-per-page-options="RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS"
-      :loading="isPending"
-      :model-value="selectedIds"
-      :page
-      :row-props="
-        ({ item }) => getContextMenuProps(item.id, () => resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS)
-      "
-      :search="filterKey"
-      :sort-by
-      @click:row="onClickRow"
-      @update:model-value="updateSelection"
-      @update:options="onUpdateOptions"
+      label="Resources"
+      :selected-ids
+      flex-1
+      @open="({ id }) => navigateTo(RoutePath.Resource(id))"
+      @update:selected-ids="updateSelection"
     >
-      <template #[`item.favorite`]="{ item }">
-        <!-- Every control nested in a row stops the click, so the row's own navigateTo does not fire behind it -->
-        <div @click.stop>
+      <template #cell="{ column, item, value }">
+        <!-- Every control nested in a row stops the click, so the row does not open behind it -->
+        <div v-if="column.key === 'favorite'" @click.stop>
           <ResourceFavoriteToggle :resource="item" />
         </div>
-      </template>
-      <template #[`item.type`]="{ item }">
-        <ResourceListTypeCell :type="item.type" />
-      </template>
-      <template #[`item.actions`]="{ item }">
-        <div @click.stop>
-          <StyledOverflowMenu :items="resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS" />
+        <ResourceListTypeCell v-else-if="column.key === ResourceListItemPropertyNames.type" :type="item.type" />
+        <div v-else-if="column.key === 'actions'" @click.stop>
+          <UiOverflowMenu
+            :items="resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS"
+            :label="`Actions for ${item.name}`"
+          />
         </div>
+        <template v-else>{{ value }}</template>
       </template>
-      <template #group-header="{ columns, isGroupOpen, item, toggleGroup }">
-        <ResourceListGroupHeaderRow :columns :is-group-open :item :toggle-group />
+      <template #group="{ items: groupItems }">
+        <ResourceListTypeCell :type="takeOne(groupItems).type" />
+        <span text-muted>{{ groupItems.length }}</span>
       </template>
-      <template #loading>
-        <StyledSkeleton type="table-row@10" />
-      </template>
-      <template #no-data>
+      <template #empty>
         <ResourceListNoDataSlot :error :has-active-filters :source @clear="clearFilters()" @refresh="refresh()" />
       </template>
-    </v-data-table-server>
+    </UiDataTable>
     <ResourceRenameDialog
       v-if="renamingResource"
       :key="renamingResource.id"

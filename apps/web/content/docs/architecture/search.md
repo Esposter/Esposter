@@ -88,11 +88,11 @@ The docs register their MiniSearch results, the room list its cursor-paginated r
 
 Three search shapes legitimately sit outside `useAutoSearch`, because there is no as-you-type server query to throttle/abort — or something else already owns fetch orchestration:
 
-| Exception              | Why it is out of scope                                                                                                | Example                                          |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| `v-data-table-server`  | The table owns fetch orchestration — its `search` prop triggers `@update:options`; feed it a `refDebounced` query ref | `Resource/List/View.vue` + `useReadResources`    |
-| Explicit-submit search | Enter submits, with filters and history; nothing fires per keystroke                                                  | [Message search](/docs/esbabbler/message-search) |
-| Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state (see above)                        | Docs search, the emoji picker (both MiniSearch)  |
+| Exception              | Why it is out of scope                                                                                  | Example                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `UiDataTable`          | The call site reads on its page, size, order and filter key; feed the filter a `refDebounced` query ref | `Resource/List/View.vue` + `useReadResources`    |
+| Explicit-submit search | Enter submits, with filters and history; nothing fires per keystroke                                    | [Message search](/docs/esbabbler/message-search) |
+| Client-index search    | A `computed` over already-loaded data — no server call, no abort, no pending state (see above)          | Docs search, the emoji picker (both MiniSearch)  |
 
 ## Key files
 
