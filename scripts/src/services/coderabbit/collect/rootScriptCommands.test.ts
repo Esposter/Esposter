@@ -1,8 +1,8 @@
 import {
-  REPAIR_BUILD_APPS_COMMAND,
-  REPAIR_VERIFY_COMMANDS,
   INSTALL_COMMAND,
+  REPAIR_BUILD_APPS_COMMAND,
   REPAIR_REGENERATE_COMMANDS,
+  REPAIR_VERIFY_COMMANDS,
 } from "#src/services/coderabbit/collect/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
