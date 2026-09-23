@@ -7,6 +7,7 @@ export const ProductListLinkItems = [
   { href: RoutePath.MessagesIndex, icon: "mdi-message-fast", title: MESSAGE_DISPLAY_NAME },
   { href: RoutePath.CallsIndex, icon: "mdi-video", title: "Calls" },
   { href: RoutePath.ResourceExplorer, icon: "mdi-earth", title: "Resource Explorer" },
+  { href: RoutePath.AgentConsole, icon: "mdi-console", title: "Agent Console" },
   {
     children: [
       {

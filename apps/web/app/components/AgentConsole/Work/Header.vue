@@ -48,68 +48,73 @@ onKeyStroke("Escape", () => {
 </script>
 
 <template>
-  <div px-4 py-2 b-b-1 b-border flex flex-wrap gap-3 items-center>
-    <div flex-1 min-w-0 truncate text-title-medium>{{ currentSession?.title || "New session" }}</div>
-    <v-chip v-if="sessionState" :color="SessionStateColorMap[sessionState]" size="small">{{ sessionState }}</v-chip>
-    <v-select
-      :items="models"
-      :model-value="sessionSettings?.model"
-      density="compact"
-      label="Model"
-      max-w-60
-      @update:model-value="
-        (newModel) => sendCommand({ model: newModel, sessionId: currentSessionId, type: CommandType.SetModel })
-      "
-    />
-    <v-select
-      :items="permissionModes"
-      :model-value="sessionSettings?.permissionMode ?? PermissionMode.Default"
-      density="compact"
-      label="Mode"
-      max-w-50
-      @update:model-value="
-        (newPermissionMode) =>
-          sendCommand({
-            permissionMode: newPermissionMode,
-            sessionId: currentSessionId,
-            type: CommandType.SetPermissionMode,
-          })
-      "
-    />
-    <v-tooltip v-if="contextUsage" location="bottom">
-      <template #activator="{ props }">
-        <v-progress-circular
-          :="props"
-          :color="isContextNearCompaction ? 'warning' : 'primary'"
-          :model-value="contextUsage.percentage"
-          size="2.25rem"
-          width="4"
+  <StyledPageHeader :title="currentSession?.title || 'New session'">
+    <template #status>
+      <div flex gap-2 items-center>
+        <v-chip v-if="sessionState" :color="SessionStateColorMap[sessionState]" size="small">{{ sessionState }}</v-chip>
+        <v-tooltip v-if="contextUsage" location="bottom">
+          <template #activator="{ props }">
+            <v-progress-circular
+              :="props"
+              :color="isContextNearCompaction ? 'warning' : 'primary'"
+              :model-value="contextUsage.percentage"
+              size="2.25rem"
+              width="4"
+            >
+              <span text-label-small>{{ Math.round(contextUsage.percentage) }}</span>
+            </v-progress-circular>
+          </template>
+          {{ formatTokenCount(contextUsage.totalTokens) }} of {{ formatTokenCount(contextUsage.maxTokens) }} tokens of
+          context
+          <template v-if="contextUsage.autoCompactThreshold">
+            — compacts automatically at {{ formatTokenCount(contextUsage.autoCompactThreshold) }}
+          </template>
+        </v-tooltip>
+        <v-chip v-if="turnResult" prepend-icon="mdi-currency-usd" size="small">
+          {{ turnResult.totalCostUsd.toFixed(2) }}
+        </v-chip>
+        <v-chip
+          v-if="rateLimit?.utilization !== undefined"
+          :color="rateLimit.status === 'allowed' ? '' : 'warning'"
+          size="small"
         >
-          <span text-label-small>{{ Math.round(contextUsage.percentage) }}</span>
-        </v-progress-circular>
-      </template>
-      {{ formatTokenCount(contextUsage.totalTokens) }} of {{ formatTokenCount(contextUsage.maxTokens) }} tokens of
-      context
-      <template v-if="contextUsage.autoCompactThreshold">
-        — compacts automatically at {{ formatTokenCount(contextUsage.autoCompactThreshold) }}
-      </template>
-    </v-tooltip>
-    <v-chip v-if="turnResult" size="small" prepend-icon="mdi-currency-usd">{{
-      turnResult.totalCostUsd.toFixed(2)
-    }}</v-chip>
-    <v-chip
-      v-if="rateLimit?.utilization !== undefined"
-      :color="rateLimit.status === 'allowed' ? '' : 'warning'"
-      size="small"
-    >
-      {{ rateLimit.rateLimitType || "Usage" }} {{ Math.round(rateLimit.utilization * 100) }}%
-    </v-chip>
-    <StyledTooltipIconButton
-      v-if="isRunning"
-      :button-props="{ color: 'error', size: 'small' }"
-      icon="mdi-stop"
-      text="Stop (Esc)"
-      @click="interrupt()"
-    />
-  </div>
+          {{ rateLimit.rateLimitType || "Usage" }} {{ Math.round(rateLimit.utilization * 100) }}%
+        </v-chip>
+      </div>
+    </template>
+    <template #actions>
+      <v-select
+        :items="models"
+        :model-value="sessionSettings?.model"
+        density="compact"
+        label="Model"
+        max-w-60
+        @update:model-value="
+          (newModel) => sendCommand({ model: newModel, sessionId: currentSessionId, type: CommandType.SetModel })
+        "
+      />
+      <v-select
+        :items="permissionModes"
+        :model-value="sessionSettings?.permissionMode ?? PermissionMode.Default"
+        density="compact"
+        label="Mode"
+        max-w-50
+        @update:model-value="
+          (newPermissionMode) =>
+            sendCommand({
+              permissionMode: newPermissionMode,
+              sessionId: currentSessionId,
+              type: CommandType.SetPermissionMode,
+            })
+        "
+      />
+      <StyledTooltipIconButton
+        v-if="isRunning"
+        :button-props="{ color: 'error', size: 'small' }"
+        icon="mdi-stop"
+        text="Stop (Esc)"
+        @click="interrupt()"
+      />
+    </template>
+  </StyledPageHeader>
 </template>

@@ -33,7 +33,7 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 | `app/components/Styled/Skeleton.vue`       | shared skeleton loader                                               |
 | `app/components/App/Breadcrumbs.vue`       | navigation-derived breadcrumb trail rendered by `PageHeader`         |
 | `app/components/App/Menu/LinkListItem.vue` | launcher leaf, reused by group + top level                           |
-| `app/services/app/ProductListLinkItems.ts` | launcher data (Resources entry + Games group)                        |
+| `app/services/app/ProductListLinkItems.ts` | launcher data (the products, then the Games group)                   |
 | `app/models/shared/ListLinkItem.ts`        | `children` field for submenus                                        |
 | `app/components/App/Bar.vue`               | top app bar; `#append` button order (launcher · theme · bell · more) |
 
