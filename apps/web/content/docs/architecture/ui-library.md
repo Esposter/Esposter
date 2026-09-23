@@ -52,6 +52,7 @@ flowchart TD
 - **Vuetify draws through the same CSS.** Its default set is the module's "unocss-mdi", which hands the class to Vuetify's class icon. Vuetify's internal icons are aliases no source file names, and the module maps only some of them, so `vuetify.config.ts` maps every alias Vuetify defines from Vuetify's own list and `uno.config.ts` safelists the result.
 - **The app's own marks are icons like any other.** The anime and dungeon gate marks are SVG files in `app/assets/icons/`, which UnoCSS's icons preset serves as the `i-custom:` set, so they are written whole as classes and draw wherever an icon class does — a library menu as much as a Vuetify icon prop. A file there is its icon's whole definition; nothing registers it.
 - **The library's icons are pixel icons, named by meaning.** `Ui/Icon.vue` takes a `UiIconMeaning` — what the icon says, such as success or remove — and `UiIconMap` resolves it to a class: [Pixelarticons](https://pixelarticons.com/) first, a set drawn on a pixel grid to sit on a voxel surface, and a Material Design Icons class for a meaning it has no glyph for. Swapping sets is one map edit, a fallback is a row in the map, and a feature never names a set. Vuetify's components keep their Material icons until their unit migrates.
+- **Pixelarticons has no text-formatting glyphs** — no bold, italic, strike or heading — so an editor's toolbar keeps its Material icons, passed as whole classes in its `Item` list.
 - **A pixel icon renders at 1.5rem**, the size of its 24-unit grid, so every unit is a whole CSS pixel; any other size blurs the grid.
 - **An icon is decoration unless it is labelled.** Without a label it is hidden from assistive technology; with one it is an image with that name, for an icon that says what nothing beside it does — a tool call's success or failure mark.
 - **Under Vitest the UnoCSS module is not loaded**, so the module falls back to Vuetify's plain class set: an icon still carries its class, which is what a test finds it by, and nothing draws it.
@@ -89,6 +90,8 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes               |
 | `UiSkeleton`        | none                                  | A block stepping between two shades of the panel where content is still on its way                    |
 | `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                                |
+| `UiOverflowMenu`    | `UiMenu`                              | The actions of one thing behind one quiet mark, from the `Item` list its context menu opens           |
+| `UiConfirmDialog`   | `UiDialog`                            | A question before something that cannot be undone: Cancel, and one destructive answer until it lands  |
 
 ### Keyboard contracts
 
@@ -98,7 +101,7 @@ The first components came out of the agent console, which drew the look by hand 
 - **A context menu** keeps the menu's contract from the moment it opens onto its first item, and hands focus back to the element it opened over.
 - **A popover** opens from its trigger by click, Enter or Space, and Escape closes it with focus back on the trigger. Its open state is a model as well, so a shortcut elsewhere on the page can open it.
 - **A command list** keeps focus in its field, as suggestions do, and highlights its first command whenever the list changes, so Enter always takes the best match. The arrows walk it, and Enter clicks the highlighted row, so a row that is a link is followed as a pointer would follow it.
-- **A dialog** is the browser's: opening it moves focus inside and traps Tab there, and Escape or a click on the scrim closes it.
+- **A dialog** is the browser's: opening it moves focus inside and traps Tab there, and Escape or a click on the scrim closes it. A confirm dialog's destructive answer stays disabled while it is under way, and a failed one leaves the dialog open to try again.
 - **Tabs** are one stop in the tab order, the selected tab. The arrows move to the next or previous tab and select it as they go, Home and End jump to the ends, and each panel is labelled by its tab.
 - **Tab links** are a navigation landmark of ordinary links, each its own stop in the tab order. The current one says so, and the call site decides which that is, since a section's tab stays current on every page in it rather than only on the one it links to.
 - **A collapsible** is a button that says whether it is expanded and names the content it controls. Enter or Space toggles it, as a button's own keys. Its content is not a region: a navigation opens dozens, and a landmark each would crowd the list a screen reader offers.
@@ -115,7 +118,7 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 - **`ui-popover`** — the top-layer element a menu, a select or suggestions open in, emptied of the browser's own popover look and padded two steps, so the frame inside it never overlaps what it hangs off. Through `anchor-size()` it is at least as wide as that.
 - **`ui-item`** — one row of a popover's list, tinted in the accent while it is highlighted, selected or focused.
 - **`ui-tab-list`** and **`ui-tab`** — a row of tabs on a one-step line in the edge colour, and a tab drawing its own step of the line in the accent while it is selected or the current page's link. Shortcuts, so `UiTabs` and `UiTabLinks` wear one look.
-- **`ui-button`** — something pressed: `ui-raised` with a button's hover and disabled states, filled by its variant or while pressed, keyed on `data-variant` and `aria-pressed`. A shortcut rather than a component's scoped style, so `UiButton` and `UiButtonLink` wear one look.
+- **`ui-button`** — something pressed: `ui-raised` with a button's hover and disabled states, filled by its variant or while pressed, keyed on `data-variant` and `aria-pressed`; a quiet toggle, such as an editor's bold, fills while pressed too. A shortcut rather than a component's scoped style, so `UiButton` and `UiButtonLink` wear one look.
 
 ### Popovers
 
@@ -133,6 +136,10 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 - **A utility cannot recolour a surface.** The surfaces are rules generated after the colour utilities in the same layer, so a `bg-*` written on a `ui-raised` element loses to it. A state that recolours a surface is a data attribute the component's scoped style reads, as an earned achievement's badge is, or a variant inside a shortcut, as `ui-button`'s are.
 - **Tabs are mandatory, not forced.** Forcing selects the first tab as the tabs register, over the choice the model already holds, so a page opened on its second tab would jump back to the first.
 - **A field validates through Vuetify 0, with Vuetify's rules.** Validation rules stay Vuetify's until retirement. A rule from `useVRules` may be a bare result as well as a function, so `UiTextField` wraps each one in the asynchronous function the primitive takes, and a migrated field keeps its rules unchanged.
+- **A confirmation is an alert dialog on `UiDialog`, not on Vuetify 0's alert dialog.** Vuetify 0's `AlertDialog` has the right role and focuses Cancel, but its action closes the dialog when it settles, success or not, and Cancel takes focus only when the primitive renders its own element. `UiConfirmDialog` therefore passes the alert dialog role through `UiDialog` and gives Cancel `autofocus`, which the browser's dialog focusing steps honour, and holds its own pending state so a failed delete stays open. happy-dom runs no focusing steps, so its test asserts which button carries `autofocus` rather than where focus went.
+- **A quiet toggle needs its own pressed rule.** The quiet variant and the pressed fill are the same specificity and the variant comes later, so `ui-button` states a quiet pressed fill separately; an editor's bold would otherwise never show it is on.
+- **A context menu's props take the browser's menu away whatever the list holds.** A target binds them only where it has items, as a post's card does for its author alone.
+- **A spinner has text.** `UiSpinner` draws its frames as characters, so a pending button's text is its label and a frame; a test finds that button by its variant or role, never by its text.
 
 ### Themes and scopes
 
@@ -217,6 +224,7 @@ flowchart TD
 | A message           | The overflow menu's sections: its updates, its actions, deleting                 |
 | A resource row      | The row's overflow menu: open in a new tab, copy link, blueprint, rename, delete |
 | A place on the dock | Open in a new tab, and bookmarking it or removing the bookmark when signed in    |
+| A post or a comment | Its author's overflow menu: edit, delete                                         |
 
 The rest — a room, a member, a sheet column, a resource in a tree — join as their units migrate in [page migration](/docs/proposals/refactors/ui-library/page-migration), each with the items its overflow button already has.
 
@@ -298,7 +306,7 @@ One pixel face, VT323, at four sizes, each a whole number of steps: the body at 
 
 ## Page migration
 
-Every product area moves onto the library one unit per commit, tracked by the "ui-library" ledger in `.agents/ledgers/` and run as the [page migration proposal](/docs/proposals/refactors/ui-library/page-migration) describes: each commit carries its unit's flow inventory, and each unit is checked by eye against it. The first units are the small pages and the settings — about, the privacy policy, sign-in, user settings, achievements and the profile — which settled the type, the frame, the button, fields and tabs. The docs came next, the first long read: running text held to a readable measure while tables, code and diagrams keep the column's width, everything that finds a page in the one sidebar — a search button drawn as the field it opens, the categories as a row of icon tab links, and the page tree with its groups as collapsibles — so nothing stands over the content but a slim toolbar on a narrow screen, and the readable-text setting. The landing page is the post feed, so it moves with the posts.
+Every product area moves onto the library one unit per commit, tracked by the "ui-library" ledger in `.agents/ledgers/` and run as the [page migration proposal](/docs/proposals/refactors/ui-library/page-migration) describes: each commit carries its unit's flow inventory, and each unit is checked by eye against it. The first units are the small pages and the settings — about, the privacy policy, sign-in, user settings, achievements and the profile — which settled the type, the frame, the button, fields and tabs. The docs came next, the first long read: running text held to a readable measure while tables, code and diagrams keep the column's width, everything that finds a page in the one sidebar — a search button drawn as the field it opens, the categories as a row of icon tab links, and the page tree with its groups as collapsibles — so nothing stands over the content but a slim toolbar on a narrow screen, and the readable-text setting. The posts followed, the first feed: the landing page's cards in Reddit's current arrangement across the page's width ([feed and ranking](/docs/post/feed-and-ranking)), the thread under Reddit's lines, and the rich text editor, whose chrome is the library's while Tiptap's document is themed from outside. A centred column on the feed was tried and dropped as wasted space, so the posts keep the page's width, as the design pass asks of every unit. `v-counter` and `v-pull-to-refresh` were the first Vuetify tags left with no consumer, so `vue/no-restricted-html-elements` bans them, and each tag that follows joins them.
 
 ## The boundary
 

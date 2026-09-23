@@ -1,6 +1,6 @@
 ---
 name: ui-library
-description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library — three layers (feature, library, Vuetify 0), the import boundary that keeps Vuetify 0 inside the library, the design tokens as the one source of colour for both libraries during the migration, the document chrome and theme scopes, the surfaces as UnoCSS rules, the four type rules, anything pressed wearing ui-button, a field in a UiForm with Vuetify's rules, a component's keyboard test, icon classes written whole, library icons named by meaning through UiIconMap, and the page migration's ledger. Outranks the vendored vuetify0 skill wherever they meet.
+description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library — three layers (feature, library, Vuetify 0), the import boundary that keeps Vuetify 0 inside the library, the design tokens as the one source of colour for both libraries during the migration, the document chrome and theme scopes, the surfaces as UnoCSS rules, the four type rules, anything pressed wearing ui-button, a field in a UiForm with Vuetify's rules, a component's keyboard test, icon classes written whole, library icons named by meaning through UiIconMap, the design pass every unit takes (motion, placement, a signature detail), and the page migration's ledger. Outranks the vendored vuetify0 skill wherever they meet.
 ---
 
 # UI Library
@@ -55,17 +55,22 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **The call site's attributes go on top of the primitive's.** When a primitive overrides what a call site passes — as the button does with `type` and `aria-pressed` — render the element from its attribute slot with `$attrs` spread after, and expose the element if something must focus or anchor to it.
 - **A field's completions are `UiSuggestions` beside the field, never a menu.** Focus stays in the field; a menu moves focus into itself and is for actions.
 - **A menu item is data** — a `UiMenuItem` list — so a context menu and an overflow button can share one list later.
+- **A confirmation before something destructive is a `UiConfirmDialog`** once what it shows is the library's; until then it stays a `StyledDeleteFormDialog`.
 - **A modal stays on Vuetify's overlay until its content is library-only.** Vuetify 0's dialog is in the top layer, where every Vuetify menu, select and tooltip its content opens renders underneath and inert. The dialog shell and the page drawers wear the library's look over Vuetify's behaviour; a popover is not modal, so its content is the library's own and holds nothing that opens a Vuetify overlay.
 - **A name shown on hover is a `UiTooltip`**, its activator props bound onto the element, never a `title` attribute, which the browser draws in its own look.
 - **A search of a surface's own is a scope of the one palette**: `useCommandScope` with its query and what it finds as `UiCommand` rows, never a dialog or a Ctrl+K of its own.
 - **A keyboard shortcut is a registered command**: `useCommands` binds it for as long as its surface is mounted and lists it in the shortcuts dialog, so never a `useVHotkey` or keydown listener of a feature's own. A key the surface handles itself, such as a composer's Enter, is a command with neither `run` nor `to`, listed and never bound. A key held for as long as it acts, such as push-to-talk, is not a shortcut.
-- **Right-click actions go through the one context menu**: bind `useContextMenu`'s props with the same `Item` list the overflow button shows, never a menu positioned by hand.
+- **Right-click actions go through the one context menu**: bind `useContextMenu`'s props with the same `Item` list a `UiOverflowMenu` shows, never a menu positioned by hand. Bind them only where the list has items — the props take the browser's own menu away whether or not ours opens.
 - **A toast goes through the app's one stack** (`AppToastStack`), as a `UiToast` fed by the store that owns that kind of toast — never a snackbar of its own.
 - **A fixed region starts past the dock**: subtract `--dock-inset-inline-start` and `--dock-inset-block-end`, never a bar's height.
 
 ## The document chrome
 
 Scrollbars, selection, the caret, native control accents and the focus ring live once in the `ui-chrome` layer of `apps/web/app/assets/css/globals.scss`. A page never restates them, and a component that wants its own focus or selection treatment simply declares it — the layer is first in `apps/web/app/assets/css/layers.css`, so no override is needed. A region in another theme is a `UiThemeScope`, never a palette set on its root; the chrome follows it.
+
+## The design pass
+
+The migration is a revamp of the design system, not a repaint. Before a unit or a library component is built, and again before it is handed over, walk `references/design-pass.md`: motion on whatever appears or disappears, placement from what the surface is for, the full width used, one thing to do first, every state designed, a signature detail in the voxel language, and a reason it beats the reference product rather than only matching it.
 
 ## Migrating a unit
 
