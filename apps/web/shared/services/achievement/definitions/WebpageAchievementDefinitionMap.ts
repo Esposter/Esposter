@@ -1,3 +1,4 @@
+// @unocss-include
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
@@ -7,7 +8,7 @@ export const WebpageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   [WebpageAchievementName.WebDeveloper]: defineAchievementDefinition({
     amount: 1,
     description: "Save a webpage",
-    icon: "mdi-web",
+    icon: "i-mdi:web",
     points: 20,
     triggerPath: "webpage.saveResourceContent",
   }),

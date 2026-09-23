@@ -1,3 +1,4 @@
+// @unocss-include
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import type { ItemCategoryDefinition } from "@/models/resource/ItemCategoryDefinition";
 import type { Except } from "type-fest";
@@ -9,7 +10,7 @@ import { prettify } from "@/util/text/prettify";
 
 const TodoListItemTypeItemCategoryDefinitionMap = {
   [TodoListItemType.Todo]: {
-    icon: "mdi-check",
+    icon: "i-mdi:check",
     targetTypeKey: ItemEntityTypePropertyNames.type,
     title: prettify(TodoListItemType.Todo),
   },

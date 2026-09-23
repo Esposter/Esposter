@@ -1,3 +1,4 @@
+// @unocss-include
 import type { Item } from "@/models/shared/Item";
 
 import { useCallStore } from "@/store/message/room/call";
@@ -26,7 +27,7 @@ export const useThreadActionItems = () => {
   const isInThreadCall = computed(() => isInCall.value && callThreadRootRowKey.value === activeRootRowKey.value);
   return computed<Item[]>(() => [
     {
-      icon: isFollowing.value ? "mdi-bell-off" : "mdi-bell",
+      icon: isFollowing.value ? "i-mdi:bell-off" : "i-mdi:bell",
       onClick: async () => {
         const roomId = activeRoomId.value;
         const threadRootRowKey = activeRootRowKey.value;
@@ -40,7 +41,7 @@ export const useThreadActionItems = () => {
       title: isFollowing.value ? "Turn off notifications for replies" : "Turn on notifications for replies",
     },
     {
-      icon: "mdi-link-variant",
+      icon: "i-mdi:link-variant",
       onClick: async () => {
         // A thread is named by its root message, so its link is that message's link
         await copyMessageLink(activeRoomId.value, activeRootRowKey.value);
@@ -51,7 +52,7 @@ export const useThreadActionItems = () => {
       // A call in a thread is the room's call addressed by the thread, so it announces itself in the thread and
       // Is joined from here — the room's own call stays where it was, and both can run at once
       disabled: isConnecting.value || (isInCall.value && !isInThreadCall.value),
-      icon: isInThreadCall.value ? "mdi-phone-hangup" : "mdi-phone",
+      icon: isInThreadCall.value ? "i-mdi:phone-hangup" : "i-mdi:phone",
       isGroupStart: true,
       onClick: async () => {
         if (isInThreadCall.value) await leaveCall();
@@ -62,7 +63,7 @@ export const useThreadActionItems = () => {
     {
       // Splitting keeps the pane the thread took over — the member list, a search's results — open beside it,
       // Which is the only way to read both at once
-      icon: "mdi-view-split-vertical",
+      icon: "i-mdi:view-split-vertical",
       isGroupStart: true,
       onClick: () => {
         splitRightDrawer.value = splitRightDrawer.value ? undefined : previousRightDrawer.value;
@@ -70,7 +71,7 @@ export const useThreadActionItems = () => {
       title: splitRightDrawer.value ? "Close split view" : "Open in split view",
     },
     {
-      icon: "mdi-open-in-new",
+      icon: "i-mdi:open-in-new",
       onClick: () => {
         // The thread's own route, so the window it opens is a full app on that thread rather than a copy of
         // The pane that would have to re-derive every store it reads

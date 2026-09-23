@@ -1,3 +1,4 @@
+// @unocss-include
 import type { ResourceListSourceDefinition } from "@/models/resource/list/ResourceListSourceDefinition";
 
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
@@ -13,7 +14,7 @@ export const ResourceListSourceDefinitionMap: Record<ResourceListSource, Resourc
   [ResourceListSource.All]: {
     emptyState: { description: "Create a resource and it will show up here.", title: "No resources yet" },
     filter: {},
-    icon: "mdi-folder-multiple-outline",
+    icon: "i-mdi:folder-multiple-outline",
     sortBy: DEFAULT_RESOURCE_SORT_BY,
     title: "All",
     to: RoutePath.ResourceExplorerAll,
@@ -21,7 +22,7 @@ export const ResourceListSourceDefinitionMap: Record<ResourceListSource, Resourc
   [ResourceListSource.Favorites]: {
     emptyState: { description: "Star a resource and it will show up here.", title: "No favorites yet" },
     filter: { isFavorite: true },
-    icon: "mdi-star-outline",
+    icon: "i-mdi:star-outline",
     sortBy: DEFAULT_RESOURCE_SORT_BY,
     title: "Favorites",
     to: RoutePath.ResourceExplorerFavorites,
@@ -29,7 +30,7 @@ export const ResourceListSourceDefinitionMap: Record<ResourceListSource, Resourc
   [ResourceListSource.Recents]: {
     emptyState: { description: "Open a resource and it will show up here.", title: "No recent resources" },
     filter: { isAccessed: true },
-    icon: "mdi-history",
+    icon: "i-mdi:history",
     pinnedColumnKey: ResourceListItemPropertyNames.lastAccessedAt,
     sortBy: LAST_ACCESSED_RESOURCE_SORT_BY,
     title: "Recent",

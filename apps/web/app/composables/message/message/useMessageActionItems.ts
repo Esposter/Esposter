@@ -1,3 +1,4 @@
+// @unocss-include
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
@@ -51,7 +52,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     Boolean(getMessageOperationPermission(message.type, MessageOperation.Update)),
   );
   const editMessageItem: Item = {
-    icon: "mdi-pencil",
+    icon: "i-mdi:pencil",
     onClick: () => {
       editingRowKey.value = message.rowKey;
     },
@@ -59,21 +60,21 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     title: "Edit Message",
   };
   const replyItem: Item = {
-    icon: "mdi-reply",
+    icon: "i-mdi:reply",
     onClick: () => {
       replyRowKey.value = message.rowKey;
     },
     title: "Reply",
   };
   const forwardMessageItem: Item = {
-    icon: "mdi-share",
+    icon: "i-mdi:share",
     onClick: () => {
       forwardRowKey.value = message.rowKey;
     },
     title: "Forward",
   };
   const copyTextItem: Item = {
-    icon: "mdi-content-copy",
+    icon: "i-mdi:content-copy",
     onClick: async () => {
       const textContent = normalizeString(parse(message.message).textContent);
       if (textContent) await copy(textContent);
@@ -83,7 +84,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const pinMessageItem = computed<Item>(() =>
     message.isPinned
       ? {
-          icon: "mdi-pin-off",
+          icon: "i-mdi:pin-off",
           onClick: async () => {
             await executeUnpinMessageMutation(
               () => $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
@@ -105,7 +106,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
           title: "Unpin Message",
         }
       : {
-          icon: "mdi-pin",
+          icon: "i-mdi:pin",
           onClick: () => {
             pinningRowKey.value = message.rowKey;
           },
@@ -113,21 +114,21 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
         },
   );
   const viewThreadItem: Item = {
-    icon: "mdi-comment-multiple-outline",
+    icon: "i-mdi:comment-multiple-outline",
     onClick: async () => {
       await openThread(message.partitionKey, message.rowKey);
     },
     title: "View Thread",
   };
   const copyMessageLinkItem: Item = {
-    icon: "mdi-link-variant",
+    icon: "i-mdi:link-variant",
     onClick: async () => {
       await copyMessageLink(message.partitionKey, message.rowKey);
     },
     title: "Copy Message Link",
   };
   const markUnreadFromHereItem: Item = {
-    icon: "mdi-email-mark-as-unread",
+    icon: "i-mdi:email-mark-as-unread",
     onClick: async () => {
       const lastMessageAt = new Date(message.createdAt.getTime() - 1);
       const roomId = message.partitionKey;
@@ -197,7 +198,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     checkIsOperationPermitted(MessageOperation.Delete)
       ? {
           color: "error",
-          icon: "mdi-delete",
+          icon: "i-mdi:delete",
           onClick: () => {
             deletingRowKey.value = message.rowKey;
           },

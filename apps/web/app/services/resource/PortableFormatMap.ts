@@ -1,3 +1,4 @@
+// @unocss-include
 import type { PortableFormat } from "@/models/resource/PortableFormat";
 import type { PortableResourceType } from "@/models/resource/PortableResourceType";
 
@@ -90,7 +91,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           else exportPersonalizedHtml(dataset.rows);
         }).match(noop, createErrorAlert);
       },
-      icon: "mdi-language-html5",
+      icon: "i-mdi:language-html5",
       label: "Personalized HTML",
     },
   ],
@@ -101,7 +102,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     // A survey is a source rather than a file format, so it imports and never exports — it sits among the
     // Formats because it is one of the ways a sheet is filled
     {
-      icon: "mdi-poll",
+      icon: "i-mdi:poll",
       import: async () => {
         const sheetStore = useSheetStore();
         const { loadContent } = sheetStore;

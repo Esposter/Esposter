@@ -1,10 +1,11 @@
+// @unocss-include
 import type { Item } from "@/models/entity/Item";
 import type { ItemCategoryDefinition } from "@/models/resource/ItemCategoryDefinition";
 
 import { ItemEntityTypePropertyNames } from "@/models/resource/ItemEntityTypePropertyNames";
 
 const NULL_ITEM_CATEGORY_DEFINITION: ItemCategoryDefinition = {
-  icon: "mdi-help",
+  icon: "i-mdi:help",
   targetTypeKey: ItemEntityTypePropertyNames.type,
   title: "None",
   value: "None",

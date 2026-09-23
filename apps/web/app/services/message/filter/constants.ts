@@ -1,3 +1,4 @@
+// @unocss-include
 import type { SearchFilterOption } from "@/models/message/filter/SearchFilterOption";
 
 import { FilterTypeHasIconMap } from "@/services/message/FilterTypeHasIconMap";
@@ -10,6 +11,6 @@ export const HAS_FILTER_OPTIONS: SearchFilterOption[] = FilterTypeHases.map((fil
 }));
 
 export const PIN_FILTER_OPTIONS: SearchFilterOption[] = [
-  { icon: "mdi-pin", label: "true", value: true },
-  { icon: "mdi-pin-off", label: "false", value: false },
+  { icon: "i-mdi:pin", label: "true", value: true },
+  { icon: "i-mdi:pin-off", label: "false", value: false },
 ];

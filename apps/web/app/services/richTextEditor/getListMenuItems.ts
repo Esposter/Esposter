@@ -1,3 +1,4 @@
+// @unocss-include
 import type { MenuItem } from "@/models/shared/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 
@@ -5,7 +6,7 @@ import type { Editor } from "@tiptap/vue-3";
 export const getListMenuItems = (editor: Editor | undefined): MenuItem[] => [
   {
     active: editor?.isActive("bulletList"),
-    icon: "mdi-format-list-bulleted",
+    icon: "i-mdi:format-list-bulleted",
     onClick: () => {
       editor?.chain().focus().toggleBulletList().run();
     },
@@ -13,7 +14,7 @@ export const getListMenuItems = (editor: Editor | undefined): MenuItem[] => [
   },
   {
     active: editor?.isActive("orderedList"),
-    icon: "mdi-format-list-numbered",
+    icon: "i-mdi:format-list-numbered",
     onClick: () => {
       editor?.chain().focus().toggleOrderedList().run();
     },

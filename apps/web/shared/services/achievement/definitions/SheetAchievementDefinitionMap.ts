@@ -1,3 +1,4 @@
+// @unocss-include
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
@@ -9,7 +10,7 @@ export const SheetAchievementDefinitionMap = defineAchievementDefinitionMap(Achi
   [TableAchievementName.DataAnalyst]: defineAchievementDefinition({
     amount: 1,
     description: "Save a file",
-    icon: "mdi-table",
+    icon: "i-mdi:table",
     points: 20,
     triggerPath: "sheet.saveResourceContent",
   }),
@@ -22,7 +23,7 @@ export const SheetAchievementDefinitionMap = defineAchievementDefinitionMap(Achi
       value: 5,
     },
     description: "Create a table with at least 5 rows",
-    icon: "mdi-calculator",
+    icon: "i-mdi:calculator",
     points: 25,
     triggerPath: "sheet.saveResourceContent",
   }),

@@ -1,3 +1,4 @@
+// @unocss-include
 import type { Item } from "@/models/shared/Item";
 import type { Resource } from "@esposter/db-schema";
 
@@ -16,22 +17,22 @@ export const useResourceListActionItems = () => {
   const { captureIds } = storeToRefs(blueprintCaptureDialogStore);
   const getActionItems = ({ id }: Resource): Item[] => [
     {
-      icon: "mdi-open-in-new",
+      icon: "i-mdi:open-in-new",
       onClick: () => {
         window.open(RoutePath.Resource(id), "_blank");
       },
       title: "Open in new tab",
     },
-    { icon: "mdi-link-variant", onClick: () => copyLinkToClipboard(RoutePath.Resource(id)), title: "Copy link" },
+    { icon: "i-mdi:link-variant", onClick: () => copyLinkToClipboard(RoutePath.Resource(id)), title: "Copy link" },
     {
-      icon: "mdi-floor-plan",
+      icon: "i-mdi:floor-plan",
       onClick: () => {
         captureIds.value = [id];
       },
       title: "Save as blueprint",
     },
     {
-      icon: "mdi-pencil",
+      icon: "i-mdi:pencil",
       onClick: () => {
         renamingId.value = id;
       },
@@ -39,7 +40,7 @@ export const useResourceListActionItems = () => {
     },
     {
       color: "error",
-      icon: "mdi-delete",
+      icon: "i-mdi:delete",
       onClick: () => {
         deletingId.value = id;
       },

@@ -1,3 +1,4 @@
+// @unocss-include
 import type { ResourceDefinition } from "#shared/models/resource/ResourceDefinition";
 
 import { dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
@@ -16,61 +17,61 @@ export const ResourceDefinitionMap = {
   [ResourceType.Blueprint]: {
     capabilities: {},
     contentSchema: blueprintResourceSchema,
-    icon: "mdi-floor-plan",
+    icon: "i-mdi:floor-plan",
     title: ResourceType.Blueprint,
   },
   [ResourceType.Dashboard]: {
     capabilities: { publishable: true },
     contentSchema: dashboardSchema,
-    icon: "mdi-view-dashboard-edit",
+    icon: "i-mdi:view-dashboard-edit",
     title: ResourceType.Dashboard,
   },
   [ResourceType.Email]: {
     capabilities: { fileAssets: true, portable: true, publishable: true },
     contentSchema: emailEditorSchema,
-    icon: "mdi-email-edit",
+    icon: "i-mdi:email-edit",
     title: ResourceType.Email,
   },
   [ResourceType.Flowchart]: {
     capabilities: { publishable: true },
     contentSchema: flowchartEditorSchema,
-    icon: "mdi-sitemap",
+    icon: "i-mdi:sitemap",
     title: ResourceType.Flowchart,
   },
   [ResourceType.Note]: {
     capabilities: { publishable: true },
     contentSchema: noteResourceSchema,
-    icon: "mdi-note-text",
+    icon: "i-mdi:note-text",
     title: ResourceType.Note,
   },
   [ResourceType.Program]: {
     capabilities: { datasetProvider: true },
     contentSchema: programResourceSchema,
-    icon: "mdi-bullhorn",
+    icon: "i-mdi:bullhorn",
     title: ResourceType.Program,
   },
   [ResourceType.Sheet]: {
     capabilities: { datasetProvider: true, portable: true },
     contentSchema: sheetResourceSchema,
-    icon: "mdi-table",
+    icon: "i-mdi:table",
     title: ResourceType.Sheet,
   },
   [ResourceType.Survey]: {
     capabilities: { datasetProvider: true, fileAssets: true, publishable: true },
     contentSchema: surveyResourceSchema,
-    icon: "mdi-clipboard-list",
+    icon: "i-mdi:clipboard-list",
     title: ResourceType.Survey,
   },
   [ResourceType.TodoList]: {
     capabilities: {},
     contentSchema: todoListResourceSchema,
-    icon: "mdi-format-list-checks",
+    icon: "i-mdi:format-list-checks",
     title: "Todo List",
   },
   [ResourceType.Webpage]: {
     capabilities: { fileAssets: true, publishable: true },
     contentSchema: webpageEditorSchema,
-    icon: "mdi-language-html5",
+    icon: "i-mdi:language-html5",
     title: ResourceType.Webpage,
   },
 } as const satisfies Record<ResourceType, ResourceDefinition>;

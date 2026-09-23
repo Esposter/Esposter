@@ -1,3 +1,4 @@
+// @unocss-include
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
@@ -34,7 +35,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
   [DungeonsAchievementName.DungeonCrawler]: defineAchievementDefinition({
     amount: 1,
     description: "Save your dungeon game",
-    icon: "mdi-sword",
+    icon: "i-mdi:sword",
     points: 10,
     triggerPath: "dungeons.saveDungeons",
   }),
@@ -50,14 +51,14 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
       type: AchievementConditionType.Property,
     },
     description: "Open every chest you have discovered in your dungeon game",
-    icon: "mdi-treasure-chest-outline",
+    icon: "i-mdi:treasure-chest-outline",
     points: 100,
     triggerPath: "dungeons.saveDungeons",
   }),
   [DungeonsAchievementName.DungeonMaster]: defineAchievementDefinition({
     amount: 50,
     description: "Save your dungeon game 50 times",
-    icon: "mdi-castle",
+    icon: "i-mdi:castle",
     points: 100,
     triggerPath: "dungeons.saveDungeons",
   }),
@@ -71,7 +72,7 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
       type: AchievementConditionType.Property,
     },
     description: "Catch your first monster in your dungeon game",
-    icon: "mdi-pokeball",
+    icon: "i-mdi:pokeball",
     points: 20,
     triggerPath: "dungeons.saveDungeons",
   }),
@@ -84,17 +85,17 @@ export const DungeonsAchievementDefinitionMap = defineAchievementDefinitionMap(A
       type: AchievementConditionType.Property,
     },
     description: "Catch every monster species in your dungeon game",
-    icon: "mdi-book-open-page-variant",
+    icon: "i-mdi:book-open-page-variant",
     points: 200,
     triggerPath: "dungeons.saveDungeons",
   }),
   [DungeonsAchievementName.MonsterElite]: defineMonsterLevelAchievementDefinition({
-    icon: "mdi-shield-star",
+    icon: "i-mdi:shield-star",
     level: 25,
     points: 200,
   }),
   [DungeonsAchievementName.MonsterTrainer]: defineMonsterLevelAchievementDefinition({
-    icon: "mdi-arm-flex",
+    icon: "i-mdi:arm-flex",
     level: 10,
     points: 50,
   }),

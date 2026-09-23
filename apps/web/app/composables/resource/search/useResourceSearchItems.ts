@@ -1,3 +1,4 @@
+// @unocss-include
 import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
 
 import { ResourceSearchGroup } from "@/models/resource/search/ResourceSearchGroup";
@@ -29,7 +30,7 @@ export const useResourceSearchItems = (searchQuery: Ref<string>) => {
       : [
           ...recentSearches.value.map((recentSearch) => ({
             group: ResourceSearchGroup.RecentSearches,
-            icon: "mdi-history",
+            icon: "i-mdi:history",
             id: `${ResourceSearchGroup.RecentSearches}${ID_SEPARATOR}${recentSearch}`,
             title: recentSearch,
             to: { path: RoutePath.ResourceExplorerAll, query: { search: recentSearch } },

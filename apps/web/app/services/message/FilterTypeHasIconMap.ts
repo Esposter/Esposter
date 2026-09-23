@@ -1,12 +1,13 @@
+// @unocss-include
 /* eslint-disable perfectionist/sort-objects */
 import { FilterTypeHas } from "@esposter/db-schema";
 
 export const FilterTypeHasIconMap = {
-  [FilterTypeHas.Link]: "mdi-link-variant",
-  [FilterTypeHas.Embed]: "mdi-file-link-outline",
-  [FilterTypeHas.File]: "mdi-paperclip",
-  [FilterTypeHas.Image]: "mdi-image-outline",
-  [FilterTypeHas.Video]: "mdi-video-outline",
-  [FilterTypeHas.Sound]: "mdi-volume-high",
-  [FilterTypeHas.Forward]: "mdi-share",
+  [FilterTypeHas.Link]: "i-mdi:link-variant",
+  [FilterTypeHas.Embed]: "i-mdi:file-link-outline",
+  [FilterTypeHas.File]: "i-mdi:paperclip",
+  [FilterTypeHas.Image]: "i-mdi:image-outline",
+  [FilterTypeHas.Video]: "i-mdi:video-outline",
+  [FilterTypeHas.Sound]: "i-mdi:volume-high",
+  [FilterTypeHas.Forward]: "i-mdi:share",
 } as const satisfies Record<FilterTypeHas, string>;

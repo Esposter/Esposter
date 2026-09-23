@@ -1,3 +1,4 @@
+// @unocss-include
 // One keystroke can match most of the dataset, and nothing is virtualised, so results are capped for the DOM
 export const MAX_EMOJI_SEARCH_RESULTS = 90;
 export const MAX_EMOJI_SUGGESTIONS = 20;
@@ -6,10 +7,10 @@ export const MAX_REACTION_HOVER_NAMES = 3;
 // Two full rows of the picker grid
 export const MAX_RECENT_EMOJIS = 18;
 // Discord pins its recents category first and calls it this; the clock is the icon it uses for it
-export const RECENT_EMOJI_CATEGORY_ICON = "mdi-clock-outline";
+export const RECENT_EMOJI_CATEGORY_ICON = "i-mdi:clock-outline";
 export const RECENT_EMOJI_CATEGORY_TITLE = "Frequently Used";
 // The room's own uploads, ranked above every unicode category the way Discord ranks a server's set
-export const ROOM_EMOJI_CATEGORY_ICON = "mdi-emoticon-plus-outline";
+export const ROOM_EMOJI_CATEGORY_ICON = "i-mdi:emoticon-plus-outline";
 export const ROOM_EMOJI_CATEGORY_TITLE = "Room Emoji";
 // What a reaction to a since-deleted room emoji reads as. The reaction still counts, so it needs a label
 export const DELETED_EMOJI_DESCRIPTION = "Deleted emoji";

@@ -1,3 +1,4 @@
+// @unocss-include
 import type { UnparameterizedAdminActionInput } from "#shared/models/db/moderation/UnparameterizedAdminActionInput";
 import type { Item } from "@/models/shared/Item";
 
@@ -42,7 +43,7 @@ export const useCallParticipantActions = () => {
     const items: Item[] = [];
     if (isForceMuteable.value && isHandRaised)
       items.push({
-        icon: "mdi-hand-back-right-off",
+        icon: "i-mdi:hand-back-right-off",
         onClick: async () => {
           await executeLowerHandMutation(
             () =>
@@ -70,11 +71,11 @@ export const useCallParticipantActions = () => {
     if (isForceMuteable.value)
       items.push(
         isParticipantMuted
-          ? getAdminActionItem(AdminActionType.ForceUnmute, "mdi-microphone", "Force Unmute")
-          : getAdminActionItem(AdminActionType.ForceMute, "mdi-microphone-off", "Force Mute"),
+          ? getAdminActionItem(AdminActionType.ForceUnmute, "i-mdi:microphone", "Force Unmute")
+          : getAdminActionItem(AdminActionType.ForceMute, "i-mdi:microphone-off", "Force Mute"),
       );
     if (isKickableFromCall.value)
-      items.push(getAdminActionItem(AdminActionType.KickFromCall, "mdi-account-remove", "Kick from Call"));
+      items.push(getAdminActionItem(AdminActionType.KickFromCall, "i-mdi:account-remove", "Kick from Call"));
     return items;
   };
 

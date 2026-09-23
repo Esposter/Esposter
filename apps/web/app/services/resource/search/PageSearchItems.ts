@@ -1,3 +1,4 @@
+// @unocss-include
 import type { ResourceSearchItem } from "@/models/resource/search/ResourceSearchItem";
 
 import { ResourceListSource, ResourceListSources } from "@/models/resource/list/ResourceListSource";
@@ -17,7 +18,7 @@ const ResourceListSourceSearchTitleMap: Record<ResourceListSource, string> = {
 export const PageSearchItems: readonly ResourceSearchItem[] = [
   {
     group: ResourceSearchGroup.Pages,
-    icon: "mdi-home-outline",
+    icon: "i-mdi:home-outline",
     id: `${ResourceSearchGroup.Pages}${ID_SEPARATOR}home`,
     title: "Home",
     to: RoutePath.ResourceExplorer,
@@ -31,21 +32,21 @@ export const PageSearchItems: readonly ResourceSearchItem[] = [
   })),
   {
     group: ResourceSearchGroup.Pages,
-    icon: "mdi-tag-multiple-outline",
+    icon: "i-mdi:tag-multiple-outline",
     id: `${ResourceSearchGroup.Pages}${ID_SEPARATOR}tags`,
     title: "Tags",
     to: RoutePath.ResourceExplorerTags,
   },
   {
     group: ResourceSearchGroup.Pages,
-    icon: "mdi-delete-outline",
+    icon: "i-mdi:delete-outline",
     id: `${ResourceSearchGroup.Pages}${ID_SEPARATOR}recycle-bin`,
     title: "Recycle bin",
     to: RoutePath.ResourceExplorerRecycleBin,
   },
   {
     group: ResourceSearchGroup.Pages,
-    icon: "mdi-plus-box-outline",
+    icon: "i-mdi:plus-box-outline",
     id: `${ResourceSearchGroup.Pages}${ID_SEPARATOR}create-a-resource`,
     title: "Create a resource",
     to: RoutePath.ResourceExplorerCreate,

@@ -1,3 +1,4 @@
+// @unocss-include
 import type { MenuItem } from "@/models/shared/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 
@@ -5,7 +6,7 @@ import type { Editor } from "@tiptap/vue-3";
 export const getTextFormatMenuItems = (editor: Editor | undefined): MenuItem[] => [
   {
     active: editor?.isActive("bold"),
-    icon: "mdi-format-bold",
+    icon: "i-mdi:format-bold",
     onClick: () => {
       editor?.chain().focus().toggleBold().run();
     },
@@ -13,7 +14,7 @@ export const getTextFormatMenuItems = (editor: Editor | undefined): MenuItem[] =
   },
   {
     active: editor?.isActive("italic"),
-    icon: "mdi-format-italic",
+    icon: "i-mdi:format-italic",
     onClick: () => {
       editor?.chain().focus().toggleItalic().run();
     },

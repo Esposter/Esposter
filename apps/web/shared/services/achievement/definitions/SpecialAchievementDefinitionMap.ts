@@ -1,3 +1,4 @@
+// @unocss-include
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
@@ -17,7 +18,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
       value: /^[A-Z\s!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?0-9]*$/u,
     },
     description: "Send a message in all uppercase",
-    icon: "mdi-format-letter-case-upper",
+    icon: "i-mdi:format-letter-case-upper",
     points: 15,
     triggerPath: "message.createMessage",
   }),
@@ -30,7 +31,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
       value: /^[a-z\s!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?0-9]*$/u,
     },
     description: "Send a message in all lowercase",
-    icon: "mdi-format-letter-case-lower",
+    icon: "i-mdi:format-letter-case-lower",
     points: 15,
     triggerPath: "message.createMessage",
   }),
@@ -43,7 +44,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
       type: AchievementConditionType.Property,
     },
     description: `Send a message with ${EMOJI_LOVER_EMOJI_COUNT}+ emojis`,
-    icon: "mdi-emoticon-excited",
+    icon: "i-mdi:emoticon-excited",
     isHidden: true,
     points: 15,
     triggerPath: "message.createMessage",
@@ -56,7 +57,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
       value: "achievement unlocked",
     },
     description: 'Send a message containing "achievement unlocked"',
-    icon: "mdi-trophy",
+    icon: "i-mdi:trophy",
     isHidden: true,
     points: 100,
     triggerPath: "message.createMessage",
@@ -70,7 +71,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
       value: /\d{10,}/u,
     },
     description: "Send a message with 10+ numbers",
-    icon: "mdi-numeric",
+    icon: "i-mdi:numeric",
     points: 20,
     triggerPath: "message.createMessage",
   }),
@@ -83,7 +84,7 @@ export const SpecialAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
       value: true,
     },
     description: "Send a palindrome message",
-    icon: "mdi-mirror",
+    icon: "i-mdi:mirror",
     isHidden: true,
     points: 50,
     triggerPath: "message.createMessage",
