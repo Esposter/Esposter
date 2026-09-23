@@ -33,6 +33,7 @@ export const UiIconMap = {
   [UiIconMeaning.Previous]: "i-pixelarticons:chevron-left",
   [UiIconMeaning.Recent]: "i-pixelarticons:clock",
   [UiIconMeaning.Record]: "i-pixelarticons:mic",
+  [UiIconMeaning.Refresh]: "i-pixelarticons:reload",
   [UiIconMeaning.Remove]: "i-pixelarticons:close",
   [UiIconMeaning.Reply]: "i-pixelarticons:reply",
   [UiIconMeaning.ResetView]: "i-pixelarticons:reload",

@@ -5,7 +5,7 @@ import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import UiDataTable from "@/components/Ui/DataTable.vue";
 import { mount } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 interface Row {
   group: string;
@@ -20,7 +20,7 @@ describe("uiDataTable", () => {
     { group: "group", id: "0", name: "0" },
     { group: "group", id: "1", name: "1" },
   ];
-  const mountTable = (groupBy?: "group") => {
+  const mountTable = (groupBy?: "group", onOpen?: (item: Row) => void) => {
     const component = mount(UiDataTable<Row, "name">, {
       props: {
         columns,
@@ -32,6 +32,7 @@ describe("uiDataTable", () => {
         itemsPerPage: 2,
         itemsPerPageOptions: [2],
         label,
+        onOpen,
         "onUpdate:page": (page: number) => component.setProps({ page }),
         "onUpdate:selectedIds": (selectedIds: string[]) => component.setProps({ selectedIds }),
         "onUpdate:sortBy": (sortBy: SortItem<"name">[]) => component.setProps({ sortBy }),
@@ -83,10 +84,11 @@ describe("uiDataTable", () => {
   test("opens a row on Enter", async () => {
     expect.hasAssertions();
 
-    const component = mountTable();
+    const onOpen = vi.fn<(item: Row) => void>();
+    const component = mountTable(undefined, onOpen);
     await component.get("tbody tr").trigger("keydown", { key: "Enter" });
 
-    expect(component.emitted<[Row]>("open")).toStrictEqual([[items[0]]]);
+    expect(onOpen).toHaveBeenCalledExactlyOnceWith(items[0]);
   });
 
   test("steps to the next page and no further than the last", async () => {

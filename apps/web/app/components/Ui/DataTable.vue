@@ -23,10 +23,14 @@ interface Props {
   itemsPerPageOptions: number[];
   // The table's accessible name
   label: string;
+  // Where a row goes when it is clicked or takes Enter. A prop rather than an emit, so a table whose rows go nowhere,
+  // Such as the recycle bin's, never draws them as something to press
+  onOpen?: (item: T) => void;
 }
 
 // A page of rows the server reads: the page, its size, the order and which rows are selected are the call site's
-// Models, so it reads the page they describe and can keep them in the address. A row opens by a click or Enter, and a
+// Models, so it reads the page they describe and can keep them in the address. A row opens by a click or Enter where it
+// Has somewhere to go, stays one stop in the tab order either way so the menu key reaches its context menu, and a
 // Selection outlives the page it was made on
 const page = defineModel<number>("page", { required: true });
 const itemsPerPage = defineModel<number>("itemsPerPage", { required: true });
@@ -43,8 +47,8 @@ const {
   itemsLength,
   itemsPerPageOptions,
   label,
+  onOpen,
 } = defineProps<Props>();
-const emit = defineEmits<{ open: [item: T] }>();
 defineSlots<{
   cell?: (props: { column: UiDataTableColumn<T, TSortKey>; item: T; value: string }) => VNode;
   empty?: () => VNode;
@@ -208,11 +212,11 @@ const toggleGroup = (value: unknown) => {
                 class="row"
                 :data-selected="selectedIds.includes(item.id) || undefined"
                 :="getRowProps?.(item)"
+                :class="{ 'cursor-pointer': onOpen }"
                 tabindex="0"
-                cursor-pointer
                 hover:bg="accent/10"
-                @click="emit('open', item)"
-                @keydown.enter.self="emit('open', item)"
+                @click="onOpen?.(item)"
+                @keydown.enter.self="onOpen?.(item)"
               >
                 <td v-if="isSelectable" px-2 @click.stop>
                   <UiCheckbox

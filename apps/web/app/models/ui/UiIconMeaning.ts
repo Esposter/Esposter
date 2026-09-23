@@ -30,6 +30,7 @@ export enum UiIconMeaning {
   Previous = "Previous",
   Recent = "Recent",
   Record = "Record",
+  Refresh = "Refresh",
   Remove = "Remove",
   Reply = "Reply",
   ResetView = "ResetView",
