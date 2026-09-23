@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { getConversationEvents } from "@/services/agentConsole/getConversationEvents";
 
-import { formatTokenCount } from "@/services/agentConsole/formatTokenCount";
+import { TOKEN_COUNT_FORMAT } from "@/services/agentConsole/constants";
 import { getDurationSeconds } from "@/services/agentConsole/getDurationSeconds";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { AgentEventType } from "agent-console-server/contracts";
@@ -45,7 +45,8 @@ const { currentSessionId } = storeToRefs(agentConsoleSessionStore);
   </v-sheet>
   <v-alert v-else-if="event.type === AgentEventType.HostError" type="error" density="compact" :text="event.message" />
   <v-divider v-else-if="event.type === AgentEventType.Compaction">
-    Context compacted · {{ formatTokenCount(event.preTokens) }} → {{ formatTokenCount(event.postTokens) }} tokens
+    Context compacted · {{ TOKEN_COUNT_FORMAT.format(event.preTokens) }} →
+    {{ TOKEN_COUNT_FORMAT.format(event.postTokens) }} tokens
   </v-divider>
   <v-divider v-else-if="event.type === AgentEventType.TurnResult" op-medium-emphasis text-label-small>
     {{ event.isError ? event.subtype : "Turn" }} · {{ getDurationSeconds(event.durationMs) }}s ·

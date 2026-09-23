@@ -33,6 +33,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     switch (serverMessage.type) {
       case ServerMessageType.CommandError:
         openingCommandIds.delete(serverMessage.commandId);
+        // oxlint-disable-next-line error-alert/no-raw-error-alert -- a host's command error is not a tRPC rejection, so no error link has shown it
         createAlert(serverMessage.message, "error");
         break;
       case ServerMessageType.Events: {
@@ -76,7 +77,10 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
           status.value = ConnectionStatus.Connected;
         });
         socket.addEventListener("message", ({ data }) => {
-          getResult(() => serverMessageSchema.parse(JSON.parse(String(data)))).match((serverMessage) => {
+          getResult(() =>
+            // oxlint-disable-next-line no-restricted-properties -- the server message schema validates the payload and coerces its dates, the pair /docs/architecture/serialization.md names
+            serverMessageSchema.parse(JSON.parse(String(data))),
+          ).match((serverMessage) => {
             receive(serverMessage);
           }, console.error);
         });

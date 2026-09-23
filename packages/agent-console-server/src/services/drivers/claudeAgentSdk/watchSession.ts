@@ -24,6 +24,7 @@ export const watchSession = async (
       emit(sessionId, [toContextUsageEvent(crypto.randomUUID(), contextUsage, new Date())]);
     }, console.error);
   const readTitle = () =>
+    // oxlint-disable-next-line id-denylist -- `dir` is the SDK's own option name
     getResultAsync(() => getSessionInfo(sessionId, { dir: cwd })).match((sessionInfo) => {
       if (!sessionInfo) return;
       openSession.title = getSessionTitle(sessionInfo) || openSession.title;
@@ -34,12 +35,14 @@ export const watchSession = async (
       ([slashCommands, models]) => {
         emit(sessionId, [toCapabilitiesEvent(crypto.randomUUID(), slashCommands, models, new Date())]);
       },
-      console.error,
+      (error) => {
+        console.error(error);
+      },
     ),
     readContextUsage(),
     getResultAsync(async () => {
       for await (const message of query) {
-        emit(sessionId, mapper.map(message, new Date()));
+        emit(sessionId, mapper.mapMessage(message, new Date()));
         if (message.type === "result") await Promise.all([readContextUsage(), readTitle()]);
       }
     }).match(
