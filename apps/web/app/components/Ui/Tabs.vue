@@ -25,19 +25,8 @@ const { items, label } = defineProps<Props>();
       }
     "
   >
-    <Tabs.List :label class="tab-list" flex of-x-auto>
-      <Tabs.Item
-        v-for="{ title, value } of items"
-        :key="value"
-        :value
-        class="tab"
-        hover:bg="accent/10"
-        text-muted
-        px-3
-        py-1
-        cursor-pointer
-        text-nowrap
-      >
+    <Tabs.List :label ui-tab-list>
+      <Tabs.Item v-for="{ title, value } of items" :key="value" :value ui-tab>
         {{ title }}
       </Tabs.Item>
     </Tabs.List>
@@ -47,15 +36,3 @@ const { items, label } = defineProps<Props>();
     </Tabs.Panel>
   </Tabs.Root>
 </template>
-
-<style scoped>
-/* The list sits on a one-step line in the edge colour, and the selected tab draws its own step of it in the accent */
-.tab-list {
-  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge);
-}
-
-.tab[data-selected] {
-  box-shadow: inset 0 calc(var(--ui-step) * -1) 0 0 var(--ui-accent);
-  color: var(--ui-accent);
-}
-</style>
