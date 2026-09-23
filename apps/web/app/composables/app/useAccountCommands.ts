@@ -46,7 +46,7 @@ export const useAccountCommands = async () => {
       {
         description: isReadableText.value ? "On" : "Off",
         group: ACCOUNT_GROUP,
-        icon: "i-mdi:format-font",
+        icon: isReadableText.value ? "i-mdi:alphabetical-variant" : "i-mdi:alphabetical-variant-off",
         id: "readable-text",
         run: () => {
           toggleReadableText();
