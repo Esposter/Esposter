@@ -78,6 +78,7 @@ onBeforeRender(() => {
   );
   for (const chunkPosition of sortedChunkPositions) {
     requestedChunkKeys.add(getChunkKey(chunkPosition.chunkX, chunkPosition.chunkZ));
+    // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
     worker.postMessage(chunkPosition);
   }
 });

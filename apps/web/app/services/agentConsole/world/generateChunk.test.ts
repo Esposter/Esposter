@@ -14,6 +14,16 @@ import { getVoxel } from "@/services/agentConsole/world/getVoxel";
 import { getWorldVoxel } from "@/services/agentConsole/world/getWorldVoxel";
 import { describe, expect, test } from "vitest";
 
+const getBorder = (voxelGrid: VoxelGrid, startX: number) =>
+  Array.from({ length: voxelGrid.height * voxelGrid.depth * 2 * CHUNK_BORDER }, (_, index) =>
+    getVoxel(
+      voxelGrid,
+      startX + (index % (2 * CHUNK_BORDER)),
+      Math.floor(index / (2 * CHUNK_BORDER)) % voxelGrid.height,
+      Math.floor(index / (2 * CHUNK_BORDER * voxelGrid.height)),
+    ),
+  );
+
 describe(generateChunk, () => {
   test("holds the same voxels along a border as the neighbour across it", () => {
     expect.hasAssertions();
@@ -21,25 +31,16 @@ describe(generateChunk, () => {
     // Across the room's left wall, so the room's stamp is held to the border as well as the ground
     const leftGrid = generateChunk(-1, 0);
     const rightGrid = generateChunk(0, 0);
-    const readBorder = (voxelGrid: VoxelGrid, startX: number) =>
-      Array.from({ length: voxelGrid.height * voxelGrid.depth * 2 * CHUNK_BORDER }, (_, index) =>
-        getVoxel(
-          voxelGrid,
-          startX + (index % (2 * CHUNK_BORDER)),
-          Math.floor(index / (2 * CHUNK_BORDER)) % voxelGrid.height,
-          Math.floor(index / (2 * CHUNK_BORDER * voxelGrid.height)),
-        ),
-      );
 
-    expect(readBorder(leftGrid, CHUNK_GRID_SIZE - 2 * CHUNK_BORDER)).toStrictEqual(readBorder(rightGrid, 0));
+    expect(getBorder(leftGrid, CHUNK_GRID_SIZE - 2 * CHUNK_BORDER)).toStrictEqual(getBorder(rightGrid, 0));
   });
 
   test("stamps the room with its door open onto level ground", () => {
     expect.hasAssertions();
 
     const voxelWorld = new Map([
-      [getChunkKey(-1, 0), generateChunk(-1, 0)],
       [getChunkKey(0, 0), generateChunk(0, 0)],
+      [getChunkKey(-1, 0), generateChunk(-1, 0)],
     ]);
     const doorway = Array.from({ length: DOOR_HEIGHT }, (_, index) => [
       getWorldVoxel(voxelWorld, 0, index + 1, DOOR_MIN_Z),

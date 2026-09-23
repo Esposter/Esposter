@@ -2,6 +2,8 @@
 import type { usePlayerInput } from "@/composables/agentConsole/world/usePlayerInput";
 import type { PerspectiveCamera } from "three";
 
+import { PaletteColor } from "@/models/agentConsole/PaletteColor";
+import { AgentConsolePaletteMap } from "@/services/agentConsole/AgentConsolePaletteMap";
 import { castThroughGrid } from "@/services/agentConsole/world/castThroughGrid";
 import {
   CAMERA_DRAG_SPEED,
@@ -22,8 +24,6 @@ import {
   PLAYER_EYE_HEIGHT,
   PLAYER_SNEAK_DROP,
 } from "@/services/agentConsole/world/constants";
-import { PaletteColor } from "@/models/agentConsole/PaletteColor";
-import { AgentConsolePaletteMap } from "@/services/agentConsole/AgentConsolePaletteMap";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
 import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
 import { Fog, MathUtils, Vector2, Vector3 } from "three";
