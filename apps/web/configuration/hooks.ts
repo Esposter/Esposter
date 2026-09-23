@@ -2,6 +2,8 @@ import type { NuxtHooks } from "@nuxt/schema";
 import type { IncomingMessage } from "node:http";
 import type { Duplex } from "node:stream";
 
+import { ResultAsync } from "neverthrow";
+
 type Upgrade = (request: IncomingMessage, socket: Duplex, head: Buffer) => Promise<void>;
 
 export const hooks: Pick<NuxtHooks, "listen" | "ready"> = {
@@ -19,16 +21,17 @@ export const hooks: Pick<NuxtHooks, "listen" | "ready"> = {
   // When that lookup finds no ready worker, Nitro rejects with "No worker available." and nothing catches it.
   // The CLI treats the unhandled rejection as fatal, restarting Nuxt and rebuilding Nitro from scratch.
   // Instead, the reconnecting client gets a closed socket and retries once the worker is up.
-  ready: async (nuxt) => {
+  ready: (nuxt) => {
     if (!nuxt.options.dev || !nuxt.server) return;
-    // Imported here rather than at the top: `nuxt prepare` loads this file on install, before @esposter/shared is built
-    const { getResultAsync, noop } = await import("@esposter/shared");
     const upgrade: Upgrade = nuxt.server.upgrade;
     nuxt.server.upgrade = (request: IncomingMessage, socket: Duplex, head: Buffer) =>
-      getResultAsync(() => upgrade(request, socket, head))
+      ResultAsync.fromThrowable(() => upgrade(request, socket, head))()
         .orTee(console.error)
-        .match(noop, () => {
-          socket.destroy();
-        });
+        .match(
+          () => undefined,
+          () => {
+            socket.destroy();
+          },
+        );
   },
 };

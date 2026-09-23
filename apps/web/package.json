@@ -230,6 +230,7 @@
     "keyframe-store": "workspace:*",
     "msw": "catalog:",
     "msw-trpc": "catalog:",
+    "neverthrow": "catalog:",
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",
     "sass-embedded": "catalog:",
