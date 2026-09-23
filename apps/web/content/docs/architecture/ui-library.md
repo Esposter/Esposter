@@ -1,6 +1,6 @@
 ---
 title: UI library
-description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the type scale, the first components and the surfaces they are drawn with, the generated map of how the pages link, the app shell with its dock, toasts and dialogs, the one context menu, the one command palette and its registry of shortcuts, the page migration's progress, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
+description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the type scale, the first components and the surfaces they are drawn with, the readable-text setting, the generated map of how the pages link, the app shell with its dock, toasts and dialogs, the one context menu, the one command palette and its registry of shortcuts, the page migration's progress, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
 ---
 
 # UI Library
@@ -60,33 +60,35 @@ flowchart TD
 
 The first components came out of the agent console, which drew the look by hand before the library existed. Each takes its behaviour from a Vuetify 0 primitive and its look from the tokens, and each has a component test of its keyboard and ARIA contract, so a feature's test never walks a menu's arrow keys again.
 
-| Component           | Built on                              | What it is                                                                                          |
-| :------------------ | :------------------------------------ | :-------------------------------------------------------------------------------------------------- |
-| `UiFrame`           | none                                  | A region of content, with an optional title in the accent colour and a slot for its actions         |
-| `UiButton`          | Button                                | The raised block, with accent, danger and quiet variants; a pressed toggle takes the accent         |
-| `UiIconButton`      | `UiButton`                            | An icon by meaning, and a required label that is its accessible name and its tooltip at once        |
-| `UiCopyButton`      | `UiIconButton`                        | Copies its source, and says it did while the clipboard composable's copied state lasts              |
-| `UiMenu`            | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                             |
-| `UiSelect`          | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                  |
-| `UiSuggestions`     | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories  |
-| `UiSpinner`         | none                                  | The terminal's star, a frame at a time, held still under reduced motion                             |
-| `UiLoadingBar`      | Progress                              | A row of voxel blocks filled as the work gets done, with the progress bar's role and value          |
-| `UiThemeScope`      | Theme                                 | A region drawn in another theme than the document's                                                 |
-| `UiPopover`         | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications |
-| `UiContextMenuHost` | Popover, `useMenu`                    | The one context menu, opened at a point by right-click, long press or the keyboard                  |
-| `UiTooltip`         | Tooltip                               | A small frame naming what it hangs off, popping out at once on hover or keyboard focus              |
-| `UiAvatar`          | Avatar                                | A picture in a frame, or the first letter of its name until one loads                               |
-| `UiToast`           | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                 |
-| `UiToastStack`      | none                                  | The one corner every toast is drawn in, announced as a polite live region                           |
-| `UiDialog`          | Dialog                                | A modal in the top layer, framed, for content that is the library's alone                           |
-| `UiCommandList`     | virtual focus                         | A search field over the commands it finds, grouped under headings, the list always shown            |
-| `UiShortcut`        | none                                  | A shortcut as the raised key caps it is pressed with                                                |
-| `UiButtonLink`      | none                                  | Somewhere to go, in the button's look: a real link, so it opens in a new tab like any other         |
-| `UiTabs`            | Tabs                                  | A row of tabs over the panel of the selected one, which alone mounts its content                    |
-| `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types                 |
-| `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes             |
-| `UiSkeleton`        | none                                  | A block stepping between two shades of the panel where content is still on its way                  |
-| `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                              |
+| Component           | Built on                              | What it is                                                                                            |
+| :------------------ | :------------------------------------ | :---------------------------------------------------------------------------------------------------- |
+| `UiFrame`           | none                                  | A region of content, with an optional title in the accent colour and a slot for its actions           |
+| `UiButton`          | Button                                | The raised block, with accent, danger and quiet variants; a pressed toggle takes the accent           |
+| `UiIconButton`      | `UiButton`                            | An icon by meaning, and a required label that is its accessible name and its tooltip at once          |
+| `UiCopyButton`      | `UiIconButton`                        | Copies its source, and says it did while the clipboard composable's copied state lasts                |
+| `UiMenu`            | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                               |
+| `UiSelect`          | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                    |
+| `UiSuggestions`     | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories    |
+| `UiSpinner`         | none                                  | The terminal's star, a frame at a time, held still under reduced motion                               |
+| `UiLoadingBar`      | Progress                              | A row of voxel blocks filled as the work gets done, with the progress bar's role and value            |
+| `UiThemeScope`      | Theme                                 | A region drawn in another theme than the document's                                                   |
+| `UiPopover`         | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications   |
+| `UiContextMenuHost` | Popover, `useMenu`                    | The one context menu, opened at a point by right-click, long press or the keyboard                    |
+| `UiTooltip`         | Tooltip                               | A small frame naming what it hangs off, popping out at once on hover or keyboard focus                |
+| `UiAvatar`          | Avatar                                | A picture in a frame, or the first letter of its name until one loads                                 |
+| `UiToast`           | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                   |
+| `UiToastStack`      | none                                  | The one corner every toast is drawn in, announced as a polite live region                             |
+| `UiDialog`          | Dialog                                | A modal in the top layer, framed, for content that is the library's alone                             |
+| `UiCommandList`     | virtual focus                         | A search field over the commands it finds, grouped under headings, the list always shown              |
+| `UiShortcut`        | none                                  | A shortcut as the raised key caps it is pressed with                                                  |
+| `UiButtonLink`      | none                                  | Somewhere to go, in the button's look: a real link, so it opens in a new tab like any other           |
+| `UiTabs`            | Tabs                                  | A row of tabs over the panel of the selected one, which alone mounts its content                      |
+| `UiTabLinks`        | `UiTooltip`                           | A row of links drawn as tabs, for sections that are somewhere to go; icons alone where width is short |
+| `UiCollapsible`     | Collapsible                           | A trigger row with a turning chevron over content hidden while it is closed: a navigation's groups    |
+| `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types                   |
+| `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes               |
+| `UiSkeleton`        | none                                  | A block stepping between two shades of the panel where content is still on its way                    |
+| `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                                |
 
 ### Keyboard contracts
 
@@ -98,6 +100,8 @@ The first components came out of the agent console, which drew the look by hand 
 - **A command list** keeps focus in its field, as suggestions do, and highlights its first command whenever the list changes, so Enter always takes the best match. The arrows walk it, and Enter clicks the highlighted row, so a row that is a link is followed as a pointer would follow it.
 - **A dialog** is the browser's: opening it moves focus inside and traps Tab there, and Escape or a click on the scrim closes it.
 - **Tabs** are one stop in the tab order, the selected tab. The arrows move to the next or previous tab and select it as they go, Home and End jump to the ends, and each panel is labelled by its tab.
+- **Tab links** are a navigation landmark of ordinary links, each its own stop in the tab order. The current one says so, and the call site decides which that is, since a section's tab stays current on every page in it rather than only on the one it links to.
+- **A collapsible** is a button that says whether it is expanded and names the content it controls. Enter or Space toggles it, as a button's own keys. Its content is not a region: a navigation opens dozens, and a landmark each would crowd the list a screen reader offers.
 - **A text field** is named by its visible label. A failing rule marks it invalid and points it at the message under it, which is a polite live region, and the form around it counts the result at once, so a submit button can stand disabled before it is pressed.
 - **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none. The menu's whole contract is `useMenu`, which `UiMenu` and the context menu share.
 
@@ -110,6 +114,7 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 - **`ui-sunk`** — the background colour, shaded along its bottom, in the page's face. A text field in the library's look wears it until the library has a field of its own.
 - **`ui-popover`** — the top-layer element a menu, a select or suggestions open in, emptied of the browser's own popover look and padded two steps, so the frame inside it never overlaps what it hangs off. Through `anchor-size()` it is at least as wide as that.
 - **`ui-item`** — one row of a popover's list, tinted in the accent while it is highlighted, selected or focused.
+- **`ui-tab-list`** and **`ui-tab`** — a row of tabs on a one-step line in the edge colour, and a tab drawing its own step of the line in the accent while it is selected or the current page's link. Shortcuts, so `UiTabs` and `UiTabLinks` wear one look.
 - **`ui-button`** — something pressed: `ui-raised` with a button's hover and disabled states, filled by its variant or while pressed, keyed on `data-variant` and `aria-pressed`. A shortcut rather than a component's scoped style, so `UiButton` and `UiButtonLink` wear one look.
 
 ### Popovers
@@ -180,7 +185,7 @@ Every flow the app bar carried has a place in the new frame:
 | Alerts, the clipboard snackbar, notification and achievement toasts | One toast stack in one corner                            |
 | The call picture-in-picture window and the user settings dialog     | Unchanged                                                |
 
-The readable-text setting is not part of it yet: it swaps the body's face, which each unit of the page migration puts in the pixel face as it moves, and it arrives with the docs, the first long read. The dock's command button, after the launcher, opens the [command palette](#command-palette).
+The account menu also holds the [readable-text setting](#type). The dock's command button, after the launcher, opens the [command palette](#command-palette).
 
 ## Context menus
 
@@ -286,13 +291,14 @@ One pixel face, VT323, at four sizes, each a whole number of steps: the body at 
 - **Tokens and rules.** The face is `--ui-font-pixel` and the sizes are `--ui-text-body`, `--ui-text-heading`, `--ui-text-title` and `--ui-text-display`, beside the step in `globals.scss`. Four rules in `uno.config.ts` wear them: `ui-body`, `ui-heading`, `ui-title` and `ui-display`.
 - **A migrated page's root wears `ui-body`**, so everything under it that sets no type of its own reads it, and each heading wears one of the other three. A heading is in the accent as well as larger, so hierarchy survives a reader who scales the text.
 - **One weight.** The face has one, and every rule says so, so a heading element's own bold is never synthesised over it.
-- **The body has a face token of its own**, `--ui-font-body`, which is the pixel face today. The readable-text setting swaps that one token, so no component knows about it.
+- **The body has a face token of its own**, `--ui-font-body`, which the readable-text setting swaps for the system's sans-serif face, so no component knows about it. Headings and code read the pixel face's own token and keep it.
+- **Readable text is a cookie, as the theme is**, not a row of the reader's settings: the first response renders the choice with no flash of the other face, and a reader who is signed out, as most docs readers are, has it too. The root carries an attribute while it is on, and one rule in `globals.scss` swaps the token under it. It is off by default, and toggled from the account menu and the palette, which read one list.
 - **Loaded on every page.** The face is a global family of the fonts module (`configuration/fonts.ts`), since the module's scan finds the faces a stylesheet names and not one named through a custom property.
 - **A link is in the info colour**, underlined on hover, as the `styling` skill has it everywhere.
 
 ## Page migration
 
-Every product area moves onto the library one unit per commit, tracked by the "ui-library" ledger in `.agents/ledgers/` and run as the [page migration proposal](/docs/proposals/refactors/ui-library/page-migration) describes: each commit carries its unit's flow inventory, and each unit is checked by eye against it. The first units are the small pages and the settings — about, the privacy policy, sign-in, user settings, achievements and the profile — which settled the type, the frame, the button, fields and tabs. The landing page is the post feed, so it moves with the posts.
+Every product area moves onto the library one unit per commit, tracked by the "ui-library" ledger in `.agents/ledgers/` and run as the [page migration proposal](/docs/proposals/refactors/ui-library/page-migration) describes: each commit carries its unit's flow inventory, and each unit is checked by eye against it. The first units are the small pages and the settings — about, the privacy policy, sign-in, user settings, achievements and the profile — which settled the type, the frame, the button, fields and tabs. The docs came next, the first long read: running text held to a readable measure while tables, code and diagrams keep the column's width, everything that finds a page in the one sidebar — a search button drawn as the field it opens, the categories as a row of icon tab links, and the page tree with its groups as collapsibles — so nothing stands over the content but a slim toolbar on a narrow screen, and the readable-text setting. The landing page is the post feed, so it moves with the posts.
 
 ## The boundary
 
@@ -373,6 +379,7 @@ flowchart TD
 | `apps/web/app/composables/ui/useContextMenu.ts`    | The props that give an element a context menu, and the long press                               |
 | `apps/web/app/composables/ui/useMenu.ts`           | The menu's keyboard contract, shared by `UiMenu` and the context menu                           |
 | `apps/web/app/store/ui/contextMenu.ts`             | What the context menu shows, where, and over what                                               |
+| `apps/web/app/store/ui/readableText.ts`            | Whether body text is in the system's face, kept in a cookie                                     |
 | `apps/web/app/store/ui/command.ts`                 | The registered commands and scopes, and whether the palette and the shortcuts dialog are open   |
 | `apps/web/app/composables/ui/useCommands.ts`       | Registers a surface's commands and binds their shortcuts while it is mounted                    |
 | `apps/web/app/composables/ui/useCommandScope.ts`   | Hands a surface's search to the palette while it is mounted                                     |
@@ -397,6 +404,8 @@ flowchart TD
 - [Address bar ranking](https://firefox-source-docs.mozilla.org/browser/urlbar/ranking.html), Firefox: frecency, the recency-and-frequency score the recent pages are ordered by.
 - [Hick's law](https://lawsofux.com/hicks-law/) and [Fitts's law](https://lawsofux.com/fittss-law/), Laws of UX: a dock of the reader's own places rather than every product, on a screen edge and under the thumb.
 - [Dialog](https://0.vuetifyjs.com/components/disclosure/dialog), Vuetify 0: the native modal dialog under `UiDialog`.
+- [Collapsible](https://0.vuetifyjs.com/components/disclosure/collapsible), Vuetify 0: the disclosure under `UiCollapsible`.
+- [Disclosure navigation](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/), WAI-ARIA Authoring Practices: a navigation of links grouped under disclosure buttons, the docs navigation's pattern, and aria-current on the link for the page open.
 - [Hotkey](https://0.vuetifyjs.com/composables/system/use-hotkey), Vuetify 0: the hotkey composable a shortcut binds through after retirement.
 - [MiniSearch](https://lucaong.github.io/minisearch/): the client index the app-wide palette searches.
 - [Top layer](https://developer.mozilla.org/en-US/docs/Glossary/Top_layer), MDN: why a modal in it hides whatever renders outside it, which keeps the dialog shell on Vuetify's overlay for now.

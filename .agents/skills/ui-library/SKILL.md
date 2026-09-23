@@ -29,7 +29,7 @@ How the palette reaches both libraries, UnoCSS and the first response is `apps/w
 - **A new pair that fails the palette test is re-picked**, never exempted from it.
 - **Only `NuxtTheme` selects a theme**, and the library's theme only ever follows Vuetify's through `useSelectUiTheme`.
 - **A length is a whole number of `--ui-step`.** Motion durations become tokens beside it with the first component that reads them.
-- **Type is the four rules.** A migrated page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. The body's face is its own token, `--ui-font-body`, so the readable-text setting swaps one token.
+- **Type is the four rules.** A migrated page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. The body's face is its own token, `--ui-font-body`, which the readable-text setting swaps; what must stay pixel whatever the body reads in — code — names `--ui-font-pixel` itself.
 
 ## Icons
 
@@ -51,7 +51,7 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **Anything pressed wears `ui-button`**: `UiButton`, or `UiButtonLink` for somewhere to go, which stays a real link. A `NuxtLink` dressed by hand as a button restates the variants.
 - **A utility cannot recolour a surface**: a `bg-*` or `text-*` written on `ui-frame`, `ui-raised` or `ui-sunk` loses to it (why is the architecture page's "What building them taught"). A state that recolours one is a data attribute the component's scoped style reads.
 - **A field is `UiTextField` inside a `UiForm`**, passed `useVRules` rules as they are: validation stays Vuetify's until retirement, and the field adapts each rule to the primitive. The form's `isValid` is false only once a field has failed, so a submit button can stand disabled on it.
-- **A choice between views of one thing is `UiTabs`**, keyed to a model — a route query where the view should survive a reload.
+- **A choice between views of one thing is `UiTabs`**, keyed to a model — a route query where the view should survive a reload. Tabs that go somewhere — a docs category — are `UiTabLinks`, real links whose current one the call site names; a group in a navigation that opens and closes is `UiCollapsible`.
 - **The call site's attributes go on top of the primitive's.** When a primitive overrides what a call site passes — as the button does with `type` and `aria-pressed` — render the element from its attribute slot with `$attrs` spread after, and expose the element if something must focus or anchor to it.
 - **A field's completions are `UiSuggestions` beside the field, never a menu.** Focus stays in the field; a menu moves focus into itself and is for actions.
 - **A menu item is data** — a `UiMenuItem` list — so a context menu and an overflow button can share one list later.

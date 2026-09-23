@@ -28,7 +28,7 @@ A pressed raised surface swaps its lit and shaded sides and moves down one step,
 
 - **One pixel face**, the console's, for everything the app draws, loaded through `@nuxt/fonts` so it is self-hosted and preloaded rather than fetched from a font service on first paint.
 - **A short scale.** The console needs one size because it is one column. An app with pages needs a hierarchy, so there are four sizes, each a whole number of steps: body, a section heading, a page title, and a display size for a landing page. Headings take the accent colour as well, so hierarchy survives a reader who has scaled the text.
-- **A readable-text setting.** A pixel face is the look, and it is also harder going for a long read and for some readers. A user setting swaps the body token for the system's own sans-serif face, leaving headings, chrome and code in the pixel face. It is per user, and it is off by default. The setting is one token swap, so no component knows about it.
+- **A readable-text setting.** A pixel face is the look, and it is also harder going for a long read and for some readers. A setting swaps the body token for the system's own sans-serif face, leaving headings and code in the pixel face. It is kept per device in a cookie, as the theme is, so a signed-out reader has it and the first response already renders it, and it is off by default. The setting is one token swap, so no component knows about it.
 - **Code** stays in the pixel face in the info colour, as in the console, and syntax highlighting in the docs takes a highlighting theme built from the tokens rather than a stock one.
 
 ## Colour

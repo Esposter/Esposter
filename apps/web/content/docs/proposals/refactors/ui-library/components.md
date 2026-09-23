@@ -40,8 +40,9 @@ A component is added to the library when the first stage needs it, never ahead o
 | Slider                  | Slider                                        | the Vuetify slider                                                                        | page migration          |
 | Form                    | Form, with the validation composable          | the Vuetify form and its rules                                                            | page migration, shipped |
 | Toggle, toggle group    | Toggle, Group                                 | the Vuetify button toggle, and chips used as filters                                      | page migration          |
-| Tabs                    | Tabs                                          | the Vuetify tabs and windows                                                              | page migration, shipped |
-| Expansion panel         | ExpansionPanel, Collapsible                   | the Vuetify expansion panels and list groups                                              | page migration          |
+| Tabs, tab links         | Tabs; none for the links                      | the Vuetify tabs and windows, and tabs used as links                                      | page migration, shipped |
+| Collapsible             | Collapsible                                   | the Vuetify list groups                                                                   | page migration, shipped |
+| Expansion panel         | ExpansionPanel                                | the Vuetify expansion panels                                                              | page migration          |
 | List, list item         | Selection or Group with roving focus          | the Vuetify list and its items, the Styled list and navigation list                       | page migration          |
 | Tree                    | Treeview                                      | nested lists used as trees                                                                | page migration          |
 | Data table              | the data table and virtual composables        | the Vuetify data table and its server variant                                             | page migration          |
