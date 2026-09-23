@@ -9,7 +9,7 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 
 ## Open
 
-- [ ] [Agent console](/docs/proposals/infra/agent-console) — a Nuxt page that replaces the terminal at full parity, over a host on the machine with the code, agents behind drivers and the look behind themes (default, then Genshin), with a playable codebase city
+- [ ] [Agent console](/docs/proposals/infra/agent-console) — past the shipped first phase: close the parity gaps, then the Genshin theme, the views (the collector harbour, then a playable codebase city) and the terminal-mirror driver
 - [ ] [Seamless spoken replies](/docs/proposals/infra/seamless-spoken-replies) — first sound within a fraction of a second of a spoken line being written, streamed from inside the line; the never-pausing stage before it holds since the engine moved to Nano
 
 ## Blocked (the character voice still switched on after two weeks of daily use)

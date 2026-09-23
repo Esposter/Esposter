@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Apply when adding any user-facing feature, deciding where an action lives, or reviewing a surface for reachability. Esposter UX conventions — every feature's create action at the point of need with management in settings, a settings panel configuring rather than creating, one dialog per created thing, standing controls a transient value never displaces, a management surface only where its actions can succeed, punctuation a value is read inside drawn as field chrome, and the reference product's wording, layout and interaction followed where the domain matches.
+description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives, or reviewing a surface for reachability. Esposter UX conventions — every feature's create action at the point of need with management in settings, a settings panel configuring rather than creating, one dialog per created thing, standing controls a transient value never displaces, a management surface only where its actions can succeed, punctuation a value is read inside drawn as field chrome, the reference product's wording, layout and interaction followed where the domain matches, and a layout looked up in Vuetify, Material 3 and the reference product before it is written.
 ---
 
 # UX Conventions
@@ -118,6 +118,10 @@ distance from the want to the act, and a click is not a distance.
 
 The finding is a **trip**: settings, another product area, a navigation the reader did not ask for. Count the
 clicks before adding the button.
+
+### Where the look comes from — `references/visual-design-sources.md`
+
+A layout is looked up before it is written: the reference product's own screen, Vuetify's component pages and wireframes, and Material 3. Composed from memory one component at a time, it reads as a stack of parts. **Laying out a new surface, or judging whether one looks right**, is that page, and so is the list of what a first draft gets wrong.
 
 ### A screenshot of the reference product is the specification — `references/reference-screenshots.md`
 

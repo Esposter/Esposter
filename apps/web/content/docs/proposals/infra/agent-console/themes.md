@@ -1,32 +1,32 @@
 ---
 title: Themes
-description: Proposal — the agent console's theme interface — what a theme may change (palette, a TresJS scene behind the work surface, reactions to session events, a voice) and may not (the work surface itself) — the plain default theme, and the Genshin theme built from the persona plugin.
+description: Proposal — what the agent console's theme interface grows beyond the default theme's reactions. The next parts are a palette, a TresJS scene behind the work surface, an avatar and a voice. The Genshin theme, built from the persona plugin, is the first to use them.
 model: claude-opus-5-5
 ---
 
 # Themes
 
-The [agent console](/docs/proposals/infra/agent-console) works the same in every theme; a theme changes how it feels. It is a registry entry in the app, not a package: an object naming its palette and, optionally, a scene component, an avatar and a set of reactions. The default theme sets none of the optional parts, so the default console is the work surface alone, plus the browser notification every theme gets while the tab is hidden — quiet, fast, and the one every parity test runs against.
+The [agent console](/docs/infra/claude-interface/agent-console) already has a theme registry. It holds one theme, the default: the work surface in the app's own Vuetify theme, and a browser notification when a hidden session ends a turn or waits on a verdict. A theme today sets only its reactions. This proposal is the rest of what a theme may set, and the Genshin theme that is the first to set it. Here the hidden-tab notification moves out of the default's reactions and into the console, so every theme gets it.
 
-## What a theme may set
+## What a theme may add
 
 | Part      | What it is                                                                                                                                               | Default theme   |
 | :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Palette   | a Vuetify theme — the app's own theming, so every component follows                                                                                      | the app's theme |
+| Palette   | a Vuetify theme, the app's own theming, so every component follows                                                                                       | the app's theme |
 | Scene     | a TresJS component rendered behind the work surface, receiving the session's events                                                                      | none            |
 | Avatar    | who the session is presented as — a name, a colour, a portrait — read from the session                                                                   | none            |
 | Reactions | a map from session event to what the theme does — a pose, a sound, a notification tone — on top of the console's own notification when the tab is hidden | none            |
 | Voice     | how the agent's spoken lines are heard                                                                                                                   | none            |
 
-A theme never replaces or reorders the work surface ([terminal parity](/docs/proposals/infra/agent-console/terminal-parity)); it may only dress it and draw behind it. That is what keeps a theme cheap to write and impossible to make a downgrade.
+A theme never replaces or reorders the work surface ([terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity)). It may only dress it and draw behind it, which is what keeps a theme cheap to write and impossible to make a downgrade. Each part is added to `AgentConsoleTheme` with the first theme that sets it, never ahead of one.
 
 ## The Genshin theme
 
 Built from what the [persona plugin](/docs/infra/claude-interface/persona-plugin) already produces:
 
-- **Avatar** from the session-start hook's output, which the SDK driver passes through as a hook event; the plugin adds one machine-readable line naming the character so the theme does not parse prose.
+- **Avatar** from the session-start hook's output, which the SDK driver already passes through as a hook event. The plugin adds one machine-readable line naming the character, so the theme does not parse prose.
 - **Palette** from the character's element.
-- **Voice** from the plugin's resident synthesizer, which the theme calls on the loopback with each spoken line it finds in a reply, since the terminal's message-display hook has no display to fire on in the console. The theme is the console's one producer of spoken lines: the synthesizer, the [element ambience](/docs/proposals/infra/agent-console/element-ambience) and [spatial chat](/docs/proposals/infra/agent-console/spatial-chat) all take the lines it finds, so no line is synthesized twice.
+- **Voice** from the plugin's resident synthesizer, which the theme calls on the loopback with each spoken line it finds in a reply. The terminal's message-display hook has no display to fire on in the console. The theme is the console's one producer of spoken lines: the synthesizer, the [element ambience](/docs/proposals/infra/agent-console/element-ambience) and [spatial chat](/docs/proposals/infra/agent-console/spatial-chat) all take the lines it finds, so no line is synthesized twice.
 - **Scene and reactions** from the sub-specs: the [wish banner](/docs/proposals/infra/agent-console/wish-banner), the [voxel atelier](/docs/proposals/infra/agent-console/voxel-atelier), the [element ambience](/docs/proposals/infra/agent-console/element-ambience) and, as an option, [spatial chat](/docs/proposals/infra/agent-console/spatial-chat).
 
 ```mermaid
@@ -41,20 +41,18 @@ flowchart TD
   R -->|attention wanted| PO[The figure turns]
 ```
 
-```text
-apps/web/app/services/agentConsole/themes/
-  AgentConsoleThemeMap.ts        ← the registry: default, genshin
-apps/web/app/models/agentConsole/
-  AgentConsoleTheme.ts           ← palette, scene, avatar, reactions, voice
-apps/web/app/components/AgentConsole/Theme/Genshin/
-```
-
 ## Key files
 
-| File                                        | Role                                                      |
-| :------------------------------------------ | :-------------------------------------------------------- |
-| `packages/genshin-persona/scripts/pick.ts`  | The session-start hook whose output names the character   |
-| `packages/genshin-persona/scripts/speak.ts` | The resident synthesizer the Genshin theme speaks through |
+| File                                                                | Role after the change                                          |
+| :------------------------------------------------------------------ | :------------------------------------------------------------- |
+| `apps/web/app/services/agentConsole/themes/AgentConsoleThemeMap.ts` | The registry the Genshin theme is added to                     |
+| `apps/web/app/models/agentConsole/AgentConsoleTheme.ts`             | The theme interface, grown by the parts the Genshin theme sets |
+| `packages/genshin-persona/scripts/pick.ts`                          | The session-start hook whose output names the character        |
+| `packages/genshin-persona/scripts/speak.ts`                         | The resident synthesizer the Genshin theme speaks through      |
+
+```text
+apps/web/app/components/AgentConsole/Theme/Genshin/
+```
 
 ## Notes
 
