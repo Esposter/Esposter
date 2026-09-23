@@ -15,13 +15,13 @@ interface Row {
 
 describe("uiDataTable", () => {
   const label = "label";
-  const columns: UiDataTableColumn<Row>[] = [{ key: "name", title: "name" }];
+  const columns: UiDataTableColumn<Row, "name">[] = [{ key: "name", title: "name" }];
   const items: Row[] = [
     { group: "group", id: "0", name: "0" },
     { group: "group", id: "1", name: "1" },
   ];
   const mountTable = (groupBy?: "group") => {
-    const component = mount(UiDataTable<Row>, {
+    const component = mount(UiDataTable<Row, "name">, {
       props: {
         columns,
         getItemTitle: ({ name }: Row) => name,
@@ -37,7 +37,7 @@ describe("uiDataTable", () => {
         sortBy: [],
         "onUpdate:page": (page: number) => component.setProps({ page }),
         "onUpdate:selectedIds": (selectedIds: string[]) => component.setProps({ selectedIds }),
-        "onUpdate:sortBy": (sortBy: SortItem<string>[]) => component.setProps({ sortBy }),
+        "onUpdate:sortBy": (sortBy: SortItem<"name">[]) => component.setProps({ sortBy }),
       },
     });
     return component;

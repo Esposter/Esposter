@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T extends { id: string }">
+<script setup lang="ts" generic="T extends { id: string }, TSortKey extends string">
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
@@ -8,7 +8,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DATA_TABLE_SKELETON_ROW_COUNT } from "@/services/ui/constants";
 
 interface Props {
-  columns: UiDataTableColumn<T>[];
+  columns: UiDataTableColumn<T, TSortKey>[];
   // What a row is called, which names the checkbox that selects it
   getItemTitle: (item: T) => string;
   // Anything a row takes beside what the table gives it, such as the props that open its context menu
@@ -30,7 +30,7 @@ interface Props {
 // Selection outlives the page it was made on
 const page = defineModel<number>("page", { required: true });
 const itemsPerPage = defineModel<number>("itemsPerPage", { required: true });
-const sortBy = defineModel<SortItem<string>[]>("sortBy", { required: true });
+const sortBy = defineModel<SortItem<TSortKey>[]>("sortBy", { required: true });
 const selectedIds = defineModel<string[]>("selectedIds", { default: () => [] });
 const {
   columns,
@@ -46,9 +46,9 @@ const {
 } = defineProps<Props>();
 const emit = defineEmits<{ open: [item: T] }>();
 defineSlots<{
-  cell?: (props: { column: UiDataTableColumn<T>; item: T }) => VNode;
+  cell?: (props: { column: UiDataTableColumn<T, TSortKey>; item: T; value: string }) => VNode;
   empty?: () => VNode;
-  group?: (props: { items: T[]; value: unknown }) => VNode;
+  group?: (props: { items: T[] }) => VNode;
 }>();
 const columnCount = computed(() => columns.length + (isSelectable ? 1 : 0));
 const pageCount = computed(() => Math.max(1, Math.ceil(itemsLength / itemsPerPage.value)));
@@ -77,8 +77,14 @@ const groups = computed(() => {
 });
 const closedGroupValues = ref(new Set<unknown>());
 const getSortOrder = (key: string) => sortBy.value.find((sortItem) => sortItem.key === key)?.order;
+const getAriaSort = (key: string) => {
+  const order = getSortOrder(key);
+  if (order === SortOrder.Asc) return "ascending";
+  else if (order === SortOrder.Desc) return "descending";
+  else return undefined;
+};
 // Ascending, then descending, then the server's own order, as a table's header cycles
-const toggleSort = (key: string) => {
+const toggleSort = (key: TSortKey) => {
   const order = getSortOrder(key);
   if (!order) sortBy.value = [{ key, order: SortOrder.Asc }];
   else if (order === SortOrder.Asc) sortBy.value = [{ key, order: SortOrder.Desc }];
@@ -86,7 +92,7 @@ const toggleSort = (key: string) => {
   page.value = 1;
 };
 // What a cell shows when the call site draws nothing there: its column's own reading, or the item's field
-const getCellValue = (column: UiDataTableColumn<T>, item: T) =>
+const getCellValue = (column: UiDataTableColumn<T, TSortKey>, item: T) =>
   column.getValue?.(item) ?? String(Reflect.get(item, column.key) ?? "");
 const toggleSelection = (id: string) => {
   selectedIds.value = selectedIds.value.includes(id)
@@ -121,12 +127,10 @@ const toggleGroup = (value: unknown) => {
               />
             </th>
             <th
-              v-for="{ isSortable, key, title } of columns"
-              :key
+              v-for="column of columns"
+              :key="column.key"
               class="header"
-              :aria-sort="
-                getSortOrder(key) === SortOrder.Asc ? 'ascending' : getSortOrder(key) ? 'descending' : undefined
-              "
+              :aria-sort="getAriaSort(column.key)"
               px-2
               py-1
               text-left
@@ -134,24 +138,26 @@ const toggleGroup = (value: unknown) => {
               text-nowrap
             >
               <button
-                v-if="isSortable !== false"
+                v-if="column.isSortable !== false"
                 type="button"
                 flex
                 gap-1
                 cursor-pointer
                 items-center
                 hover:text-text
-                @click="toggleSort(key)"
+                @click="toggleSort(column.key)"
               >
-                {{ title }}
+                {{ column.title }}
                 <UiIcon
-                  v-if="getSortOrder(key)"
+                  v-if="getSortOrder(column.key)"
                   :meaning="
-                    getSortOrder(key) === SortOrder.Asc ? UiIconMeaning.SortAscending : UiIconMeaning.SortDescending
+                    getSortOrder(column.key) === SortOrder.Asc
+                      ? UiIconMeaning.SortAscending
+                      : UiIconMeaning.SortDescending
                   "
                 />
               </button>
-              <template v-else>{{ title }}</template>
+              <template v-else>{{ column.title }}</template>
             </th>
           </tr>
         </thead>
@@ -187,7 +193,7 @@ const toggleGroup = (value: unknown) => {
                     :data-open="!closedGroupValues.has(group.value) || undefined"
                     :meaning="UiIconMeaning.Disclosure"
                   />
-                  <slot name="group" :items="group.items" :value="group.value" />
+                  <slot name="group" :items="group.items" />
                 </button>
               </td>
             </tr>
@@ -212,7 +218,9 @@ const toggleGroup = (value: unknown) => {
                   />
                 </td>
                 <td v-for="column of columns" :key="column.key" px-2 py-1>
-                  <slot name="cell" :column :item>{{ getCellValue(column, item) }}</slot>
+                  <slot name="cell" :column :item :value="getCellValue(column, item)">{{
+                    getCellValue(column, item)
+                  }}</slot>
                 </td>
               </tr>
             </template>
