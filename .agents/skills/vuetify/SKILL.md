@@ -1,22 +1,20 @@
 ---
 name: vuetify
-description: Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists. Esposter Vuetify conventions — StyledButton for primary actions with :to and type outside :button-props, v-prefixed auto-imported composables, a global default never repeated on an instance, every drawer through StyledNavigationDrawer, a tooltip on every icon-only button through StyledTooltipIconButton, typed SelectItemCategoryDefinition items with clearable banned, useVRules with a built-in alias first, the mount gate a dialog born open owes, and no SASS variables in component styles.
+description: Apply when writing or reviewing Vuetify components, dialogs, selects, forms, or lists. Esposter Vuetify conventions — StyledButton and StyledTooltipIconButton as the library's button behind Vuetify's props, v-prefixed auto-imported composables, a global default never repeated on an instance, every drawer through StyledNavigationDrawer, a tooltip on every icon-only button through StyledTooltipIconButton, typed SelectItemCategoryDefinition items with clearable banned, useVRules with a built-in alias first, the mount gate a dialog born open owes, and no SASS variables in component styles.
 ---
 
 # Vuetify Conventions
 
 ## Primary Buttons
 
-Use `StyledButton` for every confirm / complete / primary call-to-action (create, save, accept, publish, request, start). **Never a raw `color="primary"` `v-btn`** — colourless buttons are transparent by default (`references/button-backgrounds.md`), so a primary-coloured fill reads badly on the app's transparent / `v-main` base; `StyledButton` renders the midnight-bloom gradient + white text instead. It paints with `background-image`, so it is immune to every background rule and inherited variant.
+`StyledButton` and `StyledTooltipIconButton` are the UI library's `UiButton` behind the Vuetify props their call sites still pass, so a page not yet migrated gets the library's button without a call site changing (`getUiButtonProps` reads the props; the ui-library skill owns the look). A migrated unit writes `UiButton`, `UiIconButton` or `UiButtonLink` itself.
 
-- Pass Vuetify props through `:button-props="{ ... }"` (camelCase — `{ prependIcon: 'i-mdi:plus', disabled: !isValid, loading: isSubmitting }`).
-- **`:to`, `type` and native listeners go directly on the wrapper**, never inside `:button-props` — they fall through to the root `v-btn` (`type` is a native attribute, not a typed `VBtn` prop, so `buttonProps` fails typecheck). Link choice, the raw-`<a>` ban and `RoutePath` targets belong to the **routing** skill.
-- Destructive confirms stay a `color="error"` `v-btn` — error red is visible on the transparent base, and `StyledButton` is for positive/primary actions only.
-- **`StyledTooltipIconButton` passes `:icon` by default**, which forces Vuetify's circular icon-button variant — `:is-icon-button="false"` keeps the rectangular shape with the icon as a child (`references/styled-primitives.md`).
+- `StyledButton` is a surface's one primary action, in the accent. Pass Vuetify props through `:button-props="{ ... }"`: `color: "error"` draws it in the danger variant, `variant: "text"` quiet, `variant: "tonal"` raised without a fill, `loading` the spinner. `type` and native listeners go directly on the wrapper. It is never a link — somewhere to go is `UiButtonLink`.
+- `StyledTooltipIconButton` names its button by `text` and draws `icon` as a whole icon class; `:to` makes it a link. Vuetify's sizes, densities and tooltip locations are ignored: the library sizes every button and places every tooltip.
 
 ## Button Backgrounds — `references/button-backgrounds.md`
 
-Colourless flat buttons are transparent by app CSS, and a parent container (`v-card-actions`, `v-toolbar`, `v-btn-group`, …) can override the variant to `"text"` so a `color` tints the text rather than the background. Read the page before adding a fill, and never fight the container with `variant="elevated"` — a filled action inside one is `StyledButton`, an icon action is `StyledTooltipIconButton`, a destructive confirm is a `color="error"` `v-btn`.
+A raw `v-btn` is transparent when colourless, and a parent container (`v-card-actions`, `v-toolbar`, …) can override its variant to `"text"` so a `color` tints the text rather than the background. Read the page before adding a fill to one — or reach for the Styled wrappers above, which are the library's button and answer to neither rule.
 
 ## Auto-Imported Composables — `v` Prefix
 

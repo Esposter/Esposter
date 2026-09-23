@@ -13,7 +13,7 @@ Declarative links use a Nuxt-native link component or a component's `:to` prop �
 - External: `<NuxtLink :to external target="_blank">`.
 - In-page anchor: `<NuxtInvisibleLink :to="{ hash }">` (a `NuxtLink` clone that strips default link styling).
 - A link-styled control with no destination is a `<span text-info underline cursor-pointer>`, not an anchor.
-- Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, `StyledButton`, …) with a plain destination take `:to` directly. Reserve `@click="navigateTo(...)"` for actions that run logic before navigating or compute the target at click time. Route targets still come from `RoutePath`, never string-built.
+- Vuetify components (`v-btn`, `v-card`, `v-list-item`, `v-tab`, `v-chip`, …), `StyledTooltipIconButton` and `UiButtonLink` with a plain destination take `:to` directly. Reserve `@click="navigateTo(...)"` for actions that run logic before navigating or compute the target at click time. Route targets still come from `RoutePath`, never string-built.
 
 The raw-`<a>` ban is enforced by `packages/configuration/eslint/overrides/vueRules.js` via `vue/no-restricted-html-elements`. Full standard: `apps/web/content/docs/architecture/navigation.md`.
 

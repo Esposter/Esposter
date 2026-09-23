@@ -13,7 +13,6 @@ Read when a component genuinely needs a `<style>` block (`:deep()`, `@keyframes`
 | Vuetify transition speed      | `--transition-duration`      |
 | Vuetify move transition speed | `--transition-move-duration` |
 | Vue gradient                  | `--vue-gradient`             |
-| Midnight bloom                | `--midnight-bloom`           |
 
 The values are in `globals.scss` and are deliberately not restated here — a copy of one in prose is how a page
 ends up quoting the `px` an earlier revision used, and they are not even all one kind of value: a length beside a

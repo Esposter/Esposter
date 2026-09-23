@@ -7,25 +7,12 @@ Read when a button's background is not what you expected, or when reaching for `
 
 ## Do not fight rule 2 with `variant="elevated"`
 
-Transparent-on-container is the app's look, and a lone re-elevated button is the odd one out. A filled action inside a container uses a primitive that is immune because it paints with `background-image`:
+Transparent-on-container is a raw `v-btn`'s look, and a lone re-elevated one is the odd one out. A filled action inside a container uses the Styled wrappers, which render the UI library's button and so answer to neither rule:
 
-| Need                              | Use                                              |
-| --------------------------------- | ------------------------------------------------ |
-| Filled primary action (label)     | `StyledButton`                                   |
-| Icon action in a toolbar / header | `StyledTooltipIconButton` (transparent, no fill) |
-| Destructive confirm               | `color="error"` `v-btn` — red text, no fill      |
+| Need                              | Use                                                       |
+| --------------------------------- | --------------------------------------------------------- |
+| Filled primary action (label)     | `StyledButton`                                            |
+| Icon action in a toolbar / header | `StyledTooltipIconButton`                                 |
+| Destructive confirm               | `StyledButton` with `color: "error"` — the danger variant |
 
 Corollary: `color` on a container-nested `v-btn` only tints text. Never reach for a non-semantic theme colour as a fill (`color="border"` is for borders) — that only ever worked via an explicit `variant="elevated"`.
-
-## The one deliberate exception
-
-A **deliberately raised** button (e.g. a raised add action in a page header) restates the variant, and it needs **both** halves — `variant="elevated"` to beat the container's `"text"`, and `flat: false` to beat the global `VBtn` `flat` default, since elevation only applies when `variant === "elevated" && !flat`:
-
-```vue
-<StyledTooltipIconButton
-  icon="i-mdi:plus"
-  :button-props="{ flat: false, variant: 'elevated' }"
-  :is-icon-button="false"
-  text="Add Foo"
-/>
-```
