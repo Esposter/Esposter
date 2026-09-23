@@ -20,7 +20,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   const agentConsoleSessionStore = useAgentConsoleSessionStore();
   const { storeEvents, storeSessionReset, storeSessions } = agentConsoleSessionStore;
   const hostUrl = useLocalStorage(LocalStorageKey.AgentConsoleHostUrl, "");
-  const status = ref(hostUrl.value ? ConnectionStatus.Disconnected : ConnectionStatus.Unpaired);
+  const status = ref(hostUrl.value ? ConnectionStatus.Connecting : ConnectionStatus.Unpaired);
   const theme = AgentConsoleThemeMap[AgentConsoleThemeType.Default];
   // The commands this tab sent that open a session: the session they open is the one this tab moves to
   const openingCommandIds = new Set<string>();
@@ -68,8 +68,9 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     // A pasted address that is not a WebSocket URL throws here rather than failing to connect. Retrying it could
     // Never succeed, so it is refused and the page goes back to asking for one
     getResult(() => new WebSocket(hostUrl.value)).match(
+      // A retry leaves the status alone, so a host that stays away reads as down rather than flickering back to
+      // Connecting on every attempt
       (socket) => {
-        status.value = ConnectionStatus.Connecting;
         webSocket = socket;
         socket.addEventListener("open", () => {
           connectedAt = new Date();
@@ -112,6 +113,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   const pair = (newHostUrl: string) => {
     disconnect();
     hostUrl.value = newHostUrl;
+    status.value = ConnectionStatus.Connecting;
     connect();
   };
 
