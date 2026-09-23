@@ -15,6 +15,14 @@
   --apx-surface: rgb(var(--v-theme-surface));
   // One voxel: the grid every length of the UI library is a whole number of, and the width of its edges
   --ui-step: 0.25rem;
+  // The library's one face, and the body's own token for it, which the readable-text setting swaps
+  --ui-font-pixel: VT323, monospace;
+  --ui-font-body: var(--ui-font-pixel);
+  // The type scale, each a whole number of steps: body, a section heading, a page title and a landing page's display
+  --ui-text-body: calc(var(--ui-step) * 5);
+  --ui-text-heading: calc(var(--ui-step) * 6);
+  --ui-text-title: calc(var(--ui-step) * 8);
+  --ui-text-display: calc(var(--ui-step) * 12);
   --toolbar-height: 3.5rem;
   // The dock's breadth: a rail's width on a wide screen, a bar's height on a narrow one
   --dock-size: calc(var(--ui-step) * 14);

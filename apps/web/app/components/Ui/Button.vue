@@ -22,40 +22,8 @@ defineExpose({ element });
 
 <template>
   <Button.Root #default="{ attrs }" :disabled renderless>
-    <button
-      ref="element"
-      v-bind="{ ...attrs, ...$attrs }"
-      class="button"
-      :data-variant="variant"
-      px-2
-      shrink-0
-      cursor-pointer
-      ui-raised
-      disabled:cursor-default
-      hover:brightness-125
-      disabled:op-disabled
-    >
+    <button ref="element" v-bind="{ ...attrs, ...$attrs }" :data-variant="variant" ui-button>
       <slot />
     </button>
   </Button.Root>
 </template>
-
-<style scoped>
-.button[aria-pressed="true"],
-.button[data-variant="Accent"] {
-  background-color: var(--ui-accent);
-  color: var(--ui-background);
-}
-
-.button[data-variant="Danger"] {
-  background-color: var(--ui-error);
-  color: var(--ui-background);
-}
-
-/* No surface of its own, so it can float over content; the panel's colour under it keeps it legible there */
-.button[data-variant="Quiet"] {
-  background-color: var(--ui-panel);
-  box-shadow: none;
-  color: var(--ui-muted);
-}
-</style>

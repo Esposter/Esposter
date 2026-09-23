@@ -134,6 +134,42 @@ describe("unoConfig", () => {
               "padding": "0 calc(var(--ui-step) * 2)",
             },
           ],
+          [
+            "ui-body",
+            {
+              "color": "var(--ui-text)",
+              "font-family": "var(--ui-font-body)",
+              "font-size": "var(--ui-text-body)",
+              "line-height": "1.2",
+            },
+          ],
+          [
+            "ui-display",
+            {
+              "color": "var(--ui-accent)",
+              "font-family": "var(--ui-font-pixel)",
+              "font-size": "var(--ui-text-display)",
+              "line-height": "1.2",
+            },
+          ],
+          [
+            "ui-heading",
+            {
+              "color": "var(--ui-accent)",
+              "font-family": "var(--ui-font-pixel)",
+              "font-size": "var(--ui-text-heading)",
+              "line-height": "1.2",
+            },
+          ],
+          [
+            "ui-title",
+            {
+              "color": "var(--ui-accent)",
+              "font-family": "var(--ui-font-pixel)",
+              "font-size": "var(--ui-text-title)",
+              "line-height": "1.2",
+            },
+          ],
         ],
         "safelist": [
           "elevation-0",
@@ -376,6 +412,7 @@ describe("unoConfig", () => {
               "line-height": 1.4285714286,
             },
           ],
+          "ui-button": "px-2 shrink-0 cursor-pointer ui-raised hover:brightness-125 disabled:cursor-default disabled:op-disabled aria-pressed:bg-accent aria-pressed:text-background data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background data-[variant=Danger]:bg-error data-[variant=Danger]:text-background data-[variant=Quiet]:bg-panel data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
           "ui-item": "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
         },
         "theme": {

@@ -82,6 +82,21 @@ const uiSurfaceUtilities = {
     padding: `0 calc(${UI_STEP} * 2)`,
   },
 } as const satisfies Record<string, Record<string, string>>;
+// The library's type: one pixel face and four sizes, each a whole number of steps. Body text reads its own face token
+// Rather than the pixel face directly, so the readable-text setting swaps one token and no component knows about it;
+// Every size above the body is a heading, which takes the accent so hierarchy survives a reader who scales the text
+const getUiTypeUtility = (size: string, fontFamily = "var(--ui-font-pixel)", color = "var(--ui-accent)") => ({
+  color,
+  "font-family": fontFamily,
+  "font-size": `var(--ui-text-${size})`,
+  "line-height": "1.2",
+});
+const uiTypeUtilities = {
+  "ui-body": getUiTypeUtility("body", "var(--ui-font-body)", "var(--ui-text)"),
+  "ui-display": getUiTypeUtility("display"),
+  "ui-heading": getUiTypeUtility("heading"),
+  "ui-title": getUiTypeUtility("title"),
+} as const satisfies Record<string, Record<string, string>>;
 // `@esposter/shared` exports the same conversion, and this file cannot import it: the app's `postinstall` is
 // `nuxt prepare`, which is where the UnoCSS module loads this config — before any workspace package is built,
 // So the import resolves to a `dist` a fresh clone does not have yet and fails the install
@@ -185,6 +200,7 @@ export default defineConfig({
     ...Object.entries(overlayUtilities),
     ...Object.entries(opacityUtilities),
     ...Object.entries(uiSurfaceUtilities),
+    ...Object.entries(uiTypeUtilities),
   ],
   safelist: [
     ...Array.from({ length: 6 }, (_value, index) => `elevation-${index}`),
@@ -200,6 +216,15 @@ export default defineConfig({
       ]),
     ),
     "text-hint": "op-medium-emphasis text-body-small",
+    // Something pressed, a button or a link that looks like one: raised, and filled by its variant or while pressed
+    "ui-button": [
+      "px-2 shrink-0 cursor-pointer ui-raised hover:brightness-125 disabled:cursor-default disabled:op-disabled",
+      "aria-pressed:bg-accent aria-pressed:text-background",
+      "data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background",
+      "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
+      // No surface of its own, so it can float over content; the panel's colour under it keeps it legible there
+      "data-[variant=Quiet]:bg-panel data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
+    ].join(" "),
     // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
     "ui-item":
       "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
