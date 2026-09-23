@@ -230,6 +230,21 @@ describe(judgeRelease, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     );
   });
 
+  // A head the bot skipped carries commits no review read, so the text alone never settles it: the session is
+  // Handed the range and merges only on its own reading of it
+  test("judges a head the bot skipped through the session, over the commits no review read", async () => {
+    expect.hasAssertions();
+
+    const unreviewedFromSha = readSha("HEAD");
+    const developSha = publish(DEVELOP_BRANCH, commitFile(TEST_FILENAME, ""));
+    answerWith(`${ReleaseVerdict.Merge} — nothing is left`);
+    const outcome = await judgeRelease({ ...getInput(developSha), unreviewedFromSha });
+
+    expect(outcome?.kind).toBe(CycleOutcomeKind.Merged);
+    expect(readReleaseGate).not.toHaveBeenCalled();
+    expect(runSession.mock.calls[0]?.[0].prompt).toContain(`git log -p ${unreviewedFromSha}..${developSha}`);
+  });
+
   test("ports on with a hold verdict recorded", async () => {
     expect.hasAssertions();
 

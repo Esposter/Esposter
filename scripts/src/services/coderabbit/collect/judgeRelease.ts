@@ -49,6 +49,7 @@ export const judgeRelease = async ({
   level,
   pullRequest,
   reviews,
+  unreviewedFromSha,
   viewerLogin,
 }: ReleaseVerdictInput): Promise<CycleOutcome | undefined> => {
   const marker = getMarker(VERDICT_MARKER, developSha);
@@ -66,7 +67,13 @@ export const judgeRelease = async ({
   const statedRisk =
     level === undefined
       ? "the bot stated no merge risk for it"
-      : `the bot rates the merge risk _${level}_, above _${MERGEABLE_RISK_LEVEL}_`;
+      : unreviewedFromSha === undefined
+        ? `the bot rates the merge risk _${level}_, above _${MERGEABLE_RISK_LEVEL}_`
+        : `the bot last rated the merge risk _${level}_, before the head it skipped`;
+  const reviewedState =
+    unreviewedFromSha === undefined
+      ? `The review at ${developSha} left nothing open`
+      : `The bot skipped the review at ${developSha}, the reviews up to ${unreviewedFromSha} left nothing open,`;
   if (isDryRun) {
     console.info(`would judge the release at ${developSha} — ${statedRisk}`);
     return undefined;
@@ -81,7 +88,8 @@ export const judgeRelease = async ({
   // The rationale only where the level came with it: `level` is undefined for a block naming an older head as
   // Much as for no block at all, and that block is the bot's reading of code the fixes have already changed.
   // Both read the change assessment instead — the block the bot writes every time, and the one the gate and the
-  // Prompt below already say they were handed whenever the level is missing
+  // Prompt below already say they were handed whenever the level is missing. A skipped head is the exception the
+  // Caller makes: no block will ever name it, so the level arrives with the older block it came from
   const riskBlock =
     (level === undefined
       ? getLatestMarkedBlock(botBodies, ASSESSMENT_MARKER)
@@ -105,7 +113,7 @@ export const judgeRelease = async ({
     console.info(`release verdict at ${developSha}: ${verdict} — ${reason}`);
     postComment(
       pullRequest,
-      `${marker} ${verdict} — ${reason}\nThe review at ${developSha} left nothing open and ${statedRisk}. ${
+      `${marker} ${verdict} — ${reason}\n${reviewedState} and ${statedRisk}. ${
         verdict === ReleaseVerdict.Merge
           ? "Nothing real is left, so the collector merges the release."
           : "Something real is left, so the release is a person's: merge this pull request, or close it to pause. The collector keeps porting meanwhile, and the next head is judged afresh."
@@ -117,7 +125,9 @@ export const judgeRelease = async ({
   // Session, and most heads are that one (`llm-delegation` skill). Asked ahead of the account's own limit
   // Because it spends none of it — a release the record settles merges through an outage that would hold
   // Every session behind it.
-  const gatedVerdict = await readReleaseGate({ answers, feedback, riskBlock });
+  // A skipped head carries commits no review read, which the text alone cannot speak for
+  const gatedVerdict =
+    unreviewedFromSha === undefined ? await readReleaseGate({ answers, feedback, riskBlock }) : undefined;
   if (gatedVerdict) return recordVerdict(gatedVerdict);
   // A limit the drain hit is the account's, not this head's: the window ports on and the next run judges
   const limitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
@@ -133,7 +143,15 @@ export const judgeRelease = async ({
   const outcome = await withFinalizerAsync(
     async () => {
       const verdictPath = join(verdictDirectory, VERDICT_FILE);
-      const prompt = getVerdictPrompt({ answers, developSha, feedback, level, riskBlock, verdictPath });
+      const prompt = getVerdictPrompt({
+        answers,
+        developSha,
+        feedback,
+        level,
+        riskBlock,
+        unreviewedFromSha,
+        verdictPath,
+      });
       // Read-only judgement over the head the verdict covers: no install, no checks
       runGit(["switch", "--detach", developSha], cwd);
       const { isEnded, isStarted, limitResetAtMs } = await runSession({

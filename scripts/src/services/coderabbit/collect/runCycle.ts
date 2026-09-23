@@ -4,12 +4,14 @@ import type { CycleOutcome } from "#src/models/coderabbit/collect/CycleOutcome";
 import { CycleOutcomeKind } from "#src/models/coderabbit/collect/CycleOutcomeKind";
 import { GateDecisionKind } from "#src/models/coderabbit/collect/GateDecisionKind";
 import { ReleasePullRequestState } from "#src/models/coderabbit/collect/ReleasePullRequestState";
+import { checkIsMarked } from "#src/services/coderabbit/collect/checkIsMarked";
 import { checkIsSlotFree } from "#src/services/coderabbit/collect/checkIsSlotFree";
 import {
   DEVELOP_BRANCH,
   MAIN_BRANCH,
   MERGEABLE_RISK_LEVEL,
   QUEUE_BRANCH,
+  SKIPPED_REVIEW_COMMENT_MARKER,
 } from "#src/services/coderabbit/collect/constants";
 import { foldCandidate } from "#src/services/coderabbit/collect/foldCandidate";
 import { getGateDecision } from "#src/services/coderabbit/collect/getGateDecision";
@@ -34,6 +36,7 @@ import { runExpressLane } from "#src/services/coderabbit/collect/runExpressLane"
 import { runReturnStroke } from "#src/services/coderabbit/collect/runReturnStroke";
 import { settleRateLimit } from "#src/services/coderabbit/collect/settleRateLimit";
 import { syncQueue } from "#src/services/coderabbit/collect/syncQueue";
+import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -108,7 +111,14 @@ export const runCycle = async ({
   const gate =
     pullRequest === undefined
       ? { kind: GateDecisionKind.Proceed, reason: "no release pull request — nothing can be running" }
-      : getGateDecision({ checkStatus: readCheckStatus(pullRequest), developSha, lastReviewedSha });
+      : getGateDecision({
+          checkStatus: readCheckStatus(pullRequest),
+          developSha,
+          isReviewSkipped: issueComments.some((comment) =>
+            checkIsMarked(comment, CODERABBIT_REST_LOGIN, SKIPPED_REVIEW_COMMENT_MARKER),
+          ),
+          lastReviewedSha,
+        });
   console.info(`gate: ${gate.kind} — ${gate.reason}`);
   if (gate.kind === GateDecisionKind.Exit) return getOutcome(CycleOutcomeKind.Idle, gate.reason);
   else if (gate.kind === GateDecisionKind.Fail)
@@ -137,10 +147,14 @@ export const runCycle = async ({
     // Block naming an older head, or no block at all, states nothing about this one — the bot writes one on some
     // Releases and not others, for no reason this side can read — so that is a head to judge and never a head to
     // Wait on: a clean release held for a block nobody promised is held forever, and reads as `Idle` while it is.
+    // A head the bot skipped has no review to wait on and no block of its own: the last block it wrote is the only
+    // Rating there is, so the verdict weighs it beside the commits no review read — and never merges on it unasked
     const mergeRisk = getMergeRisk(issueComments);
-    const level = mergeRisk?.coveredSha === developSha ? mergeRisk.level : undefined;
-    if (gate.kind === GateDecisionKind.Proceed && drain.isClean) {
-      if (level === MERGEABLE_RISK_LEVEL) return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
+    const isReviewSkipped = gate.kind === GateDecisionKind.ReviewSkipped;
+    const level = mergeRisk?.coveredSha === developSha || isReviewSkipped ? mergeRisk?.level : undefined;
+    if ((gate.kind === GateDecisionKind.Proceed || isReviewSkipped) && drain.isClean) {
+      if (level === MERGEABLE_RISK_LEVEL && !isReviewSkipped)
+        return mergeReleasePullRequest({ developSha, isDryRun, pullRequest });
       const judged = await judgeRelease({
         cwd,
         developSha,
@@ -149,6 +163,7 @@ export const runCycle = async ({
         level,
         pullRequest,
         reviews,
+        unreviewedFromSha: isReviewSkipped ? frontier : undefined,
         viewerLogin,
       });
       if (judged) return judged;

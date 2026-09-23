@@ -173,6 +173,9 @@ export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milli
 // The walkthrough CodeRabbit rewrites when the limit makes it skip a review. It carries the deadline the cycle
 // Schedules against, and its `updated_at` is when the bot last restated the limit.
 export const RATE_LIMIT_COMMENT_MARKER = "auto-generated comment: rate limited by coderabbit.ai";
+// The walkthrough section CodeRabbit writes when it declines to review a push — an incremental review it could not
+// Recover among them. It flips the status to completed and states no range, and no later event re-fires the cycle.
+export const SKIPPED_REVIEW_COMMENT_MARKER = "auto-generated comment: skip review by coderabbit.ai";
 // The same walkthrough's record of the review that last completed — the one place a review that found nothing
 // States the range it read. A marker pair like the feedback report's (`getMarkedBlock`).
 export const RECENT_REVIEW_MARKER = "recent_review";
