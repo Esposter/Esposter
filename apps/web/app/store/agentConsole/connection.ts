@@ -7,6 +7,7 @@ import { MAX_RECONNECT_DELAY_MS, MIN_RECONNECT_DELAY_MS } from "@/services/agent
 import { reactToEvents } from "@/services/agentConsole/reactToEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAlertStore } from "@/store/alert";
 import { exhaustiveGuard, getResult } from "@esposter/shared";
@@ -17,6 +18,7 @@ import { CommandType, serverMessageSchema, ServerMessageType } from "agent-conso
 export const useAgentConsoleConnectionStore = defineStore("agentConsole/connection", () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
+  const agentConsolePanelStore = useAgentConsolePanelStore();
   const agentConsoleSessionStore = useAgentConsoleSessionStore();
   const { storeEvents, storeSessionReset, storeSessions } = agentConsoleSessionStore;
   const hostUrl = useLocalStorage(LocalStorageKey.AgentConsoleHostUrl, "");
@@ -117,10 +119,15 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     connect();
   };
 
+  // What the page shows of a host leaves with it, so the title screen asking for the next one has nothing behind it
   const unpair = () => {
     disconnect();
     hostUrl.value = "";
     status.value = ConnectionStatus.Unpaired;
+    storeSessions([]);
+    agentConsoleSessionStore.currentSessionId = "";
+    agentConsolePanelStore.openedPanelType = "";
+    agentConsolePanelStore.isWorldExpanded = false;
   };
 
   const sendCommand = (command: DistributedOmit<Command, "id">) => {

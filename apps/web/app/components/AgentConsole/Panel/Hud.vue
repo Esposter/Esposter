@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { AgentConsolePanelMenuItems } from "@/models/agentConsole/AgentConsolePanelType";
 import { SessionStateColorMap } from "@/services/agentConsole/SessionStateColorMap";
+import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useLayoutStore } from "@/store/layout";
 
+const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+const { unpair } = agentConsoleConnectionStore;
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { isWorldExpanded, openedPanelType } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
@@ -16,7 +19,8 @@ const { isDesktop } = storeToRefs(layoutStore);
 
 <template>
   <!-- Every object in the world that opens a panel has its button here, so the keyboard and a screen reader reach -->
-  <!-- All of it; the door's way out is the browser's own back -->
+  <!-- All of it; the door's way out is the browser's own back. Unpairing sits here too, the one bar shown whenever -->
+  <!-- The page is paired -->
   <nav class="hud" aria-label="Agent console" px-2 py-1 flex flex-wrap gap-2 items-center>
     <template v-if="currentSessionId">
       <span truncate>{{ currentSession?.title || "New session" }}</span>
@@ -48,6 +52,7 @@ const { isDesktop } = storeToRefs(layoutStore);
       >
         World
       </AgentConsolePanelButton>
+      <AgentConsolePanelButton @click="unpair()">Unpair</AgentConsolePanelButton>
     </div>
   </nav>
 </template>

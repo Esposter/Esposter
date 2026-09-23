@@ -8,7 +8,7 @@ import { CommandType, SessionState } from "agent-console-server/contracts";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { status } = storeToRefs(agentConsoleConnectionStore);
-const { sendCommand, unpair } = agentConsoleConnectionStore;
+const { sendCommand } = agentConsoleConnectionStore;
 const agentConsolePanelStore = useAgentConsolePanelStore();
 const { openedPanelType } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
@@ -47,13 +47,9 @@ onClickOutside(cwdForm, () => {
 
 <template>
   <div flex flex-col gap-2 min-h-0>
-    <div flex gap-2 items-center>
-      <span :class="status === ConnectionStatus.Connected ? 'connected' : 'disconnected'">{{ status }}</span>
-      <AgentConsolePanelButton v-if="isNotificationPermissionDefault" @click="requestNotificationPermission()">
-        Notify me
-      </AgentConsolePanelButton>
-      <AgentConsolePanelButton ml-a @click="unpair()">Unpair</AgentConsolePanelButton>
-    </div>
+    <AgentConsolePanelButton v-if="isNotificationPermissionDefault" self-start @click="requestNotificationPermission()">
+      Notify me
+    </AgentConsolePanelButton>
     <form
       v-if="status === ConnectionStatus.Connected"
       ref="cwdForm"
@@ -133,14 +129,6 @@ onClickOutside(cwdForm, () => {
 </template>
 
 <style scoped>
-.connected {
-  color: var(--agent-console-success);
-}
-
-.disconnected {
-  color: var(--agent-console-warning);
-}
-
 .session {
   background-color: transparent;
 }

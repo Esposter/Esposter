@@ -13,8 +13,13 @@ const agentConsolePanelStore = useAgentConsolePanelStore();
 const { isWorldExpanded, isWorldReady } = storeToRefs(agentConsolePanelStore);
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const { currentSessionId, pendingPermissionRequests } = storeToRefs(agentConsoleSessionStore);
-// A request waiting on a verdict brings the panels back, so an expanded world never hides a question the agent asked
-const isPanelColumnShown = computed(() => !isWorldExpanded.value || pendingPermissionRequests.value.length > 0);
+// Pairing takes the page to itself; after it, a request waiting on a verdict brings the panels back, so an expanded
+// World never hides a question the agent asked
+const isPanelColumnShown = computed(
+  () =>
+    status.value !== ConnectionStatus.Unpaired &&
+    (!isWorldExpanded.value || pendingPermissionRequests.value.length > 0),
+);
 const isMounted = useMounted();
 const loadingSteps = computed<LoadingStep[]>(() => [
   { isDone: isMounted.value, title: "Starting the page" },
@@ -47,8 +52,7 @@ whenever(
     <!-- Reached until the loading screen is gone -->
     <section v-show="isPanelColumnShown" :inert="!isLoaded" p-2 flex flex-col gap-2 min-h-0 md:order-first>
       <ClientOnly>
-        <AgentConsolePanelPairing v-if="status === ConnectionStatus.Unpaired" />
-        <template v-else>
+        <template v-if="status !== ConnectionStatus.Unpaired">
           <AgentConsolePanelFrame v-if="status !== ConnectionStatus.Connected">
             <p v-if="status === ConnectionStatus.Connecting" role="status">Connecting to the host…</p>
             <p v-else class="warning" role="status">
@@ -75,11 +79,16 @@ whenever(
       <ClientOnly>
         <LazyAgentConsoleWorld />
         <div p-2 flex flex-col gap-2 pointer-events-none inset-0 absolute>
-          <AgentConsolePanelHud v-if="status !== ConnectionStatus.Unpaired" pointer-events-auto />
-          <AgentConsolePanelOpened min-h-0 pointer-events-auto />
+          <template v-if="status !== ConnectionStatus.Unpaired">
+            <AgentConsolePanelHud pointer-events-auto />
+            <AgentConsolePanelOpened min-h-0 pointer-events-auto />
+          </template>
         </div>
       </ClientOnly>
     </section>
+    <ClientOnly>
+      <AgentConsolePanelPairing v-if="status === ConnectionStatus.Unpaired" :inert="!isLoaded" />
+    </ClientOnly>
     <AgentConsolePanelLoading v-if="!isLoaded" :loading-steps />
   </div>
 </template>
