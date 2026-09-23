@@ -5,6 +5,7 @@ export enum PaletteColor {
   Book = "book",
   Cloth = "cloth",
   Dirt = "dirt",
+  Door = "door",
   Error = "error",
   Floor = "floor",
   Grass = "grass",

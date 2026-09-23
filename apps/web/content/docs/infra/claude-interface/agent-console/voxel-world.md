@@ -32,7 +32,7 @@ flowchart TD
   WQ --> WK[Worker: two at a time generated and meshed, so a chunk left behind is never asked for]
   WK --> R
   Z -->|yes| O[Outlined, a label naming E and what it does]
-  O -->|E, the use trigger, or a tap on the label| U[Its console tab, the composer, or the door opened or closed]
+  O -->|E, the use trigger, or a tap on the label| U[The door opened or closed]
   Z --> R
   K{A key, with nothing open over the world} -->|T or Enter| C
   K -->|slash| S[The console, a slash typed]
@@ -41,7 +41,7 @@ flowchart TD
 ```
 
 - **The world is generated.** The ground's height in each column is four octaves of simplex noise from one seed summed, each twice the detail and half the height of the last, and it is grass over a few voxels of dirt over stone (`getTerrainHeight`, `generateChunk`). Around the room it is flattened to the room's floor and rises to the noise over a short slope, so the room stands on level ground. The same seed is the same world on every load, so nothing about it is saved. The realm is an original one: the noise is written here, and no place, name or map comes from any published setting.
-- **The room is stamped into it.** The floor, the four walls and every object are voxel boxes (`RoomVoxelBoxes`) filled into whichever chunks they fall in. It is built the way a small Minecraft house reads as cozy: two materials that disagree on purpose, pale plaster walls over a stone course and framed in dark timber posts with a beam along the top, so no wall is a flat sheet; a plank border and a rug on the floor; a window in the wall behind and in the wall to the right; torches on the walls; and a bed and potted plants among the objects. Everything in it is scenery but the things the prompts below name, and it is all drawn from the palette, with no light but the shading every face already has. The left wall holds a door, closed on every load as a door is placed in Minecraft. The player opens and closes it with E from either side of the wall, and it swings outward to stand straight out from the wall beside the opening. Its voxels are stamped with the rest, so a closed door blocks the player and an open one does not: using it generates the chunks it stands in again, and their meshes and voxels replace the old ones. Leaving to the app is the pause menu's.
+- **The room is stamped into it.** The floor, the four walls and every object are voxel boxes (`RoomVoxelBoxes`) filled into whichever chunks they fall in. It is built the way a small Minecraft house reads as cozy: materials that disagree on purpose, plaster walls over a stone course and framed in timber posts with a beam along the top, so no wall is a flat sheet; a plank border and a rug on the floor; a window in the wall behind and in the wall to the right; torches on the walls; and a notice board, a bed and potted plants among the objects. Everything in it is scenery but the door, and it is all drawn from the palette, with no light but the shading every face already has. The left wall holds a door, darker than the timber framing it, closed on every load as a door is placed in Minecraft. The player opens and closes it with E from either side of the wall, and it swings outward to stand straight out from the wall beside the opening. Its voxels are stamped with the rest, so a closed door blocks the player and an open one does not: using it generates the chunks it stands in again, and their meshes and voxels replace the old ones. Leaving to the app is the pause menu's.
 - **It streams what the camera can see.** Space is split into Minecraft's columns of sixteen by sixteen voxels. One view distance sets how far past the player the world is seen: fog in the clear colour thickens from halfway there to there, measured from wherever the camera's arm has it, and the camera's far plane stands where the fog ends, so a chunk wholly in the fog is culled rather than drawn. How far across the ground that view reaches from the player is read off the camera's frustum between the world's floor and its ceiling (`getViewReach`), which a camera tilted toward the horizon, pulled out, or on a wider screen stretches, and the chunks within that reach of the player's own, in a circle rather than a square, are the ones generated. They are queued ahead of the camera and near the player first, and a Web Worker is handed two at a time, one to work on and one waiting, so a chunk the player has run past before its turn is never generated. The worker hands its voxels and its mesh back as transferable buffers, so neither a frame nor the composer waits on the terrain. A chunk is dropped once it is a chunk further out than the reach, so a player pacing a border never regenerates one, and the chunks are settled again only when the player crosses into another or the reach crosses a chunk.
 - **A chunk is one mesh.** `greedyMesh` turns a chunk's grid into triangles once. A face between two solid voxels is never emitted, and neighbouring faces of one colour and one ambient occlusion merge into one quad. Occlusion is counted from each corner's solid neighbours, and a face is shaded by the way it faces. Both are baked into the vertex colours, so the world has no lights and no shadow map. A chunk's grid carries a one-voxel border of its neighbours' voxels, generated the same way, which is read but not meshed, so a face on a chunk's edge is culled and shaded against what is really beside it. Nothing over a chunk's highest solid voxel is visited, so its open sky costs nothing.
 - **The person is a player figure.** Six boxes — a head, a body, two arms and two legs — in the proportions a voxel person is expected to have: in sixteenths of a voxel, the head eight on a side, the body eight by twelve by four and each limb four by twelve by four, two voxels tall like an agent. It is built from the palette's colours, not from any game's model or skin. Its arms and legs swing in opposite pairs, timed by the distance walked rather than the clock so the feet never slide, and it breathes while it stands. With reduced motion asked for, the limbs hang still. Sneaking lowers its head, body and arms over its legs. It starts just inside the door on every load and is kept nowhere.
@@ -52,19 +52,7 @@ flowchart TD
 - **The camera follows.** It sits behind and above the player looking at its head, which a sneak lowers, and trails it with a little lag that reads as weight, or rigidly with reduced motion asked for. A sprint widens its view, as Minecraft's does, unless reduced motion is asked for. A drag on the room, or a gamepad's right stick, turns it around the player and tilts it between above the floor and short of straight down; the wheel brings it in or out, never farther than it starts. Where a wall would stand between the camera and the player, a ray cast through the grid pulls the camera in to just in front of it at once, and it eases back out once the wall is behind (`castThroughGrid`). Nothing in the room answers a click, and the cursor never changes over it.
 - **Each agent is a figure.** `toWorldFigures` reads the timeline lanes. The main agent stands at the station of the tool call it is waiting on, or at the gate while a permission request waits, and otherwise at home. A subagent walks in through the portal, goes to its own call's station, and leaves when it finishes. Figures sharing a station stand side by side. `ToolWorldObjectTypeMap` names each Claude Code tool's station, and any tool it does not name is used at the desk.
 - **The gauges are columns.** The context vessel fills with the share of the context used, and turns to the warning colour at nine tenths of the compaction threshold. The coins stack with the cost, the pages stack with the number of files changed, and the gate's lantern lights while a request waits. Each is one white voxel scaled to its height and tinted by its material, so a change of value rebuilds nothing.
-- **A thing is used by standing at it.** Each thing has a spot a figure stands at to use it, and it is in reach while the player stands within a voxel and a half of that spot and faces the thing's middle, so a thing behind the player never prompts (`findReachableObject`). Of the things in reach, the nearest is outlined and a label over it, ordinary HTML turned to the camera, names the key and what it does. E, a gamepad's use trigger, or a tap on the label does it, and a screen reader hears what is in reach as the player walks up to it. Every one of them but the door is also a tab or a button in the console, so none of the session needs the world (`useWorldPrompts`).
-
-  | Thing                         | Its label | What it does                                         |
-  | :---------------------------- | :-------- | :--------------------------------------------------- |
-  | The board                     | Sessions  | The console on the sessions                          |
-  | A station                     | Timeline  | The console on the timeline, at that station's calls |
-  | The context vessel, the coins | Usage     | The console on the usage                             |
-  | The pages                     | Changes   | The console on the changes                           |
-  | The gate                      | Answer    | The console on the waiting request, while one waits  |
-  | The main agent's figure       | Talk      | The console's composer, focused                      |
-  | The door                      | Open      | Opens it, or closes it with Close                    |
-
-  A station's timeline shows only the calls made at it, by the station `ToolWorldObjectTypeMap` names for each tool, with a button to show every call again.
+- **A thing in the world is used by standing at it.** A prompt acts on the world, and the door is the one thing that has one: it opens or closes. It has a spot in the middle of its opening, so it is in reach from either side of the wall while the player stands within a voxel and a half of that spot and faces the door, and a door behind the player never prompts (`findReachableObject`). While it is in reach it is outlined, and a label over it, ordinary HTML turned to the camera, names E and what it does: Open or Close. E, a gamepad's use trigger, or a tap on the label does it, and a screen reader hears what is in reach as the player walks up to it (`useWorldPrompts`). Nothing in the room opens the console; it is reached from the heads-up display's button, and from T, Enter and the slash key.
 
 - **The heads-up display describes the session.** One bar along the top carries the session's avatar where its theme reads one, its title, its state, its context and its cost, and a button that opens the console with its key written on it. While a permission request waits, that button carries a warning mark. The host's connection status reads along the bottom of the world, beside the renderer's figures in development.
 - **The keys are the world's while nothing is over it.** T or Enter opens the console on the conversation with the composer focused, and the slash key opens it with a slash already typed, as a game's command line does. E uses what is in reach. Escape opens the pause menu on its way back to the world, as a game's opens on resume, and W and S walk it as the arrows do: back to the world, the sessions, unpair, and leave to the app. The keys are read only while no dialog is open over the world, nothing editable has focus and no modifier is held, so a browser shortcut or a field is never taken over, and the shortcuts dialog lists them.
@@ -104,40 +92,39 @@ The world is open all day beside an editor, so it stays live while keeping each 
 
 ## Key files
 
-| File                                                                  | Role                                                                       |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| `apps/web/app/layouts/immersive.vue`                                  | The full-screen layout; `App.vue` drops the dock and loading bar for it    |
-| `apps/web/app/components/AgentConsole/Index.vue`                      | The world at full size with the overlays, its dusk theme scope, its font   |
-| `apps/web/app/components/AgentConsole/Overlay.vue`                    | The console: a sheet of tabs, which a permission request opens             |
-| `apps/web/app/components/AgentConsole/PauseMenu.vue`                  | Back to the world, the sessions, unpair, and leave to the app              |
-| `apps/web/app/components/AgentConsole/ChatLines.vue`                  | The latest replies' opening words over the world, fading                   |
-| `apps/web/app/composables/agentConsole/useAgentConsoleCommands.ts`    | The world's keys, bound only while nothing is open over it                 |
-| `apps/web/app/store/agentConsole/panel.ts`                            | Whether the console and the pause menu are open, and the console's tab     |
-| `apps/web/app/components/AgentConsole/World/Index.vue`                | The canvas, the player's state and input, and the development overlay      |
-| `apps/web/app/components/AgentConsole/World/Player.vue`               | The player's six boxes, its fixed-step walk, its swing and its breath      |
-| `apps/web/app/components/AgentConsole/World/FollowCamera.vue`         | Behind the player, turned by a drag, pulled in by a wall                   |
-| `apps/web/app/components/AgentConsole/Joystick.vue`                   | The touch joystick                                                         |
-| `apps/web/app/composables/agentConsole/world/usePlayerInput.ts`       | Keys, joystick and gamepad as one direction to walk and one to look, gated |
-| `apps/web/app/services/agentConsole/world/moveThroughGrid.ts`         | One step of the player's box, resolved one axis at a time                  |
-| `apps/web/app/services/agentConsole/world/simulatePlayer.ts`          | One step of Minecraft's movement: a tick's velocity, spread over its steps |
-| `apps/web/app/services/agentConsole/world/castThroughGrid.ts`         | How far a ray gets through the grid, which the camera's spring arm reads   |
-| `apps/web/app/components/AgentConsole/World/Prompt.vue`               | The outline and the label over what is in reach, and the use trigger       |
-| `apps/web/app/composables/agentConsole/world/useWorldPrompts.ts`      | Every thing that can be used by standing at it, and what it does           |
-| `apps/web/app/services/agentConsole/world/findReachableObject.ts`     | The nearest thing in reach and in front of the player                      |
-| `apps/web/app/services/agentConsole/world/WorldObjectPanelTypeMap.ts` | The console tab each object opens for a player standing at it              |
-| `apps/web/app/components/AgentConsole/World/Figure.vue`               | A figure walking to where it should stand, and breathing there             |
-| `apps/web/app/components/AgentConsole/Panel/Loading.vue`              | The loading screen: the bar, the percentage and the step under way         |
-| `apps/web/app/services/agentConsole/foldAgentEvents.ts`               | The incremental fold every panel and the world read                        |
-| `apps/web/app/services/agentConsole/world/greedyMesh.ts`              | Voxels to one mesh, with occlusion and shading baked in                    |
-| `apps/web/app/components/AgentConsole/World/Chunks.vue`               | The chunks in the camera's reach, queued for the worker and dropped        |
-| `apps/web/app/services/agentConsole/world/getViewReach.ts`            | How far across the ground the camera's frustum reaches from the player     |
-| `apps/web/app/workers/agentConsole/chunk.worker.ts`                   | A chunk generated and meshed off the main thread, its buffers handed back  |
-| `apps/web/app/services/agentConsole/world/generateChunk.ts`           | A chunk's position to its voxels, with the room stamped in                 |
-| `apps/web/app/services/agentConsole/world/getTerrainHeight.ts`        | The ground's height in a column, from the seed's noise                     |
-| `apps/web/app/services/agentConsole/world/RoomVoxelBoxes.ts`          | The room as the boxes it is built from, its door open                      |
-| `apps/web/app/services/agentConsole/world/getWorldVoxel.ts`           | A voxel looked up through the chunk that holds it                          |
-| `apps/web/app/services/agentConsole/world/WorldObjectMap.ts`          | Every object in the room, the boxes it is built from and where one stands  |
-| `apps/web/app/services/agentConsole/world/toWorldFigures.ts`          | The timeline lanes read as where each agent stands                         |
+| File                                                               | Role                                                                          |
+| :----------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| `apps/web/app/layouts/immersive.vue`                               | The full-screen layout; `App.vue` drops the dock and loading bar for it       |
+| `apps/web/app/components/AgentConsole/Index.vue`                   | The world at full size with the overlays, its dusk theme scope, its font      |
+| `apps/web/app/components/AgentConsole/Overlay.vue`                 | The console: a sheet of tabs, which a permission request opens                |
+| `apps/web/app/components/AgentConsole/PauseMenu.vue`               | Back to the world, the sessions, unpair, and leave to the app                 |
+| `apps/web/app/components/AgentConsole/ChatLines.vue`               | The latest replies' opening words over the world, fading                      |
+| `apps/web/app/composables/agentConsole/useAgentConsoleCommands.ts` | The world's keys, bound only while nothing is open over it                    |
+| `apps/web/app/store/agentConsole/panel.ts`                         | Whether the console and the pause menu are open, and the console's tab        |
+| `apps/web/app/components/AgentConsole/World/Index.vue`             | The canvas, the player's state and input, and the development overlay         |
+| `apps/web/app/components/AgentConsole/World/Player.vue`            | The player's six boxes, its fixed-step walk, its swing and its breath         |
+| `apps/web/app/components/AgentConsole/World/FollowCamera.vue`      | Behind the player, turned by a drag, pulled in by a wall                      |
+| `apps/web/app/components/AgentConsole/Joystick.vue`                | The touch joystick                                                            |
+| `apps/web/app/composables/agentConsole/world/usePlayerInput.ts`    | Keys, joystick and gamepad as one direction to walk and one to look, gated    |
+| `apps/web/app/services/agentConsole/world/moveThroughGrid.ts`      | One step of the player's box, resolved one axis at a time                     |
+| `apps/web/app/services/agentConsole/world/simulatePlayer.ts`       | One step of Minecraft's movement: a tick's velocity, spread over its steps    |
+| `apps/web/app/services/agentConsole/world/castThroughGrid.ts`      | How far a ray gets through the grid, which the camera's spring arm reads      |
+| `apps/web/app/components/AgentConsole/World/Prompt.vue`            | The outline and the label over what is in reach, and the use trigger          |
+| `apps/web/app/composables/agentConsole/world/useWorldPrompts.ts`   | Every thing in the world used by standing at it, and what it does: the door   |
+| `apps/web/app/services/agentConsole/world/findReachableObject.ts`  | The nearest thing in reach and in front of the player                         |
+| `apps/web/app/components/AgentConsole/World/Figure.vue`            | A figure walking to where it should stand, and breathing there                |
+| `apps/web/app/components/AgentConsole/Panel/Loading.vue`           | The loading screen: the bar, the percentage and the step under way            |
+| `apps/web/app/services/agentConsole/foldAgentEvents.ts`            | The incremental fold every panel and the world read                           |
+| `apps/web/app/services/agentConsole/world/greedyMesh.ts`           | Voxels to one mesh, with occlusion and shading baked in                       |
+| `apps/web/app/components/AgentConsole/World/Chunks.vue`            | The chunks in the camera's reach, queued for the worker and dropped           |
+| `apps/web/app/services/agentConsole/world/getViewReach.ts`         | How far across the ground the camera's frustum reaches from the player        |
+| `apps/web/app/workers/agentConsole/chunk.worker.ts`                | A chunk generated and meshed off the main thread, its buffers handed back     |
+| `apps/web/app/services/agentConsole/world/generateChunk.ts`        | A chunk's position to its voxels, with the room stamped in                    |
+| `apps/web/app/services/agentConsole/world/getTerrainHeight.ts`     | The ground's height in a column, from the seed's noise                        |
+| `apps/web/app/services/agentConsole/world/RoomVoxelBoxes.ts`       | The room as the boxes it is built from, its door open                         |
+| `apps/web/app/services/agentConsole/world/getWorldVoxel.ts`        | A voxel looked up through the chunk that holds it                             |
+| `apps/web/app/services/agentConsole/world/WorldObjectMap.ts`       | Every place a figure walks to, the boxes it is built from and where it stands |
+| `apps/web/app/services/agentConsole/world/toWorldFigures.ts`       | The timeline lanes read as where each agent stands                            |
 
 ## Notes
 
@@ -150,6 +137,7 @@ The world is open all day beside an editor, so it stays live while keeping each 
 
 - **A column of panels beside the world, and a button that hid it.** The world is the page and the console an overlay over it, so the room is never half the page and no mode can hide a question the agent asked.
 - **Clicking the room.** Nothing in the room answers a click. A thing whose hit area nothing on screen shows is one a person finds only by trying, so a thing is used by standing at it, where its prompt shows what it does before it is used.
+- **Prompts that open the console.** The board, each station, the gauges, the gate and the main agent each had a prompt opening a console tab, the timeline filtered to a station's calls among them. Each was a second way into what the heads-up display's button and T, Enter and the slash key already open, so the room carried a second menu over the first. A prompt acts on the world only, and the console stays apart from it, reached from its button.
 - **An orbit camera over the room.** It made the room a diorama to look at; the camera follows the player instead, and the room is a place to be in.
 - **Pointer lock, a first-person view, or clicking to walk.** A locked pointer fights every DOM surface the console is made of, a first-person view of a room this size shows mostly walls, and clicking to walk would make a click on the room mean something again. Touch gets a joystick instead.
 - **A room open on the camera's two sides, with a door always open.** It kept the camera's arm out of the walls, but a player walked out anywhere and the door was scenery. The room is walled on all four sides and its door opens and closes as Minecraft's does; the camera pulling in to the player inside is what Minecraft's own third-person camera does in a room.

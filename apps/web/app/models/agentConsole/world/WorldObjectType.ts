@@ -1,6 +1,6 @@
-// The things in the room. The stations are where a figure goes to use a kind of tool; the rest open a panel
+// The places in the room a figure walks to: a station for each kind of tool, and the gate the main agent waits at while
+// A permission request waits
 export enum WorldObjectType {
-  Board = "Board",
   Desk = "Desk",
   Gate = "Gate",
   Library = "Library",

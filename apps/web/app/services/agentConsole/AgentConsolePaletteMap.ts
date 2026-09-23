@@ -12,6 +12,7 @@ export const AgentConsolePaletteMap = {
   [PaletteColor.Book]: "#b5485d",
   [PaletteColor.Cloth]: "#3d7dca",
   [PaletteColor.Dirt]: "#6b4e3d",
+  [PaletteColor.Door]: "#5a3a26",
   [PaletteColor.Error]: DuskPalette[UiToken.Error],
   [PaletteColor.Floor]: "#3b3553",
   [PaletteColor.Grass]: "#4d7a4f",

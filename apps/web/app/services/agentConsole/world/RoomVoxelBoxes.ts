@@ -33,7 +33,8 @@ const createPlant = (x: number, z: number): VoxelBox[] => [
 // The room as the voxel boxes it is built from, stamped into the world at spawn in this order, each over the last. The
 // Floor has a plank border and a rug; the four walls are plaster over a stone course, framed by timber posts and a beam
 // Along the top, with the door's frame in the left wall and a window in the wall behind and the wall to the right; and
-// Torches, a bed and plants furnish it around every object. The door is stamped beside them in whichever state it is in
+// Torches, a notice board, a bed and plants furnish it around every object. The door is stamped beside them in
+// Whichever state it is in
 export const RoomVoxelBoxes: VoxelBox[] = [
   { color: PaletteColor.Floor, max: [LAST_X, 0, LAST_Z], min: [0, 0, 0] },
   { color: PaletteColor.Wood, max: [LAST_X - 1, 0, 1], min: [1, 0, 1] },
@@ -81,6 +82,9 @@ export const RoomVoxelBoxes: VoxelBox[] = [
   // A bed in the front corner on the right, its blanket towards the room and its pillow against the wall
   { color: PaletteColor.Rug, max: [LAST_X - 1, 1, 10], min: [LAST_X - 2, 1, 10] },
   { color: PaletteColor.Text, max: [LAST_X - 1, 1, LAST_Z - 1], min: [LAST_X - 2, 1, LAST_Z - 1] },
+  // A notice board on the wall behind, its pinned note pale on the wood
+  { color: PaletteColor.Wood, max: [5, 5, 1], min: [2, 3, 1] },
+  { color: PaletteColor.Text, max: [4, 4, 1], min: [3, 4, 1] },
   // Plants in the back corner on the right and the front corner on the left
   ...createPlant(LAST_X - 1, 1),
   ...createPlant(1, LAST_Z - 1),

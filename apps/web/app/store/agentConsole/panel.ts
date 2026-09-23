@@ -1,5 +1,3 @@
-import type { WorldObjectType } from "@/models/agentConsole/world/WorldObjectType";
-
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { useCommandStore } from "@/store/ui/command";
 // The console over the world and the tab it is on, the pause menu, the composer's draft, which outlives the tab that
@@ -14,8 +12,6 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
   const isWorldReady = ref(false);
   const consolePanelType = ref(AgentConsolePanelType.Conversation);
   const composerText = ref("");
-  // The station whose calls the timeline shows, as a player standing at it asked; every call where it is empty
-  const timelineWorldObjectType = ref<"" | WorldObjectType>("");
   // The world has the keys while nothing is open over it: a key then walks, opens the console or pauses, and
   // Otherwise it is the open dialog's
   const isWorldActive = computed(
@@ -27,12 +23,8 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
   );
   // The tab is chosen a tick before the dialog opens, so the tab's content is in place when the browser moves focus
   // Into the dialog and the composer's autofocus is honoured
-  const openConsole = async (
-    panelType: AgentConsolePanelType,
-    newTimelineWorldObjectType: "" | WorldObjectType = "",
-  ) => {
+  const openConsole = async (panelType: AgentConsolePanelType) => {
     consolePanelType.value = panelType;
-    timelineWorldObjectType.value = newTimelineWorldObjectType;
     await nextTick();
     isConsoleOpen.value = true;
   };
@@ -45,6 +37,5 @@ export const useAgentConsolePanelStore = defineStore("agentConsole/panel", () =>
     isWorldLoaded,
     isWorldReady,
     openConsole,
-    timelineWorldObjectType,
   };
 });

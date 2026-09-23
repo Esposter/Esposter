@@ -13,15 +13,16 @@ export const DOOR_MIN_Z = 8;
 export const DOOR_MAX_Z = 9;
 export const DOOR_HEIGHT = 4;
 export const DOOR_POSITION: Vector3Tuple = [1.5, 1, 9];
-// The door fills its opening while it is closed, and swung open outward on a hinge at the opening's far edge, it stands
-// Straight out from the wall, as wide as the opening. It is used from the middle of the opening, so from either side
+// The door, darker than the timber framing it, fills its opening while it is closed, and swung open outward on a hinge
+// At the opening's far edge, it stands straight out from the wall, as wide as the opening. It is used from the middle
+// Of the opening, so from either side
 export const DOOR_CLOSED_BOX: VoxelBox = {
-  color: PaletteColor.Wood,
+  color: PaletteColor.Door,
   max: [0, DOOR_HEIGHT, DOOR_MAX_Z],
   min: [0, 1, DOOR_MIN_Z],
 };
 export const DOOR_OPEN_BOX: VoxelBox = {
-  color: PaletteColor.Wood,
+  color: PaletteColor.Door,
   max: [-1, DOOR_HEIGHT, DOOR_MAX_Z + 1],
   min: [DOOR_MIN_Z - DOOR_MAX_Z - 1, 1, DOOR_MAX_Z + 1],
 };
@@ -56,9 +57,6 @@ export const ROOM_FLAT_MARGIN = 4;
 export const ROOM_BLEND_DISTANCE = 16;
 // Under the grass, this many voxels of dirt before the stone
 export const DIRT_DEPTH = 3;
-// An agent's figure is a voxel wide and two thirds of one deep
-export const FIGURE_HALF_WIDTH = 0.5;
-export const FIGURE_HALF_DEPTH = 1 / 3;
 // How far apart two figures stand at one station
 export const FIGURE_SPACING = 1.25;
 // Voxels a second a figure walks
@@ -148,11 +146,6 @@ export const VESSEL_POSITION = new Vector3(1, 1, 3);
 export const COINS_POSITION = new Vector3(10, 2, 9);
 export const PAGES_POSITION = new Vector3(12, 2, 3);
 export const LANTERN_POSITION = new Vector3(5, 3, 11);
-// Where a player stands to read each gauge: beside the vessel, at the desk's front for the coins, and at the
-// Workbench's end for the pages, clear of the stations' own spots
-export const VESSEL_STAND_POSITION: Vector3Tuple = [2.5, 1, 3.5];
-export const COINS_STAND_POSITION: Vector3Tuple = [10.5, 1, 11.3];
-export const PAGES_STAND_POSITION: Vector3Tuple = [10.3, 1, 3.5];
 // How near a thing's spot a player stands for it to prompt, how much wider than the thing its outline is drawn, and
 // How far above the outline its label floats
 export const REACH_DISTANCE = 1.5;
