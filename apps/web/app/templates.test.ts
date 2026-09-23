@@ -165,7 +165,7 @@ describe("attributify", () => {
           const bind = getStaticBind(prop);
           if (bind?.name !== "class") continue;
           for (const { groups } of bind.expression.matchAll(STRING_LITERAL_REGEX))
-            for (const token of groups?.content.split(/\s+/u) ?? [])
+            for (const token of groups?.content?.split(/\s+/u) ?? [])
               if (token && uno.isBlocked(token.split(":").at(-1) ?? ""))
                 refusedTokens.push(`${templatePath}: ${token}`);
         }
