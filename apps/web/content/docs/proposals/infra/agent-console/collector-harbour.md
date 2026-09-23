@@ -51,3 +51,4 @@ apps/web/app/components/AgentConsole/View/Harbour/
 
 - The reads belong to the collector, so the harbour imports them rather than copying them: a view that reimplemented "what is owed" would draw a harbour the collector disagrees with.
 - The host is published and the collector is not, so the view is offered only when the session's repository declares its command; everywhere else the page never shows it.
+- A declared command is the repository's code run on the host, not a read the host vouches for, so it runs only in a repository the person has trusted — the same trust Claude Code asks before a project's hooks and plugins run — and never on a clone the person has not. It runs with the person's `gh` login because the read it makes is exactly what that login is for; a repository trusted to run its hooks is already trusted with it.
