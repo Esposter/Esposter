@@ -94,6 +94,10 @@ const BLOCKED_SPELLINGS: [RegExp, string][] = [
 
 export default defineConfig({
   blocklist: BLOCKED_SPELLINGS.map(([matcher, canonical]) => [matcher, { message: `write ${canonical}` }]),
+  // Every template is read once at startup, from the Vite root Nuxt sets to `app/`. Otherwise the dev stylesheet
+  // Holds only the utilities of modules transformed so far, and a page first reached by client navigation — or a
+  // Component behind `<ClientOnly>` — renders without the ones only it uses until a reload
+  content: { filesystem: ["**/*.vue"] },
   outputToCssLayers: {
     cssLayerName: (layer) => (layer === "properties" ? null : `uno-${layer}`),
   },

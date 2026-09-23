@@ -1,6 +1,6 @@
 ---
 name: unocss
-description: Apply when editing uno.config.ts, adding new colors/utilities, or choosing between two spellings of one utility. Esposter UnoCSS configuration conventions — theme colors registration, safelist rules for dynamic Vuetify color props, cssLayerName mapping, named shortcuts for recurring utility pairs, one canonical spelling per utility family held in the blocklist and reported by unocss/blocklist, and the resolved-config snapshots that catch what a dependency bump changes.
+description: Apply when editing uno.config.ts, adding new colors/utilities, or choosing between two spellings of one utility. Esposter UnoCSS configuration conventions — theme colors registration, safelist rules for dynamic Vuetify color props, cssLayerName mapping, every template scanned at dev startup, named shortcuts for recurring utility pairs, one canonical spelling per utility family held in the blocklist and reported by unocss/blocklist, and the resolved-config snapshots that catch what a dependency bump changes.
 ---
 
 # UnoCSS Configuration
@@ -57,6 +57,10 @@ outputToCssLayers: {
 - All other layers → `uno-${layer}` (e.g. `default` → `uno-default`, `shortcuts` → `uno-shortcuts`)
 
 Layer declaration order is in `app/assets/css/layers.css`. The utility layers (`uno-shortcuts`, `uno-default`) appear after the `vuetify-*` layers so UnoCSS utilities can override Vuetify defaults. `uno-icons` sits ahead of Vuetify's: an icon rule sets `color: inherit`, and a component colouring its own icon has to win over it.
+
+## Every template scanned at startup
+
+`content.filesystem` reads every `.vue` under the Vite root (`app/`, which Nuxt sets as `srcDir`) once at dev startup. Without it the dev stylesheet holds only the utilities of the modules transformed so far, so a page first reached by client navigation, or a component behind `<ClientOnly>`, renders unstyled until a reload — padding, gaps and max widths missing while scoped styles apply. A layout that is wrong in dev and right after a reload is this, never a CSS bug; the scan stays even though a production build already sees the whole graph.
 
 ## Shortcuts for recurring utility pairs
 
