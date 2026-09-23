@@ -9,6 +9,7 @@ export const UiIconMap = {
   [UiIconMeaning.Command]: "i-pixelarticons:command",
   [UiIconMeaning.Copy]: "i-pixelarticons:copy",
   [UiIconMeaning.Device]: "i-pixelarticons:monitor",
+  [UiIconMeaning.Disclosure]: "i-pixelarticons:chevron-right",
   [UiIconMeaning.Dropdown]: "i-pixelarticons:chevron-down",
   [UiIconMeaning.Edit]: "i-pixelarticons:pencil",
   [UiIconMeaning.Expand]: "i-pixelarticons:expand",

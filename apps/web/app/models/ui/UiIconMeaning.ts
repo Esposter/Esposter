@@ -6,6 +6,7 @@ export enum UiIconMeaning {
   Command = "Command",
   Copy = "Copy",
   Device = "Device",
+  Disclosure = "Disclosure",
   Dropdown = "Dropdown",
   Edit = "Edit",
   Expand = "Expand",
