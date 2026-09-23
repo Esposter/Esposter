@@ -70,7 +70,7 @@ These are the details that make the difference between a themed app and a design
 - **Toasts** in one stack in one corner, each a frame with its status mark, pausing while hovered, and announced through a live region.
 - **Dialogs** as a frame with a title bar, over a dithered scrim — a checker of the background colour rather than a blurred wash — with focus trapped, restored on close, and the page behind made inert.
 - **Menus and selects** in the top layer through the Popover API, flipped when there is no room, with typeahead, Home and End, and the active option announced.
-- **Loading** as the console's voxel bar for a page and the spinner for a control; a skeleton is a block in the panel colour stepping between two shades, never a shimmer.
+- **Loading** as the console's voxel bar for a page and the spinner for a control; a skeleton is a block in the panel colour with a lighter band stepping across it a frame at a time, never an eased shimmer and never the whole block blinking.
 - **Empty and error states** as a frame with a mark, one sentence and at most one action.
 - **Images.** Pixel art — the achievement badges, the game sprites, the voxel marks — renders with pixelated scaling. A photo or an avatar never does. An avatar is square with a notched frame.
 - **Touch.** On a coarse pointer every target is at least eleven steps square, and a long press opens the context menu.

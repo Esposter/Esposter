@@ -88,7 +88,7 @@ The first components came out of the agent console, which drew the look by hand 
 | `UiCollapsible`     | Collapsible                           | A trigger row with a turning chevron over content hidden while it is closed: a navigation's groups     |
 | `UiTextField`       | Input                                 | A labelled sunk field of one line or several, its rules checked as the reader types                    |
 | `UiForm`            | Form                                  | The fields inside it counted into one validity, and a submit only once every one passes                |
-| `UiSkeleton`        | none                                  | A block stepping between two shades of the panel where content is still on its way                     |
+| `UiSkeleton`        | none                                  | A block of the panel, a lighter band stepping across it, where content is still on its way             |
 | `UiEmptyState`      | none                                  | A mark, a sentence, a line on how that changes, and at most one action                                 |
 | `UiOverflowMenu`    | `UiMenu`                              | The actions of one thing behind one quiet mark, from the `Item` list its context menu opens            |
 | `UiConfirmDialog`   | `UiDialog`                            | A question before something that cannot be undone: Cancel, and one destructive answer until it lands   |
@@ -175,6 +175,7 @@ flowchart TD
 - **A toast only moves on arriving.** Each source takes its own toast away, so a leaving toast would need every source behind one transition group; its arrival is `@starting-style`, which every toast gets whoever mounts it.
 - **Breadcrumbs measure with a gap of their own.** Vuetify 0's breadcrumbs decide what fits from each crumb's width plus a `gap` prop, eight pixels by default, so the list's CSS gap is two steps to match it; a wider one would let the row overflow before anything folds. The primitive places no divider and no ellipsis itself: a divider goes before every crumb after the first, and the ellipsis after the first divider, which is where the fold keeps it.
 - **A server's table is not `createDataTable`.** Vuetify 0's data table keeps its own sort, grouping and page: its sort changes only through a toggle, and what it groups by is fixed when it is made. The resource list keeps its page, size and order in the address, so a link lands on the same page, and a second copy inside the primitive would have to be walked into agreement on every back and forward. `UiDataTable` therefore takes those as models and draws the table itself, on the library's checkbox, select and buttons, with the ARIA the table pattern asks for.
+- **A skeleton never blinks as a whole.** It first stepped the whole block between two shades, which read well on a card and as a strobe on a blade's full height or a table's rows blinking in step. The block now holds still in the panel colour and a lighter band steps across it, ten steps a sweep, timed in frames so reduced motion holds it with the rest.
 - **A spinner has text.** `UiSpinner` draws its frames as characters, so a pending button's text is its label and a frame; a test finds that button by its variant or role, never by its text.
 
 ### Themes and scopes
