@@ -7,9 +7,9 @@ const { openedPanelType } = storeToRefs(agentConsolePanelStore);
 </script>
 
 <template>
-  <AgentConsolePanelFrame v-if="openedPanelType" :title="openedPanelType" max-h-full>
+  <UiFrame v-if="openedPanelType" :title="openedPanelType" max-h-full>
     <template #actions>
-      <AgentConsolePanelButton @click="openedPanelType = ''">Close</AgentConsolePanelButton>
+      <UiButton @click="openedPanelType = ''">Close</UiButton>
     </template>
     <div flex flex-col gap-2 min-h-0 of-y-auto>
       <AgentConsolePanelSessions v-if="openedPanelType === AgentConsolePanelType.Sessions" />
@@ -17,5 +17,5 @@ const { openedPanelType } = storeToRefs(agentConsolePanelStore);
       <AgentConsolePanelChanges v-else-if="openedPanelType === AgentConsolePanelType.Changes" />
       <AgentConsolePanelUsage v-else />
     </div>
-  </AgentConsolePanelFrame>
+  </UiFrame>
 </template>

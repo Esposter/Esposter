@@ -48,7 +48,7 @@ flowchart TD
 | :---------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
 | [Foundation](/docs/architecture/ui-library), shipped                    | Vuetify 0 installed, the tokens, the global chrome, the import boundary, the agent skill      | The whole app takes the dusk palette, the pixel scrollbars, the selection and the focus ring at once     |
 | [Icons](/docs/architecture/ui-library#icons), shipped                   | Icons as tree-shaken CSS instead of a font, then the pixel icon set                           | Every page stops downloading a font of several thousand icons to draw a few dozen                        |
-| [Agent console](/docs/proposals/refactors/ui-library/agent-console)     | The console's bespoke panels become the library's first components, rebuilt on Vuetify 0      | Typeahead, roving focus and proper listbox semantics in every console menu; the library proven on a page |
+| [Agent console](/docs/architecture/ui-library#components), shipped      | The console's bespoke panels become the library's first components, rebuilt on Vuetify 0      | Typeahead, roving focus and proper listbox semantics in every console menu; the library proven on a page |
 | [App shell](/docs/proposals/refactors/ui-library/shell)                 | The frame every page sits in, redesigned: navigation, notifications, account, alerts, dialogs | Every page gets the new frame, and more room for its own content                                         |
 | [Context menus](/docs/proposals/refactors/ui-library/context-menus)     | One context menu primitive, opened by right-click, long-press or the keyboard                 | The hand-rolled context menus become one, and the rest of the app gains them where they belong           |
 | [Command palette](/docs/proposals/refactors/ui-library/command-palette) | One palette for navigation and actions, fed by one shortcut registry                          | Anywhere is a keystroke away, and every shortcut in the app is listed in one place                       |
@@ -95,14 +95,13 @@ Icons and schema forms hang off nothing but the foundation, so they can run besi
 
 ## Key files
 
-| File                                                           | Role after the change                                                             |
-| :------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
-| `apps/web/app/components/AgentConsole/Panel/Frame.vue`         | The voxel edge the library's frame is lifted from                                 |
-| `apps/web/app/services/agentConsole/AgentConsolePaletteMap.ts` | The palette the app's tokens are lifted from; it keeps only the world's materials |
-| `apps/web/vuetify.config.ts`                                   | Fed from the tokens during coexistence, deleted at retirement                     |
-| `apps/web/uno.config.ts`                                       | Its theme colours are the tokens, Vuetify's names beside them until retirement    |
-| `apps/web/app/components/Styled/Dialog.vue`                    | The dialog shell, rebuilt on the library and kept as the one shell                |
-| `apps/web/app/App.vue`                                         | Loses its Vuetify app root at retirement                                          |
+| File                                                           | Role after the change                                                            |
+| :------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| `apps/web/app/services/agentConsole/AgentConsolePaletteMap.ts` | The voxel world's palette alone: its materials, and the dusk tokens it paints in |
+| `apps/web/vuetify.config.ts`                                   | Fed from the tokens during coexistence, deleted at retirement                    |
+| `apps/web/uno.config.ts`                                       | Its theme colours are the tokens, Vuetify's names beside them until retirement   |
+| `apps/web/app/components/Styled/Dialog.vue`                    | The dialog shell, rebuilt on the library and kept as the one shell               |
+| `apps/web/app/App.vue`                                         | Loses its Vuetify app root at retirement                                         |
 
 ```text
 apps/web/app/components/Ui/         the library's components, one folder level per compound part

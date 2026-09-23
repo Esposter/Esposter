@@ -7,15 +7,7 @@ const { status } = storeToRefs(agentConsoleConnectionStore);
 </script>
 
 <template>
-  <span :class="status === ConnectionStatus.Connected ? 'connected' : 'warning'" role="status">{{ status }}</span>
+  <span :class="status === ConnectionStatus.Connected ? 'text-success' : 'text-warning'" role="status">{{
+    status
+  }}</span>
 </template>
-
-<style scoped>
-.connected {
-  color: var(--agent-console-success);
-}
-
-.warning {
-  color: var(--agent-console-warning);
-}
-</style>

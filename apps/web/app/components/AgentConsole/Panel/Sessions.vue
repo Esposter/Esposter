@@ -27,8 +27,6 @@ const cwdMenuItems = computed(() =>
     }),
   ),
 );
-const isCwdMenuOpen = ref(false);
-const cwdForm = useTemplateRef("cwdForm");
 const cwdInput = useTemplateRef("cwdInput");
 // Asked on a click, never on load: a permission prompt nobody asked for is one a browser learns to hide
 const isNotificationPermissionDefault = ref(
@@ -39,20 +37,15 @@ const requestNotificationPermission = async () => {
   await Notification.requestPermission();
   isNotificationPermissionDefault.value = Notification.permission === "default";
 };
-
-onClickOutside(cwdForm, () => {
-  isCwdMenuOpen.value = false;
-});
 </script>
 
 <template>
   <div flex flex-col gap-2 min-h-0>
-    <AgentConsolePanelButton v-if="isNotificationPermissionDefault" self-start @click="requestNotificationPermission()">
+    <UiButton v-if="isNotificationPermissionDefault" self-start @click="requestNotificationPermission()">
       Notify me
-    </AgentConsolePanelButton>
+    </UiButton>
     <form
       v-if="status === ConnectionStatus.Connected"
-      ref="cwdForm"
       flex
       gap-2
       @submit.prevent="sendCommand({ cwd: editedCwd, type: CommandType.CreateSession })"
@@ -64,34 +57,24 @@ onClickOutside(cwdForm, () => {
         flex-1
         min-w-0
         placeholder="Start a session in…"
-        @focus="isCwdMenuOpen = true"
-        @keydown.escape.stop="isCwdMenuOpen = false"
+        ui-sunk
       />
-      <AgentConsolePanelPopover
-        v-if="isCwdMenuOpen && cwdMenuItems.length > 0"
-        placement="bottom-start"
-        :reference="cwdInput ?? undefined"
-      >
-        <AgentConsolePanelMenu
-          :items="cwdMenuItems"
-          label="Repositories"
-          min-h-0
-          @keydown.escape.stop="isCwdMenuOpen = false"
-          @select="
-            (cwd) => {
-              editedCwd = cwd;
-              isCwdMenuOpen = false;
-            }
-          "
-        />
-      </AgentConsolePanelPopover>
-      <AgentConsolePanelButton :disabled="!editedCwd" type="submit">New</AgentConsolePanelButton>
+      <UiSuggestions
+        :field="cwdInput ?? undefined"
+        :items="cwdMenuItems"
+        label="Repositories"
+        @select="
+          (cwd) => {
+            editedCwd = cwd;
+          }
+        "
+      />
+      <UiButton :disabled="!editedCwd" type="submit">New</UiButton>
     </form>
     <ul list-none flex flex-col gap-1 of-y-auto>
       <li v-for="{ cwd, id, lastActivityAt, state, title } of displaySessions" :key="id" flex gap-2 items-center>
         <button
-          :class="{ current: id === currentSessionId }"
-          class="session"
+          :class="{ 'bg-accent/20': id === currentSessionId }"
           px-2
           text-left
           flex-1
@@ -108,36 +91,20 @@ onClickOutside(cwdForm, () => {
           "
         >
           <span block truncate>{{ title || "New session" }}</span>
-          <span class="muted" block truncate>{{ cwd }}</span>
+          <span text-muted block truncate>{{ cwd }}</span>
         </button>
         <div flex flex-col items-end>
           <span :style="{ color: SessionStateColorMap[state] }">{{ state }}</span>
-          <NuxtTime class="muted" :datetime="lastActivityAt" relative />
+          <NuxtTime text-muted :datetime="lastActivityAt" relative />
         </div>
-        <AgentConsolePanelButton @click="sendCommand({ messageUuid: '', sessionId: id, type: CommandType.Fork })">
-          Fork
-        </AgentConsolePanelButton>
-        <AgentConsolePanelButton
+        <UiButton @click="sendCommand({ messageUuid: '', sessionId: id, type: CommandType.Fork })"> Fork </UiButton>
+        <UiButton
           v-if="state !== SessionState.Closed"
           @click="sendCommand({ sessionId: id, type: CommandType.CloseSession })"
         >
           Close
-        </AgentConsolePanelButton>
+        </UiButton>
       </li>
     </ul>
   </div>
 </template>
-
-<style scoped>
-.session {
-  background-color: transparent;
-}
-
-.current {
-  background-color: color-mix(in srgb, var(--agent-console-accent) 20%, transparent);
-}
-
-.muted {
-  color: var(--agent-console-muted);
-}
-</style>

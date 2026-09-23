@@ -10,13 +10,13 @@ The [agent console](/docs/infra/claude-interface/agent-console) already has a th
 
 ## What a theme may add
 
-| Part      | What it is                                                                                                                                               | Default theme   |
-| :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Palette   | the colours of the world and its in-game panels                                                                                                          | the world's own |
-| Scene     | the rooms and props of the voxel world, receiving the session's events                                                                                   | a bare room     |
-| Avatar    | who the session is presented as — a name, a colour, a portrait — read from the session                                                                   | none            |
-| Reactions | a map from session event to what the theme does — a pose, a sound, a notification tone — on top of the console's own notification when the tab is hidden | none            |
-| Voice     | how the agent's spoken lines are heard                                                                                                                   | none            |
+| Part      | What it is                                                                                                                                               | Default theme         |
+| :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------- |
+| Palette   | the world's materials, and the tokens inside the console's theme scope for its panels                                                                    | the world's own, dusk |
+| Scene     | the rooms and props of the voxel world, receiving the session's events                                                                                   | a bare room           |
+| Avatar    | who the session is presented as — a name, a colour, a portrait — read from the session                                                                   | none                  |
+| Reactions | a map from session event to what the theme does — a pose, a sound, a notification tone — on top of the console's own notification when the tab is hidden | none                  |
+| Voice     | how the agent's spoken lines are heard                                                                                                                   | none                  |
 
 A theme never removes a part of the [voxel world](/docs/infra/claude-interface/agent-console/voxel-world) that [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) needs. It may only dress the world and furnish it, which is what keeps a theme cheap to write and impossible to make a downgrade. Each part is added to `AgentConsoleTheme` with the first theme that sets it, never ahead of one.
 

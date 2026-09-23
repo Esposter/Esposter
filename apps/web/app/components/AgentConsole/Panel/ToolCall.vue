@@ -41,12 +41,12 @@ const resultPreview = computed(() => {
     <!-- Reads as one thing that opens; a click that ends a selection in the text is left alone -->
     <details :open="isOpen" @toggle="isOpen = ($event.target as HTMLDetailsElement).open">
       <summary flex gap-2 min-w-0 cursor-pointer hover:brightness-150>
-        <AgentConsolePanelSpinner v-if="!toolCall.result" />
-        <UiIcon v-else-if="toolCall.result.isError" class="error" label="Failed" :meaning="UiIconMeaning.Failure" />
-        <UiIcon v-else class="success" label="Succeeded" :meaning="UiIconMeaning.Success" />
+        <UiSpinner v-if="!toolCall.result" />
+        <UiIcon v-else-if="toolCall.result.isError" text-error label="Failed" :meaning="UiIconMeaning.Failure" />
+        <UiIcon v-else text-success label="Succeeded" :meaning="UiIconMeaning.Success" />
         <span>{{ toolCall.toolUse.name }}</span>
-        <span class="muted" flex-1 min-w-0 truncate>{{ summary }}</span>
-        <span class="muted">{{ duration }}</span>
+        <span text-muted flex-1 min-w-0 truncate>{{ summary }}</span>
+        <span text-muted>{{ duration }}</span>
       </summary>
       <pre of-x-auto>{{ JSON.stringify(toolCall.toolUse.input, null, 2) }}</pre>
       <pre
@@ -65,7 +65,7 @@ const resultPreview = computed(() => {
     </details>
     <pre
       v-if="!isOpen && resultPreview"
-      class="muted"
+      text-muted
       pl-4
       cursor-pointer
       ws-pre-wrap
@@ -81,19 +81,7 @@ const resultPreview = computed(() => {
 </template>
 
 <style scoped>
-.success {
-  color: var(--agent-console-success);
-}
-
-.error {
-  color: var(--agent-console-error);
-}
-
-.muted {
-  color: var(--agent-console-muted);
-}
-
 .result {
-  border-top: 0.125rem solid var(--agent-console-panel-edge);
+  border-top: 0.125rem solid var(--ui-panel-edge);
 }
 </style>

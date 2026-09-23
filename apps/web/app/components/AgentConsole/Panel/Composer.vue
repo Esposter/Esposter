@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Attachment } from "agent-console-server/contracts";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PermissionModeMenuItems } from "@/services/agentConsole/PermissionModeTitleMap";
 import { readAttachment } from "@/services/agentConsole/readAttachment";
@@ -88,16 +89,16 @@ onKeyStroke("Escape", () => {
 </script>
 
 <template>
-  <AgentConsolePanelFrame>
-    <AgentConsolePanelButton
+  <UiFrame>
+    <UiButton
       v-if="currentSession?.state === SessionState.Closed"
       @click="sendCommand({ sessionId: currentSessionId, type: CommandType.Resume })"
     >
       Resume this session
-    </AgentConsolePanelButton>
+    </UiButton>
     <template v-else>
       <div v-if="attachments.length > 0" flex flex-wrap gap-1>
-        <AgentConsolePanelButton
+        <UiButton
           v-for="({ name }, index) of attachments"
           :key="index"
           :aria-label="`Remove ${name}`"
@@ -105,44 +106,43 @@ onKeyStroke("Escape", () => {
         >
           {{ name }}
           <UiIcon :meaning="UiIconMeaning.Remove" />
-        </AgentConsolePanelButton>
+        </UiButton>
       </div>
       <textarea
         ref="prompt"
         v-model="text"
         aria-label="Message Claude"
-        field-sizing-content
         max-h="[40vh]"
         placeholder="Message Claude — / for commands, paste or drop a file"
         rows="1"
+        resize-none
+        field-sizing-content
+        ui-sunk
         @drop.prevent="attach($event.dataTransfer?.files)"
-        @keydown.enter.exact.prevent="submit()"
+        @keydown.enter.exact="
+          (event: KeyboardEvent) => {
+            if (event.defaultPrevented) return;
+            event.preventDefault();
+            submit();
+          }
+        "
         @paste="attach($event.clipboardData?.files)"
       />
-      <AgentConsolePanelPopover
-        v-if="commandMenuItems.length > 0"
-        placement="top-start"
-        :reference="prompt ?? undefined"
-      >
-        <AgentConsolePanelMenu
-          :items="commandMenuItems"
-          label="Slash commands"
-          min-h-0
-          @select="
-            (name) => {
-              text = `/${name} `;
-              prompt?.focus();
-            }
-          "
-        />
-      </AgentConsolePanelPopover>
+      <UiSuggestions
+        :field="prompt ?? undefined"
+        :items="commandMenuItems"
+        label="Slash commands"
+        @select="
+          (name) => {
+            text = `/${name} `;
+          }
+        "
+      />
       <div flex flex-wrap gap-2 items-center>
-        <AgentConsolePanelSelect v-model="model" :items="modelMenuItems" label="Model" />
-        <AgentConsolePanelSelect v-model="permissionMode" :items="PermissionModeMenuItems" label="Mode" />
-        <AgentConsolePanelButton v-if="isRunning" is-danger ml-a @click="interrupt()"
-          >Stop (Esc)</AgentConsolePanelButton
-        >
+        <UiSelect v-model="model" :items="modelMenuItems" label="Model" />
+        <UiSelect v-model="permissionMode" :items="PermissionModeMenuItems" label="Mode" />
+        <UiButton v-if="isRunning" :variant="UiButtonVariant.Danger" ml-a @click="interrupt()">Stop (Esc)</UiButton>
       </div>
     </template>
-  </AgentConsolePanelFrame>
+  </UiFrame>
 </template>

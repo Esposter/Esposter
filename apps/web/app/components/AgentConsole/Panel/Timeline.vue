@@ -17,16 +17,10 @@ const { timelineLanes, todoUpdate } = storeToRefs(agentConsoleSessionStore);
   <div flex gap-4 of-x-auto>
     <section v-for="{ id, status, title, toolCalls } of timelineLanes" :key="id" flex flex-1 flex-col gap-1 min-w-0>
       <h3>
-        {{ title }} <span v-if="status" class="muted">· {{ status }}</span>
+        {{ title }} <span v-if="status" text-muted>· {{ status }}</span>
       </h3>
-      <p v-if="toolCalls.length === 0" class="muted">No tool calls yet</p>
+      <p v-if="toolCalls.length === 0" text-muted>No tool calls yet</p>
       <AgentConsolePanelToolCall v-for="toolCall of toolCalls" :key="toolCall.toolUse.id" :tool-call />
     </section>
   </div>
 </template>
-
-<style scoped>
-.muted {
-  color: var(--agent-console-muted);
-}
-</style>

@@ -8,7 +8,7 @@ model: claude-opus-5-5
 
 The app bar is the one piece of Vuetify every page shows, so it is where the new look reaches the most screens in one change. It is also where the migration's permission to rethink rather than repaint matters most. Today's bar is a Material top bar holding a logo, the site's name, a grid of products, the theme toggle, the notification bell and an account menu. It takes a full row off the top of every page, and on a phone every control in it is at the edge furthest from the thumb.
 
-This page decides the frame that replaces it. It depends on the [agent console stage](/docs/proposals/refactors/ui-library/agent-console), which proves the frame, button, menu and loading bar it is built from.
+This page decides the frame that replaces it. It is built from the frame, button, menu and loading bar the agent console stage [shipped](/docs/architecture/ui-library#components).
 
 ## The decision
 

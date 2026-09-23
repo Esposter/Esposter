@@ -27,7 +27,7 @@ const blocks = computed(() =>
       <div v-if="typeof block === 'string'" v-html="block" />
       <div v-else relative>
         <pre p-2 of-x-auto><code>{{ block.text }}</code></pre>
-        <AgentConsolePanelCopyButton :source="block.text" right-1 top-1 absolute />
+        <UiCopyButton :source="block.text" right-1 top-1 absolute />
       </div>
     </template>
   </div>
@@ -36,11 +36,11 @@ const blocks = computed(() =>
 <style scoped>
 .markdown pre,
 .markdown :deep(pre) {
-  background-color: var(--agent-console-background);
+  background-color: var(--ui-background);
 }
 
 .markdown :deep(a) {
-  color: var(--agent-console-info);
+  color: var(--ui-info);
 }
 
 .markdown :deep(:is(ul, ol)) {

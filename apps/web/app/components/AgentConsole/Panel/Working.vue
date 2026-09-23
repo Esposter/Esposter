@@ -42,16 +42,10 @@ const progress = computed(() =>
 <template>
   <div role="status" flex flex-col>
     <span>
-      <AgentConsolePanelSpinner />
+      <UiSpinner />
       {{ sessionState === SessionState.Compacting ? "Compacting the conversation" : `${verb}…` }}
-      <span class="muted">({{ progress }})</span>
+      <span text-muted>({{ progress }})</span>
     </span>
-    <span class="muted" pl-4>Tip: {{ tip }}</span>
+    <span text-muted pl-4>Tip: {{ tip }}</span>
   </div>
 </template>
-
-<style scoped>
-.muted {
-  color: var(--agent-console-muted);
-}
-</style>

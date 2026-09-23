@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PermissionRequestEvent } from "agent-console-server/contracts";
 
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { toFileEdits } from "@/services/agentConsole/toFileEdits";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
@@ -33,7 +34,7 @@ const answer = (behavior: PermissionBehavior) => {
 </script>
 
 <template>
-  <AgentConsolePanelFrame :title="`${permissionRequest.toolName} wants permission`" max-h="[50dvh]">
+  <UiFrame :title="`${permissionRequest.toolName} wants permission`" max-h="[50dvh]">
     <div flex flex-col gap-2 of-y-auto>
       <p v-if="permissionRequest.title || permissionRequest.decisionReason">
         {{ permissionRequest.title }} {{ permissionRequest.decisionReason }}
@@ -51,13 +52,14 @@ const answer = (behavior: PermissionBehavior) => {
       v-model="denyMessage"
       aria-label="Tell Claude what to do instead (on deny)"
       placeholder="Tell Claude what to do instead (on deny)"
+      ui-sunk
     />
     <div flex flex-wrap gap-2>
-      <AgentConsolePanelButton is-active @click="answer(PermissionBehavior.Allow)">Allow</AgentConsolePanelButton>
-      <AgentConsolePanelButton v-if="permissionRequest.hasSuggestions" @click="answer(PermissionBehavior.AllowAlways)">
+      <UiButton :variant="UiButtonVariant.Accent" @click="answer(PermissionBehavior.Allow)">Allow</UiButton>
+      <UiButton v-if="permissionRequest.hasSuggestions" @click="answer(PermissionBehavior.AllowAlways)">
         Allow, and don't ask again
-      </AgentConsolePanelButton>
-      <AgentConsolePanelButton is-danger @click="answer(PermissionBehavior.Deny)">Deny</AgentConsolePanelButton>
+      </UiButton>
+      <UiButton :variant="UiButtonVariant.Danger" @click="answer(PermissionBehavior.Deny)">Deny</UiButton>
     </div>
-  </AgentConsolePanelFrame>
+  </UiFrame>
 </template>

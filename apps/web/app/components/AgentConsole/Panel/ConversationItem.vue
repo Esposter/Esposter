@@ -19,8 +19,8 @@ const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
   <!-- Every message runs the panel's full width with no box of its own, as the terminal prints it: a prompt is told -->
   <!-- Apart by its mark, and each message's actions float over its corner while it is hovered or focused -->
   <div v-if="event.type === AgentEventType.UserMessage" class="group" ws-pre-wrap relative>
-    <span class="prompt-mark">›</span> {{ event.text }}
-    <span v-if="event.attachmentCount > 0" class="muted">[{{ event.attachmentCount }} attached]</span>
+    <span text-accent>›</span> {{ event.text }}
+    <span v-if="event.attachmentCount > 0" text-muted>[{{ event.attachmentCount }} attached]</span>
     <AgentConsolePanelMessageActions is-prompt :message-uuid="event.messageUuid" :text="event.text" />
   </div>
   <div v-else-if="event.type === AgentEventType.AssistantMessage" class="group" relative>
@@ -40,43 +40,31 @@ const { toolCallMap } = storeToRefs(agentConsoleSessionStore);
   <pre v-else-if="event.type === AgentEventType.CommandOutput" class="output" px-3 py-1 ws-pre-wrap>{{
     event.content
   }}</pre>
-  <p v-else-if="event.type === AgentEventType.HostError" class="error" role="alert">{{ event.message }}</p>
-  <p v-else-if="event.type === AgentEventType.Compaction" class="muted" text-center>
+  <p v-else-if="event.type === AgentEventType.HostError" text-error role="alert">{{ event.message }}</p>
+  <p v-else-if="event.type === AgentEventType.Compaction" text-muted text-center>
     — Context compacted · {{ TOKEN_COUNT_FORMAT.format(event.preTokens) }} →
     {{ TOKEN_COUNT_FORMAT.format(event.postTokens) }} tokens —
   </p>
-  <p v-else-if="event.type === AgentEventType.FileRewind" class="muted" text-center>
+  <p v-else-if="event.type === AgentEventType.FileRewind" text-muted text-center>
     — Files rewound · {{ event.filePaths.length }} files · +{{ event.insertions }} −{{ event.deletions }} —
   </p>
-  <p v-else-if="event.type === AgentEventType.TurnResult" class="muted" text-center>
+  <p v-else-if="event.type === AgentEventType.TurnResult" text-muted text-center>
     — {{ event.isError ? event.subtype : "Turn" }} · {{ getDurationSeconds(event.durationMs) }}s ·
     {{ event.numTurns }} requests —
   </p>
-  <details v-else-if="event.type === AgentEventType.Unknown" class="folded muted">
+  <details v-else-if="event.type === AgentEventType.Unknown" class="folded" text-muted>
     <summary>{{ event.sdkType }}</summary>
     <pre of-x-auto>{{ event.raw }}</pre>
   </details>
 </template>
 
 <style scoped>
-.prompt-mark {
-  color: var(--agent-console-accent);
-}
-
 .output {
-  background-color: var(--agent-console-background);
+  background-color: var(--ui-background);
 }
 
 .folded summary {
-  color: var(--agent-console-muted);
+  color: var(--ui-muted);
   cursor: pointer;
-}
-
-.muted {
-  color: var(--agent-console-muted);
-}
-
-.error {
-  color: var(--agent-console-error);
 }
 </style>

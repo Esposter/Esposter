@@ -4,8 +4,8 @@ import { UiToken } from "@/models/ui/UiToken";
 import { UiPaletteMap } from "@@/configuration/UiPaletteMap";
 
 const DuskPalette = UiPaletteMap[UiTheme.Dusk];
-// The world's materials, beside the interface colours it takes from the app's dusk palette: the page stays in dusk
-// Whichever theme the app is in, and the world paints with both kinds as vertex colours
+// The voxel world's palette: its materials, beside the interface colours it paints with, taken from the dusk tokens the
+// Page is scoped to, so the room and the panels over it agree. The panels read the tokens themselves
 export const AgentConsolePaletteMap = {
   [PaletteColor.Accent]: DuskPalette[UiToken.Accent],
   [PaletteColor.Background]: DuskPalette[UiToken.Background],
