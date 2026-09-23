@@ -1,6 +1,6 @@
 ---
 title: Agent console
-description: Proposal — what the agent console still has to build past the host, the Agent SDK driver, the default theme and terminal parity, which have shipped. The console stays open to others through extension tiers. Next come a Genshin theme dressing the work surface from the persona plugin, views that draw the repository's tooling as places, and a terminal-mirror driver for sessions a terminal already holds.
+description: Proposal — what the agent console still has to build past the host, the Agent SDK driver, the default theme and terminal parity, which have shipped. The console stays open to others through extension tiers. Next come a voxel surface replacing the Vuetify one, a Genshin theme dressing it from the persona plugin, views that draw the repository's tooling as places, and a terminal-mirror driver for sessions a terminal already holds.
 model: claude-opus-5-5
 ---
 
@@ -11,7 +11,7 @@ The [agent console](/docs/infra/claude-interface/agent-console) has shipped its 
 ## Decisions
 
 - **The console becomes a game.** The second phase replaces the Vuetify work surface with a full-screen voxel world that has no app bar. DOM panels remain only for typing and for reading text that must be selectable ([voxel surface](/docs/proposals/infra/agent-console/voxel-surface)).
-- **The look is behind a theme.** The default theme is the voxel world with no character. A theme may add a palette, a TresJS scene behind the surface, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
+- **The look is behind a theme.** The default theme is the voxel world with no character. A theme may add a palette, rooms and props in the world, an avatar, reactions and a voice, and Genshin is the first to add them ([themes](/docs/proposals/infra/agent-console/themes)).
 - **Views are separate from themes.** A view is a panel any theme can show, such as the codebase city or the collector harbour, so a repository's tooling is visualised whatever the console is dressed as.
 - **Other tooling joins through tiers, cheapest first.** App routes open in a side pane with no code, external tools arrive through MCP Apps, and a first-party view is written only when a tool needs the scene ([extensions](/docs/proposals/infra/agent-console/extensions)).
 - **A second driver, for sessions the SDK cannot hold.** A session a terminal already runs is attached to from the outside ([terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver)).

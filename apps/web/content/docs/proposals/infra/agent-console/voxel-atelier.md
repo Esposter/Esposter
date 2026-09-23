@@ -10,7 +10,7 @@ A terminal session leaves a diff and a scrollback. The atelier gives it a room: 
 
 ## Scope
 
-**Today:** the work surface lists what the session did, and nothing pictures it.
+**Today:** the [voxel surface](/docs/proposals/infra/agent-console/voxel-surface) is a bare room, and the panels list what the session did without picturing it.
 
 **This adds** one mapping from event to object, and nothing else:
 
