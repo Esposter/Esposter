@@ -15,6 +15,7 @@ The [agent console](/docs/infra/claude-interface/agent-console) has shipped its 
 - **Views are separate from themes.** A view is a panel any theme can show, such as the codebase city or the collector harbour, so a repository's tooling is visualised whatever the console is dressed as.
 - **Other tooling joins through tiers, cheapest first.** App routes open in a side pane with no code, external tools arrive through MCP Apps, and a first-party view is written only when a tool needs the scene ([extensions](/docs/proposals/infra/agent-console/extensions)).
 - **The world is the page.** The console opens over the world as a game's chat does, and the person walks a player through the room and uses a thing by standing at it ([world first](/docs/proposals/infra/agent-console/world-first)).
+- **The room is a building in a world.** Its door opens onto terrain generated from a seed and streamed around the player, an original high-fantasy realm rather than any published one ([open world](/docs/proposals/infra/agent-console/open-world)).
 - **A second driver, for sessions the SDK cannot hold.** A session a terminal already runs is attached to from the outside ([terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver)).
 - **TresJS first; raw Three.js only where TresJS and cientos have nothing,** said on the page of the view that reaches for it, with the reason.
 
@@ -43,6 +44,7 @@ flowchart LR
 | [Workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison)       | today's terminal workflow against the console's, task by task, and the costs |
 | [Runtime budget](/docs/proposals/infra/agent-console/runtime-budget)                 | what the views and themed rooms may cost, and the techniques that hold them  |
 | [World first](/docs/proposals/infra/agent-console/world-first)                       | the world as the page, the console an overlay, a player walked through it    |
+| [Open world](/docs/proposals/infra/agent-console/open-world)                         | the room as a building in a generated world, streamed in chunks              |
 | [Terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver) | attaching to a session a terminal runs, through its transcript and a channel |
 | [Extensions](/docs/proposals/infra/agent-console/extensions)                         | how other tooling joins — app routes, MCP Apps, first-party views            |
 | [Themes](/docs/proposals/infra/agent-console/themes)                                 | the parts a theme adds past the default, and the Genshin theme               |
@@ -58,8 +60,9 @@ flowchart LR
 1. **Close the parity gaps** the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) page names: a merged diff per file and a rewind that restores files. Then do one day's work in the console alone, with every return to the terminal written into the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison).
 2. **World first**: the console overlay, then the player, then interaction.
 3. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience, all inside the world.
-4. **Views**: the collector harbour first, the city after, walked by the world-first player.
-5. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.
+4. **The open world**: terrain around the room, then biomes, then places for the views.
+5. **Views**: the collector harbour first, the city after, walked by the player.
+6. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.
 
 ## What this does not propose
 
