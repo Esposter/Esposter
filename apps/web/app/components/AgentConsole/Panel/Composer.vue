@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ImageAttachment } from "agent-console-server/contracts";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PermissionModeMenuItems } from "@/services/agentConsole/PermissionModeTitleMap";
 import { readImageAttachment } from "@/services/agentConsole/readImageAttachment";
 import { toSlashCommand } from "@/services/agentConsole/toSlashCommand";
@@ -102,7 +103,8 @@ onKeyStroke("Escape", () => {
           :aria-label="`Remove ${mediaType}`"
           @click="images = images.toSpliced(index, 1)"
         >
-          {{ mediaType }} ×
+          {{ mediaType }}
+          <UiIcon :meaning="UiIconMeaning.Remove" />
         </AgentConsolePanelButton>
       </div>
       <textarea

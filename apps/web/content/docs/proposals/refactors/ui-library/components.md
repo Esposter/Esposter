@@ -19,6 +19,7 @@ A component is added to the library when the first stage needs it, never ahead o
 
 | Component group         | Vuetify 0 primitive                           | Replaces                                                                                  | First needed by |
 | :---------------------- | :-------------------------------------------- | :---------------------------------------------------------------------------------------- | :-------------- |
+| Icon                    | none                                          | the Vuetify icon, and the text glyphs the console drew as marks                           | icons, shipped  |
 | Frame                   | none                                          | the console's panel frame, card, sheet, the Styled card                                   | agent console   |
 | Button, icon button     | Button                                        | the console's panel button, the Vuetify button, the Styled button and tooltip icon button | agent console   |
 | Popover                 | Popover, on the browser's top layer           | the console's popover and its Floating UI positioning                                     | agent console   |

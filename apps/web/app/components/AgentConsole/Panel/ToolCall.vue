@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ToolCall } from "@/models/agentConsole/ToolCall";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { RESULT_PREVIEW_LINE_COUNT } from "@/services/agentConsole/constants";
 import { getDurationSeconds } from "@/services/agentConsole/getDurationSeconds";
 
@@ -38,8 +39,8 @@ const resultPreview = computed(() => {
     <details @toggle="isOpen = !isOpen">
       <summary flex gap-2 min-w-0 cursor-pointer>
         <AgentConsolePanelSpinner v-if="!toolCall.result" />
-        <span v-else-if="toolCall.result.isError" class="error">✗</span>
-        <span v-else class="success">✓</span>
+        <UiIcon v-else-if="toolCall.result.isError" class="error" label="Failed" :meaning="UiIconMeaning.Failure" />
+        <UiIcon v-else class="success" label="Succeeded" :meaning="UiIconMeaning.Success" />
         <span>{{ toolCall.toolUse.name }}</span>
         <span class="muted" flex-1 min-w-0 truncate>{{ summary }}</span>
         <span class="muted">{{ duration }}</span>

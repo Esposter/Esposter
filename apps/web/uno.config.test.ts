@@ -393,7 +393,7 @@ describe("unoConfig", () => {
     for (const path of globSync("{app,shared}/**/*.{ts,vue}", { cwd: import.meta.dirname })) {
       if (path.endsWith(".test.ts")) continue;
       const code = readFileSync(`${import.meta.dirname}/${path}`, "utf8");
-      const icons = code.match(/i-mdi:[\da-z-]+/gu);
+      const icons = code.match(/i-[\da-z]+:[\da-z-]+/gu);
       if (!icons) continue;
       if (path.endsWith(".ts") && !code.includes("@unocss-include")) {
         missingIcons.push(path);

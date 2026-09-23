@@ -1,6 +1,8 @@
 <script setup lang="ts" generic="T extends string">
 import type { MenuItem } from "@/models/agentConsole/MenuItem";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+
 interface Props {
   items: MenuItem<T>[];
   label: string;
@@ -25,7 +27,8 @@ onClickOutside(select, () => {
       aria-haspopup="listbox"
       @click="isOpen = !isOpen"
     >
-      {{ items.find(({ value }) => value === modelValue)?.title ?? label }} ▴
+      {{ selectedTitle }}
+      <UiIcon :meaning="UiIconMeaning.Dropdown" />
     </AgentConsolePanelButton>
     <!-- Opens upward where there is room, as most selects sit at the foot of a panel, and flips below where not -->
     <AgentConsolePanelPopover v-if="isOpen" placement="top-start" :reference="select ?? undefined">

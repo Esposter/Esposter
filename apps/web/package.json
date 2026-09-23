@@ -197,6 +197,7 @@
     "@esposter/db-mock": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@iconify-json/mdi": "catalog:",
+    "@iconify-json/pixelarticons": "catalog:",
     "@json-layout/vocabulary": "catalog:",
     "@nuxt/content": "catalog:",
     "@nuxt/eslint": "catalog:",

@@ -41,6 +41,8 @@ flowchart TD
   S[An icon name in source, written in full] --> X[UnoCSS's extractor]
   A[Vuetify's own aliases: a select's arrow, a checkbox's mark] -->|safelisted| G
   X --> G[That icon's rule alone: its SVG as a mask in the current colour]
+  L[A library component: an icon by what it means] --> M[UiIconMap: the pixel set first, Material as the fallback]
+  M --> X
   G --> V[A Vuetify icon prop, through the module's UnoCSS icon set]
   G --> P[The page ships the icons it draws and nothing else]
 ```
@@ -49,6 +51,9 @@ flowchart TD
 - **A name is written in full**, as "i-mdi:" and the icon's name, because the preset generates only what its extractor finds in source. A name assembled from a prefix and a variable generates nothing and draws an empty box, so it is a review finding. The extractor reads components and markup but not plain TypeScript, which would hand every string in the app to the attributify extractor and break the stylesheet on the first one that looks like an attribute, so a `.ts` file that names an icon opts in with UnoCSS's `@unocss-include` comment on its first line. A `v-icon` takes its icon as the `icon` prop, never as text content, which the extractor does not read. A test generates the icons each source file names and fails on any it cannot find, or on a `.ts` file naming one without the comment.
 - **Vuetify draws through the same CSS.** Its default set is the module's "unocss-mdi", which hands the class to Vuetify's class icon. Vuetify's internal icons are aliases no source file names, and the module maps only some of them, so `vuetify.config.ts` maps every alias Vuetify defines from Vuetify's own list and `uno.config.ts` safelists the result.
 - **The custom component icons** — the anime and dungeon gate marks — stay components in the custom set. The app's Vuetify plugin adds that set to the module's icon configuration rather than replacing it, which would drop the aliases.
+- **The library's icons are pixel icons, named by meaning.** `Ui/Icon.vue` takes a `UiIconMeaning` — what the icon says, such as success or remove — and `UiIconMap` resolves it to a class: [Pixelarticons](https://pixelarticons.com/) first, a set drawn on a pixel grid to sit on a voxel surface, and a Material Design Icons class for a meaning it has no glyph for. Swapping sets is one map edit, a fallback is a row in the map, and a feature never names a set. Vuetify's components keep their Material icons until their unit migrates.
+- **A pixel icon renders at 1.5rem**, the size of its 24-unit grid, so every unit is a whole CSS pixel; any other size blurs the grid.
+- **An icon is decoration unless it is labelled.** Without a label it is hidden from assistive technology; with one it is an image with that name, for an icon that says what nothing beside it does — a tool call's success or failure mark.
 - **Under Vitest the UnoCSS module is not loaded**, so the module falls back to Vuetify's plain class set: an icon still carries its class, which is what a test finds it by, and nothing draws it.
 
 ## One owner per concern
@@ -94,6 +99,9 @@ A feature never imports Vuetify 0. Only the library does — its components, com
 | `apps/web/configuration/UiPaletteMap.test.ts`     | Every foreground token against every surface token, at the WCAG AA ratio                              |
 | `apps/web/configuration/ThemeModeUiThemeMap.ts`   | The library theme each of Vuetify's resolved modes selects                                            |
 | `apps/web/app/models/ui/UiToken.ts`               | The token names                                                                                       |
+| `apps/web/app/models/ui/UiIconMeaning.ts`         | What each library icon says                                                                           |
+| `apps/web/app/services/ui/UiIconMap.ts`           | Each meaning's icon class: the pixel set first, Material as the fallback                              |
+| `apps/web/app/components/Ui/Icon.vue`             | The icon element, by meaning, decorative unless labelled                                              |
 | `apps/web/app/plugins/ui.ts`                      | Vuetify 0's hydration and theme plugins, the theme through the Unhead adapter                         |
 | `apps/web/app/composables/ui/useSelectUiTheme.ts` | Selects the library theme matching a Vuetify mode                                                     |
 | `apps/web/app/components/Nuxt/Theme.vue`          | Resolves the mode once and selects it in both libraries                                               |
@@ -113,5 +121,6 @@ A feature never imports Vuetify 0. Only the library does — its components, com
 - [AI tools](https://0.vuetifyjs.com/guide/tooling/ai-tools), Vuetify 0: the skill and the markdown twin of every docs page.
 - [Icons preset](https://unocss.dev/presets/icons), UnoCSS: icons as generated CSS masks from Iconify JSON, emitted only for the names the extractor finds.
 - [Vuetify Nuxt module](https://nuxt.vuetifyjs.com/), its icons option: the "unocss-mdi" set and the aliases it maps.
+- [Pixelarticons](https://pixelarticons.com/): the pixel icon set and its MIT licence.
 - [scrollbar-color](https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color), MDN: the standard scrollbar properties the chrome sets.
 - [Success criterion 1.4.3](https://www.w3.org/TR/WCAG22/#contrast-minimum), WCAG 2.2: the AA threshold the palette test holds each pair to.
