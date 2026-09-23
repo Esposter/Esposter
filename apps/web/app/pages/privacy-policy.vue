@@ -9,7 +9,8 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
 </template>
 
 <style scoped>
-/* The policy is a document from outside the app, so its elements take the library's type here rather than a class */
+/* The policy is a document from outside the app, so its elements take the library's type here rather than a class,
+   and its links the link colour, underlined on hover */
 .privacy-policy :deep(:is(p, ul)) {
   margin-block: 1em;
 }
@@ -39,7 +40,11 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
 }
 
 .privacy-policy :deep(a) {
-  color: var(--ui-accent);
-  text-underline-offset: 0.25em;
+  color: var(--ui-info);
+  text-decoration: none;
+}
+
+.privacy-policy :deep(a:hover) {
+  text-decoration: underline;
 }
 </style>
