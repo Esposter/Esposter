@@ -29,33 +29,31 @@ describe(generateChunk, () => {
     expect.hasAssertions();
 
     // Across the room's left wall, so the room's stamp is held to the border as well as the ground
-    const leftGrid = generateChunk({ chunkX: -1, chunkZ: 0, isDoorOpen: true });
-    const rightGrid = generateChunk({ chunkX: 0, chunkZ: 0, isDoorOpen: true });
+    const leftGrid = generateChunk({ chunkX: -1, chunkZ: 0 });
+    const rightGrid = generateChunk({ chunkX: 0, chunkZ: 0 });
 
     expect(getBorder(leftGrid, CHUNK_GRID_SIZE - 2 * CHUNK_BORDER)).toStrictEqual(getBorder(rightGrid, 0));
   });
 
-  test.each([false, true])("stamps the door with isDoorOpen %s in its wall on level ground", (isDoorOpen) => {
+  test("leaves the door's opening in its wall clear, on level ground", () => {
     expect.hasAssertions();
 
     const voxelWorld = new Map([
-      [getChunkKey(0, 0), generateChunk({ chunkX: 0, chunkZ: 0, isDoorOpen })],
-      [getChunkKey(-1, 0), generateChunk({ chunkX: -1, chunkZ: 0, isDoorOpen })],
+      [getChunkKey(0, 0), generateChunk({ chunkX: 0, chunkZ: 0 })],
+      [getChunkKey(-1, 0), generateChunk({ chunkX: -1, chunkZ: 0 })],
     ]);
-    const doorVoxel = PaletteColors.indexOf(PaletteColor.Door) + 1;
-    const doorway = Array.from({ length: DOOR_HEIGHT }, (_, index) => [
-      getWorldVoxel(voxelWorld, 0, index + 1, DOOR_MIN_Z),
-      getWorldVoxel(voxelWorld, 0, index + 1, DOOR_MAX_Z),
-    ]).flat();
-
-    // A player's height either side of the opening, which nothing the room is furnished with may stand in
-    const approach = [-1, 1].flatMap((x) =>
-      [1, 2].flatMap((y) => [DOOR_MIN_Z, DOOR_MAX_Z].map((z) => getWorldVoxel(voxelWorld, x, y, z))),
+    // The opening, and a player's height either side of it, which nothing the room is furnished with may stand in
+    const doorway = [-1, 0, 1].flatMap((x) =>
+      Array.from({ length: DOOR_HEIGHT }, (_, index) =>
+        [DOOR_MIN_Z, DOOR_MAX_Z].map((z) => getWorldVoxel(voxelWorld, x, index + 1, z)),
+      ).flat(),
     );
 
-    expect(doorway).toStrictEqual(Array.from({ length: 2 * DOOR_HEIGHT }, () => (isDoorOpen ? 0 : doorVoxel)));
-    expect(approach).toStrictEqual(Array.from({ length: 8 }, () => 0));
+    expect(doorway).toStrictEqual(Array.from({ length: 3 * 2 * DOOR_HEIGHT }, () => 0));
+    // The lintel over the opening, and the ground outside it
+    expect(getWorldVoxel(voxelWorld, 0, DOOR_HEIGHT + 1, DOOR_MIN_Z)).toBe(
+      PaletteColors.indexOf(PaletteColor.Wood) + 1,
+    );
     expect(getWorldVoxel(voxelWorld, -1, 0, DOOR_MIN_Z)).toBe(PaletteColors.indexOf(PaletteColor.Grass) + 1);
-    expect(getWorldVoxel(voxelWorld, -1, 1, DOOR_MAX_Z + 1)).toBe(isDoorOpen ? doorVoxel : 0);
   });
 });

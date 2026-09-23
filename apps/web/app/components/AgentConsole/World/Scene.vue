@@ -34,6 +34,7 @@ const changedFileCount = computed(() => new Set(fileEdits.value.map(({ filePath 
 
 <template>
   <AgentConsoleWorldChunks />
+  <AgentConsoleWorldDoor />
   <AgentConsoleWorldPlayer :player-input />
   <AgentConsoleWorldPrompt :player-input />
   <AgentConsoleWorldFigure v-for="{ id, isMain, position } of worldFigures" :key="id" :is-main :position />

@@ -13,19 +13,26 @@ export const DOOR_MIN_Z = 8;
 export const DOOR_MAX_Z = 9;
 export const DOOR_HEIGHT = 4;
 export const DOOR_POSITION: Vector3Tuple = [1.5, 1, 9];
-// The door, darker than the timber framing it, fills its opening while it is closed, and swung open outward on a hinge
-// At the opening's far edge, it stands straight out from the wall, as wide as the opening. It is used from the middle
-// Of the opening, so from either side
+// The door, darker than the timber framing it, fills its opening while it is closed: its voxels are what the player
+// Collides with, and it is used from the middle of the opening, so from either side. It is drawn apart from them as a
+// Panel three sixteenths thick hung on the wall's outer face, swinging outward a quarter turn about a hinge at the
+// Opening's far edge, where it stands straight out from the wall, as wide as the opening, over the ground outside
 export const DOOR_CLOSED_BOX: VoxelBox = {
   color: PaletteColor.Door,
   max: [0, DOOR_HEIGHT, DOOR_MAX_Z],
   min: [0, 1, DOOR_MIN_Z],
 };
-export const DOOR_OPEN_BOX: VoxelBox = {
-  color: PaletteColor.Door,
+export const DOOR_OPEN_BOX: Pick<VoxelBox, "max" | "min"> = {
   max: [-1, DOOR_HEIGHT, DOOR_MAX_Z + 1],
   min: [DOOR_MIN_Z - DOOR_MAX_Z - 1, 1, DOOR_MAX_Z + 1],
 };
+export const DOOR_HINGE_POSITION = new Vector3(0, 1, DOOR_MAX_Z + 1);
+const DOOR_THICKNESS = 3 / 16;
+export const DOOR_PANEL_POSITION = new Vector3(-DOOR_THICKNESS, 0, DOOR_MIN_Z - DOOR_MAX_Z - 1);
+export const DOOR_PANEL_SCALE = new Vector3(DOOR_THICKNESS, DOOR_HEIGHT, DOOR_MAX_Z - DOOR_MIN_Z + 1);
+export const DOOR_OPEN_ANGLE = Math.PI / 2;
+// The swing takes the UI's medium duration, four of its motion units, which reduced motion makes none
+export const DOOR_SWING_MOTION_UNITS = 4;
 export const DOOR_STAND_POSITION: Vector3Tuple = [0.5, 1, (DOOR_MIN_Z + DOOR_MAX_Z + 1) / 2];
 // Where the main agent stands while it is not using a tool
 export const HOME_POSITION: Vector3Tuple = [8, 1, 6.5];

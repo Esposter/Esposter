@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type { ChunkPosition } from "@/models/agentConsole/world/ChunkPosition";
-import type { ChunkRequest } from "@/models/agentConsole/world/ChunkRequest";
 import type { GeneratedChunk } from "@/models/agentConsole/world/GeneratedChunk";
 import type { Group } from "three";
 
 import { CHUNK_SIZE, MAX_REQUESTED_CHUNK_COUNT } from "@/services/agentConsole/world/constants";
 import { createVoxelMeshGeometry } from "@/services/agentConsole/world/createVoxelMeshGeometry";
-import { DoorChunkPositions } from "@/services/agentConsole/world/DoorChunkPositions";
 import { getChunkKey } from "@/services/agentConsole/world/getChunkKey";
+import { stampDoor } from "@/services/agentConsole/world/stampDoor";
 import { getViewReach } from "@/services/agentConsole/world/getViewReach";
 import { useAgentConsolePlayerStore } from "@/store/agentConsole/player";
 import { useAgentConsoleWorldStore } from "@/store/agentConsole/world";
@@ -40,11 +39,10 @@ let isSettled = false;
 // Nothing in a chunk this far out is nearer than this many chunks' width
 const getChunkGap = (chunkX: number, chunkZ: number) =>
   Math.hypot(Math.max(Math.abs(chunkX - centerChunkX) - 1, 0), Math.max(Math.abs(chunkZ - centerChunkZ) - 1, 0));
-const requestChunk = ({ chunkX, chunkZ }: ChunkPosition) => {
-  requestedChunkKeys.add(getChunkKey(chunkX, chunkZ));
-  const chunkRequest: ChunkRequest = { chunkX, chunkZ, isDoorOpen: isDoorOpen.value };
+const requestChunk = (chunkPosition: ChunkPosition) => {
+  requestedChunkKeys.add(getChunkKey(chunkPosition.chunkX, chunkPosition.chunkZ));
   // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
-  worker.postMessage(chunkRequest);
+  worker.postMessage(chunkPosition);
 };
 const requestQueuedChunks = () => {
   while (requestedChunkKeys.size < MAX_REQUESTED_CHUNK_COUNT) {
@@ -65,12 +63,7 @@ worker.addEventListener(
     // Thrown away if the player walked out of its range before it came back
     if (!chunks.value || getChunkGap(chunkX, chunkZ) >= loadDistance + 1) return;
     voxelWorld.set(chunkKey, voxelGrid);
-    // A chunk generated again, around the door, takes its old mesh's place
-    const oldMesh = chunkMeshes.get(chunkKey);
-    if (oldMesh) {
-      chunks.value.remove(oldMesh);
-      oldMesh.geometry.dispose();
-    }
+    stampDoor(voxelWorld, isDoorOpen.value);
     const geometry = createVoxelMeshGeometry(voxelMesh);
     const mesh = new Mesh(geometry, material);
     mesh.position.set(chunkX * CHUNK_SIZE, 0, chunkZ * CHUNK_SIZE);
@@ -124,10 +117,10 @@ onBeforeRender(({ camera }) => {
   queuedChunkPositions = missingChunkPositions.toSorted((first, second) => getUrgency(first) - getUrgency(second));
   requestQueuedChunks();
 });
-// Opening or closing the door generates the chunks it stands in again, so its voxels, and so what the player collides
-// With, follow it
-watch(isDoorOpen, () => {
-  for (const chunkPosition of DoorChunkPositions) requestChunk(chunkPosition);
+// The door is drawn apart from the chunks, so opening or closing it only writes its voxels, which the player collides
+// With, into the chunk that holds them
+watch(isDoorOpen, (newIsDoorOpen) => {
+  stampDoor(voxelWorld, newIsDoorOpen);
 });
 
 onUnmounted(() => {

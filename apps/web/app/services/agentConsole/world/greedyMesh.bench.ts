@@ -39,8 +39,8 @@ describe(greedyMesh, () => {
 
   // A chunk of the world as the worker meshes it, inside its border of its neighbours' voxels: the room's, and the hills'
   test("terrain chunk", async ({ bench }) => {
-    const spawnGrid = generateChunk({ chunkX: 0, chunkZ: 0, isDoorOpen: false });
-    const hillsGrid = generateChunk({ chunkX: 3, chunkZ: 2, isDoorOpen: false });
+    const spawnGrid = generateChunk({ chunkX: 0, chunkZ: 0 });
+    const hillsGrid = generateChunk({ chunkX: 3, chunkZ: 2 });
     await bench.compare(
       bench("spawn", () => {
         greedyMesh(spawnGrid, PaletteRgbs, CHUNK_BORDER);
