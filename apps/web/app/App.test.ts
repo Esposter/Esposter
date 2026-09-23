@@ -19,7 +19,8 @@ describe("app", () => {
           { eager: true, import: "default" },
         ),
       ).map(async ([filepath, component]) => {
-        const mountedComponent = await mountSuspended(component);
+        // A WebGL scene has no canvas to draw on here, and the Tres module is outside Vitest's allowlist
+        const mountedComponent = await mountSuspended(component, { global: { stubs: { VisualGem: true } } });
         const filename = trimFileExtension(filepath);
 
         await expect(mountedComponent.html()).toMatchFileSnapshot(`__snapshots__/${filename}.html`);
