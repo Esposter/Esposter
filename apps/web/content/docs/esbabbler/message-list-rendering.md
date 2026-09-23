@@ -11,7 +11,7 @@ The message list renders every loaded message as live DOM (no virtualization yet
 
 `MessageModelMessageListContainer` renders one `MessageModelMessageListItem` per message. Each item is wrapped in a `display: contents` div so the message component and its overlapping options menu stay direct flex children of the column-reversed `v-list` while sharing one `mouseenter`/`mouseleave` region — hovering either keeps the toolbar alive, with no unmount race when the pointer crosses between them.
 
-The options menu (reaction buttons, emoji picker, edit/reply/forward buttons, the "More" context menu) is mounted with `v-if` only for the item that is hovered, the context-menu target (`messageStore.optionsMenu`), or has one of its menus open — so exactly one instance of that Vuetify-overlay-heavy subtree exists at a time. Right-clicking a message sets `optionsMenu = { rowKey, target: [x, y] }`, which both mounts the toolbar on that item and opens its "More" menu at the pointer.
+The options menu (reaction buttons, emoji picker, edit/reply/forward buttons, the "More" menu) is mounted with `v-if` only for the item that is hovered, has one of its menus open (`messageStore.optionsMenuRowKey`), or is the target of a context menu — so exactly one instance of that Vuetify-overlay-heavy subtree exists at a time. It is also the only place a message's action items are built, so a right-click, long press or menu key on a message records the point as `messageStore.contextMenuRequest`, which mounts the options menu on that item; the options menu then opens the app's one [context menu](/docs/architecture/ui-library#context-menus) at that point with the "More" menu's sections.
 
 The confirm dialogs follow the repo-wide [singleton dialog standard](/docs/architecture/singleton-dialogs): `MessageModelMessageList` mounts one `ConfirmDeleteDialog` and one `ConfirmPinDialog`, driven by the message dialog store's `deletingRowKey` / `pinningRowKey` targets. Action items (`useMessageActionItems`) write those store refs directly instead of threading emit chains through the component tree.
 
@@ -20,7 +20,9 @@ flowchart TD
     C[List/Container.vue - one Item per message] --> I[List/Item.vue - display:contents hover wrapper]
     I -->|always mounted| M[Message component via MessageComponentMap]
     I -->|v-if hovered or menu open| O[OptionsMenu - reactions, picker, More menu]
-    M -->|contextmenu sets optionsMenu| S[(messageStore)]
+    M -->|right-click sets contextMenuRequest| S[(messageStore)]
+    S -->|mounts over the target| O
+    O -->|opens with its items| CM[UiContextMenuHost]
     O -->|action item writes deletingRowKey / pinningRowKey| DS[(messageDialogStore)]
     DS -->|deletingRowKey| D[ConfirmDeleteDialog - singleton in List/Index.vue]
     DS -->|pinningRowKey| P[ConfirmPinDialog - singleton in List/Index.vue]
@@ -67,12 +69,12 @@ The emoji index follows the same once-for-the-whole-list rule from the other dir
 | `apps/web/app/components/Message/Model/Message/ConfirmPinDialog.vue`    | Store-driven pin dialog singleton                             |
 | `apps/web/app/composables/message/message/useMessageActionItems.ts`     | Action items writing store targets directly                   |
 | `apps/web/app/services/message/emoji/getEmojiIndex.ts`                  | Shared emoji index, built once on first use                   |
-| `apps/web/app/store/message/index.ts`                                   | `optionsMenu`, `editingRowKey`                                |
+| `apps/web/app/store/message/index.ts`                                   | `optionsMenuRowKey`, `contextMenuRequest`, `editingRowKey`    |
 | `apps/web/app/store/message/dialog.ts`                                  | Dialog targets: `deletingRowKey`, `pinningRowKey`             |
 
 ## Notes
 
-- One options-menu store write must never fan out re-renders: per-item computeds (`isDisabled`, `isContextMenuTarget`) only propagate when their own value changes, so untargeted items stay untouched.
+- One options-menu or context-menu store write must never fan out re-renders: per-item computeds (`isDisabled`, `isMenuTarget`) only propagate when their own value changes, so untargeted items stay untouched.
 - Where the list is anchored — present detection, jump-to-present, bidirectional paging — is
   [message list scrolling](/docs/esbabbler/message-list-scrolling).
 - List virtualization is the remaining lever if very long scrollback sessions become a problem.

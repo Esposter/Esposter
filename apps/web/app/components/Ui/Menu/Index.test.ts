@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
-import UiMenu from "@/components/Ui/Menu.vue";
+import UiMenu from "@/components/Ui/Menu/Index.vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test } from "vitest";
 

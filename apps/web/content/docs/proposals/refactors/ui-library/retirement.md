@@ -42,7 +42,7 @@ The theme hand-off also removes the client hint. Vuetify needs to know the brows
 
 ## Once it lands
 
-The design becomes as-built. The [design language](/docs/proposals/refactors/ui-library/design-language) and the [components](/docs/proposals/refactors/ui-library/components) catalogue are rewritten as an architecture standard, since they are the repository's answer to how any interface is drawn. The [context menus](/docs/proposals/refactors/ui-library/context-menus) and the [command palette](/docs/proposals/refactors/ui-library/command-palette) become standards of their own, as the search standard is. The staging pages are one-time changes, so they are deleted, with one line in the architecture index's log.
+The design becomes as-built. The [design language](/docs/proposals/refactors/ui-library/design-language) and the [components](/docs/proposals/refactors/ui-library/components) catalogue are rewritten as an architecture standard, since they are the repository's answer to how any interface is drawn. The [context menus](/docs/architecture/ui-library#context-menus), already on the architecture page, and the [command palette](/docs/proposals/refactors/ui-library/command-palette) become standards of their own, as the search standard is. The staging pages are one-time changes, so they are deleted, with one line in the architecture index's log.
 
 ## Key files
 

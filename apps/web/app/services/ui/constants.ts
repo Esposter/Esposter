@@ -14,5 +14,11 @@ export const POPOVER_POSITION_TRY = "flip-block, flip-inline, flip-block flip-in
 // Where a tooltip opens against what it names: above it, unless the region around it says otherwise through the custom
 // Property, as the dock's rail does to open them beside it
 export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";
+// How long a finger rests on a touch screen before the context menu opens under it, the platforms' own long press
+export const LONG_PRESS_MS = Temporal.Duration.from({ milliseconds: 500 }).total("milliseconds");
+// How far a resting finger may drift, in CSS pixels, before the press counts as the start of a scroll instead
+export const LONG_PRESS_MOVE_TOLERANCE = 10;
+// Where the browser's own context menu is worth more than ours: in a field, with its spell-check and paste
+export const CONTEXT_MENU_EDITABLE_SELECTOR = 'input, textarea, [contenteditable=""], [contenteditable="true"]';
 // The library's own tooltips, apart from any a primitive opens under its default namespace
 export const TOOLTIP_NAMESPACE = "ui:tooltip";

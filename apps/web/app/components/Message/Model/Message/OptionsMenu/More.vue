@@ -16,26 +16,19 @@ interface Props {
 const { actionMessageItems, deleteMessageItem, rowKey, updateMessageMenuItems } = defineProps<Props>();
 const emit = defineEmits<{ "update:menu": [value: boolean]; "update:select-emoji": [emoji: string] }>();
 const messageStore = useMessageStore();
-const { optionsMenu } = storeToRefs(messageStore);
-const moreMenuProps = computed(() => ({
-  location: "left" as const,
-  target: optionsMenu.value?.target,
-  transition: "none",
-}));
+const { optionsMenuRowKey } = storeToRefs(messageStore);
 </script>
 
 <template>
   <StyledTooltipMenuIconButton
-    :model-value="optionsMenu?.rowKey === rowKey"
+    :model-value="optionsMenuRowKey === rowKey"
     icon="i-mdi:dots-horizontal"
     text="More"
     :button-props="{ class: 'm-0', size: 'small', tile: true }"
-    :menu-props="moreMenuProps"
+    :menu-props="{ location: 'left', transition: 'none' }"
     @update:model-value="
       (value) => {
-        // We just need to set a placeholder so that the menu will appear
-        if (value) optionsMenu = { rowKey, target: 'true' };
-        else optionsMenu = undefined;
+        optionsMenuRowKey = value ? rowKey : '';
         emit('update:menu', value);
       }
     "
@@ -63,7 +56,7 @@ const moreMenuProps = computed(() => ({
         @select="
           (emojiTag) => {
             emit('update:select-emoji', emojiTag);
-            optionsMenu = undefined;
+            optionsMenuRowKey = '';
             emit('update:menu', false);
           }
         "

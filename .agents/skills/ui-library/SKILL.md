@@ -52,6 +52,7 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **A menu item is data** — a `UiMenuItem` list — so a context menu and an overflow button can share one list later.
 - **A modal stays on Vuetify's overlay until its content is library-only.** Vuetify 0's dialog is in the top layer, where every Vuetify menu, select and tooltip its content opens renders underneath and inert. The dialog shell and the page drawers wear the library's look over Vuetify's behaviour; a popover is not modal, so its content is the library's own and holds nothing that opens a Vuetify overlay.
 - **A name shown on hover is a `UiTooltip`**, its activator props bound onto the element, never a `title` attribute, which the browser draws in its own look.
+- **Right-click actions go through the one context menu**: bind `useContextMenu`'s props with the same `Item` list the overflow button shows, never a menu positioned by hand.
 - **A toast goes through the app's one stack** (`AppToastStack`), as a `UiToast` fed by the store that owns that kind of toast — never a snackbar of its own.
 - **A fixed region starts past the dock**: subtract `--dock-inset-inline-start` and `--dock-inset-block-end`, never a bar's height.
 

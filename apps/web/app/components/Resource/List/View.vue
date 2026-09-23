@@ -81,10 +81,7 @@ watch([isSummaryView, filterKey], async ([newIsSummaryView]) => {
 });
 const { visibleHeaders } = useResourceListColumns(source);
 const { clearSelection, selectedIds, selectedResources, updateSelection } = useResourceSelection(items);
-const contextMenuId = ref("");
-const contextMenuPosition = ref<[number, number]>([0, 0]);
-const { isOpen: isContextMenuOpen } = useSingletonDialog(contextMenuId);
-const contextMenuResource = computed(() => items.value.find(({ id }) => id === contextMenuId.value));
+const { getContextMenuProps } = useContextMenu();
 // Held open across a list read — typing into the search box replaces `items` — so the target is dropped with
 // The row rather than re-opening the dialog when a later read brings it back
 const { isOpen: isRenameOpen, item: renamingResource } = useSingletonDialog(renamingId, () =>
@@ -95,11 +92,6 @@ const deletingResource = computed(() => items.value.find(({ id }) => id === dele
 const deleteResources = useDeleteResources(items, count, refresh);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<ResourceListItem>) =>
   navigateTo(RoutePath.Resource(item.id));
-const onContextMenuRow = (event: MouseEvent, { item }: ItemSlot<ResourceListItem>) => {
-  event.preventDefault();
-  contextMenuPosition.value = [event.clientX, event.clientY];
-  contextMenuId.value = item.id;
-};
 const onUpdateOptions = async (options: ReadResourcesOptions) => {
   itemsPerPage.value = options.itemsPerPage;
   page.value = options.page;
@@ -171,10 +163,12 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
       :loading="isPending"
       :model-value="selectedIds"
       :page
+      :row-props="
+        ({ item }) => getContextMenuProps(item.id, () => resourceIdActionItemsMap.get(item.id) ?? NO_ACTION_ITEMS)
+      "
       :search="filterKey"
       :sort-by
       @click:row="onClickRow"
-      @contextmenu:row="onContextMenuRow"
       @update:model-value="updateSelection"
       @update:options="onUpdateOptions"
     >
@@ -202,12 +196,6 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         <ResourceListNoDataSlot :error :has-active-filters :source @clear="clearFilters()" @refresh="refresh()" />
       </template>
     </v-data-table-server>
-    <ResourceListContextMenu
-      v-if="contextMenuResource"
-      v-model="isContextMenuOpen"
-      :position="contextMenuPosition"
-      :resource="contextMenuResource"
-    />
     <ResourceRenameDialog
       v-if="renamingResource"
       :key="renamingResource.id"

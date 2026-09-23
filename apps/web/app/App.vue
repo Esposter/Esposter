@@ -30,6 +30,7 @@ const dockInsetClass = computed(() => {
         </template>
         <NuxtPage />
         <AppToastStack />
+        <UiContextMenuHost />
         <MessageContentCallPictureInPictureHost v-if="session" />
         <MessageModelUserSettingsDialog v-if="session" />
       </v-app>

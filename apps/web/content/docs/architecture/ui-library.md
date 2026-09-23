@@ -1,11 +1,11 @@
 ---
 title: UI library
-description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the first components and the surfaces they are drawn with, the generated map of how the pages link, the app shell with its dock, toasts and dialogs, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
+description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the first components and the surfaces they are drawn with, the generated map of how the pages link, the app shell with its dock, toasts and dialogs, the one context menu, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
 ---
 
 # UI Library
 
-The app is moving from Material as Vuetify draws it to a library of its own, built in `apps/web` on [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) — Vuetify's headless layer, which owns focus, keyboard handling, ARIA and positioning and paints nothing. The migration runs as a ladder of stages, designed in the [UI library proposal](/docs/proposals/refactors/ui-library). This page is what exists so far: the foundation every later stage builds on, the icons, the first components, which the agent console is built from, the flow map the later stages are designed from, and the app shell every page sits in.
+The app is moving from Material as Vuetify draws it to a library of its own, built in `apps/web` on [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) — Vuetify's headless layer, which owns focus, keyboard handling, ARIA and positioning and paints nothing. The migration runs as a ladder of stages, designed in the [UI library proposal](/docs/proposals/refactors/ui-library). This page is what exists so far: the foundation every later stage builds on, the icons, the first components, which the agent console is built from, the flow map the later stages are designed from, the app shell every page sits in, and the context menu every thing with actions of its own opens.
 
 The foundation changes no component, and still repaints every page. Its design tokens are the colours of the whole app, Vuetify's pages included, and the document's own chrome — scrollbars, selection, caret, focus ring — reads them on every page whichever library draws it.
 
@@ -60,31 +60,33 @@ flowchart TD
 
 The first components came out of the agent console, which drew the look by hand before the library existed. Each takes its behaviour from a Vuetify 0 primitive and its look from the tokens, and each has a component test of its keyboard and ARIA contract, so a feature's test never walks a menu's arrow keys again.
 
-| Component       | Built on                              | What it is                                                                                          |
-| :-------------- | :------------------------------------ | :-------------------------------------------------------------------------------------------------- |
-| `UiFrame`       | none                                  | A region of content, with an optional title in the accent colour and a slot for its actions         |
-| `UiButton`      | Button                                | The raised block, with accent, danger and quiet variants; a pressed toggle takes the accent         |
-| `UiIconButton`  | `UiButton`                            | An icon by meaning, and a required label that is its accessible name and its tooltip at once        |
-| `UiCopyButton`  | `UiIconButton`                        | Copies its source, and says it did while the clipboard composable's copied state lasts              |
-| `UiMenu`        | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                             |
-| `UiSelect`      | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                  |
-| `UiSuggestions` | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories  |
-| `UiSpinner`     | none                                  | The terminal's star, a frame at a time, held still under reduced motion                             |
-| `UiLoadingBar`  | Progress                              | A row of voxel blocks filled as the work gets done, with the progress bar's role and value          |
-| `UiThemeScope`  | Theme                                 | A region drawn in another theme than the document's                                                 |
-| `UiPopover`     | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications |
-| `UiTooltip`     | Tooltip                               | A small frame naming what it hangs off, popping out at once on hover or keyboard focus              |
-| `UiAvatar`      | Avatar                                | A picture in a frame, or the first letter of its name until one loads                               |
-| `UiToast`       | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                 |
-| `UiToastStack`  | none                                  | The one corner every toast is drawn in, announced as a polite live region                           |
+| Component           | Built on                              | What it is                                                                                          |
+| :------------------ | :------------------------------------ | :-------------------------------------------------------------------------------------------------- |
+| `UiFrame`           | none                                  | A region of content, with an optional title in the accent colour and a slot for its actions         |
+| `UiButton`          | Button                                | The raised block, with accent, danger and quiet variants; a pressed toggle takes the accent         |
+| `UiIconButton`      | `UiButton`                            | An icon by meaning, and a required label that is its accessible name and its tooltip at once        |
+| `UiCopyButton`      | `UiIconButton`                        | Copies its source, and says it did while the clipboard composable's copied state lasts              |
+| `UiMenu`            | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                             |
+| `UiSelect`          | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                  |
+| `UiSuggestions`     | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories  |
+| `UiSpinner`         | none                                  | The terminal's star, a frame at a time, held still under reduced motion                             |
+| `UiLoadingBar`      | Progress                              | A row of voxel blocks filled as the work gets done, with the progress bar's role and value          |
+| `UiThemeScope`      | Theme                                 | A region drawn in another theme than the document's                                                 |
+| `UiPopover`         | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications |
+| `UiContextMenuHost` | Popover, `useMenu`                    | The one context menu, opened at a point by right-click, long press or the keyboard                  |
+| `UiTooltip`         | Tooltip                               | A small frame naming what it hangs off, popping out at once on hover or keyboard focus              |
+| `UiAvatar`          | Avatar                                | A picture in a frame, or the first letter of its name until one loads                               |
+| `UiToast`           | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                 |
+| `UiToastStack`      | none                                  | The one corner every toast is drawn in, announced as a polite live region                           |
 
 ### Keyboard contracts
 
 - **A menu** opens from its trigger onto its first item by click, Enter, Space or the down arrow, and onto its last by the up arrow. The arrows walk it, and Home and End jump to its ends. Typing a title's first letters jumps to the next title they begin; a pause starts the search over, and one letter pressed again steps through every title it begins. Enter or Space picks. A pick or Escape closes it with focus back on the trigger, and Tab closes it and moves on.
 - **A select** opens onto its selected option by the arrows, Enter or Space. Focus stays on the trigger, which names the highlighted option as its active descendant. The arrows, Home, End and typeahead walk it, and Enter picks.
 - **Suggestions** leave focus in the field, since typing goes on there. The arrows walk them as the field's active descendant, and Enter or Tab takes the highlighted one. Enter with nothing highlighted is still the field's own key — the composer's send. Escape puts them away without reaching any shortcut on the page, and the next keystroke in the field brings them back. They show while the field has focus and something to offer, and pressing one with the mouse keeps the field focused.
+- **A context menu** keeps the menu's contract from the moment it opens onto its first item, and hands focus back to the element it opened over.
 - **A popover** opens from its trigger by click, Enter or Space, and Escape closes it with focus back on the trigger. Its open state is a model as well, so a shortcut elsewhere on the page can open it.
-- **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none.
+- **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none. The menu's whole contract is `useMenu`, which `UiMenu` and the context menu share.
 
 ### Surfaces
 
@@ -107,6 +109,7 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 - **A select's model sees only choices.** Vuetify 0's select clears the old choice before it selects the new one, which a model would see as the select going empty for a moment. `UiSelect` passes on only a value, so a call site that sends every change to a server never sends the empty one.
 - **A modal is Vuetify's until its content is not.** Vuetify 0's dialog opens in the browser's top layer, and everything outside the top layer is inert while it is open. Vuetify renders a menu, a select or a tooltip outside the element that opened it, so inside a top-layer dialog each would open underneath it and take no clicks. The dialog shell and the page drawers therefore keep Vuetify's overlay as their behaviour and wear the library's look, and move onto Vuetify 0 once nothing inside them is Vuetify's. A popover is not modal, so the dock's panels are the library's already, drawn with the library's parts alone.
 - **A tooltip opens beside a panel, never over it.** Vuetify 0's tooltip content is an auto popover, and opening one closes every other auto popover it is not inside, so hovering one dock button shut the panel another had open. `UiTooltip` keeps the primitive's timing and renders its own content as a manual popover. Its activator is renderless and hands the caller only its handlers and its anchor, since its other attributes would overwrite a button's type and disabled state; a trigger that anchors a panel too names both anchors. Where it opens is `--ui-tooltip-position-area`, which the dock sets beside the rail and above the bar.
+- **A menu takes focus a tick after it opens.** Opening sets the popover's state, and the browser shows the popover and draws a new list of items only in the render that follows; an element in a closed popover takes no focus, so `useMenu` focuses the first item once that render is done.
 - **A spinner is decoration.** It sits beside a line that says what is under way, so it has no progress role and is hidden from assistive technology. The loading bar is the one with a value to report.
 
 ### Themes and scopes
@@ -161,6 +164,39 @@ Every flow the app bar carried has a place in the new frame:
 | The call picture-in-picture window and the user settings dialog     | Unchanged                                                |
 
 The readable-text setting and the command palette's button are not part of it yet. The setting swaps the body's face, and the body is not in the pixel face until page migration puts it there. The palette's button arrives with the [command palette](/docs/proposals/refactors/ui-library/command-palette).
+
+## Context menus
+
+A thing on screen with actions of its own opens them at a right-click, a long press or the keyboard, through one menu. Vuetify 0 has no context menu, so this one is ours: the library's menu, opened at a point rather than under a trigger.
+
+```mermaid
+flowchart TD
+  RC[Right-click] --> O[At the pointer]
+  LP[Long press on a touch screen] --> O
+  KB[Shift+F10 or the menu key on the focused element] --> OE[At the element's corner]
+  O --> S[The context menu store: items, point, the element that opened it]
+  OE --> S
+  S --> H[UiContextMenuHost, the one mounted menu]
+  H --> P{Picked, clicked away from, or Escape?}
+  P -->|picked| R[Close with focus back on the element, then run the item]
+  P -->|Escape| F[Close with focus back on the element]
+  P -->|clicked away| C[Close]
+```
+
+- **A target declares its items, and nothing else.** `useContextMenu` hands out the props an element binds, keyed by what it is, with the same `Item` list its overflow button shows, so the two never disagree. The store holds what is open, where and over what, as the [singleton dialogs](/docs/architecture/singleton-dialogs) standard does for dialogs, and `UiContextMenuHost` in `App.vue` is the one menu: a list of thousands of rows mounts one.
+- **Three ways in.** A right-click opens at the pointer. A long press on a touch screen opens at the finger, is cancelled by a finger that moves on to scroll, and swallows the click its lifting raises. Shift+F10 or the menu key opens at the focused element's corner.
+- **The browser's menu stays where ours adds nothing.** Only an element that declares items prevents it. Holding Shift, or right-clicking in a field, still gives the browser's menu, with its copy, paste and spell-check.
+- **It is the library's menu.** The same keyboard contract as `UiMenu`, through `useMenu`, and the same items: an icon, a title, a group that opens after a separator, and a destructive item in the error colour. A pick closes the menu and hands focus back before the item runs, so an item that opens a dialog keeps the focus the dialog takes.
+- **A manual popover, closed by its own rules.** An auto popover's light dismiss lands after a second right-click has already moved the menu, and would shut the menu that click opened. The host closes on Escape, Tab, a pick or a click away, and a second right-click while it is open moves it to the new point, onto its new first item.
+- **A target whose items cost too much to build per row hands on the point instead.** A message's items are built by the options bar that mounts over the one active message, so a right-click on a message records the point in the message store, and the bar mounts over it and opens the menu with the overflow menu's sections. The quick reactions stay on the bar itself, one move away.
+
+| Surface             | Its items                                                                        |
+| :------------------ | :------------------------------------------------------------------------------- |
+| A message           | The overflow menu's sections: its updates, its actions, deleting                 |
+| A resource row      | The row's overflow menu: open in a new tab, copy link, blueprint, rename, delete |
+| A place on the dock | Open in a new tab, and bookmarking it or removing the bookmark when signed in    |
+
+The rest — a room, a member, a sheet column, a resource in a tree — join as their units migrate in [page migration](/docs/proposals/refactors/ui-library/page-migration), each with the items its overflow button already has.
 
 ## One owner per concern
 
@@ -262,6 +298,10 @@ flowchart TD
 | `apps/web/app/composables/useFixedLayoutStyles.ts` | Places the drawers, main region and footer past the dock                                        |
 | `apps/web/app/components/Styled/Dialog.vue`        | The dialog shell, in the library's look over Vuetify's dialog                                   |
 | `.oxlintrc.json`                                   | The import boundary                                                                             |
+| `apps/web/app/components/Ui/ContextMenu/Host.vue`  | The one context menu                                                                            |
+| `apps/web/app/composables/ui/useContextMenu.ts`    | The props that give an element a context menu, and the long press                               |
+| `apps/web/app/composables/ui/useMenu.ts`           | The menu's keyboard contract, shared by `UiMenu` and the context menu                           |
+| `apps/web/app/store/ui/contextMenu.ts`             | What the context menu shows, where, and over what                                               |
 | `.agents/skills/ui-library/SKILL.md`               | The library's conventions                                                                       |
 
 ## Sources
@@ -274,6 +314,7 @@ flowchart TD
 - [Pixelarticons](https://pixelarticons.com/): the pixel icon set and its MIT licence.
 - [Listbox](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/) and [combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/), WAI-ARIA Authoring Practices: the select's and the suggestions' keyboard contracts, and the typeahead the menu shares with the select.
 - [The menu role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menu_role), MDN: the menu's keyboard contract and its focus returning to the trigger.
+- [contextmenu event](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event), MDN: the event right-click and the menu key both raise, which the context menu leaves to the browser when Shift is held.
 - [Popover](https://0.vuetifyjs.com/components/disclosure/popover) and [roving focus](https://0.vuetifyjs.com/composables/system/use-roving-focus), Vuetify 0: the primitives under the menu, the select and the suggestions.
 - [position-anchor](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-anchor), MDN, and [anchor positioning's Baseline status](https://github.com/web-platform-dx/web-features/issues/3558), web-features: anchor positioning in every engine since Firefox 147, which is why no JavaScript positioning is installed.
 - [Address bar ranking](https://firefox-source-docs.mozilla.org/browser/urlbar/ranking.html), Firefox: frecency, the recency-and-frequency score the recent pages are ordered by.

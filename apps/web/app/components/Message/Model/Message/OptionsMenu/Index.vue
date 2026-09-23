@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
 import { getEmojiDescription } from "@/services/message/emoji/getEmojiDescription";
+import { useMessageStore } from "@/store/message";
+import { useContextMenuStore } from "@/store/ui/contextMenu";
 
 interface Props {
   hoverProps?: Record<string, unknown>;
@@ -20,6 +23,29 @@ const { actionMessageItems, deleteMessageItem, updateMessageItems, updateMessage
   isCreator,
 );
 const selectEmoji = useSelectEmoji(message);
+const messageStore = useMessageStore();
+const { contextMenuRequest } = storeToRefs(messageStore);
+const contextMenuStore = useContextMenuStore();
+const { openContextMenu } = contextMenuStore;
+// The overflow menu's sections, each opening its own group; reacting stays on the bar itself, one move away
+const contextMenuItems = computed(() => {
+  const items: Item[] = [];
+  for (const [firstItem, ...restItems] of [
+    updateMessageMenuItems.value,
+    actionMessageItems.value,
+    deleteMessageItem.value ? [deleteMessageItem.value] : [],
+  ])
+    if (firstItem) items.push({ ...firstItem, isGroupStart: true }, ...restItems);
+  return items;
+});
+
+// The bar mounts over the message a context menu was asked for, and is the one that can say what goes in it
+watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
+  if (newContextMenuRequest?.rowKey !== message.rowKey) return;
+  const { rowKey, ...point } = newContextMenuRequest;
+  contextMenuRequest.value = undefined;
+  openContextMenu({ ...point, items: contextMenuItems.value, key: rowKey });
+});
 const cardProps = computed(() => ({ elevation: isHovering ? 12 : 2, ...hoverProps }));
 </script>
 
