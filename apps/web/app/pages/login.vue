@@ -7,24 +7,21 @@ definePageMeta({ middleware: "guest" });
 
 <template>
   <NuxtLayout>
-    <v-container flex h-full items-center justify-center>
-      <StyledCard :card-props="{ width: '100%', maxWidth: '30rem' }">
-        <v-container flex flex-col gap-y-2>
-          <div text-center text-headline-small>Sign in to</div>
-          <div flex gap-x-2 items-center justify-center>
-            <AppLogo />
-            <span text-title-large>{{ SITE_NAME }}</span>
-          </div>
-          <div text-center>Login and start taking rides with {{ SITE_NAME }}!</div>
-          <div flex flex-col gap-y-3>
-            <LoginButton
-              v-for="loginButtonProps of LoginButtonItems"
-              :key="loginButtonProps.provider"
-              :="loginButtonProps"
-            />
-          </div>
-        </v-container>
-      </StyledCard>
-    </v-container>
+    <div p-4 flex h-full items-center justify-center ui-body>
+      <section p-6 text-center flex flex-col gap-4 w-full max-w-prose ui-frame>
+        <h1 flex flex-col gap-2 items-center ui-body>
+          <span text-muted>Sign in to</span>
+          <span flex gap-2 items-center ui-title><AppLogo /> {{ SITE_NAME }}</span>
+        </h1>
+        <p>Login and start taking rides with {{ SITE_NAME }}!</p>
+        <div flex flex-col gap-3>
+          <LoginButton
+            v-for="loginButtonProps of LoginButtonItems"
+            :key="loginButtonProps.provider"
+            :="loginButtonProps"
+          />
+        </div>
+      </section>
+    </div>
   </NuxtLayout>
 </template>
