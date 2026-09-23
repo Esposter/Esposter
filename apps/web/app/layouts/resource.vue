@@ -36,7 +36,7 @@ const isServiceMenuOpen = ref(false);
             @click="isServiceMenuOpen = !isServiceMenuOpen"
           />
           <AppBreadcrumbs />
-          <div ml-auto flex min-w-0>
+          <div ml-a flex min-w-0>
             <ResourceStorageMeter />
           </div>
         </div>
