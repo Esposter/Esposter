@@ -6,20 +6,25 @@ const visibleIds = useVisibleSectionIds(UserSettingsPageSections);
 </script>
 
 <template>
-  <StyledCard>
-    <v-list px-2 relative>
+  <nav aria-label="Settings sections" p-2 ui-frame>
+    <ul relative>
       <StyledSlideIndicator :active-keys="visibleIds" />
-      <v-list-item
-        v-for="section of UserSettingsPageSections"
-        :key="section"
-        :active="visibleIds.includes(section)"
-        :data-slide-indicator-key="section"
-        :to="{ hash: `#${section}` }"
-        replace
-        rd
-      >
-        {{ UserSettingsPageSectionMap[section].title }}
-      </v-list-item>
-    </v-list>
-  </StyledCard>
+      <li v-for="section of UserSettingsPageSections" :key="section">
+        <NuxtLink
+          :class="visibleIds.includes(section) ? 'text-accent' : 'text-text'"
+          :aria-current="visibleIds.includes(section) ? 'location' : undefined"
+          :data-slide-indicator-key="section"
+          :to="{ hash: `#${section}` }"
+          px-3
+          py-1
+          no-underline
+          block
+          hover:bg="accent/10"
+          replace
+        >
+          {{ UserSettingsPageSectionMap[section].title }}
+        </NuxtLink>
+      </li>
+    </ul>
+  </nav>
 </template>

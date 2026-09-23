@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+
 interface Props {
   otherSessionCount: number;
 }
@@ -15,7 +17,9 @@ const emit = defineEmits<{ signOut: [onComplete: (isSuccessful?: boolean) => voi
     @delete="(onComplete) => emit('signOut', onComplete)"
   >
     <template #activator="{ updateIsOpen }">
-      <v-btn color="error" text="Sign out everywhere else" @click.stop="updateIsOpen(true)" />
+      <UiButton :variant="UiButtonVariant.Danger" py-1 @click.stop="updateIsOpen(true)"
+        >Sign out everywhere else</UiButton
+      >
     </template>
     Sign out every device except this one? That is
     {{ otherSessionCount === 1 ? "one other session" : `${otherSessionCount} other sessions` }}.

@@ -23,8 +23,11 @@ watch(
 </script>
 
 <template>
-  <v-row>
-    <v-col self-center cols="6">{{ toTitleCase(title) }}:</v-col>
-    <component :is="RowValueComponentMap[row.type]" v-model="modelValue" :edit-mode :value="row.value" />
-  </v-row>
+  <component
+    :is="RowValueComponentMap[row.type]"
+    v-model="modelValue"
+    :edit-mode
+    :label="toTitleCase(title)"
+    :value="row.value"
+  />
 </template>

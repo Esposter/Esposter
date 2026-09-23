@@ -1,66 +1,62 @@
 <script setup lang="ts">
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
-import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { validateFile } from "@/services/file/validateFile";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { getResultAsync, takeOne } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 
 interface Props {
   editMode: boolean;
+  label: string;
   value: Row<RowValueType.Image>["value"];
 }
 
 const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
-const { editMode, value } = defineProps<Props>();
+const { editMode, label, value } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { isLoading, uploadImage } = useUploadImage(() => $trpc.user.generateProfileImageUploadUrl.mutate());
-const validateFileRule = (fileValue: FileFieldValue) => {
-  if (!fileValue) return true;
-
-  for (const file of Array.isArray(fileValue) ? fileValue : [fileValue]) {
-    const result = validateFile(file.size);
-    if (!result.isValid) return result.message;
-  }
-
-  return true;
-};
+const fileInput = useTemplateRef("fileInput");
+const fileMessage = ref("");
 </script>
 
 <template>
-  <v-col flex flex-wrap gap-x-4 items-center self-center cols="6">
-    <template v-if="editMode">
-      <v-avatar>
-        <NuxtImg v-if="modelValue" size-full object-contain :src="modelValue" :alt="modelValue" />
-        <NuxtImg v-else-if="value" size-full object-contain :src="value" :alt="value" />
-      </v-avatar>
-      <v-file-input
-        :disabled="isLoading"
-        :rules="[validateFileRule]"
-        accept="image/*"
-        prepend-icon=""
-        prepend-inner-icon="i-mdi:upload"
-        label="Upload image"
-        density="compact"
-        show-size
-        my-2
-        @update:model-value="
-          async (files?) => {
-            if (!files) return;
+  <UserProfileCardField :label>
+    <div flex flex-wrap gap-4 items-center>
+      <UiAvatar :image="(editMode ? modelValue : value) ?? ''" :name="label" />
+      <template v-if="editMode">
+        <!-- The browser's own file input, hidden behind the library's button, so choosing a file is its dialog -->
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/*"
+          hidden
+          @change="
+            async () => {
+              if (!fileInput) return;
+              const file = fileInput.files?.[0];
+              // Cleared, so choosing the same file again after a refusal is a change too
+              fileInput.value = '';
+              if (!file) return;
 
-            const file = Array.isArray(files) ? takeOne(files) : files;
-            if (!validateFile(file.size).isValid) return;
+              const result = validateFile(file.size);
+              fileMessage = result.isValid ? '' : result.message;
+              if (!result.isValid) return;
 
-            await getResultAsync(() => uploadImage(file)).match((newImage) => {
-              modelValue = newImage;
-            }, createErrorAlert);
-          }
-        "
-      />
-    </template>
-    <v-avatar v-else>
-      <NuxtImg v-if="value" size-full object-contain :src="value" :alt="value" />
-    </v-avatar>
-  </v-col>
+              await getResultAsync(() => uploadImage(file)).match((newImage) => {
+                modelValue = newImage;
+              }, createErrorAlert);
+            }
+          "
+        />
+        <UiButton :disabled="isLoading" inline-flex gap-2 items-center py-1 @click="fileInput?.click()">
+          <UiSpinner v-if="isLoading" />
+          <UiIcon v-else :meaning="UiIconMeaning.Upload" />
+          Upload image
+        </UiButton>
+        <span v-if="fileMessage" role="alert" text-error>{{ fileMessage }}</span>
+      </template>
+    </div>
+  </UserProfileCardField>
 </template>

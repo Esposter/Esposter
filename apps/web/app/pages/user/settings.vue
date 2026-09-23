@@ -2,23 +2,15 @@
 import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
 
 definePageMeta({ middleware: "auth" });
-
-const { smAndDown } = useVDisplay();
 </script>
 
 <template>
   <NuxtLayout>
-    <v-container>
-      <v-row>
-        <v-col>
-          <UserIntroductionCard />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col :cols="smAndDown ? 12 : 5">
-          <UserSettingsSideBar top-4 sticky />
-        </v-col>
-        <v-col :cols="smAndDown ? 12 : 7" flex flex-col gap-12>
+    <div px-4 py-8 flex flex-col gap-8 ui-body>
+      <UserIntroductionCard />
+      <div flex flex-col gap-8 md:flex-row md:items-start>
+        <UserSettingsSideBar shrink-0 md:top-4 md:sticky />
+        <div flex flex-1 flex-col gap-12 min-w-0>
           <UserSettingsSection :section="UserSettingsPageSection.Profile">
             <UserProfileCard />
           </UserSettingsSection>
@@ -28,8 +20,8 @@ const { smAndDown } = useVDisplay();
           <UserSettingsSection :section="UserSettingsPageSection.Sessions">
             <UserSessionsCard />
           </UserSettingsSection>
-        </v-col>
-      </v-row>
-    </v-container>
+        </div>
+      </div>
+    </div>
   </NuxtLayout>
 </template>

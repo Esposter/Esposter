@@ -6,20 +6,24 @@ import { USER_BIOGRAPHY_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
   editMode: boolean;
+  label: string;
   value: Row<RowValueType.Textarea>["value"];
 }
 
 const modelValue = defineModel<Row<RowValueType.Textarea>["value"]>({ required: true });
-const { editMode, value } = defineProps<Props>();
+const { editMode, label, value } = defineProps<Props>();
 const rules = useVRules();
 const valueRules = computed(() => [rules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)]);
 </script>
 
 <template>
-  <v-col fw-bold ws-pre-wrap self-center cols="6">
-    <v-textarea v-if="editMode" v-model="modelValue" :rules="valueRules" rows="3" auto-grow />
-    <template v-else>
-      {{ value }}
-    </template>
-  </v-col>
+  <UiTextField
+    v-if="editMode"
+    :model-value="modelValue ?? ''"
+    :label
+    :rows="3"
+    :rules="valueRules"
+    @update:model-value="modelValue = $event"
+  />
+  <UserProfileCardField v-else :label ws-pre-wrap>{{ value }}</UserProfileCardField>
 </template>

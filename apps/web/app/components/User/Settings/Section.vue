@@ -12,12 +12,12 @@ const { section } = defineProps<Props>();
 </script>
 
 <template>
-  <!-- The section is its own anchor, and the scroll margin clears the sticky app bar an anchored link would
-       otherwise land behind — which the scrollspy reads back as the top of the visible band -->
-  <section :id="section" flex flex-col gap-y-6 scroll-mt-4>
-    <div flex flex-col>
-      <div fw-bold text-title-large>{{ UserSettingsPageSectionMap[section].title }}</div>
-      <div text-body-large>{{ UserSettingsPageSectionMap[section].subtitle }}</div>
+  <!-- The section is its own anchor, and the scroll margin keeps an anchored link from landing flush with the edge —
+       which the scrollspy reads back as the top of the visible band -->
+  <section :id="section" flex flex-col gap-4 scroll-mt-4>
+    <div flex flex-col gap-1>
+      <h2 ui-heading>{{ UserSettingsPageSectionMap[section].title }}</h2>
+      <p text-muted>{{ UserSettingsPageSectionMap[section].subtitle }}</p>
     </div>
     <slot />
   </section>
