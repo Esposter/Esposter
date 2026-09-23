@@ -5,7 +5,7 @@ import { getSessionMessages } from "@anthropic-ai/claude-agent-sdk";
 import { InvalidOperationError } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@anthropic-ai/claude-agent-sdk"), () => ({ getSessionMessages: vi.fn() }));
+vi.mock(import("@anthropic-ai/claude-agent-sdk"), () => ({ getSessionMessages: vi.fn<typeof getSessionMessages>() }));
 
 describe(readSessionHistory, () => {
   const sessionId = crypto.randomUUID();
