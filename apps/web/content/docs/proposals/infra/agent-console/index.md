@@ -43,6 +43,8 @@ flowchart LR
 | [Workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison)       | today's terminal workflow against the console's, task by task, and the costs |
 | [Runtime budget](/docs/proposals/infra/agent-console/runtime-budget)                 | what the views and themed rooms may cost, and the techniques that hold them  |
 | [Open world](/docs/proposals/infra/agent-console/open-world)                         | biomes, then places for the views, in the terrain around the room            |
+| [Building](/docs/proposals/infra/agent-console/building)                             | a hotbar to break and place blocks, the edits a delta over the seed          |
+| [World settings](/docs/proposals/infra/agent-console/world-settings)                 | an Options entry in the pause menu, starting with the prompts                |
 | [Terminal-mirror driver](/docs/proposals/infra/agent-console/terminal-mirror-driver) | attaching to a session a terminal runs, through its transcript and a channel |
 | [Extensions](/docs/proposals/infra/agent-console/extensions)                         | how other tooling joins — app routes, MCP Apps, first-party views            |
 | [Themes](/docs/proposals/infra/agent-console/themes)                                 | the parts a theme adds past the default, and the Genshin theme               |
@@ -57,7 +59,7 @@ flowchart LR
 
 1. **Close the parity gaps** the [terminal parity](/docs/infra/claude-interface/agent-console/terminal-parity) page names: a merged diff per file and a rewind that restores files. Then do one day's work in the console alone, with every return to the terminal written into the [workflow comparison](/docs/proposals/infra/agent-console/workflow-comparison).
 2. **The Genshin theme**: persona, voice, wish banner, then the atelier and ambience, all inside the world.
-3. **The open world**: biomes in the terrain around the room, then places for the views.
+3. **The open world**: biomes in the terrain around the room, then places for the views, and building in it once where its edits are saved is decided.
 4. **Views**: the collector harbour first, the city after, walked by the player.
 5. **The terminal-mirror driver**, when a session started in a terminal needs to be picked up.
 
