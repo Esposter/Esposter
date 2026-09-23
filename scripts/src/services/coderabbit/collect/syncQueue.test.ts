@@ -477,6 +477,37 @@ describe(syncQueue, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
     expect(readSha("HEAD")).toBe(queueSha);
   });
 
+  // Every queue commit a rewrite replayed names its copies, and a part keeping them shares them with its siblings —
+  // So the express lane's copy of one part would read every part as ported, and the next sync would drop the rest
+  test("fails the run and counts the attempt when a part keeps the lines naming the original's copies", async () => {
+    expect.hasAssertions();
+
+    const { developSha, oversizedSha, queueSha } = setupOversized();
+    runSession.mockImplementation(() => {
+      runGit(["checkout", oversizedSha, "--", ...overflowPaths], getCwd());
+      runGit(
+        [
+          "commit",
+          "--quiet",
+          "--message",
+          `moves\n\n(cherry picked from commit ${developSha})`,
+          "--trailer",
+          `${EXPRESS_TRAILER}: ${TEST_FILENAME}`,
+        ],
+        getCwd(),
+      );
+      return Promise.resolve({ isEnded: true, isStarted: true });
+    });
+
+    await expect(
+      syncQueue({ ...baseInput, cwd: getCwd(), developSha, queueSha }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: coderabbit, the reshaper left a part naming the copies e1b1241d5399c7d8234f33a42c525fc449150d8c was replayed from (attempt 1 of 3 on e1b1241d5399c7d8234f33a42c525fc449150d8c)]`,
+    );
+    expect(runGh.mock.calls[1]?.[0].at(-1)).toContain(getMarker(RESHAPE_FAILED_MARKER, oversizedSha, [collectorSha]));
+    expect(readSha(`origin/${QUEUE_BRANCH}`)).toBe(queueSha);
+  });
+
   // The session is handed a repackaging, never the cherry-pick this step runs itself, so what it leaves open is
   // Any operation at all — and a restore refuses over one, which would cost the attempt the record that caps it
   test("fails the run and counts the attempt when the reshaping leaves a merge open", async () => {

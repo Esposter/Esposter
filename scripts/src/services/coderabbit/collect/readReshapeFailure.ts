@@ -1,5 +1,6 @@
 import { checkIsSequencing } from "#src/services/coderabbit/collect/checkIsSequencing";
 import { EXPRESS_TRAILER } from "#src/services/coderabbit/collect/constants";
+import { getPortedShas } from "#src/services/coderabbit/collect/getPortedShas";
 import { readDirtyPaths } from "#src/services/coderabbit/collect/readDirtyPaths";
 import { readFileCount } from "#src/services/coderabbit/collect/readFileCount";
 import { readTrailedShas } from "#src/services/coderabbit/collect/readTrailedShas";
@@ -22,6 +23,11 @@ export const readReshapeFailure = (originalSha: string, cwd?: string): string | 
   if (!isSameTree) return `left a tree that differs from ${originalSha}`;
   const shas = getNonEmptyLines(runGit(["rev-list", "--reverse", `${originalSha}^..HEAD`], cwd));
   if (shas.length === 0) return "produced no commit";
+  // The original's body names every copy it was replayed from, and a part keeping those lines shares them with
+  // Its siblings: the express lane's copy of one part would then read every part as ported, and the next sync
+  // Would drop the rest unreplayed (`readCherryShas`). A part is a new commit, with no lineage of its own yet
+  const partBodies = runGit(["log", "--format=%b", `${originalSha}^..HEAD`], cwd);
+  if (getPortedShas(partBodies).size > 0) return `left a part naming the copies ${originalSha} was replayed from`;
   const claimedShas = readTrailedShas(shas, EXPRESS_TRAILER, cwd);
   const oversized = shas.find(
     (sha) => !claimedShas.has(sha) && readFileCount(`${sha}^..${sha}`, cwd) > REVIEW_FILE_CAP,
