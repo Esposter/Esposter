@@ -617,9 +617,6 @@ catalogs:
     grid-layout-plus:
       specifier: ^1.1.1
       version: 1.1.1
-    gsap:
-      specifier: ^3.15.0
-      version: 3.15.0
     happy-dom:
       specifier: ^20.14.5
       version: 20.14.5
@@ -1270,9 +1267,6 @@ importers:
       grid-layout-plus:
         specifier: 'catalog:'
         version: 1.1.1(vue@3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
-      gsap:
-        specifier: 'catalog:'
-        version: 3.15.0
       howler:
         specifier: 'catalog:'
         version: 2.2.4
@@ -10637,9 +10631,6 @@ packages:
     resolution: {integrity: sha512-7CWehJubrVC8Ps5QFUlnDsp0kiREvKfi3Pdjp21EyY8BNzSusqI3Utcxvu1Y9UUKe3YExvbhJzIxHK6rorbRaQ==}
     peerDependencies:
       vue: ^3.0.0
-
-  gsap@3.15.0:
-    resolution: {integrity: sha512-dMW4CWBTUK1AEEDeZc1g4xpPGIrSf9fJF960qbTZmN/QwZIWY5wgliS6JWl9/25fpTGJrMRtSjGtOmPnfjZB+A==}
 
   guid-typescript@1.0.9:
     resolution: {integrity: sha512-Y8T4vYhEfwJOTbouREvG+3XDsjr8E3kIr7uf+JZ0BYloFsttiHU0WfvANVsR7TxNUJa/WpCnw/Ino/p+DeBhBQ==}
@@ -25134,8 +25125,6 @@ snapshots:
       '@vexip-ui/utils': 2.16.4
       interactjs: 1.10.28
       vue: 3.5.43(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
-
-  gsap@3.15.0: {}
 
   guid-typescript@1.0.9: {}
 

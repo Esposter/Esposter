@@ -376,7 +376,7 @@ describe("unoConfig", () => {
               "line-height": 1.4285714286,
             },
           ],
-          "ui-item": "px-2 text-left w-full cursor-pointer hover:brightness-125 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
+          "ui-item": "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
         },
         "theme": {
           "breakpoint": {

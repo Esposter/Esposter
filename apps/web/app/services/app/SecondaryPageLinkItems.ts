@@ -3,9 +3,10 @@ import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
 import { RoutePath } from "@esposter/shared";
 
-export const MoreDropdownLinkItems = [
+// The pages outside the products, reached from the account menu
+export const SecondaryPageLinkItems = [
   { href: RoutePath.Achievements, icon: "i-mdi:trophy", title: "Achievements" },
-  { href: RoutePath.Anime, icon: "custom:anime", title: "Anime" },
+  { href: RoutePath.Anime, icon: "i-custom:anime", title: "Anime" },
   { href: RoutePath.FluidSimulator, icon: "i-mdi:water", title: "Fluid Simulator" },
   { href: RoutePath.About, icon: "i-mdi:information", title: "About" },
   { href: RoutePath.Docs, icon: "i-mdi:book-open-page-variant", title: "Documentation" },

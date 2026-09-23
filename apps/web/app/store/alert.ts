@@ -1,10 +1,10 @@
 import type { Alert } from "@/models/vuetify/Alert";
 import type { VAlert } from "vuetify/components";
 
-import { AlertIconMap } from "@/services/vuetify/AlertIconMap";
+import { TOAST_DURATION_MS } from "@/services/ui/constants";
 import { checkIsServer } from "@esposter/shared";
 
-// The four props the alert list renders, rather than the whole `VAlert` prop surface: matching an alert already
+// The three props a toast renders, rather than the whole `VAlert` prop surface: matching an alert already
 // On screen compares two of them, and doing that across every prop v-alert accepts blows the instantiation depth
 export const useAlertStore = defineStore("alert", () => {
   const alerts = ref<Alert[]>([]);
@@ -15,18 +15,15 @@ export const useAlertStore = defineStore("alert", () => {
     const previousTimeoutId = alertTimeoutMap.get(id);
     if (previousTimeoutId) clearTimeout(previousTimeoutId);
 
-    const timeoutId = window.setTimeout(
-      () => {
-        deleteAlert(id);
-      },
-      Temporal.Duration.from({ seconds: 5 }).total("milliseconds"),
-    );
+    const timeoutId = window.setTimeout(() => {
+      deleteAlert(id);
+    }, TOAST_DURATION_MS);
     alertTimeoutMap.set(id, timeoutId);
   };
   const createAlert = (
     text: VAlert["$props"]["text"],
     type: NonNullable<VAlert["$props"]["type"]>,
-    props?: Pick<VAlert["$props"], "icon" | "location">,
+    props?: Pick<VAlert["$props"], "icon">,
   ) => {
     if (checkIsServer()) return;
     // One cause routinely rejects several operations at once — the file and thumbnail reads of a single
@@ -39,7 +36,7 @@ export const useAlertStore = defineStore("alert", () => {
     }
 
     const id = crypto.randomUUID();
-    alerts.value.push({ icon: AlertIconMap[type], id, location: "bottom center", text, type, ...props });
+    alerts.value.push({ id, text, type, ...props });
     scheduleAlertDismissal(id);
   };
   const deleteAlert = (id: string) => {

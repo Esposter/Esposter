@@ -1,7 +1,6 @@
 import type { FluidResources } from "@/models/visual/FluidResources";
 import type { RenderTarget } from "three/webgpu";
 
-import { APP_BAR_HEIGHT } from "#shared/services/app/constants";
 import { WATERS_NORMALS_TEXTURE_PATH } from "@/services/visual/constants";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
@@ -30,7 +29,15 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
   // Assigned only at the tail of onMounted (past every await), so an unmount that races setup leaves this
   // undefined and teardown no-ops instead of dereferencing a handle that was never created
   let fluidResources: FluidResources | undefined;
-  const getHeight = () => window.innerHeight - APP_BAR_HEIGHT;
+  // The viewport less the frame around the page — the dock on one edge — which the layout's container carries as its
+  // Padding, already resolved to pixels
+  const getSize = (element: HTMLElement) => {
+    const { paddingBottom, paddingLeft, paddingRight, paddingTop } = window.getComputedStyle(element);
+    return {
+      height: window.innerHeight - Number.parseFloat(paddingTop) - Number.parseFloat(paddingBottom),
+      width: window.innerWidth - Number.parseFloat(paddingLeft) - Number.parseFloat(paddingRight),
+    };
+  };
 
   onMounted(async () => {
     const containerValue = toValue(container);
@@ -38,7 +45,8 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     const { Inspector } = await import("three/examples/jsm/inspector/Inspector.js");
     const renderer = new WebGPURenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, getHeight());
+    const { height, width } = getSize(containerValue);
+    renderer.setSize(width, height);
     renderer.toneMapping = ACESFilmicToneMapping;
     renderer.toneMappingExposure = parameters.exposure;
     const inspector = new Inspector();
@@ -46,7 +54,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     containerValue.appendChild(renderer.domElement);
 
     const scene = new Scene();
-    const camera = new PerspectiveCamera(55, window.innerWidth / getHeight(), 1, 20000);
+    const camera = new PerspectiveCamera(55, width / height, 1, 20000);
     camera.position.set(30, 30, 100);
 
     const renderPipeline = new RenderPipeline(renderer);
@@ -140,9 +148,10 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     // Registered after awaits, so it is outside the synchronous setup scope and won't auto-dispose —
     // its stop handle travels in the resources so teardown can detach it
     const stopResize = useEventListener("resize", () => {
-      camera.aspect = window.innerWidth / getHeight();
+      const { height: newHeight, width: newWidth } = getSize(containerValue);
+      camera.aspect = newWidth / newHeight;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, getHeight());
+      renderer.setSize(newWidth, newHeight);
     });
 
     const render = () => {

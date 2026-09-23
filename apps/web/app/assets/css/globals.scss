@@ -1,5 +1,4 @@
 :root {
-  --app-bar-height: 3.5rem;
   --avatar-width: 2.5rem;
   --border-width: thin;
   --border-style: solid;
@@ -16,6 +15,12 @@
   --apx-surface: rgb(var(--v-theme-surface));
   // One voxel: the grid every length of the UI library is a whole number of, and the width of its edges
   --ui-step: 0.25rem;
+  --toolbar-height: 3.5rem;
+  // The dock's breadth: a rail's width on a wide screen, a bar's height on a narrow one
+  --dock-size: calc(var(--ui-step) * 14);
+  // Where the dock takes room from the page, set on the app root by breakpoint and zero on a page with no dock
+  --dock-inset-block-end: 0rem;
+  --dock-inset-inline-start: 0rem;
 }
 // The document's own chrome in the UI library's tokens, reaching every page whichever library draws it. It sits in the
 // First layer, so a component that paints its own focus or selection still wins. The inherited colours are declared
@@ -88,7 +93,7 @@ canvas {
 }
 
 .v-toolbar__content {
-  min-height: var(--app-bar-height);
+  min-height: var(--toolbar-height);
   height: auto !important;
 }
 // Restore list padding for rich text (tiptap) output, which the reset layer above zeroes out
@@ -142,4 +147,11 @@ canvas {
   .v-col:where([class*="v-col--offset-"]) {
     margin-inline-start: calc(100% * var(--v-col-offset) / var(--v-col-size-columns));
   }
+}
+// The dialog shell's scrim: a dither — a checker of the background colour — rather than a blurred wash. Global, because
+// Vuetify renders the scrim itself, outside anything the shell's own template can scope a style to
+.ui-dialog > .v-overlay__scrim {
+  background: repeating-conic-gradient(var(--ui-background) 0 25%, transparent 0 50%) 0 0 / calc(var(--ui-step) * 2)
+    calc(var(--ui-step) * 2);
+  opacity: 0.85;
 }

@@ -2,6 +2,8 @@
 import type { IconsOptions } from "vuetify-nuxt-module";
 import type { ThemeOptions, VariationsOptions } from "vuetify/lib/composables/theme.mjs";
 
+import { readdirSync, readFileSync } from "node:fs";
+import { basename, join } from "node:path";
 import { defineConfig, presetAttributify, presetIcons, presetWind4 } from "unocss";
 import { elevationPresets, typographyPresets } from "unocss-preset-vuetify";
 
@@ -34,6 +36,7 @@ const overlayUtilities = {
   "bg-activated": getOverlayBackgroundColor("activated"),
   "bg-hover": getOverlayBackgroundColor("hover"),
 } as const satisfies Record<string, Record<string, string>>;
+const CUSTOM_ICONS_DIRECTORY = join(import.meta.dirname, "app/assets/icons");
 const UI_EDGE = "var(--ui-panel-edge)";
 const UI_STEP = "var(--ui-step)";
 const UI_NEGATIVE_STEP = "calc(var(--ui-step) * -1)";
@@ -153,8 +156,20 @@ export default defineConfig({
     }),
     presetAttributify(),
     // The collections are this app's dependencies, so they resolve from here rather than from wherever the process
-    // Started — the root Vitest run starts at the repo root, where pnpm hoists none of them
-    presetIcons({ collectionsNodeResolvePath: import.meta.dirname }),
+    // Started — the root Vitest run starts at the repo root, where pnpm hoists none of them. The app's own marks sit
+    // Beside the Iconify sets, as `i-custom:` and the file's name: drawn as CSS like every other icon, so a library
+    // Component and a Vuetify icon prop both reach them
+    presetIcons({
+      collections: {
+        custom: Object.fromEntries(
+          readdirSync(CUSTOM_ICONS_DIRECTORY).map((filename) => [
+            basename(filename, ".svg"),
+            () => readFileSync(join(CUSTOM_ICONS_DIRECTORY, filename), "utf8"),
+          ]),
+        ),
+      },
+      collectionsNodeResolvePath: import.meta.dirname,
+    }),
   ],
   rules: [
     ...Object.entries(elevationPresets.md3).map(
@@ -186,7 +201,7 @@ export default defineConfig({
     "text-hint": "op-medium-emphasis text-body-small",
     // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
     "ui-item":
-      "px-2 text-left w-full cursor-pointer hover:brightness-125 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
+      "px-2 text-left w-full cursor-pointer hover:bg-accent/10 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
   },
   theme: {
     breakpoint: UNOCSS_BREAKPOINTS,
