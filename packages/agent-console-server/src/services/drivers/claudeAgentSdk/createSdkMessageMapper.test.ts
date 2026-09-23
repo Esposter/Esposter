@@ -46,8 +46,9 @@ const toStreamMessage = (
 });
 
 describe(createSdkMessageMapper, () => {
-  // One real session through the SDK — a permission prompt, a file write, a Bash call, a subagent, the persona's
-  // Hooks — recorded once and checked in, so no test here ever makes a live call
+  // One real session through the SDK — a task list, a file written then edited behind two permission prompts, a Bash
+  // Call, a subagent, the reply streamed as written with its thinking counted, the persona's hooks — recorded once and
+  // Checked in, so no test here ever makes a live call
   // oxlint-disable-next-line no-restricted-properties -- the SDK's own JSON, read as the SDK hands it over: its timestamps stay strings
   const recordedSession = JSON.parse(
     readFileSync(resolve(import.meta.dirname, "recordedSession.json"), "utf8"),
@@ -167,7 +168,11 @@ describe(createSdkMessageMapper, () => {
 
     const { mapMessage } = createSdkMessageMapper();
     const writeResultMessage = recordedSession.messages.find(
-      (message) => message.type === "user" && Boolean(message.tool_use_result),
+      (message) =>
+        message.type === "user" &&
+        typeof message.tool_use_result === "object" &&
+        message.tool_use_result !== null &&
+        "filePath" in message.tool_use_result,
     );
     assert.exists(writeResultMessage);
     const readOriginalTexts = () =>
@@ -184,7 +189,11 @@ describe(createSdkMessageMapper, () => {
 
     const { mapHistory } = createSdkMessageMapper();
     const writeResultMessage = recordedSession.messages.find(
-      (message) => message.type === "user" && Boolean(message.tool_use_result),
+      (message) =>
+        message.type === "user" &&
+        typeof message.tool_use_result === "object" &&
+        message.tool_use_result !== null &&
+        "filePath" in message.tool_use_result,
     );
     assert.exists(writeResultMessage);
     assert(writeResultMessage.type === "user");

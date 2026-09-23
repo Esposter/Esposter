@@ -31,20 +31,28 @@ describe(foldAgentEvents, () => {
         status: undefined,
         title: MAIN_LANE_TITLE,
         toolCalls: [
+          ["ToolSearch", true],
+          ["TaskCreate", true],
+          ["TaskCreate", true],
           ["Write", true],
+          ["Edit", true],
+          ["TaskUpdate", true],
+          ["TaskUpdate", true],
           ["Bash", true],
-          ["Read", true],
           ["Agent", true],
         ],
       },
-      { status: SubagentStatus.Completed, title: "List files via Glob", toolCalls: [["Glob", true]] },
+      { status: SubagentStatus.Completed, title: "Read notes.txt line", toolCalls: [["Read", true]] },
     ]);
     expect(
       [...sessionView.fileEditMap.values()]
         .flat()
         .map(({ filePath, newText, oldText }) => ({ filePath, newText, oldText })),
-    ).toStrictEqual([{ filePath: "/a", newText: "a", oldText: "" }]);
-    expect([...sessionView.fileOriginMap]).toStrictEqual([["/a", ""]]);
+    ).toStrictEqual([
+      { filePath: String.raw`/a\notes.txt`, newText: "one\n", oldText: "" },
+      { filePath: String.raw`/a\notes.txt`, newText: "two", oldText: "one" },
+    ]);
+    expect([...sessionView.fileOriginMap]).toStrictEqual([[String.raw`/a\notes.txt`, ""]]);
     expect(Array.from(sessionView.pendingPermissionRequestMap.values(), ({ toolName }) => toolName)).toStrictEqual([
       "Write",
     ]);
@@ -53,17 +61,33 @@ describe(foldAgentEvents, () => {
     );
     expect(sessionView.conversationEvents.map(({ type }) => type)).toMatchInlineSnapshot(`
       [
-        "Hook",
-        "Hook",
-        "Thinking",
-        "ToolUse",
-        "ToolUse",
-        "ToolUse",
         "Thinking",
         "Hook",
         "Hook",
         "AssistantMessage",
-        "TurnResult",
+        "ToolUse",
+        "ToolUse",
+        "ToolUse",
+        "Hook",
+        "Hook",
+        "AssistantMessage",
+        "ToolUse",
+        "Hook",
+        "Hook",
+        "AssistantMessage",
+        "ToolUse",
+        "Hook",
+        "Hook",
+        "AssistantMessage",
+        "ToolUse",
+        "ToolUse",
+        "Hook",
+        "Hook",
+        "AssistantMessage",
+        "ToolUse",
+        "Hook",
+        "Hook",
+        "AssistantMessage",
         "ToolUse",
         "Hook",
         "Hook",
@@ -129,7 +153,7 @@ describe(foldAgentEvents, () => {
     foldAgentEvents(laterSessionView, [...events, toUserMessageEvent(new Date(1)), rewindEvent]);
     foldAgentEvents(earlierSessionView, [...events, toUserMessageEvent(new Date(0)), rewindEvent]);
 
-    expect(laterSessionView.fileEditMap.size).toBe(1);
+    expect(laterSessionView.fileEditMap.size).toBe(2);
     expect(earlierSessionView.fileEditMap.size).toBe(0);
   });
 });
