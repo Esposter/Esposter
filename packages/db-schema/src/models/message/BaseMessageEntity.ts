@@ -7,7 +7,7 @@ import type { Except } from "type-fest";
 
 import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
 import { fileEntitySchema } from "#src/models/azure/table/FileEntity";
-import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
+import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { MessageType } from "#src/models/message/MessageType";
 import { sanitizedMessageSchema } from "#src/models/message/SanitizedMessage";
 import { standardMessageTypeSchema } from "#src/models/message/StandardMessageType";

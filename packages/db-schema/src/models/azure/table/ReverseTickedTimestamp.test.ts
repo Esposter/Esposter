@@ -1,4 +1,4 @@
-import { reverseTickedTimestampSchema } from "#src/models/azure/table/reverseTickedTimestampSchema";
+import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { AZURE_SELF_DESTRUCT_TIMER } from "#src/services/azure/table/constants";
 import { getReverseTickedTimestamp } from "#src/services/azure/table/getReverseTickedTimestamp";
 import { describe, expect, test } from "vitest";
