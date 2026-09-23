@@ -76,11 +76,6 @@ export default {
       element,
       message: `Don't use <${element}>. Vuetify is leaving for the UI library: a trail of links back is UiBreadcrumbs.`,
     })),
-    {
-      element: "v-data-table-server",
-      message:
-        "Don't use <v-data-table-server>. Vuetify is leaving for the UI library: a page of rows a server reads is UiDataTable.",
-    },
   ],
   // Every input Vuetify renders in this app declares `hideDetails: "auto"` once in `vuetify.config.ts`, so a
   // Per-field `hide-details` restates the default at best and defeats it at worst: the bare attribute means
