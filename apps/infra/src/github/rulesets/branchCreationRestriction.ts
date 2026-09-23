@@ -35,7 +35,5 @@ export const branchCreationRestriction: github.RepositoryRuleset = new github.Re
     rules: { creation: true },
     target: "branch",
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

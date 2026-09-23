@@ -12,7 +12,5 @@ export const reviewCollectorToken: github.ActionsSecret = new github.ActionsSecr
     secretName: "REVIEW_COLLECTOR_TOKEN",
     value: configuration.requireSecret("REVIEW_COLLECTOR_TOKEN"),
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

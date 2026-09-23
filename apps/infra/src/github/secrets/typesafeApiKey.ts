@@ -9,7 +9,5 @@ export const typesafeApiKey: github.ActionsSecret = new github.ActionsSecret(
     secretName: "TYPESAFE_API_KEY",
     value: configuration.requireSecret("TYPESAFE_API_KEY"),
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

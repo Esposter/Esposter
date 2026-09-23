@@ -9,7 +9,5 @@ export const documentation: github.IssueLabel = new github.IssueLabel(
     name: "documentation",
     repository: repository.name,
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

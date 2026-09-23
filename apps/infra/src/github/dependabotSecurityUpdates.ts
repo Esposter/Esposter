@@ -10,11 +10,6 @@ import * as github from "@pulumi/github";
 export const dependabotSecurityUpdates: github.RepositoryDependabotSecurityUpdates =
   new github.RepositoryDependabotSecurityUpdates(
     "dependabotSecurityUpdates",
-    {
-      enabled: false,
-      repository: repository.name,
-    },
-    {
-      protect: true,
-    },
+    { enabled: false, repository: repository.name },
+    { protect: true },
   );

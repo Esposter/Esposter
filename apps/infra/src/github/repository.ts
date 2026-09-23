@@ -45,7 +45,5 @@ export const repository: github.Repository = new github.Repository(
     topics: packageJson.keywords,
     visibility: "public",
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

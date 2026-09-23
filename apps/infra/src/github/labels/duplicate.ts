@@ -9,7 +9,5 @@ export const duplicate: github.IssueLabel = new github.IssueLabel(
     name: "duplicate",
     repository: repository.name,
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

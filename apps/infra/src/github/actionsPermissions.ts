@@ -14,7 +14,5 @@ export const actionsPermissions: github.ActionsRepositoryPermissions = new githu
     },
     repository: repository.name,
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );
