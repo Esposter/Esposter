@@ -97,6 +97,43 @@ describe("unoConfig", () => {
               "opacity": "var(--v-medium-emphasis-opacity, 0.6)",
             },
           ],
+          [
+            "ui-frame",
+            {
+              "background-color": "var(--ui-panel)",
+              "box-shadow": "0 calc(var(--ui-step) * -1) 0 0 var(--ui-panel-edge), 0 var(--ui-step) 0 0 var(--ui-panel-edge), calc(var(--ui-step) * -1) 0 0 0 var(--ui-panel-edge), var(--ui-step) 0 0 0 var(--ui-panel-edge), inset 0 var(--ui-step) 0 0 color-mix(in srgb, var(--ui-text) 8%, transparent)",
+            },
+          ],
+          [
+            "ui-popover",
+            {
+              "background-color": "transparent",
+              "border": "none",
+              "color": "inherit",
+              "min-width": "anchor-size(width)",
+              "overflow": "visible",
+              "padding": "calc(var(--ui-step) * 2)",
+            },
+          ],
+          [
+            "ui-raised",
+            {
+              "background-color": "var(--ui-panel-edge)",
+              "box-shadow": "inset calc(var(--ui-step) / -2) calc(var(--ui-step) / -2) 0 0 color-mix(in srgb, var(--ui-background) 45%, transparent), inset calc(var(--ui-step) / 2) calc(var(--ui-step) / 2) 0 0 color-mix(in srgb, var(--ui-text) 20%, transparent)",
+              "color": "var(--ui-text)",
+              "font": "inherit",
+            },
+          ],
+          [
+            "ui-sunk",
+            {
+              "background-color": "var(--ui-background)",
+              "box-shadow": "inset 0 calc(var(--ui-step) / -2) 0 0 var(--ui-panel-edge)",
+              "color": "inherit",
+              "font": "inherit",
+              "padding": "0 calc(var(--ui-step) * 2)",
+            },
+          ],
         ],
         "safelist": [
           "elevation-0",
@@ -339,6 +376,7 @@ describe("unoConfig", () => {
               "line-height": 1.4285714286,
             },
           ],
+          "ui-item": "px-2 text-left w-full cursor-pointer hover:brightness-125 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
         },
         "theme": {
           "breakpoint": {

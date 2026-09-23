@@ -34,6 +34,51 @@ const overlayUtilities = {
   "bg-activated": getOverlayBackgroundColor("activated"),
   "bg-hover": getOverlayBackgroundColor("hover"),
 } as const satisfies Record<string, Record<string, string>>;
+const UI_EDGE = "var(--ui-panel-edge)";
+const UI_STEP = "var(--ui-step)";
+const UI_NEGATIVE_STEP = "calc(var(--ui-step) * -1)";
+// The UI library's surfaces, each drawn with hard-edged shadows in its tokens and never a radius or a blur. A frame
+// Holds content, ringed one step out on each side so its corners are left notched, with a faint lit line along its
+// Top. A raised block can be pressed, lit along its top and left and shaded along the others. A sunk field takes
+// Input, shaded along its bottom. A popover is the top-layer element a menu, a select or a
+// Field's suggestions open in, emptied of the browser's own popover look and padded, so the frame inside it never
+// Overlaps what it hangs off
+const uiSurfaceUtilities = {
+  "ui-frame": {
+    "background-color": "var(--ui-panel)",
+    "box-shadow": [
+      `0 ${UI_NEGATIVE_STEP} 0 0 ${UI_EDGE}`,
+      `0 ${UI_STEP} 0 0 ${UI_EDGE}`,
+      `${UI_NEGATIVE_STEP} 0 0 0 ${UI_EDGE}`,
+      `${UI_STEP} 0 0 0 ${UI_EDGE}`,
+      `inset 0 ${UI_STEP} 0 0 color-mix(in srgb, var(--ui-text) 8%, transparent)`,
+    ].join(", "),
+  },
+  "ui-popover": {
+    "background-color": "transparent",
+    border: "none",
+    color: "inherit",
+    "min-width": "anchor-size(width)",
+    overflow: "visible",
+    padding: `calc(${UI_STEP} * 2)`,
+  },
+  "ui-raised": {
+    "background-color": UI_EDGE,
+    "box-shadow": [
+      `inset calc(${UI_STEP} / -2) calc(${UI_STEP} / -2) 0 0 color-mix(in srgb, var(--ui-background) 45%, transparent)`,
+      `inset calc(${UI_STEP} / 2) calc(${UI_STEP} / 2) 0 0 color-mix(in srgb, var(--ui-text) 20%, transparent)`,
+    ].join(", "),
+    color: "var(--ui-text)",
+    font: "inherit",
+  },
+  "ui-sunk": {
+    "background-color": "var(--ui-background)",
+    "box-shadow": `inset 0 calc(${UI_STEP} / -2) 0 0 ${UI_EDGE}`,
+    color: "inherit",
+    font: "inherit",
+    padding: `0 calc(${UI_STEP} * 2)`,
+  },
+} as const satisfies Record<string, Record<string, string>>;
 // `@esposter/shared` exports the same conversion, and this file cannot import it: the app's `postinstall` is
 // `nuxt prepare`, which is where the UnoCSS module loads this config — before any workspace package is built,
 // So the import resolves to a `dist` a fresh clone does not have yet and fails the install
@@ -123,6 +168,7 @@ export default defineConfig({
     // Through at a fraction — an `opacity` here would fade the element's own text with it
     ...Object.entries(overlayUtilities),
     ...Object.entries(opacityUtilities),
+    ...Object.entries(uiSurfaceUtilities),
   ],
   safelist: [
     ...Array.from({ length: 6 }, (_value, index) => `elevation-${index}`),
@@ -138,6 +184,9 @@ export default defineConfig({
       ]),
     ),
     "text-hint": "op-medium-emphasis text-body-small",
+    // One choice in a popover's list, tinted while it is the highlighted, selected or focused one
+    "ui-item":
+      "px-2 text-left w-full cursor-pointer hover:brightness-125 aria-selected:bg-accent/20 data-[highlighted]:bg-accent/20 focus-visible:bg-accent/20",
   },
   theme: {
     breakpoint: UNOCSS_BREAKPOINTS,
