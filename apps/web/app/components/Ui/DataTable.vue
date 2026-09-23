@@ -43,7 +43,7 @@ interface Props {
 // Selection outlives the page it was made on
 const page = defineModel<number>("page", { default: 1 });
 const itemsPerPage = defineModel<number>("itemsPerPage", { default: -1 });
-const sortBy = defineModel<SortItem<TSortKey>[]>("sortBy", { required: true });
+const sortBy = defineModel<SortItem<TSortKey>[]>("sortBy", { default: () => [] });
 const selectedIds = defineModel<string[]>("selectedIds", { default: () => [] });
 const {
   columns,
