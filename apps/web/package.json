@@ -108,6 +108,7 @@
     "@vuepic/vue-datepicker": "catalog:",
     "@vueuse/core": "catalog:",
     "@vueuse/router": "catalog:",
+    "agent-console-server": "workspace:*",
     "ajv": "catalog:",
     "ajv-errors": "catalog:",
     "ajv-formats": "catalog:",

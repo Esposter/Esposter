@@ -1,0 +1,17 @@
+import { TOKEN_BYTE_LENGTH, TOKEN_DIRECTORY_NAME, TOKEN_FILENAME } from "#src/services/server/constants";
+import { randomBytes } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
+// The token every connection must present, made once and kept in the person's home directory, readable by them
+// Alone. Deleting the file revokes every paired page on the next start.
+export const readToken = (): string => {
+  const tokenDirectory = join(homedir(), TOKEN_DIRECTORY_NAME);
+  const tokenPath = join(tokenDirectory, TOKEN_FILENAME);
+  if (existsSync(tokenPath)) return readFileSync(tokenPath, "utf8").trim();
+
+  const token = randomBytes(TOKEN_BYTE_LENGTH).toString("base64url");
+  mkdirSync(tokenDirectory, { recursive: true });
+  writeFileSync(tokenPath, token, { mode: 0o600 });
+  return token;
+};
