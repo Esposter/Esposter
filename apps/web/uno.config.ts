@@ -218,6 +218,10 @@ export default defineConfig({
       ]),
     ),
     "text-hint": "op-medium-emphasis text-body-small",
+    // One voxel block of a bar that fills a block at a time, lit in the accent once filled. A row narrower than its
+    // Blocks squeezes each one rather than spilling out
+    "ui-block":
+      "bg-panel grow-0 shrink basis-[calc(var(--ui-step)*4)] min-w-[var(--ui-step)] h-[calc(var(--ui-step)*6)] shadow-[inset_0_calc(var(--ui-step)/-2)_0_0_var(--ui-panel-edge)] data-[filled]:bg-accent",
     // Something pressed, a button or a link that looks like one: raised, and filled by its variant or while pressed
     "ui-button": [
       "px-2 shrink-0 cursor-pointer ui-raised hover:brightness-125 disabled:cursor-default disabled:op-disabled",
