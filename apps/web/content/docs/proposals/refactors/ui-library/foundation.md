@@ -86,7 +86,6 @@ Most code in this repository is written by agents, so the headless layer's own a
 | `apps/web/app/components/Nuxt/Theme.vue`                       | Resolves the mode once and selects it in both libraries                       |
 | `apps/web/app/services/agentConsole/AgentConsolePaletteMap.ts` | Loses its interface colours to the app palette and keeps the world's          |
 | `apps/web/app/assets/css/globals.scss`                         | Holds the document chrome: scrollbars, selection, focus, caret, colour scheme |
-| `apps/web/app/layouts/default.vue`                             | Its drawer scrollbar rule reads the tokens                                    |
 | `.oxlintrc.json`                                               | The import boundary                                                           |
 | `.agents/skills/styling/SKILL.md`                              | Its immersive-page section inverted                                           |
 

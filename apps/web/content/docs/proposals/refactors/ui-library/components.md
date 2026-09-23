@@ -32,7 +32,7 @@ A component is added to the library when the first stage needs it, never ahead o
 | Avatar                  | Avatar                                        | the Vuetify avatar, the Styled avatar and default avatar                                  | app shell       |
 | Breadcrumbs             | Breadcrumbs                                   | the app breadcrumbs                                                                       | app shell       |
 | Overflow                | Overflow                                      | the hand-built collapse of a command bar into one menu on a narrow screen                 | app shell       |
-| Context menu            | Popover with roving focus, at a point         | the two hand-built right-click menus                                                      | context menus   |
+| Context menu            | Popover with roving focus, at a point         | the hand-built right-click menus                                                          | context menus   |
 | Text field, textarea    | Input                                         | the Vuetify text field, textarea and file input                                           | page migration  |
 | Number field            | NumberField                                   | numeric text fields                                                                       | page migration  |
 | Checkbox, radio, switch | Checkbox, Radio, Switch                       | their Vuetify counterparts                                                                | page migration  |

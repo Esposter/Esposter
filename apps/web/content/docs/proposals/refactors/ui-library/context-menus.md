@@ -1,12 +1,12 @@
 ---
 title: Context menus
-description: Proposal — one context menu for the whole app. A menu opened at a point by right-click, long-press or the keyboard, one mounted host, and an item list shared with the element's own overflow menu, replacing the two hand-built right-click menus and reaching the surfaces that have none.
+description: Proposal — one context menu for the whole app. A menu opened at a point by right-click, long-press or the keyboard, one mounted host, and an item list shared with the element's own overflow menu, replacing the hand-built right-click menus and reaching the surfaces that have none.
 model: claude-opus-5-5
 ---
 
 # Context Menus
 
-Two surfaces open a menu on right-click today, and each built its own. A message stores the pointer's coordinates in its list's state and opens its options menu there. A row of the resource list does the same through the data table's row event, with its own position and id refs. Neither opens from the keyboard or from a long press on a phone, so on a touch screen and for a keyboard reader the context menu does not exist. Every other surface that has actions of its own — a room in the room list, a member, a column of a sheet, a file in a tree — offers them only through a button or not at all.
+The surfaces that open a menu on right-click today each built their own. A message stores the pointer's coordinates in its list's state and opens its options menu there. A row of the resource list does the same through the data table's row event, with its own position and id refs. Neither opens from the keyboard or from a long press on a phone, so on a touch screen and for a keyboard reader the context menu does not exist. Every other surface that has actions of its own — a room in the room list, a member, a column of a sheet, a file in a tree — offers them only through a button or not at all.
 
 Vuetify 0 has no context menu. It has the parts: a popover in the top layer, roving focus and a hotkey composable. This page is the design of ours.
 
