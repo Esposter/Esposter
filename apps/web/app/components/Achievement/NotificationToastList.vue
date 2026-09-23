@@ -15,7 +15,7 @@ userAchievements.value = await useReadUserAchievements(undefined, achievementDef
 </script>
 
 <template>
-  <AchievementNotificationSnackBar
+  <AchievementNotificationToast
     v-for="userAchievement in recentlyUnlockedUserAchievements"
     :key="userAchievement.achievement.name"
     :user-achievement

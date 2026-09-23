@@ -1,11 +1,11 @@
 ---
 title: UI library
-description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the first components and the surfaces they are drawn with, the generated map of how the pages link, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
+description: The app's own UI library on Vuetify 0's headless primitives — the design tokens as the one source of colour for both libraries while they coexist, the document chrome every page takes, icons as CSS generated per use, the first components and the surfaces they are drawn with, the generated map of how the pages link, the app shell with its dock, toasts and dialogs, the import boundary that keeps Vuetify 0 inside the library, and the agent tooling installed with it.
 ---
 
 # UI Library
 
-The app is moving from Material as Vuetify draws it to a library of its own, built in `apps/web` on [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) — Vuetify's headless layer, which owns focus, keyboard handling, ARIA and positioning and paints nothing. The migration runs as a ladder of stages, designed in the [UI library proposal](/docs/proposals/refactors/ui-library). This page is what exists so far: the foundation every later stage builds on, the icons, the first components, which the agent console is built from, and the flow map the later stages are designed from.
+The app is moving from Material as Vuetify draws it to a library of its own, built in `apps/web` on [Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0) — Vuetify's headless layer, which owns focus, keyboard handling, ARIA and positioning and paints nothing. The migration runs as a ladder of stages, designed in the [UI library proposal](/docs/proposals/refactors/ui-library). This page is what exists so far: the foundation every later stage builds on, the icons, the first components, which the agent console is built from, the flow map the later stages are designed from, and the app shell every page sits in.
 
 The foundation changes no component, and still repaints every page. Its design tokens are the colours of the whole app, Vuetify's pages included, and the document's own chrome — scrollbars, selection, caret, focus ring — reads them on every page whichever library draws it.
 
@@ -50,7 +50,7 @@ flowchart TD
 - **UnoCSS's icons preset is the engine.** A class naming an Iconify icon becomes a rule that draws its SVG as a mask filled with the current colour, so an icon takes the text colour as a glyph did. The Material Design Icons set is read at build time from its Iconify JSON package and never shipped. The rules sit in their own cascade layer ahead of Vuetify's and the utilities, since each also sets its colour to inherit: a component that colours its own icon, as a field does in its error state, and a colour or size utility written on an icon both still win.
 - **A name is written in full**, as "i-mdi:" and the icon's name, because the preset generates only what its extractor finds in source. A name assembled from a prefix and a variable generates nothing and draws an empty box, so it is a review finding. The extractor reads components and markup but not plain TypeScript, which would hand every string in the app to the attributify extractor and break the stylesheet on the first one that looks like an attribute, so a `.ts` file that names an icon opts in with UnoCSS's `@unocss-include` comment on its first line. A `v-icon` takes its icon as the `icon` prop, never as text content, which the extractor does not read. A test generates the icons each source file names and fails on any it cannot find, or on a `.ts` file naming one without the comment.
 - **Vuetify draws through the same CSS.** Its default set is the module's "unocss-mdi", which hands the class to Vuetify's class icon. Vuetify's internal icons are aliases no source file names, and the module maps only some of them, so `vuetify.config.ts` maps every alias Vuetify defines from Vuetify's own list and `uno.config.ts` safelists the result.
-- **The custom component icons** — the anime and dungeon gate marks — stay components in the custom set. The app's Vuetify plugin adds that set to the module's icon configuration rather than replacing it, which would drop the aliases.
+- **The app's own marks are icons like any other.** The anime and dungeon gate marks are SVG files in `app/assets/icons/`, which UnoCSS's icons preset serves as the `i-custom:` set, so they are written whole as classes and draw wherever an icon class does — a library menu as much as a Vuetify icon prop. A file there is its icon's whole definition; nothing registers it.
 - **The library's icons are pixel icons, named by meaning.** `Ui/Icon.vue` takes a `UiIconMeaning` — what the icon says, such as success or remove — and `UiIconMap` resolves it to a class: [Pixelarticons](https://pixelarticons.com/) first, a set drawn on a pixel grid to sit on a voxel surface, and a Material Design Icons class for a meaning it has no glyph for. Swapping sets is one map edit, a fallback is a row in the map, and a feature never names a set. Vuetify's components keep their Material icons until their unit migrates.
 - **A pixel icon renders at 1.5rem**, the size of its 24-unit grid, so every unit is a whole CSS pixel; any other size blurs the grid.
 - **An icon is decoration unless it is labelled.** Without a label it is hidden from assistive technology; with one it is an image with that name, for an icon that says what nothing beside it does — a tool call's success or failure mark.
@@ -60,24 +60,29 @@ flowchart TD
 
 The first components came out of the agent console, which drew the look by hand before the library existed. Each takes its behaviour from a Vuetify 0 primitive and its look from the tokens, and each has a component test of its keyboard and ARIA contract, so a feature's test never walks a menu's arrow keys again.
 
-| Component       | Built on                              | What it is                                                                                         |
-| :-------------- | :------------------------------------ | :------------------------------------------------------------------------------------------------- |
-| `UiFrame`       | none                                  | A region of content, with an optional title in the accent colour and a slot for its actions        |
-| `UiButton`      | Button                                | The raised block, with accent, danger and quiet variants; a pressed toggle takes the accent        |
-| `UiIconButton`  | `UiButton`                            | An icon by meaning, and a required label that is its accessible name and its tooltip at once       |
-| `UiCopyButton`  | `UiIconButton`                        | Copies its source, and says it did while the clipboard composable's copied state lasts             |
-| `UiMenu`        | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                            |
-| `UiSelect`      | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                 |
-| `UiSuggestions` | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories |
-| `UiSpinner`     | none                                  | The terminal's star, a frame at a time, held still under reduced motion                            |
-| `UiLoadingBar`  | Progress                              | A row of voxel blocks filled as the work gets done, with the progress bar's role and value         |
-| `UiThemeScope`  | Theme                                 | A region drawn in another theme than the document's                                                |
+| Component       | Built on                              | What it is                                                                                          |
+| :-------------- | :------------------------------------ | :-------------------------------------------------------------------------------------------------- |
+| `UiFrame`       | none                                  | A region of content, with an optional title in the accent colour and a slot for its actions         |
+| `UiButton`      | Button                                | The raised block, with accent, danger and quiet variants; a pressed toggle takes the accent         |
+| `UiIconButton`  | `UiButton`                            | An icon by meaning, and a required label that is its accessible name and its tooltip at once        |
+| `UiCopyButton`  | `UiIconButton`                        | Copies its source, and says it did while the clipboard composable's copied state lasts              |
+| `UiMenu`        | Popover, roving focus                 | A trigger and the actions it opens, as the menu button pattern has them                             |
+| `UiSelect`      | Select, virtual focus                 | One choice from a list, as the select-only combobox pattern has it                                  |
+| `UiSuggestions` | the popover composable, virtual focus | Completions under a text field the call site owns: the slash palette, a new session's repositories  |
+| `UiSpinner`     | none                                  | The terminal's star, a frame at a time, held still under reduced motion                             |
+| `UiLoadingBar`  | Progress                              | A row of voxel blocks filled as the work gets done, with the progress bar's role and value          |
+| `UiThemeScope`  | Theme                                 | A region drawn in another theme than the document's                                                 |
+| `UiPopover`     | Popover                               | A trigger and a framed panel of anything that is not a list of actions: the launcher, notifications |
+| `UiAvatar`      | Avatar                                | A picture in a frame, or the first letter of its name until one loads                               |
+| `UiToast`       | none                                  | A frame with a status mark, a message, an action, and a timer held while it is read                 |
+| `UiToastStack`  | none                                  | The one corner every toast is drawn in, announced as a polite live region                           |
 
 ### Keyboard contracts
 
 - **A menu** opens from its trigger onto its first item by click, Enter, Space or the down arrow, and onto its last by the up arrow. The arrows walk it, and Home and End jump to its ends. Typing a title's first letters jumps to the next title they begin; a pause starts the search over, and one letter pressed again steps through every title it begins. Enter or Space picks. A pick or Escape closes it with focus back on the trigger, and Tab closes it and moves on.
 - **A select** opens onto its selected option by the arrows, Enter or Space. Focus stays on the trigger, which names the highlighted option as its active descendant. The arrows, Home, End and typeahead walk it, and Enter picks.
 - **Suggestions** leave focus in the field, since typing goes on there. The arrows walk them as the field's active descendant, and Enter or Tab takes the highlighted one. Enter with nothing highlighted is still the field's own key — the composer's send. Escape puts them away without reaching any shortcut on the page, and the next keystroke in the field brings them back. They show while the field has focus and something to offer, and pressing one with the mouse keeps the field focused.
+- **A popover** opens from its trigger by click, Enter or Space, and Escape closes it with focus back on the trigger. Its open state is a model as well, so a shortcut elsewhere on the page can open it.
 - **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none.
 
 ### Surfaces
@@ -99,11 +104,61 @@ The three surfaces of the [design language](/docs/proposals/refactors/ui-library
 
 - **The call site's attributes win over the primitive's.** Vuetify 0's button lays its own attributes over the ones passed to it, which would drop a form's submit type and a toggle's pressed state. `UiButton` renders the element itself, from the primitive's attributes with the call site's on top. It exposes that element, because a renderless primitive leaves a fragment rather than an element as the component's root.
 - **A select's model sees only choices.** Vuetify 0's select clears the old choice before it selects the new one, which a model would see as the select going empty for a moment. `UiSelect` passes on only a value, so a call site that sends every change to a server never sends the empty one.
+- **A modal is Vuetify's until its content is not.** Vuetify 0's dialog opens in the browser's top layer, and everything outside the top layer is inert while it is open. Vuetify renders a menu, a select or a tooltip outside the element that opened it, so inside a top-layer dialog each would open underneath it and take no clicks. The dialog shell and the page drawers therefore keep Vuetify's overlay as their behaviour and wear the library's look, and move onto Vuetify 0 once nothing inside them is Vuetify's. A popover is not modal, so the dock's panels are the library's already, drawn with the library's parts alone.
 - **A spinner is decoration.** It sits beside a line that says what is under way, so it has no progress role and is hidden from assistive technology. The loading bar is the one with a value to report.
 
 ### Themes and scopes
 
 `UiThemeScope` renders Vuetify 0's theme element, whose theme attribute gives every token beneath it that theme's values, and sets the colour scheme to match, so the browser's own controls follow. The document chrome declares its inherited colours — the scrollbar, the caret and the native controls' accent — on every theme scope as well as on the root, because an inherited value is resolved where it is declared.
+
+## App shell
+
+The frame every page sits in. The top app bar is gone: what is app-wide lives in a dock, and what belongs to a page is the page's own.
+
+```mermaid
+flowchart TD
+  R[A route] --> L{Its layout}
+  L -->|immersive| I[No dock: the page brings its own way back]
+  L -->|any other| W{At least the md breakpoint?}
+  W -->|yes| RL[The dock as a rail down the left edge]
+  W -->|no| BB[The dock as a bar along the bottom]
+  RL --> D[Home, launcher, bookmarks and recent pages, notifications, account]
+  BB --> DN[Home, launcher holding the places, notifications, account]
+  D --> P[The page, its drawers docked past the dock]
+  DN --> P
+```
+
+- **The dock holds the reader's places, not the app's catalogue.** Below the launcher come the pages the reader bookmarked, then the pages they come back to most. A product's own page shows its icon, and any other page, a room or a resource, shows its title's first letter in a frame. On a narrow screen the bar has no room for them, so they lead the launcher's panel instead. Which edge the dock takes is CSS alone: Vuetify's mobile threshold is the `md` breakpoint, the one UnoCSS's variant reads, so no script decides it.
+- **Bookmarks are server-side and recent pages are not.** A bookmark follows the reader between devices, so it is a row of `bookmarks`, toggled by the current page's bookmark button and capped at a handful, since the dock shows every one. A recent page is a convenience of the device, kept in local storage and ranked by frecency: each visit weighted by how long ago the last one was, in Firefox's age buckets. Home and sign-in are never recent, and a signed-out reader has recent pages only. A page's title is the last part of its document title, read each time its head renders, so a room's name that arrives after its messages is picked up.
+- **The launcher opens every product as a panel**, grouped by what it is for: talk, make, build and play. It is the one list of products: the home and sign-in pages no longer keep a drawer of them, and give that width to their content.
+- **The account menu holds the rarely used**: settings, the theme, the pages outside the products and signing out. Signed out, its trigger is a sign-in mark and signing in leads the same menu.
+- **Notifications** are a popover on the dock with the unread count on its trigger. The panel pages through its list and marks everything read as it closes.
+- **The dock steps aside for the keyboard.** On a narrow screen, while the page's footer (a message composer) has focus, the bar is hidden and gives its room back, and it returns when focus leaves.
+- **Every fixed region starts where the dock ends.** The dock's breadth is `--dock-size`, and the app root sets `--dock-inset-inline-start` and `--dock-inset-block-end` by breakpoint. The layout's drawers, main region and footer, and any page sized to the viewport, subtract those rather than a bar's height.
+- **One toast stack in one corner.** Alerts, what was copied, the notification at the head of its queue and each unlocked achievement are each a `UiToast` in `UiToastStack`. Each source keeps its own store and its own timing; the stack only draws them. A toast that closes itself holds while it is hovered or holds focus, and an error is announced at once.
+- **One status page.** A route nothing matches and a failure that escapes both land on `error.vue`, which Nuxt draws in place of `App.vue`, so it is the library's alone and carries no dock. Its code is built in voxel blocks that drop into place a column at a time, held still under reduced motion; a missing page has one block knocked out of its middle digit and lying on the floor beneath it. It offers the way back that fits: home for a missing page, a retry and home for a failure. There is no catch-all page of its own, since Nuxt already answers an unmatched route with a 404 there.
+- **The page loading bar** is the library's voxel bar along the top edge, driven by Nuxt's own loading indicator.
+- **The dialog shell** keeps its props and its slots, and draws the library's frame with a title bar, the library's buttons and a dithered scrim over Vuetify's dialog. The Vuetify prop bags it still takes are read into the library's words in one place: a warning or error colour becomes the danger variant, a pending state the spinner.
+
+Every flow the app bar carried has a place in the new frame:
+
+| Before                                                              | Now                                                      |
+| :------------------------------------------------------------------ | :------------------------------------------------------- |
+| Logo, back to the home page                                         | The logo at the start of the dock                        |
+| Site name                                                           | The logo's accessible name; each page's own title        |
+| Products grid, with the games group                                 | The launcher, games included as a group                  |
+| The home and sign-in pages' drawer of products                      | The launcher, one click from every page                  |
+| Theme toggle                                                        | The account menu                                         |
+| Notification bell with its unread badge                             | The dock, with the count on its trigger                  |
+| Account menu: settings, pages, sign-out                             | The account menu, unchanged in content                   |
+| Signed-out menu: sign-in, pages                                     | The same menu behind a sign-in mark                      |
+| The loading bar under the app bar                                   | The voxel loading bar along the top edge                 |
+| Left and right drawers, opened by default on a wide screen          | Unchanged in behaviour, docked past the rail             |
+| Scroll-to-top button                                                | A raised icon button in the page's corner, above the bar |
+| Alerts, the clipboard snackbar, notification and achievement toasts | One toast stack in one corner                            |
+| The call picture-in-picture window and the user settings dialog     | Unchanged                                                |
+
+The readable-text setting and the command palette's button are not part of it yet. The setting swaps the body's face, and the body is not in the pixel face until page migration puts it there. The palette's button arrives with the [command palette](/docs/proposals/refactors/ui-library/command-palette).
 
 ## One owner per concern
 
@@ -170,33 +225,42 @@ flowchart TD
 
 ## Key files
 
-| File                                              | Role                                                                                            |
-| :------------------------------------------------ | :---------------------------------------------------------------------------------------------- |
-| `apps/web/configuration/UiPaletteMap.ts`          | Dusk and dawn, one entry per token                                                              |
-| `apps/web/configuration/UiPaletteMap.test.ts`     | Every foreground token against every surface token, at the WCAG AA ratio                        |
-| `apps/web/configuration/ThemeModeUiThemeMap.ts`   | The library theme each of Vuetify's resolved modes selects                                      |
-| `apps/web/app/models/ui/UiToken.ts`               | The token names                                                                                 |
-| `apps/web/app/models/ui/UiIconMeaning.ts`         | What each library icon says                                                                     |
-| `apps/web/app/services/ui/UiIconMap.ts`           | Each meaning's icon class: the pixel set first, Material as the fallback                        |
-| `apps/web/app/components/Ui/Icon.vue`             | The icon element, by meaning, decorative unless labelled                                        |
-| `apps/web/app/components/Ui/`                     | The components, each beside its component test                                                  |
-| `apps/web/app/composables/ui/useTypeahead.ts`     | The typeahead the menu and the select share                                                     |
-| `apps/web/app/models/ui/UiMenuItem.ts`            | One choice in a menu, a select or suggestions                                                   |
-| `apps/web/app/services/ui/constants.ts`           | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens |
-| `apps/web/app/plugins/ui.ts`                      | Vuetify 0's hydration and theme plugins, the theme through the Unhead adapter                   |
-| `apps/web/app/composables/ui/useSelectUiTheme.ts` | Selects the library theme matching a Vuetify mode                                               |
-| `apps/web/app/components/Nuxt/Theme.vue`          | Resolves the mode once and selects it in both libraries                                         |
-| `apps/web/vuetify.config.ts`                      | Its theme colours read the palette map; its icons are the UnoCSS set, every alias mapped        |
-| `apps/web/uno.config.ts`                          | One theme colour per token; the surfaces; the icons preset, and the safelisted aliases          |
-| `apps/web/uno.config.test.ts`                     | Every icon a source file names generates its rule                                               |
-| `apps/web/app/assets/css/globals.scss`            | The document chrome and the step token                                                          |
-| `apps/web/app/assets/css/layers.css`              | Declares the chrome's layer first, and the icons' ahead of Vuetify's                            |
-| `apps/web/app/plugins/vuetify.ts`                 | Adds the custom component icons to the module's icon configuration                              |
-| `apps/web/scripts/flowMap/services/getFlowMap.ts` | Walks the pages and the shell into the flow map                                                 |
-| `apps/web/shared/generated/flowMap/flowMap.mmd`   | The flow map, committed                                                                         |
-| `apps/web/app/components/content/FlowMap.vue`     | Draws the flow map on this page                                                                 |
-| `.oxlintrc.json`                                  | The import boundary                                                                             |
-| `.agents/skills/ui-library/SKILL.md`              | The library's conventions                                                                       |
+| File                                               | Role                                                                                            |
+| :------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| `apps/web/configuration/UiPaletteMap.ts`           | Dusk and dawn, one entry per token                                                              |
+| `apps/web/configuration/UiPaletteMap.test.ts`      | Every foreground token against every surface token, at the WCAG AA ratio                        |
+| `apps/web/configuration/ThemeModeUiThemeMap.ts`    | The library theme each of Vuetify's resolved modes selects                                      |
+| `apps/web/app/models/ui/UiToken.ts`                | The token names                                                                                 |
+| `apps/web/app/models/ui/UiIconMeaning.ts`          | What each library icon says                                                                     |
+| `apps/web/app/services/ui/UiIconMap.ts`            | Each meaning's icon class: the pixel set first, Material as the fallback                        |
+| `apps/web/app/components/Ui/Icon.vue`              | The icon element, by meaning, decorative unless labelled                                        |
+| `apps/web/app/components/Ui/`                      | The components, each beside its component test                                                  |
+| `apps/web/app/composables/ui/useTypeahead.ts`      | The typeahead the menu and the select share                                                     |
+| `apps/web/app/models/ui/UiMenuItem.ts`             | One choice in a menu, a select or suggestions                                                   |
+| `apps/web/app/services/ui/constants.ts`            | The spinner's frames, the loading bar's blocks, the typeahead's pause and where a popover opens |
+| `apps/web/app/plugins/ui.ts`                       | Vuetify 0's hydration and theme plugins, the theme through the Unhead adapter                   |
+| `apps/web/app/composables/ui/useSelectUiTheme.ts`  | Selects the library theme matching a Vuetify mode                                               |
+| `apps/web/app/components/Nuxt/Theme.vue`           | Resolves the mode once and selects it in both libraries                                         |
+| `apps/web/vuetify.config.ts`                       | Its theme colours read the palette map; its icons are the UnoCSS set, every alias mapped        |
+| `apps/web/uno.config.ts`                           | One theme colour per token; the surfaces; the icons preset, and the safelisted aliases          |
+| `apps/web/uno.config.test.ts`                      | Every icon a source file names generates its rule                                               |
+| `apps/web/app/assets/css/globals.scss`             | The document chrome and the step token                                                          |
+| `apps/web/app/assets/css/layers.css`               | Declares the chrome's layer first, and the icons' ahead of Vuetify's                            |
+| `apps/web/app/assets/icons/`                       | The app's own marks, served by UnoCSS as the `i-custom:` set                                    |
+| `apps/web/scripts/flowMap/services/getFlowMap.ts`  | Walks the pages and the shell into the flow map                                                 |
+| `apps/web/shared/generated/flowMap/flowMap.mmd`    | The flow map, committed                                                                         |
+| `apps/web/app/components/content/FlowMap.vue`      | Draws the flow map on this page                                                                 |
+| `apps/web/app/components/App/Dock/`                | The dock: places, launcher, account                                                             |
+| `apps/web/app/components/App/ToastStack.vue`       | Every source of a toast, drawn in the one stack                                                 |
+| `apps/web/app/store/bookmark.ts`                   | The reader's bookmarks, toggled optimistically                                                  |
+| `apps/web/app/store/recentPage.ts`                 | The device's recent pages, ranked by frecency                                                   |
+| `apps/web/app/plugins/recentPages.client.ts`       | Records each visit and the title the page's head settles on                                     |
+| `apps/web/server/trpc/routers/bookmark.ts`         | Reads and toggles bookmarks, capped per reader                                                  |
+| `packages/db-schema/src/schema/bookmarks.ts`       | One row per bookmarked page                                                                     |
+| `apps/web/app/composables/useFixedLayoutStyles.ts` | Places the drawers, main region and footer past the dock                                        |
+| `apps/web/app/components/Styled/Dialog.vue`        | The dialog shell, in the library's look over Vuetify's dialog                                   |
+| `.oxlintrc.json`                                   | The import boundary                                                                             |
+| `.agents/skills/ui-library/SKILL.md`               | The library's conventions                                                                       |
 
 ## Sources
 
@@ -210,6 +274,9 @@ flowchart TD
 - [The menu role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menu_role), MDN: the menu's keyboard contract and its focus returning to the trigger.
 - [Popover](https://0.vuetifyjs.com/components/disclosure/popover) and [roving focus](https://0.vuetifyjs.com/composables/system/use-roving-focus), Vuetify 0: the primitives under the menu, the select and the suggestions.
 - [position-anchor](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position-anchor), MDN, and [anchor positioning's Baseline status](https://github.com/web-platform-dx/web-features/issues/3558), web-features: anchor positioning in every engine since Firefox 147, which is why no JavaScript positioning is installed.
+- [Address bar ranking](https://firefox-source-docs.mozilla.org/browser/urlbar/ranking.html), Firefox: frecency, the recency-and-frequency score the recent pages are ordered by.
+- [Hick's law](https://lawsofux.com/hicks-law/) and [Fitts's law](https://lawsofux.com/fittss-law/), Laws of UX: a dock of the reader's own places rather than every product, on a screen edge and under the thumb.
+- [Top layer](https://developer.mozilla.org/en-US/docs/Glossary/Top_layer), MDN: why a modal in it hides whatever renders outside it, which keeps the dialog shell on Vuetify's overlay for now.
 - [Vue SFC compiler](https://github.com/vuejs/core/tree/main/packages/compiler-sfc): the parser the flow map reads each template's component tags with.
 - [scrollbar-color](https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color), MDN: the standard scrollbar properties the chrome sets.
 - [Success criterion 1.4.3](https://www.w3.org/TR/WCAG22/#contrast-minimum), WCAG 2.2: the AA threshold the palette test holds each pair to.

@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
+import { LEFT_DRAWER_WIDTH, PAGE_TITLE_SEPARATOR, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
 import { MAX_SIDE_BAR_WIDTH, MIN_SIDE_BAR_WIDTH } from "@/services/message/ui/constants";
 import { useLayoutStore } from "@/store/layout";
 import { useRoomStore } from "@/store/message/room";
 import { useMessageLayoutStore } from "@/store/message/ui/layout";
 
-useHead({ titleTemplate: (title) => (title ? `${MESSAGE_DISPLAY_NAME} | ${title}` : MESSAGE_DISPLAY_NAME) });
+useHead({
+  titleTemplate: (title) => (title ? `${MESSAGE_DISPLAY_NAME}${PAGE_TITLE_SEPARATOR}${title}` : MESSAGE_DISPLAY_NAME),
+});
 await useSubscribables();
 
 const layoutStore = useLayoutStore();

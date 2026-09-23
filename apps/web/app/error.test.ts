@@ -14,8 +14,9 @@ describe("errorPage", () => {
 
     const wrapper = await mountErrorPage(404, "Page Not Found");
 
-    expect(wrapper.text()).toContain("Page not found");
-    expect(wrapper.text()).not.toContain("Try again");
+    expect(wrapper.text()).toMatchInlineSnapshot(
+      `"Page not foundNothing lives at this address. It may have moved, or it was never here. Go home"`,
+    );
   });
 
   test("offers a failure the retry that often works", async () => {
@@ -23,8 +24,6 @@ describe("errorPage", () => {
 
     const wrapper = await mountErrorPage(500, "Server Error");
 
-    expect(wrapper.text()).toContain("Something went wrong");
-    expect(wrapper.text()).toContain("Server Error");
-    expect(wrapper.text()).toContain("Try again");
+    expect(wrapper.text()).toMatchInlineSnapshot(`"Something went wrongServer Error Try again  Go home"`);
   });
 });

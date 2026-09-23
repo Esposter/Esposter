@@ -4,15 +4,6 @@ import { sleep } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test } from "vitest";
 
-// `primary` is StyledButton's own colour, so naming it explicitly must not opt out of the gradient: a gate
-// Reading any colour at all as "the caller wants a plain button" strips it from every dialog that spells the
-// Default out
-// StyledButton is a v-btn carrying the gradient as an attributify background-image, so that attribute is what
-// Distinguishes it from the plain button in the rendered output — the generated CSS never loads under jsdom
-const getGradientButtons = (body: HTMLElement) => [
-  ...body.querySelectorAll<HTMLElement>('.v-card-actions .v-btn[bg="[image:--midnight-bloom]"]'),
-];
-
 describe("styledDialog", () => {
   const text = "text";
   const body = "<p>a</p>";
@@ -75,7 +66,7 @@ describe("styledDialog", () => {
 
     const overlay = await mountOpenDialog({}, { default: body });
 
-    expect(overlay.querySelector(".v-card-actions")).toBeNull();
+    expect(overlay.querySelector(".v-overlay__content footer")).toBeNull();
     // The row it replaces carried the only explicit dismissal, so the shell owes one back
     expect(overlay.querySelector('[aria-label="Close"], button [class~="i-mdi:close"]')).not.toBeNull();
   });
@@ -85,25 +76,21 @@ describe("styledDialog", () => {
 
     const overlay = await mountOpenDialog({ confirmButtonProps: { text } }, { default: body });
 
-    expect(overlay.querySelector(".v-card-actions")).not.toBeNull();
+    expect(overlay.querySelector(".v-overlay__content footer")).not.toBeNull();
     expect(overlay.textContent).toContain("Cancel");
   });
 
-  test("keeps the styled confirm button when the caller spells out the primary colour", async () => {
-    expect.hasAssertions();
-
-    const overlay = await mountOpenDialog({ confirmButtonProps: { color: "primary", text } });
-
-    expect(getGradientButtons(overlay)).toHaveLength(1);
-  });
-
-  test("drops to a plain button for a colour that is not the default", async () => {
+  test("draws a warning or error confirmation as the danger button", async () => {
     expect.hasAssertions();
 
     const overlay = await mountOpenDialog({ confirmButtonProps: { color: "warning", text } });
 
-    expect(getGradientButtons(overlay)).toStrictEqual([]);
-    expect(overlay.querySelector(".v-card-actions .text-warning")).not.toBeNull();
+    expect(
+      Array.from(
+        overlay.querySelectorAll<HTMLElement>(".v-overlay__content footer button"),
+        (button) => button.dataset.variant,
+      ),
+    ).toStrictEqual(["Quiet", "Danger"]);
   });
 
   // A third decision is a button among the other two, so it belongs in the trailing group rather than pushed to
@@ -114,7 +101,9 @@ describe("styledDialog", () => {
     const overlay = await mountOpenDialog({ confirmButtonProps: { text } }, { "prepend-confirm": prependConfirm });
 
     expect(
-      Array.from(overlay.querySelectorAll(".v-card-actions .v-btn"), ({ textContent }) => textContent?.trim()),
+      Array.from(overlay.querySelectorAll(".v-overlay__content footer button"), ({ textContent }) =>
+        textContent?.trim(),
+      ),
     ).toStrictEqual(["Cancel", "a", text]);
   });
 
@@ -126,7 +115,9 @@ describe("styledDialog", () => {
     const overlay = await mountOpenDialog({}, { "prepend-confirm": prependConfirm });
 
     expect(
-      Array.from(overlay.querySelectorAll(".v-card-actions .v-btn"), ({ textContent }) => textContent?.trim()),
+      Array.from(overlay.querySelectorAll(".v-overlay__content footer button"), ({ textContent }) =>
+        textContent?.trim(),
+      ),
     ).toStrictEqual(["Cancel", "a"]);
     // The row carries the dismissal, so the append close button would be a second one
     expect(overlay.querySelector('[aria-label="Close"], button [class~="i-mdi:close"]')).toBeNull();
@@ -140,6 +131,6 @@ describe("styledDialog", () => {
     const overlay = await mountOpenDialog({}, { default: body, header: "<input data-header>" });
 
     expect(overlay.querySelector("[data-header]")).not.toBeNull();
-    expect(overlay.querySelector(".v-card-text [data-header]")).toBeNull();
+    expect(overlay.querySelector(".v-overlay__content section > div [data-header]")).toBeNull();
   });
 });

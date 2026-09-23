@@ -1,6 +1,6 @@
 ---
 title: Voxel world
-description: The agent console's surface. It is a full-screen page with no app bar, where the session happens in a voxel room drawn with TresJS. The main agent walks to a station for each tool call it waits on, each subagent walks in as a figure of its own, and gauges in the room read the context, the cost and the files changed. Typing and reading stay in bespoke DOM panels in the page's own pixel palette. No Vuetify component is on the page.
+description: The agent console's surface. It is a full-screen page with no dock, where the session happens in a voxel room drawn with TresJS. The main agent walks to a station for each tool call it waits on, each subagent walks in as a figure of its own, and gauges in the room read the context, the cost and the files changed. Typing and reading stay in bespoke DOM panels in the page's own pixel palette. No Vuetify component is on the page.
 ---
 
 # Voxel world
@@ -63,22 +63,22 @@ The world is open all day beside an editor, so it stays live while keeping each 
 
 ## Key files
 
-| File                                                         | Role                                                                        |
-| :----------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `apps/web/app/layouts/immersive.vue`                         | The full-screen layout; `App.vue` drops the app bar and progress bar for it |
-| `apps/web/app/components/AgentConsole/Index.vue`             | The page's two halves, its dusk theme scope and its font                    |
-| `apps/web/app/components/AgentConsole/World/Index.vue`       | The canvas, the orbiting camera and the development overlay                 |
-| `apps/web/app/components/AgentConsole/World/Figure.vue`      | A figure walking to where it should stand, and breathing there              |
-| `apps/web/app/components/AgentConsole/Panel/Loading.vue`     | The loading screen: the bar, the percentage and the step under way          |
-| `apps/web/app/services/agentConsole/foldAgentEvents.ts`      | The incremental fold every panel and the world read                         |
-| `apps/web/app/services/agentConsole/world/greedyMesh.ts`     | Voxels to one mesh, with occlusion and shading baked in                     |
-| `apps/web/app/services/agentConsole/world/WorldObjectMap.ts` | Every object in the room, the boxes it is built from and where one stands   |
-| `apps/web/app/services/agentConsole/world/toWorldFigures.ts` | The timeline lanes read as where each agent stands                          |
+| File                                                         | Role                                                                      |
+| :----------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `apps/web/app/layouts/immersive.vue`                         | The full-screen layout; `App.vue` drops the dock and loading bar for it   |
+| `apps/web/app/components/AgentConsole/Index.vue`             | The page's two halves, its dusk theme scope and its font                  |
+| `apps/web/app/components/AgentConsole/World/Index.vue`       | The canvas, the orbiting camera and the development overlay               |
+| `apps/web/app/components/AgentConsole/World/Figure.vue`      | A figure walking to where it should stand, and breathing there            |
+| `apps/web/app/components/AgentConsole/Panel/Loading.vue`     | The loading screen: the bar, the percentage and the step under way        |
+| `apps/web/app/services/agentConsole/foldAgentEvents.ts`      | The incremental fold every panel and the world read                       |
+| `apps/web/app/services/agentConsole/world/greedyMesh.ts`     | Voxels to one mesh, with occlusion and shading baked in                   |
+| `apps/web/app/services/agentConsole/world/WorldObjectMap.ts` | Every object in the room, the boxes it is built from and where one stands |
+| `apps/web/app/services/agentConsole/world/toWorldFigures.ts` | The timeline lanes read as where each agent stands                        |
 
 ## Notes
 
 - Escape keeps the terminal's one job for it, which is interrupting a turn, and nothing else. The door and the browser's back are the way out, so a key pressed to stop the agent never takes the person out of the page.
-- Leaving the app bar behind also leaves the account menu and notifications behind on this page. The door is the way back to them. The app's alerts still show over the page, since the connection store's errors are raised through them.
+- Leaving the dock behind also leaves the account menu and notifications behind on this page. The door is the way back to them. The app's toasts still show over the page, since the connection store's errors are raised through them.
 - Instancing, levels of detail and meshing in a worker are not used. The room is small enough that each costs more than it saves. They belong to the views still proposed, whose [runtime budget](/docs/proposals/infra/agent-console/runtime-budget) sets them out.
 
 ## Sources

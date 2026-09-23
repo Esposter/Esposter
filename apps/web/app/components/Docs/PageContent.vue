@@ -21,7 +21,7 @@ const { page } = defineProps<Props>();
   :deep(h2),
   :deep(h3),
   :deep(h4) {
-    scroll-margin-top: calc(var(--app-bar-height) + 4rem);
+    scroll-margin-top: 4rem;
   }
 
   :deep(h1) {

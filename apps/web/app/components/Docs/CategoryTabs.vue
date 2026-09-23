@@ -31,7 +31,7 @@ const categories = computed(() =>
 </script>
 
 <template>
-  <div class="category-tabs" top="[--app-bar-height]" flex items-center sticky z-1>
+  <div class="category-tabs" flex items-center top-0 sticky z-1>
     <StyledTooltipIconButton
       v-if="!isLeftDrawerOpenAuto"
       :button-props="{ size: 'small' }"

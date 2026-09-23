@@ -26,8 +26,5 @@ definePageMeta({ middleware: "guest" });
         </v-container>
       </StyledCard>
     </v-container>
-    <template #left>
-      <AppProductList />
-    </template>
   </NuxtLayout>
 </template>

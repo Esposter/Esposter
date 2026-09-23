@@ -3,7 +3,13 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
 </script>
 
 <template>
-  <div class="v-window__controls" bottom-0 top-auto fixed h="[calc(100dvh_-_--app-bar-height)]">
+  <div
+    class="v-window__controls"
+    bottom="[--dock-inset-block-end]"
+    top-auto
+    fixed
+    h="[calc(100dvh_-_--dock-inset-block-end)]"
+  >
     <StyledTooltipIconButton
       :button-props="{ size: 'small' }"
       icon="i-mdi:chevron-left"

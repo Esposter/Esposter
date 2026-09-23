@@ -23,11 +23,12 @@ const slots = defineSlots<{
 const { footerStyle, hideGlobalScrollbar, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } =
   defineProps<Props>();
 const layoutStore = useLayoutStore();
-const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
+const { isDesktop, isFooterFocused, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
   storeToRefs(layoutStore);
 const container = useTemplateRef("container");
 const footer = useTemplateRef("footer");
 const bottomOffset = ref(0);
+const { focused: isFooterFocusedWithin } = useFocusWithin(footer);
 // Fixed rather than flowed, so navigating between pages cannot shift the layout
 const { bottom, left, middle, right } = useFixedLayoutStyles(
   bottomOffset,
@@ -44,6 +45,14 @@ const mergedFooterStyle = computed<CSSProperties>(() => ({ ...bottom.value, ...f
 useResizeObserver(footer, (entries) => {
   const entry = takeOne(entries);
   bottomOffset.value = entry.contentRect.bottom;
+});
+
+watch(isFooterFocusedWithin, (newIsFooterFocusedWithin) => {
+  isFooterFocused.value = newIsFooterFocusedWithin;
+});
+// Leaving a page while its composer has focus takes no blur with it, and the dock must not stay hidden on the next
+onUnmounted(() => {
+  isFooterFocused.value = false;
 });
 
 onMounted(() => {
@@ -77,7 +86,7 @@ defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
       <slot name="right" />
     </StyledNavigationDrawer>
     <!-- The max height here is what keeps the global window scrollbar hidden -->
-    <v-main ref="container" pt="[--app-bar-height]" :style="mergedMainStyle">
+    <v-main ref="container" :style="mergedMainStyle">
       <slot />
     </v-main>
 

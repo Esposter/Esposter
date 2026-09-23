@@ -50,6 +50,9 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **The call site's attributes go on top of the primitive's.** When a primitive overrides what a call site passes — as the button does with `type` and `aria-pressed` — render the element from its attribute slot with `$attrs` spread after, and expose the element if something must focus or anchor to it.
 - **A field's completions are `UiSuggestions` beside the field, never a menu.** Focus stays in the field; a menu moves focus into itself and is for actions.
 - **A menu item is data** — a `UiMenuItem` list — so a context menu and an overflow button can share one list later.
+- **A modal stays on Vuetify's overlay until its content is library-only.** Vuetify 0's dialog is in the top layer, where every Vuetify menu, select and tooltip its content opens renders underneath and inert. The dialog shell and the page drawers wear the library's look over Vuetify's behaviour; a popover is not modal, so its content is the library's own and holds nothing that opens a Vuetify overlay.
+- **A toast goes through the app's one stack** (`AppToastStack`), as a `UiToast` fed by the store that owns that kind of toast — never a snackbar of its own.
+- **A fixed region starts past the dock**: subtract `--dock-inset-inline-start` and `--dock-inset-block-end`, never a bar's height.
 
 ## The document chrome
 

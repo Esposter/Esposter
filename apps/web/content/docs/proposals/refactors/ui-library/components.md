@@ -26,13 +26,13 @@ A component is added to the library when the first stage needs it, never ahead o
 | Menu                    | Popover with roving focus                     | the console's menu, the Vuetify menu, the Styled overflow menu                            | agent console, shipped |
 | Select, suggestions     | Select; the popover with virtual focus        | the console's select and field menus, the Vuetify select, autocomplete and combobox       | agent console, shipped |
 | Loading bar, spinner    | Progress for the bar; none for the spinner    | the console's spinner and loading bar, the linear and circular progress                   | agent console, shipped |
-| Tooltip                 | Tooltip                                       | the Vuetify tooltip, the Styled help tooltip                                              | app shell              |
-| Dialog, alert dialog    | Dialog, AlertDialog                           | the Vuetify dialog under the Styled dialog and delete dialog                              | app shell              |
-| Drawer                  | Dialog when modal, a plain region when docked | the Vuetify navigation drawer under the Styled drawer and rail                            | app shell              |
-| Toast                   | Snackbar with the notifications composable    | the Vuetify snackbar, the Styled alert list and clipboard snackbar                        | app shell              |
-| Avatar                  | Avatar                                        | the Vuetify avatar, the Styled avatar and default avatar                                  | app shell              |
-| Breadcrumbs             | Breadcrumbs                                   | the app breadcrumbs                                                                       | app shell              |
-| Overflow                | Overflow                                      | the hand-built collapse of a command bar into one menu on a narrow screen                 | app shell              |
+| Tooltip                 | Tooltip                                       | the Vuetify tooltip, the Styled help tooltip                                              | page migration         |
+| Dialog, alert dialog    | Dialog, AlertDialog                           | the Vuetify dialog under the Styled dialog and delete dialog                              | retirement             |
+| Drawer                  | Dialog when modal, a plain region when docked | the Vuetify navigation drawer under the Styled drawer and rail                            | retirement             |
+| Toast                   | none                                          | the Vuetify snackbar, the Styled alert list and clipboard snackbar                        | app shell, shipped     |
+| Avatar                  | Avatar                                        | the Vuetify avatar, the Styled avatar and default avatar                                  | app shell, shipped     |
+| Breadcrumbs             | Breadcrumbs                                   | the app breadcrumbs                                                                       | page migration         |
+| Overflow                | Overflow                                      | the hand-built collapse of a command bar into one menu on a narrow screen                 | page migration         |
 | Context menu            | Popover with roving focus, at a point         | the hand-built right-click menus                                                          | context menus          |
 | Text field, textarea    | Input                                         | the Vuetify text field, textarea and file input                                           | page migration         |
 | Number field            | NumberField                                   | numeric text fields                                                                       | page migration         |
@@ -51,6 +51,8 @@ A component is added to the library when the first stage needs it, never ahead o
 | Splitter                | Splitter                                      | the Styled resize handle                                                                  | page migration         |
 | Carousel                | Carousel                                      | windows used as a slideshow, the Styled slide indicator                                   | page migration         |
 | Date picker             | the date composable with Selection            | the Styled date picker and calendar                                                       | page migration         |
+
+The tooltip, breadcrumbs and overflow are first needed by a page's own header, so they arrive with page migration; the dock names its icon buttons with the label a library icon button already carries. The dialog and the drawer move onto Vuetify 0 last: a modal in the top layer hides every Vuetify menu and tooltip its content opens, so until nothing inside them is Vuetify's they keep Vuetify's overlay and wear the library's look. The toast is presentation over the stores that already queue each kind of toast, so it takes no primitive.
 
 Two groups are ours in full, because Vuetify 0 has no component for them: the context menu, which is a menu positioned at a point rather than at a trigger, and the date picker, which is a grid of days over its date adapter. Each gets the same keyboard contract a primitive would have given it, written to the WAI-ARIA pattern for its role, and its test is what holds it there.
 

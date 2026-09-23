@@ -13,29 +13,25 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 
 - `StyledPageHeader` — the canonical page header. A `v-toolbar` (surface, `height="auto"`) laying out flex rows — the breadcrumb trail with a right-aligned `status` slot for a standing readout, then the page title beside a right-aligned `actions` slot, then an optional `filters` row — never inside `v-toolbar-title`. The trail row is where a persistent number belongs: the trail rarely fills a line, so anything parked on the title row instead pays a row of its own for width already going spare. The title row renders only when there is a title or actions, so a page named by its own content ([resource explorer](/docs/resource/explorer)) costs no empty row.
 - `StyledEmptyState` — icon + title + description + optional action slot, for "no resources yet" / "no rows" / "not bound to data" states.
-- `StyledSkeleton` — thin `v-skeleton-loader` wrapper with the project's bordered-card preset, for per-region loading (instead of relying on the single global `AppLoadingIndicator`).
+- `StyledSkeleton` — thin `v-skeleton-loader` wrapper with the project's bordered-card preset, for per-region loading (instead of relying on the page loading bar, `AppLoadingIndicator`).
 - `StyledKeyboardShortcutsDialog` — the shared shortcuts help dialog (category groups + `kbd` chips over a `KeyboardShortcutCategory[]` prop); bound to the messaging shortcuts dialog and the resource explorer's `Resource/ShortcutsOverlay`.
-- `AppBreadcrumbs` — renders the area hub followed by the pages the visitor actually came through, never the page they are on, so a direct arrival still has its way out ([breadcrumb trail](/docs/resource/breadcrumb-trail)); rendered by `StyledPageHeader`, not the global app bar, so it carries page context and never duplicates.
-- `AppMenuLinkListItem` — a single launcher leaf (extracted from `AppMenuLinkList` so leaves render identically at top level and inside a group).
+- `AppBreadcrumbs` — renders the area hub followed by the pages the visitor actually came through, never the page they are on, so a direct arrival still has its way out ([breadcrumb trail](/docs/resource/breadcrumb-trail)); rendered by `StyledPageHeader`, not the dock, so it carries page context and never duplicates.
 
 ## Navigation
 
-- `ListLinkItem` carries `children?: readonly ListLinkItem[]`. `AppMenuLinkList` renders a child-bearing item as a `v-list-group`; leaves go through `AppMenuLinkListItem`.
-- `ProductListLinkItems`: one **Resource Explorer** entry covers every resource type rather than one entry per editor; Clicker + Dungeons live under a "Games" group. `AppProductList` (home/login drawer) reuses `AppMenuLinkList` so both surfaces stay in sync.
-- The app bar's `#append` cluster (`AppBar`) orders the app launcher (nine-dot `i-mdi:dots-grid`) first, then the theme toggle, the notification bell, and the More/account menu last — the launcher leads so the product grid is the first affordance, and the bell sits directly beside the More menu.
+- `ProductGroups`: the launcher's products, grouped by what they are for. One **Resource Explorer** entry covers every resource type rather than one entry per editor; Clicker and Dungeons are the "Play" group. `AppProductGroups` draws them in the launcher, the one list of products.
+- The frame itself — the dock, its launcher, bookmarks and recent pages, the account menu and the toasts — is the [UI library's app shell](/docs/architecture/ui-library#app-shell).
 
 ## Key files
 
-| File                                       | Role                                                                 |
-| ------------------------------------------ | -------------------------------------------------------------------- |
-| `app/components/Styled/PageHeader.vue`     | shared page header (breadcrumbs + status, title + actions, filters)  |
-| `app/components/Styled/EmptyState.vue`     | shared empty state                                                   |
-| `app/components/Styled/Skeleton.vue`       | shared skeleton loader                                               |
-| `app/components/App/Breadcrumbs.vue`       | navigation-derived breadcrumb trail rendered by `PageHeader`         |
-| `app/components/App/Menu/LinkListItem.vue` | launcher leaf, reused by group + top level                           |
-| `app/services/app/ProductListLinkItems.ts` | launcher data (the products, then the Games group)                   |
-| `app/models/shared/ListLinkItem.ts`        | `children` field for submenus                                        |
-| `app/components/App/Bar.vue`               | top app bar; `#append` button order (launcher · theme · bell · more) |
+| File                                   | Role                                                                |
+| -------------------------------------- | ------------------------------------------------------------------- |
+| `app/components/Styled/PageHeader.vue` | shared page header (breadcrumbs + status, title + actions, filters) |
+| `app/components/Styled/EmptyState.vue` | shared empty state                                                  |
+| `app/components/Styled/Skeleton.vue`   | shared skeleton loader                                              |
+| `app/components/App/Breadcrumbs.vue`   | navigation-derived breadcrumb trail rendered by `PageHeader`        |
+| `app/components/App/ProductGroups.vue` | the products, grouped, drawn in the launcher                        |
+| `app/services/app/ProductGroups.ts`    | launcher data, by group                                             |
 
 ## Notes
 

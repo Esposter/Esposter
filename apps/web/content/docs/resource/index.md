@@ -25,7 +25,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Summary view](/docs/resource/summary-view) — the `/all` List/Summary toggle: per-type count cards over a grouped count procedure
 - [Resource page parity](/docs/resource/resource-page-parity) — labeled command bar with overflow, Refresh, Duplicate, type-the-name delete guard, save-conflict surface
 - [Share to esbabbler](/docs/resource/share-to-esbabbler) — Share command posting a published resource's public link into a room you pick
-- [Notifications bell](/docs/resource/notifications) — session-scoped operation-outcome toasts + app-bar bell panel
+- [Notifications bell](/docs/resource/notifications) — session-scoped operation-outcome toasts + the dock's notifications panel
 - [TodoList due reminders](/docs/resource/todolist-due-reminders) — web-push when a TodoList item comes due, over the scheduled-job + push subsystems
 - [Global search](/docs/resource/global-search) — grouped as-you-type dropdown, `Ctrl+K` command palette, keyboard chords, relevance-ranked results
 - [Global search relevance](/docs/resource/global-search-relevance) — `pg_trgm` trigram index and `similarity()` ranking, so a typo still finds its resource

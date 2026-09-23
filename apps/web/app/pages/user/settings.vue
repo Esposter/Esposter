@@ -16,7 +16,7 @@ const { smAndDown } = useVDisplay();
       </v-row>
       <v-row>
         <v-col :cols="smAndDown ? 12 : 5">
-          <UserSettingsSideBar sticky top="[calc(1rem+--app-bar-height)]" />
+          <UserSettingsSideBar top-4 sticky />
         </v-col>
         <v-col :cols="smAndDown ? 12 : 7" flex flex-col gap-12>
           <UserSettingsSection :section="UserSettingsPageSection.Profile">

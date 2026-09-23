@@ -6,7 +6,7 @@ model: claude-opus-5-5
 
 # Page Migration
 
-Once the [app shell](/docs/proposals/refactors/ui-library/shell) is on the library, every page sits in the new frame and still draws its own content with Vuetify. This stage moves that content, one unit at a time. It is the long stage, and it is built so that it never has to finish in one go: each unit is complete when it lands, the app works with any mix of migrated and unmigrated units, and each unit's gain is felt the day it merges.
+Now that the [app shell](/docs/architecture/ui-library#app-shell) is on the library, every page sits in the new frame and still draws its own content with Vuetify. This stage moves that content, one unit at a time. It is the long stage, and it is built so that it never has to finish in one go: each unit is complete when it lands, the app works with any mix of migrated and unmigrated units, and each unit's gain is felt the day it merges.
 
 ## The unit
 

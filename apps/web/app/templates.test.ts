@@ -277,12 +277,11 @@ describe("vuetify defaults", () => {
   });
 });
 
-// Every authored length is `rem` (`styling` skill). The three files that keep `px` hold a dependency's own
-// Values: the vendored ApexCharts sample SVGs, Vuetify's SASS breakpoint API and a vendored SVG's fills
+// Every authored length is `rem` (`styling` skill). What keeps `px` holds a dependency's own values: the vendored
+// ApexCharts sample SVGs and Vuetify's SASS breakpoint API
 describe("lengths", () => {
   const PX_REGEX = /[^a-z-]\d+px\b/u;
-  const PX_EXCLUDED_PATH_REGEX =
-    /^assets\/(?:dashboard\/demo\/icon\/|css\/settings\.scss$)|^components\/Visual\/FloatingAstronaut\.scss$/u;
+  const PX_EXCLUDED_PATH_REGEX = /^assets\/(?:dashboard\/demo\/icon\/|css\/settings\.scss$)/u;
 
   test("authors no px length", async () => {
     expect.hasAssertions();

@@ -71,7 +71,7 @@ With a query set the dropdown shows three groups plus a footer:
 ## Notes
 
 - One component, two mounts — never two search implementations (Home vs overlay).
-- Explorer-scoped, not app chrome — the app bar spans every product area, so it carries no resource-search button; each area owns its own palette (messaging precedent).
+- Explorer-scoped, not app chrome — the dock spans every product area, so it carries no resource-search button; each area owns its own palette (messaging precedent).
 - The Services group answers "search matches type names" client-side ("survey" surfaces the Survey service row) — pushing type-title matching into the server `where` was rejected; the client already knows `ResourceDefinitionMap`. A handful of types doesn't justify a fuzzy library; if the Pages/actions list ever grows, add `fuse.js`/`minisearch` (tiny, client-only) rather than server work.
 - Recent searches are per-device by design (localStorage); server-side search history is not worth a table. Recently opened resources are the opposite: they live server-side in `resource_accesses`, because the `Last accessed` column they feed has to agree between machines.
 - `G N` opens the [notifications](/docs/resource/notifications) bell panel — registered with the other `G`-chords.

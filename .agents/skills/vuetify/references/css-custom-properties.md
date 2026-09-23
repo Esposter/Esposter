@@ -4,7 +4,8 @@ Read when a component genuinely needs a `<style>` block (`:deep()`, `@keyframes`
 
 | Purpose                       | CSS custom property          |
 | ----------------------------- | ---------------------------- |
-| App bar height                | `--app-bar-height`           |
+| Toolbar height                | `--toolbar-height`           |
+| Room the dock takes, below    | `--dock-inset-block-end`     |
 | Vuetify avatar width          | `--avatar-width`             |
 | Vuetify border width          | `--border-width`             |
 | Vuetify border style          | `--border-style`             |
@@ -26,16 +27,16 @@ The goal is always attributify — a scoped class that only restates utilities i
 <style scoped lang="scss">
 .panel {
   border: $border-width-root $border-style-root v-bind(border);
-  top: $app-bar-height;
+  bottom: $dock-inset-block-end;
 }
 </style>
 <!-- ALSO WRONG — scoped CSS class when attributify can do this directly -->
 <style scoped>
 .panel {
   border: var(--border-width) var(--border-style) v-bind(border);
-  top: var(--app-bar-height);
+  bottom: var(--dock-inset-block-end);
 }
 </style>
 <!-- CORRECT — attributify; no style block needed -->
-<div b-1 b-border top="[var(--app-bar-height)]" />
+<div b-1 b-border bottom="[var(--dock-inset-block-end)]" />
 ```

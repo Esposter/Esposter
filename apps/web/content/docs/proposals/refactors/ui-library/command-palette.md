@@ -8,7 +8,7 @@ model: claude-opus-5-5
 
 Ctrl+K opens a different thing on different pages today. On the docs it searches the docs, in a room it searches the room's messages, and everywhere else it does nothing. The [search standard](/docs/architecture/search) already names the risk — one shortcut behaving differently depending on which surface is open — and routes every palette through one shell so at least the shell agrees. Keyboard shortcuts have the same shape: the message composer and the resource portal each keep a list of their own and a dialog to show it, and nothing lists the rest.
 
-This page makes Ctrl+K one palette everywhere and makes the shortcuts one list. It is built in the [app shell](/docs/proposals/refactors/ui-library/shell) stage, where the dock gets a button for it.
+This page makes Ctrl+K one palette everywhere and makes the shortcuts one list. The [app shell](/docs/architecture/ui-library#app-shell)'s dock gains a button for it in this stage.
 
 ## How it works
 
