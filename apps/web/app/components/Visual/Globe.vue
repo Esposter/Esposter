@@ -45,7 +45,6 @@ const height = computed(() => width.value);
 const disposables: { dispose: () => void }[] = [];
 let animationFrameId: number;
 let intervalId: number;
-
 // The scene is built in one pass rather than inline in the hook, so the lazily imported `three-globe` chunk has
 // Somewhere to report from: a stale chunk after a redeploy rejects, and a hook's callback is a slot nothing
 // Awaits. The globe is decoration on the About page, so the page renders without it

@@ -42,7 +42,6 @@ process.on("unhandledRejection", (reason) => {
 
 const server = createServer();
 if (!(await listenVoiceSocket(server))) process.exit(0);
-
 // Nothing between the bind and the connection handler below yields to the event loop: a hook connecting in such a gap
 // Is accepted by nobody and waits for an answer that never comes, so every load is started here and awaited later
 const idleTimer = setTimeout(() => {
@@ -168,7 +167,6 @@ server.on("connection", (socket) => {
   // A hook, which hands its piece over and leaves before the answer
   socket.on("error", () => {});
 });
-
 // Either load failing leaves the socket bound over an engine that answers nothing, since a reading awaits both, so
 // Both outcomes are read rather than the synthesizer's alone
 for (const load of await Promise.allSettled([synthesizerLoad, decoderLoad]))

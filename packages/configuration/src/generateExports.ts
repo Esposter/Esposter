@@ -25,7 +25,6 @@ const getCtixCommandPath = (): string => {
   if (!existsSync(ctixCommandPath)) throw new Error(`ctix's cli is not at the expected path: ${ctixCommandPath}`);
   return ctixCommandPath;
 };
-
 // Stdio is inherited, so ctix reports what it wrote exactly as it did when a script invoked it. The default and
 // The membership check are here rather than at a call site because one of the two callers is the
 // `generate-exports` bin, whose argument is a command line.

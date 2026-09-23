@@ -129,7 +129,6 @@ export const LanguageLocaleMap: Record<string, string> = {
   Turkish: "tr",
   Vietnamese: "vi",
 };
-
 // The source of a character's lines before the game-data package carries them, and of the clip a voice is cloned from
 const WIKI_ORIGIN = "https://genshin-impact.fandom.com";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template would otherwise infer

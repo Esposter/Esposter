@@ -11,7 +11,6 @@ const checkIsInputFocused = () => {
 };
 
 const checkIsModifierPressed = (event: KeyboardEvent) => event.ctrlKey || event.metaKey;
-
 // The spreadsheet's keyboard surface: copy, paste, select-all and arrow navigation over the cell selection.
 // Every handler stands down while a cell is being edited or an input holds focus, so typing into a cell never
 // Reaches the grid

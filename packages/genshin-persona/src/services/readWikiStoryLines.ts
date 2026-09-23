@@ -11,7 +11,6 @@ const VOICE_OVERS_SUBPAGE = "/Voice-Overs";
 const TRAVELER_PAGE = "Traveler";
 // The Traveler's index lists its story pages as one relative link per region
 const STORY_PAGE_LINK_REGEX = /^\* \[\[\/(?<page>[^\]|]+)/gmu;
-
 // The community wiki's voice-over page for one character in one language, parsed on request; a player twin's
 // Lines are read off the Traveler's English story pages `TravelerTwinMap` describes, as the twin's half of each
 // Dialogue, since no other language ever asks for them

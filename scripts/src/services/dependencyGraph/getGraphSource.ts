@@ -14,7 +14,6 @@ import { PackageRoleColorsMap } from "#src/services/dependencyGraph/PackageRoleC
 
 const getEdgeLines = (workspaceEdges: WorkspaceEdge[], attributes: string): string[] =>
   workspaceEdges.map(({ from, to }) => `  "${from}" -> "${to}" [${attributes}];`);
-
 // In the order the members come in, which `readWorkspacePackages` sorts by path — so the clusters are drawn
 // In the same order however the workspace file happens to list its globs.
 const getWorkspaceDirectories = (workspacePackages: WorkspacePackage[]): string[] => [
@@ -22,7 +21,6 @@ const getWorkspaceDirectories = (workspacePackages: WorkspacePackage[]): string[
     workspacePackages.flatMap(({ workspaceDirectory }) => (workspaceDirectory === "" ? [] : [workspaceDirectory])),
   ),
 ];
-
 // The nodes are boxed and titled by the workspace root they live under. Graphviz draws a subgraph as a box only
 // When its name starts with `cluster`, and it boxes the nodes declared inside that subgraph — so the node lines
 // Are nested and the edges are not, which keeps an edge from silently deciding which box a node is in.
@@ -39,7 +37,6 @@ const getClusterLines = (
     .map((workspacePackage) => `    ${getNodeLine(workspacePackage, workspaceEdges)}`),
   "  }",
 ];
-
 // A private package is drawn dashed: nothing installs it, so its edges are internal wiring rather than a
 // Promise to anyone outside this repo. The role decides the colour, and it is read off the edges rather than
 // Off a list, so a package that starts being depended on changes colour on the next run without anyone saying

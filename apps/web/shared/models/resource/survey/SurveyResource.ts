@@ -8,7 +8,6 @@ export interface SurveyResource {
   model: string;
   settings: SurveySettings;
 }
-
 // Object wrapper (not a bare string schema) so future fields extend without a blob-shape break
 export const surveyResourceSchema = z.object({
   model: z.string(),

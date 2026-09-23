@@ -4,7 +4,6 @@ import { WIKI_VOICE_FILE_EXTENSION, WIKI_VOICE_FILE_PREFIX } from "#src/services
 const LANGUAGE_PLACEHOLDER = "{language}";
 // A wiki title spells a space either way, and one template spells it as the underscore
 const TITLE_SPACE = "_";
-
 // A line's file name as the template writes it is the prefix, the dub's placeholder, the character's name and the
 // Title; what is kept is the part every dub shares
 export const getWikiFileStem = (file: string, namePlaceholder: string, name: string): string =>

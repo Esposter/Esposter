@@ -6,7 +6,6 @@ import { LEFT_DRAWER_WIDTH } from "#shared/services/app/constants";
 interface Props {
   items: NavigationItem[];
 }
-
 // Closed at every breakpoint until the caller's hamburger opens it, and closed again by the entry that was
 // Picked — navigation is the drawer's whole purpose, so staying open outlives its reason to be there
 const isOpen = defineModel<boolean>({ required: true });

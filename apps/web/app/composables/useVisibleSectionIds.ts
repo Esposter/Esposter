@@ -3,7 +3,6 @@ import { getVisibleSectionIds } from "@/services/shared/getVisibleSectionIds";
 // Prefix passes `every` on its own, so dropping the length clause reads right and answers wrong
 const checkIsSameOrder = <T>(values: readonly T[], otherValues: readonly T[]) =>
   values.length === otherValues.length && values.every((value, index) => value === otherValues[index]);
-
 // The one scrollspy behind every section-navigation sidebar — the docs table of contents, the user settings page,
 // The settings dialog. A section spans from its own anchor element down to the next one, so every section
 // Overlapping the viewport is highlighted: reading the body under one heading while the next heading is on screen

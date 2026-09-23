@@ -41,7 +41,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // While the copy says which it was (`getSyncPrompt`, `checkIsPicked`).
 const checkIsCarried = (queueSha: string, cwd: string): boolean =>
   readCherryShas(readHeadSha(cwd), queueSha, cwd).length === 0;
-
 // The rewrite's compare-and-swap, retried rather than redone: the lease names the sha the run read, and a session
 // Push in between fast-forwards that sha by a commit or two — carried onto the rewrite by the same replay and
 // Pushed under the lease the push moved to. Giving up instead would hand the next run the same conflict, and its
@@ -71,7 +70,6 @@ const pushRewrite = (cwd: string, expectedSha: string, isDryRun: boolean): strin
   }
   return undefined;
 };
-
 // The queue follows what the collector pushed, rewritten by the collector itself: the commits it still owes are
 // Replayed in order onto the tree the next window is built on — the fixes branch while it owes develop commits,
 // Develop otherwise — the first commit alone over the cap is repackaged (`reshapeQueue`), and the result is

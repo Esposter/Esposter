@@ -15,7 +15,6 @@ const SHARED_PACKAGE_PATH = "packages/shared";
 
 const readSource = (path: string): readonly [string, string] =>
   [path, readFileSync(resolve(REPOSITORY_ROOT, path), "utf8")] as const;
-
 // Every export of `packages/shared` that the ≥2-consumers rule does not earn a place there: named by one package
 // Outside it and by nothing else in it, so it belongs beside that consumer; or named by nothing anywhere, so it
 // Is dead. An export the package's own other files name stays whatever the count — it is a piece of an export

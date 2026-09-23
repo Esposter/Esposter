@@ -9,7 +9,6 @@ import characterKeywordsMap from "emojilib";
 import MiniSearch from "minisearch";
 
 let miniSearch: MiniSearch<EmojiDocument> | undefined;
-
 // Separate from `getEmojiIndex` so a surface that only renders a stored reaction never builds a search index
 const getMiniSearch = () => (miniSearch ??= createMiniSearch());
 
@@ -35,7 +34,6 @@ const createMiniSearch = () => {
   );
   return index;
 };
-
 // `fuzzy` is off: on names this short it manufactures noise rather than forgiving typos. Punctuation is a
 // Delimiter and never an operator, so "grin(" searches for "grin" and a query that is punctuation alone
 // Tokenizes to nothing and returns the empty state rather than failing to compile

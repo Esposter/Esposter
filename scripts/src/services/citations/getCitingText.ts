@@ -8,7 +8,6 @@
 const FENCE_REGEX =
   /^[ \t]*(?<backtickFence>`{3,})[^`\n]*\n[\s\S]*?^[ \t]*\k<backtickFence>`*[ \t]*$|^[ \t]*(?<tildeFence>~{3,})[^\n]*\n[\s\S]*?^[ \t]*\k<tildeFence>~*[ \t]*$/gmu;
 const BACKTICK_RUN_REGEX = /`+/gu;
-
 // The prose of a page that cites: a fence is a program rather than a citation, and a span opened by two or more
 // Backticks quotes a backticked phrase rather than citing what is inside it, so both go before the single-backtick
 // Spans are read as citations. A span closes on the next run of exactly its own length, as markdown reads it — a

@@ -35,7 +35,6 @@ export const useInitializeGameObjectEvents = () => {
         if ("eventIndex" in context) takeOne(args).stopPropagation = takeOne(args, context.eventIndex).stopPropagation;
         emit(gameObjectEvent, ...args);
       };
-
       // The rex plugin emits its event from a component of its own rather than from the game object
       const emitter = gameObjectEvent === "clickoutside" ? new ClickOutside(gameObject) : gameObject;
       emitter.on(gameObjectEvent, eventListener);

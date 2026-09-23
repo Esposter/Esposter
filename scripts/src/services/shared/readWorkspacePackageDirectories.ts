@@ -4,7 +4,6 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const GLOB_SUFFIX = "/*";
-
 // Every member's directory, workspace-relative, in the order `pnpm-workspace.yaml` declares them. The list is
 // Read from that file rather than repeated as a constant here, because a copy is a member the tooling silently
 // Stops covering the day one is added outside the two product roots — which is exactly what `scripts` is. A

@@ -10,12 +10,10 @@ const DECLARATION_REGEX = /^(?:const|let)\s+(?<name>[\w$]+)\s*[:=]/u;
 const FUNCTION_BODY_REGEX = /^(?:async\s+)?function\b/u;
 // Anywhere in the initializer, not only at its start: `new Set(await readdir())` is a top-level await too
 const AWAIT_REGEX = /\bawait\b/u;
-
 // `$` is an identifier character to JavaScript and not one to `\b`, so the boundary is spelled out rather than
 // Borrowed: `\b$fixture\b` matches nothing, and `\bfixture\b` matches the `fixture` inside `$fixture`
 const getReferenceRegex = (name: string): RegExp =>
   new RegExp(String.raw`(?:^|[^\w$])${name.replaceAll("$", String.raw`\$`)}(?=$|[^\w$])`, "u");
-
 // The code the tokens spell, with a space wherever the scanner skipped something — a bracket, a string — so two
 // Words it kept from either side never rejoin: `new Set(await …)` must read `Set await`, not `Setawait`
 const getCode = (tokens: CodeToken[]): string =>
@@ -26,7 +24,6 @@ const getCode = (tokens: CodeToken[]): string =>
     })
     .join("")
     .trim();
-
 // The statement starting at `offset`, as its code tokens up to and including the first `;` genuinely at depth
 // Zero, which is where it ends. One lazy pass: the scan stops at that semicolon rather than reading to the end
 // Of the file, and rescanning a growing prefix once per line the statement spans would read a k-line statement
@@ -39,7 +36,6 @@ const getStatementTokens = (text: string, offset: number): CodeToken[] => {
   }
   return tokens;
 };
-
 // Module-scope state in a test file, which a sibling suite can reach and mutate — the `testing` skill's scope
 // Rule. A line-anchored regex cannot decide this on its own: it reads a multi-line arrow as a constant, because
 // The `=>` lands on a later line, and it cannot tell where a declaration ends. So a statement is classified by
@@ -92,7 +88,6 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
     for (const consumedLine of lines.slice(index, index + lineCount)) offset += consumedLine.length + 1;
     index += lineCount;
   }
-
   // A pinned constant pins what its own initializer reads, so the closure is taken to a fixed point
   const pinnedNames = new Set<string>();
   while (pinningBodies.length > 0) {

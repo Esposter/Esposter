@@ -11,7 +11,6 @@ import { CATALOGUE_HEADING, SETTLED_HEADING } from "#src/services/sweeps/skillDo
 
 const POINTER_HEADINGS = new Set([CATALOGUE_HEADING, SETTLED_HEADING]);
 const SKILL_NAME_REGEX = /^[\w-]+$/u;
-
 // The two headings whose lines the convention already decides the shape of, so a run inside one is readable
 // Where a run in ordinary prose is a candidate a pass has to judge
 const getPointerLines = (text: string): string[] => {
@@ -22,14 +21,12 @@ const getPointerLines = (text: string): string[] => {
     else if (isUnderPointerHeading && (line.startsWith("- ") || line.startsWith("| "))) lines.push(line);
   return lines;
 };
-
 // A backticked repo path names one page; a backticked skill name names every page of that skill, since the
 // Argument a line points at may sit in the `SKILL.md` or in any of its reference pages
 const checkIsPointedAt = (line: string, path: string): boolean =>
   getBacktickedTokens(line).some(
     (token) => token === path || (SKILL_NAME_REGEX.test(token) && path.startsWith(`${SKILLS_DIRECTORY}/${token}/`)),
   );
-
 // A run two pages share is a copy of one argument wherever it sits, and a pass reads ordinary prose to decide
 // Which page owns it. A pointer line is the one place that is already decided: the direction it names is the
 // Owner's wording on purpose — a line that reworded it would stop matching what a reader greps — and everything

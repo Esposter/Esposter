@@ -8,7 +8,6 @@ const CHANNELS = 1;
 const BYTES_PER_SAMPLE = 2;
 const BITS_PER_SAMPLE = 16;
 const INT16_MAX = 0x7f_ff;
-
 // A WAV the stock player of every desktop opens without a codec, from the engine's float samples
 export const getWavBytes = ({ sampleRate, samples }: PcmClip): Uint8Array => {
   const buffer = Buffer.alloc(HEADER_BYTES + samples.length * BYTES_PER_SAMPLE);

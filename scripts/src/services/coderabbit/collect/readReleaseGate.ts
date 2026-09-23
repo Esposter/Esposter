@@ -32,7 +32,6 @@ export const readReleaseGate = async ({
     },
   );
   if (decisions === undefined) return undefined;
-
   // A merge and a hold are both written to the pull request, so both sit at the high-stakes bar and the band
   // Between them is the session's. The probability goes in the reason: a person reading the verdict later can
   // See which tier decided it and how close it was.

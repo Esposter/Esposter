@@ -9,7 +9,6 @@ import { getResult } from "@esposter/shared";
 const MERGE_RISK_LEVEL_REGEX = /\*\*Merge Risk:\*\* _\S+ (?<level>[^_]+)_/u;
 
 const MERGE_RISK_COVERAGE_REGEX = /<!-- final_review_risk_coverage:(?<coverage>\{.*?\}) -->/u;
-
 // The bot's walkthrough alone: the level is public text, and a forged one would release whatever it covers
 export const getMergeRisk = (issueComments: GitHubEntry[]): MergeRisk | undefined => {
   for (const { body, user } of issueComments) {

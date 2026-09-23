@@ -1,5 +1,4 @@
 const COUNTDOWN_PART_LENGTH = 2;
-
 // Discord counts an invite down as dd:hh:mm:ss, where the day part appears only once there is a day left.
 // Padding every part keeps the column at its width as the number shrinks rather than jittering each second
 export const getCountdown = (remainingMs: number) => {

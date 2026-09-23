@@ -40,7 +40,6 @@ for (const ledgerPath of readSweepFilePaths(`${LEDGER_DIRECTORY}/*.md`).filter((
   writeFileSync(absolutePath, rewrittenText);
   console.info(ledgerPath);
 }
-
 // Reported once the whole tree has been read, because a trailer naming a ledger that is now a coverage folder is
 // In scope for every area file in it and a row in one — reporting per file would call it unmatched in the rest
 for (const event of events)

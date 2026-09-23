@@ -3,7 +3,6 @@
 // Front, so a chunk filled exactly to the budget serializes to the budget rather than one byte past it — and one
 // Byte past a request cap is rejected exactly as whole as a megabyte past it
 const ARRAY_SERIALIZATION_BYTES = 1;
-
 // The byte budget and the count bound are both required, since neither implies the other: the items are
 // User text (a filename, an event payload), so one chunk of maximal CJK or emoji serializes to several times
 // The size of the same count in ASCII, while a blob of many tiny events clears the byte budget and is still

@@ -7,7 +7,6 @@ import { z } from "zod";
 export interface NoteResource {
   doc: JSONContent;
 }
-
 // A ProseMirror node: type + optional attrs/marks/text and recursive children. looseObject keeps any extra
 // Node fields a future Tiptap extension emits, so a valid document never fails the content-schema parse.
 const jsonContentSchema: z.ZodType<JSONContent> = z.lazy(() =>

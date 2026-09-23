@@ -8,7 +8,6 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";
 
 const t = initTRPC.context<AuthedContext>().create();
-
 // Best-effort: a failure here loses one log entry, never the admin action that has already committed.
 export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, next, path, type: procedureType }) => {
   const result = await next();

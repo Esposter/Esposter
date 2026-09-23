@@ -27,7 +27,6 @@ export const InviteInMessageRelations = {
   },
   user: true,
 } as const;
-
 // The row plus whoever minted it, which is what a management surface lists — a code with no author beside it
 // Says nothing about who to ask when it turns up somewhere it should not have
 export type InviteInMessageWithCreator = InviteInMessage & { user: User };

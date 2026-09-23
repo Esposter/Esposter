@@ -4,7 +4,6 @@ export const MAX_BLUEPRINT_ENTRIES = 50;
 export const MAX_BLUEPRINT_PARAMETERS = 20;
 export const MAX_BLUEPRINT_KEY_LENGTH = 100;
 export const MAX_BLUEPRINT_PARAMETER_TEXT_LENGTH = 500;
-
 // `{{parameter:<key>}}` — replaced with the deploy-time parameter value in entry names and content strings.
 // `{{entry:<key>}}` — replaced with the created resource id of that entry (late-bound cross-resource link).
 // Both grammars share the `{{<kind>:<key>}}` shape, and both earn their bound from the delimiters that

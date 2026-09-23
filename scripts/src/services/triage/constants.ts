@@ -15,7 +15,6 @@ export const TriageLabelCriteriaMap: Record<TriageLabel, string> = {
   [TriageLabel.WontFix]:
     "This will not be actioned: it is out of scope, works as intended, or asks for something the project has decided against.",
 };
-
 // The table `TriageLabel` copies, and the resources that decide whether those labels exist on the tracker at
 // All — both read by the test that holds the enum to them
 export const TRIAGE_LABELS_PATH = ".agents/triage-labels.md";

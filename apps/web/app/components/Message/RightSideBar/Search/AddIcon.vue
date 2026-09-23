@@ -4,7 +4,6 @@ interface Props {
   // Coercing the null itself was the same expression written at five call sites
   isHovering?: boolean | null;
 }
-
 // The affordance every search row shares: a plus that only shows itself under the pointer, kept mounted at
 // Zero opacity so the row's height never changes as the pointer crosses it
 const { isHovering } = defineProps<Props>();

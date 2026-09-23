@@ -45,7 +45,6 @@ useResizeObserver(
     measure(true);
   },
 );
-
 // By value, not by identity: a caller handing over an equal-but-new array — a computed rebuilt from a set that
 // Changed elsewhere, a literal in the binding — would otherwise cost a full remeasure for a selection that never
 // Moved, and measuring reads layout

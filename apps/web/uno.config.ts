@@ -35,7 +35,6 @@ const overlayUtilities = {
 // `nuxt prepare`, which is where the UnoCSS module loads this config — before any workspace package is built,
 // So the import resolves to a `dist` a fresh clone does not have yet and fails the install
 const toKebabCase = (text: string) => text.replaceAll(/[A-Z]/gu, (match) => `-${match.toLowerCase()}`);
-
 // The preset accepts two spellings for most of what it generates — `pa-4` beside `p-4`, `border-2` beside
 // `b-2`, `overflow-hidden` beside `of-hidden`, `font-bold` beside `fw-bold` — and every extra spelling is one
 // More way the same style is written across the tree. The shortest spelling of each family is canonical and

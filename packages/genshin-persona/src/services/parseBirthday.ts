@@ -1,7 +1,6 @@
 import { LEAP_YEAR } from "#src/services/constants";
 
 const MONTH_DAY_REGEX = /^(?<month>\d{1,2})\/(?<day>\d{1,2})$/u;
-
 // The game spells a birthday as an unpadded "9/20" and gives it no year. Every one is read into the same leap
 // Year, so two birthdays are comparable, 29 February is a day like any other, and December and January are
 // Neighbours

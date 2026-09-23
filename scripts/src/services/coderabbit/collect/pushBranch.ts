@@ -9,7 +9,6 @@ const readRemoteSha = (branch: string, cwd?: string): string | undefined => {
   runGit(["fetch", "origin", branch], cwd);
   return readSha(`origin/${branch}`, cwd);
 };
-
 // Every irreversible act the cycle has, in one place, which is what a dry run withholds. A compare-and-swap whose
 // Swap is the `--force-with-lease`: the remote refuses the update itself if the branch left the sha every count
 // Was measured from, so the read above it is only an early exit. The lease makes the push forced, so the

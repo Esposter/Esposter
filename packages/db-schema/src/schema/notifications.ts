@@ -9,7 +9,6 @@ import { createSelectSchema } from "drizzle-orm/zod";
 export const appNotificationTypeEnum = pgEnum("appNotificationType", AppNotificationType);
 
 export const notificationSeverityEnum = pgEnum("notificationSeverity", NotificationSeverity);
-
 // One row per recipient per notification, written by ProcessNotification for every type whose
 // AppNotificationTypeChannelMap entry includes the bell. Persisted rather than session-scoped because a push delivered
 // While the app was closed has nowhere else to land: the tab that would have held it in memory did not exist.

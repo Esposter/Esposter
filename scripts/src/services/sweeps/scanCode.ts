@@ -4,12 +4,10 @@ import type { CodeToken } from "#src/models/sweeps/CodeToken";
 // Separator, or nothing yet. The one-token lookbehind every JavaScript lexer settles for — `x / y / z` is a
 // Division because `x` is an identifier, `(/y/)` a literal because `(` is not.
 const REGEX_OPENER_REGEX = /(?:^|[=(,:[!&|?{};+\-*%<>~^]|\breturn|\btypeof|\bcase)\s*$/u;
-
 // Enough of the tail to hold the longest opener keyword and the whitespace after it
 const CODE_TAIL_LENGTH = 8;
 
 const REGEX_FLAG_REGEX = /[a-z]/u;
-
 // Every character of `text` that is real code, paired with its bracket depth and its index in `text`. Strings,
 // Regex literals, template substitutions and both comment forms are skipped, so a `;` at depth 0 genuinely ends
 // A declaration and a `;` inside a string or a `${…}` does not — a plain bracket count reads both the same and

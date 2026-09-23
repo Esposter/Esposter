@@ -222,7 +222,6 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     // "Replace" or entity doesn't exist (which is an insert)
     else this.table.set(key, { ...entity, etag: this.#getEtag() });
   }
-
   // Both halves are encoded before they are joined: either key may hold the separator, and joining them raw
   // Lets one entity's key collide with another's
   #getCompositeKey(partitionKey: string, rowKey: string): string {

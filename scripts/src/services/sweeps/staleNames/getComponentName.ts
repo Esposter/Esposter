@@ -1,7 +1,6 @@
 import { posix } from "node:path";
 
 const CASE_BOUNDARY_REGEX = /\/|(?<=[a-z\d])(?=[A-Z])/u;
-
 // The name Nuxt registers a component under, from its path below the components directory: the folder segments
 // Prefix the file name, minus the longest run of trailing folder segments the file name already opens with
 // (`Message/Room/RoomHeader.vue` is `MessageRoomHeader`, `Item/Item.vue` and `Item/Index.vue` are `Item`). The name is

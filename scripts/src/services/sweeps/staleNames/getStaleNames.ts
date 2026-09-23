@@ -30,7 +30,6 @@ const getCitedNames = (token: string): string[] => {
   if (names === undefined) return [CALL_REGEX.exec(token)?.groups?.callee ?? token];
   else return names.split(",").map((name) => name.trim());
 };
-
 // A placeholder is a whole segment of the name rather than a run of letters inside one: `readFoos` is an example
 // And `readFooter` is a name, which a substring test cannot tell apart — so it suppressed every real `Bare`,
 // `Footer` and `Snackbar` in the trees this scans, and a stale name reading as English is the one nobody notices.
@@ -40,7 +39,6 @@ const checkIsPlaceholder = (name: string): boolean =>
   name
     .split(NAME_SEGMENT_REGEX)
     .some((segment) => PLACEHOLDER_WORDS.has(segment.toLowerCase().replace(PLURAL_SUFFIX_REGEX, "")));
-
 // Every code name a page cites that the source tree no longer holds. A member access (`Foo.bar`) is judged by its
 // Segments, since the source writes `foo.bar` and the page writes the type's name in front of it.
 export const getStaleNames = (pages: CitingPage[], sourceNames: ReadonlySet<string>): StaleNameFinding[] =>

@@ -172,7 +172,6 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   getPageBlobClient(): PageBlobClient {
     throw new Error("Method not implemented.");
   }
-
   // Only what a caller can act on: the stored buffer's length, which is how a server checks an upload's real
   // Size rather than the one the client declared
   getProperties(): Promise<BlobGetPropertiesResponse> {

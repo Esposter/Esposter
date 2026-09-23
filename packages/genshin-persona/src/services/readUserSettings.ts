@@ -7,7 +7,6 @@ import { existsSync, readFileSync } from "node:fs";
 
 export const readUserSettings = (): UserSettings => {
   if (!existsSync(USER_SETTINGS_PATH)) return {};
-
   // The file is the person's to hand-edit, so the keys we read are each checked for their shape the way a hook
   // Payload's are; one shaped unlike the model is dropped, and setup or voice writes ours where it stood
   const { hooks, spinnerVerbs, statusLine, ...rest } = parseJsonObject(

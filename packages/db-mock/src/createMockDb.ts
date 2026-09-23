@@ -9,7 +9,6 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 // The snapshot is immutable, so the read is shared across every call in a worker instead of hitting disk per database
 let snapshotPromise: ReturnType<typeof readFile> | undefined;
-
 // Loads a pre-migrated data directory snapshot instead of running migrations at runtime, which skips
 // PGlite's `initdb` boot and migration generation and takes well under half the time per call.
 // Regenerate the snapshot with `pnpm snapshot:gen` whenever the schema changes.

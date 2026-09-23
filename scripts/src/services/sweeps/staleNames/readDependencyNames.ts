@@ -9,7 +9,6 @@ const STORE_DIRECTORY = join(REPOSITORY_ROOT, "node_modules", ".pnpm");
 // Beside pnpm's own cache directories, under the install it is derived from
 const CACHE_DIRECTORY = join(REPOSITORY_ROOT, "node_modules", ".cache", "@esposter", "scripts");
 const DECLARATION_REGEX = /\.d\.[cm]?ts$/u;
-
 // The packages pnpm's store holds, each a real directory under `<name@version>/node_modules/` beside symlinks to
 // Its own dependencies — the symlinks are skipped, since each points at another entry the walk reaches itself.
 // The store's own `node_modules` is the hoisted symlink tree, not a package
@@ -28,7 +27,6 @@ const readStorePackageDirectories = (): string[] =>
             : [join(modulesDirectory, entry.name)],
         ),
     );
-
 // A package's type declarations, its own nested `node_modules` left out — those are another package's
 const readDeclarationPaths = (packageDirectory: string): string[] =>
   readdirSync(packageDirectory, { recursive: true, withFileTypes: true })
@@ -39,7 +37,6 @@ const readDeclarationPaths = (packageDirectory: string): string[] =>
         !relative(packageDirectory, entry.parentPath).split(sep).includes("node_modules"),
     )
     .map((entry) => join(entry.parentPath, entry.name));
-
 // Every name an installed package declares: each word of every type declaration in pnpm's store. A page citing a
 // Library's API, or a banned one to ban it, names something the tree never held and the library always did, and
 // This is what tells that citation from a stale one. The whole store is read rather than the direct dependencies

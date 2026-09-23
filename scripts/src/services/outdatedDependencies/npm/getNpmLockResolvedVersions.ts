@@ -4,7 +4,6 @@ import { NPM_LOCKFILE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const NODE_MODULES_PREFIX = "node_modules/";
-
 // The top-level entries alone — one segment under `node_modules`, hoisted transitives included, since only the
 // Manifest's own names are ever looked up; a nested path is a second copy of a package no specifier here names.
 export const getNpmLockResolvedVersions = (lockfile: NpmLockfile): Map<string, string> => {

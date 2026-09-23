@@ -26,7 +26,6 @@ const checkIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
       throw error;
     },
   );
-
 // Idempotent by the audience key value: re-running after the audience grows issues only the missing
 // Tokens and never rotates an existing one, because a rotated token would dead-link a link already sent out.
 // The guarantee is the storage key, not this read-then-write — see ProgramParticipantEntity

@@ -14,7 +14,6 @@ import { existsSync, readFileSync } from "node:fs";
 // A refusal that threw would discard a drain that succeeded, and a thread whose reply did not land keeps the bot
 // As its last author, which the next run drains again.
 const readLines = (path: string): string[] => (existsSync(path) ? getNonEmptyLines(readFileSync(path, "utf8")) : []);
-
 // These lines are prose the drain wrote about untrusted review text (`runDrain`), posted under the same login
 // `checkIsMarked` keys its trust on — so an HTML comment reaching this far is stripped, not trusted to be prose
 const stripHtmlComments = (text: string): string => stripToFixedPoint(text, HTML_COMMENT_REGEX);

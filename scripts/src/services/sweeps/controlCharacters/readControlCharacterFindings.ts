@@ -17,7 +17,6 @@ const BINARY_BYTE = 0;
 // Git never lists them: testing every entry of the tree for a directory costs a `stat` each, a quarter of
 // This scan's whole running time, to catch the one entry named here.
 const EXCLUDED_PATHSPECS = [":(exclude)apps/web/public/cmaps", ":(exclude).claude"];
-
 // Every tracked file in the repository, scanned, one `path:line: U+XXXX` per character that renders as nothing.
 export const readControlCharacterFindings = (): string[] =>
   readSweepFilePaths(...EXCLUDED_PATHSPECS).flatMap((path) => {

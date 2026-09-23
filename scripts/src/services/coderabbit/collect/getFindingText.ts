@@ -9,7 +9,6 @@ const BLANK_RUN_REGEX = /\n{3,}/gu;
 // A capturing split keeps the fences, so the prose between them sits at the even indices and every fenced block
 // At the odd ones
 const FENCED_BLOCK_REGEX = /(?<fence>```[\s\S]*?```)/u;
-
 // A finding as the reviewer wrote it, with the machinery around it removed — the drain holds no `gh`, so a title
 // Alone would have it re-derive the case. Comments are stripped from the prose alone: a proposed fix to a
 // Template carries HTML comments of its own inside its fence, and the bot's never sit inside one.

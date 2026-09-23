@@ -11,7 +11,6 @@ import { initTRPC } from "@trpc/server";
 import { isNull, sql } from "drizzle-orm";
 
 const t = initTRPC.context<AuthedContext>().create();
-
 // Best-effort: a failure here loses one unlock, never the mutation that has already committed.
 export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next, path, type }) => {
   const result = await next();

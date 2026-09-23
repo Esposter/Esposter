@@ -17,7 +17,6 @@ import { createInterface } from "node:readline";
 const EXEMPT_SECRET_VARIABLES = new Set(["CLAUDE_CODE_OAUTH_TOKEN"]);
 
 const SECRET_VARIABLE_REGEX = /credential|key|password|secret|token/iu;
-
 // The one launcher every role goes through, its model handed in rather than fixed here (`SessionRoleModelMap`).
 // Stdout is streamed rather than inherited: each event is logged as it lands, and the sentence Claude Code
 // Prints on its way out — parsed off its own lines, never the model's narration — is what separates a session

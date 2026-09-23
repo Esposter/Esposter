@@ -10,11 +10,9 @@ import characterEmojiRecordMap from "unicode-emoji-json/data-by-emoji.json";
 const EmojiGroupValues = new Set<string>(EmojiGroups);
 
 let emojiIndex: EmojiIndex | undefined;
-
 // Built on first use rather than at import, so nothing pays for it on a page with no emoji surface, and once
 // Rather than per consumer — a reaction list, the picker and the composer all read the same three maps
 export const getEmojiIndex = () => (emojiIndex ??= createEmojiIndex());
-
 // Every emoji the dataset ships is offered, with no version cutoff: whichever Unicode release
 // `unicode-emoji-json` is pinned to in the catalog is the one the picker has, so bumping the dependency is
 // The whole of "support the newest emoji". Whether a glyph actually renders is the reader's OS and font

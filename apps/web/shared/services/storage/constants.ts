@@ -5,7 +5,6 @@
 export const MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES = 64;
 
 export const STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE = "You have run out of storage.";
-
 // Where the usage bar stops being informational and starts being a warning. Percentages rather than byte
 // Thresholds so they hold for every tier.
 export const STORAGE_USAGE_WARNING_PERCENTAGE = 75;

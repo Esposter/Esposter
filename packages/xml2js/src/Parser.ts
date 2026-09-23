@@ -187,7 +187,6 @@ export class Parser {
       this.#parseString(convertableToString, resolve);
     });
   }
-
   // A second value under a key that holds a lone one promotes it to an array and lands beside it: the promotion
   // Alone would drop the value that caused it, which is the second of three siblings under `explicitArray: false`
   #assignOrPush(object: Record<string, unknown>, key: string, newValue: unknown): void {
@@ -198,7 +197,6 @@ export class Parser {
     } else if (this.#options.explicitArray) defineProperty(object, key, [newValue]);
     else defineProperty(object, key, newValue);
   }
-
   // A node whose only key is the char data is the char data: `<a>b</a>` parses to "b", not to { _: "b" }
   #collapseCharKey(object: Record<string, unknown>): Record<string, unknown> {
     if (Object.keys(object).length === 1 && this.#options.charkey in object)

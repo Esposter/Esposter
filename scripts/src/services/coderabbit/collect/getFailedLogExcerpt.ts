@@ -5,7 +5,6 @@ import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 // `gh run view --log-failed` prints `<job>\t<step>\t<timestamp> <text>` per line, the text carrying the colours
 // The check printed to a terminal
 const LOG_LINE_REGEX = /^(?<job>[^\t]*)\t[^\t]*\t\S+ ?(?<text>.*)$/u;
-
 // The tail of every failing job's log, one section per job: a check states its verdict at the end — the failed
 // Assertions, the rule and the file, the error count — after every line it printed on its way there
 export const getFailedLogExcerpt = (log: string): string => {

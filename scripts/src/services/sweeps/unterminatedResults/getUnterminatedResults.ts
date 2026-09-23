@@ -34,7 +34,6 @@ const TERMINATOR_NAMES = "andTee|andThen|mapErr|map|match|orElse|orTee|unwrapOr"
 const TERMINATOR_REGEX = new RegExp(String.raw`^\s*\.(?:${TERMINATOR_NAMES})`, "u");
 const TRIVIA_REGEX = new RegExp(String.raw`^(?:\s|\/\/.*|${BLOCK_COMMENT_PATTERN})+`, "u");
 const AFTER_LENGTH = 34;
-
 // A terminator is a call, and `scanCode` drops the bracket, so in the code alone `.match(noop)` and
 // `.matching(noop)` both read as `.match` followed by more identifier characters — no boundary written against
 // The code can tell them apart. The source is where they separate, exactly as the call's own name is re-read
@@ -48,7 +47,6 @@ const checkIsCalled = (text: string, tokens: readonly CodeToken[], end: number):
     .replace(TRIVIA_REGEX, "")
     .startsWith("(");
 };
-
 // A `Result` nothing terminates fails silently, and no line-anchored grep can see it: the terminator sits after
 // The call's closing bracket, which is wherever its callback ends — and a fixed window around the call reports
 // Every site whose body runs long. So the scan works over `scanCode`'s output rather than the raw text, which

@@ -6,7 +6,6 @@ const CELL_PADDING = " ".length * 2;
 // The cell is backticked, and the backtick sorts after a hyphen — so the order is the bare name's, where a
 // Name precedes its own prefix-extensions the way a directory listing reads
 const getSortKey = (unit: string): string => unit.replaceAll("`", "");
-
 // A ledger whose units are the tree's own entries has no row anyone writes: a unit the tree holds and the table
 // Does not opens at `—`, a row whose unit the tree no longer holds goes, and every other row keeps its cells.
 // Rows come back in name order, since a derived table has no payoff ordering to preserve, and a new row takes the

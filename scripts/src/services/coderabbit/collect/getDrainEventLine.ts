@@ -5,7 +5,6 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResult } from "@esposter/shared";
 
 const TOOL_INPUT_LENGTH = 160;
-
 // One log line per event, so the job log reads as the session happens rather than as one block when it ends:
 // The model that answered, each tool call, the prose between them, and the result with its turns and cost. A
 // Line that is not an event prints as it is — Claude Code refusing to start writes a sentence, never JSON, and

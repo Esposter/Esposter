@@ -15,7 +15,6 @@ import { promisify } from "node:util";
 import { constants, zstdCompress } from "node:zlib";
 
 const compress = promisify(zstdCompress);
-
 // Builds the header and compresses the plaintext behind it. With a base, the base's plaintext is the
 // Dictionary: that is a delta with none of the ceremony — no diff format, no per-type structural knowledge —
 // And the encoder's own long-range matching is what makes a near-duplicate document a few hundred bytes.

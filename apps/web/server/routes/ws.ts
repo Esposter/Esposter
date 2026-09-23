@@ -29,7 +29,6 @@ process.on("SIGTERM", () => {
 const getRequest = (peer: Peer): IncomingMessage =>
   (peer.context.node as undefined | { req: IncomingMessage })?.req ??
   ({ headers: Object.fromEntries(peer.request.headers.entries()) } as IncomingMessage);
-
 // A socket that carries no session still opens and closes — it just has no device row to keep — so the user
 // Router's UNAUTHORIZED is the connection's ordinary life rather than a failure to report
 const runAsPeer = async (

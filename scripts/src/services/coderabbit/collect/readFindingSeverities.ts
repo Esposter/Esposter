@@ -11,10 +11,8 @@ const SEVERITY_CRITERIA = [
   "Real but bounded: a defect, a broken convention or a missing case, confined to the lines it names.",
   "Blocking: wrong behaviour, lost or corrupted data, a security hole, or a convention break the rest of the tree copies.",
 ] as const;
-
 // A question is named for the finding it scores, which is how its answer is read back
 const getQuestionName = (commentId: number): string => `finding${commentId}`;
-
 // The order the drain meets its findings in. A session is one-shot and may end mid-round — on the limit, on a
 // Check it could not get green — so which finding it reaches first is the one thing about the prompt that
 // Survives a round that did not finish. Nothing here acts on an answer and nothing is dropped: every finding

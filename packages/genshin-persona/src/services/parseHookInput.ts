@@ -4,7 +4,6 @@ import { parseJsonObject } from "#src/services/parseJsonObject";
 
 export const parseHookInput = (text: string): HookInput => {
   if (!text.trim()) return {};
-
   // The payload is the tool's to shape, so the fields read are each checked for their type
   const parsedInput = parseJsonObject(text);
   return {

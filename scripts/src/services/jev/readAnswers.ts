@@ -15,7 +15,6 @@ const client =
         () => undefined,
       )
     : undefined;
-
 // One round trip per state, however many questions are asked of it: the state is sent once and each answer comes
 // Back under its own key, so a second call for a second question would be the same state paid for twice.
 // Nothing here throws or retries — the SDK retries its own transport, and what it cannot answer is answered a

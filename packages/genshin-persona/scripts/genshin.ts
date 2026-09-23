@@ -124,7 +124,6 @@ const switchSessionCharacter = async (character: Character) => {
   recordSessionCharacter(character, sessionId, today.toString());
   await printCard(character);
 };
-
 // Every knob in one read, for the verbs that report rather than change: the status verb, and either language verb
 // Given no argument
 const getStatusReport = async () => {
@@ -245,7 +244,6 @@ switch (verb) {
       console.log(strings.status(await getStatusReport()));
       break;
     }
-
     // Anything the model can write is a legal reply language, so this is not held to the data package's fifteen;
     // The canonical spelling is taken where it names one of them, so the common case reads as the language verb's
     const replyLanguage = getCanonicalLanguage(readLanguageNames(), name) ?? name;
@@ -353,7 +351,6 @@ switch (verb) {
       process.exitCode = 1;
       break;
     }
-
     // The proof walks the device ladder from the top, so a rung this machine once demoted is tried again here and
     // Nowhere else: the rung on file is cleared, and a synthesizer still running — on that rung, or on the runtime
     // Being replaced — is stopped, so the one the warm spawns loads afresh
@@ -368,7 +365,6 @@ switch (verb) {
         break;
       }
     }
-
     // The runtime's own loader fetches what it is asked to load into the models directory, so the weights are
     // Downloaded by loading the engine once here — with progress, which the detached synthesizer cannot print —
     // And the synthesizer then loads them from the cache inside a hook's budget. A cache already holding them skips

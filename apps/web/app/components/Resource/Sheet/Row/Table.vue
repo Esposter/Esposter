@@ -84,7 +84,6 @@ const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
 };
 
 useCellKeyboardShortcuts();
-
 // @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.
 onClickOutside(table, () => {
   clearCellSelection();

@@ -6,7 +6,6 @@ export enum CsvDelimiter {
   Semicolon = ";",
   Tab = "\t",
 }
-
 // A union of titled literals rather than `z.enum` because the values are the delimiter characters
 // Themselves — a Vjsf select rendering them raw offers an unlabelled tab and three lone punctuation marks
 export const csvDelimiterSchema = z.union([

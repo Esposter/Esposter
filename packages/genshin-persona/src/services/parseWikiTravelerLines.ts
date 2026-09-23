@@ -16,7 +16,6 @@ const FILE_FIELD_PREFIX = "file_";
 const TURN_SEPARATOR = "<br>";
 const TRAVELER_SPEAKER = "'''{{Traveler}}:'''";
 const WORD_CHOICE_REGEX = /\{\{MC\|(?<male>[^|}]*)\|(?<female>[^|}]*)[^}]*\}\}/gu;
-
 // Every line of one twin the Traveler's story page lists that the twin opens — the clip is theirs only until
 // Paimon answers, so the text is their opening turn, which is what their reference is cut to
 export const parseWikiTravelerLines = (

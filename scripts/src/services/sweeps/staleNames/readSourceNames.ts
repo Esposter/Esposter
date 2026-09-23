@@ -14,7 +14,6 @@ const COMPONENT_PATH_REGEX = /\/components\/(?<componentPath>.+\.vue)$/u;
 // Gitignored, so they are read by path rather than through git, and are simply absent on a checkout nothing has
 // Prepared yet
 const NUXT_DECLARATIONS_DIRECTORY = join(REPOSITORY_ROOT, "apps", "web", ".nuxt");
-
 // A generated file vouches for nothing its generator's source does not, and an old one vouches for what that source
 // Since dropped — a migration snapshot still spells every column a later migration removed. The formatter's ignore
 // List is the repo's one list of what is generated, so the scan skips exactly what the formatter skips. A pattern
@@ -23,7 +22,6 @@ const readGeneratedPatterns = (): string[] =>
   parseMachineJson<{ ignorePatterns: string[] }>(
     readFileSync(join(REPOSITORY_ROOT, FORMATTER_CONFIGURATION_FILE), "utf8"),
   ).ignorePatterns.flatMap((pattern) => [pattern, `${pattern}/**`]);
-
 // Every name the tracked tree holds: each word of every source file, every path segment (a directory a ledger
 // Row names, a file name whole and by its dot-split parts, so `Foo.test.ts` vouches for `Foo`), the registered
 // Name of every Nuxt component, which no file writes, and every word of the declarations Nuxt generates

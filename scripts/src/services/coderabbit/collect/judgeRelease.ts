@@ -61,7 +61,6 @@ export const judgeRelease = async ({
     console.info(`release verdict at ${developSha} recorded: ${verdict} — ${reason}`);
     return applyVerdict(verdict);
   }
-
   // The level when the bot stated one for this head, and its silence when it did not — a clean review is judged
   // Either way, and what is written on the pull request says which of the two the judgement answered
   const statedRisk =
@@ -72,7 +71,6 @@ export const judgeRelease = async ({
     console.info(`would judge the release at ${developSha} — ${statedRisk}`);
     return undefined;
   }
-
   // Read the way the feedback report reads the same block: oldest first by `updated_at`, because the walkthrough
   // Carrying it is edited in place across reviews and its position among the comments never moves with it
   // (`getSortedByUpdatedAt`), and through the reader that already knows the block is not always in the newest
@@ -121,7 +119,6 @@ export const judgeRelease = async ({
   // Every session behind it.
   const gatedVerdict = await readReleaseGate({ answers, feedback, riskBlock });
   if (gatedVerdict) return recordVerdict(gatedVerdict);
-
   // A limit the drain hit is the account's, not this head's: the window ports on and the next run judges
   const limitResetMs = readDrainLimitResetMs(issueComments, viewerLogin);
   if (limitResetMs !== undefined && limitResetMs > Date.now()) {

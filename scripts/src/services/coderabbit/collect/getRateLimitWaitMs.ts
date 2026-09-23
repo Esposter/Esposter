@@ -5,7 +5,6 @@ import { RATE_LIMIT_COMMENT_MARKER, RETRIGGER_BUFFER_MS } from "#src/services/co
 import { CODERABBIT_REST_LOGIN } from "#src/services/coderabbit/shared/constants";
 
 const RATE_LIMIT_RESET_REGEX = /Next included review available in (?<amount>\d+) (?<unit>hours?|minutes?)/u;
-
 // How long is left of the limit the gate read off the commit status, from the one thing that knows — the
 // Walkthrough CodeRabbit rewrites when it skips a review. Relative to the comment's own timestamp, never to now:
 // The block is not removed when the limit lifts, so an expired one must read as nothing left to wait for.

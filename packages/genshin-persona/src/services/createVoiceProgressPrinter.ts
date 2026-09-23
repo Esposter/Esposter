@@ -4,7 +4,6 @@ const PROGRESS_STATUS = "progress";
 // A weight is the better part of a gigabyte, and a verb that sits silent through it looks hung
 const PRINTED_PERCENTAGE_STEP = 10;
 const MAX_PERCENTAGE = 100;
-
 // One line per step of each file the runtime fetches, and nothing for a file read from the cache, whose first
 // Report is already complete
 export const createVoiceProgressPrinter = (): ((progress: VoiceProgress) => void) => {

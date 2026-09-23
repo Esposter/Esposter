@@ -15,7 +15,6 @@ const CHARACTER_PLACEHOLDER = "{character}";
 // The Traditional Chinese script spells the second person by the player's gender through a choice template, on
 // Nearly every line; the wiki shows the first form until told otherwise, and so does the spinner
 const WORD_CHOICE_REGEX = /\{\{MC\|m=(?<male>[^|}]*)\|f=[^}]*\}\}/gu;
-
 // Every story line the voice-over page lists, with the stem its clip is filed under: the source both the
 // Reference selection measures over and the plugin fetches a reference from, and the spinner's lines in a
 // Language the data package does not carry the character in yet

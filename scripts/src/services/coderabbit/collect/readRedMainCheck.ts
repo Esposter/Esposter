@@ -25,7 +25,6 @@ const readMainCheck = (workflowFile: string, mainSha: string): MainCheck | undef
       "conclusion,databaseId,status,url",
     ]),
   ).at(0);
-
 // The red run on `main`'s head, if any — the newest run of each workflow whose verdict the repairer answers,
 // Read on every pass because the event that reports it (`workflow_run`) fires only from the copy of the trigger
 // `main` carries. A run still going or cancelled is not a red.

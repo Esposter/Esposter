@@ -20,7 +20,6 @@ const readLongestStoryStem = async (name: string) => {
   const [longest] = lines.toSorted((a, b) => b.text.length - a.text.length);
   return longest?.stem ?? "";
 };
-
 // One character's reference in one dub, fetched from the wiki the first time it is needed and cached in the state
 // Directory after — never committed — then decoded, cut to the character's own voice, brought to the engine's rate
 // And trimmed to what it conditions on. Nothing for a line the wiki no longer holds under that name

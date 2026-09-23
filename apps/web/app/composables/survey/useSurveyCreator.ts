@@ -107,7 +107,6 @@ export const useSurveyCreator = () => {
   useAdoptResourceContent(ResourceType.Survey, () => {
     if (creator.value) setCreatorModel(creator.value);
   });
-
   // `preferredColorPalette` is a plain field the preview reads only when it rebuilds its survey, so it alone
   // Leaves the creator chrome untouched — the creator theme is the observable one the renderer binds. The
   // Survey themes double as creator themes (they carry the toolbox and property grid tokens); the

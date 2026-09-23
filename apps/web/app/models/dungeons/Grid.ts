@@ -69,7 +69,6 @@ export class Grid<TGrid extends readonly (readonly unknown[])[]> {
 
     return undefined;
   }
-
   // A position outside the grid is a hole rather than a fault, which is what `validate` reads it as. Rows may be
   // Ragged, so a vertical walk crosses a short one instead of failing on it — and the grid itself can shrink
   // Under a cursor that is still on a row it had, which is what the inventory does when an item is used up.

@@ -27,7 +27,6 @@ const spawnPlayer = () => {
     PLAYER_OPTIONS,
   );
 };
-
 // The player spawned at once, so its start overlaps the first clip's synthesis. A clip is written to a temp file of
 // Its own, since no stock player reads audio from a pipe and the next clip is written while this one plays, and
 // Deleted once answered whether or not it played. A player that could not be spawned, or that exited part way,

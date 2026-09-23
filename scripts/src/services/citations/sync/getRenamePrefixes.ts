@@ -4,7 +4,6 @@ import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
 import { getOrCreate } from "@esposter/shared";
 
 const RENAME_LINE_REGEX = /^R\d*\t(?<from>[^\t]+)\t(?<to>[^\t]+)$/u;
-
 // A rename is reported per file, but a citation names whatever level of the tree it needs — a file, or the
 // Directory it lives in. Stripping the path segments the two sides still share leaves the prefix that actually
 // Moved, which rewrites a citation of the file, of any directory above it that moved with it, and nothing else:

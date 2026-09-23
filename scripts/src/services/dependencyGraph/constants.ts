@@ -15,7 +15,6 @@ export const RUNTIME_DEPENDENCY_FIELDS: DependencyField[] = [
 // The one neutral in the palette. It is the grey that carries against both a white and a near-black page, which
 // Is what every line the theme does not own has to do — the svg is committed once and read in either scheme.
 export const MUTED_COLOR = "#8b949e";
-
 // Teal, because it is the one strong mid-lightness family none of the three role hues claims: a runtime edge
 // Lands on a node's border, and the blue this replaces was the violet library border under protanopia (ΔE 3.8).
 // Mid-lightness rather than dark, so it carries on a near-black page as well as a white one.

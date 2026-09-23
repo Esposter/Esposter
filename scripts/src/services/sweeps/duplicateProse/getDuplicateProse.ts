@@ -10,7 +10,6 @@ const SKILL_OWNER_REGEX = new RegExp(`^${SKILLS_DIRECTORY.replaceAll(".", String
 // Two pages of one skill restate each other by design — the index line names the trigger its reference page
 // Opens on — so a skill is one owner, and every other page is its own
 const getOwner = (path: string): string => SKILL_OWNER_REGEX.exec(path)?.groups?.skill ?? path;
-
 // The shingles of every page in one pass: each window of `SHINGLE_SIZE` words with the pages it appears on and
 // The position it first appears at on each, and beside it how many pages hold each window one word shorter —
 // The shorter window is the longer one's prefix, so it costs one concatenation rather than a second walk
@@ -39,7 +38,6 @@ const getShingles = (
     }
   return { shinglePages, stemPageCounts };
 };
-
 // Every run of words two pages of different owners share, longest first. A run is found through its shingles —
 // Every window of `SHINGLE_SIZE` words, keyed by its text — and a shingle on three or more pages is a template
 // (an area index's standing intro, a Key Files heading) rather than a copy, so only a shingle exactly two pages

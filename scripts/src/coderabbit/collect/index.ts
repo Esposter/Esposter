@@ -28,7 +28,6 @@ const {
 const pullRequest = pullRequestArgument === undefined ? undefined : Number(pullRequestArgument);
 if (pullRequest !== undefined && !checkIsGitHubNumber(pullRequest))
   throw new InvalidOperationError(Operation.Read, "coderabbit", "the pull request argument is not a number");
-
 // The basis every attempt count names (`getMarker`): the hash of the collector's own source at the ref this run
 // Started from, read before the pass switches the checkout to the trees it builds on
 const collectorSha = runGit(["rev-parse", `HEAD:${COLLECTOR_SOURCE_PATH}`]).trim();
@@ -40,7 +39,6 @@ if (!isDryRun && dirtyPaths.length > 0)
     "coderabbit",
     `the working tree is dirty — the collector owns it:\n${dirtyPaths.join("\n")}`,
   );
-
 // A throwaway worktree for a dry run, this checkout otherwise; both port steps switch to the base they build on
 const cwd = isDryRun ? mkdtempSync(join(tmpdir(), DRY_RUN_WORKTREE_PREFIX)) : REPOSITORY_ROOT;
 if (isDryRun) {

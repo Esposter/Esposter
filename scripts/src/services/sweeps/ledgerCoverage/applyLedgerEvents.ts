@@ -9,7 +9,6 @@ const SWEPT_CELL_REGEX = new RegExp(
   String.raw`^(?<cellDate>\d{4}-\d{2}-\d{2})(?:${SWEPT_CELL_SEPARATOR}(?<cellModel>.+))?$`,
   "u",
 );
-
 // The file is the readable record and its cell is the starting state, so a hand-written date still counts and
 // The script never lowers one on its own: a sweep raises the cell to its date and the model its commit names, and
 // A reopen clears it only when it is not older than what the cell already says — a reset that predates the pass it
