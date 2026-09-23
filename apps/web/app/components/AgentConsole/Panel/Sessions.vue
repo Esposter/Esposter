@@ -28,7 +28,7 @@ const cwdMenuItems = computed(() =>
     }),
   ),
 );
-const cwdInput = useTemplateRef("cwdInput");
+const cwdTextField = useTemplateRef("cwdTextField");
 // Asked on a click, never on load: a permission prompt nobody asked for is one a browser learns to hide
 const isNotificationPermissionDefault = ref(
   typeof Notification !== "undefined" && Notification.permission === "default",
@@ -45,23 +45,16 @@ const requestNotificationPermission = async () => {
     <UiButton v-if="isNotificationPermissionDefault" self-start @click="requestNotificationPermission()">
       Notify me
     </UiButton>
-    <form
+    <UiForm
       v-if="status === ConnectionStatus.Connected"
-      flex
-      gap-2
-      @submit.prevent="sendCommand({ cwd: editedCwd, type: CommandType.CreateSession })"
+      @submit="sendCommand({ cwd: editedCwd, type: CommandType.CreateSession })"
     >
-      <input
-        ref="cwdInput"
-        v-model="editedCwd"
-        aria-label="Start a session in"
-        flex-1
-        min-w-0
-        placeholder="Start a session in…"
-        ui-sunk
-      />
+      <div flex gap-2 items-end>
+        <UiTextField ref="cwdTextField" v-model="editedCwd" label="Start a session in" flex-1 min-w-0 />
+        <UiButton :disabled="!editedCwd" type="submit">New</UiButton>
+      </div>
       <UiSuggestions
-        :field="cwdInput ?? undefined"
+        :field="cwdTextField?.element ?? undefined"
         :items="cwdMenuItems"
         label="Repositories"
         @select="
@@ -70,19 +63,16 @@ const requestNotificationPermission = async () => {
           }
         "
       />
-      <UiButton :disabled="!editedCwd" type="submit">New</UiButton>
-    </form>
+    </UiForm>
     <ul list-none flex flex-col gap-1 of-y-auto>
       <li v-for="{ cwd, id, lastActivityAt, state, title } of displaySessions" :key="id" flex gap-2 items-center>
         <button
-          :class="{ 'bg-accent/20': id === currentSessionId }"
-          px-2
-          text-left
+          :aria-current="id === currentSessionId || undefined"
+          class="aria-[current=true]:bg-accent/20"
+          type="button"
+          ui-item
           flex-1
           min-w-0
-          cursor-pointer
-          hover:brightness-125
-          type="button"
           @click="
             () => {
               if (state === SessionState.Closed) sendCommand({ sessionId: id, type: CommandType.Resume });

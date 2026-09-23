@@ -78,7 +78,7 @@ Everything typed or read is DOM, because text drawn into a canvas cannot be sele
 
 The panels are built from the [UI library](/docs/architecture/ui-library#components), with no Vuetify:
 
-- `UiDialog` is the console, as a sheet, and the pause menu, and `UiTabs` the console's tabs. `UiFrame` draws each panel's voxel edge, and `UiButton` is the raised block.
+- `UiDialog` is the console, as a sheet, and the pause menu, and `UiTabs` the console's tabs. `UiFrame` draws each panel's voxel edge, and `UiButton` is the raised block. The session search, a new session's folder and a denial's message are `UiTextField`s, and the new session's is inside a `UiForm`.
 - The slash palette and the repositories offered for a new session are `UiSuggestions` under their fields, which keep focus while the arrows walk them. The model and the mode are `UiSelect`. A message's actions are `UiMenu`. Each opens in the browser's top layer, so no panel paints over one and no overflow clips it.
 - The page's root is a dusk theme scope, so the panels read the library's tokens with dusk's values whichever theme the app is in. The world paints with `AgentConsolePaletteMap` — its materials, and the same dusk tokens as values — so a panel and the room it sits over always agree.
 - One pixel font at one size sets every panel, the agent's markdown included, and nothing in the page's scoped styles reaches another page.

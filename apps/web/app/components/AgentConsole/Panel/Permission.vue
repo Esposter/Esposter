@@ -48,12 +48,7 @@ const answer = (behavior: PermissionBehavior) => {
       </template>
       <pre v-else ws-pre-wrap of-x-auto>{{ JSON.stringify(permissionRequest.input, null, 2) }}</pre>
     </div>
-    <input
-      v-model="denyMessage"
-      aria-label="Tell Claude what to do instead (on deny)"
-      placeholder="Tell Claude what to do instead (on deny)"
-      ui-sunk
-    />
+    <UiTextField v-model="denyMessage" label="Tell Claude what to do instead (on deny)" />
     <div flex flex-wrap gap-2>
       <UiButton :variant="UiButtonVariant.Accent" @click="answer(PermissionBehavior.Allow)">Allow</UiButton>
       <UiButton v-if="permissionRequest.hasSuggestions" @click="answer(PermissionBehavior.AllowAlways)">
